@@ -23,18 +23,11 @@
  *
  * $Id$
  */
-#include "dom2_range.h"
-#include "dom2_traversal.h"
-#include "dom_node.h"
-#include "dom_doc.h"
-#include "dom_string.h"
-#include "dom_text.h"
-#include "dom_exception.h"
-#include "dom_docimpl.h"
-#include "dom2_rangeimpl.h"
+#include "dom/dom_exception.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom2_rangeimpl.h"
 
 using namespace DOM;
-
 
 Range::Range()
 {

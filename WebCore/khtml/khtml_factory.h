@@ -22,7 +22,7 @@
 
 #include <kparts/factory.h>
 #include <kparts/historyprovider.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kurl.h>
 
 class KInstance;
@@ -43,14 +43,14 @@ public:
   static void registerPart( KHTMLPart *part );
   static void deregisterPart( KHTMLPart *part );
 
-  static QList<KHTMLPart> *partList() { return s_parts; }
+  static QPtrList<KHTMLPart> *partList() { return s_parts; }
 
   static KInstance *instance();
 
   static KHTMLSettings *defaultHTMLSettings();
 
   // list of visited URLs
-  static KParts::HistoryProvider *vLinks() { 
+  static KParts::HistoryProvider *vLinks() {
     return KParts::HistoryProvider::self();
   }
 
@@ -63,7 +63,7 @@ private:
   static KInstance *s_instance;
   static KAboutData *s_about;
   static KHTMLSettings *s_settings;
-  static QList<KHTMLPart> *s_parts;
+  static QPtrList<KHTMLPart> *s_parts;
 };
 
 #endif

@@ -86,6 +86,8 @@ public:
     QRegion intersect(const QRegion &) const;
     bool contains(const QPoint &) const;
     bool isNull() const;
+    void translate(int deltaX, int deltaY);
+    QRect boundingRect() const;
 
     // operators ---------------------------------------------------------------
 

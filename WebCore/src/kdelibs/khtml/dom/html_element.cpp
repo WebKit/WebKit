@@ -20,13 +20,14 @@
  *
  * $Id$
  */
-#include "dom_string.h"
-#include "html_element.h"
-#include "html_elementimpl.h"
-#include "dom_exception.h"
-using namespace DOM;
+#include "dom/dom_exception.h"
+#include "dom/html_misc.h"
+#include "css/cssparser.h"
+#include "html/html_miscimpl.h" // HTMLCollectionImpl
 
-#include "htmlhashes.h"
+#include "misc/htmlhashes.h"
+
+using namespace DOM;
 
 HTMLElement::HTMLElement() : Element()
 {
@@ -48,17 +49,12 @@ HTMLElement &HTMLElement::operator = (const HTMLElement &other)
 
 HTMLElement &HTMLElement::operator = (const Node &other)
 {
-    if(other.nodeType() != ELEMENT_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || !ohandle->isHTMLElement()) {
 	impl = 0;
 	return *this;
     }
-    Element e;
-    e = other;
-    if(!e.isHTMLElement())
-	impl = 0;
-    else
-	Node::operator = (other);
+    Node::operator = (other);
     return *this;
 }
 
@@ -123,20 +119,16 @@ void HTMLElement::setClassName( const DOMString &value )
 
 void HTMLElement::removeCSSProperty( const DOMString &property )
 {
-    if(impl) {
-	HTMLElementImpl *e = ((HTMLElementImpl *)impl);
-	e->removeCSSProperty( property );
-	e->setChanged( true );
-    }
+    int id = getPropertyID(property.string().lower().ascii(), property.length());
+    if(id && impl)
+        static_cast<HTMLElementImpl*>(impl)->removeCSSProperty(id);
 }
 
 void HTMLElement::addCSSProperty( const DOMString &property, const DOMString &value )
 {
-    if(impl) {
-	HTMLElementImpl *e = ((HTMLElementImpl *)impl);
-	e->addCSSProperty( property, value );
-	e->setChanged( true );
-    }
+    int id = getPropertyID(property.string().lower().ascii(), property.length());
+    if(id && impl)
+        static_cast<HTMLElementImpl*>(impl)->addCSSProperty(id, value);
 }
 
 DOMString HTMLElement::innerHTML() const
@@ -167,4 +159,10 @@ void HTMLElement::setInnerText( const DOMString &text )
 	ok = ((HTMLElementImpl *)impl)->setInnerText( text );
     if ( !ok )
 	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+}
+
+HTMLCollection HTMLElement::children() const
+{
+    if(!impl) return HTMLCollection();
+    return HTMLCollection(impl, HTMLCollectionImpl::NODE_CHILDREN);
 }

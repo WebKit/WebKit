@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -18,282 +19,276 @@
  */
 
 #include "kjs_traversal.h"
-#include <qptrdict.h>
+#include "kjs_traversal.lut.h"
+#include "kjs_proxy.h"
+#include <dom/dom_node.h>
+#include <xml/dom_nodeimpl.h>
+#include <xml/dom_docimpl.h>
+#include <khtmlview.h>
+#include <kdebug.h>
 
 using namespace KJS;
 
-QPtrDict<DOMNodeIterator> nodeIterators;
-QPtrDict<DOMNodeFilter> nodeFilters;
-QPtrDict<DOMTreeWalker> treeWalkers;
-
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMNodeIterator::info = { "NodeIterator", HostType, 0, 0, 0 };
+const ClassInfo DOMNodeIterator::info = { "NodeIterator", 0, &DOMNodeIteratorTable, 0 };
+/*
+@begin DOMNodeIteratorTable 5
+  root				DOMNodeIterator::Root			DontDelete|ReadOnly
+  whatToShow			DOMNodeIterator::WhatToShow		DontDelete|ReadOnly
+  filter			DOMNodeIterator::Filter			DontDelete|ReadOnly
+  expandEntityReferences	DOMNodeIterator::ExpandEntityReferences	DontDelete|ReadOnly
+@end
+@begin DOMNodeIteratorProtoTable 3
+  nextNode	DOMNodeIterator::NextNode	DontDelete|Function 0
+  previousNode	DOMNodeIterator::PreviousNode	DontDelete|Function 0
+  detach	DOMNodeIterator::Detach		DontDelete|Function 0
+@end
+*/
+DEFINE_PROTOTYPE("DOMNodeIterator",DOMNodeIteratorProto)
+IMPLEMENT_PROTOFUNC(DOMNodeIteratorProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMNodeIteratorProto,DOMNodeIteratorProtoFunc)
+
+DOMNodeIterator::DOMNodeIterator(ExecState *exec, DOM::NodeIterator ni)
+  : DOMObject(DOMNodeIteratorProto::self(exec)), nodeIterator(ni) {}
 
 DOMNodeIterator::~DOMNodeIterator()
 {
-  nodeIterators.remove(nodeIterator.handle());
+  ScriptInterpreter::forgetDOMObject(nodeIterator.handle());
 }
 
-KJSO DOMNodeIterator::tryGet(const UString &p) const
+Value DOMNodeIterator::tryGet(ExecState *exec, const UString &p) const
+{
+  return DOMObjectLookupGetValue<DOMNodeIterator,DOMObject>(exec,p,&DOMNodeIteratorTable,this);
+}
+
+Value DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
 {
   DOM::NodeIterator ni(nodeIterator);
-  if (p == "root")
-    return getDOMNode(ni.root());
-  else if (p == "whatToShow")
+  switch (token) {
+  case Root:
+    return getDOMNode(exec,ni.root());
+  case WhatToShow:
     return Number(ni.whatToShow());
-  else if (p == "filter")
-    return getDOMNodeFilter(ni.filter());
-  else if (p == "expandEntityReferences")
+  case Filter:
+    return getDOMNodeFilter(exec,ni.filter());
+  case ExpandEntityReferences:
     return Boolean(ni.expandEntityReferences());
-  else if (p == "nextNode")
-    return new DOMNodeIteratorFunc(nodeIterator,DOMNodeIteratorFunc::NextNode);
-  else if (p == "previousNode")
-    return new DOMNodeIteratorFunc(nodeIterator,DOMNodeIteratorFunc::PreviousNode);
-  else if (p == "detach")
-    return new DOMNodeIteratorFunc(nodeIterator,DOMNodeIteratorFunc::Detach);
-  else
-    return DOMObject::tryGet(p);
-}
-
-Completion DOMNodeIteratorFunc::tryExecute(const List &/*args*/)
-{
-  KJSO result;
-
-  switch (id) {
-    case PreviousNode:
-      result = getDOMNode(nodeIterator.previousNode());
-      break;
-    case NextNode:
-      result = getDOMNode(nodeIterator.nextNode());
-      break;
-    case Detach:
-      nodeIterator.detach();
-      result = Undefined();
-      break;
-  };
-
-  return Completion(ReturnValue,result);
-}
-
-KJSO KJS::getDOMNodeIterator(DOM::NodeIterator ni)
-{
-  DOMNodeIterator *ret;
-  if (ni.isNull())
-    return Null();
-  else if ((ret = nodeIterators[ni.handle()]))
-    return ret;
-  else {
-    ret = new DOMNodeIterator(ni);
-    nodeIterators.insert(ni.handle(),ret);
-    return ret;
+ default:
+   kdWarning() << "Unhandled token in DOMNodeIterator::getValueProperty : " << token << endl;
+   return Value();
   }
 }
 
-
-// -------------------------------------------------------------------------
-
-const TypeInfo NodeFilterPrototype::info = { "NodeFilterPrototype", HostType, 0, 0, 0 };
-// ### make this protype of Range objects? (also for Node)
-
-KJSO NodeFilterPrototype::tryGet(const UString &p) const
+Value DOMNodeIteratorProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
 {
-  if (p == "FILTER_ACCEPT")
-    return Number((long unsigned int)DOM::NodeFilter::FILTER_ACCEPT);
-  if (p == "FILTER_REJECT")
-    return Number((long unsigned int)DOM::NodeFilter::FILTER_REJECT);
-  if (p == "FILTER_SKIP")
-    return Number((long unsigned int)DOM::NodeFilter::FILTER_SKIP);
-  if (p == "SHOW_ALL")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_ALL);
-  if (p == "SHOW_ELEMENT")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_ELEMENT);
-  if (p == "SHOW_ATTRIBUTE")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_ATTRIBUTE);
-  if (p == "SHOW_TEXT")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_TEXT);
-  if (p == "SHOW_CDATA_SECTION")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_CDATA_SECTION);
-  if (p == "SHOW_ENTITY_REFERENCE")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_ENTITY_REFERENCE);
-  if (p == "SHOW_ENTITY")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_ENTITY);
-  if (p == "SHOW_PROCESSING_INSTRUCTION")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_PROCESSING_INSTRUCTION);
-  if (p == "SHOW_COMMENT")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_COMMENT);
-  if (p == "SHOW_DOCUMENT")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_DOCUMENT);
-  if (p == "SHOW_DOCUMENT_TYPE")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_DOCUMENT_TYPE);
-  if (p == "SHOW_DOCUMENT_FRAGMENT")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_DOCUMENT_FRAGMENT);
-  if (p == "SHOW_NOTATION")
-    return Number((long unsigned int)DOM::NodeFilter::SHOW_NOTATION);
-
-  return DOMObject::tryGet(p);
+  if (!thisObj.inherits(&KJS::DOMNodeIterator::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::NodeIterator nodeIterator = static_cast<DOMNodeIterator *>(thisObj.imp())->toNodeIterator();
+  switch (id) {
+  case DOMNodeIterator::PreviousNode:
+    return getDOMNode(exec,nodeIterator.previousNode());
+  case DOMNodeIterator::NextNode:
+    return getDOMNode(exec,nodeIterator.nextNode());
+  case DOMNodeIterator::Detach:
+    nodeIterator.detach();
+    return Undefined();
+  }
+  return Undefined();
 }
 
-KJSO KJS::getNodeFilterPrototype()
+Value KJS::getDOMNodeIterator(ExecState *exec, DOM::NodeIterator ni)
 {
-    KJSO proto = Global::current().get("[[nodeFilter.prototype]]");
-    if (proto.isDefined())
-        return proto;
-    else
-    {
-        Object nodeFilterProto( new NodeFilterPrototype );
-        Global::current().put("[[nodeFilter.prototype]]", nodeFilterProto);
-        return nodeFilterProto;
-    }
+  return cacheDOMObject<DOM::NodeIterator, DOMNodeIterator>(exec, ni);
 }
 
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMNodeFilter::info = { "NodeFilter", HostType, 0, 0, 0 };
+const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &NodeFilterConstructorTable, 0 };
+/*
+@begin NodeFilterConstructorTable 17
+  FILTER_ACCEPT		DOM::NodeFilter::FILTER_ACCEPT	DontDelete|ReadOnly
+  FILTER_REJECT		DOM::NodeFilter::FILTER_REJECT	DontDelete|ReadOnly
+  FILTER_SKIP		DOM::NodeFilter::FILTER_SKIP	DontDelete|ReadOnly
+  SHOW_ALL		DOM::NodeFilter::SHOW_ALL	DontDelete|ReadOnly
+  SHOW_ELEMENT		DOM::NodeFilter::SHOW_ELEMENT	DontDelete|ReadOnly
+  SHOW_ATTRIBUTE	DOM::NodeFilter::SHOW_ATTRIBUTE	DontDelete|ReadOnly
+  SHOW_TEXT		DOM::NodeFilter::SHOW_TEXT	DontDelete|ReadOnly
+  SHOW_CDATA_SECTION	DOM::NodeFilter::SHOW_CDATA_SECTION	DontDelete|ReadOnly
+  SHOW_ENTITY_REFERENCE	DOM::NodeFilter::SHOW_ENTITY_REFERENCE	DontDelete|ReadOnly
+  SHOW_ENTITY		DOM::NodeFilter::SHOW_ENTITY	DontDelete|ReadOnly
+  SHOW_PROCESSING_INSTRUCTION	DOM::NodeFilter::SHOW_PROCESSING_INSTRUCTION	DontDelete|ReadOnly
+  SHOW_COMMENT		DOM::NodeFilter::SHOW_COMMENT	DontDelete|ReadOnly
+  SHOW_DOCUMENT		DOM::NodeFilter::SHOW_DOCUMENT	DontDelete|ReadOnly
+  SHOW_DOCUMENT_TYPE	DOM::NodeFilter::SHOW_DOCUMENT_TYPE	DontDelete|ReadOnly
+  SHOW_DOCUMENT_FRAGMENT	DOM::NodeFilter::SHOW_DOCUMENT_FRAGMENT	DontDelete|ReadOnly
+  SHOW_NOTATION		DOM::NodeFilter::SHOW_NOTATION	DontDelete|ReadOnly
+@end
+*/
+Value NodeFilterConstructor::tryGet(ExecState *exec, const UString &p) const
+{
+  return DOMObjectLookupGetValue<NodeFilterConstructor,DOMObject>(exec,p,&NodeFilterConstructorTable,this);
+}
 
+Value NodeFilterConstructor::getValueProperty(ExecState *, int token) const
+{
+  // We use the token as the value to return directly
+  return Number(token);
+}
+
+Value KJS::getNodeFilterConstructor(ExecState *exec)
+{
+  return cacheGlobalObject<NodeFilterConstructor>(exec, "[[nodeFilter.constructor]]");
+}
+
+// -------------------------------------------------------------------------
+
+const ClassInfo DOMNodeFilter::info = { "NodeFilter", 0, 0, 0 };
+/*
+@begin DOMNodeFilterProtoTable 1
+  acceptNode	DOMNodeFilter::AcceptNode	DontDelete|Function 0
+@end
+*/
+DEFINE_PROTOTYPE("DOMNodeFilter",DOMNodeFilterProto)
+IMPLEMENT_PROTOFUNC(DOMNodeFilterProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMNodeFilterProto,DOMNodeFilterProtoFunc)
+
+DOMNodeFilter::DOMNodeFilter(ExecState *exec, DOM::NodeFilter nf)
+  : DOMObject(DOMNodeFilterProto::self(exec)), nodeFilter(nf) {}
 
 DOMNodeFilter::~DOMNodeFilter()
 {
-  nodeFilters.remove(nodeFilter.handle());
+  ScriptInterpreter::forgetDOMObject(nodeFilter.handle());
 }
 
-KJSO DOMNodeFilter::tryGet(const UString &p) const
+Value DOMNodeFilterProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  if (p == "acceptNode")
-    return new DOMNodeFilterFunc(nodeFilter,DOMNodeFilterFunc::AcceptNode);
-  else
-    return DOMObject::tryGet(p);
-}
-
-Completion DOMNodeFilterFunc::tryExecute(const List &args)
-{
-  KJSO result;
-
-  switch (id) {
-    case AcceptNode:
-      result = Number(nodeFilter.acceptNode(toNode(args[0])));
-      break;
-  };
-
-  return Completion(ReturnValue,result);
-}
-
-KJSO KJS::getDOMNodeFilter(DOM::NodeFilter nf)
-{
-  DOMNodeFilter *ret;
-  if (nf.isNull())
-    return Null();
-  else if ((ret = nodeFilters[nf.handle()]))
-    return ret;
-  else {
-    ret = new DOMNodeFilter(nf);
-    nodeFilters.insert(nf.handle(),ret);
-    return ret;
+  if (!thisObj.inherits(&KJS::DOMNodeFilter::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
   }
+  DOM::NodeFilter nodeFilter = static_cast<DOMNodeFilter *>(thisObj.imp())->toNodeFilter();
+  switch (id) {
+    case DOMNodeFilter::AcceptNode:
+      return Number(nodeFilter.acceptNode(toNode(args[0])));
+  }
+  return Undefined();
 }
 
-
+Value KJS::getDOMNodeFilter(ExecState *exec, DOM::NodeFilter nf)
+{
+  return cacheDOMObject<DOM::NodeFilter, DOMNodeFilter>(exec, nf);
+}
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMTreeWalker::info = { "TreeWalker", HostType, 0, 0, 0 };
+const ClassInfo DOMTreeWalker::info = { "TreeWalker", 0, &DOMTreeWalkerTable, 0 };
+/*
+@begin DOMTreeWalkerTable 5
+  root			DOMTreeWalker::Root		DontDelete|ReadOnly
+  whatToShow		DOMTreeWalker::WhatToShow	DontDelete|ReadOnly
+  filter		DOMTreeWalker::Filter		DontDelete|ReadOnly
+  expandEntityReferences DOMTreeWalker::ExpandEntityReferences	DontDelete|ReadOnly
+  currentNode		DOMTreeWalker::CurrentNode	DontDelete
+@end
+@begin DOMTreeWalkerProtoTable 7
+  parentNode	DOMTreeWalker::ParentNode	DontDelete|Function 0
+  firstChild	DOMTreeWalker::FirstChild	DontDelete|Function 0
+  lastChild	DOMTreeWalker::LastChild	DontDelete|Function 0
+  previousSibling DOMTreeWalker::PreviousSibling	DontDelete|Function 0
+  nextSibling	DOMTreeWalker::NextSibling	DontDelete|Function 0
+  previousNode	DOMTreeWalker::PreviousNode	DontDelete|Function 0
+  nextNode	DOMTreeWalker::NextNode		DontDelete|Function 0
+@end
+*/
+DEFINE_PROTOTYPE("DOMTreeWalker",DOMTreeWalkerProto)
+IMPLEMENT_PROTOFUNC(DOMTreeWalkerProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMTreeWalkerProto,DOMTreeWalkerProtoFunc)
 
+DOMTreeWalker::DOMTreeWalker(ExecState *exec, DOM::TreeWalker tw)
+  : DOMObject(DOMTreeWalkerProto::self(exec)), treeWalker(tw) {}
 
 DOMTreeWalker::~DOMTreeWalker()
 {
-  treeWalkers.remove(treeWalker.handle());
+  ScriptInterpreter::forgetDOMObject(treeWalker.handle());
 }
 
-KJSO DOMTreeWalker::tryGet(const UString &p) const
+Value DOMTreeWalker::tryGet(ExecState *exec, const UString &p) const
+{
+  return DOMObjectLookupGetValue<DOMTreeWalker,DOMObject>(exec,p,&DOMTreeWalkerTable,this);
+}
+
+Value DOMTreeWalker::getValueProperty(ExecState *exec, int token) const
 {
   DOM::TreeWalker tw(treeWalker);
-  if (p == "root")
-    return getDOMNode(tw.root());
-  if (p == "whatToShow")
+  switch (token) {
+  case Root:
+    return getDOMNode(exec,tw.root());
+  case WhatToShow:
     return Number(tw.whatToShow());
-  if (p == "filter")
-    return getDOMNodeFilter(tw.filter());
-  if (p == "expandEntityReferences")
+  case Filter:
+    return getDOMNodeFilter(exec,tw.filter());
+  case ExpandEntityReferences:
     return Boolean(tw.expandEntityReferences());
-  if (p == "currentNode")
-    return getDOMNode(tw.currentNode());
-  if (p == "parentNode")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::ParentNode);
-  if (p == "firstChild")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::FirstChild);
-  if (p == "lastChild")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::LastChild);
-  if (p == "previousSibling")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::PreviousSibling);
-  if (p == "nextSibling")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::NextSibling);
-  if (p == "previousNode")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::PreviousNode);
-  if (p == "nextNode")
-    return new DOMTreewalkerFunc(treeWalker,DOMTreewalkerFunc::NextNode);
-  else
-    return DOMObject::tryGet(p);
+  case CurrentNode:
+    return getDOMNode(exec,tw.currentNode());
+  default:
+    kdWarning() << "Unhandled token in DOMTreeWalker::getValueProperty : " << token << endl;
+    return Value();
+  }
 }
 
-
-void DOMTreeWalker::tryPut(const UString &p, const KJSO& v)
+void DOMTreeWalker::tryPut(ExecState *exec, const UString &propertyName,
+                           const Value& value, int attr)
 {
-  if (p == "currentNode") {
-    treeWalker.setCurrentNode(toNode(v));
+  if (propertyName == "currentNode") {
+    treeWalker.setCurrentNode(toNode(value));
   }
   else
-    Imp::put(p, v);
+    ObjectImp::put(exec, propertyName, value, attr);
 }
 
-Completion DOMTreewalkerFunc::tryExecute(const List &/*args*/)
+Value DOMTreeWalkerProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
 {
-  KJSO result;
-
+  if (!thisObj.inherits(&KJS::DOMTreeWalker::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::TreeWalker treeWalker = static_cast<DOMTreeWalker *>(thisObj.imp())->toTreeWalker();
   switch (id) {
-    case ParentNode:
-      result = getDOMNode(treeWalker.parentNode());
-      break;
-    case FirstChild:
-      result = getDOMNode(treeWalker.firstChild());
-      break;
-    case LastChild:
-      result = getDOMNode(treeWalker.lastChild());
-      break;
-    case PreviousSibling:
-      result = getDOMNode(treeWalker.previousSibling());
-      break;
-    case NextSibling:
-      result = getDOMNode(treeWalker.nextSibling());
-      break;
-    case PreviousNode:
-      result = getDOMNode(treeWalker.previousSibling());
-      break;
-    case NextNode:
-      result = getDOMNode(treeWalker.nextNode());
-      break;
-  };
-
-  return Completion(ReturnValue,result);
-}
-
-KJSO KJS::getDOMTreeWalker(DOM::TreeWalker tw)
-{
-  DOMTreeWalker *ret;
-  if (tw.isNull())
-    return Null();
-  else if ((ret = treeWalkers[tw.handle()]))
-    return ret;
-  else {
-    ret = new DOMTreeWalker(tw);
-    treeWalkers.insert(tw.handle(),ret);
-    return ret;
+    case DOMTreeWalker::ParentNode:
+      return getDOMNode(exec,treeWalker.parentNode());
+    case DOMTreeWalker::FirstChild:
+      return getDOMNode(exec,treeWalker.firstChild());
+    case DOMTreeWalker::LastChild:
+      return getDOMNode(exec,treeWalker.lastChild());
+    case DOMTreeWalker::PreviousSibling:
+      return getDOMNode(exec,treeWalker.previousSibling());
+    case DOMTreeWalker::NextSibling:
+      return getDOMNode(exec,treeWalker.nextSibling());
+    case DOMTreeWalker::PreviousNode:
+      return getDOMNode(exec,treeWalker.previousSibling());
+    case DOMTreeWalker::NextNode:
+      return getDOMNode(exec,treeWalker.nextNode());
   }
+  return Undefined();
 }
 
-DOM::NodeFilter KJS::toNodeFilter(const KJSO& obj)
+Value KJS::getDOMTreeWalker(ExecState *exec, DOM::TreeWalker tw)
 {
-  if (!obj.derivedFrom("NodeFilter"))
+  return cacheDOMObject<DOM::TreeWalker, DOMTreeWalker>(exec, tw);
+}
+
+DOM::NodeFilter KJS::toNodeFilter(const Value& val)
+{
+  Object obj = Object::dynamicCast(val);
+  if (obj.isNull() || !obj.inherits(&DOMNodeFilter::info))
     return DOM::NodeFilter();
 
   const DOMNodeFilter *dobj = static_cast<const DOMNodeFilter*>(obj.imp());
@@ -302,7 +297,7 @@ DOM::NodeFilter KJS::toNodeFilter(const KJSO& obj)
 
 // -------------------------------------------------------------------------
 
-JSNodeFilter::JSNodeFilter(KJSO _filter) : DOM::CustomNodeFilter()
+JSNodeFilter::JSNodeFilter(Object & _filter) : DOM::CustomNodeFilter()
 {
     filter = _filter;
 }
@@ -313,13 +308,18 @@ JSNodeFilter::~JSNodeFilter()
 
 short JSNodeFilter::acceptNode(const DOM::Node &n)
 {
-    KJSO acceptNodeFunc = filter.get("acceptNode");
+  KHTMLPart *part = static_cast<DOM::DocumentImpl *>( n.handle()->docPtr()->document() )->view()->part();
+  KJSProxy *proxy = KJSProxy::proxy( part );
+  if (proxy) {
+    ExecState *exec = proxy->interpreter()->globalExec();
+    Object acceptNodeFunc = Object::dynamicCast( filter.get(exec, "acceptNode") );
     if (acceptNodeFunc.implementsCall()) {
-	List args;
-	args.append(getDOMNode(n));
-	KJSO result = acceptNodeFunc.executeCall(filter,&args);
-	return result.toNumber().intValue();
+      List args;
+      args.append(getDOMNode(exec,n));
+      Value result = acceptNodeFunc.call(exec,filter,args);
+      return result.toInteger(exec);
     }
-    else
-	return DOM::NodeFilter::FILTER_REJECT;
+  }
+
+  return DOM::NodeFilter::FILTER_REJECT;
 }

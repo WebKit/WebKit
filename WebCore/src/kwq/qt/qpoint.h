@@ -94,7 +94,7 @@ private:
 
 // class QPointArray ===========================================================
 
-class QPointArray : public QArray<QPoint> {
+class QPointArray : public QMemArray<QPoint> {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -105,7 +105,7 @@ public:
 
     QPointArray() {}
     ~QPointArray() {}
-    QPointArray(int size) : QArray<QPoint> (size){};
+    QPointArray(int size) : QMemArray<QPoint> (size){};
 
     QPointArray(const QPointArray &);
     QPointArray(int, const QCOORD *);

@@ -40,9 +40,9 @@
 #include <KWQArrayImpl.h>
 #include <iostream>
 
-// class QArray ================================================================
+// class QMemArray ================================================================
 
-template <class T> class QArray {
+template <class T> class QMemArray {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -52,30 +52,31 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QArray() : impl(sizeof(T)) {}
-    QArray(int i) : impl(sizeof(T),i) {}
-    QArray(const QArray<T> &a) : impl(a.impl) {}
-    ~QArray() {}
+    QMemArray() : impl(sizeof(T)) {}
+    QMemArray(int i) : impl(sizeof(T),i) {}
+    QMemArray(const QMemArray<T> &a) : impl(a.impl) {}
+    ~QMemArray() {}
     
     // member functions --------------------------------------------------------
 
+    bool isEmpty() {return impl.size() == 0; }
     T &at(uint u) const {return *(T *)impl.at(u); }
     T *data() const { return (T *)impl.data(); }
     uint size() const { return impl.size(); }
     uint count() const { return size(); }
     bool resize(uint size) { return impl.resize(size); }
-    QArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
+    QMemArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
     void detach() { duplicate(data(), size()); }
     bool fill(const T &item, int size=-1) { return impl.fill(&item, size); }
-    QArray<T>& assign(const QArray<T> &a) { return *this = a; }
+    QMemArray<T>& assign(const QMemArray<T> &a) { return *this = a; }
 
 
     // operators ---------------------------------------------------------------
 
-    QArray<T> &operator=(const QArray<T> &a) { impl = a.impl; return *this; }    
+    QMemArray<T> &operator=(const QMemArray<T> &a) { impl = a.impl; return *this; }    
     T &operator[](int i) const { return at(i); }
-    bool operator==(const QArray<T> &a) const { return impl == a.impl; }
-    bool operator!=(const QArray<T> &a) const { return !(*this == a); }    
+    bool operator==(const QMemArray<T> &a) const { return impl == a.impl; }
+    bool operator!=(const QMemArray<T> &a) const { return !(*this == a); }    
     operator const T*() const { return data(); }
 
 // protected -------------------------------------------------------------------
@@ -83,13 +84,13 @@ public:
  private:
     KWQArrayImpl impl;
 
-}; // class QArray =============================================================
+}; // class QMemArray =============================================================
 
 #ifdef _KWQ_IOSTREAM_
 template<class T>
-inline ostream &operator<<(ostream &stream, const QArray<T>&a)
+inline ostream &operator<<(ostream &stream, const QMemArray<T>&a)
 {
-    stream << "QArray: [size: " << a.size() << "; items: ";
+    stream << "QMemArray: [size: " << a.size() << "; items: ";
     for (unsigned i = 0; i < a.size(); i++) {
         stream << a[i];
 	if (i < a.size() - 1) {

@@ -17,26 +17,28 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-#include "css_ruleimpl.h"
-#include "css_rule.h"
-#include "css_stylesheet.h"
-#include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
-#include "cssparser.h"
+#include "dom/css_rule.h"
+#include "dom/css_stylesheet.h"
+#include "dom/dom_exception.h"
+#include "dom/dom_string.h"
+
+#include "css/css_stylesheetimpl.h"
+#include "css/css_valueimpl.h"
+#include "css/cssparser.h"
+#include "css/css_ruleimpl.h"
 
 #include "misc/loader.h"
+#include "misc/htmltags.h"
+#include "misc/htmlattrs.h"
+#include "xml/dom_docimpl.h"
 
-#include "dom_exception.h"
-#include "dom_string.h"
 using namespace DOM;
 
 #include <kdebug.h>
 
 CSSRuleImpl::CSSRuleImpl(StyleBaseImpl *parent)
-    : StyleListImpl(parent)
+    : StyleBaseImpl(parent)
 {
     m_type = CSSRule::UNKNOWN_RULE;
 }
@@ -67,7 +69,7 @@ CSSRuleImpl *CSSRuleImpl::parentRule() const
 DOM::DOMString CSSRuleImpl::cssText() const
 {
     // ###
-    return 0;
+    return DOMString();
 }
 
 void CSSRuleImpl::setCssText(DOM::DOMString /*str*/)
@@ -78,10 +80,9 @@ void CSSRuleImpl::setCssText(DOM::DOMString /*str*/)
 // ---------------------------------------------------------------------------
 
 CSSCharsetRuleImpl::CSSCharsetRuleImpl(StyleBaseImpl *parent)
-    : CSSRuleImpl(parent)
+    : CSSRuleImpl(parent), m_encoding()
 {
     m_type = CSSRule::CHARSET_RULE;
-    m_encoding = 0;
 }
 
 CSSCharsetRuleImpl::~CSSCharsetRuleImpl()
@@ -109,36 +110,29 @@ CSSStyleDeclarationImpl *CSSFontFaceRuleImpl::style() const
 
 // --------------------------------------------------------------------------
 
-CSSImportRuleImpl::CSSImportRuleImpl(StyleBaseImpl *parent, const DOM::DOMString &href,
-				     MediaListImpl *media)
+CSSImportRuleImpl::CSSImportRuleImpl( StyleBaseImpl *parent,
+                                      const DOM::DOMString &href,
+                                      const DOM::DOMString &media )
     : CSSRuleImpl(parent)
 {
     m_type = CSSRule::IMPORT_RULE;
-    m_lstMedia = media;
+
+    m_lstMedia = new MediaListImpl( this, media );
+    m_lstMedia->ref();
+
     m_strHref = href;
     m_styleSheet = 0;
-    kdDebug( 6080 ) << "CSSImportRule: requesting sheet " << href.string() << " " << baseUrl().string() << endl;
 
-    khtml::DocLoader *docLoader = 0;
-    StyleBaseImpl *root = this;
-    while (root->parent())
-	root = root->parent();
-    if (root->isCSSStyleSheet())
-	docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
+    m_cachedSheet = 0;
 
-    // we must have a docLoader !
-    // ### pass correct charset here!!
-    m_cachedSheet = docLoader->requestStyleSheet(href, baseUrl(), QString::null);
-
-    m_cachedSheet->ref(this);
-    m_loading = true;
+    init();
 }
 
 CSSImportRuleImpl::~CSSImportRuleImpl()
 {
     if(m_lstMedia) m_lstMedia->deref();
     if(m_styleSheet) m_styleSheet->deref();
-    m_cachedSheet->deref(this);
+    if(m_cachedSheet) m_cachedSheet->deref(this);
 }
 
 DOMString CSSImportRuleImpl::href() const
@@ -162,7 +156,7 @@ void CSSImportRuleImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMS
 
     m_styleSheet = new CSSStyleSheetImpl(this, url);
     m_styleSheet->ref();
-    m_styleSheet->parseString(sheet);
+    m_styleSheet->parseString( sheet, parentStyleSheet() ? parentStyleSheet()->useStrictParsing() : true );
     m_loading = false;
 
     checkLoaded();
@@ -174,19 +168,85 @@ bool CSSImportRuleImpl::isLoading()
     if(m_styleSheet->isLoading()) return true;
     return false;
 }
+
+void CSSImportRuleImpl::init()
+{
+    khtml::DocLoader *docLoader = 0;
+    StyleBaseImpl *root = this;
+    while (root->parent())
+	root = root->parent();
+    if (root->isCSSStyleSheet())
+	docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
+
+    DOMString absHref = m_strHref;
+    if (!parentStyleSheet()->href().isNull()) {
+      // use parent styleheet's URL as the base URL
+      absHref = KURL(parentStyleSheet()->href().string(),m_strHref.string()).url();
+    }
+/*
+    else {
+      // use documents's URL as the base URL
+      DocumentImpl *doc = static_cast<CSSStyleSheetImpl*>(root)->doc();
+      absHref = KURL(doc->URL(),m_strHref.string()).url();
+    }
+*/
+    kdDebug( 6080 ) << "CSSImportRule: requesting sheet " << m_strHref.string() << endl;
+    kdDebug( 6080 ) << "CSSImportRule: requesting absolute url " << absHref.string() << endl;
+
+    // we must have a docLoader !
+    // ### pass correct charset here!!
+    m_cachedSheet = docLoader->requestStyleSheet(absHref, QString::null);
+
+    if (m_cachedSheet)
+    {
+      m_cachedSheet->ref(this);
+      m_loading = true;
+    }
+}
+
 // --------------------------------------------------------------------------
 
 
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent)
-    : CSSRuleImpl(parent)
+    :   CSSRuleImpl( parent )
 {
     m_type = CSSRule::MEDIA_RULE;
     m_lstMedia = 0;
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
+}
+
+CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, const QChar *&curP,
+                              const QChar *endP, const DOM::DOMString &media )
+:   CSSRuleImpl( parent )
+{
+    m_type = CSSRule::MEDIA_RULE;
+    m_lstMedia = new MediaListImpl( this, media );
+    m_lstMedia->ref();
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
+
+    // Parse CSS data
+    while( curP < endP )
+    {
+//         kdDebug( 6080 ) << "Style rule: '" << QString( curP, endP - curP )
+//                         << "'" << endl;
+        CSSRuleImpl *rule = parseStyleRule( curP, endP );
+        if ( rule ) {
+            rule->ref();
+            appendRule( rule );
+        }
+        if (!curP) break;
+        while( curP < endP && *curP == QChar( ' ' ) )
+            curP++;
+    }
 }
 
 CSSMediaRuleImpl::~CSSMediaRuleImpl()
 {
-    if(m_lstMedia) m_lstMedia->deref();
+    if( m_lstMedia )
+        m_lstMedia->deref();
+    m_lstCSSRules->deref();
 }
 
 MediaListImpl *CSSMediaRuleImpl::media() const
@@ -194,20 +254,41 @@ MediaListImpl *CSSMediaRuleImpl::media() const
     return m_lstMedia;
 }
 
-CSSRuleList CSSMediaRuleImpl::cssRules()
+CSSRuleListImpl *CSSMediaRuleImpl::cssRules()
 {
-    return this;
+    return m_lstCSSRules;
 }
 
-unsigned long CSSMediaRuleImpl::insertRule( const DOMString &/*rule*/, unsigned long /*index*/ )
+unsigned long CSSMediaRuleImpl::appendRule( CSSRuleImpl *rule )
 {
-    // ###
+    if( rule )
+        return m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() );
+    else
+        return 0;
+}
+
+unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
+                                            unsigned long index )
+{
+    const QChar *curP = rule.unicode();
+    CSSRuleImpl *newRule = parseRule( curP, curP + rule.length() );
+
+    if( newRule )
+        return m_lstCSSRules->insertRule( newRule, index );
+
     return 0;
 }
 
-void CSSMediaRuleImpl::deleteRule( unsigned long /*index*/ )
+void CSSMediaRuleImpl::deleteRule( unsigned long index )
 {
-    // ###
+    m_lstCSSRules->deleteRule( index );
+}
+
+CSSRuleListImpl::~CSSRuleListImpl()
+{
+    CSSRuleImpl* rule;
+    while ( !m_lstCSSRules.isEmpty() && ( rule = m_lstCSSRules.take( 0 ) ) )
+        rule->deref();
 }
 
 // ---------------------------------------------------------------------------
@@ -232,7 +313,7 @@ CSSStyleDeclarationImpl *CSSPageRuleImpl::style() const
 DOM::DOMString CSSPageRuleImpl::selectorText() const
 {
     // ###
-    return 0;
+    return DOMString();
 }
 
 void CSSPageRuleImpl::setSelectorText(DOM::DOMString /*str*/)
@@ -266,8 +347,69 @@ CSSStyleDeclarationImpl *CSSStyleRuleImpl::style() const
 
 DOM::DOMString CSSStyleRuleImpl::selectorText() const
 {
-    // ###
-    return 0;
+    if ( m_selector ) {
+        // ### m_selector will be a single selector hopefully. so ->first() will disappear
+        CSSSelector* cs = m_selector->first();
+        DOMString str;
+        if ( cs->tag == -1 && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
+        {
+            str = "#";
+            str += cs->value;
+        }
+        else if ( cs->tag == -1 && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
+        {
+            str = ".";
+            str += cs->value;
+        }
+        else if ( cs->tag == -1 && cs->match == CSSSelector::Pseudo )
+        {
+            str = ":";
+            str += cs->value;
+        }
+        else
+        {
+            if ( cs->tag == -1 )
+                str = "*";
+            else
+                str = getTagName( cs->tag );
+            // optional attribute
+            if ( cs->attr ) {
+                DOMString attrName = getAttrName( cs->attr );
+                str += "[";
+                str += attrName;
+                switch (cs->match) {
+                case CSSSelector::Exact:
+                    str += "=";
+                    break;
+                case CSSSelector::Set:
+                    str += " "; /// ## correct?
+                    break;
+                case CSSSelector::List:
+                    str += "~=";
+                    break;
+                case CSSSelector::Hyphen:
+                    str += "|=";
+                    break;
+                case CSSSelector::Begin:
+                    str += "^=";
+                    break;
+                case CSSSelector::End:
+                    str += "$=";
+                    break;
+                case CSSSelector::Contain:
+                    str += "*=";
+                    break;
+                default:
+                    kdWarning(6080) << "Unhandled case in CSSStyleRuleImpl::selectorText : match=" << cs->match << endl;
+                }
+                str += "\"";
+                str += cs->value;
+                str += "\"]";
+            }
+        }
+        return str;
+    }
+    return DOMString();
 }
 
 void CSSStyleRuleImpl::setSelectorText(DOM::DOMString /*str*/)
@@ -281,7 +423,7 @@ bool CSSStyleRuleImpl::parseString( const DOMString &/*string*/, bool )
     return false;
 }
 
-void CSSStyleRuleImpl::setSelector( QList<CSSSelector> *selector)
+void CSSStyleRuleImpl::setSelector( QPtrList<CSSSelector> *selector)
 {
     m_selector = selector;
 }
@@ -312,5 +454,43 @@ CSSUnknownRuleImpl::CSSUnknownRuleImpl(StyleBaseImpl *parent)
 
 CSSUnknownRuleImpl::~CSSUnknownRuleImpl()
 {
+}
+
+// --------------------------------------------------------------------------
+
+CSSRuleListImpl::CSSRuleListImpl()
+{
+}
+
+unsigned long CSSRuleListImpl::length() const
+{
+    return m_lstCSSRules.count();
+}
+
+CSSRuleImpl *CSSRuleListImpl::item ( unsigned long index )
+{
+    return m_lstCSSRules.at( index );
+}
+
+void CSSRuleListImpl::deleteRule ( unsigned long index )
+{
+    CSSRuleImpl *rule = m_lstCSSRules.take( index );
+    if( rule )
+        rule->deref();
+    else
+        ; // ### Throw INDEX_SIZE_ERR exception here (TODO)
+}
+
+unsigned long CSSRuleListImpl::insertRule( CSSRuleImpl *rule,
+                                           unsigned long index )
+{
+    if( rule && m_lstCSSRules.insert( index, rule ) )
+    {
+        rule->ref();
+        return index;
+    }
+
+    // ### Should throw INDEX_SIZE_ERR exception instead! (TODO)
+    return 0;
 }
 

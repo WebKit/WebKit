@@ -17,6 +17,7 @@ bordercolor
 cellpadding
 cellspacing
 char
+challenge
 charoff
 charset
 checked
@@ -91,6 +92,7 @@ onmouseout
 onmouseover
 onmouseup
 onreset
+onresize
 onselect
 onsubmit
 onunload

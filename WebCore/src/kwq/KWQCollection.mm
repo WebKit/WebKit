@@ -27,31 +27,31 @@
 
 #ifndef USING_BORROWED_QCOLLECTION
 
-QCollection::QCollection() :
+QPtrCollection::QPtrCollection() :
     del_item(FALSE)
 {
 }
 
-QCollection::QCollection(const QCollection &other) :
+QPtrCollection::QPtrCollection(const QPtrCollection &other) :
     del_item(FALSE)
 {
 }
 
-QCollection &QCollection::operator=(const QCollection &other)
+QPtrCollection &QPtrCollection::operator=(const QPtrCollection &other)
 {
     return *this; // don't copy del_item
 }
 
-QCollection::~QCollection()
+QPtrCollection::~QPtrCollection()
 {
 }
 
-bool QCollection::autoDelete()
+bool QPtrCollection::autoDelete()
 {
     return del_item;
 }
 
-void QCollection::setAutoDelete(bool autoDelete)
+void QPtrCollection::setAutoDelete(bool autoDelete)
 {
     del_item = autoDelete;
 }

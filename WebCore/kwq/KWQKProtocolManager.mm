@@ -55,3 +55,13 @@ QString KProtocolManager::userAgentForHost( const QString& )
     return QString("Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)");
 }
 
+QString KProtocolManager::proxyFor(const QString &)
+{
+    _logNotYetImplemented();
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+
+    return *tempQString;
+}
+

@@ -220,6 +220,13 @@ void QWidget::move(const QPoint &p)
 }
 
 
+QRect QWidget::frameGeometry() const
+{
+    NSRect vFrame = [getView() frame];
+    return QRect (vFrame.origin.x, vFrame.origin.y, vFrame.size.width, vFrame.size.height);
+}
+
+
 QWidget *QWidget::topLevelWidget() const 
 {
     // This is only used by JavaScript to implement the various
@@ -357,6 +364,21 @@ void QWidget::setCursor(const QCursor &cur)
     data->cursor = new QCursor (cur);
 }
 
+QCursor QWidget::cursor()
+{
+    _logNotYetImplemented();
+    if (!data->cursor) {
+	data->cursor = new QCursor();
+    }
+    return *(data->cursor);
+}
+
+void QWidget::unsetCursor()
+{
+    _logNotYetImplemented();
+    if (!data->cursor)
+	data->cursor = new QCursor();
+}
 
 bool QWidget::event(QEvent *)
 {

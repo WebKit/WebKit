@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,37 +16,62 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _ARRAY_OBJECT_H_
 #define _ARRAY_OBJECT_H_
 
-#include "object.h"
-#include "function.h"
+#include "internal.h"
+#include "function_object.h"
 
 namespace KJS {
 
-  class ArrayObject : public ConstructorImp {
+  class ArrayInstanceImp : public ObjectImp {
   public:
-    ArrayObject(const Object &funcProto, const Object &arrayProto);
-    Completion execute(const List &);
-    Object construct(const List &);
+    ArrayInstanceImp(const Object &proto);
+
+    virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
+    virtual void putDirect(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  class ArrayPrototype : public ObjectImp {
+ class ArrayPrototypeImp : public ArrayInstanceImp {
   public:
-    ArrayPrototype(const Object& proto);
-    virtual KJSO get(const UString &p) const;
+    ArrayPrototypeImp(ExecState *exec,
+                      ObjectPrototypeImp *objProto);
+    Value get(ExecState *exec, const UString &p) const;
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  class ArrayProtoFunc : public InternalFunctionImp {
+  class ArrayProtoFuncImp : public InternalFunctionImp {
   public:
-    ArrayProtoFunc(int i) : id(i) { }
-    Completion execute(const List &);
+    ArrayProtoFuncImp(ExecState *exec, int i, int len);
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
     enum { ToString, ToLocaleString, Concat, Join, Pop, Push,
 	   Reverse, Shift, Slice, Sort, Splice, UnShift };
   private:
     int id;
+  };
+
+  class ArrayObjectImp : public InternalFunctionImp {
+  public:
+    ArrayObjectImp(ExecState *exec,
+                   FunctionPrototypeImp *funcProto,
+                   ArrayPrototypeImp *arrayProto);
+
+    virtual bool implementsConstruct() const;
+    virtual Object construct(ExecState *exec, const List &args);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
   };
 
 }; // namespace

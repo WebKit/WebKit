@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
@@ -19,33 +20,15 @@
  */
 
 #include "kjs_css.h"
+#include "kjs_css.lut.h"
 
-#include <qptrdict.h>
-#include <qregexp.h>
+#include <dom/html_head.h> // for HTMLStyleElement
 
-#include <xml/dom_nodeimpl.h>
-#include <dom/html_element.h>
-#include <dom/dom_string.h>
-#include <html/html_elementimpl.h>
-#include <rendering/render_style.h>
-#include <kjs/types.h>
-#include <css/cssproperties.h>
 #include <css/cssparser.h>
-#include "kjs_binding.h"
 #include "kjs_dom.h"
 
 using namespace KJS;
 #include <kdebug.h>
-
-QPtrDict<DOMCSSStyleDeclaration> domCSSStyleDeclarations;
-QPtrDict<DOMStyleSheet> styleSheets;
-QPtrDict<DOMStyleSheetList> styleSheetLists;
-QPtrDict<DOMMediaList> mediaLists;
-QPtrDict<DOMCSSRuleList> cssRuleLists;
-QPtrDict<DOMCSSRule> cssRules;
-QPtrDict<DOMCSSValue> cssValues;
-QPtrDict<DOMRect> rects;
-QPtrDict<DOMCounter> counters;
 
 static QString jsNameToProp( const UString &p )
 {
@@ -61,560 +44,757 @@ static QString jsNameToProp( const UString &p )
     return prop.lower();
 }
 
+/*
+@begin DOMCSSStyleDeclarationProtoTable 7
+  getPropertyValue	DOMCSSStyleDeclaration::GetPropertyValue	DontDelete|Function 1
+  getPropertyCSSValue	DOMCSSStyleDeclaration::GetPropertyCSSValue	DontDelete|Function 1
+  removeProperty	DOMCSSStyleDeclaration::RemoveProperty		DontDelete|Function 1
+  getPropertyPriority	DOMCSSStyleDeclaration::GetPropertyPriority	DontDelete|Function 1
+  setProperty		DOMCSSStyleDeclaration::SetProperty		DontDelete|Function 3
+  item			DOMCSSStyleDeclaration::Item			DontDelete|Function 1
+@end
+@begin DOMCSSStyleDeclarationTable 3
+  cssText		DOMCSSStyleDeclaration::CssText		DontDelete
+  length		DOMCSSStyleDeclaration::Length		DontDelete|ReadOnly
+  parentRule		DOMCSSStyleDeclaration::ParentRule	DontDelete|ReadOnly
+@end
+*/
+DEFINE_PROTOTYPE("DOMCSSStyleDeclaration", DOMCSSStyleDeclarationProto)
+IMPLEMENT_PROTOFUNC(DOMCSSStyleDeclarationProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMCSSStyleDeclarationProto, DOMCSSStyleDeclarationProtoFunc)
+
+const ClassInfo DOMCSSStyleDeclaration::info = { "CSSStyleDeclaration", 0, &DOMCSSStyleDeclarationTable, 0 };
+
+DOMCSSStyleDeclaration::DOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclaration s)
+  : DOMObject(DOMCSSStyleDeclarationProto::self(exec)), styleDecl(s)
+{ }
+
 DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration()
 {
-  domCSSStyleDeclarations.remove(styleDecl.handle());
+  ScriptInterpreter::forgetDOMObject(styleDecl.handle());
 }
 
-const TypeInfo DOMCSSStyleDeclaration::info = { "CSSStyleDeclaration", HostType, 0, 0, 0 };
-
-
-bool DOMCSSStyleDeclaration::hasProperty(const UString &p,
+bool DOMCSSStyleDeclaration::hasProperty(ExecState *exec, const UString &p,
 					 bool recursive) const
 {
-  if (p == "cssText" ||
-      p == "getPropertyValue" ||
-      p == "getPropertyCSSValue" ||
-      p == "removeProperty" ||
-      p == "getPropertyPriority" ||
-      p == "setProperty" ||
-      p == "length" ||
-      p == "item")
-      return true;
-  
   DOM::DOMString cssprop = jsNameToProp(p);
+  // strip pos- / pixel- prefix here?
   if (DOM::getPropertyID(cssprop.string().ascii(), cssprop.length()))
       return true;
+
+  return ObjectImp::hasProperty(exec, p, recursive);
+}
+
+Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const UString &propertyName) const
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMCSSStyleDeclaration::tryGet " << propertyName.qstring() << endl;
+#endif
+  const HashEntry* entry = Lookup::findEntry(&DOMCSSStyleDeclarationTable, propertyName);
+  if (entry)
+    switch (entry->value) {
+    case CssText:
+      return getString(styleDecl.cssText());
+    case Length:
+      return Number(styleDecl.length());
+    case ParentRule:
+      return getDOMCSSRule(exec,styleDecl.parentRule());
+    default:
+      break;
+    }
+
+  // Look in the prototype (for functions) before assuming it's a name
+  Object proto = Object::dynamicCast(prototype());
+  if (!proto.isNull() && proto.hasProperty(exec,propertyName))
+    return proto.get(exec,propertyName);
+
+  bool ok;
+  long unsigned int u = propertyName.toULong(&ok);
+  if (ok)
+    return getString(DOM::CSSStyleDeclaration(styleDecl).item(u));
+
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMCSSStyleDeclaration: converting to css property name: " << jsNameToProp(propertyName) << endl;
+#endif
+  DOM::CSSStyleDeclaration styleDecl2 = styleDecl;
+  DOM::DOMString p = jsNameToProp(propertyName);
+  bool asNumber = false;
+  // pixelTop returns "CSS Top" as number value in unit pixels
+  // posTop returns "CSS top" as number value in unit pixels _if_ its a
+  // positioned element. if it is not a positioned element, return 0
+  // from MSIE documentation ### IMPLEMENT THAT (Dirk)
+  {
+    QString prop = p.string();
+    if(prop.startsWith( "pixel-") || prop.startsWith( "pos-" ) ) {
+      p = prop.mid(prop.find( '-' )+1);
+      asNumber = true;
+    }
+  }
+
+  DOM::CSSValue v = styleDecl2.getPropertyCSSValue(p);
+  if (!v.isNull()) {
+    if (asNumber && v.cssValueType() == DOM::CSSValue::CSS_PRIMITIVE_VALUE)
+      return Number(static_cast<DOM::CSSPrimitiveValue>(v).getFloatValue(DOM::CSSPrimitiveValue::CSS_PX));
+
+    return getString(v.cssText());
+  }
+
+  // see if we know this css property, return empty then
+  QCString prop = p.string().latin1();
+  if (DOM::getPropertyID(prop.data(), prop.length()))
+      return getString(DOM::DOMString(""));
+
+  return DOMObject::tryGet(exec, propertyName);
+}
+
+
+void DOMCSSStyleDeclaration::tryPut(ExecState *exec, const UString &pName, const Value& value, int )
+{
+  UString propertyName = pName;
+  if ( propertyName == "clip" ) {
+    propertyName = "-konq-js-clip";
+  }
   
-  return (recursive && HostImp::hasProperty(p, true));
-}
-
-KJSO DOMCSSStyleDeclaration::tryGet(const UString &p) const
-{
-  if (p == "cssText" )
-    return getString(styleDecl.cssText());
-  else if (p == "getPropertyValue")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::GetPropertyValue);
-  else if (p == "getPropertyCSSValue")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::GetPropertyCSSValue);
-  else if (p == "removeProperty")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::RemoveProperty);
-  else if (p == "getPropertyPriority")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::GetPropertyPriority);
-  else if (p == "setProperty")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::SetProperty);
-  else if (p == "length" )
-    return Number(styleDecl.length());
-  else if (p == "item")
-    return new DOMCSSStyleDeclarationFunc(styleDecl,DOMCSSStyleDeclarationFunc::Item);
-  else if (p == "parentRule" )
-    return Undefined(); // ###
-  else {
-    bool ok;
-    long unsigned int u = p.toULong(&ok);
-    if (ok)
-      return getString(DOM::CSSStyleDeclaration(styleDecl).item(u));
-
-    DOM::CSSStyleDeclaration styleDecl2 = styleDecl;
-    DOM::DOMString v = styleDecl2.getPropertyValue(DOM::DOMString(jsNameToProp(p)));
-    if (!v.isNull())
-	return getString(v);
-  }
-  return DOMObject::tryGet(p);
-}
-
-
-void DOMCSSStyleDeclaration::tryPut(const UString &p, const KJSO& v)
-{
-  if (p == "cssText") {
-    styleDecl.setCssText(v.toString().value().string());
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMCSSStyleDeclaration::tryPut " << propertyName.qstring() << endl;
+#endif
+  if (propertyName == "cssText") {
+    styleDecl.setCssText(value.toString(exec).string());
   }
   else {
-    QString prop = jsNameToProp(p);
-    QString propvalue = v.toString().value().qstring();
+    QString prop = jsNameToProp(propertyName);
+    QString propvalue = value.toString(exec).qstring();
 
-    if(prop.left(6) == "pixel-")
-    {
-      prop = prop.mid(6); // cut it away
+    if(prop.left(4) == "css-")
+      prop = prop.mid(4);
+
+    if(prop.startsWith( "pixel-") || prop.startsWith( "pos-" ) ) {
+      prop = prop.mid(prop.find( '-' )+1);
       propvalue += "px";
     }
+#ifdef KJS_VERBOSE
+    kdDebug(6070) << "DOMCSSStyleDeclaration: prop=" << prop << " propvalue=" << propvalue << endl;
+#endif
     styleDecl.removeProperty(prop);
     if(!propvalue.isEmpty())
       styleDecl.setProperty(prop,DOM::DOMString(propvalue),""); // ### is "" ok for priority?
   }
 }
 
-Completion DOMCSSStyleDeclarationFunc::tryExecute(const List &args)
+Value DOMCSSStyleDeclarationProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-  String str = args[0].toString();
+  if (!thisObj.inherits(&KJS::DOMCSSStyleDeclaration::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::CSSStyleDeclaration styleDecl = static_cast<DOMCSSStyleDeclaration *>(thisObj.imp())->toStyleDecl();
+  String str = args[0].toString(exec);
   DOM::DOMString s = str.value().string();
 
   switch (id) {
-    case GetPropertyValue:
-      result = getString(styleDecl.getPropertyValue(s));
-      break;
-    case GetPropertyCSSValue:
-      result = Undefined(); // ###
-      break;
-    case RemoveProperty:
-      result = getString(styleDecl.removeProperty(s));
-      break;
-    case GetPropertyPriority:
-      result = getString(styleDecl.getPropertyPriority(s));
-      break;
-    case SetProperty:
-      styleDecl.setProperty(args[0].toString().value().string(),
-                            args[1].toString().value().string(),
-                            args[2].toString().value().string());
-      result = Undefined();
-      break;
-    case Item:
-      result = getString(styleDecl.item(args[0].toNumber().intValue()));
-      break;
+    case DOMCSSStyleDeclaration::GetPropertyValue:
+      return getString(styleDecl.getPropertyValue(s));
+    case DOMCSSStyleDeclaration::GetPropertyCSSValue:
+      return getDOMCSSValue(exec,styleDecl.getPropertyCSSValue(s));
+    case DOMCSSStyleDeclaration::RemoveProperty:
+      return getString(styleDecl.removeProperty(s));
+    case DOMCSSStyleDeclaration::GetPropertyPriority:
+      return getString(styleDecl.getPropertyPriority(s));
+    case DOMCSSStyleDeclaration::SetProperty:
+      styleDecl.setProperty(args[0].toString(exec).string(),
+                            args[1].toString(exec).string(),
+                            args[2].toString(exec).string());
+      return Undefined();
+    case DOMCSSStyleDeclaration::Item:
+      return getString(styleDecl.item(args[0].toInteger(exec)));
     default:
-      result = Undefined();
+      return Undefined();
   }
-
-  return Completion(ReturnValue, result);
 }
 
-KJSO KJS::getDOMCSSStyleDeclaration(DOM::CSSStyleDeclaration s)
+Value KJS::getDOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclaration s)
 {
-  DOMCSSStyleDeclaration *ret;
-  if (s.isNull())
-    return Null();
-  else if ((ret = domCSSStyleDeclarations[s.handle()]))
-    return ret;
-  else {
-    ret = new DOMCSSStyleDeclaration(s);
-    domCSSStyleDeclarations.insert(s.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::CSSStyleDeclaration, KJS::DOMCSSStyleDeclaration>(exec, s);
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMStyleSheet::info = { "StyleSheet", HostType, 0, 0, 0 };
+const ClassInfo DOMStyleSheet::info = { "StyleSheet", 0, &DOMStyleSheetTable, 0 };
+/*
+@begin DOMStyleSheetTable 7
+  type		DOMStyleSheet::Type		DontDelete|ReadOnly
+  disabled	DOMStyleSheet::Disabled		DontDelete
+  ownerNode	DOMStyleSheet::OwnerNode	DontDelete|ReadOnly
+  parentStyleSheet DOMStyleSheet::ParentStyleSheet	DontDelete|ReadOnly
+  href		DOMStyleSheet::Href		DontDelete|ReadOnly
+  title		DOMStyleSheet::Title		DontDelete|ReadOnly
+  media		DOMStyleSheet::Media		DontDelete|ReadOnly
+@end
+*/
 
 DOMStyleSheet::~DOMStyleSheet()
 {
-  styleSheets.remove(styleSheet.handle());
+  ScriptInterpreter::forgetDOMObject(styleSheet.handle());
 }
 
-KJSO DOMStyleSheet::tryGet(const UString &p) const
+Value DOMStyleSheet::tryGet(ExecState *exec, const UString &propertyName) const
 {
-  KJSO result;
+  return DOMObjectLookupGetValue<DOMStyleSheet,DOMObject>(exec,propertyName,&DOMStyleSheetTable,this);
+}
 
-  if (p == "type")
+Value DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
+{
+  switch (token) {
+  case Type:
     return getString(styleSheet.type());
-  else if (p == "disabled")
+  case Disabled:
     return Boolean(styleSheet.disabled());
-  else if (p == "ownerNode")
-    return getDOMNode(styleSheet.ownerNode());
-  else if (p == "parentStyleSheet")
-    return getDOMStyleSheet(styleSheet.parentStyleSheet());
-  else if (p == "href")
+  case OwnerNode:
+    return getDOMNode(exec,styleSheet.ownerNode());
+  case ParentStyleSheet:
+    return getDOMStyleSheet(exec,styleSheet.parentStyleSheet());
+  case Href:
     return getString(styleSheet.href());
-  else if (p == "title")
+  case Title:
     return getString(styleSheet.title());
-//  else if ( p == "media") ###
-//    return getDOMMediaList(styleSheet.media());
-  return DOMObject::tryGet(p);
+  case Media:
+    return getDOMMediaList(exec, styleSheet.media());
+  }
+  return Value();
 }
 
-void DOMStyleSheet::tryPut(const UString &p, const KJSO& v)
+void DOMStyleSheet::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
 {
-  if (p == "disabled") {
-    styleSheet.setDisabled(v.toBoolean().value());
+  if (propertyName == "disabled") {
+    styleSheet.setDisabled(value.toBoolean(exec));
   }
   else
-    DOMObject::tryPut(p, v);
+    DOMObject::tryPut(exec, propertyName, value, attr);
 }
 
-KJSO KJS::getDOMStyleSheet(DOM::StyleSheet ss)
+Value KJS::getDOMStyleSheet(ExecState *exec, DOM::StyleSheet ss)
 {
-  DOMStyleSheet *ret;
+  DOMObject *ret;
   if (ss.isNull())
     return Null();
-  else if ((ret = styleSheets[ss.handle()]))
-    return ret;
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+  if ((ret = interp->getDOMObject(ss.handle())))
+    return Value(ret);
   else {
     if (ss.isCSSStyleSheet()) {
       DOM::CSSStyleSheet cs;
       cs = ss;
-      ret = new DOMCSSStyleSheet(cs);
+      ret = new DOMCSSStyleSheet(exec,cs);
     }
     else
-      ret = new DOMStyleSheet(ss);
-    styleSheets.insert(ss.handle(),ret);
-    return ret;
+      ret = new DOMStyleSheet(exec,ss);
+    interp->putDOMObject(ss.handle(),ret);
+    return Value(ret);
   }
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMStyleSheetList::info = { "StyleSheetList", HostType, 0, 0, 0 };
+const ClassInfo DOMStyleSheetList::info = { "StyleSheetList", 0, &DOMStyleSheetListTable, 0 };
+
+/*
+@begin DOMStyleSheetListTable 2
+  length	DOMStyleSheetList::Length	DontDelete|ReadOnly
+  item		DOMStyleSheetList::Item		DontDelete|Function 1
+@end
+*/
+IMPLEMENT_PROTOFUNC(DOMStyleSheetListFunc) // not really a proto, but doesn't matter
 
 DOMStyleSheetList::~DOMStyleSheetList()
 {
-  styleSheetLists.remove(styleSheetList.handle());
+  ScriptInterpreter::forgetDOMObject(styleSheetList.handle());
 }
 
-KJSO DOMStyleSheetList::tryGet(const UString &p) const
+Value DOMStyleSheetList::tryGet(ExecState *exec, const UString &p) const
 {
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMStyleSheetList::tryGet " << p.qstring() << endl;
+#endif
   if (p == "length")
     return Number(styleSheetList.length());
   else if (p == "item")
-    return new DOMStyleSheetListFunc(styleSheetList,DOMStyleSheetListFunc::Item);
+    return lookupOrCreateFunction<DOMStyleSheetListFunc>(exec,p,this,DOMStyleSheetList::Item,1,DontDelete|Function);
 
+  // Retrieve stylesheet by index
   bool ok;
   long unsigned int u = p.toULong(&ok);
   if (ok)
-    return getDOMStyleSheet(DOM::StyleSheetList(styleSheetList).item(u));
+    return getDOMStyleSheet(exec, DOM::StyleSheetList(styleSheetList).item(u));
 
-  return DOMObject::tryGet(p);
+  // IE also supports retrieving a stylesheet by name, using the name/id of the <style> tag
+  // (this is consistent with all the other collections)
+#if 0
+  // Bad implementation because DOM::StyleSheet doesn't inherit DOM::Node
+  // so we can't use DOMNamedNodesCollection.....
+  // We could duplicate it for stylesheets though - worth it ?
+  // Other problem of this implementation: it doesn't look for the ID attribute!
+  DOM::NameNodeListImpl namedList( m_doc.documentElement().handle(), p.string() );
+  int len = namedList.length();
+  if ( len ) {
+    QValueList<DOM::Node> styleSheets;
+    for ( int i = 0 ; i < len ; ++i ) {
+      DOM::HTMLStyleElement elem = DOM::Node(namedList.item(i));
+      if (!elem.isNull())
+        styleSheets.append(elem.sheet());
+    }
+    if ( styleSheets.count() == 1 ) // single result
+      return getDOMStyleSheet(exec, styleSheets[0]);
+    else if ( styleSheets.count() > 1 ) {
+      return new DOMNamedItemsCollection(exec,styleSheets);
+    }
+  }
+#endif
+  // ### Bad implementation because returns a single element (are IDs always unique?)
+  // and doesn't look for name attribute (see implementation above).
+  // But unicity of stylesheet ids is good practice anyway ;)
+  DOM::DOMString pstr = p.string();
+  DOM::HTMLStyleElement styleElem = m_doc.getElementById( pstr );
+  if (!styleElem.isNull())
+    return getDOMStyleSheet(exec, styleElem.sheet());
+
+  return DOMObject::tryGet(exec, p);
 }
 
-KJSO KJS::getDOMStyleSheetList(DOM::StyleSheetList ssl)
+Value KJS::getDOMStyleSheetList(ExecState *exec, DOM::StyleSheetList ssl, DOM::Document doc)
 {
-  DOMStyleSheetList *ret;
+  // Can't use the cacheDOMObject macro because of the doc argument
+  DOMObject *ret;
   if (ssl.isNull())
     return Null();
-  else if ((ret = styleSheetLists[ssl.handle()]))
-    return ret;
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+  if ((ret = interp->getDOMObject(ssl.handle())))
+    return Value(ret);
   else {
-    ret = new DOMStyleSheetList(ssl);
-    styleSheetLists.insert(ssl.handle(),ret);
-    return ret;
+    ret = new DOMStyleSheetList(exec, ssl, doc);
+    interp->putDOMObject(ssl.handle(),ret);
+    return Value(ret);
   }
 }
 
-Completion DOMStyleSheetListFunc::tryExecute(const List &args)
+Value DOMStyleSheetListFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-
-  if (id == Item)
-    result = getDOMStyleSheet(styleSheetList.item(args[0].toNumber().intValue()));
-  return Completion(ReturnValue, result);
+  if (!thisObj.inherits(&KJS::DOMStyleSheetList::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::StyleSheetList styleSheetList = static_cast<DOMStyleSheetList *>(thisObj.imp())->toStyleSheetList();
+  if (id == DOMStyleSheetList::Item)
+    return getDOMStyleSheet(exec, styleSheetList.item(args[0].toInteger(exec)));
+  return Undefined();
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMMediaList::info = { "MediaList", HostType, 0, 0, 0 };
+const ClassInfo DOMMediaList::info = { "MediaList", 0, &DOMMediaListTable, 0 };
+
+/*
+@begin DOMMediaListTable 2
+  mediaText	DOMMediaList::MediaText		DontDelete|ReadOnly
+  length	DOMMediaList::Length		DontDelete|ReadOnly
+@end
+@begin DOMMediaListProtoTable 3
+  item		DOMMediaList::Item		DontDelete|Function 1
+  deleteMedium	DOMMediaList::DeleteMedium	DontDelete|Function 1
+  appendMedium	DOMMediaList::AppendMedium	DontDelete|Function 1
+@end
+*/
+DEFINE_PROTOTYPE("DOMMediaList", DOMMediaListProto)
+IMPLEMENT_PROTOFUNC(DOMMediaListProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMMediaListProto, DOMMediaListProtoFunc)
+
+DOMMediaList::DOMMediaList(ExecState *exec, DOM::MediaList ml)
+  : DOMObject(DOMMediaListProto::self(exec)), mediaList(ml) { }
 
 DOMMediaList::~DOMMediaList()
 {
-  mediaLists.remove(mediaList.handle());
+  ScriptInterpreter::forgetDOMObject(mediaList.handle());
 }
 
-KJSO DOMMediaList::tryGet(const UString &p) const
+Value DOMMediaList::tryGet(ExecState *exec, const UString &p) const
 {
-  DOM::MediaList list = DOM::MediaList(mediaList.handle());
-//  DOM::MediaListImpl *handle = mediaList.handle();
   if (p == "mediaText")
-    return getString(list.mediaText());
+    return getString(mediaList.mediaText());
   else if (p == "length")
-    return Number(list.length());
-  else if (p == "item")
-    return new DOMMediaListFunc(list,DOMMediaListFunc::Item);
-  else if (p == "deleteMedium")
-    return new DOMMediaListFunc(list,DOMMediaListFunc::DeleteMedium);
-  else if (p == "appendMedium")
-    return new DOMMediaListFunc(list,DOMMediaListFunc::AppendMedium);
+    return Number(mediaList.length());
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
   if (ok)
-    return getString(list.item(u));
+    return getString(mediaList.item(u));
 
-  return DOMObject::tryGet(p);
+  return DOMObject::tryGet(exec, p);
 }
 
-void DOMMediaList::tryPut(const UString &p, const KJSO& v)
+void DOMMediaList::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
 {
-  if (p == "mediaText")
-    mediaList.setMediaText(v.toString().value().string());
+  if (propertyName == "mediaText")
+    mediaList.setMediaText(value.toString(exec).string());
   else
-    DOMObject::tryPut(p, v);
+    DOMObject::tryPut(exec, propertyName, value, attr);
 }
 
-KJSO KJS::getDOMMediaList(DOM::MediaList ml)
+Value KJS::getDOMMediaList(ExecState *exec, DOM::MediaList ml)
 {
-  DOMMediaList *ret;
-  if (ml.isNull())
-    return Null();
-  else if ((ret = mediaLists[ml.handle()]))
-    return ret;
-  else {
-    ret = new DOMMediaList(ml);
-    mediaLists.insert(ml.handle(),ret);
-    return ret;
+  return cacheDOMObject<DOM::MediaList, KJS::DOMMediaList>(exec, ml);
+}
+
+Value KJS::DOMMediaListProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+  if (!thisObj.inherits(&KJS::DOMMediaList::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
   }
-}
-
-Completion DOMMediaListFunc::tryExecute(const List &args)
-{
-  KJSO result;
-
+  DOM::MediaList mediaList = static_cast<DOMMediaList *>(thisObj.imp())->toMediaList();
   switch (id) {
-    case Item:
-      result = getString(mediaList.item(args[0].toNumber().intValue()));
-      break;
-    case DeleteMedium:
-      mediaList.deleteMedium(args[0].toString().value().string());
-      result = Undefined();
-      break;
-    case AppendMedium:
-      mediaList.appendMedium(args[0].toString().value().string());
-      result = Undefined();
-      break;
+    case DOMMediaList::Item:
+      return getString(mediaList.item(args[0].toInteger(exec)));
+    case DOMMediaList::DeleteMedium:
+      mediaList.deleteMedium(args[0].toString(exec).string());
+      return Undefined();
+    case DOMMediaList::AppendMedium:
+      mediaList.appendMedium(args[0].toString(exec).string());
+      return Undefined();
     default:
-      break;
+      return Undefined();
   }
-
-  return Completion(ReturnValue, result);
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", HostType, 0, 0, 0 };
+const ClassInfo DOMCSSStyleSheet::info = { "CSSStyleSheet", 0, &DOMCSSStyleSheetTable, 0 };
+
+/*
+@begin DOMCSSStyleSheetTable 2
+  ownerRule	DOMCSSStyleSheet::OwnerRule	DontDelete|ReadOnly
+  cssRules	DOMCSSStyleSheet::CssRules	DontDelete|ReadOnly
+# MSIE extension
+  rules		DOMCSSStyleSheet::Rules		DontDelete|ReadOnly
+@end
+@begin DOMCSSStyleSheetProtoTable 2
+  insertRule	DOMCSSStyleSheet::InsertRule	DontDelete|Function 2
+  deleteRule	DOMCSSStyleSheet::DeleteRule	DontDelete|Function 1
+@end
+*/
+DEFINE_PROTOTYPE("DOMCSSStyleSheet",DOMCSSStyleSheetProto)
+IMPLEMENT_PROTOFUNC(DOMCSSStyleSheetProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMCSSStyleSheetProto,DOMCSSStyleSheetProtoFunc) // warning, use _WITH_PARENT if DOMStyleSheet gets a proto
+
+DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState *exec, DOM::CSSStyleSheet ss)
+  : DOMStyleSheet(DOMCSSStyleSheetProto::self(exec),ss) { }
 
 DOMCSSStyleSheet::~DOMCSSStyleSheet()
 {
 }
 
-KJSO DOMCSSStyleSheet::tryGet(const UString &p) const
+Value DOMCSSStyleSheet::tryGet(ExecState *exec, const UString &p) const
 {
-  KJSO result;
-
   DOM::CSSStyleSheet cssStyleSheet = static_cast<DOM::CSSStyleSheet>(styleSheet);
-
   if (p == "ownerRule")
-    return getDOMCSSRule(cssStyleSheet.ownerRule());
-  else if (p == "cssRules")
-    return getDOMCSSRuleList(cssStyleSheet.cssRules());
-  else if (p == "insertRule")
-    return new DOMCSSStyleSheetFunc(cssStyleSheet,DOMCSSStyleSheetFunc::InsertRule);
-  else if (p == "deleteRule")
-    return new DOMCSSStyleSheetFunc(cssStyleSheet,DOMCSSStyleSheetFunc::DeleteRule);
-
-  return DOMStyleSheet::tryGet(p);
+    return getDOMCSSRule(exec,cssStyleSheet.ownerRule());
+  else if (p == "cssRules" || p == "rules" /* MSIE extension */)
+    return getDOMCSSRuleList(exec,cssStyleSheet.cssRules());
+  return DOMStyleSheet::tryGet(exec,p);
 }
 
-Completion DOMCSSStyleSheetFunc::tryExecute(const List &args)
+Value DOMCSSStyleSheetProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-  String str = args[0].toString();
-  DOM::DOMString s = str.value().string();
+  if (!thisObj.inherits(&KJS::DOMCSSStyleSheet::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::CSSStyleSheet styleSheet = static_cast<DOMCSSStyleSheet *>(thisObj.imp())->toCSSStyleSheet();
+  Value result;
+  UString str = args[0].toString(exec);
+  DOM::DOMString s = str.string();
 
   switch (id) {
-    case InsertRule:
-      result = Number(styleSheet.insertRule(args[0].toString().value().string(),(long unsigned int)args[1].toNumber().intValue()));
+    case DOMCSSStyleSheet::InsertRule:
+      result = Number(styleSheet.insertRule(args[0].toString(exec).string(),(long unsigned int)args[1].toInteger(exec)));
       break;
-    case DeleteRule:
-      styleSheet.deleteRule(args[0].toNumber().intValue());
+    case DOMCSSStyleSheet::DeleteRule:
+      styleSheet.deleteRule(args[0].toInteger(exec));
       break;
     default:
       result = Undefined();
   }
-
-  return Completion(ReturnValue, result);
+  return result;
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCSSRuleList::info = { "CSSRuleList", HostType, 0, 0, 0 };
+const ClassInfo DOMCSSRuleList::info = { "CSSRuleList", 0, &DOMCSSRuleListTable, 0 };
+/*
+@begin DOMCSSRuleListTable 3
+  length		DOMCSSRuleList::Length		DontDelete|ReadOnly
+  item			DOMCSSRuleList::Item		DontDelete|Function 1
+@end
+*/
+IMPLEMENT_PROTOFUNC(DOMCSSRuleListFunc) // not really a proto, but doesn't matter
 
 DOMCSSRuleList::~DOMCSSRuleList()
 {
-  cssRuleLists.remove(cssRuleList.handle());
+  ScriptInterpreter::forgetDOMObject(cssRuleList.handle());
 }
 
-KJSO DOMCSSRuleList::tryGet(const UString &p) const
+Value DOMCSSRuleList::tryGet(ExecState *exec, const UString &p) const
 {
-  KJSO result;
-
+  Value result;
   if (p == "length")
     return Number(cssRuleList.length());
   else if (p == "item")
-    return new DOMCSSRuleListFunc(cssRuleList,DOMCSSRuleListFunc::Item);
+    return lookupOrCreateFunction<DOMCSSRuleListFunc>(exec,p,this,DOMCSSRuleList::Item,1,DontDelete|Function);
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
   if (ok)
-    return getDOMCSSRule(DOM::CSSRuleList(cssRuleList).item(u));
+    return getDOMCSSRule(exec,DOM::CSSRuleList(cssRuleList).item(u));
 
-  return DOMObject::tryGet(p);
+  return DOMObject::tryGet(exec,p);
 }
 
-Completion DOMCSSRuleListFunc::tryExecute(const List &args)
+Value DOMCSSRuleListFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-
+  if (!thisObj.inherits(&KJS::DOMCSSRuleList::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::CSSRuleList cssRuleList = static_cast<DOMCSSRuleList *>(thisObj.imp())->toCSSRuleList();
   switch (id) {
-    case Item:
-      result = getDOMCSSRule(cssRuleList.item(args[0].toNumber().intValue()));
-      break;
+    case DOMCSSRuleList::Item:
+      return getDOMCSSRule(exec,cssRuleList.item(args[0].toInteger(exec)));
     default:
-      result = Undefined();
+      return Undefined();
   }
-
-  return Completion(ReturnValue, result);
 }
 
-KJSO KJS::getDOMCSSRuleList(DOM::CSSRuleList rl)
+Value KJS::getDOMCSSRuleList(ExecState *exec, DOM::CSSRuleList rl)
 {
-  DOMCSSRuleList *ret;
-  if (rl.isNull())
-    return Null();
-  else if ((ret = cssRuleLists[rl.handle()]))
-    return ret;
-  else {
-    ret = new DOMCSSRuleList(rl);
-    cssRuleLists.insert(rl.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::CSSRuleList, KJS::DOMCSSRuleList>(exec, rl);
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCSSRule::info = { "CSSRule", HostType, 0, 0, 0 };
+IMPLEMENT_PROTOFUNC(DOMCSSRuleFunc) // Not a proto, but doesn't matter
 
 DOMCSSRule::~DOMCSSRule()
 {
-  cssRules.remove(cssRule.handle());
+  ScriptInterpreter::forgetDOMObject(cssRule.handle());
 }
 
-KJSO DOMCSSRule::tryGet(const UString &p) const
-{
-  KJSO result;
+const ClassInfo DOMCSSRule::info = { "CSSRule", 0, &DOMCSSRuleTable, 0 };
+const ClassInfo DOMCSSRule::style_info = { "CSSStyleRule", &DOMCSSRule::info, &DOMCSSStyleRuleTable, 0 };
+const ClassInfo DOMCSSRule::media_info = { "CSSMediaRule", &DOMCSSRule::info, &DOMCSSMediaRuleTable, 0 };
+const ClassInfo DOMCSSRule::fontface_info = { "CSSFontFaceRule", &DOMCSSRule::info, &DOMCSSFontFaceRuleTable, 0 };
+const ClassInfo DOMCSSRule::page_info = { "CSSPageRule", &DOMCSSRule::info, &DOMCSSPageRuleTable, 0 };
+const ClassInfo DOMCSSRule::import_info = { "CSSImportRule", &DOMCSSRule::info, &DOMCSSImportRuleTable, 0 };
+const ClassInfo DOMCSSRule::charset_info = { "CSSCharsetRule", &DOMCSSRule::info, &DOMCSSCharsetRuleTable, 0 };
 
+const ClassInfo* DOMCSSRule::classInfo() const
+{
   switch (cssRule.type()) {
-    case DOM::CSSRule::STYLE_RULE: {
-        DOM::CSSStyleRule rule = static_cast<DOM::CSSStyleRule>(cssRule);
-        if (p == "selectorText") return getString(rule.selectorText());
-        if (p == "style") return getDOMCSSStyleDeclaration(rule.style());
-        break;
-      }
-    case DOM::CSSRule::MEDIA_RULE: {
-        DOM::CSSMediaRule rule = static_cast<DOM::CSSMediaRule>(cssRule);
-        if (p == "media") return getDOMMediaList(rule.media());
-        if (p == "cssRules") return getDOMCSSRuleList(rule.cssRules());
-        if (p == "insertRule") return new DOMCSSRuleFunc(rule,DOMCSSRuleFunc::InsertRule);
-        if (p == "deleteRule") return new DOMCSSRuleFunc(rule,DOMCSSRuleFunc::DeleteRule);
-        break;
-      }
-    case DOM::CSSRule::FONT_FACE_RULE: {
-        DOM::CSSFontFaceRule rule = static_cast<DOM::CSSFontFaceRule>(cssRule);
-        if (p == "style") return getDOMCSSStyleDeclaration(rule.style());
-        break;
-      }
-    case DOM::CSSRule::PAGE_RULE: {
-        DOM::CSSPageRule rule = static_cast<DOM::CSSPageRule>(cssRule);
-        if (p == "selectorText") return getString(rule.selectorText());
-        if (p == "style") return getDOMCSSStyleDeclaration(rule.style());
-        break;
-      }
-    case DOM::CSSRule::IMPORT_RULE: {
-        DOM::CSSImportRule rule = static_cast<DOM::CSSImportRule>(cssRule);
-        if (p == "href") return getString(rule.href());
-        if (p == "media") return getDOMMediaList(rule.media());
-        if (p == "styleSheet") return getDOMStyleSheet(rule.styleSheet());
-        break;
-      }
-    case DOM::CSSRule::CHARSET_RULE: {
-        DOM::CSSCharsetRule rule = static_cast<DOM::CSSCharsetRule>(cssRule);
-        if (p == "encoding") return getString(rule.encoding());
-        break;
-      }
-    case DOM::CSSRule::UNKNOWN_RULE:
-      break;
+  case DOM::CSSRule::STYLE_RULE:
+    return &style_info;
+  case DOM::CSSRule::MEDIA_RULE:
+    return &media_info;
+  case DOM::CSSRule::FONT_FACE_RULE:
+    return &fontface_info;
+  case DOM::CSSRule::PAGE_RULE:
+    return &page_info;
+  case DOM::CSSRule::IMPORT_RULE:
+    return &import_info;
+  case DOM::CSSRule::CHARSET_RULE:
+    return &charset_info;
+  case DOM::CSSRule::UNKNOWN_RULE:
+  default:
+    return &info;
+  }
+}
+/*
+@begin DOMCSSRuleTable 4
+  type			DOMCSSRule::Type	DontDelete|ReadOnly
+  cssText		DOMCSSRule::CssText	DontDelete|ReadOnly
+  parentStyleSheet	DOMCSSRule::ParentStyleSheet	DontDelete|ReadOnly
+  parentRule		DOMCSSRule::ParentRule	DontDelete|ReadOnly
+@end
+@begin DOMCSSStyleRuleTable 2
+  selectorText		DOMCSSRule::Style_SelectorText	DontDelete
+  style			DOMCSSRule::Style_Style		DontDelete|ReadOnly
+@end
+@begin DOMCSSMediaRuleTable 4
+  media			DOMCSSRule::Media_Media		DontDelete|ReadOnly
+  cssRules		DOMCSSRule::Media_CssRules	DontDelete|ReadOnly
+  insertRule		DOMCSSRule::Media_InsertRule	DontDelete|Function 2
+  deleteRule		DOMCSSRule::Media_DeleteRule	DontDelete|Function 1
+@end
+@begin DOMCSSFontFaceRuleTable 1
+  style			DOMCSSRule::FontFace_Style	DontDelete|ReadOnly
+@end
+@begin DOMCSSPageRuleTable 2
+  selectorText		DOMCSSRule::Page_SelectorText	DontDelete
+  style			DOMCSSRule::Page_Style		DontDelete|ReadOnly
+@end
+@begin DOMCSSImportRuleTable 3
+  href			DOMCSSRule::Import_Href		DontDelete|ReadOnly
+  media			DOMCSSRule::Import_Media	DontDelete|ReadOnly
+  styleSheet		DOMCSSRule::Import_StyleSheet	DontDelete|ReadOnly
+@end
+@begin DOMCSSCharsetRuleTable 1
+  encoding		DOMCSSRule::Charset_Encoding	DontDelete
+@end
+*/
+Value DOMCSSRule::tryGet(ExecState *exec, const UString &propertyName) const
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMCSSRule::tryGet " << propertyName.qstring() << endl;
+#endif
+  const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+  const HashEntry* entry = Lookup::findEntry(table, propertyName);
+  if (entry) {
+    if (entry->attr & Function)
+      return lookupOrCreateFunction<DOMCSSRuleFunc>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+    return getValueProperty(exec, entry->value);
   }
 
-  if (p == "type")
+  // Base CSSRule stuff or parent class forward, as usual
+  return DOMObjectLookupGet<DOMCSSRuleFunc, DOMCSSRule, DOMObject>(exec, propertyName, &DOMCSSRuleTable, this);
+}
+
+Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
+{
+  switch (token) {
+  case Type:
     return Number(cssRule.type());
-  else if (p == "cssText")
+  case CssText:
     return getString(cssRule.cssText());
-  else if (p == "parentStyleSheet")
-    return getDOMStyleSheet(cssRule.parentStyleSheet());
-  else if (p == "parentRule")
-    return getDOMCSSRule(cssRule.parentRule());
+  case ParentStyleSheet:
+    return getDOMStyleSheet(exec,cssRule.parentStyleSheet());
+  case ParentRule:
+    return getDOMCSSRule(exec,cssRule.parentRule());
 
-  return DOMObject::tryGet(p);
-};
+  // for DOM::CSSRule::STYLE_RULE:
+  case Style_SelectorText:
+    return getString(static_cast<DOM::CSSStyleRule>(cssRule).selectorText());
+  case Style_Style:
+    return getDOMCSSStyleDeclaration(exec,static_cast<DOM::CSSStyleRule>(cssRule).style());
 
-void DOMCSSRule::tryPut(const UString &p, const KJSO& v)
-{
+  // for DOM::CSSRule::MEDIA_RULE:
+  case Media_Media:
+    return getDOMMediaList(exec,static_cast<DOM::CSSMediaRule>(cssRule).media());
+  case Media_CssRules:
+    return getDOMCSSRuleList(exec,static_cast<DOM::CSSMediaRule>(cssRule).cssRules());
 
-  switch (cssRule.type()) {
-    case DOM::CSSRule::STYLE_RULE: {
-        DOM::CSSStyleRule rule = static_cast<DOM::CSSStyleRule>(cssRule);
-        if (p == "selectorText") {
-          rule.setSelectorText(v.toString().value().string());
-          return;
-        }
-        break;
-      }
-    case DOM::CSSRule::PAGE_RULE: {
-        DOM::CSSPageRule rule = static_cast<DOM::CSSPageRule>(cssRule);
-        if (p == "selectorText") {
-          rule.setSelectorText(v.toString().value().string());
-          return;
-        }
-        break;
-      }
-    case DOM::CSSRule::CHARSET_RULE: {
-        DOM::CSSCharsetRule rule = static_cast<DOM::CSSCharsetRule>(cssRule);
-        if (p == "encoding") {
-          rule.setEncoding(v.toString().value().string());
-          return;
-        }
-        break;
-      }
-    default:
-      break;
+  // for DOM::CSSRule::FONT_FACE_RULE:
+  case FontFace_Style:
+    return getDOMCSSStyleDeclaration(exec,static_cast<DOM::CSSFontFaceRule>(cssRule).style());
+
+  // for DOM::CSSRule::PAGE_RULE:
+  case Page_SelectorText:
+    return getString(static_cast<DOM::CSSPageRule>(cssRule).selectorText());
+  case Page_Style:
+    return getDOMCSSStyleDeclaration(exec,static_cast<DOM::CSSPageRule>(cssRule).style());
+
+  // for DOM::CSSRule::IMPORT_RULE:
+  case Import_Href:
+    return getString(static_cast<DOM::CSSImportRule>(cssRule).href());
+  case Import_Media:
+    return getDOMMediaList(exec,static_cast<DOM::CSSImportRule>(cssRule).media());
+  case Import_StyleSheet:
+    return getDOMStyleSheet(exec,static_cast<DOM::CSSImportRule>(cssRule).styleSheet());
+
+  // for DOM::CSSRule::CHARSET_RULE:
+  case Charset_Encoding:
+    return getString(static_cast<DOM::CSSCharsetRule>(cssRule).encoding());
+
+  default:
+    kdWarning() << "DOMCSSRule::getValueProperty unhandled token " << token << endl;
   }
-
-  DOMObject::tryPut(p,v);
-
+  return Undefined();
 }
 
-Completion DOMCSSRuleFunc::tryExecute(const List &args)
+void DOMCSSRule::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
 {
-  KJSO result = Undefined();
+  const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+  const HashEntry* entry = Lookup::findEntry(table, propertyName);
+  if (entry) {
+    if (entry->attr & Function) // function: put as override property
+    {
+      ObjectImp::put(exec, propertyName, value, attr);
+      return;
+    }
+    else if ((entry->attr & ReadOnly) == 0) // let DOMObjectLookupPut print the warning if not
+    {
+      putValue(exec, entry->value, value, attr);
+      return;
+    }
+  }
+  DOMObjectLookupPut<DOMCSSRule, DOMObject>(exec, propertyName, value, attr, &DOMCSSRuleTable, this);
+}
+
+void DOMCSSRule::putValue(ExecState *exec, int token, const Value& value, int)
+{
+  switch (token) {
+  // for DOM::CSSRule::STYLE_RULE:
+  case Style_SelectorText:
+    static_cast<DOM::CSSStyleRule>(cssRule).setSelectorText(value.toString(exec).string());
+    return;
+
+  // for DOM::CSSRule::PAGE_RULE:
+  case Page_SelectorText:
+    static_cast<DOM::CSSPageRule>(cssRule).setSelectorText(value.toString(exec).string());
+    return;
+
+  // for DOM::CSSRule::CHARSET_RULE:
+  case Charset_Encoding:
+    static_cast<DOM::CSSCharsetRule>(cssRule).setEncoding(value.toString(exec).string());
+    return;
+
+  default:
+    kdWarning() << "DOMCSSRule::putValue unhandled token " << token << endl;
+  }
+}
+
+Value DOMCSSRuleFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+  if (!thisObj.inherits(&KJS::DOMCSSRule::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::CSSRule cssRule = static_cast<DOMCSSRule *>(thisObj.imp())->toCSSRule();
 
   if (cssRule.type() == DOM::CSSRule::MEDIA_RULE) {
     DOM::CSSMediaRule rule = static_cast<DOM::CSSMediaRule>(cssRule);
-    if (id == InsertRule)
-      result = Number(rule.insertRule(args[0].toString().value().string(),args[1].toNumber().intValue()));
-    else if (id == DeleteRule)
-      rule.deleteRule(args[0].toNumber().intValue());
+    if (id == DOMCSSRule::Media_InsertRule)
+      return Number(rule.insertRule(args[0].toString(exec).string(),args[1].toInteger(exec)));
+    else if (id == DOMCSSRule::Media_DeleteRule)
+      rule.deleteRule(args[0].toInteger(exec));
   }
 
-  return Completion(ReturnValue, result);
+  return Undefined();
 }
 
-KJSO KJS::getDOMCSSRule(DOM::CSSRule r)
+Value KJS::getDOMCSSRule(ExecState *exec, DOM::CSSRule r)
 {
-  DOMCSSRule *ret;
-  if (r.isNull())
-    return Null();
-  else if ((ret = cssRules[r.handle()]))
-    return ret;
-  else {
-    ret = new DOMCSSRule(r);
-    cssRules.insert(r.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::CSSRule, KJS::DOMCSSRule>(exec, r);
 }
 
 // -------------------------------------------------------------------------
 
 
-DOM::CSSRule KJS::toCSSRule(const KJSO& obj)
+DOM::CSSRule KJS::toCSSRule(const Value& val)
 {
-  if (!obj.derivedFrom("CSSRule"))
+  Object obj = Object::dynamicCast(val);
+  if (obj.isNull() || !obj.inherits(&DOMCSSRule::info))
     return DOM::CSSRule();
 
   const DOMCSSRule *dobj = static_cast<const DOMCSSRule*>(obj.imp());
@@ -623,348 +803,382 @@ DOM::CSSRule KJS::toCSSRule(const KJSO& obj)
 
 // -------------------------------------------------------------------------
 
-const TypeInfo CSSRulePrototype::info = { "CSSRulePrototype", HostType, 0, 0, 0 };
+const ClassInfo CSSRuleConstructor::info = { "CSSRuleConstructor", 0, &CSSRuleConstructorTable, 0 };
+/*
+@begin CSSRuleConstructorTable 7
+  UNKNOWN_RULE	CSSRuleConstructor::UNKNOWN_RULE	DontDelete|ReadOnly
+  STYLE_RULE	CSSRuleConstructor::STYLE_RULE		DontDelete|ReadOnly
+  CHARSET_RULE	CSSRuleConstructor::CHARSET_RULE	DontDelete|ReadOnly
+  IMPORT_RULE	CSSRuleConstructor::IMPORT_RULE		DontDelete|ReadOnly
+  MEDIA_RULE	CSSRuleConstructor::MEDIA_RULE		DontDelete|ReadOnly
+  FONT_FACE_RULE CSSRuleConstructor::FONT_FACE_RULE	DontDelete|ReadOnly
+  PAGE_RULE	CSSRuleConstructor::PAGE_RULE		DontDelete|ReadOnly
+@end
+*/
 
-KJSO CSSRulePrototype::tryGet(const UString &p) const
+Value CSSRuleConstructor::tryGet(ExecState *exec, const UString &p) const
 {
-
-// also prototype of CSSRule objects?
-  if (p == "UNKNOWN_RULE")
-    return Number(DOM::CSSRule::UNKNOWN_RULE);
-  else if (p == "STYLE_RULE")
-    return Number(DOM::CSSRule::STYLE_RULE);
-  else if (p == "CHARSET_RULE")
-    return Number(DOM::CSSRule::CHARSET_RULE);
-  else if (p == "IMPORT_RULE")
-    return Number(DOM::CSSRule::IMPORT_RULE);
-  else if (p == "MEDIA_RULE")
-    return Number(DOM::CSSRule::MEDIA_RULE);
-  else if (p == "FONT_FACE_RULE")
-    return Number(DOM::CSSRule::FONT_FACE_RULE);
-  else if (p == "PAGE_RULE")
-    return Number(DOM::CSSRule::PAGE_RULE);
-
-  return DOMObject::tryGet(p);
+  return DOMObjectLookupGetValue<CSSRuleConstructor,DOMObject>(exec,p,&CSSRuleConstructorTable,this);
 }
 
-KJSO KJS::getCSSRulePrototype()
+Value CSSRuleConstructor::getValueProperty(ExecState *, int token) const
 {
-    KJSO proto = Global::current().get("[[cssRule.prototype]]");
-    if (proto.isDefined())
-        return proto;
-    else
-    {
-        Object cssRuleProto( new CSSRulePrototype );
-        Global::current().put("[[cssRule.prototype]]", cssRuleProto);
-        return cssRuleProto;
-    }
+  switch (token) {
+  case UNKNOWN_RULE:
+    return Number(DOM::CSSRule::UNKNOWN_RULE);
+  case STYLE_RULE:
+    return Number(DOM::CSSRule::STYLE_RULE);
+  case CHARSET_RULE:
+    return Number(DOM::CSSRule::CHARSET_RULE);
+  case IMPORT_RULE:
+    return Number(DOM::CSSRule::IMPORT_RULE);
+  case MEDIA_RULE:
+    return Number(DOM::CSSRule::MEDIA_RULE);
+  case FONT_FACE_RULE:
+    return Number(DOM::CSSRule::FONT_FACE_RULE);
+  case PAGE_RULE:
+    return Number(DOM::CSSRule::PAGE_RULE);
+  }
+  return Value();
+}
+
+Value KJS::getCSSRuleConstructor(ExecState *exec)
+{
+  return cacheGlobalObject<CSSRuleConstructor>( exec, "[[cssRule.constructor]]" );
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCSSValue::info = { "CSSValue", HostType, 0, 0, 0 };
+const ClassInfo DOMCSSValue::info = { "CSSValue", 0, &DOMCSSValueTable, 0 };
 
+/*
+@begin DOMCSSValueTable 2
+  cssText	DOMCSSValue::CssText		DontDelete|ReadOnly
+  cssValueType	DOMCSSValue::CssValueType	DontDelete|ReadOnly
+@end
+*/
 DOMCSSValue::~DOMCSSValue()
 {
-  cssValues.remove(cssValue.handle());
+  ScriptInterpreter::forgetDOMObject(cssValue.handle());
 }
 
-KJSO DOMCSSValue::tryGet(const UString &p) const
+Value DOMCSSValue::tryGet(ExecState *exec, const UString &p) const
 {
-  KJSO result;
-
   if (p == "cssText")
     return getString(cssValue.cssText());
   else if (p == "cssValueType");
     return Number(cssValue.cssValueType());
-
-  return DOMObject::tryGet(p);
-};
-
-void DOMCSSValue::tryPut(const UString &p, const KJSO& v)
-{
-  if (p == "cssText")
-    cssValue.setCssText(v.toString().value().string());
-  else
-    DOMObject::tryPut(p, v);
+  return DOMObject::tryGet(exec,p);
 }
 
-KJSO KJS::getDOMCSSValue(DOM::CSSValue v)
+void DOMCSSValue::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
 {
-  DOMCSSValue *ret;
+  if (propertyName == "cssText")
+    cssValue.setCssText(value.toString(exec).string());
+  else
+    DOMObject::tryPut(exec, propertyName, value, attr);
+}
+
+Value KJS::getDOMCSSValue(ExecState *exec, DOM::CSSValue v)
+{
+  DOMObject *ret;
   if (v.isNull())
     return Null();
-  else if ((ret = cssValues[v.handle()]))
-    return ret;
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+  if ((ret = interp->getDOMObject(v.handle())))
+    return Value(ret);
   else {
     if (v.isCSSValueList())
-      ret = new DOMCSSValueList(v);
+      ret = new DOMCSSValueList(exec,v);
     else if (v.isCSSPrimitiveValue())
-      ret = new DOMCSSPrimitiveValue(v);
+      ret = new DOMCSSPrimitiveValue(exec,v);
     else
-      ret = new DOMCSSValue(v);
-    cssValues.insert(v.handle(),ret);
-    return ret;
+      ret = new DOMCSSValue(exec,v);
+    interp->putDOMObject(v.handle(),ret);
+    return Value(ret);
   }
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo CSSValuePrototype::info = { "CSSValuePrototype", HostType, 0, 0, 0 };
-
-KJSO CSSValuePrototype::tryGet(const UString &p) const
+const ClassInfo CSSValueConstructor::info = { "CSSValueConstructor", 0, &CSSValueConstructorTable, 0 };
+/*
+@begin CSSValueConstructorTable 5
+  CSS_INHERIT		CSSValueConstructor::CSS_INHERIT		DontDelete|ReadOnly
+  CSS_PRIMITIVE_VALUE	CSSValueConstructor::CSS_PRIMITIVE_VALUE	DontDelete|ReadOnly
+  CSS_VALUE_LIST	CSSValueConstructor::CSS_VALUE_LIST		DontDelete|ReadOnly
+  CSS_CUSTOM		CSSValueConstructor::CSS_CUSTOM			DontDelete|ReadOnly
+@end
+*/
+Value CSSValueConstructor::tryGet(ExecState *exec, const UString &p) const
 {
-// also prototype of CSSValue objects?
-  if (p == "CSS_INHERIT")
+  return DOMObjectLookupGetValue<CSSValueConstructor,DOMObject>(exec,p,&CSSValueConstructorTable,this);
+}
+
+Value CSSValueConstructor::getValueProperty(ExecState *, int token) const
+{
+  switch (token) {
+  case CSS_INHERIT:
     return Number(DOM::CSSValue::CSS_INHERIT);
-  else if (p == "CSS_PRIMITIVE_VALUE")
+  case CSS_PRIMITIVE_VALUE:
     return Number(DOM::CSSValue::CSS_PRIMITIVE_VALUE);
-  else if (p == "CSS_VALUE_LIST")
+  case CSS_VALUE_LIST:
     return Number(DOM::CSSValue::CSS_VALUE_LIST);
-  else if (p == "CSS_CUSTOM")
+  case CSS_CUSTOM:
     return Number(DOM::CSSValue::CSS_CUSTOM);
-
-  return DOMObject::tryGet(p);
-}
-
-KJSO KJS::getCSSValuePrototype()
-{
-    KJSO proto = Global::current().get("[[cssValue.prototype]]");
-    if (proto.isDefined())
-        return proto;
-    else
-    {
-        Object cssValueProto( new CSSRulePrototype );
-        Global::current().put("[[cssValue.prototype]]", cssValueProto);
-        return cssValueProto;
-    }
-}
-
-// -------------------------------------------------------------------------
-
-const TypeInfo DOMCSSPrimitiveValue::info = { "CSSPrimitiveValue", HostType, 0, 0, 0 };
-
-KJSO DOMCSSPrimitiveValue::tryGet(const UString &p) const
-{
-  KJSO result;
-  DOM::CSSPrimitiveValue val = static_cast<DOM::CSSPrimitiveValue>(cssValue);
-
-  if (p == "primitiveType")
-    return Number(val.primitiveType());
-  if (p == "setFloatValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::SetFloatValue);
-  if (p == "getFloatValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::GetFloatValue);
-  if (p == "setStringValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::SetStringValue);
-  if (p == "getStringValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::GetStringValue);
-  if (p == "getCounterValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::GetCounterValue);
-  if (p == "getRectValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::GetRectValue);
-  if (p == "getRGBColorValue")
-    return new DOMCSSPrimitiveValueFunc(val,DOMCSSPrimitiveValueFunc::GetRGBColorValue);
-
-  return DOMObject::tryGet(p);
-};
-
-Completion DOMCSSPrimitiveValueFunc::tryExecute(const List &args)
-{
-  KJSO result;
-
-  switch (id) {
-    case SetFloatValue:
-      val.setFloatValue(args[0].toNumber().intValue(),args[1].toNumber().value());
-      result = Undefined();
-      break;
-    case GetFloatValue:
-      result = Number(val.getFloatValue(args[0].toNumber().intValue()));
-      break;
-    case SetStringValue:
-      val.setStringValue(args[0].toNumber().intValue(),args[1].toString().value().string());
-      result = Undefined();
-      break;
-    case GetStringValue:
-      result = getString(val.getStringValue());
-      break;
-    case GetCounterValue:
-      result = getDOMCounter(val.getCounterValue());
-      break;
-    case GetRectValue:
-      result = getDOMRect(val.getRectValue());
-      break;
-    case GetRGBColorValue:
-      result = getDOMRGBColor(val.getRGBColorValue());
-      break;
-    default:
-      result = Undefined();
   }
+  return Value();
+}
 
-  return Completion(ReturnValue, result);
+Value KJS::getCSSValueConstructor(ExecState *exec)
+{
+  return cacheGlobalObject<CSSValueConstructor>( exec, "[[cssValue.constructor]]" );
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo CSSPrimitiveValuePrototype::info = { "CSSPrimitiveValuePrototype", HostType, 0, 0, 0 };
+const ClassInfo DOMCSSPrimitiveValue::info = { "CSSPrimitiveValue", 0, &DOMCSSPrimitiveValueTable, 0 };
+/*
+@begin DOMCSSPrimitiveValueTable 1
+  primitiveType		DOMCSSPrimitiveValue::PrimitiveType	DontDelete|ReadOnly
+@end
+@begin DOMCSSPrimitiveValueProtoTable 3
+  setFloatValue		DOMCSSPrimitiveValue::SetFloatValue	DontDelete|Function 2
+  getFloatValue		DOMCSSPrimitiveValue::GetFloatValue	DontDelete|Function 1
+  setStringValue	DOMCSSPrimitiveValue::SetStringValue	DontDelete|Function 2
+  getStringValue	DOMCSSPrimitiveValue::GetStringValue	DontDelete|Function 0
+  getCounterValue	DOMCSSPrimitiveValue::GetCounterValue	DontDelete|Function 0
+  getRectValue		DOMCSSPrimitiveValue::GetRectValue	DontDelete|Function 0
+  getRGBColorValue	DOMCSSPrimitiveValue::GetRGBColorValue	DontDelete|Function 0
+@end
+*/
+DEFINE_PROTOTYPE("DOMCSSPrimitiveValue",DOMCSSPrimitiveValueProto)
+IMPLEMENT_PROTOFUNC(DOMCSSPrimitiveValueProtoFunc)
+IMPLEMENT_PROTOTYPE(DOMCSSPrimitiveValueProto,DOMCSSPrimitiveValueProtoFunc)
 
-KJSO CSSPrimitiveValuePrototype::tryGet(const UString &p) const
+DOMCSSPrimitiveValue::DOMCSSPrimitiveValue(ExecState *exec, DOM::CSSPrimitiveValue v)
+  : DOMCSSValue(DOMCSSPrimitiveValueProto::self(exec), v) { }
+
+Value DOMCSSPrimitiveValue::tryGet(ExecState *exec, const UString &p) const
 {
-// also prototype of CSSPrimitiveValue objects?
-  if (p == "CSS_UNKNOWN")    return Number(DOM::CSSPrimitiveValue::CSS_UNKNOWN);
-  if (p == "CSS_NUMBER")     return Number(DOM::CSSPrimitiveValue::CSS_NUMBER);
-  if (p == "CSS_PERCENTAGE") return Number(DOM::CSSPrimitiveValue::CSS_PERCENTAGE);
-  if (p == "CSS_EMS")        return Number(DOM::CSSPrimitiveValue::CSS_EMS);
-  if (p == "CSS_EXS")        return Number(DOM::CSSPrimitiveValue::CSS_EXS);
-  if (p == "CSS_PX")         return Number(DOM::CSSPrimitiveValue::CSS_PX);
-  if (p == "CSS_CM")         return Number(DOM::CSSPrimitiveValue::CSS_CM);
-  if (p == "CSS_MM")         return Number(DOM::CSSPrimitiveValue::CSS_MM);
-  if (p == "CSS_IN")         return Number(DOM::CSSPrimitiveValue::CSS_IN);
-  if (p == "CSS_PT")         return Number(DOM::CSSPrimitiveValue::CSS_PT);
-  if (p == "CSS_PC")         return Number(DOM::CSSPrimitiveValue::CSS_PC);
-  if (p == "CSS_DEG")        return Number(DOM::CSSPrimitiveValue::CSS_DEG);
-  if (p == "CSS_RAD")        return Number(DOM::CSSPrimitiveValue::CSS_RAD);
-  if (p == "CSS_GRAD")       return Number(DOM::CSSPrimitiveValue::CSS_GRAD);
-  if (p == "CSS_MS")         return Number(DOM::CSSPrimitiveValue::CSS_MS);
-  if (p == "CSS_S")          return Number(DOM::CSSPrimitiveValue::CSS_S);
-  if (p == "CSS_HZ")         return Number(DOM::CSSPrimitiveValue::CSS_HZ);
-  if (p == "CSS_KHZ")        return Number(DOM::CSSPrimitiveValue::CSS_KHZ);
-  if (p == "CSS_DIMENSION")  return Number(DOM::CSSPrimitiveValue::CSS_DIMENSION);
-  if (p == "CSS_STRING")     return Number(DOM::CSSPrimitiveValue::CSS_STRING);
-  if (p == "CSS_URI")        return Number(DOM::CSSPrimitiveValue::CSS_URI);
-  if (p == "CSS_IDENT")      return Number(DOM::CSSPrimitiveValue::CSS_IDENT);
-  if (p == "CSS_ATTR")       return Number(DOM::CSSPrimitiveValue::CSS_ATTR);
-  if (p == "CSS_COUNTER")    return Number(DOM::CSSPrimitiveValue::CSS_COUNTER);
-  if (p == "CSS_RECT")       return Number(DOM::CSSPrimitiveValue::CSS_RECT);
-  if (p == "CSS_RGBCOLOR")   return Number(DOM::CSSPrimitiveValue::CSS_RGBCOLOR);
-  return CSSValuePrototype::tryGet(p);
+  if (p=="primitiveType")
+    return Number(static_cast<DOM::CSSPrimitiveValue>(cssValue).primitiveType());
+  return DOMObject::tryGet(exec,p);
 }
 
-KJSO KJS::getCSSPrimitiveValuePrototype()
+Value DOMCSSPrimitiveValueProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-    KJSO proto = Global::current().get("[[cssPrimitiveValue.prototype]]");
-    if (proto.isDefined())
-        return proto;
-    else
-    {
-        Object cssPrimitiveValueProto( new CSSRulePrototype );
-        Global::current().put("[[cssPrimitiveValue.prototype]]", cssPrimitiveValueProto);
-        return cssPrimitiveValueProto;
-    }
+  if (!thisObj.inherits(&KJS::DOMCSSPrimitiveValue::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::CSSPrimitiveValue val = static_cast<DOMCSSPrimitiveValue *>(thisObj.imp())->toCSSPrimitiveValue();
+  switch (id) {
+    case DOMCSSPrimitiveValue::SetFloatValue:
+      val.setFloatValue(args[0].toInteger(exec),args[1].toNumber(exec));
+      return Undefined();
+    case DOMCSSPrimitiveValue::GetFloatValue:
+      return Number(val.getFloatValue(args[0].toInteger(exec)));
+    case DOMCSSPrimitiveValue::SetStringValue:
+      val.setStringValue(args[0].toInteger(exec),args[1].toString(exec).string());
+      return Undefined();
+    case DOMCSSPrimitiveValue::GetStringValue:
+      return getString(val.getStringValue());
+    case DOMCSSPrimitiveValue::GetCounterValue:
+      return getDOMCounter(exec,val.getCounterValue());
+    case DOMCSSPrimitiveValue::GetRectValue:
+      return getDOMRect(exec,val.getRectValue());
+    case DOMCSSPrimitiveValue::GetRGBColorValue:
+      return getDOMRGBColor(exec,val.getRGBColorValue());
+    default:
+      return Undefined();
+  }
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCSSValueList::info = { "CSSValueList", HostType, 0, 0, 0 };
+const ClassInfo CSSPrimitiveValueConstructor::info = { "CSSPrimitiveValueConstructor", 0, &CSSPrimitiveValueConstructorTable, 0 };
 
-KJSO DOMCSSValueList::tryGet(const UString &p) const
+/*
+@begin CSSPrimitiveValueConstructorTable 27
+  CSS_UNKNOWN   	DOM::CSSPrimitiveValue::CSS_UNKNOWN	DontDelete|ReadOnly
+  CSS_NUMBER    	DOM::CSSPrimitiveValue::CSS_NUMBER	DontDelete|ReadOnly
+  CSS_PERCENTAGE	DOM::CSSPrimitiveValue::CSS_PERCENTAGE	DontDelete|ReadOnly
+  CSS_EMS       	DOM::CSSPrimitiveValue::CSS_EMS		DontDelete|ReadOnly
+  CSS_EXS       	DOM::CSSPrimitiveValue::CSS_EXS		DontDelete|ReadOnly
+  CSS_PX        	DOM::CSSPrimitiveValue::CSS_PX		DontDelete|ReadOnly
+  CSS_CM        	DOM::CSSPrimitiveValue::CSS_CM		DontDelete|ReadOnly
+  CSS_MM        	DOM::CSSPrimitiveValue::CSS_MM		DontDelete|ReadOnly
+  CSS_IN        	DOM::CSSPrimitiveValue::CSS_IN		DontDelete|ReadOnly
+  CSS_PT        	DOM::CSSPrimitiveValue::CSS_PT		DontDelete|ReadOnly
+  CSS_PC        	DOM::CSSPrimitiveValue::CSS_PC		DontDelete|ReadOnly
+  CSS_DEG       	DOM::CSSPrimitiveValue::CSS_DEG		DontDelete|ReadOnly
+  CSS_RAD       	DOM::CSSPrimitiveValue::CSS_RAD		DontDelete|ReadOnly
+  CSS_GRAD      	DOM::CSSPrimitiveValue::CSS_GRAD	DontDelete|ReadOnly
+  CSS_MS        	DOM::CSSPrimitiveValue::CSS_MS		DontDelete|ReadOnly
+  CSS_S			DOM::CSSPrimitiveValue::CSS_S		DontDelete|ReadOnly
+  CSS_HZ        	DOM::CSSPrimitiveValue::CSS_HZ		DontDelete|ReadOnly
+  CSS_KHZ       	DOM::CSSPrimitiveValue::CSS_KHZ		DontDelete|ReadOnly
+  CSS_DIMENSION 	DOM::CSSPrimitiveValue::CSS_DIMENSION	DontDelete|ReadOnly
+  CSS_STRING    	DOM::CSSPrimitiveValue::CSS_STRING	DontDelete|ReadOnly
+  CSS_URI       	DOM::CSSPrimitiveValue::CSS_URI		DontDelete|ReadOnly
+  CSS_IDENT     	DOM::CSSPrimitiveValue::CSS_IDENT	DontDelete|ReadOnly
+  CSS_ATTR      	DOM::CSSPrimitiveValue::CSS_ATTR	DontDelete|ReadOnly
+  CSS_COUNTER   	DOM::CSSPrimitiveValue::CSS_COUNTER	DontDelete|ReadOnly
+  CSS_RECT      	DOM::CSSPrimitiveValue::CSS_RECT	DontDelete|ReadOnly
+  CSS_RGBCOLOR  	DOM::CSSPrimitiveValue::CSS_RGBCOLOR	DontDelete|ReadOnly
+@end
+*/
+
+Value CSSPrimitiveValueConstructor::tryGet(ExecState *exec, const UString &p) const
 {
-  KJSO result;
+  return DOMObjectLookupGetValue<CSSPrimitiveValueConstructor,CSSValueConstructor>(exec,p,&CSSPrimitiveValueConstructorTable,this);
+}
+
+Value CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
+{
+  // We use the token as the value to return directly
+  return Number(token);
+}
+
+Value KJS::getCSSPrimitiveValueConstructor(ExecState *exec)
+{
+  return cacheGlobalObject<CSSPrimitiveValueConstructor>( exec, "[[cssPrimitiveValue.constructor]]" );
+}
+
+// -------------------------------------------------------------------------
+
+const ClassInfo DOMCSSValueList::info = { "CSSValueList", 0, &DOMCSSValueListTable, 0 };
+
+/*
+@begin DOMCSSValueListTable 3
+  length		DOMCSSValueList::Length		DontDelete|ReadOnly
+  item			DOMCSSValueList::Item		DontDelete|Function 1
+@end
+*/
+IMPLEMENT_PROTOFUNC(DOMCSSValueListFunc) // not really a proto, but doesn't matter
+
+DOMCSSValueList::DOMCSSValueList(ExecState *exec, DOM::CSSValueList v)
+  : DOMCSSValue(exec, v) { }
+
+Value DOMCSSValueList::tryGet(ExecState *exec, const UString &p) const
+{
+  Value result;
   DOM::CSSValueList valueList = static_cast<DOM::CSSValueList>(cssValue);
 
   if (p == "length")
     return Number(valueList.length());
   else if (p == "item")
-    return new DOMCSSValueListFunc(valueList,DOMCSSValueListFunc::Item);
+    return lookupOrCreateFunction<DOMCSSValueListFunc>(exec,p,this,DOMCSSValueList::Item,1,DontDelete|Function);
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
   if (ok)
-    return getDOMCSSValue(valueList.item(u));
+    return getDOMCSSValue(exec,valueList.item(u));
 
-  return DOMCSSValue::tryGet(p);
-};
+  return DOMCSSValue::tryGet(exec,p);
+}
 
-Completion DOMCSSValueListFunc::tryExecute(const List &args)
+Value DOMCSSValueListFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-
-  switch (id) {
-    case Item:
-      result = getDOMCSSValue(valueList.item(args[0].toNumber().intValue()));
-      break;
-    default:
-      result = Undefined();
-      break;
+  if (!thisObj.inherits(&KJS::DOMCSSValue::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
   }
-
-  return Completion(ReturnValue, result);
+  DOM::CSSValueList valueList = static_cast<DOMCSSValueList *>(thisObj.imp())->toValueList();
+  switch (id) {
+    case DOMCSSValueList::Item:
+      return getDOMCSSValue(exec,valueList.item(args[0].toInteger(exec)));
+    default:
+      return Undefined();
+  }
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMRGBColor::info = { "RGBColor", HostType, 0, 0, 0 };
+const ClassInfo DOMRGBColor::info = { "RGBColor", 0, &DOMRGBColorTable, 0 };
 
+/*
+@begin DOMRGBColorTable 3
+  red	DOMRGBColor::Red	DontDelete|ReadOnly
+  green	DOMRGBColor::Green	DontDelete|ReadOnly
+  blue	DOMRGBColor::Blue	DontDelete|ReadOnly
+@end
+*/
 DOMRGBColor::~DOMRGBColor()
 {
   //rgbColors.remove(rgbColor.handle());
 }
 
-KJSO DOMRGBColor::tryGet(const UString &p) const
+Value DOMRGBColor::tryGet(ExecState *exec, const UString &p) const
 {
   if (p == "red")
-    return getDOMCSSValue(rgbColor.red());
+    return getDOMCSSValue(exec,rgbColor.red());
   if (p == "green")
-    return getDOMCSSValue(rgbColor.green());
+    return getDOMCSSValue(exec,rgbColor.green());
   if (p == "blue")
-    return getDOMCSSValue(rgbColor.blue());
-
-  return DOMObject::tryGet(p);
+    return getDOMCSSValue(exec,rgbColor.blue());
+  return DOMObject::tryGet(exec,p);
 }
 
-KJSO KJS::getDOMRGBColor(DOM::RGBColor c)
+Value KJS::getDOMRGBColor(ExecState *, DOM::RGBColor c)
 {
   // ### implement equals for RGBColor since they're not refcounted objects
-  return new DOMRGBColor(c);
+  return Value(new DOMRGBColor(c));
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMRect::info = { "Rect", HostType, 0, 0, 0 };
-
+const ClassInfo DOMRect::info = { "Rect", 0, &DOMRectTable, 0 };
+/*
+@begin DOMRectTable 4
+  top	DOMRect::Top	DontDelete|ReadOnly
+  right	DOMRect::Right	DontDelete|ReadOnly
+  bottom DOMRect::Bottom DontDelete|ReadOnly
+  left	DOMRect::Left	DontDelete|ReadOnly
+@end
+*/
 DOMRect::~DOMRect()
 {
-  rects.remove(rect.handle());
+  ScriptInterpreter::forgetDOMObject(rect.handle());
 }
 
-KJSO DOMRect::tryGet(const UString &p) const
+Value DOMRect::tryGet(ExecState *exec, const UString &p) const
 {
   if (p == "top")
-    return getDOMCSSValue(rect.top());
+    return getDOMCSSValue(exec,rect.top());
   if (p == "right")
-    return getDOMCSSValue(rect.right());
+    return getDOMCSSValue(exec,rect.right());
   if (p == "bottom")
-    return getDOMCSSValue(rect.bottom());
+    return getDOMCSSValue(exec,rect.bottom());
   if (p == "left")
-    return getDOMCSSValue(rect.left());
-
-  return DOMObject::tryGet(p);
+    return getDOMCSSValue(exec,rect.left());
+  return DOMObject::tryGet(exec,p);
 }
 
-KJSO KJS::getDOMRect(DOM::Rect r)
+Value KJS::getDOMRect(ExecState *exec, DOM::Rect r)
 {
-  DOMRect *ret;
-  if (r.isNull())
-    return Null();
-  else if ((ret = rects[r.handle()]))
-    return ret;
-  else {
-    ret = new DOMRect(r);
-    rects.insert(r.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::Rect, KJS::DOMRect>(exec, r);
 }
 
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMCounter::info = { "Counter", HostType, 0, 0, 0 };
-
+const ClassInfo DOMCounter::info = { "Counter", 0, &DOMCounterTable, 0 };
+/*
+@begin DOMCounterTable 3
+  identifier	DOMCounter::Identifier	DontDelete|ReadOnly
+  listStyle	DOMCounter::ListStyle	DontDelete|ReadOnly
+  separator	DOMCounter::Separator	DontDelete|ReadOnly
+@end
+*/
 DOMCounter::~DOMCounter()
 {
-  counters.remove(counter.handle());
+  ScriptInterpreter::forgetDOMObject(counter.handle());
 }
 
-KJSO DOMCounter::tryGet(const UString &p) const
+Value DOMCounter::tryGet(ExecState *exec, const UString &p) const
 {
   if (p == "identifier")
     return getString(counter.identifier());
@@ -973,23 +1187,10 @@ KJSO DOMCounter::tryGet(const UString &p) const
   if (p == "separator")
     return getString(counter.separator());
 
-  return DOMObject::tryGet(p);
+  return DOMObject::tryGet(exec,p);
 }
 
-KJSO KJS::getDOMCounter(DOM::Counter c)
+Value KJS::getDOMCounter(ExecState *exec, DOM::Counter c)
 {
-  DOMCounter *ret;
-  if (c.isNull())
-    return Null();
-  else if ((ret = counters[c.handle()]))
-    return ret;
-  else {
-    ret = new DOMCounter(c);
-    counters.insert(c.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::Counter, KJS::DOMCounter>(exec, c);
 }
-
-
-
-

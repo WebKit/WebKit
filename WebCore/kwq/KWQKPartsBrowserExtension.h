@@ -86,7 +86,9 @@ struct URLArgs {
 
     QString frameName;
     QString serviceType;
-    
+    int xOffset;
+    int yOffset;
+
     URLArgs();
     URLArgs( const URLArgs &);
     URLArgs &operator=(const URLArgs &);    
@@ -147,6 +149,8 @@ public:
      
      void createNewWindow(const KURL &, const KParts::URLArgs &, 
         const KParts::WindowArgs &, KParts::ReadOnlyPart *&);
+
+     void setIconURL(const KURL &);
 
     // operators ---------------------------------------------------------------
 

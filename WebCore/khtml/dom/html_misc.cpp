@@ -22,13 +22,11 @@
  */
 // --------------------------------------------------------------------------
 
-#include "dom_string.h"
+#include "dom/html_misc.h"
+#include "html/html_miscimpl.h"
+#include "misc/htmlhashes.h"
 
-#include "html_misc.h"
-#include "html_miscimpl.h"
 using namespace DOM;
-
-#include "htmlhashes.h"
 
 HTMLBaseFontElement::HTMLBaseFontElement() : HTMLElement()
 {
@@ -152,10 +150,28 @@ Node HTMLCollection::base() const
     if ( !impl )
         return 0;
 
-    if ( static_cast<HTMLCollectionImpl*>( impl )->type == HTMLCollectionImpl::DOC_ALL )
-        return static_cast<HTMLCollectionImpl*>( impl )->base->firstChild();
-
     return static_cast<HTMLCollectionImpl*>( impl )->base;
+}
+
+Node HTMLCollection::firstItem() const
+{
+    if ( !impl )
+        return 0;
+    return static_cast<HTMLCollectionImpl*>( impl )->firstItem();
+}
+
+Node HTMLCollection::nextItem() const
+{
+    if ( !impl )
+        return 0;
+    return static_cast<HTMLCollectionImpl*>( impl )->nextItem();
+}
+
+Node HTMLCollection::nextNamedItem( const DOMString &name ) const
+{
+    if ( !impl )
+        return 0;
+    return static_cast<HTMLCollectionImpl*>( impl )->nextNamedItem( name );
 }
 
 HTMLCollectionImpl *HTMLCollection::handle() const

@@ -52,13 +52,13 @@ void KJavaProcess::received( const QByteArray& )
 }
 
 
-void khtml::Loader::requestDone( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
+void khtml::Loader::requestDone( khtml::DocLoader *, khtml::CachedObject *obj )
 {
     _logNotYetImplemented();
 }
 
 
-void khtml::Loader::requestFailed( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
+void khtml::Loader::requestFailed( khtml::DocLoader *, khtml::CachedObject *obj )
 {
     _logNotYetImplemented();
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -44,21 +44,12 @@ public:
 
     ~HTMLAppletElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *token);
-
+    virtual void parseAttribute(AttributeImpl *token);
     virtual void attach();
-    virtual void detach();
 
 protected:
-    DOMStringImpl *codeBase;
-    DOMStringImpl *name;
-    DOMStringImpl *code;
-    DOMStringImpl *archive;
-
-    KHTMLView *view;
     khtml::VAlign valign;
 };
 
@@ -71,19 +62,16 @@ public:
 
     ~HTMLEmbedElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *attr);
+    virtual void parseAttribute(AttributeImpl *attr);
 
     virtual void attach();
-    virtual void detach();
 
     QString url;
     QString pluginPage;
     QString serviceType;
     bool hidden;
-    QStringList param;
 };
 
 // -------------------------------------------------------------------------
@@ -95,17 +83,18 @@ public:
 
     ~HTMLObjectElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
     HTMLFormElementImpl *form() const;
 
-    virtual void parseAttribute(AttrImpl *token);
+    virtual void parseAttribute(AttributeImpl *token);
 
     virtual void attach();
     virtual void detach();
 
-    virtual void applyChanges(bool = true, bool = true);
+    virtual void recalcStyle( StyleChange ch );
+
+    DocumentImpl* contentDocument() const;
 
     QString serviceType;
     QString url;
@@ -123,10 +112,9 @@ public:
 
     ~HTMLParamElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *token);
+    virtual void parseAttribute(AttributeImpl *token);
 
     QString name() const { if(!m_name) return QString::null; return QConstString(m_name->s, m_name->l).string(); }
     QString value() const { if(!m_value) return QString::null; return QConstString(m_value->s, m_value->l).string(); }

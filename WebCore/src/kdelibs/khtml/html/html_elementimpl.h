@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,7 +24,7 @@
 #ifndef HTML_ELEMENTIMPL_H
 #define HTML_ELEMENTIMPL_H
 
-#include "dom_elementimpl.h"
+#include "xml/dom_elementimpl.h"
 
 namespace DOM {
 
@@ -40,24 +40,21 @@ public:
 
     virtual bool isHTMLElement() const { return true; }
 
-    // make it pure virtual...
-    virtual ushort id() const = 0;
+    virtual Id id() const = 0;
 
-    virtual void parseAttribute(AttrImpl *token);
+    virtual void parseAttribute(AttributeImpl *token);
 
-    void addCSSProperty( const DOMString &property, const DOMString &value, bool nonCSSHint = true);
     void addCSSLength(int id, const DOMString &value);
     void addCSSProperty(int id, const DOMString &value);
     void addCSSProperty(int id, int value);
-    void addCSSProperty(const DOMString &property);
-    DOMString getCSSProperty( int id );
     void removeCSSProperty(int id);
-    void removeCSSProperty(const DOMString &id);
 
     DOMString innerHTML() const;
     DOMString innerText() const;
     bool setInnerHTML( const DOMString &html );
     bool setInnerText( const DOMString &text );
+
+    virtual DOMString namespaceURI() const;
 
 protected:
     // for IMG, OBJECT and APPLET
@@ -71,8 +68,7 @@ public:
 
     virtual ~HTMLGenericElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const { return _id; };
+    virtual Id id() const { return _id; };
 
 protected:
     ushort _id;

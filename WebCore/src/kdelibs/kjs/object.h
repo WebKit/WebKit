@@ -1,6 +1,8 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -16,603 +18,572 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
  */
+
 
 #ifndef _KJS_OBJECT_H_
 #define _KJS_OBJECT_H_
 
-#include <stdlib.h>
+// Objects
 
-#include "ustring.h"
+#include "value.h"
+#include "types.h"
 
-/**
- * @short Main namespace
- */
 namespace KJS {
 
-  /**
-   * Types of classes derived from KJSO
-   */
-  enum Type { // main types
-              AbstractType = 1,
-              UndefinedType,
-	      NullType,
-	      BooleanType,
-	      NumberType,
-	      StringType,
-	      ObjectType,
-	      HostType,
-	      ReferenceType,
-              CompletionType,
-	      // extended types
-	      FunctionType,
-	      InternalFunctionType,
-	      DeclaredFunctionType,
-	      AnonymousFunctionType,
-	      ConstructorType,
-	      ActivationType
-  };
+  class ObjectImpPrivate;
+  class PropertyMap;
+  class HashTable;
+  class HashEntry;
+  class ListImp;
 
-  /**
-   * Property attributes.
-   */
+  // ECMA 262-3 8.6.1
+  // Attributes (only applicable to the Object type)
   enum Attribute { None       = 0,
-		   ReadOnly   = 1 << 1,
-		   DontEnum   = 1 << 2,
-		   DontDelete = 1 << 3,
-		   Internal   = 1 << 4 };
+		   ReadOnly   = 1 << 1, // property can be only read, not written
+		   DontEnum   = 1 << 2, // property doesn't appear in (for .. in ..)
+		   DontDelete = 1 << 3, // property can't be deleted
+		   Internal   = 1 << 4, // an internal property, set to by pass checks
+		   Function   = 1 << 5 }; // property is a function - only used by static hashtables
 
   /**
-   * Types of classes derived from @ref Object.
+   * Class Information
    */
-  enum Class { UndefClass,
-	       ArrayClass,
-	       StringClass,
-	       BooleanClass,
-	       NumberClass,
-	       ObjectClass,
-	       DateClass,
-	       RegExpClass,
-	       ErrorClass,
-	       FunctionClass };
-
-  /**
-   * Completion types.
-   */
-  enum Compl { Normal, Break, Continue, ReturnValue, Throw };
-
-  /**
-   * Error codes.
-   */
-  enum ErrorType { NoError = 0,
-		   GeneralError,
-		   EvalError,
-		   RangeError,
-		   ReferenceError,
-		   SyntaxError,
-		   TypeError,
-		   URIError };
-
-  extern const double NaN;
-  extern const double Inf;
-
-  // forward declarations
-  class Imp;
-  class Boolean;
-  class Number;
-  class String;
-  class Object;
-  struct Property;
-  class PropList;
-  class List;
-
-  /**
-   * @short Type information.
-   */
-  struct TypeInfo {
+  struct ClassInfo {
     /**
-     * A string denoting the type name. Example: "Number".
+     * A string denoting the class name. Example: "Window".
      */
-    const char *name;
+    const char* className;
     /**
-     * One of the @ref KJS::Type enums.
+     * Pointer to the class information of the base class.
+     * 0L if there is none.
      */
-    Type type;
+    const ClassInfo *parentClass;
     /**
-     * Pointer to the type information of the base class.
-     * NULL if there is none.
+     * Static hash-table of properties.
      */
-    const TypeInfo *base;
+    const HashTable *propHashTable;
     /**
-     * Additional specifier for your own use.
-     */
-    int extra;
-    /**
-     * Reserved for future extensions (internal).
+     * Reserved for future extension.
      */
     void *dummy;
   };
 
   /**
-   * @short Main base class for every KJS object.
+   * Represents an Object. This is a wrapper for ObjectImp
    */
-  class KJSO {
-    friend class ElementNode;
+  class Object : public Value {
   public:
-    /**
-     * Constructor.
-     */
-    KJSO();
-    /**
-     * @internal
-     */
-    KJSO(Imp *d);
-    /**
-     * Copy constructor.
-     */
-    KJSO(const KJSO &);
-    /*
-     * Assignment operator
-     */
-    KJSO& operator=(const KJSO &);
-    /**
-     * Destructor.
-     */
-    virtual ~KJSO();
-    /**
-     * @return True if this object is null, i.e. if there is no data attached
-     * to this object. Don't confuse this with the Null object.
-     */
-    bool isNull() const;
-    /**
-     * @return True if this objects is of any other value than Undefined.
-     */
-    bool isDefined() const;
-    /**
-     * @return the type of the object. One of the @ref KJS::Type enums.
-     */
-    Type type() const;
-    /**
-     * Check whether object is of a certain type
-     * @param t type to check for
-     */
-    bool isA(Type t) const { return (type() == t); }
-    /**
-     * Check whether object is of a certain type. Allows checking of
-     * host objects, too.
-     * @param type name (Number, Boolean etc.)
-     */
-    bool isA(const char *s) const;
-    /**
-     * Use this method when checking for objects. It's safer than checking
-     * for a single object type with @ref isA().
-     */
-    bool isObject() const;
-    /**
-     * Examine the inheritance structure of this object.
-     * @param t Name of the base class.
-     * @return True if object is of type t or a derived from such a type.
-     */
-    bool derivedFrom(const char *s) const;
-
-    /**
-     * @return Conversion to primitive type (Undefined, Boolean, Number
-     * or String)
-     * @param preferred Optional hint. Either StringType or NumberType.
-     */
-    KJSO toPrimitive(Type preferred = UndefinedType) const; // ECMA 9.1
-    /**
-     * @return Conversion to Boolean type.
-     */
-    Boolean toBoolean() const; // ECMA 9.2
-    /**
-     * @return Conversion to Number type.
-     */
-    Number toNumber() const; // ECMA 9.3
-    /**
-     * @return Conversion to double. 0.0 if conversion failed.
-     */
-    double round() const;
-    /**
-     * @return Conversion to Number type containing an integer value.
-     */
-    Number toInteger() const; // ECMA 9.4
-    /**
-     * @return Conversion to signed integer value.
-     */
-    int toInt32() const; // ECMA 9.5
-    /**
-     * @return Conversion to unsigned integer value.
-     */
-    unsigned int toUInt32() const; // ECMA 9.6
-    /**
-     * @return Conversion to unsigned short value.
-     */
-    unsigned short toUInt16() const; // ECMA 9.7
-    /**
-     * @return Conversion to String type.
-     */
-    String toString() const; // ECMA 9.8
-    /**
-     * @return Conversion to Object type.
-     */
-    Object toObject() const; // ECMA 9.9
-
-    // Properties
-    /**
-     * Set the internal [[Prototype]] property of this object.
-     * @param p A prototype object.
-     */
-    void setPrototype(const KJSO &p);
-    /**
-     * Set the "prototype" property of this object. Different from
-     * the internal [[Prototype]] property.
-     * @param p A prototype object.
-     */
-    void setPrototypeProperty(const KJSO &p);
-    /**
-     * @return The internal [[prototype]] property.
-     */
-    KJSO prototype() const;
-    /**
-     * The internal [[Get]] method.
-     * @return The value of property p.
-     */
-    KJSO get(const UString &p) const;
-    /**
-     * The internal [[HasProperty]] method.
-     * @param p Property name.
-     * @param recursive Indicates whether prototypes are searched as well.
-     * @return Boolean value indicating whether the object already has a
-     * member with the given name p.
-     */
-    bool hasProperty(const UString &p, bool recursive = true) const;
-    /**
-     * The internal [[Put]] method. Sets the specified property to the value v.
-     * @param p Property name.
-     * @param v Value.
-     */
-    void put(const UString &p, const KJSO& v);
-    /**
-     * The internal [[CanPut]] method.
-     * @param p Property name.
-     * @return A boolean value indicating whether a [[Put]] operation with
-     * p succeed.
-     */
-    bool canPut(const UString &p) const;
-    /**
-     * The internal [[Delete]] method. Removes the specified property from
-     * the object.
-     * @param p Property name.
-     * @return True if the property was deleted successfully or didn't exist
-     * in the first place. False if the DontDelete attribute was set.
-     */
-    bool deleteProperty(const UString &p);
-    /**
-     * Same as above put() method except the additional attribute. Right now,
-     * this only works with native types as Host Objects don't reimplement
-     * this method.
-     * @param attr One of @ref KJS::Attribute.
-     */
-    void put(const UString &p, const KJSO& v, int attr);
-    /**
-     * Convenience function for adding a Number property constructed from
-     * a double value.
-     */
-    void put(const UString &p, double d, int attr = None);
-    /**
-     * Convenience function for adding a Number property constructed from
-     * an integer value.
-     */
-    void put(const UString &p, int i, int attr = None);
-    /**
-     * Convenience function for adding a Number property constructed from
-     * an unsigned integer value.
-     */
-    void put(const UString &p, unsigned int u, int attr = None);
-
-    /**
-     * Reference method.
-     * @return Reference base if object is a reference. Throws
-     * a ReferenceError otherwise.
-     */
-    KJSO getBase() const;
-    /**
-     * Reference method.
-     * @return Property name of a reference. Null string if object is not
-     * a reference.
-     */
-    UString getPropertyName() const;
-    /**
-     * Reference method.
-     * @return Referenced value. This object if no reference.
-     */
-    KJSO getValue() const;
-    KJSO getValue();  	/* TODO: remove in next version */
-    /**
-     * Reference method. Set referenced value to v.
-     */
-    ErrorType putValue(const KJSO& v);
-
-    /**
-     * @return True if object supports @ref executeCall() method. That's the
-     * case for all objects derived from FunctionType.
-     */
-    bool implementsCall() const;
-    /**
-     * Execute function implemented via the @ref Function::execute() method.
-     *
-     * Note: check availability via @ref implementsCall() beforehand.
-     * @param thisV Object serving as the 'this' value.
-     * @param args Pointer to the list of arguments or null.
-     * @return Result of the function call.
-     */
-    KJSO executeCall(const KJSO &thisV, const List *args);
-    KJSO executeCall(const KJSO &thisV, const List *args, const List *extraScope) const;
-
-    /**
-     * Set this object's constructor.
-     */
-    void setConstructor(KJSO c);
-
-    /**
-     * @return A Pointer to the internal implementation.
-     */
-    Imp *imp() const { return rep; }
-
-#ifdef KJS_DEBUG_MEM
-    /**
-     * @internal
-     */
-    static int count;
-#endif
-  protected:
-    /**
-     * Pointer to the internal implementation.
-     */
-    Imp *rep;
-
-  private:
-    void putArrayElement(const UString &p, const KJSO &v);
-  }; // end of KJSO
-
-  /**
-   * @short Base for all implementation classes.
-   */
-  class Imp {
-    friend class KJSO;
-    friend class Collector;
-    friend class ForInNode;
-    friend class Debugger;
-  public:
-    Imp();
-  public:
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const; // ECMA 9.1
-    virtual Boolean toBoolean() const; // ECMA 9.2
-    virtual Number toNumber() const; // ECMA 9.3
-    virtual String toString() const; // ECMA 9.8
-    virtual Object toObject() const; // ECMA 9.9
-
-    // properties
-    virtual KJSO get(const UString &p) const;
-    virtual bool hasProperty(const UString &p, bool recursive = true) const;
-    virtual void put(const UString &p, const KJSO& v);
-    void put(const UString &p, const KJSO& v, int attr);
-    virtual bool canPut(const UString &p) const;
-    virtual bool deleteProperty(const UString &p);
-    virtual KJSO defaultValue(Type hint) const;
-
-    bool implementsCall() const;
-
-    /**
-     * @internal Reserved for mark & sweep garbage collection
-     */
-    virtual void mark(Imp *imp = 0L);
-    bool marked() const;
-
-    Type type() const { return typeInfo()->type; }
-    /**
-     * @return The TypeInfo struct describing this object.
-     */
-    virtual const TypeInfo* typeInfo() const { return &info; }
-
-    void setPrototype(const KJSO& p);
-    Imp* prototype() const { return proto; }
-    void setPrototypeProperty(const KJSO &p);
-    void setConstructor(const KJSO& c);
-
-    void* operator new(size_t);
-    void operator delete(void*);
-    /**
-     * @deprecated
-     */
-    void operator delete(void*, size_t);
-
-#ifdef KJS_DEBUG_MEM
-    /**
-     * @internal
-     */
-    static int count;
-#endif
-  protected:
-    virtual ~Imp();
-  private:
-    Imp(const Imp&);
-    Imp& operator=(const Imp&);
-    void putArrayElement(const UString &p, const KJSO& v);
-
-    /**
-     * Get the property names for this object. To be used by for .. in loops
-     * @return The (pointer to the) first element of a PropList, to be deleted
-     * by the caller, or 0 if there are no enumerable properties
-     */
-    PropList *propList(PropList *first = 0L, PropList *last = 0L,
-		       bool recursive = true) const;
-
-  public:
-    // reference counting mechanism
-    inline Imp* ref() { refcount++; return this; }
-    inline bool deref() { return (!--refcount); }
-    unsigned int refcount;
-
-  private:
-    Property *prop;
-    Imp *proto;
-    static const TypeInfo info;
-
-    // reserved for memory managment - currently used as flags for garbage collection
-    // (prev != 0) = marked, (next != 0) = created, (next != this) = created and gc allowed
-    Imp *prev, *next;
-    // for future extensions
-    class ImpInternal;
-    ImpInternal *internal;
-
-    void setMarked(bool m);
-    void setGcAllowed(bool a);
-    bool gcAllowed() const;
-    void setCreated(bool c);
-    bool created() const;
-  };
-
-  /**
-   * @short General implementation class for Objects
-   */
-  class ObjectImp : public Imp {
-    friend class Object;
-  public:
-    ObjectImp(Class c);
-    ObjectImp(Class c, const KJSO &v);
-    ObjectImp(Class c, const KJSO &v, const KJSO &p);
-    virtual ~ObjectImp();
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
-
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-    /**
-     * @internal Reimplemenation of @ref Imp::mark().
-     */
-    virtual void mark(Imp *imp = 0L);
-  private:
-    Class cl;
-    Imp *val;
-  };
-
-  /**
-   * @short Object class encapsulating an internal value.
-   */
-  class Object : public KJSO {
-  public:
-    Object(Imp *d);
-    Object(Class c = UndefClass);
-    Object(Class c, const KJSO& v);
-    Object(Class c, const KJSO& v, const Object& p);
+    Object();
+    explicit Object(ObjectImp *v);
+    Object(const Object &v);
     virtual ~Object();
-    void setClass(Class c);
-    Class getClass() const;
-    void setInternalValue(const KJSO& v);
-    KJSO internalValue();
-    static Object create(Class c);
-    static Object create(Class c, const KJSO& val);
-    static Object create(Class c, const KJSO& val, const Object &p);
-    static Object dynamicCast(const KJSO &obj);
-  };
 
-  /**
-   * @short Implementation base class for Host Objects.
-   */
-  class HostImp : public Imp {
-  public:
-    HostImp();
-    virtual ~HostImp();
-    virtual const TypeInfo* typeInfo() const { return &info; }
+    Object& operator=(const Object &v);
 
-    virtual Boolean toBoolean() const;
-    virtual String toString() const;
+    virtual const ClassInfo *classInfo() const;
+    bool inherits(const ClassInfo *cinfo) const;
 
-    static const TypeInfo info;
-  };
-
-  class KJScriptImp;
-  /**
-   * The Global object represents the global namespace. It holds the native
-   * objects like String and functions like eval().
-   *
-   * It also serves as a container for variables created by the user, i.e.
-   * the statement
-   * <pre>
-   *   var i = 2;
-   * </pre>
-   * will basically perform a Global::current().put("i", Number(2)); operation.
-   *
-   * @short Unique global object containing initial native properties.
-   */
-  class Global : public Object {
-    friend class KJScriptImp;
-  public:
     /**
-     * Constructs a Global object. This is done by the interpreter once and
-     * there should be no need to create an instance on your own. Usually,
-     * you'll just want to access the current instance.
-     * For example like this:
-     * <pre>
-     * Global global(Global::current());
-     * KJSO proto = global.objectPrototype();
-     * </pre>
-     */
-    Global();
-    /**
-     * Destruct the Global object.
-     */
-    virtual ~Global();
-    /**
-     * @return A reference to the Global object belonging to the current
-     * interpreter instance.
-     */
-    static Global current();
-    /**
-     * @return A handle to Object.prototype.
-     */
-    KJSO objectPrototype() const;
-    /**
-     * @return A handle to Function.prototype.
-     */
-    KJSO functionPrototype() const;
-    /**
-     * Set a filter object that will intercept all put() and get() calls
-     * to the global object. If this object returns Undefined on get() the
-     * request will be passed on the global object.
-     * @deprecated
-     */
-    void setFilter(const KJSO &f);
-    /**
-     * Return a handle to the filter object (see @ref setFilter()).
-     * Null if no filter has been installed.
-     * @deprecated
-     */
-    KJSO filter() const;
-    /**
-     * Returns the extra user data set for this global object. Null by default.
-     * Typical usage if you need to query any info related to the currently
-     * running interpreter:
+     * Converts a Value into an Object. If the value's type is not ObjectType,
+     * a null object will be returned (i.e. one with it's internal pointer set
+     * to 0). If you do not know for sure whether the value is of type
+     * ObjectType, you should check the @ref isNull() methods afterwards before
+     * calling any methods on the Object.
      *
-     *    MyMainWindow *m = (MyMainWindow*)Global::current().extra();
+     * @return The value converted to an object
      */
-    void *extra() const;
+    static Object dynamicCast(const Value &v);
+
     /**
-     * Set the extra user data for this global object. It's not used by the
-     * interpreter itself and can therefore be used to bind arbitrary data
-     * to each interpreter instance.
+     * Returns the prototype of this object. Note that this is not the same as
+     * the "prototype" property.
+     *
+     * See ECMA 8.6.2
+     *
+     * @return The object's prototype
      */
-    void setExtra(void *e);
-  private:
-    Global(void *);
-    void init();
-    void clear();
+    Value prototype() const;
+
+    /**
+     * Returns the class name of the object
+     *
+     * See ECMA 8.6.2
+     *
+     * @return The object's class name
+     */
+    UString className() const;
+
+    /**
+     * Retrieves the specified property from the object. If neither the object
+     * or any other object in it's prototype chain have the property, this
+     * function will return Undefined.
+     *
+     * See ECMA 8.6.2.1
+     *
+     * @param exec The current execution state
+     * @param propertyName The name of the property to retrieve
+     *
+     * @return The specified property, or Undefined
+     */
+    Value get(ExecState *exec, const UString &propertyName) const;
+
+    /**
+     * Sets the specified property.
+     *
+     * See ECMA 8.6.2.2
+     *
+     * @param exec The current execution state
+     * @param propertyName The name of the property to set
+     * @param propertyValue The value to set
+     */
+    void put(ExecState *exec, const UString &propertyName,
+             const Value &value, int attr = None);
+
+    /**
+     * Used to check whether or not a particular property is allowed to be set
+     * on an object
+     *
+     * See ECMA 8.6.2.3
+     *
+     * @param exec The current execution state
+     * @param propertyName The name of the property
+     * @return true if the property can be set, otherwise false
+     */
+    bool canPut(ExecState *exec, const UString &propertyName) const;
+
+    /**
+     * Checks to see whether the object (or any object in it's prototype chain)
+     * has a property with the specified name.
+     *
+     * See ECMA 8.6.2.4
+     *
+     * @param exec The current execution state
+     * @param propertyName The name of the property to check for
+     * @return true if the object has the property, otherwise false
+     */
+    bool hasProperty(ExecState *exec, const UString &propertyName,
+                     bool recursive = true) const;
+
+    /**
+     * Removes the specified property from the object.
+     *
+     * See ECMA 8.6.2.5
+     *
+     * @param exec The current execution state
+     * @param propertyName The name of the property to delete
+     * @return true if the property was successfully deleted or did not
+     * exist on the object. false if deleting the specified property is not
+     * allowed.
+     */
+    bool deleteProperty(ExecState *exec, const UString &propertyName);
+
+    /**
+     * Converts the object into a primitive value. The value return may differ
+     * depending on the supplied hint
+     *
+     * See ECMA 8.6.2.6
+     *
+     * @param exec The current execution state
+     * @param hint The desired primitive type to convert to
+     * @return A primitive value converted from the objetc. Note that the
+     * type of primitive value returned may not be the same as the requested
+     * hint.
+     */
+    Value defaultValue(ExecState *exec, Type hint) const;
+
+    /**
+     * Whether or not the object implements the construct() method. If this
+     * returns false you should not call the construct() method on this
+     * object (typically, an assertion will fail to indicate this).
+     *
+     * @return true if this object implements the construct() method, otherwise
+     * false
+     */
+    bool implementsConstruct() const;
+
+    /**
+     * Creates a new object based on this object. Typically this means the
+     * following:
+     * 1. A new object is created
+     * 2. The prototype of the new object is set to the value of this object's
+     *    "prototype" property
+     * 3. The call() method of this object is called, with the new object
+     *    passed as the this value
+     * 4. The new object is returned
+     *
+     * In some cases, Host objects may differ from these semantics, although
+     * this is discouraged.
+     *
+     * If an error occurs during construction, the execution state's exception
+     * will be set. This can be tested for with @ref ExecState::hadException().
+     * Under some circumstances, the exception object may also be returned.
+     *
+     * Note: This function should not be called if implementsConstruct() returns
+     * false, in which case it will result in an assertion failure.
+     *
+     * @param exec The current execution state
+     * @param args The arguments to be passed to call() once the new object has
+     * been created
+     * @return The newly created &amp; initialized object
+     */
+    Object construct(ExecState *exec, const List &args);
+
+    /**
+     * Whether or not the object implements the call() method. If this returns
+     * false you should not call the call() method on this object (typically,
+     * an assertion will fail to indicate this).
+     *
+     * @return true if this object implements the call() method, otherwise
+     * false
+     */
+    bool implementsCall() const;
+
+
+    /**
+     * Calls this object as if it is a function.
+     *
+     * Note: This function should not be called if implementsCall() returns
+     * false, in which case it will result in an assertion failure.
+     *
+     * See ECMA 8.6.2.3
+     *
+     * @param exec The current execution state
+     * @param thisObj The obj to be used as "this" within function execution.
+     * Note that in most cases this will be different from the C++ "this"
+     * object. For example, if the ECMAScript code "window.location.toString()"
+     * is executed, call() will be invoked on the C++ object which implements
+     * the toString method, with the thisObj being window.location
+     * @param args List of arguments to be passed to the function
+     * @return The return value from the function
+     */
+    Value call(ExecState *exec, Object &thisObj, const List &args);
+
+    /**
+     * Whether or not the object implements the hasInstance() method. If this
+     * returns false you should not call the hasInstance() method on this
+     * object (typically, an assertion will fail to indicate this).
+     *
+     * @return true if this object implements the hasInstance() method,
+     * otherwise false
+     */
+    bool implementsHasInstance() const;
+
+    /**
+     * Checks whether value delegates behaviour to this object. Used by the
+     * instanceof operator.
+     *
+     * @param exec The current execution state
+     * @param value The value to check
+     * @return true if value delegates behaviour to this object, otherwise
+     * false
+     */
+    Boolean hasInstance(ExecState *exec, const Value &value);
+
+    /**
+     * Returns the scope of this object. This is used when execution declared
+     * functions - the execution context for the function is initialized with
+     * extra object in it's scope. An example of this is functions declared
+     * inside other functions:
+     *
+     * function f() {
+     *
+     *   function b() {
+     *     return prototype;
+     *   }
+     *
+     *   var x = 4;
+     *   // do some stuff
+     * }
+     * f.prototype = new String();
+     *
+     * When the function f.b is executed, its scope will include properties of
+     * f. So in the example above the return value of f.b() would be the new
+     * String object that was assigned to f.prototype.
+     *
+     * @param exec The current execution state
+     * @return The function's scope
+     */
+    const List scope() const;
+    void setScope(const List &s);
+
+    /**
+     * Returns a List of References to all the properties of the object. Used
+     * in "for x in y" statements. The list is created new, so it can be freely
+     * modified without affecting the object's properties. It should be deleted
+     * by the caller.
+     *
+     * Subclasses can override this method in ObjectImpl to provide the
+     * appearance of
+     * having extra properties other than those set specifically with put().
+     *
+     * @param exec The current execution state
+     * @param recursive Whether or not properties in the object's prototype
+     * chain should be
+     * included in the list.
+     * @return A List of References to properties of the object.
+     **/
+    List propList(ExecState *exec, bool recursive = true);
+
+    /**
+     * Returns the internal value of the object. This is used for objects such
+     * as String and Boolean which are wrappers for native types. The interal
+     * value is the actual value represented by the wrapper objects.
+     *
+     * @see ECMA 8.6.2
+     * @return The internal value of the object
+     */
+    Value internalValue() const;
+
+    /**
+     * Sets the internal value of the object
+     *
+     * @see internalValue()
+     *
+     * @param v The new internal value
+     */
+    void setInternalValue(const Value &v);
   };
+
+  class ObjectImp : public ValueImp {
+  public:
+    /**
+     * Creates a new ObjectImp with the specified prototype
+     *
+     * @param proto The prototype
+     */
+    ObjectImp(const Object &proto);
+
+    /**
+     * Creates a new ObjectImp with a prototype of Null()
+     * (that is, the ECMAScript "null" value, not a null Object).
+     *
+     */
+    ObjectImp();
+
+    virtual ~ObjectImp();
+
+    virtual void mark();
+
+    Type type() const;
+
+    /**
+     * A pointer to a ClassInfo struct for this class. This provides a basic
+     * facility for run-time type information, and can be used to check an
+     * object's class an inheritance (see @ref inherits()). This should
+     * always return a statically declared pointer, or 0 to indicate that
+     * there is no class information.
+     *
+     * This is primarily useful if you have application-defined classes that you
+     * wish to check against for casting purposes.
+     *
+     * For example, to specify the class info for classes FooImp and BarImp,
+     * where FooImp inherits from BarImp, you would add the following in your
+     * class declarations:
+     *
+     *   class BarImp : public ObjectImp {
+     *     virtual const ClassInfo *classInfo() const { return &info; }
+     *     static const ClassInfo info;
+     *     // ...
+     *   };
+     *
+     *   class FooImp : public ObjectImp {
+     *     virtual const ClassInfo *classInfo() const { return &info; }
+     *     static const ClassInfo info;
+     *     // ...
+     *   };
+     *
+     * And in your source file:
+     *
+     *   const ClassInfo BarImp::info = {0, 0, 0}; // no parent class
+     *   const ClassInfo FooImp::info = {&BarImp::info, 0, 0};
+     *
+     * @see inherits()
+     */
+    virtual const ClassInfo *classInfo() const;
+
+    /**
+     * Checks whether this object inherits from the class with the specified
+     * classInfo() pointer. This requires that both this class and the other
+     * class return a non-NULL pointer for their classInfo() methods (otherwise
+     * it will return false).
+     *
+     * For example, for two ObjectImp pointers obj1 and obj2, you can check
+     * if obj1's class inherits from obj2's class using the following:
+     *
+     *   if (obj1->inherits(obj2->classInfo())) {
+     *     // ...
+     *   }
+     *
+     * If you have a handle to a statically declared ClassInfo, such as in the
+     * @ref classInfo() example, you can check for inheritance without needing
+     * an instance of the other class:
+     *
+     *   if (obj1->inherits(FooImp::info)) {
+     *     // ...
+     *   }
+     *
+     * @param cinfo The ClassInfo pointer for the class you want to check
+     * inheritance against.
+     * @return true if this object's class inherits from class with the
+     * ClassInfo pointer specified in cinfo
+     */
+    bool inherits(const ClassInfo *cinfo) const;
+
+    // internal properties (ECMA 262-3 8.6.2)
+
+    /**
+     * Implementation of the [[Prototype]] internal property (implemented by
+     * all Objects)
+     *
+     * @see Object::prototype()
+     */
+    Value prototype() const;
+    void setPrototype(const Value &proto);
+
+    /**
+     * Implementation of the [[Class]] internal property (implemented by all
+     * Objects)
+     *
+     * The default implementation uses classInfo().
+     * You should either implement @ref classInfo(), or
+     * if you simply need a classname, you can reimplement @ref className()
+     * instead.
+     *
+     * @see Object::className()
+     */
+    virtual UString className() const;
+
+    /**
+     * Implementation of the [[Get]] internal property (implemented by all
+     * Objects)
+     *
+     * @see Object::get()
+     */
+    // [[Get]] - must be implemented by all Objects
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+
+    /**
+     * Implementation of the [[Put]] internal property (implemented by all
+     * Objects)
+     *
+     * @see Object::put()
+     */
+    virtual void put(ExecState *exec, const UString &propertyName,
+                     const Value &value, int attr = None);
+
+    /**
+     * Implementation of the [[CanPut]] internal property (implemented by all
+     * Objects)
+     *
+     * @see Object::canPut()
+     */
+    virtual bool canPut(ExecState *exec, const UString &propertyName) const;
+
+    /**
+     * Implementation of the [[HasProperty]] internal property (implemented by
+     * all Objects)
+     *
+     * @see Object::hasProperty()
+     */
+    virtual bool hasProperty(ExecState *exec, const UString &propertyName,
+                             bool recursive = true) const;
+
+    /**
+     * Implementation of the [[Delete]] internal property (implemented by all
+     * Objects)
+     *
+     * @see Object::deleteProperty()
+     */
+    virtual bool deleteProperty(ExecState *exec,
+                                const UString &propertyName);
+
+    /**
+     * Remove all properties from this object.
+     * This doesn't take DontDelete into account, and isn't in the ECMA spec.
+     * It's simply a quick way to remove everything before destroying.
+     */
+    void deleteAllProperties( ExecState * );
+
+    /**
+     * Implementation of the [[DefaultValue]] internal property (implemented by
+     * all Objects)
+     *
+     * @see Object::defaultValue()
+     */
+    virtual Value defaultValue(ExecState *exec, Type hint) const;
+
+    virtual bool implementsConstruct() const;
+    /**
+     * Implementation of the [[Construct]] internal property
+     *
+     * @see Object::construct()
+     */
+    virtual Object construct(ExecState *exec, const List &args);
+
+    virtual bool implementsCall() const;
+    /**
+     * Implementation of the [[Call]] internal property
+     *
+     * @see Object::call()
+     */
+    virtual Value call(ExecState *exec, Object &thisObj,
+                       const List &args);
+
+    virtual bool implementsHasInstance() const;
+    /**
+     * Implementation of the [[HasInstance]] internal property
+     *
+     * @see Object::hasInstance()
+     */
+    virtual Boolean hasInstance(ExecState *exec, const Value &value);
+
+    /**
+     * Implementation of the [[Scope]] internal property
+     *
+     * @see Object::scope()
+     */
+    const List scope() const;
+    void setScope(const List &s);
+
+    List propList(ExecState *exec, bool recursive = true);
+
+    Value internalValue() const;
+    void setInternalValue(const Value &v);
+
+    Value toPrimitive(ExecState *exec,
+                      Type preferredType = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    int toInteger(ExecState *exec) const;
+    int toInt32(ExecState *exec) const;
+    unsigned int toUInt32(ExecState *exec) const;
+    unsigned short toUInt16(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    ValueImp* getDirect(const UString& propertyName) const;
+  private:
+    const HashEntry* findPropertyHashEntry( const UString& propertyName ) const;
+    ObjectImpPrivate *_od;
+    PropertyMap *_prop;
+    ValueImp *_proto;
+    ValueImp *_internalValue;
+    ListImp *_scope;
+  };
+
+  /**
+   * Types of Native Errors available. For custom errors, GeneralError
+   * should be used.
+   */
+  enum ErrorType { GeneralError   = 0,
+		   EvalError      = 1,
+		   RangeError     = 2,
+		   ReferenceError = 3,
+		   SyntaxError    = 4,
+		   TypeError      = 5,
+		   URIError       = 6};
 
   /**
    * @short Factory methods for error objects.
@@ -620,21 +591,24 @@ namespace KJS {
   class Error {
   public:
     /**
-     * Factory method for error objects. The error will be registered globally
-     * and the execution will continue as if a "throw" statement was
-     * encountered.
-     * @param e Type of error.
-     * @param m Optional error message.
-     * @param l Optional line number.
+     * Factory method for error objects.
+     *
+     * @param exec The current execution state
+     * @param errtype Type of error.
+     * @param message Optional error message.
+     * @param lineno Optional line number.
+     * @param lineno Optional source id.
      */
-    static KJSO create(ErrorType e, const char *m = 0, int l = -1);
+    static Object create(ExecState *exec, ErrorType errtype = GeneralError,
+                         const char *message = 0, int lineno = -1,
+                         int sourceId = -1);
+
     /**
-     * Same as above except the different return type (which is not casted
-     * here).
+     * Array of error names corresponding to @ref ErrorType
      */
-    static Object createObject(ErrorType e, const char *m = 0, int l = -1);
+    static const char * const * const errorNames;
   };
 
 }; // namespace
 
-#endif
+#endif // _KJS_OBJECT_H_

@@ -22,11 +22,11 @@
  */
 // --------------------------------------------------------------------------
 
-#include "html_list.h"
-#include "html_listimpl.h"
-using namespace DOM;
+#include "dom/html_list.h"
+#include "html/html_listimpl.h"
+#include "misc/htmlhashes.h"
 
-#include "htmlhashes.h"
+using namespace DOM;
 
 HTMLDListElement::HTMLDListElement() : HTMLElement()
 {

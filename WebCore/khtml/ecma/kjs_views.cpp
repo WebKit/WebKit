@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -17,72 +18,68 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "kjs_views.h"
-#include "kjs_css.h"
-#include <qptrdict.h>
-#include <dom2_events.h>
+#include "ecma/kjs_views.h"
+#include "ecma/kjs_views.lut.h"
+#include "ecma/kjs_css.h"
 
 using namespace KJS;
 
-QPtrDict<DOMAbstractView> abstractViews;
-
 // -------------------------------------------------------------------------
 
-const TypeInfo DOMAbstractView::info = { "AbstractView", HostType, 0, 0, 0 };
-
+const ClassInfo DOMAbstractView::info = { "AbstractView", 0, &DOMAbstractViewTable, 0 };
+/*
+@begin DOMAbstractViewTable 2
+  document		DOMAbstractView::Document		DontDelete|ReadOnly
+  getComputedStyle	DOMAbstractView::GetComputedStyle	DontDelete|Function 2
+@end
+*/
+IMPLEMENT_PROTOFUNC(DOMAbstractViewFunc)
 
 DOMAbstractView::~DOMAbstractView()
 {
-  abstractViews.remove(abstractView.handle());
+  ScriptInterpreter::forgetDOMObject(abstractView.handle());
 }
 
-KJSO DOMAbstractView::tryGet(const UString &p) const
+Value DOMAbstractView::tryGet(ExecState *exec, const UString &p) const
 {
-  if (p == "document")
-    return getDOMNode(abstractView.document());
-  else if (p == "getComputedStyle")
-    return new DOMAbstractViewFunc(abstractView,DOMAbstractViewFunc::GetComputedStyle);
+  if ( p == "document" )
+    return getDOMNode(exec,abstractView.document());
+  else if ( p == "getComputedStyle" )
+    return lookupOrCreateFunction<DOMAbstractViewFunc>(exec,p,this,DOMAbstractView::GetComputedStyle,2,DontDelete|Function);
   else
-    return DOMObject::tryGet(p);
+    return DOMObject::tryGet(exec,p);
 }
 
-Completion DOMAbstractViewFunc::tryExecute(const List &args)
+Value DOMAbstractViewFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  KJSO result;
-
+  if (!thisObj.inherits(&KJS::DOMAbstractView::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  DOM::AbstractView abstractView = static_cast<DOMAbstractView *>(thisObj.imp())->toAbstractView();
   switch (id) {
-    case GetComputedStyle: {
+    case DOMAbstractView::GetComputedStyle: {
         DOM::Node arg0 = toNode(args[0]);
         if (arg0.nodeType() != DOM::Node::ELEMENT_NODE)
-          result = Undefined(); // throw exception?
+          return Undefined(); // throw exception?
         else
-          result = getDOMCSSStyleDeclaration(abstractView.getComputedStyle(static_cast<DOM::Element>(arg0),
-									   args[1].toString().value().string()));
+          return getDOMCSSStyleDeclaration(exec,abstractView.getComputedStyle(static_cast<DOM::Element>(arg0),
+                                                                              args[1].toString(exec).string()));
       }
-      break;
   }
-
-  return Completion(ReturnValue, result);
+  return Undefined();
 }
 
-KJSO KJS::getDOMAbstractView(DOM::AbstractView av)
+Value KJS::getDOMAbstractView(ExecState *exec, DOM::AbstractView av)
 {
-  DOMAbstractView *ret;
-  if (av.isNull())
-    return Null();
-  else if ((ret = abstractViews[av.handle()]))
-    return ret;
-  else {
-    ret = new DOMAbstractView(av);
-    abstractViews.insert(av.handle(),ret);
-    return ret;
-  }
+  return cacheDOMObject<DOM::AbstractView, DOMAbstractView>(exec, av);
 }
 
-
-DOM::AbstractView KJS::toAbstractView (const KJSO& obj)
+DOM::AbstractView KJS::toAbstractView (const Value& val)
 {
-  if (!obj.derivedFrom("AbstractView"))
+  Object obj = Object::dynamicCast(val);
+  if (obj.isNull() || !obj.inherits(&DOMAbstractView::info))
     return DOM::AbstractView ();
 
   const DOMAbstractView  *dobj = static_cast<const DOMAbstractView *>(obj.imp());

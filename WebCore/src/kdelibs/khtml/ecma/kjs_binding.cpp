@@ -18,32 +18,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <qptrdict.h>
-#include <kdebug.h>
-
-#include <kjs/kjs.h>
-#include <kjs/object.h>
-#include <kjs/function.h>
-#include <kjs/operations.h>
-
-#include <khtml_part.h>
-#include <html_element.h>
-#include <html_head.h>
-#include <html_inline.h>
-#include <html_image.h>
-#include <dom_string.h>
-#include <dom_exception.h>
-#include <html_misc.h>
-#include <css_stylesheet.h>
-#include <dom2_events.h>
-#include <dom2_range.h>
-
 #include "kjs_binding.h"
 #include "kjs_dom.h"
-#include "kjs_html.h"
-#include "kjs_text.h"
-#include "kjs_window.h"
-#include "kjs_navigator.h"
+#include <kjs/internal.h> // for InterpreterImp
+
+#include "dom/dom_exception.h"
+#include "dom/dom2_range.h"
+#include "xml/dom2_eventsimpl.h"
+
+#include <kdebug.h>
 
 using namespace KJS;
 
@@ -55,13 +38,18 @@ using namespace KJS;
  * these may be CSS exceptions - need to check - pmk
  */
 
-KJSO DOMObject::get(const UString &p) const
+Value DOMObject::get(ExecState *exec, const UString &p) const
 {
-  KJSO result;
+  Value result;
   try {
-    result = tryGet(p);
+    result = tryGet(exec,p);
   }
   catch (DOM::DOMException e) {
+    // ### translate code into readable string ?
+    // ### oh, and s/QString/i18n or I18N_NOOP (the code in kjs uses I18N_NOOP... but where is it translated ?)
+    //     and where does it appear to the user ?
+    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    exec->setException( err );
     result = Undefined();
   }
   catch (...) {
@@ -72,32 +60,36 @@ KJSO DOMObject::get(const UString &p) const
   return result;
 }
 
-void DOMObject::put(const UString &p, const KJSO& v)
+void DOMObject::put(ExecState *exec, const UString &propertyName,
+                    const Value &value, int attr)
 {
   try {
-    tryPut(p,v);
+    tryPut(exec, propertyName, value, attr);
   }
   catch (DOM::DOMException e) {
+    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    exec->setException(err);
   }
   catch (...) {
     kdError(6070) << "Unknown exception in DOMObject::put()" << endl;
   }
 }
 
-// should rather overload HostImp::toString() this way
-String DOMObject::toString() const
+UString DOMObject::toString(ExecState *) const
 {
-  return String("[object " + UString(typeInfo()->name) + "]");
+  return "[object " + className() + "]";
 }
 
-KJSO DOMFunction::get(const UString &p) const
+Value DOMFunction::get(ExecState *exec, const UString &propertyName) const
 {
-  KJSO result;
+  Value result;
   try {
-    result = tryGet(p);
+    result = tryGet(exec, propertyName);
   }
   catch (DOM::DOMException e) {
     result = Undefined();
+    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    exec->setException(err);
   }
   catch (...) {
     kdError(6070) << "Unknown exception in DOMFunction::get()" << endl;
@@ -107,40 +99,103 @@ KJSO DOMFunction::get(const UString &p) const
   return result;
 }
 
-Completion DOMFunction::execute(const List &args)
+Value DOMFunction::call(ExecState *exec, Object &thisObj, const List &args)
 {
-  Completion completion;
+  Value val;
   try {
-    completion = tryExecute(args);
+    val = tryCall(exec, thisObj, args);
   }
   // pity there's no way to distinguish between these in JS code
   catch (DOM::DOMException e) {
-    KJSO v = Error::create(GeneralError);
-    v.put("code", Number(e.code));
-    completion = Completion(Throw, v);
+    Object err = Error::create(exec, GeneralError, QString("DOM Exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
+    exec->setException(err);
   }
   catch (DOM::RangeException e) {
-    KJSO v = Error::create(GeneralError);
-    v.put("code", Number(e.code));
-    completion = Completion(Throw, v);
+    Object err = Error::create(exec, GeneralError, QString("DOM Range Exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
+    exec->setException(err);
   }
   catch (DOM::CSSException e) {
-    KJSO v = Error::create(GeneralError);
-    v.put("code", Number(e.code));
-    completion = Completion(Throw, v);
+    Object err = Error::create(exec, GeneralError, QString("CSS Exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
+    exec->setException(err);
   }
   catch (DOM::EventException e) {
-    KJSO v = Error::create(GeneralError);
-    v.put("code", Number(e.code));
-    completion = Completion(Throw, v);
+    Object err = Error::create(exec, GeneralError, QString("DOM Event Exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
+    exec->setException(err);
   }
   catch (...) {
-    kdError(6070) << "Unknown exception in DOMFunction::execute()" << endl;
-    KJSO v = Error::create(GeneralError, "Unknown exception");
-    completion = Completion(Throw, v);
+    kdError(6070) << "Unknown exception in DOMFunction::call()" << endl;
+    Object err = Error::create(exec, GeneralError, "Unknown exception");
+    exec->setException(err);
   }
-  return completion;
+  return val;
 }
+
+ScriptInterpreter::~ScriptInterpreter()
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "ScriptInterpreter::~ScriptInterpreter " << this << " for part=" << m_part << endl;
+#endif
+}
+
+void ScriptInterpreter::forgetDOMObject( void* objectHandle )
+{
+  InterpreterImp *first = InterpreterImp::firstInterpreter();
+  if (first) {
+    InterpreterImp *scr = first;
+    do {
+      if ( scr->interpreter()->rtti() == 1 )
+        static_cast<ScriptInterpreter *>(scr->interpreter())->deleteDOMObject( objectHandle );
+      scr = scr->nextInterpreter();
+    } while (scr != first);
+  }
+}
+
+void ScriptInterpreter::mark()
+{
+  Interpreter::mark();
+  kdDebug(6070) << "ScriptInterpreter::mark marking " << m_domObjects.count() << " DOM objects" << endl;
+  QPtrDictIterator<DOMObject> it( m_domObjects );
+  for( ; it.current(); ++it )
+    it.current()->mark();
+}
+
+bool ScriptInterpreter::isWindowOpenAllowed() const
+{
+  if ( m_evt )
+  {
+    int id = m_evt->handle()->id();
+    bool eventOk = ( // mouse events
+      id == DOM::EventImpl::CLICK_EVENT || id == DOM::EventImpl::MOUSEDOWN_EVENT ||
+      id == DOM::EventImpl::MOUSEUP_EVENT || id == DOM::EventImpl::KHTML_DBLCLICK_EVENT ||
+      id == DOM::EventImpl::KHTML_CLICK_EVENT ||
+      // keyboard events
+      id == DOM::EventImpl::KHTML_KEYDOWN_EVENT || id == DOM::EventImpl::KHTML_KEYPRESS_EVENT ||
+      id == DOM::EventImpl::KHTML_KEYUP_EVENT ||
+      // other accepted events
+      id == DOM::EventImpl::SELECT_EVENT || id == DOM::EventImpl::CHANGE_EVENT ||
+      id == DOM::EventImpl::SUBMIT_EVENT );
+    kdDebug(6070) << "Window.open, smart policy: id=" << id << " eventOk=" << eventOk << endl;
+    if (eventOk)
+      return true;
+  } else // no event
+  {
+    if ( m_inlineCode )
+    {
+      // This is the <a href="javascript:window.open('...')> case -> we let it through
+      return true;
+      kdDebug(6070) << "Window.open, smart policy, no event, inline code -> ok" << endl;
+    }
+    else // This is the <script>window.open(...)</script> case -> block it
+      kdDebug(6070) << "Window.open, smart policy, no event, <script> tag -> refused" << endl;
+  }
+  return false;
+}
+
+//////
 
 UString::UString(const QString &d)
 {
@@ -178,16 +233,17 @@ QConstString UString::qconststring() const
   return QConstString((QChar*) data(), size());
 }
 
-DOM::Node KJS::toNode(const KJSO& obj)
+DOM::Node KJS::toNode(const Value& val)
 {
-  if (!obj.derivedFrom("Node"))
+  Object obj = Object::dynamicCast(val);
+  if (obj.isNull() || !obj.inherits(&DOMNode::info))
     return DOM::Node();
 
   const DOMNode *dobj = static_cast<const DOMNode*>(obj.imp());
   return dobj->toNode();
 }
 
-KJSO KJS::getString(DOM::DOMString s)
+Value KJS::getString(DOM::DOMString s)
 {
   if (s.isNull())
     return Null();
@@ -195,14 +251,21 @@ KJSO KJS::getString(DOM::DOMString s)
     return String(s);
 }
 
-bool KJS::originCheck(const KURL &kurl1, const KURL &kurl2)
-{
-  if (kurl1.protocol() == kurl2.protocol() &&
-      kurl1.host() == kurl2.host() &&
-      kurl1.port() == kurl2.port() &&
-      kurl1.user() == kurl2.user() &&
-      kurl1.pass() == kurl2.pass())
-    return true;
-  else
-    return false;
+QVariant KJS::ValueToVariant(ExecState* exec, const Value &val) {
+  QVariant res;
+  switch (val.type()) {
+  case BooleanType:
+    res = QVariant(val.toBoolean(exec), 0);
+    break;
+  case NumberType:
+    res = QVariant(val.toNumber(exec));
+    break;
+  case StringType:
+    res = QVariant(val.toString(exec).qstring());
+    break;
+  default:
+    // everything else will be 'invalid'
+    break;
+  }
+  return res;
 }

@@ -18,36 +18,36 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-#include "html_imageimpl.h"
 
-#include "htmlhashes.h"
+#include "html/html_imageimpl.h"
+#include "html/html_documentimpl.h"
+
+#include "misc/htmlhashes.h"
 #include "khtmlview.h"
+#include "khtml_part.h"
 
+#include <kstringhandler.h>
+#include <kglobal.h>
 #include <kdebug.h>
 
 #include "rendering/render_image.h"
+#include "rendering/render_flow.h"
 #include "css/cssstyleselector.h"
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 #include "css/csshelper.h"
-#include "html_documentimpl.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include <qstring.h>
 #include <qpoint.h>
 #include <qregion.h>
-#include <qstack.h>
+#include <qptrstack.h>
 #include <qimage.h>
+#include <qpointarray.h>
 
 using namespace DOM;
 using namespace khtml;
-
-// -------------------------------------------------------------------------
-
-
 
 // -------------------------------------------------------------------------
 
@@ -64,57 +64,18 @@ HTMLImageElementImpl::~HTMLImageElementImpl()
 
 // DOM related
 
-const DOMString HTMLImageElementImpl::nodeName() const
-{
-    return "IMG";
-}
-
-ushort HTMLImageElementImpl::id() const
+NodeImpl::Id HTMLImageElementImpl::id() const
 {
     return ID_IMG;
 }
 
-bool HTMLImageElementImpl::prepareMouseEvent( int _x, int _y,
-                                              int _tx, int _ty,
-                                              MouseEvent *ev )
+void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    //kdDebug( 6030 ) << "_x=" << _x << " _tx=" << _tx << " _y=" << _y << ", _ty=" << _ty << endl;
-    bool inside = HTMLElementImpl::prepareMouseEvent(_x, _y, _tx, _ty, ev);
-    if ( inside && usemap.length() > 0 &&
-         ( ! (m_render && m_render->style() && m_render->style()->visiblity() == HIDDEN) ) )
+    switch (attr->id())
     {
-        RenderObject* p = m_render->parent();
-        while( p && p->isAnonymousBox() )
-        {
-            //kdDebug( 6030 ) << "parent is anonymous!" << endl;
-            // we need to add the offset of the anonymous box
-            _tx += p->xPos();
-            _ty += p->yPos();
-            p = p->parent();
-        }
-
-        //cout << "usemap: " << usemap.string() << endl;
-        HTMLMapElementImpl* map;
-        DocumentImpl* doc = ownerDocument();
-
-        if(doc && doc->isHTMLDocument() &&
-           (map = static_cast<HTMLDocumentImpl*>(doc)->getMap(usemap)))
-        {
-            //kdDebug( 6030 ) << "have map" << endl;
-            return map->mapMouseEvent(_x-renderer()->xPos()-_tx,
-                                      _y-renderer()->yPos()-_ty,
-                                      renderer()->width(), renderer()->height(), ev);
-        }
-    }
-    return inside;
-}
-
-void HTMLImageElementImpl::parseAttribute(AttrImpl *attr)
-{
-    switch (attr->attrId)
-    {
+    case ATTR_ALT:
     case ATTR_SRC:
-        imageURL = khtml::parseURL(attr->value());
+        if (m_render) m_render->updateFromElement();
         break;
     case ATTR_WIDTH:
         addCSSLength(CSS_PROP_WIDTH, attr->value());
@@ -148,32 +109,28 @@ void HTMLImageElementImpl::parseAttribute(AttrImpl *attr)
         break;
     case ATTR_USEMAP:
         if ( attr->value()[0] == '#' )
-        {
             usemap = attr->value();
+        else {
+            QString url = getDocument()->completeURL( khtml::parseURL( attr->value() ).string() );
+            // ### we remove the part before the anchor and hope
+            // the map is on the same html page....
+            usemap = url;
         }
-        else
-        {
-            // ### we remove the part before the anchor and hope the map is on the same html page....
-            KURL u( static_cast<HTMLDocumentImpl *>(ownerDocument())->baseURL().string(), attr->value().string() );
-            usemap = khtml::parseURL(u.url());
-        }
+        m_hasAnchor = attr->val() != 0;
     case ATTR_ISMAP:
         ismap = true;
         break;
-    case ATTR_ALT:
-        alt = attr->value();
-        break;
     case ATTR_ONABORT: // ### add support for this
         setHTMLEventListener(EventImpl::ABORT_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONERROR: // ### add support for this
         setHTMLEventListener(EventImpl::ERROR_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_NAME:
     case ATTR_NOSAVE:
@@ -183,44 +140,45 @@ void HTMLImageElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
+DOMString HTMLImageElementImpl::altText() const
+{
+    // lets figure out the alt text.. magic stuff
+    // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
+    // also heavily discussed by Hixie on bugzilla
+    DOMString alt( getAttribute( ATTR_ALT ) );
+    // fall back to title attribute
+    if ( alt.isNull() )
+        alt = getAttribute( ATTR_TITLE );
+#if 0
+    if ( alt.isNull() ) {
+        QString p = KURL( getDocument()->completeURL( getAttribute(ATTR_SRC).string() ) ).prettyURL();
+        int pos;
+        if ( ( pos = p.findRev( '.' ) ) > 0 )
+            p.truncate( pos );
+        alt = DOMString( KStringHandler::csqueeze( p ) );
+    }
+#endif
+
+    return alt;
+}
+
 void HTMLImageElementImpl::attach()
 {
-    //kdDebug( 6030 ) << "HTMLImageImpl::attach" << endl;
-    setStyle(ownerDocument()->styleSelector()->styleForElement(this));
-    khtml::RenderObject *r = _parent->renderer();
-    if(r)
-    {
-        RenderImage *renderImage = new RenderImage(this);
-        renderImage->setStyle(m_style);
-        renderImage->setAlt(alt);
-        m_render = renderImage;
-        if(m_render) r->addChild(m_render, nextRenderer());
-        renderImage->setImageUrl(imageURL, static_cast<HTMLDocumentImpl *>(ownerDocument())->baseURL(),
-                                 static_cast<HTMLDocumentImpl *>(ownerDocument())->docLoader());
+    assert(!attached());
+    assert(!m_render);
+    assert(parentNode());
 
+    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
+    _style->ref();
+    if (parentNode()->renderer() && _style->display() != NONE) {
+        m_render = new RenderImage(this);
+        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
+        m_render->updateFromElement();
     }
-    HTMLElementImpl::attach();
-}
+    _style->deref();
 
-void HTMLImageElementImpl::applyChanges(bool top, bool force)
-{
-    //kdDebug(0) << "Image::applyChanges(" << top << ", " << force <<")" << endl;
-    if(force || changed()) {
-        recalcStyle();
-    }
-    HTMLElementImpl::applyChanges(top,force);
-    // ### perhaps not the most appropriate place for this.... here so it get's called after
-    // a script has executed
-    if (m_render)
-        static_cast<RenderImage *>(m_render)
-            ->setImageUrl(imageURL, static_cast<HTMLDocumentImpl *>(ownerDocument())->baseURL(),
-                          static_cast<HTMLDocumentImpl *>(ownerDocument())->docLoader());
-    setChanged(false);
-}
-
-void HTMLImageElementImpl::recalcStyle()
-{
-    HTMLElementImpl::recalcStyle();
+    NodeBaseImpl::attach();
 }
 
 QImage HTMLImageElementImpl::currentImage() const
@@ -242,27 +200,22 @@ HTMLMapElementImpl::HTMLMapElementImpl(DocumentPtr *doc)
 
 HTMLMapElementImpl::~HTMLMapElementImpl()
 {
-    if(ownerDocument() && ownerDocument()->isHTMLDocument())
-        static_cast<HTMLDocumentImpl*>(ownerDocument())->mapMap.remove(name);
+    if(getDocument() && getDocument()->isHTMLDocument())
+        static_cast<HTMLDocumentImpl*>(getDocument())->mapMap.remove(name);
 }
 
-const DOMString HTMLMapElementImpl::nodeName() const
-{
-    return "MAP";
-}
-
-ushort HTMLMapElementImpl::id() const
+NodeImpl::Id HTMLMapElementImpl::id() const
 {
     return ID_MAP;
 }
 
 bool
 HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
-                                  MouseEvent *ev )
+                                  RenderObject::NodeInfo& info)
 {
     //cout << "map:mapMouseEvent " << endl;
     //cout << x_ << " " << y_ <<" "<< width_ <<" "<< height_ << endl;
-    QStack<NodeImpl> nodeStack;
+    QPtrStack<NodeImpl> nodeStack;
 
     NodeImpl *current = firstChild();
     while(1)
@@ -278,7 +231,7 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
         {
             //cout << "area found " << endl;
             HTMLAreaElementImpl* area=static_cast<HTMLAreaElementImpl*>(current);
-            if (area->mapMouseEvent(x_,y_,width_,height_,ev))
+            if (area->mapMouseEvent(x_,y_,width_,height_, info))
                 return true;
         }
         NodeImpl *child = current->firstChild();
@@ -296,10 +249,13 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
     return false;
 }
 
-void HTMLMapElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLMapElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch (attr->attrId)
+    switch (attr->id())
     {
+    case ATTR_ID:
+        if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
+        // fall through
     case ATTR_NAME:
     {
         DOMString s = attr->value();
@@ -307,8 +263,9 @@ void HTMLMapElementImpl::parseAttribute(AttrImpl *attr)
             name = QString(s.unicode()+1, s.length()-1);
         else
             name = s.string();
-        if(ownerDocument()->isHTMLDocument())
-            static_cast<HTMLDocumentImpl*>(ownerDocument())->mapMap[name] = this;
+	// ### make this work for XML documents, e.g. in case of <html:map...>
+        if(getDocument()->isHTMLDocument())
+            static_cast<HTMLDocumentImpl*>(getDocument())->mapMap[name] = this;
         break;
     }
     default:
@@ -321,7 +278,8 @@ void HTMLMapElementImpl::parseAttribute(AttrImpl *attr)
 HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
     : HTMLAnchorElementImpl(doc)
 {
-    coords=0L;
+    m_coords=0;
+    m_coordsLen = 0;
     nohref = false;
     shape = Unknown;
     lasth = lastw = -1;
@@ -329,22 +287,17 @@ HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
 
 HTMLAreaElementImpl::~HTMLAreaElementImpl()
 {
-    delete coords;
+    if (m_coords) delete [] m_coords;
 }
 
-const DOMString HTMLAreaElementImpl::nodeName() const
-{
-    return "AREA";
-}
-
-ushort HTMLAreaElementImpl::id() const
+NodeImpl::Id HTMLAreaElementImpl::id() const
 {
     return ID_AREA;
 }
 
-void HTMLAreaElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLAreaElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch (attr->attrId)
+    switch (attr->id())
     {
     case ATTR_SHAPE:
         if ( strcasecmp( attr->value(), "default" ) == 0 )
@@ -357,10 +310,14 @@ void HTMLAreaElementImpl::parseAttribute(AttrImpl *attr)
             shape = Rect;
         break;
     case ATTR_COORDS:
-        coords = attr->val()->toLengthList();
+        if (m_coords) delete [] m_coords;
+        m_coords = attr->val()->toLengthArray(m_coordsLen);
         break;
     case ATTR_NOHREF:
-        nohref = true;
+        nohref = attr->val() != 0;
+        break;
+    case ATTR_TARGET:
+        m_hasTarget = attr->val() != 0;
         break;
     case ATTR_ALT:
         break;
@@ -371,11 +328,9 @@ void HTMLAreaElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-bool
-HTMLAreaElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
-                                   MouseEvent *ev)
+bool HTMLAreaElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
+                                   RenderObject::NodeInfo& info)
 {
-    //cout << "area:mapMouseEvent " << endl;
     bool inside = false;
     if (width_ != lastw || height_ != lasth)
     {
@@ -385,31 +340,29 @@ HTMLAreaElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
     if (region.contains(QPoint(x_,y_)))
     {
         inside = true;
-        ev->innerNode = this;
-        if(isNoref())
-            ev->noHref = true;
-        else {
-            if(target && href)
-            {
-                DOMString s = DOMString("target://") + DOMString(target) + DOMString("/#") + DOMString(href);
-                ev->url = s;
-            }
-            else
-                ev->url = href;
-        }
+        info.setInnerNode(this);
+        info.setURLElement(this);
     }
-    // dynamic HTML...
-    // ### if(inside || mouseInside()) mouseEventHandler(ev, inside);
 
     return inside;
 }
 
+QRect HTMLAreaElementImpl::getRect() const
+{
+    if (parentNode()->renderer()==0)
+        return QRect();
+    int dx, dy;
+    if (!parentNode()->renderer()->absolutePosition(dx, dy))
+        return QRect();
+    QRegion region = getRegion(lastw,lasth);
+    region.translate(dx, dy);
+    return region.boundingRect();
+}
 
-
-QRegion HTMLAreaElementImpl::getRegion(int width_, int height_)
+QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
 {
     QRegion region;
-    if (!coords)
+    if (!m_coords)
         return region;
 
     // added broken HTML support (Dirk): some pages omit the SHAPE
@@ -417,56 +370,29 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_)
     // what the HTML author tried to tell us.
 
     // a Poly needs at least 3 points (6 coords), so this is correct
-    // just ignore poly's with 2 points or less, because
-    // QRegion will anyway crash on them.
-    if ((shape==Poly || shape==Unknown) && coords->count() > 4)
-    {
-        //cout << " poly " << endl;
-        bool xcoord=true;
-        int xx = 0, yy = 0; // shut up egcs...
-        int i=0;
-
-        QListIterator<Length> it(*coords);
-        QPointArray points(it.count()/2);
-        for ( ; it.current(); ++it ) {
-            Length* len = it.current();
-            if (xcoord)
-            {
-                xx = len->minWidth(width_);
-                xcoord = false;
-            } else {
-                yy = len->minWidth(height_);
-                xcoord = true;
-                points.setPoint(i,xx,yy);
-                i++;
-            }
-        }
+    if ((shape==Poly || shape==Unknown) && m_coordsLen > 4) {
+        // make sure its even
+        int len = m_coordsLen >> 1;
+        QPointArray points(len);
+        for (int i = 0; i < len; ++i)
+            points.setPoint(i, m_coords[(i<<1)].minWidth(width_),
+                            m_coords[(i<<1)+1].minWidth(height_));
         region = QRegion(points);
     }
-    else if (shape==Circle && coords->count()>=3 || shape==Unknown && coords->count() == 3)
-    {
-        //cout << " circle " << endl;
-        int cx = coords->at(0)->minWidth(width_);
-        int cy = coords->at(1)->minWidth(height_);
-        int r1 = coords->at(2)->minWidth(width_);
-        int r2 = coords->at(2)->minWidth(height_);
-        int r  = QMIN(r1, r2);
-
-        region = QRegion(cx-r, cy-r, 2*r, 2*r,QRegion::Ellipse);
+    else if (shape==Circle && m_coordsLen>=3 || shape==Unknown && m_coordsLen == 3) {
+        int r = kMin(m_coords[2].minWidth(width_), m_coords[2].minWidth(height_));
+        region = QRegion(m_coords[0].minWidth(width_)-r,
+                         m_coords[1].minWidth(height_)-r, 2*r, 2*r,QRegion::Ellipse);
     }
-    else if (shape==Rect && coords->count()>=4 || shape==Unknown && coords->count() == 4)
-    {
-        //cout << " rect " << endl;
-        int x0 = coords->at(0)->minWidth(width_);
-        int y0 = coords->at(1)->minWidth(height_);
-        int x1 = coords->at(2)->minWidth(width_);
-        int y1 = coords->at(3)->minWidth(height_);
+    else if (shape==Rect && m_coordsLen>=4 || shape==Unknown && m_coordsLen == 4) {
+        int x0 = m_coords[0].minWidth(width_);
+        int y0 = m_coords[1].minWidth(height_);
+        int x1 = m_coords[2].minWidth(width_);
+        int y1 = m_coords[3].minWidth(height_);
         region = QRegion(x0,y0,x1-x0,y1-y0);
     }
-    else /*if (shape==Default || shape == Unknown)*/ {
-        //cout << "default/unknown" << endl;
+    else
         region = QRegion(0,0,width_,height_);
-    }
 
     return region;
 }

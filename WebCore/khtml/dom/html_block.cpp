@@ -22,13 +22,13 @@
  */
 // --------------------------------------------------------------------------
 
-#include "dom_string.h"
 
-#include "html_block.h"
-#include "html_blockimpl.h"
+#include "dom/html_block.h"
+#include "html/html_blockimpl.h"
+
 using namespace DOM;
 
-#include "htmlhashes.h"
+#include "misc/htmlhashes.h"
 
 HTMLBlockquoteElement::HTMLBlockquoteElement() : HTMLElement()
 {

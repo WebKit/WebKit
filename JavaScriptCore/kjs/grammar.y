@@ -17,26 +17,31 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <string.h>
-#include "kjs.h"
+#include <stdlib.h>
+#include "value.h"
+#include "object.h"
+#include "types.h"
+#include "interpreter.h"
 #include "nodes.h"
 #include "lexer.h"
+#include "internal.h"
 
 /* default values for bison */
 #define YYDEBUG 0
 #define YYMAXDEPTH 0
-#ifdef KJS_DEBUGGER
-#define YYERROR_VERBOSE
-#define DBG(l, s, e) { l->setLoc(s.first_line, e.last_line); } // location
+#ifdef APPLE_CHANGES
 #else
-#undef YYLSP_NEEDED
-#define DBG(l, s, e)
+#define YYERROR_VERBOSE
 #endif
+#define DBG(l, s, e) { l->setLoc(s.first_line, e.last_line, Parser::sid); } // location
 
 extern int yylex();
 int yyerror (const char *);
@@ -110,7 +115,7 @@ using namespace KJS;
 %token <ustr> IDENT
 
 /* automatically inserted semicolon */
-%token AUTO
+%token AUTOPLUSPLUS AUTOMINUSMINUS
 
 /* non-terminal types */
 %type <node>  Literal PrimaryExpr Expr MemberExpr FunctionExpr NewExpr CallExpr
@@ -162,6 +167,10 @@ Literal:
   | '/'       /* a RegExp ? */     { Lexer *l = Lexer::curr();
                                      if (!l->scanRegExp()) YYABORT;
                                      $$ = new RegExpNode(l->pattern,l->flags);}
+  | DIVEQUAL /* a RegExp starting with /= ! */
+                                   { Lexer *l = Lexer::curr();
+                                     if (!l->scanRegExp()) YYABORT;
+                                     $$ = new RegExpNode(UString('=')+l->pattern,l->flags);}
 ;
 
 PrimaryExpr:
@@ -258,9 +267,9 @@ UnaryExpr:
   | VOID UnaryExpr                 { $$ = new VoidNode($2); }
   | TYPEOF UnaryExpr               { $$ = new TypeOfNode($2); }
   | PLUSPLUS UnaryExpr             { $$ = new PrefixNode(OpPlusPlus, $2); }
-  | AUTO PLUSPLUS UnaryExpr        { $$ = new PrefixNode(OpPlusPlus, $3); }
+  | AUTOPLUSPLUS UnaryExpr         { $$ = new PrefixNode(OpPlusPlus, $2); }
   | MINUSMINUS UnaryExpr           { $$ = new PrefixNode(OpMinusMinus, $2); }
-  | AUTO MINUSMINUS UnaryExpr      { $$ = new PrefixNode(OpMinusMinus, $3); }
+  | AUTOMINUSMINUS UnaryExpr       { $$ = new PrefixNode(OpMinusMinus, $2); }
   | '+' UnaryExpr                  { $$ = new UnaryPlusNode($2); }
   | '-' UnaryExpr                  { $$ = new NegateNode($2); }
   | '~' UnaryExpr                  { $$ = new BitwiseNotNode($2); }
@@ -389,7 +398,7 @@ Statement:
 
 Block:
     '{' '}'                        { $$ = new BlockNode(0L); DBG($$, @2, @2); }
-  | '{' StatementList '}'          { $$ = new BlockNode($2); DBG($$, @3, @3); }
+  | '{' SourceElements '}'          { $$ = new BlockNode($2); DBG($$, @3, @3); }
 ;
 
 StatementList:
@@ -596,13 +605,17 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    '{' '}'  /* TODO: spec ??? */  { $$ = new FunctionBodyNode(0L); }
-  | '{' SourceElements '}'         { $$ = new FunctionBodyNode($2); }
+    '{' '}'  /* TODO: spec ??? */  { $$ = new FunctionBodyNode(0L);
+	                             DBG($$, @1, @2);}
+  | '{' SourceElements '}'         { $$ = new FunctionBodyNode($2);
+	                             DBG($$, @1, @3);}
 ;
 
 Program:
-    SourceElements                 { $$ = new ProgramNode($1);
-                                     KJScriptImp::current()->setProgNode($$); }
+    /* nothing, empty script */      { $$ = new ProgramNode(0L);
+                                     Parser::progNode = $$; }
+    | SourceElements                 { $$ = new ProgramNode($1);
+                                     Parser::progNode = $$; }
 ;
 
 SourceElements:

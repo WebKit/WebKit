@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -25,7 +25,7 @@
 #define RENDER_BOX_H
 
 #include "render_container.h"
-#include "loader.h"
+#include "misc/loader.h"
 
 namespace khtml {
     class CachedObject;
@@ -38,7 +38,7 @@ class RenderBox : public RenderContainer
 // should contain all border and padding handling
 
 public:
-    RenderBox();
+    RenderBox(DOM::NodeImpl* node);
     virtual ~RenderBox();
 
     virtual const char *renderName() const { return "RenderBox"; }
@@ -47,8 +47,6 @@ public:
     virtual void print(QPainter *p, int _x, int _y, int _w, int _h,
                        int _tx, int _ty);
 
-    virtual void updateSize();
-    virtual void updateHeight();
     virtual void close();
 
     virtual short minWidth() const { return m_minWidth; }
@@ -75,8 +73,7 @@ public:
     virtual void setHeight( int height ) { m_height = height; }
 
     virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine);
-    virtual unsigned int width( int, int) const { return width(); }
-
+    
     virtual int lowestPosition() const;
     virtual int rightmostPosition() const;
 
@@ -84,14 +81,19 @@ public:
 
     virtual void repaintRectangle(int x, int y, int w, int h, bool f=false);
 
-    virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *, bool *manualUpdate);
+    virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
 
     virtual short containingBlockWidth() const;
 
     virtual void calcWidth();
     virtual void calcHeight();
-    
+
+    virtual short calcReplacedWidth(bool* ieHack=0) const;
+    virtual int   calcReplacedHeight() const;
+
     void calcVerticalMargins();
+
+    void relativePositionOffset(int &tx, int &ty);
 
 protected:
     virtual void printBoxDecorations(QPainter *p,int _x, int _y,
@@ -102,26 +104,24 @@ protected:
     virtual int borderTopExtra() { return 0; }
     virtual int borderBottomExtra() { return 0; }
 
-    void relativePositionOffset(int &tx, int &ty);
-
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
 
-    void calcHorizontalMargins(const Length& ml, const Length& mr, int cw);  
+    void calcHorizontalMargins(const Length& ml, const Length& mr, int cw);
 
-    void calcClip(QPainter* p, int tx, int ty, const QRegion& old);    
-    
+    void calcClip(QPainter* p, int tx, int ty);
+
     // the actual height of the contents + borders + padding
     int m_height;
 
     int m_y;
-    short m_x;
 
-    // the actual width of the contents + borders + padding
+    short m_x;
     short m_width;
 
     short m_marginTop;
     short m_marginBottom;
+
     short m_marginLeft;
     short m_marginRight;
 

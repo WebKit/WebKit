@@ -19,12 +19,12 @@ none
 hidden
 dotted
 dashed
-solid
 double
+solid
+outset
+inset
 groove
 ridge
-inset
-outset
 #
 # CSS_PROP_FONT:
 #
@@ -167,7 +167,6 @@ list-item
 run-in
 compact
 marker
--konq-ruler
 table
 inline-table
 table-row-group

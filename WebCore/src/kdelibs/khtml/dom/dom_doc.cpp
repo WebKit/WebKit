@@ -21,25 +21,21 @@
  * $Id$
  */
 
-#include "dom_string.h"
-#include "dom_doc.h"
-#include "dom_docimpl.h"
-#include "dom_node.h"
-#include "dom_nodeimpl.h"
-#include "dom_exception.h"
-#include "dom_element.h"
-#include "dom_elementimpl.h"
-#include "dom_text.h"
-#include "dom_xml.h"
-#include "dom2_range.h"
-#include "dom2_traversal.h"
-#include "dom2_events.h"
-#include "dom2_views.h"
-#include "css_value.h"
+#include "dom/dom_exception.h"
+#include "dom/dom_xml.h"
+#include "dom/dom2_range.h"
+#include "dom/dom2_events.h"
+#include "dom/dom2_views.h"
+#include "dom/dom2_traversal.h"
+#include "dom/html_document.h"
+#include "html/html_documentimpl.h"
+
+#include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
+
 #include <kdebug.h>
 
 using namespace DOM;
-
 
 DOMImplementation::DOMImplementation()
 {
@@ -74,16 +70,74 @@ DOMImplementation::~DOMImplementation()
 
 bool DOMImplementation::hasFeature( const DOMString &feature, const DOMString &version )
 {
-    if (impl) return impl->hasFeature(feature,version);
-    return false;
+    if (!impl)
+	return false; // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return impl->hasFeature(feature,version);
+}
+
+DocumentType DOMImplementation::createDocumentType ( const DOMString &qualifiedName,
+                                                     const DOMString &publicId,
+                                                     const DOMString &systemId )
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    int exceptioncode = 0;
+    DocumentTypeImpl *r = impl->createDocumentType(qualifiedName, publicId, systemId, exceptioncode);
+    if ( exceptioncode )
+        throw DOMException( exceptioncode );
+    return r;
+}
+
+Document DOMImplementation::createDocument ( const DOMString &namespaceURI,
+                                             const DOMString &qualifiedName,
+                                             const DocumentType &doctype )
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    int exceptioncode = 0;
+    DocumentImpl *r = impl->createDocument(namespaceURI, qualifiedName, doctype, exceptioncode );
+    if ( exceptioncode )
+        throw DOMException( exceptioncode );
+    return r;
+}
+
+HTMLDocument DOMImplementation::createHTMLDocument( const DOMString& title )
+{
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    HTMLDocumentImpl* r = impl->createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
+
+    r->open();
+
+    r->write(QString::fromLatin1("<HTML><HEAD><TITLE>") + title.string() +
+             QString::fromLatin1("</TITLE></HEAD>"));
+
+    return r;
+}
+
+DOMImplementation DOMImplementation::getInterface(const DOMString &feature) const
+{
+    if (!impl)
+        throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return impl->getInterface(feature);
 }
 
 CSSStyleSheet DOMImplementation::createCSSStyleSheet(const DOMString &title, const DOMString &media)
 {
-    if (impl) return impl->createCSSStyleSheet(title.implementation(),media.implementation());
-    return 0;
-}
+    if (!impl)
+        throw DOMException(DOMException::NOT_FOUND_ERR);
 
+    int exceptioncode = 0;
+    CSSStyleSheetImpl *r = impl->createCSSStyleSheet(title.implementation(), media.implementation(),
+                                                     exceptioncode);
+    if ( exceptioncode )
+        throw DOMException( exceptioncode );
+    return r;
+}
 
 DOMImplementationImpl *DOMImplementation::handle() const
 {
@@ -97,19 +151,20 @@ bool DOMImplementation::isNull() const
 
 // ----------------------------------------------------------------------------
 
-Document::Document() : Node()
+Document::Document()
+    : Node()
 {
-    // we always wan't an implementation
-    impl = new DocumentImpl();
+    // we always want an implementation
+    impl = DOMImplementationImpl::instance()->createDocument();
     impl->ref();
-//    kdDebug(6090) << "Document::Document()" << endl;
 }
 
-Document::Document(bool create) : Node()
+Document::Document(bool create)
+    : Node()
 {
     if(create)
     {
-	impl = new DocumentImpl();
+	impl = DOMImplementationImpl::instance()->createDocument();
 	impl->ref();
     }
     else
@@ -129,8 +184,8 @@ Document::Document(DocumentImpl *i) : Node(i)
 
 Document &Document::operator = (const Node &other)
 {
-    if(other.nodeType() != DOCUMENT_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != DOCUMENT_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -212,14 +267,33 @@ ProcessingInstruction Document::createProcessingInstruction( const DOMString &ta
 
 Attr Document::createAttribute( const DOMString &name )
 {
-    if (impl) return ((DocumentImpl *)impl)->createAttribute( name );
-    return 0;
+    return createAttributeNS(DOMString(), name);
 }
 
 Attr Document::createAttributeNS( const DOMString &namespaceURI, const DOMString &qualifiedName )
 {
-    if (impl) return ((DocumentImpl *)impl)->createAttributeNS( namespaceURI, qualifiedName );
-    return 0;
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    if (qualifiedName.isNull()) throw DOMException(DOMException::NAMESPACE_ERR);
+
+    DOMString localName(qualifiedName.copy());
+    DOMString prefix;
+    int colonpos;
+    if ((colonpos = qualifiedName.find(':')) >= 0) {
+        prefix = qualifiedName.copy();
+        prefix.truncate(colonpos);
+        localName.remove(0, colonpos+1);
+    }
+
+    // ### check correctness of parameters
+
+    NodeImpl::Id id = static_cast<DocumentImpl*>(impl)->attrId(namespaceURI.implementation(), localName.implementation(), false /* allocate */);
+    Attr r = static_cast<DocumentImpl*>(impl)->createAttribute(id);
+    int exceptioncode = 0;
+    if (r.handle() && prefix.implementation())
+        r.handle()->setPrefix(prefix.implementation(), exceptioncode);
+    if (exceptioncode)
+        throw DOMException(exceptioncode);
+    return r;
 }
 
 EntityReference Document::createEntityReference( const DOMString &name )
@@ -228,10 +302,36 @@ EntityReference Document::createEntityReference( const DOMString &name )
     return 0;
 }
 
+Element Document::getElementById( const DOMString &elementId ) const
+{
+    if(impl) return ((DocumentImpl *)impl)->getElementById( elementId );
+    return 0;
+}
+
 NodeList Document::getElementsByTagName( const DOMString &tagName )
 {
-    if (impl) return ((DocumentImpl *)impl)->getElementsByTagName( tagName );
-    return 0;
+    if (!impl) return 0;
+    return static_cast<DocumentImpl*>(impl)->
+        getElementsByTagNameNS(0, tagName.implementation());
+}
+
+NodeList Document::getElementsByTagNameNS( const DOMString &namespaceURI, const DOMString &localName )
+{
+    if (!impl) return 0;
+    return static_cast<DocumentImpl*>(impl)->
+        getElementsByTagNameNS(namespaceURI.implementation(), localName.implementation());
+}
+
+Node Document::importNode( const Node & importedNode, bool deep )
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    int exceptioncode = 0;
+    NodeImpl *r = static_cast<DocumentImpl*>(impl)->importNode(importedNode.handle(), deep, exceptioncode);
+    if (exceptioncode)
+	throw DOMException(exceptioncode);
+    return r;
 }
 
 bool Document::isHTMLDocument() const
@@ -245,43 +345,6 @@ Range Document::createRange()
     if (impl) return ((DocumentImpl *)impl)->createRange();
     return 0;
 }
-
-/*Range Document::createRange(const Node &sc, const long so, const Node &ec, const long eo)
-{
-// ### not part of the DOM
-    Range r;
-    r.setStart( sc, so );
-    r.setEnd( ec, eo );
-    return r;
-}*/
-
-/*NodeIterator Document::createNodeIterator()
-{
-// ### not part of the DOM
-//  return NodeIterator( *this );
-    return NodeIterator();
-}*/
-
-/*NodeIterator Document::createNodeIterator(long _whatToShow, NodeFilter *filter)
-{
-// ### not part of the DOM
-//  return NodeIterator( *this, _whatToShow, filter );
-    return NodeIterator();
-}*/
-
-/*TreeWalker Document::createTreeWalker()
-{
-// ### not part of the DOM
-//  return TreeWalker( *this );
-  return TreeWalker();
-}*/
-
-/*TreeWalker Document::createTreeWalker(long _whatToShow, NodeFilter *filter )
-{
-// ### not part of the DOM
-//  return TreeWalker( *this, _whatToShow, filter);
-  return TreeWalker();
-}*/
 
 NodeIterator Document::createNodeIterator(Node root, unsigned long whatToShow,
                                     NodeFilter filter, bool entityReferenceExpansion)
@@ -338,6 +401,12 @@ KHTMLView *Document::view() const
     return ((DocumentImpl*)impl)->view();
 }
 
+DOMString Document::completeURL(const DOMString& url)
+{
+    if ( !impl ) return url;
+    return static_cast<DocumentImpl*>( impl )->completeURL( url.string() );
+}
+
 CSSStyleDeclaration Document::getOverrideStyle(const Element &elt, const DOMString &pseudoElt)
 {
     if (!impl)
@@ -362,8 +431,8 @@ DocumentFragment::DocumentFragment(const DocumentFragment &other) : Node(other)
 
 DocumentFragment &DocumentFragment::operator = (const Node &other)
 {
-    if(other.nodeType() != DOCUMENT_FRAGMENT_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != DOCUMENT_FRAGMENT_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -387,18 +456,24 @@ DocumentFragment::DocumentFragment(DocumentFragmentImpl *i) : Node(i)
 
 // ----------------------------------------------------------------------------
 
-DocumentType::DocumentType() : Node()
+DocumentType::DocumentType()
+    : Node()
 {
 }
 
-DocumentType::DocumentType(const DocumentType &other) : Node(other)
+DocumentType::DocumentType(const DocumentType &other)
+    : Node(other)
+{
+}
+
+DocumentType::DocumentType(DocumentTypeImpl *impl) : Node(impl)
 {
 }
 
 DocumentType &DocumentType::operator = (const Node &other)
 {
-    if(other.nodeType() != DOCUMENT_TYPE_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != DOCUMENT_TYPE_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -419,27 +494,49 @@ DocumentType::~DocumentType()
 
 DOMString DocumentType::name() const
 {
-    if (impl)
-	return static_cast<DocumentTypeImpl*>(impl)->name();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->name();
 }
 
 NamedNodeMap DocumentType::entities() const
 {
-    if (impl)
-	return static_cast<DocumentTypeImpl*>(impl)->entities();
-    return 0;
+    if (!impl)
+	return 0; // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->entities();
 }
 
 NamedNodeMap DocumentType::notations() const
 {
-    if (impl)
-	return static_cast<DocumentTypeImpl*>(impl)->notations();
-    return 0;
+    if (!impl)
+	return 0; // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->notations();
 }
 
-DocumentType::DocumentType(DocumentTypeImpl *impl) : Node(impl)
+DOMString DocumentType::publicId() const
 {
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->publicId();
 }
 
+DOMString DocumentType::systemId() const
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->systemId();
+}
+
+DOMString DocumentType::internalSubset() const
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentTypeImpl*>(impl)->internalSubset();
+}
 

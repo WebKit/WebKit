@@ -44,7 +44,7 @@
 #include <iostream>
 #include <string.h>
 
-typedef QArray<char> QByteArray;
+typedef QMemArray<char> QByteArray;
 
 // class QCString ==============================================================
 

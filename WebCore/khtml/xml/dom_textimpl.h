@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,45 +24,49 @@
 #ifndef _DOM_CharacterDataImpl_h_
 #define _DOM_CharacterDataImpl_h_
 
-#include "dom_nodeimpl.h"
-#include "dom_string.h"
-
-namespace khtml {
-    class RenderStyle;
-}
+#include "xml/dom_nodeimpl.h"
+#include "dom/dom_string.h"
 
 namespace DOM {
 
     class DocumentImpl;
 
-class CharacterDataImpl : public NodeWParentImpl
+class CharacterDataImpl : public NodeImpl
 {
 public:
     CharacterDataImpl(DocumentPtr *doc, const DOMString &_text);
     CharacterDataImpl(DocumentPtr *doc);
     virtual ~CharacterDataImpl();
 
-    DOMString data() const;
+    // DOM methods & attributes for CharacterData
 
-    void setData( const DOMString & );
+    virtual DOMString data() const;
+    virtual void setData( const DOMString &_data, int &exceptioncode );
+    virtual unsigned long length (  ) const;
+    virtual DOMString substringData ( const unsigned long offset, const unsigned long count, int &exceptioncode );
+    virtual void appendData ( const DOMString &arg, int &exceptioncode );
+    virtual void insertData ( const unsigned long offset, const DOMString &arg, int &exceptioncode );
+    virtual void deleteData ( const unsigned long offset, const unsigned long count, int &exceptioncode );
+    virtual void replaceData ( const unsigned long offset, const unsigned long count, const DOMString &arg, int &exceptioncode );
 
-    unsigned long length() const;
+    // DOM methods overridden from  parent classes
 
-    DOMString substringData ( const unsigned long offset, const unsigned long count, int &exceptioncode );
+    virtual DOMString nodeValue() const;
+    virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
 
-    void appendData ( const DOMString &arg );
-
-    void insertData ( const unsigned long offset, const DOMString &arg, int &exceptioncode );
-
-    void deleteData ( const unsigned long offset, const unsigned long count, int &exceptioncode );
-
-    void replaceData ( const unsigned long offset, const unsigned long count, const DOMString &arg, int &exceptioncode );
+    // Other methods (not part of DOM)
 
     DOMStringImpl *string() { return str; }
+    virtual void checkCharDataOperation( const unsigned long offset, int &exceptioncode );
+#ifndef NDEBUG
+    virtual void dump(QTextStream *stream, QString ind = "") const;
+#endif
+
 protected:
     // note: since DOMStrings are shared, str should always be copied when making
     // a change or returning a string
     DOMStringImpl *str;
+
     void dispatchModifiedEvent(DOMStringImpl *prevValue);
 };
 
@@ -75,11 +79,14 @@ public:
     CommentImpl(DocumentPtr *doc);
     virtual ~CommentImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual DOMString nodeValue() const;
+    // DOM methods overridden from  parent classes
+    virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual ushort id() const;
-    virtual NodeImpl *cloneNode(bool deep, int &exceptioncode);
+    virtual NodeImpl *cloneNode(bool deep);
+
+    // Other methods (not part of DOM)
+
+    virtual Id id() const;
     virtual bool childTypeAllowed( unsigned short type );
 };
 
@@ -92,30 +99,21 @@ public:
     TextImpl(DocumentPtr *impl);
     virtual ~TextImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual DOMString nodeValue() const;
-    virtual unsigned short nodeType() const;
-    virtual bool isTextNode() const { return true; }
+    // DOM methods & attributes for CharacterData
 
     TextImpl *splitText ( const unsigned long offset, int &exceptioncode );
 
-    virtual ushort id() const;
+    // DOM methods overridden from  parent classes
+    virtual DOMString nodeName() const;
+    virtual unsigned short nodeType() const;
+    virtual NodeImpl *cloneNode(bool deep);
 
-    virtual khtml::RenderStyle *style() const;
+    // Other methods (not part of DOM)
 
+    virtual bool isTextNode() const { return true; }
+    virtual Id id() const;
     virtual void attach();
-    virtual void detach();
-    virtual void applyChanges(bool top=true, bool force=true);
-
-    virtual bool prepareMouseEvent( int _x, int _y,
-                                    int _tx, int _ty,
-                                    MouseEvent *ev);
-
-    virtual khtml::FindSelectionResult findSelectionNode( int _x, int _y, int _tx, int _ty,
-                                                   DOM::Node & node, int & offset );
-
-    virtual NodeImpl *cloneNode(bool deep, int &exceptioncode);
-    virtual void recalcStyle();
+    virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
 
 protected:
@@ -131,9 +129,14 @@ public:
     CDATASectionImpl(DocumentPtr *impl, const DOMString &_text);
     CDATASectionImpl(DocumentPtr *impl);
     virtual ~CDATASectionImpl();
-    virtual const DOMString nodeName() const;
+
+    // DOM methods overridden from  parent classes
+    virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep, int &exceptioncode);
+    virtual NodeImpl *cloneNode(bool deep);
+
+    // Other methods (not part of DOM)
+
     virtual bool childTypeAllowed( unsigned short type );
 
 protected:

@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -16,6 +17,8 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
+ *  $Id$
  */
 
 #ifdef HAVE_CONFIG_H
@@ -28,7 +31,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include "kjs.h"
+#include "value.h"
+#include "object.h"
+#include "types.h"
+#include "interpreter.h"
 #include "nodes.h"
 #include "lexer.h"
 #include "ustring.h"
@@ -38,15 +44,15 @@
 // we can't specify the namespace in yacc's C output, so do it here
 using namespace KJS;
 
+static Lexer *currLexer = 0;
+
 #ifndef KDE_USE_FINAL
 #include "grammar.h"
 #endif
 
 #include "lexer.lut.h"
 
-#ifdef KJS_DEBUGGER
 extern YYLTYPE yylloc;	// global bison variable holding token info
-#endif
 
 // a bridge for yacc from the C world to C++
 int kjsyylex()
@@ -57,7 +63,7 @@ int kjsyylex()
 Lexer::Lexer()
   : yylineno(0),
     size8(128), size16(128), restrKeyword(false),
-    stackToken(-1), pos(0),
+    eatNextIdentifier(false), stackToken(-1), lastToken(-1), pos(0),
     code(0), length(0),
 #ifndef KJS_PURE_ECMA
     bol(true),
@@ -67,6 +73,7 @@ Lexer::Lexer()
   // allocate space for read buffers
   buffer8 = new char[size8];
   buffer16 = new UChar[size16];
+  currLexer = this;
 
 }
 
@@ -78,8 +85,11 @@ Lexer::~Lexer()
 
 Lexer *Lexer::curr()
 {
-  assert(KJScriptImp::current());
-  return KJScriptImp::current()->lex;
+  if (!currLexer) {
+    // create singleton instance
+    currLexer = new Lexer();
+  }
+  return currLexer;
 }
 
 void Lexer::setCode(const UChar *c, unsigned int len)
@@ -87,10 +97,14 @@ void Lexer::setCode(const UChar *c, unsigned int len)
   yylineno = 0;
   restrKeyword = false;
   delimited = false;
+  eatNextIdentifier = false;
   stackToken = -1;
+  lastToken = -1;
   pos = 0;
   code = c;
   length = len;
+  skipLF = false;
+  skipCR = false;
 #ifndef KJS_PURE_ECMA
   bol = true;
 #endif
@@ -127,6 +141,8 @@ int Lexer::lex()
   pos8 = pos16 = 0;
   done = false;
   terminator = false;
+  skipLF = false;
+  skipCR = false;
 
   // did we push a token on the stack previously ?
   // (after an automatic semicolon insertion)
@@ -137,6 +153,16 @@ int Lexer::lex()
   }
 
   while (!done) {
+    if (skipLF && current != '\n') // found \r but not \n afterwards
+        skipLF = false;
+    if (skipCR && current != '\r') // found \n but not \r afterwards
+        skipCR = false;
+    if (skipLF || skipCR) // found \r\n or \n\r -> eat the second one
+    {
+        skipLF = false;
+        skipCR = false;
+        shift(1);
+    }
     switch (state) {
     case Start:
       if (isWhiteSpace()) {
@@ -315,6 +341,9 @@ int Lexer::lex()
       } else if (isOctalDigit(current)) {
 	record8(current);
 	state = InOctal;
+      } else if (isDecimalDigit(current)) {
+        record8(current);
+        state = InDecimal;
       } else {
 	setDone(Number);
       }
@@ -329,6 +358,10 @@ int Lexer::lex()
     case InOctal:
       if (isOctalDigit(current)) {
 	record8(current);
+      }
+      else if (isDecimalDigit(current)) {
+        record8(current);
+        state = InDecimal;
       } else
 	setDone(Octal);
       break;
@@ -433,36 +466,56 @@ int Lexer::lex()
   }
 #endif
 
+  if (state != Identifier && eatNextIdentifier)
+    eatNextIdentifier = false;
+
   restrKeyword = false;
   delimited = false;
-#ifdef KJS_DEBUGGER
   yylloc.first_line = yylineno; // ???
   yylloc.last_line = yylineno;
-#endif
 
   switch (state) {
   case Eof:
-    return 0;
+    token = 0;
+    break;
   case Other:
     if(token == '}' || token == ';') {
       delimited = true;
     }
-    return token;
+    break;
   case Identifier:
     if ((token = Lookup::find(&mainTable, buffer16, pos16)) < 0) {
+      // Lookup for keyword failed, means this is an identifier
+      // Apply anonymous-function hack below (eat the identifier)
+      if (eatNextIdentifier) {
+        eatNextIdentifier = false;
+        UString debugstr(buffer16, pos16); fprintf(stderr,"Anonymous function hack: eating identifier %s\n",debugstr.ascii());
+        token = lex();
+        break;
+      }
       /* TODO: close leak on parse error. same holds true for String */
       kjsyylval.ustr = new UString(buffer16, pos16);
-      return IDENT;
+      token = IDENT;
+      break;
     }
+
+    eatNextIdentifier = false;
+    // Hack for "f = function somename() { ... }", too hard to get into the grammar
+    if (token == FUNCTION && lastToken == '=' )
+      eatNextIdentifier = true;
+
     if (token == CONTINUE || token == BREAK ||
 	token == RETURN || token == THROW)
       restrKeyword = true;
-    return token;
+    break;
   case String:
-    kjsyylval.ustr = new UString(buffer16, pos16); return STRING;
+    kjsyylval.ustr = new UString(buffer16, pos16);
+    token = STRING;
+    break;
   case Number:
     kjsyylval.dval = dval;
-    return NUMBER;
+    token = NUMBER;
+    break;
   case Bad:
     fprintf(stderr, "yylex: ERROR.\n");
     return -1;
@@ -470,6 +523,8 @@ int Lexer::lex()
     assert(!"unhandled numeration value in switch");
     return -1;
   }
+  lastToken = token;
+  return token;
 }
 
 bool Lexer::isWhiteSpace() const
@@ -478,9 +533,15 @@ bool Lexer::isWhiteSpace() const
 	  current == 0x0b || current == 0x0c);
 }
 
-bool Lexer::isLineTerminator() const
+bool Lexer::isLineTerminator()
 {
-  return (current == '\n' || current == '\r');
+  bool cr = (current == '\r');
+  bool lf = (current == '\n');
+  if (cr)
+      skipLF = true;
+  else if (lf)
+      skipCR = true;
+  return cr || lf;
 }
 
 bool Lexer::isIdentLetter(unsigned short c)
@@ -540,19 +601,15 @@ int Lexer::matchPunctuator(unsigned short c1, unsigned short c2,
     return NE;
   } else if (c1 == '+' && c2 == '+') {
     shift(2);
-    if (terminator) {
-      // automatic semicolon insertion
-      stackToken = PLUSPLUS;
-      return AUTO;
-    } else
+    if (terminator)
+      return AUTOPLUSPLUS;
+    else
       return PLUSPLUS;
   } else if (c1 == '-' && c2 == '-') {
     shift(2);
-    if (terminator) {
-      // automatic semicolon insertion
-      stackToken = MINUSMINUS;
-      return AUTO;
-    } else
+    if (terminator)
+      return AUTOMINUSMINUS;
+    else
       return MINUSMINUS;
   } else if (c1 == '=' && c2 == '=') {
     shift(2);
@@ -715,17 +772,25 @@ bool Lexer::scanRegExp()
 {
   pos16 = 0;
   bool lastWasEscape = false;
+  bool inBrackets = false;
 
   while (1) {
     if (isLineTerminator() || current == 0)
       return false;
-    else if (current != '/' || lastWasEscape == true)
+    else if (current != '/' || lastWasEscape == true || inBrackets == true)
     {
+        // keep track of '[' and ']'
+        if ( !lastWasEscape ) {
+          if ( current == '[' && !inBrackets )
+            inBrackets = true;
+          if ( current == ']' && inBrackets )
+            inBrackets = false;
+        }
         record16(current);
         lastWasEscape =
             !lastWasEscape && (current == '\\');
     }
-    else {
+    else { // end of regexp
       pattern = UString(buffer16, pos16);
       pos16 = 0;
       shift(1);

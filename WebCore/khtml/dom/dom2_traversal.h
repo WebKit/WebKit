@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
@@ -400,7 +400,7 @@ public:
     Node currentNode();
 
     /**
-     * see @ref getCurrentNode
+     * see @ref currentNode
      */
     void setCurrentNode(const Node _currentNode);
 

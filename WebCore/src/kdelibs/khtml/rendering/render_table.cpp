@@ -21,8 +21,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 //#define TABLE_DEBUG
@@ -30,26 +28,19 @@
 //#define DEBUG_LAYOUT
 //#define BOX_DEBUG
 
-#include "render_table.h"
+#include "rendering/render_table.h"
+#include "html/html_tableimpl.h"
+#include "misc/htmltags.h"
 
-#include <qlist.h>
-#include <qstack.h>
-#include <qbrush.h>
-#include <qpainter.h>
-#include <qpalette.h>
-#include <qdrawutil.h>
 #include <kglobal.h>
-#include "dom_string.h"
 
-#include "misc/helper.h"
-#include "misc/khtmllayout.h"
 
 #include <kdebug.h>
 #include <assert.h>
 
 using namespace khtml;
 
-template class QArray<LengthType>;
+template class QMemArray<LengthType>;
 
 #define FOR_EACH_CELL(r,c,cell) \
     for ( unsigned int r = 0; r < totalRows; r++ )                    \
@@ -67,8 +58,8 @@ template class QArray<LengthType>;
 #define END_FOR_EACH } }
 
 
-RenderTable::RenderTable()
-    : RenderFlow()
+RenderTable::RenderTable(DOM::NodeImpl* node)
+    : RenderFlow(node)
 {
 
     tCaption = 0;
@@ -88,7 +79,6 @@ RenderTable::RenderTable()
     col = 0;
 
     maxColSpan = 0;
-    totalColInfos = 0;
 
     colInfos.setAutoDelete(true);
 
@@ -115,6 +105,8 @@ RenderTable::RenderTable()
                      // by the first row parsed
     totalRows = 1;
     allocRows = 5;   // allocate five rows initially
+    rowHeights.resize( totalRows+1 );
+    rowHeights[0] = rowHeights[1] = 0;
 
     cells = new RenderTableCell ** [allocRows];
 
@@ -124,6 +116,8 @@ RenderTable::RenderTable()
         memset( cells[r], 0, totalCols * sizeof( RenderTableCell * ));
     }
     needsCellsRecalc = false;
+    colWidthKnown = false;
+    hasPercent = false;
 }
 
 RenderTable::~RenderTable()
@@ -138,7 +132,7 @@ void RenderTable::setStyle(RenderStyle *_style)
     RenderFlow::setStyle(_style);
 
     // init RenderObject attributes
-    setInline(style()->display()==INLINE_TABLE);
+    setInline(style()->display()==INLINE_TABLE && !isPositioned());
     setReplaced(style()->display()==INLINE_TABLE);
 
     spacing = style()->borderSpacing();
@@ -150,15 +144,6 @@ void RenderTable::position(int x, int y, int, int, int, bool, bool)
     //for inline tables only
     m_x = x + marginLeft();
     m_y = y + marginTop();
-}
-
-inline void
-RenderTable::ColInfo::update()
-{
-    if (minCell)
-        min = minCell->minWidth();
-    if (maxCell)
-        max = maxCell->maxWidth();
 }
 
 void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
@@ -177,20 +162,24 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
     case TABLE_COLUMN:
     case TABLE_COLUMN_GROUP:
         {
-        RenderContainer::addChild(child,beforeChild);
-        RenderTableCol* colel = static_cast<RenderTableCol *>(child);
-        if (_oldColElem && _oldColElem->style()->display() == TABLE_COLUMN_GROUP)
-            _currentCol = _oldColElem->lastCol();
-        _oldColElem = colel;
-        colel->setStartCol(_currentCol);
-        if (child->style()->display() == TABLE_COLUMN)
-            _currentCol++;
-        else
-            _currentCol+=colel->span();
-        addColInfo(colel);
-        incremental = true;
-        colel->setTable(this);
-        }
+	    RenderContainer::addChild(child,beforeChild);
+	    RenderTableCol* colel = static_cast<RenderTableCol *>(child);
+	    if (_oldColElem && _oldColElem->style()->display() == TABLE_COLUMN_GROUP)
+		_currentCol = _oldColElem->lastCol();
+	    _oldColElem = colel;
+	    colel->setStartCol(_currentCol);
+	    if ( colel->span() != 0 ) {
+		if (child->style()->display() == TABLE_COLUMN)
+		    _currentCol++;
+		else
+		    _currentCol+=colel->span();
+		addColInfo(colel);
+	    }
+	    incremental = true;
+	    colel->setTable(this);
+	}
+	child->setLayouted( false );
+	child->setMinMaxKnown( false );
         return;
     case TABLE_HEADER_GROUP:
         if(incremental && !columnPos[totalCols]);// calcColWidth();
@@ -212,7 +201,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
             o = beforeChild;
         else {
 //          kdDebug( 6040 ) << "creating anonymous table section" << endl;
-            o = new RenderTableSection();
+            o = new RenderTableSection(0 /* anonymous */);
             RenderStyle *newStyle = new RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE_ROW_GROUP);
@@ -221,6 +210,8 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
             addChild(o, beforeChild);
         }
         o->addChild(child);
+	child->setLayouted( false );
+	child->setMinMaxKnown( false );
         return;
     }
     RenderContainer::addChild(child,beforeChild);
@@ -255,9 +246,6 @@ void RenderTable::addCell( RenderTableCell *cell )
         col++;
     setCells( row, col, cell );
 
-    setMinMaxKnown(false);
-    setLayouted(false);
-
     col++;
 }
 
@@ -266,7 +254,7 @@ void RenderTable::setCells( unsigned int r, unsigned int c,
                                      RenderTableCell *cell )
 {
 #ifdef TABLE_DEBUG
-    kdDebug( 6040 ) << "span = " << cell->rowSpan() << "d/" << cell->colSpan() << "d" << endl;
+    kdDebug( 6040 ) << "setCells: span = " << cell->rowSpan() << "/" << cell->colSpan() << " pos = " << r << "/" << c << endl;
 #endif
     cell->setRow(r);
     cell->setCol(c);
@@ -283,10 +271,8 @@ void RenderTable::setCells( unsigned int r, unsigned int c,
     if ( endRow > totalRows )
         totalRows = endRow;
 
-    for ( ; r < endRow; r++ )
-    {
-        for ( unsigned int tc = c; tc < endCol; tc++ )
-        {
+    for ( ; r < endRow; r++ ) {
+        for ( unsigned int tc = c; tc < endCol; tc++ ) {
             cells[r][tc] = cell;
         }
     }
@@ -376,6 +362,45 @@ void RenderTable::recalcColInfos()
     END_FOR_EACH
 }
 
+void RenderTable::recalcColInfo( ColInfo *col )
+{
+    //qDebug("------------- recalcColinfo: line=%d, span=%d", col->start, col->span-1);
+
+    KHTMLAssert( colInfos[col->span-1]->data()[col->start] == col );
+    ColInfoLine *line = (colInfos[col->span-1]);
+    ColInfo **data = line->data() + col->start;
+    *data = 0;
+    KHTMLAssert( colInfos[col->span-1]->data()[col->start] == 0 );
+
+    // add table-column if exists
+    RenderObject *child = firstChild();
+    while( child ) {
+	if ( child->style()->display() == TABLE_COLUMN ||
+	     child->style()->display() == TABLE_COLUMN_GROUP ) {
+	    RenderTableCol *tc = static_cast<RenderTableCol *>(child);
+	    if ( tc->span() == col->span && tc->col() == col->start ) {
+		addColInfo( tc );
+		break;
+	    }
+	} else {
+	    break;
+	}
+	child = child->nextSibling();
+    }
+
+    // now the cells
+    for ( unsigned int r = 0; r < totalRows; r++ ) {
+	RenderTableCell *cell = cells[r][col->start];
+	if ( cell && cell->colSpan() == col->span )
+	    addColInfo(cell, false);
+    }
+    delete col;
+    setMinMaxKnown( false );
+
+    //qDebug("------------- end recalcColinfo");
+}
+
+
 void RenderTable::addColInfo(RenderTableCol *colel)
 {
 
@@ -384,13 +409,14 @@ void RenderTable::addColInfo(RenderTableCol *colel)
     int _minSize=0;
     int _maxSize=0;
     Length _width = colel->width();
-    if (_width.type==Fixed)
+    if (_width.type==Fixed) {
         _maxSize=_width.value;
+	_minSize=_width.value;
+    }
 
-    for (int n=0; n<span; ++n)
-    {
+    for (int n=0; n<span; ++n) {
 #ifdef TABLE_DEBUG
-        kdDebug( 6040 ) << "COL" << endl;
+        kdDebug( 6040 ) << "COL Element" << endl;
         kdDebug( 6040 ) << "    startCol=" << _startCol << " span=" << span << endl;
         kdDebug( 6040 ) << "    min=" << _minSize << " max=" << _maxSize << " val=" << _width.value << endl;
 #endif
@@ -399,7 +425,7 @@ void RenderTable::addColInfo(RenderTableCol *colel)
 
 }
 
-void RenderTable::addColInfo(RenderTableCell *cell)
+void RenderTable::addColInfo(RenderTableCell *cell, bool allowRecalc)
 {
 
     int _startCol = cell->col();
@@ -415,19 +441,13 @@ void RenderTable::addColInfo(RenderTableCell *cell)
     }
 
     Length _width = cell->style()->width();
-    addColInfo(_startCol, _colSpan, _minSize, _maxSize, _width ,cell);
+    addColInfo(_startCol, _colSpan, _minSize, _maxSize, _width ,cell, allowRecalc);
 }
 
 void RenderTable::addColInfo(int _startCol, int _colSpan,
                                       int _minSize, int _maxSize,
-                                      Length _width, RenderTableCell* _cell)
+                                      Length _width, RenderTableCell* _cell, bool allowRecalc )
 {
-#ifdef TABLE_DEBUG
-    kdDebug( 6040 ) << "addColInfo():" << endl;
-    kdDebug( 6040 ) << "    startCol=" << _startCol << " span=" << _colSpan << endl;
-    kdDebug( 6040 ) << "    min=" << _minSize << " max=" << _maxSize << endl;
-    kdDebug( 6040 ) << "    totalCols=" << totalCols << endl;
-#endif
     // Netscape ignores width values of "0" or "0%"
     if ( style()->htmlHacks() && _width.value == 0 && (_width.type == Percent || _width.type == Fixed) )
 	    _width = Length();
@@ -437,46 +457,84 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 
     ColInfo* col = colInfos[_colSpan-1]->at(_startCol);
 
-    if (!col)
-    {
+    bool changed = false;
+    bool recalc = false;
+
+    if (!col) {
         col = new ColInfo;
         col->span = _colSpan;
         col->start = _startCol;
         col->minCell = _cell;
         col->maxCell = _cell;
+	col->min = _minSize;
+	col->max = _maxSize;
         if (_colSpan>maxColSpan)
             maxColSpan=_colSpan;
         colInfos[_colSpan-1]->insert(_startCol,col);
-    }
+	col->type = _width.type;
+	col->value = _width.value;
+	col->widthCell = _cell;
 
-    if (_minSize > col->min)
-    {
-        col->min = _minSize;
-        col->minCell = _cell;
-    }
-    if (_maxSize > col->max)
-    {
-        col->max = _maxSize;
-        col->maxCell = _cell;
-    }
-    
-    // Fixed width is treated as variable 
+	changed = true;
+    } else {
+	if (_minSize > col->min)
+	{
+	    if ( allowRecalc && col->minCell == _cell ) {
+		recalc = true;
+	    } else {
+		col->min = _minSize;
+		col->minCell = _cell;
+		changed = true;
+	    }
+	}
+	if (_maxSize > col->max)
+	{
+	    if ( allowRecalc && col->maxCell == _cell ) {
+		recalc = true;
+	    } else {
+		col->max = _maxSize;
+		col->maxCell = _cell;
+		changed = true;
+	    }
+	}
 
-    if (_width.type == col->type)
-        col->value = _width.value > col->value ? _width.value : col->value;    
-    
-    if ( (_width.type > col->type && (_width.type!=Fixed || col->type<=Variable))
-            || ( col->type == Fixed && _width.type!=Variable) )
-    {
-        col->type = _width.type;
-        col->value = _width.value;
-    }
+	// Fixed width is treated as variable
 
-    setMinMaxKnown(false);
+	if (_width.type == col->type && _width.value > col->value ) {
+	    if ( allowRecalc && col->widthCell == _cell ) {
+		recalc = true;
+	    } else {
+		col->value = _width.value;
+		col->widthCell = _cell;
+		changed = true;
+	    }
+	} else if ( (_width.type > int(col->type) && (!(_width.type==Fixed) || (int(col->type)<=Variable)))
+		    || ( col->type == Fixed && !(_width.type==Variable)) ) {
+	    if ( allowRecalc && col->widthCell == _cell ) {
+		recalc = true;
+	    } else {
+		col->type = _width.type;
+		col->value = _width.value;
+		col->widthCell = _cell;
+		changed = true;
+	    }
+	}
+    }
+    if ( recalc )
+	recalcColInfo( col );
+    if ( changed )
+	setMinMaxKnown(false);
+
+    if ( recalc || changed )
+	colWidthKnown = false;
 
 #ifdef TABLE_DEBUG
-    kdDebug( 6040 ) << "  end: min=" << colMinWidth[_startCol] << " max=" << colMaxWidth[_startCol] << " act=" << actColWidth[_startCol] << endl;
+    kdDebug( 6040 ) << "(" << this << "):addColInfo():" << endl;
+    kdDebug( 6040 ) << "    startCol=" << col->start << " span=" << col->span << endl;
+    kdDebug( 6040 ) << "    min=" << col->min << " max=" << col->max << endl;
+    kdDebug( 6040 ) << "    type=" << col->type << " width=" << col->value << endl;
 #endif
+
 }
 
 void RenderTable::spreadSpanMinMax(int col, int span, int distmin,
@@ -701,7 +759,7 @@ void RenderTable::calcSingleColMinMax(int c, ColInfo* col)
         {
             oldmin+=colMinWidth[o];
             oldmax+=colMaxWidth[o];
-        }        
+        }
         int spreadmin = smin-oldmin-(span-1)*spacing;
 //        kdDebug( 6040 ) << "colmin " << smin  << endl;
 //        kdDebug( 6040 ) << "oldmin " << oldmin  << endl;
@@ -729,11 +787,6 @@ void RenderTable::calcFinalColMax(int c, ColInfo* col)
         oldmin+=colMinWidth[o];
     }
 
-#ifdef APPLE_CHANGES
-    // [kocienda] smin in unused
-#else /* APPLE_CHANGES not defined */
-    int smin = col->min;
-#endif /* APPLE_CHANGES not defined */
     int smax = col->max;
 
     if (col->type == Percent)
@@ -772,15 +825,7 @@ void RenderTable::calcColMinMax()
 // columns.
 // Calculate min and max width for the table.
 
-
-#ifdef TABLE_DEBUG
-    kdDebug( 6040 ) << "RenderTable::calcColMinMax(), " << minMaxKnown() << endl;
-#endif
-
     // PHASE 1, prepare
-
-//    if(minMaxKnown())
-//      return;
 
     colMinWidth.fill(0);
     colMaxWidth.fill(0);
@@ -788,11 +833,15 @@ void RenderTable::calcColMinMax()
     int availableWidth = containingBlockWidth();
 
     int realMaxWidth=spacing;
-    
+
     int* spanPercent = new int[maxColSpan];
     int* spanPercentMax = new int[maxColSpan];
 
     LengthType widthType = style()->width().type;
+
+#ifdef TABLE_DEBUG
+    kdDebug( 6040 ) << "RenderTable(" << this << ")::calcColMinMax(), maxCelSpan" << maxColSpan << " totalCols " << totalCols << " widthtype=" << widthType << " widthval=" << style()->width().value << endl;
+#endif
 
     Length l;
     if ( ( l = style()->marginLeft() ).isFixed() )
@@ -809,7 +858,7 @@ void RenderTable::calcColMinMax()
 
         int spanMax=0;
         spanPercentMax[s] = spacing;
-        spanPercent[s] = 0;        
+        spanPercent[s] = 0;
 
         for ( unsigned int c=0; c<totalCols-s; ++c)
         {
@@ -822,10 +871,9 @@ void RenderTable::calcColMinMax()
             kdDebug( 6040 ) << " s=" << s << " c=" << c << " min=" << col->min << " value=" << col->value  <<
                         " max="<<col->max<< endl;
 #endif
-            col->update();
-            
+
             spanMax += col->max + spacing;
-            
+
             if (col->type==Percent)
             {
                 spanPercentMax[s] += col->max+spacing;
@@ -859,8 +907,8 @@ void RenderTable::calcColMinMax()
     int minRel=0;
     int minVar=0;
     int maxRel=0;
-    int maxVar=0;    
-    bool hasPercent=false;
+    int maxVar=0;
+    hasPercent=false;
     bool hasRel=false;
     bool hasVar=false;
 
@@ -887,7 +935,7 @@ void RenderTable::calcColMinMax()
             if (!hasRel){
                 hasRel=true;
                 minRel=maxRel=spacing;
-            }            
+            }
             totalRelative += colValue[i] ;
             minRel += colMinWidth[i] + spacing;
             maxRel += colMaxWidth[i] + spacing;
@@ -899,13 +947,13 @@ void RenderTable::calcColMinMax()
             if (!hasVar){
                 hasVar=true;
                 minVar=maxVar=spacing;
-            }                
+            }
             minVar += colMinWidth[i] + spacing;
             maxVar += colMaxWidth[i] + spacing;
         }
 
     }
-    
+
     for ( int s=0; s<maxColSpan ; ++s)
     {
         maxPercent = KMAX(spanPercentMax[s],maxPercent);
@@ -914,39 +962,75 @@ void RenderTable::calcColMinMax()
     delete[] spanPercentMax;
     delete[] spanPercent;
 
-    if(widthType > Relative) // Percent or fixed table
-    {
-        m_width = style()->width().minWidth(availableWidth);
-        if(m_minWidth > m_width) m_width = m_minWidth;
-	//kdDebug( 6040 ) << "1 width=" << m_width << " minWidth=" << m_minWidth << " availableWidth=" << availableWidth << " " << endl;
-    }
-    else if (hasPercent)
-    {        
+    if (widthType <= Relative && hasPercent) {
 	    int tot = KMIN(100u, totalPercent );
         if (tot>0)
 	        m_maxWidth = maxPercent*100/tot;
-        if (tot<100) 
+        if (tot<100)
             m_maxWidth = KMAX( short((maxVar+maxRel)*100/(100-tot)), m_maxWidth );
+    }
+
+
+
+    // PHASE 5, set table min and max to final values
+
+    if(widthType == Fixed) {
+	m_width = style()->width().value;
+	if ( m_width < m_minWidth )
+	    m_width = m_minWidth;
+        m_minWidth = m_maxWidth = m_width;
+    } else {
+        if (realMaxWidth > m_maxWidth)
+            m_maxWidth = realMaxWidth;
+    }
+
+    m_minWidth += borderLeft() + borderRight();
+    m_maxWidth += borderLeft() + borderRight();
+
+#ifdef TABLE_DEBUG
+    kdDebug( 6040 ) << "TABLE width=" << m_width <<
+                " m_minWidth=" << m_minWidth <<
+                " m_maxWidth=" << m_maxWidth <<
+                " realMaxWidth=" << realMaxWidth << endl;
+#endif
+}
+
+void RenderTable::calcWidth()
+{
+    if ( isPositioned() ) {
+        calcAbsoluteHorizontal();
+    }
+
+    int borderWidth = borderLeft() + borderRight();
+    int availableWidth = containingBlockWidth() - borderWidth;
+
+
+    LengthType widthType = style()->width().type;
+    if(widthType > Relative) {
+	// Percent or fixed table
+        m_width = style()->width().minWidth( availableWidth );
+        if(m_minWidth > m_width) m_width = m_minWidth;
+	//kdDebug( 6040 ) << "1 width=" << m_width << " minWidth=" << m_minWidth << " availableWidth=" << availableWidth << " " << endl;
+    } else if (hasPercent) {
         m_width = KMIN(short( availableWidth ),m_maxWidth);
 //        kdDebug( 6040 ) << "width=" << m_width << " maxPercent=" << maxPercent << " maxVar=" << maxVar << " " << endl;
-    }
-    else
-    {
+    } else {
         m_width = KMIN(short( availableWidth ),m_maxWidth);
     }
 
     m_width = KMAX (m_width, m_minWidth);
 
+    m_marginRight=0;
+    m_marginLeft=0;
 
-    // PHASE 4, calculate maximums for percent and relative columns
+    calcHorizontalMargins(style()->marginLeft(),style()->marginRight(),availableWidth);
 
-    for ( unsigned int s=0;  (int)s<maxColSpan ; ++s)
-    {
+    // PHASE 4, calculate maximums for percent and relative columns. We can't do this in
+    // the minMax calculations, as we do not have the correct table width there.
+
+    for ( unsigned int s=0;  (int)s<maxColSpan ; ++s) {
         ColInfoLine* spanCols = colInfos[s];
-
-        for ( unsigned int c=0; c<totalCols-s; ++c)
-        {
-
+        for ( unsigned int c=0; c<totalCols-s; ++c) {
             ColInfo* col;
             col = spanCols->at(c);
 
@@ -956,54 +1040,10 @@ void RenderTable::calcColMinMax()
                 continue;
 
             calcFinalColMax(c, col);
-
         }
-
     }
 
-
-    // PHASE 5, set table min and max to final values
-
-    if(widthType == Fixed)
-    {
-        m_minWidth = m_maxWidth = m_width;
-    }
-    else 
-    {
-        if (realMaxWidth > m_maxWidth)
-            m_maxWidth = realMaxWidth;
-    }
-
-    m_minWidth += borderLeft() + borderRight();
-    m_maxWidth += borderLeft() + borderRight();
-    m_width += borderLeft() + borderRight();
-
-/*    kdDebug( 6040 ) << "TABLE width=" << m_width <<
-                " m_minWidth=" << m_minWidth <<
-                " m_maxWidth=" << m_maxWidth <<
-                " realMaxWidth=" << realMaxWidth << endl;
-*/
-
-//    setMinMaxKnown(true);
-
-
-    int cw = containingBlockWidth();
-
-    m_marginRight=0;
-    m_marginLeft=0;
-
-    calcHorizontalMargins(style()->marginLeft(),style()->marginRight(),cw);
-
-
-}
-
-void RenderTable::calcWidth()
-{
-    Length ml = style()->marginLeft();
-    Length mr = style()->marginRight();
-    int cw = containingBlockWidth();
-    m_marginLeft = ml.minWidth(cw);
-    m_marginRight = mr.minWidth(cw);
+    m_width += borderWidth;
 }
 
 void RenderTable::calcColWidth(void)
@@ -1011,19 +1051,13 @@ void RenderTable::calcColWidth(void)
 
 #ifdef TABLE_DEBUG
     kdDebug( 6040 ) << "START calcColWidth() this = " << this << endl;
-    kdDebug( 6040 ) << "---- " << totalColInfos << " ----" << endl;
     kdDebug( 6040 ) << "maxColSpan = " << maxColSpan << endl;
 #endif
 
+    colWidthKnown = true;
+
     if (totalCols==0)
         return;
-
-    /*
-     * Calculate min and max width for every column,
-     * and the width of the table
-     */
-
-    calcColMinMax();
 
     /*
      * Set actColWidth[] to column minimums, it will
@@ -1084,9 +1118,9 @@ void RenderTable::calcColWidth(void)
     }
 
 #ifdef TABLE_DEBUG
-    for(int i = 1; i <= (int)totalCols; i++)
+    for(int i = 0; i < (int)totalCols; i++)
     {
-        kdDebug( 6040 ) << "Start->target " << i << ": " << actColWidth[i-1] << "->" << colMaxWidth[i-1] << endl;
+        kdDebug( 6040 ) << "Start->target " << i << ": " << actColWidth[i] << "->" << colMaxWidth[i] << " type=" << colType[i] << endl;
     }
 #endif
 
@@ -1107,16 +1141,29 @@ void RenderTable::calcColWidth(void)
     toAdd = distributeWidth(toAdd,Relative,numRel);
     toAdd = distributeWidth(toAdd,Variable,numVar);
 
+#ifdef TABLE_DEBUG
+    for(int i = 0; i < (int)totalCols; i++)
+    {
+        kdDebug( 6040 ) << "distributeWidth->target " << i << ": " << actColWidth[i] << "->" << colMaxWidth[i] << " type=" << colType[i] << endl;
+    }
+#endif
+
     /*
      * Some width still left?
      * Reverse order, variable->relative->percent
      */
 
-    toAdd = distributeRest(toAdd,Variable,maxVar);
-    toAdd = distributeRest(toAdd,Relative,maxRel);
-    toAdd = distributeRest(toAdd,Percent,maxPercent);
-    toAdd = distributeRest(toAdd,Fixed,maxFixed);
+    if ( numVar ) toAdd = distributeRest(toAdd,Variable,maxVar);
+    if ( numRel ) toAdd = distributeRest(toAdd,Relative,maxRel);
+    if ( numPercent ) toAdd = distributeRest(toAdd,Percent,maxPercent);
+    if ( numFixed ) toAdd = distributeRest(toAdd,Fixed,maxFixed);
 
+#ifdef TABLE_DEBUG
+    for(int i = 0; i < (int)totalCols; i++)
+    {
+        kdDebug( 6040 ) << "distributeRest->target " << i << ": " << actColWidth[i] << "->" << colMaxWidth[i] << " type=" << colType[i] << endl;
+    }
+#endif
     /*
      * If something remains, put it to the last column
      */
@@ -1137,7 +1184,7 @@ void RenderTable::calcColWidth(void)
     }
 
 #ifdef TABLE_DEBUG
-    if(m_width != columnPos[totalCols] )
+    if(m_width - borderLeft() - borderLeft() != columnPos[totalCols] )
         kdDebug( 6040 ) << "========> table layout error!!! <===============================" << endl;
     kdDebug( 6040 ) << "total width = " << m_width << " colpos = " << columnPos[totalCols] << endl;
 #endif
@@ -1180,8 +1227,8 @@ int RenderTable::distributeWidth(int distrib, LengthType type, int typeCols )
 
 int RenderTable::distributeRest(int distrib, LengthType type, int divider )
 {
-    if (!divider)
-        return distrib;
+    if ( !divider )
+	return distrib;
 
 #ifdef TABLE_DEBUG
     kdDebug( 6040 ) << "DISTRIBUTING rest, " << distrib << " pixels to type " << type << " cols" << endl;
@@ -1196,10 +1243,8 @@ int RenderTable::distributeRest(int distrib, LengthType type, int divider )
     {
         if (colType[c]==type)
         {
-            int delta = (colMaxWidth[c] * distrib) / divider;
+            int delta = colMaxWidth[c] * distrib / divider;
             delta=KMIN(delta,tdis);
-            if (delta==0 && tdis)
-                delta=1;
             actColWidth[c] += delta;
             tdis -= delta;
         }
@@ -1287,27 +1332,24 @@ void RenderTable::calcRowHeight(int r)
 
 void RenderTable::layout()
 {
-    recalcCells();
-//kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", layouted=" << layouted() << endl;
-    if (layouted() && !containsPositioned() && _lastParentWidth == containingBlockWidth())
-        return;
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
+
+    //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", layouted=" << layouted() << endl;
 
     _lastParentWidth = containingBlockWidth();
 
     m_height = 0;
 
+    int oldWidth = m_width;
+    calcWidth();
+    if ( !colWidthKnown || oldWidth != m_width )
+	calcColWidth();
+
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(Table)::layout1() width=" << width() << ", layouted=" << layouted() << endl;
+    kdDebug( 6040 ) << renderName() << "(Table)::layout1() width=" << width() << ", marginLeft=" << marginLeft() << " marginRight=" << marginRight() << endl;
 #endif
 
-
-    FOR_EACH_CELL( r, c, cell)
-    {
-        cell->calcMinMaxWidth();
-    }
-    END_FOR_EACH
-
-    calcColWidth();
 
     setCellWidths();
 
@@ -1315,12 +1357,20 @@ void RenderTable::layout()
     if(tCaption && tCaption->style()->captionSide() != CAPBOTTOM)
     {
         tCaption->setPos(m_height, tCaption->marginLeft());
-        tCaption->layout();
+	if ( !tCaption->layouted() )
+	    tCaption->layout();
         m_height += tCaption->height() + tCaption->marginTop() + tCaption->marginBottom();
     }
 
-    // layout rows
+    // layout child objects
+    RenderObject *child = firstChild();
+    while( child ) {
+	if ( child != tCaption && !child->layouted() )
+	    child->layout();
+	child = child->nextSibling();
+    }
 
+    // layout rows
     layoutRows(m_height);
 
     m_height += rowHeights[totalRows];
@@ -1329,7 +1379,8 @@ void RenderTable::layout()
     if(tCaption && tCaption->style()->captionSide()==CAPBOTTOM)
     {
         tCaption->setPos(tCaption->marginLeft(), m_height);
-        tCaption->layout();
+	if ( !tCaption->layouted() )
+	    tCaption->layout();
         m_height += tCaption->height() + tCaption->marginTop() + tCaption->marginBottom();
     }
 
@@ -1340,7 +1391,8 @@ void RenderTable::layout()
     //kdDebug(0) << "table height: " << m_height << endl;
 
     // table can be containing block of positioned elements.
-    layoutSpecialObjects();
+    // ### only pass true if width or height changed.
+    layoutSpecialObjects( true );
 
     setLayouted();
 
@@ -1352,32 +1404,10 @@ void RenderTable::layoutRows(int yoff)
     int rHeight;
     int indx, rindx;
 
-    for ( unsigned int r = 0; r < totalRows; r++ )
-    {    
-        for ( unsigned int c = 0; c < totalCols; c++ )
-        {
-            RenderTableCell *cell = cells[r][c];
-            if (!cell)
-                continue;
-            if ( c < totalCols - 1 && cell == cells[r][c+1] )
-                continue;
-#ifdef APPLE_CHANGES
-            // [kocienda] fixed signed/unsigned comparison
-            if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
-#else /* APPLE_CHANGES not defined */
-            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
-#endif /* APPLE_CHANGES not defined */
-                continue;
-
-    	    cell->calcVerticalMargins();
-            cell->layout();
-            cell->setCellTopExtra(0);
-            cell->setCellBottomExtra(0);
-        }
-
+    for ( unsigned int r = 0; r < totalRows; r++ ) {
         calcRowHeight(r);
     }
-    
+
 
     // html tables with percent height are relative to view
     Length h = style()->height();
@@ -1387,24 +1417,19 @@ void RenderTable::layoutRows(int yoff)
     else if (h.isPercent())
     {
         Length ch = containingBlock()->style()->height();
-#ifdef APPLE_CHANGES
-        // [kocienda] containing is unused
-#else /* APPLE_CHANGES not defined */
-        RenderObject *containing = containingBlock();
-#endif /* APPLE_CHANGES not defined */
         if (ch.isFixed())
             th = h.width(ch.value);
-        else 
-        {        
+        else
+        {
             // check we or not inside a table
-            RenderObject* ro = parent();    
-            for (; ro && !ro->isTableCell(); ro=ro->parent());            
+            RenderObject* ro = parent();
+            for (; ro && !ro->isTableCell(); ro=ro->parent());
             if (!ro)
-            {            
+            {
                 th = h.width(viewRect().height())-5;
                 // not really, but this way the view height change
                 // gets propagated correctly
-                setContainsPositioned(true);
+                setOverhangingContents();
             }
         }
     }
@@ -1416,7 +1441,7 @@ void RenderTable::layoutRows(int yoff)
         {
             int tot=rowHeights[totalRows];
             int add=0;
-            int prev=rowHeights[0];            
+            int prev=rowHeights[0];
             for ( unsigned int r = 0; r < totalRows; r++ )
             {
                 //weight with the original height
@@ -1427,8 +1452,8 @@ void RenderTable::layoutRows(int yoff)
             rowHeights[totalRows]=th;
         }
     }
-       
-    
+
+
     for ( unsigned int r = 0; r < totalRows; r++ )
     {
         for ( unsigned int c = 0; c < totalCols; c++ )
@@ -1438,12 +1463,7 @@ void RenderTable::layoutRows(int yoff)
                 continue;
             if ( c < totalCols - 1 && cell == cells[r][c+1] )
                 continue;
-#ifdef APPLE_CHANGES
-            // [kocienda] fixed signed/unsigned comparison
-            if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
-#else /* APPLE_CHANGES not defined */
-            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
-#endif /* APPLE_CHANGES not defined */
+            if ( r < totalRows - 1 && cell == cells[r+1][c] )
                 continue;
 
             if ( ( indx = c-cell->colSpan()+1 ) < 0 )
@@ -1479,9 +1499,9 @@ void RenderTable::layoutRows(int yoff)
             default:
                 break;
             }
-    #ifdef DEBUG_LAYOUT
+#ifdef DEBUG_LAYOUT
             kdDebug( 6040 ) << "CELL te=" << te << ", be=" << rHeight - cell->height() - te << ", rHeight=" << rHeight << ", valign=" << va << endl;
-    #endif
+#endif
             cell->setCellTopExtra( te );
             cell->setCellBottomExtra( rHeight - cell->height() - te);
 
@@ -1519,9 +1539,10 @@ void RenderTable::setCellWidths()
 #ifdef TABLE_DEBUG
             kdDebug( 6040 ) << "0x" << this << ": setting width " << r << "/" << indx << "-" << c << " (0x" << cell << "): " << w << " " << endl;
 #endif
-            if (cell->width() != w)
-                cell->setLayouted(false);
+	    int oldWidth = cell->width();
             cell->setWidth( w );
+            if ( w != oldWidth )
+                cell->setLayouted(false);
         }
     END_FOR_EACH
 
@@ -1531,7 +1552,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
                                   int _w, int _h, int _tx, int _ty)
 {
 
-//    if(!layouted()) return;
+//     if(!layouted()) return;
 
     _tx += xPos();
     _ty += yPos();
@@ -1539,7 +1560,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
 #ifdef TABLE_PRINT
     kdDebug( 6040 ) << "RenderTable::print() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    if (!containsPositioned() && !isRelPositioned() && !isPositioned())
+    if (!overhangingContents() && !isRelPositioned() && !isPositioned())
     {
         if((_ty > _y + _h) || (_ty + height() < _y)) return;
         if((_tx > _x + _w) || (_tx + width() < _x)) return;
@@ -1548,22 +1569,61 @@ void RenderTable::print( QPainter *p, int _x, int _y,
 #ifdef TABLE_PRINT
      kdDebug( 6040 ) << "RenderTable::print(2) " << _tx << "/" << _ty << " (" << _x << "/" << _y << ")" << endl;
 #endif
+    // the case below happens during parsing
+    // when we have a new table that never got layouted. Don't print it.
+    if ( totalRows == 1 && rowHeights[1] == 0 )
+	return;
 
-     if(isVisible())
+    if(style()->visibility() == VISIBLE)
          printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    if ( tCaption )
+    int topextra = 0;
+
+    if ( tCaption ) {
         tCaption->print( p, _x, _y, _w, _h, _tx, _ty );
+        if (tCaption->style()->captionSide() != CAPBOTTOM)
+            topextra = - borderTopExtra();
+    }
+
+    // check which rows and cols are visible and only print these
+    // ### fixme: could use a binary search here
+    unsigned int startrow = 0;
+    unsigned int endrow = totalRows;
+    for ( ; startrow < totalRows; startrow++ ) {
+	if ( _ty + topextra + rowHeights[startrow+1] > _y )
+	    break;
+    }
+    for ( ; endrow > 0; endrow-- ) {
+	if ( _ty + topextra + rowHeights[endrow-1] < _y + _h )
+	    break;
+    }
+    unsigned int startcol = 0;
+    unsigned int endcol = totalCols;
+    for ( ; startcol < totalCols; startcol++ ) {
+	if ( _tx + columnPos[startcol+1] > _x )
+	    break;
+    }
+    for ( ; endcol > 0; endcol-- ) {
+	if ( _tx + columnPos[endcol-1] < _x + _w )
+	    break;
+    }
 
     // draw the cells
-    FOR_EACH_CELL(r, c, cell)
-    {
+    for ( unsigned int r = startrow; r < endrow; r++ ) {
+        for ( unsigned int c = startcol; c < endcol; c++ ) {
+            RenderTableCell *cell = cells[r][c];
+            if (!cell)
+                continue;
+            if ( (c < endcol - 1) && (cell == cells[r][c+1]) )
+                continue;
+            if ( (r < endrow - 1) && (cells[r+1][c] == cell) )
+                continue;
 #ifdef DEBUG_LAYOUT
-        kdDebug( 6040 ) << "printing cell " << r << "/" << c << endl;
+	    kdDebug( 6040 ) << "printing cell " << r << "/" << c << endl;
 #endif
-        cell->print( p, _x, _y, _w, _h, _tx, _ty);
+	    cell->print( p, _x, _y, _w, _h, _tx, _ty);
+	}
     }
-    END_FOR_EACH
 
     if ( specialObjects )
 	printSpecialObjects( p, _x, _y, _w, _h, _tx, _ty);
@@ -1575,30 +1635,32 @@ void RenderTable::print( QPainter *p, int _x, int _y,
 
 void RenderTable::calcMinMaxWidth()
 {
-    recalcCells();
+    KHTMLAssert( !minMaxKnown() );
+
+    if ( needsCellsRecalc )
+	recalcCells();
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(Table)::calcMinMaxWidth() known=" << minMaxKnown() << endl;
+    kdDebug( 6040 ) << renderName() << "(Table " << this << ")::calcMinMaxWidth()" <<  endl;
 #endif
 
-    calcColMinMax();
+    /*
+     * Calculate min and max width for every column,
+     * Max width for percent cols are still not accurate, but as they don't
+     * influence the total max width of the table we don't care.
+     */
+     calcColMinMax();
+
+    setMinMaxKnown();
+#ifdef DEBUG_LAYOUT
+    kdDebug( 6040 ) << renderName() << "END: (Table " << this << ")::calcMinMaxWidth() min = " << m_minWidth << " max = " << m_maxWidth <<  endl;
+#endif
 }
 
 void RenderTable::close()
 {
 //    kdDebug( 6040 ) << "RenderTable::close()" << endl;
-    setParsing(false);
     setLayouted(false);
-    updateSize();
-}
-
-void RenderTable::updateSize()
-{
-//    kdDebug( 6040 ) << "RenderTable::updateSize()" << endl;
-
-//    setMinMaxKnown(false);
-//    setLayouted(false);
-//    parent()->updateSize();
-     RenderFlow::updateSize();
+    setMinMaxKnown(false);
 }
 
 int RenderTable::borderTopExtra()
@@ -1627,8 +1689,6 @@ void RenderTable::setNeedsCellsRecalc()
 
 void RenderTable::recalcCells()
 {
-    if (!needsCellsRecalc)
-	return;
     needsCellsRecalc = false;
 
     _oldColElem = 0;
@@ -1638,7 +1698,6 @@ void RenderTable::recalcCells()
     col = 0;
 
     maxColSpan = 0;
-    totalColInfos = 0;
 
     _currentCol=0;
 
@@ -1702,20 +1761,44 @@ void RenderTable::recalcCells()
     recalcColInfos();
 }
 
+#ifndef NDEBUG
+void RenderTable::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " totalCols=" << totalCols;
+    *stream << " totalRows=" << totalRows;
+
+    if (tCaption)
+	*stream << " tCaption";
+    if (head)
+	*stream << " head";
+    if (foot)
+	*stream << " foot";
+
+    if (collapseBorders)
+	*stream << " collapseBorders";
+
+// ###    RenderTableCell ***cells;
+// ###    QPtrVector<ColInfoLine> colInfos;
+// ###    Frame frame;
+// ###    Rules rules;
+// ###    RenderTableCol *_oldColElem;
+
+    RenderFlow::dump(stream,ind);
+}
+#endif
 
 // --------------------------------------------------------------------------
 
-RenderTableSection::RenderTableSection()
-    : RenderContainer()
+RenderTableSection::RenderTableSection(DOM::NodeImpl* node)
+    : RenderContainer(node)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
+    nrows = 0;
 }
 
 RenderTableSection::~RenderTableSection()
 {
-    nrows = 0;
-
     // recalc cell info because RenderTable has unguarded pointers
     // stored that point to this RenderTableSection.
     if (table)
@@ -1739,7 +1822,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
             row = beforeChild;
         else {
             kdDebug( 6040 ) << "creating anonymous table row" << endl;
-            row = new RenderTableRow();
+            row = new RenderTableRow(0 /* anonymous table */);
             RenderStyle *newStyle = new RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE_ROW);
@@ -1748,6 +1831,8 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
             addChild(row, beforeChild);
         }
         row->addChild(child);
+	child->setLayouted( false );
+	child->setMinMaxKnown( false );
         return;
     }
 
@@ -1759,15 +1844,25 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
     RenderContainer::addChild(child,beforeChild);
 }
 
+#ifndef NDEBUG
+void RenderTableSection::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " nrows=" << nrows;
+
+    RenderContainer::dump(stream,ind);
+}
+#endif
+
 // -------------------------------------------------------------------------
 
-RenderTableRow::RenderTableRow()
-    : RenderContainer()
+RenderTableRow::RenderTableRow(DOM::NodeImpl* node)
+    : RenderContainer(node)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
 
     rIndex = -1;
+    ncols = 0;
 }
 
 RenderTableRow::~RenderTableRow()
@@ -1810,7 +1905,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
             cell = static_cast<RenderTableCell *>(beforeChild);
         else {
 //          kdDebug( 6040 ) << "creating anonymous table cell" << endl;
-            cell = new RenderTableCell();
+            cell = new RenderTableCell(0 /* anonymous object */);
             RenderStyle *newStyle = new RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE_CELL);
@@ -1819,6 +1914,8 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
             addChild(cell, beforeChild);
         }
         cell->addChild(child);
+	child->setLayouted( false );
+	child->setMinMaxKnown( false );
         return;
     } else
         cell = static_cast<RenderTableCell *>(child);
@@ -1839,15 +1936,45 @@ void RenderTableRow::repaint()
     if ( table ) table->repaint();
 }
 
+#ifndef NDEBUG
+void RenderTableRow::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " rIndex = " << rIndex;
+    *stream << " ncols = " << ncols;
+
+    RenderContainer::dump(stream,ind);
+}
+#endif
+
+void RenderTableRow::layout()
+{
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
+
+    RenderObject *child = firstChild();
+    while( child ) {
+	KHTMLAssert( child->isTableCell() );
+	if ( !child->layouted() ) {
+	    RenderTableCell *cell = static_cast<RenderTableCell *>(child);
+	    cell->calcVerticalMargins();
+	    cell->layout();
+	    cell->setCellTopExtra(0);
+	    cell->setCellBottomExtra(0);
+	}
+	child = child->nextSibling();
+    }
+    setLayouted();
+}
+
 // -------------------------------------------------------------------------
 
-RenderTableCell::RenderTableCell()
-  : RenderFlow()
+RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
+  : RenderFlow(_node)
 {
   _col = -1;
   _row = -1;
-  cSpan = rSpan = 1;
-  nWrap = false;
+  updateFromElement();
+  _id = 0;
   rowHeight = 0;
   m_table = 0;
   rowimpl = 0;
@@ -1862,8 +1989,23 @@ RenderTableCell::~RenderTableCell()
         m_table->setNeedsCellsRecalc();
 }
 
+void RenderTableCell::updateFromElement()
+{
+  DOM::NodeImpl *node = element();
+  if ( node && (node->id() == ID_TD || node->id() == ID_TH) ) {
+      DOM::HTMLTableCellElementImpl *tc = static_cast<DOM::HTMLTableCellElementImpl *>(node);
+      cSpan = tc->colSpan();
+      rSpan = tc->rowSpan();
+      nWrap = tc->noWrap();
+  } else {
+      cSpan = rSpan = 1;
+      nWrap = false;
+  }
+}
+
 void RenderTableCell::calcMinMaxWidth()
 {
+    KHTMLAssert( !minMaxKnown() );
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(TableCell)::calcMinMaxWidth() known=" << minMaxKnown() << endl;
 #endif
@@ -1875,54 +2017,34 @@ void RenderTableCell::calcMinMaxWidth()
 
     RenderFlow::calcMinMaxWidth();
 
-    if(nWrap && style()->width().type!=Fixed)
+    if(nWrap && !(style()->width().type==Fixed))
         m_minWidth = m_maxWidth;
 
-    if (m_minWidth!=oldMin || m_maxWidth!=oldMax)
+    if (m_minWidth!=oldMin || m_maxWidth!=oldMax) {
         m_table->addColInfo(this);
-
+    }
+    setMinMaxKnown();
 }
 
 void RenderTableCell::calcWidth()
 {
 }
 
+void RenderTableCell::setWidth( int width )
+{
+    if ( width != m_width ) {
+	m_width = width;
+	m_widthChanged = true;
+    }
+}
+
 void RenderTableCell::close()
 {
-    //kdDebug( 6040 ) << "renderFlow::close()" << endl;
-    setParsing(false);
-    if(haveAnonymousBox())
-    {
-        lastChild()->close();
-        //kdDebug( 6040 ) << "RenderFlow::close(): closing anonymous box" << endl;
-        setHaveAnonymousBox(false);
-    }
-
-    //if(lastChild())
-    //    m_height += lastChild()->height() + lastChild()->marginBottom();
-    if(style()->hasBorder())
-        m_height += borderBottom();
-    if(style()->hasPadding())
-        m_height += paddingBottom();
-
-    setMinMaxKnown(false);
-    calcMinMaxWidth();
-    setLayouted(false);
-
-    m_table->updateSize();
+    RenderFlow::close();
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderTableCell)::close() total height =" << m_height << endl;
 #endif
-}
-
-
-void RenderTableCell::updateSize()
-{
-//    kdDebug( 6040 ) << renderName() << "(RenderTableCell)::updateSize()" << endl;
-
-    RenderFlow::updateSize();
-
 }
 
 
@@ -1961,6 +2083,8 @@ void RenderTableCell::setStyle( RenderStyle *style )
 }
 
 #ifdef BOX_DEBUG
+#include <qpainter.h>
+
 static void outlineBox(QPainter *p, int _tx, int _ty, int w, int h)
 {
     p->setPen(QPen(QColor("yellow"), 3, Qt::DotLine));
@@ -1984,7 +2108,7 @@ void RenderTableCell::print(QPainter *p, int _x, int _y,
     _ty += m_y + _topExtra;
 
     // check if we need to do anything at all...
-    if(!containsPositioned() && ((_ty-_topExtra > _y + _h)
+    if(!overhangingContents() && ((_ty-_topExtra > _y + _h)
         || (_ty + m_height+_topExtra+_bottomExtra < _y))) return;
 
     printObject(p, _x, _y, _w, _h, _tx, _ty);
@@ -2015,7 +2139,7 @@ void RenderTableCell::printBoxDecorations(QPainter *p,int, int _y,
     if ( !c.isValid() && parent() ) // take from row
         c = parent()->style()->backgroundColor();
     if ( !c.isValid() && parent() && parent()->parent() ) // take from rowgroup
-        c = parent()->parent()->style()->backgroundColor();    
+        c = parent()->parent()->style()->backgroundColor();
     // ### col is missing...
 
     // ### get offsets right in case the bgimage is inherited.
@@ -2037,21 +2161,52 @@ void RenderTableCell::repaint()
     if ( m_table ) m_table->repaint();
 }
 
+#ifndef NDEBUG
+void RenderTableCell::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " _row=" << _row;
+    *stream << " _col=" << _col;
+    *stream << " rSpan=" << rSpan;
+    *stream << " cSpan=" << cSpan;
+    *stream << " _id=" << _id;
+    *stream << " nWrap=" << nWrap;
+
+    RenderFlow::dump(stream,ind);
+}
+#endif
+
 // -------------------------------------------------------------------------
 
-RenderTableCol::RenderTableCol()
-    : RenderContainer()
+RenderTableCol::RenderTableCol(DOM::NodeImpl* node)
+    : RenderContainer(node)
 {
     // init RenderObject attributes
     setInline(true);   // our object is not Inline
 
     _span = 1;
+    updateFromElement();
+    _currentCol = 0;
+    _startCol = 0;
+    _id = 0;
 }
 
 RenderTableCol::~RenderTableCol()
 {
 }
 
+void RenderTableCol::updateFromElement()
+{
+  DOM::NodeImpl *node = element();
+  if ( node && (node->id() == ID_COL || node->id() == ID_COLGROUP) ) {
+      DOM::HTMLTableColElementImpl *tc = static_cast<DOM::HTMLTableColElementImpl *>(node);
+      _span = tc->span();
+  } else {
+      if ( style()->display() == TABLE_COLUMN_GROUP )
+	  _span = 0;
+      else
+	  _span = 1;
+  }
+}
 
 void RenderTableCol::addChild(RenderObject *child, RenderObject *beforeChild)
 {
@@ -2082,10 +2237,21 @@ Length RenderTableCol::width()
         return style()->width();
 }
 
+#ifndef NDEBUG
+void RenderTableCol::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " _span=" << _span;
+    *stream << " _startCol=" << _startCol;
+    *stream << " _id=" << _id;
+
+    RenderContainer::dump(stream,ind);
+}
+#endif
+
 // -------------------------------------------------------------------------
 
-RenderTableCaption::RenderTableCaption()
-  : RenderFlow()
+RenderTableCaption::RenderTableCaption(DOM::NodeImpl* node)
+  : RenderFlow(node)
 {
 }
 

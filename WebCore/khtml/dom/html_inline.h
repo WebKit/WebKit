@@ -33,7 +33,7 @@
 #include <dom/html_element.h>
 
 namespace DOM {
-
+class HTMLGenericElementImpl;
 class HTMLAnchorElementImpl;
 class DOMString;
 
@@ -509,6 +509,17 @@ public:
      * see @ref width
      */
     void setWidth( const DOMString & );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Returns the document this iframe contains, if there is any and
+     * it is available, a Null document otherwise. The attribute is
+     * read-only.
+     *
+     * @return The content Document if available.
+     */
+    Document contentDocument() const;
 };
 
 // --------------------------------------------------------------------------
@@ -532,7 +543,7 @@ public:
     HTMLModElement(const Node &other) : HTMLElement()
          {(*this)=other;}
 protected:
-    HTMLModElement(HTMLModElementImpl *impl);
+    HTMLModElement(HTMLElementImpl *impl);
 public:
 
     HTMLModElement & operator = (const HTMLModElement &other);
@@ -590,7 +601,7 @@ public:
     HTMLQuoteElement(const Node &other) : HTMLElement()
          {(*this)=other;}
 protected:
-    HTMLQuoteElement(HTMLQuoteElementImpl *impl);
+    HTMLQuoteElement(HTMLGenericElementImpl *impl);
 public:
 
     HTMLQuoteElement & operator = (const HTMLQuoteElement &other);

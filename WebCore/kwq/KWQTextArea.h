@@ -39,26 +39,23 @@ class QWidget;
 
 // The following methods corresponds to methods required by KDE.
 - (void) setWordWrap: (BOOL)f;
-
 - (BOOL) wordWrap;
-
 - (BOOL) isReadOnly;
-
 - (void) setReadOnly: (BOOL)flag;
-
 - (void) setText: (NSString *)s;
-
 - (NSString *)text;
-
 - (NSString *)textForLine: (int)line;
-
 - (int) numLines;
-
 - (void) selectAll;
-
 - (void) setEditable: (BOOL)flag;
-
 - (BOOL)isEditable;
 
+// paragraph-oriented functions for the benefit of QTextEdit
+- (int)paragraphs;
+- (int)paragraphLength:(int)paragraph;
+- (NSString *)textForParagraph:(int)paragraph;
+- (int)lineOfCharAtIndex:(int)index inParagraph:(int)paragraph;
+- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;
+- (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph;
 
 @end

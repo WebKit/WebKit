@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,111 +16,164 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
-#include "kjs.h"
-#include "operations.h"
+#include "value.h"
+#include "object.h"
 #include "types.h"
-#include "internal.h"
+#include "interpreter.h"
+#include "operations.h"
 #include "error_object.h"
-#include "debugger.h"
+//#include "debugger.h"
 
 using namespace KJS;
 
-const char *ErrorObject::errName[] = {
-  "No Error",
-  "Error",
-  "EvalError",
-  "RangeError",
-  "ReferenceError",
-  "SyntaxError",
-  "TypeError",
-  "URIError"
-};
-
-ErrorObject::ErrorObject(const Object &funcProto, const Object &errProto,
-			 ErrorType t)
-  : ConstructorImp(funcProto, 1), errType(t)
-{
-  // ECMA 15.11.3.1 Error.prototype
-  setPrototypeProperty(errProto);
-  const char *n = errName[errType];
-
-  put("name", String(n));
-}
-
-ErrorObject::ErrorObject(const Object& proto, ErrorType t,
-			 const char *m, int l)
-  : ConstructorImp(proto, 1), errType(t)
-{
-  const char *n = errName[errType];
-
-  put("name", String(n));
-  put("message", String(m));
-  put("line", Number(l));
-#ifdef KJS_DEBUGGER
-  Debugger *dbg = KJScriptImp::current()->debugger();
-  if (dbg)
-    put("sid", Number(dbg->sourceId()));
-#endif
-}
-
-// ECMA 15.9.2
-Completion ErrorObject::execute(const List &args)
-{
-  // "Error()" gives the sames result as "new Error()"
-  return Completion(ReturnValue, construct(args));
-}
-
-// ECMA 15.9.3
-Object ErrorObject::construct(const List &args)
-{
-  if (args.isEmpty() == 1 || !args[0].isDefined())
-    return Object::create(ErrorClass, Undefined());
-
-  String message = args[0].toString();
-  return Object::create(ErrorClass, message);
-}
-
-Object ErrorObject::create(ErrorType e, const char *m, int l)
-{
-  Global global(Global::current());
-  KJSO prot = Global::current().get("[[Error.prototype]]");
-  assert(prot.isObject());
-  Imp *d = new ErrorObject(Object(prot.imp()), e, m, l);
-
-  return Object(d);
-}
+// ------------------------------ ErrorPrototypeImp ----------------------------
 
 // ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(const Object& proto)
-  : ObjectImp(ErrorClass, Undefined(), proto)
+ErrorPrototypeImp::ErrorPrototypeImp(ExecState *exec,
+                                     ObjectPrototypeImp *objectProto,
+                                     FunctionPrototypeImp *funcProto)
+  : ObjectImp(Object(objectProto))
 {
-  // The constructor will be added later in ErrorObject's constructor
+  Value protect(this);
+  setInternalValue(Undefined());
+  // The constructor will be added later in ErrorObjectImp's constructor
+
+  put(exec, "name",     String("Error"), DontEnum);
+  put(exec, "message",  String("Unknown error"), DontEnum);
+  put(exec, "toString", Object(new ErrorProtoFuncImp(exec,funcProto)), DontEnum);
 }
 
-KJSO ErrorPrototype::get(const UString &p) const
-{
-  const char *s;
+// ------------------------------ ErrorProtoFuncImp ----------------------------
 
-  /* TODO: are these properties dynamic, i.e. should we put() them ? */
-  if (p == "name")
-    s = "Error";
-  else if (p == "message")
-    s = "Error message.";
-  else if (p == "toString")
-    return Function(new ErrorProtoFunc());
-  else
-    return Imp::get(p);
+ErrorProtoFuncImp::ErrorProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto)
+  : InternalFunctionImp(funcProto)
+{
+  Value protect(this);
+  put(exec,"length",Number(0),DontDelete|ReadOnly|DontEnum);
+}
+
+bool ErrorProtoFuncImp::implementsCall() const
+{
+  return true;
+}
+
+Value ErrorProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*args*/)
+{
+  // toString()
+  UString s = "Error";
+
+  Value v = thisObj.get(exec,"name");
+  if (v.type() != UndefinedType) {
+    s = v.toString(exec);
+  }
+
+  v = thisObj.get(exec,"message");
+  if (v.type() != UndefinedType) {
+    s += ": "+v.toString(exec);
+  }
 
   return String(s);
 }
 
-Completion ErrorProtoFunc::execute(const List &)
-{
-  // toString()
-  const char *s = "Error message.";
+// ------------------------------ ErrorObjectImp -------------------------------
 
-  return Completion(ReturnValue, String(s));
+ErrorObjectImp::ErrorObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                               ErrorPrototypeImp *errorProto)
+  : InternalFunctionImp(funcProto)
+{
+  Value protect(this);
+  // ECMA 15.11.3.1 Error.prototype
+  put(exec, "prototype", Object(errorProto), DontEnum|DontDelete|ReadOnly);
+  //put(exec, "name", String(n));
+}
+
+bool ErrorObjectImp::implementsConstruct() const
+{
+  return true;
+}
+
+// ECMA 15.9.3
+Object ErrorObjectImp::construct(ExecState *exec, const List &args)
+{
+  Object proto = Object::dynamicCast(exec->interpreter()->builtinErrorPrototype());
+  Object obj(new ObjectImp(proto));
+
+  if (!args.isEmpty() && args[0].type() != UndefinedType) {
+    obj.put(exec,"message", String(args[0].toString(exec)));
+  }
+
+  return obj;
+}
+
+bool ErrorObjectImp::implementsCall() const
+{
+  return true;
+}
+
+// ECMA 15.9.2
+Value ErrorObjectImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+{
+  // "Error()" gives the sames result as "new Error()"
+  return construct(exec,args);
+}
+
+// ------------------------------ NativeErrorPrototypeImp ----------------------
+
+NativeErrorPrototypeImp::NativeErrorPrototypeImp(ExecState *exec, ErrorPrototypeImp *errorProto,
+                                                 ErrorType et, UString name, UString message)
+  : ObjectImp(Object(errorProto))
+{
+  Value protect(this);
+  errType = et;
+  put(exec,"name",String(name));
+  put(exec,"message",String(message));
+}
+
+// ------------------------------ NativeErrorImp -------------------------------
+
+const ClassInfo NativeErrorImp::info = {"Error", &InternalFunctionImp::info, 0, 0};
+
+NativeErrorImp::NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                               const Object &prot)
+  : InternalFunctionImp(funcProto), proto(0)
+{
+  Value protect(this);
+  proto = static_cast<ObjectImp*>(prot.imp());
+
+  put(exec,"length",Number(1),DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
+  put(exec,"prototype",prot);
+}
+
+bool NativeErrorImp::implementsConstruct() const
+{
+  return true;
+}
+
+Object NativeErrorImp::construct(ExecState *exec, const List &args)
+{
+  Object obj(new ObjectImp(Object(proto)));
+  if (args[0].type() != UndefinedType)
+    obj.put(exec, "message", String(args[0].toString(exec)));
+  return obj;
+}
+
+bool NativeErrorImp::implementsCall() const
+{
+  return true;
+}
+
+Value NativeErrorImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+{
+  return construct(exec,args);
+}
+
+void NativeErrorImp::mark()
+{
+  ObjectImp::mark();
+  if (proto && !proto->marked())
+    proto->mark();
 }
 

@@ -1,6 +1,8 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -16,98 +18,44 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
+ *  $Id$
  */
 
-#include <stdio.h>
-
-#include "kjs.h"
+#include "value.h"
 #include "object.h"
 #include "types.h"
+#include "interpreter.h"
+
+#include <assert.h>
+#include <math.h>
+#include <stdio.h>
+
 #include "internal.h"
+#include "collector.h"
 #include "operations.h"
+#include "error_object.h"
 #include "nodes.h"
 
 using namespace KJS;
 
-Undefined::Undefined() : KJSO(UndefinedImp::staticUndefined) { }
+// ------------------------------ Reference ------------------------------------
 
-Undefined::~Undefined() { }
-
-Null::Null() : KJSO(NullImp::staticNull) { }
-
-Null::~Null() { }
-
-Boolean::Boolean(bool b)
-  : KJSO(b ? BooleanImp::staticTrue : BooleanImp::staticFalse)
+Reference::Reference(const Object& b, const UString& p)
+  : Value(new ReferenceImp(b,p))
 {
 }
 
-Boolean::Boolean(BooleanImp *i) : KJSO(i) { }
-
-Boolean::~Boolean() { }
-
-bool Boolean::value() const
+Reference::Reference(const Null& b, const UString& p)
+  : Value(new ReferenceImp(b,p))
 {
-  assert(rep);
-  return ((BooleanImp*)rep)->value();
 }
 
-Number::Number(int i)
-  : KJSO(new NumberImp(static_cast<double>(i))) { }
-
-Number::Number(unsigned int u)
-  : KJSO(new NumberImp(static_cast<double>(u))) { }
-
-Number::Number(double d)
-  : KJSO(new NumberImp(d)) { }
-
-Number::Number(long int l)
-  : KJSO(new NumberImp(static_cast<double>(l))) { }
-
-Number::Number(long unsigned int l)
-  : KJSO(new NumberImp(static_cast<double>(l))) { }
-
-Number::Number(NumberImp *i)
-  : KJSO(i) { }
-
-Number::~Number() { }
-
-double Number::value() const
+Reference::Reference(ReferenceImp *v) : Value(v)
 {
-  assert(rep);
-  return ((NumberImp*)rep)->value();
 }
 
-int Number::intValue() const
-{
-  assert(rep);
-  return (int)((NumberImp*)rep)->value();
-}
-
-bool Number::isNaN() const
-{
-  return KJS::isNaN(((NumberImp*)rep)->value());
-}
-
-bool Number::isInf() const
-{
-  return KJS::isInf(((NumberImp*)rep)->value());
-}
-
-String::String(const UString &s) : KJSO(new StringImp(UString(s))) { }
-
-String::String(StringImp *i) : KJSO(i) { }
-
-String::~String() { }
-
-UString String::value() const
-{
-  assert(rep);
-  return ((StringImp*)rep)->value();
-}
-
-Reference::Reference(const KJSO& b, const UString &p)
-  : KJSO(new ReferenceImp(b, p))
+Reference::Reference(const Reference &v) : Value(v)
 {
 }
 
@@ -115,185 +63,262 @@ Reference::~Reference()
 {
 }
 
-Completion::Completion(Imp *d) : KJSO(d) { }
-
-Completion::Completion(Compl c)
-  : KJSO(new CompletionImp(c, KJSO(), UString::null))
+Reference& Reference::operator=(const Reference &v)
 {
-  if (c == Throw)
-    KJScriptImp::setException(new UndefinedImp());
+  Value::operator=(v);
+  return *this;
 }
 
-Completion::Completion(Compl c, const KJSO& v, const UString &t)
-  : KJSO(new CompletionImp(c, v, t))
+Reference Reference::dynamicCast(const Value &v)
 {
-  if (c == Throw)
-    KJScriptImp::setException(v.imp());
+  if (v.isNull() || v.type() != ReferenceType)
+    return 0;
+
+  return static_cast<ReferenceImp*>(v.imp());
 }
 
-Completion::~Completion() { }
+// ------------------------------ ListIterator ---------------------------------
 
-Compl Completion::complType() const
-{
-  assert(rep);
-  return ((CompletionImp*)rep)->completion();
-}
+//d  dont add   ListIterator();
 
-bool Completion::isValueCompletion() const
+ListIterator::ListIterator(ListNode *n) : node(n)
 {
-  assert(rep);
-  return !((CompletionImp*)rep)->value().isNull();
-}
-
-KJSO Completion::value() const
-{
-  assert(isA(CompletionType));
-  return ((CompletionImp*)rep)->value();
-}
-
-UString Completion::target() const
-{
-  assert(rep);
-  return ((CompletionImp*)rep)->target();
 }
 
 ListIterator::ListIterator(const List &l)
-  : node(l.hook->next)
+  : node(static_cast<ListImp*>(l.imp())->hook->next)
 {
 }
 
-List::List()
+ListIterator& ListIterator::operator=(const ListIterator &iterator)
 {
-#ifdef KJS_DEBUG_MEM
-  count++;
-#endif
+  node=iterator.node;
+  return *this;
+}
 
-  static KJSO *null = 0;
-  if (!null)
-     null = new KJSO();
+ListIterator::ListIterator(const ListIterator &i) : node(i.node)
+{
+}
 
-  hook = new ListNode(*null, 0L, 0L);
-  hook->next = hook;
-  hook->prev = hook;
+ListIterator::~ListIterator()
+{
+}
+
+ValueImp* ListIterator::operator->() const
+{
+  return node->member;
+}
+
+    //    operator Value* () const { return node->member; }
+Value ListIterator::operator*() const
+{
+  return Value(node->member);
+}
+
+    //    operator Value*() const { return node->member; }
+Value ListIterator::operator++()
+{
+  node = node->next;
+  return Value(node->member);
+}
+
+Value ListIterator::operator++(int)
+{
+  const ListNode *n = node;
+  ++*this;
+  return Value(n->member);
+}
+
+Value ListIterator::operator--()
+{
+  node = node->prev;
+  return Value(node->member);
+}
+
+Value ListIterator::operator--(int)
+{
+  const ListNode *n = node;
+  --*this;
+  return Value(n->member);
+}
+
+bool ListIterator::operator==(const ListIterator &it) const
+{
+  return (node==it.node);
+}
+
+bool ListIterator::operator!=(const ListIterator &it) const
+{
+  return (node!=it.node);
+}
+
+// ------------------------------ List -----------------------------------------
+
+List::List()
+  : Value(new ListImp())
+{
+  //fprintf(stderr,"List::List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount);
+}
+
+List::List(ListImp *v) : Value(v)
+{
+  //fprintf(stderr,"List::List(imp) this=%p imp=%p refcount=%d\n",this,v,v?v->refcount:0);
+}
+
+List::List(const List &v) : Value(v)
+{
+  //fprintf(stderr,"List::List(List) this=%p imp=%p refcount=%d\n",this,rep,rep?rep->refcount:0);
 }
 
 List::~List()
 {
-#ifdef KJS_DEBUG_MEM
-  count--;
-#endif
-
-  clear();
-  delete hook;
+  //fprintf(stderr,"List::~List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount-1);
 }
 
-void List::append(const KJSO& obj)
+List& List::operator=(const List &v)
 {
-  ListNode *n = new ListNode(obj, hook->prev, hook);
-  hook->prev->next = n;
-  hook->prev = n;
+  //fprintf(stderr,"List::operator=() this=%p\n",this);
+  Value::operator=(v);
+  return *this;
 }
 
-void List::prepend(const KJSO& obj)
+List List::dynamicCast(const Value &v)
 {
-  ListNode *n = new ListNode(obj, hook, hook->next);
-  hook->next->prev = n;
-  hook->next = n;
+  if (v.isNull() || v.type() != ListType)
+    return 0;
+
+  return static_cast<ListImp*>(v.imp());
+}
+
+void List::append(const Value& val)
+{
+  static_cast<ListImp*>(rep)->append(val);
+}
+
+void List::prepend(const Value& val)
+{
+  static_cast<ListImp*>(rep)->prepend(val);
+}
+
+void List::appendList(const List& lst)
+{
+  static_cast<ListImp*>(rep)->appendList(lst);
+}
+
+void List::prependList(const List& lst)
+{
+  static_cast<ListImp*>(rep)->prependList(lst);
 }
 
 void List::removeFirst()
 {
-  erase(hook->next);
+  static_cast<ListImp*>(rep)->removeFirst();
 }
 
 void List::removeLast()
 {
-  erase(hook->prev);
+  static_cast<ListImp*>(rep)->removeLast();
 }
 
-void List::remove(const KJSO &obj)
+void List::remove(const Value &val)
 {
-  if (obj.isNull())
-    return;
-  ListNode *n = hook->next;
-  while (n != hook) {
-    if (n->member.imp() == obj.imp()) {
-      erase(n);
-      return;
-    }
-    n = n->next;
-  }
+  static_cast<ListImp*>(rep)->remove(val);
 }
 
 void List::clear()
 {
-  ListNode *n = hook->next;
-  while (n != hook) {
-    n = n->next;
-    delete n->prev;
-  }
-
-  hook->next = hook;
-  hook->prev = hook;
+  static_cast<ListImp*>(rep)->clear();
 }
 
-List *List::copy() const
+List List::copy() const
 {
-  List *newList = new List();
-  ListIterator e = end();
-  ListIterator it = begin();
-
-  while(it != e) {
-    newList->append(*it);
-    ++it;
-  }
-
-  return newList;
+  return static_cast<ListImp*>(rep)->copy();
 }
 
-void List::erase(ListNode *n)
+ListIterator List::begin() const
 {
-  if (n != hook) {
-    n->next->prev = n->prev;
-    n->prev->next = n->next;
-    delete n;
-  }
+  return static_cast<ListImp*>(rep)->begin();
+}
+
+ListIterator List::end() const
+{
+  return static_cast<ListImp*>(rep)->end();
+}
+
+bool List::isEmpty() const
+{
+  return static_cast<ListImp*>(rep)->isEmpty();
 }
 
 int List::size() const
 {
-  int s = 0;
-  ListNode *node = hook;
-  while ((node = node->next) != hook)
-    s++;
-
-  return s;
+  return static_cast<ListImp*>(rep)->size();
 }
 
-KJSO List::at(int i) const
+Value List::at(int i) const
 {
-  if (i < 0 || i >= size())
-    return Undefined();
-
-  ListIterator it = begin();
-  int j = 0;
-  while ((j++ < i))
-    it++;
-
-  return *it;
+  return static_cast<ListImp*>(rep)->at(i);
 }
 
-List *List::emptyList = 0L;
-
-const List *List::empty()
+Value List::operator[](int i) const
 {
-  if (!emptyList)
-    emptyList = new List;
-#ifdef KJS_DEBUG_MEM
-  else
-    count++;
-#endif
+  return static_cast<ListImp*>(rep)->at(i);
+}
 
+const List List::empty()
+{
+  return ListImp::empty();
+}
 
-  return emptyList;
+// ------------------------------ Completion -----------------------------------
+
+Completion::Completion(ComplType c, const Value& v, const UString &t)
+  : Value(new CompletionImp(c,v,t))
+{
+}
+
+Completion::Completion(CompletionImp *v) : Value(v)
+{
+}
+
+Completion::Completion(const Completion &v) : Value(v)
+{
+}
+
+Completion::~Completion()
+{
+}
+
+Completion& Completion::operator=(const Completion &v)
+{
+  Value::operator=(v);
+  return *this;
+}
+
+Completion Completion::dynamicCast(const Value &v)
+{
+  if (v.isNull() || v.type() != CompletionType)
+    return 0;
+
+  return static_cast<CompletionImp*>(v.imp());
+}
+
+ComplType Completion::complType() const
+{
+  return static_cast<CompletionImp*>(rep)->complType();
+}
+
+Value Completion::value() const
+{
+  return static_cast<CompletionImp*>(rep)->value();
+}
+
+UString Completion::target() const
+{
+  return static_cast<CompletionImp*>(rep)->target();
+}
+
+bool Completion::isValueCompletion() const
+{
+  return !value().isNull();
 }

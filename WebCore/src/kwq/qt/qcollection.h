@@ -48,17 +48,17 @@
 
 #else
 
-class QCollection {
+class QPtrCollection {
  public:
     typedef void *Item;
 
     bool autoDelete();
     void setAutoDelete(bool autoDelete);
  protected:
-    QCollection();
-    QCollection(const QCollection &);
-    QCollection &operator=(const QCollection &);
-    virtual ~QCollection();
+    QPtrCollection();
+    QPtrCollection(const QPtrCollection &);
+    QPtrCollection &operator=(const QPtrCollection &);
+    virtual ~QPtrCollection();
 
     bool del_item;				// default FALSE
 };

@@ -47,6 +47,7 @@ class KWQVectorImpl
     bool resize(uint size, bool delItems);
     bool insert(uint n, const void *item, bool delItems);
     void *at(int n) const;
+    void **data();
     KWQVectorImpl &assign (KWQVectorImpl &vi, bool delItems);
 
  private:

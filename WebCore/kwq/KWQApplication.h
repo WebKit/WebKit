@@ -76,6 +76,9 @@ public:
     virtual void     setMainWidget( QWidget * );
 
     // member functions --------------------------------------------------------
+
+    QWidget *focusWidget() const;
+
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
@@ -99,5 +102,7 @@ private:
 #endif
 
 }; // class QApplication =======================================================
+
+extern QApplication *qApp;
 
 #endif

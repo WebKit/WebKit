@@ -34,6 +34,7 @@
 #include "qsize.h"
 #include "qstring.h"
 #include "qfont.h"
+#include "qfontinfo.h"
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 #import <Cocoa/Cocoa.h>
@@ -77,6 +78,8 @@ public:
     int descent() const;
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(QChar) const;
+    QRect boundingRect(int, int, int, int, int, const QString &) const;
+
     QSize size(int, const QString &, int len=-1, int tabstops=0, 
         int *tabarray=0, char **intern=0 ) const;
     int rightBearing(QChar) const;
@@ -89,3 +92,4 @@ private:
 }; // class QFontMetrics =======================================================
 
 #endif
+

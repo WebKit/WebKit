@@ -38,9 +38,9 @@
 
 #include <qlist.h>
 
-// class QStack ================================================================
+// class QPtrStack ================================================================
 
-template<class T> class QStack {
+template<class T> class QPtrStack {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -49,9 +49,9 @@ public:
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
 
-    QStack() : list() {}
-    QStack(const QStack<T> &s) : list(s.list) {}
-    ~QStack() {}
+    QPtrStack() : list() {}
+    QPtrStack(const QPtrStack<T> &s) : list(s.list) {}
+    ~QPtrStack() {}
 
     // member functions --------------------------------------------------------
 
@@ -62,22 +62,22 @@ public:
 
     // operators ---------------------------------------------------------------
 
-    QStack<T> &operator=(const QStack<T> &s) { list = s.list; return *this; }
+    QPtrStack<T> &operator=(const QPtrStack<T> &s) { list = s.list; return *this; }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
  private:
-    QList<T> list;
+    QPtrList<T> list;
 
-}; // class QStack =============================================================
+}; // class QPtrStack =============================================================
 
 #ifdef _KWQ_IOSTREAM_
 template<class T>
-inline ostream &operator<<(ostream &stream, const QStack<T>&s)
+inline ostream &operator<<(ostream &stream, const QPtrStack<T>&s)
 {
-    stream << "QStack: [size: " << s.count() << "; items: ";
+    stream << "QPtrStack: [size: " << s.count() << "; items: ";
 
-    QStack<T> tmp(s);
+    QPtrStack<T> tmp(s);
 
     while (!tmp.isEmpty()) {
         stream << *tmp.pop();

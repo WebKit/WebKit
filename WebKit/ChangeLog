@@ -1,3 +1,17 @@
+2002-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Merged the following changes from LABYRINTH_KDE_3_MERGE branch:
+	
+	2002-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+		Merged accumlated changes from HEAD, up to
+		MERGED_TO_KDE_3_MERGE_BRANCH tag.
+
+	2002-03-19  Maciej Stachowiak  <mjs@apple.com>
+	
+	        * WebView.subproj/IFWebView.mm: (-[IFWebView layout]):
+		layout() no longer takes an argument.
+	
 2002-03-21  Richard Williamson  <rjw@apple.com>
 
         Added setNeedsToApplyStyles: and reapplyStyles.  This is for dynamic preferences
@@ -128,7 +142,7 @@
 	* WebKit.pbproj/project.pbxproj: version wars
 
 2002-03-15  John Sullivan  <sullivan@apple.com>
-	
+
 	Fixed bug where history entry images weren't showing up, except by historical
 	accident in some cases.
 	Made IFWebHistory no longer be a singleton class; made the file location

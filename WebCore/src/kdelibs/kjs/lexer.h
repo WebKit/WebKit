@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -16,6 +17,8 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
+ *  $Id$
  */
 
 #ifndef _KJSLEXER_H_
@@ -63,7 +66,7 @@ namespace KJS {
 		 InUnicodeEscape,
 		 Other,
 		 Bad };
-    
+
     bool scanRegExp();
     UString pattern, flags;
 
@@ -78,7 +81,11 @@ namespace KJS {
     bool restrKeyword;
     // encountered delimiter like "'" and "}" on last run
     bool delimited;
+    bool skipLF;
+    bool skipCR;
+    bool eatNextIdentifier;
     int stackToken;
+    int lastToken;
 
     State state;
     void setDone(State s);
@@ -87,7 +94,7 @@ namespace KJS {
     int lookupKeyword(const char *);
 
     bool isWhiteSpace() const;
-    bool isLineTerminator() const;
+    bool isLineTerminator();
     bool isHexDigit(unsigned short c) const;
     bool isOctalDigit(unsigned short c) const;
 
@@ -118,11 +125,6 @@ namespace KJS {
 
     // current and following unicode characters
     unsigned short current, next1, next2, next3;
-
-    struct keyword {
-      const char *name;
-      int token;
-    };
 
     // for future extensions
     class LexerPrivate;

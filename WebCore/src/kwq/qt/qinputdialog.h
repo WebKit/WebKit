@@ -33,6 +33,7 @@
 #include "qstring.h"
 #include "qlabel.h"
 #include "qwidget.h"
+#include "qlineedit.h"
 
 // class QInputDialog ==========================================================
 
@@ -45,8 +46,8 @@ public:
 
     // static member functions -------------------------------------------------
 
-    static QString getText(const QString &, const QString &, 
-        const QString &text=QString::null, bool *ok=0, QWidget *parent=0, 
+    static QString getText(const QString &, const QString &, QLineEdit::EchoMode,
+        const QString &text=QString::null, bool *ok=0, QWidget *parent=0,
         const char *name=0);
 
     // constructors, copy constructors, and destructors ------------------------

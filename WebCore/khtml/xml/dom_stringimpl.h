@@ -24,10 +24,10 @@
 #define _DOM_DOMStringImpl_h_
 
 #include <qstring.h>
-#include <dom_misc.h>
-#include <khtmllayout.h>
 
-template<class type> class QList;
+#include "dom/dom_misc.h"
+#include "misc/khtmllayout.h"
+
 class QChar;
 
 namespace DOM {
@@ -67,10 +67,10 @@ public:
         return QConstString(s,len).string().toInt(ok);
     };
 
-    QList<khtml::Length> *toLengthList() const;
+    khtml::Length* toLengthArray(int& len) const;
     bool isLower() const;
-    DOMStringImpl *lower();
-    DOMStringImpl *upper();
+    DOMStringImpl *lower() const;
+    DOMStringImpl *upper() const;
     DOMStringImpl *capitalize();
 
     unsigned int l;

@@ -22,13 +22,11 @@
  */
 // --------------------------------------------------------------------------
 
-#include "dom_string.h"
-#include "html_form.h"
-#include "html_head.h"
-#include "html_headimpl.h"
-using namespace DOM;
+#include "dom/html_head.h"
+#include "html/html_headimpl.h"
+#include "misc/htmlhashes.h"
 
-#include "htmlhashes.h"
+using namespace DOM;
 
 HTMLBaseElement::HTMLBaseElement() : HTMLElement()
 {

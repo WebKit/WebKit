@@ -26,10 +26,11 @@
 #ifndef KHTMLSTRING_H
 #define KHTMLSTRING_H
 
-#include "dom_string.h"
-using namespace DOM;
+#include "dom/dom_string.h"
 
 #include <qstring.h>
+
+using namespace DOM;
 
 namespace khtml
 {
@@ -38,25 +39,28 @@ class DOMStringIt
 {
 public:
     DOMStringIt()
-	{ s = 0, l = 0; }
+	{ s = 0, l = 0; lines = 0; }
     DOMStringIt(QChar *str, uint len)
-	{ s = str, l = len; }
+	{ s = str, l = len; lines = 0; }
     DOMStringIt(const QString &str)
-	{ s = str.unicode(); l = str.length(); }
+	{ s = str.unicode(); l = str.length(); lines = 0; }
     DOMStringIt(const DOMString &str)
-	{ s = str.unicode(); l = str.length(); }
+	{ s = str.unicode(); l = str.length(); lines = 0; }
 
     DOMStringIt *operator++()
     {
         if(!pushedChar.isNull())
             pushedChar=0;
-        else if(l > 0 )
+        else if(l > 0 ) {
+            if (*s == '\n')
+                lines++;
 	    s++, l--;
+        }
 	return this;
     }
 public:
     void push(const QChar& c) { /* assert(pushedChar.isNull());*/  pushedChar = c; }
-    
+
     const QChar& operator*() const  { return pushedChar.isNull() ? *s : pushedChar; }
     const QChar* operator->() const { return pushedChar.isNull() ? s : &pushedChar; }
 
@@ -64,11 +68,13 @@ public:
     uint length() const { return l+(!pushedChar.isNull()); }
 
     const QChar *current() const { return pushedChar.isNull() ? s : &pushedChar; }
+    int lineCount() const { return lines; }
 
 protected:
     QChar pushedChar;
     const QChar *s;
     int l;
+    int lines;
 };
 
 

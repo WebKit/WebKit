@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,6 +16,8 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _KJS_REGEXP_H_
@@ -26,6 +29,7 @@
 
 #ifdef HAVE_PCREPOSIX
 #include <pcreposix.h>
+#include <pcre.h>
 #else  // POSIX regex - not so good...
 extern "C" { // bug with some libc5 distributions
 #include <regex.h>
@@ -38,15 +42,24 @@ namespace KJS {
 
   class RegExp {
   public:
-    enum { None, Global, IgnoreCase, Multiline };
+    enum { None = 0, Global = 1, IgnoreCase = 2, Multiline = 4 };
     RegExp(const UString &p, int f = None);
     ~RegExp();
-    UString match(const UString &s, int i = -1, int *pos = 0L);
-    bool test(const UString &s, int i = -1);
+    UString match(const UString &s, int i = -1, int *pos = 0L, int **ovector = 0L);
+    // test is unused. The JS spec says that RegExp.test should use
+    // RegExp.exec, so it has to store $1 etc.
+    // bool test(const UString &s, int i = -1);
+    uint subPatterns() const { return nrSubPatterns; }
   private:
     const UString &pattern;
     int flags;
+
+#ifndef HAVE_PCREPOSIX
     regex_t preg;
+#else
+    pcre *pcregex;
+#endif
+    uint nrSubPatterns;
 
     RegExp();
   };

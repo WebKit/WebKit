@@ -21,14 +21,14 @@
  * $Id$
  */
 #include "helper.h"
+#include <khtmllayout.h>
 #include <qmap.h>
 #include <qpainter.h>
 #include <dom/dom_string.h>
 #include <xml/dom_stringimpl.h>
-#include <qlist.h>
-#include <khtmllayout.h>
+#include <qptrlist.h>
 #include <kstaticdeleter.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <qtooltip.h>
 
@@ -143,7 +143,7 @@ using namespace khtml;
         map["inactivecaptiontext"] = globalConfig->readColorEntry( "inactiveForeground", &cg.text());
         map["graytext"] = cg.text();
 
-	KConfig *bckgrConfig = new KConfig("kdesktoprc"); // No multi-screen support
+	KConfig *bckgrConfig = new KConfig("kdesktoprc", true, false); // No multi-screen support
 	bckgrConfig->setGroup("Desktop0");
         // Desktop background.
 	map["background"] = bckgrConfig->readColorEntry("Color1", &cg.background());
@@ -224,32 +224,28 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     {
         name = name.left(7);
     }
-	      
+
     if ( len > 4 && name[0].lower() == 'r' && name[1].lower() == 'g' &&
          name[2].lower() == 'b' && name[3] == '(' &&
          name[len-1] == ')')
     {
         // CSS like rgb(r, g, b) style
         DOMString rgb = name.mid(4, name.length()-5);
-        QList<Length> *l = rgb.implementation()->toLengthList();
-        if(l->count() != 3)
-        {
-	    // transparent in case of an invalid color.
+        int count;
+        khtml::Length* l = rgb.implementation()->toLengthArray(count);
+        if (count != 3)
+            // transparent in case of an invalid color.
             color = QColor();
-        } else {
-	    int r = l->at(0)->isUndefined() ? 0 : l->at(0)->width(255);
-	    if(r < 0) r = 0;
-	    if(r > 255) r = 255;
-	    int g = l->at(1)->isUndefined() ? 0 : l->at(1)->width(255);
-	    if(g < 0) g = 0;
-	    if(g > 255) g = 255;
-	    int b = l->at(2)->isUndefined() ? 0 : l->at(2)->width(255);
-	    if(b < 0) b = 0;
-	    if(b > 255) b = 255;
-
-	    color.setRgb(r, g, b);
-	}
-        delete l;
+        else {
+            int c[3];
+            for (int i = 0; i < 3; ++i) {
+                c[i] = l[i].width(255);
+                if (c[i] < 0) c[i] = 0;
+                if (c[i] > 255) c[i] = 255;
+            }
+            color.setRgb(c[0], c[1], c[2]);
+        }
+        delete [] l;
     }
     else
     {
@@ -282,13 +278,4 @@ QPainter *khtml::printpainter = 0;
 void khtml::setPrintPainter( QPainter *printer )
 {
     printpainter = printer;
-}
-
-QFontMetrics khtml::fontMetrics( const QFont &f )
-{
-    if(printpainter) {
-	printpainter->setFont( f );
-	return printpainter->fontMetrics();
-    }
-    return QFontMetrics( f );
 }

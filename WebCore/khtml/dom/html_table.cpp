@@ -22,17 +22,15 @@
  */
 // --------------------------------------------------------------------------
 
-#include "dom_string.h"
-#include "html_element.h"
-#include "html_misc.h"
-#include "html_miscimpl.h"
+#include "dom/html_misc.h"
+#include "dom/html_table.h"
+#include "dom/dom_exception.h"
 
-#include "html_table.h"
-#include "html_tableimpl.h"
-#include "dom_exception.h"
+#include "html/html_miscimpl.h"
+#include "html/html_tableimpl.h"
+#include "misc/htmlhashes.h"
+
 using namespace DOM;
-
-#include "htmlhashes.h"
 
 HTMLTableCaptionElement::HTMLTableCaptionElement() : HTMLElement()
 {

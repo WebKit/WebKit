@@ -78,6 +78,7 @@ public:
 
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h);
+    void updateContents(const QRect &r);
     void repaintContents(int x, int y, int w, int h, bool erase=TRUE);
     QPoint contentsToViewport(const QPoint &);
     void viewportToContents(int vx, int vy, int& x, int& y);

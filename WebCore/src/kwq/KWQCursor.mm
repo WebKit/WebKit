@@ -29,6 +29,8 @@
 const QCursor & Qt::sizeAllCursor = QCursor();
 const QCursor & Qt::splitHCursor = QCursor();
 const QCursor & Qt::splitVCursor = QCursor();
+const QCursor & Qt::sizeHorCursor = QCursor();
+const QCursor & Qt::sizeVerCursor = QCursor();
 
 QCursor::QCursor()
 {
@@ -60,4 +62,10 @@ QCursor &QCursor::operator=(const QCursor &)
 {
     _logNotYetImplemented();
     return *this;
+}
+
+int QCursor::handle()
+{
+    _logNotYetImplemented();
+    return 0;
 }

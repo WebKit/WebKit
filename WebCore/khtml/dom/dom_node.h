@@ -42,7 +42,7 @@ class NodeImpl;
 class NamedNodeMapImpl;
 class EventListener;
 class Event;
- 
+
 /**
  * Objects implementing the <code> NamedNodeMap </code> interface are
  * used to represent collections of nodes that can be accessed by
@@ -150,11 +150,80 @@ public:
     Node item ( unsigned long index ) const;
 
     /**
+     * Introduced in DOM Level 2
+     *
+     * Retrieves a node specified by local name and namespace URI. HTML-only
+     * DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the node to retrieve.
+     *
+     * @param localName The local name of the node to retrieve.
+     *
+     * @return A Node (of any type) with the specified local name and namespace
+     * URI, or null if they do not identify any node in this map.
+     */
+    Node getNamedItemNS( const DOMString &namespaceURI,
+                         const DOMString &localName ) const;
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Adds a node using its namespaceURI and localName. If a node with that
+     * namespace URI and that local name is already present in this map, it is
+     * replaced by the new one.
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param arg A node to store in this map. The node will later be
+     * accessible using the value of its namespaceURI and localName attributes.
+     *
+     * @return If the new Node replaces an existing node the replaced Node is
+     * returned, otherwise null is returned.
+     *
+     * @exception DOMException
+     * WRONG_DOCUMENT_ERR: Raised if arg was created from a different document
+     * than the one that created this map.
+     *
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
+     *
+     * INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an
+     * attribute of another Element object. The DOM user must explicitly clone
+     * Attr nodes to re-use them in other elements.
+     */
+    Node setNamedItemNS( const Node &arg );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Removes a node specified by local name and namespace URI. A removed
+     * attribute may be known to have a default value when this map contains
+     * the attributes attached to an element, as returned by the attributes
+     * attribute of the Node interface. If so, an attribute immediately appears
+     * containing the default value as well as the corresponding namespace URI,
+     * local name, and prefix when applicable.
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the node to remove.
+     *
+     * @param localName The local name of the node to remove.
+     *
+     * @return The node removed from this map if a node with such a local name
+     * and namespace URI exists.
+     *
+     * @exception DOMException
+     * NOT_FOUND_ERR: Raised if there is no node with the specified
+     * namespaceURI and localName in this map.
+     *
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
+     */
+    Node removeNamedItemNS( const DOMString &namespaceURI,
+                            const DOMString &localName );
+
+    /**
      * @internal
      * not part of the DOM
      */
-    NamedNodeMapImpl *handle() const;
-    bool isNull() const;
+    NamedNodeMapImpl *handle() const throw();
+    bool isNull() const throw();
 
 protected:
     NamedNodeMap( NamedNodeMapImpl *i);
@@ -162,6 +231,7 @@ protected:
 
     friend class Node;
     friend class DocumentType;
+    friend class NodeImpl;
 };
 
 class NamedNodeMap;
@@ -569,6 +639,116 @@ public:
     Node cloneNode ( bool deep );
 
     /**
+     * Modified in DOM Level 2
+     *
+     * Puts all Text nodes in the full depth of the sub-tree underneath this
+     * Node, including attribute nodes, into a "normal" form where only
+     * structure (e.g., elements, comments, processing instructions, CDATA
+     * sections, and entity references) separates Text nodes, i.e., there are
+     * neither adjacent Text nodes nor empty Text nodes. This can be used to
+     * ensure that the DOM view of a document is the same as if it were saved
+     * and re-loaded, and is useful when operations (such as XPointer
+     * [XPointer] lookups) that depend on a particular document tree structure
+     * are to be used.
+     *
+     * Note: In cases where the document contains CDATASections, the normalize
+     * operation alone may not be sufficient, since XPointers do not
+     * differentiate between Text nodes and CDATASection nodes.
+     */
+    void normalize (  );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Tests whether the DOM implementation implements a specific feature and
+     * that feature is supported by this node.
+     *
+     * @param feature The name of the feature to test. This is the same name
+     * which can be passed to the method hasFeature on DOMImplementation.
+     *
+     * @param version This is the version number of the feature to test. In
+     * Level 2, version 1, this is the string "2.0". If the version is not
+     * specified, supporting any version of the feature will cause the method
+     * to return true.
+     *
+     * @return Returns true if the specified feature is supported on this node,
+     * false otherwise.
+     */
+    bool isSupported( const DOMString &feature,
+                      const DOMString &version ) const;
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * The namespace URI of this node, or null if it is unspecified.
+     * This is not a computed value that is the result of a namespace lookup
+     * based on an examination of the namespace declarations in scope. It is
+     * merely the namespace URI given at creation time. For nodes of any type
+     * other than ELEMENT_NODE and ATTRIBUTE_NODE and nodes created with a DOM
+     * Level 1 method, such as createElement from the Document interface, this
+     * is always null.
+     *
+     * Note: Per the Namespaces in XML Specification [Namespaces] an attribute
+     * does not inherit its namespace from the element it is attached to. If an
+     * attribute is not explicitly given a namespace, it simply has no
+     * namespace.
+     */
+    DOMString namespaceURI(  ) const;
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * The namespace prefix of this node, or null if it is unspecified.
+     * Note that setting this attribute, when permitted, changes the nodeName
+     * attribute, which holds the qualified name, as well as the tagName and
+     * name attributes of the Element and Attr interfaces, when applicable.
+     * Note also that changing the prefix of an attribute that is known to have
+     * a default value, does not make a new attribute with the default value
+     * and the original prefix appear, since the namespaceURI and localName do
+     * not change.
+     * For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+     * nodes created with a DOM Level 1 method, such as createElement from the
+     * Document interface, this is always null.
+     */
+    DOMString prefix(  ) const;
+
+    /**
+     * see @ref prefix
+     *
+     * @exception DOMException
+     * INVALID_CHARACTER_ERR: Raised if the specified prefix contains an
+     * illegal character.
+     *
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+     *
+     * NAMESPACE_ERR: Raised if the specified prefix is malformed, if the
+     * namespaceURI of this node is null, if the specified prefix is "xml" and
+     * the namespaceURI of this node is different from
+     * "http://www.w3.org/XML/1998/namespace", if this node is an attribute and
+     * the specified prefix is "xmlns" and the namespaceURI of this node is
+     * different from "http://www.w3.org/2000/xmlns/", or if this node is an
+     * attribute and the qualifiedName of this node is "xmlns" [Namespaces].
+     */
+    void setPrefix(const DOMString &prefix );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Returns the local part of the qualified name of this node.
+     * For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+     * nodes created with a DOM Level 1 method, such as createElement from the
+     * Document interface, this is always null.
+     */
+    DOMString localName(  ) const;
+
+    /**
+     * Returns whether this node (if it is an element) has any attributes.
+     * @return a boolean. True if this node has any attributes, false otherwise.
+     *  Introduced in DOM Level 2
+     */
+    bool hasAttributes (  );
+
+    /**
      * Introduced in DOM Level 2
      * This method is from the EventTarget interface
      *
@@ -599,7 +779,7 @@ public:
     void addEventListener(const DOMString &type,
 			  EventListener *listener,
 			  const bool useCapture);
-			
+
     /**
      * Introduced in DOM Level 2
      * This method is from the EventTarget interface
@@ -636,19 +816,21 @@ public:
      * This method allows the dispatch of events into the implementations event
      * model. Events dispatched in this manner will have the same capturing and
      * bubbling behavior as events dispatched directly by the implementation.
-     * The target of the event is the EventTarget on which dispatchEvent is called.
+     * The target of the event is the EventTarget on which dispatchEvent is
+     * called.
      *
      * @param evt Specifies the event type, behavior, and contextual
      * information to be used in processing the event.
      *
      * @return The return value of dispatchEvent indicates whether any of the
      * listeners which handled the event called preventDefault. If
-     * preventDefault was called the value is false, else the value is true.Exceptions
+     * preventDefault was called the value is false, else the value is true.
      *
      * @exception EventException
      * UNSPECIFIED_EVENT_TYPE_ERR: Raised if the Event's type was not specified
      * by initializing the event before dispatchEvent was called. Specification
-     * of the Event's type as null or an empty string will also trigger this exception.
+     * of the Event's type as null or an empty string will also trigger this
+     * exception.
      */
     bool dispatchEvent(const Event &evt);
 
@@ -657,10 +839,11 @@ public:
      * not part of the DOM.
      * @returns the element id, in case this is an element, 0 otherwise
      */
-    unsigned short elementId() const;
+    Q_UINT32 elementId() const;
 
     /**
-     * tests if this Node is 0. Useful especially, if casting to a derived class:
+     * tests if this Node is 0. Useful especially, if casting to a derived
+     * class:
      *
      * <pre>
      * Node n = .....;
@@ -689,7 +872,7 @@ public:
      * @returns the exact coordinates and size of this element.
      */
     QRect getRect();
-    
+
 protected:
     NodeImpl *impl;
 };

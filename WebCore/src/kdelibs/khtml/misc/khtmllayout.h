@@ -45,29 +45,19 @@ namespace khtml
     enum LengthType { Undefined = 0, Variable = 1, Relative, Percent, Fixed, Static };
     struct Length
     {
-	Length() { value = 0; type = Variable; }
-	Length(LengthType t) { value = 0; type = t; }
-	Length(int v, LengthType t)
-	    {
-		value = v;
-		type = t;
-	    }
-	Length(const Length &l)
-	    {
-		value = l.value;
-		type = l.type;
-	    }
-	    
-	bool operator==(const Length& o) const
-	{
-	    return type==o.type && value==o.value;
-	}
-        
+        Length() : value(0), type(Variable)  {}
+        Length(LengthType t) : value(0), type(t) {}
+        Length(int v, LengthType t) : value(v), type(t) {}
+        Length(const Length &l) : value(l.value), type(l.type) {}
+
+        Length& operator=(const Length& o)
+            { *((Q_UINT32 *)this) = *((Q_UINT32 *)&o); return *this; }
+        bool operator==(const Length& o) const
+            { return *((Q_UINT32 *)this) == *((Q_UINT32 *)&o); }
         bool operator!=(const Length& o) const
-	{
-	    return type!=o.type || value!=o.value;
-	}
-	
+            { return *((Q_UINT32 *)this) != *((Q_UINT32 *)&o); }
+
+
 	/*
 	 * works only for Fixed and Percent, returns -1 otherwise
 	 */
@@ -103,16 +93,17 @@ namespace khtml
 		    return 0;
 		}
 	    }
-	bool isUndefined() const { return (type == Undefined); }
-	bool isVariable() const { return (type == Variable); }
-	bool isRelative() const { return (type == Relative); }
-	bool isPercent() const { return (type == Percent); }
-	bool isFixed() const { return (type == Fixed); }
+        bool isUndefined() const { return (type == Undefined); }
+        bool isVariable() const { return (type == Variable); }
+        bool isRelative() const { return (type == Relative); }
+        bool isPercent() const { return (type == Percent); }
+        bool isFixed() const { return (type == Fixed); }
         bool isStatic() const { return (type == Static); }
-	int value : 29;
-	LengthType type : 3;
+
+        int value : 29;
+        LengthType type : 3;
     };
-    
+
 };
 
 #endif

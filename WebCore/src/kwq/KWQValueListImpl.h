@@ -79,8 +79,8 @@ public:
 
     void appendNode(KWQValueListNodeImpl *node);
     void prependNode(KWQValueListNodeImpl *node);
-    void removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(KWQValueListNodeImpl *, KWQValueListNodeImpl *));
-    uint containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(KWQValueListNodeImpl *, KWQValueListNodeImpl *)) const;
+    void removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *));
+    uint containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const;
 
     KWQValueListIteratorImpl removeIterator(KWQValueListIteratorImpl &iterator);
     KWQValueListIteratorImpl fromLast();

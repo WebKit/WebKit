@@ -35,7 +35,7 @@ QPointArray::QPointArray(int nPoints, const QCOORD *points)
 
 void QPointArray::setPoint( uint index, int x, int y )
 {
-    QArray<QPoint>::at( index ) = QPoint( x, y );
+    QMemArray<QPoint>::at( index ) = QPoint( x, y );
 }
 
 

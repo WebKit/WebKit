@@ -18,34 +18,23 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 // -------------------------------------------------------------------------
 //#define DEBUG
 //#define DEBUG_LAYOUT
 //#define BOX_DEBUG
-
-
-#include "dom_string.h"
-
-#include <qfontmetrics.h>
-#include <qsortedlist.h>
-#include <qpainter.h>
-
-#include <kglobal.h>
-
-#include "render_flow.h"
-#include "render_text.h"
-#include "misc/helper.h"
-
-#include "htmlhashes.h"
-
-#include "render_style.h"
-#include "render_root.h"
+//#define FLOAT_DEBUG
 
 #include <kdebug.h>
 #include <assert.h>
+#include <qpainter.h>
+#include <kglobal.h>
+
+#include "rendering/render_flow.h"
+#include "rendering/render_text.h"
+#include "rendering/render_table.h"
+#include "rendering/render_root.h"
+#include "xml/dom_nodeimpl.h"
 
 using namespace DOM;
 using namespace khtml;
@@ -62,11 +51,14 @@ static inline int collapseMargins(int a, int b)
 }
 
 
-RenderFlow::RenderFlow()
-    : RenderBox()
+RenderFlow::RenderFlow(DOM::NodeImpl* node)
+    : RenderBox(node)
 {
     m_childrenInline = true;
-    m_haveAnonymous = false;
+    m_pre = false;
+    firstLine = false;
+    m_blockBidi = false;
+    m_clearStatus = CNONE;
 
     specialObjects = 0;
 }
@@ -91,22 +83,20 @@ void RenderFlow::setStyle(RenderStyle *_style)
     if(style()->whiteSpace() == PRE)
         m_pre = true;
 
-    if (haveAnonymousBox())
+    // ### we could save this call when the change only affected
+    // non inherited properties
+    RenderObject *child = firstChild();
+    while(child != 0)
     {
-        RenderObject *child = firstChild();
-        while(child != 0)
+        if(child->isAnonymousBox())
         {
-            if(child->isAnonymousBox())
-            {
-                RenderStyle* newStyle = new RenderStyle();
-                newStyle->inheritFrom(style());
-                newStyle->setDisplay(BLOCK);
-                child->setStyle(newStyle);
-                child->setIsAnonymousBox(true);
-            }
-            child = child->nextSibling();
+            RenderStyle* newStyle = new RenderStyle();
+            newStyle->inheritFrom(style());
+            newStyle->setDisplay(BLOCK);
+            child->setStyle(newStyle);
+            child->setIsAnonymousBox(true);
         }
-
+        child = child->nextSibling();
     }
 }
 
@@ -130,7 +120,7 @@ void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
     }
 
     // check if we need to do anything at all...
-    if(!isInline() && !containsPositioned() && !isRelPositioned() && !isPositioned() )
+    if(!isInline() && !overhangingContents() && !isRelPositioned() && !isPositioned() )
     {
         int h = m_height;
         if(specialObjects && floatBottom() > h) h = floatBottom();
@@ -142,8 +132,8 @@ void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
 #endif /* APPLE_CHANGES not defined */
         }
     }
-        
-    printObject(p, _x, _y, _w, _h, _tx, _ty);    
+
+    printObject(p, _x, _y, _w, _h, _tx, _ty);
 }
 
 void RenderFlow::printObject(QPainter *p, int _x, int _y,
@@ -156,24 +146,21 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
     // add offset for relative positioning
     if(isRelPositioned())
         relativePositionOffset(_tx, _ty);
-   
-    
+
+
     // 1. print background, borders etc
-    if(hasSpecialObjects() && !isInline() && isVisible())
+    if(hasSpecialObjects() && !isInline() && style()->visibility() == VISIBLE )
         printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
 
-    // overflow: hidden    
-    // save old clip region, set a new one
-    QRegion oldClip;
-    if (style()->overflow()==OHIDDEN)
-    {
-        if (p->hasClipping())
-            oldClip = p->clipRegion();        
-        calcClip(p, _tx, _ty, oldClip);   
+    bool clipped = false;
+    // overflow: hidden
+    if (style()->overflow()==OHIDDEN || style()->jsClipMode() ) {
+        calcClip(p, _tx, _ty);
+	clipped = true;
     }
-    
-    
+
+
 
     // 2. print contents
     RenderObject *child = firstChild();
@@ -190,24 +177,22 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
 
     // overflow: hidden
     // restore clip region
-    if (style()->overflow()==OHIDDEN)
-    {
-        if (oldClip.isNull())
-            p->setClipping(false);
-        else
-            p->setClipRegion(oldClip);        
-    }    
-    
-    if(!isInline() && style()->outlineWidth())
+    if ( clipped ) {
+	p->restore();
+    }
+
+    if(!isInline() && !childrenInline() && style()->outlineWidth())
         printOutline(p, _tx, _ty, width(), height(), style());
 
 #ifdef BOX_DEBUG
-    if(isAnonymousBox())
-	outlineBox(p, _tx, _ty, "green");
-    if(isFloating())
-	outlineBox(p, _tx, _ty, "yellow");
-    else
-	outlineBox(p, _tx, _ty);
+    if ( style() && style()->visibility() == VISIBLE ) {
+        if(isAnonymousBox())
+            outlineBox(p, _tx, _ty, "green");
+        if(isFloating())
+	    outlineBox(p, _tx, _ty, "yellow");
+        else
+            outlineBox(p, _tx, _ty);
+    }
 #endif
 
 }
@@ -215,34 +200,50 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
 void RenderFlow::printSpecialObjects( QPainter *p, int x, int y, int w, int h, int tx, int ty)
 {
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it ) {
-	if (r->node->containingBlock()==this) {
-	    RenderObject *o = r->node;
-	    //kdDebug(0) << renderName() << "printing positioned at " << tx + o->xPos() << "/" << ty + o->yPos()<< endl;
-	    o->print(p, x, y, w, h, tx , ty);
+        // A special object may be registered with several different objects... so we only print the
+        // object if we are it's containing block
+	if (r->node->containingBlock() == this) {
+	    r->node->print(p, x, y, w, h, tx , ty);
 	}
+#ifdef FLOAT_DEBUG
+	p->save();
+	p->setPen( Qt::magenta );
+	p->setBrush( QPainter::NoBrush );
+	//qDebug("(%p): special object at (%d/%d-%d/%d)", this, r->left, r->startY, r->width, r->endY - r->startY );
+	p->drawRect( QRect( r->left+tx, r->startY+ty, r->width, r->endY - r->startY) );
+	p->restore();
+#endif
     }
 }
 
 
 void RenderFlow::layout()
 {
-    //kdDebug( 6040 ) << renderName() << " " << this << "::layout() start" << endl;
-    //QTime t;
-    //t.start();
+//    kdDebug( 6040 ) << renderName() << " " << this << "::layout() start" << endl;
+//     QTime t;
+//     t.start();
 
-     assert(!isInline());
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
+    KHTMLAssert(!isInline());
 
     int oldWidth = m_width;
 
     calcWidth();
 
-//    kdDebug( 6040 ) << specialObjects << "," << oldWidth << ","
-//            << m_width << ","<< layouted() << "," << isAnonymousBox() << endl;
+    bool relayoutChildren = false;
+    if ( oldWidth != m_width )
+	relayoutChildren = true;
 
-    if ( !containsSpecial() && oldWidth == m_width && layouted() && !isAnonymousBox()
-            && !containsPositioned() && !isPositioned()) return;
+    // need a small hack here, as tables are done a bit differently
+    if ( isTableCell() ) //&& static_cast<RenderTableCell *>(this)->widthChanged() )
+	relayoutChildren = true;
+
+//     kdDebug( 6040 ) << specialObjects << "," << oldWidth << ","
+//                     << m_width << ","<< layouted() << "," << isAnonymousBox() << ","
+//                     << overhangingContents() << "," << isPositioned() << endl;
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::layout() width=" << m_width << ", layouted=" << layouted() << endl;
@@ -250,7 +251,7 @@ void RenderFlow::layout()
         kdDebug( 6040 ) << renderName() << ": containingBlock == this" << endl;
 #endif
 
-    if(m_width<=0 && !isPositioned()) {
+    if(m_width<=0 && !isPositioned() && !overhangingContents()) {
         if(m_y < 0) m_y = 0;
         setLayouted();
         return;
@@ -264,16 +265,19 @@ void RenderFlow::layout()
 //    kdDebug( 6040 ) << "childrenInline()=" << childrenInline() << endl;
     if(childrenInline()) {
         // ### make bidi resumeable so that we can get rid of this ugly hack
-        if(!parsing())
+        if (!m_blockBidi)
             layoutInlineChildren();
     }
     else
-        layoutBlockChildren();
+        layoutBlockChildren( relayoutChildren );
 
+    int oldHeight = m_height;
     calcHeight();
+    if ( oldHeight != m_height )
+	relayoutChildren = true;
 
-    if ( lastChild() && lastChild()->hasOverhangingFloats() && isTableCell() ) {
-	m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
+    if ( isTableCell() && lastChild() && lastChild()->hasOverhangingFloats() ) {
+        m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
 	m_height += borderBottom() + paddingBottom();
     }
     if( hasOverhangingFloats() && (isFloating() || isTableCell()) ) {
@@ -281,40 +285,39 @@ void RenderFlow::layout()
 	m_height += borderBottom() + paddingBottom();
     }
 
-    layoutSpecialObjects();
+    layoutSpecialObjects( relayoutChildren );
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
-    // ### REMOVE ME! (see above)
-     if(childrenInline() && parsing())
-         setLayouted(false);
-     else
-        setLayouted();
+    setLayouted();
 }
 
-void RenderFlow::layoutSpecialObjects()
+void RenderFlow::layoutSpecialObjects( bool relayoutChildren )
 {
     if(specialObjects) {
 	//kdDebug( 6040 ) << renderName() << " " << this << "::layoutSpecialObjects() start" << endl;
-
         SpecialObject* r;
-        QListIterator<SpecialObject> it(*specialObjects);
+        QPtrListIterator<SpecialObject> it(*specialObjects);
         for ( ; (r = it.current()); ++it ) {
-            //kdDebug(6040) << "have a positioned object" << endl;
-            if (r->type == SpecialObject::Positioned)
-                r->node->layout();
+            //kdDebug(6040) << "   have a positioned object" << endl;
+            if (r->type == SpecialObject::Positioned) {
+		if ( relayoutChildren ) {
+		    r->node->setLayouted( false );
+		}
+		if ( !r->node->layouted() )
+		    r->node->layout();
+	    }
         }
         specialObjects->sort();
     }
 }
 
-void RenderFlow::layoutBlockChildren()
+void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 {
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << " layoutBlockChildren( " << this <<" )" << endl;
+    kdDebug( 6040 ) << renderName() << " layoutBlockChildren( " << this <<" ), relayoutChildren="<< relayoutChildren << endl;
 #endif
 
-    bool _layouted = true;
     int xPos = 0;
     int toAdd = 0;
 
@@ -351,38 +354,46 @@ void RenderFlow::layoutBlockChildren()
 	if ( prevMargin != TABLECELLMARGIN )
 	    m_height = -prevMargin;
     }
-    //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl; 
+    //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
     // take care in case we inherited floats
     if (child && floatBottom() > m_height)
 	child->setLayouted(false);
 
-    
-    //QTime t;
-    //t.start();
+
+//     QTime t;
+//     t.start();
 
     while( child != 0 )
     {
-        //kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->layouted() << endl;
-        //kdDebug( 6040 ) << t.elapsed() << endl;
+
+        // make sure we relayout children if we need it.
+        if ( relayoutChildren || floatBottom() > m_y ||
+             (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())))
+                child->setLayouted(false);
+
+//         kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->layouted() << endl;
+//         kdDebug( 6040 ) << t.elapsed() << endl;
         // ### might be some layouts are done two times... FIX that.
 
         if (child->isPositioned())
         {
-            child->layout();
-            static_cast<RenderFlow*>(child->containingBlock())->insertPositioned(child);
+            static_cast<RenderFlow*>(child->containingBlock())->insertSpecialObject(child);
 	    //kdDebug() << "RenderFlow::layoutBlockChildren inserting positioned into " << child->containingBlock()->renderName() << endl;
             child = child->nextSibling();
             continue;
         } else if ( child->isReplaced() ) {
-            child->layout();
-	} else if ( child->isFloating() ) {
+            if ( !child->layouted() )
+                child->layout();
+        } else if ( child->isFloating() ) {
 	    // margins of floats and other objects do not collapse. The hack below assures this.
-	    m_height += prevMargin;
-	    insertFloat( child );
+	    if ( prevMargin != TABLECELLMARGIN )
+		m_height += prevMargin;
+	    insertSpecialObject( child );
 	    positionNewFloats();
-	    //kdDebug() << "RenderFlow::layoutBlockChildren inserting float at "<< m_height <<" prevMargin="<<prevMargin << endl; 
-	    m_height -= prevMargin;
+	    //kdDebug() << "RenderFlow::layoutBlockChildren inserting float at "<< m_height <<" prevMargin="<<prevMargin << endl;
+	    if ( prevMargin != TABLECELLMARGIN )
+		m_height -= prevMargin;
 	    child = child->nextSibling();
 	    continue;
 	}
@@ -409,10 +420,10 @@ void RenderFlow::layoutBlockChildren()
         }
 
         child->setPos(child->xPos(), m_height);
-        child->layout();
+	if ( !child->layouted() )
+	    child->layout();
 
         int chPos = xPos + child->marginLeft();
-
 
         if(style()->direction() == LTR) {
             // html blocks flow around floats
@@ -444,7 +455,7 @@ void RenderFlow::layoutBlockChildren()
 	m_height += prevMargin;
     m_height += toAdd;
 
-    setLayouted(_layouted);
+    setLayouted();
 
     // kdDebug( 6040 ) << "layouted = " << layouted_ << endl;
 }
@@ -472,77 +483,61 @@ bool RenderFlow::checkClear(RenderObject *child)
     return true;
 }
 
-void
-RenderFlow::insertPositioned(RenderObject *o)
+void RenderFlow::insertSpecialObject(RenderObject *o)
 {
-    //kdDebug() << renderName() << "::insertPositioned " << this<< isAnonymousBox() << " " << o << endl;
-    if(!specialObjects) {
-        specialObjects = new QSortedList<SpecialObject>;
-        specialObjects->setAutoDelete(true);
+    // Create the list of special objects if we don't aleady have one
+    if (!specialObjects) {
+	specialObjects = new QSortedList<SpecialObject>;
+	specialObjects->setAutoDelete(true);
+    }
+    else {
+	// Don't insert the object again if it's already in the list
+	QPtrListIterator<SpecialObject> it(*specialObjects);
+	SpecialObject* f;
+	while ( (f = it.current()) ) {
+	    if (f->node == o) return;
+	    ++it;
+	}
     }
 
-    // don't insert it twice!
-    QListIterator<SpecialObject> it(*specialObjects);
-    SpecialObject* f;
-    while ( (f = it.current()) ) {
-        if (f->node == o) return;
-        ++it;
+    // Create the special object entry & append it to the list
+
+    SpecialObject *newObj;
+    if (o->isPositioned()) {
+	// positioned object
+	newObj = new SpecialObject(SpecialObject::Positioned);
+        setOverhangingContents();
+    }
+    else if (o->isFloating()) {
+	// floating object
+	if ( !o->layouted() )
+	    o->layout();
+
+	if(o->style()->floating() == FLEFT)
+	    newObj = new SpecialObject(SpecialObject::FloatLeft);
+	else
+	    newObj = new SpecialObject(SpecialObject::FloatRight);
+
+	newObj->startY = -1;
+	newObj->endY = -1;
+	newObj->width = o->width() + o->marginLeft() + o->marginRight();
+    }
+    else {
+	// We should never get here, as insertSpecialObject() should only ever be called with positioned or floating
+	// objects.
+	KHTMLAssert(false);
     }
 
-    if (!f) f = new SpecialObject;
+    newObj->count = specialObjects->count();
+    newObj->node = o;
 
-    f->type = SpecialObject::Positioned;
-    f->node = o;
-    f->count = specialObjects->count();
-
-    specialObjects->append(f);
-
-    setContainsPositioned(true);
-}
-
-void
-RenderFlow::insertFloat(RenderObject *o)
-{
-    //kdDebug( 6040 ) << renderName() << " " << (void *)this << "::insertFloat(" << o <<")" << endl;
-
-    // a floating element
-    if(!specialObjects) {
-        specialObjects = new QSortedList<SpecialObject>;
-        specialObjects->setAutoDelete(true);
-    }
-
-    // don't insert it twice!
-    QListIterator<SpecialObject> it(*specialObjects);
-    SpecialObject* f;
-    while ( (f = it.current()) ) {
-        if (f->node == o) return;
-        ++it;
-    }
-
-    o->layout();
-
-    if(!f) f = new SpecialObject;
-
-    f->count = specialObjects->count();
-    f->startY = -1;
-    f->endY = -1;
-    f->width = o->width() + o->marginLeft() + o->marginRight();
-
-    if(o->style()->floating() == FLEFT)
-        f->type = SpecialObject::FloatLeft;
-    else
-        f->type = SpecialObject::FloatRight;
-    f->node = o;
-
-    specialObjects->append(f);
-//    kdDebug( 6040 ) << "inserting node " << o << " number of specialobject = " << //     specialObjects->count() << endl;
-
+    specialObjects->append(newObj);
 }
 
 void RenderFlow::removeSpecialObject(RenderObject *o)
 {
     if (specialObjects) {
-	QListIterator<SpecialObject> it(*specialObjects);
+        QPtrListIterator<SpecialObject> it(*specialObjects);
 	while (it.current()) {
 	    if (it.current()->node == o)
 		specialObjects->removeRef(it.current());
@@ -622,16 +617,16 @@ void RenderFlow::positionNewFloats()
                 y += QMIN(heightRemainingLeft, heightRemainingRight);
                 fx = rightRelOffset(y,ro, &heightRemainingRight);
             }
-            if (fx<f->width) fx=f->width;                    
+            if (fx<f->width) fx=f->width;
             f->left = fx - f->width;
             //kdDebug( 6040 ) << "positioning right aligned float at (" << fx - o->marginRight() - o->width() << "/" << y + o->marginTop() << ")" << endl;
             o->setPos(fx - o->marginRight() - o->width(), y + o->marginTop());
-        }        
-        f->startY = y;
+        }
+	f->startY = y;
         f->endY = f->startY + _height;
 
 
-//      kdDebug( 6040 ) << "specialObject y= (" << f->startY << "-" << f->endY << ")" << endl;
+	//kdDebug( 6040 ) << "specialObject x/y= (" << f->left << "/" << f->startY << "-" << f->width << "/" << f->endY - f->startY << ")" << endl;
 
         f = specialObjects->next();
     }
@@ -669,17 +664,17 @@ RenderFlow::leftOffset() const
 {
     int left = 0;
 
+    if(style()->hasBorder())
+        left += borderLeft();
+    if(style()->hasPadding())
+        left += paddingLeft();
+
     if ( firstLine && style()->direction() == LTR ) {
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
         left += style()->textIndent().minWidth(cw);
     }
-
-    if(style()->hasBorder())
-        left = borderLeft();
-    if(style()->hasPadding())
-        left += paddingLeft();
 
     return left;
 }
@@ -693,7 +688,7 @@ RenderFlow::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 
     if ( heightRemaining ) *heightRemaining = 1;
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it )
     {
 	//kdDebug( 6040 ) <<(void *)this << " left: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
@@ -713,6 +708,11 @@ RenderFlow::rightOffset() const
 {
     int right = m_width;
 
+    if(style()->hasBorder())
+        right -= borderRight();
+    if(style()->hasPadding())
+        right -= paddingRight();
+
     if ( firstLine && style()->direction() == RTL ) {
         int cw=0;
         if (style()->textIndent().isPercent())
@@ -720,10 +720,6 @@ RenderFlow::rightOffset() const
         right += style()->textIndent().minWidth(cw);
     }
 
-    if(style()->hasBorder())
-        right -= borderRight();
-    if(style()->hasPadding())
-        right -= paddingRight();
     return right;
 }
 
@@ -736,10 +732,10 @@ RenderFlow::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 
     if (heightRemaining) *heightRemaining = 1;
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it )
     {
-//      kdDebug( 6040 ) << "right: sy, ey, x, w " << //     r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
+	//kdDebug( 6040 ) << "right: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
         if (r->startY <= y && r->endY > y &&
             r->type == SpecialObject::FloatRight &&
             r->left < right) {
@@ -747,14 +743,14 @@ RenderFlow::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 	    if ( heightRemaining ) *heightRemaining = r->endY - y;
 	}
     }
-//    kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
+    //kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
     return right;
 }
 
 unsigned short
 RenderFlow::lineWidth(int y) const
 {
-//    kdDebug( 6040 ) << "lineWidth(" << y << ")=" << rightOffset(y) - leftOffset(y) << endl;
+    //kdDebug( 6040 ) << "lineWidth(" << y << ")=" << rightOffset(y) - leftOffset(y) << endl;
     return rightOffset(y) - leftOffset(y);
 }
 
@@ -764,7 +760,7 @@ RenderFlow::floatBottom() const
     if (!specialObjects) return 0;
     int bottom=0;
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it )
         if (r->endY>bottom && r->type <= SpecialObject::FloatRight)
             bottom=r->endY;
@@ -781,7 +777,7 @@ RenderFlow::lowestPosition() const
         while( last && (last->isPositioned() || last->isFloating()) )
             last = last->previousSibling();
         if( last )
-            lp = yPos() + last->lowestPosition();
+            lp = last->yPos() + last->lowestPosition();
     }
 
     if(  lp > bottom )
@@ -791,7 +787,7 @@ RenderFlow::lowestPosition() const
 
     if (specialObjects) {
         SpecialObject* r;
-        QListIterator<SpecialObject> it(*specialObjects);
+        QPtrListIterator<SpecialObject> it(*specialObjects);
         for ( ; (r = it.current()); ++it ) {
             lp = 0;
             if ( r->type == SpecialObject::FloatLeft || r->type == SpecialObject::FloatRight ){
@@ -814,23 +810,23 @@ int RenderFlow::rightmostPosition() const
 
     RenderObject *c;
     for (c = firstChild(); c; c = c->nextSibling()) {
-	if (!c->isPositioned() && !c->isFloating()) {
-	    int childRight = xPos() + c->rightmostPosition();
-	    if (childRight > right)
-		right = childRight;
-	}
+        if (!c->isPositioned() && !c->isFloating()) {
+            int childRight = c->xPos() + c->rightmostPosition();
+            if (childRight > right)
+                right = childRight;
+        }
     }
 
     if (specialObjects) {
         SpecialObject* r;
-        QListIterator<SpecialObject> it(*specialObjects);
+        QPtrListIterator<SpecialObject> it(*specialObjects);
         for ( ; (r = it.current()); ++it ) {
             int specialRight=0;
             if ( r->type == SpecialObject::FloatLeft || r->type == SpecialObject::FloatRight ){
                 specialRight = r->left + r->node->rightmostPosition();
             } else if ( r->type == SpecialObject::Positioned ) {
                 specialRight = r->node->xPos() + r->node->rightmostPosition();
-            }            
+            }
             if (specialRight > right)
 		        right = specialRight;
         }
@@ -846,7 +842,7 @@ RenderFlow::leftBottom()
     if (!specialObjects) return 0;
     int bottom=0;
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it )
         if (r->endY>bottom && r->type == SpecialObject::FloatLeft)
             bottom=r->endY;
@@ -860,7 +856,7 @@ RenderFlow::rightBottom()
     if (!specialObjects) return 0;
     int bottom=0;
     SpecialObject* r;
-    QListIterator<SpecialObject> it(*specialObjects);
+    QPtrListIterator<SpecialObject> it(*specialObjects);
     for ( ; (r = it.current()); ++it )
         if (r->endY>bottom && r->type == SpecialObject::FloatRight)
             bottom=r->endY;
@@ -874,7 +870,7 @@ RenderFlow::clearFloats()
     //kdDebug( 6040 ) << this <<" clearFloats" << endl;
 
     if (specialObjects) {
-	if( containsPositioned() ) {
+	if( overhangingContents() ) {
             specialObjects->first();
             while ( specialObjects->current()) {
 		if ( specialObjects->current()->type != SpecialObject::Positioned )
@@ -905,13 +901,13 @@ RenderFlow::clearFloats()
 	} else
 	    break;
     }
-    
+
     int offset = m_y;
 
     if ( parentHasFloats ) {
-	addOverHangingFloats( static_cast<RenderFlow *>( parent() ), 0, offset, false );
+	addOverHangingFloats( static_cast<RenderFlow *>( parent() ), parent()->borderLeft() + parent()->paddingLeft() , offset, false );
     }
-    
+
     if(prev ) {
         if(prev->isTableCell()) return;
 
@@ -947,7 +943,7 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 	specialObjects->setAutoDelete(true);
     }
 
-    QListIterator<SpecialObject> it(*flow->specialObjects);
+    QPtrListIterator<SpecialObject> it(*flow->specialObjects);
     SpecialObject *r;
     for ( ; (r = it.current()); ++it ) {
 	if ( r->type <= SpecialObject::FloatRight &&
@@ -956,13 +952,13 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 
 	    SpecialObject* f = 0;
 	    // don't insert it twice!
-	    QListIterator<SpecialObject> it(*specialObjects);
+	    QPtrListIterator<SpecialObject> it(*specialObjects);
 	    while ( (f = it.current()) ) {
 		if (f->node == r->node) break;
 		++it;
 	    }
 	    if ( !f ) {
-		SpecialObject *special = new SpecialObject;
+		SpecialObject *special = new SpecialObject(r->type);
 		special->count = specialObjects->count();
 		special->startY = r->startY - offset;
 		special->endY = r->endY - offset;
@@ -973,10 +969,9 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 		    special->left -= marginLeft();
 		special->width = r->width;
 		special->node = r->node;
-		special->type = r->type;
 		specialObjects->append(special);
 #ifdef DEBUG_LAYOUT
-		kdDebug( 6040 ) << "    y: " << special->startY << "-" << special->endY << " left: " << special->left << " width: " << special->width << endl;
+	kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << special->left << "/" << special->startY << "-" << special->width << "/" << special->endY - special->startY << ")" << endl;
 #endif
 	    }
 	}
@@ -984,20 +979,47 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 }
 
 
+static inline RenderObject *next(RenderObject *par, RenderObject *current)
+{
+    RenderObject *next = 0;
+    while(current != 0)
+    {
+        //kdDebug( 6040 ) << "current = " << current << endl;
+	if(!current->isFloating() && !current->isReplaced() && !current->isPositioned())
+	    next = current->firstChild();
+	if(!next) {
+	    while(current && current != par) {
+		next = current->nextSibling();
+		if(next) break;
+		current = current->parent();
+	    }
+	}
+	
+        if(!next) break;
+
+        if(next->isText() || next->isBR() || next->isFloating() || next->isReplaced() || next->isPositioned())
+            break;
+        current = next;
+    }
+    return next;
+}
+
+
 void RenderFlow::calcMinMaxWidth()
 {
+    KHTMLAssert( !minMaxKnown() );
+
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderBox)::calcMinMaxWidth() known=" << minMaxKnown() << endl;
+    kdDebug( 6040 ) << renderName() << "(RenderBox)::calcMinMaxWidth() this=" << this << endl;
 #endif
 
     m_minWidth = 0;
-    m_maxWidth = 0;   
+    m_maxWidth = 0;
 
-    if (isInline())
-        return;    
-
-//    if(minMaxKnown())
-//        return;
+    if (isInline()) {
+	setMinMaxKnown();
+        return;
+    }
 
     int cw = containingBlock()->contentWidth();
 
@@ -1033,8 +1055,6 @@ void RenderFlow::calcMinMaxWidth()
                     childMin+=ti;
                     childMax+=ti;
 
-                    if(!child->minMaxKnown())
-                        child->calcMinMaxWidth();
                     bool hasNbsp=false;
                     RenderText* t = static_cast<RenderText *>(child);
                     if (t->data()[0] == nbsp) //inline starts with nbsp
@@ -1054,14 +1074,14 @@ void RenderFlow::calcMinMaxWidth()
                         noBreak = true;
                         hasNbsp = true;
                     }
-		    if ( t->hasBreakableChar() )
-			noBreak = false;
-		    prevWasText = true;
+                    if ( t->hasBreakableChar() )
+                        noBreak = false;
+                    prevWasText = true;
                     if (hasNbsp)
                     {
                         if(inlineMin < currentMin) inlineMin = currentMin;
                         prevchild = child;
-                        child = next(child);
+                        child = next(this, child);
                         hasNbsp = false;
                         continue;
                     }
@@ -1091,19 +1111,17 @@ void RenderFlow::calcMinMaxWidth()
             }
 	    prevWasText = false;
             prevchild = child;
-            child = next(child);
+            child = next(this, child);
         }
         if(m_minWidth < inlineMin) m_minWidth = inlineMin;
         if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
-//        kdDebug( 6040 ) << "m_maxWidth=" << m_maxWidth << endl;
+//         kdDebug( 6040 ) << "m_minWidth=" << m_minWidth 
+// 			<< " m_maxWidth=" << m_maxWidth << endl;
     }
     else
     {
         while(child != 0)
         {
-//            if(!child->minMaxKnown())
-//                child->calcMinMaxWidth();
-
             // positioned children don't affect the minmaxwidth
             if (child->isPositioned())
             {
@@ -1124,9 +1142,9 @@ void RenderFlow::calcMinMaxWidth()
             }
             else
             {
-                if (ml.type!=Variable && mr.type!=Variable)
+                if (!(ml.type==Variable) && !(mr.type==Variable))
                 {
-                    if (child->style()->width().type!=Variable)
+                    if (!(child->style()->width().type==Variable))
                     {
                         if (child->style()->direction()==LTR)
                             margin = child->marginLeft();
@@ -1137,9 +1155,9 @@ void RenderFlow::calcMinMaxWidth()
                         margin = child->marginLeft()+child->marginRight();
 
                 }
-                else if (ml.type != Variable)
+                else if (!(ml.type == Variable))
                     margin = child->marginLeft();
-                else if (mr.type != Variable)
+                else if (!(mr.type == Variable))
                     margin = child->marginRight();
             }
 
@@ -1153,9 +1171,12 @@ void RenderFlow::calcMinMaxWidth()
         }
     }
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
-    
+
     if (style()->width().isFixed())
-        m_maxWidth = KMAX(m_minWidth,short(style()->width().value)); 
+        m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
+
+    if ( style()->whiteSpace() != NORMAL )
+        m_minWidth = m_maxWidth;
 
     int toAdd = 0;
     if(style()->hasBorder())
@@ -1166,44 +1187,22 @@ void RenderFlow::calcMinMaxWidth()
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
 
-//    seems to work but I'm not sure so I better leave it out
-//    maybe checking minMaxKnown() for each child and only set it if
-//    all childs have minMaxKnown() set ? this should be save? (Dirk)
-    if(childrenInline())
-        setMinMaxKnown();
+    setMinMaxKnown();
 
+    //kdDebug( 6040 ) << "Text::calcMinMaxWidth(" << this << "): min = " << m_minWidth << " max = " << m_maxWidth << endl;
     // ### compare with min/max width set in style sheet...
 }
 
 void RenderFlow::close()
 {
-//    kdDebug( 6040 ) << (void*)this<< " renderFlow::close()" << endl;
-    if(haveAnonymousBox())
-    {
+    // ### get rid of me
+    m_blockBidi = false;
+
+    if(lastChild() && lastChild()->isAnonymousBox()) {
         lastChild()->close();
-        //kdDebug( 6040 ) << "RenderFlow::close(): closing anonymous box" << endl;
-        setHaveAnonymousBox(false);
     }
 
-    calcWidth();
-    calcHeight();
-
-    calcMinMaxWidth();
-
-    setParsing(false);
-
-    if ( isInline() )
-	return;
-
-    if(containingBlockWidth() < m_minWidth && parent())
-        containingBlock()->updateSize();
-    else
-        containingBlock()->updateHeight();
-
-
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderFlow)::close() total height =" << m_height << endl;
-#endif
+    RenderBox::close();
 }
 
 void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
@@ -1213,6 +1212,10 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
                        ", " << (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
     kdDebug( 6040 ) << "current height = " << m_height << endl;
 #endif
+    setLayouted( false );
+
+    if (m_blockBidi)
+        newChild->setBlockBidi();
 
     RenderStyle* pseudoStyle=0;
     if ( ( !firstChild() || firstChild() == beforeChild )
@@ -1224,7 +1227,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 
 	    //kdDebug( 6040 ) << "first letter" << endl;
 
-	    RenderFlow* firstLetter = new RenderFlow();
+	    RenderFlow* firstLetter = new RenderFlow(0 /* anonymous box */);
 	    pseudoStyle->setDisplay( INLINE );
 	    firstLetter->setStyle(pseudoStyle);
 
@@ -1234,14 +1237,14 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 
 	    if(oldText->l >= 1) {
 		unsigned int length = 0;
-		while ( length < oldText->l && 
+		while ( length < oldText->l &&
 			( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
 		    length++;
 		length++;
 		//kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
 		newTextChild->setText(oldText->substring(length,oldText->l-length));
 
-		RenderText* letter = new RenderText(oldText->substring(0,length));
+		RenderText* letter = new RenderText(0 /* anonymous object */, oldText->substring(0,length));
 		RenderStyle* newStyle = new RenderStyle();
 		newStyle->inheritFrom(pseudoStyle);
 		letter->setStyle(newStyle);
@@ -1251,202 +1254,177 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 
 	}
     }
-    bool nonInlineInChild = false;
 
+    insertPseudoChild(RenderStyle::BEFORE, newChild, beforeChild);
+
+    // If the requested beforeChild is not one of our children, then this is most likely because
+    // there is an anonymous block box within this object that contains the beforeChild. So
+    // just insert the child into the anonymous block box instead of here.
     if (beforeChild && beforeChild->parent() != this) {
-        // perhaps beforeChild is inside an anonymous box that is our child
-        if (!newChild->isInline() && !newChild->isFloating() && beforeChild->parent() &&
-            beforeChild->parent()->isAnonymousBox() && beforeChild->parent()->parent() == this)
-            nonInlineInChild = true;
-        else {
+
+        KHTMLAssert(beforeChild->parent());
+        KHTMLAssert(beforeChild->parent()->isAnonymousBox());
+        KHTMLAssert(beforeChild->parent()->parent() == this);
+
+        if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
+	    newChild->setLayouted( false );
+	    newChild->setMinMaxKnown( false );
             return;
+        }
+        else {
+            // Trying to insert a block child into an anonymous block box which contains only
+            // inline elements... move all of the anonymous box's inline children into other
+            // anonmous boxes which become children of this
+
+            RenderObject *anonBox = beforeChild->parent();
+            KHTMLAssert (anonBox->isFlow()); // ### RenderTableSection the only exception - should never happen here
+
+	    if ( anonBox->childrenInline() )
+		static_cast<RenderFlow*>(anonBox)->makeChildrenNonInline(beforeChild);
+            beforeChild = beforeChild->parent();
+
+            RenderObject *child;
+            while ((child = anonBox->firstChild()) != 0) {
+                anonBox->removeChild(child);
+                addChild(child,anonBox);
+            }
+
+            removeChildNode(anonBox);
+            anonBox->detach(); // does necessary cleanup & deletes anonBox
+
+            KHTMLAssert(beforeChild->parent() == this);
         }
     }
 
-    //to prevents non-layouted elements from getting printed
-    if (!newChild->isInline() && !newChild->isFloating())
+    // prevent non-layouted elements from getting printed by pushing them far above the top of the
+    // page
+    if (!newChild->isInline())
         newChild->setPos(newChild->xPos(), -500000);
 
     if (!newChild->isText())
     {
         if (newChild->style()->position() != STATIC)
-                setContainsPositioned(true);
+            setOverhangingContents();
     }
 
-
-    if((m_childrenInline && !newChild->isInline() && !newChild->isFloating()) ||
-       nonInlineInChild)
+    // RenderFlow has to either have all of it's children inline, or all of it's children as blocks.
+    // So, if our children are currently inline and block child has to be inserted, we move all our
+    // inline children into anonymous block boxes
+    if ( m_childrenInline && !newChild->isInline() && !newChild->isSpecial() )
     {
-        RenderObject *boxSource;
-        if (nonInlineInChild)
-            boxSource = beforeChild->parent();
-        else
-            boxSource = this;
-        // put all inline children from boxSource in two anonymous block boxes -
-        // one containing those before beforeChild, and one containing beforeChild and after
-        if(boxSource->lastChild())
-        {
-//          kdDebug( 6040 ) << "no inline child, moving previous inline children!" << endl;
-            RenderFlow *beforeBox = 0;
-
-            if(beforeChild != boxSource->firstChild()) {
-                RenderStyle *newStyle = new RenderStyle();
-                newStyle->inheritFrom(boxSource->style());
-                newStyle->setDisplay(BLOCK);
-
-                beforeBox = new RenderFlow();
-                beforeBox->setStyle(newStyle);
-                beforeBox->setIsAnonymousBox(true);
-                // ### the children have a wrong style!!!
-                // They get exactly the style of this element, not of the anonymous box
-                // might be important for bg colors!
-
-                RenderObject* node = boxSource->firstChild();
-                while(node && node != beforeChild) {
-                    RenderObject* cnode = node;
-                    node = node->nextSibling();
-                    beforeBox->appendChildNode(boxSource->removeChildNode(cnode));
-                }
-                boxSource->insertChildNode(beforeBox,boxSource->firstChild());
-                beforeBox->close();
-                beforeBox->setPos(beforeBox->xPos(), -100000);
-                beforeBox->setLayouted(false);
-            }
+	if ( m_childrenInline )
+	    makeChildrenNonInline(beforeChild);
+        if (beforeChild) {
+	    if ( beforeChild->parent() != this ) {
+		beforeChild = beforeChild->parent();
+		KHTMLAssert(beforeChild->parent()->isAnonymousBox());
+		KHTMLAssert(beforeChild->parent()->parent() == this);
+	    }
+        }
+    }
+    else if (!m_childrenInline)
+    {
+        // If we're inserting an inline child but all of our children are blocks, then we have to make sure
+        // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
+        // a new one is created and inserted into our list of children in the appropriate position.
+        if(newChild->isInline()) {
             if (beforeChild) {
-                RenderFlow *afterBox = new RenderFlow();
-                RenderStyle *newStyle = new RenderStyle();
-                newStyle->inheritFrom(boxSource->style());
-                newStyle->setDisplay(BLOCK);
-                afterBox->setStyle(newStyle);
-                afterBox->setIsAnonymousBox(true);
-                // ### the children have a wrong style!!!
-                // They get exactly the style of this element, not of the anonymous box
-                // might be important for bg colors!
-                RenderObject* node = beforeChild;
-                while(node) {
-                    RenderObject* cnode = node;
-                    node = node->nextSibling();
-                    afterBox->appendChildNode(boxSource->removeChildNode(cnode));
+                if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBox()) {
+                    beforeChild->previousSibling()->addChild(newChild);
+		    newChild->setLayouted( false );
+		    newChild->setMinMaxKnown( false );
+                    return;
                 }
-                boxSource->appendChildNode(afterBox);
-                afterBox->close();
-                afterBox->setPos(afterBox->xPos(), -100000);
-                afterBox->setLayouted(false);
-                beforeChild = afterBox;
             }
-            if (nonInlineInChild) {
-                boxSource->setLayouted(false);
-                // boxSource will now contain up to two anonymous boxes - move
-                // them into this in place of boxSource
-                if(boxSource->firstChild())
-                    insertChildNode(boxSource->removeChildNode(boxSource->firstChild()), boxSource);
-                if(boxSource->lastChild())
-                    insertChildNode(boxSource->removeChildNode(boxSource->lastChild()), boxSource);
+            else{
+                if (m_last && m_last->isAnonymousBox()) {
+                    m_last->addChild(newChild);
+		    newChild->setLayouted( false );
+		    newChild->setMinMaxKnown( false );
+		    return;
+                }
+            }
 
-                // make sure boxSource doesn't muck other objects up when deleted
-                removeChildNode(boxSource);
-                boxSource->detach();
-                // ### what happens with boxSource's bg image if it had one?
+            // no suitable existing anonymous box - create a new one
+            RenderStyle *newStyle = new RenderStyle();
+            newStyle->inheritFrom(style());
+            newStyle->setDisplay(BLOCK);
+
+            RenderFlow *newBox = new RenderFlow(0 /* anonymous box */);
+            newBox->setStyle(newStyle);
+            newBox->setIsAnonymousBox(true);
+
+            RenderBox::addChild(newBox,beforeChild);
+            newBox->addChild(newChild);
+            newBox->setPos(newBox->xPos(), -500000);
+
+	    newChild->setLayouted( false );
+	    newChild->setMinMaxKnown( false );
+            return;
+        }
+        else {
+            // We are adding another block child... if the current last child is an anonymous box
+            // then it needs to be closed.
+            // ### get rid of the closing thing altogether this will only work during initial parsing
+            if (lastChild() && lastChild()->isAnonymousBox()) {
+                lastChild()->close();
             }
         }
-        m_childrenInline = false;
-    }
-    else if(!m_childrenInline)
-    {
-        if( newChild->isInline() )
-        {
-            // #### this won't work with beforeChild != 0 !!!!
-            if (beforeChild && beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBox()) {
-                beforeChild->previousSibling()->addChild(newChild);
-                setLayouted(false);
-                return;
-            }
-
-//          kdDebug( 6040 ) << "adding inline child to anonymous box" << endl;
-            if(!haveAnonymousBox())
-            {
-                //kdDebug( 6040 ) << "creating anonymous box" << endl;
-                RenderStyle *newStyle = new RenderStyle();
-                newStyle->inheritFrom(style());
-
-                newStyle->setDisplay(BLOCK);
-                RenderFlow *newBox = new RenderFlow();
-                newBox->setStyle(newStyle);
-                newBox->setIsAnonymousBox(true);
-                RenderBox::addChild(newBox,beforeChild);
-                newBox->addChild(newChild);
-                newBox->setPos(newBox->xPos(), -100000);
-                if (beforeChild)
-                {
-                    newBox->close();
-                    newBox->layout();
-                } else
-                    setHaveAnonymousBox();
-                return;
-            }
-            else
-            {
-                //kdDebug( 6040 ) << "adding to last box" << endl;
-                lastChild()->addChild(newChild); // ,beforeChild ???
-                return;
-            }
-        }
-        else if(haveAnonymousBox())
-        {
-            lastChild()->close();
-            lastChild()->layout();
-            setHaveAnonymousBox(false);
-//          kdDebug( 6040 ) << "closing anonymous box" << endl;
-        }
-    }
-    else if(!newChild->isInline() && !newChild->isFloating())
-    {
-        m_childrenInline = false;
     }
 
-    if(!newChild->isInline() && !newChild->isFloating())
+    if(!newChild->isInline()) // block child
     {
+        // If we are inline ourselves and have become block, we have to make sure our parent
+        // makes the necessary adjustments so that all of it's other children are moved into
+        // anonymous block boxes where necessary
         if (style()->display() == INLINE)
         {
             setInline(false); // inline can't contain blocks
-            if (parent() && parent()->isFlow())
-                static_cast<RenderFlow*>(parent())->makeChildrenNonInline();
+	    RenderObject *p = parent();
+            if (p && p->isFlow() && p->childrenInline() ) {
+                static_cast<RenderFlow*>(p)->makeChildrenNonInline();
+            }
         }
     }
 
-    setLayouted(false);
     RenderBox::addChild(newChild,beforeChild);
     // ### care about aligned stuff
+
+    newChild->setLayouted( false );
+    newChild->setMinMaxKnown( false );
+    insertPseudoChild(RenderStyle::AFTER, newChild, beforeChild);
+
 }
 
-void RenderFlow::makeChildrenNonInline()
+void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
 {
-// Put all inline children into anonymous block boxes
-// ### should we call this all the way up to the top of the tree?
+    KHTMLAssert(!box2Start || box2Start->parent() == this);
 
     m_childrenInline = false;
 
     RenderObject *child = firstChild();
     RenderObject *next;
-    RenderObject *boxFirst = firstChild();
-    RenderObject *boxLast = firstChild();
+    RenderObject *boxFirst = 0;
+    RenderObject *boxLast = 0;
     while (child) {
         next = child->nextSibling();
 
-        if (child->isInline() || child->isFloating()) {
+        if (child->isInline()) {
+	    if ( !boxFirst )
+		boxFirst = child;
             boxLast = child;
         }
 
-        if ((!child->isInline() && !child->isFloating() && boxFirst != child) ||
-            (!next && (boxFirst->isInline() || boxFirst->isFloating()))) {
-
-            // make anon box of those before child
+        if ( boxFirst &&
+	     ( !child->isInline() || !next || child == box2Start ) ) {
+            // Create a new anonymous box containing all children starting from boxFirst
+            // and up to (but not including) boxLast, and put it in place of the children
             RenderStyle *newStyle = new RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
 
-            RenderFlow *box = new RenderFlow();
+            RenderFlow *box = new RenderFlow(0 /* anonymous box */);
             box->setStyle(newStyle);
             box->setIsAnonymousBox(true);
             // ### the children have a wrong style!!!
@@ -1463,57 +1441,92 @@ void RenderFlow::makeChildrenNonInline()
             }
             box->appendChildNode(removeChildNode(boxLast));
             box->close();
-            box->setPos(box->xPos(), -100000);
+            box->setPos(box->xPos(), -500000);
             box->setLayouted(false);
-        }
-
-        if (!child->isInline() && !child->isFloating())
             boxFirst = boxLast = next;
+        }
 
         child = next;
     }
-    if ( isInline() ) {
+
+
+    if (isInline()) {
         setInline(false);
-        if ( parent()->isFlow() )
-            static_cast<RenderFlow *>(parent())->makeChildrenNonInline();
+        if (parent()->isFlow()) {
+            KHTMLAssert(parent()->childrenInline());
+	    static_cast<RenderFlow *>(parent())->makeChildrenNonInline();
+        }
     }
     setLayouted(false);
 }
 
-void RenderFlow::specialHandler(RenderObject *o)
+bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
-//    kdDebug( 6040 ) << "specialHandler" << endl;
-    if(o->isFloating())
-        insertFloat(o);
-    else if(o->isPositioned())
-        static_cast<RenderFlow*>(o->containingBlock())->insertPositioned(o);
+    bool inBox = false;
+    if (specialObjects) {
+        SpecialObject* o;
+        QPtrListIterator<SpecialObject> it(*specialObjects);
+        for (it.toLast(); (o = it.current()); --it)
+            if (o->node->containingBlock() == this)
+                inBox |= o->node->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos());
+    }
 
+    inBox |= RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty);
+    return inBox;
 }
 
-bool RenderFlow::containsPoint(int _x, int _y, int _tx, int _ty)
-{
-    if (!RenderBox::containsPoint(_x,_y,_tx,_ty))
-	return false;
 
-    return ((_x >= _tx+leftOffset(_y-_ty)) && (_x <= _tx+rightOffset(_y-_ty)));
-}
-
+#ifndef NDEBUG
 void RenderFlow::printTree(int indent) const
 {
     RenderBox::printTree(indent);
 
+//     KHTMLAssert(!m_blockBidi);
+
     if(specialObjects)
     {
-        QListIterator<SpecialObject> it(*specialObjects);
+        QPtrListIterator<SpecialObject> it(*specialObjects);
         SpecialObject *r;
         for ( ; (r = it.current()); ++it )
         {
             QString s;
             s.fill(' ', indent);
-            kdDebug() << s << renderName() << ":     special -> (" << r->startY << " - " << r->endY << ")" << endl;
+            kdDebug() << s << renderName() << ":  " <<
+                (r->type == SpecialObject::FloatLeft ? "FloatLeft" : (r->type == SpecialObject::FloatRight ? "FloatRight" : "Positioned"))  <<
+                "[" << r->node->renderName() << ": " << (void*)r->node << "] (" << r->startY << " - " << r->endY << ")" <<
+                (r->noPaint ? " noPaint" : " ") << "width: " << r->width <<
+                endl;
         }
     }
 }
+
+void RenderFlow::dump(QTextStream *stream, QString ind) const
+{
+    if (m_childrenInline) { *stream << " childrenInline"; }
+    if (m_pre) { *stream << " pre"; }
+    if (firstLine) { *stream << " firstLine"; }
+
+    if(specialObjects && !specialObjects->isEmpty())
+    {
+	*stream << " special(";
+        QPtrListIterator<SpecialObject> it(*specialObjects);
+        SpecialObject *r;
+	bool first = true;
+        for ( ; (r = it.current()); ++it )
+        {
+            if (!first)
+		*stream << ",";
+            *stream << r->node->renderName();
+	    first = false;
+        }
+	*stream << ")";
+    }
+
+    // ### EClear m_clearStatus
+
+    RenderBox::dump(stream,ind);
+}
+#endif
 
 #undef DEBUG
 #undef DEBUG_LAYOUT

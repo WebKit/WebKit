@@ -59,7 +59,7 @@ public:
     
     // member functions --------------------------------------------------------
 
-    QStrList *args();
+    QValueList<QCString> args();
     bool isRunning() const;
     bool writeStdin(const char *buffer, int buflen);
     virtual bool start(RunMode runmode=NotifyOnExit, 

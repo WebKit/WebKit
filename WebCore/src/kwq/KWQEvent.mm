@@ -44,7 +44,13 @@ QEvent::Type QEvent::type() const
 // class QMouseEvent ===========================================================
 
 QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s )
-    : QEvent(t), _position(pos), _button(b), _state((ushort)s){
+    : QEvent(t), _position(pos), _button(b), _state((ushort)s)
+{
+}
+
+QMouseEvent::QMouseEvent(Type t, const QPoint &pos, const QPoint &, int b, int s)
+    : QEvent(t), _position(pos), _button(b), _state((ushort)s)
+{
 }
 
 int QMouseEvent::x()
@@ -120,7 +126,7 @@ int QTimerEvent::timerId() const
 
 // class QKeyEvent =============================================================
 
-QKeyEvent::QKeyEvent(Type, Key, int, int)
+QKeyEvent::QKeyEvent(Type, int, int, int, const QString &, bool, ushort)
 {
     _logNotYetImplemented();
 }
@@ -149,6 +155,38 @@ void QKeyEvent::accept()
 void QKeyEvent::ignore()
 {
     _logNotYetImplemented();
+}
+
+
+bool QKeyEvent::isAutoRepeat() const
+{
+    _logNotYetImplemented();
+    return false;
+}
+
+QString QKeyEvent::text(void) const
+{
+    _logNotYetImplemented();
+    return QString();
+}
+
+
+int QKeyEvent::ascii(void) const
+{
+    _logNotYetImplemented();
+    return 0;
+}
+
+int QKeyEvent::count(void) const
+{
+    _logNotYetImplemented();
+    return 0;
+}
+
+bool QKeyEvent::isAccepted(void) const
+{
+    _logNotYetImplemented();
+    return false;
 }
 
 
@@ -209,4 +247,39 @@ void QWheelEvent::ignore()
 QCustomEvent::QCustomEvent( int type )
     : QEvent( (QEvent::Type)type ), d( 0 )
 {
+}
+
+// class QContextMenuEvent ======================================================
+
+QContextMenuEvent::QContextMenuEvent(int r, const QPoint &p, const QPoint &gp, Qt::ButtonState s) :
+    m_reason(r),
+    m_pos(p),
+    m_globalPos(gp),
+    m_state(s)
+{
+}
+
+QPoint QContextMenuEvent::globalPos(void) const
+{
+    return m_globalPos;
+}
+
+int QContextMenuEvent::reason(void) const
+{
+    return m_reason;
+}
+
+QContextMenuEvent::ButtonState QContextMenuEvent::state(void) const
+{
+    return m_state;
+}
+
+int QContextMenuEvent::x(void) const
+{
+    return m_pos.x();
+}
+
+int QContextMenuEvent::y(void) const
+{
+    return m_pos.y();
 }

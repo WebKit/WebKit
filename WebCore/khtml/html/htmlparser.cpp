@@ -26,29 +26,30 @@
 // KDE HTML Widget -- HTML Parser
 //#define PARSER_DEBUG
 
-#include "htmlparser.h"
+#include "html/htmlparser.h"
 
-#include "dom_nodeimpl.h"
-#include "dom_exception.h"
-#include "html_baseimpl.h"
-#include "html_blockimpl.h"
-#include "html_documentimpl.h"
-#include "html_elementimpl.h"
-#include "html_formimpl.h"
-#include "html_headimpl.h"
-#include "html_imageimpl.h"
-#include "html_inlineimpl.h"
-#include "html_listimpl.h"
-#include "html_miscimpl.h"
-#include "html_tableimpl.h"
-#include "html_objectimpl.h"
-#include "dom_textimpl.h"
-#include "htmlhashes.h"
-#include "htmltokenizer.h"
+#include "dom/dom_exception.h"
+
+#include "html/html_baseimpl.h"
+#include "html/html_blockimpl.h"
+#include "html/html_documentimpl.h"
+#include "html/html_elementimpl.h"
+#include "html/html_formimpl.h"
+#include "html/html_headimpl.h"
+#include "html/html_imageimpl.h"
+#include "html/html_inlineimpl.h"
+#include "html/html_listimpl.h"
+#include "html/html_miscimpl.h"
+#include "html/html_tableimpl.h"
+#include "html/html_objectimpl.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_nodeimpl.h"
+#include "misc/htmlhashes.h"
+#include "html/htmltokenizer.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
+#include "css/cssproperties.h"
+#include "css/cssvalues.h"
 
 #include "rendering/render_object.h"
 
@@ -244,7 +245,12 @@ void KHTMLParser::parseToken(Token *t)
 
     // if this tag is forbidden inside the current context, pop
     // blocks until we are allowed to add it...
-    while(forbiddenTag[t->id]) popOneBlock();
+    while(forbiddenTag[t->id]) {
+#ifdef PARSER_DEBUG
+        kdDebug( 6035 ) << "t->id: " << t->id << " is forbidden :-( " << endl;
+#endif
+        popOneBlock();
+    }
 
     if ( !insertNode(n) ) {
         // we couldn't insert the node...
@@ -289,15 +295,36 @@ bool KHTMLParser::insertNode(NodeImpl *n)
             pushBlock(id, tagPriority[id]);
             current = newNode;
 #if SPEED_DEBUG < 2
-            if(!n->attached() && HTMLWidget )  n->attach();
+            if(!n->attached() && HTMLWidget ) {
+                // ### get rid of init. it has no reason for existance.
+                // those that do not support multiple attach() have to block it
+                // (it only happens upon display: change on those elments, and those
+                // are so special it won't be supported anyway. (think of <select> changed
+                // into a <input> element. not possible.
+                n->init();
+                //
+                if (!n->attached())
+                    n->attach();
+                if (n->renderer())
+                    n->renderer()->setBlockBidi();
+            }
 #endif
             //_inline = current->isInline();
             if(current->isInline()) _inline = true;
         }
         else {
 #if SPEED_DEBUG < 2
-            if(!n->attached() && HTMLWidget)  n->attach();
-	    if(n->renderer()) n->renderer()->close();
+            if(!n->attached() && HTMLWidget) {
+                n->init();
+                if (!n->attached())
+                    n->attach();
+            }
+            if (n->maintainsState()) {
+                QString state(document->document()->nextState());
+                if (!state.isNull()) n->restoreState(state);
+            }
+            if(n->renderer())
+                n->renderer()->close();
 #endif
             flat = false;
         }
@@ -334,8 +361,11 @@ bool KHTMLParser::insertNode(NodeImpl *n)
             if( head ) {
                 head->addChild(n);
 #if SPEED_DEBUG < 2
-                if(!n->attached() && HTMLWidget)
-                    n->attach();
+		if(!n->attached() && HTMLWidget) {
+                    n->init();
+                    if (!n->attached())
+                        n->attach();
+		}
 #endif
                 return true;
             }
@@ -354,8 +384,11 @@ bool KHTMLParser::insertNode(NodeImpl *n)
                     pushBlock(id, tagPriority[id]);
                     current = newNode;
 #if SPEED_DEBUG < 2
-                    if(!n->attached() && HTMLWidget)
-                        n->attach();
+		    if(!n->attached() && HTMLWidget) {
+                        n->init();
+                        if (!n->attached())
+                            n->attach();
+		    }
 #endif
                 } else {
 #ifdef PARSER_DEBUG
@@ -370,24 +403,22 @@ bool KHTMLParser::insertNode(NodeImpl *n)
                 return false;
             }
             break;
-            // SCRIPT and OBJECT are allowd in the body.
+            // SCRIPT and OBJECT are allowed in the body.
         case ID_BODY:
             if(inBody && doc()->body()) {
                 // we have another <BODY> element.... apply attributes to existing one
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
-                NamedAttrMapImpl *map = static_cast<NamedAttrMapImpl*>(n->attributes());
-                NamedAttrMapImpl *bodymap = static_cast<NamedAttrMapImpl*>(doc()->body()->attributes());
-                unsigned long attrNo;
-                int exceptioncode;
+                NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
+                NamedAttrMapImpl *bmap = doc()->body()->attributes(false);
                 bool changed = false;
-                for (attrNo = 0; map && attrNo < map->length(); attrNo++)
-                    if(!bodymap->getNamedItem(static_cast<AttrImpl*>(map->item(attrNo))->name())) {
-                        doc()->body()->setAttributeNode(static_cast<AttrImpl*>(map->item(attrNo)->cloneNode(false,exceptioncode)), exceptioncode);
-                        changed = true;
-                    }
+                for (unsigned long l = 0; map && l < map->length(); ++l) {
+                    AttributeImpl* it = map->attributeItem(l);
+                    changed = !bmap->getAttributeItem(it->id());
+                    bmap->insertAttribute(new AttributeImpl(it->id(), it->val()));
+                }
                 if ( changed )
-                    doc()->applyChanges();
+                    doc()->recalcStyle( NodeImpl::Inherit );
                 noRealBody = false;
             } else if ( current->isDocumentNode() )
                 break;
@@ -431,7 +462,11 @@ bool KHTMLParser::insertNode(NodeImpl *n)
             {
                 map->addChild(n);
 #if SPEED_DEBUG < 2
-                if(!n->attached() && HTMLWidget)  n->attach();
+                if(!n->attached() && HTMLWidget) {
+                    if (!n->attached())
+		    n->init();
+		    n->attach();
+		}
 #endif
                 handled = true;
             }
@@ -472,15 +507,6 @@ bool KHTMLParser::insertNode(NodeImpl *n)
                     insertNode(e);
                     handled = true;
                 }
-                break;
-            case ID_FRAME:
-                if( haveFrameSet ) break;
-                e = new HTMLFrameSetElementImpl(document);
-                inBody = true;
-                noRealBody = false;
-                haveFrameSet = true;
-                insertNode(e);
-                handled = true;
                 break;
             default:
                 if ( haveFrameSet ) break;
@@ -572,7 +598,11 @@ bool KHTMLParser::insertNode(NodeImpl *n)
 #endif
                         break;
                     }
-                    if ( HTMLWidget ) container->attach();
+                    if ( !container->attached() && HTMLWidget ) {
+			container->init();
+                        if (!container->attached())
+			container->attach();
+		    }
                     pushBlock( ID__KONQBLOCK, tagPriority[ID__KONQBLOCK] );
                     haveKonqBlock = true;
                     current = container;
@@ -775,6 +805,9 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         } else
             flat = true;
         break;
+    case ID_KEYGEN:
+        n = new HTMLKeygenElementImpl(document, form);
+        break;
     case ID_LABEL:
         n = new HTMLLabelElementImpl(document);
         break;
@@ -858,9 +891,10 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_P:
         n = new HTMLParagraphElementImpl(document);
         break;
+    case ID_XMP:
     case ID_PRE:
     case ID_PLAINTEXT:
-        n = new HTMLPreElementImpl(document);
+        n = new HTMLPreElementImpl(document, t->id);
         break;
 
 // font stuff
@@ -874,7 +908,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 // ins/del
     case ID_DEL:
     case ID_INS:
-        n = new HTMLModElementImpl(document, t->id);
+        n = new HTMLGenericElementImpl(document, t->id);
         break;
 
 // anchor
@@ -946,7 +980,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         n = new HTMLBRElementImpl(document);
         break;
     case ID_Q:
-        n = new HTMLQuoteElementImpl(document);
+        n = new HTMLGenericElementImpl(document, t->id);
         break;
 
 // elements with no special representation in the DOM
@@ -954,7 +988,6 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 // block:
     case ID_ADDRESS:
     case ID_CENTER:
-    case ID_LISTING:
         n = new HTMLGenericElementImpl(document, t->id);
         break;
 // inline
@@ -984,6 +1017,8 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_SUB:
     case ID_SUP:
     case ID_SPAN:
+    case ID_NOBR:
+    case ID_WBR:
         n = new HTMLGenericElementImpl(document, t->id);
         break;
 
@@ -1005,11 +1040,12 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 //        discard_until = ID_NOLAYER + ID_CLOSE_TAG;
         return 0;
         break;
+    case ID_MARQUEE:
+        n = new HTMLGenericElementImpl(document, t->id);
+        break;        
 // text
     case ID_TEXT:
         n = new TextImpl(document, t->text);
-        if (t->complexText )
-            n->setComplexText(true);
         break;
     case ID_COMMENT:
 #ifdef COMMENTS_IN_DOM
@@ -1044,10 +1080,6 @@ void KHTMLParser::processCloseTag(Token *t)
         // don't close head neither. the creation of body will do it for us.
         // fixes some sites, that define stylesheets after </head>
         return;
-    case ID_TITLE+ID_CLOSE_TAG:
-        if ( current->id() == ID_TITLE )
-          static_cast<HTMLTitleElementImpl *>(current)->setTitle();
-        break;
     case ID_SELECT+ID_CLOSE_TAG:
         inSelect = false;
         break;
@@ -1133,8 +1165,14 @@ void KHTMLParser::popOneBlock()
 #endif
 
 #if SPEED_DEBUG < 1
-    if(Elem->node != current)
-        if(current->renderer()) current->renderer()->close();
+    if((Elem->node != current)) {
+        if (current->maintainsState()) {
+            QString state(document->document()->nextState());
+            if (!state.isNull()) current->restoreState(state);
+        }
+        if (current->renderer())
+            current->renderer()->close();
+    }
 #endif
 
     removeForbidden(Elem->id, forbiddenTag);
@@ -1191,15 +1229,10 @@ NodeImpl *KHTMLParser::handleIsindex( Token *t )
         n = new HTMLDivElementImpl( document );
     NodeImpl *child = new HTMLHRElementImpl( document );
     n->addChild( child );
-    AttrImpl* a = 0;
-    DOMString text;
-
-    if(t->attrs)
-        a = t->attrs->getIdItem(ATTR_PROMPT);
-    if(a)
+    AttributeImpl* a = t->attrs ? t->attrs->getAttributeItem(ATTR_PROMPT) : 0;
+    DOMString text = i18n("This is a searchable index. Enter search keywords: ");
+    if (a)
         text = a->value() + " ";
-    else
-        text =  i18n("This is a searchable index. Enter search keywords: ");
     child = new TextImpl(document, text);
     n->addChild( child );
     child = new HTMLIsIndexElementImpl(document, myform);

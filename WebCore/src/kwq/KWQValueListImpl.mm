@@ -263,7 +263,7 @@ void KWQValueListImpl::prependNode(KWQValueListNodeImpl *node)
     d->count++;
 }
 
-void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(KWQValueListNodeImpl *, KWQValueListNodeImpl *))
+void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *))
 {
     copyOnWrite();
 
@@ -290,7 +290,7 @@ void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equal
     }
 }
 
-uint KWQValueListImpl::containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(KWQValueListNodeImpl *, KWQValueListNodeImpl *)) const
+uint KWQValueListImpl::containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const
 {
     KWQValueListNodeImpl *p = d->head;
     unsigned contains = 0;

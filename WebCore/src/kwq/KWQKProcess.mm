@@ -38,10 +38,10 @@ KProcess::~KProcess()
 }
 
 
-QStrList *KProcess::args()
+QValueList<QCString> KProcess::args()
 {
     _logNotYetImplemented();
-    return new QStrList();
+    return QValueList<QCString>();
 }
 
 

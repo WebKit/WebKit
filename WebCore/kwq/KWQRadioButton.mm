@@ -50,3 +50,11 @@ void QRadioButton::setChecked(bool isChecked)
         [button setState: NSOffState];
 }
 
+
+bool QRadioButton::isChecked()
+{
+    KWQNSButton *button;
+    button = (KWQNSButton *)getView();
+
+    return ([button state] == NSOnState);
+}

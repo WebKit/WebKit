@@ -6,3 +6,4 @@ testecma
 *.la
 *.lo
 *.moc
+*.lut.h

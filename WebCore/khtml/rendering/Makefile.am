@@ -25,8 +25,6 @@ libkhtmlrendering_o_SOURCES = \
 	render_form.h \
 	render_frames.cpp \
 	render_frames.h \
-	render_hr.cpp \
-	render_hr.h \
 	render_html.cpp \
 	render_html.h \
 	render_image.cpp \

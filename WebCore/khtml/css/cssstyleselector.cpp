@@ -17,15 +17,15 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-#include "cssstyleselector.h"
+
+#include "css/cssstyleselector.h"
 #include "rendering/render_style.h"
-#include "css_stylesheetimpl.h"
-#include "css_ruleimpl.h"
-#include "css_valueimpl.h"
-#include "csshelper.h"
+#include "css/css_stylesheetimpl.h"
+#include "css/css_ruleimpl.h"
+#include "css/css_valueimpl.h"
+#include "css/csshelper.h"
+#include "rendering/render_object.h"
 #include "html/html_documentimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "dom/css_rule.h"
@@ -34,19 +34,19 @@
 using namespace khtml;
 using namespace DOM;
 
-#include "cssproperties.h"
-#include "cssvalues.h"
+#include "css/cssproperties.h"
+#include "css/cssvalues.h"
 
 #include "misc/khtmllayout.h"
 #include "khtml_settings.h"
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
+#include "misc/loader.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include "khtml_settings.h"
 
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kcharsets.h>
 #include <kglobal.h>
 #include <qfile.h>
@@ -62,6 +62,7 @@ using namespace DOM;
 #include <qintcache.h>
 
 CSSStyleSelectorList *CSSStyleSelector::defaultStyle = 0;
+CSSStyleSelectorList *CSSStyleSelector::defaultPrintStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
 
 enum PseudoState { PseudoUnknown, PseudoNone, PseudoLink, PseudoVisited};
@@ -73,6 +74,7 @@ static int usedDynamicStates;
 static int selectorDynamicState;
 static CSSStyleSelector::Encodedurl *encodedurl;
 
+
 #ifdef APPLE_CHANGES
 #define OPTIMIZE_STRING_USAGE
 #ifdef OPTIMIZE_STRING_USAGE
@@ -81,10 +83,16 @@ static CFMutableStringRef reuseableString = 0;
 #endif
 
 
-CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
+CSSStyleSelector::CSSStyleSelector( KHTMLView *view, QString userStyleSheet, StyleSheetListImpl *styleSheets,
+                                    const KURL &url, bool _strictParsing )
 {
-    strictParsing = doc->parseMode() == DocumentImpl::Strict;
-    if(!defaultStyle) loadDefaultStyle(doc->view()?doc->view()->part()->settings():0);
+    strictParsing = _strictParsing;
+    if(!defaultStyle) loadDefaultStyle(view ? view->part()->settings() : 0);
+#if APPLE_CHANGES
+    m_medium = view ? view->mediaType() : QString("all");
+#else
+    m_medium = view ? view->mediaType() : "all";
+#endif
 
     selectors = 0;
     selectorCache = 0;
@@ -92,27 +100,33 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
     userStyle = 0;
     userSheet = 0;
 
-
-    if ( !doc->userStyleSheet().isEmpty() ) {
+    if ( !userStyleSheet.isEmpty() ) {
         userSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl *)0);
-        userSheet->parseString( DOMString( doc->userStyleSheet() ) );
+        userSheet->parseString( DOMString( userStyleSheet ) );
 
         userStyle = new CSSStyleSelectorList();
-        userStyle->append(userSheet);
+        userStyle->append( userSheet, m_medium );
     }
 
     // add stylesheets from document
     authorStyle = new CSSStyleSelectorList();
-    StyleSheetListImpl* ss = doc->styleSheets();
-    for ( QListIterator<StyleSheetImpl> it( ss->styleSheets ); it.current(); ++it )
- 	    authorStyle->append( it.current());
+
+
+    QPtrListIterator<StyleSheetImpl> it( styleSheets->styleSheets );
+    for ( ; it.current(); ++it ) {
+        if ( it.current()->isCSSStyleSheet() ) {
+            authorStyle->append( static_cast<CSSStyleSheetImpl*>( it.current() ),
+                                 m_medium );
+        }
+    }
 
     buildLists();
 
     //kdDebug( 6080 ) << "number of style sheets in document " << authorStyleSheets.count() << endl;
     //kdDebug( 6080 ) << "CSSStyleSelector: author style has " << authorStyle->count() << " elements"<< endl;
 
-    KURL u = doc->baseURL().string();
+    KURL u = url;
+
     u.setQuery( QString::null );
     u.setRef( QString::null );
     encodedurl.file = u.url();
@@ -128,12 +142,13 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
     //kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
 }
 
-CSSStyleSelector::CSSStyleSelector(StyleSheetImpl *sheet)
+CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
 {
     if(!defaultStyle) loadDefaultStyle();
+    m_medium = sheet->doc()->view()->mediaType();
 
     authorStyle = new CSSStyleSelectorList();
-    authorStyle->append(sheet);
+    authorStyle->append( sheet, m_medium );
 }
 
 CSSStyleSelector::~CSSStyleSelector()
@@ -144,9 +159,10 @@ CSSStyleSelector::~CSSStyleSelector()
     delete userSheet;
 }
 
-void CSSStyleSelector::addSheet(StyleSheetImpl *sheet)
+void CSSStyleSelector::addSheet( CSSStyleSheetImpl *sheet )
 {
-    authorStyle->append(sheet);
+    m_medium = sheet->doc()->view()->mediaType();
+    authorStyle->append( sheet, m_medium );
 }
 
 void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
@@ -164,22 +180,27 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
 
     QString style = QString::fromLatin1( file.data() );
     if(s)
-	style += s->settingsToCSS();
+        style += s->settingsToCSS();
     DOMString str(style);
 
-    defaultSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl *)0);
+    defaultSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
     defaultSheet->parseString( str );
 
     defaultStyle = new CSSStyleSelectorList();
-    defaultStyle->append(defaultSheet);
+    defaultStyle->append( defaultSheet );
+
+    defaultPrintStyle = new CSSStyleSelectorList();
+    defaultPrintStyle->append( defaultSheet, "print" );
     //kdDebug() << "CSSStyleSelector: default style has " << defaultStyle->count() << " elements"<< endl;
 }
 
 void CSSStyleSelector::clear()
 {
     delete defaultStyle;
+    delete defaultPrintStyle;
     delete defaultSheet;
     defaultStyle = 0;
+    defaultPrintStyle = 0;
     defaultSheet = 0;
 }
 
@@ -198,13 +219,14 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
     CSSOrderedPropertyList *pseudoProps = new CSSOrderedPropertyList;
 
     // try to sort out most style rules as early as possible.
-    int id = e->id();
+    // ### implement CSS3 namespace support
+    int cssTagId = (e->id() & NodeImpl::IdLocalMask);
     int smatch = 0;
     int schecked = 0;
 
     for ( unsigned int i = 0; i < selectors_size; i++ ) {
 	int tag = selectors[i]->tag;
-	if ( id == tag || tag == -1 ) {
+	if ( cssTagId == tag || tag == -1 ) {
 	    ++schecked;
 
 	    checkSelector( i, e );
@@ -215,11 +237,11 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 		//qDebug("adding property" );
 		for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
 		    for ( unsigned int j = 0; j < (unsigned int )selectorCache[i].props[p+1]; ++j )
-			static_cast<QList<CSSOrderedProperty>*>(propsToApply)->append( properties[selectorCache[i].props[p]+j] );
+			static_cast<QPtrList<CSSOrderedProperty>*>(propsToApply)->append( properties[selectorCache[i].props[p]+j] );
 	    } else if ( selectorCache[i].state == AppliesPseudo ) {
 		for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
 		    for ( unsigned int j = 0; j < (unsigned int) selectorCache[i].props[p+1]; ++j ) {
-			static_cast<QList<CSSOrderedProperty>*>(pseudoProps)->append(  properties[selectorCache[i].props[p]+j] );
+			static_cast<QPtrList<CSSOrderedProperty>*>(pseudoProps)->append(  properties[selectorCache[i].props[p]+j] );
 			properties[selectorCache[i].props[p]+j]->pseudoId = (RenderStyle::PseudoId) selectors[i]->pseudoId;
 		    }
 	    }
@@ -241,16 +263,14 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
     pseudoProps->sort();
 
     RenderStyle* style = new RenderStyle();
-    if(e->parentNode()) {
-        assert(e->parentNode()->style() != 0);
-        style->inheritFrom(e->parentNode()->style());
-    }
+    if(e->parentNode() && e->parentNode()->renderer())
+        style->inheritFrom(e->parentNode()->renderer()->style());
 
     //qDebug("applying properties, count=%d", propsToApply->count() );
 
     // we can't apply style rules without a view(). This
     // tends to happen on delayed destruction of widget Renderobjects
-    KHTMLView* v = e->ownerDocument()->view();
+    KHTMLView* v = e->getDocument()->view();
     if ( v && v->part() ) {
         if ( propsToApply->count() != 0 ) {
             CSSOrderedProperty *ordprop = propsToApply->first();
@@ -262,14 +282,23 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
         }
 
         if ( pseudoProps->count() != 0 ) {
-            //qDebug("%d applying %d pseudo props", e->id(), pseudoProps->count() );
+            //qDebug("%d applying %d pseudo props", e->cssTagId(), pseudoProps->count() );
             CSSOrderedProperty *ordprop = pseudoProps->first();
             while( ordprop ) {
                 RenderStyle *pseudoStyle;
-                pseudoStyle = style->addPseudoStyle(ordprop->pseudoId);
+                pseudoStyle = style->getPseudoStyle(ordprop->pseudoId);
+
+                if (!pseudoStyle)
+                {
+                    pseudoStyle = style->addPseudoStyle(ordprop->pseudoId);
+                    if (pseudoStyle && (ordprop->pseudoId==RenderStyle::BEFORE ||
+                            ordprop->pseudoId==RenderStyle::AFTER))
+                        pseudoStyle->inheritFrom(e->parentNode()->renderer()->style());
+                }
 
                 if ( pseudoStyle )
                     applyRule(pseudoStyle, ordprop->prop, e);
+
                 ordprop = pseudoProps->next();
             }
         }
@@ -277,8 +306,6 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 
     if ( usedDynamicStates & StyleSelector::Hover )
 	style->setHasHover();
-    if ( usedDynamicStates & StyleSelector::Focus )
-	style->setHasFocus();
     if ( usedDynamicStates & StyleSelector::Active )
 	style->setHasActive();
 
@@ -291,7 +318,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 void CSSStyleSelector::addInlineDeclarations(DOM::CSSStyleDeclarationImpl *decl,
 					     CSSOrderedPropertyList *list )
 {
-    QList<CSSProperty> *values = decl->values();
+    QPtrList<CSSProperty> *values = decl->values();
     if(!values) return;
     int len = values->count();
 
@@ -329,7 +356,7 @@ void CSSStyleSelector::addInlineDeclarations(DOM::CSSStyleDeclarationImpl *decl,
 	array->selector = 0;
 	array->position = i;
 	array->priority = (!first << 30) | (source << 24);
-	static_cast<QList<CSSOrderedProperty>*>(list)->append( array );
+	static_cast<QPtrList<CSSOrderedProperty>*>(list)->append( array );
 	array++;
     }
 }
@@ -352,7 +379,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
     bool single = false;
     if ( sel->tag == -1 )
 	single = true;
-    
+
     // first selector has to match
     if(!checkOneSelector(sel, e)) return;
 
@@ -402,8 +429,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
 	    //kdDebug() << "CSSOrderedRule::checkSelector" << endl;
 	    ElementImpl *elem = static_cast<ElementImpl *>(n);
 	    // a selector is invalid if something follows :first-xxx
-	    if ( dynamicPseudo == RenderStyle::FIRST_LINE ||
-		 dynamicPseudo == RenderStyle::FIRST_LETTER ) {
+	    if ( dynamicPseudo != RenderStyle::NOPSEUDO ) {
 		return;
 	    }
 	    if(!checkOneSelector(sel, elem)) return;
@@ -489,7 +515,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     if(!e)
         return false;
 
-    if(e->id() != sel->tag && sel->tag != -1) return false;
+    if((e->id() & NodeImpl::IdLocalMask) != uint(sel->tag) && sel->tag != -1) return false;
 
     if(sel->attr)
     {
@@ -517,16 +543,48 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             if(pos < (int)str.length() && str[pos] != ' ') return false;
             break;
         }
+        case CSSSelector::Contain:
+        {
+            //kdDebug( 6080 ) << "checking for contains match" << endl;
+            QString str = value.string();
+            QString selStr = sel->value.string();
+            int pos = str.find(selStr, 0, strictParsing);
+            if(pos == -1) return false;
+            break;
+        }
+        case CSSSelector::Begin:
+        {
+            //kdDebug( 6080 ) << "checking for beginswith match" << endl;
+            QString str = value.string();
+            QString selStr = sel->value.string();
+            int pos = str.find(selStr, 0, strictParsing);
+            if(pos != 0) return false;
+            break;
+        }
+        case CSSSelector::End:
+        {
+            //kdDebug( 6080 ) << "checking for endswith match" << endl;
+            QString str = value.string();
+            QString selStr = sel->value.string();
+	    if (strictParsing && !str.endsWith(selStr)) return false;
+	    if (!strictParsing) {
+	        int pos = str.length() - selStr.length();
+		if (pos < 0 || pos != str.find(selStr, pos, false) )
+		    return false;
+	    }
+            break;
+        }
         case CSSSelector::Hyphen:
         {
-            // ### still doesn't work. FIXME
             //kdDebug( 6080 ) << "checking for hyphen match" << endl;
             QString str = value.string();
-            if(str.find(sel->value.string(), 0, strictParsing) != 0) return false;
-            // ### could be "bla , sdfdsf" too. Parse out spaces
-            int pos = sel->value.length() + 1;
-            while(pos < (int)str.length() && sel->value[pos] == ' ') pos++;
-            if(pos < (int)str.length() && sel->value[pos] != ',') return false;
+            QString selStr = sel->value.string();
+            if(str.length() < selStr.length()) return false;
+            // Check if str begins with selStr:
+            if(str.find(selStr, 0, strictParsing) != 0) return false;
+            // It does. Check for exact match or following '-':
+            if(str.length() != selStr.length()
+                && str[selStr.length()] != '-') return false;
             break;
         }
         case CSSSelector::Pseudo:
@@ -583,7 +641,13 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
 		selectorDynamicState |= StyleSelector::Active;
 		return true;
 	    }
-	}
+	} else if ( value == "before" ) {
+            dynamicPseudo = RenderStyle::BEFORE;
+            return true;
+        } else if ( value == "after" ) {
+            dynamicPseudo = RenderStyle::AFTER;
+            return true;
+        }
 	return false;
     }
     // ### add the rest of the checks...
@@ -619,10 +683,14 @@ void CSSStyleSelector::buildLists()
     clearLists();
     // collect all selectors and Properties in lists. Then transer them to the array for faster lookup.
 
-    QList<CSSSelector> selectorList;
+    QPtrList<CSSSelector> selectorList;
     CSSOrderedPropertyList propertyList;
 
-    if(defaultStyle) defaultStyle->collect( &selectorList, &propertyList, Default, Default );
+    if(m_medium == "print" && defaultPrintStyle)
+      defaultPrintStyle->collect( &selectorList, &propertyList, Default,
+        Default );
+    else if(defaultStyle) defaultStyle->collect( &selectorList, &propertyList,
+      Default, Default );
     if(userStyle) userStyle->collect(&selectorList, &propertyList, User, UserImportant );
     if(authorStyle) authorStyle->collect(&selectorList, &propertyList, Author, AuthorImportant );
 
@@ -656,34 +724,31 @@ void CSSStyleSelector::buildLists()
     }
     *prop = 0;
 
-    // This algorithm sucks badly. but hey, its performance shouldn't matter much ( Dirk )
-    for ( unsigned int sel = 0; sel < selectors_size; ++sel ) {
-        prop = properties;
-        int len = 0;
-        int offset = 0;
-        bool matches = properties[0] ? properties[0]->selector == sel : false;
-        for ( unsigned int p = 0; p < properties_size; ++p ) {
-            if ( !properties[p] || ( matches != ( properties[p]->selector == sel ) )) {
-                if ( matches ) {
-                    int* newprops = new int[selectorCache[sel].props_size+2];
-                    for ( unsigned int i=0; i < selectorCache[sel].props_size; i++ )
-                        newprops[i] = selectorCache[sel].props[i];
-                    newprops[selectorCache[sel].props_size] = offset;
-                    newprops[selectorCache[sel].props_size+1] = len;
-                    delete [] selectorCache[sel].props;
-                    selectorCache[sel].props = newprops;
-                    selectorCache[sel].props_size += 2;
-                    matches = false;
-                }
-                else {
-                    matches = true;
-                    offset = p;
-                    len = 0;
-                }
+    unsigned int* offsets = new unsigned int[selectors_size];
+    if(properties[0])
+	offsets[properties[0]->selector] = 0;
+    for(unsigned int p = 1; p < properties_size; ++p) {
+
+	if(!properties[p] || (properties[p]->selector != properties[p - 1]->selector)) {
+	    unsigned int sel = properties[p - 1]->selector;
+            int* newprops = new int[selectorCache[sel].props_size+2];
+            for ( unsigned int i=0; i < selectorCache[sel].props_size; i++ )
+                newprops[i] = selectorCache[sel].props[i];
+
+	    newprops[selectorCache[sel].props_size] = offsets[sel];
+	    newprops[selectorCache[sel].props_size+1] = p - offsets[sel];
+            delete [] selectorCache[sel].props;
+            selectorCache[sel].props = newprops;
+            selectorCache[sel].props_size += 2;
+
+	    if(properties[p]) {
+		sel = properties[p]->selector;
+		offsets[sel] = p;
             }
-            ++len;
         }
     }
+    delete [] offsets;
+
 
 #if 0
     // and now the same for the selector map
@@ -736,7 +801,7 @@ CSSOrderedRule::~CSSOrderedRule()
 // -----------------------------------------------------------------
 
 CSSStyleSelectorList::CSSStyleSelectorList()
-    : QList<CSSOrderedRule>()
+    : QPtrList<CSSOrderedRule>()
 {
     setAutoDelete(true);
 }
@@ -744,10 +809,15 @@ CSSStyleSelectorList::~CSSStyleSelectorList()
 {
 }
 
-void CSSStyleSelectorList::append(StyleSheetImpl *sheet)
+void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
+                                   const DOMString &medium )
 {
-
     if(!sheet || !sheet->isCSSStyleSheet()) return;
+
+    // No media implies "all", but if a medialist exists it must
+    // contain our current medium
+    if( sheet->media() && !sheet->media()->contains( medium ) )
+        return; // style sheet not applicable for this medium
 
     int len = sheet->length();
 
@@ -757,27 +827,79 @@ void CSSStyleSelectorList::append(StyleSheetImpl *sheet)
         if(item->isStyleRule())
         {
             CSSStyleRuleImpl *r = static_cast<CSSStyleRuleImpl *>(item);
-            QList<CSSSelector> *s = r->selector();
+            QPtrList<CSSSelector> *s = r->selector();
             for(int j = 0; j < (int)s->count(); j++)
             {
                 CSSOrderedRule *rule = new CSSOrderedRule(r, s->at(j), count());
-		QList<CSSOrderedRule>::append(rule);
+		QPtrList<CSSOrderedRule>::append(rule);
                 //kdDebug( 6080 ) << "appending StyleRule!" << endl;
             }
         }
         else if(item->isImportRule())
         {
             CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(item);
-            // ### check media type
-            StyleSheetImpl *importedSheet = import->styleSheet();
-            append(importedSheet);
+
+            //kdDebug( 6080 ) << "@import: Media: "
+            //                << import->media()->mediaText().string() << endl;
+
+            if( !import->media() || import->media()->contains( medium ) )
+            {
+                CSSStyleSheetImpl *importedSheet = import->styleSheet();
+                append( importedSheet, medium );
+            }
         }
-        // ### include media, import rules and other
+        else if( item->isMediaRule() )
+        {
+            CSSMediaRuleImpl *r = static_cast<CSSMediaRuleImpl *>( item );
+            CSSRuleListImpl *rules = r->cssRules();
+
+            //DOMString mediaText = media->mediaText();
+            //kdDebug( 6080 ) << "@media: Media: "
+            //                << r->media()->mediaText().string() << endl;
+
+            if( ( !r->media() || r->media()->contains( medium ) ) && rules)
+            {
+                // Traverse child elements of the @import rule. Since
+                // many elements are not allowed as child we do not use
+                // a recursive call to append() here
+                for( unsigned j = 0; j < rules->length(); j++ )
+                {
+                    //kdDebug( 6080 ) << "*** Rule #" << j << endl;
+
+                    CSSRuleImpl *childItem = rules->item( j );
+                    if( childItem->isStyleRule() )
+                    {
+                        // It is a StyleRule, so append it to our list
+                        CSSStyleRuleImpl *styleRule =
+                                static_cast<CSSStyleRuleImpl *>( childItem );
+
+                        QPtrList<CSSSelector> *s = styleRule->selector();
+                        for( int j = 0; j < ( int ) s->count(); j++ )
+                        {
+                            CSSOrderedRule *orderedRule = new CSSOrderedRule(
+                                            styleRule, s->at( j ), count() );
+                	    QPtrList<CSSOrderedRule>::append( orderedRule );
+                        }
+                    }
+                    else
+                    {
+                        //kdDebug( 6080 ) << "Ignoring child rule of "
+                        //    "ImportRule: rule is not a StyleRule!" << endl;
+                    }
+                }   // for rules
+            }   // if rules
+            else
+            {
+                //kdDebug( 6080 ) << "CSSMediaRule not rendered: "
+                //                << "rule empty or wrong medium!" << endl;
+            }
+        }
+        // ### include other rules
     }
 }
 
 
-void CSSStyleSelectorList::collect( QList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
+void CSSStyleSelectorList::collect( QPtrList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
 				    Source regular, Source important )
 {
     CSSOrderedRule *r = first();
@@ -801,7 +923,7 @@ void CSSStyleSelectorList::collect( QList<CSSSelector> *selectorList, CSSOrdered
 
 // -------------------------------------------------------------------------
 
-int CSSOrderedPropertyList::compareItems(QCollection::Item i1, QCollection::Item i2)
+int CSSOrderedPropertyList::compareItems(QPtrCollection::Item i1, QPtrCollection::Item i2)
 {
     int diff =  static_cast<CSSOrderedProperty *>(i1)->priority
         - static_cast<CSSOrderedProperty *>(i2)->priority;
@@ -812,7 +934,7 @@ int CSSOrderedPropertyList::compareItems(QCollection::Item i1, QCollection::Item
 void CSSOrderedPropertyList::append(DOM::CSSStyleDeclarationImpl *decl, uint selector, uint specificity,
 				    Source regular, Source important )
 {
-    QList<CSSProperty> *values = decl->values();
+    QPtrList<CSSProperty> *values = decl->values();
     if(!values) return;
     int len = values->count();
     for(int i = 0; i < len; i++)
@@ -839,7 +961,7 @@ void CSSOrderedPropertyList::append(DOM::CSSStyleDeclarationImpl *decl, uint sel
             break;
         }
 
-	QList<CSSOrderedProperty>::append(new CSSOrderedProperty(prop, selector,
+	QPtrList<CSSOrderedProperty>::append(new CSSOrderedProperty(prop, selector,
 								 first, source, specificity,
 								 count() ));
     }
@@ -862,7 +984,7 @@ static Length convertToLength( CSSPrimitiveValueImpl *primitiveValue, RenderStyl
 	    l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)), Percent);
 	else if(type == CSSPrimitiveValue::CSS_NUMBER)
 	    l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
-	else if ( *ok )
+	else if ( ok )
 	    *ok = false;
     }
     return l;
@@ -870,9 +992,12 @@ static Length convertToLength( CSSPrimitiveValueImpl *primitiveValue, RenderStyl
 
 void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::ElementImpl *e)
 {
+    // use current style as fallback in case we have no parent
+    khtml::RenderStyle* parentStyle = (e->parentNode() && e->parentNode()->renderer()) ?
+                                       e->parentNode()->renderer()->style() : style;
     CSSValueImpl *value = prop->value();
 
-    QPaintDeviceMetrics *paintDeviceMetrics = e->ownerDocument()->paintDeviceMetrics();
+    QPaintDeviceMetrics *paintDeviceMetrics = e->getDocument()->paintDeviceMetrics();
 
     //kdDebug( 6080 ) << "applying property " << prop->m_id << endl;
 
@@ -888,10 +1013,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     {
 // ident only properties
     case CSS_PROP_BACKGROUND_ATTACHMENT:
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setBackgroundAttachment(e->parentNode()->style()->backgroundAttachment());
+            style->setBackgroundAttachment(parentStyle->backgroundAttachment());
             return;
         }
         if(!primitiveValue) break;
@@ -900,7 +1025,7 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         case CSS_VAL_FIXED:
             {
                 style->setBackgroundAttachment(false);
-                DocumentImpl *doc = e->ownerDocument();
+                DocumentImpl *doc = e->getDocument();
 		// only use slow repaints if we actually have a background pixmap
                 if( style->backgroundImage() )
                     doc->view()->useSlowRepaints();
@@ -914,9 +1039,9 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         }
     case CSS_PROP_BACKGROUND_REPEAT:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
-            style->setBackgroundRepeat(e->parentNode()->style()->backgroundRepeat());
+            style->setBackgroundRepeat(parentStyle->backgroundRepeat());
             return;
         }
         if(!primitiveValue) return;
@@ -939,10 +1064,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 	}
     }
     case CSS_PROP_BORDER_COLLAPSE:
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setBorderCollapse(e->parentNode()->style()->borderCollapse());
+            style->setBorderCollapse(parentStyle->borderCollapse());
             break;
         }
         if(!primitiveValue) break;
@@ -964,25 +1089,25 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_BORDER_LEFT_STYLE:
     case CSS_PROP_OUTLINE_STYLE:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
             switch(prop->m_id)
             {
             case CSS_PROP_BORDER_TOP_STYLE:
-                style->setBorderTopStyle(e->parentNode()->style()->borderTopStyle());
+                style->setBorderTopStyle(parentStyle->borderTopStyle());
                 return;
             case CSS_PROP_BORDER_RIGHT_STYLE:
-                style->setBorderRightStyle(e->parentNode()->style()->borderRightStyle());
+                style->setBorderRightStyle(parentStyle->borderRightStyle());
                 return;
             case CSS_PROP_BORDER_BOTTOM_STYLE:
-                style->setBorderBottomStyle(e->parentNode()->style()->borderBottomStyle());
+                style->setBorderBottomStyle(parentStyle->borderBottomStyle());
                 return;
             case CSS_PROP_BORDER_LEFT_STYLE:
-                style->setBorderLeftStyle(e->parentNode()->style()->borderLeftStyle());
+                style->setBorderLeftStyle(parentStyle->borderLeftStyle());
                 return;
             case CSS_PROP_OUTLINE_STYLE:
-                style->setOutlineStyle(e->parentNode()->style()->outlineStyle());
+                style->setOutlineStyle(parentStyle->outlineStyle());
                 return;
             }
         }
@@ -1008,10 +1133,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     }
     case CSS_PROP_CAPTION_SIDE:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setCaptionSide(e->parentNode()->style()->captionSide());
+            style->setCaptionSide(parentStyle->captionSide());
             break;
         }
         if(!primitiveValue) break;
@@ -1034,10 +1159,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     }
     case CSS_PROP_CLEAR:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setClear(e->parentNode()->style()->clear());
+            style->setClear(parentStyle->clear());
             break;
         }
         if(!primitiveValue) break;
@@ -1058,10 +1183,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     }
     case CSS_PROP_DIRECTION:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setDirection(e->parentNode()->style()->direction());
+            style->setDirection(parentStyle->direction());
             break;
         }
         if(!primitiveValue) break;
@@ -1070,10 +1195,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     }
     case CSS_PROP_DISPLAY:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setDisplay(e->parentNode()->style()->display());
+            style->setDisplay(parentStyle->display());
             break;
         }
         if(!primitiveValue) break;
@@ -1099,10 +1224,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         break;
     case CSS_PROP_FLOAT:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setFloating(e->parentNode()->style()->floating());
+            style->setFloating(parentStyle->floating());
             return;
         }
         if(!primitiveValue) return;
@@ -1133,10 +1258,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_FONT_STYLE:
     {
         QFont f = style->font();
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            f.setItalic(e->parentNode()->style()->font().italic());
+            f.setItalic(parentStyle->font().italic());
             style->setFont(f);
             return;
         }
@@ -1154,7 +1279,7 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         default:
             return;
         }
-        //KGlobal::charsets()->setQFont(f, e->ownerDocument()->view()->part()->settings()->charset);
+        //KGlobal::charsets()->setQFont(f, e->getDocument()->view()->part()->settings()->charset);
         style->setFont(f);
         break;
     }
@@ -1162,10 +1287,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     case CSS_PROP_FONT_VARIANT:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setFontVariant(e->parentNode()->style()->fontVariant());
+            style->setFontVariant(parentStyle->fontVariant());
             return;
         }
         if(!primitiveValue) return;
@@ -1183,11 +1308,11 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_FONT_WEIGHT:
     {
         QFont f = style->font();
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            f.setWeight(e->parentNode()->style()->font().weight());
-            //KGlobal::charsets()->setQFont(f, e->ownerDocument()->view()->part()->settings()->charset);
+            f.setWeight(parentStyle->font().weight());
+            //KGlobal::charsets()->setQFont(f, e->getDocument()->view()->part()->settings()->charset);
             style->setFont(f);
             return;
         }
@@ -1214,17 +1339,17 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         {
             // ### fix parsing of 100-900 values in parser, apply them here
         }
-        //KGlobal::charsets()->setQFont(f, e->ownerDocument()->view()->part()->settings()->charset);
+        //KGlobal::charsets()->setQFont(f, e->getDocument()->view()->part()->settings()->charset);
         style->setFont(f);
         break;
     }
 
     case CSS_PROP_LIST_STYLE_POSITION:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setListStylePosition(e->parentNode()->style()->listStylePosition());
+            style->setListStylePosition(parentStyle->listStylePosition());
             return;
         }
         if(!primitiveValue) return;
@@ -1235,10 +1360,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     case CSS_PROP_LIST_STYLE_TYPE:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setListStyleType(e->parentNode()->style()->listStyleType());
+            style->setListStyleType(parentStyle->listStyleType());
             return;
         }
         if(!primitiveValue) return;
@@ -1258,10 +1383,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     case CSS_PROP_OVERFLOW:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setPosition(e->parentNode()->style()->position());
+            style->setOverflow(parentStyle->overflow());
             return;
         }
         if(!primitiveValue) return;
@@ -1271,7 +1396,7 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         case CSS_VAL_VISIBLE:
             o = OVISIBLE; break;
         case CSS_VAL_HIDDEN:
-            o = OHIDDEN; kdDebug() << "overflow:hidden" << endl; break;
+            o = OHIDDEN; //kdDebug() << "overflow:hidden" << endl; break;
         case CSS_VAL_SCROLL:
             o = SCROLL; break;
         case CSS_VAL_AUTO:
@@ -1293,10 +1418,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     case CSS_PROP_POSITION:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setPosition(e->parentNode()->style()->position());
+            style->setPosition(parentStyle->position());
             return;
         }
         if(!primitiveValue) return;
@@ -1311,7 +1436,7 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
             p = ABSOLUTE; break;
         case CSS_VAL_FIXED:
             {
-                DocumentImpl *doc = e->ownerDocument();
+                DocumentImpl *doc = e->getDocument();
                 doc->view()->useSlowRepaints();
                 p = FIXED;
                 break;
@@ -1328,13 +1453,32 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 //     case CSS_PROP_SPEAK_NUMERAL:
 //     case CSS_PROP_SPEAK_PUNCTUATION:
     case CSS_PROP_TABLE_LAYOUT:
-    case CSS_PROP_UNICODE_BIDI:
+	break;
+    case CSS_PROP_UNICODE_BIDI: {
+	EUnicodeBidi b = UBNormal;
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
+            if(!e->parentNode()) return;
+            b = parentStyle->unicodeBidi();
+        } else {
+	    switch( primitiveValue->getIdent() ) {
+		case CSS_VAL_NORMAL:
+		    b = UBNormal; break;
+		case CSS_VAL_EMBED:
+		    b = Embed; break;
+		case CSS_VAL_BIDI_OVERRIDE:
+		    b = Override; break;
+		default:
+		    return;
+	    }
+	}
+	style->setUnicodeBidi( b );
         break;
+    }
     case CSS_PROP_TEXT_TRANSFORM:
         {
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
-            style->setTextTransform(e->parentNode()->style()->textTransform());
+            style->setTextTransform(parentStyle->textTransform());
             return;
         }
 
@@ -1354,30 +1498,30 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     case CSS_PROP_VISIBILITY:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
-            style->setVisiblity(e->parentNode()->style()->visiblity());
+            style->setVisibility(parentStyle->visibility());
             return;
         }
 
         switch( primitiveValue->getIdent() ) {
         case CSS_VAL_HIDDEN:
-            style->setVisiblity( HIDDEN );
+            style->setVisibility( HIDDEN );
             break;
         case CSS_VAL_VISIBLE:
-            style->setVisiblity( VISIBLE );
+            style->setVisibility( VISIBLE );
             break;
         case CSS_VAL_COLLAPSE:
-            style->setVisiblity( COLLAPSE );
+            style->setVisibility( COLLAPSE );
         default:
             break;
         }
         break;
     }
     case CSS_PROP_WHITE_SPACE:
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
-            style->setWhiteSpace(e->parentNode()->style()->whiteSpace());
+            style->setWhiteSpace(parentStyle->whiteSpace());
             return;
         }
 
@@ -1445,9 +1589,9 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         // CSS2BorderSpacing
     case CSS_PROP_CURSOR:
         // CSS2Cursor
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
-            style->setCursor(e->parentNode()->style()->cursor());
+            style->setCursor(parentStyle->cursor());
             return;
         } else if(primitiveValue) {
 	    if(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_URI) {
@@ -1486,24 +1630,24 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
     {
         QColor col;
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             switch(prop->m_id)
             {
             case CSS_PROP_BACKGROUND_COLOR:
-                style->setBackgroundColor(e->parentNode()->style()->backgroundColor()); break;
+                style->setBackgroundColor(parentStyle->backgroundColor()); break;
             case CSS_PROP_BORDER_TOP_COLOR:
-                style->setBorderTopColor(e->parentNode()->style()->borderTopColor()); break;
+                style->setBorderTopColor(parentStyle->borderTopColor()); break;
             case CSS_PROP_BORDER_RIGHT_COLOR:
-                style->setBorderRightColor(e->parentNode()->style()->borderRightColor()); break;
+                style->setBorderRightColor(parentStyle->borderRightColor()); break;
             case CSS_PROP_BORDER_BOTTOM_COLOR:
-                style->setBorderBottomColor(e->parentNode()->style()->borderBottomColor()); break;
+                style->setBorderBottomColor(parentStyle->borderBottomColor()); break;
             case CSS_PROP_BORDER_LEFT_COLOR:
-                style->setBorderLeftColor(e->parentNode()->style()->borderLeftColor()); break;
+                style->setBorderLeftColor(parentStyle->borderLeftColor()); break;
             case CSS_PROP_COLOR:
-                style->setColor(e->parentNode()->style()->color()); break;
+                style->setColor(parentStyle->color()); break;
             case CSS_PROP_OUTLINE_COLOR:
-		style->setOutlineColor(e->parentNode()->style()->outlineColor()); break;
+		style->setOutlineColor(parentStyle->outlineColor()); break;
             default:
                 // ###
                 break;
@@ -1573,10 +1717,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 // uri || inherit
     case CSS_PROP_BACKGROUND_IMAGE:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setBackgroundImage(e->parentNode()->style()->backgroundImage());
+            style->setBackgroundImage(parentStyle->backgroundImage());
             break;
         }
         if(!primitiveValue) return;
@@ -1590,10 +1734,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 //         break;
     case CSS_PROP_LIST_STYLE_IMAGE:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setListStyleImage(e->parentNode()->style()->listStyleImage());
+            style->setListStyleImage(parentStyle->listStyleImage());
             break;
         }
         if(!primitiveValue) return;
@@ -1610,20 +1754,20 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_BORDER_LEFT_WIDTH:
     case CSS_PROP_OUTLINE_WIDTH:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             switch(prop->m_id)
             {
             case CSS_PROP_BORDER_TOP_WIDTH:
-                style->setBorderTopWidth(e->parentNode()->style()->borderTopWidth()); break;
+                style->setBorderTopWidth(parentStyle->borderTopWidth()); break;
             case CSS_PROP_BORDER_RIGHT_WIDTH:
-                style->setBorderRightWidth(e->parentNode()->style()->borderRightWidth()); break;
+                style->setBorderRightWidth(parentStyle->borderRightWidth()); break;
             case CSS_PROP_BORDER_BOTTOM_WIDTH:
-                style->setBorderBottomWidth(e->parentNode()->style()->borderBottomWidth()); break;
+                style->setBorderBottomWidth(parentStyle->borderBottomWidth()); break;
             case CSS_PROP_BORDER_LEFT_WIDTH:
-                style->setBorderLeftWidth(e->parentNode()->style()->borderLeftWidth()); break;
+                style->setBorderLeftWidth(parentStyle->borderLeftWidth()); break;
             case CSS_PROP_OUTLINE_WIDTH:
-                style->setOutlineWidth(e->parentNode()->style()->outlineWidth()); break;
+                style->setOutlineWidth(parentStyle->outlineWidth()); break;
             default:
                 // ###
                 break;
@@ -1677,7 +1821,7 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_LETTER_SPACING:
     case CSS_PROP_WORD_SPACING:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
             switch(prop->m_id)
@@ -1686,9 +1830,9 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
                 // ###
                 break;
             case CSS_PROP_LETTER_SPACING:
-                style->setLetterSpacing(e->parentNode()->style()->letterSpacing()); break;
+                style->setLetterSpacing(parentStyle->letterSpacing()); break;
             case CSS_PROP_WORD_SPACING:
-                style->setWordSpacing(e->parentNode()->style()->wordSpacing()); break;
+                style->setWordSpacing(parentStyle->wordSpacing()); break;
             default:
                 // ###
                 break;
@@ -1752,42 +1896,42 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_TEXT_INDENT:
         // +inherit
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT) {
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!e->parentNode()) return;
             switch(prop->m_id)
                 {
                 case CSS_PROP_MAX_WIDTH:
-                    style->setMaxWidth(e->parentNode()->style()->maxWidth()); break;
+                    style->setMaxWidth(parentStyle->maxWidth()); break;
                 case CSS_PROP_BOTTOM:
-                    style->setBottom(e->parentNode()->style()->bottom()); break;
+                    style->setBottom(parentStyle->bottom()); break;
                 case CSS_PROP_TOP:
-                    style->setTop(e->parentNode()->style()->top()); break;
+                    style->setTop(parentStyle->top()); break;
                 case CSS_PROP_LEFT:
-                    style->setLeft(e->parentNode()->style()->left()); break;
+                    style->setLeft(parentStyle->left()); break;
                 case CSS_PROP_RIGHT:
-                    style->setRight(e->parentNode()->style()->right()); break;
+                    style->setRight(parentStyle->right()); break;
                 case CSS_PROP_WIDTH:
-                    style->setWidth(e->parentNode()->style()->width()); break;
+                    style->setWidth(parentStyle->width()); break;
                 case CSS_PROP_MIN_WIDTH:
-                    style->setMinWidth(e->parentNode()->style()->minWidth()); break;
+                    style->setMinWidth(parentStyle->minWidth()); break;
                 case CSS_PROP_PADDING_TOP:
-                    style->setPaddingTop(e->parentNode()->style()->paddingTop()); break;
+                    style->setPaddingTop(parentStyle->paddingTop()); break;
                 case CSS_PROP_PADDING_RIGHT:
-                    style->setPaddingRight(e->parentNode()->style()->paddingRight()); break;
+                    style->setPaddingRight(parentStyle->paddingRight()); break;
                 case CSS_PROP_PADDING_BOTTOM:
-                    style->setPaddingBottom(e->parentNode()->style()->paddingBottom()); break;
+                    style->setPaddingBottom(parentStyle->paddingBottom()); break;
                 case CSS_PROP_PADDING_LEFT:
-                    style->setPaddingLeft(e->parentNode()->style()->paddingLeft()); break;
+                    style->setPaddingLeft(parentStyle->paddingLeft()); break;
                 case CSS_PROP_MARGIN_TOP:
-                    style->setMarginTop(e->parentNode()->style()->marginTop()); break;
+                    style->setMarginTop(parentStyle->marginTop()); break;
                 case CSS_PROP_MARGIN_RIGHT:
-                    style->setMarginRight(e->parentNode()->style()->marginRight()); break;
+                    style->setMarginRight(parentStyle->marginRight()); break;
                 case CSS_PROP_MARGIN_BOTTOM:
-                    style->setMarginBottom(e->parentNode()->style()->marginBottom()); break;
+                    style->setMarginBottom(parentStyle->marginBottom()); break;
                 case CSS_PROP_MARGIN_LEFT:
-                    style->setMarginLeft(e->parentNode()->style()->marginLeft()); break;
+                    style->setMarginLeft(parentStyle->marginLeft()); break;
                 case CSS_PROP_TEXT_INDENT:
-                    style->setTextIndent(e->parentNode()->style()->textIndent()); break;
+                    style->setTextIndent(parentStyle->textIndent()); break;
                 default:
                     return;
                 }
@@ -1851,17 +1995,17 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         if(!prop->m_id == CSS_PROP_MAX_HEIGHT && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
             apply = true;
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
             switch(prop->m_id)
                 {
                 case CSS_PROP_MAX_HEIGHT:
-                    style->setMaxHeight(e->parentNode()->style()->maxHeight()); break;
+                    style->setMaxHeight(parentStyle->maxHeight()); break;
                 case CSS_PROP_HEIGHT:
-                    style->setHeight(e->parentNode()->style()->height()); break;
+                    style->setHeight(parentStyle->height()); break;
                 case CSS_PROP_MIN_HEIGHT:
-                    style->setMinHeight(e->parentNode()->style()->minHeight()); break;
+                    style->setMinHeight(parentStyle->minHeight()); break;
                 default:
                     return;
                 }
@@ -1898,10 +2042,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         break;
 
     case CSS_PROP_VERTICAL_ALIGN:
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setVerticalAlign(e->parentNode()->style()->verticalAlign());
+            style->setVerticalAlign(parentStyle->verticalAlign());
             return;
         }
         if(!primitiveValue) return;
@@ -1952,28 +2096,24 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         QFont f = style->font();
         int oldSize;
         float size = 0;
-        int minFontSize = e->ownerDocument()->view()->part()->settings()->minFontSize();
+        int minFontSize = e->getDocument()->view()->part()->settings()->minFontSize();
 
-        float toPix = 1.; // fallback
-        if ( !khtml::printpainter )
-            toPix = paintDeviceMetrics->logicalDpiY()/72.;
+        float toPix = paintDeviceMetrics->logicalDpiY()/72.;
 #ifdef APPLE_CHANGES
         // FIXME: SCREEN_RESOLUTION hack good enough to keep?
-        if ( !khtml::printpainter && toPix < SCREEN_RESOLUTION/72 )
-            toPix = SCREEN_RESOLUTION/72;
+        if (toPix  < SCREEN_RESOLUTION/72) toPix = SCREEN_RESOLUTION/72;
 #else /* APPLE_CHANGES not defined */
-        if ( !khtml::printpainter && toPix < 96./72. )
-            toPix = 96./72.;
+        if (toPix  < 96./72.) toPix = 96./72.;
 #endif /* APPLE_CHANGES not defined */
 
-        QValueList<int> standardSizes = e->ownerDocument()->view()->part()->fontSizes();
+        QValueList<int> standardSizes = e->getDocument()->view()->part()->fontSizes();
         if(e->parentNode()) {
-            oldSize = e->parentNode()->style()->font().pixelSize();
+            oldSize = parentStyle->font().pixelSize();
         } else {
             oldSize = (int)(standardSizes[3]*toPix);
         }
 
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             size = oldSize;
         }
@@ -2012,9 +2152,6 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         else
         {
             int type = primitiveValue->primitiveType();
-            RenderStyle *parentStyle = style; // use the current style as fallback in case we have no parent
-            if(e->parentNode())
-                parentStyle = e->parentNode()->style();
             if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
                 size = computeLengthFloat(primitiveValue, parentStyle, paintDeviceMetrics);
             else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -2031,11 +2168,11 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
         //kdDebug( 6080 ) << "computed raw font size: " << size << endl;
 
-        const KHTMLSettings *s = e->ownerDocument()->view()->part()->settings();
+        const KHTMLSettings *s = e->getDocument()->view()->part()->settings();
 
         setFontSize( f, (int)size, s, paintDeviceMetrics );
 
-        //KGlobal::charsets()->setQFont(f, e->ownerDocument()->view()->part()->settings()->charset);
+        //KGlobal::charsets()->setQFont(f, e->getDocument()->view()->part()->settings()->charset);
         style->setFont(f);
         return;
     }
@@ -2054,10 +2191,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         break;
     case CSS_PROP_Z_INDEX:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setZIndex(e->parentNode()->style()->zIndex());
+            style->setZIndex(parentStyle->zIndex());
             return;
         }
         if(!primitiveValue ||
@@ -2070,21 +2207,21 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 // length, percent, number
     case CSS_PROP_LINE_HEIGHT:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setLineHeight(e->parentNode()->style()->lineHeight());
+            style->setLineHeight(parentStyle->lineHeight());
             return;
         }
         Length lineHeight;
         if(!primitiveValue) return;
         int type = primitiveValue->primitiveType();
         if(primitiveValue->getIdent() == CSS_VAL_NORMAL)
-            lineHeight = Length(100, Percent);
+            lineHeight = Length( -100, Percent );
         else if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-                lineHeight = Length(computeLength(primitiveValue, style, paintDeviceMetrics), Fixed);
+            lineHeight = Length(computeLength(primitiveValue, style, paintDeviceMetrics), Fixed);
         else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            lineHeight = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)), Percent);
+            lineHeight = Length( ( style->font().pixelSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
         else if(type == CSSPrimitiveValue::CSS_NUMBER)
             lineHeight = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
         else
@@ -2103,10 +2240,10 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 // string
     case CSS_PROP_TEXT_ALIGN:
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setTextAlign(e->parentNode()->style()->textAlign());
+            style->setTextAlign(parentStyle->textAlign());
             return;
         }
         if(!primitiveValue) return;
@@ -2116,19 +2253,20 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         }
 	return;
     }
+    
 // rect
+	case CSS_PROP__KONQ_JS_CLIP:
     case CSS_PROP_CLIP:
     {
 	Length top;
 	Length right;
 	Length bottom;
 	Length left;
-	if ( value->valueType() == CSSValue::CSS_INHERIT ) {
-	    RenderStyle *inherited = e->parentNode()->style();
-	    top = inherited->clipTop();
-	    right = inherited->clipRight();
-	    bottom = inherited->clipBottom();
-	    left = inherited->clipLeft();
+	if ( value->cssValueType() == CSSValue::CSS_INHERIT ) {
+	    top = parentStyle->clipTop();
+	    right = parentStyle->clipRight();
+	    bottom = parentStyle->clipBottom();
+	    left = parentStyle->clipLeft();
 	} else if ( !primitiveValue ) {
 	    break;
 	} else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RECT ) {
@@ -2139,26 +2277,55 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 	    right = convertToLength( rect->right(), style, paintDeviceMetrics );
 	    bottom = convertToLength( rect->bottom(), style, paintDeviceMetrics );
 	    left = convertToLength( rect->left(), style, paintDeviceMetrics );
-	    
+
 	} else if ( primitiveValue->getIdent() != CSS_VAL_AUTO ) {
 	    break;
 	}
-// 	qDebug("setting top to %d", top.value );
-// 	qDebug("setting right to %d", right.value );
-// 	qDebug("setting bottom to %d", bottom.value );
-// 	qDebug("setting left to %d", left.value );
+// 	qDebug("setting clip top to %d", top.value );
+// 	qDebug("setting clip right to %d", right.value );
+// 	qDebug("setting clip bottom to %d", bottom.value );
+// 	qDebug("setting clip left to %d", left.value );
 	style->setClipTop( top );
 	style->setClipRight( right );
 	style->setClipBottom( bottom );
 	style->setClipLeft( left );
-	    
+
+	
+	style->setJsClipMode( (prop->m_id == CSS_PROP__KONQ_JS_CLIP) ? true : false );
         // rect, ident
         break;
     }
-    
+
 // lists
     case CSS_PROP_CONTENT:
         // list of string, uri, counter, attr, i
+    {
+        if (!(style->styleType()==RenderStyle::BEFORE ||
+                style->styleType()==RenderStyle::AFTER))
+            break;
+                
+        if(!value->isValueList()) return;
+        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+        int len = list->length();
+        
+        for(int i = 0; i < len; i++) {
+            CSSValueImpl *item = list->item(i);
+            if(!item->isPrimitiveValue()) continue;
+            CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
+            if(val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
+            {                
+                style->setContent(val->getStringValue());
+            } 
+            else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI)
+            {
+                CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(val);
+                style->setContent(image->image());
+            }    
+
+        }
+        break;
+    }
+
     case CSS_PROP_COUNTER_INCREMENT:
         // list of CSS2CounterIncrement
     case CSS_PROP_COUNTER_RESET:
@@ -2172,68 +2339,39 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         if(!value->isValueList()) return;
         CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
         int len = list->length();
-	const KHTMLSettings *s = e->ownerDocument()->view()->part()->settings();
-	QString available = s->availableFamilies();
 	QFont f = style->font();
 	QString family;
-	//kdDebug(0) << "searching for font... available:" << available << endl;
-        for(int i = 0; i < len; i++)
-        {
+        for(int i = 0; i < len; i++) {
             CSSValueImpl *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
             if(!val->primitiveType() == CSSPrimitiveValue::CSS_STRING) return;
-            DOMStringImpl *str = val->getStringValue();
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-            QString face = QString::gstring_toQString(&reuseableString, (UniChar *)(str->s),  str->l).lower();
-#else
-            QString face = QConstString(str->s, str->l).string().lower();
-#endif
-	    // a languge tag is often added in braces at the end. Remove it.
-	    face = face.replace(QRegExp(" \\(.*\\)$"), "");
-            //kdDebug(0) << "searching for face '" << face << "'" << endl;
-            if(face == "serif")
-                face = s->serifFontName();
-            else if(face == "sans-serif")
-                face = s->sansSerifFontName();
-            else if( face == "cursive")
-                face = s->cursiveFontName();
-            else if( face == "fantasy")
-                face = s->fantasyFontName();
-            else if( face == "monospace")
-                face = s->fixedFontName();
-            else if( face == "konq_default")
-                face = s->stdFontName();
-
-	    int pos;
-	    if( (pos = available.find( face, 0, false)) == -1 ) {
-		QString str = face;
-                int p = face.find(' ');
-                // Arial Blk --> Arial
-                // MS Sans Serif --> Sans Serif
-                if(p > 0 && (int)str.length() - p > p)
-                    str = str.mid( p+1 );
-                else
-                    str.truncate( p );
-		pos = available.find( str, 0, false);
-	    }
-
-	    if ( pos != -1 ) {
-		int pos1 = available.findRev( ',', pos ) + 1;
-		pos = available.find( ',', pos );
-		if ( pos == -1 )
-		    pos = available.length();
-		family = available.mid( pos1, pos - pos1 );
-		f.setFamily( family );
-		KGlobal::charsets()->setQFont(f, s->charset() );
-		//kdDebug() << "font charset is " << f.charSet() << " script = " << s->script() << endl;
-		if ( s->charset() == s->script() || KGlobal::charsets()->supportsScript( f, s->script() ) ) {
-		    //kdDebug() << "=====> setting font family to " << family << endl;
-		    style->setFont(f);
-		    return;
+	    // FIXME:MERGE removed optimization to avoid allocating QString here
+	    QString face = static_cast<FontFamilyValueImpl *>(val)->fontName();
+	    if ( !face.isNull() || face.isEmpty() ) {
+		const KHTMLSettings *s = e->getDocument()->view()->part()->settings();
+		if(face == "serif") {
+		    face = s->serifFontName();
 		}
+		else if(face == "sans-serif") {
+		    face = s->sansSerifFontName();
+		}
+		else if( face == "cursive") {
+		    face = s->cursiveFontName();
+		}
+		else if( face == "fantasy") {
+		    face = s->fantasyFontName();
+		}
+		else if( face == "monospace") {
+		    face = s->fixedFontName();
+		}
+		else if( face == "konq_default") {
+		    face = s->stdFontName();
+		}
+		f.setFamily( face );
+                style->setFont(f);
+                return;
 	    }
-//            kdDebug( 6080 ) << "no match for font family " << face << ", got " << f.family() << endl;
         }
 //	kdDebug() << "khtml::setFont: time=" << qt.elapsed() << endl;
         break;
@@ -2247,11 +2385,11 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         // list of ident
         // ### no list at the moment
     {
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setTextDecoration(e->parentNode()->style()->textDecoration());
-            style->setTextDecorationColor(e->parentNode()->style()->textDecorationColor());
+            style->setTextDecoration(parentStyle->textDecoration());
+            style->setTextDecorationColor(parentStyle->textDecorationColor());
             return;
         }
         int t = TDNONE;
@@ -2287,12 +2425,11 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 	style->setTextDecorationColor(style->color());
         break;
     }
-
     case CSS_PROP__KONQ_FLOW_MODE:
-        if(value->valueType() == CSSValue::CSS_INHERIT)
+        if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!e->parentNode()) return;
-            style->setFlowAroundFloats(e->parentNode()->style()->flowAroundFloats());
+            style->setFlowAroundFloats(parentStyle->flowAroundFloats());
             return;
         }
         if(!primitiveValue) return;
@@ -2308,12 +2445,12 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
 
 // shorthand properties
     case CSS_PROP_BACKGROUND:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setBackgroundColor(e->parentNode()->style()->backgroundColor());
-        style->setBackgroundImage(e->parentNode()->style()->backgroundImage());
-        style->setBackgroundRepeat(e->parentNode()->style()->backgroundRepeat());
-        style->setBackgroundAttachment(e->parentNode()->style()->backgroundAttachment());
-//      style->setBackgroundPosition(e->parentNode()->style()->backgroundPosition());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setBackgroundColor(parentStyle->backgroundColor());
+        style->setBackgroundImage(parentStyle->backgroundImage());
+        style->setBackgroundRepeat(parentStyle->backgroundRepeat());
+        style->setBackgroundAttachment(parentStyle->backgroundAttachment());
+//      style->setBackgroundPosition(parentStyle->backgroundPosition());
 
         break;
     case CSS_PROP_BORDER_COLOR:
@@ -2328,67 +2465,67 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
     case CSS_PROP_BORDER:
     case CSS_PROP_BORDER_STYLE:
     case CSS_PROP_BORDER_WIDTH:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
 
         if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_COLOR)
         {
-            style->setBorderTopColor(e->parentNode()->style()->borderTopColor());
-            style->setBorderBottomColor(e->parentNode()->style()->borderBottomColor());
-            style->setBorderLeftColor(e->parentNode()->style()->borderLeftColor());
-            style->setBorderRightColor(e->parentNode()->style()->borderRightColor());
+            style->setBorderTopColor(parentStyle->borderTopColor());
+            style->setBorderBottomColor(parentStyle->borderBottomColor());
+            style->setBorderLeftColor(parentStyle->borderLeftColor());
+            style->setBorderRightColor(parentStyle->borderRightColor());
         }
         if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_STYLE)
         {
-            style->setBorderTopStyle(e->parentNode()->style()->borderTopStyle());
-            style->setBorderBottomStyle(e->parentNode()->style()->borderBottomStyle());
-            style->setBorderLeftStyle(e->parentNode()->style()->borderLeftStyle());
-            style->setBorderRightStyle(e->parentNode()->style()->borderRightStyle());
+            style->setBorderTopStyle(parentStyle->borderTopStyle());
+            style->setBorderBottomStyle(parentStyle->borderBottomStyle());
+            style->setBorderLeftStyle(parentStyle->borderLeftStyle());
+            style->setBorderRightStyle(parentStyle->borderRightStyle());
         }
         if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_WIDTH)
         {
-            style->setBorderTopWidth(e->parentNode()->style()->borderTopWidth());
-            style->setBorderBottomWidth(e->parentNode()->style()->borderBottomWidth());
-            style->setBorderLeftWidth(e->parentNode()->style()->borderLeftWidth());
-            style->setBorderRightWidth(e->parentNode()->style()->borderRightWidth());
+            style->setBorderTopWidth(parentStyle->borderTopWidth());
+            style->setBorderBottomWidth(parentStyle->borderBottomWidth());
+            style->setBorderLeftWidth(parentStyle->borderLeftWidth());
+            style->setBorderRightWidth(parentStyle->borderRightWidth());
         }
         return;
     case CSS_PROP_BORDER_TOP:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setBorderTopColor(e->parentNode()->style()->borderTopColor());
-        style->setBorderTopStyle(e->parentNode()->style()->borderTopStyle());
-        style->setBorderTopWidth(e->parentNode()->style()->borderTopWidth());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setBorderTopColor(parentStyle->borderTopColor());
+        style->setBorderTopStyle(parentStyle->borderTopStyle());
+        style->setBorderTopWidth(parentStyle->borderTopWidth());
         return;
     case CSS_PROP_BORDER_RIGHT:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setBorderRightColor(e->parentNode()->style()->borderRightColor());
-        style->setBorderRightStyle(e->parentNode()->style()->borderRightStyle());
-        style->setBorderRightWidth(e->parentNode()->style()->borderRightWidth());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setBorderRightColor(parentStyle->borderRightColor());
+        style->setBorderRightStyle(parentStyle->borderRightStyle());
+        style->setBorderRightWidth(parentStyle->borderRightWidth());
         return;
     case CSS_PROP_BORDER_BOTTOM:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setBorderBottomColor(e->parentNode()->style()->borderBottomColor());
-        style->setBorderBottomStyle(e->parentNode()->style()->borderBottomStyle());
-        style->setBorderBottomWidth(e->parentNode()->style()->borderBottomWidth());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setBorderBottomColor(parentStyle->borderBottomColor());
+        style->setBorderBottomStyle(parentStyle->borderBottomStyle());
+        style->setBorderBottomWidth(parentStyle->borderBottomWidth());
         return;
     case CSS_PROP_BORDER_LEFT:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setBorderLeftColor(e->parentNode()->style()->borderLeftColor());
-        style->setBorderLeftStyle(e->parentNode()->style()->borderLeftStyle());
-        style->setBorderLeftWidth(e->parentNode()->style()->borderLeftWidth());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setBorderLeftColor(parentStyle->borderLeftColor());
+        style->setBorderLeftStyle(parentStyle->borderLeftStyle());
+        style->setBorderLeftWidth(parentStyle->borderLeftWidth());
         return;
     case CSS_PROP_MARGIN:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setMarginTop(e->parentNode()->style()->marginTop());
-        style->setMarginBottom(e->parentNode()->style()->marginBottom());
-        style->setMarginLeft(e->parentNode()->style()->marginLeft());
-        style->setMarginRight(e->parentNode()->style()->marginRight());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setMarginTop(parentStyle->marginTop());
+        style->setMarginBottom(parentStyle->marginBottom());
+        style->setMarginLeft(parentStyle->marginLeft());
+        style->setMarginRight(parentStyle->marginRight());
         return;
     case CSS_PROP_PADDING:
-        if(value->valueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
-        style->setPaddingTop(e->parentNode()->style()->paddingTop());
-        style->setPaddingBottom(e->parentNode()->style()->paddingBottom());
-        style->setPaddingLeft(e->parentNode()->style()->paddingLeft());
-        style->setPaddingRight(e->parentNode()->style()->paddingRight());
+        if(value->cssValueType() != CSSValue::CSS_INHERIT || !e->parentNode()) return;
+        style->setPaddingTop(parentStyle->paddingTop());
+        style->setPaddingBottom(parentStyle->paddingBottom());
+        style->setPaddingLeft(parentStyle->paddingLeft());
+        style->setPaddingRight(parentStyle->paddingRight());
         return;
 
 

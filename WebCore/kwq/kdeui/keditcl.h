@@ -34,7 +34,7 @@
 #include <KWQFrame.h>
 #include <KWQScrollBar.h>
 #include <qstring.h>
-
+#include <qtextedit.h>
 
 const uint Tbl_vScrollBar       = 0x00000001;
 const uint Tbl_hScrollBar       = 0x00000002;
@@ -89,60 +89,6 @@ private:
 }; // class QTableView =========================================================
 
 
-// class QMultiLineEdit ========================================================
-
-class QMultiLineEdit : public QTableView {
-public:
-
-    // structs -----------------------------------------------------------------
-
-    enum WordWrap {
-        NoWrap,
-        WidgetWidth
-    };    
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
-    QMultiLineEdit();
-    ~QMultiLineEdit();
-
-    // member functions --------------------------------------------------------
-
-    void setWordWrap(WordWrap);
-    WordWrap wordWrap() const;
-    bool hasMarkedText() const;
-    bool isReadOnly() const;
-    virtual void setReadOnly(bool);
-    virtual void setCursorPosition(int line, int col, bool mark = FALSE);
-    void getCursorPosition(int *line, int *col) const;
-    virtual void setText(const QString &);
-    QString text();
-    QString textLine(int line) const;
-    int numLines() const;
-    void selectAll();
-
-#ifdef _KWQ_	
-    int verticalScrollBarWidth() const;
-    int horizontalScrollBarHeight() const;
-#endif
-
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QMultiLineEdit(const QMultiLineEdit &);
-    QMultiLineEdit &operator=(const QMultiLineEdit &);
-
-}; // class QMultiLineEdit =====================================================
 
 
 // class KEdit =================================================================

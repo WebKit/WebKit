@@ -29,30 +29,21 @@
 #ifndef HTMLTOKENIZER_H
 #define HTMLTOKENIZER_H
 
-
-//
-// External Classes
-//
-///////////////////
-
 class KCharsets;
-
-//
-// Internal Classes
-//
-///////////////////
-
 class StringTokenizer;
 class HTMLTokenizer;
 
 #include <qstring.h>
 #include <qobject.h>
+#include <qptrqueue.h>
 
-#include "stringit.h"
-#include "loader_client.h"
-#include "xml/dom_elementimpl.h"
+#include "misc/loader_client.h"
 #include "misc/htmltags.h"
+#include "misc/stringit.h"
 #include "xml/dom_stringimpl.h"
+#include "xml/xml_tokenizer.h"
+#include "xml/dom_elementimpl.h"
+#include "xml/dom_docimpl.h"
 
 #if defined(APPLE_CHANGES) && defined(__OBJC__)
 #define id id_
@@ -80,7 +71,6 @@ namespace khtml {
     public:
         Token() {
             id = 0;
-            complexText = false;
             attrs = 0;
             text = 0;
             //qDebug("new token, creating %08lx", attrs);
@@ -89,13 +79,22 @@ namespace khtml {
             if(attrs) attrs->deref();
             if(text) text->deref();
         }
-        void insertAttr(AttrImpl* a)
+        void addAttribute(DocumentImpl* doc, QChar* buffer, const QString& attrName, const DOMString& v)
         {
-            if(!attrs) {
-                attrs = new DOM::NamedAttrMapImpl(0);
-                attrs->ref();
+            AttributeImpl* a = 0;
+            if(buffer->unicode())
+                a = new AttributeImpl(buffer->unicode(), v.implementation());
+            else if ( !attrName.isEmpty() && attrName != "/" )
+                a = new AttributeImpl(doc->attrId(0, DOMString(attrName).implementation(), false),
+                                      v.implementation());
+
+            if (a) {
+                if(!attrs) {
+                    attrs = new DOM::NamedAttrMapImpl(0);
+                    attrs->ref();
+                }
+                attrs->insertAttribute(a);
             }
-            attrs->insertAttr(a);
         }
         void reset()
         {
@@ -104,7 +103,6 @@ namespace khtml {
                 attrs = 0;
             }
             id = 0;
-            complexText = false;
             if(text) {
                 text->deref();
                 text = 0;
@@ -113,45 +111,13 @@ namespace khtml {
         DOM::NamedAttrMapImpl* attrs;
         ushort id;
         DOMStringImpl* text;
-        bool complexText;
     };
 };
 
 // The count of spaces used for each tab.
 #define TAB_SIZE 8
 
-
-class Tokenizer : public QObject
-{
-    Q_OBJECT
-public:
-    virtual void begin() = 0;
-    // script output must be prepended, while new data
-    // received during executing a script must be appended, hence the
-    // extra bool to be able to distinguish between both cases. document.write()
-    // always uses false, while khtmlpart uses true
-    virtual void write( const QString &str, bool appendData) = 0;
-    virtual void end() = 0;
-    virtual void finish() = 0;
-    virtual void setOnHold(bool /*_onHold*/) {}
-
-signals:
-#ifdef APPLE_CHANGES
-    // temporary implementation here to get test to link
-    void finishedParsing() {};
-#else /* APPLE_CHANGES not defined */
-    void finishedParsing();
-#endif /* APPLE_CHANGES not defined */
-
-};
-
 //-----------------------------------------------------------------------------
-
-/**
- * @internal
- * This class takes QStrings as input, and splits up the input streams into
- * tokens, which are passed on to the @ref KHTMLParser.
- */
 
 class HTMLTokenizer : public Tokenizer, public khtml::CachedObjectClient
 {
@@ -174,6 +140,7 @@ protected:
     void processListing(khtml::DOMStringIt list);
 
     void parseComment(khtml::DOMStringIt &str);
+    void parseServer(khtml::DOMStringIt &str);
     void parseText(khtml::DOMStringIt &str);
     void parseListing(khtml::DOMStringIt &str);
     void parseSpecial(khtml::DOMStringIt &str, bool begin);
@@ -181,8 +148,10 @@ protected:
     void parseEntity(khtml::DOMStringIt &str, QChar *&dest, bool start = false);
     void parseProcessingInstruction(khtml::DOMStringIt &str);
     void scriptHandler();
-    void scriptExecution(const QString& script);
+    void scriptExecution(const QString& script, QString scriptURL = QString(),
+                         int baseLine = 0);
     void addPendingSource();
+    void setSrc(QString source);
 
     // check if we have enough space in the buffer.
     // if not enlarge it
@@ -289,8 +258,8 @@ protected:
     // Are we in a <select> ... </select> block
     bool select;
 
-    // Are we in a <listing> ... </listing> block
-    bool listing;
+    // Are we in a <xmp> ... </xmp> block
+    bool xmp;
 
     // Are we in plain textmode ?
     bool plaintext;
@@ -307,6 +276,11 @@ protected:
     // was the previous character escaped ?
     bool escaped;
 
+    // are we in a server includes statement?
+    bool server;
+
+    bool brokenServer;
+
     // name of an unknown attribute
     QString attrName;
 
@@ -318,7 +292,7 @@ protected:
     int scriptCodeMaxSize;
     // resync point of script code size
     int scriptCodeResync;
-    
+
     // Stores characters if we are scanning for a string like "</script>"
     QChar searchBuffer[ 10 ];
     // Counts where we are in the string we are scanning for
@@ -344,13 +318,18 @@ protected:
     // true if we are executing a script while parsing a document. This causes the parsing of
     // the output of the script to be postponed until after the script has finished executing
     int m_executingScript;
-    khtml::CachedScript *cachedScript;
+    QPtrQueue<khtml::CachedScript> cachedScript;
     // you can pause the tokenizer if you need to display a dialog or something
     bool onHold;
 
     // if we found one broken comment, there are most likely others as well
     // store a flag to get rid of the O(n^2) behaviour in such a case.
     bool brokenComments;
+    // current line number
+    int lineno;
+    // line number at which the current <script> started
+    int scriptStartLineno;
+    int tagStartLineno;
 
 #define CBUFLEN 14
     char cBuffer[CBUFLEN+2];

@@ -74,7 +74,7 @@ struct QPState {				// painter state
     NSCompositingOperation compositingOperation;
 };
 
-typedef QStack<QPState> QPStateStack;
+typedef QPtrStack<QPState> QPStateStack;
 
 
 QPainter::QPainter()
@@ -170,7 +170,7 @@ void QPainter::save()
 {
     QPStateStack *pss = data->ps_stack;
     if ( pss == 0 ) {
-	pss = new QStack<QPState>;
+	pss = new QPStateStack;
 	data->ps_stack = pss;
     }
     
@@ -328,6 +328,10 @@ void QPainter::drawPolygon(const QPointArray &points, bool winding, int index,
     _drawPoints (points, winding, index, npoints, TRUE);
 }
 
+void QPainter::drawConvexPolygon(const QPointArray &points)
+{
+    _drawPoints (points, FALSE, 0, -1, TRUE);
+}
 
 void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index, 
     int _npoints, bool fill)
@@ -538,6 +542,17 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
     _unlockFocus();
 }
+
+
+void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDirection dir)
+{
+    if (dir == RTL) {
+	_logPartiallyImplemented();
+    }
+
+    drawText(x, y, qstring, len);
+}
+
 
 void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int len)
 {

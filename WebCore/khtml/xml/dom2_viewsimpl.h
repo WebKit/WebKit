@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 2001 Peter Kelly (pmk@post.com)
@@ -25,11 +25,14 @@
 #define _DOM_ViewsImpl_h_
 
 #include "dom/dom_misc.h"
-#include "dom_docimpl.h"
 #include "css/css_valueimpl.h"
 
 namespace DOM {
 
+class DocumentImpl;
+class CSSStyleDeclarationImpl;
+class ElementImpl;
+class DOMStringImpl;
 
 // Introduced in DOM Level 2:
 class AbstractViewImpl : public DomShared

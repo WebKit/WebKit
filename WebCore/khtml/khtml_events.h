@@ -37,19 +37,11 @@ public:
   QMouseEvent *qmouseEvent() const { return m_qmouseEvent; }
   int x() const { return m_x; }
   int y() const { return m_y; }
+  int absX() const { return m_nodeAbsX; }
+  int absY() const { return m_nodeAbsY; }
+
   DOM::DOMString url() const { return m_url; }
   DOM::Node innerNode() const { return m_innerNode; }
-
-  // Temporary, for text selection only. To be removed when findSelectionNode determines
-  // this by itself.
-  int nodeAbsX() const;
-  int nodeAbsY() const;
-  void setNodePos( int x, int y);
-
-  // obsolete. don't use it. its a no-op. 
-  bool isURLHandlingEnabled() const; // ### remove KDE 3.0
-  // obsolete. don't use it. its a no-op.
-  void setURLHandlingEnabled( bool enable ); // ### remove KDE 3.0
 
   // return the offset of innerNode
   long offset() const;
@@ -58,9 +50,9 @@ private:
   QMouseEvent *m_qmouseEvent;
   int m_x;
   int m_y;
+  int m_nodeAbsX, m_nodeAbsY;
   DOM::DOMString m_url;
   DOM::Node m_innerNode;
-  long m_offset; // ##remove
   class MouseEventPrivate;
   MouseEventPrivate *d;
 };

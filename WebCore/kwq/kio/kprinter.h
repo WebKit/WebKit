@@ -34,12 +34,15 @@
 #include <qstring.h>
 #include <qwidget.h>
 #include <qsize.h>
+#include <qprinter.h>
 
 // NOTE: I stuck this file here rather than create a whole new 
 // kdeprint directory
 
 class KPrinter : public QPaintDevice {
 public:
+    KPrinter(QPrinter::PrinterMode m = QPrinter::ScreenResolution);
+
     bool setup(QWidget *parent=0);
     bool newPage();
     void setDocName(const QString &);

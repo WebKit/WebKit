@@ -17,26 +17,22 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-#include "xml_tokenizer.h"
 
-#include "dom_docimpl.h"
-#include "dom_node.h"
-#include "dom_elementimpl.h"
-#include "dom_textimpl.h"
-#include "dom_xmlimpl.h"
+#include "xml_tokenizer.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_xmlimpl.h"
 #include "html/html_headimpl.h"
 #include "rendering/render_object.h"
-#include "css/css_stylesheetimpl.h"
-
+#include "misc/htmltags.h"
+#include "misc/htmlattrs.h"
 #include "misc/loader.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
-#include <qtextstream.h>
+#include <qvariant.h>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -70,7 +66,7 @@ bool XMLHandler::startDocument()
     errorProt = "";
     state = StateInit;
 
-    return TRUE;
+    return true;
 }
 
 
@@ -80,25 +76,35 @@ bool XMLHandler::startElement( const QString& namespaceURI, const QString& /*loc
         exitText();
 
     ElementImpl *newElement;
-    if (namespaceURI.isNull())
-        newElement = m_doc->document()->createElement(qName);
-    else
-        newElement = m_doc->document()->createElementNS(namespaceURI,qName);
+    newElement = m_doc->document()->createElementNS(namespaceURI,qName);
 
-    // ### handle exceptions
     int i;
-    for (i = 0; i < atts.length(); i++)
-        newElement->setAttribute(atts.localName(i),atts.value(i));
+    for (i = 0; i < atts.length(); i++) {
+        int exceptioncode = 0;
+        DOMString uri(atts.uri(i));
+        DOMString ln(atts.localName(i));
+        DOMString val(atts.value(i));
+        NodeImpl::Id id = m_doc->document()->attrId(uri.implementation(),
+                                                    ln.implementation(),
+                                                    false /* allocate */);
+        newElement->setAttribute(id, val.implementation(), exceptioncode);
+        if (exceptioncode) // exception setting attributes
+            return false;
+    }
     if (m_currentNode->addChild(newElement)) {
         if (m_view)
             newElement->attach();
         m_currentNode = newElement;
-        return TRUE;
+        return true;
     }
     else {
         delete newElement;
-        return FALSE;
+        return false;
     }
+
+    // ### DOM spec states: "if there is no markup inside an element's content, the text is contained in a
+    // single object implementing the Text interface that is the only child of the element."... do we
+    // need to ensure that empty elements always have an empty text child?
 }
 
 
@@ -113,7 +119,7 @@ bool XMLHandler::endElement( const QString& /*namespaceURI*/, const QString& /*l
     }
 // ###  else error
 
-    return TRUE;
+    return true;
 }
 
 
@@ -127,11 +133,11 @@ bool XMLHandler::startCDATA()
         if (m_view)
             newNode->attach();
         m_currentNode = newNode;
-        return TRUE;
+        return true;
     }
     else {
         delete newNode;
-        return FALSE;
+        return false;
     }
 
 }
@@ -146,15 +152,32 @@ bool XMLHandler::endCDATA()
 bool XMLHandler::characters( const QString& ch )
 {
     if (ch.stripWhiteSpace().isEmpty())
-        return TRUE;
+        return true;
 
-    if (m_currentNode->nodeType() == Node::TEXT_NODE || m_currentNode->nodeType() == Node::CDATA_SECTION_NODE
-        || enterText()) {
-        static_cast<TextImpl*>(m_currentNode)->appendData(ch);
-        return TRUE;
+    if (m_currentNode->nodeType() == Node::TEXT_NODE ||
+        m_currentNode->nodeType() == Node::CDATA_SECTION_NODE ||
+        enterText()) {
+
+        unsigned short parentId = m_currentNode->parentNode() ? m_currentNode->parentNode()->id() : 0;
+        if (parentId == ID_SCRIPT || parentId == ID_STYLE || parentId == ID_XMP || parentId == ID_TEXTAREA) {
+            // ### hack.. preserve whitespace for script, style, xmp and textarea... is this the correct
+            // way of doing this?
+            int exceptioncode = 0;
+            static_cast<TextImpl*>(m_currentNode)->appendData(ch,exceptioncode);
+            if (exceptioncode)
+                return false;
+        }
+        else {
+            // for all others, simplify the whitespace
+            int exceptioncode = 0;
+            static_cast<TextImpl*>(m_currentNode)->appendData(ch.simplifyWhiteSpace(),exceptioncode);
+            if (exceptioncode)
+                return false;
+        }
+        return true;
     }
     else
-        return FALSE;
+        return false;
 }
 
 bool XMLHandler::comment(const QString & ch)
@@ -180,13 +203,13 @@ bool XMLHandler::processingInstruction(const QString &target, const QString &dat
 
 QString XMLHandler::errorString()
 {
-    return "the document is not in the correct file format";
+    return i18n("the document is not in the correct file format");
 }
 
 
 bool XMLHandler::fatalError( const QXmlParseException& exception )
 {
-    errorProt += QString( "fatal parsing error: %1 in line %2, column %3\n" )
+    errorProt += i18n( "fatal parsing error: %1 in line %2, column %3" )
         .arg( exception.message() )
         .arg( exception.lineNumber() )
         .arg( exception.columnNumber() );
@@ -204,11 +227,11 @@ bool XMLHandler::enterText()
         if (m_view)
             newNode->attach();
         m_currentNode = newNode;
-        return TRUE;
+        return true;
     }
     else {
         delete newNode;
-        return FALSE;
+        return false;
     }
 }
 
@@ -216,26 +239,7 @@ void XMLHandler::exitText()
 {
     NodeImpl* par = m_currentNode->parentNode();
     if (par != 0)
-    {
-        if (!sheetElemId.isEmpty() && par->isElementNode())
-        {
-            QValueList<DOMString>::Iterator it;
-            for( it = sheetElemId.begin(); it != sheetElemId.end(); ++it )
-            {
-                if (static_cast<ElementImpl*>(par)->getAttribute("id")==*it)
-                {
-    //                kdDebug() << "sheet found:" << endl;
-                    DOMString sheet= static_cast<TextImpl*>(m_currentNode)->data();
-    //                kdDebug() << sheet.string() << endl;
-                    CSSStyleSheetImpl *styleSheet = new CSSStyleSheetImpl(m_doc->document());
-                    styleSheet->parseString(sheet);
-                    m_doc->document()->createSelector();
-                }
-            }
-        }
-
         m_currentNode = par;
-    }
 }
 
 bool XMLHandler::attributeDecl(const QString &/*eName*/, const QString &/*aName*/, const QString &/*type*/,
@@ -257,14 +261,19 @@ bool XMLHandler::internalEntityDecl(const QString &name, const QString &value)
     EntityImpl *e = new EntityImpl(m_doc,name);
     // ### further parse entities inside the value and add them as separate nodes (or entityreferences)?
     e->addChild(m_doc->document()->createTextNode(value));
-    static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->entities())->addNode(e);
+// ### FIXME
+//     if (m_doc->document()->doctype())
+//         static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->entities())->addNode(e);
     return true;
 }
 
 bool XMLHandler::notationDecl(const QString &name, const QString &publicId, const QString &systemId)
 {
-    NotationImpl *n = new NotationImpl(m_doc,name,publicId,systemId);
-    static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->notations())->addNode(n);
+// ### FIXME
+//     if (m_doc->document()->doctype()) {
+//         NotationImpl *n = new NotationImpl(m_doc,name,publicId,systemId);
+//         static_cast<GenericRONamedNodeMapImpl*>(m_doc->document()->doctype()->notations())->addNode(n);
+//     }
     return true;
 }
 
@@ -277,8 +286,6 @@ bool XMLHandler::unparsedEntityDecl(const QString &/*name*/, const QString &/*pu
 
 
 //------------------------------------------------------------------------------
-
-
 
 XMLTokenizer::XMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view)
 {
@@ -311,11 +318,14 @@ void XMLTokenizer::write( const QString &str, bool /*appendData*/ )
 
 void XMLTokenizer::end()
 {
+#ifndef APPLE_CHANGES
     emit finishedParsing();
+#endif
 }
 
 void XMLTokenizer::finish()
 {
+    kdDebug() << kdBacktrace() << endl;
     // parse xml file
     XMLHandler handler(m_doc,m_view);
     QXmlInputSource source;
@@ -327,54 +337,70 @@ void XMLTokenizer::finish()
     reader.setDeclHandler( &handler );
     reader.setDTDHandler( &handler );
     bool ok = reader.parse( source );
-    // ### handle exceptions inserting nodes
-    if (!ok) {
-        kdDebug(6036) << "Error during XML parsing: " << handler.errorProtocol() << endl;
 
-        int exceptioncode;
+    if (!ok) {
+        // An error occurred during parsing of the code. Display an error page to the user (the DOM
+        // tree is created manually and includes an excerpt from the code where the error is located)
+
+        // ### for multiple error messages, display the code for each (can this happen?)
+
+        // Clear the document
+        int exceptioncode = 0;
         while (m_doc->document()->hasChildNodes())
             static_cast<NodeImpl*>(m_doc->document())->removeChild(m_doc->document()->firstChild(),exceptioncode);
 
-        // construct a HTML page giving the error message
-        // ### for multiple error messages, display the code for each
         QTextIStream stream(&m_xmlCode);
         unsigned long lineno;
         for (lineno = 0; lineno < handler.errorLine-1; lineno++)
           stream.readLine();
         QString line = stream.readLine();
 
-        m_doc->document()->appendChild(m_doc->document()->createElementNS("http://www.w3.org/1999/xhtml","html"),exceptioncode);
-        NodeImpl *body = m_doc->document()->createElementNS("http://www.w3.org/1999/xhtml","body");
-        m_doc->document()->firstChild()->appendChild(body,exceptioncode);
-
-        NodeImpl *h1 = m_doc->document()->createElementNS("http://www.w3.org/1999/xhtml","h1");
-        body->appendChild(h1,exceptioncode);
-        h1->appendChild(m_doc->document()->createTextNode(i18n("XML parsing error")),exceptioncode);
-        h1->renderer()->close();
-
-        body->appendChild(m_doc->document()->createTextNode(handler.errorProtocol()),exceptioncode);
-        body->appendChild(m_doc->document()->createElementNS("http://www.w3.org/1999/xhtml","hr"),exceptioncode);
-        NodeImpl *pre = m_doc->document()->createElementNS("http://www.w3.org/1999/xhtml","pre");
-        body->appendChild(pre,exceptioncode);
-        pre->appendChild(m_doc->document()->createTextNode(line+"\n"),exceptioncode);
-
         unsigned long colno;
-        QString indent = "";
+        QString errorLocPtr = "";
         for (colno = 0; colno < handler.errorCol-1; colno++)
-            indent += " ";
+            errorLocPtr += " ";
+        errorLocPtr += "^";
 
-        pre->appendChild(m_doc->document()->createTextNode(indent+"^"),exceptioncode);
+        // Create elements for display
+        DocumentImpl *doc = m_doc->document();
+        NodeImpl *html = doc->createElementNS(XHTML_NAMESPACE,"html");
+        NodeImpl   *body = doc->createElementNS(XHTML_NAMESPACE,"body");
+        NodeImpl     *h1 = doc->createElementNS(XHTML_NAMESPACE,"h1");
+        NodeImpl       *headingText = doc->createTextNode(i18n("XML parsing error"));
+        NodeImpl     *errorText = doc->createTextNode(handler.errorProtocol());
+        NodeImpl     *hr = doc->createElementNS(XHTML_NAMESPACE,"hr");
+        NodeImpl     *pre = doc->createElementNS(XHTML_NAMESPACE,"pre");
+        NodeImpl       *lineText = doc->createTextNode(line+"\n");
+        NodeImpl       *errorLocText = doc->createTextNode(errorLocPtr);
+
+        // Construct DOM tree. We ignore exceptions as we assume they will not be thrown here (due to the
+        // fact we are using a known tag set)
+        doc->appendChild(html,exceptioncode);
+        html->appendChild(body,exceptioncode);
+        body->appendChild(h1,exceptioncode);
+        h1->appendChild(headingText,exceptioncode);
+        body->appendChild(errorText,exceptioncode);
+        body->appendChild(hr,exceptioncode);
+        body->appendChild(pre,exceptioncode);
+        pre->appendChild(lineText,exceptioncode);
+        pre->appendChild(errorLocText,exceptioncode);
+
+        // Close the renderers so that they update their display correctly
+        // ### this should not be necessary, but requires changes in the rendering code...
+        h1->renderer()->close();
         pre->renderer()->close();
-
         body->renderer()->close();
-        m_doc->document()->applyChanges();
+
+        m_doc->document()->recalcStyle( NodeImpl::Inherit );
         m_doc->document()->updateRendering();
 
         end();
     }
     else {
+        // Parsing was successful. Now locate all html <script> tags in the document and execute them
+        // one by one
         addScripts(m_doc->document());
-        m_scriptsIt = new QListIterator<HTMLScriptElementImpl>(m_scripts);
+        m_scriptsIt = new QPtrListIterator<HTMLScriptElementImpl>(m_scripts);
         executeScripts();
     }
 
@@ -382,7 +408,10 @@ void XMLTokenizer::finish()
 
 void XMLTokenizer::addScripts(NodeImpl *n)
 {
-    if (n->nodeName() == "SCRIPT") { // ### also check that namespace is html (and SCRIPT should be lowercase)
+    // Recursively go through the entire document tree, looking for html <script> tags. For each of these
+    // that is found, add it to the m_scripts list from which they will be executed
+
+    if (n->id() == ID_SCRIPT) {
         m_scripts.append(static_cast<HTMLScriptElementImpl*>(n));
     }
 
@@ -393,21 +422,29 @@ void XMLTokenizer::addScripts(NodeImpl *n)
 
 void XMLTokenizer::executeScripts()
 {
+    // Iterate through all of the html <script> tags in the document. For those that have a src attribute,
+    // start loading the script and return (executeScripts() will be called again once the script is loaded
+    // and continue where it left off). For scripts that don't have a src attribute, execute the code
+    // inside the tag
     while (m_scriptsIt->current()) {
-        DOMString scriptSrc = m_scriptsIt->current()->getAttribute("src");
-        QString charset = m_scriptsIt->current()->getAttribute( "charset" ).string();
+        DOMString scriptSrc = m_scriptsIt->current()->getAttribute(ATTR_SRC);
+        QString charset = m_scriptsIt->current()->getAttribute(ATTR_CHARSET).string();
+
         if (scriptSrc != "") {
-            m_cachedScript = m_doc->document()->docLoader()->requestScript(scriptSrc, m_doc->document()->baseURL(), charset);
+            // we have a src attribute
+            m_cachedScript = m_doc->document()->docLoader()->requestScript(scriptSrc, charset);
             ++(*m_scriptsIt);
             m_cachedScript->ref(this); // will call executeScripts() again if already cached
             return;
         }
         else {
+            // no src attribute - execute from contents of tag
             QString scriptCode = "";
             NodeImpl *child;
             for (child = m_scriptsIt->current()->firstChild(); child; child = child->nextSibling()) {
-                if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE)
+                if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE) {
                     scriptCode += static_cast<TextImpl*>(child)->data().string();
+                }
             }
             // the script cannot do document.write until we support incremental parsing
             // ### handle the case where the script deletes the node or redirects to
@@ -419,13 +456,20 @@ void XMLTokenizer::executeScripts()
             ++(*m_scriptsIt);
         }
     }
-    if (!m_scriptsIt->current()) {
-        end(); // this actually causes us to be deleted
-    }
+
+    // All scripts have finished executing, so calculate the style for the document and close
+    // the last element
+    m_doc->document()->updateStyleSelector();
+
+    // We are now finished parsing
+    end();
 }
 
 void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
 {
+    // This is called when a script has finished loading that was requested from executeScripts(). We execute
+    // the script, and then call executeScripts() again to continue iterating through the list of scripts in
+    // the document
     if (finishedObj == m_cachedScript) {
         DOMString scriptSource = m_cachedScript->script();
         m_cachedScript->deref(this);

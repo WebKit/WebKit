@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,17 +24,13 @@
 #ifndef RENDER_IMAGE_H
 #define RENDER_IMAGE_H
 
-#include "dtd.h"
-#include "render_replaced.h"
+#include "html/dtd.h"
+#include "html/html_elementimpl.h"
+#include "rendering/render_replaced.h"
+#include "dom/dom_string.h"
 
 #include <qmap.h>
 #include <qpixmap.h>
-
-#include <dom/dom_string.h>
-
-namespace DOM {
-    class HTMLElementImpl;
-}
 
 namespace khtml {
 
@@ -54,20 +50,21 @@ public:
 
     virtual void layout();
 
-    virtual void setPixmap( const QPixmap &, const QRect&, CachedImage *, bool *manualUpdate);
+    virtual void setPixmap( const QPixmap &, const QRect&, CachedImage *);
 
     QPixmap pixmap() const { return pix; }
+    // don't even think about making this method virtual!
+    DOM::HTMLElementImpl* element() const
+    { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
 
-    void setImageUrl(DOM::DOMString url, DOM::DOMString baseUrl, DocLoader *docLoader);
-    void setAlt(DOM::DOMString text);
-
-    virtual short intrinsicWidth() const;
-    virtual int intrinsicHeight() const;
 
     // hook to keep RendeObject::m_inline() up to date
     virtual void setStyle(RenderStyle *style);
+    virtual void updateFromElement();
 
     virtual void notifyFinished(CachedObject *finishedObj);
+
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty);
 
 private:
     /*
@@ -78,7 +75,6 @@ private:
      */
 
     QPixmap pix;
-    QSize  pixSize;
 
     /*
      * Cache for images that need resizing
@@ -90,8 +86,7 @@ private:
 
     CachedImage *image;
     bool berrorPic : 1;
-
-    DOM::HTMLElementImpl *element;
+    bool loadEventSent : 1;
 };
 
 

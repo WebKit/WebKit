@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,52 +16,95 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
-#include "kjs.h"
+#include "value.h"
+#include "object.h"
+#include "types.h"
+#include "interpreter.h"
 #include "operations.h"
 #include "object_object.h"
-#include "types.h"
+#include "function_object.h"
 #include <stdio.h>
+#include <assert.h>
 
 using namespace KJS;
 
-ObjectObject::ObjectObject(const Object &funcProto, const Object &objProto)
-    : ConstructorImp(funcProto, 1)
+// ------------------------------ ObjectPrototypeImp --------------------------------
+
+ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
+                                       FunctionPrototypeImp *funcProto)
+  : ObjectImp() // [[Prototype]] is Null()
 {
-  // ECMA 15.2.3.1
-  setPrototypeProperty(objProto);
+  Value protect(this);
+  put(exec,"toString", Object(new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToString, 0)), DontEnum);
+  put(exec,"valueOf",  Object(new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ValueOf,  0)), DontEnum);
 }
 
-Completion ObjectObject::execute(const List &args)
-{
-  KJSO result;
 
-  List argList;
-  if (args.isEmpty()) {
-    result = construct(argList);
-  } else {
-    KJSO arg = args[0];
-    if (arg.isA(NullType) || arg.isA(UndefinedType)) {
-      argList.append(arg);
-      result = construct(argList);
-    } else
-      result = arg.toObject();
-  }
-  return Completion(ReturnValue, result);
+// ------------------------------ ObjectProtoFuncImp --------------------------------
+
+ObjectProtoFuncImp::ObjectProtoFuncImp(ExecState *exec,
+                                       FunctionPrototypeImp *funcProto,
+                                       int i, int len)
+  : InternalFunctionImp(funcProto), id(i)
+{
+  Value protect(this);
+  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+}
+
+
+bool ObjectProtoFuncImp::implementsCall() const
+{
+  return true;
+}
+
+// ECMA 15.2.4.2 + 15.2.4.3
+
+Value ObjectProtoFuncImp::call(ExecState */*exec*/, Object &thisObj, const List &/*args*/)
+{
+  if (id == ValueOf)
+    return thisObj;
+  else /* ToString */
+    return String("[object "+thisObj.className()+"]");
+}
+
+// ------------------------------ ObjectObjectImp --------------------------------
+
+ObjectObjectImp::ObjectObjectImp(ExecState *exec,
+                                 ObjectPrototypeImp *objProto,
+                                 FunctionPrototypeImp *funcProto)
+  : InternalFunctionImp(funcProto)
+{
+  Value protect(this);
+  // ECMA 15.2.3.1
+  put(exec,"prototype", Object(objProto), DontEnum|DontDelete|ReadOnly);
+
+  // no. of arguments for constructor
+  put(exec,"length", Number(1), ReadOnly|DontDelete|DontEnum);
+}
+
+
+bool ObjectObjectImp::implementsConstruct() const
+{
+  return true;
 }
 
 // ECMA 15.2.2
-Object ObjectObject::construct(const List &args)
+Object ObjectObjectImp::construct(ExecState *exec, const List &args)
 {
   // if no arguments have been passed ...
-  if (args.isEmpty())
-    return Object::create(ObjectClass);
+  if (args.isEmpty()) {
+    Object proto = exec->interpreter()->builtinObjectPrototype();
+    Object result(new ObjectImp(proto));
+    return result;
+  }
 
-  KJSO arg = *args.begin();
+  Value arg = *(args.begin());
   Object obj = Object::dynamicCast(arg);
   if (!obj.isNull()) {
-    /* TODO: handle host objects */
     return obj;
   }
 
@@ -68,85 +112,37 @@ Object ObjectObject::construct(const List &args)
   case StringType:
   case BooleanType:
   case NumberType:
-    return arg.toObject();
+    return arg.toObject(exec);
   default:
     assert(!"unhandled switch case in ObjectConstructor");
   case NullType:
   case UndefinedType:
-    return Object::create(ObjectClass);
+    Object proto = exec->interpreter()->builtinObjectPrototype();
+    return Object(new ObjectImp(proto));
   }
 }
 
-ObjectPrototype::ObjectPrototype()
-  : ObjectImp(ObjectClass)
+bool ObjectObjectImp::implementsCall() const
 {
-  // the spec says that [[Property]] should be `null'.
-  // Not sure if Null or C's NULL is needed.
+  return true;
 }
 
-bool ObjectPrototype::hasProperty(const UString &p, bool recursive) const
+Value ObjectObjectImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
 {
-    if ( p == "toString" || p == "valueOf" )
-        return true;
-    return /*recursive &&*/ ObjectImp::hasProperty(p, recursive);
-}
+  Value result;
 
-KJSO ObjectPrototype::get(const UString &p) const
-{
-  if (p == "toString")
-    return Function(new ObjectProtoFunc(ToString));
-  else if (p == "valueOf")
-    return Function(new ObjectProtoFunc(ValueOf));
-  else
-    return Imp::get(p);
-}
-
-ObjectProtoFunc::ObjectProtoFunc(int i)
-  : id(i)
-{
-}
-
-// ECMA 15.2.4.2 + 15.2.4.3
-Completion ObjectProtoFunc::execute(const List &)
-{
-  Object thisObj = Object::dynamicCast(thisValue());
-
-  /* TODO: what to do with non-objects. Is this possible at all ? */
-  // Yes, this happens with Host Object at least (David)
-  if (thisObj.isNull()) {
-    UString str = "[object ";
-    str += thisValue().isNull() ? "null" : thisValue().imp()->typeInfo()->name;
-    str += "]";
-    return Completion(ReturnValue, String(str));
+  List argList;
+  // Construct a new Object
+  if (args.isEmpty()) {
+    result = construct(exec,argList);
+  } else {
+    Value arg = args[0];
+    if (arg.type() == NullType || arg.type() == UndefinedType) {
+      argList.append(arg);
+      result = construct(exec,argList);
+    } else
+      result = arg.toObject(exec);
   }
-
-  // valueOf()
-  if (id == ObjectPrototype::ValueOf)
-    /* TODO: host objects*/
-    return Completion(ReturnValue, thisObj);
-
-  // toString()
-  UString str;
-  switch(thisObj.getClass()) {
-  case StringClass:
-    str = "[object String]";
-    break;
-  case BooleanClass:
-    str = "[object Boolean]";
-    break;
-  case NumberClass:
-    str = "[object Number]";
-    break;
-  case ObjectClass:
-  {
-    str = "[object ";
-    str += thisValue().isNull() ? "Object" : thisValue().imp()->typeInfo()->name;
-    str += "]";
-    break;
-  }
-  default:
-    str = "[undefined object]";
-  }
-
-  return Completion(ReturnValue, String(str));
+  return result;
 }
+

@@ -281,7 +281,24 @@ public:
     void remove(const K& key)
     {
 	QMapNode<K,V> tmp(key, V());
-	removeInternal(&tmp);
+	removeEqualInternal(&tmp);
+    }
+
+    void remove(const QMapIterator<K,V> &iterator)
+    {
+	removeEqualInternal(iterator.node, true);
+    }
+
+    Iterator find (const K &key)
+    {
+	QMapNode<K,V> tmp(key, V());
+	QMapNode<K,V> *result = (QMapNode<K,V> *)findInternal(&tmp);
+	
+	if (result != NULL) {
+	    return Iterator(result);
+	} else {
+	    return Iterator(end());
+	}
     }
 
     ConstIterator find (const K &key) const

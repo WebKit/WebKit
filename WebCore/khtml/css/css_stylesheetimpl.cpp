@@ -23,18 +23,18 @@
 
 //#define CSS_STYLESHEET_DEBUG
 
-#include "css_stylesheetimpl.h"
+#include "dom/dom_string.h"
+#include "dom/dom_exception.h"
+#include "dom/css_stylesheet.h"
+#include "dom/css_rule.h"
 
-#include "css_stylesheet.h"
-#include "css_rule.h"
-#include "css_ruleimpl.h"
-#include "css_valueimpl.h"
-#include "cssparser.h"
+#include "css/css_ruleimpl.h"
+#include "css/css_valueimpl.h"
+#include "css/cssparser.h"
+#include "css/css_stylesheetimpl.h"
 
-#include "dom_string.h"
-#include "dom_exception.h"
-#include "dom_nodeimpl.h"
-#include "html_documentimpl.h"
+#include "xml/dom_nodeimpl.h"
+#include "html/html_documentimpl.h"
 #include "misc/loader.h"
 
 #include <kdebug.h>
@@ -119,13 +119,22 @@ MediaListImpl *StyleSheetImpl::media() const
     return m_media;
 }
 
+void StyleSheetImpl::setMedia( MediaListImpl *media )
+{
+    if( m_media )
+        m_media->deref();
+    m_media = media;
+    if( m_media )
+        m_media->ref();
+}
+
 // -----------------------------------------------------------------------
 
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString href)
     : StyleSheetImpl(parentSheet, href)
 {
-    m_lstChildren = new QList<StyleBaseImpl>;
+    m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = 0;
     m_implicit = false;
 }
@@ -133,15 +142,15 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString h
 CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOMString href, bool _implicit)
     : StyleSheetImpl(parentNode, href)
 {
-    m_lstChildren = new QList<StyleBaseImpl>;
-    m_doc = parentNode->nodeType() == Node::DOCUMENT_NODE ? static_cast<DocumentImpl*>(parentNode) : m_doc = parentNode->ownerDocument();
+    m_lstChildren = new QPtrList<StyleBaseImpl>;
+    m_doc = parentNode->getDocument();
     m_implicit = _implicit;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
     : StyleSheetImpl(ownerRule, href)
 {
-    m_lstChildren = new QList<StyleBaseImpl>;
+    m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = 0;
     m_implicit = false;
 }
@@ -149,21 +158,21 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
 CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig)
     : StyleSheetImpl(parentNode, orig->m_strHref)
 {
-    m_lstChildren = new QList<StyleBaseImpl>;
+    m_lstChildren = new QPtrList<StyleBaseImpl>;
     StyleBaseImpl *rule;
     for ( rule = orig->m_lstChildren->first(); rule != 0; rule = orig->m_lstChildren->next() )
     {
         m_lstChildren->append(rule);
         rule->setParent(this);
     }
-    m_doc = parentNode->nodeType() == Node::DOCUMENT_NODE ? static_cast<DocumentImpl*>(parentNode) : m_doc = parentNode->ownerDocument();
+    m_doc = parentNode->getDocument();
     m_implicit = false;
 }
 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig)
     : StyleSheetImpl(ownerRule, orig->m_strHref)
 {
-    m_lstChildren = new QList<StyleBaseImpl>;
+    m_lstChildren = new QPtrList<StyleBaseImpl>;
     StyleBaseImpl *rule;
     for ( rule = orig->m_lstChildren->first(); rule != 0; rule = orig->m_lstChildren->next() )
     {
@@ -248,6 +257,7 @@ bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
         {
            m_lstChildren->append(rule);
            rule->setParent(this);
+//           rule->init();
         }
     }
     return true;
@@ -311,7 +321,7 @@ StyleSheetListImpl::StyleSheetListImpl()
 
 StyleSheetListImpl::~StyleSheetListImpl()
 {
-    for ( QListIterator<StyleSheetImpl> it ( styleSheets ); it.current(); ++it )
+    for ( QPtrListIterator<StyleSheetImpl> it ( styleSheets ); it.current(); ++it )
         it.current()->deref();
 }
 
@@ -333,7 +343,7 @@ unsigned long StyleSheetListImpl::length() const
 {
     // hack so implicit BODY stylesheets don't get counted here
     unsigned long l = 0;
-    QListIterator<StyleSheetImpl> it(styleSheets);
+    QPtrListIterator<StyleSheetImpl> it(styleSheets);
     for (; it.current(); ++it) {
         if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit())
             l++;
@@ -344,7 +354,7 @@ unsigned long StyleSheetListImpl::length() const
 StyleSheetImpl *StyleSheetListImpl::item ( unsigned long index )
 {
     unsigned long l = 0;
-    QListIterator<StyleSheetImpl> it(styleSheets);
+    QPtrListIterator<StyleSheetImpl> it(styleSheets);
     for (; it.current(); ++it) {
         if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit()) {
             if (l == index)
@@ -362,13 +372,32 @@ MediaListImpl::MediaListImpl(CSSStyleSheetImpl *parentSheet)
 {
 }
 
+MediaListImpl::MediaListImpl( CSSStyleSheetImpl *parentSheet,
+                              const DOMString &media )
+    : StyleBaseImpl( parentSheet )
+{
+    setMediaText( media );
+}
+
 MediaListImpl::MediaListImpl(CSSRuleImpl *parentRule)
     : StyleBaseImpl(parentRule)
 {
 }
 
+MediaListImpl::MediaListImpl( CSSRuleImpl *parentRule, const DOMString &media )
+    : StyleBaseImpl(parentRule)
+{
+    setMediaText( media );
+}
+
 MediaListImpl::~MediaListImpl()
 {
+}
+
+bool MediaListImpl::contains( const DOMString &medium ) const
+{
+    return m_lstMedia.count() == 0 || m_lstMedia.contains( medium ) ||
+            m_lstMedia.contains( "all" );
 }
 
 CSSStyleSheetImpl *MediaListImpl::parentStyleSheet() const
@@ -388,12 +417,12 @@ unsigned long MediaListImpl::length() const
     return m_lstMedia.count();
 }
 
-DOMString MediaListImpl::item( unsigned long index )
+DOMString MediaListImpl::item( unsigned long index ) const
 {
     return m_lstMedia[index];
 }
 
-void MediaListImpl::del( const DOMString &oldMedium )
+void MediaListImpl::deleteMedium( const DOMString &oldMedium )
 {
     for ( QValueList<DOMString>::Iterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
         if( (*it) == oldMedium ) {
@@ -403,7 +432,7 @@ void MediaListImpl::del( const DOMString &oldMedium )
     }
 }
 
-void MediaListImpl::append( const DOMString &newMedium )
+void MediaListImpl::appendMedium( const DOMString &newMedium )
 {
     m_lstMedia.append( newMedium );
 }
@@ -424,5 +453,9 @@ void MediaListImpl::setMediaText(const DOM::DOMString &value)
     QString val = value.string();
     QStringList list = QStringList::split( ',', value.string() );
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
-        m_lstMedia.append( DOMString( (*it).stripWhiteSpace() ) );
+    {
+        DOMString medium = (*it).stripWhiteSpace();
+        if( medium != "" )
+            m_lstMedia.append( medium );
+    }
 }

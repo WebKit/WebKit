@@ -114,7 +114,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    KConfig(const QString &n, bool bReadOnly=false);
+    KConfig(const QString &n, bool bReadOnly=false, bool bUseKDEGlobals = true);
     virtual ~KConfig();
 
     // member functions --------------------------------------------------------

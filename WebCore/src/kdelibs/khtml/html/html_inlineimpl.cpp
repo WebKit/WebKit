@@ -19,18 +19,14 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 // -------------------------------------------------------------------------
-#include "html_inlineimpl.h"
-#include "html_imageimpl.h"
-#include "html_documentimpl.h"
-using namespace DOM;
 
-#include <kdebug.h>
+#include "html/html_inlineimpl.h"
+#include "html/html_imageimpl.h"
+#include "html/html_documentimpl.h"
 
-#include "htmlhashes.h"
+#include "misc/htmlhashes.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
 #include "css/csshelper.h"
@@ -41,126 +37,129 @@ using namespace DOM;
 #include "rendering/render_br.h"
 #include "rendering/render_image.h"
 
+#include <kdebug.h>
+
 using namespace khtml;
+using namespace DOM;
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
-    href = 0;
-    target = 0;
+    m_hasTarget = false;
 }
 
 HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
 {
-    if( href ) href->deref();
-    if( target ) target->deref();
 }
 
-const DOMString HTMLAnchorElementImpl::nodeName() const
-{
-    return "A";
-}
-
-ushort HTMLAnchorElementImpl::id() const
+NodeImpl::Id HTMLAnchorElementImpl::id() const
 {
     return ID_A;
 }
 
-bool HTMLAnchorElementImpl::prepareMouseEvent( int _x, int _y,
-                                               int _tx, int _ty,
-                                               MouseEvent *ev)
-{
-    bool inside = HTMLElementImpl::prepareMouseEvent( _x, _y, _tx, _ty, ev);
-
-    // ### ev->noHref obsolete now ? ( Dirk )
-    if ( inside && ev->url==0 && !ev->noHref
-         && m_render && m_render->style() && m_render->style()->visiblity() != HIDDEN )
-    {
-        //kdDebug() << "HTMLAnchorElementImpl::prepareMouseEvent" << _tx << "/" << _ty <<endl;
-        // set the url
-        if(target && href)
-            ev->url = DOMString("target://") + DOMString(target) + DOMString("/#") + DOMString(href);
-        else
-            ev->url = href;
-    }
-
-    return inside;
-}
-
-
 void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    // ### KHTML_CLICK_EVENT??? why that?
-    // port to DOMACTIVATE
-    if (evt->id() == EventImpl::KHTML_CLICK_EVENT && evt->isMouseEvent() && href) {
-        MouseEventImpl* e = static_cast<MouseEventImpl*>( evt );
+    if ( ( evt->id() == EventImpl::KHTML_CLICK_EVENT ||
+         ( evt->id() == EventImpl::KHTML_KEYUP_EVENT && m_focused)) && m_hasAnchor) {
+
+        MouseEventImpl *e = 0;
+        if ( evt->id() == EventImpl::KHTML_CLICK_EVENT )
+            e = static_cast<MouseEventImpl*>( evt );
+
+        KeyEventImpl *k = 0;
+        if (evt->id() == EventImpl::KHTML_KEYUP_EVENT)
+            k = static_cast<KeyEventImpl *>( evt );
+
         QString utarget;
         QString url;
 
-        if ( e->button() == 2 ) return;
+        if ( e && e->button() == 2 ) {
+	    HTMLElementImpl::defaultEventHandler(evt);
+	    return;
+        }
 
-        url = QConstString( href->s, href->l ).string();
+        if ( k ) {
+            if (k->virtKeyVal() != KeyEventImpl::DOM_VK_ENTER) {
+                HTMLElementImpl::defaultEventHandler(evt);
+                return;
+            }
+            if (k->qKeyEvent) k->qKeyEvent->accept();
+        }
 
-        if ( target )
-            utarget = QConstString( target->s, target->l ).string();
+        url = khtml::parseURL(getAttribute(ATTR_HREF)).string();
 
-        if ( e->button() == 1 )
+        utarget = getAttribute(ATTR_TARGET).string();
+
+        if ( e && e->button() == 1 )
             utarget = "_blank";
 
-        if ( e->target()->id() == ID_IMG ) {
-            HTMLImageElementImpl* img = static_cast<HTMLImageElementImpl*>( e->target() );
+        if ( evt->target()->id() == ID_IMG ) {
+            HTMLImageElementImpl* img = static_cast<HTMLImageElementImpl*>( evt->target() );
             if ( img && img->isServerMap() )
             {
                 khtml::RenderImage *r = static_cast<khtml::RenderImage *>(img->renderer());
-                if(r)
+                if(r && e)
                 {
                     int absx, absy;
                     r->absolutePosition(absx, absy);
                     int x(e->clientX() - absx), y(e->clientY() - absy);
                     url += QString("?%1,%2").arg( x ).arg( y );
                 }
+                else {
+                    evt->setDefaultHandled();
+		    HTMLElementImpl::defaultEventHandler(evt);
+		    return;
+                }
             }
         }
         if ( !evt->defaultPrevented() ) {
             int state = 0;
-
-            if ( e->ctrlKey() )
-                state |= Qt::ControlButton;
-            if ( e->shiftKey() )
-                state |= Qt::ShiftButton;
-            if ( e->altKey() )
-                state |= Qt::AltButton;
-
             int button = 0;
 
-            if ( e->button() == 0 )
-                button = Qt::LeftButton;
-            else if ( e->button() == 1 )
-                button = Qt::MidButton;
-            else if ( e->button() == 2 )
-                button = Qt::RightButton;
+            if ( e ) {
+                if ( e->ctrlKey() )
+                    state |= Qt::ControlButton;
+                if ( e->shiftKey() )
+                    state |= Qt::ShiftButton;
+                if ( e->altKey() )
+                    state |= Qt::AltButton;
 
-            ownerDocument()->view()->part()->
+                if ( e->button() == 0 )
+                    button = Qt::LeftButton;
+                else if ( e->button() == 1 )
+                    button = Qt::MidButton;
+                else if ( e->button() == 2 )
+                    button = Qt::RightButton;
+            }
+	    else if ( k )
+	    {
+	      if ( k->checkModifier(Qt::ShiftButton) )
+                state |= Qt::ShiftButton;
+	      if ( k->checkModifier(Qt::AltButton) )
+                state |= Qt::AltButton;
+	      if ( k->checkModifier(Qt::ControlButton) )
+                state |= Qt::ControlButton;
+	    }
+
+            getDocument()->view()->resetCursor();
+            getDocument()->view()->part()->
                 urlSelected( url, button, state, utarget );
         }
+        evt->setDefaultHandled();
     }
+    HTMLElementImpl::defaultEventHandler(evt);
 }
 
 
-void HTMLAnchorElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_HREF:
-    {
-        DOMString s = khtml::parseURL(attr->val());
-        href = s.implementation();
-        if(href) href->ref();
+        m_hasAnchor = attr->val() != 0;
         break;
-    }
     case ATTR_TARGET:
-        target = attr->val();
-        target->ref();
+        m_hasTarget = attr->val() != 0;
         break;
     case ATTR_NAME:
     case ATTR_TITLE:
@@ -181,19 +180,14 @@ HTMLBRElementImpl::~HTMLBRElementImpl()
 {
 }
 
-const DOMString HTMLBRElementImpl::nodeName() const
-{
-    return "BR";
-}
-
-ushort HTMLBRElementImpl::id() const
+NodeImpl::Id HTMLBRElementImpl::id() const
 {
     return ID_BR;
 }
 
-void HTMLBRElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLBRElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_CLEAR:
     {
@@ -209,16 +203,16 @@ void HTMLBRElementImpl::parseAttribute(AttrImpl *attr)
 
 void HTMLBRElementImpl::attach()
 {
-    //kdDebug( 6030 ) << "HTMLBRElementImpl::attach" << endl;
-    setStyle(ownerDocument()->styleSelector()->styleForElement(this));
-    khtml::RenderObject *r = _parent->renderer();
-    if(r)
-    {
-        m_render = new RenderBR();
-        m_render->setStyle(m_style);
-        r->addChild(m_render, nextRenderer());
+    assert(!attached());
+    assert(!m_render);
+    assert(parentNode());
+
+    if (parentNode()->renderer()) {
+        m_render = new RenderBR(this);
+        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
-    HTMLElementImpl::attach();
+    NodeImpl::attach();
 }
 
 // -------------------------------------------------------------------------
@@ -232,24 +226,19 @@ HTMLFontElementImpl::~HTMLFontElementImpl()
 {
 }
 
-const DOMString HTMLFontElementImpl::nodeName() const
-{
-    return "FONT";
-}
-
-ushort HTMLFontElementImpl::id() const
+NodeImpl::Id HTMLFontElementImpl::id() const
 {
     return ID_FONT;
 }
 
-void HTMLFontElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLFontElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_SIZE:
     {
         DOMString s = attr->value();
-        if(s != 0) {
+        if(!s.isNull()) {
             int num = s.toInt();
             if ( *s.unicode() == '+' || *s.unicode() == '-' ) {
                 num += 3;
@@ -287,71 +276,4 @@ void HTMLFontElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-
-void HTMLFontElementImpl::attach()
-{
-    HTMLElementImpl::attach();
-#if 0
-    // the font element needs special handling because it has to behave like
-    // an inline or block level element depending on context.
-
-    setStyle(document->styleSelector()->styleForElement(this));
-    if(_parent && _parent->renderer())
-    {
-        if(_parent->style()->display() != INLINE)
-            m_style->setDisplay(BLOCK);
-        m_render = khtml::RenderObject::createObject(this);
-
-        if(m_render)
-        {
-            _parent->renderer()->addChild(m_render, nextRenderer());
-        }
-    }
-
-    HTMLElementImpl::attach();
-#endif
-}
-
-
-// -------------------------------------------------------------------------
-
-HTMLModElementImpl::HTMLModElementImpl(DocumentPtr *doc, ushort tagid) : HTMLElementImpl(doc)
-{
-    _id = tagid;
-}
-
-HTMLModElementImpl::~HTMLModElementImpl()
-{
-}
-
-const DOMString HTMLModElementImpl::nodeName() const
-{
-    return getTagName(_id);
-}
-
-ushort HTMLModElementImpl::id() const
-{
-    return _id;
-}
-
-// -------------------------------------------------------------------------
-
-HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
-{
-}
-
-HTMLQuoteElementImpl::~HTMLQuoteElementImpl()
-{
-}
-
-const DOMString HTMLQuoteElementImpl::nodeName() const
-{
-    return "Q";
-}
-
-ushort HTMLQuoteElementImpl::id() const
-{
-    return ID_Q;
-}
 

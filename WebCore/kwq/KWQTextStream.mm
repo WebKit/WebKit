@@ -42,6 +42,11 @@ QTextStream::QTextStream(QByteArray, int)
     _logNotYetImplemented();
 }
 
+QTextStream::QTextStream(QString *, int)
+{
+    _logNotYetImplemented();
+}
+
 
 QTextStream::~QTextStream()
 {
@@ -111,3 +116,21 @@ QString QTextOStream::readLine()
     return QString();
 }
 
+
+QTextStream &QTextStream::operator<<(QTextStream &(*const &)(QTextStream &)) 
+{
+    _logNotYetImplemented();
+    return *this;
+}
+
+QTextStream &QTextStream::operator<<(void const *)
+{
+    _logNotYetImplemented();
+    return *this;
+}
+
+QTextStream &endl(QTextStream& stream)
+{
+    _logNotYetImplemented();
+    return stream;
+}

@@ -111,4 +111,7 @@ kdbgstream kdFatal(bool cond, int area = 0)
 }
 
 
-
+QString kdBacktrace()
+{
+    return QString();
+}

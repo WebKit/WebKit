@@ -141,6 +141,12 @@ void QObject::removeEventFilter(const QObject *)
     _logNeverImplemented();
 }
 
+bool QObject::eventFilter(QObject *o, QEvent *e)
+{
+    _logNeverImplemented();
+    return false;
+}
+
 
 void QObject::blockSignals(bool)
 {

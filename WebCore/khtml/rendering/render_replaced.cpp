@@ -25,16 +25,22 @@
 #include "render_root.h"
 
 #include <assert.h>
-#include <qscrollview.h>
+#include <qwidget.h>
+#include <qpainter.h>
+#include <qevent.h>
+#include <qapplication.h>
 
-#include "misc/helper.h"
 #include "khtmlview.h"
+#include "xml/dom2_eventsimpl.h"
+#include "khtml_part.h"
+#include "xml/dom_docimpl.h" // ### remove dependency
 
 using namespace khtml;
+using namespace DOM;
 
 
-RenderReplaced::RenderReplaced()
-    : RenderBox()
+RenderReplaced::RenderReplaced(DOM::NodeImpl* node)
+    : RenderBox(node)
 {
     // init RenderObject attributes
     setReplaced(true);
@@ -46,124 +52,35 @@ RenderReplaced::RenderReplaced()
 void RenderReplaced::print( QPainter *p, int _x, int _y, int _w, int _h,
                             int _tx, int _ty)
 {
-    if ( !isVisible() )
-        return;
+    // not visible or nont even once layouted?
+    if (style()->visibility() != VISIBLE || m_y <=  -500000)  return;
 
     _tx += m_x;
     _ty += m_y;
 
     if((_ty > _y + _h) || (_ty + m_height < _y)) return;
 
-    if(hasSpecialObjects()) printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);    
-        
-    // overflow: hidden    
-    // save old clip region, set a new one
-    QRegion oldClip;
-    if (style()->overflow()==OHIDDEN)
-    {
-        if (p->hasClipping())
-            oldClip = p->clipRegion();        
-        calcClip(p, _tx, _ty, oldClip);   
-    }    
-    
+    if(hasSpecialObjects()) printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+
+    // overflow: hidden
+    bool clipped = false;
+    if (style()->overflow()==OHIDDEN || style()->jsClipMode() ) {
+        calcClip(p, _tx, _ty);
+	clipped = true;
+    }
+
     printObject(p, _x, _y, _w, _h, _tx, _ty);
-    
+
     // overflow: hidden
     // restore clip region
-    if (style()->overflow()==OHIDDEN)
-    {
-        if (oldClip.isNull())
-            p->setClipping(false);
-        else
-            p->setClipRegion(oldClip);        
-    }     
-}
-
-short RenderReplaced::calcReplacedWidth(bool* ieHack) const
-{
-    Length w = style()->width();
-    short width;
-    if ( ieHack )
-        *ieHack = false;
-
-    switch( w.type ) {
-    case Variable:
-    {
-        Length h = style()->height();
-        int ih = intrinsicHeight();
-        if ( ih > 0 && ( h.isPercent() || h.isFixed() ) )
-            width = ( ( h.isPercent() ? calcReplacedHeight() : h.value )*intrinsicWidth() ) / ih;
-        else
-            width = intrinsicWidth();
-        break;
+    if ( clipped ) {
+	p->restore();
     }
-    case Percent:
-    {
-        int cw = containingBlockWidth();
-        if ( cw )
-            width = w.minWidth( cw );
-        else
-            width = intrinsicWidth();
-
-        if ( ieHack )
-            *ieHack = cw;
-        break;
-    }
-    case Fixed:
-        width = w.value;
-        break;
-    default:
-        width = intrinsicWidth();
-        break;
-    };
-
-    return width;
-}
-
-int RenderReplaced::calcReplacedHeight() const
-{
-    Length h = style()->height();
-    short height;
-    switch( h.type ) {
-    case Variable:
-    {
-        Length w = style()->width();
-        int iw = intrinsicWidth();
-        if( iw > 0 && ( w.isFixed() || w.isPercent() ))
-            height = (( w.isPercent() ? calcReplacedWidth() : w.value ) * intrinsicHeight()) / iw;
-        else
-            height = intrinsicHeight();
-    }
-    break;
-    case Percent:
-    {
-        RenderObject* cb = containingBlock();
-        if ( cb->isBody() )
-            height = h.minWidth( cb->root()->view()->visibleHeight() );
-        else {
-            if ( cb->isTableCell() )
-                cb = cb->containingBlock();
-
-            if ( cb->style()->height().isFixed() )
-                height = h.minWidth( cb->style()->height().value );
-            else
-                height = intrinsicHeight();
-        }
-    }
-    break;
-    case Fixed:
-        height = h.value;
-        break;
-    default:
-        height = intrinsicHeight();
-    };
-
-    return height;
 }
 
 void RenderReplaced::calcMinMaxWidth()
 {
-    if(minMaxKnown()) return;
+    KHTMLAssert( !minMaxKnown());
 
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << "RenderReplaced::calcMinMaxWidth() known=" << minMaxKnown() << endl;
@@ -176,13 +93,13 @@ void RenderReplaced::calcMinMaxWidth()
         m_minWidth = 0;
         m_maxWidth = width;
     }
-    else {
+    else
         m_minWidth = m_maxWidth = width;
-        setMinMaxKnown();
-    }
+
+    setMinMaxKnown();
 }
 
-int RenderReplaced::lineHeight( bool ) const
+short RenderReplaced::lineHeight( bool ) const
 {
     return height()+marginTop()+marginBottom();
 }
@@ -200,11 +117,16 @@ void RenderReplaced::position(int x, int y, int, int, int, bool, bool)
 
 // -----------------------------------------------------------------------------
 
-RenderWidget::RenderWidget(QScrollView *view)
-        : RenderReplaced()
+RenderWidget::RenderWidget(DOM::NodeImpl* node)
+        : RenderReplaced(node)
 {
     m_widget = 0;
-    m_view = view;
+    // a replaced element doesn't support being anonymous
+    assert(node);
+    m_view = node->getDocument()->view();
+    m_paintingSelf = false;
+    m_ignorePaintEvents = false;
+    m_widgetShown = false;
 
     // this is no real reference counting, its just there
     // to make sure that we're not deleted while we're recursed
@@ -215,6 +137,7 @@ RenderWidget::RenderWidget(QScrollView *view)
 void RenderWidget::detach()
 {
     remove();
+
     if ( m_widget ) {
         if ( m_view )
             m_view->removeChild( m_widget );
@@ -227,7 +150,7 @@ void RenderWidget::detach()
 
 RenderWidget::~RenderWidget()
 {
-    assert( refCount() <= 0 );
+    KHTMLAssert( refCount() <= 0 );
 
     delete m_widget;
 }
@@ -236,19 +159,36 @@ void RenderWidget::setQWidget(QWidget *widget)
 {
     if (widget != m_widget)
     {
-        if(m_widget) {
-            disconnect( m_widget, SIGNAL( destroyed()),
-                        this, SLOT( slotWidgetDestructed()));
+        if (m_widget) {
+            m_widget->removeEventFilter(this);
+            disconnect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
             delete m_widget;
             m_widget = 0;
         }
-	widget->setFocusPolicy(QWidget::ClickFocus);
         m_widget = widget;
-        connect( m_widget, SIGNAL( destroyed()),
-                 this, SLOT( slotWidgetDestructed()));
+        if (m_widget) {
+            connect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
+            m_widget->installEventFilter(this);
+            // if we're already layouted, apply the calculated space to the
+            // widget immediately
+            if (layouted()) {
+                m_widget->resize( m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
+                                  m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight());
+            }
+            else
+                setPos(xPos(), -500000);
+        }
     }
+}
 
-    setContainsWidget(widget);
+void RenderWidget::layout( )
+{
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
+    if ( m_widget )
+        m_widget->resize( m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
+                          m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight());
+    setLayouted();
 }
 
 void RenderWidget::slotWidgetDestructed()
@@ -262,49 +202,208 @@ void RenderWidget::setStyle(RenderStyle *_style)
     if(m_widget)
     {
         m_widget->setFont(style()->font());
-        if(!isVisible()) m_widget->hide();
+        if (style()->visibility() != VISIBLE) {
+            m_widget->hide();
+            m_widgetShown = false;
+        }
     }
+
+    // do not paint background or borders for widgets
+    setSpecialObjects(false);
 }
 
-void RenderWidget::printObject(QPainter *, int, int, int, int, int _tx, int _ty)
+void RenderWidget::printObject(QPainter *p, int, int, int, int, int _tx, int _ty)
 {
-    // ### this does not get called if a form element moves of the screen, so
-    // the widget stays in it's old place!
-    if(!(m_widget && m_view) || !isVisible()) return;
+    if (!m_widget || !m_view)
+	return;
+
+    if (style()->visibility() != VISIBLE) {
+	m_widget->hide();
+	m_widgetShown = false;
+	return;
+    }
 
     // add offset for relative positioning
     if(isRelPositioned())
-        relativePositionOffset(_tx, _ty);
+	relativePositionOffset(_tx, _ty);
 
-    bool oldMouseTracking = m_widget->hasMouseTracking();
-    m_view->addChild(m_widget, _tx+borderLeft()+paddingLeft(), _ty+borderTop()+paddingTop());
-    m_widget->setMouseTracking(oldMouseTracking);
+    // Although the widget is a child of our KHTMLView, it is not displayed directly in the view area. Instead, it is
+    // first drawn onto a pixmap which is then drawn onto the rendering area. This is to that form controls and other
+    // widgets can be drawn as part of the normal rendering process, and the z-index of other objects can be properly
+    // taken into account.
 
-    m_widget->show();
-}
+//    if (!m_widgetShown) {
+//	m_widgetShown = true;
+	m_view->addChild(m_widget, _tx+borderLeft()+paddingLeft(), _ty+borderTop()+paddingTop());
+	m_widget->show();
+//    }
 
-void RenderWidget::placeWidget(int xPos, int yPos)
-{
-    // add offset for relative positioning
-    if(isRelPositioned())
-        relativePositionOffset(xPos, yPos);
-
-    if(!(m_widget && m_view)) return;
-    bool oldMouseTracking = m_widget->hasMouseTracking();
-    m_view->addChild(m_widget,  xPos+borderLeft()+paddingLeft(), yPos+borderTop()+paddingTop());
-    m_widget->setMouseTracking(oldMouseTracking);
-}
-
-void RenderWidget::focus()
-{
-    if (m_widget)
+/*
+    m_view->setIgnoreEvents(true);
+    QWidget *prevFocusWidget = qApp->focusWidget();
+    DocumentImpl *doc = m_view->part()->xmlDocImpl();
+    if (doc->focusNode() && doc->focusNode()->renderer() == this)// ### use RenderObject flag
 	m_widget->setFocus();
+
+    m_paintingSelf = true;
+    QPixmap widgetPixmap = QPixmap::grabWidget(m_widget);
+    m_paintingSelf = false;
+
+    if (prevFocusWidget)
+	prevFocusWidget->setFocus();
+    m_view->setIgnoreEvents(false);
+
+    p->drawPixmap(_tx+borderLeft()+paddingLeft(), _ty+borderTop()+paddingTop(), widgetPixmap);
+*/
 }
 
-void RenderWidget::blur()
+bool RenderWidget::eventFilter(QObject *o, QEvent *e)
 {
-    if (m_widget)
-	m_widget->clearFocus();
+/*
+//    if (e->type() == QEvent::ShowWindowRequest)
+//	return true;
+
+    if ((e->type() == QEvent::Paint) && m_paintingSelf)
+	return false;
+
+    if (e->type() == QEvent::Paint) {
+	if (!m_paintingSelf && !m_ignorePaintEvents) {
+	    int xpos = 0;
+	    int ypos = 0;
+	    absolutePosition(xpos,ypos);
+	    m_view->updateContents(xpos,ypos,width(),height());
+	}
+	return true;
+    }
+*/
+    return QObject::eventFilter(o,e);
+}
+
+void RenderWidget::handleDOMEvent(EventImpl *evt)
+{
+    // Since the widget is stored outside of the normal viewing area and doesn't receive the events directly (the
+    // events are recevied by our KHTMLView), we have to pass the events on to the widget. Doing this also ensures that
+    // widgets only receive events if the event occurs over part of the widget that is visible, e.g. if there is an
+    // object with a higher z-index partially obscuring the widget and the user clicks on it, the widget won't get the
+    // event
+
+    if (!m_widget)
+	return;
+
+    bool doRepaint = false;
+
+    if (evt->isMouseEvent()) {
+	MouseEventImpl *mev = static_cast<MouseEventImpl*>(evt);
+
+	// Work out event type
+	QEvent::Type qtype = QEvent::None;
+	if (mev->id() == EventImpl::MOUSEDOWN_EVENT)
+	    qtype = QEvent::MouseButtonPress;
+	else if (mev->id() == EventImpl::MOUSEUP_EVENT)
+	    qtype = QEvent::MouseButtonRelease;
+	else if (mev->id() == EventImpl::MOUSEMOVE_EVENT)
+	    qtype = QEvent::MouseMove;
+	else if (mev->id() == EventImpl::MOUSEOVER_EVENT)
+	    qtype = QEvent::Enter;
+	else if (mev->id() == EventImpl::MOUSEOUT_EVENT)
+	    qtype = QEvent::Leave;
+	else if (mev->id() == EventImpl::KHTML_ORIGCLICK_MOUSEUP_EVENT)
+	    qtype = QEvent::MouseButtonRelease;
+
+	// Work out button
+	int button;
+	if (mev->button() == 2)
+	    button = Qt::RightButton;
+	else if (mev->button() == 1)
+	    button = Qt::MidButton;
+	else
+	    button = Qt::LeftButton;
+
+	// Work out key modifier state
+	int state = 0;
+	if (mev->ctrlKey())
+	    state |= Qt::ControlButton;
+	if (mev->altKey())
+	    state |= Qt::AltButton;
+	if (mev->shiftKey())
+	    state |= Qt::ShiftButton;
+	// ### meta key ?
+
+	// Get local & global positions for the mouse event
+	int xpos = 0;
+	int ypos = 0;
+	absolutePosition(xpos,ypos);
+	QPoint pos(mev->clientX()-xpos,mev->clientY()-ypos);
+	QPoint globalPos(mev->screenX(),mev->screenY());
+
+	// Create the event
+	QEvent *event = 0;
+	if (qtype == QEvent::MouseButtonPress || qtype == QEvent::MouseButtonRelease || qtype == QEvent::MouseMove)
+	    event = new QMouseEvent(qtype,pos,globalPos,button,state);
+	else if (qtype == QEvent::Enter || qtype == QEvent::Leave)
+	    event = new QEvent(qtype);
+
+	// Send the actual event to the widget
+	if (event) {
+	    if (sendWidgetEvent(event))
+		doRepaint = true;
+	    delete event;
+	}
+    }
+    else if (evt->id() == EventImpl::DOMFOCUSIN_EVENT) {
+	QFocusEvent focusEvent(QEvent::FocusIn);
+
+	m_widget->setFocusProxy(m_view);
+	m_view->setFocus();
+
+	sendWidgetEvent(&focusEvent);
+	doRepaint = true;
+    }
+    else if (evt->id() == EventImpl::DOMFOCUSOUT_EVENT) {
+	QFocusEvent focusEvent(QEvent::FocusOut);
+
+	m_widget->setFocusProxy(0);
+
+	sendWidgetEvent(&focusEvent);
+	doRepaint = true;
+    }
+    else if (evt->id() == EventImpl::KHTML_KEYDOWN_EVENT ||
+	     evt->id() == EventImpl::KHTML_KEYUP_EVENT) {
+	KeyEventImpl *keyEvent = static_cast<KeyEventImpl*>(evt);
+
+	if (sendWidgetEvent(keyEvent->qKeyEvent)) {
+	    keyEvent->qKeyEvent->accept();
+	    doRepaint = true;
+	}
+    }
+
+    if (doRepaint) {
+	int xpos = 0;
+	int ypos = 0;
+	absolutePosition(xpos,ypos);
+	m_view->updateContents(xpos,ypos,width(),height());
+    }
+
+    evt->setDefaultHandled();
+}
+
+bool RenderWidget::sendWidgetEvent(QEvent *event)
+{
+    m_view->setIgnoreEvents(true);
+    m_ignorePaintEvents = true;
+    QWidget *prevFocusWidget = qApp->focusWidget();
+    DocumentImpl *doc = m_view->part()->xmlDocImpl();
+    if (doc->focusNode() && doc->focusNode()->renderer() == this)// ### use RenderObject flag
+	m_widget->setFocus();
+
+    bool eventHandled = QApplication::sendEvent(m_widget,event);
+
+    if (prevFocusWidget)
+	prevFocusWidget->setFocus();
+    m_ignorePaintEvents = false;
+    m_view->setIgnoreEvents(false);
+
+    return eventHandled;
 }
 
 #include "render_replaced.moc"

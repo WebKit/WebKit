@@ -123,3 +123,29 @@ QRegion &QRegion::operator=(const QRegion &other)
     [data->path appendBezierPath:other.data->path];
     return *this;
 }
+
+void QRegion::translate(int deltaX, int deltaY)
+{
+    NSAffineTransform *translation = [[NSAffineTransform alloc] init];
+    [translation translateXBy:deltaX yBy:deltaY];
+
+    if (!data->path) {
+	data->path = [[NSBezierPath alloc] init];
+    }
+
+    [data->path transformUsingAffineTransform:translation];
+
+    [translation release];
+}
+
+
+QRect QRegion::boundingRect() const
+{
+    if (!data->path) {
+	return QRect();
+    }
+
+    NSRect bounds = [data->path bounds];
+
+    return QRect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+}

@@ -58,6 +58,7 @@ public:
     static QCursor sizeFDiagCursor();
     static QCursor ibeamCursor();
     static QCursor waitCursor();
+    static QCursor whatsThisCursor();
 
     // constructors, copy constructors, and destructors ------------------------
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
@@ -26,12 +26,14 @@
 #ifndef _DOM2_TraversalImpl_h_
 #define _DOM2_TraversalImpl_h_
 
-#include "dom_nodeimpl.h"
 #include "dom/dom_node.h"
 #include "dom/dom_misc.h"
-#include "dom2_traversal.h"
+#include "dom/dom2_traversal.h"
 
 namespace DOM {
+
+class NodeImpl;
+class DocumentImpl;
 
 class NodeIteratorImpl : public DomShared
 {
@@ -149,13 +151,13 @@ protected:
      * the TreeWalker.
      *
      */
-    long whatToShow;
+    long m_whatToShow;
 
     /**
      * The filter used to screen nodes.
      *
      */
-    NodeFilter *filter;
+    NodeFilter *m_filter;
 
     /**
      * The value of this flag determines whether entity reference
@@ -170,7 +172,7 @@ protected:
      *
      * This is not implemented (allways true)
      */
-    bool expandEntityReferences;
+    bool m_expandEntityReferences;
 
     /**
      * The current node.
@@ -182,9 +184,9 @@ protected:
      * type.
      *
      */
-    Node currentNode;
+    Node m_currentNode;
 
-    Node rootNode;
+    Node m_rootNode;
 };
 
 

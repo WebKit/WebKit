@@ -56,6 +56,7 @@ public:
     bool removeLast(bool deleteItem);
     bool removeRef(const void *item, bool deleteItem);
 
+    void *getFirst() const;
     void *getLast() const;
     void *current() const;
     void *first();
@@ -63,6 +64,7 @@ public:
     void *next();
     void *prev();
     void *take(uint n);
+    void *take();
 
     void append(const void *item);
     void prepend(const void *item);

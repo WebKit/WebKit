@@ -24,9 +24,7 @@
 #include <qobject.h>
 #include <qguardedptr.h>
 #include <qmap.h>
-#include <qlist.h>
-#include <kjs/object.h>
-#include <kjs/function.h>
+#include <qptrlist.h>
 
 #include "kjs_binding.h"
 
@@ -45,22 +43,25 @@ namespace KJS {
 
   class Screen : public ObjectImp {
   public:
+    Screen(ExecState *exec);
     enum {
-      height, width, colorDepth, pixelDepth, availLeft, availTop, availHeight,
-      availWidth
+      Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight,
+      AvailWidth
     };
-
-    Screen() : ObjectImp( UndefClass ) { }
-    KJSO get(const UString &p) const;
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
   private:
     KHTMLView *view;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  class Window : public HostImp {
+  class Window : public ObjectImp {
     friend QGuardedPtr<KHTMLPart> getInstance();
     friend class Location;
     friend class WindowFunc;
     friend class WindowQObject;
+    friend class ScheduledAction;
   public:
     Window(KHTMLPart *p);
   public:
@@ -70,33 +71,52 @@ namespace KJS {
      * for the specified part p this will be returned in order to have unique
      * bindings.
      */
-    static Imp *retrieve(KHTMLPart *p);
+    static Object retrieve(KHTMLPart *p);
+    /**
+     * Returns the Window object for a given HTML part
+     */
     static Window *retrieveWindow(KHTMLPart *p);
     /**
      * returns a pointer to the Window object this javascript interpreting instance
      * was called from.
      */
-    static Window *retrieveActive();
+    static Window *retrieveActive(ExecState *exec);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
-    virtual void mark(Imp *imp = 0L);
-    virtual bool hasProperty(const UString &p, bool recursive = true) const;
-    virtual KJSO get(const UString &p) const;
-    virtual void put(const UString &p, const KJSO& v);
-    virtual Boolean toBoolean() const;
+    virtual void mark();
+    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive = true) const;
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
+    virtual bool toBoolean(ExecState *exec) const;
     int installTimeout(const UString &handler, int t, bool singleShot);
     void clearTimeout(int timerId);
     void scheduleClose();
-    bool isSafeScript() const;
+    bool isSafeScript(ExecState *exec) const;
     Location *location() const;
-    void setListener(int eventId, KJSO func);
-    KJSO getListener(int eventId) const;
-    JSEventListener *getJSEventListener(const KJSO &obj, bool html = false);
-    void clear();
-    virtual String toString() const;
+    JSEventListener *getJSEventListener(const Value &val, bool html = false);
+    void clear( ExecState *exec );
+    virtual UString toString(ExecState *exec) const;
 
-    QList<JSEventListener> jsEventListeners;
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    // Set the current "event" object
+    void setCurrentEvent( DOM::Event *evt );
+
+    QPtrList<JSEventListener> jsEventListeners;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,
+           NodeFilter, DOMException, Frames, _History, Event, InnerHeight,
+           InnerWidth, Length, _Location, Name, _Navigator, _Konqueror,
+           OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
+           Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
+           ScrollTo, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
+           Image, Option, Alert, Confirm, Prompt, Open, SetTimeout, ClearTimeout,
+           Focus, Blur, Close, SetInterval, ClearInterval, CaptureEvents, Onabort, Onblur,
+           Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, Onfocus,
+           Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
+           Onmouseout, Onmouseover, Onmouseup, Onmove, Onreset, Onresize,
+           Onselect, Onsubmit, Onunload };
+  protected:
+    Value getListener(ExecState *exec, int eventId) const;
+    void setListener(ExecState *exec, int eventId, Value func);
   private:
     QGuardedPtr<KHTMLPart> m_part;
     Screen *screen;
@@ -104,19 +124,26 @@ namespace KJS {
     FrameArray *frames;
     Location *loc;
     WindowQObject *winq;
+    DOM::Event *m_evt;
   };
 
-  class WindowFunc : public DOMFunction {
+  /**
+   * An action (either function or string) to be executed after a specified
+   * time interval, either once or repeatedly. Used for window.setTimeout()
+   * and window.setInterval()
+   */
+  class ScheduledAction {
   public:
-    WindowFunc(const Window *w, int i) : window(w), id(i) { };
-    Completion tryExecute(const List &);
-    enum { Alert, Confirm, Prompt, Open, SetTimeout, ClearTimeout, Focus, Blur, Close,
-          MoveBy, MoveTo, ResizeBy, ResizeTo, ScrollBy, ScrollTo, SetInterval, ClearInterval,
-          ToString };
+    ScheduledAction(Object _func, List _args, bool _singleShot);
+    ScheduledAction(QString _code, bool _singleShot);
+    ~ScheduledAction();
+    void execute(Window *window);
 
-  private:
-    const Window *window;
-    int id;
+    ObjectImp func;
+    List args;
+    QString code;
+    bool isFunction;
+    bool singleShot;
   };
 
   class WindowQObject : public QObject {
@@ -125,7 +152,8 @@ namespace KJS {
     WindowQObject(Window *w);
     ~WindowQObject();
     int installTimeout(const UString &handler, int t, bool singleShot);
-    void clearTimeout(int timerId);
+    int installTimeout(const Value &func, List args, int t, bool singleShot);
+    void clearTimeout(int timerId, bool delAction = true);
   public slots:
     void timeoutClose();
   protected slots:
@@ -135,31 +163,41 @@ namespace KJS {
   private:
     Window *parent;
     KHTMLPart *part;   		// not guarded, may be dangling
-    QMap<int, QString> map;
+    QMap<int, ScheduledAction*> scheduledActions;
   };
 
-  class Location : public HostImp {
+  class Location : public ObjectImp {
   public:
-    virtual KJSO get(const UString &p) const;
-    virtual void put(const UString &p, const KJSO &v);
-    virtual KJSO toPrimitive(Type preferred) const;
-    virtual String toString() const;
+    ~Location();
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
+    virtual Value toPrimitive(ExecState *exec, Type preferred) const;
+    virtual UString toString(ExecState *exec) const;
+    enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, EqualEqual,
+           Replace, Reload, ToString };
     KHTMLPart *part() const { return m_part; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   private:
     friend class Window;
     Location(KHTMLPart *p);
     QGuardedPtr<KHTMLPart> m_part;
   };
 
-  class LocationFunc : public DOMFunction {
+#ifdef Q_WS_QWS
+  class Konqueror : public ObjectImp {
+    friend class KonquerorFunc;
   public:
-    LocationFunc(const Location *loc, int i);
-    Completion tryExecute(const List &);
-    enum { Replace, Reload, ToString };
+    Konqueror(KHTMLPart *p) : part(p) { }
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual UString toString(ExecState *exec) const;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   private:
-    const Location *location;
-    int id;
+    KHTMLPart *part;
   };
+#endif
 
 }; // namespace
 

@@ -20,19 +20,18 @@
  *
  * $Id$
  */
-#include "render_html.h"
-#include "render_root.h"
+#include "rendering/render_html.h"
+#include "rendering/render_root.h"
+#include "html/html_elementimpl.h"
 
-#include <qpainter.h>
-#include <qscrollview.h>
 #include "khtmlview.h"
 
 #include <kdebug.h>
 
 using namespace khtml;
 
-RenderHtml::RenderHtml()
-    : RenderFlow()
+RenderHtml::RenderHtml(DOM::HTMLElementImpl* node)
+    : RenderFlow(node)
 {
 }
 
@@ -69,20 +68,20 @@ void RenderHtml::printBoxDecorations(QPainter *p,int, int _y,
 	if( !bg )
 	    bg = firstChild()->style()->backgroundImage();
         if( !c.isValid() && root()->view())
-            c = root()->view()->palette().normal().color(QColorGroup::Base);
+            c = root()->view()->palette().active().color(QColorGroup::Base);
     }
 
     int w = width();
     int h = height();
 
 //    kdDebug(0) << "width = " << w <<endl;
-    
+
     int rw;
     if (root()->view())
         rw=root()->view()->contentsWidth();
     else
         rw=root()->width();
-    
+
 //    kdDebug(0) << "rw = " << rw <<endl;
 
     int bx = _tx - marginLeft();

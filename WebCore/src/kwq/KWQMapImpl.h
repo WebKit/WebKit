@@ -90,7 +90,7 @@ class KWQMapImpl {
 
     KWQMapNodeImpl *findInternal(KWQMapNodeImpl *target) const;
     KWQMapNodeImpl *insertInternal(KWQMapNodeImpl *nodeToInsert, bool replaceExisting);
-    void removeInternal(KWQMapNodeImpl *nodeToRemove);
+    void removeEqualInternal(KWQMapNodeImpl *nodeToRemove, bool samePointer = false);
     uint countInternal() const;
     void clearInternal();
     void swap(KWQMapImpl &map);

@@ -34,20 +34,28 @@
 
 #include <qcolor.h>
 #include <qfont.h>
+#include <qfontmetrics.h>
 #include <qlist.h>
 #include <qpalette.h>
 #include <qapplication.h>
-#include "dom/dom_misc.h"
 
-#include <khtmllayout.h>
+#include "dom/dom_misc.h"
+#include "misc/khtmllayout.h"
+
+#include <assert.h>
 
 #define SET_VAR(group,variable,value) \
-    if (group->variable != value) \
+    if (!(group->variable == value)) \
         group.access()->variable = value;
+
+namespace DOM {
+    class DOMStringImpl;
+}
 
 namespace khtml {
 
     class CachedImage;
+    class CachedObject;
 
 template <class DATA>
 class DataRef
@@ -169,7 +177,7 @@ enum EPosition {
 };
 
 enum EFloat {
-    FNONE, FLEFT, FRIGHT
+    FNONE = 0, FLEFT, FRIGHT
 };
 
 
@@ -178,8 +186,8 @@ enum EFloat {
 
 
 enum EBorderStyle {
-    BNONE, BHIDDEN, DOTTED, DASHED, SOLID, DOUBLE,
-    GROOVE, RIDGE, INSET, OUTSET
+    BNONE, BHIDDEN, DOTTED, DASHED, DOUBLE, SOLID,
+    OUTSET, INSET, GROOVE, RIDGE
 };
 
 
@@ -198,7 +206,11 @@ public:
     unsigned short width : 12;
     EBorderStyle style : 4;
 
-    bool nonZero() const { return width!=0 && style!=BNONE; }
+    bool nonZero() const
+    {
+      // rikkus: workaround for gcc 2.95.3
+      return width!=0 && !(style==BNONE);
+    }
 
     bool operator==(const BorderValue& o) const
     {
@@ -234,6 +246,9 @@ public:
 
     StyleSurroundData(const StyleSurroundData& o );
     bool operator==(const StyleSurroundData& o) const;
+    bool operator!=(const StyleSurroundData& o) const {
+        return !(*this == o);
+    }
 
     LengthBox offset;
     LengthBox margin;
@@ -267,6 +282,9 @@ public:
     }
 
     bool operator==(const StyleBoxData& o) const;
+    bool operator!=(const StyleBoxData& o) const {
+        return !(*this == o);
+    }
 
     Length width;
     Length height;
@@ -278,10 +296,9 @@ public:
     Length max_height;
 
     Length vertical_align;
-    
+
     int z_index;
 };
-
 
 //------------------------------------------------
 // Random visual rendering model attributes. Not inherited.
@@ -291,7 +308,7 @@ enum EOverflow {
 };
 
 enum EVerticalAlign {
-    BASELINE, MIDDLE, SUB, SUPER, TEXT_TOP, 
+    BASELINE, MIDDLE, SUB, SUPER, TEXT_TOP,
     TEXT_BOTTOM, TOP, BOTTOM, BASELINE_MIDDLE, LENGTH
 };
 
@@ -303,6 +320,10 @@ enum ETableLayout {
     TAUTO, TFIXED
 };
 
+enum EUnicodeBidi {
+    UBNormal, Embed, Override 
+};
+
 class StyleVisualData : public SharedData
 {
 public:
@@ -312,6 +333,16 @@ public:
 
     StyleVisualData(const StyleVisualData& o );
 
+    bool operator==( const StyleVisualData &o ) const {
+	return ( clip == o.clip &&
+		 colspan == o.colspan &&
+		 counter_increment == o.counter_increment &&
+		 counter_reset == o.counter_reset &&
+		 palette == o.palette );
+    }
+    bool operator!=( const StyleVisualData &o ) const {
+        return !(*this == o);
+    }
 
     LengthBox clip;
 
@@ -319,7 +350,7 @@ public:
 
     short counter_increment; //ok, so these are not visual mode spesific
     short counter_reset;     //can't go to inherited, since these are not inherited
-    
+
     QPalette palette;      //widget styling with IE attributes
 
 };
@@ -358,6 +389,11 @@ public:
 	    image == o.image &&
 	    x_position == o.x_position &&
 	    y_position == o.y_position;
+    }
+
+    bool operator!=(const StyleBackgroundData &o) const
+    {
+	return !(operator==(o));
     }
 
     QColor color;
@@ -404,17 +440,17 @@ public:
     {
 	letter_spacing = 0;
 	word_spacing = 0;
-	line_height = Length(100, Percent);
+        line_height = Length( -100, Percent );
 	indent = Length(0, Fixed);
 	border_spacing = 0;
 	style_image = 0;
 	cursor_image = 0;
     }
 
-    StyleInheritedData() { setDefaultValues(); }
+    StyleInheritedData() : SharedData(), font(), fontMetrics( font ) { setDefaultValues(); }
     virtual ~StyleInheritedData() { }
 
-    StyleInheritedData(const StyleInheritedData& o ) : SharedData()
+    StyleInheritedData(const StyleInheritedData& o ) : SharedData(), font(), fontMetrics( font )
     {
 	indent = o.indent;
 	line_height = o.line_height;
@@ -423,6 +459,7 @@ public:
 	style_image = o.style_image;
 	cursor_image = o.cursor_image;
 	font = o.font;
+	fontMetrics = o.fontMetrics;
 	color = o.color;
 	decoration_color = o.decoration_color;
 	letter_spacing = 0;
@@ -445,22 +482,28 @@ public:
         // doesn't work because structs are not packed
     	//return memcmp(this, &o, sizeof(*this))==0;
     }
+    bool operator != ( const StyleInheritedData &o ) const
+    {
+	return !(operator==( o ) );
+    }
 
     Length indent;
+    // could be packed in a short but doesn't
+    // make a difference currently because of padding
     Length line_height;
-
-    int letter_spacing : 8;
-    int word_spacing : 8;
-
-    short border_spacing;
 
     CachedImage *style_image;
     CachedImage *cursor_image;
 
     QFont font;
+    QFontMetrics fontMetrics;
     QColor color;
     QColor decoration_color;
 
+    int letter_spacing : 8;
+    int word_spacing : 8;
+
+    short border_spacing;
 };
 
 
@@ -484,7 +527,7 @@ enum EListStyleType {
 
 enum EListStylePosition { OUTSIDE, INSIDE };
 
-enum EVisiblity { VISIBLE, HIDDEN, COLLAPSE };
+enum EVisibility { VISIBLE, HIDDEN, COLLAPSE };
 
 enum ECursor {
     CURSOR_AUTO, CURSOR_CROSS, CURSOR_DEFAULT, CURSOR_POINTER, CURSOR_MOVE,
@@ -499,7 +542,7 @@ enum EFontVariant {
 //------------------------------------------------
 
 enum EDisplay {
-    INLINE, BLOCK, LIST_ITEM, RUN_IN, COMPACT, MARKER, KONQ_RULER,
+    INLINE, BLOCK, LIST_ITEM, RUN_IN, COMPACT, MARKER,
     TABLE, INLINE_TABLE, TABLE_ROW_GROUP,
     TABLE_HEADER_GROUP, TABLE_FOOTER_GROUP, TABLE_ROW,
     TABLE_COLUMN_GROUP, TABLE_COLUMN, TABLE_CELL,
@@ -512,51 +555,71 @@ public:
     static void cleanup();
 
     // static pseudo styles. Dynamic ones are produced on the fly.
-    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER };
+    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER };
 
 protected:
     void setBitDefaults();
 
 // !START SYNC!: Keep this in sync with the copy constructor in render_style.cpp
 
-    EDisplay _display : 5;
+    // inherit
+    struct InheritedFlags {
+    // 32 bit inherited, don't add to the struct, or the operator will break.
+	bool operator==( const InheritedFlags &other ) const {
+	    return *((Q_UINT32 *)this) == *((Q_UINT32 *)&other);
+	}
+	bool operator!=( const InheritedFlags &other ) const {
+	    return *((Q_UINT32 *)this) != *((Q_UINT32 *)&other);
+	}
 
-// inherit
-    bool _border_collapse : 1 ;
-    EEmptyCell _empty_cells : 2 ;
-    ECaptionSide _caption_side : 2;
-    EListStyleType _list_style_type : 5 ;
-    EListStylePosition _list_style_position :1;
-    EVisiblity _visiblity : 2;
-    ETextAlign _text_align : 3;
-    ETextTransform _text_transform : 4;
-    EDirection _direction : 1;
-    EWhiteSpace _white_space : 2;
-    int _text_decoration : 4;
-    bool _visuallyOrdered : 1;
-    ECursor _cursor_style : 4;
-    EFontVariant _font_variant : 1;
-    
-    bool _htmlHacks :1;
+	bool _border_collapse : 1 ;
+	EEmptyCell _empty_cells : 1 ;
+	ECaptionSide _caption_side : 2;
+	EListStyleType _list_style_type : 5 ;
+	EListStylePosition _list_style_position :1;
+	EVisibility _visibility : 2;
+	ETextAlign _text_align : 3;
+	ETextTransform _text_transform : 2;
+	EDirection _direction : 1;
+	EWhiteSpace _white_space : 2;
+	int _text_decoration : 4;
+	ECursor _cursor_style : 4;
+	EFontVariant _font_variant : 1;
+              // non CSS2 inherited
+              bool _visuallyOrdered : 1;
+              bool _htmlHacks :1;
+              int _unused : 1;
+    } inherited_flags;
 
 // don't inherit
+    struct NonInheritedFlags {
+    // 32 bit non-inherited, don't add to the struct, or the operator will break.
+	bool operator==( const NonInheritedFlags &other ) const {
+	    return *((Q_UINT32 *)this) == *((Q_UINT32 *)&other);
+	}
+	bool operator!=( const NonInheritedFlags &other ) const {
+	    return *((Q_UINT32 *)this) != *((Q_UINT32 *)&other);
+	}
 
-    EOverflow _overflow : 4 ;
-    EVerticalAlign _vertical_align : 4;
-    EClear _clear : 2;
-    ETableLayout _table_layout : 1;
-    EBackgroundRepeat _bg_repeat : 2;
-    bool _bg_attachment : 1;
-    EPosition _position : 2;
-    EFloat _floating : 2;
+        EDisplay _display : 5;
+        EOverflow _overflow : 4 ;
+        EVerticalAlign _vertical_align : 4;
+        EClear _clear : 2;
+        ETableLayout _table_layout : 1;
+        EBackgroundRepeat _bg_repeat : 2;
+        bool _bg_attachment : 1;
+        EPosition _position : 2;
+        EFloat _floating : 2;
+        bool _flowAroundFloats :1;
 
-    bool _flowAroundFloats :1;
+        PseudoId _styleType : 3;
+        bool _hasHover : 1;
+        bool _hasActive : 1;
 
-    PseudoId _styleType : 2;
-    bool _hasHover : 1;
-    bool _hasFocus : 1;
-    bool _hasActive : 1;
-    
+	bool _jsClipMode : 1;
+        EUnicodeBidi _unicodeBidi : 2;
+    } noninherited_flags;
+
 // non-inherited attributes
     DataRef<StyleBoxData> box;
     DataRef<StyleVisualData> visual;
@@ -576,55 +639,52 @@ protected:
 
 private:
     RenderStyle(const RenderStyle*) {}
-    
+
 public:
 
     RenderStyle();
     // used to create the default style.
     RenderStyle(bool);
     RenderStyle(const RenderStyle&);
-    
-    ~RenderStyle();
-    
+
+    virtual ~RenderStyle();
+
     void inheritFrom(const RenderStyle* inheritParent);
 
-    PseudoId styleType() { return _styleType; }
+    PseudoId styleType() { return  noninherited_flags._styleType; }
 
     RenderStyle* getPseudoStyle(PseudoId pi);
     RenderStyle* addPseudoStyle(PseudoId pi);
     bool hasPseudoStyle() const { return pseudoStyle; }
     void removePseudoStyle(PseudoId pi);
 
-    bool hasHover() const { return _hasHover; }
-    bool hasFocus() const { return _hasFocus; }
-    bool hasActive() const { return _hasActive; }
+    bool hasHover() const { return  noninherited_flags._hasHover; }
+    bool hasActive() const { return  noninherited_flags._hasActive; }
 
-    void setHasHover() { _hasHover = true; }
-    void setHasFocus() { _hasFocus = true; }
-    void setHasActive() { _hasActive = true; }
-    
+    void setHasHover() {  noninherited_flags._hasHover = true; }
+    void setHasActive() {  noninherited_flags._hasActive = true; }
+
     bool operator==(const RenderStyle& other) const;
-
-    bool        isFloating() const { return (_floating == FLEFT || _floating == FRIGHT); }
+    bool        isFloating() const { return !(noninherited_flags._floating == FNONE); }
     bool        hasMargin() const { return surround->margin.nonZero(); }
     bool        hasPadding() const { return surround->padding.nonZero(); }
     bool        hasBorder() const { return surround->border.hasBorder(); }
     bool        hasOffset() const { return surround->offset.nonZero(); }
 
-    bool visuallyOrdered() const { return _visuallyOrdered; }
-    void setVisuallyOrdered(bool b) { _visuallyOrdered = b; }
+    bool visuallyOrdered() const { return inherited_flags._visuallyOrdered; }
+    void setVisuallyOrdered(bool b) {  inherited_flags._visuallyOrdered = b; }
 
 // attribute getter methods
 
-    EDisplay 	display() const { return _display; }
+    EDisplay 	display() const { return noninherited_flags._display; }
 
     Length  	left() const {  return surround->offset.left; }
     Length  	right() const {  return surround->offset.right; }
     Length  	top() const {  return surround->offset.top; }
     Length  	bottom() const {  return surround->offset.bottom; }
 
-    EPosition 	position() const { return _position; }
-    EFloat  	floating() const { return _floating; }
+    EPosition 	position() const { return  noninherited_flags._position; }
+    EFloat  	floating() const { return  noninherited_flags._floating; }
 
     Length  	width() const { return box->width; }
     Length  	height() const { return box->height; }
@@ -655,57 +715,61 @@ public:
     EBorderStyle    outlineStyle() const {  return surround->outline.style; }
     const QColor &  	    outlineColor() const {  return surround->outline.color; }
 
-    EOverflow overflow() const { return _overflow; }
-    EVisiblity visiblity() const { return _visiblity; }
-    EVerticalAlign verticalAlign() const { return _vertical_align; }
+    EOverflow overflow() const { return  noninherited_flags._overflow; }
+    EVisibility visibility() const { return inherited_flags._visibility; }
+    EVerticalAlign verticalAlign() const { return  noninherited_flags._vertical_align; }
     Length verticalAlignLength() const { return box->vertical_align; }
-    
+
     Length clipLeft() const { return visual->clip.left; }
     Length clipRight() const { return visual->clip.right; }
     Length clipTop() const { return visual->clip.top; }
     Length clipBottom() const { return visual->clip.bottom; }
-    EClear clear() const { return _clear; }
-    ETableLayout inheritedLayout() const { return _table_layout; }
+    bool jsClipMode() const { return noninherited_flags._jsClipMode; }
+    
+    EUnicodeBidi unicodeBidi() const { return noninherited_flags._unicodeBidi; }
+
+    EClear clear() const { return  noninherited_flags._clear; }
+    ETableLayout inheritedLayout() const { return  noninherited_flags._table_layout; }
 
     short colSpan() const { return visual->colspan; }
 
     const QFont & font() const { return inherited->font; }
+    const QFontMetrics & fontMetrics() const { return inherited->fontMetrics; }
 
     const QColor & color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }
-    ETextAlign textAlign() const { return _text_align; }
-    ETextTransform textTransform() const { return _text_transform; }
-    int textDecoration() const { return _text_decoration; }
+    ETextAlign textAlign() const { return inherited_flags._text_align; }
+    ETextTransform textTransform() const { return inherited_flags._text_transform; }
+    int textDecoration() const { return inherited_flags._text_decoration; }
     const QColor &textDecorationColor() const { return inherited->decoration_color; }
     int wordSpacing() const { return inherited->word_spacing; }
     int letterSpacing() const { return inherited->letter_spacing; }
 
-    EDirection direction() const { return _direction; }
+    EDirection direction() const { return inherited_flags._direction; }
     Length lineHeight() const { return inherited->line_height; }
 
-    EWhiteSpace whiteSpace() const { return _white_space; }
+    EWhiteSpace whiteSpace() const { return inherited_flags._white_space; }
 
 
     const QColor & backgroundColor() const { return background->color; }
     CachedImage *backgroundImage() const { return background->image; }
-    EBackgroundRepeat backgroundRepeat() const { return _bg_repeat; }
-    // backgroundAttachment returns true for scrolling (regular) attachment, false for fixed
-    bool backgroundAttachment() const { return _bg_attachment; }
+    EBackgroundRepeat backgroundRepeat() const { return  noninherited_flags._bg_repeat; }
+    bool backgroundAttachment() const { return  noninherited_flags._bg_attachment; }
     Length backgroundXPosition() const { return background->x_position; }
     Length backgroundYPosition() const { return background->y_position; }
 
     // returns true for collapsing borders, false for separate borders
-    bool borderCollapse() const { return _border_collapse; }
+    bool borderCollapse() const { return inherited_flags._border_collapse; }
     short borderSpacing() const { return inherited->border_spacing; }
-    EEmptyCell emptyCells() const { return _empty_cells; }
-    ECaptionSide captionSide() const { return _caption_side; }
+    EEmptyCell emptyCells() const { return inherited_flags._empty_cells; }
+    ECaptionSide captionSide() const { return inherited_flags._caption_side; }
 
     short counterIncrement() const { return visual->counter_increment; }
     short counterReset() const { return visual->counter_reset; }
 
-    EListStyleType listStyleType() const { return _list_style_type; }
+    EListStyleType listStyleType() const { return inherited_flags._list_style_type; }
     CachedImage *listStyleImage() const { return inherited->style_image; }
-    EListStylePosition listStylePosition() const { return _list_style_position; }
+    EListStylePosition listStylePosition() const { return inherited_flags._list_style_position; }
 
     Length marginTop() const { return surround->margin.top; }
     Length marginBottom() const {  return surround->margin.bottom; }
@@ -717,17 +781,17 @@ public:
     Length paddingLeft() const { return surround->padding.left; }
     Length paddingRight() const {  return surround->padding.right; }
 
-    ECursor cursor() const { return _cursor_style; }
-    EFontVariant fontVariant() { return _font_variant; }
-    
+    ECursor cursor() const { return inherited_flags._cursor_style; }
+    EFontVariant fontVariant() { return inherited_flags._font_variant; }
+
     CachedImage *cursorImage() const { return inherited->cursor_image; }
-    
+
 
 // attribute setter methods
 
-    void setDisplay(EDisplay v) { _display = v; }
-    void setPosition(EPosition v) { _position = v; }
-    void setFloating(EFloat v) { _floating = v; }
+    void setDisplay(EDisplay v) {  noninherited_flags._display = v; }
+    void setPosition(EPosition v) {  noninherited_flags._position = v; }
+    void setFloating(EFloat v) {  noninherited_flags._floating = v; }
 
     void setLeft(Length v)  {  SET_VAR(surround,offset.left,v) }
     void setRight(Length v) {  SET_VAR(surround,offset.right,v) }
@@ -758,55 +822,63 @@ public:
     void setOutlineStyle(EBorderStyle v)   {  SET_VAR(surround,outline.style,v) }
     void setOutlineColor(const QColor & v) {  SET_VAR(surround,outline.color,v) }
 
-    void setOverflow(EOverflow v) { _overflow = v; }
-    void setVisiblity(EVisiblity v) { _visiblity = v; }
-    void setVerticalAlign(EVerticalAlign v) { _vertical_align = v; }
+    void setOverflow(EOverflow v) {  noninherited_flags._overflow = v; }
+    void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
+    void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
     void setVerticalAlignLength(Length l) { SET_VAR(box, vertical_align, l ) }
 
     void setClipLeft(Length v) { SET_VAR(visual,clip.left,v) }
     void setClipRight(Length v) { SET_VAR(visual,clip.right,v) }
     void setClipTop(Length v) { SET_VAR(visual,clip.top,v) }
     void setClipBottom(Length v) { SET_VAR(visual,clip.bottom,v) }
+    void setJsClipMode( bool b ) { noninherited_flags._jsClipMode = b; }
 
-    void setClear(EClear v) { _clear = v; }
-    void setTableLayout(ETableLayout v) { _table_layout = v; }
+    void setUnicodeBidi( EUnicodeBidi b ) { noninherited_flags._unicodeBidi = b; }
+
+    void setClear(EClear v) {  noninherited_flags._clear = v; }
+    void setTableLayout(ETableLayout v) {  noninherited_flags._table_layout = v; }
     void ssetColSpan(short v) { SET_VAR(visual,colspan,v) }
 
-    void setFont(const QFont & v) { SET_VAR(inherited,font,v) }
+    void setFont(const QFont & v) {
+	if (!(inherited->font == v)) {
+	    inherited.access()->font = v;
+	    inherited.access()->fontMetrics = v;
+	}
+    }
 
     void setColor(const QColor & v) { SET_VAR(inherited,color,v) }
     void setTextIndent(Length v) { SET_VAR(inherited,indent,v) }
-    void setTextAlign(ETextAlign v) { _text_align = v; }
-    void setTextTransform(ETextTransform v) { _text_transform = v; }
-    void setTextDecoration(int v) { _text_decoration = v; }
+    void setTextAlign(ETextAlign v) { inherited_flags._text_align = v; }
+    void setTextTransform(ETextTransform v) { inherited_flags._text_transform = v; }
+    void setTextDecoration(int v) { inherited_flags._text_decoration = v; }
     void setTextDecorationColor(const QColor &v) { SET_VAR(inherited,decoration_color,v) }
-    void setDirection(EDirection v) { _direction = v; }
+    void setDirection(EDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length v) { SET_VAR(inherited,line_height,v) }
 
-    void setWhiteSpace(EWhiteSpace v) { _white_space = v; }
+    void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
     void setWordSpacing(int v) { SET_VAR(inherited,word_spacing,v) }
     void setLetterSpacing(int v) { SET_VAR(inherited,letter_spacing,v) }
 
     void setBackgroundColor(const QColor & v) {  SET_VAR(background,color,v) }
     void setBackgroundImage(CachedImage *v) {  SET_VAR(background,image,v) }
-    void setBackgroundRepeat(EBackgroundRepeat v) {  _bg_repeat = v; }
-    void setBackgroundAttachment(bool scroll) {  _bg_attachment = scroll; }
+    void setBackgroundRepeat(EBackgroundRepeat v) {  noninherited_flags._bg_repeat = v; }
+    void setBackgroundAttachment(bool scroll) {  noninherited_flags._bg_attachment = scroll; }
     void setBackgroundXPosition(Length v) {  SET_VAR(background,x_position,v) }
     void setBackgroundYPosition(Length v) {  SET_VAR(background,y_position,v) }
 
-    void setBorderCollapse(bool collapse) { _border_collapse = collapse; }
+    void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
     void setBorderSpacing(short v) { SET_VAR(inherited,border_spacing,v) }
-    void setEmptyCells(EEmptyCell v) { _empty_cells = v; }
-    void setCaptionSide(ECaptionSide v) { _caption_side = v; }
+    void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
+    void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
 
 
     void setCounterIncrement(short v) {  SET_VAR(visual,counter_increment,v) }
     void setCounterReset(short v) {  SET_VAR(visual,counter_reset,v) }
 
-    void setListStyleType(EListStyleType v) {  _list_style_type = v; }
+    void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
     void setListStyleImage(CachedImage *v) {  SET_VAR(inherited,style_image,v)}
-    void setListStylePosition(EListStylePosition v) {  _list_style_position = v; }
+    void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void setMarginTop(Length v)     {  SET_VAR(surround,margin.top,v) }
     void setMarginBottom(Length v)  {  SET_VAR(surround,margin.bottom,v) }
@@ -818,31 +890,83 @@ public:
     void setPaddingLeft(Length v)   {  SET_VAR(surround,padding.left,v) }
     void setPaddingRight(Length v)  {  SET_VAR(surround,padding.right,v) }
 
-    void setCursor( ECursor c ) { _cursor_style = c; }
-    void setFontVariant( EFontVariant f ) { _font_variant = f; }
+    void setCursor( ECursor c ) { inherited_flags._cursor_style = c; }
+    void setFontVariant( EFontVariant f ) { inherited_flags._font_variant = f; }
     void setCursorImage( CachedImage *v ) { SET_VAR(inherited,cursor_image,v) }
 
-    bool htmlHacks() const { return _htmlHacks; }
-    void setHtmlHacks(bool b=true) { _htmlHacks = b; }
+    bool htmlHacks() const { return inherited_flags._htmlHacks; }
+    void setHtmlHacks(bool b=true) { inherited_flags._htmlHacks = b; }
 
-    bool flowAroundFloats() const { return _flowAroundFloats; }
-    void setFlowAroundFloats(bool b=true) { _flowAroundFloats = b; }
+    bool flowAroundFloats() const { return  noninherited_flags._flowAroundFloats; }
+    void setFlowAroundFloats(bool b=true) {  noninherited_flags._flowAroundFloats = b; }
 
     int zIndex() const { return box->z_index; }
     void setZIndex(int v) { SET_VAR(box,z_index,v) }
-    
+
     QPalette palette() const { return visual->palette; }
     void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c)
     {
-        visual.access()->palette.setColor(g,r,c); 
-    } 
+        visual.access()->palette.setColor(g,r,c);
+    }
     void resetPalette() // Called when the desktop color scheme changes.
     {
         const_cast<StyleVisualData *>(visual.get())->palette = QApplication::palette();
     }
 
 
+    enum ContentType
+    {
+        CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
+    };
+
+    virtual ContentType contentType() { return CONTENT_NONE; }
+
+    virtual void setContent(DOM::DOMStringImpl* /*s*/) { assert(false); }
+    virtual void setContent(CachedObject* /*o*/) { assert(false); }
+
+    virtual DOM::DOMStringImpl* contentText() { return 0; }
+    virtual CachedObject* contentObject() { return 0; }
+
+    bool inheritedNotEqual( RenderStyle *other ) const;
+
+    enum Diff { Equal, NonVisible = Equal, Visible, Position, Layout, CbLayout };
+    Diff diff( const RenderStyle *other ) const;
 };
+
+
+class RenderPseudoElementStyle : public RenderStyle
+{
+public:
+
+    RenderPseudoElementStyle();
+    RenderPseudoElementStyle(bool b);
+    RenderPseudoElementStyle(const RenderStyle& r);
+
+    virtual ~RenderPseudoElementStyle();
+
+    ContentType contentType() { return _contentType; }
+
+    void setContent(DOM::DOMStringImpl* s);
+    void setContent(CachedObject* o);
+
+    DOM::DOMStringImpl* contentText();
+    CachedObject* contentObject();
+
+
+private:
+
+    void clearContent();
+
+    ContentType _contentType;
+
+    union {
+        CachedObject* object;
+        DOM::DOMStringImpl* text;
+        // counters...
+    } _content ;
+
+};
+
 
 } // namespace
 

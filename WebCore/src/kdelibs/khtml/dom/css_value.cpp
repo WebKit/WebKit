@@ -20,11 +20,12 @@
  *
  * $Id$
  */
-#include "css_rule.h"
-#include "css_value.h"
-#include "css_valueimpl.h"
-#include "dom_exception.h"
-#include "dom_string.h"
+
+#include "dom/css_rule.h"
+#include "dom/dom_exception.h"
+
+#include "css/css_valueimpl.h"
+
 using namespace DOM;
 
 CSSStyleDeclaration::CSSStyleDeclaration()
@@ -72,32 +73,45 @@ void CSSStyleDeclaration::setCssText( const DOMString &value )
 DOMString CSSStyleDeclaration::getPropertyValue( const DOMString &propertyName )
 {
     if(!impl) return DOMString();
-    return static_cast<CSSStyleDeclarationImpl *>(impl)->getPropertyValue( propertyName );
+    CSSValue v(getPropertyCSSValue(propertyName));
+    return v.cssText();
 }
 
 CSSValue CSSStyleDeclaration::getPropertyCSSValue( const DOMString &propertyName )
 {
     if(!impl) return 0;
-    return static_cast<CSSStyleDeclarationImpl *>(impl)->getPropertyCSSValue( propertyName );
+    int id = getPropertyID(propertyName.string().ascii(), propertyName.length());
+    if (!id) return 0;
+    return static_cast<CSSStyleDeclarationImpl *>(impl)->getPropertyCSSValue(id);
 }
 
-DOMString CSSStyleDeclaration::removeProperty( const DOMString &propertyName )
+DOMString CSSStyleDeclaration::removeProperty( const DOMString &property )
 {
-    if(!impl) return DOMString();
-    return static_cast<CSSStyleDeclarationImpl *>(impl)->removeProperty( propertyName );
-    return DOMString();
+    int id = getPropertyID(property.string().ascii(), property.length());
+    if(!impl || !id) return DOMString();
+    return static_cast<CSSStyleDeclarationImpl *>(impl)->removeProperty( id );
 }
 
 DOMString CSSStyleDeclaration::getPropertyPriority( const DOMString &propertyName )
 {
-    if(!impl) return DOMString();
-    return impl->getPropertyPriority(propertyName);
+    int id = getPropertyID(propertyName.string().ascii(), propertyName.length());
+    if(!impl || !id) return DOMString();
+    if (impl->getPropertyPriority(id))
+        return DOMString("important");
+    return DOMString();
 }
 
-void CSSStyleDeclaration::setProperty( const DOMString &propertyName, const DOMString &value, const DOMString &priority )
+void CSSStyleDeclaration::setProperty( const DOMString &propName, const DOMString &value, const DOMString &priority )
 {
     if(!impl) return;
-    static_cast<CSSStyleDeclarationImpl *>(impl)->setProperty( propertyName, value, priority );
+    int id = getPropertyID(propName.string().lower().ascii(), propName.length());
+    if (!id) return;
+    bool important = false;
+    QString str = priority.string();
+    if (str.find("important", 0, false) != -1)
+        important = true;
+
+    static_cast<CSSStyleDeclarationImpl *>(impl)->setProperty( id, value, important );
 }
 
 unsigned long CSSStyleDeclaration::length() const
@@ -170,12 +184,6 @@ void CSSValue::setCssText( const DOMString &/*value*/ )
 {
     if(!impl) return;
     ((CSSValueImpl *)impl)->cssText();
-}
-
-unsigned short CSSValue::valueType() const
-{
-    if(!impl) return 0;
-    return ((CSSValueImpl *)impl)->valueType();
 }
 
 unsigned short CSSValue::cssValueType() const
@@ -318,7 +326,7 @@ unsigned short CSSPrimitiveValue::primitiveType() const
 void CSSPrimitiveValue::setFloatValue( unsigned short unitType, float floatValue )
 {
     if(!impl) return;
-    int exceptioncode;
+    int exceptioncode = 0;
     ((CSSPrimitiveValueImpl *)impl)->setFloatValue( unitType, floatValue, exceptioncode );
     if ( exceptioncode >= CSSException::_EXCEPTION_OFFSET )
 	throw CSSException( exceptioncode - CSSException::_EXCEPTION_OFFSET );

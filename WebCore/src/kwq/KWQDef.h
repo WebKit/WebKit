@@ -89,4 +89,5 @@ typedef int XEvent;
 #define QT_STATIC_CONST static const
 #define QT_STATIC_CONST_IMPL const
 
+#define Q_ASSERT(arg) do {} while(0)
 #endif

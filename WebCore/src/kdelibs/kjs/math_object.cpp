@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,126 +16,225 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
-#include "kjs.h"
+#include "value.h"
+#include "object.h"
 #include "types.h"
+#include "interpreter.h"
 #include "operations.h"
 #include "math_object.h"
-#include "lookup.h"
 
 #include "math_object.lut.h"
 
 using namespace KJS;
 
-KJSO Math::get(const UString &p) const
+// ------------------------------ MathObjectImp --------------------------------
+
+const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable, 0 };
+
+/* Source for math_object.lut.h
+@begin mathTable 21
+  E		MathObjectImp::Euler	DontEnum
+  LN2		MathObjectImp::Ln2	DontEnum
+  LN10		MathObjectImp::Ln10	DontEnum
+  LOG2E		MathObjectImp::Log2E	DontEnum
+  LOG10E	MathObjectImp::Log10E	DontEnum
+  PI		MathObjectImp::Pi	DontEnum
+  SQRT1_2	MathObjectImp::Sqrt1_2	DontEnum
+  SQRT2		MathObjectImp::Sqrt2	DontEnum
+  abs		MathObjectImp::Abs	DontEnum|Function 1
+  acos		MathObjectImp::ACos	DontEnum|Function 1
+  asin		MathObjectImp::ASin	DontEnum|Function 1
+  atan		MathObjectImp::ATan	DontEnum|Function 1
+  atan2		MathObjectImp::ATan2	DontEnum|Function 2
+  ceil		MathObjectImp::Ceil	DontEnum|Function 1
+  cos		MathObjectImp::Cos	DontEnum|Function 1
+  exp		MathObjectImp::Exp	DontEnum|Function 1
+  floor		MathObjectImp::Floor	DontEnum|Function 1
+  log		MathObjectImp::Log	DontEnum|Function 1
+  max		MathObjectImp::Max	DontEnum|Function 2
+  min		MathObjectImp::Min	DontEnum|Function 2
+  pow		MathObjectImp::Pow	DontEnum|Function 2
+  random	MathObjectImp::Random	DontEnum|Function 0
+  round		MathObjectImp::Round	DontEnum|Function 1
+  sin		MathObjectImp::Sin	DontEnum|Function 1
+  sqrt		MathObjectImp::Sqrt	DontEnum|Function 1
+  tan		MathObjectImp::Tan	DontEnum|Function 1
+@end
+*/
+
+MathObjectImp::MathObjectImp(ExecState * /*exec*/,
+                             ObjectPrototypeImp *objProto)
+  : ObjectImp(Object(objProto))
 {
-  int token = Lookup::find(&mathTable, p);
+}
 
-  if (token < 0)
-    return Imp::get(p);
+// ECMA 15.8
+Value MathObjectImp::get(ExecState *exec, const UString &propertyName) const
+{
+  return lookupGet<MathFuncImp, MathObjectImp, ObjectImp>( exec, propertyName, &mathTable, this );
+}
 
-  double d;
-  int len = 1;
+Value MathObjectImp::getValueProperty(ExecState *, int token) const
+{
+  double d = -42; // ;)
   switch (token) {
-  case Math::Euler:
+  case Euler:
     d = exp(1.0);
     break;
-  case Math::Ln2:
+  case Ln2:
     d = log(2.0);
     break;
-  case Math::Ln10:
+  case Ln10:
     d = log(10.0);
     break;
-  case Math::Log2E:
+  case Log2E:
     d = 1.0/log(2.0);
     break;
-  case Math::Log10E:
+  case Log10E:
     d = 1.0/log(10.0);
     break;
-  case Math::Pi:
+  case Pi:
     d = 2.0 * asin(1.0);
     break;
-  case Math::Sqrt1_2:
+  case Sqrt1_2:
     d = sqrt(0.5);
     break;
-  case Math::Sqrt2:
+  case Sqrt2:
     d = sqrt(2.0);
     break;
   default:
-    if (token == Math::Min || token == Math::Max || token == Math::Pow)
-      len = 2;
-    return Function(new MathFunc(token, len));
-  };
+    fprintf( stderr, "Internal error in MathObjectImp: unhandled token %d\n", token );
+    break;
+  }
 
   return Number(d);
 }
 
-bool Math::hasProperty(const UString &p, bool recursive) const
+// ------------------------------ MathObjectImp --------------------------------
+
+MathFuncImp::MathFuncImp(ExecState *exec, int i, int l)
+  : InternalFunctionImp(
+    static_cast<FunctionPrototypeImp*>(exec->interpreter()->builtinFunctionPrototype().imp())
+    ), id(i)
 {
-  return (Lookup::find(&mathTable, p) >= 0 ||
-	  (recursive && Imp::hasProperty(p, recursive)));
+  Value protect(this);
+  put(exec,"length",Number(l),DontDelete|ReadOnly|DontEnum);
 }
 
-Completion MathFunc::execute(const List &args)
+bool MathFuncImp::implementsCall() const
 {
-  KJSO v = args[0];
-  Number n = v.toNumber();
+  return true;
+}
+
+Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+{
+  Value v = args[0];
+  Number n = v.toNumber(exec);
   double arg = n.value();
 
-  KJSO v2 = args[1];
-  Number n2 = v2.toNumber();
+  Value v2 = args[1];
+  Number n2 = v2.toNumber(exec);
   double arg2 = n2.value();
   double result;
 
   switch (id) {
-  case Math::Abs:
-    result = ( arg < 0 ) ? (-arg) : arg;
+  case MathObjectImp::Abs:
+    result = ( arg < 0 || arg == -0) ? (-arg) : arg;
     break;
-  case Math::ACos:
+  case MathObjectImp::ACos:
     result = ::acos(arg);
     break;
-  case Math::ASin:
+  case MathObjectImp::ASin:
     result = ::asin(arg);
     break;
-  case Math::ATan:
+  case MathObjectImp::ATan:
     result = ::atan(arg);
     break;
-  case Math::ATan2:
+  case MathObjectImp::ATan2:
     result = ::atan2(arg, arg2);
     break;
-  case Math::Ceil:
+  case MathObjectImp::Ceil:
     result = ::ceil(arg);
     break;
-  case Math::Cos:
+  case MathObjectImp::Cos:
     result = ::cos(arg);
     break;
-  case Math::Exp:
+  case MathObjectImp::Exp:
     result = ::exp(arg);
     break;
-  case Math::Floor:
+  case MathObjectImp::Floor:
     result = ::floor(arg);
     break;
-  case Math::Log:
+  case MathObjectImp::Log:
     result = ::log(arg);
     break;
-  case Math::Max:
-    result = ( arg > arg2 ) ? arg : arg2;
+  case MathObjectImp::Max: {
+    unsigned int argsCount = args.size();
+    result = -Inf;
+    for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
+      double val = args[k].toNumber(exec);
+      if ( isNaN( val ) )
+      {
+        result = NaN;
+        break;
+      }
+      if ( val > result )
+        result = val;
+    }
     break;
-  case Math::Min:
-    result = ( arg < arg2 ) ? arg : arg2;
+  }
+  case MathObjectImp::Min: {
+    unsigned int argsCount = args.size();
+    result = +Inf;
+    for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
+      double val = args[k].toNumber(exec);
+      if ( isNaN( val ) )
+      {
+        result = NaN;
+        break;
+      }
+      if ( val < result )
+        result = val;
+    }
     break;
-  case Math::Pow:
-    result = ::pow(arg, arg2);
+  }
+  case MathObjectImp::Pow:
+    // ECMA 15.8.2.1.13 (::pow takes care of most of the critera)
+    if (KJS::isNaN(arg2))
+      result = NaN;
+    else if (arg2 == 0)
+      result = 1;
+    else if (KJS::isNaN(arg) && arg2 != 0)
+      result = NaN;
+    else if (::fabs(arg) > 1 && KJS::isPosInf(arg2))
+      result = Inf;
+    else if (::fabs(arg) > 1 && KJS::isNegInf(arg2))
+      result = +0;
+    else if (::fabs(arg) == 1 && KJS::isPosInf(arg2))
+      result = NaN;
+    else if (::fabs(arg) == 1 && KJS::isNegInf(arg2))
+      result = NaN;
+    else if (::fabs(arg) < 1 && KJS::isPosInf(arg2))
+      result = +0;
+    else if (::fabs(arg) < 1 && KJS::isNegInf(arg2))
+      result = Inf;
+    else
+      result = ::pow(arg, arg2);
     break;
-  case Math::Random:
+  case MathObjectImp::Random:
     result = ::rand();
     result = result / RAND_MAX;
     break;
-  case Math::Round:
+  case MathObjectImp::Round:
     if (isNaN(arg))
       result = arg;
     if (isInf(arg) || isInf(-arg))
@@ -144,13 +244,13 @@ Completion MathFunc::execute(const List &args)
     else
       result = (double)(arg >= 0.0 ? int(arg + 0.5) : int(arg - 0.5));
     break;
-  case Math::Sin:
+  case MathObjectImp::Sin:
     result = ::sin(arg);
     break;
-  case Math::Sqrt:
+  case MathObjectImp::Sqrt:
     result = ::sqrt(arg);
     break;
-  case Math::Tan:
+  case MathObjectImp::Tan:
     result = ::tan(arg);
     break;
 
@@ -159,5 +259,5 @@ Completion MathFunc::execute(const List &args)
     assert(0);
   }
 
-  return Completion(ReturnValue, Number(result));
+  return Number(result);
 }

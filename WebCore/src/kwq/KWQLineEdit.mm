@@ -142,3 +142,17 @@ QLineEdit &QLineEdit::operator=(const QLineEdit &)
 }
 
 
+bool QLineEdit::edited() const
+{
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field edited];
+}
+
+
+void QLineEdit::setEdited(bool flag)
+{
+    KWQNSTextField *field = (KWQNSTextField *)getView();
+    
+    return [field setEdited:flag];
+}

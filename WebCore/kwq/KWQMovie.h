@@ -49,7 +49,7 @@ public:
 
     // enums -------------------------------------------------------------------
 
-    enum Status { EndOfFrame, EndOfMovie };
+    enum Status { EndOfFrame, EndOfLoop, EndOfMovie };
 
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------

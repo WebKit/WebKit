@@ -3,6 +3,8 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2001 Peter Kelly (pmk@post.com)
+ *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,104 +20,57 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-//#define EVENT_DEBUG
-#include "dom_elementimpl.h"
-#include "dom_exception.h"
-#include "dom_node.h"
-#include "dom_textimpl.h"
-#include "dom_docimpl.h"
-#include "dom2_eventsimpl.h"
-#include "dtd.h"
 
-#include "css/cssstyleselector.h"
-#include "rendering/render_object.h"
-#include "misc/htmlhashes.h"
-#include <kdebug.h>
-#include "css_valueimpl.h"
-#include "css_stylesheetimpl.h"
+//#define EVENT_DEBUG
+#include "dom/dom_exception.h"
+#include "dom/dom_node.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom2_eventsimpl.h"
+#include "xml/dom_elementimpl.h"
+
+#include "html/dtd.h"
 #include "html/htmlparser.h"
+
+#include "rendering/render_root.h"
+#include "misc/htmlhashes.h"
+#include "css/css_valueimpl.h"
+#include "css/css_stylesheetimpl.h"
+#include "css/cssstyleselector.h"
+#include "xml/dom_xmlimpl.h"
+
+#include <qtextstream.h>
+#include <kdebug.h>
 
 using namespace DOM;
 using namespace khtml;
 
-/*
- * NOTE:
- * According to the DOM docs, an Attr stores the value directly in it's parsed
- * form, but for values containing entities, creates a subtree with nodes
- * containing the unexpanded form (for XML). On read, the value is always
- * returned entity-free, so we decided for HTML we could only store a
- * parsed DOMString and have no child-nodes.
- */
-
-AttrImpl::AttrImpl()
-    : NodeImpl(0),
-      _name( 0 ),
-      _value( 0 ),
-      _element(0),
-      attrId(0)
-{
+void AttributeImpl::allocateImpl(ElementImpl* e) {
+    _impl = new AttrImpl(e, this);
+    _impl->ref();
 }
 
-
-AttrImpl::AttrImpl(DocumentPtr *doc, const DOMString &name)
-    : NodeImpl(doc),
-      _name( 0 ),
-      _value( 0 ),
-      _element(0),
-      attrId(0)
+AttrImpl::AttrImpl(ElementImpl* element, AttributeImpl* a)
+    : NodeBaseImpl(element->docPtr()),
+      m_element(element),
+      m_attribute(a)
 {
-    setName(name);
-}
-
-AttrImpl::AttrImpl(DocumentPtr *doc, int id)
-    : NodeImpl(doc),
-      _name( 0 ),
-      _value( 0 ),
-      _element(0),
-      attrId(id)
-{
-}
-
-AttrImpl::AttrImpl(const AttrImpl &other) : NodeImpl(other.docPtr())
-{
-    m_specified = other.specified();
-    _element = other._element;
-    _name = other._name;
-    if (_name) _name->ref();
-    _value = other._value;
-    if (_value) _value->ref();
-    attrId = other.attrId;
-}
-
-AttrImpl &AttrImpl::operator = (const AttrImpl &other)
-{
-    NodeImpl::operator =(other);
-    m_specified = other.specified();
-    _element = other._element;
-
-    if (_name) _name->deref();
-    _name = other._name;
-    if (_name) _name->ref();
-    if (_value) _value->deref();
-    _value = other._value;
-    if (_value) _value->ref();
-    attrId = other.attrId;
-
-    return *this;
+    assert(!m_attribute->_impl);
+    m_attribute->_impl = this;
+    m_attribute->ref();
 }
 
 AttrImpl::~AttrImpl()
 {
-    if(_name) _name->deref();
-    if(_value) _value->deref();
+    assert(m_attribute->_impl == this);
+    m_attribute->_impl = 0;
+    m_attribute->deref();
 }
 
-const DOMString AttrImpl::nodeName() const
+DOMString AttrImpl::nodeName() const
 {
-    return name();
+    return getDocument()->attrName(m_attribute->id());
 }
 
 unsigned short AttrImpl::nodeType() const
@@ -123,115 +78,59 @@ unsigned short AttrImpl::nodeType() const
     return Node::ATTRIBUTE_NODE;
 }
 
-
-DOMString AttrImpl::name() const
+DOMString AttrImpl::prefix() const
 {
-    if(attrId)
-        return getAttrName(attrId);
-    else if (_name)
-        return _name;
-    else
-        return DOMString();
+    return m_attribute->prefix();
 }
 
-void AttrImpl::setName(const DOMString &n)
+void AttrImpl::setPrefix(const DOMString &_prefix, int &exceptioncode )
 {
-    if(_name) _name->deref();
-    _name = n.implementation();
-    if(!_name) return;
+    checkSetPrefix(_prefix, exceptioncode);
+    if (exceptioncode)
+        return;
 
-    attrId = khtml::getAttrID(QConstString(_name->s, _name->l).string().lower().ascii(), _name->l);
-    if (attrId)
-        _name = 0;
-    else
-        _name->ref();
+    m_attribute->setPrefix(_prefix.implementation());
 }
 
-DOMString AttrImpl::value() const {
-    return _value;
+DOMString AttrImpl::nodeValue() const {
+    return m_attribute->val();
 }
 
-void AttrImpl::setValue( const DOMString &v )
+void AttrImpl::setValue( const DOMString &v, int &exceptioncode )
 {
-    // according to the DOM docs, we should create an unparsed Text child
-    // node here; we decided this was not necessary for HTML
+    exceptioncode = 0;
 
-    // ### TODO: parse value string, interprete entities (not sure if we are supposed to do this)
+    // ### according to the DOM docs, we should create an unparsed Text child
+    // node here
+    // do not interprete entities in the string, its literal!
 
-    if (_element)
-        _element->checkReadOnly();
-
-    DOMStringImpl *prevValue = _value;
-    _value = v.implementation();
-    if (_value) _value->ref();
-    m_specified = true;
-
-    if (_element) {
-        _element->parseAttribute(this);
-        _element->setChanged(true);
-	if (getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER)) {
-	    int exceptioncode;
-	    _element->dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,this,prevValue,
-				    _value,_name,MutationEvent::MODIFICATION),exceptioncode);
-	}
+    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
-    if (prevValue) prevValue->deref();
+
+    // ### what to do on 0 ?
+    if (v.isNull()) {
+        exceptioncode = DOMException::DOMSTRING_SIZE_ERR;
+        return;
+    }
+
+    m_attribute->setValue(v.implementation());
+    if (m_element)
+        m_element->parseAttribute(m_attribute);
 }
 
 void AttrImpl::setNodeValue( const DOMString &v, int &exceptioncode )
 {
     exceptioncode = 0;
-    setValue(v);
+    // NO_MODIFICATION_ALLOWED_ERR: taken care of by setValue()
+    setValue(v, exceptioncode);
 }
 
-AttrImpl::AttrImpl(const DOMString &name, const DOMString &value, DocumentPtr *doc)
-    : NodeImpl(doc)
+NodeImpl *AttrImpl::cloneNode ( bool /*deep*/)
 {
-    attrId = 0;
-    _name = 0;
-    setName(name);
-    _value = value.implementation();
-    if (_value) _value->ref();
-    _element = 0;
-    m_specified = 1;
-}
-
-AttrImpl::AttrImpl(int _id, const DOMString &value, DocumentPtr *doc) : NodeImpl(doc)
-{
-  attrId = _id;
-  _name = 0;
-  _value = value.implementation();
-  if (_value) _value->ref();
-  _element = 0;
-  m_specified = false;
-}
-
-NodeImpl *AttrImpl::parentNode() const
-{
-    return 0;
-}
-
-NodeImpl *AttrImpl::previousSibling() const
-{
-    return 0;
-}
-
-NodeImpl *AttrImpl::nextSibling() const
-{
-    return 0;
-}
-
-NodeImpl *AttrImpl::cloneNode ( bool /*deep*/, int &/*exceptioncode*/ )
-{
-    AttrImpl *newImpl = new AttrImpl(*this);
-    newImpl->_element = 0; // can't have two attributes with the same name/id attached to an element
-    return newImpl;
-}
-
-bool AttrImpl::deleteMe()
-{
-    if(!_element && _ref <= 0) return true;
-    return false;
+    return new AttrImpl(0,  new AttributeImpl(m_attribute->id(), m_attribute->val()));
 }
 
 // DOM Section 1.1.1
@@ -257,20 +156,16 @@ bool AttrImpl::childTypeAllowed( unsigned short type )
 
 // -------------------------------------------------------------------------
 
-ElementImpl::ElementImpl(DocumentPtr *doc) : NodeBaseImpl(doc)
+ElementImpl::ElementImpl(DocumentPtr *doc)
+    : NodeBaseImpl(doc)
 {
     namedAttrMap = 0;
-
-    has_tabindex=false;
-    tabindex=0;
     m_styleDecls = 0;
+    m_prefix = 0;
 }
 
 ElementImpl::~ElementImpl()
 {
-    if (m_render)
-        detach();
-
     if(namedAttrMap) {
         namedAttrMap->detachFromElement();
         namedAttrMap->deref();
@@ -281,12 +176,21 @@ ElementImpl::~ElementImpl()
         m_styleDecls->setParent(0);
         m_styleDecls->deref();
     }
+
+    if (m_prefix)
+        m_prefix->deref();
 }
 
-bool ElementImpl::isInline() const
+void ElementImpl::removeAttribute( NodeImpl::Id id, int &exceptioncode )
 {
-    if(!m_style) return false;
-    return (m_style->display() == khtml::INLINE);
+    if (namedAttrMap)
+        namedAttrMap->removeNamedItem(id, exceptioncode);
+}
+
+void ElementImpl::setAttribute(NodeImpl::Id id, const DOMString &value)
+{
+    int exceptioncode = 0;
+    setAttribute(id,value.implementation(),exceptioncode);
 }
 
 unsigned short ElementImpl::nodeType() const
@@ -294,90 +198,38 @@ unsigned short ElementImpl::nodeType() const
     return Node::ELEMENT_NODE;
 }
 
-DOMString ElementImpl::tagName() const
+DOMString ElementImpl::getAttribute(NodeImpl::Id id) const
 {
-    return nodeName();
-}
-
-DOMString ElementImpl::getAttribute( const DOMString &name ) const
-{
-  // search in already set attributes first
-    int exceptioncode; // ### propogate
-    if(!namedAttrMap) return 0;
-    AttrImpl *attr = static_cast<AttrImpl*>(namedAttrMap->getNamedItem(name,exceptioncode));
-    if (attr) return attr->value();
+    if (!namedAttrMap) return DOMString();
+    AttributeImpl* a = namedAttrMap->getAttributeItem(id);
+    if (a) return a->val();
 
     // then search in default attr in case it is not yet set
     NamedAttrMapImpl* dm = defaultMap();
-    if(!dm) return 0;
-    AttrImpl* defattr = static_cast<AttrImpl*>(dm->getNamedItem(name, exceptioncode));
-    if(!defattr || exceptioncode) return 0;
-
-    return defattr->value();
+    if(!dm) return DOMString();
+    AttributeImpl* defattr = dm->getAttributeItem(id);
+    if (!defattr) return DOMString();
+    return defattr->val();
 }
 
-DOMString ElementImpl::getAttribute( int id )
+void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode )
 {
-    // search in already set attributes first
-    if(!namedAttrMap) return DOMString();
-    AttrImpl *attr = static_cast<AttrImpl*>(namedAttrMap->getIdItem(id));
-    if (attr) return attr->value();
+    // allocate attributemap if necessary
+    AttributeImpl* old = attributes(false)->getAttributeItem(id);
 
-    // then search in default attr in case it is not yet set
-    NamedAttrMapImpl* dm = defaultMap();
-    if(!dm) return 0;
-
-    AttrImpl* defattr = static_cast<AttrImpl*>(dm->getIdItem(id));
-    if(!defattr) return DOMString();
-
-    return defattr->value();
-}
-
-AttrImpl *ElementImpl::getAttributeNode ( int index ) const
-{
-    return namedAttrMap ? namedAttrMap->getIdItem(index) : 0;
-}
-
-int ElementImpl::getAttributeCount() const
-{
-    int exceptioncode; // ### propogate
-    return namedAttrMap ? namedAttrMap->length(exceptioncode) : 0;
-}
-
-void ElementImpl::setAttribute( const DOMString &name, const DOMString &value)
-{
-    // ### check for invalid characters in value -> throw exception
-    int exceptioncode; // ### propogate
-    if(!namedAttrMap) {
-        namedAttrMap = new NamedAttrMapImpl(this);
-        namedAttrMap->ref();
+    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
+    if (namedAttrMap->isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
-    if (value.isNull())
-        namedAttrMap->removeNamedItem(name,exceptioncode);
-    else {
-        AttrImpl *a = static_cast<AttrImpl*>(namedAttrMap->getNamedItem(name));
-        if (a)
-            a->setValue(value);
-        else
-            namedAttrMap->setNamedItem(new AttrImpl(name,value,docPtr()), exceptioncode);
-    }
-}
 
-void ElementImpl::setAttribute( int id, const DOMString &value )
-{
-    if(!namedAttrMap) {
-        namedAttrMap = new NamedAttrMapImpl(this);
-        namedAttrMap->ref();
-    }
-    if (value.isNull())
-        namedAttrMap->removeIdItem(id);
-    else {
-        int exceptioncode;
-        AttrImpl* a = static_cast<AttrImpl*>(namedAttrMap->getIdItem(id));
-        if(a)
-            a->setValue(value);
-        else
-            namedAttrMap->setIdItem(new AttrImpl(id,value,docPtr() ), exceptioncode );
+    if (old && !value)
+        namedAttrMap->removeAttribute(id);
+    else if (!old && value)
+        namedAttrMap->addAttribute(new AttributeImpl(id, value));
+    else if (old && value) {
+        old->setValue(value);
+        parseAttribute(old);
     }
 }
 
@@ -392,125 +244,58 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
         namedAttrMap->ref();
         namedAttrMap->element = this;
         unsigned int len = namedAttrMap->length();
-
-        for(unsigned int i = 0; i < len; i++) {
-            AttrImpl* a = namedAttrMap->attrs[i];
-            if(a && !a->_element) {
-                a->_element = this;
-
-                parseAttribute(a);
-            }
-        }
+        for(unsigned int i = 0; i < len; i++)
+            parseAttribute(namedAttrMap->attrs[i]);
     }
 }
 
-void ElementImpl::removeAttribute( const DOMString &name )
+NodeImpl *ElementImpl::cloneNode(bool deep)
 {
-    int exceptioncode; // ### propogate
-    if(!namedAttrMap) return;
-    namedAttrMap->removeNamedItem(name,exceptioncode);
-}
-
-NodeImpl *ElementImpl::cloneNode ( bool deep, int &exceptioncode )
-{
-    ElementImpl *newImpl = ownerDocument()->createElement(tagName());
-    if (!newImpl)
-      return 0;
+    // ### we loose the namespace here ... FIXME
+    ElementImpl *clone = getDocument()->createElement(tagName());
+    if (!clone) return 0;
 
     // clone attributes
     if(namedAttrMap)
-        *(static_cast<NamedAttrMapImpl*>(newImpl->attributes())) = *namedAttrMap;
+        *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
 
     if (deep)
-        cloneChildNodes(newImpl,exceptioncode);
-    return newImpl;
+        cloneChildNodes(clone);
+    return clone;
 }
 
-NamedNodeMapImpl *ElementImpl::attributes()
+DOMString ElementImpl::nodeName() const
 {
-    if(!namedAttrMap) {
-        namedAttrMap = new NamedAttrMapImpl(this);
-        namedAttrMap->ref();
-    }
-    return namedAttrMap;
+    return tagName();
 }
 
-AttrImpl *ElementImpl::getAttributeNode( const DOMString &name )
+DOMString ElementImpl::tagName() const
 {
-    int exceptioncode; // ### propogate
-    // ### do we return attribute node if it is in the default map but not specified?
-    if(!namedAttrMap) return 0;
-    return static_cast<AttrImpl*>(namedAttrMap->getNamedItem(name,exceptioncode));
+    DOMString tn = getDocument()->tagName(id());
 
+    if (m_prefix)
+        return DOMString(m_prefix) + ":" + tn;
+
+    return tn;
 }
 
-Attr ElementImpl::setAttributeNode( AttrImpl *newAttr, int &exceptioncode )
+void ElementImpl::setPrefix( const DOMString &_prefix, int &exceptioncode )
 {
-    exceptioncode = 0;
-    if (!newAttr) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
-    }
-    if(!namedAttrMap) {
-        namedAttrMap = new NamedAttrMapImpl(this);
-        namedAttrMap->ref();
-    }
-    if (newAttr->attrId)
-        return namedAttrMap->setIdItem(newAttr, exceptioncode);
-    else
-        return namedAttrMap->setNamedItem(newAttr, exceptioncode);
+    checkSetPrefix(_prefix, exceptioncode);
+    if (exceptioncode)
+        return;
+
+    if (m_prefix)
+        m_prefix->deref();
+    m_prefix = _prefix.implementation();
+    if (m_prefix)
+        m_prefix->ref();
 }
 
-Attr ElementImpl::removeAttributeNode( AttrImpl *oldAttr, int &exceptioncode )
+void ElementImpl::createAttributeMap() const
 {
-    // ### should we replace with default in map? currently default attrs don't exist in map
-    exceptioncode = 0;
-    if(!namedAttrMap) return 0;
-    return namedAttrMap->removeAttr(oldAttr, exceptioncode);
-}
-
-NodeListImpl *ElementImpl::getElementsByTagName( const DOMString &name )
-{
-    return new TagNodeListImpl( this, name );
-}
-
-short ElementImpl::tabIndex() const
-{
-  if (has_tabindex)
-    return tabindex;
-  else
-    return -1;
-}
-
-void ElementImpl::setTabIndex( short _tabindex )
-{
-  has_tabindex=true;
-  tabindex=_tabindex;
-}
-
-void ElementImpl::normalize( int &exceptioncode )
-{
-    // In DOM level 2, this gets moved to Node
-    // ### normalize attributes? (when we store attributes using child nodes)
-    exceptioncode = 0;
-    NodeImpl *child = _first;
-    while (child) {
-        NodeImpl *nextChild = child->nextSibling();
-        if (child->nodeType() == Node::ELEMENT_NODE) {
-            static_cast<ElementImpl*>(child)->normalize(exceptioncode);
-            if (exceptioncode)
-                return;
-            child = nextChild;
-        }
-        else if (nextChild && child->nodeType() == Node::TEXT_NODE && nextChild->nodeType() == Node::TEXT_NODE) {
-            static_cast<TextImpl*>(child)->appendData(static_cast<TextImpl*>(nextChild)->data());
-            removeChild(nextChild,exceptioncode);
-            if (exceptioncode)
-                return;
-        }
-        else
-            child = nextChild;
-    }
+    namedAttrMap = new NamedAttrMapImpl(const_cast<ElementImpl*>(this));
+    namedAttrMap->ref();
 }
 
 NamedAttrMapImpl* ElementImpl::defaultMap() const
@@ -520,233 +305,85 @@ NamedAttrMapImpl* ElementImpl::defaultMap() const
 
 void ElementImpl::attach()
 {
-    if (!m_render)
-    {
-#if SPEED_DEBUG < 2
-        setStyle(ownerDocument()->styleSelector()->styleForElement(this));
+    assert(!attached());
+    assert(!m_render);
+    assert(parentNode());
+
 #if SPEED_DEBUG < 1
-        if(_parent && _parent->renderer())
-        {
-            m_render = khtml::RenderObject::createObject(this);
-            if(m_render)
-            {
-                _parent->renderer()->addChild(m_render, nextRenderer());
-            }
-        }
-#endif
+    if (parentNode()->renderer()) {
+        RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
+        _style->ref();
+        m_render = RenderObject::createObject(this, _style);
+        if(m_render)
+            parentNode()->renderer()->addChild(m_render, nextRenderer());
+        _style->deref();
+    }
 #endif
 
-    }
     NodeBaseImpl::attach();
 }
 
-void ElementImpl::detach()
+void ElementImpl::recalcStyle( StyleChange change )
 {
-    NodeBaseImpl::detach();
-
-    if ( m_render )
-        m_render->detach();
-
-    m_render = 0;
-}
-
-void ElementImpl::recalcStyle()
-{
-    if(!m_style) return;
-    EDisplay oldDisplay = m_style->display();
-
-    int dynamicState = StyleSelector::None;
-    if ( m_mouseInside )
-        dynamicState |= StyleSelector::Hover;
-    if ( m_focused )
-        dynamicState |= StyleSelector::Focus;
-    if ( m_active )
-        dynamicState |= StyleSelector::Active;
-
-    setStyle( ownerDocument()->styleSelector()->styleForElement(this, dynamicState) );
-
-    if (oldDisplay != m_style->display()) {
-	detach();
-	attach();
-    }
-    if( m_render && m_style )
-        m_render->setStyle(m_style);
-    NodeImpl *n;
-    for (n = _first; n; n = n->nextSibling())
-        n->recalcStyle();
-}
-
-bool ElementImpl::prepareMouseEvent( int _x, int _y,
-                                     int _tx, int _ty,
-                                     MouseEvent *ev)
-{
-#ifdef EVENT_DEBUG
-    kdDebug( 6030 ) << nodeName().string() << "::prepareMouseEvent" << endl;
-#endif
-    bool inside = false;
-
-    if(!m_render) return false;
-
-    int origTx = _tx;
-    int origTy = _ty;
-
-    RenderObject *p = m_render->parent();
-    while( p && p->isAnonymousBox() ) {
-//      kdDebug( 6030 ) << "parent is anonymous!" << endl;
-        // we need to add the offset of the anonymous box
-        _tx += p->xPos();
-        _ty += p->yPos();
-        p = p->parent();
-    }
-
-    bool positioned = m_render->isPositioned();
-    int oldZIndex = ev->currentZIndex;
-
-    // Positioned element -> store current zIndex, for children to use
-    if ( positioned ) {
-        ev->currentZIndex = m_render->style()->zIndex();
-        //kdDebug() << "ElementImpl::prepareMouseEvent storing currentZIndex=" << ev->currentZIndex << endl;
-    }
-
-    if(!m_render->isInline() || !m_render->firstChild() || m_render->isFloating() ) {
-        bool known = m_render->absolutePosition(_tx, _ty);
-	if (known && m_render->containsPoint(_x,_y,_tx,_ty)) {
-            if  ( m_render->style() && !m_render->style()->visiblity() == HIDDEN ) {
-                //if ( positioned )
-                //    kdDebug(6030) << " currentZIndex=" << ev->currentZIndex << " ev->zIndex=" << ev->zIndex << endl;
-                if ( ev->currentZIndex >= ev->zIndex ) {
-                    //kdDebug(6030) << nodeName().string() << " SETTING innerNode " << endl;
-                    ev->innerNode = Node(this);
-                    ev->nodeAbsX = origTx;
-                    ev->nodeAbsY = origTy;
-                    ev->zIndex = ev->currentZIndex;
-                    inside = true;
-                }
-            }
-        }
-    }
-
-    NodeImpl *child = firstChild();
-    while(child != 0) {
-        if(child->prepareMouseEvent(_x, _y, _tx, _ty, ev))
-            inside = true;
-        child = child->nextSibling();
-    }
-
-#ifdef EVENT_DEBUG
-    if(inside) kdDebug( 6030 ) << nodeName().string() << "    --> inside" << endl;
-#endif
-
+    // ### should go away and be done in renderobject
+    RenderStyle* _style = m_render ? m_render->style() : 0;
 #if 0
-    // #############
-    if(inside || mouseInside())
-        if  ( ! (m_render->style() && m_render->style()->visiblity() == HIDDEN) )
-        {
-            // dynamic HTML...
-            // ### mouseEventHandler(ev, inside);
-        }
+    const char* debug;
+    switch(change) {
+    case NoChange: debug = "NoChange";
+        break;
+    case NoInherit: debug= "NoInherit";
+        break;
+    case Inherit: debug = "Inherit";
+        break;
+    case Force: debug = "Force";
+        break;
+    }
+    qDebug("recalcStyle(%d: %s)[%p: %s]", change, debug, this, tagName().string().latin1());
 #endif
+    if ( change >= Inherit || changed() ) {
+        EDisplay oldDisplay = _style ? _style->display() : NONE;
 
-    bool oldinside=mouseInside();
+        int dynamicState = StyleSelector::None;
+        if ( m_render && m_render->mouseInside() )
+            dynamicState |= StyleSelector::Hover;
+        if ( m_focused )
+            dynamicState |= StyleSelector::Focus;
+        if ( m_active )
+            dynamicState |= StyleSelector::Active;
 
-    setMouseInside(inside);
-
-    bool oldactive = active();
-    if ( inside ) {
-	if ( ev->type == MousePress )
-	    m_active = true;
-	else if ( ev->type == MouseRelease )
-	    m_active = false;
-    } else if ( m_active ) {
-	m_active = false;
-    }
-
-
-    if ( (oldinside != inside && m_style->hasHover()) ||
-	 ( oldactive != m_active && m_style->hasActive() ) )
-        applyChanges(true, false);
-
-    // reset previous z index
-    if ( positioned )
-        ev->currentZIndex = oldZIndex;
-
-    return inside;
-}
-
-void ElementImpl::setFocus(bool received)
-{
-    NodeBaseImpl::setFocus(received);
-    applyChanges(true, false);
-}
-
-void ElementImpl::setActive(bool down)
-{
-    NodeBaseImpl::setActive(down);
-    applyChanges(true, false);
-}
-
-khtml::FindSelectionResult ElementImpl::findSelectionNode( int _x, int _y, int _tx, int _ty, DOM::Node & node, int & offset )
-{
-    //kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " _x=" << _x << " _y=" << _y
-    //           << " _tx=" << _tx << " _ty=" << _ty << endl;
-
-    // ######### Duplicated code from mouseEvent
-    // TODO put the code above (getting _tx,_ty) in a common place and call it from here
-
-    if (!m_render) return SelectionPointAfter;
-
-    RenderObject *p = m_render->parent();
-    while( p && p->isAnonymousBox() ) {
-//      kdDebug( 6030 ) << "parent is anonymous!" << endl;
-        // we need to add the offset of the anonymous box
-        _tx += p->xPos();
-        _ty += p->yPos();
-        p = p->parent();
-    }
-
-    if(!m_render->isInline() || !m_render->firstChild() || m_render->isFloating() )
-    {
-        m_render->absolutePosition(_tx, _ty);
-    }
-
-    int off=0, lastOffset=0;
-    DOM::Node nod;
-    DOM::Node lastNode;
-    NodeImpl *child = firstChild();
-    while(child != 0)
-    {
-        khtml::FindSelectionResult pos = child->findSelectionNode(_x, _y, _tx, _ty, nod, off);
-        //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
-        if ( pos == SelectionPointInside ) // perfect match
-        {
-            node = nod;
-            offset = off;
-            //kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " match offset=" << offset << endl;
-            return SelectionPointInside;
-        } else if ( pos == SelectionPointBefore )
-        {
-            //x,y is before this element -> stop here
-            if ( !lastNode.isNull() ) {
-                node = lastNode;
-                offset = lastOffset;
-                //kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before this child -> returning offset=" << offset << endl;
-                return SelectionPointInside;
-            } else {
-                //kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before us -> returning -2" << endl;
-                return SelectionPointBefore;
+        RenderStyle *newStyle = getDocument()->styleSelector()->styleForElement(this, dynamicState);
+        newStyle->ref();
+        StyleChange ch = diff( _style, newStyle );
+        if ( ch != NoChange ) {
+            if (oldDisplay != newStyle->display()) {
+                // ### doesn't this already take care of changing the style
+                // for all children?
+                if (attached()) detach();
+                // ### uuhm, suboptimal. style gets calculated again
+                attach();
+            }
+            if( m_render && newStyle ) {
+                //qDebug("--> setting style on render element bgcolor=%s", newStyle->backgroundColor().name().latin1());
+                m_render->setStyle(newStyle);
             }
         }
-        // SelectionPointAfter -> keep going
-        if ( !nod.isNull() )
-        {
-            lastNode = nod;
-            lastOffset = off;
-        }
-        child = child->nextSibling();
+        newStyle->deref();
+
+        if ( change != Force )
+            change = ch;
     }
-    node = lastNode;
-    offset = lastOffset;
-    return SelectionPointAfter;
+
+    NodeImpl *n;
+    for (n = _first; n; n = n->nextSibling()) {
+// 	    qDebug("    (%p) calling recalcStyle on child %s, change=%d", this, n->isElementNode() ? ((ElementImpl *)n)->tagName().string().latin1() : n->isTextNode() ? "text" : "unknown", change );
+        if ( change >= Inherit || n->isTextNode() ||
+             n->hasChangedChild() || n->changed() )
+            n->recalcStyle( change );
+    }
+
+    setChanged( false );
+    setHasChangedChild( false );
 }
 
 bool ElementImpl::isSelectable() const
@@ -761,10 +398,13 @@ bool ElementImpl::childAllowed( NodeImpl *newChild )
         return false;
 
     // ### check xml element allowedness according to DTD
-    if (id() && newChild->id()) // if one if these is 0 then it is an xml element and we allow it anyway
-        return checkChild(id(), newChild->id());
+
+    // If either this node or the other node is an XML element node, allow regardless (we don't do DTD checks for XML
+    // yet)
+    if (isXMLElementNode() || newChild->isXMLElementNode())
+	return true;
     else
-        return true;
+	return checkChild(id(), newChild->id());
 }
 
 bool ElementImpl::childTypeAllowed( unsigned short type )
@@ -787,80 +427,115 @@ void ElementImpl::createDecl( )
 {
     m_styleDecls = new CSSStyleDeclarationImpl(0);
     m_styleDecls->ref();
-    m_styleDecls->setParent(ownerDocument()->elementSheet());
+    m_styleDecls->setParent(getDocument()->elementSheet());
     m_styleDecls->setNode(this);
-    m_styleDecls->setStrictParsing( ownerDocument()->parseMode() == DocumentImpl::Strict );
+    m_styleDecls->setStrictParsing( getDocument()->parseMode() == DocumentImpl::Strict );
 }
 
-void ElementImpl::dispatchAttrRemovalEvent(NodeImpl *attr)
+void ElementImpl::dispatchAttrRemovalEvent(AttributeImpl *attr)
 {
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
-    int exceptioncode;
-    AttrImpl *att = static_cast<AttrImpl*>(attr);
-    dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,att->value(),
-		  att->value(),att->name(),MutationEvent::REMOVAL),exceptioncode);
+#ifndef APPLE_CHANGES
+    int exceptioncode = 0;
+#endif /* not APPLE_CHANGES */
+//     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
+// 		  attr->value(), getDocument()->attrName(attr->id()),MutationEvent::REMOVAL),exceptioncode);
 }
 
-void ElementImpl::dispatchAttrAdditionEvent(NodeImpl *attr)
+void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
 {
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
-    int exceptioncode;
-    AttrImpl *att = static_cast<AttrImpl*>(attr);
-    dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,att->value(),
-		  att->value(),att->name(),MutationEvent::ADDITION),exceptioncode);
+#ifndef APPLE_CHANGES
+    int exceptioncode = 0;
+#endif
+//     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
+//                                         attr->value(),getDocument()->attrName(attr->id()),MutationEvent::ADDITION),exceptioncode);
 }
+
+#ifndef NDEBUG
+void ElementImpl::dump(QTextStream *stream, QString ind) const
+{
+    if (namedAttrMap) {
+        for (uint i = 0; i < namedAttrMap->length(); i++) {
+            AttributeImpl *attr = namedAttrMap->attributeItem(i);
+            *stream << " " << DOMString(getDocument()->attrName(attr->id())).string().ascii()
+                    << "=\"" << DOMString(attr->value()).string().ascii() << "\"";
+        }
+    }
+
+    NodeBaseImpl::dump(stream,ind);
+}
+#endif
 
 // -------------------------------------------------------------------------
 
-XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_name) : ElementImpl(doc)
+XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_tagName)
+    : ElementImpl(doc)
 {
-    m_name = _name;
-    if (m_name)
-        m_name->ref();
-    m_namespaceURI = 0;
-    m_id = ownerDocument()->elementId(_name);
+    m_id = doc->document()->tagId(0 /* no namespace */, _tagName,  false /* allocate */);
 }
 
-XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_name, DOMStringImpl *_namespaceURI) : ElementImpl(doc)
+XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_qualifiedName, DOMStringImpl *_namespaceURI)
+    : ElementImpl(doc)
 {
-    m_name = _name;
-    if (m_name)
-        m_name->ref();
-    m_namespaceURI = _namespaceURI;
-    if (m_namespaceURI)
-        m_namespaceURI->ref();
-    m_id = ownerDocument()->elementId(_name);
+    int colonpos = -1;
+    for (uint i = 0; i < _qualifiedName->l; ++i)
+        if (_qualifiedName->s[i] == ':') {
+            colonpos = i;
+            break;
+        }
+
+    if (colonpos >= 0) {
+        // we have a prefix
+        DOMStringImpl* localName = _qualifiedName->copy();
+        localName->ref();
+        localName->remove(0,colonpos+1);
+        m_id = doc->document()->tagId(_namespaceURI, localName, false /* allocate */);
+        localName->deref();
+        m_prefix = _qualifiedName->copy();
+        m_prefix->ref();
+        m_prefix->truncate(colonpos);
+    }
+    else {
+        // no prefix
+        m_id = doc->document()->tagId(_namespaceURI, _qualifiedName, false /* allocate */);
+        m_prefix = 0;
+    }
 }
 
 XMLElementImpl::~XMLElementImpl()
 {
-    if (m_name)
-        m_name->deref();
-    if (m_namespaceURI)
-        m_namespaceURI->deref();
 }
 
-const DOMString XMLElementImpl::nodeName() const
+DOMString XMLElementImpl::localName() const
 {
-    return m_name;
-}
-
-DOMString XMLElementImpl::namespaceURI() const
-{
-    return m_namespaceURI;
+    return getDocument()->tagName(m_id);
 }
 
 
-bool XMLElementImpl::isXMLElementNode() const
+NodeImpl *XMLElementImpl::cloneNode ( bool deep )
 {
-    return true;
+    // ### we loose namespace here FIXME
+    // should pass id around
+    XMLElementImpl *clone = new XMLElementImpl(docPtr(), getDocument()->tagName(m_id).implementation());
+    clone->m_id = m_id;
+
+    // clone attributes
+    if(namedAttrMap)
+        *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
+
+    if (deep)
+        cloneChildNodes(clone);
+
+    return clone;
 }
 
 // -------------------------------------------------------------------------
 
-NamedAttrMapImpl::NamedAttrMapImpl(ElementImpl *e) : element(e)
+NamedAttrMapImpl::NamedAttrMapImpl(ElementImpl *e)
+    : element(e)
 {
     attrs = 0;
     len = 0;
@@ -868,294 +543,131 @@ NamedAttrMapImpl::NamedAttrMapImpl(ElementImpl *e) : element(e)
 
 NamedAttrMapImpl::~NamedAttrMapImpl()
 {
-    clearAttrs();
+    clearAttributes();
 }
 
-NamedAttrMapImpl &NamedAttrMapImpl::operator =(const NamedAttrMapImpl &other)
+
+AttrImpl *NamedAttrMapImpl::getNamedItem ( NodeImpl::Id id ) const
 {
-    // clone all attributes in the other map, but attach to our element
-    if (!element)
-        return *this;
+    AttributeImpl* a = getAttributeItem(id);
+    if (!a) return 0;
 
-    clearAttrs();
-    len = other.len;
-    attrs = new AttrImpl* [len];
-    uint i;
+    if (!a->attrImpl())
+        a->allocateImpl(element);
 
-    // first initialize attrs vector, then call parseAttribute on it
-    // this allows parseAttribute to use getAttribute
-    for (i = 0; i < len; i++) {
-        int exceptioncode; // ### propogate
-        attrs[i] = static_cast<AttrImpl*>(other.attrs[i]->cloneNode(true,exceptioncode));
-        attrs[i]->_element = element;
-        attrs[i]->ref();
+    return a->attrImpl();
+}
+
+Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
+{
+    if (!element) {
+        exceptioncode = DOMException::NOT_FOUND_ERR;
+        return 0;
     }
 
-    for(i = 0; i < len; i++)
-        element->parseAttribute(attrs[i]);
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return 0;
+    }
 
-    element->setChanged(true);
-    return *this;
+    // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
+    if (arg->getDocument() != element->getDocument()) {
+        exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
+        return 0;
+    }
+
+    // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
+    if (!arg->isAttributeNode()) {
+        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+    AttrImpl *attr = static_cast<AttrImpl*>(arg);
+
+    // INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element object.
+    // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
+    if (attr->ownerElement()) {
+        exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
+        return 0;
+    }
+
+    AttributeImpl* a = attr->attrImpl();
+    AttributeImpl* old = getAttributeItem(a->id());
+    if (old == a) return arg; // we know about it already
+
+    // ### slightly inefficient - resizes attribute array twice.
+    Node r;
+    if (old) {
+        if (!old->attrImpl())
+            old->allocateImpl(element);
+        r = old->_impl;
+        removeAttribute(a->id());
+    }
+    addAttribute(a);
+    return r;
 }
 
-unsigned long NamedAttrMapImpl::length(int &/*exceptioncode*/) const
+// The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
+// if the attribute is not found - David
+Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
 {
-    return length();
+    // ### should this really be raised when the attribute to remove isn't there at all?
+    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return Node();
+    }
+
+    AttributeImpl* a = getAttributeItem(id);
+    if (!a) return Node();
+
+    if (!a->attrImpl())  a->allocateImpl(element);
+    Node r(a->attrImpl());
+    removeAttribute(id);
+    return r;
 }
 
-unsigned long NamedAttrMapImpl::length() const
+AttrImpl *NamedAttrMapImpl::item ( unsigned long index ) const
+{
+    if (index >= len)
+        return 0;
+
+    if (!attrs[index]->attrImpl())
+        attrs[index]->allocateImpl(element);
+
+    return attrs[index]->attrImpl();
+}
+
+unsigned long NamedAttrMapImpl::length(  ) const
 {
     return len;
 }
 
-NodeImpl *NamedAttrMapImpl::getNamedItem ( const DOMString &name, int &/*exceptioncode*/ ) const
+AttributeImpl* NamedAttrMapImpl::getAttributeItem(NodeImpl::Id id) const
 {
-    return getNamedItem(name);
-}
-
-NodeImpl *NamedAttrMapImpl::getNamedItem ( const DOMString &name ) const
-{
-    uint i;
-    for (i = 0; i < len; i++) {
-        if (!strcasecmp(attrs[i]->name(),name))
+    for (unsigned long i = 0; i < len; ++i)
+        if (attrs[i]->id() == id)
             return attrs[i];
-    }
 
     return 0;
 }
 
-AttrImpl *NamedAttrMapImpl::getIdItem ( int id ) const
+NodeImpl::Id NamedAttrMapImpl::mapId(const DOMString& namespaceURI,
+                                     const DOMString& localName, bool readonly)
 {
-    uint i;
-    for (i = 0; i < len; i++) {
-        if (attrs[i]->attrId == id)
-            return attrs[i];
-    }
-
-    return 0;
+    assert(element);
+    if (!element) return 0;
+    return element->getDocument()->attrId(namespaceURI.implementation(),
+                                            localName.implementation(), readonly);
 }
 
-
-Node NamedAttrMapImpl::setNamedItem ( const Node &arg, int &exceptioncode )
-{
-    // ### check for invalid chars in name ?
-    // ### check same document
-    exceptioncode = 0;
-    if (!element) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
-    }
-    element->checkReadOnly();
-
-    if (arg.nodeType() != Node::ATTRIBUTE_NODE) {
-        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-        return 0;
-    }
-
-    AttrImpl *attr = static_cast<AttrImpl*>(arg.handle());
-
-    if (attr->_element) {
-        exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
-        return 0;
-    }
-
-    uint i;
-    for (i = 0; i < len; i++) {
-        // ### for XML attributes are case sensitive (?) - check this elsewhere also
-        if (!strcasecmp(attrs[i]->name(),attr->name())) {
-            // attribute with this id already in list
-            Attr oldAttr = attrs[i];
-            attrs[i]->_element = 0;
-            attrs[i]->deref();
-            attrs[i] = attr;
-            attrs[i]->ref();
-            attr->_element = element;
-            element->parseAttribute(attr);
-            element->setChanged(true);
-            element->dispatchAttrRemovalEvent(oldAttr.handle());
-            element->dispatchAttrAdditionEvent(attrs[i]);
-	    element->dispatchSubtreeModifiedEvent();
-            return oldAttr;
-        }
-    }
-
-    // attribute with this name not yet in list
-    AttrImpl **newAttrs = new AttrImpl* [len+1];
-    if (attrs) {
-      for (i = 0; i < len; i++)
-        newAttrs[i] = attrs[i];
-      delete [] attrs;
-    }
-    attrs = newAttrs;
-    attrs[len] = attr;
-    attr->ref();
-    len++;
-    attr->_element = element;
-    element->parseAttribute(attr);
-    element->setChanged(true);
-    element->dispatchAttrAdditionEvent(attr);
-    element->dispatchSubtreeModifiedEvent();
-    return 0;
-}
-
-Attr NamedAttrMapImpl::setIdItem ( AttrImpl *attr, int &exceptioncode )
-{
-    exceptioncode = 0;
-    if (!element) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
-    }
-    element->checkReadOnly();
-
-    if (attr->_element) {
-        exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
-        return 0;
-    }
-
-    uint i;
-    for (i = 0; i < len; i++) {
-        if (attrs[i]->attrId == attr->attrId) {
-            // attribute with this id already in list
-            Attr oldAttr = attrs[i];
-            attrs[i]->_element = 0;
-            attrs[i]->deref();
-            attrs[i] = attr;
-            attrs[i]->ref();
-            attr->_element = element;
-            element->parseAttribute(attr);
-            element->setChanged(true);
-            element->dispatchAttrRemovalEvent(oldAttr.handle());
-            element->dispatchAttrAdditionEvent(attrs[i]);
-            element->dispatchSubtreeModifiedEvent();
-            return oldAttr; // ### check this gets deleted if ref = 0 and it's not assigned to anything
-        }
-    }
-
-    // attribute with this id not yet in list
-    AttrImpl **newAttrs = new AttrImpl* [len+1];
-    if (attrs) {
-      for (i = 0; i < len; i++)
-        newAttrs[i] = attrs[i];
-      delete [] attrs;
-    }
-    attrs = newAttrs;
-    attrs[len] = attr;
-    attr->ref();
-    len++;
-    attr->_element = element;
-    element->parseAttribute(attr);
-    element->setChanged(true);
-    element->dispatchAttrAdditionEvent(attr);
-    element->dispatchSubtreeModifiedEvent();
-    return 0;
-}
-
-Node NamedAttrMapImpl::removeNamedItem ( const DOMString &name, int &exceptioncode )
-{
-    if (element)
-        element->checkReadOnly();
-
-    if (!attrs) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
-    }
-
-    uint i;
-    int found = -1;
-    for (i = 0; i < len && found < 0; i++) {
-        if (!strcasecmp(attrs[i]->name(),name))
-            found = i;
-    }
-    if (found < 0) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
-    }
-
-    Attr ret = attrs[found];
-    attrs[found]->_element = 0;
-    attrs[found]->deref();
-    if (len == 1) {
-        delete [] attrs;
-        attrs = 0;
-        len = 0;
-    } else {
-        AttrImpl **newAttrs = new AttrImpl* [len-1];
-        for (i = 0; i < uint(found); i++)
-            newAttrs[i] = attrs[i];
-        len--;
-        for (; i < len; i++)
-            newAttrs[i] = attrs[i+1];
-        delete [] attrs;
-        attrs = newAttrs;
-    }
-    DOMString nullStr;
-    AttrImpl a(name,nullStr,element->docPtr());
-    element->parseAttribute(&a);
-    element->setChanged(true);
-    element->dispatchAttrRemovalEvent(ret.handle());
-    element->dispatchSubtreeModifiedEvent();
-    return ret;
-}
-
-Attr NamedAttrMapImpl::removeIdItem ( int id )
-{
-    if (!attrs)
-        return 0;
-
-    uint i;
-    int found = -1;
-    for (i = 0; i < len && found < 0; i++) {
-        if (attrs[i]->attrId == id)
-            found = i;
-    }
-    if (found < 0)
-        return 0;
-
-    Attr ret = attrs[found];
-    attrs[found]->_element = 0;
-    attrs[found]->deref();
-    if (len == 1) {
-        delete [] attrs;
-        attrs = 0;
-        len = 0;
-    } else {
-        AttrImpl **newAttrs = new AttrImpl* [len-1];
-        for (i = 0; i < uint(found); i++)
-            newAttrs[i] = attrs[i];
-        len--;
-        for (; i < len; i++)
-            newAttrs[i] = attrs[i+1];
-        delete [] attrs;
-        attrs = newAttrs;
-    }
-    DOMString nullStr;
-    AttrImpl a(id,nullStr,element->docPtr());
-    element->parseAttribute(&a);
-    element->setChanged(true);
-    element->dispatchAttrRemovalEvent(ret.handle());
-    element->dispatchSubtreeModifiedEvent();
-    return ret;
-}
-
-NodeImpl *NamedAttrMapImpl::item ( unsigned long index, int &/*exceptioncode*/ ) const
-{
-    return item(index);
-}
-
-NodeImpl *NamedAttrMapImpl::item ( unsigned long index ) const
-{
-    if (index >= len)
-        return 0;
-    else
-        return attrs[index];
-}
-
-void NamedAttrMapImpl::clearAttrs()
+void NamedAttrMapImpl::clearAttributes()
 {
     if (attrs) {
         uint i;
         for (i = 0; i < len; i++) {
-            attrs[i]->_element = 0;
+            if (attrs[i]->_impl)
+                attrs[i]->_impl->m_element = 0;
             attrs[i]->deref();
         }
         delete [] attrs;
@@ -1164,67 +676,102 @@ void NamedAttrMapImpl::clearAttrs()
     len = 0;
 }
 
-void NamedAttrMapImpl::insertAttr( AttrImpl *a )
-{
-    // only add if not already there
-    if( !a->attrId || !getIdItem(a->attrId)) {
-        AttrImpl** nList = new AttrImpl* [ len+1 ];
-        if(attrs) {
-            for(uint i = 0; i < len; i++)
-                nList[i] = attrs[i];
-            delete [] attrs;
-        }
-        attrs = nList;
-        attrs[len++] = a;
-        a->ref();
-    }
-}
-
-Attr NamedAttrMapImpl::removeAttr( AttrImpl *oldAttr, int &exceptioncode )
-{
-    exceptioncode = 0;
-    uint i;
-    for (i = 0; i < len; i++) {
-        if (attrs[i] == oldAttr) {
-            Attr ret = attrs[i];
-            attrs[i]->_element = 0;
-            attrs[i]->deref();
-
-            if (len == 1) {
-                delete [] attrs;
-                attrs = 0;
-                len = 0;
-            }
-            else {
-                AttrImpl **newAttrs = new AttrImpl* [len-1];
-                uint ni;
-                for (ni = 0; ni < i; ni++)
-                    newAttrs[ni] = attrs[ni];
-                len--;
-                for (; ni < len; ni++)
-                    newAttrs[ni] = attrs[ni+1];
-                delete attrs;
-                attrs = newAttrs;
-            }
-
-            AttrImpl a = oldAttr->attrId ? AttrImpl(oldAttr->attrId,"",element->docPtr()) :
-                                       AttrImpl(oldAttr->name(),"",element->docPtr());
-            element->parseAttribute(&a);
-            element->setChanged(true);
-            element->dispatchAttrRemovalEvent(ret.handle());
-            element->dispatchSubtreeModifiedEvent();
-            return ret;
-        }
-    }
-    exceptioncode = DOMException::NOT_FOUND_ERR;
-    return 0;
-
-}
-
 void NamedAttrMapImpl::detachFromElement()
 {
     // we allow a NamedAttrMapImpl w/o an element in case someone still has a reference
     // to if after the element gets deleted - but the map is now invalid
     element = 0;
-    clearAttrs();
+    clearAttributes();
 }
+
+NamedAttrMapImpl& NamedAttrMapImpl::operator=(const NamedAttrMapImpl& other)
+{
+    // clone all attributes in the other map, but attach to our element
+    if (!element) return *this;
+
+    clearAttributes();
+    len = other.len;
+    attrs = new AttributeImpl* [len];
+
+    // first initialize attrs vector, then call parseAttribute on it
+    // this allows parseAttribute to use getAttribute
+    for (uint i = 0; i < len; i++) {
+        attrs[i] = new AttributeImpl(other.attrs[i]->id(), other.attrs[i]->val());
+        attrs[i]->ref();
+    }
+
+    for(uint i = 0; i < len; i++)
+        element->parseAttribute(attrs[i]);
+
+    return *this;
+}
+
+void NamedAttrMapImpl::addAttribute(AttributeImpl *attr)
+{
+    // Add the attribute tot he list
+    AttributeImpl **newAttrs = new AttributeImpl* [len+1];
+    if (attrs) {
+      for (uint i = 0; i < len; i++)
+        newAttrs[i] = attrs[i];
+      delete [] attrs;
+    }
+    attrs = newAttrs;
+    attrs[len++] = attr;
+    attr->ref();
+
+    // Notify the element that the attribute has been added, and dispatch appropriate mutation events
+    // Note that element may be null here if we are called from insertAttr() during parsing
+    if (element) {
+        element->parseAttribute(attr);
+        element->dispatchAttrAdditionEvent(attr);
+        element->dispatchSubtreeModifiedEvent();
+    }
+}
+
+void NamedAttrMapImpl::removeAttribute(NodeImpl::Id id)
+{
+    unsigned long index = len+1;
+    for (unsigned long i = 0; i < len; ++i)
+        if (attrs[i]->id() == id) {
+            index = i;
+            break;
+        }
+
+    if (index >= len) return;
+
+    // Remove the attribute from the list
+    AttributeImpl* attr = attrs[index];
+    if (attrs[index]->_impl)
+        attrs[index]->_impl->m_element = 0;
+    if (len == 1) {
+        delete [] attrs;
+        attrs = 0;
+        len = 0;
+    }
+    else {
+        AttributeImpl **newAttrs = new AttributeImpl* [len-1];
+        uint i;
+        for (i = 0; i < uint(index); i++)
+            newAttrs[i] = attrs[i];
+        len--;
+        for (; i < len; i++)
+            newAttrs[i] = attrs[i+1];
+        delete [] attrs;
+        attrs = newAttrs;
+    }
+
+    // Notify the element that the attribute has been removed
+    // dispatch appropriate mutation events
+    if (attr->_value) {
+        attr->_value->deref();
+        attr->_value = 0;
+        if (element)
+            element->parseAttribute(attr);
+    }
+    if (element) {
+        element->dispatchAttrRemovalEvent(attr);
+        element->dispatchSubtreeModifiedEvent();
+    }
+    attr->deref();
+}
+

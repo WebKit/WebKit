@@ -54,3 +54,30 @@ QString KMimeType::name() const
     }
     return *tempQString;
 }
+
+QString KMimeType::comment() const
+{
+    _logNotYetImplemented();
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+    return *tempQString;
+}
+
+
+KMimeType::Ptr KMimeType::mimeType(QString serviceType)
+{
+    _logNotYetImplemented();
+    return KMimeType::Ptr();
+}
+
+
+QString KMimeType::defaultMimeType()
+{
+    _logNotYetImplemented();
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+    return *tempQString;
+}
+

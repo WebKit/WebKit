@@ -37,6 +37,7 @@ namespace DOM {
 
 class HTMLElementImpl;
 class DOMString;
+class HTMLCollection;
 
 /**
  * All HTML element interfaces derive from this class. Elements that
@@ -168,7 +169,7 @@ public:
      * children.
      */
     void setInnerHTML( const DOMString &html );
-    
+
     /**
      * The text contained in this element.
      * This function is not part of the DOM specifications as defined by the w3c.
@@ -176,19 +177,25 @@ public:
     DOMString innerText() const;
 
     /**
-     * Set the text content of this node. 
+     * Set the text content of this node.
      *
      * @exception DOMException
      * NO_MODIFICATION_ALLOWED_ERR: Raised if there is the element does not allow
      * children.
      */
     void setInnerText( const DOMString &text );
-    
+
+    /**
+     * Retrieves a collection of nodes that are direct descendants of this node.
+     * IE-specific extension.
+     */
+    HTMLCollection children() const;
+
     /*
      * @internal
      */
     void removeCSSProperty( const DOMString& property );
-    
+
     /*
      * @internal
      */

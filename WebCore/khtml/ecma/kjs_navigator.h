@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
@@ -22,21 +23,22 @@
 
 #include <kjs/object.h>
 
-#include "kjs_binding.h"
-
-class KHTMLView;
 class KHTMLPart;
 
 namespace KJS {
 
-  class Navigator : public HostImp {
+  class Navigator : public ObjectImp {
   public:
-    Navigator(KHTMLPart *p) : part(p) { }
-    virtual KJSO get(const UString &p) const;
-    virtual bool hasProperty(const UString &p, bool recursive) const;
-    virtual String toString() const;
+    Navigator(ExecState *exec, KHTMLPart *p);
+    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { AppCodeName, AppName, AppVersion, Language, UserAgent, Platform,
+           _Plugins, _MimeTypes, Product, Vendor, JavaEnabled };
+    KHTMLPart *part() const { return m_part; }
   private:
-    KHTMLPart *part;
+    KHTMLPart *m_part;
   };
 }; // namespace
 

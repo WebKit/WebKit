@@ -28,8 +28,6 @@
 // qt includes and classes
 #include <qscrollview.h>
 
-template<class C> class QList;
-
 class QPainter;
 class QRect;
 
@@ -40,6 +38,7 @@ namespace DOM {
     class HTMLTitleElementImpl;
     class HTMLGenericFormElementImpl;
     class HTMLFormElementImpl;
+    class HTMLAnchorElementImpl;
     class Range;
     class NodeImpl;
     class CSSProperty;
@@ -50,7 +49,10 @@ namespace khtml {
     class RenderRoot;
     class RenderStyle;
     class RenderLineEdit;
-    void applyRule(RenderStyle *style, DOM::CSSProperty *prop, DOM::ElementImpl *e);
+    class RenderPartObject;
+    class RenderWidget;
+    class CSSStyleSelector;
+    void applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::ElementImpl *e);
 };
 
 #ifdef APPLE_CHANGES
@@ -60,7 +62,7 @@ class KHTMLPart;
 class KHTMLViewPrivate;
 
 /**
- * Render and display HTML in a @ref QScrollView.
+ * Renders and displays HTML in a @ref QScrollView.
  *
  * Suitable for use as an application's main view.
  **/
@@ -69,24 +71,28 @@ class KHTMLView : public QScrollView
     Q_OBJECT
 
     friend class DOM::HTMLDocumentImpl;
-    friend class DOM::HTMLElementImpl;
     friend class DOM::HTMLTitleElementImpl;
-    friend class KHTMLPart;
-    friend class khtml::RenderRoot;
     friend class DOM::HTMLGenericFormElementImpl;
     friend class DOM::HTMLFormElementImpl;
+    friend class DOM::HTMLAnchorElementImpl;
+    friend class KHTMLPart;
+    friend class khtml::RenderRoot;
+    friend class khtml::RenderObject;
     friend class khtml::RenderLineEdit;
+    friend class khtml::RenderPartObject;
+    friend class khtml::RenderWidget;
+    friend class khtml::CSSStyleSelector;
     friend void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::ElementImpl *e);
 
 public:
     /**
-     * Construct a @ref KHTMLView.
+     * Constructs a KHTMLView.
      */
     KHTMLView( KHTMLPart *part, QWidget *parent, const char *name=0 );
     virtual ~KHTMLView();
 
     /**
-     * Retrieve a pointer to the @ref KHTMLPart that is
+     * Returns a pointer to the KHTMLPart that is
      * rendering the page.
      **/
     KHTMLPart *part() const { return m_part; }
@@ -94,84 +100,58 @@ public:
     int frameWidth() const { return _width; }
 
     /**
-     * BCI: This function is provided for compatibility reasons only and 
-     * will be removed in KDE3.0.
-     * use sendEvent(view, Key_Tab) instead.
-     * Move the view towards the next link and
-     * draw a cursor around it
-     **/
-    bool gotoNextLink();
-
-    /**
-     * BCI: This function is provided for compatibility reasons only and 
-     * will be removed in KDE3.0
-     * use sendEvent(view, Key_BackTab) instead.
-     * Move the view towards the next link and
-     * draw a cursor around it
-     **/
-    bool gotoPrevLink();
-
-    /**
-     * BCI: This function is provided for compatibility reasons only and 
-     * will be removed in KDE3.0
-     * use sendEvent(view, Key_Return) instead.
-     * visualize that the item under the cursor
-     * has been pressed (true) or released(false)
+     * Sets a margin in x direction.
      */
-    void toggleActLink(bool);
+    void setMarginWidth(int x);
 
     /**
-     * Set a margin in x direction.
-     */
-    void setMarginWidth(int x) { _marginWidth = x; }
-
-    /**
-     * Retrieve the margin width.
+     * Returns the margin width.
      *
      * A return value of -1 means the default value will be used.
      */
     int marginWidth() const { return _marginWidth; }
 
     /*
-     * Set a margin in y direction.
+     * Sets a margin in y direction.
      */
-    void setMarginHeight(int y) { _marginHeight = y; }
+    void setMarginHeight(int y);
 
-    /*
-     * Retrieve the margin height.
+    /**
+     * Returns the margin height.
      *
      * A return value of -1 means the default value will be used.
      */
     int marginHeight() { return _marginHeight; }
 
-    /*
-     * Set vertical scrollbar mode. Reimplemented for internal reasons.
+    /**
+     * Sets verticals scrollbar mode. Reimplemented for internal reasons.
      */
     virtual void setVScrollBarMode ( ScrollBarMode mode );
 
-    /*
-     * Set horizontal scrollbar mode. Reimplemented for internal reasons.
+    /**
+     * Sets horizontal scrollbar mode. Reimplemented for internal reasons.
      */
     virtual void setHScrollBarMode ( ScrollBarMode mode );
 
     /**
-     * Print the HTML document.
-     **/
+     * Overrides the scrollbar mode.
+     */
+    void forceHScrollBarMode( ScrollBarMode mode );
+
+    /**
+     * Overrides the scrollbar mode.
+     */
+    void forceVScrollBarMode( ScrollBarMode mode );
+
+    /**
+     * Prints the HTML document.
+     */
     void print();
 
     /**
-     * Paint the HTML document to a QPainter.
-     * The document will be scaled to match the width of
-     * rc and clipped to fit in the height.
-     * yOff determines the vertical offset in the document to start with.
-     * more, if nonzero will be set to true if the documents extends
-     * beyond the rc or false if everything below yOff was painted.
-     **/
-    void paint(QPainter *p, const QRect &rc, int yOff = 0, bool *more = 0);
-
-    void layout(bool force = false);
-
-    static const QList<KHTMLView> *viewList() { return lstViews; }
+     * ensure the display is up to date
+     */
+    void layout();
 
 signals:
     void cleared();
@@ -187,53 +167,66 @@ public:
     virtual void hideEvent ( QHideEvent *);
     virtual bool focusNextPrevChild( bool next );
     virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
+    virtual void drawContents( QPainter* );
 
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusOutEvent( QFocusEvent * );
-
-    /**
-     * This function emits the @ref doubleClick() signal when the user
-     * double clicks a <a href=...> tag.
-     */
     virtual void viewportMouseDoubleClickEvent( QMouseEvent * );
-
-    /**
-     * This function is called when the user moves the mouse.
-     */
     virtual void viewportMouseMoveEvent(QMouseEvent *);
-
-    /**
-     * this function is called when the user releases a mouse button.
-     */
     virtual void viewportMouseReleaseEvent(QMouseEvent *);
-
+#ifndef QT_NO_WHEELEVENT
     virtual void viewportWheelEvent(QWheelEvent*);
+#endif
 
     void keyPressEvent( QKeyEvent *_ke );
-    void keyReleaseEvent( QKeyEvent *_ke );
-
-    /**
-     * Scroll the view
-     */
+    void keyReleaseEvent ( QKeyEvent *_ke );
+    void contentsContextMenuEvent ( QContextMenuEvent *_ce );
     void doAutoScroll();
+
+    void timerEvent ( QTimerEvent * );
 
 protected slots:
     void slotPaletteChanged();
+    void slotScrollBarMoved();
 
 private:
+
+    void resetCursor();
+
+    void scheduleRelayout();
+    
+    void scheduleRepaint(int x, int y, int w, int h);
+
     /**
-     * move the view towards the given rectangle be up to one page.
-     * return true if reached.
+     * Paints the HTML document to a QPainter.
+     * The document will be scaled to match the width of
+     * rc and clipped to fit in the height.
+     * yOff determines the vertical offset in the document to start with.
+     * more, if nonzero will be set to true if the documents extends
+     * beyond the rc or false if everything below yOff was painted.
+     **/
+    void paint(QPainter *p, const QRect &rc, int yOff = 0, bool *more = 0);
+
+    /**
+     * Get/set the CSS Media Type.
+     *
+     * Media type is set to "screen" for on-screen rendering and "print"
+     * during printing. Other media types lack the proper support in the
+     * renderer and are not activated. The DOM tree and the parser itself,
+     * however, properly handle other media types. To make them actually work
+     * you only need to enable the media type in the view and if necessary
+     * add the media type dependent changes to the renderer.
      */
+    void setMediaType( const QString &medium );
+    QString mediaType() const;
+
     bool scrollTo(const QRect &);
 
-    /**
-     * move the view towards the next node
-     * or the last node from this one.
-     */
-    bool gotoLink(bool);
+    void focusNextPrevNode(bool next);
 
     void useSlowRepaints();
+
+    void setIgnoreWheelEvents(bool e);
 
     void init();
 
@@ -244,17 +237,17 @@ private:
     QStringList formCompletionItems(const QString &name) const;
     void addFormCompletionItem(const QString &name, const QString &value);
 
-    void dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool cancelable,
+    bool dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool cancelable,
 			    int detail,QMouseEvent *_mouse, bool setUnder,
 			    int mouseEventType);
 
+    void setIgnoreEvents(bool ignore);
+    bool ignoreEvents();
+    
+    void complete();
+
     // ------------------------------------- member variables ------------------------------------
  private:
-    /**
-     * List of all open browsers.
-     */
-    static QList<KHTMLView> *lstViews;
-
     int _width;
     int _height;
 
@@ -263,6 +256,8 @@ private:
 
     KHTMLPart *m_part;
     KHTMLViewPrivate *d;
+
+    QString m_medium;   // media type
 };
 
 #endif

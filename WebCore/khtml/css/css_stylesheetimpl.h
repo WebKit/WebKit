@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
@@ -23,12 +23,11 @@
 #ifndef _CSS_css_stylesheetimpl_h_
 #define _CSS_css_stylesheetimpl_h_
 
-#include <qlist.h>
 #include <qvaluelist.h>
+#include <qptrlist.h>
 
-#include <dom_string.h>
-
-#include "cssparser.h"
+#include "dom/dom_string.h"
+#include "css/cssparser.h"
 #include "misc/loader_client.h"
 
 namespace khtml {
@@ -51,18 +50,18 @@ class DocumentImpl;
 class StyleSheetImpl : public StyleListImpl
 {
 public:
-    StyleSheetImpl(DOM::NodeImpl *ownerNode, DOM::DOMString href = 0);
-    StyleSheetImpl(StyleSheetImpl *parentSheet, DOM::DOMString href = 0);
-    StyleSheetImpl(StyleBaseImpl *owner, DOM::DOMString href  = 0);
-    StyleSheetImpl(khtml::CachedCSSStyleSheet *cached, DOM::DOMString href  = 0);
+    StyleSheetImpl(DOM::NodeImpl *ownerNode, DOM::DOMString href = DOMString());
+    StyleSheetImpl(StyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
+    StyleSheetImpl(StyleBaseImpl *owner, DOM::DOMString href  = DOMString());
+    StyleSheetImpl(khtml::CachedCSSStyleSheet *cached, DOM::DOMString href  = DOMString());
 
     virtual ~StyleSheetImpl();
 
-    virtual bool isStyleSheet() { return true; }
+    virtual bool isStyleSheet() const { return true; }
 
     virtual bool deleteMe();
 
-    virtual DOM::DOMString type() const { return 0; }
+    virtual DOM::DOMString type() const { return DOMString(); }
 
     bool disabled() const;
     void setDisabled( bool );
@@ -72,6 +71,7 @@ public:
     DOM::DOMString href() const;
     DOM::DOMString title() const;
     MediaListImpl *media() const;
+    void setMedia( MediaListImpl *media );
 
 protected:
     DOM::NodeImpl *m_parentNode;
@@ -84,16 +84,16 @@ protected:
 class CSSStyleSheetImpl : public StyleSheetImpl
 {
 public:
-    CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = 0, bool _implicit = false);
-    CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOM::DOMString href = 0);
-    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOM::DOMString href  = 0);
+    CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString(), bool _implicit = false);
+    CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
+    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOM::DOMString href = DOMString());
     // clone from a cached version of the sheet
     CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig);
     CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig);
 
     virtual ~CSSStyleSheetImpl();
 
-    virtual bool isCSSStyleSheet() { return true; }
+    virtual bool isCSSStyleSheet() const { return true; }
 
     virtual DOM::DOMString type() const { return "text/css"; }
 
@@ -131,19 +131,19 @@ public:
     void add(StyleSheetImpl* s);
     void remove(StyleSheetImpl* s);
 
-    QList<StyleSheetImpl> styleSheets;
+    QPtrList<StyleSheetImpl> styleSheets;
 };
 
 // ----------------------------------------------------------------------------
 
-// ### This has different methods from the MediaList class because MediaList has
-// been adjusted to fit to the spec - this class needs to be updated
-
 class MediaListImpl : public StyleBaseImpl
 {
 public:
-    MediaListImpl(CSSStyleSheetImpl *parentSheet);
-    MediaListImpl(CSSRuleImpl *parentRule);
+    MediaListImpl( CSSStyleSheetImpl *parentSheet );
+    MediaListImpl( CSSStyleSheetImpl *parentSheet,
+                   const DOM::DOMString &media );
+    MediaListImpl( CSSRuleImpl *parentRule );
+    MediaListImpl( CSSRuleImpl *parentRule, const DOM::DOMString &media );
 
     virtual ~MediaListImpl();
 
@@ -152,12 +152,22 @@ public:
     CSSStyleSheetImpl *parentStyleSheet() const;
     CSSRuleImpl *parentRule() const;
     unsigned long length() const;
-    DOM::DOMString item ( unsigned long index );
-    void del ( const DOM::DOMString &oldMedium );
-    void append ( const DOM::DOMString &newMedium );
+    DOM::DOMString item ( unsigned long index ) const;
+    void deleteMedium ( const DOM::DOMString &oldMedium );
+    void appendMedium ( const DOM::DOMString &newMedium );
 
     DOM::DOMString mediaText() const;
     void setMediaText(const DOM::DOMString &value);
+
+    /**
+     * Check if the list contains either the requested medium, or the
+     * catch-all "all" media type. Returns true when found, false otherwise.
+     * Since not specifying media types should be treated as "all" according
+     * to DOM specs, an empty list always returns true.
+     *
+     * _NOT_ part of the DOM!
+     */
+    bool contains( const DOM::DOMString &medium ) const;
 
 protected:
     QValueList<DOM::DOMString> m_lstMedia;

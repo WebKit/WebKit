@@ -112,6 +112,7 @@ libkwq_o_SOURCES = \
 	KWQString.mm \
 	KWQStringList.mm \
 	KWQStyle.mm \
+	KWQStyleSheet.mm \
 	KWQTextArea.mm \
 	KWQTextContainer.mm \
 	KWQTextEdit.mm \
@@ -150,6 +151,7 @@ INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(WEBCORE_INCLUDES) \
+	-I$(top_srcdir)/WebFoundation/Misc.subproj \
 	-I/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ \
 	-F/System/Library/Frameworks/ApplicationServices.framework/Frameworks \
 	-I/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/PrivateHeaders \

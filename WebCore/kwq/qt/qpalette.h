@@ -88,6 +88,8 @@ public:
 
     QColorGroup &operator=(const QColorGroup &);
 
+    bool operator==(const QColorGroup &);
+
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 private:
@@ -132,6 +134,8 @@ public:
     // operators ---------------------------------------------------------------
 
     QPalette &operator=(const QPalette &);
+
+    bool operator==(const QPalette &) const;
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------

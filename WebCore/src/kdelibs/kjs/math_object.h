@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,30 +16,36 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _MATH_OBJECT_H_
 #define _MATH_OBJECT_H_
 
-#include "object.h"
-#include "function.h"
+#include "internal.h"
+#include "function_object.h"
 
 namespace KJS {
 
-  class Math : public ObjectImp {
+  class MathObjectImp : public ObjectImp {
   public:
-    Math() : ObjectImp(BooleanClass) { }
-    virtual KJSO get(const UString &p) const;
-    virtual bool hasProperty(const UString &p, bool recursive = true) const;
+    MathObjectImp(ExecState *exec,
+                  ObjectPrototypeImp *objProto);
+    Value get(ExecState *exec, const UString &p) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
     enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2,
-	   Abs, ACos, ASin, ATan, ATan2, Ceil, Cos, Pow,
-	   Exp, Floor, Log, Max, Min, Random, Round, Sin, Sqrt, Tan };
+           Abs, ACos, ASin, ATan, ATan2, Ceil, Cos, Pow,
+           Exp, Floor, Log, Max, Min, Random, Round, Sin, Sqrt, Tan };
   };
 
-  class MathFunc : public InternalFunctionImp {
+  class MathFuncImp : public InternalFunctionImp {
   public:
-    MathFunc(int i, int l) : InternalFunctionImp(l), id(i) { }
-    Completion execute(const List &);
+    MathFuncImp(ExecState *exec, int i, int l);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
   private:
     int id;
   };

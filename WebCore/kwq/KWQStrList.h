@@ -40,7 +40,7 @@
 
 // class QStrList ==============================================================
 
-typedef QList<char> QStrList;
+typedef QPtrList<char> QStrList;
 
 #endif // USING_BORROWED_QSTRLIST
 

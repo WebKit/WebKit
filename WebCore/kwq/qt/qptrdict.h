@@ -45,7 +45,7 @@ template <class T> class QPtrDictIterator;
 
 // class QPtrDict ==============================================================
 
-template <class T> class QPtrDict : public QCollection {
+template <class T> class QPtrDict : public QPtrCollection {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -70,7 +70,7 @@ public:
 
     // operators ---------------------------------------------------------------
 
-    QPtrDict<T> &operator=(const QPtrDict<T> &pd) { impl.assign(pd.impl,del_item); QCollection::operator=(pd); return *this; }
+    QPtrDict<T> &operator=(const QPtrDict<T> &pd) { impl.assign(pd.impl,del_item); QPtrCollection::operator=(pd); return *this; }
     T *operator[](void *key) const { return (T *)impl.find(key); } 
 
 // protected -------------------------------------------------------------------

@@ -37,6 +37,17 @@
 
 class QStyle : public QObject {
 public:
+    
+    typedef enum { 
+	PM_IndicatorWidth,
+	PM_IndicatorHeight,
+	PM_ExclusiveIndicatorWidth,
+	PM_ExclusiveIndicatorHeight
+    } PixelMetric;
+
+    typedef enum {
+	SH_GUIStyle
+    } StyleHint;
 
     // structs -----------------------------------------------------------------
     // typedefs ----------------------------------------------------------------
@@ -51,8 +62,10 @@ public:
     // member functions --------------------------------------------------------
 
     GUIStyle guiStyle() const;
-    virtual QSize indicatorSize() { return QSize(22,22); };	// FIXME!  Shouldn't be hardcoded.
-    virtual QSize exclusiveIndicatorSize() { return QSize(22,22); };// FIXME!  Shouldn't be hardcoded.
+    virtual QSize indicatorSize() { return QSize(22,22); }	// FIXME!  Shouldn't be hardcoded.
+    virtual QSize exclusiveIndicatorSize() { return QSize(22,22); } // FIXME!  Shouldn't be hardcoded.
+    virtual int pixelMetric(int metric) const { return 22; } // FIXME!  Shouldn't be hardcoded.
+    virtual int styleHint(StyleHint hint) const { return 0; }
 
     // operators ---------------------------------------------------------------
 

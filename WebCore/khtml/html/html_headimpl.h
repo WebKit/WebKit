@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,11 +24,12 @@
 #ifndef HTML_HEADIMPL_H
 #define HTML_HEADIMPL_H
 
-#include "html_elementimpl.h"
+#include "html/html_elementimpl.h"
+#include "misc/loader_client.h"
+#include "css/css_stylesheetimpl.h"
 
 class KHTMLView;
 
-#include "misc/loader_client.h"
 namespace khtml {
     class CachedCSSStyleSheet;
 };
@@ -39,23 +40,27 @@ namespace DOM {
 class DOMString;
 class HTMLFormElementImpl;
 class StyleSheetImpl;
+class CSSStyleSheetImpl;
 
 class HTMLBaseElementImpl : public HTMLElementImpl
 {
 public:
     HTMLBaseElementImpl(DocumentPtr *doc);
-
     ~HTMLBaseElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    DOMString href() const { return m_href; }
+    DOMString target() const { return m_target; }
 
-    virtual void parseAttribute(AttrImpl *attr);
-    virtual void attach();
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
+    void process();
 
 protected:
-    DOMString _href;
-    DOMString _target;
+    DOMString m_href;
+    DOMString m_target;
 };
 
 
@@ -66,27 +71,29 @@ class HTMLLinkElementImpl : public khtml::CachedObjectClient, public HTMLElement
 {
 public:
     HTMLLinkElementImpl(DocumentPtr *doc);
-
     ~HTMLLinkElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    StyleSheetImpl *sheet() const;
+    StyleSheetImpl* sheet() const { return m_sheet; }
 
     // overload from HTMLElementImpl
-    virtual void attach();
-    virtual void detach();
-    virtual void parseAttribute(AttrImpl *attr);
+    virtual void parseAttribute(AttributeImpl *attr);
+
+    void process();
+
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
     // from CachedObjectClient
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
     bool isLoading() const;
     void sheetLoaded();
 
+
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
-    StyleSheetImpl *m_sheet;
+    CSSStyleSheetImpl *m_sheet;
     DOMString m_url;
     DOMString m_type;
     QString m_media;
@@ -104,15 +111,15 @@ public:
 
     ~HTMLMetaElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void insertedIntoDocument();
 
-    virtual void parseAttribute(AttrImpl *attr);
-    virtual void attach();
+    void process();
 
 protected:
-    DOMString _equiv;
-    DOMString _content;
+    DOMString m_equiv;
+    DOMString m_content;
 };
 
 // -------------------------------------------------------------------------
@@ -124,8 +131,7 @@ public:
 
     ~HTMLScriptElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -134,30 +140,23 @@ class HTMLStyleElementImpl : public HTMLElementImpl
 {
 public:
     HTMLStyleElementImpl(DocumentPtr *doc);
-
     ~HTMLStyleElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
     StyleSheetImpl *sheet() const { return m_sheet; }
 
     // overload from HTMLElementImpl
-    virtual void parseAttribute(AttrImpl *attr);
-    virtual NodeImpl *addChild(NodeImpl *child);
-    virtual void setChanged(bool b=true);
+    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    virtual void childrenChanged();
 
     bool isLoading() const;
     void sheetLoaded();
-    void reparseSheet();
-
-    virtual void attach();
-    virtual void detach();
 
 protected:
     StyleSheetImpl *m_sheet;
-    DOMString m_type;
-    DOMString m_media;
 };
 
 // -------------------------------------------------------------------------
@@ -169,9 +168,14 @@ public:
 
     ~HTMLTitleElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-    virtual void setTitle();
+    virtual Id id() const;
+
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    virtual void childrenChanged();
+
+protected:
+    DOMString m_title;
 };
 
 }; //namespace

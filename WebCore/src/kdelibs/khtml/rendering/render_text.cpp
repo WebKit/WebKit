@@ -24,21 +24,15 @@
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
 
-#include "render_text.h"
-#include "break_lines.h"
-#include "render_style.h"
+#include "rendering/render_text.h"
+#include "rendering/break_lines.h"
+#include "xml/dom_nodeimpl.h"
 
 #include "misc/loader.h"
-#include "misc/helper.h"
 
-#include <qfontmetrics.h>
-#include <qfontinfo.h>
-#include <qfont.h>
 #include <qpainter.h>
-#include <qstring.h>
-#include <qcolor.h>
-#include <qrect.h>
 #include <kdebug.h>
+#include <assert.h>
 
 #define QT_ALLOC_QCHAR_VEC( N ) (QChar*) new char[ sizeof(QChar)*( N ) ]
 #define QT_DELETE_QCHAR_VEC( P ) delete[] ((char*)( P ))
@@ -53,18 +47,17 @@ using namespace DOM;
 
 TextSlave::~TextSlave()
 {
-    if(m_reversed)
-        QT_DELETE_QCHAR_VEC(m_text);
 }
 
-void TextSlave::print( QPainter *p, int _tx, int _ty)
+void TextSlave::print( QPainter *pt, int _tx, int _ty)
 {
     if (!m_text || m_len <= 0)
         return;
 
     QConstString s(m_text, m_len);
     //kdDebug( 6040 ) << "textSlave::printing(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
-    p->drawText(m_x + _tx, m_y + _ty + m_baseline, s.string());
+
+    pt->drawText(m_x + _tx, m_y + _ty + m_baseline, s.string(), -1, m_reversed ? QPainter::RTL : QPainter::LTR);
 }
 
 void TextSlave::printSelection(QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
@@ -86,10 +79,8 @@ void TextSlave::printSelection(QPainter *p, RenderStyle* style, int tx, int ty, 
         _width = p->fontMetrics().width(s.string());
 
     int _offset = 0;
-    if ( startPos > 0 ) {
-        QConstString aStr(m_text, startPos);
-        _offset = p->fontMetrics().width(aStr.string());
-    }
+    if ( startPos > 0 )
+        _offset = p->fontMetrics().width(QConstString( m_text, startPos ).string());
 
     p->save();
     QColor c = style->color();
@@ -100,7 +91,7 @@ void TextSlave::printSelection(QPainter *p, RenderStyle* style, int tx, int ty, 
     ty += m_baseline;
 
     //kdDebug( 6040 ) << "textSlave::printing(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
-    p->drawText(m_x + tx + _offset, m_y + ty, s.string());
+    p->drawText(m_x + tx + _offset, m_y + ty, s.string(), -1, m_reversed ? QPainter::RTL : QPainter::LTR);
     p->restore();
 }
 
@@ -109,7 +100,7 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     _tx += m_x;
     _ty += m_y;
 
-    int width = m_width;
+    int width = m_width - 1;
 
     if( begin )
  	width -= p->paddingLeft() + p->borderLeft();
@@ -146,17 +137,18 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
 
 void TextSlave::printBoxDecorations(QPainter *pt, RenderStyle* style, RenderText *p, int _tx, int _ty, bool begin, bool end)
 {
-
     int topExtra = p->borderTop() + p->paddingTop();
     int bottomExtra = p->borderBottom() + p->paddingBottom();
+    // ### firstline
+    int halfleading = (p->m_lineHeight - style->font().pixelSize() ) / 2;
 
     _tx += m_x;
-    _ty += m_y + m_baseline - pt->fontMetrics().ascent() - topExtra;
+    _ty += m_y + halfleading - topExtra;
 
     int width = m_width;
 
-    // the height of the decorations is:  topBorder + topPadding + fm.height() + bottomPadding + bottomBorder
-    int height = pt->fontMetrics().height() + topExtra + bottomExtra;
+    // the height of the decorations is:  topBorder + topPadding + CSS font-size + bottomPadding + bottomBorder
+    int height = style->font().pixelSize() + topExtra + bottomExtra;
 
     if( begin )
 	_tx -= p->paddingLeft() + p->borderLeft();
@@ -172,28 +164,15 @@ void TextSlave::printBoxDecorations(QPainter *pt, RenderStyle* style, RenderText
         pt->drawTiledPixmap(_tx, _ty, width, height, i->tiled_pixmap(c));
     }
 
+#ifdef DEBUG_VALIGN
+    pt->fillRect(_tx, _ty, width, height, Qt::cyan );
+#endif
+
     if(style->hasBorder())
         p->printBorder(pt, _tx, _ty, width, height, style, begin, end);
-
-#ifdef BIDI_DEBUG
-    int h = p->lineHeight( false ) + p->paddingTop() + p->paddingBottom() + p->borderTop() + p->borderBottom();
-    QColor c2 = QColor("#0000ff");
-    p->drawBorder(pt, _tx, _ty, _tx, _ty + h, 1,
-                  RenderObject::BSLeft, c2, c2, SOLID, false, false, 0, 0);
-    p->drawBorder(pt, _tx + m_width, _ty, _tx + m_width, _ty + h, 1,
-                  RenderObject::BSRight, c2, c2, SOLID, false, false, 0, 0);
-#endif
 }
 
-bool TextSlave::checkPoint(int _x, int _y, int _tx, int _ty, int height)
-{
-    if((_ty + m_y > _y) || (_ty + m_y + height < _y) ||
-       (_tx + m_x > _x) || (_tx + m_x + m_width < _x))
-        return false;
-    return true;
-}
-
-FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int _ty, QFontMetrics * fm, int & offset, int lineHeight)
+FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const QFontMetrics * fm, int & offset, short lineHeight)
 {
     //kdDebug(6040) << "TextSlave::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
     //              << " _tx+m_x=" << _tx+m_x << " _ty+m_y=" << _ty+m_y << endl;
@@ -245,8 +224,8 @@ TextSlaveArray::TextSlaveArray()
 
 int TextSlaveArray::compareItems( Item d1, Item d2 )
 {
-    ASSERT(d1);
-    ASSERT(d2);
+    assert(d1);
+    assert(d2);
 
     return static_cast<TextSlave*>(d1)->m_y - static_cast<TextSlave*>(d2)->m_y;
 }
@@ -298,52 +277,44 @@ int TextSlaveArray::findFirstMatching(Item d) const
 
 // -------------------------------------------------------------------------------------
 
-RenderText::RenderText(DOMStringImpl *_str)
-    : RenderObject()
+RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
+    : RenderObject(node)
 {
     // init RenderObject attributes
     setRenderText();   // our object inherits from RenderText
-    setInline(true);   // our object is Inline
 
     m_minWidth = -1;
     m_maxWidth = -1;
     str = _str;
     if(str) str->ref();
-    assert(!str || !str->l || str->s);
+    KHTMLAssert(!str || !str->l || str->s);
 
     m_selectionState = SelectionNone;
     m_hasReturn = true;
-    fm = 0;
 
 #ifdef DEBUG_LAYOUT
     QConstString cstr(str->s, str->l);
-    kdDebug( 6040 ) << "RenderText::setText '" << (const char *)cstr.string().utf8() << "'" << endl;
+    kdDebug( 6040 ) << "RenderText ctr( "<< cstr.string().length() << " )  '" << cstr.string() << "'" << endl;
 #endif
 }
 
 void RenderText::setStyle(RenderStyle *_style)
 {
-    bool fontchanged = ( !style() || style()->font() != _style->font() );
-    RenderObject::setStyle(_style);
-    if ( !fm || fontchanged ) {
-        delete fm;
-        fm = new QFontMetrics( style()->font() );
-    }
-    m_lineHeight = style()->lineHeight().width(metrics( false ).height());
+    if ( style() != _style ) {
+	RenderObject::setStyle( _style );
+	m_lineHeight = RenderObject::lineHeight(false);
 
-    if(m_lineHeight<=0)
-        m_lineHeight = metrics( false ).height();
-
-    if ( style()->fontVariant() == SMALL_CAPS ) {
-	setText( str->upper() );
-    } else {
-	// ### does not work if texttransform is set to None again!
-	switch(style()->textTransform()) {
-	    case CAPITALIZE:  setText(str->capitalize());  break;
-	    case UPPERCASE:   setText(str->upper());       break;
-	    case LOWERCASE:   setText(str->lower());       break;
-	    case NONE:
-	    default:;
+	if ( style()->fontVariant() == SMALL_CAPS ) {
+	    setText( str->upper() );
+	} else {
+	    // ### does not work if texttransform is set to None again!
+	    switch(style()->textTransform()) {
+		case CAPITALIZE:  setText(str->capitalize());  break;
+		case UPPERCASE:   setText(str->upper());       break;
+		case LOWERCASE:   setText(str->lower());       break;
+		case NONE:
+		default:;
+	    }
 	}
     }
 }
@@ -352,7 +323,6 @@ RenderText::~RenderText()
 {
     deleteSlaves();
     if(str) str->deref();
-    delete fm;
 }
 
 void RenderText::deleteSlaves()
@@ -365,7 +335,7 @@ void RenderText::deleteSlaves()
     for(unsigned int i=0; i < len; i++)
         m_lines.remove(i);
 
-    ASSERT(m_lines.count() == 0);
+    KHTMLAssert(m_lines.count() == 0);
 }
 
 TextSlave * RenderText::findTextSlave( int offset, int &pos )
@@ -394,42 +364,59 @@ TextSlave * RenderText::findTextSlave( int offset, int &pos )
     return s;
 }
 
-bool RenderText::checkPoint(int _x, int _y, int _tx, int _ty)
+bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
+    assert(parent());
+
+    _tx -= paddingLeft() + borderLeft();
+    _ty -= borderTop() + paddingTop();
+
+    int height = m_lineHeight + borderTop() + paddingTop() +
+                 borderBottom() + paddingBottom();
+
+    bool inside = false;
     TextSlave *s = m_lines.count() ? m_lines[0] : 0;
     int si = 0;
-    while(s)
-    {
-        if( s->checkPoint(_x, _y, _tx, _ty, m_lineHeight) )
-            return true;
-        // ### this might be wrong, if combining chars are used ( eg arabic )
+    while(s) {
+        if((_y >=_ty + s->m_y) && (_y < _ty + s->m_y + height) &&
+           (_x >= _tx + s->m_x) && (_x <_tx + s->m_x + s->m_width) ) {
+            inside = true;
+            break;
+        }
+
         s = si < (int)m_lines.count()-1 ? m_lines[++si] : 0;
     }
-    return false;
+
+#ifndef APPLE_CHANGES
+    bool oldinside = mouseInside();
+#endif /* not APPLE_CHANGES */
+    setMouseInside(inside);
+    if (mouseInside() != inside && element())
+        element()->setChanged();
+
+    return inside;
 }
 
-FindSelectionResult RenderText::checkSelectionPoint(int _x, int _y, int _tx, int _ty, int &offset)
+FindSelectionResult RenderText::checkSelectionPoint(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
 {
-    //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
-    //              << " _tx=" << _tx << " _ty=" << _ty << endl;
+//     kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
+//                   << " _tx=" << _tx << " _ty=" << _ty << endl;
     for(unsigned int si = 0; si < m_lines.count(); si++)
     {
         TextSlave* s = m_lines[si];
         if ( s->m_reversed )
             return SelectionPointBefore; // abort if RTL (TODO)
         int result;
-	if ( khtml::printpainter || hasFirstLine() ) {
-	    QFontMetrics _fm = metrics( ( si == 0) );
-	    result = s->checkSelectionPoint(_x, _y, _tx, _ty, &_fm, offset, m_lineHeight);
-	} else {
-	    result = s->checkSelectionPoint(_x, _y, _tx, _ty, fm, offset, m_lineHeight);
-	}
+        const QFontMetrics &fm = metrics(si == 0);
+        result = s->checkSelectionPoint(_x, _y, _tx, _ty, &fm, offset, m_lineHeight);
+
         //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
         if ( result == SelectionPointInside ) // x,y is inside the textslave
         {
             // ### only for visuallyOrdered !
             offset += s->m_text - str->s; // add the offset from the previous lines
             //kdDebug(6040) << "RenderText::checkSelectionPoint inside -> " << offset << endl;
+            node = element();
             return SelectionPointInside;
         } else if ( result == SelectionPointBefore )
         {
@@ -439,11 +426,13 @@ FindSelectionResult RenderText::checkSelectionPoint(int _x, int _y, int _tx, int
                 // ### only for visuallyOrdered !
                 offset = s->m_text - str->s - 1;
                 //kdDebug(6040) << "RenderText::checkSelectionPoint before -> " << offset << endl;
+                node = element();
                 return SelectionPointInside;
             } else
             {
                 offset = 0;
-                //kdDebug(6040) << "RenderText::checkSelectionPoint before us -> returning Before" << endl;
+                //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << "before us -> returning Before" << endl;
+                node = element();
                 return SelectionPointBefore;
             }
         }
@@ -451,6 +440,8 @@ FindSelectionResult RenderText::checkSelectionPoint(int _x, int _y, int _tx, int
 
     // set offset to max
     offset = str->l;
+    //qDebug("setting node to %p", element());
+    node = element();
     return SelectionPointAfter;
 }
 
@@ -466,7 +457,7 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
   _y = s->m_y;
   height = m_lineHeight; // ### firstLine!!! s->m_height;
 
-  QFontMetrics fm = metrics( false ); // #### wrong for first-line!
+  const QFontMetrics &fm = metrics( false ); // #### wrong for first-line!
   QString tekst(s->m_text, s->m_len);
   _x = s->m_x + (fm.boundingRect(tekst, pos)).right();
   if(pos)
@@ -489,12 +480,11 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
 
 bool RenderText::absolutePosition(int &xPos, int &yPos, bool)
 {
+    return RenderObject::absolutePosition(xPos, yPos, false);
+
     if(parent() && parent()->absolutePosition(xPos, yPos, false)) {
-        if ( m_lines.count() ) {
-            TextSlave* s = m_lines[0];
-            xPos += s->m_x;
-            yPos += s->m_y;
-        }
+        xPos -= paddingLeft() + borderLeft();
+        yPos -= borderTop() + paddingTop();
         return true;
     }
     xPos = yPos = 0;
@@ -525,9 +515,18 @@ void RenderText::posOfChar(int chr, int &x, int &y)
     }
 }
 
+int RenderText::rightmostPosition() const
+{
+    if (style()->whiteSpace() != NORMAL)
+        return maxWidth();
+
+    return 0;
+}
+
 void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                       int tx, int ty)
 {
+    int ow = style()->outlineWidth();
     RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
     int d = style()->textDecoration();
     TextSlave f(0, y-ty);
@@ -583,10 +582,11 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
         int minx =  1000000;
         int maxx = -1000000;
         int outlinebox_y = m_lines[si]->m_y;
+	QPtrList <QRect> linerects;
+        linerects.setAutoDelete(true);
+        linerects.append(new QRect());
 
-        RenderStyle* outlineStyle = 0;
-        if (!outlineStyle && style()->outlineWidth())
-            outlineStyle = style();
+	bool renderOutline = style()->outlineWidth()!=0;
 
         // run until we find one that is outside the range, then we
         // know we can stop
@@ -596,11 +596,11 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
             if(_style->font() != p->font())
                 p->setFont(_style->font());
-
             if((hasSpecialObjects()  &&
                 (parent()->isInline() || pseudoStyle)) &&
                (!pseudoStyle || s->m_firstLine))
                 s->printBoxDecorations(p, _style, this, tx, ty, si == 0, si == (int)m_lines.count()-1);
+
 
             if(_style->color() != p->pen().color())
                 p->setPen(_style->color());
@@ -629,22 +629,45 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 startPos -= diff;
                 //kdDebug(6040) << this << " startPos now " << startPos << ", endPos now " << endPos << endl;
             }
-            if(outlineStyle) {
+            if(renderOutline) {
                 if(outlinebox_y == s->m_y) {
                     if(minx > s->m_x)  minx = s->m_x;
-                    if(maxx < s->m_x+s->m_width) maxx = s->m_x+s->m_width;
+                    int newmaxx = s->m_x+s->m_width;
+                    //if (parent()->isInline() && si==0) newmaxx-=paddingLeft();
+                    if (parent()->isInline() && si==int(m_lines.count())-1) newmaxx-=paddingRight();
+                    if(maxx < newmaxx) maxx = newmaxx;
                 }
                 else {
-                    printOutline(p, tx+minx, ty+outlinebox_y, maxx-minx, m_lineHeight, outlineStyle);
+                    QRect *curLine = new QRect(minx, outlinebox_y, maxx-minx, m_lineHeight);
+                    linerects.append(curLine);
+
                     outlinebox_y = s->m_y;
                     minx = s->m_x;
                     maxx = s->m_x+s->m_width;
+                    //if (parent()->isInline() && si==0) maxx-=paddingLeft();
+                    if (parent()->isInline() && si==int(m_lines.count())-1) maxx-=paddingRight();
                 }
             }
-        } while (++si < (int)m_lines.count() && m_lines[si]->checkVerticalPoint(y, ty, h, m_lineHeight));
+#ifdef BIDI_DEBUG
+            {
+                int h = lineHeight( false ) + paddingTop() + paddingBottom() + borderTop() + borderBottom();
+                QColor c2 = QColor("#0000ff");
+                drawBorder(p, tx, ty, tx+1, ty + h,
+                              RenderObject::BSLeft, c2, c2, SOLID, 1, 1);
+                drawBorder(p, tx + s->m_width, ty, tx + s->m_width + 1, ty + h,
+                              RenderObject::BSRight, c2, c2, SOLID, 1, 1);
+            }
+#endif
 
-        if(outlineStyle)
-            printOutline(p, tx+minx, ty+outlinebox_y, maxx-minx, m_lineHeight, outlineStyle);
+        } while (++si < (int)m_lines.count() && m_lines[si]->checkVerticalPoint(y-ow, ty, h, m_lineHeight));
+
+        if(renderOutline)
+	  {
+	    linerects.append(new QRect(minx, outlinebox_y, maxx-minx, m_lineHeight));
+	    linerects.append(new QRect());
+	    for (unsigned int i = 1; i < linerects.count() - 1; i++)
+                printTextOutline(p, tx, ty, *linerects.at(i-1), *linerects.at(i), *linerects.at(i+1));
+	  }
     }
 }
 
@@ -652,22 +675,22 @@ void RenderText::print( QPainter *p, int x, int y, int w, int h,
                       int tx, int ty)
 {
 #ifndef APPLE_CHANGES
-    if ( !isVisible() )
-        return;
+    if (style()->visibility() != VISIBLE) return;
 #endif /* APPLE_CHANGES not defined */
 
     int s = m_lines.count() - 1;
     if ( s < 0 ) return;
-   if ( ty + m_lines[0]->m_y > y + h ) return;
-   if ( ty + m_lines[s]->m_y + m_lines[s]->m_baseline + m_lineHeight < y ) return;
+
+    // ### incorporate padding/border here!
+    if ( ty + m_lines[0]->m_y > y + h + 64 ) return;
+    if ( ty + m_lines[s]->m_y + m_lines[s]->m_baseline + m_lineHeight + 64 < y ) return;
 
     printObject(p, x, y, w, h, tx, ty);
 }
 
 void RenderText::calcMinMaxWidth()
 {
-    //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): known=" << minMaxKnown() << endl;
-    if(minMaxKnown()) return;
+    KHTMLAssert( !minMaxKnown() );
 
     // ### calc Min and Max width...
     m_minWidth = 0;
@@ -679,7 +702,7 @@ void RenderText::calcMinMaxWidth()
     m_hasBreakableChar = false;
 
     // ### not 100% correct for first-line
-    QFontMetrics _fm = khtml::printpainter ? metrics( false ) : *fm;
+    const QFontMetrics &_fm = metrics( false );
     int len = str->l;
     if ( len == 1 && str->s->latin1() == '\n' )
 	m_hasReturn = true;
@@ -732,7 +755,12 @@ void RenderText::calcMinMaxWidth()
     }
     if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
     if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
+
+    if (style()->whiteSpace() == NOWRAP)
+        m_minWidth = m_maxWidth;
+
     setMinMaxKnown();
+    //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): min = " << m_minWidth << " max = " << m_maxWidth << endl;
 }
 
 int RenderText::minXPos() const
@@ -765,7 +793,7 @@ int RenderText::yPos() const
 
 const QFont &RenderText::font()
 {
-    return parent()->style()->font();
+    return style()->font();
 }
 
 void RenderText::setText(DOMStringImpl *text)
@@ -777,42 +805,42 @@ void RenderText::setText(DOMStringImpl *text)
 
     // ### what should happen if we change the text of a
     // RenderBR object ?
-    assert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
-    assert(!str->l || str->s);
+    KHTMLAssert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
+    KHTMLAssert(!str->l || str->s);
 
     setLayouted(false);
-    RenderObject* cb = containingBlock();
-    if ( cb != this )
-    {
-        cb->setLayouted(false);
-        cb->layout();
-    }
-#ifdef DEBUG_LAYOUT
+#ifdef BIDI_DEBUG
     QConstString cstr(str->s, str->l);
-    kdDebug( 6040 ) << "RenderText::setText '" << (const char *)cstr.string().utf8() << "'" << endl;
+    kdDebug( 6040 ) << "RenderText::setText( " << cstr.string().length() << " ) '" << cstr.string() << "'" << endl;
 #endif
 }
 
 int RenderText::height() const
 {
-    // ### does this make sense??
-    int retval = metrics( false ).height() + paddingTop() + paddingBottom() + borderTop() + borderBottom();
-    if (m_lines.count())
-	retval += m_lineHeight;
+    int retval;
+    if ( m_lines.count() )
+        retval = m_lines[m_lines.count()-1]->m_y + m_lineHeight - m_lines[0]->m_y;
+    else
+        retval = metrics( false ).height();
+
+    retval += paddingTop() + paddingBottom() + borderTop() + borderBottom();
+
     return retval;
 }
 
-int RenderText::lineHeight( bool firstLine ) const
+short RenderText::lineHeight( bool firstLine ) const
 {
-    if ( firstLine ) 
-	return RenderObject::lineHeight( firstLine );
+    if ( firstLine )
+ 	return RenderObject::lineHeight( firstLine );
+
     return m_lineHeight;
 }
 
-// #### fix for printpainter and :first-line needed
 short RenderText::baselinePosition( bool firstLine ) const
 {
-    return metrics( firstLine ).ascent();
+    const QFontMetrics &fm = metrics( firstLine );
+    return fm.ascent() +
+        ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
 void RenderText::position(int x, int y, int from, int len, int width, bool reverse, bool firstLine)
@@ -822,26 +850,7 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
 
     QChar *ch;
     reverse = reverse && !style()->visuallyOrdered();
-    if ( reverse ) {
-        // reverse String
-        QString aStr = QConstString(str->s+from, len).string();
-        //kdDebug( 6040 ) << "reversing '" << (const char *)aStr.utf8() << "' len=" << aStr.length() << " oldlen=" << len << endl;
-        len = aStr.length();
-        ch = QT_ALLOC_QCHAR_VEC(len);
-        int half =  len/2;
-        const QChar *s = aStr.unicode();
-        for(int i = 0; i <= half; i++)
-        {
-            ch[len-1-i] = s[i];
-            ch[i] = s[len-1-i];
-            if(ch[i].mirrored() && !style()->visuallyOrdered())
-                ch[i] = ch[i].mirroredChar();
-            if(ch[len-1-i].mirrored() && !style()->visuallyOrdered() && i != len-1-i)
-                ch[len-1-i] = ch[len-1-i].mirroredChar();
-        }
-    }
-    else
-        ch = str->s+from;
+    ch = str->s+from;
 
     // ### margins and RTL
     if(from == 0 && parent()->isInline() && parent()->firstChild()==this)
@@ -853,12 +862,9 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
     if(from + len == int(str->l) && parent()->isInline() && parent()->lastChild()==this)
         width -= marginRight();
 
-    // add half leading to vertiaclly center it.
-    y += ( m_lineHeight - metrics( firstLine ).height() )/2;
-
 #ifdef DEBUG_LAYOUT
     QConstString cstr(ch, len);
-    kdDebug( 6040 ) << "setting slave text to '" << (const char *)cstr.string().utf8() << "' len=" << len << " width=" << width << " at (" << x << "/" << y << ")" << " height=" << lineHeight() << " fontHeight=" << metrics().height() << " ascent =" << metrics().ascent() << endl;
+    qDebug("setting slave text to *%s*, len=%d, w)=%d" , cstr.string().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
 #endif
 
     TextSlave *s = new TextSlave(x, y, ch, len,
@@ -874,24 +880,19 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
 unsigned int RenderText::width(unsigned int from, unsigned int len, bool firstLine) const
 {
     if(!str->s || from > str->l ) return 0;
-
     if ( from + len > str->l ) len = str->l - from;
 
-    if ( khtml::printpainter || ( firstLine && hasFirstLine() ) ) {
-	QFontMetrics _fm = metrics( firstLine );
-	return width( from, len, &_fm );
-    }
-
-    return width( from, len, fm );
+    const QFontMetrics &fm = metrics(firstLine);
+    return width( from, len, &fm);
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, QFontMetrics *_fm) const
+unsigned int RenderText::width(unsigned int from, unsigned int len, const QFontMetrics *_fm) const
 {
     if(!str->s || from > str->l ) return 0;
     if ( from + len > str->l ) len = str->l - from;
 
     int w;
-    if ( _fm == fm && from == 0 && len == str->l )
+    if ( _fm == &style()->fontMetrics() && from == 0 && len == str->l )
  	 w = m_maxWidth;
     if( len == 1)
         w = _fm->width( *(str->s+from) );
@@ -961,16 +962,96 @@ short RenderText::verticalPositionHint( bool firstLine ) const
     return parent()->verticalPositionHint( firstLine );
 }
 
-QFontMetrics RenderText::metrics(bool firstLine) const
+const QFontMetrics &RenderText::metrics(bool firstLine) const
 {
     if( firstLine && hasFirstLine() ) {
 	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
 	if ( pseudoStyle )
-	    return fontMetrics( pseudoStyle->font() );
+	    return pseudoStyle->fontMetrics();
     }
-    if ( khtml::printpainter )
-	return fontMetrics(style()->font());
-    return *fm;
+    return style()->fontMetrics();
+}
+
+void RenderText::printTextOutline(QPainter *p, int tx, int ty, const QRect &lastline, const QRect &thisline, const QRect &nextline)
+{
+  int ow = style()->outlineWidth();
+  EBorderStyle os = style()->outlineStyle();
+  QColor oc = style()->outlineColor();
+
+  int t = ty + thisline.top();
+  int l = tx + thisline.left();
+  int b = ty + thisline.bottom() + 1;
+  int r = tx + thisline.right() + 1;
+
+  // left edge
+  drawBorder(p,
+	     l - ow,
+	     t - (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : 0),
+	     l,
+	     b + (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : 0),
+	     BSLeft,
+	     oc, style()->color(), os,
+	     (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : -ow),
+	     (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : -ow),
+	     true);
+
+  // right edge
+  drawBorder(p,
+	     r,
+	     t - (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : 0),
+	     r + ow,
+	     b + (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : 0),
+	     BSRight,
+	     oc, style()->color(), os,
+	     (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : -ow),
+	     (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : -ow),
+	     true);
+  // upper edge
+  if ( thisline.left() < lastline.left())
+      drawBorder(p,
+		 l - ow,
+		 t - ow,
+		 QMIN(r+ow, (lastline.isValid()? tx+lastline.left() : 1000000)),
+		 t ,
+		 BSTop, oc, style()->color(), os,
+		 ow,
+		 (lastline.isValid() && tx+lastline.left()+1<r+ow ? -ow : ow),
+		 true);
+
+  if (lastline.right() < thisline.right())
+      drawBorder(p,
+		 QMAX(lastline.isValid()?tx + lastline.right() + 1:-1000000, l - ow),
+		 t - ow,
+		 r + ow,
+		 t ,
+		 BSTop, oc, style()->color(), os,
+		 (lastline.isValid() && l-ow < tx+lastline.right()+1 ? -ow : ow),
+		 ow,
+		 true);
+
+  // lower edge
+  if ( thisline.left() < nextline.left())
+      drawBorder(p,
+		 l - ow,
+		 b,
+		 QMIN(r+ow, nextline.isValid()? tx+nextline.left()+1 : 1000000),
+		 b + ow,
+		 BSBottom, oc, style()->color(), os,
+		 ow,
+		 (nextline.isValid() && tx+nextline.left()+1<r+ow? -ow : ow),
+		 true);
+
+  if (nextline.right() < thisline.right())
+      drawBorder(p,
+		 QMAX(nextline.isValid()?tx+nextline.right()+1:-1000000 , l-ow),
+		 b,
+		 r + ow,
+		 b + ow,
+		 BSBottom, oc, style()->color(), os,
+		 (nextline.isValid() && l-ow < tx+nextline.right()+1? -ow : ow),
+		 ow,
+		 true);
 }
 
 #undef BIDI_DEBUG
+#undef DEBUG_LAYOUT

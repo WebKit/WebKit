@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -24,17 +24,20 @@
 #ifndef _DOM_XmlImpl_h_
 #define _DOM_XmlImpl_h_
 
-#include "dom_nodeimpl.h"
-#include "css_stylesheetimpl.h"
-#include "misc/loader.h"
+#include "xml/dom_nodeimpl.h"
 #include "misc/loader_client.h"
 
 #include <qxml.h>
 
+namespace khtml {
+class CachedCSSStyleSheet;
+};
+
 namespace DOM {
 
-    class DocumentImpl;
-
+class DocumentImpl;
+class CSSStyleSheetImpl;
+class StyleSheetImpl;
 class DOMString;
 
 class EntityImpl : public NodeBaseImpl
@@ -45,14 +48,22 @@ public:
     EntityImpl(DocumentPtr *doc, DOMString _publicId, DOMString _systemId, DOMString _notationName);
     virtual ~EntityImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    // DOM methods & attributes for Entity
 
     virtual DOMString publicId() const;
     virtual DOMString systemId() const;
     virtual DOMString notationName() const;
+
+    // DOM methods overridden from  parent classes
+
+    virtual DOMString nodeName() const;
+    virtual unsigned short nodeType() const;
+    virtual NodeImpl *cloneNode ( bool deep );
+
+    // Other methods (not part of DOM)
+
     virtual bool childTypeAllowed( unsigned short type );
-    virtual NodeImpl *cloneNode ( bool deep, int &exceptioncode );
+
 protected:
     DOMStringImpl *m_publicId;
     DOMStringImpl *m_systemId;
@@ -68,10 +79,16 @@ public:
     EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *_entityName);
     virtual ~EntityReferenceImpl();
 
-    virtual const DOMString nodeName() const;
+    // DOM methods overridden from  parent classes
+
+    virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
+    virtual NodeImpl *cloneNode ( bool deep );
+
+    // Other methods (not part of DOM)
+
     virtual bool childTypeAllowed( unsigned short type );
-    virtual NodeImpl *cloneNode ( bool deep, int &exceptioncode );
+
 protected:
     DOMStringImpl *m_entityName;
 };
@@ -83,13 +100,20 @@ public:
     NotationImpl(DocumentPtr *doc, DOMString _name, DOMString _publicId, DOMString _systemId);
     virtual ~NotationImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    // DOM methods & attributes for Notation
 
     virtual DOMString publicId() const;
     virtual DOMString systemId() const;
+
+    // DOM methods overridden from  parent classes
+
+    virtual DOMString nodeName() const;
+    virtual unsigned short nodeType() const;
+    virtual NodeImpl *cloneNode ( bool deep );
+
+    // Other methods (not part of DOM)
+
     virtual bool childTypeAllowed( unsigned short type );
-    virtual NodeImpl *cloneNode ( bool deep, int &exceptioncode );
 protected:
     DOMStringImpl *m_name;
     DOMStringImpl *m_publicId;
@@ -104,22 +128,33 @@ public:
     ProcessingInstructionImpl(DocumentPtr *doc, DOMString _target, DOMString _data);
     virtual ~ProcessingInstructionImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual DOMString nodeValue() const;
+    // DOM methods & attributes for Notation
 
     virtual DOMString target() const;
     virtual DOMString data() const;
-    virtual void setData( const DOMString &_data );
+    virtual void setData( const DOMString &_data, int &exceptioncode );
+
+    // DOM methods overridden from  parent classes
+
+    virtual DOMString nodeName() const;
+    virtual unsigned short nodeType() const;
+    virtual DOMString nodeValue() const;
+    virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
+    virtual NodeImpl *cloneNode ( bool deep );
+
+    // Other methods (not part of DOM)
+
+    virtual DOMString localHref() const;
     virtual bool childTypeAllowed( unsigned short type );
-    virtual NodeImpl *cloneNode ( bool deep, int &exceptioncode );
     StyleSheetImpl *sheet() const;
     void checkStyleSheet();
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
+    virtual void setStyleSheet(CSSStyleSheetImpl* sheet);
 
 protected:
     DOMStringImpl *m_target;
     DOMStringImpl *m_data;
+    DOMStringImpl *m_localHref;
     khtml::CachedCSSStyleSheet *m_cachedSheet;
     CSSStyleSheetImpl *m_sheet;
 };

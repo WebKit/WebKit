@@ -20,16 +20,11 @@
  *
  * $Id$
  */
-#include "html_object.h"
 
-#include "dom_string.h"
-#include "html_misc.h"
-#include "html_miscimpl.h"
-#include "html_objectimpl.h"
-#include "html_element.h"
-#include "html_elementimpl.h"
-
-#include "htmlhashes.h"
+#include "dom/dom_doc.h"
+#include "dom/html_object.h"
+#include "html/html_objectimpl.h"
+#include "misc/htmlhashes.h"
 
 HTMLAppletElement::HTMLAppletElement() : HTMLElement()
 {
@@ -422,6 +417,12 @@ DOMString HTMLObjectElement::width() const
 void HTMLObjectElement::setWidth( const DOMString &value )
 {
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_WIDTH, value);
+}
+
+Document HTMLObjectElement::contentDocument() const
+{
+    if (impl) return static_cast<HTMLObjectElementImpl*>(impl)->contentDocument();
+    return Document();
 }
 
 // --------------------------------------------------------------------------

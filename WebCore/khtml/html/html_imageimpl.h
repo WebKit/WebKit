@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,8 +24,9 @@
 #ifndef HTML_IMAGEIMPL_H
 #define HTML_IMAGEIMPL_H
 
-#include "html_inlineimpl.h"
+#include "html/html_inlineimpl.h"
 #include "misc/khtmllayout.h"
+#include "rendering/render_object.h"
 
 #include <qregion.h>
 
@@ -41,34 +42,22 @@ public:
 
     ~HTMLImageElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *);
-
-    virtual bool prepareMouseEvent( int _x, int _y,
-                                    int _tx, int _ty,
-                                    MouseEvent *ev );
+    virtual void parseAttribute(AttributeImpl *);
 
     virtual void attach();
-    virtual void applyChanges(bool top=true, bool force=true);
-    virtual void recalcStyle();
 
     bool isServerMap() const { return ( ismap && !usemap.length() );  }
     QImage currentImage() const;
 
+    DOMString altText() const;
+
+    DOMString imageMap() const { return usemap; }
+
 protected:
-    bool ismap;
-
-    /**
-     * The URL of this image.
-     */
-    DOMString imageURL;
-
-    // text to display as long as the image isn't available
-    DOMString alt;
-
     DOMString usemap;
+    bool ismap;
 };
 
 
@@ -83,22 +72,22 @@ public:
     HTMLAreaElementImpl(DocumentPtr *doc);
     ~HTMLAreaElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    void parseAttribute(AttrImpl *attr);
+    virtual void parseAttribute(AttributeImpl *attr);
 
     bool isDefault() const { return shape==Default; }
-    bool isNoref() const { return nohref && !href; }
 
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
-                       MouseEvent *ev );
+                       khtml::RenderObject::NodeInfo& info);
+
+    virtual QRect getRect() const;
 
 protected:
-
-    QRegion getRegion(int width_, int height);
+    QRegion getRegion(int width_, int height) const;
     QRegion region;
-    QList<khtml::Length>* coords;
+    khtml::Length* m_coords;
+    int m_coordsLen;
     int lastw, lasth;
     Shape shape  : 3;
     bool nohref  : 1;
@@ -114,15 +103,14 @@ public:
 
     ~HTMLMapElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
     virtual DOMString getName() const { return name; }
 
-    virtual void parseAttribute(AttrImpl *attr);
+    virtual void parseAttribute(AttributeImpl *attr);
 
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
-                       MouseEvent *ev );
+                       khtml::RenderObject::NodeInfo& info);
 private:
 
     QString name;

@@ -36,6 +36,7 @@ QCursor KCursor::sizeBDiagCursor() { return QCursor(); }
 QCursor KCursor::sizeFDiagCursor() { return QCursor(); }
 QCursor KCursor::ibeamCursor() { return QCursor(); }
 QCursor KCursor::waitCursor() { return QCursor(); }
+QCursor KCursor::whatsThisCursor() { return QCursor(); }
 
 
 KCursor::KCursor()

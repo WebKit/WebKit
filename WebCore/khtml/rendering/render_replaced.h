@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the HTML widget for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -25,25 +25,23 @@
 
 #include "render_box.h"
 
-#include <qwidget.h>
-class QScrollView;
+#include <qobject.h>
+class KHTMLView;
+class QWidget;
 
 namespace khtml {
 
 class RenderReplaced : public RenderBox
 {
 public:
-    RenderReplaced();
+    RenderReplaced(DOM::NodeImpl* node);
     virtual ~RenderReplaced() {}
 
     virtual const char *renderName() const { return "RenderReplaced"; }
 
     virtual bool isRendered() const { return true; }
 
-    virtual short calcReplacedWidth(bool* ieHack=0) const;
-    virtual int   calcReplacedHeight() const;
-
-    virtual int lineHeight( bool firstLine) const;
+    virtual short lineHeight( bool firstLine) const;
     virtual short baselinePosition( bool firstLine ) const;
 
     virtual void calcMinMaxWidth();
@@ -51,13 +49,13 @@ public:
     virtual void print( QPainter *, int x, int y, int w, int h,
                         int tx, int ty);
     virtual void printObject(QPainter *p, int x, int y, int w, int h, int tx, int ty) = 0;
-    
+
     virtual short intrinsicWidth() const { return m_intrinsicWidth; }
     virtual int intrinsicHeight() const { return m_intrinsicHeight; }
 
     void setIntrinsicWidth(int w) {  m_intrinsicWidth = w; }
     void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
-    
+
     virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine);
 
 private:
@@ -70,7 +68,7 @@ class RenderWidget : public QObject, public RenderReplaced, public DOM::DomShare
 {
     Q_OBJECT
 public:
-    RenderWidget(QScrollView *view);
+    RenderWidget(DOM::NodeImpl* node);
     virtual ~RenderWidget();
 
     virtual void setStyle(RenderStyle *style);
@@ -79,21 +77,28 @@ public:
 
     virtual bool isWidget() const { return true; };
 
-    virtual void focus();
-    virtual void blur();
-
-    void placeWidget(int x, int y);
-
     virtual void detach();
-    
+    virtual void layout( );
+
+    virtual bool eventFilter(QObject *o, QEvent *e);
+
+    virtual void handleDOMEvent(DOM::EventImpl *evt);
+
+    bool sendWidgetEvent(QEvent *event);
+    QWidget *widget() const { return m_widget; }
+    KHTMLView* view() const { return m_view; }
+
 public slots:
     void slotWidgetDestructed();
 
 protected:
     void setQWidget(QWidget *widget);
-    QScrollView *m_view;
-public:
     QWidget *m_widget;
+    KHTMLView* m_view;
+
+    bool m_paintingSelf : 1;
+    bool m_ignorePaintEvents : 1;
+    bool m_widgetShown : 1;
 };
 
 };

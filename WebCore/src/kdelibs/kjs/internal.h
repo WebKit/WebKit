@@ -1,6 +1,8 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -16,169 +18,230 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
  */
 
 #ifndef _INTERNAL_H_
 #define _INTERNAL_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "kjs.h"
+#include "ustring.h"
+#include "value.h"
 #include "object.h"
-#include "function.h"
+#include "types.h"
+#include "interpreter.h"
 
 #define I18N_NOOP(s) s
 
 namespace KJS {
 
-  class Boolean;
-  class Number;
-  class String;
-  class Object;
-  class RegExp;
-  class Node;
-  class FunctionBodyNode;
+  static const double D16 = 65536.0;
+  static const double D32 = 4294967296.0;
+
   class ProgramNode;
-#ifdef KJS_DEBUGGER
+  class FunctionBodyNode;
+  class FunctionPrototypeImp;
+  class FunctionImp;
   class Debugger;
-#endif
 
-  class UndefinedImp : public Imp {
+  // ---------------------------------------------------------------------------
+  //                            Primitive impls
+  // ---------------------------------------------------------------------------
+
+  class UndefinedImp : public ValueImp {
   public:
-    UndefinedImp();
+    UndefinedImp() {}
     virtual ~UndefinedImp() { }
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-      
+    Type type() const { return UndefinedType; }
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
     static UndefinedImp *staticUndefined;
   };
 
-  class NullImp : public Imp {
+  class NullImp : public ValueImp {
   public:
-    NullImp();
+    NullImp() {}
     virtual ~NullImp() { }
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    Type type() const { return NullType; }
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
 
     static NullImp *staticNull;
   };
 
-  class BooleanImp : public Imp {
+  class BooleanImp : public ValueImp {
   public:
     virtual ~BooleanImp() { }
     BooleanImp(bool v = false) : val(v) { }
     bool value() const { return val; }
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    Type type() const { return BooleanType; }
 
-    static BooleanImp *staticTrue, *staticFalse;
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    static BooleanImp *staticTrue;
+    static BooleanImp *staticFalse;
   private:
     bool val;
   };
 
-  class NumberImp : public Imp {
-  public:
-    NumberImp(double v);
-    virtual ~NumberImp() { }
-    double value() const { return val; }
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
-
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  private:
-    double val;
-  };
-
-  class StringImp : public Imp {
+  class StringImp : public ValueImp {
   public:
     StringImp(const UString& v);
     virtual ~StringImp() { }
     UString value() const { return val; }
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual Boolean toBoolean() const;
-    virtual Number toNumber() const;
-    virtual String toString() const;
-    virtual Object toObject() const;
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    Type type() const { return StringType; }
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
   private:
     UString val;
   };
 
-  class ReferenceImp : public Imp {
+  class NumberImp : public ValueImp {
   public:
-    ReferenceImp(const KJSO& b, const UString& p);
+    NumberImp(double v);
+    virtual ~NumberImp() { }
+    double value() const { return val; }
+
+    Type type() const { return NumberType; }
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+  private:
+    double val;
+  };
+
+  // ---------------------------------------------------------------------------
+  //                            Internal type impls
+  // ---------------------------------------------------------------------------
+
+  class ReferenceImp : public ValueImp {
+  public:
+
+    ReferenceImp(const Value& v, const UString& p);
     virtual ~ReferenceImp() { }
-    virtual void mark(Imp*);
-    KJSO getBase() const { return base; }
+    virtual void mark();
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    Value getBase() const { return Value(base); }
     UString getPropertyName() const { return prop; }
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    Type type() const { return ReferenceType; }
+
   private:
-    KJSO base;
+    ValueImp *base;
     UString prop;
   };
 
-  class CompletionImp : public Imp {
+  class CompletionImp : public ValueImp {
   public:
-    CompletionImp(Compl c, const KJSO& v, const UString& t);
-    virtual ~CompletionImp() { }
-    virtual void mark(Imp*);
-    Compl completion() const { return comp; }
-    KJSO value() const { return val; }
+    Type type() const { return CompletionType; }
+
+    CompletionImp(ComplType c, const Value& v, const UString& t);
+    virtual ~CompletionImp();
+    virtual void mark();
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    ComplType complType() const { return comp; }
+    Value value() const { return Value(val); }
     UString target() const { return tar; }
 
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
   private:
-    Compl comp;
-    KJSO val;
+    ComplType comp;
+    ValueImp * val;
     UString tar;
   };
 
-  class RegExpImp : public ObjectImp {
-  public:
-    RegExpImp();
-    ~RegExpImp();
-    void setRegExp(RegExp *r) { reg = r; }
-    RegExp* regExp() const { return reg; }
-  private:
-    RegExp *reg;
+  /**
+   * @internal
+   */
+  class ListNode {
+    friend class List;
+    friend class ListImp;
+    friend class ListIterator;
+    ListNode(Value val, ListNode *p, ListNode *n)
+      : member(val.imp()), prev(p), next(n) {};
+    ValueImp *member;
+    ListNode *prev, *next;
   };
 
-  class StatementNode;
-  class UString;
-
-  class Reference : public KJSO {
+  class ListImp : public ValueImp {
+    friend class ListIterator;
+    friend class List;
+    friend class InterpreterImp;
   public:
-    Reference(const KJSO& b, const UString &p);
-    virtual ~Reference();
+    ListImp();
+    ~ListImp();
+
+    Type type() const { return ListType; }
+
+    virtual void mark();
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    void append(const Value& val);
+    void prepend(const Value& val);
+    void appendList(const List& lst);
+    void prependList(const List& lst);
+    void removeFirst();
+    void removeLast();
+    void remove(const Value &val);
+    void clear();
+    ListImp *copy() const;
+    ListIterator begin() const { return ListIterator(hook->next); }
+    ListIterator end() const { return ListIterator(hook); }
+    //    bool isEmpty() const { return (hook->prev == hook); }
+    bool isEmpty() const;
+    int size() const;
+    Value at(int i) const;
+    Value operator[](int i) const { return at(i); }
+    static ListImp* empty();
+
+#ifdef KJS_DEBUG_MEM
+    static int count;
+#endif
+  private:
+    void erase(ListNode *n);
+    ListNode *hook;
+    static ListImp *emptyList;
   };
 
   /**
@@ -188,6 +251,9 @@ namespace KJS {
   public:
     LabelStack(): tos(0L) {}
     ~LabelStack();
+
+    LabelStack(const LabelStack &other);
+    LabelStack &operator=(const LabelStack &other);
 
     /**
      * If id is not empty and is not in the stack already, puts it on top of
@@ -203,204 +269,226 @@ namespace KJS {
      */
     void pop();
   private:
-    struct StackElm {
+    struct StackElem {
       UString id;
-      StackElm *prev;
+      StackElem *prev;
     };
 
-    StackElm *tos;
+    StackElem *tos;
+    void clear();
   };
+
+
+  // ---------------------------------------------------------------------------
+  //                            Parsing & evaluateion
+  // ---------------------------------------------------------------------------
+
+  enum CodeType { GlobalCode,
+		  EvalCode,
+		  FunctionCode,
+		  AnonymousCode };
 
   /**
    * @short Execution context.
    */
-  class Context {
+  class ContextImp {
   public:
-    Context(CodeType type = GlobalCode, Context *callingContext = 0L,
-	       FunctionImp *func = 0L, const List *args = 0L, Imp *thisV = 0L);
-    virtual ~Context();
-    static Context *current();
-    static void setCurrent(Context *c);
-    const List *pScopeChain() const { return scopeChain; }
-    void pushScope(const KJSO &s);
+    ContextImp(Object &glob, ExecState *exec, Object &thisV, CodeType type = GlobalCode,
+               ContextImp *_callingContext = 0L, FunctionImp *func = 0L, const List &args = List());
+    virtual ~ContextImp();
+
+    const List scopeChain() const { return scope; }
+    Object variableObject() const { return variable; }
+    void setVariableObject(const Object &v) { variable = v; }
+    Object thisValue() const { return thisVal; }
+    ContextImp *callingContext() { return callingCon; }
+    Object activationObject() { return activation; }
+
+    void pushScope(const Object &s);
     void popScope();
-    List *copyOfChain();
-    KJSO variableObject() const { return variable; }
-    void setVariableObject( const KJSO &obj ) { variable = obj; }
-    KJSO thisValue() const { return thisVal; }
-    void setThisValue(const KJSO &t) { thisVal = t; }
     LabelStack *seenLabels() { return &ls; }
+
   private:
+
+    List scope;
+    Object variable;
+    Object thisVal;
+    ContextImp *callingCon;
+    Object activation;
+
+
     LabelStack ls;
-    KJSO thisVal;
-    KJSO activation;
-    KJSO variable;
-    List *scopeChain;
+    CodeType codeType;
   };
 
-  class DeclaredFunctionImp : public ConstructorImp {
+  /**
+   * @internal
+   *
+   * Parses ECMAScript source code and converts into ProgramNode objects, which
+   * represent the root of a parse tree. This class provides a conveniant workaround
+   * for the problem of the bison parser working in a static context.
+   */
+  class Parser {
   public:
-    DeclaredFunctionImp(const UString &n, FunctionBodyNode *b,
-			const List *sc);
-    ~DeclaredFunctionImp();
-    Completion execute(const List &);
-    Object construct(const List &);
-    CodeType codeType() const { return FunctionCode; }
-    List *scopeChain() const { return scopes; }
-  private:
-    FunctionBodyNode *body;
-    List *scopes;
+    static ProgramNode *parse(const UChar *code, unsigned int length, int *sourceId = 0,
+			      int *errLine = 0, UString *errMsg = 0);
+
+    static ProgramNode *progNode;
+    static int sid;
   };
 
-  class AnonymousFunction : public Function {
-  public:
-    AnonymousFunction();
-    Completion execute(const List &);
-    CodeType codeType() const { return AnonymousCode; }
-  };
-
-  class ActivationImp : public Imp {
-  public:
-    ActivationImp(FunctionImp *f, const List *args);
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  };
-
-  class ExecutionStack {
-  public:
-    ExecutionStack();
-    ExecutionStack *push();
-    ExecutionStack *pop();
-    
-    ProgramNode *progNode;
-    Node *firstNode;
-  private:
-    ExecutionStack *prev;
-  };
-
-  class KJScriptImp {
-    friend class ::KJScript;
-    friend class Lexer;
-    friend class Context;
-    friend class Global;
+  class InterpreterImp {
     friend class Collector;
   public:
-    KJScriptImp(KJScript *s);
-    ~KJScriptImp();
+    static void globalInit();
+    static void globalClear();
+
+    InterpreterImp(Interpreter *interp, const Object &glob);
+    ~InterpreterImp();
+
+    Object globalObject() const { return global; }
+    Interpreter* interpreter() const { return m_interpreter; }
+
     void mark();
-    static KJScriptImp *current() { return curr; }
-    static void setException(Imp *e);
-    static void setException(const char *msg);
-    static bool hadException();
-    static KJSO exception();
-    static void clearException();
 
-    Context *context() const { return con; }
-    void setContext(Context *c) { con = c; }
-
-#ifdef KJS_DEBUGGER
-    /**
-     * Attach debugger d to this engine. If there already was another instance
-     * attached it will be detached.
-     */
-    void attachDebugger(Debugger *d);
+    ExecState *globalExec() { return globExec; }
+    bool checkSyntax(const UString &code);
+    Completion evaluate(const UString &code, const Value &thisV);
     Debugger *debugger() const { return dbg; }
-    int sourceId() const { return sid; }
-    bool setBreakpoint(int id, int line, bool set);
-#endif
+    void setDebugger(Debugger *d);
+
+    Object builtinObject() const { return b_Object; }
+    Object builtinFunction() const { return b_Function; }
+    Object builtinArray() const { return b_Array; }
+    Object builtinBoolean() const { return b_Boolean; }
+    Object builtinString() const { return b_String; }
+    Object builtinNumber() const { return b_Number; }
+    Object builtinDate() const { return b_Date; }
+    Object builtinRegExp() const { return b_RegExp; }
+    Object builtinError() const { return b_Error; }
+
+    Object builtinObjectPrototype() const { return b_ObjectPrototype; }
+    Object builtinFunctionPrototype() const { return b_FunctionPrototype; }
+    Object builtinArrayPrototype() const { return b_ArrayPrototype; }
+    Object builtinBooleanPrototype() const { return b_BooleanPrototype; }
+    Object builtinStringPrototype() const { return b_StringPrototype; }
+    Object builtinNumberPrototype() const { return b_NumberPrototype; }
+    Object builtinDatePrototype() const { return b_DatePrototype; }
+    Object builtinRegExpPrototype() const { return b_RegExpPrototype; }
+    Object builtinErrorPrototype() const { return b_ErrorPrototype; }
+
+    Object builtinEvalError() const { return b_evalError; }
+    Object builtinRangeError() const { return b_rangeError; }
+    Object builtinReferenceError() const { return b_referenceError; }
+    Object builtinSyntaxError() const { return b_syntaxError; }
+    Object builtinTypeError() const { return b_typeError; }
+    Object builtinURIError() const { return b_uriError; }
+
+    Object builtinEvalErrorPrototype() const { return b_evalErrorPrototype; }
+    Object builtinRangeErrorPrototype() const { return b_rangeErrorPrototype; }
+    Object builtinReferenceErrorPrototype() const { return b_referenceErrorPrototype; }
+    Object builtinSyntaxErrorPrototype() const { return b_syntaxErrorPrototype; }
+    Object builtinTypeErrorPrototype() const { return b_typeErrorPrototype; }
+    Object builtinURIErrorPrototype() const { return b_uriErrorPrototype; }
+
+    void setCompatMode(Interpreter::CompatMode mode) { m_compatMode = mode; }
+    Interpreter::CompatMode compatMode() const { return m_compatMode; }
+
+    // Chained list of interpreters (ring)
+    static InterpreterImp* firstInterpreter() { return s_hook; }
+    InterpreterImp *nextInterpreter() const { return next; }
+    InterpreterImp *prevInterpreter() const { return prev; }
+
   private:
-    /**
-     * Initialize global object and context. For internal use only.
-     */
-    void init();
     void clear();
-    /**
-     * Called when the first interpreter is instanciated. Initializes
-     * global pointers.
-     */
-    void globalInit();
-    /**
-     * Called when the last interpreter instance is destroyed. Frees
-     * globally allocated memory.
-     */
-    void globalClear();
-    bool evaluate(const UChar *code, unsigned int length, const KJSO &thisV = KJSO(),
-		  bool onlyCheckSyntax = false);
-    bool call(const KJSO &scope, const UString &func, const List &args);
-    bool call(const KJSO &func, const KJSO &thisV,
-	      const List &args, const List &extraScope);
-
-  public:
-    ProgramNode *progNode() const { return stack->progNode; }
-    void setProgNode(ProgramNode *p) { stack->progNode = p; }
-    Node *firstNode() const { return stack->firstNode; }
-    void setFirstNode(Node *n) { stack->firstNode = n; }
-    void pushStack();
-    void popStack();
-    KJScriptImp *next, *prev;
-    KJScript *scr;
-    ExecutionStack *stack;
-
-  private:
-    ProgramNode *progN;
-    Node *firstN;
-
-    static KJScriptImp *curr, *hook;
-    static int instances; // total number of instances
-    static int running;	// total number running
-    bool initialized;
-    Lexer *lex;
-    Context *con;
-    Global glob;
-    int errType, errLine;
-    UString errMsg;
-#ifdef KJS_DEBUGGER
+    Interpreter *m_interpreter;
+    Object global;
     Debugger *dbg;
-    int sid;
-#endif
-    const char *exMsg;
-    Imp *exVal;
-    Imp *retVal;
+
+    // Built-in properties of the object prototype. These are accessible
+    // from here even if they are replaced by js code (e.g. assigning to
+    // Array.prototype)
+
+    Object b_Object;
+    Object b_Function;
+    Object b_Array;
+    Object b_Boolean;
+    Object b_String;
+    Object b_Number;
+    Object b_Date;
+    Object b_RegExp;
+    Object b_Error;
+
+    Object b_ObjectPrototype;
+    Object b_FunctionPrototype;
+    Object b_ArrayPrototype;
+    Object b_BooleanPrototype;
+    Object b_StringPrototype;
+    Object b_NumberPrototype;
+    Object b_DatePrototype;
+    Object b_RegExpPrototype;
+    Object b_ErrorPrototype;
+
+    Object b_evalError;
+    Object b_rangeError;
+    Object b_referenceError;
+    Object b_syntaxError;
+    Object b_typeError;
+    Object b_uriError;
+
+    Object b_evalErrorPrototype;
+    Object b_rangeErrorPrototype;
+    Object b_referenceErrorPrototype;
+    Object b_syntaxErrorPrototype;
+    Object b_typeErrorPrototype;
+    Object b_uriErrorPrototype;
+
+    ExecState *globExec;
+    Interpreter::CompatMode m_compatMode;
+
+    // Chained list of interpreters (ring) - for collector
+    static InterpreterImp* s_hook;
+    InterpreterImp *next, *prev;
+
     int recursion;
   };
 
-  inline bool KJScriptImp::hadException()
-  {
-    assert(curr);
-    return curr->exMsg;
-  }
-
-  /**
-   * @short Struct used to return the property names of an object
-   */
-  class PropList {
+  class AttachedInterpreter;
+  class DebuggerImp {
   public:
-    PropList(UString nm = UString::null, PropList *nx = 0) :
-			  name(nm), next(nx) {};
-    ~PropList() {
-      if(next) delete next;
+
+    DebuggerImp() {
+      interps = 0;
+      isAborted = false;
     }
-    /**
-     * The property name
-     */
-    UString name;
-    /**
-     * The next property
-     */
-    PropList *next;
-    bool contains(const UString &name);
+
+    void abort() { isAborted = true; }
+    bool aborted() const { return isAborted; }
+
+    AttachedInterpreter *interps;
+    bool isAborted;
   };
 
-  /* TODO just temporary until functions are objects and this becomes
-     a member function. Called by RelationNode for 'instanceof' operator. */
-  KJSO hasInstance(const KJSO &F, const KJSO &V);
 
-// #define KJS_VERBOSE
+
+  class InternalFunctionImp : public ObjectImp {
+  public:
+    InternalFunctionImp(FunctionPrototypeImp *funcProto);
+    bool implementsHasInstance() const;
+    Boolean hasInstance(ExecState *exec, const Value &value);
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+  };
+
+  // helper function for toInteger, toInt32, toUInt32 and toUInt16
+  double roundValue(ExecState *exec, const Value &v);
+
 #ifndef NDEBUG
-  void printInfo( const char *s, const KJSO &o );
+  void printInfo(ExecState *exec, const char *s, const Value &o, int lineno = -1);
 #endif
 
 }; // namespace
 
 
-#endif
+#endif //  _INTERNAL_H_

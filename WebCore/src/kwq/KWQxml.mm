@@ -77,6 +77,14 @@ QString QXmlAttributes::value(int index) const
 }
 
 
+QString QXmlAttributes::uri(int) const
+{
+    _logNotYetImplemented();
+    return QString();
+}
+
+
+
 QXmlAttributes &QXmlAttributes::operator=(const QXmlAttributes &)
 {
     _logNotYetImplemented();
@@ -211,7 +219,4 @@ int QXmlParseException::lineNumber() const
     _logNotYetImplemented();
     return 0;
 }
-
-
-
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -24,10 +24,10 @@
 #ifndef _CSS_cssparser_h_
 #define _CSS_cssparser_h_
 
-#include "dom_string.h"
-#include "dom_misc.h"
-#include <qlist.h>
-#include <qdatetime.h> 
+#include "dom/dom_string.h"
+#include "dom/dom_misc.h"
+#include <qdatetime.h>
+#include <qptrlist.h>
 
 namespace DOM {
 
@@ -50,14 +50,23 @@ namespace DOM {
 class CSSSelector
 {
 public:
-    CSSSelector(void);
-    ~CSSSelector(void);
+    CSSSelector(void)
+	: tagHistory(0), attr(0), tag(0), relation( Descendant ), 
+    match( None ), nonCSSHint( false ), pseudoId( 0 ) {}
+
+    ~CSSSelector(void) {
+	if (tagHistory)
+	    delete tagHistory;
+    }
+    
     void print(void);
 
     // checks if the 2 selectors (including sub selectors) agree.
     bool operator == ( const CSSSelector &other );
-    
+
     // tag == -1 means apply to all elements (Selector = *)
+
+    unsigned int specificity();
 
     /* how the attribute value has to match.... Default is Exact */
     enum Match
@@ -67,7 +76,10 @@ public:
 	Set,
 	List,
 	Hyphen,
-	Pseudo
+	Pseudo,
+	Contain,   // css3: E[foo*="bar"]
+	Begin,     // css3: E[foo^="bar"]
+	End        // css3: E[foo$="bar"]
     };
 
     enum Relation
@@ -78,17 +90,17 @@ public:
 	SubSelector
     };
 
-    Relation relation 	: 2;
-    Match 	 match 	: 3;
-    bool	nonCSSHint : 1;
-    unsigned int 	pseudoId : 2;
+    DOM::DOMString value;
+    CSSSelector *tagHistory;
     int          attr;
     int          tag;
-    DOM::DOMString value;
 
-    CSSSelector *tagHistory;
+    Relation relation     : 2;
+    Match 	 match         : 4;
+    bool	nonCSSHint : 1;
+    unsigned int pseudoId : 3;
 
-    unsigned int specificity();
+
 };
 
     // a style class which has a parent (almost all have)
@@ -103,13 +115,13 @@ public:
 	virtual bool deleteMe();
 
 	// returns the url of the style sheet this object belongs to
-	DOMString baseUrl();
+	DOMString baseURL();
 
 	StyleBaseImpl *parent() { return m_parent; }
 
-	virtual bool isStyleSheet() { return false; }
-	virtual bool isCSSStyleSheet() { return false; }
-	virtual bool isStyleSheetList() { return false; }
+	virtual bool isStyleSheet() const { return false; }
+	virtual bool isCSSStyleSheet() const { return false; }
+	virtual bool isStyleSheetList() const { return false; }
 	virtual bool isMediaList() { return false; }
 	virtual bool isRuleList() { return false; }
 	virtual bool isRule() { return false; }
@@ -122,7 +134,7 @@ public:
 	virtual bool isUnknownRule() { return false; }
 	virtual bool isStyleDeclaration() { return false; }
 	virtual bool isValue() { return false; }
-	virtual bool isPrimitiveValue() { return false; }
+	virtual bool isPrimitiveValue() const { return false; }
 	virtual bool isValueList() { return false; }
 	virtual bool isValueCustom() { return false; }
 
@@ -135,28 +147,31 @@ public:
 
 	CSSSelector *parseSelector2(const QChar *curP, const QChar *endP, CSSSelector::Relation relation);
 	CSSSelector *parseSelector1(const QChar *curP, const QChar *endP);
-	QList<CSSSelector> *parseSelector(const QChar *curP, const QChar *endP);
+	QPtrList<CSSSelector> *parseSelector(const QChar *curP, const QChar *endP);
 
 	void parseProperty(const QChar *curP, const QChar *endP);
-	QList<CSSProperty> *parseProperties(const QChar *curP, const QChar *endP);
+	QPtrList<CSSProperty> *parseProperties(const QChar *curP, const QChar *endP);
 
 	/* parses generic CSSValues, return true, if it found a valid value */
-	bool parseValue(const QChar *curP, const QChar *endP, int propId);	
-	bool parseValue(const QChar *curP, const QChar *endP, int propId, 
-			bool important, QList<CSSProperty> *propList);	
+	bool parseValue(const QChar *curP, const QChar *endP, int propId);
+	bool parseValue(const QChar *curP, const QChar *endP, int propId,
+			bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
 	bool parseFont(const QChar *curP, const QChar *endP);
 	bool parse4Values(const QChar *curP, const QChar *endP, const int *properties);
 	bool parseShortHand(const QChar *curP, const QChar *endP, const int *properties, int num);
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue);
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue,
-			    bool important, QList<CSSProperty> *propList);
-	QList<QChar> splitShorthandProperties(const QChar *curP, const QChar *endP);
+			    bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
+	QPtrList<QChar> splitShorthandProperties(const QChar *curP, const QChar *endP);
 	bool parseBackgroundPosition(const QChar *curP, const QChar *&nextP, const QChar *endP);
-	
+
 	/* define CSS_AURAL in cssparser.cpp if you want to parse CSS2 Aural properties */
 	bool parse2Values(const QChar *curP, const QChar *endP, const int *properties);
 	bool parseAuralValue(const QChar *curP, const QChar *endP, int propId);
 
+        CSSValueImpl* parseContent(const QChar *curP, const QChar *endP);
+        QPtrList<QChar> splitContent(const QChar *curP, const QChar *endP);
+                
 	// defines units allowed for a certain property, used in parseUnit
 	enum Units
 	{
@@ -175,7 +190,9 @@ public:
 	CSSPrimitiveValueImpl *parseUnit(const QChar * curP, const QChar *endP, int allowedUnits);
 
 	CSSRuleImpl *parseAtRule(const QChar *&curP, const QChar *endP);
-	CSSStyleRuleImpl *parseStyleRule(const QChar *&curP, const QChar *endP);
+
+	// the caller is responible for deleting the returned lists in the next to methods
+	CSSRuleImpl *parseStyleRule(const QChar *&curP, const QChar *endP);
 	CSSRuleImpl *parseRule(const QChar *&curP, const QChar *endP);
 
 	virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
@@ -183,17 +200,15 @@ public:
 	virtual void checkLoaded();
 
 	void setStrictParsing( bool b ) { strictParsing = b; }
-	
-   	QTime m_pingTimer;   
+	bool useStrictParsing() const { return strictParsing; }
 
     protected:
 	StyleBaseImpl *m_parent;
 	bool hasInlinedDecl : 1;
 	bool strictParsing : 1;
-	
     private:
-	bool m_bImportant;
-        QList<CSSProperty> *m_propList;
+// 	bool m_bImportant : 1;
+//         bool m_bnonCSSHint : 1;
     };
 
     // a style class which has a list of children (StyleSheets for example)
@@ -211,32 +226,8 @@ public:
 	void append(StyleBaseImpl *item) { m_lstChildren->append(item); }
 
     protected:
-	QList<StyleBaseImpl> *m_lstChildren;
+	QPtrList<StyleBaseImpl> *m_lstChildren;
     };
-
-
-// another helper class
-class CSSProperty
-{
-public:
-    CSSProperty()
-    {
-	m_id = -1;
-	m_value = 0;
-	m_bImportant = false;
-	nonCSSHint = false;
-    }
-    ~CSSProperty();
-
-    void setValue(CSSValueImpl *val);
-    CSSValueImpl *value();
-
-    int  m_id;
-    bool m_bImportant 	: 1;
-    bool nonCSSHint 	: 1;
-protected:
-    CSSValueImpl *m_value;
-};
 
 }; // namespace
 

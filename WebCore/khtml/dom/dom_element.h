@@ -37,8 +37,10 @@ namespace DOM {
 
 class DOMString;
 class AttrImpl;
+class Element;
 class ElementImpl;
 class NamedAttrMapImpl;
+class DocumentImpl;
 
 /**
  * The <code> Attr </code> interface represents an attribute in an
@@ -87,6 +89,7 @@ class Attr : public Node
 {
     friend class Element;
     friend class Document;
+    friend class DocumentImpl;
     friend class HTMLDocument;
     friend class ElementImpl;
     friend class NamedAttrMapImpl;
@@ -156,6 +159,14 @@ public:
      */
     void setValue( const DOMString & );
 
+    /**
+     * Introduced in DOM Level 2
+     *
+     * The Element node this attribute is attached to or null if this attribute
+     * is not in use.
+     */
+    Element ownerElement() const;
+
 protected:
 
     Attr( AttrImpl *_impl );
@@ -197,6 +208,8 @@ class Element : public Node
 {
     friend class Document;
     friend class HTMLDocument;
+//    friend class AttrImpl;
+    friend class Attr;
 
 public:
     Element();
@@ -348,21 +361,173 @@ public:
     NodeList getElementsByTagName ( const DOMString &name );
 
     /**
-     * Puts all <code> Text </code> nodes in the full depth of the
-     * sub-tree underneath this <code> Element </code> into a "normal"
-     * form where only markup (e.g., tags, comments, processing
-     * instructions, CDATA sections, and entity references) separates
-     * <code> Text </code> nodes, i.e., there are no adjacent <code>
-     * Text </code> nodes. This can be used to ensure that the DOM
-     * view of a document is the same as if it were saved and
-     * re-loaded, and is useful when operations (such as XPointer
-     * lookups) that depend on a particular document tree structure
-     * are to be used.
+     * Introduced in DOM Level 2
+     * Returns a NodeList of all the descendant Elements with a given local
+     * name and namespace URI in the order in which they are encountered in a
+     * preorder traversal of this Element tree.
      *
-     * @return
+     * @param namespaceURI The namespace URI of the elements to match on. The
+     * special value "*" matches all namespaces.
      *
+     * @param localName The local name of the elements to match on. The special
+     * value "*" matches all local names.
+     *
+     * @return A new NodeList object containing all the matched Elements.
      */
-    void normalize (  );
+    NodeList getElementsByTagNameNS ( const DOMString &namespaceURI,
+                                      const DOMString &localName );
+
+    /**
+     * Introduced in DOM Level 2.
+     *
+     * No Exceptions.
+     *
+     * Retrieves an attribute value by local name and namespace URI. HTML-only
+     * DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the attribute to retrieve.
+     *
+     * @param localName The local name of the attribute to retrieve.
+     *
+     * @return The Attr value as a string, or the empty string if that
+     * attribute does not have a specified or default value.
+     */
+    DOMString getAttributeNS ( const DOMString &namespaceURI,
+                               const DOMString &localName );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Adds a new attribute. If an attribute with the same local name and
+     * namespace URI is already present on the element, its prefix is changed
+     * to be the prefix part of the qualifiedName, and its value is changed to
+     * be the value parameter. This value is a simple string; it is not parsed
+     * as it is being set. So any markup (such as syntax to be recognized as an
+     * entity reference) is treated as literal text, and needs to be
+     * appropriately escaped by the implementation when it is written out. In
+     * order to assign an attribute value that contains entity references, the
+     * user must create an Attr node plus any Text and EntityReference nodes,
+     * build the appropriate subtree, and use setAttributeNodeNS or
+     * setAttributeNode to assign it as the value of an attribute.
+     *
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the attribute to create or
+     * alter.
+     *
+     * @param qualifiedName The qualified name of the attribute to create or
+     * alter.
+     *
+     * @param value The value to set in string form.
+     *
+     * @exception DOMException
+     * INVALID_CHARACTER_ERR: Raised if the specified qualified name contains
+     * an illegal character.
+     *
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+     *
+     * NAMESPACE_ERR: Raised if the qualifiedName is malformed, if the
+     * qualifiedName has a prefix and the namespaceURI is null, if the
+     * qualifiedName has a prefix that is "xml" and the namespaceURI is
+     * different from "http://www.w3.org/XML/1998/namespace", or if the
+     * qualifiedName is "xmlns" and the namespaceURI is different from
+     * "http://www.w3.org/2000/xmlns/".
+     */
+    void setAttributeNS ( const DOMString &namespaceURI,
+                          const DOMString &qualifiedName,
+                          const DOMString &value );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Removes an attribute by local name and namespace URI. If the removed
+     * attribute has a default value it is immediately replaced. The replacing
+     * attribute has the same namespace URI and local name, as well as the
+     * original prefix.
+     *
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the attribute to remove.
+     *
+     * @param localName The local name of the attribute to remove.
+     *
+     * @exception DOMException
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+     */
+    void removeAttributeNS ( const DOMString &namespaceURI,
+                             const DOMString &localName );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Retrieves an Attr node by local name and namespace URI. HTML-only DOM
+     * implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the attribute to retrieve.
+     *
+     * @param localName The local name of the attribute to retrieve.
+     *
+     * @return The Attr node with the specified attribute local name and
+     * namespace URI or null if there is no such attribute.
+     */
+    Attr getAttributeNodeNS ( const DOMString &namespaceURI,
+                              const DOMString &localName );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Adds a new attribute. If an attribute with that local name and that
+     * namespace URI is already present in the element, it is replaced by the
+     * new one.
+     *
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param newAttr The Attr node to add to the attribute list.
+     *
+     * @return If the newAttr attribute replaces an existing attribute with the
+     * same local name and namespace URI, the replaced Attr node is returned,
+     * otherwise null is returned.
+     *
+     * @exception DOMException
+     * WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different
+     * document than the one that created the element.
+     *
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+     *
+     * INUSE_ATTRIBUTE_ERR: Raised if newAttr is already an attribute of
+     * another Element object. The DOM user must explicitly clone Attr nodes to
+     * re-use them in other elements.
+     */
+    Attr setAttributeNodeNS ( const Attr &newAttr );
+
+    /**
+     * Returns true when an attribute with a given name is specified on this
+     * element or has a default value, false otherwise.
+     * Introduced in DOM Level 2.
+     *
+     * @param name The name of the attribute to look for.
+     *
+     * @return true if an attribute with the given name is specified on this
+     * element or has a default value, false otherwise.
+     */
+    bool hasAttribute( const DOMString& name );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Returns true when an attribute with a given local name and namespace URI
+     * is specified on this element or has a default value, false otherwise.
+     * HTML-only DOM implementations do not need to implement this method.
+     *
+     * @param namespaceURI The namespace URI of the attribute to look for.
+     *
+     * @param localName The local name of the attribute to look for.
+     *
+     * @return true if an attribute with the given local name and namespace URI
+     * is specified or has a default value on this element, false otherwise.
+     */
+    bool hasAttributeNS ( const DOMString &namespaceURI,
+                          const DOMString &localName );
 
     /**
      * Introduced in DOM Level 2
@@ -378,8 +543,13 @@ public:
      */
     bool isHTMLElement() const;
 
-protected:
+    static bool khtmlValidAttrName(const DOMString &name);
+    static bool khtmlValidPrefix(const DOMString &name);
+    static bool khtmlValidQualifiedName(const DOMString &name);
 
+    static bool khtmlMalformedQualifiedName(const DOMString &name);
+    static bool khtmlMalformedPrefix(const DOMString &name);
+protected:
     Element(ElementImpl *_impl);
 };
 

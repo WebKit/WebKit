@@ -40,6 +40,7 @@ class KHTMLPart;
 namespace DOM {
 
 class HTMLDocumentImpl;
+class DOMImplementation;
 class HTMLCollection;
 class NodeList;
 class Element;
@@ -73,6 +74,7 @@ class HTMLDocument : public Document
 {
     friend class ::KHTMLView;
     friend class ::KHTMLPart;
+    friend class DOMImplementation;
 public:
     HTMLDocument();
     /**
@@ -82,7 +84,7 @@ public:
      */
     HTMLDocument(KHTMLView *parent);
     HTMLDocument(const HTMLDocument &other);
-    HTMLDocument(const Node &other) : Document()
+    HTMLDocument(const Node &other) : Document(false)
          {(*this)=other;}
 protected:
     HTMLDocument(HTMLDocumentImpl *impl);
@@ -109,7 +111,6 @@ public:
      * Returns the URI of the page that linked to this page. The value
      * is an empty string if the user navigated to the page directly
      * (not through a link, but, for example, via a bookmark).
-     *
      */
     DOMString referrer() const;
 
@@ -122,8 +123,7 @@ public:
     DOMString domain() const;
 
     /**
-     * The complete URI of the document.
-     *
+     * The absolute URI of the document.
      */
     DOMString URL() const;
 
@@ -183,13 +183,6 @@ public:
     HTMLCollection anchors() const;
 
     /**
-     * A collection of all the <code>IMG</code>, <code>OBJECT</code>,
-     * <code>AREA</code>, <code>A</code>, forms and anchor elements of
-     * a document.
-     */
-    HTMLCollection all() const;
-
-    /**
      * The cookies associated with this document. If there are none,
      * the value is an empty string. Otherwise, the value is a string:
      * a semicolon-delimited list of "name, value" pairs for all the
@@ -242,7 +235,6 @@ public:
      *
      */
     void write ( const DOMString &text );
-    void write ( const QString &text );
 
     /**
      * Write a string of text followed by a newline character to a
@@ -258,20 +250,6 @@ public:
     void writeln ( const DOMString &text );
 
     /**
-     * Returns the Element whose <code> id </code> is given by
-     * elementId. If no such element exists, returns <code> null
-     * </code> . Behavior is not defined if more than one element has
-     * this <code> id </code> .
-     *
-     * @param elementId The unique <code> id </code> value for an
-     * element.
-     *
-     * @return The matching element.
-     *
-     */
-    Element getElementById ( const DOMString &elementId );
-
-    /**
      * Returns the (possibly empty) collection of elements whose
      * <code> name </code> value is given by <code> elementName
      * </code> .
@@ -283,6 +261,31 @@ public:
      *
      */
     NodeList getElementsByName ( const DOMString &elementName );
+
+    /**
+     * not part of the DOM
+     *
+     * converts the given (potentially relative) URL in a
+     * full-qualified one, using the baseURL / document URL for
+     * the missing parts.
+     */
+    DOMString completeURL( const DOMString& url) const;
+
+    /**
+     * Not part of the DOM
+     *
+     * The date the document was last modified.
+     */
+    DOMString lastModified() const;
+
+    /**
+     * Not part of the DOM
+     *
+     * A collection of all the <code>IMG</code>, <code>OBJECT</code>,
+     * <code>AREA</code>, <code>A</code>, forms and anchor elements of
+     * a document.
+     */
+    HTMLCollection all() const;
 };
 
 }; //namespace

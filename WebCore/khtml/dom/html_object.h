@@ -491,6 +491,17 @@ public:
      * see @ref width
      */
     void setWidth( const DOMString & );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Returns the document this iframe contains, if there is any and
+     * it is available, a Null document otherwise. The attribute is
+     * read-only.
+     *
+     * @return The content Document if available.
+     */
+    Document contentDocument() const;
 };
 
 // --------------------------------------------------------------------------

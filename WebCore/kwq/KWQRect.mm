@@ -28,6 +28,7 @@
 #ifndef USING_BORROWED_QRECT
 
 #define MAX(a,b) ((a) >= (b) ? (a) : (b))
+#define MIN(a,b) ((a) <= (b) ? (a) : (b))
 
 
 QRect::QRect() : xp(0), yp(0), w(1), h(1)
@@ -50,6 +51,11 @@ bool QRect::isNull() const
 bool QRect::isValid() const
 {
     return w > 0 && h > 0;
+}
+
+bool QRect::isEmpty() const
+{
+    return w > 1 && h > 1;
 }
 
 int QRect::x() const
@@ -115,6 +121,28 @@ void QRect::setHeight(int height)
 QRect QRect::intersect(const QRect &r) const
 {
     return operator&(r);
+}
+
+QRect QRect::unite(const QRect &r) const
+{
+    int nx, ny, nw, nh;
+
+    nx = MIN(xp, r.xp);
+    ny = MIN(yp, r.yp);
+
+    if (xp + w >= r.xp + r.w) {
+        nw = xp + w - nx;
+    } else {
+        nw = r.xp + r.w - nx; 
+    }
+
+    if (yp + h >= r.yp + r.h) {
+        nh = yp + h - ny;
+    } else {
+        nh = r.yp + r.h - ny; 
+    }
+
+    return QRect(nx, ny, nw, nh);
 }
 
 bool QRect::intersects(const QRect &r) const

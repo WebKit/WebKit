@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -39,8 +39,7 @@ public:
 
     ~HTMLBaseFontElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -65,30 +64,43 @@ public:
         SELECT_OPTIONS,
         // from HTMLMap
         MAP_AREAS,
-        DOC_ALL        // "all" elements
+        DOC_ALL,        // "all" elements (IE)
+        NODE_CHILDREN   // first-level children (IE)
     };
 
     HTMLCollectionImpl(NodeImpl *_base, int _tagId);
 
     virtual ~HTMLCollectionImpl();
     unsigned long length() const;
+    // This method is o(n), so you should't use it to iterate over all items. Use firstItem/nextItem instead.
     NodeImpl *item ( unsigned long index ) const;
+    virtual NodeImpl *firstItem() const;
+    virtual NodeImpl *nextItem() const;
+
     NodeImpl *namedItem ( const DOMString &name ) const;
+    // In case of multiple items named the same way
+    NodeImpl *nextNamedItem( const DOMString &name ) const;
 
 protected:
     virtual unsigned long calcLength(NodeImpl *current) const;
     virtual NodeImpl *getItem(NodeImpl *current, int index, int &pos) const;
-    virtual NodeImpl *getNamedItem( NodeImpl *current, int attr_id,
-                            const DOMString &name ) const;
-   // the base node, the collection refers to
+    virtual NodeImpl *getNamedItem(NodeImpl *current, int attr_id, const DOMString &name) const;
+    virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
+    // the base node, the collection refers to
     NodeImpl *base;
     // The collection list the following elements
     int type;
 
     // ### add optimization, so that a linear loop through the
-    // Collection is O(n) and not O(n^2)!
+    // Collection [using item(i)] is O(n) and not O(n^2)!
+    // But for that we need to get notified in case of changes in the dom structure...
     //NodeImpl *current;
     //int currentPos;
+
+    // For firstItem()/nextItem()
+    mutable NodeImpl *currentItem;
+    // For nextNamedItem()
+    mutable bool idsDone;
 };
 
 // this whole class is just a big hack to find form elements even in
@@ -103,10 +115,17 @@ public:
     {};
     ~HTMLFormCollectionImpl() { };
 
+    virtual NodeImpl *firstItem() const;
+    virtual NodeImpl *nextItem() const;
 protected:
     virtual unsigned long calcLength(NodeImpl* current) const;
-    virtual NodeImpl* getItem(NodeImpl *current, int index, int& pos) const;
-    virtual NodeImpl* getNamedItem(NodeImpl* current, int attr_id, const DOMString& name) const;
+    virtual NodeImpl *getItem(NodeImpl *current, int index, int& pos) const;
+    virtual NodeImpl *getNamedItem(NodeImpl* current, int attr_id, const DOMString& name) const;
+    virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
+private:
+    NodeImpl* getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber) const;
+    NodeImpl* getNamedImgItem(NodeImpl* current, int attr_id, const DOMString& name, int& duplicateNumber) const;
+    mutable int currentPos;
 };
 
 

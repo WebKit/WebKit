@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the html renderer for KDE.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
@@ -27,28 +27,44 @@
 
 #include <qcolor.h>
 #include <qrect.h>
+#include <assert.h>
 
-#include "xml/dom_nodeimpl.h"
 #include "misc/khtmllayout.h"
 #include "misc/loader_client.h"
-
-#include "render_style.h"
+#include "misc/helper.h"
+#include "rendering/render_style.h"
 
 class QPainter;
+class QTextStream;
 class CSSStyle;
 class KHTMLView;
 
+#ifndef NDEBUG
+#define KHTMLAssert( x ) if( !(x) ) { \
+    const RenderObject *o = this; while( o->parent() ) o = o->parent(); \
+    o->printTree(); \
+    assert( false ); \
+}
+#else
+#define KHTMLAssert( x )
+#endif
+
 namespace DOM {
+    class HTMLAreaElementImpl;
     class DOMString;
     class NodeImpl;
+    class ElementImpl;
+    class EventImpl;
 };
 
 namespace khtml {
-
+    class RenderFlow;
     class RenderStyle;
     class RenderTable;
     class CachedObject;
     class RenderRoot;
+    class RenderText;
+    class RenderFrameSet;
 
 /**
  * Base Class for all rendering tree objects.
@@ -57,7 +73,7 @@ class RenderObject : public CachedObjectClient
 {
 public:
 
-    RenderObject();
+    RenderObject(DOM::NodeImpl* node);
     virtual ~RenderObject();
 
     RenderObject *parent() const { return m_parent; }
@@ -89,9 +105,13 @@ private:
 
 public:
     virtual const char *renderName() const { return "RenderObject"; }
+#ifndef NDEBUG
+    QString information() const;
     virtual void printTree(int indent=0) const;
+    virtual void dump(QTextStream *stream, QString ind = "") const;
+#endif
 
-    static RenderObject *createObject(DOM::NodeImpl *node);
+    static RenderObject *createObject(DOM::NodeImpl* node, RenderStyle* style);
 
     // some helper functions...
     virtual bool childrenInline() const { return false; }
@@ -109,6 +129,7 @@ public:
     virtual bool isWidget() const { return false; }
     virtual bool isBody() const { return false; }
     virtual bool isFormElement() const { return false; }
+    virtual bool isFrameSet() const { return false; }
 
     bool isAnonymousBox() const { return m_isAnonymous; }
     void setIsAnonymousBox(bool b) { m_isAnonymous = b; }
@@ -116,47 +137,80 @@ public:
     bool isFloating() const { return m_floating; }
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning
-    bool isText() const  { return m_isText; }   // inherits RenderText
+    bool isText() const  { return m_isText; }
     bool isInline() const { return m_inline; }  // inline object
+    bool mouseInside() const { return m_mouseInside; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool hasSpecialObjects() const { return m_printSpecial; }
-    bool isVisible() const  { return m_visible; }
     bool layouted() const   { return m_layouted; }
-    bool parsing() const    { return m_parsing;     }
     bool minMaxKnown() const{ return m_minMaxKnown; }
-    bool containsPositioned() const { return m_containsPositioned; }
-    bool containsWidget() const { return m_containsWidget; }
+    bool overhangingContents() const { return m_overhangingContents; }
     bool hasFirstLine() const { return m_hasFirstLine; }
+    bool isSelectionBorder() const { return m_isSelectionBorder; }
+    bool recalcMinMax() const { return m_recalcMinMax; }
+
     RenderRoot* root() const;
-    
-    /**
+    // don't even think about making this method virtual!
+    DOM::NodeImpl* element() const { return m_node; }
+
+   /**
      * returns the object containing this one. can be different from parent for
      * positioned elements
      */
     RenderObject *container() const;
 
-    void setContainsPositioned(bool p);
-    void setLayouted(bool b=true) { m_layouted = b; }
-    void setParsing(bool b=true) { m_parsing = b; }
-    void setMinMaxKnown(bool b=true) { m_minMaxKnown = b; }
+    void setOverhangingContents(bool p=true);
+    void setLayouted(bool b=true) {
+	m_layouted = b;
+	if(!b) {
+	    RenderObject *o = m_parent;
+	    RenderObject *root = this;
+	    while( o ) {
+		o->m_layouted = false;
+		root = o;
+		o = o->m_parent;
+	    }
+#ifndef APPLE_CHANGES
+	    root->scheduleRelayout();
+#endif
+	}
+    }
+    // hack to block inline layouts during parsing
+    // evil, evil. I didn't do it. <tm>
+    virtual void setBlockBidi() {}
+
+    void setMinMaxKnown(bool b=true) {
+	m_minMaxKnown = b;
+	if ( !b ) {
+	    RenderObject *o = this;
+	    RenderObject *root = this;
+	    while( o ) { // ### && !o->m_recalcMinMax ) {
+		o->m_recalcMinMax = true;
+		root = o;
+		o = o->m_parent;
+	    }
+	}
+    }
     void setPositioned(bool b=true)  { m_positioned = b;  }
     void setRelPositioned(bool b=true) { m_relPositioned = b; }
     void setFloating(bool b=true) { m_floating = b; }
     void setInline(bool b=true) { m_inline = b; }
+    void setMouseInside(bool b=true) { m_mouseInside = b; }
     void setSpecialObjects(bool b=true) { m_printSpecial = b; }
-    void setVisible(bool b=true) { m_visible = b; }
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b=true) { m_replaced = b; }
-    void setContainsWidget(bool b=true) { m_containsWidget = b; }
+    void setIsSelectionBorder(bool b=true) { m_isSelectionBorder = b; }
+
+    void scheduleRelayout();
 
     // for discussion of lineHeight see CSS2 spec
-    virtual int lineHeight( bool firstLine ) const;
+    virtual short lineHeight( bool firstLine ) const;
     // for the vertical-align property of inline elements
     // the difference between this objects baseline position and the lines baseline position.
     virtual short verticalPositionHint( bool firstLine ) const;
     // the offset of baseline from the top of the object.
     virtual short baselinePosition( bool firstLine ) const;
-    
+
     /*
      * Print the object and it's children, clipped by (x|y|w|h).
      * (tx|ty) is the calculated position of the parent
@@ -180,9 +234,14 @@ public:
      * set to the same value. This has the special meaning that m_width,
      * contains the actual value.
      *
-     * ### assumes calcMinMaxWidth has already been called for all children.
+     * assumes calcMinMaxWidth has already been called for all children.
      */
     virtual void calcMinMaxWidth() { }
+
+    /*
+     * Does the min max width recalculations after changes.
+     */
+    void recalcMinMaxWidths();
 
     /*
      * Calculates the actual width of the object (only for non inline
@@ -202,12 +261,47 @@ public:
      */
     virtual void layout() = 0;
 
-    // propagates size changes upwards in the tree
-    virtual void updateSize();
-    virtual void updateHeight() {}
-    
-    // The corresponding closing element has been parsed. 
-    virtual void close() { setParsing(false); }
+    // used for element state updates that can not be fixed with a
+    // repaint and do not need a relayout
+    virtual void updateFromElement() {};
+
+    // The corresponding closing element has been parsed. ### remove me
+    virtual void close() { }
+
+    // does a query on the rendertree and finds the innernode
+    // and overURL for the given position
+    // if readonly == false, it will recalc hover styles accordingly
+    class NodeInfo
+    {
+        friend class RenderImage;
+        friend class RenderFlow;
+        friend class RenderText;
+        friend class RenderObject;
+        friend class RenderFrameSet;
+        friend class DOM::HTMLAreaElementImpl;
+    public:
+        NodeInfo(bool readonly, bool active)
+            : m_innerNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active)
+            { }
+
+        DOM::NodeImpl* innerNode() const { return m_innerNode; }
+        DOM::NodeImpl* URLElement() const { return m_innerURLElement; }
+        bool readonly() const { return m_readonly; }
+        bool active() const { return m_active; }
+
+    private:
+        void setInnerNode(DOM::NodeImpl* n) { m_innerNode = n; }
+        void setURLElement(DOM::NodeImpl* n) { m_innerURLElement = n; }
+
+        DOM::NodeImpl* m_innerNode;
+        DOM::NodeImpl* m_innerURLElement;
+        bool m_readonly;
+        bool m_active;
+    };
+
+    virtual FindSelectionResult checkSelectionPoint( int _x, int _y, int _tx, int _ty,
+                                                     DOM::NodeImpl*&, int & offset );
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty);
 
     // set the style of the object.
     virtual void setStyle(RenderStyle *style);
@@ -253,33 +347,42 @@ public:
     int paddingLeft() const;
     int paddingRight() const;
 
-    int borderTop() const { return m_style->borderTopWidth(); }
-    int borderBottom() const { return m_style->borderBottomWidth(); }
-    int borderLeft() const { return m_style->borderLeftWidth(); }
-    int borderRight() const { return m_style->borderRightWidth(); }
+    int borderTop() const { return style()->borderTopWidth(); }
+    int borderBottom() const { return style()->borderBottomWidth(); }
+    int borderLeft() const { return style()->borderLeftWidth(); }
+    int borderRight() const { return style()->borderRightWidth(); }
 
     virtual short minWidth() const { return 0; }
     virtual short maxWidth() const { return 0; }
 
-    virtual RenderStyle* style() const { return m_style; }
+    RenderStyle* style() const { return m_style; }
+    RenderStyle* style( bool firstLine ) const {
+	RenderStyle *s = m_style;
+	if( firstLine && hasFirstLine() ) {
+	    RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
+	    if ( pseudoStyle )
+		s = pseudoStyle;
+	}
+	return s;
+    }
 
     enum BorderSide {
         BSTop, BSBottom, BSLeft, BSRight
     };
-    void drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int width, BorderSide s,
-                    QColor c, const QColor& textcolor, EBorderStyle style, bool sb1, bool sb2,
+    void drawBorder(QPainter *p, int x1, int y1, int x2, int y2, BorderSide s,
+                    QColor c, const QColor& textcolor, EBorderStyle style,
                     int adjbw1, int adjbw2, bool invalidisInvert = false);
 
     virtual void setTable(RenderTable*) {};
 
-    // force a complete repaint 
+    // force a complete repaint
     virtual void repaint() { if(m_parent) m_parent->repaint(); }
     virtual void repaintRectangle(int x, int y, int w, int h, bool f=false);
 
     virtual unsigned int length() const { return 1; }
 
     virtual bool isHidden() const { return isFloating() || isPositioned(); }
-    
+
     // Special objects are objects that are neither really inline nor blocklevel
     bool isSpecial() const { return (isFloating() || isPositioned()); };
     virtual bool containsSpecial() { return false; }
@@ -300,22 +403,28 @@ public:
     virtual void setSelectionState(SelectionState) {}
 
     virtual void cursorPos(int /*offset*/, int &/*_x*/, int &/*_y*/, int &/*height*/);
-    
+
     virtual int lowestPosition() const {return 0;}
-    
+
     virtual int rightmostPosition() const {return 0;}
-    
+
     // recursively invalidate current layout
-    void invalidateLayout();
-    
+    // unused: void invalidateLayout();
+
     virtual void calcVerticalMargins() {}
     void removeFromSpecialObjects();
 
     virtual void detach();
 
-    virtual bool containsPoint(int _x, int _y, int _tx, int _ty);
+    const QFont &font(bool firstLine) const {
+	return style( firstLine )->font();
+    }
 
-    QFont font(bool firstLine) const;
+    const QFontMetrics &fontMetrics(bool firstLine) const {
+	return style( firstLine )->fontMetrics();
+    }
+
+    virtual void handleDOMEvent(DOM::EventImpl */*evt*/) {}
 
 protected:
     virtual void selectionStartEnd(int& spos, int& epos);
@@ -336,31 +445,36 @@ protected:
     short getVerticalPosition( bool firstLine ) const;
 
 private:
-    RenderStyle *m_style;
+    RenderStyle* m_style;
+    DOM::NodeImpl* m_node;
     RenderObject *m_parent;
     RenderObject *m_previous;
     RenderObject *m_next;
-    
+
     short m_verticalPosition;
 
-    bool m_layouted       : 1;
-    bool m_parsing        : 1;
-    bool m_minMaxKnown    : 1;
-    bool m_floating       : 1;
+    bool m_layouted                  : 1;
+    bool m_unused                   : 1;
+    bool m_minMaxKnown               : 1;
+    bool m_floating                  : 1;
 
-    bool m_positioned     : 1;
-    bool m_containsPositioned     : 1;
-    bool m_relPositioned  : 1;
-    bool m_printSpecial   : 1; // if the box has something special to print (background, border, etc)
-    bool m_isAnonymous    : 1;
-    bool m_visible        : 1;
-    bool m_isText         : 1;
-    bool m_inline         : 1;
-    bool m_replaced       : 1;
-    bool m_containsWidget : 1;
-    bool m_containsOverhangingFloats : 1;
-    bool m_hasFirstLine   : 1;
+    bool m_positioned                : 1;
+    bool m_overhangingContents : 1;
+    bool m_relPositioned             : 1;
+    bool m_printSpecial              : 1; // if the box has something special to print (background, border, etc)
 
+    bool m_isAnonymous               : 1;
+    bool m_recalcMinMax 	     : 1;
+    bool m_isText                    : 1;
+    bool m_inline                    : 1;
+
+    bool m_replaced                  : 1;
+    bool m_mouseInside : 1;
+    bool m_hasFirstLine              : 1;
+    bool m_isSelectionBorder          : 1;
+
+    // note: do not add unnecessary bitflags, we have 32 bit already!
+    friend class RenderListItem;
     friend class RenderContainer;
     friend class RenderRoot;
 };

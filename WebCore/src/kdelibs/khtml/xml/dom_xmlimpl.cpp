@@ -17,16 +17,15 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
+#include "dom/dom_exception.h"
 
-#include "dom/dom_text.h"
-#include "dom_xmlimpl.h"
-#include "dom_docimpl.h"
-#include "dom_stringimpl.h"
-#include "dom_exception.h"
+#include "xml/dom_xmlimpl.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom_stringimpl.h"
+#include "css/css_stylesheetimpl.h"
+#include "misc/loader.h"
 
 using namespace DOM;
 
@@ -75,16 +74,6 @@ EntityImpl::~EntityImpl()
         m_name->deref();
 }
 
-const DOMString EntityImpl::nodeName() const
-{
-    return m_name;
-}
-
-unsigned short EntityImpl::nodeType() const
-{
-    return Node::ENTITY_NODE;
-}
-
 DOMString EntityImpl::publicId() const
 {
     return m_publicId;
@@ -98,6 +87,23 @@ DOMString EntityImpl::systemId() const
 DOMString EntityImpl::notationName() const
 {
     return m_notationName;
+}
+
+DOMString EntityImpl::nodeName() const
+{
+    return m_name;
+}
+
+unsigned short EntityImpl::nodeType() const
+{
+    return Node::ENTITY_NODE;
+}
+
+NodeImpl *EntityImpl::cloneNode ( bool /*deep*/)
+{
+    // Spec says cloning Document nodes is "implementation dependent"
+    // so we do not support it...
+    return 0;
 }
 
 // DOM Section 1.1.1
@@ -115,12 +121,6 @@ bool EntityImpl::childTypeAllowed( unsigned short type )
         default:
             return false;
     }
-}
-
-NodeImpl *EntityImpl::cloneNode ( bool /*deep*/, int &exceptioncode )
-{
-    exceptioncode = DOMException::NOT_SUPPORTED_ERR;
-    return 0;
 }
 
 // -------------------------------------------------------------------------
@@ -143,7 +143,7 @@ EntityReferenceImpl::~EntityReferenceImpl()
         m_entityName->deref();
 }
 
-const DOMString EntityReferenceImpl::nodeName() const
+DOMString EntityReferenceImpl::nodeName() const
 {
     return m_entityName;
 }
@@ -151,6 +151,16 @@ const DOMString EntityReferenceImpl::nodeName() const
 unsigned short EntityReferenceImpl::nodeType() const
 {
     return Node::ENTITY_REFERENCE_NODE;
+}
+
+NodeImpl *EntityReferenceImpl::cloneNode ( bool deep )
+{
+    EntityReferenceImpl *clone = new EntityReferenceImpl(docPtr(),m_entityName);
+    // ### make sure children are readonly
+    // ### since we are a reference, should we clone children anyway (even if not deep?)
+    if (deep)
+        cloneChildNodes(clone);
+    return clone;
 }
 
 // DOM Section 1.1.1
@@ -168,16 +178,6 @@ bool EntityReferenceImpl::childTypeAllowed( unsigned short type )
         default:
             return false;
     }
-}
-
-NodeImpl *EntityReferenceImpl::cloneNode ( bool deep, int &exceptioncode )
-{
-    EntityReferenceImpl *clone = new EntityReferenceImpl(docPtr(),m_entityName);
-    // ### make sure children are readonly
-    // ### since we are a reference, should we clone children anyway (even if not deep?)
-    if (deep)
-        cloneChildNodes(clone,exceptioncode);
-    return clone;
 }
 
 // -------------------------------------------------------------------------
@@ -212,16 +212,6 @@ NotationImpl::~NotationImpl()
         m_systemId->deref();
 }
 
-const DOMString NotationImpl::nodeName() const
-{
-    return m_name;
-}
-
-unsigned short NotationImpl::nodeType() const
-{
-    return Node::NOTATION_NODE;
-}
-
 DOMString NotationImpl::publicId() const
 {
     return m_publicId;
@@ -232,24 +222,39 @@ DOMString NotationImpl::systemId() const
     return m_systemId;
 }
 
+DOMString NotationImpl::nodeName() const
+{
+    return m_name;
+}
+
+unsigned short NotationImpl::nodeType() const
+{
+    return Node::NOTATION_NODE;
+}
+
+NodeImpl *NotationImpl::cloneNode ( bool /*deep*/)
+{
+    // Spec says cloning Document nodes is "implementation dependent"
+    // so we do not support it...
+    return 0;
+}
+
 // DOM Section 1.1.1
 bool NotationImpl::childTypeAllowed( unsigned short /*type*/ )
 {
     return false;
 }
 
-NodeImpl *NotationImpl::cloneNode ( bool /*deep*/, int &exceptioncode )
-{
-    exceptioncode = DOMException::NOT_SUPPORTED_ERR;
-    return 0;
-}
-
 // -------------------------------------------------------------------------
+
+// ### need a way of updating these properly whenever child nodes of the processing instruction
+// change or are added/removed
 
 ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc) : NodeBaseImpl(doc)
 {
     m_target = 0;
     m_data = 0;
+    m_localHref = 0;
     m_sheet = 0;
     m_cachedSheet = 0;
 }
@@ -264,6 +269,7 @@ ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMString
         m_data->ref();
     m_sheet = 0;
     m_cachedSheet = 0;
+    m_localHref = 0;
 }
 
 ProcessingInstructionImpl::~ProcessingInstructionImpl()
@@ -278,7 +284,32 @@ ProcessingInstructionImpl::~ProcessingInstructionImpl()
 	m_sheet->deref();
 }
 
-const DOMString ProcessingInstructionImpl::nodeName() const
+DOMString ProcessingInstructionImpl::target() const
+{
+    return m_target;
+}
+
+DOMString ProcessingInstructionImpl::data() const
+{
+    return m_data;
+}
+
+void ProcessingInstructionImpl::setData( const DOMString &_data, int &exceptioncode )
+{
+    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
+    if (m_data)
+        m_data->deref();
+    m_data = _data.implementation();
+    if (m_data)
+        m_data->ref();
+}
+
+DOMString ProcessingInstructionImpl::nodeName() const
 {
     return m_target;
 }
@@ -293,34 +324,27 @@ DOMString ProcessingInstructionImpl::nodeValue() const
     return m_data;
 }
 
-DOMString ProcessingInstructionImpl::target() const
+void ProcessingInstructionImpl::setNodeValue( const DOMString &_nodeValue, int &exceptioncode )
 {
-    return m_target;
+    // NO_MODIFICATION_ALLOWED_ERR: taken care of by setData()
+    setData(_nodeValue, exceptioncode);
 }
 
-DOMString ProcessingInstructionImpl::data() const
+NodeImpl *ProcessingInstructionImpl::cloneNode ( bool /*deep*/)
 {
-    return m_data;
+    // ### copy m_localHref
+    return new ProcessingInstructionImpl(docPtr(),m_target,m_data);
 }
 
-void ProcessingInstructionImpl::setData( const DOMString &_data )
+DOMString ProcessingInstructionImpl::localHref() const
 {
-    if (m_data)
-        m_data->deref();
-    m_data = _data.implementation();
-    if (m_data)
-        m_data->ref();
+    return m_localHref;
 }
 
 // DOM Section 1.1.1
 bool ProcessingInstructionImpl::childTypeAllowed( unsigned short /*type*/ )
 {
     return false;
-}
-
-NodeImpl *ProcessingInstructionImpl::cloneNode ( bool /*deep*/, int &/*exceptioncode*/ )
-{
-    return new ProcessingInstructionImpl(docPtr(),m_target,m_data);
 }
 
 void ProcessingInstructionImpl::checkStyleSheet()
@@ -339,18 +363,28 @@ void ProcessingInstructionImpl::checkStyleSheet()
             return;
 
         DOMString href = attrs.value("href");
-/*        if (href[0]=='#')
-            sheetElemId.append(href.string().mid(1)); // ###
-        else {*/
-            // ### some validation on the URL?
-	    // ### make sure doc->baseURL() is not empty?
-	    // ### FIXME charset
-	    if (m_cachedSheet)
-		m_cachedSheet->deref(this);
-	    m_cachedSheet = ownerDocument()->docLoader()->requestStyleSheet(href, ownerDocument()->baseURL(), QString::null);
-	    m_cachedSheet->ref( this );
-//        }
 
+        if (href.length()>1)
+        {
+            if (href[0]=='#')
+            {
+                if (m_localHref)
+                    m_localHref->deref();
+                m_localHref=href.implementation()->split(1);
+                if (m_localHref)
+                    m_localHref->ref();
+            }
+            else
+            {
+                // ### some validation on the URL?
+                // ### FIXME charset
+                if (m_cachedSheet) m_cachedSheet->deref(this);
+                m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href.string()), QString::null);
+                if (m_cachedSheet)
+                    m_cachedSheet->ref( this );
+            }
+
+        }
     }
 }
 
@@ -363,14 +397,23 @@ void ProcessingInstructionImpl::setStyleSheet(const DOM::DOMString &url, const D
 {
     if (m_sheet)
 	m_sheet->deref();
-    m_sheet = new CSSStyleSheetImpl(ownerDocument(), url);
-    m_sheet->parseString(sheet);
+    m_sheet = new CSSStyleSheetImpl(getDocument(), url);
     m_sheet->ref();
+    m_sheet->parseString(sheet);
     if (m_cachedSheet)
 	m_cachedSheet->deref(this);
     m_cachedSheet = 0;
 
-    getDocument()->createSelector();
+    getDocument()->updateStyleSelector();
+}
+
+void ProcessingInstructionImpl::setStyleSheet(CSSStyleSheetImpl* sheet)
+{
+    if (m_sheet)
+        m_sheet->deref();
+    m_sheet = sheet;
+    if (m_sheet)
+        m_sheet->ref();
 }
 
 // -------------------------------------------------------------------------

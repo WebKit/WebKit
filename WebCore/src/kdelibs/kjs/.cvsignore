@@ -9,3 +9,4 @@ grammar.h
 *.lo
 *.la
 .libs
+*.lut.h

@@ -48,7 +48,7 @@ template<class T> class QDictIterator;
 
 // class QDict =================================================================
 
-template <class T> class QDict : public QCollection {
+template <class T> class QDict : public QPtrCollection {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -72,7 +72,7 @@ public:
 
     // operators ---------------------------------------------------------------
 
-    QDict<T> &operator=(const QDict<T> &d) { impl.assign(d.impl,del_item); QCollection::operator=(d); return *this;}
+    QDict<T> &operator=(const QDict<T> &d) { impl.assign(d.impl,del_item); QPtrCollection::operator=(d); return *this;}
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------

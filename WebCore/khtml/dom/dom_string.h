@@ -41,12 +41,10 @@ class DOMStringImpl;
 class DOMString
 {
     friend class CharacterDataImpl;
-
+    friend bool operator==( const DOMString &a, const char *b );
 public:
     /** default constructor. Gives an empty DOMString */
     DOMString();
-    /* constructs a null DOMString. Like this assignment to 0 works */
-    DOMString(int);
 
     DOMString(const QChar *str, uint len);
     DOMString(const QString &);
@@ -70,7 +68,7 @@ public:
     void insert(DOMString str, uint pos);
 
     /**
-     * The character at position i of the DOMString. If i > length(), the
+     * The character at position i of the DOMString. If i >= length(), the
      * character returned will be 0.
      */
     const QChar &operator [](unsigned int i) const;
@@ -84,6 +82,15 @@ public:
      * Splits the string into two. The original string gets truncated to pos, and the rest is returned.
      */
     DOMString split(unsigned int pos);
+
+    /**
+     * Returns a lowercase version of the string
+     */
+    DOMString lower() const;
+    /**
+     * Returns an uppercase version of the string
+     */
+    DOMString upper() const;
 
     QChar *unicode() const;
     QString string() const;
@@ -101,12 +108,6 @@ public:
      * Use at own risk!!!
      */
     DOMStringImpl *implementation() const { return impl; }
-
-    /**
-     * @internal get a pointer to start of the string
-     * Needed by kBackpage
-     */
-    const QChar *stringPtr() const;
 
 protected:
     DOMStringImpl *impl;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the html renderer for KDE.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
@@ -25,6 +25,11 @@
 
 #include "render_flow.h"
 
+namespace DOM {
+
+    class HTMLElementImpl;
+}
+
 class QScrollView;
 
 namespace khtml {
@@ -32,7 +37,7 @@ namespace khtml {
     class RenderHtml : public RenderFlow
     {
     public:
-	RenderHtml();
+	RenderHtml(DOM::HTMLElementImpl* node);
 	virtual ~RenderHtml();
 
 	virtual const char *renderName() const { return "RenderHtml"; }
@@ -42,7 +47,7 @@ namespace khtml {
 	virtual void print( QPainter *, int x, int y, int w, int h, int tx, int ty);
 	virtual void repaint();
 	virtual void layout();
-    virtual short containingBlockWidth() const; 
+    virtual short containingBlockWidth() const;
     protected:
 	virtual void printBoxDecorations(QPainter *p,int _x, int _y,
 					 int _w, int _h, int _tx, int _ty);

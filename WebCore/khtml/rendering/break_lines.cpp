@@ -1,6 +1,4 @@
 #include <break_lines.h>
-#include <qtextcodec.h>
-#include <qcstring.h>
 
 #ifdef HAVE_THAI_BREAKS
 #include "ThBreakIterator.h"

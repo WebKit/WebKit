@@ -216,6 +216,11 @@ void QScrollView::updateContents(int x, int y, int w, int h)
     KWQDEBUG6 ("0x%08x %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
+void QScrollView::updateContents(const QRect &rect)
+{
+    return updateContents(rect.x(), rect.y(), rect.width(), rect.height());
+}
+
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 {

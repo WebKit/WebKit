@@ -27,19 +27,21 @@
 //#define PAR_DEBUG
 //#define EVENT_DEBUG
 //#define UNSUPPORTED_ATTR
-#include "dtd.h"
-#include "html_elementimpl.h"
-#include "html_documentimpl.h"
-#include "htmltokenizer.h"
 
-#include "htmlhashes.h"
+#include "html/dtd.h"
+#include "html/html_elementimpl.h"
+#include "html/html_documentimpl.h"
+#include "html/htmltokenizer.h"
+
+#include "misc/htmlhashes.h"
+
 #include "khtmlview.h"
 #include "khtml_part.h"
 
 #include "rendering/render_object.h"
 #include "rendering/render_replaced.h"
 #include "css/css_valueimpl.h"
-#include "css_stylesheetimpl.h"
+#include "css/css_stylesheetimpl.h"
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 #include "xml/dom_textimpl.h"
@@ -50,7 +52,8 @@
 using namespace DOM;
 using namespace khtml;
 
-HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc) : ElementImpl(doc)
+HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
+    : ElementImpl(doc)
 {
 }
 
@@ -58,10 +61,10 @@ HTMLElementImpl::~HTMLElementImpl()
 {
 }
 
-void HTMLElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 {
     DOMString indexstring;
-    switch( attr->attrId )
+    switch( attr->id() )
     {
     case ATTR_ALIGN:
         if (attr->val()) {
@@ -87,7 +90,9 @@ void HTMLElementImpl::parseAttribute(AttrImpl *attr)
         // ### the inline sheet ay contain more than 1 property!
         // stylesheet info
         setHasStyle();
-        addCSSProperty(attr->value());
+        if(!m_styleDecls) createDecl();
+        m_styleDecls->setProperty(attr->value());
+        setChanged();
         break;
     case ATTR_TABINDEX:
         indexstring=getAttribute(ATTR_TABINDEX);
@@ -99,80 +104,75 @@ void HTMLElementImpl::parseAttribute(AttrImpl *attr)
         break;
     case ATTR_DIR:
         addCSSProperty(CSS_PROP_DIRECTION, attr->value());
-        break;
-        // BiDi info
+        addCSSProperty(CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
         break;
 // standard events
     case ATTR_ONCLICK:
 	setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONDBLCLICK:
 	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONMOUSEDOWN:
         setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONMOUSEMOVE:
         setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONMOUSEOUT:
         setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONMOUSEOVER:
         setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONMOUSEUP:
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONKEYDOWN:
         setHTMLEventListener(EventImpl::KHTML_KEYDOWN_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
 	break;
     case ATTR_ONKEYPRESS:
         setHTMLEventListener(EventImpl::KHTML_KEYPRESS_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
 	break;
     case ATTR_ONKEYUP:
         setHTMLEventListener(EventImpl::KHTML_KEYUP_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
 // other misc attributes
     default:
-#ifdef UNSUPPORTED_ATTR	
-	kdDebug(6030) << "UATTR: <" << this->nodeName().string() << "> [" 
+#ifdef UNSUPPORTED_ATTR
+	kdDebug(6030) << "UATTR: <" << this->nodeName().string() << "> ["
 		      << attr->name().string() << "]=[" << attr->value().string() << "]" << endl;
 #endif
         break;
     }
 }
 
-void HTMLElementImpl::addCSSProperty( const DOMString &property, const DOMString &value, bool nonCSSHint)
-{
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setProperty(property, value, false, nonCSSHint);
-}
-
 void HTMLElementImpl::addCSSProperty(int id, const DOMString &value)
 {
     if(!m_styleDecls) createDecl();
     m_styleDecls->setProperty(id, value, false, true);
+    setChanged();
 }
 
 void HTMLElementImpl::addCSSProperty(int id, int value)
 {
     if(!m_styleDecls) createDecl();
     m_styleDecls->setProperty(id, value, false, true);
+    setChanged();
 }
 
 void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
@@ -183,6 +183,9 @@ void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
     DOMStringImpl* v = value.implementation();
     if ( v ) {
         unsigned int l = 0;
+
+        while ( l < v->l && v->s[l].latin1()==' ') l++;
+
         for ( ;l < v->l; l++ ) {
             char cc = v->s[l].latin1();
             if ( cc > '9' || ( cc < '0' && cc != '*' && cc != '%' && cc != '.') )
@@ -190,42 +193,22 @@ void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
         }
         if ( l != v->l ) {
             m_styleDecls->setLengthProperty( id, DOMString( v->s, l ), false, true );
+            setChanged();
             return;
         }
     }
 
     m_styleDecls->setLengthProperty(id, value, false, true);
-}
-
-void HTMLElementImpl::addCSSProperty(const DOMString &property)
-{
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setProperty(property);
+    setChanged();
 }
 
 void HTMLElementImpl::removeCSSProperty(int id)
 {
     if(!m_styleDecls)
         return;
-    HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
-    m_styleDecls->setParent(doc->elementSheet());
+    m_styleDecls->setParent(getDocument()->elementSheet());
     m_styleDecls->removeProperty(id);
-}
-
-void HTMLElementImpl::removeCSSProperty( const DOMString &id )
-{
-    if(!m_styleDecls)
-        return;
-    HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
-    m_styleDecls->setParent(doc->elementSheet());
-    m_styleDecls->removeProperty(id);
-}
-
-DOMString HTMLElementImpl::getCSSProperty( int id )
-{
-    if(!m_styleDecls)
-        return 0;
-    return m_styleDecls->getPropertyValue( id );
+    setChanged();
 }
 
 DOMString HTMLElementImpl::innerHTML() const
@@ -237,7 +220,7 @@ DOMString HTMLElementImpl::innerText() const
 {
     DOMString text;
 
-    NodeImpl *n = firstChild();
+    const NodeImpl *n = this;
     // find the next text/image after the anchor, to get a position
     while(n) {
         if(n->firstChild())
@@ -254,7 +237,7 @@ DOMString HTMLElementImpl::innerText() const
             n = next;
         }
         if(n->isTextNode() ) {
-            text += static_cast<TextImpl *>(n)->data();
+            text += static_cast<const TextImpl *>(n)->data();
         }
     }
  end:
@@ -286,7 +269,7 @@ bool HTMLElementImpl::setInnerHTML( const DOMString &html )
         default:
             break;
     }
-    if ( !ownerDocument()->isHTMLDocument() )
+    if ( !getDocument()->isHTMLDocument() )
         return false;
 
     DocumentFragmentImpl *fragment = new DocumentFragmentImpl( docPtr() );
@@ -299,6 +282,7 @@ bool HTMLElementImpl::setInnerHTML( const DOMString &html )
     removeChildren();
     int ec = 0;
     appendChild( fragment, ec );
+    delete fragment;
     return !ec;
 }
 
@@ -334,6 +318,16 @@ bool HTMLElementImpl::setInnerText( const DOMString &text )
     if ( !ec )
         return true;
     return false;
+}
+
+DOMString HTMLElementImpl::namespaceURI() const
+{
+    // For HTML documents, we treat HTML elements as having no namespace. But for XML documents
+    // the elements have the namespace defined in the XHTML spec
+    if (getDocument()->isHTMLDocument())
+        return DOMString();
+    else
+        return XHTML_NAMESPACE;
 }
 
 void HTMLElementImpl::addHTMLAlignment( DOMString alignment )
@@ -383,10 +377,3 @@ HTMLGenericElementImpl::~HTMLGenericElementImpl()
 {
 }
 
-const DOMString HTMLGenericElementImpl::nodeName() const
-{
-    if (ownerDocument()->isHTMLDocument())
-        return getTagName(_id);
-    else
-        return getTagName(_id).string().lower();
-}

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kstddirs.h>
 #include <kwqdebug.h>
+#include <kstandarddirs.h>
 
 QString locate(const char *type, const QString& filename, const KInstance* instance)
 {
@@ -50,4 +50,3 @@ QString KStandardDirs::saveLocation(const char *, const QString &suffix = QStrin
     _logNotYetImplemented();
     return QString();
 }
-    

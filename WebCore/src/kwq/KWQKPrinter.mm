@@ -29,6 +29,11 @@
 //FIX ME:
 static QSize *tempQSize = NULL;
 
+KPrinter::KPrinter(QPrinter::PrinterMode)
+{
+    _logNeverImplemented();
+}
+
 bool KPrinter::setup(QWidget *parent=0)
 {
     _logNeverImplemented();

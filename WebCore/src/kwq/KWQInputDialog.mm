@@ -26,7 +26,7 @@
 
 #include <qinputdialog.h>
 
-QString QInputDialog::getText(const QString &, const QString &, const QString &, bool *,
+QString QInputDialog::getText(const QString &, const QString &, QLineEdit::EchoMode, const QString &, bool *,
     QWidget *, const char *)
 {
     _logNeverImplemented();

@@ -411,6 +411,8 @@ public:
     int contains(char) const;
     int contains(const char *, bool cs=TRUE) const;
 
+    bool endsWith(const QString &) const;
+
     // NOTE: toXXXXX integer functions only support base 10 and base 16
     // NOTE: toShort, toUShort, toULong, and toDouble are NOT used but are kept
     // for completeness
@@ -574,6 +576,11 @@ inline int QString::compare(const QString &qs) const
 inline bool QString::startsWith(const QString &qs) const
 {
     return CFStringHasPrefix(s, qs.s);
+}
+
+inline bool QString::endsWith(const QString &qs) const
+{
+    return CFStringHasSuffix(s, qs.s);
 }
 
 inline QString QString::fromLatin1(const char *chs)

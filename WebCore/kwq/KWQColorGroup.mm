@@ -169,3 +169,12 @@ QColorGroup &QColorGroup::operator=(const QColorGroup &other)
 }
 
 
+bool QColorGroup::operator==(const QColorGroup &other)
+{
+    for (int i = 0; i < QCOLOR_GROUP_SIZE; i++) {
+        if (d->brushes[i] != other.d->brushes[i]) {
+	    return false;
+	}
+    }
+    return true;
+}

@@ -5,6 +5,7 @@
 #include <kdebug.h>
 #include <qmap.h>
 #include <qguardedptr.h>
+#include <qstringlist.h>
 
 // For future expansion
 class KJavaAppletContextPrivate

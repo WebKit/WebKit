@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -16,6 +17,7 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -41,9 +43,8 @@
 #include <float.h>
 #endif
 
-#include "object.h"
-#include "types.h"
 #include "operations.h"
+#include "object.h"
 
 using namespace KJS;
 
@@ -71,8 +72,34 @@ bool KJS::isInf(double d)
 #endif
 }
 
+bool KJS::isPosInf(double d)
+{
+#if defined(HAVE_FUNC_ISINF)
+  return (isinf(d) == 1);
+#elif HAVE_FUNC_FINITE
+  return finite(d) == 0 && d == d; // ### can we distinguish between + and - ?
+#elif HAVE_FUNC__FINITE
+  return _finite(d) == 0 && d == d; // ###
+#else
+  return false;
+#endif
+}
+
+bool KJS::isNegInf(double d)
+{
+#if defined(HAVE_FUNC_ISINF)
+  return (isinf(d) == -1);
+#elif HAVE_FUNC_FINITE
+  return finite(d) == 0 && d == d; // ###
+#elif HAVE_FUNC__FINITE
+  return _finite(d) == 0 && d == d; // ###
+#else
+  return false;
+#endif
+}
+
 // ECMA 11.9.3
-bool KJS::equal(const KJSO& v1, const KJSO& v2)
+bool KJS::equal(ExecState *exec, const Value& v1, const Value& v2)
 {
   Type t1 = v1.type();
   Type t2 = v2.type();
@@ -81,17 +108,19 @@ bool KJS::equal(const KJSO& v1, const KJSO& v2)
     if (t1 == UndefinedType || t1 == NullType)
       return true;
     if (t1 == NumberType)
-      return (v1.toNumber().value() == v2.toNumber().value()); /* TODO: NaN, -0 ? */
-    if (t1 == StringType)
-      return (v1.toString().value() == v2.toString().value());
-    if (t1 == BooleanType)
-      return (v1.toBoolean().value() == v2.toBoolean().value());
-    if (t1 == HostType) {
-	KJSO h1 = v1.get("[[==]]");
-	KJSO h2 = v2.get("[[==]]");
-	if (!h1.isA(UndefinedType) && !h2.isA(UndefinedType))
-	    return equal(h1, h2);
+    {
+      double d1 = v1.toNumber(exec);
+      double d2 = v2.toNumber(exec);
+      if ( isNaN( d1 ) || isNaN( d2 ) )
+        return false;
+      return ( d1 == d2 ); /* TODO: +0, -0 ? */
     }
+    if (t1 == StringType)
+      return (v1.toString(exec) == v2.toString(exec));
+    if (t1 == BooleanType)
+      return (v1.toBoolean(exec) == v2.toBoolean(exec));
+
+    // types are Object
     return (v1.imp() == v2.imp());
   }
 
@@ -99,30 +128,30 @@ bool KJS::equal(const KJSO& v1, const KJSO& v2)
   if ((t1 == NullType && t2 == UndefinedType) || (t1 == UndefinedType && t2 == NullType))
     return true;
   if (t1 == NumberType && t2 == StringType) {
-    Number n2 = v2.toNumber();
-    return equal(v1, n2);
+    Number n2 = v2.toNumber(exec);
+    return equal(exec,v1, n2);
   }
   if ((t1 == StringType && t2 == NumberType) || t1 == BooleanType) {
-    Number n1 = v1.toNumber();
-    return equal(n1, v2);
+    Number n1 = v1.toNumber(exec);
+    return equal(exec,n1, v2);
   }
   if (t2 == BooleanType) {
-    Number n2 = v2.toNumber();
-    return equal(v1, n2);
+    Number n2 = v2.toNumber(exec);
+    return equal(exec,v1, n2);
   }
   if ((t1 == StringType || t1 == NumberType) && t2 >= ObjectType) {
-    KJSO p2 = v2.toPrimitive();
-    return equal(v1, p2);
+    Value p2 = v2.toPrimitive(exec);
+    return equal(exec,v1, p2);
   }
   if (t1 >= ObjectType && (t2 == StringType || t2 == NumberType)) {
-    KJSO p1 = v1.toPrimitive();
-    return equal(p1, v2);
+    Value p1 = v1.toPrimitive(exec);
+    return equal(exec,p1, v2);
   }
 
   return false;
 }
 
-bool KJS::strictEqual(const KJSO &v1, const KJSO &v2)
+bool KJS::strictEqual(ExecState *exec, const Value &v1, const Value &v2)
 {
   Type t1 = v1.type();
   Type t2 = v2.type();
@@ -132,8 +161,8 @@ bool KJS::strictEqual(const KJSO &v1, const KJSO &v2)
   if (t1 == UndefinedType || t1 == NullType)
     return true;
   if (t1 == NumberType) {
-    double n1 = v1.toNumber().value();
-    double n2 = v2.toNumber().value();
+    double n1 = v1.toNumber(exec);
+    double n2 = v2.toNumber(exec);
     if (isNaN(n1) || isNaN(n2))
       return false;
     if (n1 == n2)
@@ -141,9 +170,9 @@ bool KJS::strictEqual(const KJSO &v1, const KJSO &v2)
     /* TODO: +0 and -0 */
     return false;
   } else if (t1 == StringType) {
-    return v1.toString().value() == v2.toString().value();
+    return v1.toString(exec) == v2.toString(exec);
   } else if (t2 == BooleanType) {
-    return v1.toBoolean().value() == v2.toBoolean().value();
+    return v1.toBoolean(exec) == v2.toBoolean(exec);
   }
   if (v1.imp() == v2.imp())
     return true;
@@ -152,64 +181,69 @@ bool KJS::strictEqual(const KJSO &v1, const KJSO &v2)
   return false;
 }
 
-int KJS::relation(const KJSO& v1, const KJSO& v2)
+int KJS::relation(ExecState *exec, const Value& v1, const Value& v2)
 {
-  KJSO p1 = v1.toPrimitive(NumberType);
-  KJSO p2 = v2.toPrimitive(NumberType);
+  Value p1 = v1.toPrimitive(exec,NumberType);
+  Value p2 = v2.toPrimitive(exec,NumberType);
 
-  if (p1.isA(StringType) && p2.isA(StringType))
-    return p1.toString().value() < p2.toString().value() ? 1 : 0;
+  if (p1.type() == StringType && p2.type() == StringType)
+    return p1.toString(exec) < p2.toString(exec) ? 1 : 0;
 
-  Number n1 = p1.toNumber();
-  Number n2 = p2.toNumber();
-  /* TODO: check for NaN */
-  if (n1.value() == n2.value())
+  double n1 = p1.toNumber(exec);
+  double n2 = p2.toNumber(exec);
+  if ( isNaN( n1 ) || isNaN( n2 ) )
+    return -1; // means undefined
+  if (n1 == n2)
     return 0;
-  /* TODO: +0, -0 and Infinity */
-  return (n1.value() < n2.value());
+  /* TODO: +0, -0 */
+  if ( isPosInf( n1 ) )
+    return 0;
+  if ( isPosInf( n2 ) )
+    return 1;
+  if ( isNegInf( n2 ) )
+    return 0;
+  if ( isNegInf( n1 ) )
+    return 1;
+  return (n1 < n2) ? 1 : 0;
 }
 
-double KJS::max(double d1, double d2)
+int KJS::maxInt(int d1, int d2)
 {
-  /* TODO: check for NaN */
   return (d1 > d2) ? d1 : d2;
 }
 
-double KJS::min(double d1, double d2)
+int KJS::minInt(int d1, int d2)
 {
-  /* TODO: check for NaN */
   return (d1 < d2) ? d1 : d2;
 }
 
 // ECMA 11.6
-KJSO KJS::add(const KJSO &v1, const KJSO &v2, char oper)
+Value KJS::add(ExecState *exec, const Value &v1, const Value &v2, char oper)
 {
-  KJSO p1 = v1.toPrimitive();
-  KJSO p2 = v2.toPrimitive();
+  Value p1 = v1.toPrimitive(exec);
+  Value p2 = v2.toPrimitive(exec);
 
-  if ((p1.isA(StringType) || p2.isA(StringType)) && oper == '+') {
-    String s1 = p1.toString();
-    String s2 = p2.toString();
+  if ((p1.type() == StringType || p2.type() == StringType) && oper == '+') {
+    UString s1 = p1.toString(exec);
+    UString s2 = p2.toString(exec);
 
-    UString s = s1.value() + s2.value();
-
-    return String(s);
+    return String(s1 + s2);
   }
 
-  Number n1 = p1.toNumber();
-  Number n2 = p2.toNumber();
+  double n1 = p1.toNumber(exec);
+  double n2 = p2.toNumber(exec);
 
   if (oper == '+')
-    return Number(n1.value() + n2.value());
+    return Number(n1 + n2);
   else
-    return Number(n1.value() - n2.value());
+    return Number(n1 - n2);
 }
 
 // ECMA 11.5
-KJSO KJS::mult(const KJSO &v1, const KJSO &v2, char oper)
+Value KJS::mult(ExecState *exec, const Value &v1, const Value &v2, char oper)
 {
-  Number n1 = v1.toNumber();
-  Number n2 = v2.toNumber();
+  Number n1 = v1.toNumber(exec);
+  Number n2 = v2.toNumber(exec);
 
   double result;
 

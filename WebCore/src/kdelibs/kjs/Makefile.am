@@ -4,6 +4,8 @@ noinst_LIBRARIES = libkjs.o
 libkjs_o_LDFLAGS = -Wl,-r -nostdlib
 libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkjs_o_LDFLAGS) -o
 
+INCLUDES = $(KWQ_INCLUDES)
+
 libkjs_o_SOURCES = \
 	array_object.cpp \
 	array_object.h \
@@ -21,13 +23,12 @@ libkjs_o_SOURCES = \
 	function.h \
 	function_object.cpp \
 	function_object.h \
-	global_object.cpp \
 	grammar.cpp \
 	grammar.h \
 	internal.cpp \
 	internal.h \
-	kjs.cpp \
-	kjs.h \
+	interpreter.cpp \
+	interpreter.h \
 	lexer.cpp \
 	lexer.h \
 	lexer.lut.h \
@@ -46,6 +47,8 @@ libkjs_o_SOURCES = \
 	object_object.h \
 	operations.cpp \
 	operations.h \
+	property_map.cpp \
+	property_map.h \
 	regexp.cpp \
 	regexp.h \
 	regexp_object.cpp \
@@ -56,6 +59,8 @@ libkjs_o_SOURCES = \
 	types.h \
 	ustring.cpp \
 	ustring.h \
+	value.cpp \
+	value.h \
 	$(NULL)
 
 noinst_PROGRAMS = testkjs
@@ -75,7 +80,29 @@ grammar-stamp: grammar.y
 	ln -sf grammar.cpp.h grammar.h
 	touch ./grammar-stamp
 
-BUILT_SOURCES = $(GRAMMAR_FILES) grammar-stamp
+LUT_FILES = math_object.lut.h lexer.lut.h array_object.lut.h date_object.lut.h string_object.lut.h number_object.lut.h
+
+lexer.lut.h: keywords.table
+	./create_hash_table keywords.table -i > lexer.lut.h;
+
+array_object.lut.h: array_object.cpp
+	./create_hash_table array_object.cpp -i > array_object.lut.h
+
+math_object.lut.h: math_object.cpp
+	./create_hash_table math_object.cpp -i > math_object.lut.h
+
+date_object.lut.h: date_object.cpp
+	./create_hash_table date_object.cpp -i > date_object.lut.h
+
+number_object.lut.h: number_object.cpp
+	./create_hash_table number_object.cpp -i > number_object.lut.h
+
+string_object.lut.h: string_object.cpp
+	./create_hash_table string_object.cpp -i > string_object.lut.h
+
+
+
+BUILT_SOURCES = $(GRAMMAR_FILES) $(LUT_FILES) grammar-stamp
 
 CLEANFILES = $(BUILT_SOURCES)
 

@@ -22,14 +22,15 @@
  */
 // --------------------------------------------------------------------------
 
-#include "dom_string.h"
-#include "html_image.h"
-#include "html_imageimpl.h"
-#include "html_misc.h"
-#include "html_miscimpl.h"
-using namespace DOM;
+#include "dom/dom_doc.h"
+#include "dom/html_image.h"
+#include "dom/html_misc.h"
 
-#include "htmlhashes.h"
+#include "html/html_imageimpl.h"
+#include "html/html_miscimpl.h"
+#include "misc/htmlhashes.h"
+
+using namespace DOM;
 
 HTMLAreaElement::HTMLAreaElement() : HTMLElement()
 {
@@ -196,17 +197,6 @@ HTMLImageElement::~HTMLImageElement()
 {
 }
 
-DOMString HTMLImageElement::lowSrc() const
-{
-    // DOM specs says URI for low resolution output...
-    // too bad you can't specfy it by an attribute...
-    return DOMString();
-}
-
-void HTMLImageElement::setLowSrc( const DOMString &/*value*/ )
-{
-}
-
 DOMString HTMLImageElement::name() const
 {
     if(!impl) return DOMString();
@@ -240,37 +230,40 @@ void HTMLImageElement::setAlt( const DOMString &value )
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_ALT, value);
 }
 
-DOMString HTMLImageElement::border() const
+long HTMLImageElement::border() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_BORDER);
+    if(!impl) return 0;
+    // ### return value in pixels
+    return static_cast<HTMLImageElementImpl*>(impl)->getAttribute(ATTR_BORDER).toInt();
 }
 
-void HTMLImageElement::setBorder( const DOMString &value )
+void HTMLImageElement::setBorder( long value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_BORDER, value);
+    if (impl) static_cast<HTMLImageElementImpl*>(impl)->setAttribute(ATTR_BORDER, QString::number(value));
 }
 
-DOMString HTMLImageElement::height() const
+long HTMLImageElement::height() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_HEIGHT);
+    if(!impl) return 0;
+    // ### return actual value
+    return ((ElementImpl *)impl)->getAttribute(ATTR_HEIGHT).toInt();
 }
 
-void HTMLImageElement::setHeight( const DOMString &value )
+void HTMLImageElement::setHeight( long value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HEIGHT, value);
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HEIGHT, QString::number(value));
 }
 
-DOMString HTMLImageElement::hspace() const
+long HTMLImageElement::hspace() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_HSPACE);
+    if(!impl) return 0;
+    // ### return actual value
+    return ((ElementImpl *)impl)->getAttribute(ATTR_HSPACE).toInt();
 }
 
-void HTMLImageElement::setHspace( const DOMString &value )
+void HTMLImageElement::setHspace( long value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HSPACE, value);
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HSPACE, QString::number(value));
 }
 
 bool HTMLImageElement::isMap() const
@@ -304,7 +297,11 @@ void HTMLImageElement::setLongDesc( const DOMString &value )
 DOMString HTMLImageElement::src() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_SRC);
+    DOMString s = ((ElementImpl *)impl)->getAttribute(ATTR_SRC);
+    // ### not sure if we're supposed to do the completion
+    if ( !s.isEmpty() )
+        s = ownerDocument().completeURL( s );
+    return s;
 }
 
 void HTMLImageElement::setSrc( const DOMString &value )
@@ -323,26 +320,28 @@ void HTMLImageElement::setUseMap( const DOMString &value )
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_USEMAP, value);
 }
 
-DOMString HTMLImageElement::vspace() const
+long HTMLImageElement::vspace() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_VSPACE);
+    if(!impl) return 0;
+    // ### return actual vspace
+    return ((ElementImpl *)impl)->getAttribute(ATTR_VSPACE).toInt();
 }
 
-void HTMLImageElement::setVspace( const DOMString &value )
+void HTMLImageElement::setVspace( long value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_VSPACE, value);
+    if(impl) static_cast<ElementImpl*>(impl)->setAttribute(ATTR_VSPACE, QString::number(value));
 }
 
-DOMString HTMLImageElement::width() const
+long HTMLImageElement::width() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_WIDTH);
+    if(!impl) return 0;
+    // ### return actual width
+    return ((ElementImpl *)impl)->getAttribute(ATTR_WIDTH).toInt();
 }
 
-void HTMLImageElement::setWidth( const DOMString &value )
+void HTMLImageElement::setWidth( long value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_WIDTH, value);
+    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_WIDTH, QString::number(value));
 }
 
 // --------------------------------------------------------------------------

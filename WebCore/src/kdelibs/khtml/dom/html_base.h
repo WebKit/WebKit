@@ -281,6 +281,17 @@ public:
      * see @ref src
      */
     void setSrc( const DOMString & );
+
+    /**
+     * Introduced in DOM Level 2
+     *
+     * Returns the document this frame contains, if there is any and
+     * it is available, a Null document otherwise. The attribute is
+     * read-only.
+     *
+     * @return The content Document if available.
+     */
+    Document contentDocument() const;
 };
 
 // --------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -23,23 +23,24 @@
 #ifndef _CSS_cssstyleselector_h_
 #define _CSS_cssstyleselector_h_
 
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "rendering/render_style.h"
 #include "dom/dom_string.h"
 
 class KHTMLSettings;
+class KHTMLView;
+class KURL;
 
 namespace DOM {
     class ElementImpl;
-    class DocumentImpl;
-    class HTMLDocumentImpl;
     class StyleSheetImpl;
     class CSSStyleRuleImpl;
     class CSSStyleSheetImpl;
     class CSSSelector;
     class CSSStyleDeclarationImpl;
     class CSSProperty;
+    class StyleSheetListImpl;
 }
 
 namespace khtml
@@ -56,7 +57,7 @@ namespace khtml
 
     /*
      * to remember the source where a rule came from. Differntiates between
-     * important and not important rules. This is ordered in the order they have to be applied 
+     * important and not important rules. This is ordered in the order they have to be applied
      * to the RenderStyle.
      */
     enum Source {
@@ -81,9 +82,9 @@ namespace khtml
     public:
 	StyleSelector() {};
 	virtual ~StyleSelector() {};
-	
+
 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e, int = None) = 0;
-	
+
 	enum State {
 	    None = 0x00,
 	    Hover = 0x01,
@@ -107,21 +108,22 @@ namespace khtml
 	 * Also takes into account special cases for HTML documents,
 	 * including the defaultStyle (which is html only)
 	 */
-	CSSStyleSelector(DOM::DocumentImpl *doc);
+	CSSStyleSelector( KHTMLView *view, QString userStyleSheet, DOM::StyleSheetListImpl *styleSheets, const KURL &url,
+                          bool _strictParsing );
 	/**
 	 * same as above but for a single stylesheet.
 	 */
-	CSSStyleSelector(DOM::StyleSheetImpl *sheet);
+	CSSStyleSelector( DOM::CSSStyleSheetImpl *sheet );
 
 	virtual ~CSSStyleSelector();
-	
-	void addSheet(DOM::StyleSheetImpl *sheet);
-        
+
+	void addSheet( DOM::CSSStyleSheetImpl *sheet );
+
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
 	static void clear();
-	
+
 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e, int state = None );
-	
+
 	bool strictParsing;
 	struct Encodedurl {
 	    QString host; //also contains protocol
@@ -142,13 +144,14 @@ namespace khtml
 
 	void addInlineDeclarations(DOM::CSSStyleDeclarationImpl *decl,
 				   CSSOrderedPropertyList *list );
-	
+
 	static DOM::CSSStyleSheetImpl *defaultSheet;
 	static CSSStyleSelectorList *defaultStyle;
+	static CSSStyleSelectorList *defaultPrintStyle;
 	CSSStyleSelectorList *authorStyle;
         CSSStyleSelectorList *userStyle;
         DOM::CSSStyleSheetImpl *userSheet;
-	
+
     public: // we need to make the enum public for SelectorCache
 	enum SelectorState {
 	    Unknown = 0,
@@ -156,6 +159,18 @@ namespace khtml
 	    AppliesPseudo,
 	    Invalid
 	};
+
+        enum SelectorMedia {
+            MediaAural = 1,
+            MediaBraille,
+            MediaEmboss,
+            MediaHandheld,
+            MediaPrint,
+            MediaProjection,
+            MediaScreen,
+            MediaTTY,
+            MediaTV
+        };
     protected:
 
         struct SelectorCache {
@@ -163,13 +178,14 @@ namespace khtml
             unsigned int props_size;
             int *props;
         };
-            
+
 	unsigned int selectors_size;
 	DOM::CSSSelector **selectors;
 	SelectorCache *selectorCache;
 	unsigned int properties_size;
 	CSSOrderedProperty **properties;
-	QArray<CSSOrderedProperty> inlineProps;
+	QMemArray<CSSOrderedProperty> inlineProps;
+        QString m_medium;
     };
 
     /*
@@ -182,9 +198,9 @@ namespace khtml
      */
     class CSSOrderedProperty
     {
-    public:	
-	CSSOrderedProperty(DOM::CSSProperty *_prop, uint _selector, 
-			   bool first, Source source, unsigned int specificity, 
+    public:
+	CSSOrderedProperty(DOM::CSSProperty *_prop, uint _selector,
+			   bool first, Source source, unsigned int specificity,
 			   unsigned int _position )
 	    : prop ( _prop ), pseudoId( RenderStyle::NOPSEUDO ), selector( _selector ),
 	      position( _position )
@@ -196,7 +212,7 @@ namespace khtml
 	RenderStyle::PseudoId pseudoId;
 	unsigned int selector;
 	unsigned int position;
-	
+
 	Q_UINT32 priority;
     };
 
@@ -204,11 +220,11 @@ namespace khtml
      * This is the list we will collect all properties we need to apply in.
      * It will get sorted once before applying.
      */
-    class CSSOrderedPropertyList : public QList<CSSOrderedProperty>
+    class CSSOrderedPropertyList : public QPtrList<CSSOrderedProperty>
     {
     public:
-	virtual int compareItems(QCollection::Item i1, QCollection::Item i2);
-	void append(DOM::CSSStyleDeclarationImpl *decl, uint selector, uint specificity, 
+	virtual int compareItems(QPtrCollection::Item i1, QPtrCollection::Item i2);
+	void append(DOM::CSSStyleDeclarationImpl *decl, uint selector, uint specificity,
 		    Source regular, Source important );
     };
 
@@ -217,21 +233,22 @@ namespace khtml
     public:
 	CSSOrderedRule(DOM::CSSStyleRuleImpl *r, DOM::CSSSelector *s, int _index);
 	~CSSOrderedRule();
-	
+
 	DOM::CSSSelector *selector;
 	DOM::CSSStyleRuleImpl *rule;
 	int index;
     };
 
-    class CSSStyleSelectorList : public QList<CSSOrderedRule>
+    class CSSStyleSelectorList : public QPtrList<CSSOrderedRule>
     {
     public:
 	CSSStyleSelectorList();
 	virtual ~CSSStyleSelectorList();
-	
-	void append(DOM::StyleSheetImpl *sheet);
-	
-	void collect( QList<DOM::CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
+
+	void append( DOM::CSSStyleSheetImpl *sheet,
+                 const DOM::DOMString &medium = "screen" );
+
+	void collect( QPtrList<DOM::CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
 		      Source regular, Source important );
     };
 

@@ -132,7 +132,7 @@ public:
     void append(const T &val) { impl.appendNode(new QValueListNode<T>(val)); } 
     void prepend(const T &val) { impl.prependNode(new QValueListNode<T>(val)); } 
     void remove(const T &val) { QValueListNode<T> node(val); impl.removeEqualNodes(&node, nodesEqual); }
-    uint contains(const T &val) { QValueListNode<T> node(val); return impl.containsEqualNodes(&node, nodesEqual); }
+    uint contains(const T &val) const { QValueListNode<T> node(val); return impl.containsEqualNodes(&node, nodesEqual); }
 
     Iterator remove(Iterator iter) { return QValueListIterator<T>(impl.removeIterator(iter.impl)); }
     Iterator fromLast() { return QValueListIterator<T>(impl.fromLast()); }
@@ -159,7 +159,7 @@ private:
     KWQValueListImpl impl;
 
     static void deleteNode(KWQValueListNodeImpl *node) { delete (QValueListNode<T> *)node; }
-    static bool nodesEqual(KWQValueListNodeImpl *a, KWQValueListNodeImpl *b) { return ((QValueListNode<T> *)a)->value == ((QValueListNode<T> *)b)->value; }	
+    static bool nodesEqual(const KWQValueListNodeImpl *a, const KWQValueListNodeImpl *b) { return ((QValueListNode<T> *)a)->value == ((QValueListNode<T> *)b)->value; }	
     static KWQValueListNodeImpl *copyNode(KWQValueListNodeImpl *node) { return new QValueListNode<T>(((QValueListNode<T> *)node)->value); }
 }; // class QValueList =========================================================
 

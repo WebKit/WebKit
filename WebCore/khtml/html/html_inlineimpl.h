@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -35,44 +35,28 @@ class HTMLAnchorElementImpl : public HTMLElementImpl
 {
 public:
     HTMLAnchorElementImpl(DocumentPtr *doc);
+    ~HTMLAnchorElementImpl();
 
-    virtual ~HTMLAnchorElementImpl();
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    DOMString areaHref() const { return href; }
-    DOMString targetRef() const { return target; }
-
-    virtual bool isSelectable() const { return href!=0; }
-
-    virtual void parseAttribute(AttrImpl *attr);
-    virtual bool prepareMouseEvent( int x, int y,
-                                    int _tx, int _ty,
-                                    MouseEvent *ev);
+    virtual bool isSelectable() const { return m_hasAnchor; }
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
 protected:
-    DOMStringImpl *href;
-    DOMStringImpl *target;
+    bool m_hasTarget : 1;
 };
 
 // -------------------------------------------------------------------------
 
-typedef enum { BRNone=0, BRLeft, BRRight, BRAll} BRClear;
+//typedef enum { BRNone=0, BRLeft, BRRight, BRAll} BRClear;
 
 class HTMLBRElementImpl : public HTMLElementImpl
 {
 public:
-
     HTMLBRElementImpl(DocumentPtr *doc);
-
     ~HTMLBRElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void parseAttribute(AttrImpl *attr);
-
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *attr);
     virtual void attach();
 };
 
@@ -82,45 +66,10 @@ class HTMLFontElementImpl : public HTMLElementImpl
 {
 public:
     HTMLFontElementImpl(DocumentPtr *doc);
-
     ~HTMLFontElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void parseAttribute(AttrImpl *attr);
-    void attach();
-};
-
-// -------------------------------------------------------------------------
-
-class HTMLModElementImpl : public HTMLElementImpl
-{
-public:
-    HTMLModElementImpl(DocumentPtr *doc, ushort tagid);
-
-    ~HTMLModElementImpl();
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-protected:
-    ushort _id;
-};
-
-// -------------------------------------------------------------------------
-
-class DOMString;
-
-class HTMLQuoteElementImpl : public HTMLElementImpl
-{
-public:
-    HTMLQuoteElementImpl(DocumentPtr *doc);
-
-    ~HTMLQuoteElementImpl();
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *attr);
 };
 
 }; //namespace

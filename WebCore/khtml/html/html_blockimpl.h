@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -28,23 +28,20 @@
 
 #include "html_elementimpl.h"
 #include "dtd.h"
-#include "rendering/render_style.h"
 
 namespace DOM {
 
 class DOMString;
 
+// -------------------------------------------------------------------------
+
 class HTMLBlockquoteElementImpl : public HTMLElementImpl
 {
 public:
     HTMLBlockquoteElementImpl(DocumentPtr *doc);
-
     ~HTMLBlockquoteElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    void attach();
+    virtual NodeImpl::Id id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -55,13 +52,10 @@ class HTMLDivElementImpl : public HTMLElementImpl
 {
 public:
     HTMLDivElementImpl(DocumentPtr *doc);
-
     ~HTMLDivElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    void parseAttribute(AttrImpl *token);
+    virtual NodeImpl::Id id() const;
+    virtual void parseAttribute(AttributeImpl *token);
 };
 
 // -------------------------------------------------------------------------
@@ -70,33 +64,22 @@ class HTMLHRElementImpl : public HTMLElementImpl
 {
 public:
     HTMLHRElementImpl(DocumentPtr *doc);
-
     ~HTMLHRElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void parseAttribute(AttrImpl *);
-
+    virtual NodeImpl::Id id() const;
+    virtual void parseAttribute(AttributeImpl *);
     virtual void attach();
+
 protected:
     bool noShade : 1;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLHeadingElementImpl : public HTMLElementImpl
+class HTMLHeadingElementImpl : public HTMLGenericElementImpl
 {
 public:
     HTMLHeadingElementImpl(DocumentPtr *doc, ushort _tagid);
-
-    ~HTMLHeadingElementImpl();
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-protected:
-    ushort _id;
 };
 
 // -------------------------------------------------------------------------
@@ -112,26 +95,18 @@ class HTMLParagraphElementImpl : public HTMLElementImpl
 public:
     HTMLParagraphElementImpl(DocumentPtr *doc);
 
-    ~HTMLParagraphElementImpl();
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual NodeImpl::Id id() const;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLPreElementImpl : public HTMLElementImpl
+class HTMLPreElementImpl : public HTMLGenericElementImpl
 {
 public:
-    HTMLPreElementImpl(DocumentPtr *doc);
-
-    ~HTMLPreElementImpl();
+    HTMLPreElementImpl(DocumentPtr *doc, ushort _tagid);
 
     long width() const;
     void setWidth( long w );
-
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -142,10 +117,9 @@ public:
     HTMLLayerElementImpl( DocumentPtr *doc );
     ~HTMLLayerElementImpl();
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-    
-    virtual void parseAttribute(AttrImpl *);
+    virtual NodeImpl::Id id() const;
+
+    virtual void parseAttribute(AttributeImpl *);
 
     bool fixed;
 };

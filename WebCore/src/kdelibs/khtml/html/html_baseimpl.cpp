@@ -2,8 +2,9 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org))
- *           (C) 2000 Simon Hausmann <hausmann@kde.org>
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Simon Hausmann (hausmann@kde.org)
+ *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,13 +20,11 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 // -------------------------------------------------------------------------
-#include "html_baseimpl.h"
 
-#include "html_documentimpl.h"
+#include "html/html_baseimpl.h"
+#include "html/html_documentimpl.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -41,6 +40,7 @@
 #include "misc/loader.h"
 #include "misc/htmlhashes.h"
 #include "dom/dom_string.h"
+#include "dom/dom_doc.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include <kurl.h>
@@ -50,7 +50,8 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(doc),
+    m_bgSet( false ), m_fgSet( false )
 {
     m_styleSheet = 0;
 }
@@ -60,26 +61,22 @@ HTMLBodyElementImpl::~HTMLBodyElementImpl()
     if(m_styleSheet) m_styleSheet->deref();
 }
 
-const DOMString HTMLBodyElementImpl::nodeName() const
-{
-    return "BODY";
-}
-
-ushort HTMLBodyElementImpl::id() const
+NodeImpl::Id HTMLBodyElementImpl::id() const
 {
     return ID_BODY;
 }
 
-void HTMLBodyElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
 
     case ATTR_BACKGROUND:
     {
-        KURL u = khtml::Cache::completeURL(attr->value(), static_cast<HTMLDocumentImpl *>(ownerDocument())->baseURL());
-        bgImage = u.url();
-        addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+u.url()+"')" );
+        QString url = khtml::parseURL( attr->value() ).string();
+        url = getDocument()->completeURL( url );
+        addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
+        m_bgSet = !attr->value().isNull();
         break;
     }
     case ATTR_MARGINWIDTH:
@@ -95,11 +92,12 @@ void HTMLBodyElementImpl::parseAttribute(AttrImpl *attr)
         addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
         break;
     case ATTR_BGCOLOR:
-        bgColor = attr->value();
         addCSSProperty(CSS_PROP_BACKGROUND_COLOR, attr->value());
+        m_bgSet = !attr->value().isNull();
         break;
     case ATTR_TEXT:
         addCSSProperty(CSS_PROP_COLOR, attr->value());
+        m_fgSet = !attr->value().isNull();
         break;
     case ATTR_BGPROPERTIES:
         if ( strcasecmp( attr->value(), "fixed" ) == 0)
@@ -110,38 +108,42 @@ void HTMLBodyElementImpl::parseAttribute(AttrImpl *attr)
     case ATTR_LINK:
     {
         if(!m_styleSheet) {
-            m_styleSheet = new CSSStyleSheetImpl(this,0,true);
+            m_styleSheet = new CSSStyleSheetImpl(this,DOMString(),true);
             m_styleSheet->ref();
         }
         QString aStr;
-	if ( attr->attrId == ATTR_LINK )
+	if ( attr->id() == ATTR_LINK )
 	    aStr = "a:link";
-	else if ( attr->attrId == ATTR_VLINK )
+	else if ( attr->id() == ATTR_VLINK )
 	    aStr = "a:visited";
-	else if ( attr->attrId == ATTR_ALINK )
+	else if ( attr->id() == ATTR_ALINK )
 	    aStr = "a:active";
 	aStr += " { color: " + attr->value().string() + "; }";
         m_styleSheet->parseString(aStr);
         m_styleSheet->setNonCSSHints();
         if (attached())
-            getDocument()->createSelector();
+            getDocument()->updateStyleSelector();
         break;
     }
     case ATTR_ONLOAD:
-        ownerDocument()->setWindowEventListener(EventImpl::LOAD_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+        getDocument()->setWindowEventListener(EventImpl::LOAD_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONUNLOAD:
-        ownerDocument()->setWindowEventListener(EventImpl::UNLOAD_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+        getDocument()->setWindowEventListener(EventImpl::UNLOAD_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONBLUR:
-        ownerDocument()->setWindowEventListener(EventImpl::BLUR_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+        getDocument()->setWindowEventListener(EventImpl::BLUR_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONFOCUS:
-        ownerDocument()->setWindowEventListener(EventImpl::FOCUS_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+        getDocument()->setWindowEventListener(EventImpl::FOCUS_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONRESIZE:
+        getDocument()->setWindowEventListener(EventImpl::RESIZE_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_NOSAVE:
 	break;
@@ -150,10 +152,11 @@ void HTMLBodyElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-
-void HTMLBodyElementImpl::attach()
+void HTMLBodyElementImpl::init()
 {
-    KHTMLView* w = ownerDocument()->view();
+    HTMLElementImpl::init();
+
+    KHTMLView* w = getDocument()->view();
     if(w->marginWidth() != -1) {
         QString s;
         s.sprintf( "%d", w->marginWidth() );
@@ -167,29 +170,23 @@ void HTMLBodyElementImpl::attach()
         addCSSLength(CSS_PROP_MARGIN_BOTTOM, s);
     }
 
-    ownerDocument()->createSelector();
+//     if ( m_bgSet && !m_fgSet )
+//         addCSSProperty(CSS_PROP_COLOR, "black");
 
-    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
-
-    khtml::RenderObject *r = _parent->renderer();
-
-    // ignore display: none for this element!
-    if ( !r )
-      return;
-
-    m_render = new RenderBody(this);
-    m_render->setStyle(m_style);
-    r->addChild( m_render, nextRenderer() );
-
-    HTMLElementImpl::attach();
+    getDocument()->updateStyleSelector();
 }
 
-bool HTMLBodyElementImpl::prepareMouseEvent(int _x, int _y, int _tx, int _ty, MouseEvent *ev)
+void HTMLBodyElementImpl::attach()
 {
-    bool inside = HTMLElementImpl::prepareMouseEvent(_x, _y, _tx, _ty, ev);
-    if(!inside)
-	ev->innerNode = this;
-    return !inside;
+    assert(!m_render);
+    assert(parentNode());
+    assert(parentNode()->renderer());
+
+    m_render = new RenderBody(this);
+    m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+    parentNode()->renderer()->addChild(m_render, nextRenderer());
+
+    NodeBaseImpl::attach();
 }
 
 // -------------------------------------------------------------------------
@@ -197,7 +194,6 @@ bool HTMLBodyElementImpl::prepareMouseEvent(int _x, int _y, int _tx, int _ty, Mo
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
-    view = 0;
     parentWidget = 0;
 
     frameBorder = true;
@@ -212,23 +208,21 @@ HTMLFrameElementImpl::~HTMLFrameElementImpl()
 {
 }
 
-const DOMString HTMLFrameElementImpl::nodeName() const
-{
-    return "FRAME";
-}
-
-ushort HTMLFrameElementImpl::id() const
+NodeImpl::Id HTMLFrameElementImpl::id() const
 {
     return ID_FRAME;
 }
 
-void HTMLFrameElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_SRC:
         url = khtml::parseURL(attr->val());
         break;
+    case ATTR_ID:
+        if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
+        // fall through
     case ATTR_NAME:
         name = attr->value();
         break;
@@ -261,21 +255,9 @@ void HTMLFrameElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-void HTMLFrameElementImpl::attach()
+void HTMLFrameElementImpl::init()
 {
-    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
-
-    KHTMLView* w = ownerDocument()->view();
-    // limit to how deep we can nest frames
-    KHTMLPart *part = w->part();
-    int depth = 0;
-    while ((part = part->parentPart()))
-        depth++;
-
-    if (depth > 6 || url.isNull()) {
-        style()->setDisplay( NONE );
-        return;
-    }
+    HTMLElementImpl::init();
 
     // inherit default settings from parent frameset
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
@@ -290,36 +272,55 @@ void HTMLFrameElementImpl::attach()
         }
         node = static_cast<HTMLElementImpl*>(node->parentNode());
     }
+}
 
-    khtml::RenderObject *r = _parent->renderer();
+void HTMLFrameElementImpl::attach()
+{
+    assert(!attached());
+    assert(parentNode());
+    assert(parentNode()->renderer());
 
     // ignore display: none for this element!
-    if ( !r )
-      return;
+    KHTMLView* w = getDocument()->view();
+    // limit to how deep we can nest frames
+    KHTMLPart *part = w->part();
+    int depth = 0;
+    while ((part = part->parentPart()))
+        depth++;
 
-    khtml::RenderFrame *renderFrame = new khtml::RenderFrame( w, this );
-    m_render = renderFrame;
-    m_render->setStyle(m_style);
-    r->addChild( m_render, nextRenderer() );
+    if (depth < 7)  {
+        m_render = new RenderFrame(this);
+        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
+    }
+
+    NodeBaseImpl::attach();
+
+    if (!m_render)
+        return;
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
     if(name.isEmpty() || w->part()->frameExists( name.string() ) )
-    {
       name = DOMString(w->part()->requestFrameName());
-      kdDebug( 6030 ) << "creating frame name: " << name.string() << endl;
-    }
 
-    w->part()->requestFrame( renderFrame, url.string(), name.string() );
-
-    HTMLElementImpl::attach();
-    return;
+    // load the frame contents
+    if (!url.isNull())
+        w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
 }
 
 void HTMLFrameElementImpl::detach()
 {
     HTMLElementImpl::detach();
-    delete view;
     parentWidget = 0;
+}
+
+void HTMLFrameElementImpl::setLocation( const DOMString& str )
+{
+    url = str;
+    KHTMLView* w = getDocument()->view();
+    if ( m_render && w && w->part() )
+        // don't call this for an iframe
+        w->part()->requestFrame( static_cast<khtml::RenderFrame *>(m_render), url.string(), name.string() );
 }
 
 bool HTMLFrameElementImpl::isSelectable() const
@@ -331,13 +332,26 @@ void HTMLFrameElementImpl::setFocus(bool received)
 {
     HTMLElementImpl::setFocus(received);
     khtml::RenderFrame *renderFrame = static_cast<khtml::RenderFrame *>(m_render);
-    if (!renderFrame || !renderFrame->m_widget)
-        return;
+    if (!renderFrame || !renderFrame->widget())
+	return;
     if (received)
-        renderFrame->m_widget->setFocus();
+	renderFrame->widget()->setFocus();
     else
-        renderFrame->m_widget->clearFocus();
+	renderFrame->widget()->clearFocus();
 }
+
+DocumentImpl* HTMLFrameElementImpl::contentDocument() const
+{
+    if ( !m_render ) return 0;
+
+    RenderPart* render = static_cast<RenderPart*>( m_render );
+
+    if(render->widget() && render->widget()->inherits("KHTMLView"))
+        return static_cast<KHTMLView*>( render->widget() )->part()->xmlDocImpl();
+
+    return 0;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
@@ -355,38 +369,37 @@ HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
     noresize = false;
 
     m_resizing = false;
-
-    view = 0;
 }
 
 HTMLFrameSetElementImpl::~HTMLFrameSetElementImpl()
 {
-    delete m_rows;
-    delete m_cols;
+    if (m_rows)
+        delete [] m_rows;
+    if (m_cols)
+        delete [] m_cols;
 }
 
-const DOMString HTMLFrameSetElementImpl::nodeName() const
-{
-    return "FRAMESET";
-}
-
-ushort HTMLFrameSetElementImpl::id() const
+NodeImpl::Id HTMLFrameSetElementImpl::id() const
 {
     return ID_FRAMESET;
 }
 
-void HTMLFrameSetElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_ROWS:
-        m_rows = attr->val()->toLengthList();
-        m_totalRows = m_rows->count();
-        break;
+        if (!attr->val()) break;
+        if (m_rows) delete [] m_rows;
+        m_rows = attr->val()->toLengthArray(m_totalRows);
+        setChanged();
+    break;
     case ATTR_COLS:
-        m_cols = attr->val()->toLengthList();
-        m_totalCols = m_cols->count();
-        break;
+        if (!attr->val()) break;
+        delete [] m_cols;
+        m_cols = attr->val()->toLengthArray(m_totalCols);
+        setChanged();
+    break;
     case ATTR_FRAMEBORDER:
         // false or "no" or "0"..
         if ( attr->value().toInt() == 0 ) {
@@ -405,20 +418,21 @@ void HTMLFrameSetElementImpl::parseAttribute(AttrImpl *attr)
         break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONUNLOAD:
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-	    ownerDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
 }
 
-void HTMLFrameSetElementImpl::attach()
+void HTMLFrameSetElementImpl::init()
 {
-    KHTMLView* w = ownerDocument()->view();
+    HTMLElementImpl::init();
+
     // inherit default settings from parent frameset
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
     while(node)
@@ -432,122 +446,48 @@ void HTMLFrameSetElementImpl::attach()
         }
         node = static_cast<HTMLElementImpl*>(node->parentNode());
     }
-
-    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
-    view = w;
-    khtml::RenderObject *r = _parent->renderer();
-
-    // ignore display: none for this element!
-    if ( !r )
-      return;
-
-    khtml::RenderFrameSet *renderFrameSet = new khtml::RenderFrameSet( this, w, m_rows, m_cols );
-    m_render = renderFrameSet;
-    m_render->setStyle(m_style);
-    r->addChild( m_render, nextRenderer() );
-
-    HTMLElementImpl::attach();
 }
 
-// verifies that we have enough m_rows/m_cols entries for the actual document structure
-// if there are not enough, we add fake ones.
-// ### investigate IE's behaviour in such cases more closely
-bool HTMLFrameSetElementImpl::verifyLayout()
+void HTMLFrameSetElementImpl::attach()
 {
-    QList<khtml::Length>* layoutAttr = 0;
+    assert(!m_render);
+    assert(parentNode());
+    assert(parentNode()->renderer());
 
-    if(m_cols) layoutAttr = m_cols;
-    if(m_rows) layoutAttr = m_rows;
+    // ignore display: none
+    m_render = new RenderFrameSet(this);
+    m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+    parentNode()->renderer()->addChild(m_render, nextRenderer());
 
-    if(!layoutAttr) {
-        layoutAttr = new QList<Length>;
-        layoutAttr->setAutoDelete(true);
-        m_rows = layoutAttr;
-        static_cast<khtml::RenderFrameSet*>(m_render)->m_rows = layoutAttr;
-    }
-
-    bool changed = false;
-    unsigned int l = layoutAttr->count();
-    unsigned int i = 0;
-
-    for(HTMLElementImpl* node = static_cast<HTMLElementImpl*>(firstChild());
-        node;
-        node = static_cast<HTMLElementImpl*>(node->nextSibling()), i++) {
-        if(i < l) continue;
-
-        if(node->id() == ID_FRAMESET)
-            layoutAttr->append(new Length(1, khtml::Relative));
-        else
-            layoutAttr->append(new Length(0, khtml::Fixed));
-        changed = true;
-    }
-    if(m_rows)
-        m_totalRows = i;
-    else
-        m_totalCols = i;
-
-    return changed;
-}
-
-bool HTMLFrameSetElementImpl::prepareMouseEvent( int _x, int _y,
-                                                 int _tx, int _ty,
-                                                 MouseEvent *ev )
-{
-    _x-=_tx;
-    _y-=_ty;
-
-    NodeImpl *child = _first;
-    while(child)
-    {
-        if(child->id() == ID_FRAMESET)
-            if(child->prepareMouseEvent( _x, _y, _tx, _ty, ev )) return true;
-        child = child->nextSibling();
-    }
-
-    if(noresize) return true;
-
-    if ( !m_render || !m_render->layouted() )
-    {
-      kdDebug( 6030 ) << "ugh, not layouted or not attached?!" << endl;
-      return true;
-    }
-    if ( (m_render->style() && m_render->style()->visiblity() == HIDDEN) )
-      return true;
-
-    if (static_cast<khtml::RenderFrameSet *>(m_render)->canResize( _x, _y, ev->type )) {
-        ev->innerNode = Node(this);
-        return true;
-    }
-    else
-        return false;
+    NodeBaseImpl::attach();
 }
 
 void HTMLFrameSetElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent())
+    if (evt->isMouseEvent() && !noresize && m_render)
         static_cast<khtml::RenderFrameSet *>(m_render)->userResize(static_cast<MouseEventImpl*>(evt));
-}
 
-khtml::FindSelectionResult HTMLFrameSetElementImpl::findSelectionNode( int _x, int _y, int _tx, int _ty,
-                                                                DOM::Node & node, int & offset )
-{
-    _x-=_tx;
-    _y-=_ty;
-    NodeImpl *child = _first;
-    while(child)
-    {
-        if(child->id() == ID_FRAMESET)
-            return child->findSelectionNode( _x, _y, _tx, _ty, node, offset ); // to be checked
-        child = child->nextSibling();
-    }
-    return SelectionPointAfter;
+    evt->setDefaultHandled();
+    HTMLElementImpl::defaultEventHandler(evt);
 }
 
 void HTMLFrameSetElementImpl::detach()
 {
+    if(attached())
+        // ### send the event when we actually get removed from the doc instead of here
+        dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
+
     HTMLElementImpl::detach();
-    // ### send the event when we actually get removed from the doc instead of here
-    dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
+}
+
+void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
+{
+    if (changed() && m_render) {
+        m_render->setLayouted(false);
+        m_render->layout();
+        setChanged(false);
+    }
+    HTMLElementImpl::recalcStyle( ch );
 }
 
 
@@ -562,32 +502,23 @@ HTMLHeadElementImpl::~HTMLHeadElementImpl()
 {
 }
 
-const DOMString HTMLHeadElementImpl::nodeName() const
-{
-    return "HEAD";
-}
-
-ushort HTMLHeadElementImpl::id() const
+NodeImpl::Id HTMLHeadElementImpl::id() const
 {
     return ID_HEAD;
 }
 
 void HTMLHtmlElementImpl::attach()
 {
-    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
-    khtml::RenderObject *r = _parent->renderer();
+    assert(!m_render);
+    assert(parentNode());
+    assert(parentNode()->renderer());
 
-    // ignore display: none for this element!
-    if ( !r )
-      return;
+    m_render = new RenderHtml(this);
+    m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+    parentNode()->renderer()->addChild(m_render, nextRenderer());
 
-    m_render = new khtml::RenderHtml();
-    m_render->setStyle(m_style);
-    r->addChild( m_render, nextRenderer() );
-
-    HTMLElementImpl::attach();
+    NodeBaseImpl::attach();
 }
-
 
 // -------------------------------------------------------------------------
 
@@ -600,12 +531,7 @@ HTMLHtmlElementImpl::~HTMLHtmlElementImpl()
 {
 }
 
-const DOMString HTMLHtmlElementImpl::nodeName() const
-{
-    return "HTML";
-}
-
-ushort HTMLHtmlElementImpl::id() const
+NodeImpl::Id HTMLHtmlElementImpl::id() const
 {
     return ID_HTML;
 }
@@ -625,21 +551,14 @@ HTMLIFrameElementImpl::~HTMLIFrameElementImpl()
 {
 }
 
-const DOMString HTMLIFrameElementImpl::nodeName() const
-{
-    return "IFRAME";
-}
-
-ushort HTMLIFrameElementImpl::id() const
+NodeImpl::Id HTMLIFrameElementImpl::id() const
 {
     return ID_IFRAME;
 }
 
-void HTMLIFrameElementImpl::parseAttribute(AttrImpl *attr )
+void HTMLIFrameElementImpl::parseAttribute(AttributeImpl *attr )
 {
-  DOM::DOMStringImpl *stringImpl = attr->value().implementation();
-  QString val = QConstString( stringImpl->s, stringImpl->l ).string();
-  switch (  attr->attrId )
+  switch (  attr->id() )
   {
     case ATTR_WIDTH:
       addCSSLength( CSS_PROP_WIDTH, attr->value());
@@ -658,57 +577,45 @@ void HTMLIFrameElementImpl::parseAttribute(AttrImpl *attr )
 
 void HTMLIFrameElementImpl::attach()
 {
-  setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
+    assert(!attached());
+    assert(!m_render);
+    assert(parentNode());
 
-  KHTMLView* w = ownerDocument()->view();
-  // limit to how deep we can nest frames
-  KHTMLPart *part = w->part();
-  int depth = 0;
-  while ((part = part->parentPart()))
-    depth++;
-  if (depth > 6) {
-      style()->setDisplay( NONE );
-      return;
-  }
+    KHTMLView* w = getDocument()->view();
+    // limit to how deep we can nest frames
+    KHTMLPart *part = w->part();
+    int depth = 0;
+    while ((part = part->parentPart()))
+	depth++;
 
-  khtml::RenderObject *r = _parent->renderer();
+    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
+    _style->ref();
+    if (depth < 7 && parentNode()->renderer() && _style->display() != NONE) {
+        m_render = new RenderPartObject(this);
+        m_render->setStyle(_style);
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
+    }
+    _style->deref();
 
-  if(r && m_style->display() != NONE) {
+    NodeBaseImpl::attach();
 
-      // we need a unique name for every frame in the frameset. Hope that's unique enough.
-      if(name.isEmpty())
-      {
-          name = DOMString(w->part()->requestFrameName());
-          kdDebug( 6030 ) << "creating frame name: " << name.string() << endl;
-      }
+    if (m_render) {
+        // we need a unique name for every frame in the frameset. Hope that's unique enough.
+        KHTMLView* w = getDocument()->view();
+        if(name.isEmpty() || w->part()->frameExists( name.string() ))
+            name = DOMString(w->part()->requestFrameName());
 
-      khtml::RenderPartObject *renderFrame = new khtml::RenderPartObject( w, this );
-      m_render = renderFrame;
-      m_render->setStyle(m_style);
-      r->addChild( m_render, nextRenderer() );
-      renderFrame->updateWidget();
-  }
-
-  HTMLElementImpl::attach();
+        static_cast<RenderPartObject*>(m_render)->updateWidget();
+        needWidgetUpdate = false;
+    }
 }
 
-void HTMLIFrameElementImpl::applyChanges(bool top, bool force)
+void HTMLIFrameElementImpl::recalcStyle( StyleChange ch )
 {
     if (needWidgetUpdate) {
         if(m_render)  static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;
     }
-    HTMLElementImpl::applyChanges(top,force);
+    HTMLElementImpl::recalcStyle( ch );
 }
 
-DocumentImpl* HTMLIFrameElementImpl::frameDocument() const
-{
-    if ( !m_render ) return 0;
-
-    RenderPartObject* render = static_cast<RenderPartObject*>( m_render );
-
-    if(render->m_widget && render->m_widget->inherits("KHTMLView"))
-        return static_cast<KHTMLView*>( render->m_widget )->part()->xmlDocImpl();
-
-    return 0;
-}

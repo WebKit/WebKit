@@ -7,8 +7,6 @@ libkhtmlmisc_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $
 libkhtmlmisc_o_SOURCES = \
 	decoder.cpp \
 	decoder.h \
-	font.cpp \
-	font.h \
 	helper.cpp \
 	helper.h \
 	htmlattrs.h \

@@ -23,7 +23,7 @@
 #ifndef _DOM_dtd_h_
 #define _DOM_dtd_h_
 
-#include "dom_string.h"
+#include "dom/dom_string.h"
 
 namespace DOM
 {

@@ -1,0 +1,161 @@
+#! /usr/bin/perl -w
+#
+# Static Hashtable Generator
+#
+# (c) 2000-2002 by Harri Porten <porten@kde.org> and
+#                  David Faure <faure@kde.org>
+
+$file = $ARGV[0];
+shift;
+my $findSize = 0;
+my $includelookup = 0;
+# Use -s as second argument to make it try many hash sizes
+$findSize = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-s");
+# Use -i as second argument to make it include "lookup.h"
+$includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
+print STDERR "Creating hashtable for $file\n";
+open(IN, $file) or die "No such file $file";
+
+@keys = ();
+@values = ();
+@attrs = ();
+@params = ();
+
+my $inside = 0;
+my $name;
+my $size;
+my $hashsize;
+my $banner = 0;
+sub calcTable();
+sub output();
+sub hashValue($);
+
+while (<IN>) {
+  chop;
+  s/^\s*//g;
+  if (/^\#|^$/) {
+      # comment. do nothing
+    } elsif (/^\@begin\s*(\w+)\s*(\d+)\s*$/ && !$inside) {
+      $inside = 1;
+      $name = $1;
+      $hashsize = $2;
+    } elsif (/^\@end\s*$/ && $inside) {
+
+      if($findSize) {
+	my $entriesnum=@keys;
+        print STDERR "Table: $name   $entriesnum entries\n";
+	for( $i=3 ; $i<79 ; ++$i) { $hashsize=$i ; calcTable(); }
+      } else {
+        calcTable();
+      }
+
+      output();
+      @keys = ();
+      @values = ();
+      @attrs = ();
+      @params = ();
+      $inside = 0;
+    } elsif (/^([\w\[\=\]]+)\s*([\w\:-]+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
+      my $key = $1;
+      my $val = $2;
+      my $att = $3;
+      my $param = $4;
+      push(@keys, $key);
+      push(@values, $val);
+      printf STDERR "WARNING: Number of arguments missing for $key/$val\n"
+        if ( $att =~ m/Function/ && length($param) == 0);
+      push(@attrs, length($att) > 0 ? $att : "0");
+      push(@params, length($param) > 0 ? $param : "0");
+    } elsif ($inside) {
+      die "invalid data";
+    }
+}
+
+die "missing closing \@end" if ($inside);
+
+sub calcTable() {
+  @table = ();
+  @links = ();
+  $size = $hashsize;
+  my $collisions = 0;
+  my $maxdepth = 0;
+  my $i = 0;
+  foreach $key (@keys) {
+    my $depth = 0;
+    my $h = hashValue($key) % $hashsize;
+    while (defined($table[$h])) {
+      if (defined($links[$h])) {
+	$h = $links[$h];
+	$depth++;
+      } else {
+	$collisions++;
+	$links[$h] = $size;
+	$h = $size;
+	$size++;
+      }
+    }
+    $table[$h] = $i;
+    $i++;
+    $maxdepth = $depth if ( $depth > $maxdepth);
+  }
+
+  if ($findSize) {
+    my $emptycount = 0;
+    foreach $entry (@table) {
+      $emptycount++ if (!defined($entry));
+    }
+    print STDERR "Hashsize: $hashsize  Total Size: $size Empty: $emptycount MaxDepth: $maxdepth Collisions: $collisions\n";
+  }
+#  my $i = 0;
+#  foreach $entry (@table) {
+#    print "$i " . $entry;
+#    print " -> " . $links[$i] if (defined($links[$i]));
+#    print "\n";
+#    $i++;
+#  }
+}
+
+sub hashValue($) {
+  @chars = split(/ */, $_[0]);
+  my $val = 0;
+  foreach $c (@chars) {
+    $val += ord($c);
+  }
+  return $val;
+}
+
+sub output() {
+  if (!$banner) {
+    $banner = 1;
+    print "/* Automatically generated from $file using $0. DO NOT EDIT ! */\n";
+  }
+
+  print "\n#include \"lookup.h\"\n" if ($includelookup);
+  print "\nnamespace KJS {\n";
+  print "\nconst struct HashEntry ${name}Entries[] = {\n";
+  my $i = 0;
+  foreach $entry (@table) {
+    if (defined($entry)) {
+      my $key = $keys[$entry];
+      print "   \{ \"" . $key . "\"";
+      print ", " . $values[$entry];
+      print ", " . $attrs[$entry];
+      print ", " . $params[$entry];
+      print ", ";
+      if (defined($links[$i])) {
+	print "&${name}Entries[$links[$i]]" . " \}";
+      } else {
+	print "0 \}"
+      }
+    } else {
+      print "   \{ 0, 0, 0, 0, 0 \}";
+    }
+    print "," unless ($i == $size - 1);
+    print "\n";
+    $i++;
+  }
+  print "};\n";
+  print "\nconst struct HashTable $name = ";
+  print "\{ 2, $size, ${name}Entries, $hashsize \};\n\n";
+  print "}; // namespace\n";
+}

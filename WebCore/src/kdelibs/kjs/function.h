@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -16,118 +17,110 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
+ *  $Id$
  */
 
 #ifndef _KJS_FUNCTION_H_
 #define _KJS_FUNCTION_H_
 
-#include <assert.h>
-
-#include "object.h"
-#include "types.h"
+#include "internal.h"
 
 namespace KJS {
 
-  enum CodeType { GlobalCode,
-		  EvalCode,
-		  FunctionCode,
-		  AnonymousCode,
-		  HostCode };
-
-  enum FunctionAttribute { ImplicitNone, ImplicitThis, ImplicitParents };
-
-  class Function;
   class Parameter;
 
   /**
-   * @short Implementation class for Functions.
+   * @short Implementation class for internal Functions.
    */
-  class FunctionImp : public ObjectImp {
+  class FunctionImp : public InternalFunctionImp {
     friend class Function;
+    friend class ActivationImp;
   public:
-    FunctionImp();
-    FunctionImp(const UString &n);
+    FunctionImp(ExecState *exec, const UString &n = UString::null);
     virtual ~FunctionImp();
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-    virtual Completion execute(const List &) = 0;
-    bool hasAttribute(FunctionAttribute a) const { return (attr & a) != 0; }
-    virtual CodeType codeType() const = 0;
-    KJSO thisValue() const;
+
+    virtual void mark();
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
     void addParameter(const UString &n);
-    void setLength(int l);
-    KJSO executeCall(Imp *thisV, const List *args);
-    KJSO executeCall(Imp *thisV, const List *args, const List *extraScope);
-    UString name() const;
+    virtual CodeType codeType() const = 0;
+
+    virtual Completion execute(ExecState *exec) = 0;
+    UString name() const { return ident; }
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
   protected:
-    UString ident;
-    FunctionAttribute attr;
     Parameter *param;
+    UString ident;
+
   private:
-    void processParameters(const List *);
+    void processParameters(ExecState *exec, const List &);
+    virtual void processVarDecls(ExecState *exec);
+
+    void pushArgs(ExecState *exec, const Object &args);
+    void popArgs(ExecState *exec);
+    ListImp *argStack;
   };
 
-  /**
-   * @short Abstract base class for internal functions.
-   */
-  class InternalFunctionImp : public FunctionImp {
+  class DeclaredFunctionImp : public FunctionImp {
   public:
-    InternalFunctionImp();
-    InternalFunctionImp(int l);
-    InternalFunctionImp(const UString &n);
-    virtual ~InternalFunctionImp() { }
-    virtual String toString() const;
-    virtual KJSO toPrimitive(Type) const { return toString(); }
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-    virtual Completion execute(const List &);
-    virtual CodeType codeType() const { return HostCode; }
+    DeclaredFunctionImp(ExecState *exec, const UString &n,
+			FunctionBodyNode *b, const List &sc);
+    ~DeclaredFunctionImp();
+
+    bool implementsConstruct() const;
+    Object construct(ExecState *exec, const List &args);
+
+    virtual Completion execute(ExecState *exec);
+    CodeType codeType() const { return FunctionCode; }
+    FunctionBodyNode *body;
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+  private:
+    virtual void processVarDecls(ExecState *exec);
   };
 
-  /**
-   * @short Base class for Function objects.
-   */
-  class Function : public KJSO {
+
+
+
+  class ArgumentsImp : public ObjectImp {
   public:
-    Function(Imp *);
-    virtual ~Function() { }
-    Completion execute(const List &);
-    bool hasAttribute(FunctionAttribute a) const;
-    CodeType codeType() const { return HostCode; }
-    KJSO thisValue() const;
-  };
-  
-  /**
-   * @short Implementation class for Constructors.
-   */
-  class ConstructorImp : public InternalFunctionImp {
-  public:
-    ConstructorImp();
-    ConstructorImp(const UString &n);	/* TODO: add length */
-    ConstructorImp(const KJSO &, int);
-    ConstructorImp(const UString &n, const KJSO &p, int len);
-    virtual ~ConstructorImp();
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-    virtual Completion execute(const List &);
-    virtual Object construct(const List &) = 0;
+    ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args);
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  /**
-    * @short Constructor object for use with the 'new' operator
-    */
-  class Constructor : public Function {
+  class ActivationImp : public ObjectImp {
   public:
-    Constructor(Imp *);
-    virtual ~Constructor();
-    //    Constructor(const Object& proto, int len);
-    /**
-     * @return @ref ConstructorType
-     */
-    Completion execute(const List &);
-    Object construct(const List &args);
-    static Constructor dynamicCast(const KJSO &obj);
+    ActivationImp(ExecState *exec, FunctionImp *f, const List &args);
+    ~ActivationImp();
+
+    Object argumentsObject() { return Object(arguments); }
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+  private:
+    ObjectImp* arguments;
   };
+
+  class GlobalFuncImp : public InternalFunctionImp {
+  public:
+    GlobalFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual CodeType codeType() const;
+    enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape };
+  private:
+    int id;
+  };
+
+
 
 }; // namespace
 

@@ -124,9 +124,11 @@ QApplication::QApplication( int &argc, char **argv)
 #endif    
 }
 
+QApplication *qApp = NULL;
 
 #ifdef TRANSITIONAL_CODE
-void QApplication::_initialize(){
+void QApplication::_initialize()
+{
     NSDictionary *info;
     NSString *principalClassName;
     NSString *mainNibFile;
@@ -148,6 +150,10 @@ void QApplication::_initialize(){
     
     //  Force linkage
     [_KWQOwner class];
+
+    if (qApp == NULL) {
+	qApp = this;
+    }
 }
 #endif
 
@@ -206,3 +212,9 @@ int QApplication::exec()
 #endif
 }
 
+
+QWidget *QApplication::focusWidget() const
+{
+    _logNeverImplemented();
+    return NULL;
+}

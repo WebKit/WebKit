@@ -71,7 +71,7 @@ float khtml::computeLengthFloat(DOM::CSSPrimitiveValueImpl *val, RenderStyle *st
 		break;
     case CSSPrimitiveValue::CSS_EXS:
 	{
-        QFontMetrics fm = khtml::fontMetrics(style->font());
+        QFontMetrics fm = style->fontMetrics();
         QRect b = fm.boundingRect('x');
         factor = b.height();
         break;
@@ -154,22 +154,18 @@ void khtml::setFontSize( QFont &f,  int  pixelsize, const KHTMLSettings *s, QPai
     float size = pixelsize;
 
 #ifndef APPLE_CHANGES
-    float toPix = 1.;
-    if ( !khtml::printpainter )
-        toPix = devMetrics->logicalDpiY()/72.;
+    float toPix = devMetrics->logicalDpiY()/72.;
 
     // ok, now some magic to get a nice unscaled font
     // ### all other font properties should be set before this one!!!!
     // ####### make it use the charset needed!!!!
-    QFont::CharSet cs = s->charset();
-    QString charset = KGlobal::charsets()->xCharsetName( cs );
 
-    if( !db.isSmoothlyScalable(f.family(), db.styleString(f), charset) )
+    if( !db.isSmoothlyScalable(f.family(), db.styleString(f)) )
     {
-        QValueList<int> pointSizes = db.smoothSizes(f.family(), db.styleString(f), charset);
+        QValueList<int> pointSizes = db.smoothSizes(f.family(), db.styleString(f));
         // lets see if we find a nice looking font, which is not too far away
         // from the requested one.
-        //kdDebug() << "khtml::setFontSize family = " << f.family() << " size requested=" << size << endl;
+        //kdDebug(6080) << "khtml::setFontSize family = " << f.family() << " size requested=" << size << endl;
 
         QValueList<int>::Iterator it;
         float diff = 1; // ### 100% deviation

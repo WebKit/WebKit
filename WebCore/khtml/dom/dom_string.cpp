@@ -17,24 +17,16 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-#include "dom_string.h"
-#include "dom_stringimpl.h"
+#include "dom/dom_string.h"
+#include "xml/dom_stringimpl.h"
 
-#include <kglobal.h>
 
 using namespace DOM;
 
 
 DOMString::DOMString()
-{
-    impl = 0;
-}
-
-DOMString::DOMString(int)
 {
     impl = 0;
 }
@@ -180,6 +172,17 @@ DOMString DOMString::split(unsigned int pos)
   return impl->split(pos);
 }
 
+DOMString DOMString::lower() const
+{
+  if(!impl) return DOMString();
+  return impl->lower();
+}
+
+DOMString DOMString::upper() const
+{
+  if(!impl) return DOMString();
+  return impl->upper();
+}
 
 bool DOMString::percentage(int &_percentage) const
 {
@@ -257,12 +260,6 @@ bool DOMString::isEmpty() const
     return (impl->l == 0);
 }
 
-const QChar *DOMString::stringPtr() const
-{
-    if (impl) return impl->s;
-    return 0;
-}
-
 //-----------------------------------------------------------------------------
 
 bool DOM::operator==( const DOMString &a, const DOMString &b )
@@ -290,11 +287,11 @@ bool DOM::operator==( const DOMString &a, const QString &b )
 bool DOM::operator==( const DOMString &a, const char *b )
 {
     if ( !b ) return a.isNull();
-    if ( a.isNull() ) return false;
     unsigned int blen = strlen(b);
+    if ( a.isNull() ) return (blen == 0);
     if(a.length() != blen) return false;
 
-    const QChar* aptr = a.stringPtr();
+    const QChar* aptr = a.impl->s;
     while( blen-- ) {
         if((*aptr++).latin1() != *b++)
             return false;

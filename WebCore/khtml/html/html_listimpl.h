@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -41,12 +41,10 @@ public:
     HTMLUListElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
     virtual ~HTMLUListElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *);
+    virtual void parseAttribute(AttributeImpl *);
 
-    virtual void attach();
     virtual int start() const { return 1; }
 };
 
@@ -58,10 +56,7 @@ public:
     HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
     virtual ~HTMLDirectoryElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void attach();
+    virtual Id id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -72,10 +67,7 @@ public:
     HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
     virtual ~HTMLMenuElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void attach();
+    virtual Id id() const;
 };
 
 // -------------------------------------------------------------------------
@@ -87,12 +79,8 @@ public:
         : HTMLUListElementImpl(doc) { _start = 1; }
     virtual ~HTMLOListElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
-
-    virtual void parseAttribute(AttrImpl *);
-
-    virtual void attach();
+    virtual Id id() const;
+    virtual void parseAttribute(AttributeImpl *);
 
     int start() const { return _start; }
 private:
@@ -108,10 +96,9 @@ public:
         : HTMLElementImpl(doc) { isValued = false; }
     virtual ~HTMLLIElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 
-    virtual void parseAttribute(AttrImpl *attr);
+    virtual void parseAttribute(AttributeImpl *attr);
 
     virtual void attach();
 
@@ -128,8 +115,7 @@ public:
     HTMLDListElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
     virtual ~HTMLDListElementImpl() {}
 
-    virtual const DOMString nodeName() const;
-    virtual ushort id() const;
+    virtual Id id() const;
 };
 
 }; //namespace

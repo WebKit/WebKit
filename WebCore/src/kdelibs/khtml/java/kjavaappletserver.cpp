@@ -4,7 +4,7 @@
 #include "kjavadownloader.h"
 
 #include <kconfig.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/kprotocolmanager.h>
@@ -189,7 +189,7 @@ void KJavaAppletServer::setupJava( KJavaProcess *p )
     //check for http proxies...
     if( KProtocolManager::useProxy() )
     {
-        QString httpProxy = KProtocolManager::httpProxy();
+        QString httpProxy = KProtocolManager::proxyFor("http");
         kdDebug(6100) << "httpProxy is " << httpProxy << endl;
 
         KURL url( httpProxy );

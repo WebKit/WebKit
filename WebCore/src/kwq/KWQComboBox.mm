@@ -157,4 +157,11 @@ void QComboBox::setCurrentItem(int index)
         KWQDEBUG2 ("Error, index = %d, numberOfItems = %d", index, num);
 }
 
+int QComboBox::currentItem() const
+{
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+
+    return [comboBox indexOfSelectedItem];
+}
+
 

@@ -35,8 +35,7 @@ DomShared::~DomShared()
 
 bool DomShared::deleteMe()
 {
-  if(_ref <= 0)  return true;
-  return false;
+    return !_ref;
 }
 
 

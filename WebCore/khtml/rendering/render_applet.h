@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the HTML widget for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -23,21 +23,24 @@
 #ifndef render_applet_h
 #define render_applet_h
 
-#include "render_replaced.h"
+#include "rendering/render_replaced.h"
+#include "html/html_objectimpl.h"
 
 #include <qwidget.h>
 #include <qmap.h>
-#include <html_objectimpl.h>
 
-class QScrollView;
+class KHTMLView;
+
+namespace DOM {
+    class HTMLElementImpl;
+};
 
 namespace khtml {
 
 class RenderApplet : public RenderWidget
 {
 public:
-  RenderApplet(QScrollView *view,
-               QMap<QString, QString> args, DOM::HTMLElementImpl *node);
+    RenderApplet(DOM::HTMLElementImpl* node, QMap<QString, QString> args);
     virtual ~RenderApplet();
 
     virtual const char *renderName() const { return "RenderApplet"; }
@@ -46,16 +49,17 @@ public:
     virtual short intrinsicWidth() const;
     virtual int intrinsicHeight() const;
 
+    DOM::HTMLElementImpl *element() const
+    { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
+
 private:
     void processArguments( QMap<QString, QString> args );
-
-    DOM::HTMLElementImpl *m_applet;
 };
 
 class RenderEmptyApplet : public RenderWidget
 {
 public:
-    RenderEmptyApplet(QScrollView *view);
+    RenderEmptyApplet(DOM::NodeImpl* node);
 
     virtual const char *renderName() const { return "RenderEmptyApplet"; }
 

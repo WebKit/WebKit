@@ -162,7 +162,7 @@
         if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
             WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
-            widget->layout(TRUE);
+            widget->layout();
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
         }

@@ -20,14 +20,9 @@
  *
  * $Id$
  */
-#include "css_ruleimpl.h"
 
-#include "css_stylesheet.h"
-#include "css_value.h"
-#include "dom_exception.h"
-#include "dom_string.h"
+#include "css/css_ruleimpl.h"
 
-#include "css_rule.h"
 using namespace DOM;
 
 CSSRule::CSSRule()
@@ -509,8 +504,6 @@ CSSUnknownRule::~CSSUnknownRule()
 
 // ----------------------------------------------------------
 
-// ### need to create a CSSRuleListImpl class for this
-
 CSSRuleList::CSSRuleList()
 {
     impl = 0;
@@ -528,10 +521,19 @@ CSSRuleList::CSSRuleList(CSSRuleListImpl *i)
     if(impl) impl->ref();
 }
 
-CSSRuleList::CSSRuleList(StyleListImpl */*i*/)
+CSSRuleList::CSSRuleList(StyleListImpl *lst)
 {
-//    ###
-//    impl = ?
+    impl = new CSSRuleListImpl;
+    impl->ref();
+    if (lst)
+    {
+        for( unsigned long i = 0; i < lst->length() ; ++i )
+        {
+            StyleBaseImpl* style = lst->item( i );
+            if ( style->isRule() )
+                impl->insertRule( static_cast<CSSRuleImpl *>(style), impl->length() );
+        }
+    }
 }
 
 CSSRuleList &CSSRuleList::operator = (const CSSRuleList &other)

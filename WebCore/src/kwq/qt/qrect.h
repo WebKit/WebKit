@@ -70,6 +70,7 @@ public:
 
     bool isNull() const;
     bool isValid() const;
+    bool isEmpty() const;
 
     int x() const;
     int y() const;
@@ -86,7 +87,7 @@ public:
     void setHeight(int);
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
-
+    QRect unite(const QRect &) const;
 
     // operators ---------------------------------------------------------------
 

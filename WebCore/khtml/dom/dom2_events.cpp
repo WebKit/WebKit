@@ -21,15 +21,11 @@
  * $Id$
  */
 
-#include "dom2_events.h"
-#include "dom2_views.h"
-#include "dom2_eventsimpl.h"
-#include "dom_string.h"
-#include "dom_exception.h"
+#include "dom/dom2_views.h"
+#include "dom/dom_exception.h"
+#include "xml/dom2_eventsimpl.h"
 
 using namespace DOM;
-
-
 
 EventListener::EventListener()
 {
@@ -86,7 +82,7 @@ DOMString Event::type() const
 {
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
-	
+
     return impl->type();
 }
 
@@ -176,7 +172,7 @@ DOMString Event::eventModuleName()
 {
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
-	
+
     return impl->eventModuleName();
 }
 

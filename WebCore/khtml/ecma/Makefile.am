@@ -23,8 +23,6 @@ libkhtmlecma_o_SOURCES = \
 	kjs_proxy.h \
 	kjs_range.cpp \
 	kjs_range.h \
-	kjs_text.cpp \
-	kjs_text.h \
 	kjs_traversal.cpp \
 	kjs_traversal.h \
 	kjs_views.cpp \
@@ -51,7 +49,25 @@ INCLUDES = \
 kjs_window.moc:
 	touch $@
 
-BUILT_SOURCES = kjs_window.moc
+LUT_FILES = \
+	kjs_css.lut.h \
+	kjs_dom.lut.h \
+	kjs_html.lut.h \
+	kjs_events.lut.h \
+	kjs_navigator.lut.h \
+	kjs_range.lut.h \
+	kjs_traversal.lut.h \
+	kjs_views.lut.h \
+	kjs_window.lut.h \
+	$(NULL)
+
+CREATE_HASH_TABLE = ../../kjs/create_hash_table
+
+%.lut.h: %.cpp $(CREATE_HASH_TABLE)
+	$(CREATE_HASH_TABLE) $< > $@
+
+
+BUILT_SOURCES = kjs_window.moc $(LUT_FILES)
 CLEANFILES = $(BUILT_SOURCES)
 
 

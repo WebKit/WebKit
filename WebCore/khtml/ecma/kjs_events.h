@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -20,9 +21,9 @@
 #ifndef _KJS_EVENTS_H_
 #define _KJS_EVENTS_H_
 
-#include "kjs_dom.h"
-#include <dom2_events.h>
-#include <dom_misc.h>
+#include "ecma/kjs_dom.h"
+#include "dom/dom2_events.h"
+#include "dom/dom_misc.h"
 
 namespace KJS {
 
@@ -30,144 +31,123 @@ namespace KJS {
 
   class JSEventListener : public DOM::EventListener {
   public:
-    JSEventListener(KJSO _listener, const KJSO &_win, bool _html = false);
+    JSEventListener(Object _listener, const Object &_win, bool _html = false);
     virtual ~JSEventListener();
     virtual void handleEvent(DOM::Event &evt);
     virtual DOM::DOMString eventListenerType();
-    KJSO listenerObj() { return listener; }
+    Object listenerObj() { return listener; }
   protected:
-    KJSO listener;
+    Object listener;
     bool html;
-    KJSO win;
+    Object win;
   };
 
-  KJSO getNodeEventListener(DOM::Node n, int eventId);
+  Value getNodeEventListener(DOM::Node n, int eventId);
 
-  // Prototype object Event
-  class EventPrototype : public DOMObject {
+  // Constructor for Event - currently only used for some global vars
+  class EventConstructor : public DOMObject {
   public:
-    EventPrototype() { }
-    virtual KJSO tryGet(const UString &p) const;
+    EventConstructor(ExecState *) { }
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  KJSO getEventPrototype();
+  Value getEventConstructor(ExecState *exec);
 
   class DOMEvent : public DOMObject {
   public:
-    DOMEvent(DOM::Event e) : event(e) {}
+    DOMEvent(ExecState *exec, DOM::Event e);
     ~DOMEvent();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-    virtual DOM::Event toEvent() const { return event; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { Type, Target, CurrentTarget, EventPhase, Bubbles,
+           Cancelable, TimeStamp, SrcElement,
+           StopPropagation, PreventDefault, InitEvent };
+    DOM::Event toEvent() const { return event; }
   protected:
     DOM::Event event;
   };
 
-  class DOMEventFunc : public DOMFunction {
-    friend class DOMNode;
-  public:
-    DOMEventFunc(DOM::Event e, int i) : event(e), id(i) { }
-    Completion tryExecute(const List &);
-    enum { StopPropagation, PreventDefault, InitEvent };
-  private:
-    DOM::Event event;
-    int id;
-  };
-
-  KJSO getDOMEvent(DOM::Event e);
+  Value getDOMEvent(ExecState *exec, DOM::Event e);
 
   /**
-   * Convert an object to an Event. Returns a null Node if not possible.
+   * Convert an object to an Event. Returns a null Event if not possible.
    */
-  DOM::Event toEvent(const KJSO&);
+  DOM::Event toEvent(const Value&);
 
-  // Prototype object EventException
-  class EventExceptionPrototype : public DOMObject {
+  // Constructor object EventException
+  class EventExceptionConstructor : public DOMObject {
   public:
-    EventExceptionPrototype() { }
-    virtual KJSO tryGet(const UString &p) const;
+    EventExceptionConstructor(ExecState *) { }
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  KJSO getEventExceptionPrototype();
+  Value getEventExceptionConstructor(ExecState *exec);
 
   class DOMUIEvent : public DOMEvent {
   public:
-    DOMUIEvent(DOM::UIEvent ue) : DOMEvent(ue) {}
+    DOMUIEvent(ExecState *exec, DOM::UIEvent ue) : DOMEvent(exec, ue) {}
     ~DOMUIEvent();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  };
-
-  class DOMUIEventFunc : public DOMFunction {
-  public:
-    DOMUIEventFunc(DOM::UIEvent ue, int i) : uiEvent(ue), id(i) { }
-    Completion tryExecute(const List &);
-    enum { InitUIEvent };
-  private:
-    DOM::UIEvent uiEvent;
-    int id;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { View, Detail, InitUIEvent };
+    DOM::UIEvent toUIEvent() const { return static_cast<DOM::UIEvent>(event); }
   };
 
   class DOMMouseEvent : public DOMUIEvent {
   public:
-    DOMMouseEvent(DOM::MouseEvent me) : DOMUIEvent(me) {}
+    DOMMouseEvent(ExecState *exec, DOM::MouseEvent me) : DOMUIEvent(exec, me) {}
     ~DOMMouseEvent();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { ScreenX, ScreenY, ClientX, X, ClientY, Y, OffsetX, OffsetY,
+           CtrlKey, ShiftKey, AltKey,
+           MetaKey, Button, RelatedTarget, FromElement, ToElement,
+           InitMouseEvent };
+    DOM::MouseEvent toMouseEvent() const { return static_cast<DOM::MouseEvent>(event); }
   };
 
-  class DOMMouseEventFunc : public DOMFunction {
+  // Constructor object MutationEvent
+  class MutationEventConstructor : public DOMObject {
   public:
-    DOMMouseEventFunc(DOM::MouseEvent me, int i) : mouseEvent(me), id(i) { }
-    Completion tryExecute(const List &);
-    enum { InitMouseEvent };
-  private:
-    DOM::MouseEvent mouseEvent;
-    int id;
-  };
-
-  // Prototype object MutationEvent
-  class MutationEventPrototype : public DOMObject {
-  public:
-    MutationEventPrototype() { }
-    virtual KJSO tryGet(const UString &p) const;
+    MutationEventConstructor(ExecState *) { }
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  KJSO getMutationEventPrototype();
+  Value getMutationEventConstructor(ExecState *exec);
 
   class DOMMutationEvent : public DOMEvent {
   public:
-    DOMMutationEvent(DOM::MutationEvent me) : DOMEvent(me) {}
+    DOMMutationEvent(ExecState *exec, DOM::MutationEvent me) : DOMEvent(exec, me) {}
     ~DOMMutationEvent();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  };
-
-  class DOMMutationEventFunc : public DOMFunction {
-  public:
-    DOMMutationEventFunc(DOM::MutationEvent me, int i) : mutationEvent(me), id(i) { }
-    Completion tryExecute(const List &);
-    enum { InitMutationEvent };
-  private:
-    DOM::MutationEvent mutationEvent;
-    int id;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { AttrChange, RelatedNode, AttrName, PrevValue, NewValue,
+           InitMutationEvent };
+    DOM::MutationEvent toMutationEvent() const { return static_cast<DOM::MutationEvent>(event); }
   };
 
 }; // namespace

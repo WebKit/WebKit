@@ -31,14 +31,9 @@ static const QString *DEFAULT_ENCODING = NULL;
 KHTMLSettings::KHTMLSettings()
 {    
     // set available font families...ask the system
-    NSFontManager *sharedFontManager;
-    NSArray *array, *fontSizeArray;
     unsigned int i;
+    NSArray *fontSizeArray;
         
-    sharedFontManager = [NSFontManager sharedFontManager];
-    array = [sharedFontManager availableFontFamilies];
-    m_fontFamilies = NSSTRING_TO_QSTRING([array componentsJoinedByString:@","]);
-    
     m_fontSizes.clear();
     fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitFontSizes"];
     for(i=0; i<[fontSizeArray count]; i++){
@@ -119,9 +114,10 @@ int KHTMLSettings::minFontSize() const
 }
 
 
-QString KHTMLSettings::availableFamilies() const
+QString KHTMLSettings::availableFamilies()
 {
-    return m_fontFamilies;
+    return NSSTRING_TO_QSTRING([[[NSFontManager sharedFontManager]
+				availableFontFamilies] componentsJoinedByString:@","]);
 }
 
 

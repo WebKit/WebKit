@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
@@ -27,7 +27,7 @@
 #ifndef _DOM2_RangeImpl_h_
 #define _DOM2_RangeImpl_h_
 
-#include "dom2_range.h"
+#include "dom/dom2_range.h"
 
 namespace DOM {
 

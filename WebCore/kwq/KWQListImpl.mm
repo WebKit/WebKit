@@ -428,6 +428,11 @@ bool KWQListImpl::removeRef(const void *item, bool deleteItem)
     return remove(deleteItem);
 }
 
+void *KWQListImpl::getFirst() const
+{
+    return d->head->data;
+}
+
 void *KWQListImpl::getLast() const
 {
     KWQListNode *node = d->head;
@@ -488,6 +493,13 @@ void *KWQListImpl::prev()
 void *KWQListImpl::take(uint n)
 {
     void *retval = at(n);
+    remove(false);
+    return retval;
+}
+
+void *KWQListImpl::take()
+{
+    void *retval = current();
     remove(false);
     return retval;
 }

@@ -44,6 +44,12 @@
 
 // class QTextStream ===========================================================
 
+class QTextStream;
+
+typedef QTextStream& (*QTextStreamManipulator)(QTextStream &);
+
+QTextStream &endl(QTextStream& stream);
+
 class QTextStream {
 public:
 
@@ -56,6 +62,7 @@ public:
 
     QTextStream();
     QTextStream(QByteArray, int);
+    QTextStream(QString *, int);
     virtual ~QTextStream();       
 
     // member functions --------------------------------------------------------
@@ -65,6 +72,8 @@ public:
      QTextStream &operator<<(const char *);
      QTextStream &operator<<(const QCString &);
      QTextStream &operator<<(const QString &);
+     QTextStream &operator<<(const QTextStreamManipulator &);
+     QTextStream &operator<<(const void *);
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
@@ -169,6 +178,9 @@ private:
 
 }; // class QTextOStream =======================================================
 
+
 #endif // USING_BORROWED_QTEXTSTREAM
 
 #endif
+
+

@@ -25,6 +25,7 @@
 #import <qwidget.h>
 
 #import <KWQTextArea.h>
+#import <IFNSStringExtensions.h>
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -256,6 +257,136 @@ const float LargeNumberForText = 1.0e7;
     //    [self _createTextView];
 }
 
+- (int)paragraphs
+{
+    return [[textView string] countOfString:@"\n"] + 1;
+}
+
+static NSRange RangeOfParagraph(NSString *text, int paragraph)
+{
+    int paragraphSoFar = 0;
+    NSRange searchRange = NSMakeRange(0, [text length]);
+    NSRange newlineRange;
+
+    do {
+	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
+	if (newlineRange.location == NSNotFound) {
+	    break;
+	}
+
+	if (paragraphSoFar == paragraph) {
+	    break;
+	}
+
+	paragraphSoFar++;
+
+	searchRange.length -= (newlineRange.location + 1 - searchRange.location);
+	searchRange.location = newlineRange.location + 1;
+	if (searchRange.length < 0) {
+	    searchRange.location = NSNotFound;
+	    searchRange.length = 0;
+	    break;
+	}
+    } while (true);
+
+    if (paragraphSoFar < paragraph) {
+	return NSMakeRange(NSNotFound, 0);
+    } else if (searchRange.location == NSNotFound || newlineRange.location == NSNotFound) {
+	return searchRange;
+    } else {
+	return NSMakeRange(searchRange.location, newlineRange.location - searchRange.location);
+    }
+}
+
+- (int)paragraphLength:(int)paragraph
+{
+    NSString *text = [textView string];
+    NSRange range = RangeOfParagraph(text, paragraph);
+    if (range.location == NSNotFound) {
+	return 0;
+    } else {
+	return range.length;
+    }
+}
+
+- (NSString *)textForParagraph:(int)paragraph
+{
+    NSString *text = [textView string];
+    NSRange range = RangeOfParagraph(text, paragraph);
+    if (range.location == NSNotFound) {
+	return [NSString string];
+    } else {
+	return [text substringWithRange:range];
+    }
+}
+
+- (int)lineOfCharAtIndex:(int)index inParagraph:(int)paragraph
+{
+    NSString *text = [textView string];
+    NSRange range = RangeOfParagraph(text, paragraph);
+    NSLayoutManager *layoutManager = [textView layoutManager];
+
+    if (range.location == NSNotFound) {
+	return -1;
+    }
+
+    NSRange characterMaxRange = NSMakeRange(0, range.location);
+    NSRange glyphMaxRange = [layoutManager glyphRangeForCharacterRange:characterMaxRange actualCharacterRange:NULL];
+
+    // FIXME: factor line counting code out into something shared
+    unsigned numberOfGlyphs = glyphMaxRange.location + glyphMaxRange.length;
+    NSRange glyphRange = NSMakeRange(0,0);
+    int lineCount = 0;
+
+    while (NSMaxRange(glyphRange) < numberOfGlyphs) {
+        (void)[layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
+        lineCount++;
+    }
+
+    return lineCount;
+}
+
+- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
+{
+    // FIXME: is this right? Cocoa text view docs are impenetrable
+    NSString *text = [textView string];
+    NSRange selectedRange = [textView selectedRange];
+    
+    if (selectedRange.location == NSNotFound) {
+	*index = 0;
+	*paragraph = 0;
+    } else {
+	int num = [self paragraphs];
+	int i;
+	NSRange range;
+	
+	// this loop will
+	for (i = 0; i < num; i++) {
+	    range = RangeOfParagraph(text, i);
+	    if (range.location + range.length > selectedRange.location) {
+		break;
+	    }
+	}
+
+	*paragraph = num;
+	*index = selectedRange.location - range.location;
+    }
+}
+
+- (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
+{
+    // FIXME: is this right? Cocoa text view docs are impenetrable
+    NSString *text = [textView string];
+    NSRange range = RangeOfParagraph(text, paragraph);
+
+    if (range.location == NSNotFound) {
+	[textView setMarkedText:@"" selectedRange:NSMakeRange([text length], 0)];
+    } else {
+	[textView setMarkedText:@"" selectedRange:NSMakeRange(range.location + index, 0)];
+    }
+}
 
 @end
+
+
 

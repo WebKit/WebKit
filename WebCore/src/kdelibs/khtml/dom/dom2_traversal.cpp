@@ -21,10 +21,9 @@
  * $Id$
  */
 
-#include "dom2_traversal.h"
-#include "dom_node.h"
-#include "dom_exception.h"
-#include "dom2_traversalimpl.h"
+#include "dom/dom_exception.h"
+#include "dom/dom_string.h"
+#include "xml/dom2_traversalimpl.h"
 
 using namespace DOM;
 

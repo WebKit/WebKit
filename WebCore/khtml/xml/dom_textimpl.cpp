@@ -18,19 +18,14 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-#include "dom_textimpl.h"
 
-#include "dom_stringimpl.h"
-#include "dom_exception.h"
+#include "dom/dom_exception.h"
+#include "css/cssstyleselector.h"
+#include "xml/dom2_eventsimpl.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_docimpl.h"
 
-#include "dom/dom_string.h"
-#include "dom_docimpl.h"
-#include "dom2_eventsimpl.h"
-
-#include "dom/dom_node.h"
 #include "misc/htmlhashes.h"
 #include "rendering/render_text.h"
 
@@ -40,15 +35,15 @@ using namespace DOM;
 using namespace khtml;
 
 
-CharacterDataImpl::CharacterDataImpl(DocumentPtr *doc) : NodeWParentImpl(doc)
+CharacterDataImpl::CharacterDataImpl(DocumentPtr *doc)
+    : NodeImpl(doc)
 {
     str = 0;
 }
 
 CharacterDataImpl::CharacterDataImpl(DocumentPtr *doc, const DOMString &_text)
-    : NodeWParentImpl(doc)
+    : NodeImpl(doc)
 {
-//    str = new DOMStringImpl(_text.impl->s,_text.impl->l);
     str = _text.impl;
     str->ref();
 }
@@ -63,11 +58,17 @@ DOMString CharacterDataImpl::data() const
     return str;
 }
 
-void CharacterDataImpl::setData( const DOMString &newStr )
+void CharacterDataImpl::setData( const DOMString &_data, int &exceptioncode )
 {
-    if(str == newStr.impl) return; // ### fire DOMCharacterDataModified if modified?
+    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
+    if(str == _data.impl) return; // ### fire DOMCharacterDataModified if modified?
     DOMStringImpl *oldStr = str;
-    str = newStr.impl;
+    str = _data.impl;
     if(str) str->ref();
     if (m_render)
       (static_cast<RenderText*>(m_render))->setText(str);
@@ -85,15 +86,23 @@ unsigned long CharacterDataImpl::length() const
 DOMString CharacterDataImpl::substringData( const unsigned long offset, const unsigned long count, int &exceptioncode )
 {
     exceptioncode = 0;
-    if (offset > str->l ) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+    checkCharDataOperation(offset, exceptioncode);
+    if (exceptioncode)
         return DOMString();
-    }
+
     return str->substring(offset,count);
 }
 
-void CharacterDataImpl::appendData( const DOMString &arg )
+void CharacterDataImpl::appendData( const DOMString &arg, int &exceptioncode )
 {
+    exceptioncode = 0;
+
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
     DOMStringImpl *oldStr = str;
     str = str->copy();
     str->ref();
@@ -109,10 +118,10 @@ void CharacterDataImpl::appendData( const DOMString &arg )
 void CharacterDataImpl::insertData( const unsigned long offset, const DOMString &arg, int &exceptioncode )
 {
     exceptioncode = 0;
-    if (offset > str->l) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+    checkCharDataOperation(offset, exceptioncode);
+    if (exceptioncode)
         return;
-    }
+
     DOMStringImpl *oldStr = str;
     str = str->copy();
     str->ref();
@@ -128,10 +137,9 @@ void CharacterDataImpl::insertData( const unsigned long offset, const DOMString 
 void CharacterDataImpl::deleteData( const unsigned long offset, const unsigned long count, int &exceptioncode )
 {
     exceptioncode = 0;
-    if (offset > str->l) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+    checkCharDataOperation(offset, exceptioncode);
+    if (exceptioncode)
         return;
-    }
 
     DOMStringImpl *oldStr = str;
     str = str->copy();
@@ -148,10 +156,9 @@ void CharacterDataImpl::deleteData( const unsigned long offset, const unsigned l
 void CharacterDataImpl::replaceData( const unsigned long offset, const unsigned long count, const DOMString &arg, int &exceptioncode )
 {
     exceptioncode = 0;
-    if (offset > str->l) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+    checkCharDataOperation(offset, exceptioncode);
+    if (exceptioncode)
         return;
-    }
 
     unsigned long realCount;
     if (offset + count > str->l)
@@ -172,22 +179,59 @@ void CharacterDataImpl::replaceData( const unsigned long offset, const unsigned 
     oldStr->deref();
 }
 
+DOMString CharacterDataImpl::nodeValue() const
+{
+    return str;
+}
+
+void CharacterDataImpl::setNodeValue( const DOMString &_nodeValue, int &exceptioncode )
+{
+    // NO_MODIFICATION_ALLOWED_ERR: taken care of by setData()
+    setData(_nodeValue, exceptioncode);
+}
+
 void CharacterDataImpl::dispatchModifiedEvent(DOMStringImpl *prevValue)
 {
-    // ### fixme (?) - hack so STYLE elements reparse their stylesheet when text changes
-    if (_parent)
-        _parent->setChanged(true);
+    if (parentNode())
+        parentNode()->childrenChanged();
     if (!getDocument()->hasListenerType(DocumentImpl::DOMCHARACTERDATAMODIFIED_LISTENER))
-	return;
+        return;
 
     DOMStringImpl *newValue = str->copy();
     newValue->ref();
-    int exceptioncode;
+    int exceptioncode = 0;
     dispatchEvent(new MutationEventImpl(EventImpl::DOMCHARACTERDATAMODIFIED_EVENT,
-		  true,false,0,prevValue,newValue,0,0),exceptioncode);
+		  true,false,0,prevValue,newValue,DOMString(),0),exceptioncode);
     newValue->deref();
     dispatchSubtreeModifiedEvent();
 }
+
+void CharacterDataImpl::checkCharDataOperation( const unsigned long offset, int &exceptioncode )
+{
+    exceptioncode = 0;
+
+    // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of 16-bit
+    // units in data.
+    if (offset > str->l) {
+        exceptioncode = DOMException::INDEX_SIZE_ERR;
+        return;
+    }
+
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+}
+
+#ifndef NDEBUG
+void CharacterDataImpl::dump(QTextStream *stream, QString ind) const
+{
+    *stream << " str=\"" << DOMString(str).string().ascii() << "\"";
+
+    NodeImpl::dump(stream,ind);
+}
+#endif
 
 // ---------------------------------------------------------------------------
 
@@ -205,14 +249,9 @@ CommentImpl::~CommentImpl()
 {
 }
 
-const DOMString CommentImpl::nodeName() const
+DOMString CommentImpl::nodeName() const
 {
     return "#comment";
-}
-
-DOMString CommentImpl::nodeValue() const
-{
-    return str;
 }
 
 unsigned short CommentImpl::nodeType() const
@@ -220,14 +259,14 @@ unsigned short CommentImpl::nodeType() const
     return Node::COMMENT_NODE;
 }
 
-ushort CommentImpl::id() const
+NodeImpl *CommentImpl::cloneNode(bool /*deep*/)
 {
-    return ID_COMMENT;
+    return getDocument()->createComment( str );
 }
 
-NodeImpl *CommentImpl::cloneNode(bool /*deep*/, int &/*exceptioncode*/)
+NodeImpl::Id CommentImpl::id() const
 {
-    return ownerDocument()->createComment( str );
+    return ID_COMMENT;
 }
 
 // DOM Section 1.1.1
@@ -257,8 +296,21 @@ TextImpl::~TextImpl()
 TextImpl *TextImpl::splitText( const unsigned long offset, int &exceptioncode )
 {
     exceptioncode = 0;
+
+    // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than
+    // the number of 16-bit units in data.
+
+    // ### we explicitly check for a negative long that has been cast to an unsigned long
+    // ... this can happen if JS code passes in -1 - we need to catch this earlier! (in the
+    // kjs bindings)
     if (offset > str->l || (long)offset < 0) {
         exceptioncode = DOMException::INDEX_SIZE_ERR;
+        return 0;
+    }
+
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+    if (isReadOnly()) {
+        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }
 
@@ -271,8 +323,8 @@ TextImpl *TextImpl::splitText( const unsigned long offset, int &exceptioncode )
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
 
-    if (_parent)
-        _parent->insertBefore(newText,_next, exceptioncode );
+    if (parentNode())
+        parentNode()->insertBefore(newText,nextSibling(), exceptioncode );
     if ( exceptioncode )
         return 0;
 
@@ -282,121 +334,54 @@ TextImpl *TextImpl::splitText( const unsigned long offset, int &exceptioncode )
     return newText;
 }
 
-const DOMString TextImpl::nodeName() const
+DOMString TextImpl::nodeName() const
 {
   return "#text";
 }
-DOMString TextImpl::nodeValue() const
-{
-    return str;
-}
-
 
 unsigned short TextImpl::nodeType() const
 {
     return Node::TEXT_NODE;
 }
 
+NodeImpl *TextImpl::cloneNode(bool /*deep*/)
+{
+    return getDocument()->createTextNode(str);
+}
+
 void TextImpl::attach()
 {
-    if (!m_render) {
-        RenderObject *r = _parent->renderer();
-        if( r && style() ) {
-	    m_render = new RenderText(str);
-	    m_render->setStyle( style() );
-	    r->addChild(m_render, nextRenderer());
-        }
+    assert(!m_render);
+    assert(!attached());
+    assert(parentNode() && parentNode()->isElementNode());
+
+    ElementImpl* element = static_cast<ElementImpl*>(parentNode());
+    if (!m_render && element->renderer()) {
+        khtml::RenderStyle* _style = element->renderer()->style();
+        m_render = new RenderText(this, str);
+        m_render->setStyle(_style);
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
 
     CharacterDataImpl::attach();
 }
 
-void TextImpl::detach()
-{
-    CharacterDataImpl::detach();
-
-    if ( m_render )
-        m_render->detach();
-
-    m_render = 0;
-}
-
-void TextImpl::applyChanges(bool,bool force)
-{
-    if (force || changed())
-        recalcStyle();
-    setChanged(false);
-}
-
-khtml::RenderStyle *TextImpl::style() const
-{
-    return _parent ? _parent->style() : 0;
-}
-
-bool TextImpl::prepareMouseEvent( int _x, int _y,
-                                  int _tx, int _ty,
-                                  MouseEvent *ev)
-{
-    //kdDebug( 6020 ) << "Text::prepareMouseEvent" << endl;
-
-    if(!m_render) return false;
-
-    if (m_render->style() && m_render->style()->visiblity() == HIDDEN)
-        return false;
-
-    int origTx = _tx;
-    int origTy = _ty;
-
-    if(m_render->parent() && m_render->parent()->isAnonymousBox())
-    {
-        // we need to add the offset of the anonymous box
-        _tx += m_render->parent()->xPos();
-        _ty += m_render->parent()->yPos();
-    }
-
-    if( static_cast<RenderText *>(m_render)->checkPoint(_x, _y, _tx, _ty) )
-    {
-        ev->innerNode = Node(this);
-        ev->nodeAbsX = origTx;
-        ev->nodeAbsY = origTy;
-        return true;
-    }
-    return false;
-}
-
-khtml::FindSelectionResult TextImpl::findSelectionNode( int _x, int _y, int _tx, int _ty,
-                                                 DOM::Node & node, int & offset )
-{
-    //kdDebug(6030) << "TextImpl::findSelectionNode " << this << " _x=" << _x << " _y=" << _y
-    //           << " _tx=" << _tx << " _ty=" << _ty << endl;
-    if(!m_render) return SelectionPointBefore;
-
-    if(m_render->parent() && m_render->parent()->isAnonymousBox())
-    {
-        // we need to add the offset of the anonymous box
-        _tx += m_render->parent()->xPos();
-        _ty += m_render->parent()->yPos();
-    }
-
-    node = this;
-    return static_cast<RenderText *>(m_render)->checkSelectionPoint(_x, _y, _tx, _ty, offset);
-}
-
-ushort TextImpl::id() const
+NodeImpl::Id TextImpl::id() const
 {
     return ID_TEXT;
 }
 
-NodeImpl *TextImpl::cloneNode(bool /*deep*/, int &/*exceptioncode*/)
+void TextImpl::recalcStyle( StyleChange change )
 {
-    return ownerDocument()->createTextNode(str);
-}
-
-void TextImpl::recalcStyle()
-{
-    if (!parentNode())
-        return;
-    if(m_render) m_render->setStyle(parentNode()->style());
+//      qDebug("textImpl::recalcStyle");
+    if (change != NoChange && parentNode()) {
+// 	qDebug("DomText::recalcStyle");
+	if(m_render)
+	    m_render->setStyle(parentNode()->renderer()->style());
+    }
+    if ( changed() && m_render && m_render->isText() )
+	static_cast<RenderText*>(m_render)->setText(str);
+    setChanged( false );
 }
 
 // DOM Section 1.1.1
@@ -424,7 +409,7 @@ CDATASectionImpl::~CDATASectionImpl()
 {
 }
 
-const DOMString CDATASectionImpl::nodeName() const
+DOMString CDATASectionImpl::nodeName() const
 {
   return "#cdata-section";
 }
@@ -434,9 +419,9 @@ unsigned short CDATASectionImpl::nodeType() const
     return Node::CDATA_SECTION_NODE;
 }
 
-NodeImpl *CDATASectionImpl::cloneNode(bool /*deep*/, int &/*exceptioncode*/)
+NodeImpl *CDATASectionImpl::cloneNode(bool /*deep*/)
 {
-    return ownerDocument()->createCDATASection(str);
+    return getDocument()->createCDATASection(str);
 }
 
 // DOM Section 1.1.1

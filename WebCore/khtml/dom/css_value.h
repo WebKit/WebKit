@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  *
  * This file includes excerpts from the Document Object Model (DOM)
- * Level 2 Specification (Candidate Recommendation)
- * http://www.w3.org/TR/2000/CR-DOM-Level-2-20000510/
+ * Level 2 Specification (Style)
+ * http://www.w3.org/TR/DOM-Level-2-Style/
  * Copyright © 2000 W3C® (MIT, INRIA, Keio), All Rights Reserved.
  *
  * $Id$
@@ -278,14 +278,6 @@ public:
      *
      */
     void setCssText( const DOM::DOMString & );
-
-    /**
-     * A code defining the type of the value as defined above.
-     *
-     * This method is deprecated. You should use @ref cssValueType instead.
-     *
-     */
-    unsigned short valueType() const; // BCI: deprecated (method name incorrect according to specs)
 
     /**
      * A code defining the type of the value as defined above.

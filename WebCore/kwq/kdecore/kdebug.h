@@ -31,6 +31,7 @@
 #endif
 
 #include <qstring.h>
+#include <qtextstream.h>
 
 class kdbgstream;
 
@@ -94,5 +95,6 @@ kdbgstream kdError(int area = 0);
 kdbgstream kdError(bool cond, int area = 0);
 kdbgstream kdFatal(int area = 0);
 kdbgstream kdFatal(bool cond, int area = 0);
+QString kdBacktrace();
 
 #endif

@@ -23,108 +23,96 @@
  * $Id$
  */
 
-#include "render_object.h"
-
-#include "dom_nodeimpl.h"
-#include "render_box.h"
-#include "render_flow.h"
-#include "render_style.h"
-#include "render_table.h"
-#include "render_list.h"
-#include "render_style.h"
-#include "render_root.h"
-#include "render_hr.h"
-#include "misc/loader.h"
-
+#include "rendering/render_object.h"
+#include "rendering/render_table.h"
+#include "rendering/render_list.h"
+#include "rendering/render_root.h"
+#include "xml/dom_elementimpl.h"
+#include "misc/htmlhashes.h"
 #include <kdebug.h>
-#include <qnamespace.h>
 #include <qpainter.h>
-#include <qcolor.h>
-#include <qpen.h>
-#include <qsize.h>
+#include "khtmlview.h"
 
 #include <assert.h>
 using namespace DOM;
 using namespace khtml;
 
-RenderObject *RenderObject::createObject(DOM::NodeImpl *node)
+RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* style)
 {
-    RenderStyle *style = node->style();
     RenderObject *o = 0;
     switch(style->display())
     {
+    case NONE:
+        break;
     case INLINE:
     case BLOCK:
-        o = new RenderFlow();
+        o = new RenderFlow(node);
         break;
     case LIST_ITEM:
-        o = new RenderListItem();
+        o = new RenderListItem(node);
         break;
     case RUN_IN:
     case COMPACT:
     case MARKER:
         break;
-    case KONQ_RULER:
-        o = new RenderHR();
-        break;
     case TABLE:
     case INLINE_TABLE:
         // ### set inline/block right
         //kdDebug( 6040 ) << "creating RenderTable" << endl;
-        o = new RenderTable();
+        o = new RenderTable(node);
         break;
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        o = new RenderTableSection();
+        o = new RenderTableSection(node);
         break;
     case TABLE_ROW:
-        o = new RenderTableRow();
+        o = new RenderTableRow(node);
         break;
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        o = new RenderTableCol();
+        o = new RenderTableCol(node);
         break;
     case TABLE_CELL:
-        o = new RenderTableCell();
+        o = new RenderTableCell(node);
         break;
     case TABLE_CAPTION:
-        o = new RenderTableCaption();
+        o = new RenderTableCaption(node);
         break;
-    case NONE:
-        return 0;
     }
     if(o) o->setStyle(style);
     return o;
 }
 
 
-RenderObject::RenderObject()
+RenderObject::RenderObject(DOM::NodeImpl* node)
+    : CachedObjectClient(),
+m_style( 0 ),
+m_node( node ),
+m_parent( 0 ),
+m_previous( 0 ),
+m_next( 0 ),
+m_verticalPosition( PositionUndefined ),
+m_layouted( false ),
+m_unused( false ),
+m_minMaxKnown( false ),
+m_floating( false ),
+
+m_positioned( false ),
+m_overhangingContents( false ),
+m_relPositioned( false ),
+m_printSpecial( false ),
+
+m_isAnonymous( false ),
+m_recalcMinMax( false ),
+m_isText( false ),
+m_inline( true ),
+
+m_replaced( false ),
+m_mouseInside( false ),
+m_hasFirstLine( false ),
+m_isSelectionBorder( false )
 {
-    m_style = 0;
-
-    m_layouted = false;
-    m_parsing = false;
-    m_minMaxKnown = false;
-
-    m_parent = 0;
-    m_previous = 0;
-    m_next = 0;
-
-    m_floating = false;
-    m_positioned = false;
-    m_relPositioned = false;
-    m_printSpecial = false;
-    m_containsPositioned = false;
-    m_isAnonymous = false;
-    m_isText = false;
-    m_inline = true;
-    m_replaced = false;
-    m_visible = true;
-    m_containsWidget = false;
-    m_containsOverhangingFloats = false;
-    m_hasFirstLine = false;
-    m_verticalPosition = PositionUndefined;
 }
 
 RenderObject::~RenderObject()
@@ -133,34 +121,34 @@ RenderObject::~RenderObject()
         m_style->backgroundImage()->deref(this);
 
     if (m_style)
-	m_style->deref();
+        m_style->deref();
 }
 
 
 void RenderObject::addChild(RenderObject* , RenderObject *)
 {
-    ASSERT(0);
+    KHTMLAssert(0);
 }
 
 RenderObject* RenderObject::removeChildNode(RenderObject* )
 {
-    ASSERT(0);
+    KHTMLAssert(0);
     return 0;
 }
 
 void RenderObject::removeChild(RenderObject* )
 {
-    ASSERT(0);
+    KHTMLAssert(0);
 }
 
 void RenderObject::appendChildNode(RenderObject*)
 {
-    ASSERT(0);
+    KHTMLAssert(0);
 }
 
 void RenderObject::insertChildNode(RenderObject*, RenderObject*)
 {
-    ASSERT(0);
+    KHTMLAssert(0);
 }
 
 RenderObject *RenderObject::containingBlock() const
@@ -185,8 +173,12 @@ RenderObject *RenderObject::containingBlock() const
     // the case below should never happen...
     if(!o) {
         if(!isRoot()) {
-            //assert ( false );
-            kdDebug( 6040 ) << renderName() << "(RenderObject): No containingBlock!" << endl;
+#ifndef NDEBUG
+            kdDebug( 6040 ) << this << ": " << renderName() << "(RenderObject): No containingBlock!" << endl;
+            const RenderObject* p = this;
+            while (p->parent()) p = p->parent();
+            p->printTree();
+#endif
         }
         return const_cast<RenderObject *>(this);
     } else
@@ -205,10 +197,12 @@ int RenderObject::containingBlockHeight() const
     return containingBlock()->contentHeight();
 }
 
-void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int width,
+void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
                               BorderSide s, QColor c, const QColor& textcolor, EBorderStyle style,
-                              bool sb1, bool sb2, int adjbw1, int adjbw2, bool invalidisInvert)
+                              int adjbw1, int adjbw2, bool invalidisInvert)
 {
+    int width = (s==BSTop||s==BSBottom?y2-y1:x2-x1);
+
     if(style == DOUBLE && width < 3)
         style = SOLID;
 
@@ -227,7 +221,6 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int w
         }
     }
 
-    int half = width/2;
     switch(style)
     {
     case BNONE:
@@ -243,64 +236,127 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int w
     case DASHED:
         if(style == DASHED)
             p->setPen(QPen(c, width == 1 ? 0 : width, Qt::DashLine));
-
-        switch(s)
         {
-        case BSTop:
-            y1 += half; y2 += half;   break;
-        case BSBottom:
-            y1 -= half + (width % 2); y2 -= half + (width % 2);   break;
-        case BSLeft:
-            x1 += half; x2 += half;
-            y1 += width; y2 -= width; break;
-        case BSRight:
-            x1 -= half + (width % 2); x2 -= half + (width % 2);
-            y2 -= width; y1 += width; break;
+            switch(s)
+            {
+            case BSBottom:
+            case BSTop:
+                p->drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
+            case BSRight:
+            case BSLeft:
+                p->drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);
+            }
         }
-
-        p->drawLine(x1, y1, x2, y2);
         break;
 
     case DOUBLE:
     {
-        p->setPen(Qt::NoPen);
-        p->setBrush(c);
+        int third = (width+1)/3;
 
-        int w = (width+1)/3;
-        switch(s)
-        {
-        case BSTop:
-            p->drawRect(x1, y1, x2-x1, w);
-            p->drawRect(x1+(sb1 ? 0 : width), y1+width-w, x2-x1-(sb1 ? 0 : width)-(sb2 ? 0 : width), w);
-            break;
-        case BSBottom:
-            p->drawRect(x1, y1-w, x2-x1, w);
-            p->drawRect(x1+(sb1 ? 0 : width-w), y1-width, x2-x1-(sb1 ? 0 : width-w)-(sb2 ? 0 : width-w), w);
-            break;
-        case BSLeft:
-            p->drawRect(x1, y1, w, y2-y1);
-            p->drawRect(x1+width-w, y1+width-w, w, y2-y1-2*width+2*w);
-            break;
-        case BSRight:
-            p->drawRect(x1-w, y1, w, y2-y1);
-            p->drawRect(x1-width, y1+width-w, w, y2-y1-2*width+2*w);
-            break;
-        }
+	if (adjbw1 == 0 && adjbw2 == 0)
+	{
+	    p->setPen(Qt::NoPen);
+	    p->setBrush(c);
+	    switch(s)
+	    {
+	    case BSTop:
+	    case BSBottom:
+	        p->drawRect(x1, y1      , x2-x1, third);
+		p->drawRect(x1, y2-third, x2-x1, third);
+		break;
+	    case BSLeft:
+	        p->drawRect(x1      , y1+1, third, y2-y1-1);
+		p->drawRect(x2-third, y1+1, third, y2-y1-1);
+		break;
+	    case BSRight:
+	        p->drawRect(x1      , y1+1, third, y2-y1-1);
+		p->drawRect(x2-third, y1+1, third, y2-y1-1);
+		break;
+	    }
+	}
+	else
+	{
+	    int adjbw1bigthird;
+	    if (adjbw1>0) adjbw1bigthird = adjbw1+1;
+	    else adjbw1bigthird = adjbw1 - 1;
+	    adjbw1bigthird /= 3;
 
+	    int adjbw2bigthird;
+	    if (adjbw2>0) adjbw2bigthird = adjbw2 + 1;
+	    else adjbw2bigthird = adjbw2 - 1;
+	    adjbw2bigthird /= 3;
+
+	  switch(s)
+	    {
+	    case BSTop:
+	      drawBorder(p, x1+QMAX((-adjbw1*2+1)/3,0), y1        , x2-QMAX((-adjbw2*2+1)/3,0), y1 + third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      drawBorder(p, x1+QMAX(( adjbw1*2+1)/3,0), y2 - third, x2-QMAX(( adjbw2*2+1)/3,0), y2        , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      break;
+	    case BSLeft:
+	      drawBorder(p, x1        , y1+QMAX((-adjbw1*2+1)/3,0), x1+third, y2-QMAX((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      drawBorder(p, x2 - third, y1+QMAX(( adjbw1*2+1)/3,0), x2      , y2-QMAX(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      break;
+	    case BSBottom:
+	      drawBorder(p, x1+QMAX(( adjbw1*2+1)/3,0), y1      , x2-QMAX(( adjbw2*2+1)/3,0), y1+third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      drawBorder(p, x1+QMAX((-adjbw1*2+1)/3,0), y2-third, x2-QMAX((-adjbw2*2+1)/3,0), y2      , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      break;
+	    case BSRight:
+            drawBorder(p, x1      , y1+QMAX(( adjbw1*2+1)/3,0), x1+third, y2-QMAX(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	    drawBorder(p, x2-third, y1+QMAX((-adjbw1*2+1)/3,0), x2      , y2-QMAX((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+	      break;
+	    default:
+	      break;
+	    }
+	}
         break;
     }
     case RIDGE:
-        // could be more efficient. but maybe current code is already faster than
-        // drawing two small rectangles?
-        // disadvantage is that current edges doesn't look right because of reverse
-        // drawing order
-        drawBorder(p, x1, y1, x2, y2, width, s, c, textcolor, INSET, true, true, adjbw1, adjbw2);
-        drawBorder(p, x1, y1, x2, y2, half, s, c, textcolor, OUTSET, true, true, adjbw1/2, adjbw2/2);
-        break;
     case GROOVE:
-        drawBorder(p, x1, y1, x2, y2, width, s, c, textcolor, OUTSET, true, true, adjbw1, adjbw2);
-        drawBorder(p, x1, y1, x2, y2, half, s, c, textcolor, INSET, true, true, adjbw1/2, adjbw2/2);
+    {
+        EBorderStyle s1;
+        EBorderStyle s2;
+        if (style==GROOVE)
+        {
+            s1 = INSET;
+            s2 = OUTSET;
+        }
+        else
+        {
+            s1 = OUTSET;
+            s2 = INSET;
+        }
+
+	int adjbw1bighalf;
+	int adjbw2bighalf;
+	if (adjbw1>0) adjbw1bighalf=adjbw1+1;
+	else adjbw1bighalf=adjbw1-1;
+	adjbw1bighalf/=2;
+
+	if (adjbw2>0) adjbw2bighalf=adjbw2+1;
+	else adjbw2bighalf=adjbw2-1;
+	adjbw2bighalf/=2;
+
+        switch (s)
+	{
+	case BSTop:
+	    drawBorder(p, x1+QMAX(-adjbw1  ,0)/2,  y1        , x2-QMAX(-adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+	    drawBorder(p, x1+QMAX( adjbw1+1,0)/2, (y1+y2+1)/2, x2-QMAX( adjbw2+1,0)/2,  y2        , s, c, textcolor, s2, adjbw1/2, adjbw2/2);
+	    break;
+	case BSLeft:
+            drawBorder(p,  x1        , y1+QMAX(-adjbw1  ,0)/2, (x1+x2+1)/2, y2-QMAX(-adjbw2,0)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+	    drawBorder(p, (x1+x2+1)/2, y1+QMAX( adjbw1+1,0)/2,  x2        , y2-QMAX( adjbw2+1,0)/2, s, c, textcolor, s2, adjbw1/2, adjbw2/2);
+	    break;
+	case BSBottom:
+	    drawBorder(p, x1+QMAX( adjbw1  ,0)/2,  y1        , x2-QMAX( adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s2,  adjbw1bighalf, adjbw2bighalf);
+	    drawBorder(p, x1+QMAX(-adjbw1+1,0)/2, (y1+y2+1)/2, x2-QMAX(-adjbw2+1,0)/2,  y2        , s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+	    break;
+	case BSRight:
+            drawBorder(p,  x1        , y1+QMAX( adjbw1  ,0)/2, (x1+x2+1)/2, y2-QMAX( adjbw2,0)/2, s, c, textcolor, s2, adjbw1bighalf, adjbw2bighalf);
+	    drawBorder(p, (x1+x2+1)/2, y1+QMAX(-adjbw1+1,0)/2,  x2        , y2-QMAX(-adjbw2+1,0)/2, s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+	    break;
+	}
         break;
+    }
     case INSET:
         if(s == BSTop || s == BSLeft)
             c = c.dark();
@@ -309,94 +365,49 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int w
     case OUTSET:
         if(style == OUTSET && (s == BSBottom || s == BSRight))
             c = c.dark();
-
-        if(s == BSTop || s == BSLeft)
-            sb2 = true;
-        else
-            sb1 = true;
         /* nobreak; */
     case SOLID:
-        // ###: make this shitty code faster (Dirk)
-        // use convex polygon drawing (40% faster)
-        // only draw expensive edges if its actually visible (colors / visibility different, see sb1 / sb2)
-        QPointArray tri(3);
+        QPointArray quad(4);
         p->setPen(Qt::NoPen);
         p->setBrush(c);
-        switch(s) {
+	Q_ASSERT(x2>=x1);
+	Q_ASSERT(y2>=y1);
+	if (adjbw1==0 && adjbw2 == 0)
+	  {
+            p->drawRect(x1,y1,x2-x1,y2-y1);
+	    return;
+	  }
+	switch(s) {
         case BSTop:
-            if(width) {
-                if(sb1) {
-                    tri.setPoints(3, x1, y1, x1+adjbw1, y1, x1+adjbw1, y1+width);
-                    p->drawPolygon(tri);
-                 }
-                 if(sb2) {
-                    tri.setPoints(3, x2-adjbw2, y2, x2, y2, x2-adjbw2, y2+width);
-                    p->drawPolygon(tri);
-                 }
-                 p->drawRect(x1+adjbw1, y1, x2-x1-adjbw1-(sb2 ? adjbw2 : 0), width);
-            }
-            else
-                p->drawRect(x1, y1, x2-x1, 0);
+            quad.setPoints(4,
+			   x1+QMAX(-adjbw1,0), y1,
+                           x1+QMAX( adjbw1,0), y2,
+                           x2-QMAX( adjbw2,0), y2,
+                           x2-QMAX(-adjbw2,0), y1);
             break;
         case BSBottom:
-            if(width)
-            {
-                if(sb1)
-                {
-                    tri.setPoints(3, x1, y1, x1+adjbw1, y1, x1+adjbw1, y1-width);
-                    p->drawPolygon(tri);
-                }
-                if(sb2)
-                {
-                    tri.setPoints(3, x2-adjbw2, y2-width, x2-adjbw2, y2, x2, y2);
-                    p->drawPolygon(tri);
-                }
-                p->drawRect(x1+(sb1 ? adjbw1 : 0), y1-width, x2-x1-(sb1 ? adjbw1 : 0)-adjbw2, width);
-            }
-            else
-                p->drawRect(x1, y1, x2-x1, 0);
-
+            quad.setPoints(4,
+			   x1+QMAX( adjbw1,0), y1,
+                           x1+QMAX(-adjbw1,0), y2,
+                           x2-QMAX(-adjbw2,0), y2,
+                           x2-QMAX( adjbw2,0), y1);
             break;
-        break;
         case BSLeft:
-            if(width)
-            {
-                if(sb1)
-                {
-                    tri.setPoints(3, x1, y1, x1, y1+adjbw1, x1+width, y1+adjbw1);
-                    p->drawPolygon(tri);
-                }
-                if(sb2)
-                {
-                    tri.setPoints(3, x2, y2-adjbw2, x2, y2, x2+width, y2-adjbw2);
-                    p->drawPolygon(tri);
-                }
-                p->drawRect(x1, y1+(sb1 ? adjbw1 : 0), width, y2-y1-(sb1 ? adjbw1:0)-adjbw2);
-            }
-            else
-                p->drawRect(x1, y1+adjbw1, 0, y2-y1);
-
+	  quad.setPoints(4,
+			 x1, y1+QMAX(-adjbw1,0),
+               		 x1, y2-QMAX(-adjbw2,0),
+			 x2, y2-QMAX( adjbw2,0),
+			 x2, y1+QMAX( adjbw1,0));
             break;
         case BSRight:
-            if(width)
-            {
-                if(sb1)
-                {
-                    tri.setPoints(3, x1, y1, x1, y1+adjbw1, x1-width, y1+adjbw1);
-                    p->drawPolygon(tri);
-                }
-                if(sb2)
-                {
-                    tri.setPoints(3, x2, y2, x2, y2-adjbw2, x2-width, y2-adjbw2);
-                    p->drawPolygon(tri);
-                }
-                p->drawRect(x1-width, y1+adjbw1, width, y2-y1-adjbw1-(sb2 ? adjbw2 : 0));
-            }
-            else
-                p->drawRect(x1, y1+adjbw1, 0, y2-y1);
-
+	  quad.setPoints(4,
+			 x1, y1+QMAX( adjbw1,0),
+               		 x1, y2-QMAX( adjbw2,0),
+			 x2, y2-QMAX(-adjbw2,0),
+			 x2, y1+QMAX(-adjbw1,0));
             break;
         }
+	p->drawConvexPolygon(quad);
         break;
     }
 
@@ -407,33 +418,65 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2, int w
 void RenderObject::printBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin, bool end)
 {
     const QColor& tc = style->borderTopColor();
-    const QColor& lc = style->borderLeftColor();
-    const QColor& rc = style->borderRightColor();
     const QColor& bc = style->borderBottomColor();
-    bool render_t = style->borderTopStyle() != BNONE && style->borderTopStyle() != BHIDDEN;
-    bool render_l = style->borderLeftStyle() != BNONE && style->borderLeftStyle() != BHIDDEN && begin;
-    bool render_r = style->borderRightStyle() != BNONE && style->borderRightStyle() != BHIDDEN && end;
-    bool render_b = style->borderBottomStyle() != BNONE && style->borderBottomStyle() != BHIDDEN;
 
-    if(render_r)
-        drawBorder(p, _tx + w, _ty, _tx + w, _ty + h, style->borderRightWidth(), BSRight, rc, style->color(),
-                   style->borderRightStyle(), render_t && tc != rc, render_b && bc != rc,
-                   style->borderTopWidth(), style->borderBottomWidth());
+    EBorderStyle ts = style->borderTopStyle();
+    EBorderStyle bs = style->borderBottomStyle();
+    EBorderStyle ls = style->borderLeftStyle();
+    EBorderStyle rs = style->borderRightStyle();
 
-    if(render_b)
-        drawBorder(p, _tx, _ty + h, _tx + w, _ty + h, style->borderBottomWidth(), BSBottom, bc, style->color(),
-                   style->borderBottomStyle(), render_l && lc != bc, render_r && rc != bc,
-                   style->borderLeftWidth(), end ? style->borderRightWidth() : 0);
-
-    if(render_l)
-        drawBorder(p, _tx, _ty, _tx, _ty + h, style->borderLeftWidth(), BSLeft, lc, style->color(),
-                   style->borderLeftStyle(), render_t && tc != lc, render_b && bc != lc,
-                   style->borderTopWidth(), style->borderBottomWidth());
+    bool render_t = ts > BHIDDEN;
+    bool render_l = ls > BHIDDEN && begin;
+    bool render_r = rs > BHIDDEN && end;
+    bool render_b = bs > BHIDDEN;
 
     if(render_t)
-        drawBorder(p, _tx, _ty, _tx + w, _ty, style->borderTopWidth(), BSTop, tc, style->color(),
-                   style->borderTopStyle(), render_l && lc != tc, render_r && rc != tc,
-                   begin ? style->borderLeftWidth() : 0, style->borderRightWidth());
+        drawBorder(p, _tx, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0),
+		   (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+
+    if(render_b)
+        drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
+                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0),
+		   (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+
+    if(render_l)
+    {
+	const QColor& lc = style->borderLeftColor();
+
+	bool ignore_top =
+	  (tc == lc) &&
+	  (ls <= OUTSET) &&
+	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+
+	bool ignore_bottom =
+	  (bc == lc) &&
+	  (ls <= OUTSET) &&
+	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+
+        drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
+		   ignore_top?0:style->borderTopWidth(),
+		   ignore_bottom?0:style->borderBottomWidth());
+    }
+
+    if(render_r)
+    {
+	const QColor& rc = style->borderRightColor();
+
+	bool ignore_top =
+	  (tc == rc) &&
+	  (rs <= SOLID || rs == INSET) &&
+	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+
+	bool ignore_bottom =
+	  (bc == rc) &&
+	  (rs <= SOLID || rs == INSET) &&
+	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+
+        drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,
+		   ignore_top?0:style->borderTopWidth(),
+		   ignore_bottom?0:style->borderBottomWidth());
+    }
 }
 
 void RenderObject::printOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
@@ -444,14 +487,22 @@ void RenderObject::printOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     const QColor& oc = style->outlineColor();
     EBorderStyle os = style->outlineStyle();
 
-    drawBorder(p, _tx - ow, _ty-ow, _tx - ow, _ty + h+ow, ow, BSLeft, oc, style->color(),
-               os, false, false, ow, ow, true);
-    drawBorder(p, _tx - ow, _ty - ow, _tx + w + ow, _ty - ow, ow, BSTop, oc, style->color(),
-               os, false, false, ow, ow, true);
-    drawBorder(p, _tx + w + ow, _ty - ow, _tx + w + ow, _ty + h + ow, ow, BSRight, oc, style->color(),
-               os, false, false, ow, ow, true);
-    drawBorder(p, _tx -ow, _ty + h + ow, _tx + w + ow, _ty + h + ow, ow, BSBottom, oc, style->color(),
-               os, false, false, ow, ow, true);
+    drawBorder(p, _tx-ow, _ty-ow, _tx, _ty+h+ow, BSLeft,
+	       QColor(oc), style->color(),
+               os, ow, ow, true);
+
+    drawBorder(p, _tx-ow, _ty-ow, _tx+w+ow, _ty, BSTop,
+	       QColor(oc), style->color(),
+	       os, ow, ow, true);
+
+    drawBorder(p, _tx+w, _ty-ow, _tx+w+ow, _ty+h+ow, BSRight,
+	       QColor(oc), style->color(),
+	       os, ow, ow, true);
+
+    drawBorder(p, _tx-ow, _ty+h, _tx+w+ow, _ty+h+ow, BSBottom,
+	       QColor(oc), style->color(),
+	       os, ow, ow, true);
+
 }
 
 void RenderObject::print( QPainter *p, int x, int y, int w, int h, int tx, int ty)
@@ -464,29 +515,48 @@ void RenderObject::repaintRectangle(int x, int y, int w, int h, bool f)
     if(parent()) parent()->repaintRectangle(x, y, w, h, f);
 }
 
+#ifndef NDEBUG
+
+QString RenderObject::information() const
+{
+    QString str;
+    QTextStream ts( &str, IO_WriteOnly );
+    ts << renderName()
+	<< "(" << (style() ? style()->refCount() : 0) << ")"
+       << ": " << (void*)this << "  ";
+    if (isInline()) ts << "il ";
+    if (childrenInline()) ts << "ci ";
+    if (isFloating()) ts << "fl ";
+    if (isAnonymousBox()) ts << "an ";
+    if (isRelPositioned()) ts << "rp ";
+    if (isPositioned()) ts << "ps ";
+    if (overhangingContents()) ts << "oc ";
+    if (layouted()) ts << "lt ";
+    if (m_recalcMinMax) ts << "rmm ";
+    if (mouseInside()) ts << "mi";
+    if (element() && element()->active()) ts << "act";
+    if (element()) ts << " <" <<  getTagName(element()->id()).string() << ">";
+    ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"
+	<< (isTableCell() ?
+	    ( QString::fromLatin1(" [r=") +
+	      QString::number( static_cast<const RenderTableCell *>(this)->row() ) +
+	      QString::fromLatin1(" c=") +
+	      QString::number( static_cast<const RenderTableCell *>(this)->col() ) +
+	      QString::fromLatin1(" rs=") +
+	      QString::number( static_cast<const RenderTableCell *>(this)->rowSpan() ) +
+	      QString::fromLatin1(" cs=") +
+	      QString::number( static_cast<const RenderTableCell *>(this)->colSpan() ) +
+	      QString::fromLatin1("]") ) : QString::null );
+	return str;
+}
+
 void RenderObject::printTree(int indent) const
 {
     QString ind;
     ind.fill(' ', indent);
-    int childcount = 0;
-    for(RenderObject* c = firstChild(); c; c = c->nextSibling())
-        childcount++;
 
-    kdDebug()    << ind << renderName()
-                 << (childcount ?
-                     (QString::fromLatin1("[") + QString::number(childcount) + QString::fromLatin1("]"))
-                     : QString::null)
-                 << "(" << (style() ? style()->refCount() : 0) << ")"
-                 << ": " << (void*)this
-                 << " il=" << (int)isInline() << " ci=" << (int) childrenInline()
-                 << " fl=" << (int)isFloating() << " rp=" << (int)isReplaced()
-                 << " an=" << (int)isAnonymousBox()
-                 << " ps=" << (int)isPositioned()
-                 << " cp=" << (int)containsPositioned()
-                 << " lt=" << (int)layouted()
-                 << " cw=" << (int)containsWidget()
-                 << " pa=" << (int)parsing()
-                 << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")" << endl;
+    kdDebug() << ind << information() << endl;
+
     RenderObject *child = firstChild();
     while( child != 0 )
     {
@@ -495,22 +565,45 @@ void RenderObject::printTree(int indent) const
     }
 }
 
+void RenderObject::dump(QTextStream *stream, QString ind) const
+{
+    if (isAnonymousBox()) { *stream << " anonymousBox"; }
+    if (isFloating()) { *stream << " floating"; }
+    if (isPositioned()) { *stream << " positioned"; }
+    if (isRelPositioned()) { *stream << " relPositioned"; }
+    if (isText()) { *stream << " text"; }
+    if (isInline()) { *stream << " inline"; }
+    if (isReplaced()) { *stream << " replaced"; }
+    if (hasSpecialObjects()) { *stream << " specialObjects"; }
+    if (layouted()) { *stream << " layouted"; }
+    if (minMaxKnown()) { *stream << " minMaxKnown"; }
+    if (overhangingContents()) { *stream << " overhangingContents"; }
+    if (hasFirstLine()) { *stream << " hasFirstLine"; }
+    *stream << endl;
+
+    RenderObject *child = firstChild();
+    while( child != 0 )
+    {
+	*stream << ind << child->renderName() << ": ";
+	child->dump(stream,ind+"  ");
+	child = child->nextSibling();
+    }
+}
+#endif
+
 void RenderObject::selectionStartEnd(int& spos, int& epos)
 {
     if (parent())
         parent()->selectionStartEnd(spos, epos);
 }
 
-void RenderObject::updateSize()
-{
-    containingBlock()->updateSize();
-}
-
 void RenderObject::setStyle(RenderStyle *style)
 {
     if (m_style == style)
-	return;
+        return;
 
+    RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
+    //qDebug("new style, diff=%d", d);
     // reset style flags
     m_floating = false;
     m_positioned = false;
@@ -519,7 +612,6 @@ void RenderObject::setStyle(RenderStyle *style)
     // no support for changing the display type dynamically... object must be
     // detached and re-attached as a different type
     //m_inline = true;
-    m_visible = true;
 
     RenderStyle *oldStyle = m_style;
     m_style = style;
@@ -543,27 +635,30 @@ void RenderObject::setStyle(RenderStyle *style)
 	if(nb) nb->ref(this);
     }
 
-    if( m_style->backgroundColor().isValid() || m_style->hasBorder() || nb )
-        setSpecialObjects(true);
-    else
-        setSpecialObjects(false);
-
-    if( m_style->visiblity() == HIDDEN || m_style->visiblity() == COLLAPSE )
-	m_visible = false;
-
+    setSpecialObjects( m_style->backgroundColor().isValid() || m_style->hasBorder() || nb );
     m_hasFirstLine = (style->getPseudoStyle(RenderStyle::FIRST_LINE) != 0);
 
-    setMinMaxKnown(false);
-    setLayouted(false);
+    if ( d >= RenderStyle::Position && m_parent ) {
+	//qDebug("triggering relayout");
+	setMinMaxKnown(false);
+	setLayouted(false);
+    } else if ( m_parent ) {
+	//qDebug("triggering repaint");
+	repaint();
+    }
 }
 
-void RenderObject::setContainsPositioned(bool p)
+void RenderObject::setOverhangingContents(bool p)
 {
+    if (m_overhangingContents == p)
+	return;
+
+    RenderObject *cb = containingBlock();
     if (p)
     {
-        m_containsPositioned = true;
-        if (containingBlock()!=this)
-            containingBlock()->setContainsPositioned(true);
+        m_overhangingContents = true;
+        if (cb!=this)
+            cb->setOverhangingContents();
     }
     else
     {
@@ -572,7 +667,7 @@ void RenderObject::setContainsPositioned(bool p)
 
         for( n = firstChild(); n != 0; n = n->nextSibling() )
         {
-            if (n->isPositioned() || n->containsPositioned())
+            if (n->isPositioned() || n->overhangingContents())
                 c=true;
         }
 
@@ -580,9 +675,9 @@ void RenderObject::setContainsPositioned(bool p)
             return;
         else
         {
-            m_containsPositioned = false;
-            if (containingBlock()!=this)
-                containingBlock()->setContainsPositioned(false);
+            m_overhangingContents = false;
+            if (cb!=this)
+                cb->setOverhangingContents(false);
         }
     }
 }
@@ -645,7 +740,7 @@ RenderRoot* RenderObject::root() const
     RenderObject* o = const_cast<RenderObject*>( this );
     while ( o->parent() ) o = o->parent();
 
-    assert( o->isRoot() );
+    KHTMLAssert( o->isRoot() );
     return static_cast<RenderRoot*>( o );
 }
 
@@ -662,12 +757,15 @@ RenderObject *RenderObject::container() const
     return o;
 }
 
+#if 0  /// this method is unused
 void RenderObject::invalidateLayout()
 {
+    kdDebug() << "RenderObject::invalidateLayout " << renderName() << endl;
     setLayouted(false);
     if (m_parent && m_parent->layouted())
         m_parent->invalidateLayout();
 }
+#endif
 
 void RenderObject::removeFromSpecialObjects()
 {
@@ -687,10 +785,84 @@ void RenderObject::detach()
     delete this;
 }
 
-bool RenderObject::containsPoint(int _x, int _y, int _tx, int _ty)
+FindSelectionResult RenderObject::checkSelectionPoint( int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
 {
-    return ((_y >= _ty) && (_y < _ty + height()) &&
-	    (_x >= _tx) && (_x < _tx + width()));
+    int lastOffset=0;
+    int off = offset;
+    DOM::NodeImpl* nod = node;
+    DOM::NodeImpl* lastNode = 0;
+    for (RenderObject *child = firstChild(); child; child=child->nextSibling()) {
+        khtml::FindSelectionResult pos = child->checkSelectionPoint(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
+        //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
+        switch(pos) {
+        case SelectionPointInside:
+            node = nod;
+            offset = off;
+            return SelectionPointInside;
+        case SelectionPointBefore:
+            //x,y is before this element -> stop here
+            if ( lastNode) {
+                node = lastNode;
+                offset = lastOffset;
+//                 kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before this child "
+//                               << node << "-> returning offset=" << offset << endl;
+                return SelectionPointInside;
+            } else {
+//                 kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before us -> returning -2" << endl;
+                return SelectionPointBefore;
+            }
+            break;
+        case SelectionPointAfter:
+//             kdDebug(6030) << "ElementImpl::findSelectionNode: selection after: " << nod << " offset: " << off << endl;
+            lastNode = nod;
+            lastOffset = off;
+        }
+    }
+    node = lastNode;
+    offset = lastOffset;
+    return SelectionPointAfter;
+}
+
+bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+{
+    int tx = _tx + xPos();
+    int ty = _ty + yPos();
+    if (isRelPositioned())
+        static_cast<RenderBox*>(this)->relativePositionOffset(tx, ty);
+
+    bool inside = (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + height()) &&
+                  (_x >= tx) && (_x < tx + width()))) || isBody();
+    bool inner = !info.innerNode();
+
+    // ### table should have its own, more performant method
+     if (isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside()) {
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling())
+            if (!child->isSpecial() && child->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos()))
+                inside = true;
+    }
+
+    if (inside && element()) {
+        if (!info.innerNode())
+            info.setInnerNode(element());
+        if (element()->hasAnchor() && !info.URLElement())
+            info.setURLElement(element());
+    }
+
+    if (!info.readonly()) {
+        // lets see if we need a new style
+        bool oldinside = mouseInside();
+        setMouseInside(inside && inner);
+        if (element()) {
+            bool oldactive = element()->active();
+            if (oldactive != (inside && info.active() && element() == info.innerNode()))
+                element()->setActive(inside && info.active() && element() == info.innerNode());
+            if ( ((oldinside != mouseInside()) && style()->hasHover()) ||
+                 ((oldactive != element()->active()) && style()->hasActive()))
+                element()->setChanged();
+        }
+    }
+
+    return inside;
 }
 
 short RenderObject::verticalPositionHint( bool firstLine ) const
@@ -720,23 +892,36 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 	} else if ( parent() && parent()->childrenInline() ) {
 	    vpos = parent()->verticalPositionHint( firstLine );
 	    // don't allow elements nested inside text-top to have a different valignment.
-	    if ( va == BASELINE || vpos == PositionTop || vpos == PositionBottom )
+	    if ( va == BASELINE )
 		return vpos;
 
-	    QFont f = parent()->font( firstLine );
+        //     if ( vpos == PositionTop )
+//                 vpos = 0;
+
+	    const QFont &f = parent()->font( firstLine );
+            int fontheight = parent()->lineHeight( firstLine );
+            int fontsize = f.pixelSize();
+            int halfleading = ( fontheight - fontsize ) / 2;
+
 	    if ( va == SUB )
-		vpos += f.pixelSize()/5 + 1;
+		vpos += fontsize/5 + 1;
 	    else if ( va == SUPER )
-		vpos -= f.pixelSize()/3 + 1;
+		vpos -= fontsize/3 + 1;
 	    else if ( va == TEXT_TOP ) {
-		vpos += -QFontMetrics(f).ascent() + baselinePosition( firstLine );
+//                 qDebug( "got TEXT_TOP vertical pos hint" );
+//                 qDebug( "parent:" );
+//                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", fontheight, fontsize, parent()->baselinePosition( firstLine ) );
+//                 qDebug( "this:" );
+//                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", lineHeight( firstLine ), style()->font().pixelSize(), baselinePosition( firstLine ) );
+                vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) +
+                        halfleading );
 	    } else if ( va == MIDDLE ) {
 		QRect b = QFontMetrics(f).boundingRect('x');
 		vpos += -b.height()/2 - lineHeight( firstLine )/2 + baselinePosition( firstLine );
 	    } else if ( va == TEXT_BOTTOM ) {
 		vpos += QFontMetrics(f).descent();
 		if ( !isReplaced() )
-		    vpos -= QFontMetrics(font(firstLine)).descent();
+		    vpos -= fontMetrics(firstLine).descent();
 	    } else if ( va == BASELINE_MIDDLE )
 		vpos += - lineHeight( firstLine )/2 + baselinePosition( firstLine );
 	}
@@ -744,28 +929,32 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
     return vpos;
 }
 
-int RenderObject::lineHeight( bool firstLine ) const
+short RenderObject::lineHeight( bool firstLine ) const
 {
-    // is this method ever called?
-    //assert( 0 );
+    Length lh;
+    if( firstLine && hasFirstLine() ) {
+	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
+	if ( pseudoStyle )
+            lh = pseudoStyle->lineHeight();
+    }
+    else
+        lh = style()->lineHeight();
 
-    // ### optimise and don't ignore :first-line
-    return style()->lineHeight().width( QFontMetrics( font( firstLine ) ).height() );
+    // its "unset", choose nice default
+    if ( lh.value < 0 )
+        return style()->fontMetrics().height();
+
+    if ( lh.isPercent() )
+        return lh.minWidth( style()->font().pixelSize() );
+
+    // its fixed
+    return lh.value;
 }
 
 short RenderObject::baselinePosition( bool firstLine ) const
 {
-    return isInline() ? QFontMetrics(font(firstLine)).ascent() : contentHeight();
-}
-
-QFont RenderObject::font(bool firstLine) const
-{
-    if( firstLine && hasFirstLine() ) {
-	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
-	if ( pseudoStyle )
-	    return pseudoStyle->font();
-    }
-    return style()->font();
+    const QFontMetrics &fm = fontMetrics( firstLine );
+    return fm.ascent() + ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
 void RenderObject::invalidateVerticalPositions()
@@ -778,3 +967,54 @@ void RenderObject::invalidateVerticalPositions()
     }
 }
 
+void RenderObject::recalcMinMaxWidths()
+{
+    KHTMLAssert( m_recalcMinMax );
+
+#ifdef DEBUG_LAYOUT
+    kdDebug( 6040 ) << renderName() << " recalcMinMaxWidths() this=" << this <<endl;
+#endif
+
+    RenderObject *child = firstChild();
+    while( child ) {
+        // gcc sucks. if anybody knows a trick to get rid of the
+        // warning without adding an extra (unneeded) initialisation,
+        // go ahead
+#ifdef APPLE_CHANGES
+	int cmin = 0;
+	int cmax = 0;
+#else /* not APPLE_CHANGES */
+	int cmin, cmax;
+#endif /* not APPLE_CHANGES */
+	bool test = false;
+	if ( ( m_minMaxKnown && child->m_recalcMinMax ) || !child->m_minMaxKnown ) {
+	    cmin = child->minWidth();
+	    cmax = child->maxWidth();
+	    test = true;
+	}
+	if ( child->m_recalcMinMax )
+	    child->recalcMinMaxWidths();
+	if ( !child->m_minMaxKnown )
+	    child->calcMinMaxWidth();
+	if ( m_minMaxKnown && test && (cmin != child->minWidth() || cmax != child->maxWidth()) )
+	    m_minMaxKnown = false;
+	child = child->nextSibling();
+    }
+
+    // we need to recalculate, if the contains inline children, as the change could have
+    // happened somewhere deep inside the child tree
+    if ( !isInline() && childrenInline() )
+	m_minMaxKnown = false;
+
+    if ( !m_minMaxKnown )
+	calcMinMaxWidth();
+    m_recalcMinMax = false;
+}
+
+void RenderObject::scheduleRelayout()
+{
+    if (!isRoot()) return;
+    KHTMLView *view = static_cast<RenderRoot *>(this)->view();
+    if ( view )
+	view->scheduleRelayout();
+}

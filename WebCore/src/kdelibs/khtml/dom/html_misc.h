@@ -122,6 +122,7 @@ class HTMLCollection
     friend class HTMLTableElement;
     friend class HTMLTableRowElement;
     friend class HTMLTableSectionElement;
+    friend class HTMLElement;
 
 public:
     HTMLCollection();
@@ -179,6 +180,11 @@ public:
     Node base() const;
     HTMLCollectionImpl *handle() const;
     bool isNull() const;
+    // Fast iteration
+    Node firstItem() const;
+    Node nextItem() const;
+    // In case of multiple items named the same way
+    Node nextNamedItem( const DOMString &name ) const;
 
 protected:
     HTMLCollectionImpl *impl;

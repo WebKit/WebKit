@@ -36,6 +36,9 @@
 #undef Boolean
 
 #include <new>
+#include <stdlib.h>
+
+#import <Foundation/NSData.h>
 
 class KWQVectorImpl::KWQVectorPrivate
 {
@@ -209,6 +212,19 @@ void *KWQVectorImpl::at(int n) const
     }
 
     return (void *)CFArrayGetValueAtIndex(d->cfarray, n);
+}
+
+void **KWQVectorImpl::data()
+{
+    void **values;
+    unsigned length = CFArrayGetCount(d->cfarray);
+
+    // allocate some memory and set it up to be autoreleased. this is pure evil.
+    values = malloc(length * sizeof(void *));
+    [[[NSData alloc] initWithBytesNoCopy:values length:length] autorelease];
+
+    CFArrayGetValues(d->cfarray, CFRangeMake(0, CFArrayGetCount(d->cfarray)), (const void **)values);
+    return values;
 }
 
 KWQVectorImpl &KWQVectorImpl::assign (KWQVectorImpl &vi, bool delItems)

@@ -56,10 +56,11 @@ layer
 legend
 li
 link
-listing
 map
+marquee
 menu
 meta
+nobr
 noembed
 noframes
 noscript
@@ -97,3 +98,5 @@ tt
 u
 ul
 var
+wbr
+xmp

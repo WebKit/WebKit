@@ -138,6 +138,21 @@
 }
 
 
+- (bool)edited
+{
+    return edited;
+}
+
+- (void)setEdited:(bool)ed
+{
+    edited = ed;
+}
+
+-(void)textDidChange:(NSNotification *)aNotification
+{
+    edited = true;
+}
+
 @end
 
 

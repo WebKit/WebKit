@@ -20,8 +20,9 @@
  *
  * $Id$
  */
-#include "dtd.h"
-#include "htmlhashes.h"
+
+#include "html/dtd.h"
+#include "misc/htmlhashes.h"
 
 using namespace DOM;
 
@@ -56,8 +57,8 @@ const unsigned short DOM::tagPriority[] = {
     0, // ID_BASEFONT
     1, // ID_BDO
     1, // ID_BIG
-    3, // ID_BLOCKQUOTE
-    9, // ID_BODY
+    5, // ID_BLOCKQUOTE
+   10, // ID_BODY
     0, // ID_BR
     1, // ID_BUTTON
     5, // ID_CAPTION
@@ -79,16 +80,16 @@ const unsigned short DOM::tagPriority[] = {
     5, // ID_FONT
     3, // ID_FORM
     0, // ID_FRAME
-    9, // ID_FRAMESET
-    3, // ID_H1
-    3, // ID_H2
-    3, // ID_H3
-    3, // ID_H4
-    3, // ID_H5
-    3, // ID_H6
-    9, // ID_HEAD
+   10,// ID_FRAMESET
+    5, // ID_H1
+    5, // ID_H2
+    5, // ID_H3
+    5, // ID_H4
+    5, // ID_H5
+    5, // ID_H6
+   10,// ID_HEAD
     0, // ID_HR
-    10, // ID_HTML
+   11,// ID_HTML
     1, // ID_I
     1, // ID_IFRAME
     0, // ID_IMG
@@ -103,12 +104,13 @@ const unsigned short DOM::tagPriority[] = {
     1, // ID_LEGEND
     3, // ID_LI
     0, // ID_LINK
-    1, // ID_LISTING
     1, // ID_MAP
+    3, // ID_MARQUEE
     4, // ID_MENU
     0, // ID_META
-    9, // ID_NOEMBED
-    9, // ID_NOFRAMES
+    1, // ID_NOBR
+   10,// ID_NOEMBED
+   10,// ID_NOFRAMES
     3, // ID_NOSCRIPT
     1, // ID_NOLAYER
     7, // ID_OBJECT
@@ -117,13 +119,13 @@ const unsigned short DOM::tagPriority[] = {
     2, // ID_OPTION
     3, // ID_P
     0, // ID_PARAM
-    1, // ID_PLAIN
+    5, // ID_PLAINTEXT
     5, // ID_PRE
     1, // ID_Q
     1, // ID_S
     1, // ID_SAMP
     1, // ID_SCRIPT
-    5, // ID_SELECT
+    6, // ID_SELECT
     1, // ID_SMALL
     1, // ID_SPAN
     1, // ID_STRIKE
@@ -131,19 +133,21 @@ const unsigned short DOM::tagPriority[] = {
     1, // ID_STYLE
     1, // ID_SUB
     1, // ID_SUP
-    8, // ID_TABLE
-    7, // ID_TBODY
-    5, // ID_TD
+    9,// ID_TABLE
+    8, // ID_TBODY
+    6, // ID_TD
     1, // ID_TEXTAREA
-    7, // ID_TFOOT
-    5, // ID_TH
-    7, // ID_THEAD
+    8, // ID_TFOOT
+    6, // ID_TH
+    8, // ID_THEAD
     1, // ID_TITLE
-    6, // ID_TR
+    7, // ID_TR
     1, // ID_TT
     1, // ID_U
     4, // ID_UL
     1, // ID_VAR
+    1, // ID_WBR
+    5, // ID_XMP
     0, // ID_TEXT
 };
 
@@ -207,10 +211,11 @@ const tagStatus DOM::endTag[] = {
     REQUIRED,  // ID_LEGEND
     OPTIONAL,  // ID_LI
     FORBIDDEN, // ID_LINK
-    REQUIRED,  // ID_LISTING
     REQUIRED,  // ID_MAP
+    REQUIRED,  // ID_MARQUEE
     REQUIRED,  // ID_MENU
     FORBIDDEN, // ID_META
+    REQUIRED,  // ID_NOBR
     REQUIRED,  // ID_NOEMBED
     REQUIRED,  // ID_NOFRAMES
     REQUIRED,  // ID_NOSCRIPT
@@ -221,7 +226,7 @@ const tagStatus DOM::endTag[] = {
     OPTIONAL,  // ID_OPTION
     OPTIONAL,  // ID_P
     FORBIDDEN, // ID_PARAM
-    REQUIRED,  // ID_PLAIN
+    REQUIRED,  // ID_PLAINTEXT
     REQUIRED,  // ID_PRE
     REQUIRED,  // ID_Q
     REQUIRED,  // ID_S
@@ -248,6 +253,8 @@ const tagStatus DOM::endTag[] = {
     REQUIRED,  // ID_U
     REQUIRED,  // ID_UL
     REQUIRED,  // ID_VAR
+    REQUIRED,  // ID_WBR
+    REQUIRED,  // ID_XMP
     REQUIRED   // ID_TEXT
 };
 
@@ -296,6 +303,8 @@ static const ushort tag_list_0[] = {
     ID_INS,
     ID_DEL,
     ID_COMMENT,
+    ID_NOBR,
+    ID_WBR,
     0
 };
 
@@ -312,6 +321,7 @@ static const ushort tag_list_1[] = {
     ID_DIR,
     ID_MENU,
     ID_PRE,
+    ID_PLAINTEXT,
     ID_DL,
     ID_DIV,
     ID_LAYER,
@@ -368,10 +378,13 @@ static const ushort tag_list_1[] = {
     ID_BUTTON,
     ID_COMMENT,
     ID_LI,
-    ID_LISTING,
+    ID_XMP,
     ID__KONQBLOCK,
     ID_INS,
     ID_DEL,
+    ID_NOBR,
+    ID_WBR,
+    ID_MARQUEE,
     0
 };
 
@@ -393,6 +406,7 @@ static const ushort tag_list_3[] = {
     ID_DIR,
     ID_MENU,
     ID_PRE,
+    ID_PLAINTEXT,
     ID_DL,
     ID_DIV,
     ID_LAYER,
@@ -408,8 +422,9 @@ static const ushort tag_list_3[] = {
     ID_ADDRESS,
     ID_COMMENT,
     ID_LI,
-    ID_LISTING,
+    ID_XMP,
     ID__KONQBLOCK,
+    ID_MARQUEE,
     0
 };
 
@@ -427,6 +442,7 @@ static const ushort tag_list_4[] = {
     ID_DIR,
     ID_MENU,
     ID_PRE,
+    ID_PLAINTEXT,
     ID_DL,
     ID_DIV,
     ID_LAYER,
@@ -482,7 +498,8 @@ static const ushort tag_list_4[] = {
     ID_BUTTON,
     ID_COMMENT,
     ID_LI,
-    ID_LISTING,
+    ID_XMP,
+    ID_MARQUEE,
     0
 };
 
@@ -601,6 +618,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // BODY: _1 * + _2
         if( check_array(childID, tag_list_1) ) return true;
         return check_array(childID, tag_list_2);
+    case ID_NOBR:
+    case ID_WBR:
     case ID_ADDRESS:
         // ADDRESS: ( _0 | P ) *
         if( check_array(childID, tag_list_0) ) return true;
@@ -627,6 +646,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_NOFRAMES:
     case ID_NOSCRIPT:
     case ID_CAPTION:
+    case ID_MARQUEE:
         // DIV: _1 *
         return check_array(childID, tag_list_1);
     case ID_A:
@@ -646,6 +666,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // OBJECT: _4 *
         return check_array(childID, tag_list_4);
     case ID_PRE:
+    case ID_XMP:
+    case ID_PLAINTEXT:
         // PRE: _0 * - _5
         return check_array(childID, tag_list_1);
     case ID_DL:
@@ -667,6 +689,11 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_LABEL:
         // LABEL: _0 * - LABEL
         return check_array(childID, tag_list_0);
+        // KEYGEN does not really allow any childs
+        // from outside, just need this to be able
+        // to add the keylengths ourself
+        // Yes, consider it a hack (Dirk)
+    case ID_KEYGEN:
     case ID_SELECT:
         // SELECT: _7 +
         return check_array(childID, tag_list_7);
@@ -754,7 +781,12 @@ void DOM::addForbidden(int tagId, ushort *forbiddenTags)
         // we allow nested anchors. The innermost one wil be taken...
         //forbiddenTags[ID_A]++;
         break;
+    case ID_NOBR:
+        forbiddenTags[ID_PRE]++;
+        // fall through
     case ID_PRE:
+    case ID_PLAINTEXT:
+    case ID_XMP:
         //forbiddenTags[ID_IMG]++;
         forbiddenTags[ID_OBJECT]++;
         forbiddenTags[ID_EMBED]++;
@@ -780,6 +812,8 @@ void DOM::addForbidden(int tagId, ushort *forbiddenTags)
         forbiddenTags[ID_DIR]++;
         forbiddenTags[ID_MENU]++;
         forbiddenTags[ID_PRE]++;
+        forbiddenTags[ID_PLAINTEXT]++;
+        forbiddenTags[ID_XMP]++;
         forbiddenTags[ID_DL]++;
         forbiddenTags[ID_DIV]++;
         forbiddenTags[ID_CENTER]++;
@@ -824,7 +858,12 @@ void DOM::removeForbidden(int tagId, ushort *forbiddenTags)
     case ID_A:
         //forbiddenTags[ID_A]--;
         break;
+    case ID_NOBR:
+        forbiddenTags[ID_PRE]--;
+        // fall through
     case ID_PRE:
+    case ID_XMP:
+    case ID_PLAINTEXT:
         //forbiddenTags[ID_IMG]--;
         forbiddenTags[ID_OBJECT]--;
         forbiddenTags[ID_EMBED]--;
@@ -849,6 +888,8 @@ void DOM::removeForbidden(int tagId, ushort *forbiddenTags)
         forbiddenTags[ID_DIR]--;
         forbiddenTags[ID_MENU]--;
         forbiddenTags[ID_PRE]--;
+        forbiddenTags[ID_PLAINTEXT]--;
+        forbiddenTags[ID_XMP]--;
         forbiddenTags[ID_DL]--;
         forbiddenTags[ID_DIV]--;
         forbiddenTags[ID_CENTER]--;

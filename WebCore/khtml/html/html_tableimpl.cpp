@@ -1,4 +1,3 @@
-
 /**
  * This file is part of the DOM implementation for KDE.
  *
@@ -22,18 +21,15 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
-#include "html_tableimpl.h"
 
-#include "dom_exception.h"
-#include "html_documentimpl.h"
-#include "dom_node.h"
+#include "html/html_documentimpl.h"
+#include "html/html_tableimpl.h"
 
-using namespace DOM;
+#include "dom/dom_exception.h"
+#include "dom/dom_node.h"
 
-#include "htmlhashes.h"
+#include "misc/htmlhashes.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
 
@@ -43,9 +39,11 @@ using namespace DOM;
 #include "css/csshelper.h"
 
 #include "rendering/render_table.h"
-using namespace khtml;
 
 #include <kdebug.h>
+
+using namespace khtml;
+using namespace DOM;
 
 HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
   : HTMLElementImpl(doc)
@@ -60,13 +58,14 @@ HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
 
     incremental = false;
     m_noBorder = true;
+    m_solid = false;
 
     // reset font color and sizes here, if we don't have strict parse mode.
     // this is 90% compatible to ie and mozilla, and the by way easiest solution...
     // only difference to 100% correct is that in strict mode <font> elements are propagated into tables.
-    if ( ownerDocument()->parseMode() != DocumentImpl::Strict ) {
+    if ( getDocument()->parseMode() != DocumentImpl::Strict ) {
         addCSSProperty( CSS_PROP_FONT_SIZE, CSS_VAL_MEDIUM );
-        addCSSProperty( CSS_PROP_COLOR, ownerDocument()->textColor() );
+        addCSSProperty( CSS_PROP_COLOR, getDocument()->textColor() );
         addCSSProperty( CSS_PROP_FONT_FAMILY, "konq_default" );
     }
 }
@@ -75,19 +74,14 @@ HTMLTableElementImpl::~HTMLTableElementImpl()
 {
 }
 
-const DOMString HTMLTableElementImpl::nodeName() const
-{
-    return "TABLE";
-}
-
-ushort HTMLTableElementImpl::id() const
+NodeImpl::Id HTMLTableElementImpl::id() const
 {
     return ID_TABLE;
 }
 
 NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
 {
-    int exceptioncode;
+    int exceptioncode = 0;
     NodeImpl* r;
     if(tCaption) {
         replaceChild ( c, tCaption, exceptioncode );
@@ -101,7 +95,7 @@ NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
 
 NodeImpl* HTMLTableElementImpl::setTHead( HTMLTableSectionElementImpl *s )
 {
-    int exceptioncode;
+    int exceptioncode = 0;
     NodeImpl* r;
     if(head) {
         replaceChild( s, head, exceptioncode );
@@ -120,7 +114,7 @@ NodeImpl* HTMLTableElementImpl::setTHead( HTMLTableSectionElementImpl *s )
 
 NodeImpl* HTMLTableElementImpl::setTFoot( HTMLTableSectionElementImpl *s )
 {
-    int exceptioncode;
+    int exceptioncode = 0;
     NodeImpl* r;
     if(foot) {
         replaceChild ( s, foot, exceptioncode );
@@ -134,11 +128,27 @@ NodeImpl* HTMLTableElementImpl::setTFoot( HTMLTableSectionElementImpl *s )
     return r;
 }
 
+NodeImpl* HTMLTableElementImpl::setTBody( HTMLTableSectionElementImpl *s )
+{
+    int exceptioncode = 0;
+    NodeImpl* r;
+
+    if(!firstBody)
+        firstBody = s;
+
+    if( foot )
+        r = insertBefore( s, foot, exceptioncode );
+    else
+        r = appendChild( s, exceptioncode );
+
+    return r;
+}
+
 HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
 {
     if(!head)
     {
-        int exceptioncode;
+        int exceptioncode = 0;
         head = new HTMLTableSectionElementImpl(docPtr(), ID_THEAD);
         if(foot)
             insertBefore( head, foot, exceptioncode );
@@ -153,7 +163,7 @@ HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
 void HTMLTableElementImpl::deleteTHead(  )
 {
     if(head) {
-        int exceptioncode;
+        int exceptioncode = 0;
         HTMLElementImpl::removeChild(head, exceptioncode);
     }
     head = 0;
@@ -163,7 +173,7 @@ HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
 {
     if(!foot)
     {
-        int exceptioncode;
+        int exceptioncode = 0;
         foot = new HTMLTableSectionElementImpl(docPtr(), ID_TFOOT);
         if(firstBody)
             insertBefore( foot, firstBody, exceptioncode );
@@ -176,7 +186,7 @@ HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
 void HTMLTableElementImpl::deleteTFoot(  )
 {
     if(foot) {
-        int exceptioncode;
+        int exceptioncode = 0;
         HTMLElementImpl::removeChild(foot, exceptioncode);
     }
     foot = 0;
@@ -186,7 +196,7 @@ HTMLElementImpl *HTMLTableElementImpl::createCaption(  )
 {
     if(!tCaption)
     {
-        int exceptioncode;
+        int exceptioncode = 0;
         tCaption = new HTMLTableCaptionElementImpl(docPtr());
         insertBefore( tCaption, firstChild(), exceptioncode );
     }
@@ -196,21 +206,54 @@ HTMLElementImpl *HTMLTableElementImpl::createCaption(  )
 void HTMLTableElementImpl::deleteCaption(  )
 {
     if(tCaption) {
-        int exceptioncode;
+        int exceptioncode = 0;
         HTMLElementImpl::removeChild(tCaption, exceptioncode);
     }
     tCaption = 0;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::insertRow( long /*index*/ )
+HTMLElementImpl *HTMLTableElementImpl::insertRow( long index )
 {
-    // ###
-    return 0;
+    // IE treats index=-1 as default value meaning 'append after last'
+    // This isn't in the DOM. So, not implemented yet.
+    HTMLTableSectionElementImpl* section = 0L;
+    NodeImpl *node = firstChild();
+    for ( ; node ; node = node->nextSibling() )
+    {
+        if ( node->id() == ID_THEAD || node->id() == ID_TFOOT || node->id() == ID_TBODY )
+        {
+            section = static_cast<HTMLTableSectionElementImpl *>(node);
+            if ( section->numRows() > index )
+                break;
+            else
+                index -= section->numRows();
+        }
+    }
+    if (!section) {
+        section = new HTMLTableSectionElementImpl(docPtr(), ID_TBODY);
+        setTBody( section );
+    }
+    return section->insertRow( index );
 }
 
-void HTMLTableElementImpl::deleteRow( long /*index*/ )
+void HTMLTableElementImpl::deleteRow( long index )
 {
-    // ###
+    HTMLTableSectionElementImpl* section = 0L;
+    NodeImpl *node = firstChild();
+    for ( ; node ; node = node->nextSibling() )
+    {
+        if ( node->id() == ID_THEAD || node->id() == ID_TFOOT || node->id() == ID_TBODY )
+        {
+            section = static_cast<HTMLTableSectionElementImpl *>(node);
+            if ( section->numRows() > index )
+                break;
+            else
+                index -= section->numRows();
+        }
+    }
+    if ( section && index >= 0 && index < section->numRows() )
+        section->deleteRow( index );
+    // ## TODO error checking, returning exceptioncode
 }
 
 NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
@@ -244,18 +287,16 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
         break;
     case ID_TBODY:
         //if(incremental && !columnPos[totalCols]);// calcColWidth();
-        if(!firstBody)
-            firstBody = static_cast<HTMLTableSectionElementImpl *>(child);
-        return HTMLElementImpl::addChild( child );
+        return setTBody(static_cast<HTMLTableSectionElementImpl *>(child));
         break;
     }
     return 0;
 }
 
-void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLTableElementImpl::parseAttribute(AttributeImpl *attr)
 {
     // ### to CSS!!
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_WIDTH:
         if (!attr->value().isEmpty())
@@ -284,7 +325,8 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
         border=1;
 #endif
         m_noBorder = !border;
-        addCSSLength(CSS_PROP_BORDER_WIDTH, DOMString( QString::number( border) ) );
+        DOMString v = QString::number( border );
+        addCSSLength(CSS_PROP_BORDER_WIDTH, v );
 #if 0
         // wanted by HTML4 specs
         if(!border)
@@ -304,15 +346,15 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
         if(!attr->value().isEmpty()) {
             addCSSProperty(CSS_PROP_BORDER_COLOR, attr->value());
             addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
             addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
             addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+            m_solid = true;
         }
         break;
     case ATTR_BACKGROUND:
     {
         if (!attr->value().isEmpty()) {
-            HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
 #ifdef APPLE_CHANGES
             // our c++ implementation likes this better
             DOMString d(khtml::parseURL(attr->value()));
@@ -320,8 +362,7 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
 #else /* APPLE_CHANGES not defined */
             QString url = khtml::parseURL( attr->value() ).string();
 #endif /* APPLE_CHANGES not defined */
-            if ( doc->view() )
-                url = doc->view()->part()->completeURL( url ).url();
+            url = getDocument()->completeURL( url );
             addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
         }
         else
@@ -407,22 +448,30 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
             removeCSSProperty(CSS_PROP_VERTICAL_ALIGN);
         break;
     case ATTR_NOSAVE:
-	break;	
+	break;
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
 }
 
-void HTMLTableElementImpl::attach()
+void HTMLTableElementImpl::init()
 {
-    HTMLElementImpl::attach();
+    HTMLElementImpl::init();
+
+    if (!m_noBorder) {
+        int v = m_solid ? CSS_VAL_SOLID : CSS_VAL_OUTSET;
+        addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, v);
+        addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v);
+        addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, v);
+        addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, v);
+    }
 }
 
 // --------------------------------------------------------------------------
 
-void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLTablePartElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_BGCOLOR:
         if (attr->val())
@@ -433,7 +482,6 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
     case ATTR_BACKGROUND:
     {
         if (attr->val()) {
-            HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
 #ifdef APPLE_CHANGES
             // our c++ implementation likes this better
             DOMString d(khtml::parseURL(attr->value()));
@@ -441,9 +489,8 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
 #else /* APPLE_CHANGES not defined */
             QString url = khtml::parseURL( attr->value() ).string();
 #endif /* APPLE_CHANGES not defined */
-            if ( doc->view() )
-                url = doc->view()->part()->completeURL( url ).url();
-            addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
+            url = getDocument()->completeURL( url );
+            addCSSProperty(CSS_PROP_BACKGROUND_IMAGE,  "url('"+url+"')" );
         }
         else
             removeCSSProperty(CSS_PROP_BACKGROUND_IMAGE);
@@ -454,9 +501,10 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
         if(!attr->value().isEmpty()) {
             addCSSProperty(CSS_PROP_BORDER_COLOR, attr->value());
             addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
             addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
             addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+            m_solid = true;
         }
         break;
     }
@@ -469,15 +517,10 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
         break;
     }
     case ATTR_NOSAVE:
-	break;	
+	break;
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
-}
-
-void HTMLTablePartElementImpl::attach()
-{
-    HTMLElementImpl::attach();
 }
 
 // -------------------------------------------------------------------------
@@ -494,12 +537,7 @@ HTMLTableSectionElementImpl::~HTMLTableSectionElementImpl()
     nrows = 0;
 }
 
-const DOMString HTMLTableSectionElementImpl::nodeName() const
-{
-    return getTagName(_id);
-}
-
-ushort HTMLTableSectionElementImpl::id() const
+NodeImpl::Id HTMLTableSectionElementImpl::id() const
 {
     return _id;
 }
@@ -514,7 +552,7 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( long index )
     HTMLTableRowElementImpl *r = new HTMLTableRowElementImpl(docPtr());
 
     NodeListImpl *children = childNodes();
-    int exceptioncode;
+    int exceptioncode = 0;
     if(!children || (int)children->length() <= index)
         appendChild(r, exceptioncode);
     else {
@@ -536,7 +574,7 @@ void HTMLTableSectionElementImpl::deleteRow( long index )
     if(children && (int)children->length() > index)
     {
         nrows--;
-        int exceptioncode;
+        int exceptioncode = 0;
         HTMLElementImpl::removeChild(children->item(index), exceptioncode);
     }
     if(children) delete children;
@@ -553,12 +591,7 @@ HTMLTableRowElementImpl::~HTMLTableRowElementImpl()
 {
 }
 
-const DOMString HTMLTableRowElementImpl::nodeName() const
-{
-    return "TR";
-}
-
-ushort HTMLTableRowElementImpl::id() const
+NodeImpl::Id HTMLTableRowElementImpl::id() const
 {
     return ID_TR;
 }
@@ -606,7 +639,7 @@ HTMLElementImpl *HTMLTableRowElementImpl::insertCell( long index )
     HTMLTableCellElementImpl *c = new HTMLTableCellElementImpl(docPtr(), ID_TD);
 
     NodeListImpl *children = childNodes();
-    int exceptioncode;
+    int exceptioncode = 0;
     if(!children || (int)children->length() <= index)
         appendChild(c, exceptioncode);
     else {
@@ -626,7 +659,7 @@ void HTMLTableRowElementImpl::deleteCell( long index )
     if(index < 0) return;
     NodeListImpl *children = childNodes();
     if(children && (int)children->length() > index) {
-        int exceptioncode;
+        int exceptioncode = 0;
         HTMLElementImpl::removeChild(children->item(index), exceptioncode);
     }
     if(children) delete children;
@@ -640,7 +673,7 @@ HTMLTableCellElementImpl::HTMLTableCellElementImpl(DocumentPtr *doc, int tag)
   _col = -1;
   _row = -1;
   cSpan = rSpan = 1;
-  nWrap = false;
+  m_nowrap = false;
   _id = tag;
   rowHeight = 0;
 }
@@ -649,20 +682,13 @@ HTMLTableCellElementImpl::~HTMLTableCellElementImpl()
 {
 }
 
-const DOMString HTMLTableCellElementImpl::nodeName() const
+void HTMLTableCellElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    return getTagName(_id);
-}
-
-void HTMLTableCellElementImpl::parseAttribute(AttrImpl *attr)
-{
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_BORDER:
-        addCSSLength(CSS_PROP_BORDER_TOP_WIDTH, attr->value());
-        addCSSLength(CSS_PROP_BORDER_RIGHT_WIDTH, attr->value());
-        addCSSLength(CSS_PROP_BORDER_BOTTOM_WIDTH, attr->value());
-        addCSSLength(CSS_PROP_BORDER_LEFT_WIDTH, attr->value());
+        // euhm? not supported by other browsers as far as I can see (Dirk)
+        //addCSSLength(CSS_PROP_BORDER_WIDTH, attr->value());
         break;
     case ATTR_ROWSPAN:
         // ###
@@ -677,7 +703,7 @@ void HTMLTableCellElementImpl::parseAttribute(AttrImpl *attr)
         if(cSpan < 1 || cSpan > 1024) cSpan = 1;
         break;
     case ATTR_NOWRAP:
-        nWrap = (attr->val() != 0);
+        m_nowrap = (attr->val() != 0);
         break;
     case ATTR_WIDTH:
         if (!attr->value().isEmpty())
@@ -692,51 +718,38 @@ void HTMLTableCellElementImpl::parseAttribute(AttrImpl *attr)
             removeCSSProperty(CSS_PROP_HEIGHT);
         break;
     case ATTR_NOSAVE:
-	break;	
+	break;
     default:
         HTMLTablePartElementImpl::parseAttribute(attr);
     }
 }
 
-void HTMLTableCellElementImpl::attach()
+void HTMLTableCellElementImpl::init()
 {
-    HTMLElementImpl* p = static_cast<HTMLElementImpl*>(_parent);
+    HTMLTablePartElementImpl::init();
+
+    HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parentNode());
     while(p && p->id() != ID_TABLE)
         p = static_cast<HTMLElementImpl*>(p->parentNode());
 
     if(p) {
         HTMLTableElementImpl* table = static_cast<HTMLTableElementImpl*>(p);
-	//
-        if(table->m_noBorder && getAttribute(ATTR_BORDER).isNull()) {
+        if (table->m_noBorder) {
             addCSSProperty(CSS_PROP_BORDER_WIDTH, "0");
-	}
-        if(!table->getAttribute(ATTR_BORDERCOLOR).isNull()) {
-            addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-	}
-    }
-
-    setStyle(ownerDocument()->styleSelector()->styleForElement(this));
-    khtml::RenderObject *r = _parent->renderer();
-    if(r)
-    {
-        m_render = khtml::RenderObject::createObject(this);
-        if(m_render && m_render->style()->display() == TABLE_CELL)
-        {
-            RenderTableCell *cell = static_cast<RenderTableCell *>(m_render);
-            cell->setRowSpan(rSpan);
-            cell->setColSpan(cSpan);
-            cell->setNoWrap(nWrap);
         }
-        if(m_render) r->addChild(m_render, nextRenderer());
+        else {
+            addCSSProperty(CSS_PROP_BORDER_WIDTH, "1px");
+            int v = (table->m_solid || m_solid) ? CSS_VAL_SOLID : CSS_VAL_INSET;
+            addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, v);
+            addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v);
+            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, v);
+            addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, v);
+
+            if (!m_solid)
+                addCSSProperty(CSS_PROP_BORDER_COLOR, "inherit");
+        }
     }
-
-    HTMLElementImpl::attach();
 }
-
-
 
 // -------------------------------------------------------------------------
 
@@ -744,19 +757,14 @@ HTMLTableColElementImpl::HTMLTableColElementImpl(DocumentPtr *doc, ushort i)
     : HTMLElementImpl(doc)
 {
     _id = i;
-    _span = 1;
+    _span = (_id == ID_COLGROUP ? 0 : 1);
 }
 
 HTMLTableColElementImpl::~HTMLTableColElementImpl()
 {
 }
 
-const DOMString HTMLTableColElementImpl::nodeName() const
-{
-    return getTagName(_id);
-}
-
-ushort HTMLTableColElementImpl::id() const
+NodeImpl::Id HTMLTableColElementImpl::id() const
 {
     return _id;
 }
@@ -785,9 +793,9 @@ NodeImpl *HTMLTableColElementImpl::addChild(NodeImpl *child)
 
 }
 
-void HTMLTableColElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLTableColElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_SPAN:
         _span = attr->val() ? attr->val()->toInt() : 1;
@@ -821,20 +829,15 @@ HTMLTableCaptionElementImpl::~HTMLTableCaptionElementImpl()
 {
 }
 
-const DOMString HTMLTableCaptionElementImpl::nodeName() const
-{
-    return "CAPTION";
-}
-
-ushort HTMLTableCaptionElementImpl::id() const
+NodeImpl::Id HTMLTableCaptionElementImpl::id() const
 {
     return ID_CAPTION;
 }
 
 
-void HTMLTableCaptionElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLTableCaptionElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_ALIGN:
         if (!attr->value().isEmpty())

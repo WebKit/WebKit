@@ -60,6 +60,11 @@ void BrowserExtension::openURLRequest(const KURL &, const KParts::URLArgs &)
     _logNotYetImplemented();
 }
 
+void BrowserExtension::setIconURL(const KURL &)
+{
+    _logNotYetImplemented();
+}
+
 // class BrowserHostExtension ==================================================
 
 BrowserHostExtension::BrowserHostExtension()
@@ -72,6 +77,7 @@ BrowserHostExtension::~BrowserHostExtension()
 {
     _logNotYetImplemented();
 }
+
 
 // struct URLArgs ==============================================================
 

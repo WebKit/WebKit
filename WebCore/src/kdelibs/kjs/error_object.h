@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,39 +16,72 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _ERROR_OBJECT_H_
 #define _ERROR_OBJECT_H_
 
-#include "object.h"
-#include "function.h"
+#include "internal.h"
+#include "function_object.h"
 
 namespace KJS {
 
-  class ErrorObject : public ConstructorImp {
+  class ErrorPrototypeImp : public ObjectImp {
   public:
-    ErrorObject(const Object &funcProto, const Object &errProto,
-		ErrorType t = GeneralError);
-    ErrorObject(const Object& proto, ErrorType t, const char *m, int l = -1);
-    Completion execute(const List &);
-    Object construct(const List &);
-    static Object create(ErrorType e, const char *m, int ln);
+    ErrorPrototypeImp(ExecState *exec,
+                      ObjectPrototypeImp *objectProto,
+                      FunctionPrototypeImp *funcProto);
+  };
+
+  class ErrorProtoFuncImp : public InternalFunctionImp {
+  public:
+    ErrorProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+  };
+
+  class ErrorObjectImp : public InternalFunctionImp {
+  public:
+    ErrorObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                   ErrorPrototypeImp *errorProto);
+
+    virtual bool implementsConstruct() const;
+    virtual Object construct(ExecState *exec, const List &args);
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+  };
+
+
+
+
+
+  class NativeErrorPrototypeImp : public ObjectImp {
+  public:
+    NativeErrorPrototypeImp(ExecState *exec, ErrorPrototypeImp *errorProto,
+                            ErrorType et, UString name, UString message);
   private:
     ErrorType errType;
-    static const char *errName[];
   };
 
-  class ErrorPrototype : public ObjectImp {
+  class NativeErrorImp : public InternalFunctionImp {
   public:
-    ErrorPrototype(const Object& proto);
-    virtual KJSO get(const UString &p) const;
-  };
+    NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                   const Object &prot);
 
-  class ErrorProtoFunc : public InternalFunctionImp {
-  public:
-    ErrorProtoFunc() { }
-    Completion execute(const List &);
+    virtual bool implementsConstruct() const;
+    virtual Object construct(ExecState *exec, const List &args);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
+    virtual void mark();
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+  private:
+    ObjectImp *proto;
   };
 
 }; // namespace

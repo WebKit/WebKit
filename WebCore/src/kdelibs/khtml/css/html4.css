@@ -44,10 +44,19 @@ script {
  * generic block level elements
  */
 
-body {
-	display: block;
-	margin: 10px;
-} 
+@media print {
+	body {
+		display: block;
+		margin: 2cm;
+	}
+}
+
+@media screen {
+	body {
+		display: block;
+		margin: 10px;
+	}
+}
 
 p {
 	display: block;
@@ -79,6 +88,20 @@ blockquote {
         -konq-flow-mode: -konq-around-floats
 }
 
+Q        {
+         display: inline;
+}
+
+Q:before {
+         content: '"';
+    /*   content: open-quote;   */
+}
+
+Q:after  {
+         content: '"';
+    /*   content: close-quote;  */
+}
+
 IFRAME {
 	display: block;
 }
@@ -99,10 +122,9 @@ CENTER {
 }  
       
 HR  { 
-	/* display: -konq-ruler; */
         display: block; 
-	margin-top: 5px; 
-	margin-bottom: 5px; 
+        margin-top: 12px; 
+        margin-bottom: 12px; 
         border-style: inset;
         border-width: 1px;
         margin-left: 1px; /* will be overwritten by ALIGN */ 
@@ -182,8 +204,6 @@ TABLE {
 	text-align: justify;
 	border-spacing: 2px;
 	border-color: gray;
-	border-style: outset;
-	border-width: 0px;
 	padding: 1px;
         -konq-flow-mode: -konq-around-floats;
 }
@@ -221,8 +241,7 @@ COLGROUP {
 TR { 
 	display: table-row;
 	vertical-align: inherit; 
-	border: inherit;
-        border-color: inherit;
+        border-color: inherit; 
 	padding: inherit; 
 }
       
@@ -231,9 +250,6 @@ TD, TH {
 	display: table-cell;
 	vertical-align: inherit;
 	padding: inherit;
-	border-style: inset;   /* overwritten by <table bordercolor> */
-	border-color: inherit;
-        border-width: 1px;     /* overwritten by <table border=0> */
 }
       
 TH { 
@@ -291,6 +307,11 @@ LI {
 UL UL { 
 	list-style-type: circle;
 }
+
+OL UL { 
+	list-style-type: circle;
+}
+
 UL UL UL { 
 	list-style-type: square;
 }
@@ -363,6 +384,7 @@ INPUT[type="text"],
 INPUT[type="password"],
 TEXTAREA { 
 	font-family: monospace;
+	cursor: text;
 }
 
 INPUT[type="hidden"] {
@@ -410,7 +432,9 @@ SAMP {
 	font-family: monospace; 
 }
       
-PRE { 
+PRE,
+XMP, 
+PLAINTEXT { 
 	display: block;
 	font-family: monospace; 
 	white-space: pre; 
@@ -504,6 +528,20 @@ frameset {
 frame { 
 	display: block;
 }
+
+nobr {
+        display: inline;
+        white-space: nowrap; 
+}
+
+wbr {
+        white-space: normal;
+}
+
+marquee {
+        display: none;
+}
+
 
 /* noscript is handled internally, as it depends on the html settings */
 

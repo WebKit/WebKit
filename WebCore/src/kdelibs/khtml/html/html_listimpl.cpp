@@ -33,19 +33,14 @@ using namespace DOM;
 
 using namespace khtml;
 
-const DOMString HTMLUListElementImpl::nodeName() const
-{
-    return "UL";
-}
-
-ushort HTMLUListElementImpl::id() const
+NodeImpl::Id HTMLUListElementImpl::id() const
 {
     return ID_UL;
 }
 
-void HTMLUListElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLUListElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_TYPE:
         addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, attr->value());
@@ -55,60 +50,30 @@ void HTMLUListElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-void HTMLUListElementImpl::attach()
-{
-    HTMLElementImpl::attach();
-}
-
 // -------------------------------------------------------------------------
 
-const DOMString HTMLDirectoryElementImpl::nodeName() const
-{
-    return "DIR";
-}
-
-ushort HTMLDirectoryElementImpl::id() const
+NodeImpl::Id HTMLDirectoryElementImpl::id() const
 {
     return ID_DIR;
 }
 
-void HTMLDirectoryElementImpl::attach()
-{
-    HTMLElementImpl::attach();
-}
-
 // -------------------------------------------------------------------------
 
-const DOMString HTMLMenuElementImpl::nodeName() const
-{
-    return "MENU";
-}
-
-ushort HTMLMenuElementImpl::id() const
+NodeImpl::Id HTMLMenuElementImpl::id() const
 {
     return ID_MENU;
 }
 
-void HTMLMenuElementImpl::attach()
-{
-    HTMLElementImpl::attach();
-}
-
 // -------------------------------------------------------------------------
 
-const DOMString HTMLOListElementImpl::nodeName() const
-{
-    return "OL";
-}
-
-ushort HTMLOListElementImpl::id() const
+NodeImpl::Id HTMLOListElementImpl::id() const
 {
     return ID_OL;
 }
 
-void HTMLOListElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLOListElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_TYPE:
         if ( strcmp( attr->value(), "a" ) == 0 )
@@ -129,27 +94,17 @@ void HTMLOListElementImpl::parseAttribute(AttrImpl *attr)
     }
 }
 
-void HTMLOListElementImpl::attach()
-{
-    HTMLElementImpl::attach();
-}
-
 // -------------------------------------------------------------------------
 
-const DOMString HTMLLIElementImpl::nodeName() const
-{
-    return "LI";
-}
-
-ushort HTMLLIElementImpl::id() const
+NodeImpl::Id HTMLLIElementImpl::id() const
 {
     return ID_LI;
 }
 
 
-void HTMLLIElementImpl::parseAttribute(AttrImpl *attr)
+void HTMLLIElementImpl::parseAttribute(AttributeImpl *attr)
 {
-    switch(attr->attrId)
+    switch(attr->id())
     {
     case ATTR_VALUE:
         isValued = true;
@@ -184,6 +139,8 @@ void HTMLLIElementImpl::parseAttribute(AttrImpl *attr)
 
 void HTMLLIElementImpl::attach()
 {
+    assert(!attached());
+
     HTMLElementImpl::attach();
 
     // If we are first, and the OL has a start attr.
@@ -205,12 +162,7 @@ void HTMLLIElementImpl::attach()
 // -------------------------------------------------------------------------
 
 
-const DOMString HTMLDListElementImpl::nodeName() const
-{
-    return "DL";
-}
-
-ushort HTMLDListElementImpl::id() const
+NodeImpl::Id HTMLDListElementImpl::id() const
 {
     return ID_DL;
 }

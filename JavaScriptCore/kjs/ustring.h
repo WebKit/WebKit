@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -16,13 +17,19 @@
  *  along with this library; see the file COPYING.LIB.  If not, write to
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
+ *
+ *  $Id$
  */
 
-#ifndef _KJS_STRING_H_
-#define _KJS_STRING_H_
+#ifndef _KJS_USTRING_H_
+#define _KJS_USTRING_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
+#ifdef APPLE_CHANGES
+#include <KWQDef.h>
 #endif
 
 /**
@@ -34,12 +41,6 @@ namespace DOM {
 class KJScript;
 class QString;
 class QConstString;
-
-#if defined(__GNUC__)
-#define KJS_PACKED __attribute__((__packed__))
-#else
-#define KJS_PACKED
-#endif
 
 namespace KJS {
 
@@ -73,15 +74,15 @@ namespace KJS {
     /**
      * @return The higher byte of the character.
      */
-    unsigned char high() const { return hi; }
+    unsigned char high() const { return uc >> 8; }
     /**
      * @return The lower byte of the character.
      */
-    unsigned char low() const { return lo; }
+    unsigned char low() const { return uc & 0xFF; }
     /**
      * @return the 16 bit Unicode value of the character
      */
-    unsigned short unicode() const { return hi << 8 | lo; }
+    unsigned short unicode() const { return uc; }
   public:
     /**
      * @return The character converted to lower case.
@@ -101,25 +102,13 @@ namespace KJS {
     friend bool operator==(const UChar &c1, const UChar &c2);
     friend bool operator==(const UString& s1, const char *s2);
     friend bool operator<(const UString& s1, const UString& s2);
-#ifdef KJS_SWAPPED_CHAR
-    unsigned char lo;
-    unsigned char hi;
-#else
-    unsigned char hi;
-    unsigned char lo;
-#endif
-  } KJS_PACKED;
 
+    ushort uc;
+  };
 
-#ifdef KJS_SWAPPED_CHAR // to avoid reorder warnings
-  inline UChar::UChar() : lo(0), hi(0) { }
-  inline UChar::UChar(unsigned char h , unsigned char l) : lo(l), hi(h) { }
-  inline UChar::UChar(unsigned short u) : lo(u & 0x00ff), hi(u >> 8) { }
-#else
-  inline UChar::UChar() : hi(0), lo(0) { }
-  inline UChar::UChar(unsigned char h , unsigned char l) : hi(h), lo(l) { }
-  inline UChar::UChar(unsigned short u) : hi(u >> 8), lo(u & 0x00ff) { }
-#endif
+  inline UChar::UChar() : uc(0) { }
+  inline UChar::UChar(unsigned char h , unsigned char l) : uc(h << 8 | l) { }
+  inline UChar::UChar(unsigned short u) : uc(u) { }
 
   /**
    * @short Dynamic reference to a string character.
@@ -154,11 +143,11 @@ namespace KJS {
     /**
      * @return Lower byte.
      */
-    unsigned char& low() const { return ref().lo; }
+    unsigned char low() const { return ref().uc & 0xFF; }
     /**
      * @return Higher byte.
      */
-    unsigned char& high() const { return ref().hi; }
+    unsigned char high() const { return ref().uc >> 8; }
     /**
      * @return Character converted to lower case.
      */
@@ -364,8 +353,9 @@ namespace KJS {
      * the algorithm will recognize hexadecimal representations (as
      * indicated by a 0x or 0X prefix) and +/- Infinity.
      * Returns NaN if the conversion failed.
+     * @param tolerant if true, toDouble can tolerate garbage after the number.
      */
-    double toDouble() const;
+    double toDouble(bool tolerant=false) const;
     /**
      * Attempts an conversion to an unsigned long integer. ok will be set
      * according to the success.
@@ -397,7 +387,9 @@ namespace KJS {
     Rep *rep;
   };
 
-  bool operator==(const UChar &c1, const UChar &c2);
+  inline bool operator==(const UChar &c1, const UChar &c2) {
+    return (c1.uc == c2.uc);
+  }
   bool operator==(const UString& s1, const UString& s2);
   inline bool operator!=(const UString& s1, const UString& s2) {
     return !KJS::operator==(s1, s2);
@@ -407,7 +399,9 @@ namespace KJS {
   inline bool operator!=(const UString& s1, const char *s2) {
     return !KJS::operator==(s1, s2);
   }
-  bool operator==(const char *s1, const UString& s2);
+  inline bool operator==(const char *s1, const UString& s2) {
+    return operator==(s2, s1);
+  }
   inline bool operator!=(const char *s1, const UString& s2) {
     return !KJS::operator==(s1, s2);
   }

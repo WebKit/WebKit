@@ -565,6 +565,11 @@ public:
     DOMString type() const;
 
     /**
+     * see @ref type
+     */
+    void setType(const DOMString&);
+
+    /**
      * Use client-side image map. See the <a
      * href="http://www.w3.org/TR/REC-html40/struct/objects.html#adef-usemap">
      * usemap attribute definition </a> in HTML 4.0.

@@ -23,15 +23,21 @@
  * $Id$
  */
 
+//#define DEBUG_LAYOUT
+
 #include "render_container.h"
 #include "render_table.h"
+#include "render_text.h"
+#include "render_image.h"
+#include "render_root.h"
 
 #include <kdebug.h>
+#include <assert.h>
 
 using namespace khtml;
 
-RenderContainer::RenderContainer()
-    : RenderObject()
+RenderContainer::RenderContainer(DOM::NodeImpl* node)
+    : RenderObject(node)
 {
     m_first = 0;
     m_last = 0;
@@ -54,16 +60,13 @@ RenderContainer::~RenderContainer()
 void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderObject)::addChild( " << newChild->renderName() << ", "
-                       (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
+    kdDebug( 6040 ) << this << ": " <<  renderName() << "(RenderObject)::addChild( " << newChild << ": " <<
+        newChild->renderName() << ", " << (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
-
-    if(parsing())
-        newChild->setParsing();
 
     bool needsTable = false;
 
-    if(!newChild->isText()) {
+    if(!newChild->isText() && !newChild->isReplaced()) {
         switch(newChild->style()->display()) {
         case INLINE:
         case BLOCK:
@@ -73,14 +76,14 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         case MARKER:
         case TABLE:
         case INLINE_TABLE:
-        case KONQ_RULER:
+        case TABLE_COLUMN:
             break;
         case TABLE_COLUMN_GROUP:
-        case TABLE_COLUMN:
         case TABLE_CAPTION:
         case TABLE_ROW_GROUP:
         case TABLE_HEADER_GROUP:
         case TABLE_FOOTER_GROUP:
+
             //kdDebug( 6040 ) << "adding section" << endl;
             if ( !isTable() )
                 needsTable = true;
@@ -97,7 +100,7 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
             break;
         case NONE:
             kdDebug( 6000 ) << "error in RenderObject::addChild()!!!!" << endl;
-	    break;
+            break;
         }
     }
 
@@ -108,26 +111,47 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         if( beforeChild && beforeChild->isAnonymousBox() && beforeChild->isTable() )
             table = static_cast<RenderTable *>(beforeChild);
         else {
-//          kdDebug( 6040 ) << "creating anonymous table" << endl;
-            table = new RenderTable;
+            //kdDebug( 6040 ) << "creating anonymous table" << endl;
+            table = new RenderTable(0 /* is anonymous */);
             RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(m_style);
+            newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE);
             table->setStyle(newStyle);
             table->setIsAnonymousBox(true);
             addChild(table, beforeChild);
         }
         table->addChild(newChild);
-        return;
+    } else {
+	// just add it...
+	insertChildNode(newChild, beforeChild);
     }
-
-    // just add it...
-    insertChildNode(newChild, beforeChild);
+    newChild->setLayouted( false );
+    newChild->setMinMaxKnown( false );
 }
 
 RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
 {
-    ASSERT(oldChild->parent() == this);
+    KHTMLAssert(oldChild->parent() == this);
+
+    // if oldChild is the start or end of the selection, then clear the selection to
+    // avoid problems of invalid pointers
+
+    // ### This is not the "proper" solution... ideally the selection should be maintained
+    // based on DOM Nodes and a Range, which gets adjusted appropriately when nodes are
+    // deleted/inserted near etc. But this at least prevents crashes caused when the start
+    // or end of the selection is deleted and then accessed when the user next selects
+    // something.
+
+    if (oldChild->isSelectionBorder()) {
+        RenderObject *root = oldChild;
+        while (root && root->parent())
+            root = root->parent();
+        if (root->isRoot()) {
+            static_cast<RenderRoot*>(root)->clearSelection();
+        }
+    }
+
+    // remove the child
     if (oldChild->previousSibling())
         oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
     if (oldChild->nextSibling())
@@ -142,6 +166,9 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
+    setLayouted( false );
+    setMinMaxKnown( false );
+
     return oldChild;
 }
 
@@ -149,24 +176,52 @@ void RenderContainer::removeChild(RenderObject *oldChild)
 {
     removeChildNode(oldChild);
     setLayouted(false);
-    if(containsWidget()) {
-        bool anotherone = false;
-        for(RenderObject* o = firstChild(); o; o = o->nextSibling()) {
-            if(o->isWidget() || o->containsWidget()) {
-                anotherone = true;
-                break;
-            }
+}
+
+
+void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child, RenderObject* beforeChild)
+{
+
+    if (child->isText())
+        return;
+
+    RenderStyle* pseudo = child->style()->getPseudoStyle(type);
+
+    if (pseudo)
+    {
+        if (pseudo->contentType()==RenderStyle::CONTENT_TEXT)
+        {
+            RenderObject* po = new RenderFlow(0 /* anonymous box */);
+            po->setStyle(pseudo);
+
+            addChild(po, beforeChild);
+
+            RenderText* t = new RenderText(0 /*anonymous object */, pseudo->contentText());
+            t->setStyle(pseudo);
+
+//            kdDebug() << DOM::DOMString(pseudo->contentText()).string() << endl;
+
+            po->addChild(t);
+
+            t->close();
+            po->close();
         }
-        if(!anotherone) {
-            setContainsWidget(false);
-            // ### propagate to parent!!
+        else if (pseudo->contentType()==RenderStyle::CONTENT_OBJECT)
+        {
+            RenderObject* po = new RenderImage(0);
+            po->setStyle(pseudo);
+            addChild(po, beforeChild);
+            po->close();
         }
+
     }
 }
 
+
 void RenderContainer::appendChildNode(RenderObject* newChild)
 {
-    ASSERT(newChild->parent() == 0);
+    KHTMLAssert(newChild->parent() == 0);
+
     newChild->setParent(this);
     RenderObject* lChild = lastChild();
 
@@ -179,26 +234,19 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
         setFirstChild(newChild);
 
     setLastChild(newChild);
-
-    if(newChild->isWidget())
-    {
-        RenderObject* o = this;
-        while(o) {
-            o->setContainsWidget();
-            o = o->parent();
-        }
-    }
+    newChild->setLayouted( false );
+    newChild->setMinMaxKnown( false );
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
 {
     if(!beforeChild) {
         appendChildNode(child);
-	return;
+        return;
     }
 
-    ASSERT(!child->parent());
-    ASSERT(beforeChild->parent() == this);
+    KHTMLAssert(!child->parent());
+    KHTMLAssert(beforeChild->parent() == this);
 
     if(beforeChild == firstChild())
         setFirstChild(child);
@@ -210,15 +258,23 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     child->setPreviousSibling(prev);
 
     child->setParent(this);
-
-    if(child->isWidget())
-    {
-        RenderObject* o = this;
-        while(o) {
-            o->setContainsWidget();
-            o = o->parent();
-        }
-    }
+    child->setLayouted( false );
+    child->setMinMaxKnown( false );
 }
 
 
+void RenderContainer::layout()
+{
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
+
+    RenderObject *child = firstChild();
+    while( child ) {
+	if( !child->layouted() )
+	    child->layout();
+	child = child->nextSibling();
+    }
+    setLayouted();
+}
+
+#undef DEBUG_LAYOUT

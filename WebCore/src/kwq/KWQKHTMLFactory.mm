@@ -20,7 +20,7 @@
 #include <kwqdebug.h>
 #include <khtml_factory.h>
 
-QList<KHTMLPart> *KHTMLFactory::s_parts;
+QPtrList<KHTMLPart> *KHTMLFactory::s_parts;
 
 
 KHTMLFactory::KHTMLFactory( bool clone = false )

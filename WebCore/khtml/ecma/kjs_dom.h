@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
@@ -20,16 +21,16 @@
 #ifndef _KJS_DOM_H_
 #define _KJS_DOM_H_
 
-#include <dom_node.h>
-#include <dom_doc.h>
-#include <dom_element.h>
-#include <dom_xml.h>
+#include "dom/dom_node.h"
+#include "dom/dom_doc.h"
+#include "dom/dom_element.h"
+#include "dom/dom_xml.h"
 
-#include <kjs/object.h>
-#include <kjs/function.h>
+#include "ecma/kjs_binding.h"
 
-#include "kjs_binding.h"
-#include "kjs_css.h"
+#if APPLE_CHANGES
+#include <qvaluelist.h>
+#endif
 
 #if defined(APPLE_CHANGES) && defined(__OBJC__)
 #define id id_
@@ -38,48 +39,58 @@ namespace KJS {
 
   class DOMNode : public DOMObject {
   public:
-    DOMNode(DOM::Node n) : node(n) { }
+    // Build a DOMNode
+    DOMNode(ExecState *exec, DOM::Node n);
+    // Constructor for inherited classes
+    DOMNode(Object proto, DOM::Node n);
     ~DOMNode();
-    virtual Boolean toBoolean() const;
-    virtual bool hasProperty(const UString &p, bool recursive = true) const;
-    virtual KJSO tryGet(const UString &p) const;
-    virtual void tryPut(const UString &p, const KJSO& v);
-    virtual DOM::Node toNode() const { return node; }
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual bool toBoolean(ExecState *) const;
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
 
-    virtual KJSO toPrimitive(Type preferred = UndefinedType) const;
-    virtual String toString() const;
-    void setListener(int eventId,KJSO func) const;
-    KJSO getListener(int eventId) const;
-    virtual List *eventHandlerScope() const;
+    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int attr);
+    virtual DOM::Node toNode() const { return node; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+
+    virtual Value toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
+    virtual UString toString(ExecState *exec) const;
+    void setListener(ExecState *exec, int eventId, Value func) const;
+    Value getListener(int eventId) const;
+    virtual List eventHandlerScope(ExecState *exec) const;
+
+    enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
+           ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling,
+           Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
+           ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
+           CloneNode, Normalize, IsSupported, AddEventListener, RemoveEventListener,
+           DispatchEvent, Contains,
+           OnAbort, OnBlur, OnChange, OnClick, OnDblClick, OnDragDrop, OnError,
+           OnFocus, OnKeyDown, OnKeyPress, OnKeyUp, OnLoad, OnMouseDown,
+           OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMove, OnReset,
+           OnResize, OnSelect, OnSubmit, OnUnload,
+           OffsetLeft, OffsetTop, OffsetWidth, OffsetHeight, OffsetParent,
+           ClientWidth, ClientHeight, ScrollLeft, ScrollTop };
 
   protected:
     DOM::Node node;
   };
 
-  class DOMNodeFunc : public DOMFunction {
-    friend class DOMNode;
-  public:
-    DOMNodeFunc(DOM::Node n, int i) : node(n), id(i) { }
-    Completion tryExecute(const List &);
-    enum { InsertBefore, ReplaceChild, RemoveChild, AppendChild,
-	   HasChildNodes, CloneNode, AddEventListener, RemoveEventListener,
-	   DispatchEvent };
-  private:
-    DOM::Node node;
-    int id;
-  };
-
   class DOMNodeList : public DOMObject {
   public:
-    DOMNodeList(DOM::NodeList l) : list(l) { }
+    DOMNodeList(ExecState *, DOM::NodeList l) : list(l) { }
     ~DOMNodeList();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List&args);
+    virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args);
+    virtual bool implementsCall() const { return true; }
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    virtual Boolean toBoolean() const { return Boolean(true); }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    virtual bool toBoolean(ExecState *) const { return true; }
+    static const ClassInfo info;
+    DOM::NodeList nodeList() const { return list; }
   private:
     DOM::NodeList list;
   };
@@ -87,178 +98,204 @@ namespace KJS {
   class DOMNodeListFunc : public DOMFunction {
     friend class DOMNodeList;
   public:
-    DOMNodeListFunc(DOM::NodeList l, int i) : list(l), id(i) { }
-    Completion tryExecute(const List &);
+    DOMNodeListFunc(ExecState *exec, int id, int len);
+    virtual Value tryCall(ExecState *exec, Object &thisObj, const List &);
     enum { Item };
   private:
-    DOM::NodeList list;
     int id;
   };
 
   class DOMDocument : public DOMNode {
   public:
-    DOMDocument(DOM::Document d) : DOMNode(d) { }
-    virtual KJSO tryGet(const UString &p) const;
-    virtual bool hasProperty(const UString &p, bool recursive = true) const;
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  };
-
-  class DOMDocFunction : public DOMFunction {
-  public:
-    DOMDocFunction(DOM::Document d, int i);
-    Completion tryExecute(const List &);
-    enum { CreateElement, CreateDocumentFragment, CreateTextNode,
-	   CreateComment, CreateCDATASection, CreateProcessingInstruction,
-	   CreateAttribute, CreateEntityReference, GetElementsByTagName,
-	   ImportNode, CreateElementNS, CreateAttributeNS, GetElementsByTagNameNS, GetElementById,
-	   CreateRange, CreateNodeIterator, CreateTreeWalker, CreateEvent, GetOverrideStyle };
-  private:
-    DOM::Document doc;
-    int id;
+    // Build a DOMDocument
+    DOMDocument(ExecState *exec, DOM::Document d);
+    // Constructor for inherited classes
+    DOMDocument(Object proto, DOM::Document d);
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { DocType, Implementation, DocumentElement,
+           // Functions
+           CreateElement, CreateDocumentFragment, CreateTextNode, CreateComment,
+           CreateCDATASection, CreateProcessingInstruction, CreateAttribute,
+           CreateEntityReference, GetElementsByTagName, ImportNode, CreateElementNS,
+           CreateAttributeNS, GetElementsByTagNameNS, GetElementById,
+           CreateRange, CreateNodeIterator, CreateTreeWalker, DefaultView,
+           CreateEvent, StyleSheets, GetOverrideStyle };
   };
 
   class DOMAttr : public DOMNode {
   public:
-    DOMAttr(DOM::Attr a) : DOMNode(a) { }
-    virtual KJSO tryGet(const UString &p) const;
-    virtual void tryPut(const UString &p, const KJSO& v);
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    DOMAttr(ExecState *exec, DOM::Attr a) : DOMNode(exec, a) { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    Value getValueProperty(ExecState *exec, int token) const;
+    void putValue(ExecState *exec, int token, const Value& value, int attr);
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { Name, Specified, ValueProperty, OwnerElement };
   };
 
   class DOMElement : public DOMNode {
   public:
-    DOMElement(DOM::Element e) : DOMNode(e) { }
-    virtual KJSO tryGet(const UString &p) const;
+    // Build a DOMElement
+    DOMElement(ExecState *exec, DOM::Element e);
+    // Constructor for inherited classes
+    DOMElement(Object proto, DOM::Element e);
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
-  };
-
-  class DOMElementFunction : public DOMFunction {
-  public:
-    DOMElementFunction(DOM::Element e, int i);
-    Completion tryExecute(const List &);
-    enum { GetAttribute, SetAttribute, RemoveAttribute, GetAttributeNode,
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { TagName, Style,
+           GetAttribute, SetAttribute, RemoveAttribute, GetAttributeNode,
            SetAttributeNode, RemoveAttributeNode, GetElementsByTagName,
            GetAttributeNS, SetAttributeNS, RemoveAttributeNS, GetAttributeNodeNS,
-           SetAttributeNodeNS, GetElementsByTagNameNS, HasAttribute, HasAttributeNS,
-           Normalize };
-  private:
-    DOM::Element element;
-    int id;
+           SetAttributeNodeNS, GetElementsByTagNameNS, HasAttribute, HasAttributeNS };
   };
 
   class DOMDOMImplementation : public DOMObject {
   public:
-    DOMDOMImplementation(DOM::DOMImplementation i) : implementation(i) { }
+    // Build a DOMDOMImplementation
+    DOMDOMImplementation(ExecState *,DOM::DOMImplementation i);
     ~DOMDOMImplementation();
-    virtual KJSO tryGet(const UString &p) const;
     // no put - all functions
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    virtual Boolean toBoolean() const { return Boolean(true); }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    virtual bool toBoolean(ExecState *) const { return true; }
+    static const ClassInfo info;
+    enum { HasFeature, CreateDocumentType, CreateDocument, CreateCSSStyleSheet, CreateHTMLDocument };
+    DOM::DOMImplementation toImplementation() const { return implementation; }
   private:
     DOM::DOMImplementation implementation;
-  };
-
-  class DOMDOMImplementationFunction : public DOMFunction {
-  public:
-    DOMDOMImplementationFunction(DOM::DOMImplementation impl, int i);
-    Completion tryExecute(const List &);
-    enum { HasFeature, CreateDocumentType, CreateDocument, CreateCSSStyleSheet };
-  private:
-    DOM::DOMImplementation implementation;
-    int id;
   };
 
   class DOMDocumentType : public DOMNode {
   public:
-    DOMDocumentType(DOM::DocumentType dt) : DOMNode(dt) { }
-    virtual KJSO tryGet(const UString &p) const;
+    // Build a DOMDocumentType
+    DOMDocumentType(ExecState *exec, DOM::DocumentType dt);
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { Name, Entities, Notations, PublicId, SystemId, InternalSubset };
   };
 
   class DOMNamedNodeMap : public DOMObject {
   public:
-    DOMNamedNodeMap(DOM::NamedNodeMap m) : map(m) { }
+    DOMNamedNodeMap(ExecState *, DOM::NamedNodeMap m);
     ~DOMNamedNodeMap();
-    virtual KJSO tryGet(const UString &p) const;
+    virtual bool hasProperty(ExecState *exec, const UString &p, bool recursive) const;
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    virtual Boolean toBoolean() const { return Boolean(true); }
-    static const TypeInfo info;
-  private:
-    DOM::NamedNodeMap map;
-  };
-
-  class DOMNamedNodeMapFunction : public DOMFunction {
-  public:
-    DOMNamedNodeMapFunction(DOM::NamedNodeMap m, int i);
-    Completion tryExecute(const List &);
+    virtual const ClassInfo* classInfo() const { return &info; }
+    virtual bool toBoolean(ExecState *) const { return true; }
+    static const ClassInfo info;
     enum { GetNamedItem, SetNamedItem, RemoveNamedItem, Item,
            GetNamedItemNS, SetNamedItemNS, RemoveNamedItemNS };
+    DOM::NamedNodeMap toMap() const { return map; }
   private:
     DOM::NamedNodeMap map;
-    int id;
   };
 
   class DOMProcessingInstruction : public DOMNode {
   public:
-    DOMProcessingInstruction(DOM::ProcessingInstruction pi) : DOMNode(pi) { }
-    virtual KJSO tryGet(const UString &p) const;
-    virtual void tryPut(const UString &p, const KJSO& v);
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    DOMProcessingInstruction(ExecState *exec, DOM::ProcessingInstruction pi) : DOMNode(exec, pi) { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { Target, Data, Sheet };
   };
 
   class DOMNotation : public DOMNode {
   public:
-    DOMNotation(DOM::Notation n) : DOMNode(n) { }
-    virtual KJSO tryGet(const UString &p) const;
+    DOMNotation(ExecState *exec, DOM::Notation n) : DOMNode(exec, n) { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { PublicId, SystemId };
   };
 
   class DOMEntity : public DOMNode {
   public:
-    DOMEntity(DOM::Entity e) : DOMNode(e) { }
-    virtual KJSO tryGet(const UString &p) const;
+    DOMEntity(ExecState *exec, DOM::Entity e) : DOMNode(exec, e) { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { PublicId, SystemId, NotationName };
   };
 
-  // Prototype object Node
-  class NodePrototype : public DOMObject {
+  // Constructor for Node - constructor stuff not implemented yet
+  class NodeConstructor : public DOMObject {
   public:
-    NodePrototype() { }
-    virtual KJSO tryGet(const UString &p) const;
+    NodeConstructor(ExecState *) : DOMObject() { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  // Prototype object DOMException
-  class DOMExceptionPrototype : public DOMObject {
+  // Constructor for DOMException - constructor stuff not implemented yet
+  class DOMExceptionConstructor : public DOMObject {
   public:
-    DOMExceptionPrototype() { }
-    virtual KJSO tryGet(const UString &p) const;
+    DOMExceptionConstructor(ExecState *) : DOMObject() { }
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
-    virtual const TypeInfo* typeInfo() const { return &info; }
-    static const TypeInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  KJSO getDOMNode(DOM::Node n);
-  KJSO getDOMNamedNodeMap(DOM::NamedNodeMap m);
-  KJSO getDOMNodeList(DOM::NodeList l);
-  KJSO getDOMDOMImplementation(DOM::DOMImplementation i);
-  KJSO getNodePrototype();
-  KJSO getDOMExceptionPrototype();
+  Value getDOMNode(ExecState *exec, DOM::Node n);
+  Value getDOMNamedNodeMap(ExecState *exec, DOM::NamedNodeMap m);
+  Value getDOMNodeList(ExecState *exec, DOM::NodeList l);
+  Value getDOMDOMImplementation(ExecState *exec, DOM::DOMImplementation i);
+  Object getNodeConstructor(ExecState *exec);
+  Object getDOMExceptionConstructor(ExecState *exec);
+
+  // Internal class, used for the collection return by e.g. document.forms.myinput
+  // when multiple nodes have the same name.
+  class DOMNamedNodesCollection : public DOMObject {
+  public:
+    DOMNamedNodesCollection(ExecState *exec, QValueList<DOM::Node>& nodes );
+    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+  private:
+    QValueList<DOM::Node> m_nodes;
+  };
+
+  class DOMCharacterData : public DOMNode {
+  public:
+    // Build a DOMCharacterData
+    DOMCharacterData(ExecState *exec, DOM::CharacterData d);
+    // Constructor for inherited classes
+    DOMCharacterData(Object proto, DOM::CharacterData d);
+    virtual Value tryGet(ExecState *exec,const UString &propertyName) const;
+    Value getValueProperty(ExecState *, int token) const;
+    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    DOM::CharacterData toData() const { return static_cast<DOM::CharacterData>(node); }
+    enum { Data, Length,
+           SubstringData, AppendData, InsertData, DeleteData, ReplaceData };
+  };
+
+  class DOMText : public DOMCharacterData {
+  public:
+    DOMText(ExecState *exec, DOM::Text t);
+    virtual Value tryGet(ExecState *exec,const UString &propertyName) const;
+    Value getValueProperty(ExecState *, int token) const;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    DOM::Text toText() const { return static_cast<DOM::Text>(node); }
+    enum { SplitText };
+  };
 
 }; // namespace
 #if defined(APPLE_CHANGES) && defined(__OBJC__)

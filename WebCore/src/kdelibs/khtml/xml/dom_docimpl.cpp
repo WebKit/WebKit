@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,68 +19,54 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-#include "dom_docimpl.h"
+#include "dom/dom_exception.h"
 
-#include "dom_node.h"
-#include "dom_elementimpl.h"
-#include "dom_textimpl.h"
-#include "dom_exception.h"
-#include "dom_xmlimpl.h"
-#include "dom2_rangeimpl.h"
-#include "dom2_traversalimpl.h"
-#include "dom2_viewsimpl.h"
-#include "dom2_eventsimpl.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_xmlimpl.h"
+#include "xml/dom2_rangeimpl.h"
+#include "xml/dom2_eventsimpl.h"
+#include "xml/xml_tokenizer.h"
 
+#include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
-#include "misc/helper.h"
-#include "css/csshelper.h"
-
-#include <qstring.h>
-#include <qstack.h>
-#include <qlist.h>
-#include <qpaintdevicemetrics.h>
 #include "misc/htmlhashes.h"
-#include "misc/loader.h"
+#include "misc/helper.h"
+#include "ecma/kjs_proxy.h"
+
+#include <qptrstack.h>
+#include <qpaintdevicemetrics.h>
 #include <kdebug.h>
+#include <kstaticdeleter.h>
 
-#include "htmltokenizer.h"
-#include "xml_tokenizer.h"
-
-#include "rendering/render_object.h"
 #include "rendering/render_root.h"
-#include "rendering/render_style.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
 
-#include <kglobal.h>
-#include <kcharsets.h>
 #include <kglobalsettings.h>
+#include <kstringhandler.h>
 #include "khtml_settings.h"
 
-#include "html_baseimpl.h"
-#include "html_blockimpl.h"
-#include "html_documentimpl.h"
-#include "html_elementimpl.h"
-#include "html_formimpl.h"
-#include "html_headimpl.h"
-#include "html_imageimpl.h"
-#include "html_inlineimpl.h"
-#include "html_listimpl.h"
-#include "html_miscimpl.h"
-#include "html_tableimpl.h"
-#include "html_objectimpl.h"
+#include "html/html_baseimpl.h"
+#include "html/html_blockimpl.h"
+#include "html/html_documentimpl.h"
+#include "html/html_formimpl.h"
+#include "html/html_headimpl.h"
+#include "html/html_imageimpl.h"
+#include "html/html_listimpl.h"
+#include "html/html_miscimpl.h"
+#include "html/html_tableimpl.h"
+#include "html/html_objectimpl.h"
+
+#include <kio/job.h>
 
 using namespace DOM;
 using namespace khtml;
 
-//template class QStack<DOM::NodeImpl>; // needed ?
-
+DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
 DOMImplementationImpl::DOMImplementationImpl()
 {
@@ -91,6 +78,7 @@ DOMImplementationImpl::~DOMImplementationImpl()
 
 bool DOMImplementationImpl::hasFeature ( const DOMString &feature, const DOMString &version )
 {
+    // ### update when we (fully) support the relevant features
     QString lower = feature.string().lower();
     if ((lower == "html" || lower == "xml") &&
         (version == "1.0" || version == "" || version.isNull()))
@@ -99,83 +87,241 @@ bool DOMImplementationImpl::hasFeature ( const DOMString &feature, const DOMStri
         return false;
 }
 
-CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(DOMStringImpl */*title*/, DOMStringImpl */*media*/)
+DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
+                                                             const DOMString &systemId, int &exceptioncode )
 {
-    return 0; // ###
+    // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
+    if (qualifiedName.isNull()) {
+        exceptioncode = DOMException::NAMESPACE_ERR;
+        return 0;
+    }
+
+    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
+    if (!Element::khtmlValidQualifiedName(qualifiedName)) {
+        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
+    }
+
+    // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
+    if (Element::khtmlMalformedQualifiedName(qualifiedName)) {
+        exceptioncode = DOMException::NAMESPACE_ERR;
+        return 0;
+    }
+
+    return new DocumentTypeImpl(this,0,qualifiedName,publicId,systemId);
+}
+
+DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*feature*/) const
+{
+    // ###
+    return 0;
+}
+
+DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
+                                                     const DocumentType &doctype, int &exceptioncode )
+{
+    exceptioncode = 0;
+
+    // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
+    if (qualifiedName.isNull()) {
+        exceptioncode = DOMException::NAMESPACE_ERR;
+        return 0;
+    }
+
+    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
+    if (!Element::khtmlValidQualifiedName(qualifiedName)) {
+        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
+    }
+
+    // NAMESPACE_ERR:
+    // - Raised if the qualifiedName is malformed,
+    // - if the qualifiedName has a prefix and the namespaceURI is null, or
+    // - if the qualifiedName has a prefix that is "xml" and the namespaceURI is different
+    //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
+    int colonpos = -1;
+    uint i;
+    DOMStringImpl *qname = qualifiedName.implementation();
+    for (i = 0; i < qname->l && colonpos < 0; i++) {
+        if ((*qname)[i] == ':')
+            colonpos = i;
+    }
+
+    if (Element::khtmlMalformedQualifiedName(qualifiedName) ||
+        (colonpos >= 0 && namespaceURI.isNull()) ||
+        (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
+         namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
+
+        exceptioncode = DOMException::NAMESPACE_ERR;
+        return 0;
+    }
+
+    DocumentTypeImpl *dtype = static_cast<DocumentTypeImpl*>(doctype.handle());
+    // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
+    // created from a different implementation.
+    if (dtype && (dtype->getDocument() || dtype->implementation() != this)) {
+        exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
+        return 0;
+    }
+
+    // ### this is completely broken.. without a view it will not work (Dirk)
+    DocumentImpl *doc = new DocumentImpl(this, 0);
+
+    // now get the interesting parts of the doctype
+    // ### create new one if not there (currently always there)
+    if (doc->doctype() && dtype)
+        doc->doctype()->copyFrom(*dtype);
+
+    ElementImpl *element = doc->createElementNS(namespaceURI,qualifiedName);
+    doc->appendChild(element,exceptioncode);
+    if (exceptioncode) {
+        delete element;
+        delete doc;
+        return 0;
+    }
+
+    return doc;
+}
+
+CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(DOMStringImpl */*title*/, DOMStringImpl */*media*/,
+                                                              int &/*exceptioncode*/)
+{
+    // ### implement
+    return 0;
+}
+
+DocumentImpl *DOMImplementationImpl::createDocument( KHTMLView *v )
+{
+    return new DocumentImpl(this, v);
+}
+
+HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument( KHTMLView *v )
+{
+    return new HTMLDocumentImpl(this, v);
+}
+
+DOMImplementationImpl *DOMImplementationImpl::instance()
+{
+    if (!m_instance) {
+        m_instance = new DOMImplementationImpl();
+        m_instance->ref();
+    }
+
+    return m_instance;
 }
 
 // ------------------------------------------------------------------------
 
+KStaticDeleter< QPtrList<DocumentImpl> > s_changedDocumentsDeleter;
+QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
+
 // KHTMLView might be 0
-DocumentImpl::DocumentImpl(KHTMLView *v)
+DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : NodeBaseImpl( new DocumentPtr() )
 {
     document->doc = this;
-    m_styleSelector = 0;
+
     m_paintDeviceMetrics = 0;
 
     m_view = v;
 
     if ( v ) {
-        m_docLoader = new DocLoader(v->part());
+        m_docLoader = new DocLoader(v->part(), this );
         setPaintDevice( m_view );
     }
     else
-        m_docLoader = new DocLoader( 0 );
+        m_docLoader = new DocLoader( 0, this );
 
     visuallyOrdered = false;
     m_loadingSheet = false;
+    m_bParsing = false;
+    m_docChanged = false;
     m_sheet = 0;
     m_elemSheet = 0;
     m_tokenizer = 0;
-    m_doctype = new DocumentTypeImpl( docPtr() );
+
+    // ### this should be created during parsing a <!DOCTYPE>
+    // not during construction. Not sure who added that and why (Dirk)
+    m_doctype = new DocumentTypeImpl(_implementation, document,
+                                     DOMString() /* qualifiedName */,
+                                     DOMString() /* publicId */,
+                                     DOMString() /* systemId */);
     m_doctype->ref();
-    m_implementation = new DOMImplementationImpl();
+
+    m_implementation = _implementation;
     m_implementation->ref();
     pMode = Strict;
+    hMode = XHtml;
     m_textColor = "#000000";
     m_elementNames = 0;
     m_elementNameAlloc = 0;
     m_elementNameCount = 0;
+    m_attrNames = 0;
+    m_attrNameAlloc = 0;
+    m_attrNameCount = 0;
+    m_namespaceURIAlloc = 4;
+    m_namespaceURICount = 1;
+    QString xhtml(XHTML_NAMESPACE);
+    m_namespaceURIs = new DOMStringImpl* [m_namespaceURIAlloc];
+    m_namespaceURIs[0] = new DOMStringImpl(xhtml.unicode(), xhtml.length());
+    m_namespaceURIs[0]->ref();
     m_focusNode = 0;
     m_defaultView = new AbstractViewImpl(this);
     m_defaultView->ref();
     m_listenerTypes = 0;
     m_styleSheets = new StyleSheetListImpl;
     m_styleSheets->ref();
+    m_inDocument = true;
+    m_styleSelectorDirty = false;
+
+    m_styleSelector = new CSSStyleSelector( m_view, m_usersheet, m_styleSheets, m_url,
+                                            pMode == Strict );
+    m_windowEventListeners.setAutoDelete(true);
 }
 
 DocumentImpl::~DocumentImpl()
 {
+    if (changedDocuments && m_docChanged)
+        changedDocuments->remove(this);
     document->doc = 0;
     delete m_sheet;
     delete m_styleSelector;
     delete m_docLoader;
     if (m_elemSheet )  m_elemSheet->deref();
     delete m_tokenizer;
-    m_doctype->deref();
+    if (m_doctype)
+        m_doctype->deref();
     m_implementation->deref();
     delete m_paintDeviceMetrics;
 
     if (m_elementNames) {
-        unsigned short id;
-        for (id = 0; id < m_elementNameCount; id++) {
+        for (unsigned short id = 0; id < m_elementNameCount; id++)
             m_elementNames[id]->deref();
-        }
         delete [] m_elementNames;
     }
+    if (m_attrNames) {
+        for (unsigned short id = 0; id < m_attrNameCount; id++)
+            m_attrNames[id]->deref();
+        delete [] m_attrNames;
+    }
+    for (unsigned short id = 0; id < m_namespaceURICount; ++id)
+        m_namespaceURIs[id]->deref();
+    delete [] m_namespaceURIs;
     m_defaultView->deref();
     m_styleSheets->deref();
+    if (m_focusNode)
+        m_focusNode->deref();
 }
 
-const DOMString DocumentImpl::nodeName() const
+
+DocumentTypeImpl *DocumentImpl::doctype() const
 {
-    return "#document";
+    return m_doctype;
 }
 
-unsigned short DocumentImpl::nodeType() const
+DOMImplementationImpl *DocumentImpl::implementation() const
 {
-    return Node::DOCUMENT_NODE;
+    return m_implementation;
 }
 
 ElementImpl *DocumentImpl::documentElement() const
@@ -191,18 +337,133 @@ ElementImpl *DocumentImpl::createElement( const DOMString &name )
     return new XMLElementImpl( document, name.implementation() );
 }
 
-ElementImpl *DocumentImpl::createElementNS ( const DOMString &_namespaceURI, const DOMString &_qualifiedName )
+DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
+{
+    return new DocumentFragmentImpl( docPtr() );
+}
+
+TextImpl *DocumentImpl::createTextNode( const DOMString &data )
+{
+    return new TextImpl( docPtr(), data);
+}
+
+CommentImpl *DocumentImpl::createComment ( const DOMString &data )
+{
+    return new CommentImpl( docPtr(), data );
+}
+
+CDATASectionImpl *DocumentImpl::createCDATASection ( const DOMString &data )
+{
+    return new CDATASectionImpl( docPtr(), data );
+}
+
+ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOMString &target, const DOMString &data )
+{
+    return new ProcessingInstructionImpl( docPtr(),target,data);
+}
+
+Attr DocumentImpl::createAttribute( NodeImpl::Id id )
+{
+    return new AttrImpl(0, new AttributeImpl(id, DOMString("").implementation()));
+}
+
+EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
+{
+    return new EntityReferenceImpl(docPtr(), name.implementation());
+}
+
+NodeImpl *DocumentImpl::importNode( NodeImpl */*importedNode*/, bool /*deep*/,
+                                           int &/*exceptioncode*/ )
+{
+    // ### implement
+    return 0;
+}
+
+ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName )
 {
     ElementImpl *e = 0;
-    // ### somehow set the namespace for html elements to http://www.w3.org/1999/xhtml ?
-    if (_namespaceURI == "http://www.w3.org/1999/xhtml") {
+    if (_namespaceURI == XHTML_NAMESPACE) {
+        // User requested an element in the XHTML namespace - this means we create a HTML element
+        // (elements not in this namespace are treated as normal XML elements)
         QString qName = _qualifiedName.string();
         int colonPos = qName.find(':',0);
-        e = createHTMLElement(colonPos ? qName.mid(colonPos+1) : qName);
+        e = createHTMLElement(qName.mid(colonPos+1));
+        int exceptioncode = 0;
+        if (colonPos >= 0)
+            e->setPrefix(qName.left(colonPos),  exceptioncode);
     }
     if (!e)
         e = new XMLElementImpl( document, _qualifiedName.implementation(), _namespaceURI.implementation() );
+
     return e;
+}
+
+ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
+{
+    QPtrStack<NodeImpl> nodeStack;
+    NodeImpl *current = _first;
+
+    while(1)
+    {
+        if(!current)
+        {
+            if(nodeStack.isEmpty()) break;
+            current = nodeStack.pop();
+            current = current->nextSibling();
+        }
+        else
+        {
+            if(current->isElementNode())
+            {
+                ElementImpl *e = static_cast<ElementImpl *>(current);
+                if(e->getAttribute(ATTR_ID) == elementId)
+                    return e;
+            }
+
+            NodeImpl *child = current->firstChild();
+            if(child)
+            {
+                nodeStack.push(current);
+                current = child;
+            }
+            else
+            {
+                current = current->nextSibling();
+            }
+        }
+    }
+
+    //kdDebug() << "WARNING: *DocumentImpl::getElementById not found " << elementId.string() << endl;
+    return 0;
+}
+
+void DocumentImpl::setTitle(DOMString _title)
+{
+    m_title = _title;
+
+    QString titleStr = m_title.string();
+    titleStr.compose();
+    if ( !view()->part()->parentPart() ) {
+	if (titleStr.isNull() || titleStr.isEmpty()) {
+	    // empty title... set window caption as the URL
+	    KURL url = m_url;
+	    url.setRef(QString::null);
+	    url.setQuery(QString::null);
+	    titleStr = url.url();
+	}
+
+	emit view()->part()->setWindowCaption( KStringHandler::csqueeze( titleStr, 128 ) );
+    }
+}
+
+DOMString DocumentImpl::nodeName() const
+{
+    return "#document";
+}
+
+unsigned short DocumentImpl::nodeType() const
+{
+    return Node::DOCUMENT_NODE;
 }
 
 ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
@@ -334,7 +595,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
         n = new HTMLParagraphElementImpl(docPtr());
         break;
     case ID_PRE:
-        n = new HTMLPreElementImpl(docPtr());
+        n = new HTMLPreElementImpl(docPtr(), id);
         break;
 
 // font stuff
@@ -348,7 +609,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
 // ins/del
     case ID_DEL:
     case ID_INS:
-        n = new HTMLModElementImpl(docPtr(), id);
+        n = new HTMLGenericElementImpl(docPtr(), id);
         break;
 
 // anchor
@@ -411,7 +672,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
         n = new HTMLBRElementImpl(docPtr());
         break;
     case ID_Q:
-        n = new HTMLQuoteElementImpl(docPtr());
+        n = new HTMLGenericElementImpl(docPtr(), id);
         break;
 
 // elements with no special representation in the DOM
@@ -448,6 +709,8 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
     case ID_SUB:
     case ID_SUP:
     case ID_SPAN:
+    case ID_NOBR:
+    case ID_WBR:
         n = new HTMLGenericElementImpl(docPtr(), id);
         break;
 
@@ -465,10 +728,8 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
     return n;
 }
 
-// Used to maintain list of all forms in document
-QString DocumentImpl::registerElement(ElementImpl *e)
+QString DocumentImpl::nextState()
 {
-   m_registeredElements.append(e);
    QString state;
    if (!m_state.isEmpty())
    {
@@ -478,23 +739,15 @@ QString DocumentImpl::registerElement(ElementImpl *e)
    return state;
 }
 
-// Used to maintain list of all forms in document
-void DocumentImpl::removeElement(ElementImpl *e)
+QStringList DocumentImpl::docState()
 {
-   m_registeredElements.removeRef(e);
+    QStringList s;
+    for (NodeImpl *n = this; n != 0; n = n->traverseNextNode()) {
+	if (n->maintainsState())
+	    s.append(n->state());
+    }
+    return s;
 }
-
-QStringList DocumentImpl::state()
-{
-   QStringList s;
-   for( ElementImpl *e = m_registeredElements.first();
-        e; e = m_registeredElements.next())
-   {
-       s.append(e->state());
-   }
-   return s;
-}
-
 
 RangeImpl *DocumentImpl::createRange()
 {
@@ -502,7 +755,7 @@ RangeImpl *DocumentImpl::createRange()
 }
 
 NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned long whatToShow,
-                                                   NodeFilter filter, bool entityReferenceExpansion,
+                                                   NodeFilter &filter, bool entityReferenceExpansion,
                                                    int &exceptioncode)
 {
     if (!root) {
@@ -513,205 +766,171 @@ NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned long
     return new NodeIteratorImpl(root,whatToShow,filter,entityReferenceExpansion);
 }
 
-TreeWalkerImpl *DocumentImpl::createTreeWalker(Node /*root*/, unsigned long /*whatToShow*/, NodeFilter /*filter*/,
+TreeWalkerImpl *DocumentImpl::createTreeWalker(Node /*root*/, unsigned long /*whatToShow*/, NodeFilter &/*filter*/,
                                 bool /*entityReferenceExpansion*/)
 {
+    // ###
     return new TreeWalkerImpl;
 }
 
-void DocumentImpl::applyChanges(bool,bool force)
+void DocumentImpl::setDocumentChanged(bool b)
 {
-    // ### move the following two lines to createSelector????
-    delete m_styleSelector;
-    m_styleSelector = 0;
+    if (!changedDocuments)
+        changedDocuments = s_changedDocumentsDeleter.setObject( new QPtrList<DocumentImpl>() );
 
-    m_styleSelector = new CSSStyleSelector(this);
-    if(!m_render) return;
-
-    recalcStyle();
-
-    // a style change can influence the children, so we just go
-    // through them and trigger an appplyChanges there too
-    NodeImpl *n = _first;
-    while(n) {
-        n->applyChanges(false,force || changed());
-        n = n->nextSibling();
-    }
-
-    // force a relayout of this part of the document
-    m_render->layout();
-    // force a repaint of this part.
-    // ### if updateSize() changes any size, it will already force a
-    // repaint, so we might do double work here...
-    m_render->repaint();
-    setChanged(false);
+    if (b && !m_docChanged)
+        changedDocuments->append(this);
+    else if (!b && m_docChanged)
+        changedDocuments->remove(this);
+    m_docChanged = b;
 }
 
-DocumentTypeImpl *DocumentImpl::doctype() const
+void DocumentImpl::recalcStyle( StyleChange change )
 {
-    return m_doctype;
-}
+//     qDebug("recalcStyle(%p)", this);
+//     QTime qt;
+//     qt.start();
+    if( !m_render ) goto bail_out;
 
-DOMImplementationImpl *DocumentImpl::implementation() const
-{
-    return m_implementation;
-}
+    if ( change == Force ) {
+        RenderStyle* oldStyle = m_render->style();
+        if ( oldStyle ) oldStyle->ref();
+        RenderStyle* _style = new RenderStyle();
+        _style->setDisplay(BLOCK);
+        _style->setVisuallyOrdered( visuallyOrdered );
+        // ### make the font stuff _really_ work!!!!
 
+        QFont f = KGlobalSettings::generalFont();
+        if (m_view) {
+            const KHTMLSettings *settings = m_view->part()->settings();
+            f.setFamily(settings->stdFontName());
 
-void DocumentImpl::setChanged(bool b)
-{
-    if (b)
-        changedNodes.append(this);
-    NodeBaseImpl::setChanged(b);
-}
-
-void DocumentImpl::recalcStyle()
-{
-    QTime qt;
-    qt.start();
-    if( !m_render ) return;
-    setStyle(new RenderStyle());
-    m_style->setDisplay(BLOCK);
-    m_style->setVisuallyOrdered( visuallyOrdered );
-    // ### make the font stuff _really_ work!!!!
-
-    QFont f = KGlobalSettings::generalFont();
-    if (m_view)
-    {
-        const KHTMLSettings *settings = m_view->part()->settings();
-        f.setFamily(settings->stdFontName());
-
-        QValueList<int> fs = settings->fontSizes();
-        float dpiY = 72.; // fallback
-        if ( !khtml::printpainter )
-            dpiY = paintDeviceMetrics()->logicalDpiY();
+            QValueList<int> fs = settings->fontSizes();
+            float dpiY = 72.; // fallback
+            if ( !khtml::printpainter )
+                dpiY = paintDeviceMetrics()->logicalDpiY();
 #ifdef APPLE_CHANGES
-        // FIXME: Is SCREEN_RESOLUTION hack good enough?
-        if ( !khtml::printpainter && dpiY < SCREEN_RESOLUTION )
-            dpiY = SCREEN_RESOLUTION;
+            // FIXME: Is SCREEN_RESOLUTION hack good enough?
+            if ( !khtml::printpainter && dpiY < SCREEN_RESOLUTION )
+                dpiY = SCREEN_RESOLUTION;
 #else /* APPLE_CHANGES not defined */
-        if ( !khtml::printpainter && dpiY < 96 )
-            dpiY = 96.;
+            if ( !khtml::printpainter && dpiY < 96 )
+                dpiY = 96.;
 #endif /* APPLE_CHANGES not defined */
-        float size = fs[3] * dpiY / 72.;
-        if(size < settings->minFontSize())
-            size = settings->minFontSize();
+            float size = fs[3] * dpiY / 72.;
+            if(size < settings->minFontSize())
+                size = settings->minFontSize();
 
-        khtml::setFontSize( f, int(size),  settings, paintDeviceMetrics() );
-        KGlobal::charsets()->setQFont(f, settings->charset());
+            khtml::setFontSize( f, int(size),  settings, paintDeviceMetrics() );
+        }
+
+        //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
+        _style->setFont(f);
+        if ( parseMode() != Strict )
+            _style->setHtmlHacks(true); // enable html specific rendering tricks
+
+        StyleChange ch = diff( _style, oldStyle );
+        if(m_render && ch != NoChange)
+            m_render->setStyle(_style);
+        if ( change != Force )
+            change = ch;
+
+        if (oldStyle)
+            oldStyle->deref();
     }
-
-    //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
-    m_style->setFont(f);
-
-    if ( parseMode() != Strict )
-        m_style->setHtmlHacks(true); // enable html specific rendering tricks
-    if(m_render)
-        m_render->setStyle(m_style);
 
     NodeImpl *n;
     for (n = _first; n; n = n->nextSibling())
-        n->recalcStyle();
+        if ( change>= Inherit || n->hasChangedChild() || n->changed() )
+            n->recalcStyle( change );
     //kdDebug( 6020 ) << "TIME: recalcStyle() dt=" << qt.elapsed() << endl;
-}
 
+    // ### should be done by the rendering tree itself,
+    // this way is rather crude and CPU intensive
+    if ( changed() ) {
+	renderer()->setLayouted( false );
+	renderer()->setMinMaxKnown( false );
+	renderer()->layout();
+	renderer()->repaint();
+    }
 
-
-// ------------------------------------------------------------------------
-
-DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
-{
-    return new DocumentFragmentImpl( docPtr() );
-}
-
-TextImpl *DocumentImpl::createTextNode( const DOMString &data )
-{
-    return new TextImpl( docPtr(), data);
-}
-
-CommentImpl *DocumentImpl::createComment ( const DOMString &data )
-{
-    return new CommentImpl( docPtr(), data );
-}
-
-CDATASectionImpl *DocumentImpl::createCDATASection ( const DOMString &data )
-{
-    return new CDATASectionImpl( docPtr(), data );
-}
-
-ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOMString &target, const DOMString &data )
-{
-    return new ProcessingInstructionImpl( docPtr(),target,data);
-}
-
-AttrImpl *DocumentImpl::createAttribute( const DOMString &name )
-{
-    AttrImpl *attr = new AttrImpl( docPtr(), name );
-    attr->setValue("");
-    return attr;
-}
-
-AttrImpl *DocumentImpl::createAttributeNS( const DOMString &/*_namespaceURI*/, const DOMString &/*_qualifiedName*/ )
-{
-    // ###
-    return 0;
-}
-
-
-EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
-{
-    return new EntityReferenceImpl(docPtr(), name.implementation());
-}
-
-NodeListImpl *DocumentImpl::getElementsByTagName( const DOMString &tagname )
-{
-    return new TagNodeListImpl( this, tagname );
+bail_out:
+    setChanged( false );
+    setHasChangedChild( false );
+    setDocumentChanged( false );
 }
 
 void DocumentImpl::updateRendering()
 {
-//    int o=changedNodes.count();
-//    int a=0;
-    QListIterator<NodeImpl> it(changedNodes);
-    for (; it.current(); ) {
-        // applyChanges removes current from the list
-	    it.current()->applyChanges( true, true );
-//        a++;
+    if (!hasChangedChild()) return;
+
+//     QTime time;
+//     time.start();
+//     kdDebug() << "UPDATERENDERING: "<<endl;
+
+    StyleChange change = NoChange;
+#if 0
+    if ( m_styleSelectorDirty ) {
+	recalcStyleSelector();
+	change = Force;
     }
-//    kdDebug() << "UpdateRendering orig="<<o<<" actual="<<a<<endl;
-    changedNodes.clear();
+#endif
+    recalcStyle( change );
+
+//    kdDebug() << "UPDATERENDERING time used="<<time.elapsed()<<endl;
 }
 
-void DocumentImpl::attach(KHTMLView *w)
+void DocumentImpl::updateDocumentsRendering()
 {
-    m_view = w;
-    if ( m_view ) {
-        m_docLoader->m_part = w->part();
-        setPaintDevice( m_view );
+    if (!changedDocuments)
+        return;
+
+    while ( !changedDocuments->isEmpty() ) {
+        changedDocuments->first();
+        DocumentImpl* it = changedDocuments->take();
+        if (it->isDocumentChanged())
+            it->updateRendering();
     }
-    if(!m_styleSelector) createSelector();
-    m_render = new RenderRoot(w);
-    recalcStyle();
+}
+
+void DocumentImpl::attach()
+{
+    assert(!attached());
+
+    if ( m_view )
+        setPaintDevice( m_view );
+
+    // Create the rendering tree
+    m_render = new RenderRoot(this, m_view);
+    recalcStyle( Force );
+
+    RenderObject* render = m_render;
+    m_render = 0;
 
     NodeBaseImpl::attach();
+    m_render = render;
 }
 
 void DocumentImpl::detach()
 {
+    RenderObject* render = m_render;
+
+    // indicate destruction mode,  i.e. attached() but m_render == 0
+    m_render = 0;
+
     NodeBaseImpl::detach();
 
-    if ( m_render )
-        m_render->detach();
+    if ( render )
+        render->detach();
 
-    m_render = 0;
     m_view = 0;
 }
 
 void DocumentImpl::setVisuallyOrdered()
 {
     visuallyOrdered = true;
-    if(!m_style) return;
-    m_style->setVisuallyOrdered(true);
+    if (m_render)
+        m_render->style()->setVisuallyOrdered(true);
 }
 
 void DocumentImpl::setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep)
@@ -740,33 +959,52 @@ void DocumentImpl::setPaintDevice( QPaintDevice *dev )
 
 void DocumentImpl::open(  )
 {
+    if (parsing()) return;
+
+    if (m_tokenizer)
+        close();
+
     clear();
     m_tokenizer = createTokenizer();
     connect(m_tokenizer,SIGNAL(finishedParsing()),this,SIGNAL(finishedParsing()));
     m_tokenizer->begin();
+
+    if (m_view && m_view->part()->jScript())
+        m_view->part()->jScript()->setSourceFile(m_url,"");
 }
 
 void DocumentImpl::close(  )
 {
-    for ( RenderObject* o = m_render; o; o = o->lastChild() )
-        o->setParsing( false );
+    if (parsing()) return;
+
     if ( m_render )
         m_render->close();
 
     delete m_tokenizer;
     m_tokenizer = 0;
+
+#ifndef APPLE_CHANGES
+    if (m_view)
+        m_view->part()->checkEmitLoadEvent();
+#endif
 }
 
 void DocumentImpl::write( const DOMString &text )
 {
-    if(m_tokenizer)
-        m_tokenizer->write(text.string(), false);
+    write(text.string());
 }
 
 void DocumentImpl::write( const QString &text )
 {
-    if(m_tokenizer)
-        m_tokenizer->write(text, false);
+    if (!m_tokenizer) {
+        open();
+        write(QString::fromLatin1("<html>"));
+    }
+
+    m_tokenizer->write(text, false);
+
+    if (m_view && m_view->part()->jScript())
+        m_view->part()->jScript()->appendSourceFile(m_url,text);
 }
 
 void DocumentImpl::writeln( const DOMString &text )
@@ -789,200 +1027,46 @@ void DocumentImpl::clear()
     removeChildren();
 }
 
-ElementImpl *DocumentImpl::getElementById( const DOMString &elementId )
-{
-    QStack<NodeImpl> nodeStack;
-    NodeImpl *current = _first;
-
-    while(1)
-    {
-        if(!current)
-        {
-            if(nodeStack.isEmpty()) break;
-            current = nodeStack.pop();
-            current = current->nextSibling();
-        }
-        else
-        {
-            if(current->isElementNode())
-            {
-                ElementImpl *e = static_cast<ElementImpl *>(current);
-                if(e->getAttribute(ATTR_ID) == elementId)
-                    return e;
-            }
-
-            NodeImpl *child = current->firstChild();
-            if(child)
-            {
-                nodeStack.push(current);
-                current = child;
-            }
-            else
-            {
-                current = current->nextSibling();
-            }
-        }
-    }
-
-    return 0;
-}
-
-DOMString DocumentImpl::baseURL() const
-{
-    if(view() && !view()->part()->baseURL().isEmpty()) return view()->part()->baseURL().url();
-    return url;
-}
-
 void DocumentImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet)
 {
-    kdDebug( 6030 ) << "HTMLDocument::setStyleSheet()" << endl;
+//    kdDebug( 6030 ) << "HTMLDocument::setStyleSheet()" << endl;
     m_sheet = new CSSStyleSheetImpl(this, url);
     m_sheet->ref();
     m_sheet->parseString(sheet);
     m_loadingSheet = false;
 
-    createSelector();
+    updateStyleSelector();
 }
 
 void DocumentImpl::setUserStyleSheet( const QString& sheet )
 {
     if ( m_usersheet != sheet ) {
         m_usersheet = sheet;
-        applyChanges();
+        recalcStyle( Force );
     }
 }
 
 CSSStyleSheetImpl* DocumentImpl::elementSheet()
 {
     if (!m_elemSheet) {
-        m_elemSheet = new CSSStyleSheetImpl(this, baseURL());
+        m_elemSheet = new CSSStyleSheetImpl(this, baseURL() );
         m_elemSheet->ref();
     }
     return m_elemSheet;
 }
 
-static bool isTransitional(const QString &spec, int start)
+void DocumentImpl::determineParseMode( const QString &/*str*/ )
 {
-    if((spec.find("TRANSITIONAL", start, false ) != -1 ) ||
-       (spec.find("LOOSE", start, false ) != -1 ) ||
-       (spec.find("FRAMESET", start, false ) != -1 ) ||
-       (spec.find("LATIN1", start, false ) != -1 ) ||
-       (spec.find("SYMBOLS", start, false ) != -1 ) ||
-       (spec.find("SPECIAL", start, false ) != -1 ) ) {
-        //kdDebug() << "isTransitional" << endl;
-        return true;
-    }
-    return false;
-}
-
-enum HTMLMode {
-    Html3 = 0,
-    Html4 = 1,
-    XHtml = 2
-};
-
-void DocumentImpl::determineParseMode( const QString &str )
-{
-    // determines the parse mode for HTML
-    // quite some hints here are inspired by the mozilla code.
-
-    // default parsing mode is Loose
-    pMode = Compat;
-
-    ParseMode systemId = Unknown;
-    ParseMode publicId = Unknown;
-    HTMLMode htmlMode = Html3;
-
-    int pos = 0;
-    int doctype = str.find("!doctype", 0, false);
-    if( doctype > 2 )
-        pos = doctype - 2;
-
-    // get the first tag (or the doctype tag
-    int start = str.find('<', pos);
-    int stop = str.find('>', pos);
-    if( start > -1 && stop > start ) {
-        QString spec = str.mid( start + 1, stop - start - 1 );
-        //kdDebug() << "DocumentImpl::determineParseMode dtd=" << spec<< endl;
-        start = 0;
-        int quote = -1;
-        if( doctype != -1 ) {
-            while( (quote = spec.find( "\"", start )) != -1 ) {
-                int quote2 = spec.find( "\"", quote+1 );
-                if(quote2 < 0) quote2 = spec.length();
-                QString val = spec.mid( quote+1, quote2 - quote-1 );
-                //kdDebug() << "DocumentImpl::determineParseMode val = " << val << endl;
-                // find system id
-                pos = val.find("http://www.w3.org/tr/", 0, false);
-                if ( pos != -1 ) {
-                    // loose or strict dtd?
-                    if ( val.find("strict.dtd", pos, false) != -1 )
-                        systemId = Strict;
-                    else if (isTransitional(val, pos))
-                        systemId = Transitional;
-                }
-
-                // find public id
-                pos = val.find("//dtd", 0, false );
-                if ( pos != -1 ) {
-                    if( val.find( "xhtml", pos+6, false ) != -1 ) {
-                        htmlMode = XHtml;
-                        if( isTransitional( val, pos ) )
-                            publicId = Transitional;
-                        else
-                            publicId = Strict;
-                    } else if ( val.find( "15445:1999", pos+6 ) != -1 ) {
-                        htmlMode = Html4;
-                        publicId = Strict;
-                    } else {
-                        int tagPos = val.find( "html", pos+6, false );
-                        if( tagPos == -1 )
-                            tagPos = val.find( "hypertext markup", pos+6, false );
-                        if ( tagPos != -1 ) {
-                            tagPos = val.find(QRegExp("[0-9]"), tagPos );
-                            int version = val.mid( tagPos, 1 ).toInt();
-                            //kdDebug() << "DocumentImpl::determineParseMode tagPos = " << tagPos << " version=" << version << endl;
-                            if( version > 3 ) {
-                                htmlMode = Html4;
-                                publicId = isTransitional( val, tagPos ) ? Transitional : Strict;
-                            }
-                        }
-                    }
-                }
-                start = quote2 + 1;
-            }
-        }
-
-        if( systemId == publicId )
-            pMode = publicId;
-        else if ( systemId == Unknown )
-            pMode = htmlMode == Html4 ? Compat : publicId;
-        else if ( publicId == Transitional && systemId == Strict ) {
-            if ( htmlMode == Html3 )
-                pMode = Compat;
-            else
-                pMode = Strict;
-        } else
-            pMode = Compat;
-
-        if ( htmlMode == XHtml )
-            pMode = Strict;
-    }
-    //kdDebug() << "DocumentImpl::determineParseMode: publicId =" << publicId << " systemId = " << systemId << endl;
-    //kdDebug() << "DocumentImpl::determineParseMode: htmlMode = " << htmlMode<< endl;
-    if( pMode == Strict )
-        kdDebug(6020) << " using strict parseMode" << endl;
-    else if (pMode == Compat )
-        kdDebug(6020) << " using compatibility parseMode" << endl;
-    else
-        kdDebug(6020) << " using transitional parseMode" << endl;
+    // For xML documents, use string parse mode
+    pMode = Strict;
+    kdDebug(6020) << " using strict parseMode" << endl;
 }
 
 // Please see if there`s a possibility to merge that code
 // with the next function and getElementByID().
-NodeImpl *DocumentImpl::findElement( int id )
+NodeImpl *DocumentImpl::findElement( Id id )
 {
-    QStack<NodeImpl> nodeStack;
+    QPtrStack<NodeImpl> nodeStack;
     NodeImpl *current = _first;
 
     while(1)
@@ -1014,206 +1098,332 @@ NodeImpl *DocumentImpl::findElement( int id )
     return 0;
 }
 
-ElementImpl *DocumentImpl::findSelectableElement(NodeImpl *start, bool forward)
+NodeImpl *DocumentImpl::nextFocusNode(NodeImpl *fromNode)
 {
-    if (!start)
-        start = forward?_first:_last;
-    if (!start)
-        return 0;
-    if (forward)
-        while(1)
-        {
-            if (!start->isSelectable() && start->firstChild())
-                start = start->firstChild();
-            else if (start->nextSibling())
-                start = start->nextSibling();
-            else // find the next sibling of the first parent that has a nextSibling
-            {
-                NodeImpl *pa = start;
-                while (pa)
-                {
-                    pa = pa->parentNode();
-                    if (!pa)
-                        return 0;
-                    if (pa->nextSibling())
-                    {
-                        start = pa->nextSibling();
-                        pa = 0;
-                    }
-                }
-            }
-            if (start->isElementNode() && start->isSelectable())
-                return static_cast<ElementImpl*>(start);
-        }
-    else
-        while (1)
-        {
-            if (!start->isSelectable() && start->lastChild())
-                start = start->lastChild();
-            else if (start->previousSibling())
-                start = start->previousSibling();
-            else
-            {
-                NodeImpl *pa = start;
-                while (pa)
-                {
-                  // find the previous sibling of the first parent that has a prevSibling
-                    pa = pa->parentNode();
-                    if (!pa)
-                        return 0;
-                    if (pa->previousSibling())
-                    {
-                        start = pa->previousSibling();
-                        pa = 0;
-                        break;
-                    }
-                }
-            }
-            if (start->isElementNode() && start->isSelectable())
-                return static_cast<ElementImpl*>(start);
-        }
-    kdFatal(6000) << "some error in findElement\n";
-}
+    unsigned short fromTabIndex;
 
+    if (!fromNode) {
+	// No starting node supplied; begin with the top of the document
+	NodeImpl *n;
 
-int DocumentImpl::findHighestTabIndex()
-{
-    NodeImpl *n=this;
-    NodeImpl *next=0;
-    ElementImpl *a;
-    int retval=-1;
-    int tmpval;
-    while(n)
-    {
-        //find out tabindex of current element, if availiable
-        if (n->isElementNode())
-        {
-            a=static_cast<ElementImpl *>(n);
-            tmpval=a->tabIndex();
-            if (tmpval>retval)
-                retval=tmpval;
-        }
-        //iterate to next element.
-        if (!n->isSelectable() && n->firstChild())
-            n=n->firstChild();
-        else if (n->nextSibling())
-            n=n->nextSibling();
-        else
-        {
-            next=0;
-            while(!next)
-            {
-                n=n->parentNode();
-                if (!n)
-                    return retval;
-                next=n->nextSibling();
-            }
-            n=next;
-        }
+	int lowestTabIndex = 65535;
+	for (n = this; n != 0; n = n->traverseNextNode()) {
+	    if (n->isSelectable()) {
+		if ((n->tabIndex() > 0) && (n->tabIndex() < lowestTabIndex))
+		    lowestTabIndex = n->tabIndex();
+	    }
+	}
+
+	if (lowestTabIndex == 65535)
+	    lowestTabIndex = 0;
+
+	// Go to the first node in the document that has the desired tab index
+	for (n = this; n != 0; n = n->traverseNextNode()) {
+	    if (n->isSelectable() && (n->tabIndex() == lowestTabIndex))
+		return n;
+	}
+
+	return 0;
     }
-    return retval;
-}
+    else {
+	fromTabIndex = fromNode->tabIndex();
+    }
 
-ElementImpl *DocumentImpl::findNextLink(ElementImpl *cur, bool forward)
-{
-    int curTabIndex = (cur?cur->tabIndex():(forward?1:-1));
+    if (fromTabIndex == 0) {
+	// Just need to find the next selectable node after fromNode (in document order) that doesn't have a tab index
+	NodeImpl *n = fromNode->traverseNextNode();
+	while (n && !(n->isSelectable() && n->tabIndex() == 0))
+	    n = n->traverseNextNode();
+	return n;
+    }
+    else {
+	// Find the lowest tab index out of all the nodes except fromNode, that is greater than or equal to fromNode's
+	// tab index. For nodes with the same tab index as fromNode, we are only interested in those that come after
+	// fromNode in document order.
+	// If we don't find a suitable tab index, the next focus node will be one with a tab index of 0.
+	unsigned short lowestSuitableTabIndex = 65535;
+	NodeImpl *n;
 
-    switch(curTabIndex)
-    {
-    case -1:
-        return notabindex(cur, forward);
-    case 0:
-        return tabindexzero(cur, forward);
-    default:
-        return intabindex(cur, forward);
+	bool reachedFromNode = false;
+	for (n = this; n != 0; n = n->traverseNextNode()) {
+	    if (n->isSelectable() &&
+		((reachedFromNode && (n->tabIndex() >= fromTabIndex)) ||
+		 (!reachedFromNode && (n->tabIndex() > fromTabIndex))) &&
+		(n->tabIndex() < lowestSuitableTabIndex) &&
+		(n != fromNode)) {
+
+		// We found a selectable node with a tab index at least as high as fromNode's. Keep searching though,
+		// as there may be another node which has a lower tab index but is still suitable for use.
+		lowestSuitableTabIndex = n->tabIndex();
+	    }
+
+	    if (n == fromNode)
+		reachedFromNode = true;
+	}
+
+	if (lowestSuitableTabIndex == 65535) {
+	    // No next node with a tab index -> just take first node with tab index of 0
+	    NodeImpl *n = this;
+	    while (n && !(n->isSelectable() && n->tabIndex() == 0))
+		n = n->traverseNextNode();
+	    return n;
+	}
+
+	// Search forwards from fromNode
+	for (n = fromNode->traverseNextNode(); n != 0; n = n->traverseNextNode()) {
+	    if (n->isSelectable() && (n->tabIndex() == lowestSuitableTabIndex))
+		return n;
+	}
+
+	// The next node isn't after fromNode, start from the beginning of the document
+	for (n = this; n != fromNode; n = n->traverseNextNode()) {
+	    if (n->isSelectable() && (n->tabIndex() == lowestSuitableTabIndex))
+		return n;
+	}
+
+	assert(false); // should never get here
+	return 0;
     }
 }
 
-ElementImpl *DocumentImpl::findLink(ElementImpl *n, bool forward, int tabIndexHint)
+NodeImpl *DocumentImpl::previousFocusNode(NodeImpl *fromNode)
 {
-    // tabIndexHint is the tabIndex that should be found.
-    // if tabIndex is -1, items containing tabIndex are skipped.
+    NodeImpl *lastNode = this;
+    while (lastNode->lastChild())
+	lastNode = lastNode->lastChild();
 
-    //  kdDebug(6000)<<"DocumentImpl:findLink: Node: "<<n<<" forward: "<<(forward?"true":"false")<<" tabIndexHint: "<<tabIndexHint<<"\n";
+    if (!fromNode) {
+	// No starting node supplied; begin with the very last node in the document
+	NodeImpl *n;
 
-    int maxTabIndex;
+	int highestTabIndex = 0;
+	for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+	    if (n->isSelectable()) {
+		if (n->tabIndex() == 0)
+		    return n;
+		else if (n->tabIndex() > highestTabIndex)
+		    highestTabIndex = n->tabIndex();
+	    }
+	}
 
-    if (forward) maxTabIndex = findHighestTabIndex();
-    else maxTabIndex = -1;
+	// No node with a tab index of 0; just go to the last node with the highest tab index
+	for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+	    if (n->isSelectable() && (n->tabIndex() == highestTabIndex))
+		return n;
+	}
 
-    do
-    {
-        n = findSelectableElement(n, forward);
-        // this is alright even for non-tabindex-searches,
-        // because DOM::NodeImpl::tabIndex() defaults to -1.
-    } while (n && (n->tabIndex()!=tabIndexHint));
+	return 0;
+    }
+    else {
+	unsigned short fromTabIndex = fromNode->tabIndex();
+
+	if (fromTabIndex == 0) {
+	    // Find the previous selectable node before fromNode (in document order) that doesn't have a tab index
+	    NodeImpl *n = fromNode->traversePreviousNode();
+	    while (n && !(n->isSelectable() && n->tabIndex() == 0))
+		n = n->traversePreviousNode();
+	    if (n)
+		return n;
+
+	    // No previous nodes with a 0 tab index, go to the last node in the document that has the highest tab index
+	    int highestTabIndex = 0;
+	    for (n = this; n != 0; n = n->traverseNextNode()) {
+		if (n->isSelectable() && (n->tabIndex() > highestTabIndex))
+		    highestTabIndex = n->tabIndex();
+	    }
+
+	    if (highestTabIndex == 0)
+		return 0;
+
+	    for (n = lastNode; n != 0; n = n->traversePreviousNode()) {
+		if (n->isSelectable() && (n->tabIndex() == highestTabIndex))
+		    return n;
+	    }
+
+	    assert(false); // should never get here
+	    return 0;
+	}
+	else {
+	    // Find the lowest tab index out of all the nodes except fromNode, that is less than or equal to fromNode's
+	    // tab index. For nodes with the same tab index as fromNode, we are only interested in those before
+	    // fromNode.
+	    // If we don't find a suitable tab index, then there will be no previous focus node.
+	    unsigned short highestSuitableTabIndex = 0;
+	    NodeImpl *n;
+
+	    bool reachedFromNode = false;
+	    for (n = this; n != 0; n = n->traverseNextNode()) {
+		if (n->isSelectable() &&
+		    ((!reachedFromNode && (n->tabIndex() <= fromTabIndex)) ||
+		     (reachedFromNode && (n->tabIndex() < fromTabIndex)))  &&
+		    (n->tabIndex() > highestSuitableTabIndex) &&
+		    (n != fromNode)) {
+
+		    // We found a selectable node with a tab index no higher than fromNode's. Keep searching though, as
+		    // there may be another node which has a higher tab index but is still suitable for use.
+		    highestSuitableTabIndex = n->tabIndex();
+		}
+
+		if (n == fromNode)
+		    reachedFromNode = true;
+	    }
+
+	    if (highestSuitableTabIndex == 0) {
+		// No previous node with a tab index. Since the order specified by HTML is nodes with tab index > 0
+		// first, this means that there is no previous node.
+		return 0;
+	    }
+
+	    // Search backwards from fromNode
+	    for (n = fromNode->traversePreviousNode(); n != 0; n = n->traversePreviousNode()) {
+		if (n->isSelectable() && (n->tabIndex() == highestSuitableTabIndex))
+		    return n;
+	    }
+	    // The previous node isn't before fromNode, start from the end of the document
+	    for (n = lastNode; n != fromNode; n = n->traversePreviousNode()) {
+		if (n->isSelectable() && (n->tabIndex() == highestSuitableTabIndex))
+		    return n;
+	    }
+
+	    assert(false); // should never get here
+	    return 0;
+	}
+    }
+}
+
+int DocumentImpl::nodeAbsIndex(NodeImpl *node)
+{
+    assert(node->getDocument() == this);
+
+    int absIndex = 0;
+    for (NodeImpl *n = node; n != this; n = n->traversePreviousNode())
+	absIndex++;
+    return absIndex;
+}
+
+NodeImpl *DocumentImpl::nodeWithAbsIndex(int absIndex)
+{
+    NodeImpl *n = this;
+    for (int i = 0; n && (i < absIndex); i++) {
+	n = n->traverseNextNode();
+    }
     return n;
 }
 
-ElementImpl *DocumentImpl::notabindex(ElementImpl *cur, bool forward)
+void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &content)
 {
-    // REQ: n must be after the current node and its tabindex must be -1
-    if ((cur = findLink(cur, forward, -1)))
-        return cur;
+    assert(!equiv.isNull() && !content.isNull());
 
-    if (forward)
-        return 0;
-    else
-        return tabindexzero(cur, forward);
-}
+    KHTMLView *v = getDocument()->view();
 
-ElementImpl *DocumentImpl::intabindex(ElementImpl *cur, bool forward)
-{
-    short tmptabindex;
-    short maxtabindex = findHighestTabIndex();
-    short increment=(forward?1:-1);
-    if (cur)
+    if(strcasecmp(equiv, "refresh") == 0 && v->part()->metaRefreshEnabled())
     {
-        tmptabindex = cur->tabIndex();
-    }
-    else tmptabindex=(forward?1:maxtabindex);
+        // get delay and url
+        QString str = content.string().stripWhiteSpace();
+        int pos = str.find(QRegExp("[;,]"));
+        if ( pos == -1 )
+            pos = str.find(QRegExp("[ \t]"));
 
-    while(tmptabindex>0 && tmptabindex<=maxtabindex)
+        if (pos == -1) // There can be no url (David)
+        {
+            bool ok = false;
+            int delay = 0;
+	    delay = content.implementation()->toInt(&ok);
+            if(ok) v->part()->scheduleRedirection(delay, v->part()->url().url());
+        } else {
+            int delay = 0;
+            bool ok = false;
+
+	    DOMStringImpl* s = content.implementation()->substring(0, pos);
+	    delay = s->toInt(&ok);
+	    delete s;
+
+            pos++;
+            while(pos < (int)str.length() && str[pos].isSpace()) pos++;
+            str = str.mid(pos);
+            if(str.find("url", 0,  false ) == 0)  str = str.mid(3);
+            str = str.stripWhiteSpace();
+            if ( str.length() && str[0] == '=' ) str = str.mid( 1 ).stripWhiteSpace();
+            str = parseURL( DOMString(str) ).string();
+            if ( ok )
+                v->part()->scheduleRedirection(delay, getDocument()->completeURL( str ));
+        }
+    }
+    else if(strcasecmp(equiv, "expires") == 0)
     {
-        if ((cur = findLink(cur, forward, tmptabindex)))
-            return cur;
-        tmptabindex+=increment;
+        QString str = content.string().stripWhiteSpace();
+        time_t expire_date = str.toLong();
+        KURL url = v->part()->url();
+        if (m_docLoader)
+            m_docLoader->setExpireDate(expire_date);
+    }
+    else if(strcasecmp(equiv, "pragma") == 0 || strcasecmp(equiv, "cache-control") == 0)
+    {
+        QString str = content.string().lower().stripWhiteSpace();
+        KURL url = v->part()->url();
+        if ((str == "no-cache") && url.protocol().startsWith("http"))
+        {
+           KIO::http_update_cache(url, true, 0);
+        }
+    }
+    else if( (strcasecmp(equiv, "set-cookie") == 0))
+    {
+        // ### make setCookie work on XML documents too; e.g. in case of <html:meta .....>
+        HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(this);
+        d->setCookie(content);
+    }
+}
+
+bool DocumentImpl::prepareMouseEvent( int _x, int _y, MouseEvent *ev )
+{
+    if ( m_render ) {
+        assert(m_render->isRoot());
+        RenderObject::NodeInfo renderInfo(false, ev->type == MousePress);
+        bool isInside = m_render->nodeAtPoint(renderInfo, _x, _y, 0, 0);
+        ev->innerNode = renderInfo.innerNode();
+
+        if (renderInfo.URLElement()) {
+            assert(renderInfo.URLElement()->isElementNode());
+            ElementImpl* e =  static_cast<ElementImpl*>(renderInfo.URLElement());
+            DOMString href = khtml::parseURL(e->getAttribute(ATTR_HREF));
+            DOMString target = e->getAttribute(ATTR_TARGET);
+
+            if (!target.isNull() && !href.isNull())
+                ev->url = DOMString("target://") + target + DOMString("/#") + href;
+            else
+                ev->url = href;
+        }
+
+        updateRendering();
+
+        return isInside;
     }
 
-    if (forward)
-        return tabindexzero(cur, forward);
-    else
-        return 0;
-}
 
-ElementImpl *DocumentImpl::tabindexzero(ElementImpl *cur, bool forward)
-{
-    //REQ: tabindex of result must be 0 and it must be after the current node ;
-    if ((cur = findLink(cur, forward, 0)))
-        return cur;
-
-    if (forward)
-        return notabindex(cur, forward);
-    else
-        return intabindex(cur, forward);
-}
-
-bool DocumentImpl::prepareMouseEvent( int _x, int _y,
-                                      int, int,
-                                      MouseEvent *ev )
-{
-    NodeImpl *n = documentElement();
-    if ( n )
-        return n->prepareMouseEvent( _x, _y, 0, 0, ev );
-    else
-        return false;
+    return false;
 }
 
 // DOM Section 1.1.1
 bool DocumentImpl::childAllowed( NodeImpl *newChild )
 {
-// ### maximum of one Element
-// ### maximum of one DocumentType
+    // Documents may contain a maximum of one Element child
+    if (newChild->nodeType() == Node::ELEMENT_NODE) {
+        NodeImpl *c;
+        for (c = firstChild(); c; c = c->nextSibling()) {
+            if (c->nodeType() == Node::ELEMENT_NODE)
+                return false;
+        }
+    }
+
+    // Documents may contain a maximum of one DocumentType child
+    if (newChild->nodeType() == Node::DOCUMENT_TYPE_NODE) {
+        NodeImpl *c;
+        for (c = firstChild(); c; c = c->nextSibling()) {
+            if (c->nodeType() == Node::DOCUMENT_TYPE_NODE)
+                return false;
+        }
+    }
+
     return childTypeAllowed(newChild->nodeType());
 }
 
@@ -1231,32 +1441,175 @@ bool DocumentImpl::childTypeAllowed( unsigned short type )
     }
 }
 
-
-NodeImpl *DocumentImpl::cloneNode ( bool /*deep*/, int &exceptioncode )
+NodeImpl *DocumentImpl::cloneNode ( bool /*deep*/ )
 {
-    exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+    // Spec says cloning Document nodes is "implementation dependent"
+    // so we do not support it...
     return 0;
 }
 
-unsigned short DocumentImpl::elementId(DOMStringImpl *_name)
+NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly)
 {
-    unsigned short id = 0;
-    // note: this does not take namespaces into account, as it is only really used for css at the moment
+    // Each document maintains a mapping of attrname -> id for every attr name
+    // encountered in the document.
+    // For attrnames without a prefix (no qualified element name) and without matching
+    // namespace, the value defined in misc/htmlattrs.h is used.
+    NodeImpl::Id id = 0;
 
-    if (_name->isLower()) // use the html id instead (if one exists)
-        id = khtml::getTagID(DOMString(_name).string().ascii(), _name->l);
-    if (id)
-        return id;
+    // First see if it's a HTML attribute name
+    QConstString n(_name->s, _name->l);
+    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
+        // we're in HTML namespace if we know the tag.
+        // xhtml is lower case - case sensitive, easy to implement
+        if ( htmlMode() == XHtml && (id = khtml::getAttrID(n.string().ascii(), _name->l)) )
+            return id;
+        // compatibility: upper case - case insensitive
+        if ( htmlMode() != XHtml && (id = khtml::getAttrID(n.string().lower().ascii(), _name->l )) )
+            return id;
 
-    // first try and find the element
+        // ok, the fast path didn't work out, we need the full check
+    }
+
+    // now lets find out the namespace
+    if (_namespaceURI) {
+        DOMString nsU(_namespaceURI);
+        bool found = false;
+        // ### yeah, this is lame. use a dictionary / map instead
+        for (unsigned short ns = 0; ns < m_namespaceURICount; ++ns)
+            if (nsU == DOMString(m_namespaceURIs[ns])) {
+                id |= ns << 16;
+                found = true;
+                break;
+            }
+
+        if (!found && !readonly) {
+            // something new, add it
+            if (m_namespaceURICount >= m_namespaceURIAlloc) {
+                m_namespaceURIAlloc += 32;
+                DOMStringImpl **newURIs = new DOMStringImpl* [m_namespaceURIAlloc];
+                for (unsigned short i = 0; i < m_namespaceURICount; i++)
+                    newURIs[i] = m_namespaceURIs[i];
+                delete [] m_namespaceURIs;
+                m_namespaceURIs = newURIs;
+            }
+            m_namespaceURIs[m_namespaceURICount++] = _namespaceURI;
+            _namespaceURI->ref();
+            id |= m_namespaceURICount << 16;
+        }
+    }
+
+    // Look in the m_attrNames array for the name
+    // ### yeah, this is lame. use a dictionary / map instead
+    DOMString nme(n.string());
+    // compatibility mode has to store upper case
+    if (htmlMode() != XHtml) nme = nme.upper();
+    for (id = 0; id < m_attrNameCount; id++)
+        if (DOMString(m_attrNames[id]) == nme)
+            return ATTR_LAST_ATTR+id;
+
+    // unknown
+    if (readonly) return 0;
+
+    // Name not found in m_attrNames, so let's add it
+    // ### yeah, this is lame. use a dictionary / map instead
+    if (m_attrNameCount+1 > m_attrNameAlloc) {
+        m_attrNameAlloc += 100;
+        DOMStringImpl **newNames = new DOMStringImpl* [m_attrNameAlloc];
+        if (m_attrNames) {
+            unsigned short i;
+            for (i = 0; i < m_attrNameCount; i++)
+                newNames[i] = m_attrNames[i];
+            delete [] m_attrNames;
+        }
+        m_attrNames = newNames;
+    }
+
+    id = m_attrNameCount++;
+    m_attrNames[id] = nme.implementation();
+    m_attrNames[id]->ref();
+
+    return ATTR_LAST_ATTR+id;
+}
+
+DOMString DocumentImpl::attrName(NodeImpl::Id _id) const
+{
+    if (_id >= ATTR_LAST_ATTR)
+        return m_attrNames[_id-ATTR_LAST_ATTR];
+    else {
+        // ### put them in a cache
+        if (getDocument()->htmlMode() == DocumentImpl::XHtml)
+            return getAttrName(_id).lower();
+        else
+            return getAttrName(_id);
+    }
+}
+
+NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly)
+{
+    if (!_name) return 0;
+    // Each document maintains a mapping of tag name -> id for every tag name encountered
+    // in the document.
+    NodeImpl::Id id = 0;
+
+    // First see if it's a HTML element name
+    QConstString n(_name->s, _name->l);
+    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
+        // we're in HTML namespace if we know the tag.
+        // xhtml is lower case - case sensitive, easy to implement
+        if ( htmlMode() == XHtml && (id = khtml::getTagID(n.string().ascii(), _name->l)) )
+            return id;
+        // compatibility: upper case - case insensitive
+        if ( htmlMode() != XHtml && (id = khtml::getTagID(n.string().lower().ascii(), _name->l )) )
+            return id;
+
+        // ok, the fast path didn't work out, we need the full check
+    }
+
+    // now lets find out the namespace
+    if (_namespaceURI) {
+        DOMString nsU(_namespaceURI);
+        bool found = false;
+        // ### yeah, this is lame. use a dictionary / map instead
+        for (unsigned short ns = 0; ns < m_namespaceURICount; ++ns)
+            if (nsU == DOMString(m_namespaceURIs[ns])) {
+                id |= ns << 16;
+                found = true;
+                break;
+            }
+
+        if (!found && !readonly) {
+            // something new, add it
+            if (m_namespaceURICount >= m_namespaceURIAlloc) {
+                m_namespaceURIAlloc += 32;
+                DOMStringImpl **newURIs = new DOMStringImpl* [m_namespaceURIAlloc];
+                for (unsigned short i = 0; i < m_namespaceURICount; i++)
+                    newURIs[i] = m_namespaceURIs[i];
+                delete [] m_namespaceURIs;
+                m_namespaceURIs = newURIs;
+            }
+            m_namespaceURIs[m_namespaceURICount++] = _namespaceURI;
+            _namespaceURI->ref();
+            id |= m_namespaceURICount << 16;
+        }
+    }
+
+    // Look in the m_elementNames array for the name
+    // ### yeah, this is lame. use a dictionary / map instead
+    DOMString nme(n.string());
+    // compatibility mode has to store upper case
+    if (htmlMode() != XHtml) nme = nme.upper();
     for (id = 0; id < m_elementNameCount; id++)
-        if (!strcmp(m_elementNames[id],_name))
-            return id+1000;
+        if (DOMString(m_elementNames[id]) == nme)
+            return ID_LAST_TAG+id;
 
-    // we don't have it yet, assign it an id
+    // unknown
+    if (readonly) return 0;
+
+    // Name not found in m_elementNames, so let's add it
     if (m_elementNameCount+1 > m_elementNameAlloc) {
         m_elementNameAlloc += 100;
         DOMStringImpl **newNames = new DOMStringImpl* [m_elementNameAlloc];
+        // ### yeah, this is lame. use a dictionary / map instead
         if (m_elementNames) {
             unsigned short i;
             for (i = 0; i < m_elementNameCount; i++)
@@ -1265,98 +1618,169 @@ unsigned short DocumentImpl::elementId(DOMStringImpl *_name)
         }
         m_elementNames = newNames;
     }
+
     id = m_elementNameCount++;
-    m_elementNames[id] = _name;
-    _name->ref();
-    // we add 1000 to the XML element id to avoid clashes with HTML element ids
-    return id+1000;
+    m_elementNames[id] = nme.implementation();
+    m_elementNames[id]->ref();
+
+    return ID_LAST_TAG+id;
 }
 
-DOMStringImpl *DocumentImpl::elementName(unsigned short _id) const
+DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
 {
-    if (_id >= 1000)
-        return m_elementNames[_id-1000];
-    else
-        return getTagName(_id).implementation()->lower();
+    if (_id >= ID_LAST_TAG)
+        return m_elementNames[_id-ID_LAST_TAG];
+    else {
+        // ### put them in a cache
+        if (getDocument()->htmlMode() == DocumentImpl::XHtml)
+            return getTagName(_id).lower();
+        else
+            return getTagName(_id);
+    }
 }
 
+
+DOMStringImpl* DocumentImpl::namespaceURI(NodeImpl::Id _id) const
+{
+    if (_id < ID_LAST_TAG)
+        return htmlMode() == XHtml ? m_namespaceURIs[0] : 0;
+
+    unsigned short ns = _id >> 16;
+
+    if (!ns) return 0;
+
+    return m_namespaceURIs[ns-1];
+}
 
 StyleSheetListImpl* DocumentImpl::styleSheets()
 {
     return m_styleSheets;
 }
 
-void DocumentImpl::createSelector()
+void DocumentImpl::updateStyleSelector()
 {
-    QList<StyleSheetImpl> oldStyleSheets = m_styleSheets->styleSheets;
+    recalcStyleSelector();
+    recalcStyle(Force);
+#if 0
+
+    m_styleSelectorDirty = true;
+#endif
+    if ( renderer() ) {
+        renderer()->setLayouted( false );
+        renderer()->setMinMaxKnown( false );
+    }
+}
+
+void DocumentImpl::recalcStyleSelector()
+{
+    if ( !m_render || !attached() ) return;
+
+    QPtrList<StyleSheetImpl> oldStyleSheets = m_styleSheets->styleSheets;
     m_styleSheets->styleSheets.clear();
     NodeImpl *n;
     for (n = this; n; n = n->traverseNextNode()) {
     	StyleSheetImpl *sheet = 0;
-    	if (n->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
-	    sheet = static_cast<ProcessingInstructionImpl*>(n)->sheet();
-    	else if (n->id() == ID_LINK)
-	    sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
-    	else if (n->id() == ID_STYLE)
-	    sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
-    	else if (n->id() == ID_BODY)
-	    sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();
 
-	if (sheet) {
-	    sheet->ref();
-	    m_styleSheets->styleSheets.append(sheet);
-	}
-	if (isHTMLDocument() && n->id() == ID_BODY)
-	    break;
+        if (n->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
+        {
+            // Processing instruction (XML documents only)
+            ProcessingInstructionImpl* pi = static_cast<ProcessingInstructionImpl*>(n);
+            sheet = pi->sheet();
+            if (!sheet && !pi->localHref().isEmpty())
+            {
+                // Processing instruction with reference to an element in this document - e.g.
+                // <?xml-stylesheet href="#mystyle">, with the element
+                // <foo id="mystyle">heading { color: red; }</foo> at some location in
+                // the document
+                ElementImpl* elem = getElementById(pi->localHref());
+                if (elem) {
+                    DOMString sheetText("");
+                    NodeImpl *c;
+                    for (c = elem->firstChild(); c; c = c->nextSibling()) {
+                        if (c->nodeType() == Node::TEXT_NODE || c->nodeType() == Node::CDATA_SECTION_NODE)
+                            sheetText += c->nodeValue();
+                    }
+
+                    CSSStyleSheetImpl *cssSheet = new CSSStyleSheetImpl(this);
+                    cssSheet->parseString(sheetText);
+                    pi->setStyleSheet(cssSheet);
+                    sheet = cssSheet;
+                }
+            }
+
+        }
+        else if (n->id() == ID_LINK) {
+            // <LINK> element
+	    sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
+        }
+        else if (n->id() == ID_STYLE) {
+            // <STYLE> element
+	    sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
+        }
+        else if (n->id() == ID_BODY) {
+            // <BODY> element (doesn't contain styles as such but vlink="..." and friends
+            // are treated as style declarations)
+	    sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();
+        }
+
+        if (sheet) {
+            sheet->ref();
+            m_styleSheets->styleSheets.append(sheet);
+        }
+
+        // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
+        // can stop searching here.
+        if (isHTMLDocument() && n->id() == ID_BODY)
+            break;
     }
-    QListIterator<StyleSheetImpl> it(oldStyleSheets);
+
+    // De-reference all the stylesheets in the old list
+    QPtrListIterator<StyleSheetImpl> it(oldStyleSheets);
     for (; it.current(); ++it)
 	it.current()->deref();
-    applyChanges(true,true);
+
+    // Create a new style selector
+    delete m_styleSelector;
+    m_styleSelector = new CSSStyleSelector( m_view, m_usersheet, m_styleSheets, m_url,
+                                            pMode == Strict );
+
+    m_styleSelectorDirty = false;
 }
 
-void DocumentImpl::setFocusNode(ElementImpl *n)
+void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 {
-    // ### add check for same Document
-    if (m_focusNode != n)
-    {
-        if (m_focusNode)
-        {
-            if (m_focusNode->active()) m_focusNode->setActive(false);
+    // Make sure newFocusNode is actually in this document
+    if (newFocusNode && (newFocusNode->getDocument() != this))
+        return;
+
+    if (m_focusNode != newFocusNode) {
+        // Remove focus from the existing focus node (if any)
+        if (m_focusNode) {
+            if (m_focusNode->active())
+                m_focusNode->setActive(false);
+
             m_focusNode->setFocus(false);
+	    m_focusNode->dispatchHTMLEvent(EventImpl::BLUR_EVENT,false,false);
+	    m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSOUT_EVENT);
 
-	    int exceptioncode;
-
-	    UIEventImpl *ue = new UIEventImpl(EventImpl::DOMFOCUSOUT_EVENT,
-	                                      true,false,defaultView(),
-					      0);
-
-	    ue->ref();
-	    m_focusNode->dispatchEvent(ue,exceptioncode);
-	    ue->deref();
+            if ((m_focusNode == this) && m_focusNode->hasOneRef()) {
+                m_focusNode->deref(); // deletes this
+                return;
+            }
+	    else {
+                m_focusNode->deref();
+            }
         }
-        m_focusNode = n;
-        //kdDebug(6020)<<"DOM::DocumentImpl::setFocusNode("<<n<<")"<<endl;
-        if (n)
-	{
-	    int exceptioncode;
 
-	    UIEventImpl *ue = new UIEventImpl(EventImpl::DOMFOCUSIN_EVENT,
-	                                      true,false,defaultView(),
-					      0);
-
-	    ue->ref();
-	    m_focusNode->dispatchEvent(ue,exceptioncode);
-	    ue->deref();
-
-            n->setFocus();
+        // Set focus on the new node
+        m_focusNode = newFocusNode;
+        if (m_focusNode) {
+	    m_focusNode->ref();
+	    m_focusNode->dispatchHTMLEvent(EventImpl::FOCUS_EVENT,false,false);
+	    m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSIN_EVENT);
+            m_focusNode->setFocus();
 	}
     }
-}
-
-ElementImpl *DocumentImpl::focusNode()
-{
-    return m_focusNode;
 }
 
 void DocumentImpl::attachNodeIterator(NodeIteratorImpl *ni)
@@ -1371,7 +1795,7 @@ void DocumentImpl::detachNodeIterator(NodeIteratorImpl *ni)
 
 void DocumentImpl::notifyBeforeNodeRemoval(NodeImpl *n)
 {
-    QListIterator<NodeIteratorImpl> it(m_nodeIterators);
+    QPtrListIterator<NodeIteratorImpl> it(m_nodeIterators);
     for (; it.current(); ++it)
         it.current()->notifyBeforeNodeRemoval(n);
 }
@@ -1405,10 +1829,11 @@ CSSStyleDeclarationImpl *DocumentImpl::getOverrideStyle(ElementImpl */*elt*/, DO
 void DocumentImpl::defaultEventHandler(EventImpl *evt)
 {
     // if any html event listeners are registered on the window, then dispatch them here
-    QListIterator<RegisteredEventListener> it(m_windowEventListeners);
-    Event ev = evt;
+    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    Event ev(evt);
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id()) {
+            evt->setCurrentTarget(this);
             it.current()->listener->handleEvent(ev);
 	    return;
 	}
@@ -1417,16 +1842,20 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
 
 void DocumentImpl::setWindowEventListener(int id, EventListener *listener)
 {
+    // If we already have it we don't want removeWindowEventListener to delete it
+    if (listener)
+	listener->ref();
     removeWindowEventListener(id);
     if (listener) {
 	RegisteredEventListener *rl = new RegisteredEventListener(static_cast<EventImpl::EventId>(id),listener,false);
 	m_windowEventListeners.append(rl);
+	listener->deref();
     }
 }
 
 EventListener *DocumentImpl::getWindowEventListener(int id)
 {
-    QListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
 	if (it.current()->id == id) {
 	    return it.current()->listener;
@@ -1438,7 +1867,7 @@ EventListener *DocumentImpl::getWindowEventListener(int id)
 
 void DocumentImpl::removeWindowEventListener(int id)
 {
-    QListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
 	if (it.current()->id == id) {
 	    m_windowEventListeners.removeRef(it.current());
@@ -1463,7 +1892,7 @@ DocumentFragmentImpl::DocumentFragmentImpl(const DocumentFragmentImpl &other)
 {
 }
 
-const DOMString DocumentFragmentImpl::nodeName() const
+DOMString DocumentFragmentImpl::nodeName() const
 {
   return "#document-fragment";
 }
@@ -1490,48 +1919,50 @@ bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
     }
 }
 
-NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep, int &exceptioncode )
+NodeImpl *DocumentFragmentImpl::cloneNode ( bool deep )
 {
     DocumentFragmentImpl *clone = new DocumentFragmentImpl( docPtr() );
     if (deep)
-        cloneChildNodes(clone,exceptioncode);
+        cloneChildNodes(clone);
     return clone;
 }
 
 
 // ----------------------------------------------------------------------------
 
-DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc) : NodeImpl(doc)
+DocumentTypeImpl::DocumentTypeImpl(DOMImplementationImpl *implementation, DocumentPtr *doc,
+                                   const DOMString &qualifiedName, const DOMString &publicId,
+                                   const DOMString &systemId)
+    : NodeImpl(doc), m_implementation(implementation),
+      m_qualifiedName(qualifiedName), m_publicId(publicId), m_systemId(systemId)
 {
-    m_entities = new GenericRONamedNodeMapImpl();
-    m_entities->ref();
-    m_notations = new GenericRONamedNodeMapImpl();
-    m_notations->ref();
+    m_implementation->ref();
+
+    m_entities = 0;
+    m_notations = 0;
+
+    // if doc is 0, it is not attached to a document and / or
+    // therefore does not provide entities or notations. (DOM Level 3)
 }
 
 DocumentTypeImpl::~DocumentTypeImpl()
 {
-    m_entities->deref();
-    m_notations->deref();
+    m_implementation->deref();
+    if (m_entities)
+        m_entities->deref();
+    if (m_notations)
+        m_notations->deref();
 }
 
-const DOMString DocumentTypeImpl::name() const
+void DocumentTypeImpl::copyFrom(const DocumentTypeImpl& other)
 {
-    // ###
-    return 0;
+    m_qualifiedName = other.m_qualifiedName;
+    m_publicId = other.m_publicId;
+    m_systemId = other.m_systemId;
+    m_subset = other.m_subset;
 }
 
-NamedNodeMapImpl *DocumentTypeImpl::entities() const
-{
-    return m_entities;
-}
-
-NamedNodeMapImpl *DocumentTypeImpl::notations() const
-{
-    return m_notations;
-}
-
-const DOMString DocumentTypeImpl::nodeName() const
+DOMString DocumentTypeImpl::nodeName() const
 {
     return name();
 }
@@ -1547,13 +1978,12 @@ bool DocumentTypeImpl::childTypeAllowed( unsigned short /*type*/ )
     return false;
 }
 
-NodeImpl *DocumentTypeImpl::cloneNode ( bool /*deep*/, int &exceptioncode )
+NodeImpl *DocumentTypeImpl::cloneNode ( bool /*deep*/ )
 {
-    exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+    // Spec says cloning Document nodes is "implementation dependent"
+    // so we do not support it...
     return 0;
 }
 
 
 #include "dom_docimpl.moc"
-
-

@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,28 +16,83 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _NUMBER_OBJECT_H_
 #define _NUMBER_OBJECT_H_
 
-#include "object.h"
-#include "function.h"
+#include "internal.h"
+#include "function_object.h"
 
 namespace KJS {
 
-  class NumberObject : public ConstructorImp {
+  class NumberInstanceImp : public ObjectImp {
   public:
-    NumberObject(const Object& funcProto, const Object &numProto);
-    virtual KJSO get(const UString &p) const;
-    Completion execute(const List &);
-    Object construct(const List &);
+    NumberInstanceImp(const Object &proto);
+
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
   };
 
-  class NumberPrototype : public ObjectImp {
+  /**
+   * @internal
+   *
+   * The initial value of Number.prototype (and thus all objects created
+   * with the Number constructor
+   */
+  class NumberPrototypeImp : public NumberInstanceImp {
   public:
-    NumberPrototype(const Object& proto);
-    virtual KJSO get(const UString &p) const;
+    NumberPrototypeImp(ExecState *exec,
+                       ObjectPrototypeImp *objProto,
+                       FunctionPrototypeImp *funcProto);
+  };
+
+  /**
+   * @internal
+   *
+   * Class to implement all methods that are properties of the
+   * Number.prototype object
+   */
+  class NumberProtoFuncImp : public InternalFunctionImp {
+  public:
+    NumberProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                       int i, int len);
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
+    enum { ToString, ToLocaleString, ValueOf };
+  private:
+    int id;
+  };
+
+  /**
+   * @internal
+   *
+   * The initial value of the the global variable's "Number" property
+   */
+  class NumberObjectImp : public InternalFunctionImp {
+  public:
+    NumberObjectImp(ExecState *exec,
+                    FunctionPrototypeImp *funcProto,
+                    NumberPrototypeImp *numberProto);
+
+    virtual bool implementsConstruct() const;
+    virtual Object construct(ExecState *exec, const List &args);
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
+    Value get(ExecState *exec, const UString &p) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
+
+    Completion execute(const List &);
+    Object construct(const List &);
   };
 
 }; // namespace

@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,6 +16,8 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #include <stdio.h>
@@ -28,60 +31,13 @@
 
 using namespace KJS;
 
-int Lookup::find(const struct HashTable *table,
-		 const UChar *c, unsigned int len)
-{
-  // we only know about version 1 so far
-  if (table->type != 1) {
-    fprintf(stderr, "Unknown hash table version.\n");
-    return -1;
-  }
-
-  int h = hash(c, len) % table->hashSize;
-  const HashEntry *e = &table->entries[h];
-
-  // empty bucket ?
-  if (!e->c)
-    return -1;
-
-  do {
-    // compare strings
-#ifdef KJS_SWAPPED_CHAR
-    /* TODO: not exactly as optimized as the other version ... */
-    if (len == e->len) {
-	const UChar *u = (const UChar*)e->c;
-	const UChar *c2 = c;
-	unsigned int i;
-	for (i = 0; i < len; i++, u++, c2++)
-	    if (!(*c2 == UChar(u->low(), u->high()))) // reverse byte order
-		goto next;
-        return e->value;
-    }
-next:
-#else
-    if ((len == e->len) && (memcmp(c, e->c, len * sizeof(UChar)) == 0))
-	return e->value;
-#endif
-    // try next bucket
-    e = e->next;
-  } while (e);
-
-  return -1;
-}
-
-int Lookup::find(const struct HashTable *table, const UString &s)
-{
-  return find(table, s.data(), s.size());
-}
-
-int Lookup::find(const struct HashTable2 *table,
-		 const UChar *c, unsigned int len)
+const HashEntry* Lookup::findEntry( const struct HashTable *table,
+                              const UChar *c, unsigned int len )
 {
   if (table->type != 2) {
-    fprintf(stderr, "Unknown hash table version.\n");
-    return -1;
+    fprintf(stderr, "KJS: Unknown hash table version.\n");
+    return 0;
   }
-
   char *ascii = new char[len+1];
   unsigned int i;
   for(i = 0; i < len; i++, c++) {
@@ -93,29 +49,44 @@ int Lookup::find(const struct HashTable2 *table,
   ascii[i] = '\0';
 
   int h = hash(ascii) % table->hashSize;
-  const HashEntry2 *e = &table->entries[h];
+  const HashEntry *e = &table->entries[h];
 
   // empty bucket ?
   if (!e->s) {
     delete [] ascii;
-    return -1;
+    return 0;
   }
 
   do {
     // compare strings
     if (strcmp(ascii, e->s) == 0) {
       delete [] ascii;
-      return e->value;
+      return e;
     }
     // try next bucket
     e = e->next;
   } while (e);
 
   delete [] ascii;
+  return 0;
+}
+
+const HashEntry* Lookup::findEntry( const struct HashTable *table,
+                                const UString &s )
+{
+  return findEntry( table, s.data(), s.size() );
+}
+
+int Lookup::find(const struct HashTable *table,
+		 const UChar *c, unsigned int len)
+{
+  const HashEntry *entry = findEntry( table, c, len );
+  if (entry)
+    return entry->value;
   return -1;
 }
 
-int Lookup::find(const struct HashTable2 *table, const UString &s)
+int Lookup::find(const struct HashTable *table, const UString &s)
 {
   return find(table, s.data(), s.size());
 }

@@ -114,3 +114,8 @@ QPalette &QPalette::operator=(const QPalette &other)
     d->disabled = other.d->disabled;
     return *this;
 }
+
+bool QPalette::operator==(QPalette const &other) const
+{
+    return d->active == other.d->active && d->inactive == other.d->inactive && d->disabled == other.d->disabled;
+}

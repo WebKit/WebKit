@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
@@ -15,37 +16,65 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  $Id$
  */
 
 #ifndef _OBJECT_OBJECT_H_
 #define _OBJECT_OBJECT_H_
 
-#include "object.h"
-#include "function.h"
+#include "internal.h"
 
 namespace KJS {
 
-  class ObjectObject : public ConstructorImp {
+  class FunctionPrototypeImp;
+
+  /**
+   * @internal
+   *
+   * The initial value of Object.prototype (and thus all objects created
+   * with the Object constructor
+   */
+  class ObjectPrototypeImp : public ObjectImp {
   public:
-    ObjectObject(const Object &funcProto, const Object &objProto);
-    Completion execute(const List &);
-    Object construct(const List &);
+    ObjectPrototypeImp(ExecState *exec, FunctionPrototypeImp *funcProto);
   };
 
-  class ObjectPrototype : public ObjectImp {
+  /**
+   * @internal
+   *
+   * Class to implement all methods that are properties of the
+   * Object.prototype object
+   */
+  class ObjectProtoFuncImp : public InternalFunctionImp {
   public:
-    ObjectPrototype();
-    bool hasProperty(const UString &p, bool recursive) const;
-    KJSO get(const UString &p) const;
+    ObjectProtoFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto,
+                       int i, int len);
+
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
     enum { ToString, ValueOf };
-  };
-
-  class ObjectProtoFunc : public InternalFunctionImp {
-  public:
-    ObjectProtoFunc(int i);
-    Completion execute(const List &);
   private:
     int id;
+  };
+
+  /**
+   * @internal
+   *
+   * The initial value of the the global variable's "Object" property
+   */
+  class ObjectObjectImp : public InternalFunctionImp {
+  public:
+
+    ObjectObjectImp(ExecState *exec,
+                    ObjectPrototypeImp *objProto,
+                    FunctionPrototypeImp *funcProto);
+
+    virtual bool implementsConstruct() const;
+    virtual Object construct(ExecState *exec, const List &args);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
   };
 
 }; // namespace

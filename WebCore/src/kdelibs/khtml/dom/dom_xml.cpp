@@ -22,12 +22,12 @@
  */
 
 
-#include "dom_xml.h"
-#include "dom_string.h"
-#include "dom_textimpl.h"
-#include "dom_xmlimpl.h"
-using namespace DOM;
+#include "dom/dom_xml.h"
+#include "dom/dom_exception.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom_xmlimpl.h"
 
+using namespace DOM;
 
 CDATASection::CDATASection()
 {
@@ -39,8 +39,8 @@ CDATASection::CDATASection(const CDATASection &) : Text()
 
 CDATASection &CDATASection::operator = (const Node &other)
 {
-    if(other.nodeType() != CDATA_SECTION_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != CDATA_SECTION_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -73,8 +73,8 @@ Entity::Entity(const Entity &) : Node()
 
 Entity &Entity::operator = (const Node &other)
 {
-    if(other.nodeType() != ENTITY_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != ENTITY_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -94,20 +94,26 @@ Entity::~Entity()
 
 DOMString Entity::publicId() const
 {
-    if (impl) return ((EntityImpl*)impl)->publicId();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((EntityImpl*)impl)->publicId();
 }
 
 DOMString Entity::systemId() const
 {
-    if (impl) return ((EntityImpl*)impl)->systemId();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((EntityImpl*)impl)->systemId();
 }
 
 DOMString Entity::notationName() const
 {
-    if (impl) return ((EntityImpl*)impl)->notationName();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((EntityImpl*)impl)->notationName();
 }
 
 Entity::Entity(EntityImpl *i) : Node(i)
@@ -126,8 +132,8 @@ EntityReference::EntityReference(const EntityReference &) : Node()
 
 EntityReference &EntityReference::operator = (const Node &other)
 {
-    if(other.nodeType() != ENTITY_REFERENCE_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != ENTITY_REFERENCE_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -161,8 +167,8 @@ Notation::Notation(const Notation &) : Node()
 
 Notation &Notation::operator = (const Node &other)
 {
-    if(other.nodeType() != NOTATION_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != NOTATION_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -182,14 +188,18 @@ Notation::~Notation()
 
 DOMString Notation::publicId() const
 {
-    if (impl) return ((EntityImpl*)impl)->publicId();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((NotationImpl*)impl)->publicId();
 }
 
 DOMString Notation::systemId() const
 {
-    if (impl) return ((EntityImpl*)impl)->systemId();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((NotationImpl*)impl)->systemId();
 }
 
 Notation::Notation(NotationImpl *i) : Node(i)
@@ -210,8 +220,8 @@ ProcessingInstruction::ProcessingInstruction(const ProcessingInstruction &)
 
 ProcessingInstruction &ProcessingInstruction::operator = (const Node &other)
 {
-    if(other.nodeType() != PROCESSING_INSTRUCTION_NODE)
-    {
+    NodeImpl* ohandle = other.handle();
+    if (!ohandle || ohandle->nodeType() != PROCESSING_INSTRUCTION_NODE) {
 	impl = 0;
 	return *this;
     }
@@ -231,19 +241,29 @@ ProcessingInstruction::~ProcessingInstruction()
 
 DOMString ProcessingInstruction::target() const
 {
-    if (impl) return ((ProcessingInstructionImpl*)impl)->target();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((ProcessingInstructionImpl*)impl)->target();
 }
 
 DOMString ProcessingInstruction::data() const
 {
-    if (impl) return ((ProcessingInstructionImpl*)impl)->data();
-    return DOMString();
+    if (!impl)
+	return DOMString(); // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return ((ProcessingInstructionImpl*)impl)->data();
 }
 
 void ProcessingInstruction::setData( const DOMString &_data )
 {
-    if (impl) ((ProcessingInstructionImpl*)impl)->setData(_data);
+    if (!impl)
+	return; // ### enable throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    int exceptioncode = 0;
+    ((ProcessingInstructionImpl*)impl)->setData(_data, exceptioncode);
+    if (exceptioncode)
+	throw DOMException(exceptioncode);
 }
 
 ProcessingInstruction::ProcessingInstruction(ProcessingInstructionImpl *i) : Node(i)

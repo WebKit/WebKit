@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -25,10 +25,11 @@
 #ifndef HTML_DOCUMENTIMPL_H
 #define HTML_DOCUMENTIMPL_H
 
-#include "dom_docimpl.h"
+#include "xml/dom_docimpl.h"
 #include "misc/loader_client.h"
 
 #include <qmap.h>
+
 class KHTMLView;
 class QString;
 
@@ -47,31 +48,31 @@ class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectCli
 {
     Q_OBJECT
 public:
-    HTMLDocumentImpl();
-    HTMLDocumentImpl(KHTMLView *v);
-
+    HTMLDocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v = 0);
     ~HTMLDocumentImpl();
 
     virtual bool isHTMLDocument() const { return true; }
 
     DOMString referrer() const;
     DOMString domain() const;
+    void setDomain( const DOMString &newDomain, bool force = false ); // not part of the DOM
+    DOMString lastModified() const;
+    DOMString cookie() const;
+    void setCookie( const DOMString &);
 
     HTMLElementImpl *body();
     void setBody(HTMLElementImpl *_body);
 
     virtual Tokenizer *createTokenizer();
-    NodeListImpl *getElementsByName ( const DOMString &elementName );
-
-    virtual void detach();
 
     virtual bool childAllowed( NodeImpl *newChild );
 
-    void setOnload( const QString &script ) { onloadScript = script; }
-    void setOnunload( const QString &script ) { onUnloadScript = script; }
     virtual ElementImpl *createElement ( const DOMString &tagName );
 
     HTMLMapElementImpl* getMap(const DOMString& url_);
+
+    virtual void determineParseMode( const QString &str );
+    virtual void close();
 
 protected:
     HTMLElementImpl *bodyElement;
@@ -80,31 +81,14 @@ protected:
     friend class HTMLImageElementImpl;
     QMap<QString,HTMLMapElementImpl*> mapMap;
 
-    QString onloadScript;
-    QString onUnloadScript;
-
 protected slots:
     /**
      * Repaints, so that all links get the proper color
      */
     void slotHistoryChanged();
+private:
+    mutable DOMString m_domain;
 };
-
-// ###  this is a temporary class just to get us going with XHTML
-// eventually HTMLTokenizer will be able to detect if the document is XHTML or HTML
-class XHTMLDocumentImpl : public HTMLDocumentImpl
-{
-    Q_OBJECT
-public:
-
-    XHTMLDocumentImpl();
-    XHTMLDocumentImpl(KHTMLView *v);
-    ~XHTMLDocumentImpl();
-
-    virtual Tokenizer *createTokenizer();
-
-};
-
 
 }; //namespace
 

@@ -25,15 +25,19 @@
 
 #include <kdebug.h>
 
-#include "render_applet.h"
-#include "../khtmlview.h"
-#include "../khtml_part.h"
+#include "rendering/render_applet.h"
+#include "rendering/render_root.h"
+#include "xml/dom_docimpl.h"
+#include "khtmlview.h"
+#include "khtml_part.h"
 
 #include <qlabel.h>
-#include <qscrollview.h>
 
-#include <java/kjavaappletwidget.h>
-#include <misc/htmltags.h>
+#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
+
+#include "java/kjavaappletwidget.h"
+#include "misc/htmltags.h"
+#include "html/html_objectimpl.h"
 
 #ifdef APPLE_CHANGES
 #include <WCJavaAppletWidget.h>
@@ -41,16 +45,15 @@
 using namespace khtml;
 using namespace DOM;
 
-RenderApplet::RenderApplet(QScrollView *view,
-                           QMap<QString, QString> args, HTMLElementImpl *applet)
-    : RenderWidget(view)
+RenderApplet::RenderApplet(HTMLElementImpl *applet, QMap<QString, QString> args )
+    : RenderWidget(applet)
 {
     // init RenderObject attributes
     setInline(true);
-    m_applet = applet;
 
 #ifdef APPLE_CHANGES
-    NodeImpl *child = m_applet->firstChild();
+    // FIXME:MERGE Is this needed any more?
+    NodeImpl *child = element()->firstChild();
     while(child) {
         if(child->id() == ID_PARAM) {
             HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
@@ -61,7 +64,7 @@ RenderApplet::RenderApplet(QScrollView *view,
     setQWidget( new WCJavaAppletWidget(args));
 #else /* APPLE_CHANGES not defined */
     KJavaAppletContext *context = 0;
-    KHTMLView *_view = static_cast<KHTMLView*>(view);
+    KHTMLView *_view = applet->getDocument()->view();
     if ( _view ) {
         KHTMLPart *part = _view->part();
         context = part->createJavaContext();
@@ -69,7 +72,7 @@ RenderApplet::RenderApplet(QScrollView *view,
 
     if ( context ) {
         //kdDebug(6100) << "RenderApplet::RenderApplet, setting QWidget" << endl;
-        setQWidget( new KJavaAppletWidget(context, view->viewport()) );
+        setQWidget( new KJavaAppletWidget(context, _view->viewport()) );
         processArguments(args);
     }
 #endif /* APPLE_CHANGES not defined */
@@ -86,8 +89,7 @@ short RenderApplet::intrinsicWidth() const
     if( m_widget )
         rval = ((KJavaAppletWidget*)(m_widget))->sizeHint().width();
 
-    //kdDebug(6100) << "RenderApplet::intrinsicWidth(), returning " << rval << endl;
-    return rval;
+    return rval > 10 ? rval : 50;
 }
 
 int RenderApplet::intrinsicHeight() const
@@ -97,15 +99,15 @@ int RenderApplet::intrinsicHeight() const
     if( m_widget )
         rval = m_widget->sizeHint().height();
 
-    //kdDebug(6100) << "RenderApplet::intrinsicHeight(), returning " << rval << endl;
-    return rval;
+    return rval > 10 ? rval : 50;
 }
 
 void RenderApplet::layout()
 {
     //kdDebug(6100) << "RenderApplet::layout" << endl;
 
-    if(layouted()) return;
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
 
     calcWidth();
     calcHeight();
@@ -116,7 +118,7 @@ void RenderApplet::layout()
 #else /* APPLE_CHANGES not defined */
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
     if ( tmp ) {
-        NodeImpl *child = m_applet->firstChild();
+        NodeImpl *child = element()->firstChild();
 
         while(child) {
 
@@ -159,13 +161,13 @@ void RenderApplet::processArguments(QMap<QString, QString> args)
     }
 }
 
-RenderEmptyApplet::RenderEmptyApplet(QScrollView *view)
-  : RenderWidget( view )
+RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
+  : RenderWidget(node)
 {
     // init RenderObject attributes
     setInline(true);
 
-    QLabel* label = new QLabel(i18n("Java Applet is not loaded. (Java interpreter disabled)"), view->viewport());
+    QLabel* label = new QLabel(i18n("Java Applet is not loaded. (Java interpreter disabled)"), node->getDocument()->view()->viewport());
     label->setAlignment( Qt::AlignCenter | Qt::WordBreak );
     setQWidget(label);
 }
@@ -182,8 +184,8 @@ int RenderEmptyApplet::intrinsicHeight() const
 
 void RenderEmptyApplet::layout()
 {
-    if(layouted())
-        return;
+    KHTMLAssert( !layouted() );
+    KHTMLAssert( minMaxKnown() );
 
     calcWidth();
     calcHeight();
@@ -197,3 +199,4 @@ void RenderEmptyApplet::layout()
 
     setLayouted();
 }
+#endif
