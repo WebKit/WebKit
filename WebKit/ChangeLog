@@ -1,3 +1,9 @@
+2002-04-19  Richard Williamson  <rjw@apple.com>
+
+        Updated comments to reflect new API.
+        
+	* WebView.subproj/IFLocationChangeHandler.h:
+
 2002-04-19  Darin Adler  <darin@apple.com>
 
 	* Plugins.subproj/IFPluginView.h: Re-add the attributes and values arrays,

@@ -15,28 +15,22 @@
    ============================================================================= 
    
     IFLocationChangeHandlers track changes to a frames location.  This includes 
-    a change that may result in a download rather than a change to the frame
-    document.
+    changes that may result in a download, or a resource being opened externally.
+    rather than a change to the frame document.
     
-    Handlers are created by IFWebController's provideLocationChangeHandlerForFrame:
+    Handlers are created by IFWebController's provideLocationChangeHandlerForFrame:andURL:
     method.
     
-    Handlers may veto a change by return NO from
-    
-        - (BOOL)locationWillChangeTo: (NSURL *)url;
-
     A location change that results in changing a frame's document will trigger the
     following messages, sent in order:
    
         - (void)locationChangeStarted;
-        - (void)locationChangeCommitted;
+        - (void)requestContentPolicyForMIMEType: (NSString *)type;
+        - (void)locationChangeCommitted;  // Only sent for the IFContentPolicyShow policy.
         - (void)locationChangeDone: (IFError *)error;
-
-    A location change that results in a download will trigger the following messages,
-    sent in order:
-    
-        - (void)locationChangeStarted;
-        - (void) downloadingWithHandler:(IFDownloadHandler *)downloadHandler;
+   
+   None of the IFLocationChangeHandler methods should block for any extended period
+   of time.
    
    ============================================================================= 
 */
@@ -59,6 +53,11 @@ typedef enum {
 
 - (void)locationChangeStarted;
 
+// Sent after locationChangeStarted.
+// Implementations typically call haveContentPolicy:forLocationChangeHandler: on IFWebController
+// after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
+- (void)requestContentPolicyForMIMEType: (NSString *)type;
+
 - (void)locationChangeCommitted;
 
 - (void)locationChangeDone: (IFError *)error;
@@ -67,13 +66,7 @@ typedef enum {
 
 - (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource;
 
-// Sent once the IFContentType of the location handler
-// has been determined.  Should not block.
-// Implementations typically call haveContentPolicy:forLocationChangeHandler: immediately, although
-// may call it later after showing a user dialog.
-- (void)requestContentPolicyForMIMEType: (NSString *)type;
-
-// We may have different errors that cause the the policy to be un-implementable, i.e.
+// Sent when errors are encountered with an un-implementable policy, i.e.
 // file i/o failure, launch services failure, type mismatches, etc.
 - (void)unableToImplementContentPolicy: (IFError *)error;
 
