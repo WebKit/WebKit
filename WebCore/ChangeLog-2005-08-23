@@ -1,3 +1,16 @@
+2002-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- fixed 3134558 -- REGRESSION: Lord of the Rings site problems
+
+	This regression was caused when we fixed the abcnews.com problem (3124933).
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::createEmptyDocument):
+	Despite its name, this function was never intended to overwrite an existing document with
+	an empty document. When we changed it do do the creation in a better way, we lost the
+	check that prevents it from doing anything at all if we already have a document.
+
 2002-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

@@ -666,7 +666,12 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
 
 void KWQKHTMLPart::createEmptyDocument()
 {
-    [_bridge loadEmptyDocumentSynchronously];
+    // Although it's not completely clear from the name of this function,
+    // it does nothing if we already have a document, and just creates an
+    // empty one if we have no document at all.
+    if (!d->m_doc) {
+        [_bridge loadEmptyDocumentSynchronously];
+    }
 }
 
 void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
