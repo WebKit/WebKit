@@ -23,6 +23,7 @@
 - (void)dealloc
 {
     [image release];
+    [super dealloc];
 }
 
 - (IFImageRenderer *)image

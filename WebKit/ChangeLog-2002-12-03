@@ -1,5 +1,11 @@
 2002-07-13  Darin Adler  <darin@apple.com>
 
+        * Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView dealloc]):
+        * WebView.subproj/IFImageRepresentation.m: (-[IFImageRepresentation dealloc]):
+	Fix leaks by adding calls to [super dealloc].
+
+2002-07-13  Darin Adler  <darin@apple.com>
+
         * Misc.subproj/IFNSEventExtras.h: Removed.
         * Misc.subproj/IFNSEventExtras.m: Removed.
         * WebKit.pbproj/project.pbxproj: Removed IFNSEventExtras.*.

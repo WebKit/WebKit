@@ -44,6 +44,7 @@ static NSImage *image = nil;
 {
     [pluginPage release];
     [mimeType release];
+    [super dealloc];
 }
 
 - (void)drawRect:(NSRect)rect {
