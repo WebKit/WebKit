@@ -2,6 +2,22 @@
 
         Reviewed by Darin
 
+        Changed cookie-related class names:
+
+        WebCookie -> NSHTTPCookie
+        WebCookiePrivate -> NSHTTPCookieInternal     
+        WebCookieManager -> NSHTTPCookieStorage      
+        WebCookieManagerPrivate -> NSHTTPCookieStorageInternal     
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesEnabled]):
+        (-[WebCookieAdapter cookiesForURL:]):
+        (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
+
+2003-04-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         Changed file names for these classes. The contents
 	of the files themselves remain unchanged.
 

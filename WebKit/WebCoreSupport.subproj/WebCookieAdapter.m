@@ -26,7 +26,7 @@
 {
     BOOL result;
 
-    WebCookieAcceptPolicy acceptPolicy = [[WebCookieManager sharedCookieManager] acceptPolicy];
+    WebCookieAcceptPolicy acceptPolicy = [[NSHTTPCookieStorage sharedCookieManager] acceptPolicy];
     result = (acceptPolicy == WebCookieAcceptPolicyAlways || acceptPolicy == WebCookieAcceptPolicyOnlyFromMainDocumentDomain);
     
     return result;
@@ -34,12 +34,12 @@
 
 - (NSString *)cookiesForURL:(NSString *)URL
 {
-    return [[[WebCookieManager sharedCookieManager] cookieRequestHeaderFieldsForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
+    return [[[NSHTTPCookieStorage sharedCookieManager] cookieRequestHeaderFieldsForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
 }
 
 - (void)setCookies:(NSString *)cookies forURL:(NSString *)URL policyBaseURL:(NSString *)policyBaseURL
 {
-    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeader:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
+    [[NSHTTPCookieStorage sharedCookieManager] setCookiesFromResponseHeader:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
         forURL:[NSURL _web_URLWithString:URL] policyBaseURL:[NSURL _web_URLWithString:policyBaseURL]];    
 }
 
