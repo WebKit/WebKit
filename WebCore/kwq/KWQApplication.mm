@@ -30,12 +30,16 @@
 #import "_KWQOwner.h"
 
 // FIXME: 
-static QPalette DEFAULT_PALETTE = QPalette();
-static QSize DEFAULT_SIZE = QSize(0,0);
+static QPalette *DEFAULT_PALETTE = NULL;
+static QSize *DEFAULT_SIZE = NULL;
 
 QPalette QApplication::palette(const QWidget *p)
 {
-    return DEFAULT_PALETTE;
+    if (DEFAULT_PALETTE == NULL) {
+        DEFAULT_PALETTE = new QPalette();
+    }
+
+    return *DEFAULT_PALETTE;
 }
 
 
@@ -58,7 +62,12 @@ int QApplication::startDragDistance()
 QSize QApplication::globalStrut()
 {
     _logNotYetImplemented();
-    return DEFAULT_SIZE;
+
+    if (DEFAULT_SIZE == NULL) {
+        DEFAULT_SIZE = new QSize(0,0);
+    }
+
+    return *DEFAULT_SIZE;
 }
 
 

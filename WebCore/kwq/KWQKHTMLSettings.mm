@@ -26,7 +26,7 @@
 #include <khtml_settings.h>
 
 // FIXME: remove this hack
-static const QString DEFAULT_ENCODING = NSSTRING_TO_QSTRING(@"NSISOLatin1StringEncoding");
+static const QString *DEFAULT_ENCODING = NULL;
 
 KHTMLSettings::KHTMLSettings()
 {    
@@ -106,7 +106,10 @@ const QString &KHTMLSettings::encoding() const
 {
     _logNotYetImplemented();
     // FIXME: remove this hack
-    return DEFAULT_ENCODING;
+    if (DEFAULT_ENCODING == NULL) {
+        DEFAULT_ENCODING = new QString(NSSTRING_TO_QSTRING(@"NSISOLatin1StringEncoding"));
+    }
+    return *DEFAULT_ENCODING;
 }
 
 

@@ -109,10 +109,15 @@ void QPixmap::setMask(const QBitmap &)
     _logNotYetImplemented();
 }
 
-static QBitmap *theMask = new QBitmap();
+static QBitmap *theMask = NULL;
 const QBitmap *QPixmap::mask() const
 {
     _logNotYetImplemented();
+
+    if (theMask == NULL) {
+	theMask = new QBitmap();
+    }
+
     return theMask;
 }
 

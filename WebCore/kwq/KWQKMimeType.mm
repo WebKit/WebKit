@@ -27,13 +27,16 @@
 #include <kmimetype.h>
 
 //FIX ME:
-static QString tempQString = QString();
-static KMimeType::Ptr tempPtr = KMimeType::Ptr();
+static QString *tempQString = NULL;
+static KMimeType::Ptr *tempPtr = NULL;
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t=0, bool=false, bool)
 {
     _logNotYetImplemented();
-    return tempPtr;
+    if (tempPtr == NULL) {
+        tempPtr = new KMimeType::Ptr();
+    }
+    return *tempPtr;
 }
 
 
@@ -46,5 +49,8 @@ KMimeType::~KMimeType()
 QString KMimeType::name() const
 {
     _logNotYetImplemented();
-    return tempQString;
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+    return *tempQString;
 }

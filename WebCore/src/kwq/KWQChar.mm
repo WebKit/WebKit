@@ -33,6 +33,7 @@
 
 static UniChar scratchUniChar;
 
+/* FIXME: use of this function is clearly not threadsafe! */
 static CFMutableStringRef GetScratchUniCharString()
 {
     static CFMutableStringRef s = NULL;

@@ -28,7 +28,7 @@
 
 #include <kwqdebug.h>
 
-static NSDictionary *namedColors;
+static NSDictionary *namedColors = NULL;
 
 #define ROUND_TO_INT(f) ((int)rint((f)))
 

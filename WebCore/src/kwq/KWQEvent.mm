@@ -26,9 +26,6 @@
 #include <kwqdebug.h>
 #include <qevent.h>
 
-// FIXME: replace this hack
-static const QPoint ORIGIN(0,0);
-
 // class QEvent ================================================================
 
 

@@ -27,7 +27,7 @@
 #include <klocale.h>
 
 //FIX ME:
-static QString tempQString = QString("en_US");
+static QString *tempQString = NULL;
 
 QString i18n(const char* text)
 {
@@ -40,6 +40,9 @@ QString i18n(const char* text)
 QString KLocale::language() const
 {
     _logNotYetImplemented();
-    return tempQString;
+    if (tempQString == NULL) {
+        tempQString = new QString("en_US");
+    }
+    return *tempQString;
 }
 

@@ -33,6 +33,8 @@
 #include <qtextcodec.h>
 #include <kcharsets.h>
 
+#if USING_BORROWED_KURL
+
 static QTextCodec * codecForHint( int encoding_hint /* not 0 ! */ )
 {
 /*
@@ -1545,3 +1547,4 @@ bool urlcmp( const QString& _url1, const QString& _url2, bool _ignore_trailing, 
   return true;
 }
 
+#endif

@@ -30,7 +30,7 @@
 #include <kprotocolmanager.h>
 
 //FIX ME:
-static QString tempQString = QString();
+static QString *tempQString = NULL;
 
 bool KProtocolManager::useProxy()
 {
@@ -41,7 +41,11 @@ bool KProtocolManager::useProxy()
 QString KProtocolManager::httpProxy()
 {
     _logNotYetImplemented();
-    return tempQString;
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+
+    return *tempQString;
 }
 
 QString KProtocolManager::userAgentForHost( const QString& )

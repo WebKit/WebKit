@@ -32,7 +32,7 @@ const QCursor & Qt::splitVCursor = QCursor();
 
 QCursor::QCursor()
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
 }
 
 QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
@@ -47,7 +47,7 @@ QCursor::QCursor(const QCursor &)
 
 QCursor::~QCursor()
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
 }
       
 QPoint QCursor::pos()

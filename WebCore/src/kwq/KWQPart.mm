@@ -42,10 +42,15 @@ KParts::Part::~Part()
 }
 
 
-static QWidget *theWidget = new QWidget();
+static QWidget *theWidget = NULL;
 QWidget *KParts::Part::widget()
 {
     _logNotYetImplemented();
+
+    if (theWidget == NULL) {
+        theWidget = new QWidget();
+    }
+
     return theWidget;
 }
 
@@ -70,10 +75,15 @@ KParts::ReadOnlyPart::~ReadOnlyPart()
 }
 
 
-static const KURL emptyURL = KURL();
+static KURL *emptyURL = NULL;
 const KURL &KParts::ReadOnlyPart::url() const
 {
     // must override
     _logNeverImplemented();
-    return emptyURL;
+
+    if (emptyURL == NULL) {
+	emptyURL = new KURL();
+    }
+
+    return *emptyURL;
 }

@@ -31,7 +31,7 @@
 #include <Foundation/Foundation.h>
 #include <WCURICache.h>
 
-static const QString DEFAULT_ERROR_TEXT = "DEFAULT_ERROR_TEXT";
+static const QString *DEFAULT_ERROR_TEXT = NULL;
 
 namespace KIO {
 
@@ -52,7 +52,11 @@ int Job::error()
 const QString &Job::errorText()
 {
     _logNotYetImplemented();
-    return DEFAULT_ERROR_TEXT;
+    if (DEFAULT_ERROR_TEXT == NULL) {
+        DEFAULT_ERROR_TEXT = new QString("DEFAULT_ERROR_TEXT");
+    }
+
+    return *DEFAULT_ERROR_TEXT;
 }
 
 

@@ -27,9 +27,10 @@
 #include <kconfig.h>
 
 //FIX ME:
-static QString tempQString = QString();
-static QColor tempQColor = QColor(0,0,0);
-static QStringList tempQStringList = QStringList();
+static QString *tempQString = NULL;
+static QColor *tempQColor = NULL;
+static QStringList *tempQStringList = NULL;
+
 
 KConfigBase::KConfigBase()
 {
@@ -62,7 +63,10 @@ QString KConfigBase::readEntry(const char *pKey,
     const QString& aDefault=QString::null) const
 {
     _logNotYetImplemented();
-    return tempQString;
+    if (tempQString == NULL) {
+        tempQString = new QString();
+    }
+    return *tempQString;
 }
 
 
@@ -93,14 +97,20 @@ bool KConfigBase::readBoolEntry(const char *pKey, bool nDefault=0) const
 QColor KConfigBase::readColorEntry(const char *pKey, const QColor *pDefault=0L) const
 {
     _logNotYetImplemented();
-    return tempQColor;
+    if (tempQColor == NULL) {
+        tempQColor = new QColor(0,0,0);
+    }
+    return *tempQColor;
 }
 
 
 QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 {
     _logNotYetImplemented();
-    return tempQStringList;
+    if (tempQStringList == NULL) {
+        tempQStringList = new QStringList();
+    }
+    return *tempQStringList;
 }
 
 

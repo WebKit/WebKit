@@ -1,3 +1,34 @@
+2002-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Avoid static initialization of objects as much as possible. Order
+	of static initializers is unpredictable and we had some
+	cross-dependencies, so avoid this practice as much as possible to
+	fix various startup crashes.
+
+	* src/kwq/KWQApplication.mm: (QApplication::palette),
+	(QApplication::globalStrut):
+	* src/kwq/KWQChar.mm:
+	* src/kwq/KWQColor.mm:
+	* src/kwq/KWQCursor.mm: (QCursor::QCursor), (QCursor::~QCursor):
+	* src/kwq/KWQEvent.mm:
+	* src/kwq/KWQKConfigBase.mm: (KConfigBase::readEntry),
+	(KConfigBase::readColorEntry), (KConfigBase::readListEntry):
+	* src/kwq/KWQKHTMLSettings.mm: (KHTMLSettings::encoding):
+	* src/kwq/KWQKJavaEmbed.mm: (KJavaEmbed::sizeHint),
+	(KJavaEmbed::minimumSizeHint):
+	* src/kwq/KWQKLocale.mm: (KLocale::language):
+	* src/kwq/KWQKMimeType.mm: (KMimeType::findByURL), (KMimeType::name):
+	* src/kwq/KWQKPrinter.mm: (KPrinter::margins):
+	* src/kwq/KWQKProtocolManager.mm: (KProtocolManager::httpProxy):
+	* src/kwq/KWQKWinModule.mm: (KWinModule::workArea):
+	* src/kwq/KWQKjobclasses.mm:
+	* src/kwq/KWQKnetaccess.mm:
+	* src/kwq/KWQPart.mm: (KParts::Part::widget), (KParts::ReadOnlyPart::url):
+	* src/kwq/KWQPixmap.mm: (QPixmap::mask):
+	* src/kwq/KWQToolTip.mm: (QToolTip::palette):
+	* src/kwq/kde/_kurl.cpp:
+	* src/kwq/kdecore/kurl.h:
+
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix a couple of problems that kept `make -j3' from working from a

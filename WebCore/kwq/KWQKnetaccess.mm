@@ -27,7 +27,7 @@
 #include <netaccess.h>
 
 //FIX ME:
-static QString tempQString = QString();
+static QString *tempQString;
 
 namespace KIO {
 
@@ -41,7 +41,11 @@ bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 QString NetAccess::lastErrorString()
 {
     _logNotYetImplemented();
-    return tempQString;
+    if (tempQString == NULL) {
+	tempQString = new QString();
+    }
+
+    return *tempQString;
 }
 
 

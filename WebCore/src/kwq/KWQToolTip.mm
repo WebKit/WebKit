@@ -27,12 +27,16 @@
 #include <qtooltip.h>
 
 // FIXME: 
-static QPalette DEFAULT_PALETTE = QPalette();
+static QPalette *DEFAULT_PALETTE = NULL;
 
 QPalette QToolTip::palette()
 {
     _logNotYetImplemented();
-    return DEFAULT_PALETTE;
+    if (DEFAULT_PALETTE == NULL) {
+	DEFAULT_PALETTE = new QPalette();
+    }
+
+    return *DEFAULT_PALETTE;
 }
 
 
