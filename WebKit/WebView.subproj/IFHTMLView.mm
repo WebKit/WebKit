@@ -52,15 +52,13 @@
 }
 
 
-- (BOOL)validateMenuItem:(NSMenuItem *)item 
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
-
-    if (action == @selector(copy:)){
-        if ([[[self _bridge] selectedText] length] > 0)
-            return YES;
+    if (action == @selector(copy:)) {
+        return [[[self _bridge] selectedText] length] != 0;
     }
-    return NO;
+    return YES;
 }
 
 
