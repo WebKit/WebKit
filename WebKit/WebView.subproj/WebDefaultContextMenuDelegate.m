@@ -113,7 +113,7 @@
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
-    [controller _downloadURL:URL withContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:nil]];
+    [controller _downloadURL:URL];
 }
 
 - (void)openLinkInNewWindow:(id)sender

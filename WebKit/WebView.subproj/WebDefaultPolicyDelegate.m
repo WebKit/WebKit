@@ -58,11 +58,10 @@
 				    andRequest:(WebResourceRequest *)request
                                        inFrame:(WebFrame *)frame;
 {
-    if([WebController canShowMIMEType:[response contentType]]){
-        return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyShow andPath:nil];
-    }
-    else{
-        return [WebContentPolicy webPolicyWithContentAction: WebContentPolicyIgnore andPath:nil];
+    if ([WebController canShowMIMEType:[response contentType]]) {
+        return [WebContentPolicy webPolicyWithContentAction:WebContentPolicyShow];
+    } else {
+        return [WebContentPolicy webPolicyWithContentAction:WebContentPolicyIgnore];
     }
 }
 
@@ -76,7 +75,7 @@
 			      andRequest:(WebResourceRequest *)request
 				 inFrame:(WebFrame *)frame
 {
-    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow andPath:nil];
+    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow];
 }
 
 @end

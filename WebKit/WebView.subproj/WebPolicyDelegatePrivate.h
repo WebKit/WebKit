@@ -10,6 +10,5 @@
 @interface WebPolicy (WebPrivate)
 
 - (void)_setPolicyAction:(WebPolicyAction)policyAction;
-- (void)_setPath:(NSString *)path;
 
 @end

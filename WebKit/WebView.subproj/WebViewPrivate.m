@@ -186,7 +186,7 @@
     return result;
 }
 
-- (void)_downloadURL:(NSURL *)URL withContentPolicy:(WebContentPolicy *)contentPolicy
+- (void)_downloadURL:(NSURL *)URL
 {
     WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];

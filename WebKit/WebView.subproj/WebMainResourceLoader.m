@@ -148,7 +148,7 @@
 								  andRequest:[dataSource request]
 								  inFrame:[dataSource webFrame]];
     } else {
-	contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:nil];
+	contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave];
     }
 
     policyAction = [contentPolicy policyAction];

@@ -1029,8 +1029,7 @@ static const char * const stateNames[] = {
 	[controller _openNewWindowWithRequest:request behind:YES];
 	break;
     case WebClickPolicySave:
-	[controller _downloadURL:[request URL]
-		    withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
+	[controller _downloadURL:[request URL]];
 	break;
     case WebClickPolicyIgnore:
 	break;

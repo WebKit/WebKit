@@ -761,10 +761,13 @@
     }
     
     NSString *filename = [[imageURL path] lastPathComponent];
-    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
 
-    [[self _controller] _downloadURL:imageURL
-                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:path]];
+
+    // FIXME: need to respect the chosen path here
+    [[self _controller] _downloadURL:imageURL];
+#if 0
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
+#endif
     
     return [NSArray arrayWithObject:filename];
 }

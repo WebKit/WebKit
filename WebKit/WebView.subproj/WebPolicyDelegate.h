@@ -42,7 +42,6 @@ extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
     @constant WebPolicyRevealInFinder Reveal the file in the Finder.
     @constant WebPolicySave Save the resource to disk.
     @constant WebPolicyOpenURL Open the URL in another application.
-    @constant WebPolicySaveAndOpen Save and open the resource in another application.
     @constant WebPolicyOpenNewWindow Open the resource in another window.
     @constant WebPolicyOpenNewWindowBehind Open the resource in another window behind this window.
     @constant WebPolicyIgnore Do nothing with the resource.
@@ -53,7 +52,6 @@ typedef enum {
     WebPolicyRevealInFinder,
     WebPolicySave,
     WebPolicyOpenURL,
-    WebPolicySaveAndOpen,
     WebPolicyOpenNewWindow,
     WebPolicyOpenNewWindowBehind,
     WebPolicyIgnore
@@ -134,12 +132,6 @@ typedef enum {
 */
 - (WebPolicyAction)policyAction;
 
-/*!
-    @method path
-    @abstract The path for the saved file.
-*/
-- (NSString *)path;
-
 @end
 
 
@@ -177,13 +169,11 @@ typedef enum {
 */
 @interface WebContentPolicy : WebPolicy
 /*!
-    @method webPolicyWithContentAction:andPath:
+    @method webPolicyWithContentAction:
     @abstract WebContentPolicy constructor
     @param action The policy action of the WebContentPolicy.
-    @param thePath Path to where the file should be saved. Only applicable for
-    WebContentPolicySave WebContentAction.
 */
-+ webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath;
++ webPolicyWithContentAction: (WebContentAction)action;
 @end
 
 
@@ -193,13 +183,11 @@ typedef enum {
 */
 @interface WebClickPolicy : WebPolicy
 /*!
-    @method webPolicyWithClickAction:andPath:
+    @method webPolicyWithClickAction:
     @abstract WebClickPolicy constructor
     @param action The policy action of the WebClickPolicy.
-    @param thePath Path to where the file should be saved. Only applicable for
-    WebClickPolicySave  WebClickAction.
 */
-+ webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath;
++ webPolicyWithClickAction: (WebClickAction)action;
 @end
 
 

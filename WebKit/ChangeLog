@@ -1,3 +1,32 @@
+2002-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+	Remove contentPolicy parameter from _downloadURL, and remove
+	remaining traces of path from policy object.
+
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        (-[WebPolicyPrivate dealloc]):
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:]):
+        (+[WebClickPolicy webPolicyWithClickAction:]):
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate downloadURL:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate clickPolicyForAction:andRequest:inFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
 2002-11-11  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebNetscapePluginPackage.m: (-[WebNetscapePluginPackage load]):
@@ -565,7 +594,6 @@
 
 2002-11-06  Darin Adler  <darin@apple.com>
 
->>>>>>> 1.1102
 	- added a BinHex decoder and did a little work on the MacBinary decoder
         
         I'm not supposed to be working on this, but I didn't feel like doing "real" work.
