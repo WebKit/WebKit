@@ -56,19 +56,27 @@ QWidget* QScrollView::viewport() const
 
 int QScrollView::visibleWidth() const
 {
-    // ? Is this used to determined what is rendered
-    // by the engine.
-    NSRect bounds = [getView() bounds];
-    return (int)bounds.size.width;
+    NSScrollView *scrollView = [[getView() superview] superview];
+    int visibleWidth;
+    
+    if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
+        visibleWidth = (int)([scrollView documentVisibleRect].size.width);
+    else
+        visibleWidth = (int)([getView() bounds].size.width);
+    return visibleWidth;
 }
 
 
 int QScrollView::visibleHeight() const
 {
-    // ? Is this used to determined what is rendered
-    // by the engine.
-    NSRect bounds = [getView() bounds];
-    return (int)bounds.size.height;
+    NSScrollView *scrollView = [[getView() superview] superview];
+    int visibleHeight;
+    
+    if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
+        visibleHeight = (int)([scrollView documentVisibleRect].size.height);
+    else
+        visibleHeight = (int)([getView() bounds].size.height);
+    return visibleHeight;
 }
 
 
