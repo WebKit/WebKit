@@ -1,3 +1,12 @@
+2005-02-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4024786> REGRESSION (Mail): "Smart paste" plain-text word into Blot leaves insertion point misplaced
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): Call updateLayout so caretMinOffset and caretMaxOffset return correct values.
+
 2005-02-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
