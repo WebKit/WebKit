@@ -1,3 +1,12 @@
+2003-09-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3420396.  If a frame targets _top and a URL that contains a fragment (very unusual, it's meaningless for a frameset to contain a named anchor point) the frameset won't be reloaded.  Our normal path is to just scroll to the anchor point.  This is only important because our Help folks oddly depend on the behavior.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+
 2003-09-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

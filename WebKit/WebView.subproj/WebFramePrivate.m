@@ -1716,7 +1716,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!isFormSubmission
         && loadType != WebFrameLoadTypeReload
         && loadType != WebFrameLoadTypeSame
-        && ![self _shouldReloadForCurrent:URL andDestination:[_private->bridge URL]]) {
+        && ![self _shouldReloadForCurrent:URL andDestination:[_private->bridge URL]]
+
+        // We don't want to just scroll if a link from within a
+        // frameset is trying to reload the frameset into _top.
+        && ![_private->bridge isFrameSet]) {
         
         // Just do anchor navigation within the existing content.
         
@@ -1724,10 +1728,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // currently displaying a frameset, or if the new URL does not have a fragment.
         // These rules are based on what KHTML was doing in KHTMLPart::openURL.
         
-        // One reason we only do this if there is an anchor in the URL is that
-        // this might prevent us from reloading a document that has subframes that are
-        // different than what we're displaying (in other words, a link from within a
-        // frame is trying to reload the frameset into _top).
         
         // FIXME: What about load types other than Standard and Reload?
 
