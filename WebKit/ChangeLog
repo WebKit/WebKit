@@ -1,5 +1,14 @@
 2002-12-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+	- fixed fix for 3132056 -- Supply Finder bits for decoded BinHex files
+
+        * Downloads.subproj/WebBinHexDecoder.m: (-[WebBinHexDecoder decodeHeader]):
+	Mask off fewer Finder flag bits. Use the same mask as for MacBinary, in fact.
+
+2002-12-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard.
 
 	- fixed 3127490 -- pages w/frames sometimes show up blank

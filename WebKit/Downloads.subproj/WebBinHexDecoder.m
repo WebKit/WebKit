@@ -257,8 +257,7 @@ done:
     _resourceForkLengthRemaining = (((((header.remainder[15] << 8) | header.remainder[16]) << 8) | header.remainder[17]) << 8) | header.remainder[18];
     
     // Mask off to the only fields in BinHex that we want to respect.
-    // Most flags just aren't supported in BinHex files even though there's a 16-bit field.
-    _finderFlags &= kHasBundle | kIsStationery;
+    _finderFlags &= kColor | kIsShared | kHasCustomIcon | kIsStationery | kHasBundle | kIsAlias;
     
     // Reset the CRC so it's ready to compute a fork CRC.
     _CRC = 0;
