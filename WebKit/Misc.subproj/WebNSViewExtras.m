@@ -223,12 +223,17 @@
     [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
 }
 
-- (BOOL)firstResponderIsSelfOrDescendantView
+- (BOOL)_web_firstResponderIsSelfOrDescendantView
 {
     NSResponder *responder = [[self window] firstResponder];
     return (responder && 
            (responder == self || 
            ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
+}
+
+- (BOOL)_web_firstResponderCausesFocusDisplay
+{
+    return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _web_parentWebFrameView];
 }
 
 @end

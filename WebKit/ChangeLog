@@ -1,3 +1,29 @@
+2004-08-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Update name of firstResponderIsSelfOrDescendantView, adding _web_ prefix to this SPI call.
+        
+        Do some work to make caret blinking in newly-created editable WebView's that are 
+        similar in structure to Blot more "automatic".
+
+        * Misc.subproj/WebNSViewExtras.h: Change name of firstResponderIsSelfOrDescendantView. Add _web_ prefix.
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_firstResponderIsSelfOrDescendantView]): Name change.
+        (-[NSView _web_firstResponderCausesFocusDisplay]): Adds an additional check for whether the view's
+        is first responder. This helps to make the focus setting in viewDidMoveToWindow work right.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateFocusDisplay]): Use _web_firstResponderCausesFocusDisplay now instead of 
+        firstResponderIsSelfOrDescendantView.
+        (-[WebHTMLView viewDidMoveToWindow]): Schedule call to updateFocusDisplay for the next crank of the
+        run loop. The reason is that placing the caret in the just-installed view requires the HTML/XML 
+        document to be available on the WebCore side, but it is not at the time this code is running. 
+        However, it will be there on the next crank of the run loop. Doing this helps to make a 
+        blinking caret appear in a new, empty window "automatic".
+        (-[WebHTMLView performKeyEquivalent:]):  _web_firstResponderIsSelfOrDescendantView name change.
+        * WebView.subproj/WebView.m:
+        (-[WebView _performResponderOperation:with:]): _web_firstResponderIsSelfOrDescendantView name change.
+
 2004-07-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

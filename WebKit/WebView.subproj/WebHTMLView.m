@@ -1317,7 +1317,7 @@ static WebHTMLView *lastHitView = nil;
     // 2. Caret blinking (blinks | does not blink)
     // 3. The drawing of a focus ring around links in web pages.
 
-    BOOL flag = !_private->resigningFirstResponder && [[self window] isKeyWindow] && [self firstResponderIsSelfOrDescendantView];
+    BOOL flag = !_private->resigningFirstResponder && [[self window] isKeyWindow] && [self _web_firstResponderCausesFocusDisplay];
     [[self _bridge] setDisplaysWithFocusAttributes:flag];
 }
 
@@ -1422,7 +1422,13 @@ static WebHTMLView *lastHitView = nil;
             [self addWindowObservers];
             [self addSuperviewObservers];
             [self addMouseMovedObserver];
-            [self updateFocusDisplay];
+            // Schedule this update, rather than making the call right now.
+            // The reason is that placing the caret in the just-installed view requires
+            // the HTML/XML document to be available on the WebCore side, but it is not
+            // at the time this code is running. However, it will be there on the next
+            // crank of the run loop. Doing this helps to make a blinking caret appear 
+            // in a new, empty window "automatic".
+            [self performSelector:@selector(updateFocusDisplay) withObject:nil afterDelay:0];
     
             [[self _pluginController] startAllPlugins];
     
@@ -2286,7 +2292,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
-    if ([self firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
+    if ([self _web_firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
         return YES;
     }
     return [super performKeyEquivalent:event];
