@@ -1,4 +1,16 @@
-2004-11-10  Ken Kocienda  <kocienda@apple.com>
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Updated some layout test results that changed as a result of my last checking.
+        Added a new test that has been in my tree for a few days.
+
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt:
+        * layout-tests/editing/deleting/delete-3800834-fix-expected.txt:
+        * layout-tests/editing/inserting/insert-3851164-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3851164-fix.html: Added.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
 

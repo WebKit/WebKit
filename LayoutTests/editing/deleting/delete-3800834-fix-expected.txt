@@ -13,6 +13,7 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x0
         RenderBlock (anonymous) at (14,66) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
 selection is CARET:
 start:      position 3 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 upstream:   position 3 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
