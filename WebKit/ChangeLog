@@ -1,3 +1,16 @@
+2004-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- avoid messing with undo manager needlessly for ~1% HTML iBench speedup
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge registerCommandForUndo:]): mark undo/redo item flag
+        (-[WebBridge registerCommandForRedo:]): ditto
+        (-[WebBridge clearUndoRedoOperations]): check flag before removing items,
+	and clear it after removing them
+
 2004-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

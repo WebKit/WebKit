@@ -19,6 +19,7 @@
     BOOL _keyboardUIModeAccessed;
     BOOL _doingClientRedirect;
     BOOL _inNextKeyViewOutsideWebFrameViews;
+    BOOL _haveUndoRedoOperations;
 }
 
 - (id)initWithWebFrame:(WebFrame *)webFrame;

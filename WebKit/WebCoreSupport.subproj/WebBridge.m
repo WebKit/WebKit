@@ -1183,18 +1183,23 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     NSUndoManager *undoManager = [[_frame webView] undoManager];
     [undoManager registerUndoWithTarget:self selector:@selector(undoEditing:) object:arg];
+    _haveUndoRedoOperations = YES;
 }
 
 - (void)registerCommandForRedo:(id)arg
 {
     NSUndoManager *undoManager = [[_frame webView] undoManager];
     [undoManager registerUndoWithTarget:self selector:@selector(redoEditing:) object:arg];
+    _haveUndoRedoOperations = YES;
 }
 
 - (void)clearUndoRedoOperations
 {
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    [undoManager removeAllActionsWithTarget:self];
+    if (_haveUndoRedoOperations) {
+	NSUndoManager *undoManager = [[_frame webView] undoManager];
+	[undoManager removeAllActionsWithTarget:self];
+	_haveUndoRedoOperations = NO;
+    }
 }
 
 - (void)editingKeyDown:(NSEvent *)event
