@@ -1,3 +1,13 @@
+2004-09-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3800316, test 37 for tables is failing on the layout tests.  Make sure we don't incorrectly match
+	non-HTML elements with HTML tag selectors in CSS.
+	
+        Reviewed by rjw
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+
 2004-09-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3601920, CSS "tabs" not switching properly on zen garden design.  Improve the repainting to account
