@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,52 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_UTILITY_H_
-#define _BINDINGS_OBJC_UTILITY_H_
+#ifndef _NP_SAP_H_
+#define _NP_SAP_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#include <NP_runtime.h>
 
-#include <value.h>
+/*
+	NPP_GetNativeObjectForJavaScript allows user agents to retrieve a plugin's exported
+	interface.
+*/
+typedef NP_Object *(*NPP_GetNativeObjectForJavaScript) (NPP instance);
 
-#include <objc_header.h>
+/*
+	Get the window object for the page that contains the plugin.
+*/
+typedef NP_JavaScriptObject *(*NPN_GetWindowJavaScriptObject) (NPP instance);
 
-namespace KJS
-{
-
-namespace Bindings 
-{
-
-typedef union {
-    ObjectStructPtr objectValue;
-    bool booleanValue;
-    char charValue;
-    short shortValue;
-    int intValue;
-    long longValue;
-    float floatValue;
-    double doubleValue;
-} ObjcValue;
-
-typedef enum {
-    ObjcVoidType,
-    ObjcObjectType,
-    ObjcCharType,
-    ObjcShortType,
-    ObjcIntType,
-    ObjcLongType,
-    ObjcFloatType,
-    ObjcDoubleType,
-    ObjcInvalidType
-} ObjcValueType;
-
-ObjcValue convertValueToObjcValue (KJS::ExecState *exec, const KJS::Value &value, ObjcValueType type);
-Value convertObjcValueToValue (KJS::ExecState *exec, void *buffer, ObjcValueType type);
-ObjcValueType objcValueTypeForType (const char *type);
-
-void JSMethodNameToObjCMethodName(const char *name, char *name, unsigned int length);
-
-} // namespace Bindings
-
-} // namespace KJS
+/*
+	Get the JavaScript DOM object that refers to the plugin.
+*/
+typedef NP_JavaScriptObject *(*NPN_GetInstanceJavaScriptObject) (NPP instance);
 
 #endif
+

@@ -37,28 +37,47 @@
     long
     float
     double
-    NSString        string
-    NSArray         []
-    id              wrapper
+    NSNumber        Number
+    NSString        String
+    NSArray         Array
+    id              Object wrapper
     other           exception
     
     JavaScript to   ObjC
     Number          coerced char, short, int, long, float, or double
     String          NSString
-    wrapper         id
+    Object wrapper         id
     Object          JavaScriptObject
     [], other       exception
 */
 
-
-@interface NSObject (JavaScriptMethods)
+// This is intended to be a public API.
+@interface NSObject (JavaScriptMethods) 
 
 + (NSString *)JavaScriptNameForSelector:(SEL)aSelector;
 + (BOOL)excludeSelectorFromJavaScript:(SEL)aSelector;
 
 @end
 
+@class JavaScriptObjectPrivate;
 
+// This is intended to be a public API.
+@interface JavaScriptObject : NSObject
+{
+    JavaScriptObjectPrivate *_private;
+}
+
+- (id)call:(NSString *)methodName arguments:(NSArray *)args;
+- (id)evaluate:(NSString *)script;
+- (id)getMember:(NSString *)name;
+- (void)setMember:(NSString *)name value:(id)value;
+- (void)removeMember:(NSString *)name;
+- (NSString *)toString;
+- (id)getSlot:(unsigned int)index;
+- (void)setSlot:(unsigned int)index value:(id)value;
+@end
+
+// This is intended to be an SPI, as it exposes KJS::Value.
 @interface JavaScriptValueConverter
 
 + (void)registerConverter:(JavaScriptValueConverter *)aConverter;
@@ -67,10 +86,6 @@
 
 - (id)objectForValue:(KJS::Value)aValue;
 
-@end
-
-
-@interface JavaScriptObject
 @end
 
 #endif

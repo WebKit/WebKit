@@ -518,6 +518,7 @@
 				BE9185E205EE59B80081354D,
 				BE94EB6605EFFE6B0032DCB5,
 				BE94EB6705EFFE6B0032DCB5,
+				515B877605F5332F00EABBF9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -916,6 +917,20 @@
 //512
 //513
 //514
+		515B877505F5332F00EABBF9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = NP_SAP.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		515B877605F5332F00EABBF9 = {
+			fileRef = 515B877505F5332F00EABBF9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		517FA6B20370BD6100CA2D3A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -4485,6 +4500,7 @@
 		};
 		F523D23402DE436B018635CA = {
 			children = (
+				515B877505F5332F00EABBF9,
 				F523D1F402DE4369018635CA,
 				F523D1F502DE4369018635CA,
 				F523D1F602DE4369018635CA,

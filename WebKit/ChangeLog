@@ -1,3 +1,13 @@
+2004-03-02  Richard Williamson   <rjw@apple.com>
+
+	Added WebJavaScriptObject API.  The location of this file may
+	change.
+
+        Reviewed by Chris.
+
+        * Plugins.subproj/NP_objc.h: Added.
+        * WebKit.pbproj/project.pbxproj:
+
 2004-03-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3575598>: REGRESSION: Safari crashes at IS&T website

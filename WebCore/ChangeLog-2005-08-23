@@ -1,3 +1,20 @@
+2004-03-02  Richard Williamson   <rjw@apple.com>
+
+	Added NP_SAP API.  This API includes the new entry points
+	used to bind native interfaces to JavaScript.  It's final location
+	may change.
+
+	Made changes to KWQKHTMLPart.mm to reflect changes in names
+	on RootObject.
+	
+        Reviewed by Chris.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/NP_SAP.h: Added.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::cleanupPluginRootObjects):
+        * kwq/WebCoreBridge.mm:
+
 2004-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

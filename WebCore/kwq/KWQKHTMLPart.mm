@@ -57,6 +57,7 @@
 #import "render_text.h"
 #import "xml/dom2_eventsimpl.h"
 #import <JavaScriptCore/property_map.h>
+#import <JavaScriptCore/runtime_root.h>
 
 #undef _KWQ_TIMING
 
@@ -2842,7 +2843,7 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
 {
     KJS::Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {
-        KJS::Bindings::RootObject::removeAllJavaReferencesForRoot (root);
+        root->removeAllNativeReferences ();
         rootObjects.removeLast();
     }
 }

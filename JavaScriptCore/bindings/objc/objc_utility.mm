@@ -90,7 +90,7 @@ void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer,
     [], other       exception
 
 */
-ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Value value, ObjcValueType type)
+ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJS::Value &value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
@@ -125,8 +125,6 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
                 Number n = Number::dynamicCast(value);
                 result.objectValue = [NSNumber numberWithDouble:n.value()];
             }
-            
-            // FIXME:  Deal with other Object types by creating a JavaScriptObjects
         }
         break;
         

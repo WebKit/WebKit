@@ -1,3 +1,100 @@
+2004-03-02  Richard Williamson   <rjw@apple.com>
+
+	C binding API.  Partial implementation.
+
+	Completed ObjectiveC bindings (not based on the C API).  These will re-implemented over the C binding API, but I wanted to get this code in the tree.
+
+	Factored root object reference counting scheme.  It is now useful independent
+	of LiveConnect.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_runtime.cpp: Added.
+        (NP_IdentifierFromUTF8):
+        (NP_GetIdentifiers):
+        (NP_UTF8FromIdentifier):
+        (NP_CreateObject):
+        (NP_RetainObject):
+        (NP_ReleaseObject):
+        (NP_IsKindOfClass):
+        (NP_SetException):
+        (NP_Call):
+        (NP_Evaluate):
+        (NP_GetProperty):
+        (NP_SetProperty):
+        (NP_RemoveProperty):
+        (NP_ToString):
+        (NP_GetPropertyAtIndex):
+        (NP_SetPropertyAtIndex):
+        (NP_CreateNumberWithInt):
+        (NP_CreateNumberWithFloat):
+        (NP_CreateNumberWithDouble):
+        (NP_IntFromNumber):
+        (NP_FloatFromNumber):
+        (NP_DoubleFromNumber):
+        (NP_CreateStringWithUTF8):
+        (NP_CreateStringWithUTF16):
+        (NP_UTF8FromString):
+        (NP_UTF16FromString):
+        (NP_CreateBoolean):
+        (NP_BoolFromBoolean):
+        (NP_GetNull):
+        (NP_GetUndefined):
+        (NP_CreateArray):
+        (NP_CreateArrayV):
+        (NP_ObjectAtIndex):
+        * bindings/NP_runtime.h: Added.
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::invoke):
+        (JSObject::finalize):
+        (JSObject::createNative):
+        (JSObject::convertValueToJObject):
+        * bindings/jni/jni_jsobject.h:
+        * bindings/objc/objc_jsobject.h:
+        * bindings/objc/objc_jsobject.mm:
+        (rootForView):
+        (windowJavaScriptObject):
+        (-[JavaScriptObject initWithObjectImp:KJS::root:Bindings::]):
+        (-[JavaScriptObject dealloc]):
+        (-[JavaScriptObject _convertValueToObjcValue:KJS::]):
+        (-[JavaScriptObject call:arguments:]):
+        (-[JavaScriptObject evaluate:]):
+        (-[JavaScriptObject getMember:]):
+        (-[JavaScriptObject setMember:value:]):
+        (-[JavaScriptObject removeMember:]):
+        (-[JavaScriptObject toString]):
+        (-[JavaScriptObject getSlot:]):
+        (-[JavaScriptObject setSlot:value:]):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        * bindings/runtime_root.cpp: Added.
+        (getReferencesByRootDictionary):
+        (getReferencesDictionary):
+        (KJS::Bindings::findReferenceDictionary):
+        (KJS::Bindings::rootForImp):
+        (KJS::Bindings::addNativeReference):
+        (KJS::Bindings::removeNativeReference):
+        (completedJavaScriptAccess):
+        (initializeJavaScriptAccessLock):
+        (lockJavaScriptAccess):
+        (unlockJavaScriptAccess):
+        (RootObject::dispatchToJavaScriptThread):
+        (performJavaScriptAccess):
+        (RootObject::setFindRootObjectForNativeHandleFunction):
+        (RootObject::removeAllNativeReferences):
+        * bindings/runtime_root.h: Added.
+        (KJS::Bindings::RootObject::RootObject):
+        (KJS::Bindings::RootObject::~RootObject):
+        (KJS::Bindings::RootObject::setRootObjectImp):
+        (KJS::Bindings::RootObject::rootObjectImp):
+        (KJS::Bindings::RootObject::setInterpreter):
+        (KJS::Bindings::RootObject::interpreter):
+        (KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction):
+        (KJS::Bindings::RootObject::runLoop):
+        (KJS::Bindings::RootObject::performJavaScriptSource):
+
 === Safari-130 ===
 
 === Safari-129 ===

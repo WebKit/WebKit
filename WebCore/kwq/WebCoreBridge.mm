@@ -51,6 +51,7 @@
 
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/object.h>
+#import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/property_map.h>
 
 #import "KWQAssertions.h"

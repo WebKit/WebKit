@@ -42,46 +42,6 @@ namespace Bindings {
 
 class RootObject;
 
-typedef RootObject *(*FindRootObjectForNativeHandleFunctionPtr)(void *);
-
-class RootObject
-{
-public:
-    RootObject (const void *nativeHandle) : _nativeHandle(nativeHandle), _imp(0), _interpreter(0) {}
-    ~RootObject (){
-        _imp->deref();
-    }
-    
-    void setRootObjectImp (KJS::ObjectImp *i) { 
-        _imp = i;
-        _imp->ref();
-    }
-    
-    KJS::ObjectImp *rootObjectImp() const { return _imp; }
-    
-    void setInterpreter (KJS::Interpreter *i) { _interpreter = i; }
-    KJS::Interpreter *interpreter() const { return _interpreter; }
-
-    // Must be called from the thread that will be used to access JavaScript.
-    static void setFindRootObjectForNativeHandleFunction(FindRootObjectForNativeHandleFunctionPtr aFunc);
-    static FindRootObjectForNativeHandleFunctionPtr findRootObjectForNativeHandleFunction() {
-        return _findRootObjectForNativeHandleFunctionPtr;
-    }
-
-    static void removeAllJavaReferencesForRoot (Bindings::RootObject *root);
-    static CFRunLoopRef runLoop() { return _runLoop; }
-    static CFRunLoopSourceRef performJavaScriptSource() { return _performJavaScriptSource; }
-    
-private:
-    const void *_nativeHandle;
-    KJS::ObjectImp *_imp;
-    KJS::Interpreter *_interpreter;
-
-    static FindRootObjectForNativeHandleFunctionPtr _findRootObjectForNativeHandleFunctionPtr;
-    static CFRunLoopRef _runLoop;
-    static CFRunLoopSourceRef _performJavaScriptSource;
-};
-
 enum JSObjectCallType {
     CreateNative,
     Call,
@@ -106,6 +66,7 @@ struct JSObjectCallContext
     CFRunLoopRef originatingLoop;
     jvalue result;
 };
+
 
 typedef struct JSObjectCallContext JSObjectCallContext;
 
