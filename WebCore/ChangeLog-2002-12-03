@@ -1,3 +1,8 @@
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::attach): Removed a stray printf.
+
 2002-11-14  Darin Adler  <darin@apple.com>
 
 	- fixed most of the problems with OPTGROUP

@@ -1090,7 +1090,6 @@ void HTMLInputElementImpl::attach()
         case IMAGE: {
              DOMString width = getAttribute( ATTR_WIDTH );
              if (!width.isEmpty()) {
-                printf("Added prop.\n");
                 addCSSLength(CSS_PROP_WIDTH, width);
              }
              m_render =  new (arena) RenderImageButton(this);
