@@ -820,8 +820,7 @@ QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 QRect QFontMetrics::boundingRect(QChar qc) const
 {
     unichar c = qc.unicode();
-    NSString *string = [NSString stringWithCharacters: &c length: 1];
-    NSRect rect = [data->getInfo() rectForString: string];
+    NSRect rect = _rectForString(data->getInfo(), &c, 1);
 
     return QRect(ROUND_TO_INT(rect.origin.x),
             ROUND_TO_INT(rect.origin.y),

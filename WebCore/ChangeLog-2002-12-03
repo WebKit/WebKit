@@ -1,3 +1,10 @@
+2002-03-18  Richard Williamson  <rjw@apple.com>
+
+        Changed to use non direct _rectForString() function.   Avoids
+        unnecessary NSString allocation.
+        
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::boundingRect):
+
 2002-03-18  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQFontMetrics.mm: (QFontMetricsPrivate::getInfo),
