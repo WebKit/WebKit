@@ -403,7 +403,7 @@ bool Selection::modify(EAlter alter, int verticalDistance)
 
     CaretPosition pos;
 
-    int xPos;
+    int xPos = 0; /* initialized only to make compiler happy */
     switch (alter) {
         case MOVE:
             pos = verticalDistance > 0 ? m_end : m_start;

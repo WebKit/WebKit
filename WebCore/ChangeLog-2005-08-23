@@ -1,3 +1,9 @@
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modify):
+        initialize xPos to make compiler happy in deployment builds
+
 2004-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
