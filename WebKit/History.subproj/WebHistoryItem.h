@@ -17,9 +17,9 @@
     NSString *_title;
     NSImage *_image;
     NSString *_comment;
-    NSDate *_creationDate;
-    NSDate *_modificationDate;
-    NSDate *_lastVisitedDate;
+    NSCalendarDate *_creationDate;
+    NSCalendarDate *_modificationDate;
+    NSCalendarDate *_lastVisitedDate;
 }
 
 -(id)init;
@@ -31,16 +31,16 @@
 -(NSString *)title;
 -(NSImage *)image;
 -(NSString *)comment;
--(NSDate *)creationDate;
--(NSDate *)modificationDate;
--(NSDate *)lastVisitedDate;
+-(NSCalendarDate *)creationDate;
+-(NSCalendarDate *)modificationDate;
+-(NSCalendarDate *)lastVisitedDate;
 
 -(void)setURL:(NSURL *)url;
 -(void)setTitle:(NSString *)title;
 -(void)setImage:(NSImage *)image;
 -(void)setComment:(NSString *)comment;
--(void)setModificationDate:(NSDate *)date;
--(void)setLastVisitedDate:(NSDate *)date;
+-(void)setModificationDate:(NSCalendarDate *)date;
+-(void)setLastVisitedDate:(NSCalendarDate *)date;
 
 -(unsigned)hash;
 -(BOOL)isEqual:(id)anObject;

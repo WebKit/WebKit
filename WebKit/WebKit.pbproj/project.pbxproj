@@ -193,6 +193,7 @@
 				F5EBC45702134BC301CA1520,
 				F5EBC45802134BC301CA1520,
 				9CF0E24B021361B10ECA16EA,
+				F5B92B840223191D01C1A525,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -225,6 +226,7 @@
 				9CF0E24C021361B10ECA16EA,
 				F5143A380221DCCE01A80181,
 				F520FB1C0221DEFD01C1A525,
+				F5B92B850223191D01C1A525,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -414,6 +416,8 @@
 				39446082020F50ED0ECA1767,
 				F520FB190221DEFD01C1A525,
 				F520FB1A0221DEFD01C1A525,
+				F5B92B820223191D01C1A525,
+				F5B92B830223191D01C1A525,
 			);
 			isa = PBXGroup;
 			name = History;
@@ -1015,6 +1019,28 @@
 		};
 		F520FB1C0221DEFD01C1A525 = {
 			fileRef = F520FB1A0221DEFD01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B92B820223191D01C1A525 = {
+			isa = PBXFileReference;
+			path = IFWebHistoryPrivate.h;
+			refType = 4;
+		};
+		F5B92B830223191D01C1A525 = {
+			isa = PBXFileReference;
+			path = IFWebHistoryPrivate.m;
+			refType = 4;
+		};
+		F5B92B840223191D01C1A525 = {
+			fileRef = F5B92B820223191D01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B92B850223191D01C1A525 = {
+			fileRef = F5B92B830223191D01C1A525;
 			isa = PBXBuildFile;
 			settings = {
 			};

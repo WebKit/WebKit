@@ -48,9 +48,9 @@ id <WCURIEntry> WCCreateURIEntry(void)
     _title = [title retain];
     _image = [image retain];
     _comment = [comment retain];
-    _creationDate = [[NSDate alloc] init];
-    _modificationDate = [[NSDate alloc] init];
-    _lastVisitedDate = [[NSDate alloc] init];
+    _creationDate = [[NSCalendarDate alloc] init];
+    _modificationDate = [[NSCalendarDate alloc] init];
+    _lastVisitedDate = [[NSCalendarDate alloc] init];
     
     return self;
 }
@@ -75,17 +75,17 @@ id <WCURIEntry> WCCreateURIEntry(void)
     return _comment;
 }
 
--(NSDate *)creationDate;
+-(NSCalendarDate *)creationDate;
 {
     return _creationDate;
 }
 
--(NSDate *)modificationDate;
+-(NSCalendarDate *)modificationDate;
 {
     return _modificationDate;
 }
 
--(NSDate *)lastVisitedDate
+-(NSCalendarDate *)lastVisitedDate
 {
     return _lastVisitedDate;
 }
@@ -122,7 +122,7 @@ id <WCURIEntry> WCCreateURIEntry(void)
     }
 }
 
--(void)setModificationDate:(NSDate *)date
+-(void)setModificationDate:(NSCalendarDate *)date
 {
     if (date != _modificationDate) {
         [_modificationDate release];
@@ -130,7 +130,7 @@ id <WCURIEntry> WCCreateURIEntry(void)
     }
 }
 
--(void)setLastVisitedDate:(NSDate *)date
+-(void)setLastVisitedDate:(NSCalendarDate *)date
 {
     if (date != _lastVisitedDate) {
         [_lastVisitedDate release];

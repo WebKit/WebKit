@@ -9,9 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/IFURIEntry.h>
 
+@class IFWebHistoryPrivate;
+
+// notification sent when history is modified
+#define IFWebHistoryEntriesChangedNotification		@"IFWebHistoryEntriesChangedNotification"
+
 @interface IFWebHistory : NSObject {
 @private
-    id _historyPrivate;
+    IFWebHistoryPrivate *_historyPrivate;
 }
 
 + (IFWebHistory *)sharedWebHistory;
@@ -19,6 +24,7 @@
 // modifying contents
 - (void)addEntry: (IFURIEntry *)entry;
 - (void)removeEntry: (IFURIEntry *)entry;
+- (void)removeEntriesForDay: (NSCalendarDate *)calendarDate;
 - (void)removeAllEntries;
 
 // retrieving contents for date-based presentation

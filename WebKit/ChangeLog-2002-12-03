@@ -1,3 +1,44 @@
+2002-02-19  John Sullivan  <sullivan@apple.com>
+
+	Finished first cut at IFWebHistory implementation. All methods are implemented
+	except the string-matching ones.
+
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIEntry.m: (-[IFURIEntry initWithURL:title:image:comment:]),
+	(-[IFURIEntry lastVisitedDate]), (-[IFURIEntry setModificationDate:]),
+	(-[IFURIEntry setLastVisitedDate:]):
+	Changed all NSDates to be NSCalendarDates.
+
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistory.m: (-[IFWebHistory init]), (-[IFWebHistory
+	dealloc]), (-[IFWebHistory sendEntriesChangedNotification]), (-[IFWebHistory
+	addEntry:]), (-[IFWebHistory removeEntry:]), (-[IFWebHistory
+	removeEntriesForDay:]), (-[IFWebHistory removeAllEntries]), (-[IFWebHistory
+	orderedLastVisitedDays]), (-[IFWebHistory orderedEntriesLastVisitedOnDay:]),
+	(-[IFWebHistory entriesWithAddressContainingString:]), (-[IFWebHistory
+	entriesWithTitleOrAddressContainingString:]), (-[IFWebHistory containsURL:]):
+	Implemented all IFWebHistory methods by calling through to IFWebHistoryPrivate object.
+	Send a change notification each time the actual data changes. Removed all
+	canned-data mechanisms.
+
+	* History.subproj/IFWebHistoryPrivate.h:
+	* History.subproj/IFWebHistoryPrivate.m: (-[IFWebHistoryPrivate init]),
+	(-[IFWebHistoryPrivate dealloc]), (-[IFWebHistoryPrivate findIndex:forDay:]),
+	(-[IFWebHistoryPrivate insertEntry:atDateIndex:]), (-[IFWebHistoryPrivate
+	removeEntryForURLString:]), (-[IFWebHistoryPrivate addEntry:]),
+	(-[IFWebHistoryPrivate removeEntry:]), (-[IFWebHistoryPrivate
+	removeEntriesForDay:]), (-[IFWebHistoryPrivate removeAllEntries]),
+	(-[IFWebHistoryPrivate orderedLastVisitedDays]), (-[IFWebHistoryPrivate
+	orderedEntriesLastVisitedOnDay:]), (-[IFWebHistoryPrivate
+	entriesWithAddressContainingString:]), (-[IFWebHistoryPrivate
+	entriesWithTitleOrAddressContainingString:]), (-[IFWebHistoryPrivate
+	containsURL:]):
+	Implemented guts of history mechanism using a dictionary for URL lookup and
+	a sorted array of dates with entries and a sorted array of sorted arrays of 
+	entries per date.
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files
+
 2002-02-18  John Sullivan  <sullivan@apple.com>
 
 	First piece of implementing IFWebHistory. None of the mutators do anything,
