@@ -31,7 +31,7 @@ typedef enum
 enum
 {
     MAX_UNSIGNED_LENGTH = 20, // long enough to hold the string representation of a 64-bit unsigned number
-    SYNC_IDLE_THRESHOLD = 1,
+    SYNC_IDLE_THRESHOLD = 3,
 };
 
 // support for expiring cache files using file system access times --------------------------------------------
