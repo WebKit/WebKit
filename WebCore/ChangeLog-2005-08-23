@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3773740> calling addEventListener on a frame that hasn't loaded yet crashes
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Add nil checks for the document.
+        The nil check prevents the crash but there's still a bug here; I filed 3807059 about that.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed problem where up and down arrow keys are not preserving X position
 
         * khtml/khtml_part.cpp:
