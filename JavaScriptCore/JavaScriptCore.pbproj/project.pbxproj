@@ -46,6 +46,7 @@
 		034768DFFF38A50411DB9C8B = {
 			children = (
 				034768E0FF38A50411DB9C8B,
+				45E12D7706A49A6C00E9DF84,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -84,6 +85,8 @@
 			projectDirPath = "";
 			targets = (
 				0867D69CFE84028FC02AAC07,
+				45E12D7606A49A6C00E9DF84,
+				45E12D7F06A49AD600E9DF84,
 			);
 		};
 		0867D691FE84028FC02AAC07 = {
@@ -435,6 +438,143 @@
 //082
 //083
 //084
+//450
+//451
+//452
+//453
+//454
+		45E12D7206A49A6C00E9DF84 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45E12D7306A49A6C00E9DF84 = {
+			buildActionMask = 2147483647;
+			files = (
+				45E12D8906A49B0F00E9DF84,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45E12D7406A49A6C00E9DF84 = {
+			buildActionMask = 2147483647;
+			files = (
+				45E12DBA06A49B5400E9DF84,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45E12D7506A49A6C00E9DF84 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45E12D7606A49A6C00E9DF84 = {
+			buildPhases = (
+				45E12D7206A49A6C00E9DF84,
+				45E12D7306A49A6C00E9DF84,
+				45E12D7406A49A6C00E9DF84,
+				45E12D7506A49A6C00E9DF84,
+			);
+			buildSettings = {
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = testkjs;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = testkjs;
+			productInstallPath = /usr/local/bin;
+			productName = testkjs;
+			productReference = 45E12D7706A49A6C00E9DF84;
+		};
+		45E12D7706A49A6C00E9DF84 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = testkjs;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		45E12D7F06A49AD600E9DF84 = {
+			buildPhases = (
+			);
+			buildSettings = {
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = All;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+				45E12D8306A49AEF00E9DF84,
+				45E12D8106A49AE900E9DF84,
+			);
+			isa = PBXAggregateTarget;
+			name = All;
+			productName = All;
+		};
+		45E12D8006A49AE900E9DF84 = {
+			containerPortal = 0867D690FE84028FC02AAC07;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = 45E12D7606A49A6C00E9DF84;
+			remoteInfo = testkjs;
+		};
+		45E12D8106A49AE900E9DF84 = {
+			isa = PBXTargetDependency;
+			target = 45E12D7606A49A6C00E9DF84;
+			targetProxy = 45E12D8006A49AE900E9DF84;
+		};
+		45E12D8206A49AEF00E9DF84 = {
+			containerPortal = 0867D690FE84028FC02AAC07;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = 0867D69CFE84028FC02AAC07;
+			remoteInfo = JavaScriptCore;
+		};
+		45E12D8306A49AEF00E9DF84 = {
+			isa = PBXTargetDependency;
+			target = 0867D69CFE84028FC02AAC07;
+			targetProxy = 45E12D8206A49AEF00E9DF84;
+		};
+		45E12D8806A49B0F00E9DF84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = testkjs.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		45E12D8906A49B0F00E9DF84 = {
+			fileRef = 45E12D8806A49B0F00E9DF84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		45E12DBA06A49B5400E9DF84 = {
+			fileRef = 034768E0FF38A50411DB9C8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//450
+//451
+//452
+//453
+//454
 //510
 //511
 //512
@@ -1869,6 +2009,7 @@
 		};
 		F5C290E50284F960018635CA = {
 			children = (
+				45E12D8806A49B0F00E9DF84,
 				F692A8540255597D01FF60F7,
 				F692A8C802555BA201FF60F7,
 				F692A8C902555BA201FF60F7,
