@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+	<rdar://problem/3505795>: loading invalid XML document crashes trying to create h1 element
+        
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::isValidName): include "0123456789" instead of
+	"0-9", it's not a regexp it's just a list of characters.
+
+2003-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 	<rdar://problem/3504155>: Safari fails XMLHttpRequest abort test
         
 	* khtml/ecma/xmlhttprequest.cpp:
