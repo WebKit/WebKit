@@ -1,5 +1,51 @@
 2004-10-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3826343> crash in KHTMLParser::setCurrent parsing document fragment (happens in Calendar widget)
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Initialized currentIsReferenced to false (fixes bug).
+        (KHTMLParser::reset): Use doc() to make code easier to read.
+        (KHTMLParser::setCurrent): Ditto.
+        (KHTMLParser::parseToken): Ditto.
+        (KHTMLParser::insertNode): Ditto.
+        (KHTMLParser::getElement): Ditto.
+        (KHTMLParser::popOneBlock): Ditto.
+
+        - fixed <rdar://problem/3814237> REGRESSION (Mail): Copy/paste style does not set color in Mail compose window
+
+        * kwq/KWQKHTMLPart.h: Added fontAttributesForSelectionStart.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::styleForSelectionStart): Factored out most of fontForSelection.
+        (KWQKHTMLPart::fontAttributesForSelectionStart): Added.
+        (KWQKHTMLPart::fontAttributesForSelectionStart): Added.
+        (KWQKHTMLPart::registerCommandForUndo): Updated for name change (see below).
+        (KWQKHTMLPart::registerCommandForRedo): Ditto.
+
+        * kwq/WebCoreBridge.h: Added fontAttributesForSelectionStart.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge undoEditing:]): Updated for name change (see below).
+        (-[WebCoreBridge redoEditing:]): Ditto.
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:]): Got rid of named temporary
+        EditCommandPtr variable to make things slightly more terse.
+        (-[WebCoreBridge moveSelectionToDragCaret:smartMove:]): Ditto.
+        (-[WebCoreBridge deleteSelectionWithSmartDelete:]): Ditto.
+        (-[WebCoreBridge fontAttributesForSelectionStart]): Added.
+
+        - fix compile on Panther and other cleanup
+
+        * khtml/khtml_part.cpp: Removed unneeded include.
+        * kwq/KWQEditCommand.h: Got rid of use of "impl" when referring to EditCommand pointers.
+        * kwq/KWQEditCommand.mm: Added include so we compile on Panther.
+        (-[KWQEditCommand initWithEditCommand:]): Changed name.
+        (-[KWQEditCommand dealloc]): Updated for m_impl change to m_command.
+        (-[KWQEditCommand finalize]): Ditto.
+        (+[KWQEditCommand commandWithEditCommand:]): Changed name.
+        (-[KWQEditCommand command]): Changed name.
+
+2004-10-04  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - did a more-robust version of the fix I just landed

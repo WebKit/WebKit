@@ -133,7 +133,7 @@ KHTMLParser::KHTMLParser( KHTMLView *_parent, DocumentPtr *doc)
 }
 
 KHTMLParser::KHTMLParser( DOM::DocumentFragmentImpl *i, DocumentPtr *doc )
-    : current(0)
+    : current(0), currentIsReferenced(false)
 {
     HTMLWidget = 0;
     document = doc;
@@ -166,7 +166,7 @@ KHTMLParser::~KHTMLParser()
 
 void KHTMLParser::reset()
 {
-    setCurrent(document->document());
+    setCurrent(doc());
 
     freeBlock();
 
@@ -190,7 +190,7 @@ void KHTMLParser::reset()
 
 void KHTMLParser::setCurrent(DOM::NodeImpl *newCurrent) 
 {
-    bool newCurrentIsReferenced = newCurrent && newCurrent != document->document();
+    bool newCurrentIsReferenced = newCurrent && newCurrent != doc();
     if (newCurrentIsReferenced) 
 	newCurrent->ref(); 
     if (currentIsReferenced) 
@@ -223,7 +223,7 @@ void KHTMLParser::parseToken(Token *t)
 
     // holy shit. apparently some sites use </br> instead of <br>
     // be compatible with IE and NS
-    if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->inCompatMode())
+    if(t->id == ID_BR+ID_CLOSE_TAG && doc()->inCompatMode())
         t->id -= ID_CLOSE_TAG;
 
     if(t->id > ID_CLOSE_TAG)
@@ -341,8 +341,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             if(!n->attached() && HTMLWidget)
                 n->attach();
             if (n->maintainsState()) {
-                document->document()->registerMaintainsState(n);
-                QStringList &states = document->document()->restoreState();
+                doc()->registerMaintainsState(n);
+                QStringList &states = doc()->restoreState();
                 if (!states.isEmpty())
                     n->restoreState(states);
             }
@@ -840,9 +840,8 @@ NodeImpl *KHTMLParser::getElement(Token* t)
             // we can't implement that behaviour now because it could cause too many
             // regressions and the headaches are not worth the work as long as there is
             // no site actually relying on that detail (Dirk)
-            if (static_cast<HTMLDocumentImpl*>(document->document())->body())
-                static_cast<HTMLDocumentImpl*>(document->document())->body()
-                    ->setAttribute(ATTR_STYLE, "display:none");
+            if (doc()->body())
+                doc()->body()->setAttribute(ATTR_STYLE, "display:none");
             inBody = false;
         }
         if ( (haveContent || haveFrameSet) && current->id() == ID_HTML)
@@ -1611,9 +1610,9 @@ void KHTMLParser::popOneBlock(bool delBlock)
 
 #if SPEED_DEBUG < 1
     if((Elem->node != current)) {
-        if (current->maintainsState() && document->document()){
-            document->document()->registerMaintainsState(current);
-            QStringList &states = document->document()->restoreState();
+        if (current->maintainsState() && doc()){
+            doc()->registerMaintainsState(current);
+            QStringList &states = doc()->restoreState();
             if (!states.isEmpty())
                 current->restoreState(states);
         }

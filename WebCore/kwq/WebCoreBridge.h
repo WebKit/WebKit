@@ -276,6 +276,7 @@ typedef enum {
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
+- (NSDictionary *)fontAttributesForSelectionStart;
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;

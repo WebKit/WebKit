@@ -26,6 +26,7 @@
 #import "KWQKHTMLPart.h"
 
 #import "DOMInternal.h"
+
 #import "KWQClipboard.h"
 #import "KWQDOMNode.h"
 #import "KWQDummyView.h"
@@ -40,9 +41,13 @@
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
+
 #import "WebCoreBridge.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreViewFactory.h"
+#import "WebDashboardRegion.h"
+
+#import "css_computedstyle.h"
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
@@ -77,8 +82,6 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
-#import "WebDashboardRegion.h"
-
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
@@ -107,6 +110,7 @@ using khtml::CharacterIterator;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::DashboardRegionValue;
+using khtml::EditCommandPtr;
 using khtml::endOfWord;
 using khtml::findPlainText;
 using khtml::InlineTextBox;
@@ -131,8 +135,10 @@ using khtml::RightWordIfOnBoundary;
 using khtml::Selection;
 using khtml::setEnd;
 using khtml::setStart;
+using khtml::ShadowData;
 using khtml::startOfWord;
 using khtml::startVisiblePosition;
+using khtml::StyleDashboardRegion;
 using khtml::TextIterator;
 using khtml::UPSTREAM;
 using khtml::VISIBLE;
@@ -2967,7 +2973,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                             
                             listText += '\t';
                             if (itemParent){
-                                khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
+                                RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
 
                                 maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
                                 switch(listRenderer->style()->listStyleType()) {
@@ -3359,49 +3365,59 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRe
     return result;
 }
 
+RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
+{
+    nodeToRemove = 0;
+
+    if (!xmlDocImpl())
+        return 0;
+    if (d->m_selection.isNone())
+        return 0;
+    
+    Position pos = VisiblePosition(d->m_selection.start(), UPSTREAM).deepEquivalent();
+    ASSERT(pos.isNotNull());
+    if (!pos.inRenderedContent())
+        return 0;
+    NodeImpl *node = pos.node();
+    if (!node)
+        return 0;
+    
+    if (!d->m_typingStyle)
+        return node->renderer()->style();
+
+    int exceptionCode = 0;
+    ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    TextImpl *text = xmlDocImpl()->createEditingTextNode("");
+    styleElement->appendChild(text, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    node->parentNode()->insertBefore(styleElement, node, exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    nodeToRemove = styleElement;    
+    return styleElement->renderer()->style();
+}
+
 NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 {
     if (hasMultipleFonts)
         *hasMultipleFonts = false;
 
-    if (!xmlDocImpl())
-        return nil;
-    if (d->m_selection.isNone())
-        return nil;
-    
-    if (d->m_selection.isCaret()) {
-        Position pos = VisiblePosition(d->m_selection.start(), UPSTREAM).deepEquivalent();
-        ASSERT(pos.isNotNull());
-        if (!pos.inRenderedContent())
-            return nil;
-        NodeImpl *node = pos.node();
-        if (!node)
-            return nil;
-        
-        if (!d->m_typingStyle)
-            return node->renderer()->style()->font().getNSFont();
+    if (!d->m_selection.isRange()) {
+        NodeImpl *nodeToRemove;
+        NSFont *result = styleForSelectionStart(nodeToRemove)->font().getNSFont();
 
-        int exceptionCode = 0;
-        ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        
-        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
-        ASSERT(exceptionCode == 0);
-        
-        TextImpl *text = xmlDocImpl()->createEditingTextNode("");
-        styleElement->appendChild(text, exceptionCode);
-        ASSERT(exceptionCode == 0);
+        if (nodeToRemove) {
+            int exceptionCode;
+            nodeToRemove->remove(exceptionCode);
+            ASSERT(exceptionCode == 0);
+        }
 
-        node->parentNode()->insertBefore(styleElement, node, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        
-        RenderObject *renderer = styleElement->renderer();
-        ASSERT(renderer);
-        NSFont *result = renderer->style()->font().getNSFont();
-        
-        styleElement->remove(exceptionCode);
-        ASSERT(exceptionCode == 0);
-        
         return result;
     }
 
@@ -3421,12 +3437,76 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
             if (!hasMultipleFonts)
                 break;
         } else if (font != f) {
-            *hasMultipleFonts = false;
+            *hasMultipleFonts = true;
             break;
         }
     }
 
     return font;
+}
+
+NSDictionary *KWQKHTMLPart::fontAttributesForSelectionStart() const
+{
+    NodeImpl *nodeToRemove;
+    RenderStyle *style = styleForSelectionStart(nodeToRemove);
+    if (!style)
+        return nil;
+
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+
+    if (style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
+        [result setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+
+    if (style->font().getNSFont())
+        [result setObject:style->font().getNSFont() forKey:NSFontAttributeName];
+
+    if (style->color().isValid() && style->color() != black)
+        [result setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+
+    ShadowData *shadow = style->textShadow();
+    if (shadow) {
+        NSShadow *s = [[NSShadow alloc] init];
+        [s setShadowOffset:NSMakeSize(shadow->x, shadow->y)];
+        [s setShadowBlurRadius:shadow->blur];
+        [s setShadowColor:shadow->color.getNSColor()];
+        [result setObject:s forKey:NSShadowAttributeName];
+    }
+
+    int decoration = style->textDecorationsInEffect();
+    if (decoration & khtml::LINE_THROUGH)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+
+    int superscriptInt = 0;
+    switch (style->verticalAlign()) {
+        case khtml::BASELINE:
+        case khtml::BOTTOM:
+        case khtml::BASELINE_MIDDLE:
+        case khtml::LENGTH:
+        case khtml::MIDDLE:
+        case khtml::TEXT_BOTTOM:
+        case khtml::TEXT_TOP:
+        case khtml::TOP:
+            break;
+        case khtml::SUB:
+            superscriptInt = -1;
+            break;
+        case khtml::SUPER:
+            superscriptInt = 1;
+            break;
+    }
+    if (superscriptInt)
+        [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
+
+    if (decoration & khtml::UNDERLINE)
+        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+
+    if (nodeToRemove) {
+        int exceptionCode = 0;
+        nodeToRemove->remove(exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+
+    return result;
 }
 
 KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
@@ -3756,18 +3836,18 @@ DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
     return fragment;
 }
 
-void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommandPtr &cmd)
+void KWQKHTMLPart::registerCommandForUndo(const EditCommandPtr &cmd)
 {
     ASSERT(cmd.get());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
     [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(undoEditing:) object:kwq];
     _haveUndoRedoOperations = YES;
 }
 
-void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommandPtr &cmd)
+void KWQKHTMLPart::registerCommandForRedo(const EditCommandPtr &cmd)
 {
     ASSERT(cmd.get());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
     [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(redoEditing:) object:kwq];
     _haveUndoRedoOperations = YES;
 }
@@ -4001,9 +4081,9 @@ NSMutableDictionary *KWQKHTMLPart::dashboardRegionsDictionary()
         rect.size.height = region.bounds.height();
         NSString *label = region.label.getNSString();
         WebDashboardRegionType type = WebDashboardRegionTypeNone;
-        if (region.type == khtml::StyleDashboardRegion::Circle)
+        if (region.type == StyleDashboardRegion::Circle)
             type = WebDashboardRegionTypeCircle;
-        else if (region.type == khtml::StyleDashboardRegion::Rectangle)
+        else if (region.type == StyleDashboardRegion::Rectangle)
             type = WebDashboardRegionTypeRectangle;
         NSMutableArray *regionValues = [webRegions objectForKey:label];
         if (!regionValues) {

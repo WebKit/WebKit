@@ -26,43 +26,43 @@
 #import "KWQEditCommand.h"
 
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
+
 #import "htmlediting.h"
 
 using khtml::EditCommand;
 
 @implementation KWQEditCommand
 
-- (id)initWithEditCommandImpl:(EditCommand *)impl
+- (id)initWithEditCommand:(EditCommand *)command
 {
-    ASSERT(impl);
+    ASSERT(command);
     [super init];
-    m_impl = impl;
-    impl->ref();
+    m_command = command;
+    command->ref();
     return self;
 }
 
 - (void)dealloc
 {
-    if (m_impl)
-        m_impl->deref();
+    m_command->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    if (m_impl)
-        m_impl->deref();
+    m_command->deref();
     [super finalize];
 }
 
-+ (KWQEditCommand *)commandWithEditCommandImpl:(EditCommand *)impl
++ (KWQEditCommand *)commandWithEditCommand:(EditCommand *)command
 {
-    return [[[KWQEditCommand alloc] initWithEditCommandImpl:impl] autorelease];
+    return [[[KWQEditCommand alloc] initWithEditCommand:command] autorelease];
 }
 
-- (EditCommand *)impl
+- (EditCommand *)command
 {
-    return m_impl;
+    return m_command;
 }
 
 @end

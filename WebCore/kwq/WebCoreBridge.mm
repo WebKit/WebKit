@@ -84,6 +84,7 @@
 @class NSView;
 
 using DOM::AtomicString;
+using DOM::CSSStyleDeclarationImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentTypeImpl;
@@ -103,7 +104,6 @@ using DOM::Range;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommandPtr;
-using khtml::EditCommand;
 using khtml::ETextGranularity;
 using khtml::MoveSelectionCommand;
 using khtml::parseURL;
@@ -1334,17 +1334,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)undoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
-    
-    EditCommandPtr cmd([arg impl]);
-    cmd.unapply();
+    [arg command]->unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
-    
-    EditCommandPtr cmd([arg impl]);
-    cmd.reapply();
+    [arg command]->reapply();
 }
 
 - (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity
@@ -1520,8 +1516,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !fragment)
         return;
     
-    EditCommandPtr cmd(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace));
-    cmd.apply();
+    EditCommandPtr(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace)).apply();
     [self ensureSelectionVisible];
 }
 
@@ -1569,8 +1564,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
     Position base = _part->dragCaret().base();
-    EditCommandPtr cmd(new MoveSelectionCommand(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove));
-    cmd.apply();
+    EditCommandPtr(new MoveSelectionCommand(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove)).apply();
 }
 
 - (Position)_positionForPoint:(NSPoint)point
@@ -1617,8 +1611,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!selection.isRange())
         return;
     
-    EditCommandPtr cmd(new DeleteSelectionCommand(_part->xmlDocImpl(), smartDelete));
-    cmd.apply();
+    EditCommandPtr(new DeleteSelectionCommand(_part->xmlDocImpl(), smartDelete)).apply();
 }
 
 - (void)deleteKeyPressed
@@ -1653,6 +1646,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (hasMultipleFonts)
         *hasMultipleFonts = multipleFonts;
     return font;
+}
+
+- (NSDictionary *)fontAttributesForSelectionStart
+{
+    return _part ? _part->fontAttributesForSelectionStart() : nil;
 }
 
 - (void)ensureSelectionVisible

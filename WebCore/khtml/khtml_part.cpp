@@ -39,7 +39,6 @@
 #include "dom/dom_string.h"
 #include "dom/dom_element.h"
 #include "dom/html_document.h"
-#include "editing/htmlediting.h"
 #include "editing/selection.h"
 #include "editing/visible_position.h"
 #include "editing/visible_text.h"
