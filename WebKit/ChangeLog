@@ -1,3 +1,20 @@
+2004-11-04  David Hyatt  <hyatt@apple.com>
+
+	Make sure the dominant line direction is properly set for RTL runs so that spaces will reverse.
+
+	Change xHeight to measure the ascent of the x glyph, since the xHeight metrics appear to be
+	totally bogus in both CG and AppKit.
+	
+        Reviewed by darin
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer xHeight]):
+        (-[WebTextRenderer _createATSUTextLayoutForRun:style:]):
+        (-[WebTextRenderer _trapezoidForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:geometry:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+
 2004-11-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt (when I originally coded it).

@@ -453,8 +453,14 @@ static BOOL alwaysUseATSU = NO;
 
 - (float)xHeight
 {
-    // The concrete implementation of xHeight in NSCGSFont will definitely not
-    // throw an exception, it's all just math.
+    // Measure the actual character "x", because AppKit synthesizes X height rather
+    // than getting it from the font. Unfortunately, NSFont will round this for us
+    // so we don't quite get the right value.
+    NSGlyph xGlyph = [font glyphWithName:@"x"];
+    if (xGlyph) {
+        NSRect xBox = [font boundingRectForGlyph:xGlyph];
+        return NSMaxY(xBox);
+    }
 
     return [font xHeight];
 }
@@ -1334,7 +1340,7 @@ static const char *joiningNames[] = {
     }
 }
 
-- (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run
+- (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style
 {
     // The only Cocoa calls here are to NSGraphicsContext and the self
     // call to _initializeATSUStyle, which are all exception-safe.
@@ -1364,11 +1370,12 @@ static const char *joiningNames[] = {
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ATSLineLayoutOptions lineLayoutOptions = (kATSLineFractDisable | kATSLineDisableAutoAdjustDisplayPos | kATSLineUseDeviceMetrics);
-    ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag };
-    ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions)  };
-    ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions };
+    Boolean rtl = style->rtl;
+    ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag, kATSULineDirectionTag };
+    ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions), sizeof(Boolean)  };
+    ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions, &rtl };
     
-    status = ATSUSetLayoutControls(layout, 2, tags, sizes, values);
+    status = ATSUSetLayoutControls(layout, 3, tags, sizes, values);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUSetLayoutControls failed(%d)", status);
 
@@ -1392,7 +1399,7 @@ static const char *joiningNames[] = {
         return nilTrapezoid;
     }
         
-    ATSUTextLayout layout = [self _createATSUTextLayoutForRun:run];
+    ATSUTextLayout layout = [self _createATSUTextLayoutForRun:run style:style];
 
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
@@ -1472,7 +1479,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         return;
     }
 
-    layout = [self _createATSUTextLayoutForRun:aRun];
+    layout = [self _createATSUTextLayoutForRun:aRun style:style];
 
     WebCoreTextRun leadingRun = *aRun;
     leadingRun.from = 0;
@@ -1543,7 +1550,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     if (runLength <= 0)
         return;
 
-    layout = [self _createATSUTextLayoutForRun:aRun];
+    layout = [self _createATSUTextLayoutForRun:aRun style:style];
 
     if (style->backgroundColor != nil)
         [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
@@ -1586,7 +1593,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         aRun = &swappedRun;
     }
 
-    layout = [self _createATSUTextLayoutForRun:aRun];
+    layout = [self _createATSUTextLayoutForRun:aRun style:style];
 
     primaryOffset = aRun->from;
     
