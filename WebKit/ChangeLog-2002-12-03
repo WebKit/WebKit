@@ -1,5 +1,14 @@
 2002-10-22  Darin Adler  <darin@apple.com>
 
+        * Misc.subproj/WebKitErrors.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+	Rename WebErrorLocationChangeInterruptedByURLPolicyChange to
+	WebErrorLocationChangeInterruptedByPolicyChange.
+
+2002-10-22  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebMainResourceClient.m:
         (-[WebMainResourceClient handle:didReceiveResponse:]):
 	Send the new error whenever a policy change happens. The old code was
