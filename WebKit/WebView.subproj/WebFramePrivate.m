@@ -38,7 +38,9 @@ static const char * const stateNames[6] = {
 {
     [webView _setController: nil];
     [dataSource _setController: nil];
+    [dataSource _setLocationChangeHandler: nil];
     [provisionalDataSource _setController: nil];
+    [provisionalDataSource _setLocationChangeHandler: nil];
 
     [name autorelease];
     [webView autorelease];
@@ -70,6 +72,7 @@ static const char * const stateNames[6] = {
 {
     if (dataSource != d) {
         [dataSource _setController: nil];
+        [dataSource _setLocationChangeHandler: nil];
         [dataSource autorelease];
         dataSource = [d retain];
     }
@@ -245,7 +248,7 @@ static const char * const stateNames[6] = {
         
             [self _setState: IFWEBFRAMESTATE_COMMITTED_PAGE];
         
-            [[[self dataSource] _locationChangeHandler] locationChangeCommitted];
+            [[[self dataSource] _locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
             
             // If we have a title let the controller know about it.
             if ([[self dataSource] pageTitle])
@@ -323,7 +326,7 @@ static const char * const stateNames[6] = {
                 if (![pd isLoading]) {
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
 
-                    [[pd _locationChangeHandler] locationChangeDone: [pd mainDocumentError]];
+                    [[pd _locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
@@ -379,7 +382,7 @@ static const char * const stateNames[6] = {
                 [thisDocumentView setNeedsDisplay: YES];
                 [thisDocumentView display];
                 
-                [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
+                [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        

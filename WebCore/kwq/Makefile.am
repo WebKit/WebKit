@@ -92,12 +92,10 @@ libkwq_o_SOURCES = \
 	KWQScrollView.mm \
 	KWQString.mm \
 	KWQStringList.mm \
-	KWQStyle.mm \
 	KWQStyleSheet.mm \
 	KWQTextArea.mm \
 	KWQTextEdit.mm \
 	KWQTimer.mm \
-	KWQToolTip.mm \
 	KWQValueListImpl.mm \
 	KWQVariant.mm \
 	KWQVectorImpl.mm \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,27 @@
 #ifndef KCHARSETS_H_
 #define KCHARSETS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qfont.h>
 #include <qstring.h>
 
 class QTextCodec;
 
-// class KCharsets =============================================================
-
 class KCharsets {
 public:
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KCharsets();
-    ~KCharsets();
-
-    // member functions --------------------------------------------------------
-
     QTextCodec *codecForName(const QString &) const;
     QTextCodec *codecForName(const QString &, bool &) const;
 
     QFont::CharSet charsetForEncoding(const QString &) const;
     QFont::CharSet charsetForEncoding(const QString &, bool) const;
 
-    void setQFont(QFont &, QFont::CharSet) const;
-    void setQFont(QFont &, QString) const;
+    void setQFont(QFont &, QFont::CharSet) const { }
+    void setQFont(QFont &, QString) const { }
 
     QString name(QFont::CharSet);
     QString xCharsetName(QFont::CharSet) const;
 
     bool supportsScript(const QFont &, QFont::CharSet);
 
-}; // class KCharsets ==========================================================
+};
 
 #endif

@@ -77,18 +77,13 @@
 }
 
 
-- (void)removeFromSuperview
+- (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    [self _stopPlugins];
-    [super removeFromSuperview];
+    if (!window)
+        [self _stopPlugins];
+    [super viewWillMoveToWindow:window];
 }
 
-
-- (void)removeFromSuperviewWithoutNeedingDisplay
-{
-    [self _stopPlugins];
-    [super removeFromSuperviewWithoutNeedingDisplay];
-}
 
 // This method is typically called by the view's controller when
 // the data source is changed.

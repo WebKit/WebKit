@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,35 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <kwqdebug.h>
 
 #import <qvariant.h>
+
 #import <qstring.h>
 
 class QVariant::QVariantPrivate {
 public:
-    QVariantPrivate() : t(QVariant::Invalid), refCount(0)
-    {
-    }
-    
-    ~QVariantPrivate() {
-         clear();
-    }
-    
-    void clear()
-    {
-        switch (t) {
-            case QVariant::Invalid:
-            case QVariant::UInt:
-            case QVariant::Double:
-            case QVariant::Bool:
-                break;
-            case QVariant::String:
-                delete (QString*)value.p;
-                break;
-        }
-        t = QVariant::Invalid;
-    }
+    QVariantPrivate(QVariant::Type type = QVariant::Invalid);
+    ~QVariantPrivate();
     
     QVariant::Type t;
 
@@ -62,94 +42,100 @@ public:
     } value;
 
     int refCount;
-
-    friend class KWQRefPtr<QVariantPrivate>;
 };
 
-QVariant::QVariant() : d(new QVariantPrivate())
+QVariant::QVariantPrivate::QVariantPrivate(QVariant::Type type)
+    : t(type), refCount(0)
 {
 }
 
-
-QVariant::QVariant(bool val, int i) : d(new QVariantPrivate())
+QVariant::QVariantPrivate::~QVariantPrivate()
 {
-    d->t = Bool;
+    if (t == QVariant::String)
+        delete (QString*)value.p;
+}
+
+QVariant::QVariant() : d(new QVariantPrivate)
+{
+}
+
+QVariant::QVariant(bool val, int i) : d(new QVariantPrivate(Bool))
+{
     d->value.d = val;
 }
 
-
-QVariant::QVariant(double val) : d(new QVariantPrivate())
+QVariant::QVariant(double val) : d(new QVariantPrivate(Double))
 {
-    d->t = Double;
     d->value.d = val;
 }
 
-
-QVariant::QVariant(const QString &s) : d(new QVariantPrivate())
+QVariant::QVariant(const QString &s) : d(new QVariantPrivate(String))
 {
-    d->t = String;
     d->value.p = new QString(s);
 }
-
-
-QVariant::QVariant(const QVariant &other) : d(0)
-{
-    d = other.d;
-}
-
 
 QVariant::~QVariant()
 {
 }
 
+QVariant::QVariant(const QVariant &v)
+    : d(v.d)
+{
+}
+
+QVariant &QVariant::operator=(const QVariant &v)
+{
+    d = v.d;
+    return *this;
+}
 
 QVariant::Type QVariant::type() const
 {
     return d->t;
 }
 
-
 bool QVariant::toBool() const
 {
-    if (d->t == Bool) {
+    switch (d->t) {
+    case Bool:
         return d->value.b;
-    }
-    if (d->t == Double) {
+    case UInt:
+        return d->value.u;
+    case Double:
         return d->value.d != 0.0;
+    case Invalid:
+    case String:
+        break;
     }
-    if (d->t == UInt) {
-        return d->value.u != 0;
-    }
-
-    return FALSE;
+    return false;
 }
-
 
 uint QVariant::toUInt() const
 {
-    if (d->t == UInt) {
-        return (int)d->value.u;
+    switch (d->t) {
+    case Bool:
+        return d->value.b;
+    case UInt:
+        return d->value.u;
+    case Double:
+        return (uint)d->value.d;
+    case Invalid:
+    case String:
+        break;
     }
-    if (d->t == Double) {
-        return (int)d->value.d;
-    }
-    if (d->t == Bool) {
-        return (int)d->value.b;
-    }
-    
     return 0;
 }
 
-
 QString QVariant::asString() const
-{    
-    return *((QString *)d->value.p);
-}
-
-
-QVariant &QVariant::operator=(const QVariant &other)
 {
-    d = other.d;
-    return *this;
+    switch (d->t) {
+    case String:
+        return *(QString *)d->value.p;
+    case Invalid:
+    case Bool:
+    case UInt:
+    case Double:
+        break;
+    }
+    return QString();
 }
-

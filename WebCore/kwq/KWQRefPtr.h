@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,69 +26,58 @@
 #ifndef KWQREFPTR_H_
 #define KWQREFPTR_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-
 template <class T> class KWQRefPtr {
 public:
-    explicit KWQRefPtr(T* ptr = 0) : pointer(ptr)
-    {
-        ref();
-    }
+    KWQRefPtr() : pointer(0) { }
+    explicit KWQRefPtr(T*);
+    ~KWQRefPtr() { unref(); }
 
-    KWQRefPtr(const KWQRefPtr& r) : pointer(r.pointer)
-    {
-        ref();
-    }
+    KWQRefPtr(const KWQRefPtr&);
+    KWQRefPtr& operator=(const KWQRefPtr&);
 
-    KWQRefPtr& operator=(const KWQRefPtr& r) {
-        if (&r != this) {
-	    r.ref();
-	    unref();
-	    pointer = r.pointer;
-	}
-	return *this;
-    }
-
-    ~KWQRefPtr() 
-    {
-        unref();
-    }
-
-    bool isNull() const {
-        return pointer == 0;
-    }
-
-    T& operator*() const {
-        return *pointer;
-    }
-
-    T* operator->() const {
-        return pointer;
-    }
+    bool isNull() const { return pointer == 0; }
+    T& operator*() const { return *pointer; }
+    T* operator->() const { return pointer; }
 
 private:
-    void unref() 
-    {
-        if (!isNull()) {
-	    if (--pointer->refCount == 0) {
-	        delete pointer;
-	    }
-	}
-    }
-
-    void ref() const 
-    {
-        if (!isNull()) {
-  	    ++pointer->refCount;
-	}
-    }
+    void unref();
+    void ref() const; 
 
     T* pointer;
 };
 
+template <class T> KWQRefPtr<T>::KWQRefPtr(T* p)
+    : pointer(p)
+{
+    ref();
+}
+
+template <class T> KWQRefPtr<T>::KWQRefPtr(const KWQRefPtr& r)
+    : pointer(r.pointer)
+{
+    ref();
+}
+
+template <class T> KWQRefPtr<T>& KWQRefPtr<T>::operator=(const KWQRefPtr& r)
+{
+    r.ref();
+    unref();
+    pointer = r.pointer;
+    return *this;
+}
+
+template <class T> void KWQRefPtr<T>::ref() const
+{
+    if (pointer) {
+        ++pointer->refCount;
+    }
+}
+
+template <class T> void KWQRefPtr<T>::unref()
+{
+    if (pointer && --pointer->refCount == 0) {
+        delete pointer;
+    }
+}
 
 #endif
-

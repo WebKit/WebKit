@@ -82,7 +82,7 @@ typedef enum {
 
 @protocol IFWebControllerPolicyHandler <NSObject>
 
-- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame;
+- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForDataSource: (IFWebDataSource *)dataSource;
 
 // URLPolicyForURL: is used to determine what to do BEFORE a URL is loaded, i.e.
 // before it is clicked or loaded via a URL bar.  Clients can choose to handle the

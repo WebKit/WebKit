@@ -1,3 +1,42 @@
+2002-06-20  Darin Adler  <darin@apple.com>
+
+	Fix for leak where sub-frame IFHTMLViews would not call _stopPlugins.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView viewWillMoveToWindow:]):
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView viewWillMoveToWindow:]):
+	Use this viewWillMoveToWindow instead of removeFromSuperview; it's a more
+	reliable way to handle cases where the view is removed from the view hierarchy.
+
+	Fix for IFWebFrame -> IFWebDataSource -> LoadProgressMonitor -> IFWebFrame
+	reference cycle.
+
+	* WebView.subproj/IFLocationChangeHandler.h: Add dataSource parameters for the
+	methods that don't have them so this can be "delegate" style.
+	* WebView.subproj/IFWebController.h: Pass a dataSource instead of a frame
+	when asking for a location change handler.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	Pass dataSource for locationChangeDone.
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _startLoading:]):
+	Pass dataSource for locationChangeStarted.
+
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame setProvisionalDataSource:]):
+	Pass a dataSource instead of a frame when asking for a location change handler.
+
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _transitionProvisionalToCommitted]): Pass dataSource for
+	locationChangeCommitted.
+	(-[IFWebFrame _isLoadComplete]): Pass dataSource for locationChangeDone.
+
+	* force-clean-timestamp: Give this mechanism a try. I'm not sure
+	we really need a clean build right now.
+
+	* WebView.subproj/IFWebDataSource.mm: Simplify.
+
 2002-06-20  Kenneth Kocienda  <kocienda@apple.com>
 
         A more complete fix for this bug:

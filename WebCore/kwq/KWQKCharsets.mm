@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: obviously many functions here can be made inline
-
 #import <kcharsets.h>
 #import <qtextcodec.h>
 #import <kwqdebug.h>
-
-// constructors, copy constructors, and destructors ----------------------------
-
-KCharsets::KCharsets()
-{
-    // do nothing
-}
-
-KCharsets::~KCharsets()
-{
-    // do nothing
-}
-
-// member functions --------------------------------------------------------
 
 QTextCodec *KCharsets::codecForName(const QString &qs) const
 {
@@ -75,22 +59,6 @@ QFont::CharSet KCharsets::charsetForEncoding(const QString &, bool) const
     return QFont::Unicode;
 }
 
-void KCharsets::setQFont(QFont &font, QFont::CharSet) const
-{
-    // FIXME: do we need a real implementation here?
-    // [kocienda: 2001-11-05] I don't think we need to implement this
-    // do nothing
-//    _logNeverImplemented();
-}
-
-void KCharsets::setQFont(QFont &, QString) const
-{
-    // FIXME: do we need a real implementation here?
-    // [kocienda: 2001-11-05] I don't think we need to implement this
-    // do nothing
-//    _logNeverImplemented();
-}
-
 QString KCharsets::name(QFont::CharSet)
 {
     // FIXME: need real implementation here
@@ -111,4 +79,3 @@ bool KCharsets::supportsScript(const QFont &, QFont::CharSet)
     _logPartiallyImplemented();
     return true;
 }
-

@@ -45,16 +45,16 @@ typedef enum {
 
 @protocol IFLocationChangeHandler <NSObject>
 
-- (void)locationChangeStarted;
+- (void)locationChangeStartedForDataSource: (IFWebDataSource *)dataSource;
 
 // Sent after locationChangeStarted.
 // Implementations typically call haveContentPolicy:forLocationChangeHandler: on IFWebController
 // after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
 - (void)requestContentPolicyForMIMEType: (NSString *)type dataSource: (IFWebDataSource *)dataSource;
 
-- (void)locationChangeCommitted;
+- (void)locationChangeCommittedForDataSource: (IFWebDataSource *)dataSource;
 
-- (void)locationChangeDone: (IFError *)error;
+- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource;
 

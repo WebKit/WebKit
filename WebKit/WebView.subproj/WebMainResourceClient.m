@@ -169,7 +169,7 @@
     }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicyOpenExternally){
         if(!downloadHandler){
             [frame->_private setProvisionalDataSource:nil];
-            [[dataSource _locationChangeHandler] locationChangeDone:nil];
+            [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
         }
         [downloadHandler receivedData:data];

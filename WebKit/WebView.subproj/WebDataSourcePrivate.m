@@ -177,7 +177,7 @@ static NSMutableDictionary *_repTypes=nil;
     
     [self _setLoading:YES];
 
-    [[self _locationChangeHandler] locationChangeStarted];
+    [[self _locationChangeHandler] locationChangeStartedForDataSource:self];
 }
 
 - (void)_addURLHandle: (IFURLHandle *)handle

@@ -19,25 +19,20 @@
 
 @implementation IFWebDataSource
 
-- (void)_commonInitialization
-{
-    _private = [[IFWebDataSourcePrivate alloc] init];
-}
-
 -(id)initWithURL:(NSURL *)theURL
 {
-    return [self  initWithURL:theURL attributes:nil flags:0];
+    return [self initWithURL:theURL attributes:nil flags:0];
 }
 
 -(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes
 {
-    return [self  initWithURL:theURL attributes:theAttributes flags:0];
+    return [self initWithURL:theURL attributes:theAttributes flags:0];
 }
 
 -(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 {
     [super init];
-    [self _commonInitialization];
+    _private = [[IFWebDataSourcePrivate alloc] init];
     _private->inputURL = [theURL retain];
     _private->mainHandle = [[IFURLHandle alloc] initWithURL: _private->inputURL attributes:theAttributes flags:theFlags];
     return self;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,58 +26,14 @@
 #ifndef QTOOLTIP_H_
 #define QTOOLTIP_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <qnamespace.h>
 #include <qpalette.h>
-#include <qwidget.h>
-#include <qrect.h>
-#include <qsize.h>
 
-// class QToolTip ==============================================================
-
-class QToolTip : public Qt {
+class QToolTip {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
+    QToolTip(QWidget *) { }
+    void tip(const QRect &r, const QString &s) { }
     
-    // static member functions -------------------------------------------------
-    
-    static QPalette palette();
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QToolTip(QWidget *);
-    
-// add no-op destructor
-    virtual ~QToolTip() {}
-
-    // member functions --------------------------------------------------------
-
-    void tip(const QRect &, const QString &);
-    
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-    virtual void maybeTip(const QPoint &) = 0;
-
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-    QToolTip(const QToolTip &);
-
-// add assignment operator 
-// this private declaration prevents assignment
-    QToolTip &operator=(const QToolTip &);
-
-}; // class QToolTip ===========================================================
+    static QPalette palette() { return QPalette(); }
+};
 
 #endif

@@ -569,10 +569,11 @@ static char *newCString(NSString *string)
     return YES;
 }
 
-- (void)removeFromSuperview
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    [self stop];
-    [super removeFromSuperview];
+    if (!newWindow)
+        [self stop];
+    [super viewWillMoveToWindow:newWindow];
 }
 
 #pragma mark NOTIFICATIONS

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,43 +26,10 @@
 #ifndef QSORTEDLIST_H_
 #define QSORTEDLIST_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QSORTEDLIST ==================================================
-
-#ifdef USING_BORROWED_QSORTEDLIST
-#include <_qsortedlist.h>
-#else
-
-#include "qptrlist.h"
-
-// class QSortedList ===========================================================
+#include <qptrlist.h>
 
 template<class T> class QSortedList : public QPtrList<T> {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QSortedList() : QPtrList<T>() {}
-    QSortedList(const QSortedList<T> &sl) : QPtrList<T>(sl) {}
-    ~QSortedList() {}
-    
-    // Member functions --------------------------------------------------------
-
-    // operators ---------------------------------------------------------------
-
-    QSortedList<T> &operator=(const QSortedList<T> &sl) { QPtrList<T>::operator=(sl); return *this; }
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
     virtual int compareItems(void *a, void *b) 
     { 
 	T *ta = (T *)a; 
@@ -75,9 +42,6 @@ public:
 	    return 1; 
 	}
     }
-
-}; // class QSortedList ========================================================
-
-#endif // USING_BORROWED_QSORTEDLIST
+};
 
 #endif

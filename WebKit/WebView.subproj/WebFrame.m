@@ -148,7 +148,7 @@
             [self stopLoading];
         }
         
-        locationChangeHandler = [[[self controller] policyHandler] provideLocationChangeHandlerForFrame: self];
+        locationChangeHandler = [[[self controller] policyHandler] provideLocationChangeHandlerForDataSource: newDataSource];
     
         [newDataSource _setLocationChangeHandler: locationChangeHandler];
     
