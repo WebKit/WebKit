@@ -2,6 +2,16 @@
 
         Reviewed by Don.
 
+	- fixed build.
+	
+        * ForwardingHeaders/rendering/render_layer.h: Added.
+
+2002-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3114737 - DHTML image content mispositioned on lexus.com
+	
         * khtml/dom/dom2_events.cpp:
         (UIEvent::layerX): Added to support nonstandard Mozilla
 	event.layerX property.
