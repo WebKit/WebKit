@@ -430,7 +430,7 @@ int QString::find(const QRegExp &qre, int index) const
             index += len;
         }
         if (len && (index >= 0) && (index < len)) {
-            qre.match(*this, index);
+            return qre.match(*this, index);
         }
     }
     return -1;
@@ -952,9 +952,7 @@ QChar QString::operator[](int index) const
     if (s && (index >= 0)) {
         CFIndex len = CFStringGetLength(s);
         if (index < len) {
-            CFStringInlineBuffer buf;
-            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, index));
-            return QChar(CFStringGetCharacterFromInlineBuffer(&buf, index));
+            return QChar(CFStringGetCharacterAtIndex(s, index));
         }
     }
     return QChar(0);
