@@ -188,12 +188,12 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     
     [bitmapImage release];
 
-    // Hack:  This incantation is how you post a flags-changed event through CG.  In this case we're
-    // saying that the CAPSLOCK key was released, which doesn't seem to effect anything.  We post it
-    // to wake up the NSDragManager, which is sitting in a nextEvent call up the stack from us because
-    // the CF drag manager is too lame to use the RunLoop by itself.  If we're lucky for Tiger we can
-    // get the AppKit to listen for a completely innocuous event, which we can then post instead.
-    CGPostKeyboardEvent(0, 57, false);
+    // Hack:  We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
+    // up the stack from us because the CF drag manager is too lame to use the RunLoop by itself.  This
+    // is the most innocuous event, per Kristen.
+    
+    NSEvent *ev = [NSEvent mouseEventWithType:NSMouseMoved location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
+    [NSApp postEvent:ev atStart:YES];
 }
 
 

@@ -1,3 +1,15 @@
+2004-06-14  Trey Matteson  <trey@apple.com>
+
+	Use a different hack, as recommended by Kristin, to force the drag
+	manager to exit a modal event wait it is in.  The hack is required
+	to update the drag image on the fly.  Instead of posting a CG
+	event we post at the AppKit level.
+
+        Reviewed by Louch
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge setDraggingImage:at:]):
+
 2004-06-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
