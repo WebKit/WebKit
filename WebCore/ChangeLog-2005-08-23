@@ -2,6 +2,33 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3818712> form checkbox value property is read only
+
+        The underlying problem was that we were storing two separate values for all
+        form elements; one for the value property (JavaScript) and the other for the
+        value attribute (DOM). This is a good idea for text input, but not for other types.
+
+        * khtml/html/html_formimpl.h: Changed setValue to take a const DOMString reference.
+        Added private storesValueSeparateFromAttribute function.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::setType): Handle type changes, including detaching and re-attaching
+        if type changed, and moving value from m_value to ATTR_VALUE and vice versa.
+        (DOM::HTMLInputElementImpl::type): Added a case for ISINDEX and moved the default out of the
+        switch so that we will get a warning if a type is left out.
+        (DOM::HTMLInputElementImpl::parseHTMLAttribute): Tweaked comment format.
+        (DOM::HTMLInputElementImpl::reset): Changed to only nuke the value if the value property is stored
+        separately from the attribute. Otherwise, we just want to lave it alone
+        (DOM::HTMLInputElementImpl::value): Changed to always use m_value if it's not null, then fall back
+        on the attribute, and finally fall back to the "on" for the checkbox only if both are null.
+        (DOM::HTMLInputElementImpl::setValue): Changed to set the attribute unless the value property is
+        supposed to be stored separate from the attribute.
+        (DOM::HTMLInputElementImpl::storesValueSeparateFromAttribute): Added. Returns true for text-type
+        input elements, and false for the others.
+
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3296652> checkbox input type does not respond to onchange
 
         * khtml/rendering/render_form.cpp:

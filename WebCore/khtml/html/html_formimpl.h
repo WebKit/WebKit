@@ -306,7 +306,7 @@ public:
     void setType(const DOMString& t);
 
     DOMString value() const;
-    void setValue(DOMString val);
+    void setValue(const DOMString &);
 
     void blur();
     void focus();
@@ -351,6 +351,7 @@ public:
 #endif
     
 protected:
+    bool storesValueSeparateFromAttribute() const;
 
     DOMString m_value;
     int       xPos;

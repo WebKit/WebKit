@@ -1261,7 +1261,21 @@ void HTMLInputElementImpl::setType(const DOMString& t)
             // Useful in case we were called from inside parseHTMLAttribute.
             setAttribute(ATTR_TYPE, type());
         } else {
+            bool wasAttached = m_attached;
+            if (wasAttached)
+                detach();
+            bool didStoreValue = storesValueSeparateFromAttribute();
             m_type = newType;
+            bool willStoreValue = storesValueSeparateFromAttribute();
+            if (didStoreValue && !willStoreValue && !m_value.isNull()) {
+                setAttribute(ATTR_VALUE, m_value);
+                m_value = DOMString();
+            }
+            if (!didStoreValue && willStoreValue) {
+                m_value = getAttribute(ATTR_VALUE);
+            }
+            if (wasAttached)
+                attach();
         }
     }
     m_haveType = true;
@@ -1285,8 +1299,9 @@ DOMString HTMLInputElementImpl::type() const
     case SEARCH: return "search";
     case RANGE: return "range";
 #endif
-    default: return "";
+    case ISINDEX: return "";
     }
+    return "";
 }
 
 QString HTMLInputElementImpl::state( )
@@ -1441,8 +1456,9 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         }
         break;
     case ATTR_VALUE:
-        if (m_value.isNull()) // We only need to setChanged if the form is looking
-            setChanged();     // at the default value right now.
+        // We only need to setChanged if the form is looking at the default value right now.
+        if (m_value.isNull())
+            setChanged();
         break;
     case ATTR_CHECKED:
         m_defaultChecked = !attr->isNull();
@@ -1801,7 +1817,8 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
 
 void HTMLInputElementImpl::reset()
 {
-    setValue(DOMString());
+    if (storesValueSeparateFromAttribute())
+        setValue(DOMString());
     setChecked(m_defaultChecked);
     m_useDefaultChecked = true;
 }
@@ -1821,35 +1838,58 @@ void HTMLInputElementImpl::setChecked(bool _checked)
 
 DOMString HTMLInputElementImpl::value() const
 {
-    if (m_type == CHECKBOX || m_type == RADIO) {
-        DOMString val = getAttribute(ATTR_VALUE);
-
-        // If no attribute exists, then just use "on" or "" based off the checked() state
-        // of the control.
-        if (val.isNull()) {
-            if (checked())
-                return DOMString("on");
-            else
-                return DOMString("");
-        }
-        return val;
-    }
+    DOMString value = m_value;
 
     // It's important *not* to fall back to the value attribute for file inputs,
     // because that would allow a malicious web page to upload files by setting the
     // value attribute in markup.
-    if (m_value.isNull() && m_type != FILE)
-        return getAttribute(ATTR_VALUE);
-    return m_value;
+    if (value.isNull() && m_type != FILE)
+        value = getAttribute(ATTR_VALUE);
+
+    // If no attribute exists, then just use "on" or "" based off the checked() state of the control.
+    if (value.isNull() && (m_type == CHECKBOX || m_type == RADIO))
+        return DOMString(checked() ? "on" : "");
+
+    return value;
 }
 
 
-void HTMLInputElementImpl::setValue(DOMString val)
+void HTMLInputElementImpl::setValue(const DOMString &value)
 {
     if (m_type == FILE) return;
 
-    m_value = val;
-    setChanged();
+    if (storesValueSeparateFromAttribute()) {
+        m_value = value;
+        setChanged();
+    } else {
+        setAttribute(ATTR_VALUE, value);
+    }
+}
+
+bool HTMLInputElementImpl::storesValueSeparateFromAttribute() const
+{
+    switch (m_type) {
+        case BUTTON:
+        case CHECKBOX:
+        case FILE:
+        case HIDDEN:
+        case IMAGE:
+        case RADIO:
+#if APPLE_CHANGES
+        case RANGE:
+#endif
+        case RESET:
+        case SUBMIT:
+            return false;
+        case ISINDEX:
+        case PASSWORD:
+#if APPLE_CHANGES
+        case SEARCH:
+#endif
+        case TEXT:
+            return true;
+    }
+    return false;
 }
 
 void HTMLInputElementImpl::blur()
