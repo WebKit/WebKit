@@ -301,6 +301,13 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 		parse(newURL.ascii(), &newURL);
 		break;
 	    }
+	case '?':
+            // query-only reference, special case needed for non-URL results
+	    {
+		QString newURL = base.urlString.left(base.pathEndPos) + str;
+		parse(newURL.ascii(), &newURL);
+		break;
+	    }
 	case '/':
 	    // must be net-path or absolute-path reference
 	    {

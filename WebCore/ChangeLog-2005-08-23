@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+	- fixed 3140822 -- relative URLs starting with query strings clobber path as the RFC says, but web says no
+
+        * kwq/KWQKURL.mm: (KURL::KURL): Add a case for queries (as with anchors) to match
+        the behavior of the web (albeit not the RFC).
+
+2003-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
 	- fixed 3120355 -- importing IE favorites garbles non-ASCII characters (esp. bad for non-Roman languages)
 
         * kwq/WebCoreEncodings.h: Added decodeData:, removed all other (unused) methods.
