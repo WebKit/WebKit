@@ -118,7 +118,11 @@ void QComboBox::clear()
 void QComboBox::setCurrentItem(int index)
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    [comboBox selectItemAtIndex: index];
+    int num = [comboBox numberOfItems];
+    if (num != 0 && index < num)
+        [comboBox selectItemAtIndex: index];
+    else
+        NSLog (@"Error, index incorrect");
 }
 
 

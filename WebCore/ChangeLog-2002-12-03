@@ -1,3 +1,17 @@
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
+    First pass as frame code.  Still needs cleanup.
+    
+	* src/kdelibs/khtml/dom/dom_misc.cpp: (DomShared::ref), (DomShared::deref):
+	* src/kdelibs/khtml/dom/dom_misc.h:
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::~KHTMLView):
+	* src/kwq/KWQComboBox.mm: (QComboBox::setCurrentItem):
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::~KHTMLPart), (KHTMLPart::begin),
+	(KHTMLPart::end), (KHTMLPart::xmlDocImpl), (KHTMLPart::khtmlMouseReleaseEvent),
+	(KHTMLPart::requestFrameName), (KHTMLPart::requestFrame),
+	(KHTMLPart::requestObject), (KHTMLPart::checkCompleted):
+
 2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
 
         Checked in the missing file
@@ -88,6 +102,7 @@
 	src/kwq/qt/_qptrdict.h: Avoid causing problems when the relevant
 	defines are not defined.
 
+>>>>>>> 1.28
 2002-01-22  Richard Williamson  <rjw@apple.com>
 
     Implemented KWQDesktopWidget to represent main screen.  Used by javascript.

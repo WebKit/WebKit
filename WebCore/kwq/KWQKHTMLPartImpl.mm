@@ -186,6 +186,8 @@ public:
     QPoint m_dragLastPos;
 #endif
 
+    int m_frameNameId;
+
     KHTMLPartPrivate(KHTMLPart *part)
     {
         if (!cache_init) {
@@ -194,7 +196,10 @@ public:
         }
         m_part = part;
         m_view = 0L;
+        
+        // Why is this allocated here?
         m_doc = new HTMLDocumentImpl();
+        
         m_decoder = 0L;
         m_bFirstData = true;
         //m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
@@ -206,11 +211,25 @@ public:
         m_jscript = 0L;
         m_runningScripts = 0;
         m_onlyLocalReferences = 0;
+
+        m_frameNameId = 1;
     }
 
     ~KHTMLPartPrivate()
     {
-        [m_recv release];   
+        if ( m_doc )
+             m_doc->detach();
+
+        if (m_doc->refCount() != 1)
+            fprintf (stdout, "Warning:  document reference count not 1 as expect,  ref = %d\n", m_doc->refCount());
+        if ( m_doc )
+           m_doc->deref();
+        
+        m_doc = 0;
+
+        delete m_settings;
+
+        [m_recv autorelease];   
     }
 
 };
@@ -238,7 +257,6 @@ void KHTMLPart::init()
 KHTMLPart::~KHTMLPart()
 {
     delete d;
-    _logNotYetImplemented();
     NSLog(@"destructing KHTMLPart");
 }
 
@@ -513,6 +531,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
     //d->m_referrer = url.url();
     
     d->m_doc = new HTMLDocumentImpl(d->m_view);
+    //DomShared::instanceToCheck = (void *)((DomShared *)d->m_doc);
     d->m_doc->ref();
 
     d->m_baseURL = KURL();
@@ -599,7 +618,9 @@ void KHTMLPart::write(const char *str, int len)
     
     double start = CFAbsoluteTimeGetCurrent();
     
+#ifdef _KWQ_TIMING        
     QString decoded = d->m_decoder->decode( str, len );
+#endif
             
     if(decoded.isEmpty())
         return;
@@ -638,10 +659,15 @@ void KHTMLPart::write( const QString &str )
 
 void KHTMLPart::end()
 {
+    fprintf (stdout, "0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
     // make sure nothing's left in there...
-    if(d->m_decoder)
-        write(d->m_decoder->flush());
-    d->m_doc->finishParsing();
+    //if(d->m_decoder)
+    //    write(d->m_decoder->flush());
+    //d->m_doc->finishParsing();
+
+    QString str = d->m_doc->recursive_toHTML(1);
+    
+    d->m_doc->close();
 }
 
 
@@ -884,7 +910,9 @@ DOM::HTMLDocumentImpl *KHTMLPart::docImpl() const
 DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
 {
 //    _logPartiallyImplemented();
-    return d->m_doc;
+    if (d)
+        return d->m_doc;
+    return 0;
 }
 
 
@@ -1183,6 +1211,12 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
 }
 
+// [rjw]:  hack-o-rama.  This will all have to change once we
+// implement this correctly.
+@interface WKWebView : NSObject
+- (void)_resetView;
+@end
+
 void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 {
   DOM::Node innerNode = event->innerNode();
@@ -1197,7 +1231,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        [((KWQHTMLView *)((QWidget *)view())->getView()) resetView];
+        [((WKWebView *)((QWidget *)view())->getView()) _resetView];
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
         openURL (clickedURL);
         // [kocienda]: shield your eyes!
@@ -1399,8 +1433,7 @@ DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
 
 QString KHTMLPart::requestFrameName()
 {
-    _logNeverImplemented();
-    return QString();
+    return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);
 }
 
 
@@ -1409,15 +1442,6 @@ bool KHTMLPart::frameExists( const QString &frameName )
     _logNeverImplemented();
     return FALSE;
 }
-
-
-bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
-                    const QStringList &args, bool isIFrame)
-{
-    _logNeverImplemented();
-    return FALSE;
-}
-
 
 void KHTMLPart::emitUnloadEvent()
 {
@@ -1437,10 +1461,99 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
     _logNeverImplemented();
 }
 
+@class WKWebDataSource;
+@class WKWebView;
+
+@protocol WKWebController
+- (void)addFrame: child toParent: parent;
+- (void)viewForFrameNamed: (NSString *)name inDataSource: (WKWebDataSource *)dataSource;
+@end
+
+@interface WKWebDataSource : NSObject
+- initWithURL: (NSURL *)url;
+- (void)_setFrameName: (NSString *)fName;
+- (id <WKWebController>)controller;
+- (void)startLoading: (BOOL)forceRefresh;
+- (void)addFrame: frame;
+- frameNamed: (NSString *)f;
+@end
+
+@interface WKWebView (Foo)
+- initWithFrame: (NSRect)frame;
+- (QWidget *)_widget;
+@end
+
+@interface WKWebFrame: NSObject
+- initWithName: (NSString *)n view: v dataSource: (WKWebDataSource *)d;
+- view;
+@end
+
+
+bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
+                    const QStringList &params, bool isIFrame)
+{
+    NSString *nsframeName = QSTRING_TO_NSSTRING(frameName);
+    WKWebFrame *aFrame;
+    WKWebDataSource *childDataSource;
+    NSURL *childURL;
+    WKWebView *childView;
+    WKWebFrame *newFrame;
+    
+    
+    fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
+    aFrame =[getDataSource() frameNamed: nsframeName];
+    if (aFrame){
+        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x frame found\n", (unsigned int)this, (unsigned int)frame);    
+        // ?
+        frame->setWidget ([[aFrame view] _widget]);
+    }
+    else {        
+        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
+        childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
+        childDataSource = [[WKWebDataSource alloc] initWithURL: childURL];
+        [childDataSource _setFrameName: nsframeName];
+        childView = [[WKWebView alloc] initWithFrame: 
+                NSMakeRect (0,0,frame->intrinsicWidth(),frame->intrinsicHeight())];
+    
+        newFrame = [[[WKWebFrame alloc] initWithName: nsframeName view: childView dataSource: childDataSource] autorelease];
+        
+        [getDataSource() addFrame: newFrame];
+        
+        [[getDataSource() controller] addFrame: newFrame toParent: getDataSource()];
+    
+        frame->setWidget ([childView _widget]);
+        
+        [childDataSource startLoading: YES];
+    }
+
+#ifdef _SUPPORT_JAVASCRIPT_URL_    
+    if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 && !isIFrame )
+    {
+        // static cast is safe as of isIFrame being false.
+        // but: shouldn't we support this javascript hack for iframes aswell?
+        khtml::RenderFrame* rf = static_cast<khtml::RenderFrame*>(frame);
+        assert(rf);
+        QVariant res = executeScript( DOM::Node(rf->frameImpl()), url.right( url.length() - 11) );
+        if ( res.type() == QVariant::String ) {
+            KURL myurl;
+            myurl.setProtocol("javascript");
+            myurl.setPath(res.asString());
+            return processObjectRequest(&(*it), myurl, QString("text/html") );
+        }
+        return false;
+    }
+#endif
+
+
+    return true;
+}
+
+
 
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
+#ifdef _KWQ_
     WKPluginWidget *pluginWidget;
     
     if(url.isEmpty() || serviceType.isEmpty()){
@@ -1448,8 +1561,25 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
     }
     pluginWidget = new WKPluginWidget(0, url, serviceType, args);
     frame->setWidget(pluginWidget);
+
     return TRUE;
+#else
+    if (url.isEmpty())
+        return false;
+    
+    khtml::ChildFrame child;
+    QValueList<khtml::ChildFrame>::Iterator it = d->m_objects.append( child );
+    (*it).m_frame = frame;
+    (*it).m_type = khtml::ChildFrame::Object;
+    (*it).m_params = params;
+    
+    KParts::URLArgs args;
+    args.serviceType = serviceType;
+    
+    return requestObject( &(*it), completeURL( url ), args );
+#endif
 }
+
 
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
@@ -1500,5 +1630,7 @@ void KHTMLPart::checkCompleted()
         [[NSNotificationCenter defaultCenter] removeObserver:d->m_recv name:urlString object:nil];
         // tell anyone who's interested that we're done
         [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-done" object:urlString];
+
+        end();
     }
 }

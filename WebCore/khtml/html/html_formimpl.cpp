@@ -180,9 +180,26 @@ QByteArray HTMLFormElementImpl::formData()
     QCString enc_string = ""; // used for non-multipart data
 
     // find out the QTextcodec to use
+#ifdef _KWQ_
+    QString origStr = m_acceptcharset.string();
+    QChar space(' ');
+    QChar strChars[origStr.length()];
+
+    for(unsigned int i=0; i < origStr.length(); i++)
+        if(origStr[i].latin1() == ',')
+            strChars[i] = space;
+        else
+            strChars[i] = origStr[i];
+    QString str(strChars, origStr.length());
+#else
     QString str = m_acceptcharset.string();
     QChar space(' ');
-    for(unsigned int i=0; i < str.length(); i++) if(str[i].latin1() == ',') str[i] = space;
+
+    for(unsigned int i=0; i < str.length(); i++)
+        if(str[i].latin1() == ',')
+            str[i] = space;
+#endif
+
     QStringList charsets = QStringList::split(' ', str);
     QTextCodec* codec = 0;
     for ( QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it )
@@ -208,9 +225,17 @@ QByteArray HTMLFormElementImpl::formData()
     if(!codec)
         codec = QTextCodec::codecForLocale();
 
+#ifdef _KWQ_
+    QString encCharset = codec->name();
+    QChar encChars[encCharset.length()];
+    for(unsigned int i=0; i < encCharset.length(); i++)
+        encChars[i] = encCharset[i].latin1() == ' ' ? QChar('-') : encCharset[i].lower();
+    QString m_encCharset(encChars,  encCharset.length());
+#else
     m_encCharset = codec->name();
     for(unsigned int i=0; i < m_encCharset.length(); i++)
         m_encCharset[i] = m_encCharset[i].latin1() == ' ' ? QChar('-') : m_encCharset[i].lower();
+#endif
 
     for(HTMLGenericFormElementImpl *current = formElements.first(); current; current = formElements.next())
     {
@@ -1484,15 +1509,27 @@ void HTMLSelectElementImpl::setValue(DOMStringImpl* /*value*/)
 
 QString HTMLSelectElementImpl::state( )
 {
-    QString state;
     QArray<HTMLGenericFormElementImpl*> items = listItems();
 
     int l = items.count();
+
+#ifndef _KWQ_
+    QString state;
 
     state.fill('.', l);
     for(int i = 0; i < l; i++)
         if(items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
             state[i] = 'X';
+#else
+    QChar stateChars[l];
+    
+    for(int i = 0; i < l; i++)
+        if(items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
+            stateChars[i] = 'X';
+        else
+            stateChars[i] = '.';
+    QString state(stateChars, l);
+#endif
 
     return state;
 }
@@ -1504,7 +1541,13 @@ void HTMLSelectElementImpl::restoreState(const QString &_state)
     QString state = _state;
     if(!state.isEmpty() && !state.contains('X') && !m_multiple) {
         ASSERT("should not happen in restoreState!");
+#ifdef _KWQ_
+        // Invalid access to string's internal buffer.  Should never get here
+        // anyway.
+        //state[0] = 'X';
+#else
         state[0] = 'X';
+#endif
     }
 
     QArray<HTMLGenericFormElementImpl*> items = listItems();

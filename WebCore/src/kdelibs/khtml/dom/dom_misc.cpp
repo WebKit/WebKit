@@ -24,6 +24,8 @@
 #include "dom_misc.h"
 using namespace DOM;
 
+#include <stdio.h>
+
 DomShared::~DomShared()
 {
   // deliberately left blank
@@ -36,4 +38,25 @@ bool DomShared::deleteMe()
   return false;
 }
 
+#ifdef _KWQ_
+void *DomShared::instanceToCheck;
 
+void DomShared::ref()
+{
+    if (((void *)this) == instanceToCheck){
+        printf ("0x%08x incrementing ref %d\n", (unsigned int)this, _ref);
+    }
+    _ref++;
+}
+
+void DomShared::deref() 
+{
+    if (((void *)this) == instanceToCheck){
+        fprintf (stdout, "0x%08x decrementing ref %d\n", (unsigned int)this, _ref);
+    }
+    if(_ref)
+        _ref--; 
+    if(!_ref && deleteMe())
+        delete this; 
+}
+#endif

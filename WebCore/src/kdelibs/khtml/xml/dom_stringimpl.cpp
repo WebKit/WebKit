@@ -213,7 +213,6 @@ Length DOMStringImpl::toLength() const
 
 QList<Length> *DOMStringImpl::toLengthList() const
 {
-    QString str(s, l);
     int pos = 0;
     int pos2;
 
@@ -221,12 +220,29 @@ QList<Length> *DOMStringImpl::toLengthList() const
     // to fix lists like "1,2px 3 ,4"
     // make sure not to break percentage or relative widths
     // ### what about "auto" ?
+#ifdef _KWQ_
+    QChar spacified[l];
+    QChar space(' ');
+    for(unsigned int i=0; i < l; i++) {
+        QChar cc = s[i];
+        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') ){
+            spacified[i] = space;
+        }
+        else {
+            spacified[i] = cc;
+        }
+    }
+    QString str(spacified, l);
+#else
+    QString str(s, l);
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
         char cc = str[i].latin1();
-        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') )
+        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') ){
             str[i] = space;
+        }
     }
+#endif
     str = str.simplifyWhiteSpace();
 
     QList<Length> *list = new QList<Length>;

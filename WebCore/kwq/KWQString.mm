@@ -25,11 +25,20 @@
 
 // FIXME: obviously many functions here can be made inline
 
+/*
+    This implementation uses CFMutableStringRefs as a rep for the actual
+    string data.  Reps may be shared between QString instances, and follow
+    a copy-on-write sematic.  If you change the implementation be sure to
+    copy the rep before calling any of the CF functions that might mutate
+    the string.
+*/
+
 #include <Foundation/Foundation.h>
 #include <kwqdebug.h>
 #include <qstring.h>
 #include <qregexp.h>
 #include <stdio.h>
+
 
 #ifndef USING_BORROWED_QSTRING
 
@@ -108,7 +117,10 @@ QString QString::fromStringWithEncoding(const char *chs, int len,
                     strncpy(buf, chs, len);
                     *(buf + len) = '\0';
                     CFStringAppendCString(qs.s, buf, encoding);
+#ifdef KWQ_STRING_DEBUG
+#else
                     CFAllocatorDeallocate(kCFAllocatorDefault, buf);
+#endif
                 }
 #else
                 const int capacity = 64;
@@ -151,7 +163,10 @@ QString QString::fromCFString(CFStringRef cfs)
 
     ref = CFStringCreateMutableCopy(NULL, CFStringGetLength(cfs), cfs);
     qs = QString::fromCFMutableString(ref);
+#ifdef KWQ_STRING_DEBUG
+#else
     CFRelease(ref);
+#endif
     
     return qs;
 }
@@ -168,13 +183,32 @@ QString::QString()
     cacheType = CacheInvalid;
 }
 
+#ifdef KWQ_STRING_DEBUG
+void QString::_cf_release(CFStringRef x) const
+{
+    //if (x)
+    //    CFRelease(x);
+}
+
+void QString::_cf_retain(CFStringRef x) const
+{
+    if (x)
+        CFRetain(x);
+    else
+        fprintf (stderr, "Attempt to retain nil string\n");
+}
+#endif
+
 QString::~QString()
 {
     if (s) {
-        CFRelease(s);
+        _cf_release(s);
     }
     if (cache) {
+#ifdef KWQ_STRING_DEBUG
+#else
         CFAllocatorDeallocate(kCFAllocatorDefault, cache);
+#endif
     }
 }
 
@@ -252,7 +286,7 @@ QString::QString(const QString &qs)
 {
     // shared copy
     if (qs.s) {
-        CFRetain(qs.s);
+        _cf_retain(qs.s);
     }
     s = qs.s;
     cache = NULL;
@@ -265,10 +299,10 @@ QString &QString::operator=(const QString &qs)
 {
     // shared copy
     if (qs.s) {
-        CFRetain(qs.s);
+        _cf_retain(qs.s);
     }
     if (s) {
-        CFRelease(s);
+        _cf_release(s);
     }
     s = qs.s;
     cacheType = CacheInvalid;
@@ -495,7 +529,7 @@ int QString::find(const char *chs, int index, bool cs) const
                         cs ? 0 : kCFCompareCaseInsensitive, &r)) {
                     pos = r.location;
                 }
-                CFRelease(tmp);
+                _cf_release(tmp);
             }
         }
     }
@@ -554,7 +588,7 @@ int QString::findRev(const char *chs, int index) const
                         kCFCompareBackwards, &r)) {
                     pos = r.location;
                 }
-                CFRelease(tmp);
+                _cf_release(tmp);
             }
         }
     }
@@ -600,7 +634,7 @@ int QString::contains(const char *chs, bool cs) const
                 // move to next possible overlapping match
                 pos += r.location + 1;
             }
-            CFRelease(tmp);
+            _cf_release(tmp);
         }
     }
     return c;
@@ -728,7 +762,7 @@ QString QString::arg(const QString &replacement, int width) const
                     if (tmp) {
                         CFStringPad(tmp, CFSTR(" "), padding, 0);
                         CFStringInsert(qs.s, pos, tmp);
-                        CFRelease(tmp);
+                        _cf_release(tmp);
                     }
                 }
             }
@@ -797,10 +831,10 @@ QString QString::mid(uint index, uint width) const
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);
-                    CFRelease(tmp);
+                    _cf_release(tmp);
                 }
             } else {
-                CFRetain(s);
+                _cf_retain(s);
                 qs.s = s;
             }
         }
@@ -824,7 +858,7 @@ QString QString::lower() const
         qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
     }
     if (qs.s) {
-	CFStringLowercase(qs.s, NULL);
+	    CFStringLowercase(qs.s, NULL);
     }
     return qs;
 }
@@ -847,7 +881,7 @@ QString QString::stripWhiteSpace() const
                 }
             }
             if (!qs.s) {
-                CFRetain(s);
+                _cf_retain(s);
                 qs.s = s;
             }
         }
@@ -906,7 +940,7 @@ QString QString::simplifyWhiteSpace() const
                     CFStringAppendCharacters(qs.s, buf, fill);
                 }
             } else {
-                CFRetain(s);
+                _cf_retain(s);
                 qs.s = s;
             }
         }
@@ -918,21 +952,14 @@ QString &QString::setUnicode(const QChar *qcs, uint len)
 {
     flushCache();
     if (qcs && len) {
+        if (s) 
+            _cf_release(s);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
-            CFStringRef tmp = CFStringCreateWithCharactersNoCopy(
-                    kCFAllocatorDefault, &qcs->c, len, kCFAllocatorNull);
-            if (tmp) {
-                CFStringReplaceAll(s, tmp);
-                CFRelease(tmp);
-            }
-        } else {
-            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-            if (s) {
-                CFStringAppendCharacters(s, &qcs->c, len);
-            }
+            CFStringAppendCharacters(s, &qcs->c, len);
         }
     } else if (s) {
-        CFRelease(s);
+        _cf_release(s);
         s = NULL;
     }
     return *this;
@@ -942,22 +969,14 @@ QString &QString::setLatin1(const char *chs)
 {
     flushCache();
     if (chs && *chs) {
+        if (s) 
+            _cf_release(s);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
-            CFStringRef tmp = CFStringCreateWithCStringNoCopy(
-                    kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                    kCFAllocatorNull);
-            if (tmp) {
-                CFStringReplaceAll(s, tmp);
-                CFRelease(tmp);
-            }
-        } else {
-            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-            if (s) {
-                CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
-            }
+            CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
         }
     } else if (s) {
-        CFRelease(s);
+        _cf_release(s);
         s = NULL;
     }
     return *this;
@@ -1019,24 +1038,23 @@ QString &QString::sprintf(const char *format, ...)
     va_start(args, format);
     flushCache();
     if (format && *format) {
-        if (!s) {
-            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-        }
-        if (s) {
-            CFStringRef f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
-                    format, kCFStringEncodingISOLatin1, kCFAllocatorNull);
-            if (f) {
-                CFStringRef tmp = CFStringCreateWithFormatAndArguments(
-                        kCFAllocatorDefault, NULL, f, args);
-                if (tmp) {
-                    CFStringReplaceAll(s, tmp);
-                    CFRelease(tmp);
-                }
-                CFRelease(f);
+        if (s)
+            _cf_release(s);
+
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+        CFStringRef f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
+                format, kCFStringEncodingISOLatin1, kCFAllocatorNull);
+        if (f) {
+            CFStringRef tmp = CFStringCreateWithFormatAndArguments(
+                    kCFAllocatorDefault, NULL, f, args);
+            if (tmp) {
+                CFStringReplaceAll(s, tmp);
+                _cf_release(tmp);
             }
+            _cf_release(f);
         }
     } else if (s) {
-        CFRelease(s);
+        _cf_release(s);
         s = NULL;
     }
     va_end(args);
@@ -1053,15 +1071,28 @@ QString &QString::append(const QString &qs)
     return insert(length(), qs);
 }
 
+void QString::_copyInternalString()
+{
+    if (s) {
+        CFMutableStringRef tmp;
+        tmp = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+        CFRelease (s);
+        s = tmp;
+    }
+}
+
 QString &QString::insert(uint index, const QString &qs)
 {
     flushCache();
     if (qs.s) {
         CFIndex len = CFStringGetLength(qs.s);
         if (len) {
+            // How do we know that s mutable?
+            // 
             if (!s) {
                 s = CFStringCreateMutable(kCFAllocatorDefault, 0);
             }
+            _copyInternalString();
             if (s) {
                 if (index < (uint)CFStringGetLength(s)) {
                     CFStringInsert(s, index, qs.s);
@@ -1093,6 +1124,7 @@ QString &QString::remove(uint index, uint width)
             if (width > (len - index)) {
                 width = len - index;
             }
+            _copyInternalString();
             CFStringDelete(s, CFRangeMake(index, width));
         }
     }
@@ -1111,6 +1143,7 @@ QString &QString::replace(const QRegExp &qre, const QString &qs)
                 break;
             }
             CFRange r = CFRangeMake(i, width);
+            _copyInternalString();
             if (len) {
                 CFStringReplace(s, r, qs.s);
             } else {
@@ -1127,11 +1160,12 @@ void QString::truncate(uint newLen)
     if (s) {
         if (newLen) {
             CFIndex len = CFStringGetLength(s);
+            _copyInternalString();
             if (len && (newLen < (uint)len)) {
                 CFStringDelete(s, CFRangeMake(newLen, len - newLen));
             }
         } else {
-            CFRelease(s);
+            _cf_release(s);
             s = NULL;
         }
     }
@@ -1144,7 +1178,7 @@ void QString::fill(QChar qc, int len)
         if (len < 0) {
             len = CFStringGetLength(s);
         }
-        CFRelease(s);
+        _cf_release(s);
         s = NULL;
     }
     if (len > 0) {
@@ -1157,7 +1191,10 @@ void QString::fill(QChar qc, int len)
             s = CFStringCreateMutableWithExternalCharactersNoCopy(
                     kCFAllocatorDefault, ucs, len, 0, kCFAllocatorDefault);
             if (!s) {
+#ifdef KWQ_STRING_DEBUG
+#else
                 CFAllocatorDeallocate(kCFAllocatorDefault, ucs);
+#endif
             }
         }
     }
@@ -1193,7 +1230,7 @@ QString::operator const char *() const
     return latin1();
 }
 
-QChar QString::operator[](int index) const
+const QChar QString::operator[](int index) const
 {
     if (index >= 0) {
         return at(index);
@@ -1221,7 +1258,10 @@ QString &QString::operator+=(char ch)
 void QString::flushCache() const
 {
     if (cache) {
+#ifdef KWQ_STRING_DEBUG
+#else
         CFAllocatorDeallocate(kCFAllocatorDefault, cache);
+#endif
         cache = NULL;
         cacheType = CacheInvalid;
     }
@@ -1241,7 +1281,10 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
                 *reinterpret_cast<char *>(chs) = '\0';
             }
             QCString qcs = QCString(chs);
+#ifdef KWQ_STRING_DEBUG
+#else
             CFAllocatorDeallocate(kCFAllocatorDefault, chs);
+#endif
             return qcs;
         }
     }
@@ -1348,10 +1391,10 @@ QString QString::leftRight(uint width, bool left) const
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);
-                    CFRelease(tmp);
+                    _cf_release(tmp);
                 }
             } else {
-                CFRetain(s);
+                _cf_retain(s);
                 qs.s = s;
             }
         }
@@ -1372,7 +1415,7 @@ int QString::compareToLatin1(const char *chs) const
             kCFAllocatorNull);
     if (tmp) {
         int result = CFStringCompare(s, tmp, 0);
-        CFRelease(tmp);
+        _cf_release(tmp);
         return result;
     }
     return kCFCompareGreaterThan;
@@ -1406,7 +1449,7 @@ bool operator==(const QString &qs, const char *chs)
                 kCFAllocatorNull);
         if (tmp) {
             result = CFStringCompare(qs.s, tmp, 0) == kCFCompareEqualTo;
-            CFRelease(tmp);
+            _cf_release(tmp);
         }
     }
     return result;
