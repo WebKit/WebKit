@@ -254,7 +254,7 @@ static NSMutableDictionary *viewTypes;
 
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType
 {
-    return ([viewTypes objectForKey:MIMEType] == [WebHTMLView class]);
+    return [[[self _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType] isSubclassOfClass:[WebHTMLView class]];
 }
 
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType

@@ -1,3 +1,12 @@
+2004-10-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3851491> installedPlugins being called for a page without plugins
+
+        Reviewed by mjs.
+
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _canShowMIMETypeAsHTML:]): call _viewTypesAllowImageTypeOmission instead of using ivar since the ivar is nil until _viewTypesAllowImageTypeOmission is called, this was causing [WebView canShowMIMEType:] to check plug-ins 
+
 === Safari-168 ===
 
 2004-10-22  Ken Kocienda  <kocienda@apple.com>
