@@ -1,3 +1,12 @@
+2005-01-27  Adele Amchan  <adele@apple.com>
+
+        fixed by Darin, reviewed by me.
+
+        <rdar://problem/3976314> REGRESSION (180-TOT): submitting password fields fail on Panther
+
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController string]): on panther, the secure text field's editor 
+        does not contain the real string, so now we just call stringValue on the field in that case.
+
 2005-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin, Hyatt and Ken.
