@@ -1,3 +1,10 @@
+2002-03-11  Richard Williamson  <rjw@apple.com>
+
+Re-implemented QPainter::drawTiledPixmap to use core graphics patterns.  Currently this depends
+on SPI.  The performance boost is huge osx.macnn.com draws 40x faster now.
+
+	* src/kwq/KWQPainter.mm: (QPainter::drawTiledPixmap):
+
 2002-03-08  Richard Williamson  <rjw@apple.com>
 
 Re-implemented KWQFont to lazily request font from NSFontManager instead of

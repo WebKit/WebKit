@@ -74,6 +74,10 @@
 
 
 /*
+*/
+- (IFError *)lastError;
+
+/*
     This method removes references the underlying resources.
     FIXME:  I think this should be private.
 */

@@ -19,15 +19,19 @@
 {
     id dview = [self documentView];
         
-    if( clipView == [self contentView] ) {
+    if( clipView == [self contentView] && breakRecursionCycle == NO ) {
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
     
+        breakRecursionCycle = YES;
+        
         scrollsVertically = [dview bounds].size.height > [self frame].size.height;
         scrollsHorizontally = [dview bounds].size.width > [self frame].size.width;
     
         [self setHasVerticalScroller: scrollsVertically];
         [self setHasHorizontalScroller: scrollsHorizontally];
+        
+        breakRecursionCycle = NO;
     }
     [super reflectScrolledClipView: clipView];
 }

@@ -155,6 +155,8 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
+    [self _setLastError: nil];
+    
     // Force refresh is irrelevant, as this will always be the first load.
     // The controller will transition the provisional data source to the
     // committed data source.
@@ -175,6 +177,8 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
+    [self _setLastError: nil];
+
     [data->dataSource startLoading: forceRefresh];
 }
 
@@ -185,6 +189,12 @@
     [data setDataSource: nil];
     [[data view] _resetWidget];
     [data setView: nil];
+}
+
+- (IFError *)lastError
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return data->lastError;
 }
 
 @end

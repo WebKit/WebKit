@@ -8,6 +8,7 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 
 #import <WebKit/WebKitDebug.h>
@@ -145,7 +146,9 @@ static id IFLoadProgressMake()
     [childView _setController: self];
     [childDataSource _setController: self];
 
-    scrollView  = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    [scrollView setHasVerticalScroller: NO];
+    [scrollView setHasHorizontalScroller: NO];
     [childView _setFrameScrollView: scrollView];
         
     return newFrame;

@@ -7,6 +7,7 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFError.h>
 
 #import <WebKit/WebKitDebug.h>
 
@@ -17,6 +18,7 @@
 
 - (void)dealloc
 {
+    [lastError autorelease];
     [name autorelease];
     [view autorelease];
     [dataSource autorelease];
@@ -147,13 +149,7 @@
     if ([self _state] == IFWEBFRAMESTATE_COMPLETE)
         return YES;
 
-    if (error){
-        [self _setState: IFWEBFRAMESTATE_ERROR];
-        [[self controller] locationChangeDone: error forFrame: self];
-        return YES;
-    }
-        
-    if ([self _state] == IFWEBFRAMESTATE_PROVISIONAL)
+    if ([self _state] == IFWEBFRAMESTATE_PROVISIONAL && error == nil)
         return NO;
 
     // Check all children first.
@@ -167,6 +163,9 @@
     }
 
     if (![[self dataSource] isLoading]){
+        if (error)
+            [self _setLastError: error];
+
         [self _setState: IFWEBFRAMESTATE_COMPLETE];
         
         [[self dataSource] _part]->end();
@@ -182,6 +181,13 @@
     return NO;
 }
 
+- (void)_setLastError: (IFError *)error
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    
+    [data->lastError release];
+    data->lastError = [error retain];
+}
 
 @end
 
