@@ -237,9 +237,9 @@ static NSMutableSet *schemesWithRepresentationsSet;
     ASSERT(URL);
     
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [WebDownload _downloadWithSource:request
-                            delegate:_private->downloadDelegate
-                           directory:[directory isAbsolutePath] ? directory : nil];
+    [WebDownload _downloadWithRequest:request
+                             delegate:_private->downloadDelegate
+                            directory:[directory isAbsolutePath] ? directory : nil];
     [request release];
 }
 

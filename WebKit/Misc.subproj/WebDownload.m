@@ -156,11 +156,11 @@
     return self;
 }
 
-- (id)initWithSource:(NSURLRequest *)request delegate:(id)delegate
+- (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate
 {
     self = [self init];
     [_webInternal setRealDelegate:delegate];
-    [super initWithSource:request delegate:_webInternal];
+    [super initWithRequest:request delegate:_webInternal];
     return self;
 }
 
@@ -176,13 +176,13 @@
     return self;
 }
 
-- (id)_initWithSource:(NSURLRequest *)request
-             delegate:(id)delegate
-            directory:(NSString *)directory
+- (id)_initWithRequest:(NSURLRequest *)request
+              delegate:(id)delegate
+             directory:(NSString *)directory
 {
     self = [self init];
     [_webInternal setRealDelegate:delegate];
-    [super _initWithSource:request delegate:_webInternal directory:directory];
+    [super _initWithRequest:request delegate:_webInternal directory:directory];
     return self;
 }
 

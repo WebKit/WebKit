@@ -1,3 +1,17 @@
+2003-06-03  Chris Blumenberg  <cblu@apple.com>
+
+        Fixed: 3278496 - <rdar://problem/3278496>:	NSURLDownload: initWithSource and source should be renamed to initWithRequest and request
+
+        Reviewed by rjw.
+
+        * Misc.subproj/WebDownload.m:
+        (-[WebDownload initWithRequest:delegate:]):
+        (-[WebDownload _initWithRequest:delegate:directory:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView setNeedsDisplay:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _downloadURL:toDirectory:]):
+
 2003-06-03  Richard Williamson   <rjw@apple.com>
 	
 	Fixed 3263188, 3274636.
