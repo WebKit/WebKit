@@ -274,7 +274,7 @@ extern "C" {
     }
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
 {
     NPError npErr;
     char *cFilename;
