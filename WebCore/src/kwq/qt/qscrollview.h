@@ -35,6 +35,7 @@ public:
     QWidget* viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
+    int contentsWidth() const;
     int contentsX() const;
     int contentsY() const;
     void scrollBy(int dx, int dy);
