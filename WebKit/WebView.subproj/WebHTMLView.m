@@ -1753,7 +1753,7 @@ static WebHTMLView *lastHitView = nil;
     [self selectAll];
 }
 
-- (void)jumpToSelection: sender
+- (void)jumpToSelection:(id)sender
 {
     [[self _bridge] jumpToSelection];
 }
@@ -1763,23 +1763,141 @@ static WebHTMLView *lastHitView = nil;
     SEL action = [item action];
     WebBridge *bridge = [self _bridge];
 
-    if (action == @selector(cut:)) {
-        return [bridge mayDHTMLCut] || [self _canDelete];
+    if (action == @selector(alignCenter:)
+            || action == @selector(alignLeft:)
+            || action == @selector(alignJustified:)
+            || action == @selector(alignRight:)
+            || action == @selector(changeAttributes:)
+            || action == @selector(changeBaseWritingDirection:) // FIXME: check menu item based on writing direction
+            || action == @selector(changeColor:)
+            || action == @selector(changeFont:)
+            || action == @selector(changeSpelling:)
+            || action == @selector(_changeSpellingFromMenu:)
+            || action == @selector(checkSpelling:)
+            || action == @selector(complete:)
+            || action == @selector(deleteBackward:)
+            || action == @selector(deleteBackwardByDecomposingPreviousCharacter:)
+            || action == @selector(deleteForward:)
+            || action == @selector(deleteToBeginningOfLine:)
+            || action == @selector(deleteToBeginningOfParagraph:)
+            || action == @selector(deleteToEndOfLine:)
+            || action == @selector(deleteToEndOfParagraph:)
+            || action == @selector(deleteToMark:)
+            || action == @selector(deleteWordBackward:)
+            || action == @selector(deleteWordForward:)
+            || action == @selector(insertBacktab:)
+            || action == @selector(insertLineBreak:)
+            || action == @selector(insertNewline:)
+            || action == @selector(insertNewlineIgnoringFieldEditor:)
+            || action == @selector(insertParagraphSeparator:)
+            || action == @selector(insertTab:)
+            || action == @selector(insertTabIgnoringFieldEditor:)
+            || action == @selector(moveBackward:)
+            || action == @selector(moveBackwardAndModifySelection:)
+            || action == @selector(moveDown:)
+            || action == @selector(moveDownAndModifySelection:)
+            || action == @selector(moveForward:)
+            || action == @selector(moveForwardAndModifySelection:)
+            || action == @selector(moveLeft:)
+            || action == @selector(moveLeftAndModifySelection:)
+            || action == @selector(moveParagraphBackwardAndModifySelection:)
+            || action == @selector(moveParagraphForwardAndModifySelection:)
+            || action == @selector(moveRight:)
+            || action == @selector(moveRightAndModifySelection:)
+            || action == @selector(moveToBeginningOfDocument:)
+            || action == @selector(moveToBeginningOfDocumentAndModifySelection:)
+            || action == @selector(moveToBeginningOfLine:)
+            || action == @selector(moveToBeginningOfLineAndModifySelection:)
+            || action == @selector(moveToBeginningOfParagraph:)
+            || action == @selector(moveToBeginningOfParagraphAndModifySelection:)
+            || action == @selector(moveToEndOfDocument:)
+            || action == @selector(moveToEndOfDocumentAndModifySelection:)
+            || action == @selector(moveToEndOfLine:)
+            || action == @selector(moveToEndOfLineAndModifySelection:)
+            || action == @selector(moveToEndOfParagraph:)
+            || action == @selector(moveToEndOfParagraphAndModifySelection:)
+            || action == @selector(moveUp:)
+            || action == @selector(moveUpAndModifySelection:)
+            || action == @selector(moveWordBackward:)
+            || action == @selector(moveWordBackwardAndModifySelection:)
+            || action == @selector(moveWordForward:)
+            || action == @selector(moveWordForwardAndModifySelection:)
+            || action == @selector(moveWordLeft:)
+            || action == @selector(moveWordLeftAndModifySelection:)
+            || action == @selector(moveWordRight:)
+            || action == @selector(moveWordRightAndModifySelection:)
+            || action == @selector(pageDown:)
+            || action == @selector(pageDownAndModifySelection:)
+            || action == @selector(pageUp:)
+            || action == @selector(pageUpAndModifySelection:)
+            || action == @selector(pasteFont:)
+            || action == @selector(showGuessPanel:)
+            || action == @selector(toggleBaseWritingDirection:)
+            || action == @selector(transpose:)
+            || action == @selector(yank:)
+            || action == @selector(yankAndSelect:)) {
+        return [self _canEdit];
+    } else if (action == @selector(capitalizeWord:)
+               || action == @selector(lowercaseWord:)
+               || action == @selector(uppercaseWord:)) {
+        return [self _hasSelection] && [self _isEditable];
+    } else if (action == @selector(centerSelectionInVisibleArea:)
+            || action == @selector(copyFont:)
+            || action == @selector(setMark:)) {
+        return [self _hasSelectionOrInsertionPoint];
+    } else if (action == @selector(changeDocumentBackgroundColor:)) {
+        return [[self _webView] isEditable];
     } else if (action == @selector(copy:)) {
         return [bridge mayDHTMLCopy] || [self _canCopy];
+    } else if (action == @selector(cut:)) {
+        return [bridge mayDHTMLCut] || [self _canDelete];
     } else if (action == @selector(delete:)) {
         return [self _canDelete];
-    } else if (action == @selector(paste:)) {
+    } else if (action == @selector(_ignoreSpellingFromMenu:)
+            || action == @selector(jumpToSelection:)
+            || action == @selector(_learnSpellingFromMenu:)
+            || action == @selector(takeFindStringFromSelection:)) {
+        return [self _hasSelection];
+    } else if (action == @selector(paste:) || action == @selector(pasteAsPlainText:) || action == @selector(pasteAsRichText:)) {
         return [bridge mayDHTMLPaste] || [self _canPaste];
-    } else if (action == @selector(takeFindStringFromSelection:)) {
-        return [self _hasSelection];
-    } else if (action == @selector(jumpToSelection:)) {
-        return [self _hasSelection];
-    } else if (action == @selector(checkSpelling:)
-               || action == @selector(showGuessPanel:)
-               || action == @selector(changeSpelling:)
-               || action == @selector(ignoreSpelling:)) {
-        return [[self _bridge] isSelectionEditable];
+    } else if (action == @selector(performFindPanelAction:)) {
+        // FIXME: Not yet implemented.
+        return NO;
+    } else if (action == @selector(selectToMark:)
+            || action == @selector(swapWithMark:)) {
+        return [self _hasSelectionOrInsertionPoint] && [[self _bridge] markDOMRange] != nil;
+    } else if (action == @selector(subscript:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            DOMCSSStyleDeclaration *style = [self _emptyStyle];
+            [style setVerticalAlign:@"sub"];
+            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+        }
+        return [self _canEdit];
+    } else if (action == @selector(superscript:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            DOMCSSStyleDeclaration *style = [self _emptyStyle];
+            [style setVerticalAlign:@"super"];
+            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+        }
+        return [self _canEdit];
+    } else if (action == @selector(underline:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            DOMCSSStyleDeclaration *style = [self _emptyStyle];
+            [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+        }
+        return [self _canEdit];
+    } else if (action == @selector(unscript:)) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
+            DOMCSSStyleDeclaration *style = [self _emptyStyle];
+            [style setVerticalAlign:@"baseline"];
+            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+        }
+        return [self _canEdit];
 #ifndef OMIT_TIGER_FEATURES
     } else if (action == @selector(_searchWithSpotlightFromMenu:)
                || action == @selector(_searchWithGoogleFromMenu:)
@@ -3053,7 +3171,8 @@ static WebHTMLView *lastHitView = nil;
         return self;
 }
 
-- (id)_accessibilityParentForSubview:(NSView *)subview {
+- (id)_accessibilityParentForSubview:(NSView *)subview
+{
     id accTree = [[self _bridge] accessibilityTree];
     if (!accTree)
         return self;
@@ -4112,9 +4231,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)ignoreSpelling:(id)sender
 {
-    if (![self _canEdit])
-        return;
-    
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
         ERROR("No NSSpellChecker");
@@ -4267,9 +4383,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)swapWithMark:(id)sender
 {
-    if (![self _canEdit])
-        return;
-
     WebBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     if (mark == nil) {
@@ -4337,6 +4450,28 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
 }
 
+- (void)changeBaseWritingDirection:(id)sender
+{
+    if (![self _canEdit])
+        return;
+    
+    NSWritingDirection writingDirection = [sender tag];
+
+    NSString *direction = @"LTR";
+    switch (writingDirection) {
+        case NSWritingDirectionLeftToRight:
+        case NSWritingDirectionNatural:
+            break;
+        case NSWritingDirectionRightToLeft:
+            direction = @"RTL";
+            break;
+    }
+
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setDirection:direction];
+    [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
+}
+
 #if 0
 
 // CSS does not have a way to specify an outline font, which may make this difficult to implement.
@@ -4351,10 +4486,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 // These could be important.
 - (void)toggleTraditionalCharacterShape:(id)sender;
-- (void)changeBaseWritingDirection:(id)sender;
 
-// I'm not sure what the equivalents of these in the web world are; we use <br> as a paragraph break.
-- (void)insertLineBreak:(id)sender;
+// I'm not sure what the equivalents of these in the web world are.
 - (void)insertLineSeparator:(id)sender;
 - (void)insertPageBreak:(id)sender;
 

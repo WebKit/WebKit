@@ -1,3 +1,18 @@
+2005-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/3991225> Format->Style->Underline menu item does not get checked when selected text is underlined
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validateUserInterfaceItem:]): Added tons of additional cases in here for all the
+        "action" style methods in this class that don't always want to be valid. For the ones where state
+        makes sense, added the state-checking code too for the menu item case.
+        (-[WebHTMLView ignoreSpelling:]): Removed unnecessary "editable text only" check since this command
+        would work fine on a non-editable selection.
+        (-[WebHTMLView swapWithMark:]): Ditto.
+        (-[WebHTMLView changeBaseWritingDirection:]): Added. Like toggle, but based on the sender's tag.
+
 2005-02-08  Darin Adler  <darin@apple.com>
 
         "Reviewed" by Richard (he told me the file was obsolete).
