@@ -1,3 +1,13 @@
+2002-11-21  David Hyatt  <hyatt@apple.com>
+
+	Fix <font> so that behaves just like <i>, <b>, etc. Stop
+	the (incorrect) allowance of blocks inside <font> tags.
+	This fixes the mispositioning on avoyagetoarcturus.blogspot.com
+	and fixes the vertical gaps on www.ve3d.com.
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
 2002-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Pass symroots for this tree to pbxbuild.
