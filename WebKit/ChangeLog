@@ -1,3 +1,7 @@
+2002-12-30  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2002-12-30  Trey Matteson  <trey@apple.com>
 
 	3137110 - REGRESSION: calls from 2nd and subsequent instances of Java 1.4.1 plug-in seem to be ignored
