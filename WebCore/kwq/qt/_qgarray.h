@@ -13,6 +13,16 @@
 #ifndef _QGARRAY_H_
 #define _QGARRAY_H_
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
+#include <KWQDef.h>
+
+// -------------------------------------------------------------------------
+
 #include <_qshared.h>
 
 class QGArray					// generic array

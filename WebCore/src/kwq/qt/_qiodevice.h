@@ -38,6 +38,16 @@
 #ifndef QIODEVICE_H
 #define QIODEVICE_H
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
+#include <KWQDef.h>
+
+// -------------------------------------------------------------------------
+
 #ifndef QT_H
 #include "qglobal.h"
 #include "qcstring.h"

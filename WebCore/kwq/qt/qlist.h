@@ -37,7 +37,7 @@
 #else
 
 #include <KWQDef.h>
-#include <KWQCollection.h>
+#include <_qcollection.h>
 
 // class QList =================================================================
 

@@ -17,7 +17,15 @@
 #include <config.h>
 #endif
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
 #include <KWQDef.h>
+
+// -------------------------------------------------------------------------
 
 struct QShared
 {

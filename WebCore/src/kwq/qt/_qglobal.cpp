@@ -23,6 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
+// -------------------------------------------------------------------------
+
 void qDebug(const char *msg, ...)
 {
 }

@@ -35,6 +35,14 @@
 **
 **********************************************************************/
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
+// -------------------------------------------------------------------------
+
 // Don't define it while compiling this module, or USERS of Qt will
 // not be able to link.
 #ifdef QT_NO_CAST_ASCII

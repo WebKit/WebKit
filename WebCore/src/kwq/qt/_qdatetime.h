@@ -38,6 +38,16 @@
 #ifndef QDATETIME_H
 #define QDATETIME_H
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifndef _KWQ_COMPLETE_
+#define _KWQ_COMPLETE_
+#endif
+
+#include <KWQDef.h>
+
+// -------------------------------------------------------------------------
+
 #ifndef QT_H
 #include "qstring.h"
 #endif // QT_H
