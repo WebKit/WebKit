@@ -88,6 +88,8 @@ public:
     int viewportWidth() const { return m_viewportWidth; }
     int viewportHeight() const { return m_viewportHeight; }
 
+    virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
+    
     QRect selectionRect() const;
     
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }

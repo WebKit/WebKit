@@ -1,3 +1,13 @@
+2004-03-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3584646, AxWebArea should encompass all children (its AxSize should).
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::absoluteRects):
+        * khtml/rendering/render_canvas.h:
+
 2004-03-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: INPUT images are not part of web archives.

@@ -313,6 +313,11 @@ static QRect enclosingPositionedRect (RenderObject *n)
     return rect;
 }
 
+void RenderCanvas::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
+{
+    rects.append(QRect(_tx, _ty, m_layer->width(), m_layer->height()));
+}
+
 QRect RenderCanvas::selectionRect() const
 {
     RenderObject *r = m_selectionStart;
