@@ -1188,6 +1188,17 @@ void DeleteSelectionCommandImpl::doApply()
         // after collapsing whitespace, selection is empty...no work to do
         return;
 
+    NodeImpl *startBlock = upstreamStart.node()->enclosingBlockFlowElement();
+    NodeImpl *endBlock = downstreamEnd.node()->enclosingBlockFlowElement();
+    if (!startBlock || !endBlock)
+        // Can't figure out what blocks we're in. This can happen if
+        // the document structure is not what we are expecting, like if
+        // the document has no body element, or if the editable block
+        // has been changed to display: inline. Some day it might
+        // be nice to be able to deal with this, but for now, bail.
+        return;
+    bool startBlockEndBlockAreSiblings = startBlock->parentNode() == endBlock->parentNode();
+
     Position endingPosition;
     bool adjustEndingPositionDownstream = false;
 
@@ -1209,10 +1220,6 @@ void DeleteSelectionCommandImpl::doApply()
     bool startAtStartOfBlock = startAtStartOfRootEditableElement || 
         (startRenderedOffset == 0 && downstreamStart.inFirstEditableInContainingEditableBlock());
     bool endAtEndOfBlock = downstreamEnd.isLastRenderedPositionInEditableBlock();
-
-    NodeImpl *startBlock = upstreamStart.node()->enclosingBlockFlowElement();
-    NodeImpl *endBlock = downstreamEnd.node()->enclosingBlockFlowElement();
-    bool startBlockEndBlockAreSiblings = startBlock->parentNode() == endBlock->parentNode();
 
     debugPosition("upstreamStart:       ", upstreamStart);
     debugPosition("downstreamStart:     ", downstreamStart);

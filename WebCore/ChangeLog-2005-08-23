@@ -2,6 +2,20 @@
 
         Reviewed by Hyatt
 
+        Fix for this bug:
+        
+        <rdar://problem/3722153> Random crash while typing (DOM::NodeImpl::parentNode (this=0x0))
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::doApply): This check merely makes the code
+        more robust. I do not understand how Grant ended up with null start or end 
+        blocks in the case of his bug report, but by adding two null checks, the code is 
+        now hardened a bit in case it happens again.
+
+2004-07-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         Fix for these bugs:
 
         <rdar://problem/3730785> Crash when arrow navigation goes to empty table cell
