@@ -22,7 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#define _logNeverImplemented()   NSLog (@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__)
-#define _logNotYetImplemented()   NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__)
 
+#ifndef KWQDEBUG_H_
+#define KWQDEBUG_H_
+
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
+#include <Foundation/Foundation.h>
+#undef Fixed
+#undef Rect
+#undef Boolean
+
+#define _logNeverImplemented() \
+        NSLog(@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, \
+                __FUNCTION__)
+#define _logPartiallyImplemented() \
+        NSLog(@"ERROR %s:%d  %s (PARTIALLY IMPLEMENTED)\n", __FILE__, \
+                __LINE__, __FUNCTION__)
+#define _logNotYetImplemented() \
+        NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, \
+                __LINE__, __FUNCTION__)
+
+#endif
