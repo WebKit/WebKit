@@ -68,8 +68,12 @@ static float stringWidth(WebTextRenderer *renderer, const unichar *characters, u
 
 static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)
 {
+    unsigned length = [string length];
+    if (length == 0) {
+        return string;
+    }
+
     unichar stringBuffer[STRING_BUFFER_SIZE];
-    unsigned length;
     unsigned keepCount;
     unsigned truncatedLength;
     float width;
@@ -93,7 +97,6 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     
     ASSERT(currentRenderer);
 
-    length = [string length];
     if (length > STRING_BUFFER_SIZE) {
         keepCount = STRING_BUFFER_SIZE - 1; // need 1 character for the ellipsis
         truncatedLength = centerTruncateToBuffer(string, length, keepCount, stringBuffer);

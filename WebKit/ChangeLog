@@ -1,3 +1,13 @@
+2003-11-04  John Sullivan  <sullivan@apple.com>
+
+        - a little optimization I noticed when looking at 3125137
+
+        Reviewed by Chris.
+
+        * Misc.subproj/WebStringTruncator.m:
+        (truncateString):
+        if incoming string has length 0, bail out right away
+
 2003-11-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
