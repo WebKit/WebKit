@@ -1,3 +1,16 @@
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Change ArgumentListNode operations to be iterative instead of
+	recursive. This probably fixes 3095446 (Crash in
+	KJS::ArgumentListNode::ref()) but I can't reproduce it myself so
+	I'm not 100% sure. I think the original bug was a stack overflow
+	and this change would remove that possibility.
+	
+        * kjs/nodes.cpp:
+        (ArgumentListNode::ref): Make iterative.
+        (ArgumentListNode::deref): Make iterative.
+        (ArgumentListNode::evaluateList): Make iterative.
+
 === Alexander-32 ===
 
 2002-11-14  Darin Adler  <darin@apple.com>

@@ -550,19 +550,37 @@ ArgumentListNode::ArgumentListNode(ArgumentListNode *l, Node *e)
 
 void ArgumentListNode::ref()
 {
-  Node::ref();
-  if ( expr )
-    expr->ref();
-  if ( list )
-    list->ref();
+  ArgumentListNode *l = this;
+
+  while (l != NULL) {
+    l->Node::ref();
+    if ( l->expr )
+      l->expr->ref();
+    l = l->list;
+  }
 }
 
 bool ArgumentListNode::deref()
 {
   if ( expr && expr->deref() )
     delete expr;
-  if ( list && list->deref() )
-    delete list;
+
+  ArgumentListNode *l = this->list;
+
+  while (l != NULL) {
+    if ( l->expr && l->expr->deref() )
+      delete l->expr;
+    
+    ArgumentListNode *next = l->list;
+
+    if (l->Node::deref()) {
+      l->list = NULL;
+      delete l;
+    }
+
+    l = next;
+  }
+
   return Node::deref();
 }
 
@@ -576,15 +594,17 @@ Value ArgumentListNode::evaluate(ExecState */*exec*/)
 List ArgumentListNode::evaluateList(ExecState *exec)
 {
   List l;
-  if (list) {
-    l = list->evaluateList(exec);
+
+  ArgumentListNode *n = this;
+
+  while (n != NULL) {
+    Value v = n->expr->evaluate(exec);
     KJS_CHECKEXCEPTIONLIST
+
+    l.append(v);
+
+    n = n->list;
   }
-
-  Value v = expr->evaluate(exec);
-  KJS_CHECKEXCEPTIONLIST
-
-  l.append(v);
 
   return l;
 }

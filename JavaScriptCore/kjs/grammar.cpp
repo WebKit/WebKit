@@ -254,7 +254,7 @@ static const short yyrhs[] = {     3,
      0,    12,    93,    96,     0,    93,     0,    12,    94,     0,
     93,    96,     0,    95,    96,     0,    95,    66,   114,    67,
      0,    95,    70,    58,     0,    62,    63,     0,    62,    97,
-    63,     0,   112,     0,    97,    68,   112,     0,    94,     0,
+    63,     0,   112,     0,   112,    68,    97,     0,    94,     0,
     95,     0,    98,     0,    98,    42,     0,    98,    43,     0,
     99,     0,    18,   100,     0,    17,   100,     0,    26,   100,
      0,    42,   100,     0,    59,   100,     0,    43,   100,     0,
@@ -317,22 +317,22 @@ static const short yyrline[] = { 0,
    179,   180,   181,   182,   185,   187,   188,   191,   193,   197,
    199,   202,   204,   207,   209,   213,   216,   217,   220,   222,
    223,   224,   226,   229,   231,   234,   236,   237,   238,   242,
-   244,   247,   249,   252,   254,   257,   259,   260,   263,   265,
-   266,   267,   268,   269,   270,   271,   272,   273,   274,   275,
-   278,   280,   281,   282,   285,   287,   288,   291,   293,   294,
-   295,   298,   300,   302,   304,   306,   308,   310,   314,   316,
-   317,   318,   319,   322,   324,   327,   329,   332,   334,   337,
-   339,   343,   345,   349,   351,   355,   357,   361,   363,   364,
-   365,   366,   367,   368,   369,   370,   371,   372,   373,   376,
-   378,   381,   383,   384,   385,   386,   387,   388,   389,   390,
-   391,   392,   393,   394,   395,   398,   400,   403,   405,   408,
-   411,   420,   422,   426,   428,   431,   435,   439,   442,   449,
-   451,   455,   457,   458,   461,   464,   467,   471,   477,   479,
-   482,   484,   488,   490,   497,   499,   503,   505,   513,   515,
-   519,   520,   526,   531,   536,   538,   542,   544,   547,   549,
-   552,   554,   557,   559,   562,   568,   572,   574,   575,   578,
-   582,   586,   589,   593,   595,   600,   602,   606,   609,   613,
-   616,   620,   623,   629,   631
+   244,   247,   250,   256,   258,   261,   263,   264,   267,   269,
+   270,   271,   272,   273,   274,   275,   276,   277,   278,   279,
+   282,   284,   285,   286,   289,   291,   292,   295,   297,   298,
+   299,   302,   304,   306,   308,   310,   312,   314,   318,   320,
+   321,   322,   323,   326,   328,   331,   333,   336,   338,   341,
+   343,   347,   349,   353,   355,   359,   361,   365,   367,   368,
+   369,   370,   371,   372,   373,   374,   375,   376,   377,   380,
+   382,   385,   387,   388,   389,   390,   391,   392,   393,   394,
+   395,   396,   397,   398,   399,   402,   404,   407,   409,   412,
+   415,   424,   426,   430,   432,   435,   439,   443,   446,   453,
+   455,   459,   461,   462,   465,   468,   471,   475,   481,   483,
+   486,   488,   492,   494,   501,   503,   507,   509,   517,   519,
+   523,   524,   530,   535,   540,   542,   546,   548,   551,   553,
+   556,   558,   561,   563,   566,   572,   576,   578,   579,   582,
+   586,   590,   593,   597,   599,   604,   606,   610,   613,   617,
+   620,   624,   627,   633,   635
 };
 #endif
 
@@ -472,39 +472,39 @@ static const short yypact[] = {   631,
 -32768,-32768,     7,-32768,   129,   -42,-32768,-32768,    18,   112,
 -32768,-32768,  1066,   230,  1066,-32768,  1066,  1066,   -45,   483,
    162,-32768,-32768,   705,-32768,-32768,    -6,   150,   176,    50,
-   220,   -37,   185,   212,-32768,   154,   850,   214,-32768,-32768,
--32768,-32768,   922,  1066,   234,-32768,  1066,   237,-32768,-32768,
+   220,   -37,   185,   212,-32768,   154,   850,   196,-32768,-32768,
+-32768,-32768,   922,  1066,   224,-32768,  1066,   234,-32768,-32768,
 -32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,
 -32768,-32768,-32768,  1066,  1066,  1066,  1066,  1066,  1066,  1066,
   1066,  1066,  1066,  1066,  1066,  1066,  1066,  1066,  1066,  1066,
   1066,  1066,  1066,  1066,  1066,  1066,  1066,  1066,-32768,  1066,
--32768,-32768,-32768,-32768,   244,    87,   241,   226,-32768,-32768,
+-32768,-32768,-32768,-32768,   244,    87,   238,   225,-32768,-32768,
 -32768,-32768,-32768,  1066,-32768,-32768,   -24,-32768,-32768,-32768,
-    64,-32768,   248,   100,-32768,-32768,   103,   252,   121,   122,
-   124,-32768,-32768,   253,     0,   283,-32768,-32768,-32768,-32768,
-    35,  1066,-32768,-32768,    12,-32768,-32768,-32768,-32768,   181,
--32768,   203,-32768,   223,-32768,-32768,-32768,-32768,-32768,    71,
+    64,-32768,   243,   100,-32768,-32768,   103,   248,   121,   122,
+   124,-32768,-32768,   250,     0,   281,-32768,-32768,-32768,-32768,
+    35,  1066,-32768,-32768,    12,-32768,-32768,-32768,-32768,   252,
+   249,   223,-32768,   228,-32768,-32768,-32768,-32768,-32768,    71,
     71,   -25,   -25,   -25,    38,    38,    38,    38,    38,    38,
-    82,    82,    82,    82,   239,   239,   239,    84,   133,   249,
--32768,   -15,   -41,  1066,  1066,-32768,-32768,   248,   190,   557,
--32768,   248,   259,   705,  1066,   705,   255,   705,   262,-32768,
--32768,   254,-32768,   994,-32768,  1066,-32768,-32768,  1066,  1066,
-   298,  1066,   197,   245,-32768,   248,-32768,   260,-32768,-32768,
-   307,   199,-32768,   323,-32768,-32768,   270,  1066,-32768,-32768,
--32768,-32768,   200,  1066,   261,   705,  1066,-32768,-32768,   705,
--32768,  1066,    23,   323,-32768,     0,-32768,   705,   201,  1066,
--32768,   274,-32768,   232,   275,-32768,   323,-32768,-32768,-32768,
-   705,   280,   705,   705,   705,   281,-32768,   705,-32768,-32768,
-   705,   705,-32768,-32768,-32768,   348,   349,-32768
+    82,    82,    82,    82,   239,   239,   239,    84,   133,   247,
+-32768,   -15,   -41,  1066,  1066,-32768,-32768,   243,   181,   557,
+-32768,   243,   260,   705,  1066,   705,   255,   705,   262,-32768,
+-32768,   253,-32768,   994,-32768,  1066,-32768,-32768,  1066,  1066,
+   299,  1066,   190,   241,-32768,   243,-32768,   264,-32768,-32768,
+   307,   197,-32768,   323,-32768,-32768,   270,  1066,-32768,-32768,
+-32768,-32768,   199,  1066,   259,   705,  1066,-32768,-32768,   705,
+-32768,  1066,    23,   323,-32768,     0,-32768,   705,   200,  1066,
+-32768,   274,-32768,   229,   275,-32768,   323,-32768,-32768,-32768,
+   705,   282,   705,   705,   705,   283,-32768,   705,-32768,-32768,
+   705,   705,-32768,-32768,-32768,   346,   349,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768,-32768,-32768,   126,-32768,-32768,   135,   346,   351,-32768,
-   -34,-32768,    41,-32768,     1,   148,   -10,    15,   117,   123,
--32768,-32768,   184,   196,-32768,-32768,  -122,-32768,    -9,   -17,
-   -22,    29,-32768,   191,   178,   118,-32768,-32768,-32768,-32768,
-  -225,-32768,-32768,-32768,-32768,-32768,-32768,    44,-32768,    55,
--32768,-32768,-32768,-32768,-32768,   166,-32768,-32768,   182,  -223,
+-32768,-32768,-32768,   126,-32768,-32768,   135,   351,   352,-32768,
+   -34,    88,    41,-32768,     1,   142,   -10,    15,   117,    96,
+-32768,-32768,   178,   198,-32768,-32768,  -122,-32768,    -9,   -17,
+   -22,    28,-32768,   191,   182,   118,-32768,-32768,-32768,-32768,
+  -225,-32768,-32768,-32768,-32768,-32768,-32768,    44,-32768,    58,
+-32768,-32768,-32768,-32768,-32768,   167,-32768,-32768,   183,  -223,
 -32768,     2,-32768
 };
 
@@ -529,7 +529,7 @@ static const short yytable[] = {   104,
     16,   155,   173,   142,   143,   144,   145,   146,   147,   148,
    149,   150,   151,   152,   133,   156,   157,   174,   137,   242,
    243,   244,   138,   140,   141,   237,   238,   239,   167,   168,
-    26,   310,   272,   311,   175,   274,   312,   273,    85,   153,
+    26,   310,   272,   231,   175,   274,   312,   273,    85,   153,
    180,    30,    31,   176,    86,    96,    33,   245,   246,   247,
    248,   249,   250,   276,   277,   327,   278,   194,   180,   180,
    201,   180,   280,   214,   215,   100,   100,   100,   100,   100,
@@ -537,21 +537,21 @@ static const short yytable[] = {   104,
    100,   100,   100,   100,   100,   100,   100,   100,   -27,  -126,
    224,   225,  -126,  -126,  -126,  -126,  -126,  -126,  -126,  -126,
   -126,  -126,  -126,  -126,  -126,  -126,  -126,  -126,  -126,  -126,
-  -126,  -126,  -126,   285,   -28,  -126,  -126,  -126,   286,  -126,
-  -126,   208,   296,   222,   293,   187,   301,   273,   303,   316,
-   306,   321,   328,   341,   180,   302,   180,   180,   180,   287,
-   180,   298,   169,   170,   171,   172,   223,  -126,  -126,  -126,
-   313,   228,   187,  -126,  -126,   251,   252,   253,   254,   288,
-   180,   233,  -126,  -126,   235,   255,   256,   257,   331,   180,
-   344,   262,   333,   339,   329,   240,   241,   187,   180,   265,
-   340,   270,   334,   275,   279,   215,   300,   289,   304,   307,
-   187,   314,   308,   347,   319,   349,   350,   350,   317,   320,
+  -126,  -126,  -126,   296,   -28,  -126,  -126,  -126,   273,  -126,
+  -126,   208,   316,   222,   293,   187,   301,   180,   303,   321,
+   306,   328,   341,   228,   180,   302,   180,   180,   255,   256,
+   257,   298,   169,   170,   171,   172,   223,  -126,  -126,  -126,
+   313,   233,   187,  -126,  -126,   251,   252,   253,   254,   287,
+   180,   235,  -126,  -126,   288,   180,   180,   344,   331,   240,
+   241,   262,   333,   339,   329,   180,   270,   187,   265,   275,
+   340,   279,   334,   215,   285,   289,   286,   300,   304,   307,
+   187,   308,   314,   347,   317,   349,   350,   350,   319,   320,
    354,   322,   326,   355,   355,    97,   343,     1,     2,     3,
-     4,     5,   348,   345,   330,   353,     8,   357,   358,    84,
-   284,    13,    14,    87,    16,   282,   140,   141,    88,   258,
+     4,     5,   330,   345,   348,   357,     8,   353,   358,    84,
+   284,    13,    14,   258,    16,   282,   140,   141,    87,    88,
     19,   142,   143,   144,   145,   146,   147,   148,   149,   150,
-   151,   152,   259,   352,   267,   263,    24,    25,   338,   291,
-   346,   281,   269,     0,    26,     0,     0,     0,     0,     0,
+   151,   152,   352,   311,   259,   263,    24,    25,   267,   291,
+   346,   338,   281,   269,    26,     0,     0,     0,     0,     0,
      0,     0,    85,    28,    29,    30,    31,   153,    86,     0,
     33,     0,     0,     0,     0,    34,    35,    36,    37,     0,
      0,     1,     2,     3,   118,   119,     6,     0,    98,     7,
@@ -656,19 +656,19 @@ static const short yycheck[] = {    17,
     11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
     21,    22,    23,    63,    69,    26,    27,    28,    68,    30,
     31,    22,    63,    69,   264,   265,   274,    68,   276,    63,
-   278,    63,    63,    63,    68,   275,    68,    68,    68,    67,
-    68,   270,    34,    35,    36,    37,    65,    58,    59,    60,
-   290,    68,   292,    64,    65,   169,   170,   171,   172,    67,
-    68,    58,    73,    74,    58,   173,   174,   175,   316,    68,
-    69,    58,   320,   326,   314,   158,   159,   317,    68,    84,
-   328,    64,   322,    62,    62,    33,    58,    69,    64,    58,
-   330,    24,    69,   341,    65,   343,   344,   345,    84,    23,
+   278,    63,    63,    68,    68,   275,    68,    68,   173,   174,
+   175,   270,    34,    35,    36,    37,    65,    58,    59,    60,
+   290,    58,   292,    64,    65,   169,   170,   171,   172,    67,
+    68,    58,    73,    74,    67,    68,    68,    69,   316,   158,
+   159,    58,   320,   326,   314,    68,    64,   317,    84,    62,
+   328,    62,   322,    33,    63,    69,    68,    58,    64,    58,
+   330,    69,    24,   341,    84,   343,   344,   345,    65,    23,
    348,     9,    63,   351,   352,     1,    63,     3,     4,     5,
-     6,     7,    63,    69,    84,    65,    12,     0,     0,    15,
-   225,    17,    18,     8,    20,   221,    42,    43,     8,   176,
+     6,     7,    84,    69,    63,     0,    12,    65,     0,    15,
+   225,    17,    18,   176,    20,   221,    42,    43,     8,     8,
     26,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-    56,    57,   177,   345,   197,   185,    42,    43,   324,   262,
-   337,   216,   201,    -1,    50,    -1,    -1,    -1,    -1,    -1,
+    56,    57,   345,   286,   177,   185,    42,    43,   197,   262,
+   337,   324,   216,   201,    50,    -1,    -1,    -1,    -1,    -1,
     -1,    -1,    58,    59,    60,    61,    62,    83,    64,    -1,
     66,    -1,    -1,    -1,    -1,    71,    72,    73,    74,    -1,
     -1,     3,     4,     5,     6,     7,     8,    -1,    84,    11,
@@ -1441,236 +1441,236 @@ case 42:
 { yyval.alist = new ArgumentListNode(yyvsp[0].node); ;
     break;}
 case 43:
-#line 249 "grammar.y"
-{ yyval.alist = new ArgumentListNode(yyvsp[-2].alist, yyvsp[0].node); ;
+#line 250 "grammar.y"
+{ yyval.alist = new ArgumentListNode(yyvsp[0].alist, yyvsp[-2].node); ;
     break;}
 case 47:
-#line 259 "grammar.y"
+#line 263 "grammar.y"
 { yyval.node = new PostfixNode(yyvsp[-1].node, OpPlusPlus); ;
     break;}
 case 48:
-#line 260 "grammar.y"
+#line 264 "grammar.y"
 { yyval.node = new PostfixNode(yyvsp[-1].node, OpMinusMinus); ;
     break;}
 case 50:
-#line 265 "grammar.y"
+#line 269 "grammar.y"
 { yyval.node = new DeleteNode(yyvsp[0].node); ;
     break;}
 case 51:
-#line 266 "grammar.y"
+#line 270 "grammar.y"
 { yyval.node = new VoidNode(yyvsp[0].node); ;
     break;}
 case 52:
-#line 267 "grammar.y"
+#line 271 "grammar.y"
 { yyval.node = new TypeOfNode(yyvsp[0].node); ;
     break;}
 case 53:
-#line 268 "grammar.y"
+#line 272 "grammar.y"
 { yyval.node = new PrefixNode(OpPlusPlus, yyvsp[0].node); ;
     break;}
 case 54:
-#line 269 "grammar.y"
+#line 273 "grammar.y"
 { yyval.node = new PrefixNode(OpPlusPlus, yyvsp[0].node); ;
     break;}
 case 55:
-#line 270 "grammar.y"
+#line 274 "grammar.y"
 { yyval.node = new PrefixNode(OpMinusMinus, yyvsp[0].node); ;
     break;}
 case 56:
-#line 271 "grammar.y"
+#line 275 "grammar.y"
 { yyval.node = new PrefixNode(OpMinusMinus, yyvsp[0].node); ;
     break;}
 case 57:
-#line 272 "grammar.y"
+#line 276 "grammar.y"
 { yyval.node = new UnaryPlusNode(yyvsp[0].node); ;
     break;}
 case 58:
-#line 273 "grammar.y"
+#line 277 "grammar.y"
 { yyval.node = new NegateNode(yyvsp[0].node); ;
     break;}
 case 59:
-#line 274 "grammar.y"
+#line 278 "grammar.y"
 { yyval.node = new BitwiseNotNode(yyvsp[0].node); ;
     break;}
 case 60:
-#line 275 "grammar.y"
+#line 279 "grammar.y"
 { yyval.node = new LogicalNotNode(yyvsp[0].node); ;
     break;}
 case 62:
-#line 280 "grammar.y"
+#line 284 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node, yyvsp[0].node, '*'); ;
     break;}
 case 63:
-#line 281 "grammar.y"
+#line 285 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node, yyvsp[0].node, '/'); ;
     break;}
 case 64:
-#line 282 "grammar.y"
+#line 286 "grammar.y"
 { yyval.node = new MultNode(yyvsp[-2].node,yyvsp[0].node,'%'); ;
     break;}
 case 66:
-#line 287 "grammar.y"
+#line 291 "grammar.y"
 { yyval.node = new AddNode(yyvsp[-2].node, yyvsp[0].node, '+'); ;
     break;}
 case 67:
-#line 288 "grammar.y"
+#line 292 "grammar.y"
 { yyval.node = new AddNode(yyvsp[-2].node, yyvsp[0].node, '-'); ;
     break;}
 case 69:
-#line 293 "grammar.y"
+#line 297 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpLShift, yyvsp[0].node); ;
     break;}
 case 70:
-#line 294 "grammar.y"
+#line 298 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpRShift, yyvsp[0].node); ;
     break;}
 case 71:
-#line 295 "grammar.y"
+#line 299 "grammar.y"
 { yyval.node = new ShiftNode(yyvsp[-2].node, OpURShift, yyvsp[0].node); ;
     break;}
 case 73:
-#line 301 "grammar.y"
+#line 305 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpLess, yyvsp[0].node); ;
     break;}
 case 74:
-#line 303 "grammar.y"
+#line 307 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpGreater, yyvsp[0].node); ;
     break;}
 case 75:
-#line 305 "grammar.y"
+#line 309 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpLessEq, yyvsp[0].node); ;
     break;}
 case 76:
-#line 307 "grammar.y"
+#line 311 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpGreaterEq, yyvsp[0].node); ;
     break;}
 case 77:
-#line 309 "grammar.y"
+#line 313 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpInstanceOf, yyvsp[0].node); ;
     break;}
 case 78:
-#line 311 "grammar.y"
+#line 315 "grammar.y"
 { yyval.node = new RelationalNode(yyvsp[-2].node, OpIn, yyvsp[0].node); ;
     break;}
 case 80:
-#line 316 "grammar.y"
+#line 320 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpEqEq, yyvsp[0].node); ;
     break;}
 case 81:
-#line 317 "grammar.y"
+#line 321 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpNotEq, yyvsp[0].node); ;
     break;}
 case 82:
-#line 318 "grammar.y"
+#line 322 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpStrEq, yyvsp[0].node); ;
     break;}
 case 83:
-#line 319 "grammar.y"
+#line 323 "grammar.y"
 { yyval.node = new EqualNode(yyvsp[-2].node, OpStrNEq, yyvsp[0].node);;
     break;}
 case 85:
-#line 324 "grammar.y"
+#line 328 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitAnd, yyvsp[0].node); ;
     break;}
 case 87:
-#line 329 "grammar.y"
+#line 333 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitXOr, yyvsp[0].node); ;
     break;}
 case 89:
-#line 334 "grammar.y"
+#line 338 "grammar.y"
 { yyval.node = new BitOperNode(yyvsp[-2].node, OpBitOr, yyvsp[0].node); ;
     break;}
 case 91:
-#line 340 "grammar.y"
+#line 344 "grammar.y"
 { yyval.node = new BinaryLogicalNode(yyvsp[-2].node, OpAnd, yyvsp[0].node); ;
     break;}
 case 93:
-#line 346 "grammar.y"
+#line 350 "grammar.y"
 { yyval.node = new BinaryLogicalNode(yyvsp[-2].node, OpOr, yyvsp[0].node); ;
     break;}
 case 95:
-#line 352 "grammar.y"
+#line 356 "grammar.y"
 { yyval.node = new ConditionalNode(yyvsp[-4].node, yyvsp[-2].node, yyvsp[0].node); ;
     break;}
 case 97:
-#line 358 "grammar.y"
+#line 362 "grammar.y"
 { yyval.node = new AssignNode(yyvsp[-2].node, yyvsp[-1].op, yyvsp[0].node);;
     break;}
 case 98:
-#line 362 "grammar.y"
+#line 366 "grammar.y"
 { yyval.op = OpEqual; ;
     break;}
 case 99:
-#line 363 "grammar.y"
+#line 367 "grammar.y"
 { yyval.op = OpPlusEq; ;
     break;}
 case 100:
-#line 364 "grammar.y"
+#line 368 "grammar.y"
 { yyval.op = OpMinusEq; ;
     break;}
 case 101:
-#line 365 "grammar.y"
+#line 369 "grammar.y"
 { yyval.op = OpMultEq; ;
     break;}
 case 102:
-#line 366 "grammar.y"
+#line 370 "grammar.y"
 { yyval.op = OpDivEq; ;
     break;}
 case 103:
-#line 367 "grammar.y"
+#line 371 "grammar.y"
 { yyval.op = OpLShift; ;
     break;}
 case 104:
-#line 368 "grammar.y"
+#line 372 "grammar.y"
 { yyval.op = OpRShift; ;
     break;}
 case 105:
-#line 369 "grammar.y"
+#line 373 "grammar.y"
 { yyval.op = OpURShift; ;
     break;}
 case 106:
-#line 370 "grammar.y"
+#line 374 "grammar.y"
 { yyval.op = OpAndEq; ;
     break;}
 case 107:
-#line 371 "grammar.y"
+#line 375 "grammar.y"
 { yyval.op = OpXOrEq; ;
     break;}
 case 108:
-#line 372 "grammar.y"
+#line 376 "grammar.y"
 { yyval.op = OpOrEq; ;
     break;}
 case 109:
-#line 373 "grammar.y"
+#line 377 "grammar.y"
 { yyval.op = OpModEq; ;
     break;}
 case 111:
-#line 378 "grammar.y"
+#line 382 "grammar.y"
 { yyval.node = new CommaNode(yyvsp[-2].node, yyvsp[0].node); ;
     break;}
 case 126:
-#line 399 "grammar.y"
+#line 403 "grammar.y"
 { yyval.stat = new BlockNode(0L); DBG(yyval.stat, yylsp[0], yylsp[0]); ;
     break;}
 case 127:
-#line 400 "grammar.y"
+#line 404 "grammar.y"
 { yyval.stat = new BlockNode(yyvsp[-1].srcs); DBG(yyval.stat, yylsp[0], yylsp[0]); ;
     break;}
 case 128:
-#line 404 "grammar.y"
+#line 408 "grammar.y"
 { yyval.slist = new StatListNode(yyvsp[0].stat); ;
     break;}
 case 129:
-#line 405 "grammar.y"
+#line 409 "grammar.y"
 { yyval.slist = new StatListNode(yyvsp[-1].slist, yyvsp[0].stat); ;
     break;}
 case 130:
-#line 409 "grammar.y"
+#line 413 "grammar.y"
 { yyval.stat = new VarStatementNode(yyvsp[-1].vlist);
                                       DBG(yyval.stat, yylsp[-2], yylsp[0]); ;
     break;}
 case 131:
-#line 411 "grammar.y"
+#line 415 "grammar.y"
 { if (automatic()) {
                                           yyval.stat = new VarStatementNode(yyvsp[-1].vlist);
 					  DBG(yyval.stat, yylsp[-2], yylsp[-1]);
@@ -1680,36 +1680,36 @@ case 131:
                                       ;
     break;}
 case 132:
-#line 421 "grammar.y"
+#line 425 "grammar.y"
 { yyval.vlist = new VarDeclListNode(yyvsp[0].decl); ;
     break;}
 case 133:
-#line 423 "grammar.y"
+#line 427 "grammar.y"
 { yyval.vlist = new VarDeclListNode(yyvsp[-2].vlist, yyvsp[0].decl); ;
     break;}
 case 134:
-#line 427 "grammar.y"
+#line 431 "grammar.y"
 { yyval.decl = new VarDeclNode(yyvsp[0].ustr, 0); delete yyvsp[0].ustr; ;
     break;}
 case 135:
-#line 428 "grammar.y"
+#line 432 "grammar.y"
 { yyval.decl = new VarDeclNode(yyvsp[-1].ustr, yyvsp[0].init); delete yyvsp[-1].ustr; ;
     break;}
 case 136:
-#line 432 "grammar.y"
+#line 436 "grammar.y"
 { yyval.init = new AssignExprNode(yyvsp[0].node); ;
     break;}
 case 137:
-#line 436 "grammar.y"
+#line 440 "grammar.y"
 { yyval.stat = new EmptyStatementNode(); ;
     break;}
 case 138:
-#line 440 "grammar.y"
+#line 444 "grammar.y"
 { yyval.stat = new ExprStatementNode(yyvsp[-1].node);
                                      DBG(yyval.stat, yylsp[-1], yylsp[0]); ;
     break;}
 case 139:
-#line 442 "grammar.y"
+#line 446 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ExprStatementNode(yyvsp[-1].node);
 				       DBG(yyval.stat, yylsp[-1], yylsp[-1]);
@@ -1717,70 +1717,70 @@ case 139:
 				       YYABORT; ;
     break;}
 case 140:
-#line 450 "grammar.y"
+#line 454 "grammar.y"
 { yyval.stat = new IfNode(yyvsp[-2].node,yyvsp[0].stat,0L);DBG(yyval.stat,yylsp[-4],yylsp[-1]); ;
     break;}
 case 141:
-#line 452 "grammar.y"
+#line 456 "grammar.y"
 { yyval.stat = new IfNode(yyvsp[-4].node,yyvsp[-2].stat,yyvsp[0].stat);DBG(yyval.stat,yylsp[-6],yylsp[-3]); ;
     break;}
 case 142:
-#line 456 "grammar.y"
+#line 460 "grammar.y"
 { yyval.stat=new DoWhileNode(yyvsp[-4].stat,yyvsp[-1].node);DBG(yyval.stat,yylsp[-5],yylsp[-3]);;
     break;}
 case 143:
-#line 457 "grammar.y"
+#line 461 "grammar.y"
 { yyval.stat = new WhileNode(yyvsp[-2].node,yyvsp[0].stat);DBG(yyval.stat,yylsp[-4],yylsp[-1]); ;
     break;}
 case 144:
-#line 459 "grammar.y"
+#line 463 "grammar.y"
 { yyval.stat = new ForNode(yyvsp[-6].node,yyvsp[-4].node,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-8],yylsp[-1]); ;
     break;}
 case 145:
-#line 462 "grammar.y"
+#line 466 "grammar.y"
 { yyval.stat = new ForNode(yyvsp[-6].vlist,yyvsp[-4].node,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-9],yylsp[-1]); ;
     break;}
 case 146:
-#line 465 "grammar.y"
+#line 469 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-4].node, yyvsp[-2].node, yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-6],yylsp[-1]); ;
     break;}
 case 147:
-#line 468 "grammar.y"
+#line 472 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-4].ustr,0L,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-7],yylsp[-1]);
                                      delete yyvsp[-4].ustr; ;
     break;}
 case 148:
-#line 472 "grammar.y"
+#line 476 "grammar.y"
 { yyval.stat = new ForInNode(yyvsp[-5].ustr,yyvsp[-4].init,yyvsp[-2].node,yyvsp[0].stat);
 	                             DBG(yyval.stat,yylsp[-8],yylsp[-1]);
                                      delete yyvsp[-5].ustr; ;
     break;}
 case 149:
-#line 478 "grammar.y"
+#line 482 "grammar.y"
 { yyval.node = 0L; ;
     break;}
 case 151:
-#line 483 "grammar.y"
+#line 487 "grammar.y"
 { yyval.stat = new ContinueNode(); DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 152:
-#line 484 "grammar.y"
+#line 488 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ContinueNode(); DBG(yyval.stat,yylsp[-1],yylsp[0]);
                                      } else
 				       YYABORT; ;
     break;}
 case 153:
-#line 488 "grammar.y"
+#line 492 "grammar.y"
 { yyval.stat = new ContinueNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[0]);
                                      delete yyvsp[-1].ustr; ;
     break;}
 case 154:
-#line 490 "grammar.y"
+#line 494 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ContinueNode(yyvsp[-1].ustr);DBG(yyval.stat,yylsp[-2],yylsp[-1]);
 				       delete yyvsp[-1].ustr;
@@ -1788,23 +1788,23 @@ case 154:
 				       YYABORT; ;
     break;}
 case 155:
-#line 498 "grammar.y"
+#line 502 "grammar.y"
 { yyval.stat = new BreakNode();DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 156:
-#line 499 "grammar.y"
+#line 503 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new BreakNode(); DBG(yyval.stat,yylsp[-1],yylsp[-1]);
                                      } else
 				       YYABORT; ;
     break;}
 case 157:
-#line 503 "grammar.y"
+#line 507 "grammar.y"
 { yyval.stat = new BreakNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[0]);
                                      delete yyvsp[-1].ustr; ;
     break;}
 case 158:
-#line 505 "grammar.y"
+#line 509 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new BreakNode(yyvsp[-1].ustr); DBG(yyval.stat,yylsp[-2],yylsp[-1]);
 				       delete yyvsp[-1].ustr;
@@ -1813,164 +1813,164 @@ case 158:
                                    ;
     break;}
 case 159:
-#line 514 "grammar.y"
+#line 518 "grammar.y"
 { yyval.stat = new ReturnNode(0L); DBG(yyval.stat,yylsp[-1],yylsp[0]); ;
     break;}
 case 160:
-#line 515 "grammar.y"
+#line 519 "grammar.y"
 { if (automatic()) {
                                        yyval.stat = new ReturnNode(0L); DBG(yyval.stat,yylsp[-1],yylsp[-1]);
                                      } else
 				       YYABORT; ;
     break;}
 case 161:
-#line 519 "grammar.y"
+#line 523 "grammar.y"
 { yyval.stat = new ReturnNode(yyvsp[-1].node); ;
     break;}
 case 162:
-#line 520 "grammar.y"
+#line 524 "grammar.y"
 { if (automatic())
                                        yyval.stat = new ReturnNode(yyvsp[-1].node);
                                      else
 				       YYABORT; ;
     break;}
 case 163:
-#line 527 "grammar.y"
+#line 531 "grammar.y"
 { yyval.stat = new WithNode(yyvsp[-2].node,yyvsp[0].stat);
                                      DBG(yyval.stat, yylsp[-4], yylsp[-1]); ;
     break;}
 case 164:
-#line 532 "grammar.y"
+#line 536 "grammar.y"
 { yyval.stat = new SwitchNode(yyvsp[-2].node, yyvsp[0].cblk);
                                      DBG(yyval.stat, yylsp[-4], yylsp[-1]); ;
     break;}
 case 165:
-#line 537 "grammar.y"
+#line 541 "grammar.y"
 { yyval.cblk = new CaseBlockNode(yyvsp[-1].clist, 0L, 0L); ;
     break;}
 case 166:
-#line 539 "grammar.y"
+#line 543 "grammar.y"
 { yyval.cblk = new CaseBlockNode(yyvsp[-3].clist, yyvsp[-2].ccl, yyvsp[-1].clist); ;
     break;}
 case 167:
-#line 543 "grammar.y"
+#line 547 "grammar.y"
 { yyval.clist = 0L; ;
     break;}
 case 169:
-#line 548 "grammar.y"
+#line 552 "grammar.y"
 { yyval.clist = new ClauseListNode(yyvsp[0].ccl); ;
     break;}
 case 170:
-#line 549 "grammar.y"
+#line 553 "grammar.y"
 { yyval.clist = yyvsp[-1].clist->append(yyvsp[0].ccl); ;
     break;}
 case 171:
-#line 553 "grammar.y"
+#line 557 "grammar.y"
 { yyval.ccl = new CaseClauseNode(yyvsp[-1].node, 0L); ;
     break;}
 case 172:
-#line 554 "grammar.y"
+#line 558 "grammar.y"
 { yyval.ccl = new CaseClauseNode(yyvsp[-2].node, yyvsp[0].slist); ;
     break;}
 case 173:
-#line 558 "grammar.y"
+#line 562 "grammar.y"
 { yyval.ccl = new CaseClauseNode(0L, 0L);; ;
     break;}
 case 174:
-#line 559 "grammar.y"
+#line 563 "grammar.y"
 { yyval.ccl = new CaseClauseNode(0L, yyvsp[0].slist); ;
     break;}
 case 175:
-#line 563 "grammar.y"
+#line 567 "grammar.y"
 { yyvsp[0].stat->pushLabel(yyvsp[-2].ustr);
                                      yyval.stat = new LabelNode(yyvsp[-2].ustr, yyvsp[0].stat);
                                      delete yyvsp[-2].ustr; ;
     break;}
 case 176:
-#line 569 "grammar.y"
+#line 573 "grammar.y"
 { yyval.stat = new ThrowNode(yyvsp[-1].node); ;
     break;}
 case 177:
-#line 573 "grammar.y"
+#line 577 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-1].stat, yyvsp[0].node); ;
     break;}
 case 178:
-#line 574 "grammar.y"
+#line 578 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-1].stat, 0L, yyvsp[0].node); ;
     break;}
 case 179:
-#line 575 "grammar.y"
+#line 579 "grammar.y"
 { yyval.stat = new TryNode(yyvsp[-2].stat, yyvsp[-1].node, yyvsp[0].node); ;
     break;}
 case 180:
-#line 579 "grammar.y"
+#line 583 "grammar.y"
 { yyval.node = new CatchNode(yyvsp[-2].ustr, yyvsp[0].stat); delete yyvsp[-2].ustr; ;
     break;}
 case 181:
-#line 583 "grammar.y"
+#line 587 "grammar.y"
 { yyval.node = new FinallyNode(yyvsp[0].stat); ;
     break;}
 case 182:
-#line 587 "grammar.y"
+#line 591 "grammar.y"
 { yyval.func = new FuncDeclNode(yyvsp[-3].ustr, 0L, yyvsp[0].body);
                                              delete yyvsp[-3].ustr; ;
     break;}
 case 183:
-#line 590 "grammar.y"
+#line 594 "grammar.y"
 { yyval.func = new FuncDeclNode(yyvsp[-4].ustr, yyvsp[-2].param, yyvsp[0].body);
                                      delete yyvsp[-4].ustr; ;
     break;}
 case 184:
-#line 594 "grammar.y"
+#line 598 "grammar.y"
 { yyval.node = new FuncExprNode(0L, yyvsp[0].body); ;
     break;}
 case 185:
-#line 596 "grammar.y"
+#line 600 "grammar.y"
 { yyval.node = new FuncExprNode(yyvsp[-2].param, yyvsp[0].body); ;
     break;}
 case 186:
-#line 601 "grammar.y"
+#line 605 "grammar.y"
 { yyval.param = new ParameterNode(yyvsp[0].ustr); delete yyvsp[0].ustr; ;
     break;}
 case 187:
-#line 602 "grammar.y"
+#line 606 "grammar.y"
 { yyval.param = yyvsp[-2].param->append(yyvsp[0].ustr);
 	                             delete yyvsp[0].ustr; ;
     break;}
 case 188:
-#line 607 "grammar.y"
+#line 611 "grammar.y"
 { yyval.body = new FunctionBodyNode(0L);
 	                             DBG(yyval.body, yylsp[-1], yylsp[0]);;
     break;}
 case 189:
-#line 609 "grammar.y"
+#line 613 "grammar.y"
 { yyval.body = new FunctionBodyNode(yyvsp[-1].srcs);
 	                             DBG(yyval.body, yylsp[-2], yylsp[0]);;
     break;}
 case 190:
-#line 614 "grammar.y"
+#line 618 "grammar.y"
 { yyval.prog = new ProgramNode(0L);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 191:
-#line 616 "grammar.y"
+#line 620 "grammar.y"
 { yyval.prog = new ProgramNode(yyvsp[0].srcs);
                                      Parser::progNode = yyval.prog; ;
     break;}
 case 192:
-#line 621 "grammar.y"
+#line 625 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[0].src); ;
     break;}
 case 193:
-#line 623 "grammar.y"
+#line 627 "grammar.y"
 { yyval.srcs = new SourceElementsNode(yyvsp[0].srcs, yyvsp[-1].src); ;
     break;}
 case 194:
-#line 630 "grammar.y"
+#line 634 "grammar.y"
 { yyval.src = new SourceElementNode(yyvsp[0].stat); ;
     break;}
 case 195:
-#line 631 "grammar.y"
+#line 635 "grammar.y"
 { yyval.src = new SourceElementNode(yyvsp[0].func); ;
     break;}
 }
@@ -2195,7 +2195,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 634 "grammar.y"
+#line 638 "grammar.y"
 
 
 int yyerror (const char *)  /* Called by yyparse on error */
