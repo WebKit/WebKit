@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x33
+  RenderBlock {HTML} at (0,0) size 800x33
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderText {TEXT} at (0,0) size 181x17
+        text run at (0,0) width 181: "This text should show up. "
+      RenderText {TEXT} at (181,0) size 213x17
+        text run at (181,0) width 213: "This text should also show up. "
+      RenderText {TEXT} at (394,0) size 204x17
+        text run at (394,0) width 204: "This text should show up too."
+      RenderText {TEXT} at (0,0) size 0x0
