@@ -1,3 +1,11 @@
+2002-07-02  Darin Adler  <darin@apple.com>
+
+	- fixed 2978806 -- Crash going to ebay home page
+
+        * khtml/ecma/kjs_navigator.cpp: (PluginBase::PluginBase): Check to be sure
+	that we are not at the end of the "tokens" collection before dereferencing
+	the iterator.
+
 2002-07-01  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed Radar 2953256 - JavaScript window.moveTo() and
