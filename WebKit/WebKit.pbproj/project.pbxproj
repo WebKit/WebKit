@@ -63,6 +63,15 @@
 				014CEA450018CDF011CA2923,
 			);
 			isa = PBXProject;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Spanish,
+				Dutch,
+				Italian,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07;
 			productRefGroup = 034768DFFF38A50411DB9C8B;
 			projectDirPath = "";
@@ -180,6 +189,7 @@
 			files = (
 				089C1668FE841158C02AAC07,
 				35F3577501986B740ACA1520,
+				35F357800198AAB80ACA1520,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -222,6 +232,7 @@
 		};
 		089C1665FE841158C02AAC07 = {
 			children = (
+				35F3577E0198AAB80ACA1520,
 				089C1666FE841158C02AAC07,
 				35F3577401986B740ACA1520,
 			);
@@ -231,7 +242,13 @@
 		};
 		089C1666FE841158C02AAC07 = {
 			children = (
+				35F357790198A6100ACA1520,
 				089C1667FE841158C02AAC07,
+				35F3577A0198A99D0ACA1520,
+				35F357780198A6100ACA1520,
+				35F3577C0198AA000ACA1520,
+				35F3577B0198A9AD0ACA1520,
+				35F357760198A3970ACA1520,
 			);
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
@@ -520,6 +537,36 @@
 //352
 //353
 //354
+		354B0A1A0198BD810ACA1520 = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/Localizable.strings;
+			refType = 4;
+		};
+		359D289A0198D3B50ACA1520 = {
+			isa = PBXFileReference;
+			name = Dutch;
+			path = Dutch.lproj/Localizable.strings;
+			refType = 4;
+		};
+		359D289B0198D3B50ACA1520 = {
+			isa = PBXFileReference;
+			name = German;
+			path = German.lproj/Localizable.strings;
+			refType = 4;
+		};
+		359D289C0198D3B50ACA1520 = {
+			isa = PBXFileReference;
+			name = Italian;
+			path = Italian.lproj/Localizable.strings;
+			refType = 4;
+		};
+		359D289D0198D3B50ACA1520 = {
+			isa = PBXFileReference;
+			name = Japanese;
+			path = Japanese.lproj/Localizable.strings;
+			refType = 4;
+		};
 		35F3577401986B740ACA1520 = {
 			isa = PBXFileReference;
 			name = html4.css;
@@ -531,6 +578,75 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		35F357760198A3970ACA1520 = {
+			isa = PBXFileReference;
+			name = Spanish;
+			path = Spanish.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F357780198A6100ACA1520 = {
+			isa = PBXFileReference;
+			name = German;
+			path = German.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F357790198A6100ACA1520 = {
+			isa = PBXFileReference;
+			name = Dutch;
+			path = Dutch.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F3577A0198A99D0ACA1520 = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F3577B0198A9AD0ACA1520 = {
+			isa = PBXFileReference;
+			name = Japanese;
+			path = Japanese.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F3577C0198AA000ACA1520 = {
+			isa = PBXFileReference;
+			name = Italian;
+			path = Italian.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		35F3577E0198AAB80ACA1520 = {
+			children = (
+				359D289A0198D3B50ACA1520,
+				35F3577F0198AAB80ACA1520,
+				354B0A1A0198BD810ACA1520,
+				359D289B0198D3B50ACA1520,
+				359D289C0198D3B50ACA1520,
+				359D289D0198D3B50ACA1520,
+				35F357840198AD6B0ACA1520,
+			);
+			isa = PBXVariantGroup;
+			name = Localizable.strings;
+			path = "";
+			refType = 4;
+		};
+		35F3577F0198AAB80ACA1520 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/Localizable.strings;
+			refType = 4;
+		};
+		35F357800198AAB80ACA1520 = {
+			fileRef = 35F3577E0198AAB80ACA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		35F357840198AD6B0ACA1520 = {
+			isa = PBXFileReference;
+			name = Spanish;
+			path = Spanish.lproj/Localizable.strings;
+			refType = 4;
 		};
 //350
 //351
