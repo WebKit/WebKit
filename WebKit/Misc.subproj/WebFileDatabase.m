@@ -196,7 +196,7 @@ enum
     [mutex lock];
     
     [setCache setObject:object forKey:key];
-    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseSetObjectOp key:key object:nil];
+    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseSetObjectOp key:key object:object];
     [ops addObject:op];
     [self setTimer];
     
@@ -264,9 +264,11 @@ enum
 
     // go to disk
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-    
-    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
 
+    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
+    if (!data) {
+        data = [[NSData alloc] initWithContentsOfFile:filePath];
+    }
     if (data) {
         unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
         fileKey = [unarchiver decodeObject];
@@ -301,7 +303,7 @@ enum
     NSFileManager *defaultManager;
 
 #ifdef WEBFOUNDATION_DEBUG
-    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performSetObject - %@", key);
+    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performSetObject - %@ - %@", key, [IFURLFileDatabase uniqueFilePathForKey:key]);
 #endif
 
     result = NO;
