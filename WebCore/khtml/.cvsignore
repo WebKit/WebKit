@@ -7,3 +7,4 @@ testrender
 SunWS_cache
 ir.out
 testkhtml_static
+*.moc
