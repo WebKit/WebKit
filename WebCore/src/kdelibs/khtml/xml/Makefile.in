@@ -54,6 +54,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
     -DNEED_BOGUS_TEXTSTREAMS \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
+    -I$(TOPSRCDIR)/src/kwq/kde \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I$(TOPSRCDIR)/src/kwq/kdeui \
