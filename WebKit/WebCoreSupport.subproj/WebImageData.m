@@ -686,14 +686,15 @@ static NSMutableSet *activeAnimations;
     while ((animation = [objectEnumerator nextObject])) {
 	NSSet *renderersInView = (NSSet *)CFDictionaryGetValue (animation->animatingRenderers, aView);
         if (renderersInView) {
-	    if (!renderersToStop)
-		renderersToStop = [[NSMutableSet alloc] init];
+			if (!renderersToStop)
+				renderersToStop = [[NSMutableSet alloc] init];
             [renderersToStop unionSet:renderersInView];
         }
     }
 
     // Now tell them all to stop drawing.
     [renderersToStop makeObjectsPerformSelector:@selector(stopAnimation)];
+	[renderersToStop release];
 }
 
 - (void)addAnimatingRenderer:(WebImageRenderer *)r inView:(NSView *)view
