@@ -1,3 +1,16 @@
+2002-07-23  David Hyatt  <hyatt@apple.com>
+
+	Fix bug 2803155 - images not displayed on http://bscw.gmd.de.
+	My fix is to use our newfound quirks mode to implement a comment
+	parsing quirk (this is how Mozilla handles this same issue).
+	Only in quirks mode, the tokenizer will treat <!--> atomically as
+	a complete comment.
+
+	This is bug 34302 on bugs.kde.org, for those who are curious.
+	
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+
 2002-07-23  Chris Blumenberg  <cblu@apple.com>
 
 	Initial plumbing for contextual menu support.

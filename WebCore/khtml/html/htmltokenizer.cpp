@@ -773,9 +773,19 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         dest = buffer; // ignore the previous part of this tag
                         comment = true;
                         tag = NoTag;
-                        parseComment(src);
 
-                        return; // Finished parsing tag!
+			// Fix bug 34302 at kde.bugs.org.  Go ahead and treat
+			// <!--> as a valid comment, since both mozilla and IE on windows
+			// can handle this case.  Only do this in quirks mode. -dwh
+			if (*src == '>' && parser->doc()->parseMode() != DocumentImpl::Strict) {
+			  comment = false;
+			  ++src;
+			  cBuffer[cBufferPos++] = src->cell();
+			}
+		        else
+			  parseComment(src);
+			  
+			return; // Finished parsing tag!
                     }
                     // cuts of high part, is okay
                     cBuffer[cBufferPos++] = src->cell();
