@@ -821,12 +821,14 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         [self _willChangeValueForKey: _WebIsLoadingKey];
         [self _willChangeValueForKey: _WebMainFrameURLKey];
     }
+    [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebMainFrameURLKey];
+    [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
@@ -834,6 +836,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebIsLoadingKey];
+    [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -841,6 +844,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebIsLoadingKey];
+    [NSApp setWindowsNeedUpdate:YES];
 }
 
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -850,6 +854,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         [self _didChangeValueForKey: _WebIsLoadingKey];
         [self _didChangeValueForKey: _WebMainFrameURLKey];
     }
+    [NSApp setWindowsNeedUpdate:YES];
 }
 
 @end

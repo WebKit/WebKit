@@ -1,3 +1,29 @@
+2003-08-25  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3391264 -- REGRESSION (Panther): Back/Forward buttons not
+ 	updating immediately after page load
+
+	The buttons are updated in response to window update notifications.
+	Jaguar was sending so many extra bogus notifications that it
+	masked the fact that we weren't ensuring that these notifications
+	were sent at all in the case of non-event-based interesting
+	changes that might affect menu items/toolbar items/etc.
+
+        Reviewed by Richard
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+	call -[NSApp setWindowsNeedUpdate:YES] so window update notices
+	will be sent
+        (-[WebView _didCommitLoadForFrame:]):
+	ditto
+        (-[WebView _didFinishLoadForFrame:]):
+	ditto
+        (-[WebView _didFailLoadWithError:forFrame:]):
+	ditto
+        (-[WebView _didFailProvisionalLoadWithError:forFrame:]):
+	ditto
+
 2003-08-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
