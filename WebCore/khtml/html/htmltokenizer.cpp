@@ -1031,23 +1031,21 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
                 // Look up the tagID for the specified tag name (now that we've shaved off any
                 // invalid / that might have followed the name).
-                uint tagID = getTagID(ptr, len);
+                unsigned short tagID = getTagID(ptr, len);
                 if (!tagID) {
-#ifdef TOKEN_DEBUG
-                    QCString tmp(ptr, len+1);
-                    kdDebug( 6036 ) << "Unknown tag: \"" << tmp.data() << "\"" << endl;
-#endif
-                    dest = buffer;
+                    DOMString tagName(ptr);
+                    DocumentImpl *doc = parser->docPtr()->document();
+                    if (doc->isValidName(tagName))
+                        tagID = parser->docPtr()->document()->tagId(0, tagName.implementation(), false);
                 }
-                else
-                {
+                if (tagID) {
 #ifdef TOKEN_DEBUG
                     QCString tmp(ptr, len+1);
                     kdDebug( 6036 ) << "found tag id=" << tagID << ": " << tmp.data() << endl;
 #endif
                     currToken.id = beginTag ? tagID : tagID + ID_CLOSE_TAG;
-                    dest = buffer;
                 }
+                dest = buffer;
                 tag = SearchAttribute;
                 cBufferPos = 0;
             }
@@ -1326,9 +1324,9 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
-            bool beginTag = !currToken.flat && (tagID < ID_CLOSE_TAG);
+            bool beginTag = !currToken.flat && (tagID <= ID_CLOSE_TAG);
 
-            if (tagID >= ID_CLOSE_TAG)
+            if (tagID > ID_CLOSE_TAG)
                 tagID -= ID_CLOSE_TAG;
             else if (tagID == ID_SCRIPT) {
                 AttributeImpl* a = 0;
@@ -1424,7 +1422,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     script = true;
                     parseSpecial(src);
                 }
-                else if (tagID < ID_CLOSE_TAG) // Handle <script src="foo"/>
+                else if (tagID <= ID_CLOSE_TAG) // Handle <script src="foo"/>
                     scriptHandler();
                 break;
             case ID_STYLE:

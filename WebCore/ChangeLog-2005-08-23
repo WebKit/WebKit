@@ -1,3 +1,39 @@
+2004-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - re-fixed <rdar://problem/3760910> Request to include support for custom tag names in HTML (they already work in XML)
+
+        (turns out the PLT regression was a false alarm)
+
+        * khtml/html/htmlparser.h: Change forbidden tag array to be allocated in the object rather than on
+        the heap. Also use ID_LAST_TAG for the array size; the old code used ID_CLOSE_TAG which is now a
+        much larger number.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Remove code that creates the forbidden tag array on the heap; makes more
+        sense to just have the array be a member so we don't have to use new and delete on it. Also needed
+        to eliminate code that used ID_CLOSE_TAG for an array size.
+        (KHTMLParser::~KHTMLParser): Remove code that deletes the forbidden tag array. Also changed the code
+        that manages isindex to use deref instead of delete.
+        (KHTMLParser::reset): Use safer sizeof for clearing the forbidden tag array. Old code had the
+        mistake of using ID_CLOSE_TAG for the array size too.
+        (KHTMLParser::parseToken): Removed code that checks for bogus tags; it's not clear why it was ever
+        there and it would prevent custom tags from working. Added range check before using the forbidden
+        tag array with the token ID since custom tags will use index values past the end of the array.
+        (KHTMLParser::getElement): Removed most of the code that makes an element by ID; now the work is done
+        inside the DocumentImpl createHTMLElement. Any code that needs to be different than a dynamic
+        createElement call is still here. Last time I left out a few form element types from this switch;
+        fixed now.
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::parseTag): Call the tagId function in the
+        document if getTagID fails; this creates a unique per-document ID.
+
+        * khtml/misc/htmltags.c: Regenerated.
+        * khtml/misc/htmltags.h: Regenerated.
+
+        * khtml/misc/maketags: Changed the generated constants to use "const unsigned short" instead of "#define".
+        Changed ID_CLOSE_TAG to be a fixed value of 32000 rather than being just past the IDs of the HTML tags.
+        Also rewrote getTagName to work with the new scheme.
+
 2005-01-06  David Harrison  <harrison@apple.com>
         
         Fixed Panther build.  Also, do not advertize sentence support since it is incomplete.
