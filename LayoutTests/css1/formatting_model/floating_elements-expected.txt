@@ -61,19 +61,19 @@ layer at (0,0) size 800x6376
       RenderBlock {HR} at (24,482) size 590x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock {DIV} at (2,508) size 442x226 [bgcolor=#000000] [border: (5px solid #800080)]
         RenderBlock (floating) {P} at (5,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {TEXT} at (17,17) size 144x36
-            text run at (17,17) width 93: "This is the first"
-            text run at (17,35) width 144: "left-floating paragraph."
+          RenderText {TEXT} at (17,17) size 122x36
+            text run at (17,17) width 122: "This is the first left-"
+            text run at (17,35) width 119: "floating paragraph."
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (199,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {TEXT} at (17,17) size 144x36
-            text run at (17,17) width 113: "This is the second"
-            text run at (17,35) width 144: "left-floating paragraph."
+          RenderText {TEXT} at (17,17) size 142x36
+            text run at (17,17) width 142: "This is the second left-"
+            text run at (17,35) width 119: "floating paragraph."
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {P} at (5,75) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-          RenderText {TEXT} at (17,17) size 144x36
-            text run at (17,17) width 98: "This is the third"
-            text run at (17,35) width 144: "left-floating paragraph."
+          RenderText {TEXT} at (17,17) size 127x36
+            text run at (17,17) width 127: "This is the third left-"
+            text run at (17,35) width 119: "floating paragraph."
         RenderText {TEXT} at (393,5) size 430x216
           text run at (393,5) width 42: "This is"
           text run at (393,23) width 23: "text"
@@ -422,19 +422,19 @@ layer at (0,0) size 800x6376
               RenderBlock {HR} at (28,304) size 573x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (6,330) size 442x226 [border: (5px solid #800080)]
                 RenderBlock (floating) {P} at (5,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {TEXT} at (17,17) size 144x36
-                    text run at (17,17) width 93: "This is the first"
-                    text run at (17,35) width 144: "left-floating paragraph."
+                  RenderText {TEXT} at (17,17) size 122x36
+                    text run at (17,17) width 122: "This is the first left-"
+                    text run at (17,35) width 119: "floating paragraph."
                 RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (199,5) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {TEXT} at (17,17) size 144x36
-                    text run at (17,17) width 113: "This is the second"
-                    text run at (17,35) width 144: "left-floating paragraph."
+                  RenderText {TEXT} at (17,17) size 142x36
+                    text run at (17,17) width 142: "This is the second left-"
+                    text run at (17,35) width 119: "floating paragraph."
                 RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock (floating) {P} at (5,75) size 194x70 [bgcolor=#C0C0C0] [border: (1px solid #00FF00)]
-                  RenderText {TEXT} at (17,17) size 144x36
-                    text run at (17,17) width 98: "This is the third"
-                    text run at (17,35) width 144: "left-floating paragraph."
+                  RenderText {TEXT} at (17,17) size 127x36
+                    text run at (17,17) width 127: "This is the third left-"
+                    text run at (17,35) width 119: "floating paragraph."
                 RenderText {TEXT} at (393,5) size 430x216
                   text run at (393,5) width 42: "This is"
                   text run at (393,23) width 23: "text"

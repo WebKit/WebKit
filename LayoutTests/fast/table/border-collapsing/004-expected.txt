@@ -106,11 +106,11 @@ layer at (0,0) size 800x1438
                 text run at (6,24) width 110: "separated borders"
                 text run at (6,42) width 43: "model."
             RenderTableCell {TD} at (198,66) size 196x66 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (6,6) size 158x54
+              RenderText {TEXT} at (6,6) size 173x54
                 text run at (6,6) width 158: "This means that elements"
-                text run at (6,24) width 123: "within the cell have"
-                text run at (6,42) width 123: "border-spacing of 1"
-                text run at (129,42) width 23: "em."
+                text run at (6,24) width 173: "within the cell have border-"
+                text run at (6,42) width 77: "spacing of 1"
+                text run at (83,42) width 23: "em."
             RenderTableCell {TD} at (410,75) size 320x48 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 279x36
                 text run at (6,6) width 205: "The borders on the header cells, "
@@ -225,8 +225,9 @@ layer at (0,0) size 800x1438
                 text run at (6,6) width 185: "Elements within the cell have"
                 text run at (6,24) width 178: "horizontal border-spacing of"
                 text run at (6,42) width 20: "0.5"
-                text run at (26,42) width 96: "em and vertical"
-                text run at (6,60) width 127: "border-spacing of 0."
+                text run at (26,42) width 100: "em and vertical "
+                text run at (126,42) width 46: "border-"
+                text run at (6,60) width 81: "spacing of 0."
             RenderTableCell {TD} at (438,52) size 300x48 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 279x36
                 text run at (6,6) width 205: "The borders on the header cells, "

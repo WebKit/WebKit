@@ -58,10 +58,10 @@ layer at (0,0) size 800x753
           RenderText {TEXT} at (644,0) size 757x36
             text run at (644,0) width 113: ", giving it an aqua"
             text run at (0,18) width 474: "background and no padding, since negative padding values are not allowed"
-        RenderText {TEXT} at (474,18) size 748x36
+        RenderText {TEXT} at (474,18) size 780x36
           text run at (474,18) width 8: ". "
-          text run at (482,18) width 266: "Padding on inline elements does not affect"
-          text run at (0,36) width 528: "line-height calculations, so all lines in this element should have the same line-height."
+          text run at (482,18) width 298: "Padding on inline elements does not affect line-"
+          text run at (0,36) width 500: "height calculations, so all lines in this element should have the same line-height."
       RenderBlock {P} at (0,387) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."

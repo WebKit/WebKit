@@ -5,21 +5,22 @@ layer at (0,0) size 800x334
     RenderBody {BODY} at (8,16) size 784x302
       RenderBlock (floating) {DIV} at (0,0) size 470x334
         RenderBlock {P} at (0,16) size 470x54
-          RenderText {TEXT} at (0,0) size 411x18
-            text run at (0,0) width 411: "This test case illustrates incorrect positioning of list items within a"
-          RenderInline {CODE} at (0,0) size 136x15
-            RenderText {TEXT} at (0,20) size 136x15
-              text run at (0,20) width 136: "text-align: right"
-          RenderText {TEXT} at (136,18) size 71x18
-            text run at (136,18) width 71: " div after a "
+          RenderText {TEXT} at (0,0) size 415x18
+            text run at (0,0) width 415: "This test case illustrates incorrect positioning of list items within a "
+          RenderInline {CODE} at (0,0) size 455x33
+            RenderText {TEXT} at (415,2) size 455x33
+              text run at (415,2) width 40: "text-"
+              text run at (0,20) width 96: "align: right"
+          RenderText {TEXT} at (96,18) size 71x18
+            text run at (96,18) width 71: " div after a "
           RenderInline {CODE} at (0,0) size 88x15
-            RenderText {TEXT} at (207,20) size 88x15
-              text run at (207,20) width 88: "float: left"
-          RenderText {TEXT} at (295,18) size 32x18
-            text run at (295,18) width 32: " div. "
-          RenderInline {A} at (0,0) size 460x36 [color=#0000EE]
-            RenderText {TEXT} at (327,18) size 460x36
-              text run at (327,18) width 133: "Screenshot of correct"
+            RenderText {TEXT} at (167,20) size 88x15
+              text run at (167,20) width 88: "float: left"
+          RenderText {TEXT} at (255,18) size 32x18
+            text run at (255,18) width 32: " div. "
+          RenderInline {A} at (0,0) size 420x36 [color=#0000EE]
+            RenderText {TEXT} at (287,18) size 420x36
+              text run at (287,18) width 133: "Screenshot of correct"
               text run at (0,36) width 55: "behavior"
           RenderText {TEXT} at (55,36) size 8x18
             text run at (55,36) width 8: "; "

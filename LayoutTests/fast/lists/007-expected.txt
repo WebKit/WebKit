@@ -10,8 +10,8 @@ layer at (0,0) size 800x96
             text run at (0,0) width 715: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order to test."
         RenderListItem {LI} at (50,18) size 734x54 [bgcolor=#FFFFFF] [border: (25px solid #008000)]
           RenderListMarker at (50,0) size 0x14 [bgcolor=#000000]
-          RenderText {TEXT} at (50,0) size 675x54
-            text run at (50,0) width 604: "Another list item might not be such a bad idea, either, considering that such things do need to be"
-            text run at (50,18) width 108: "double-checked. "
-            text run at (158,18) width 567: "This list item has its left padding also set to 25 pixels, which should combine with the list's"
-            text run at (50,36) width 235: "padding to make 50 pixels of margin."
+          RenderText {TEXT} at (50,0) size 682x54
+            text run at (50,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
+            text run at (50,18) width 60: "checked. "
+            text run at (110,18) width 622: "This list item has its left padding also set to 25 pixels, which should combine with the list's padding"
+            text run at (50,36) width 180: "to make 50 pixels of margin."

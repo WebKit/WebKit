@@ -69,23 +69,21 @@ layer at (0,0) size 800x4169
           text run at (670,28) width 73: "Extra text is"
           text run at (0,55) width 304: "included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,584) size 784x81 [bgcolor=#000000]
-        RenderText {TEXT} at (0,3) size 779x81
+        RenderText {TEXT} at (0,3) size 778x81
           text run at (0,3) width 711: "This element should be in a sans-serif font, italicized and small caps, with a weight of 900. "
-          text run at (711,3) width 21: "Its"
-          text run at (0,30) width 763: "font-size should be 150% the base font size, and its line-height should be 150% of that value (18"
-          text run at (763,30) width 16: "px"
-          text run at (0,57) width 52: "and 27"
-          text run at (52,57) width 136: "px, respectively). "
-          text run at (188,57) width 559: "Extra text is included for the purposes of testing this more effectively."
+          text run at (711,3) width 67: "Its font-"
+          text run at (0,30) width 722: "size should be 150% the base font size, and its line-height should be 150% of that value (18"
+          text run at (722,30) width 48: "px and"
+          text run at (0,57) width 156: "27px, respectively). "
+          text run at (156,57) width 559: "Extra text is included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,683) size 784x162 [bgcolor=#000000]
-        RenderText {TEXT} at (0,16) size 768x162
+        RenderText {TEXT} at (0,16) size 765x162
           text run at (0,16) width 698: "This element should be in a sans-serif font, italicized and small caps, with a weight of 100. "
-          text run at (698,16) width 21: "Its"
-          text run at (0,70) width 752: "font-size should be 150% the base font size, and its line-height should be 300% of that value (18"
-          text run at (752,70) width 16: "px"
-          text run at (0,124) width 51: "and 54"
-          text run at (51,124) width 135: "px, respectively). "
-          text run at (186,124) width 556: "Extra text is included for the purposes of testing this more effectively."
+          text run at (698,16) width 67: "Its font-"
+          text run at (0,70) width 711: "size should be 150% the base font size, and its line-height should be 300% of that value (18"
+          text run at (711,70) width 47: "px and"
+          text run at (0,124) width 155: "54px, respectively). "
+          text run at (155,124) width 556: "Extra text is included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,863) size 784x144 [bgcolor=#000000]
         RenderText {TEXT} at (0,7) size 750x144
           text run at (0,7) width 750: "This element should be in a monospace font, italicized and small caps, with a weight of"
@@ -97,13 +95,13 @@ layer at (0,0) size 800x4169
           text run at (618,79) width 113: "Extra text is"
           text run at (0,115) width 499: "included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1025) size 784x288 [bgcolor=#000000]
-        RenderText {TEXT} at (0,37) size 771x288
+        RenderText {TEXT} at (0,37) size 765x288
           text run at (0,37) width 698: "This element should be in a sans-serif font, italicized and small caps, with a weight of 500. "
-          text run at (698,37) width 21: "Its"
-          text run at (0,133) width 392: "font-size should be 150% the base font size, or 18"
-          text run at (392,133) width 257: "px, and its line-height should be 1"
-          text run at (649,133) width 23: "in. "
-          text run at (672,133) width 99: "Extra text is"
+          text run at (698,37) width 67: "Its font-"
+          text run at (0,133) width 351: "size should be 150% the base font size, or 18"
+          text run at (351,133) width 257: "px, and its line-height should be 1"
+          text run at (608,133) width 23: "in. "
+          text run at (631,133) width 99: "Extra text is"
           text run at (0,229) width 452: "included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1331) size 784x108 [bgcolor=#000000]
         RenderText {TEXT} at (0,7) size 774x108
@@ -123,15 +121,14 @@ layer at (0,0) size 800x4169
           text run at (757,6) width 24: "Extra"
           text run at (0,31) width 291: "text is included for the purposes of testing this more effectively."
       RenderBlock {P} at (0,1525) size 784x216 [bgcolor=#000000]
-        RenderInline {SPAN} at (0,0) size 781x183 [bgcolor=#C0C0C0]
-          RenderText {TEXT} at (0,16) size 781x216
+        RenderInline {SPAN} at (0,0) size 774x183 [bgcolor=#C0C0C0]
+          RenderText {TEXT} at (0,16) size 774x216
             text run at (0,16) width 698: "This element should be in a sans-serif font, italicized and small caps, with a weight of 100. "
-            text run at (698,16) width 21: "Its"
-            text run at (0,70) width 752: "font-size should be 150% the base font size, and its line-height should be 300% of that value (18"
-            text run at (752,70) width 16: "px"
-            text run at (0,124) width 51: "and 54"
-            text run at (51,124) width 730: "px, respectively). The text should have a silver background. The background color has been set"
-            text run at (0,178) width 679: "on an inline element and should therefore only cover the text, not the interline spacing."
+            text run at (698,16) width 67: "Its font-"
+            text run at (0,70) width 711: "size should be 150% the base font size, and its line-height should be 300% of that value (18"
+            text run at (711,70) width 47: "px and"
+            text run at (0,124) width 774: "54px, respectively). The text should have a silver background. The background color has been set on"
+            text run at (0,178) width 655: "an inline element and should therefore only cover the text, not the interline spacing."
         RenderText {TEXT} at (0,0) size 0x0
       RenderTable {TABLE} at (0,1759) size 784x2394 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x2392
@@ -176,20 +173,20 @@ layer at (0,0) size 800x4169
                   text run at (258,76) width 503: "Extra text is included for the purposes of testing"
                   text run at (0,112) width 218: "this more effectively."
               RenderBlock {P} at (4,437) size 762x79
-                RenderText {TEXT} at (0,2) size 731x52
+                RenderText {TEXT} at (0,2) size 762x52
                   text run at (0,2) width 628: "This element should be in a cursive font, 'small' in size, with a line-height 200% the height of the text's actual size. "
-                  text run at (628,2) width 103: "For example, if the"
-                  text run at (0,28) width 82: "font-size value "
+                  text run at (628,2) width 134: "For example, if the font-"
+                  text run at (0,28) width 55: "size value "
                 RenderInline {CODE} at (0,0) size 35x13
-                  RenderText {TEXT} at (82,33) size 35x26
-                    text run at (82,33) width 35: "small"
-                RenderText {TEXT} at (117,28) size 754x53
-                  text run at (117,28) width 104: " is calculated at 10"
-                  text run at (221,28) width 199: "px, then the line-height should be 20"
-                  text run at (420,28) width 20: "px. "
-                  text run at (440,28) width 280: "The actual value of the font-size is UA-dependent. "
-                  text run at (720,28) width 34: "Extra"
-                  text run at (0,55) width 343: "text is included for the purposes of testing this more effectively."
+                  RenderText {TEXT} at (55,33) size 35x26
+                    text run at (55,33) width 35: "small"
+                RenderText {TEXT} at (90,28) size 753x53
+                  text run at (90,28) width 104: " is calculated at 10"
+                  text run at (194,28) width 199: "px, then the line-height should be 20"
+                  text run at (393,28) width 20: "px. "
+                  text run at (413,28) width 280: "The actual value of the font-size is UA-dependent. "
+                  text run at (693,28) width 60: "Extra text"
+                  text run at (0,55) width 317: "is included for the purposes of testing this more effectively."
               RenderBlock {P} at (4,540) size 762x180
                 RenderText {TEXT} at (0,4) size 721x180
                   text run at (0,4) width 714: "This element should be in a sans-serif font, italicized and small caps,"

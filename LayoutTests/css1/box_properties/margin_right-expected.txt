@@ -41,12 +41,12 @@ layer at (0,0) size 802x1005
           RenderText {TEXT} at (19,0) size 700x18
             text run at (19,0) width 700: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to gray."
         RenderListItem {LI} at (40,18) size 694x54 [bgcolor=#FFFFFF]
-          RenderListMarker at (90,0) size 0x14 [bgcolor=#000000]
-          RenderText {TEXT} at (90,0) size 677x54
-            text run at (90,0) width 604: "Another list item might not be such a bad idea, either, considering that such things do need to be"
-            text run at (17,18) width 108: "double-checked. "
-            text run at (125,18) width 569: "This list item has its right margin also set to 25 pixels, which should combine with the list's"
-            text run at (166,36) width 528: "margin to make 50 pixels of margin, and its background-color has been set to white."
+          RenderListMarker at (38,0) size 0x14 [bgcolor=#000000]
+          RenderText {TEXT} at (38,0) size 693x54
+            text run at (38,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
+            text run at (1,18) width 60: "checked. "
+            text run at (61,18) width 633: "This list item has its right margin also set to 25 pixels, which should combine with the list's margin to"
+            text run at (230,36) width 464: "make 50 pixels of margin, and its background-color has been set to white."
         RenderListItem {LI} at (40,72) size 719x18 [bgcolor=#000000]
           RenderListMarker at (540,0) size 0x14
           RenderText {TEXT} at (540,0) size 179x18
@@ -97,12 +97,12 @@ layer at (0,0) size 802x1005
                     text run at (33,0) width 664: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to"
                     text run at (665,18) width 32: "gray."
                 RenderListItem {LI} at (40,36) size 672x54 [bgcolor=#FFFFFF]
-                  RenderListMarker at (68,0) size 0x14 [bgcolor=#000000]
-                  RenderText {TEXT} at (68,0) size 646x54
-                    text run at (68,0) width 604: "Another list item might not be such a bad idea, either, considering that such things do need to be"
-                    text run at (26,18) width 108: "double-checked. "
-                    text run at (134,18) width 538: "This list item has its right margin also set to 25 pixels, which should combine with the"
-                    text run at (113,36) width 559: "list's margin to make 50 pixels of margin, and its background-color has been set to white."
+                  RenderListMarker at (16,0) size 0x14 [bgcolor=#000000]
+                  RenderText {TEXT} at (16,0) size 656x54
+                    text run at (16,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
+                    text run at (43,18) width 60: "checked. "
+                    text run at (103,18) width 569: "This list item has its right margin also set to 25 pixels, which should combine with the list's"
+                    text run at (144,36) width 528: "margin to make 50 pixels of margin, and its background-color has been set to white."
                 RenderListItem {LI} at (40,90) size 697x18 [bgcolor=#000000]
                   RenderListMarker at (518,0) size 0x14
                   RenderText {TEXT} at (518,0) size 179x18
