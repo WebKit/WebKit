@@ -182,12 +182,10 @@ Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
       double val = args[k].toNumber(exec);
       if ( isNaN( val ) )
       {
-	    result = NaN;
+        result = NaN;
         break;
       }
-      // Comparing a number to negative infinity doesn't work.  
-      // -dwh
-      if ( k == 0 || val > result )
+      if ( val > result )
         result = val;
     }
     break;
@@ -202,9 +200,7 @@ Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
         result = NaN;
         break;
       }
-      // Comparing a number to positive infinity doesn't work.  
-      // -dwh
-      if ( k == 0 || val < result )
+      if ( val < result )
         result = val;
     }
     break;

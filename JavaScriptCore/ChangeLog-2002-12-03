@@ -1,3 +1,15 @@
+2002-09-26  Darin Adler  <darin@apple.com>
+
+	Fix the infinity problem Dave worked around. We didn't have the
+	configuration flags set right to make infinity work. Setting those
+	properly made everything work without changes to min and max.
+
+        * kjs/config.h: Define HAVE_FUNC_ISINF, HAVE_STRING_H, and
+	also WORDS_BIGENDIAN (if on ppc).
+
+        * kjs/math_object.cpp: (MathFuncImp::call): Roll out min and max
+	changes from yesterday.
+
 2002-09-25  David Hyatt  <hyatt@apple.com>
 
 	Fix the impls of min/max to not use +inf/-inf when you have
