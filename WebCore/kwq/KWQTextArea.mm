@@ -89,8 +89,8 @@ const float LargeNumberForText = 1.0e7;
     [textView setHorizontallyResizable:!wrap];
     [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
 
-    [[textView textContainer] setContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
     [[textView textContainer] setWidthTracksTextView:wrap];
+    [[textView textContainer] setContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
 }
 
 - (void)_createTextView
@@ -99,7 +99,6 @@ const float LargeNumberForText = 1.0e7;
 
     [textView setRichText:NO];
     [textView setAllowsUndo:YES];
-    [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
     [textView setDelegate:self];
 
     [self setDocumentView:textView];
@@ -361,6 +360,16 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [_font release];
     _font = font;
     [textView setFont:font];
+}
+
+- (void)setTextColor:(NSColor *)color
+{
+    [textView setTextColor:color];
+}
+
+- (void)setBackgroundColor:(NSColor *)color
+{
+    [textView setBackgroundColor:color];
 }
 
 - (BOOL)becomeFirstResponder

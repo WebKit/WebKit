@@ -1,5 +1,21 @@
 2004-10-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3828147> REGRESSION: textareas with wrap="off" show their contents in a thin vertical line of text
+
+        * kwq/KWQTextArea.h: Added setTextColor and setBackgroundColor methods. This is really for another fix
+        I'm landing later, but it does no harm to add these now.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _configureTextViewForWordWrapMode]): Set the container size after changing the flag that
+        determines if the width tracks the text view. Otherwise, we won't successfully set the width in the case
+        where we don't want it to track the text view. This caused the bug. 
+        (-[KWQTextArea _createTextView]): Remove unneeded call to setMaxSize. The above method already does that.
+        (-[KWQTextArea setTextColor:]): Added.
+        (-[KWQTextArea setBackgroundColor:]): Added.
+
+2004-10-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fixed <rdar://problem/3829452> REGRESSION (156-157): onload handler doesn't run on page with meta refresh of 0 duration (new Apple start page)
@@ -116,8 +132,6 @@
 2004-10-05  David Hyatt  <hyatt@apple.com>
 
 	Fix a bug in the iteration of locateCousinList and clean up the style sharing stats code.
-
-        Reviewed by NOBODY (OOPS!).
 
         * khtml/css/cssstyleselector.cpp:
         (khtml::CSSStyleSelector::locateCousinList):
@@ -1360,13 +1374,11 @@
 
 2004-09-24  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Hyatt made an improvement in the render tree which caused the results
         to get a little thinner.
 
-        * layout-tests/editing/deleting/delete-block-merge-contents-001-expected.txt.
-        * layout-tests/editing/deleting/delete-block-merge-contents-008-expected.txt.
+        * layout-tests/editing/deleting/delete-block-merge-contents-001-expected.txt
+        * layout-tests/editing/deleting/delete-block-merge-contents-008-expected.txt
 
 2004-09-24  Ken Kocienda  <kocienda@apple.com>
 
