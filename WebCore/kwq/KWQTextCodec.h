@@ -33,47 +33,29 @@
 #include "qstring.h"
 #include "qcstring.h"
 
+class QTextCodec;
+
 // class QTextDecoder ==========================================================
 
 class QTextDecoder {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
     // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QTextDecoder() {}
-#endif
 
-    virtual ~QTextDecoder();
-    
+    QTextDecoder(const QTextCodec *);
+    ~QTextDecoder();
+
     // member functions --------------------------------------------------------
 
-    virtual QString toUnicode(const char *, int)=0;
+    QString toUnicode(const char *, int);
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
 private:
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTextDecoder(const QTextDecoder &);
-#endif
+    // data members ------------------------------------------------------------
 
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QTextDecoder &operator=(const QTextDecoder &);
-#endif
+    const QTextCodec *textCodec;
 
 }; // class QTextDecoder =======================================================
 
@@ -83,54 +65,42 @@ private:
 class QTextCodec {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
     // static member functions -------------------------------------------------
 
     static QTextCodec *codecForMib(int);
-    static QTextCodec *codecForName(const char *, int accuracy=0);
+    //static QTextCodec *codecForName(const char *, int accuracy=0);
+    static QTextCodec *codecForName(const char *);
     static QTextCodec *codecForLocale();
 
     // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QTextCodec() {}
-#endif
-
-    virtual ~QTextCodec();
+    QTextCodec(int);
+    ~QTextCodec();
 
     // member functions --------------------------------------------------------
 
-    virtual const char* name() const=0;
-    virtual int mibEnum() const=0;
-    virtual QTextDecoder *makeDecoder() const;
+    //virtual const char* name() const=0;
+    const char* name() const;
+    //virtual int mibEnum() const=0;
+    int mibEnum() const;
+
+    //virtual QTextDecoder *makeDecoder() const;
+    QTextDecoder *makeDecoder() const;
+
     QCString fromUnicode(const QString &) const;
 
-    virtual QString toUnicode(const char *, int) const;
+    //virtual QString toUnicode(const char *, int) const;
+    QString toUnicode(const char *, int) const;
     QString toUnicode(const QByteArray &, int) const;
     QString toUnicode(const char *) const;
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
-private:
+//private:
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTextCodec(const QTextCodec &);
-#endif
+    // data members ------------------------------------------------------------
 
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QTextCodec &operator=(const QTextCodec &);
-#endif
+    CFStringEncoding encoding;
 
 }; // class QTextCodec =========================================================
 

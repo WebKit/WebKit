@@ -23,102 +23,98 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: obviously many functions here can be made inline
+
 #include <qtextcodec.h>
+#include <kwqdebug.h>
 
-class QTextCodec;
-
-class KWQSimpleTextCodec : public QTextCodec {
-public:
-
-    virtual ~KWQSimpleTextCodec() {}
-
-    int KWQSimpleTextCodec::mibEnum() const {
-        // FIXME: do real work here
-        return 0;
-    }
-
-    const char *KWQSimpleTextCodec::name() const
-    {
-        // FIXME: do real work here
-        return "KWQSimpleTextCodec";
-    }
-
-};
-
-
-class KWQSimpleTextDecoder : public QTextDecoder {
-public:
-
-    virtual ~KWQSimpleTextDecoder() {}
-
-    QString KWQSimpleTextDecoder::toUnicode(const char *s, int i) {
-        return QString(s);
-    }
-};
+// FIXME: do we need this one we have a REAL implementation?
+static QTextCodec latin1TextCodec(kCFStringEncodingISOLatin1);
 
 // class QTextDecoder ==========================================================
 
+// constructors, copy constructors, and destructors ----------------------------
+
+QTextDecoder::QTextDecoder(const QTextCodec *tc)
+{
+    textCodec = tc;
+}
 
 QTextDecoder::~QTextDecoder()
 {
+    // do nothing
+}
+
+// member functions --------------------------------------------------------
+
+QString QTextDecoder::toUnicode(const char *chs, int len)
+{
+    return textCodec->toUnicode(chs, len);
 }
 
 
 // class QTextCodec ============================================================
 
+// static member functions -----------------------------------------------------
+
 QTextCodec *QTextCodec::codecForMib(int)
 {
-    // FIXME: do real work here
-    return new KWQSimpleTextCodec();
+    // FIXME: need REAL implementation here
+    _logPartiallyImplemented();
+    return &latin1TextCodec;
 }
 
-
-QTextCodec *QTextCodec::codecForName(const char *, int accuracy=0)
+QTextCodec *QTextCodec::codecForName(const char *)
 {
-    // FIXME: do real work here
-    return new KWQSimpleTextCodec();
+    // FIXME: need REAL implementation here
+    _logPartiallyImplemented();
+    return &latin1TextCodec;
 }
-
 
 QTextCodec *QTextCodec::codecForLocale()
 {
-    // FIXME: do real work here
-    return new KWQSimpleTextCodec();
+    // FIXME: need REAL implementation here
+    _logPartiallyImplemented();
+    return &latin1TextCodec;
 }
 
+// constructors, copy constructors, and destructors ----------------------------
+
+QTextCodec::QTextCodec(int e)
+{
+    encoding = e;
+}
 
 QTextCodec::~QTextCodec()
 {
+    // do nothing
 }
 
 // member functions --------------------------------------------------------
 
 QTextDecoder *QTextCodec::makeDecoder() const
 {
-    // FIXME: do real work here
-    return new KWQSimpleTextDecoder();
+    // FIXME: will this leak or do clients dispose of the object?
+    return new QTextDecoder(this);
 }
 
-
-QCString QTextCodec::fromUnicode(const QString &s) const
+QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
-    return QCString(s.latin1());
+    // FIXME: is there a more efficient way to do this?
+    return QCString(qcs.latin1());
 }
 
-
-QString QTextCodec::toUnicode(const char *s, int) const
+QString QTextCodec::toUnicode(const char *chs, int len) const
 {
-    return QString(s);
+    return QString::fromStringWithEncoding(chs, len, encoding);
 }
 
-QString QTextCodec::toUnicode(const QByteArray &array, int) const
+QString QTextCodec::toUnicode(const QByteArray &qba, int len) const
 {
-    return QString(array);
+    return QString::fromStringWithEncoding(qba, len, encoding);
 }
 
-
-QString QTextCodec::toUnicode(const char *s) const
+QString QTextCodec::toUnicode(const char *chs) const
 {
-    return QString(s);
+    return QString::fromStringWithEncoding(chs, -1, encoding);
 }
-
