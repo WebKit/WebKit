@@ -26,6 +26,7 @@ MMOBJECTS = \
 	KWQasyncimageio.o \
 	KWQasyncio.o \
 	KWQtextcodec.o \
+	KWQtextstream.o \
 	KWQApplication.o \
 	KWQBrush.o \
 	KWQButton.o \

@@ -25,10 +25,6 @@
 
 #include <qbutton.h>
 
-QButton::QButton()
-{
-}
-
 
 QButton::QButton(QWidget *parent)
 {

@@ -23,21 +23,71 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include <qstring.h>
+#define NEED_BOGUS_TEXTSTREAMS 1
 
-#include <kprotocolmanager.h>
+#include <qtextstream.h>
 
+// class QTextStream ===========================================================
 
-bool KProtocolManager::useProxy()
+QTextStream::QTextStream()
 {
 }
 
 
-QString KProtocolManager::httpProxy()
+QTextStream::QTextStream(QByteArray, int)
 {
 }
 
-QString KProtocolManager::userAgentForHost( const QString& )
+
+QTextStream::~QTextStream()
+{
+}
+
+
+QTextStream &QTextStream::operator<<(char)
+{
+}
+
+
+QTextStream &QTextStream::operator<<(const char *)
+{
+}
+
+
+QTextStream &QTextStream::operator<<(const QCString &)
+{
+}
+
+
+QTextStream &QTextStream::operator<<(const QString &)
+{
+}
+
+
+// class QTextIStream ==========================================================
+
+QTextIStream::QTextIStream(QString *)
+{
+}
+
+
+QString QTextIStream::readLine()
+{
+}
+
+
+// class QTextOStream ==========================================================
+
+QTextOStream::QTextOStream(QString *)
+{
+}
+
+
+QTextOStream::QTextOStream(QByteArray)
+{
+}
+
+QString QTextOStream::readLine()
 {
 }
 

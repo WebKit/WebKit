@@ -36,3 +36,8 @@ bool KProtocolManager::useProxy()
 QString KProtocolManager::httpProxy()
 {
 }
+
+QString KProtocolManager::userAgentForHost( const QString& )
+{
+}
+

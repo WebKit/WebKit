@@ -51,7 +51,7 @@ QSize KJavaEmbed::minimumSizeHint() const
 }
 
 
-void focusOutEvent( QFocusEvent * )
+void KJavaEmbed::focusOutEvent( QFocusEvent * )
 {
 }
 
