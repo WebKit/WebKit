@@ -119,11 +119,12 @@
     if ([dataSource webFrame]) {
         if ([self _isDisplayingWebArchive]) {
             [self loadArchive];
+        } else {
+            // Telling the bridge we received some data and passing nil as the data is our
+            // way to get work done that is normally done when the first bit of data is
+            // received, even for the case of a document with no data (like about:blank).
+            [_private->bridge receivedData:nil textEncodingName:[[_private->dataSource response] textEncodingName]];
         }
-        // Telling the bridge we received some data and passing nil as the data is our
-        // way to get work done that is normally done when the first bit of data is
-        // received, even for the case of a document with no data (like about:blank).
-        [_private->bridge addData:nil];
     }
 }
 
