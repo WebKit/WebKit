@@ -170,7 +170,7 @@
 	<key>CFBundleSignature</key>
 	<string>webc</string>
 	<key>CFBundleVersion</key>
-	<string>37u2</string>
+	<string>37</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 	<key>SKIP_INSTALL</key>

@@ -177,7 +177,7 @@
 	<key>CFBundleSignature</key>
 	<string>webk</string>
 	<key>CFBundleVersion</key>
-	<string>37u3</string>
+	<string>37</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 	<key>SKIP_INSTALL</key>
