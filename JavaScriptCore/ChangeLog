@@ -1,5 +1,19 @@
 2003-07-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed problem where some JavaScriptCore symbols had no namespace or prefix
+
+        * kjs/grammar.y: Added a define for yylloc to make it use the kjs prefix.
+        This is the same thing done for the rest of the symbols automatically by yacc,
+        but for some reason it's not done for yyloc. Also make automatic() function static.
+        * kjs/grammar.cpp: Regenerated.
+        * kjs/lexer.cpp: Use kjsyylloc instead of yyloc.
+
+        * pcre/pcre.h: Add defines to prepend kjs prefixes for all the PCRE functions.
+
+2003-07-30  Darin Adler  <darin@apple.com>
+
         * Makefile.am: Include the subdirectory with the PCRE code in it.
 
 2003-07-30  John Sullivan  <sullivan@apple.com>

@@ -51,7 +51,7 @@ static Lexer *currLexer = 0;
 
 #include "lexer.lut.h"
 
-extern YYLTYPE yylloc; // global bison variable holding token info
+extern YYLTYPE kjsyylloc; // global bison variable holding token info
 
 // a bridge for yacc from the C world to C++
 int kjsyylex()
@@ -481,8 +481,8 @@ int Lexer::lex()
 
   restrKeyword = false;
   delimited = false;
-  yylloc.first_line = yylineno; // ???
-  yylloc.last_line = yylineno;
+  kjsyylloc.first_line = yylineno; // ???
+  kjsyylloc.last_line = yylineno;
 
   switch (state) {
   case Eof:

@@ -7,6 +7,21 @@
 #ifndef _PCRE_H
 #define _PCRE_H
 
+#define pcre_compile kjs_pcre_compile
+#define pcre_copy_substring kjs_pcre_copy_substring
+#define pcre_exec kjs_pcre_exec
+#define pcre_free kjs_pcre_free
+#define pcre_free_substring kjs_pcre_free_substring
+#define pcre_free_substring_list kjs_pcre_free_substring_list
+#define pcre_fullinfo kjs_pcre_fullinfo
+#define pcre_get_substring kjs_pcre_get_substring
+#define pcre_get_substring_list kjs_pcre_get_substring_list
+#define pcre_info kjs_pcre_info
+#define pcre_maketables kjs_pcre_maketables
+#define pcre_malloc kjs_pcre_malloc
+#define pcre_study kjs_pcre_study
+#define pcre_version kjs_pcre_version
+
 #define PCRE_MAJOR 3
 #define PCRE_MINOR 9
 #define PCRE_DATE 02-Jan-2002
