@@ -1931,6 +1931,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                                               // then assume the start width has been applied.
             bool appliedEndWidth = false;
 
+            int wrapW = tmpW;
+            
             while(len) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 const QChar c = str[pos];
@@ -1965,7 +1967,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 }
                 
                 bool applyWordSpacing = false;
-                if ( (isPre && c == '\n') || (!isPre && isBreakable( str, pos, strlen )) ) {
+
+                bool breakWords = w == 0 && o->style()->whiteSpace() == NORMAL && o->style()->wordWrap() == BREAK_WORD;
+                if (breakWords)
+                    wrapW += t->width(pos, 1, f);
+                if ((isPre && c == '\n') || (!isPre && isBreakable(str, pos, strlen)) || (breakWords && wrapW > width)) {
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this

@@ -1,3 +1,35 @@
+2004-09-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3705894> REGRESSION (Mail): if a single word is wider than the window, 
+        it doesn't break and just runs off the right side
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Add support for CSS_PROP_WORD_WRAP.
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): Ditto.
+        * khtml/css/cssproperties.c: Generated file.
+        * khtml/css/cssproperties.h: Ditto.
+        * khtml/css/cssproperties.in: Add word-wrap property.
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty): Add support for CSS_PROP_WORD_WRAP.
+        * khtml/css/cssvalues.c: Generated file.
+        * khtml/css/cssvalues.h: Ditto.
+        * khtml/css/cssvalues.in: Add break-word value.
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak): Add code to implement new word wrapping feature.
+        * khtml/rendering/render_style.cpp:
+        (StyleCSS3InheritedData): Add support for new wordWrap property.
+        (StyleCSS3InheritedData::operator==): Ditto.
+        (RenderStyle::diff): Ditto.
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::wordWrap): Ditto.
+        (khtml::RenderStyle::setWordWrap): Ditto.
+        (khtml::RenderStyle::initialWordWrap): Ditto.
+
 2004-09-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -562,6 +562,12 @@ enum EUserSelect {
     SELECT_AUTO, SELECT_NONE, SELECT_TEXT
 };
 
+// Word Break Values. Matches WinIE, rather than CSS3
+
+enum EWordWrap {
+    WBNORMAL, BREAK_WORD
+};
+
 // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
 // we save space, and only allocate this object when someone actually uses
 // a non-inherited CSS3 property.
@@ -617,6 +623,7 @@ public:
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
     EUserModify userModify : 2; // Flag used for editing state
+    EWordWrap wordWrap : 1;    // Flag used for word wrap
 #if APPLE_CHANGES
     bool textSizeAdjust : 1;    // An Apple extension.  Not really CSS3 but not worth making a new struct over.
 #endif
@@ -1139,6 +1146,7 @@ public:
     bool textOverflow() const { return css3NonInheritedData->textOverflow; }
     EMarginCollapse marginTopCollapse() const { return css3NonInheritedData->marginTopCollapse; }
     EMarginCollapse marginBottomCollapse() const { return css3NonInheritedData->marginBottomCollapse; }
+    EWordWrap wordWrap() const { return css3InheritedData->wordWrap; }
     // End CSS3 Getters
 
 #if APPLE_CHANGES
@@ -1339,6 +1347,7 @@ public:
     void setTextOverflow(bool b) { SET_VAR(css3NonInheritedData, textOverflow, b); }
     void setMarginTopCollapse(EMarginCollapse c) { SET_VAR(css3NonInheritedData, marginTopCollapse, c); }
     void setMarginBottomCollapse(EMarginCollapse c) { SET_VAR(css3NonInheritedData, marginBottomCollapse, c); }
+    void setWordWrap(EWordWrap b) { SET_VAR(css3InheritedData, wordWrap, b); }
     // End CSS3 Setters
    
 #if APPLE_CHANGES
@@ -1453,6 +1462,7 @@ public:
     static bool initialTextOverflow() { return false; }
     static EMarginCollapse initialMarginTopCollapse() { return MCOLLAPSE; }
     static EMarginCollapse initialMarginBottomCollapse() { return MCOLLAPSE; }
+    static EWordWrap initialWordWrap() { return WBNORMAL; }
 
 #if APPLE_CHANGES
     // Keep these at the end.

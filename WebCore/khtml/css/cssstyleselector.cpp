@@ -2510,6 +2510,26 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         return;
     }
 
+    case CSS_PROP_WORD_WRAP:
+    {
+        HANDLE_INHERIT_AND_INITIAL(wordWrap, WordWrap)
+
+        if(!primitiveValue->getIdent()) return;
+
+        EWordWrap s;
+        switch(primitiveValue->getIdent()) {
+        case CSS_VAL_BREAK_WORD:
+            s = BREAK_WORD;
+            break;
+        case CSS_VAL_NORMAL:
+        default:
+            s = WBNORMAL;
+            break;
+        }
+        style->setWordWrap(s);
+        break;
+    }
+
         // length, percent
     case CSS_PROP_MAX_WIDTH:
         // +none +inherit

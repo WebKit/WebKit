@@ -851,6 +851,11 @@ bool CSSParser::parseValue( int propId, bool important )
             valid_primitive = validUnit( value, FLength, strict );
 	break;
 
+    case CSS_PROP_WORD_WRAP:           // normal | break-word
+	if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_WORD)
+	    valid_primitive = true;
+	break;
+
     case CSS_PROP_TEXT_INDENT:          // <length> | <percentage> | inherit
     case CSS_PROP_PADDING_TOP:          //// <padding-width> | inherit
     case CSS_PROP_PADDING_RIGHT:        //   Which is defined as

@@ -413,3 +413,8 @@ wave
 #
 continuous
 skip-white-space
+
+#
+# CSS_PROP_WORD_BREAK
+#
+break-word
