@@ -871,16 +871,11 @@ void Selection::validate(ETextGranularity granularity)
                 // However, the end of the document is an exception and always selects the previous word even though it could be
                 // both the start of a line and after a hard line break.
                 VisiblePosition pos(m_base);
-                if (isStartOfBlock(pos) && isEndOfBlock(pos)) {
-                    m_start = m_end = m_base;
-                }
-                else {
-                    EWordSide side = LeftWordIfOnBoundary;
-                    //if ((isEndOfParagraph(pos) || isStartOfLine(pos, m_affinity)) && !isEndOfDocument(pos))
-                    //    side = RightWordIfOnBoundary;
-                    m_start = startOfWord(pos, side).deepEquivalent();
-                    m_end = endOfWord(pos, side).deepEquivalent();
-                }
+                EWordSide side = LeftWordIfOnBoundary;
+                if ((isEndOfParagraph(pos) || isStartOfLine(pos, m_affinity)) && !isEndOfDocument(pos))
+                    side = RightWordIfOnBoundary;
+                m_start = startOfWord(pos, side).deepEquivalent();
+                m_end = endOfWord(pos, side).deepEquivalent();
             } else if (m_baseIsStart) {
                 m_start = startOfWord(VisiblePosition(m_base)).deepEquivalent();
                 m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
