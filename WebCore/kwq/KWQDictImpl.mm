@@ -27,31 +27,31 @@
 #import <CoreFoundation/CoreFoundation.h>
 
 KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *)) :
-    KWQPtrDictImpl(size, deleteFunc, &kCFCopyStringDictionaryKeyCallBacks)
+    KWQPtrDictImpl(size, deleteFunc, &kCFCopyStringDictionaryKeyCallBacks), m_caseSensitive(caseSensitive)
 {
 }
 
 void KWQDictImpl::insert(const QString &key, const void *value)
 {
-    KWQPtrDictImpl::insert((void *)key.getCFString(), value);
+    KWQPtrDictImpl::insert((void *)(m_caseSensitive ? key : key.lower()).getCFString(), value);
 }
 
 bool KWQDictImpl::remove(const QString &key, bool deleteItem)
 {
-    return KWQPtrDictImpl::remove((void *)key.getCFString(), deleteItem);
+    return KWQPtrDictImpl::remove((void *)(m_caseSensitive ? key : key.lower()).getCFString(), deleteItem);
 }
 
 void *KWQDictImpl::find(const QString &key) const
 {
-    return KWQPtrDictImpl::find((void *)key.getCFString());
+    return KWQPtrDictImpl::find((void *)(m_caseSensitive ? key : key.lower()).getCFString());
 }
 
 QString KWQDictIteratorImpl::currentStringKey() const
 {
     void *key = currentKey();
 
-    if (key == NULL) {
-	return QString();
-    }
+    if (key == NULL)
+        return QString();
+        
     return QString::fromCFString((CFStringRef)key);
 }

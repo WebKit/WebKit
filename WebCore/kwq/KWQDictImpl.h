@@ -36,6 +36,9 @@ class KWQDictImpl : public KWQPtrDictImpl {
     void insert(const QString &key, const void *value);
     bool remove(const QString &key, bool deleteItems);
     void *find(const QString &key) const;
+
+private:
+    bool m_caseSensitive;
 };
 
 class KWQDictIteratorImpl : public KWQPtrDictIteratorImpl {

@@ -1,3 +1,20 @@
+2004-06-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Javascript execCommand system wants to use case-insensitive QDict.
+        The interface for QDict offers this feature, but it was never implemented.
+        Now it is.
+
+        * kwq/KWQDictImpl.h: Declare bool to store case-sensitive bit.
+        * kwq/KWQDictImpl.mm:
+        (KWQDictImpl::KWQDictImpl): No longer drops caseSensitive on the floor; stores
+        it in instance variable.
+        (KWQDictImpl::insert): Make lowercase version of key for operation, if necessary.
+        (KWQDictImpl::remove): Ditto.
+        (KWQDictImpl::find): Ditto.
+        (KWQDictIteratorImpl::currentStringKey): Whitespace cleanup.
+
 === 144 ===
 
 2004-06-10  Ken Kocienda  <kocienda@apple.com>
