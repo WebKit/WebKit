@@ -1,10 +1,3 @@
-2004-05-18  Decker Kevin  <kdecker@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        * khtml/xml/dom_stringimpl.cpp:
-        (DOM::parseLength):
-
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
 	Added stubs to get the WebScriptObject for the window
