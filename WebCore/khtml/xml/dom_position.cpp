@@ -34,6 +34,7 @@
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
 #include "xml/dom_edititerator.h"
+#include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
 
 #if APPLE_CHANGES
@@ -132,6 +133,17 @@ Position &Position::operator=(const Position &o)
     m_offset = o.offset();
     
     return *this;
+}
+
+ElementImpl *Position::element() const
+{
+    if (isEmpty())
+        return 0;
+        
+    NodeImpl *n = node();
+    for (; n && !n->isElementNode(); n = n->parentNode()); //loop
+        
+    return static_cast<ElementImpl *>(n);
 }
 
 long Position::renderedOffset() const

@@ -28,6 +28,7 @@
 
 namespace DOM {
 
+class ElementImpl;
 class NodeImpl;
 
 class Position
@@ -40,6 +41,8 @@ public:
 
     NodeImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
+
+    ElementImpl *element() const;
 
     long renderedOffset() const;
 

@@ -1,3 +1,15 @@
+2004-05-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Gramps
+
+        Add helper to get the DOM element for a Position.
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::element): Returns the Position's node if it is an element, or
+        the first ancestor of the node that is an element. Returns 0 if node is not
+        an element and has no parent that is an element.
+        * khtml/xml/dom_position.h: Added declaration.
+
 2004-05-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
