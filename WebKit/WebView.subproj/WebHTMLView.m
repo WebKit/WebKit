@@ -58,6 +58,9 @@
 // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
 #import <AppKit/NSKeyBindingManager.h>
 
+// need to declare this because AppKit does not make it available as API or SPI
+extern NSString *NSMarkedClauseSegmentAttributeName; 
+
 // Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
 void _NSInitializeKillRing(void);
 void _NSAppendToKillRing(NSString *);
@@ -4333,10 +4336,22 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 @implementation WebHTMLView (WebNSTextInputSupport)
 
+static NSArray *validAttributes = nil;
+
 - (NSArray *)validAttributesForMarkedText
 {
-    // FIXME: TEXTINPUT: validAttributesForMarkedText not yet implemented
-    return [NSArray array];
+    if (!validAttributes) {
+        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName, nil];
+        // NSText also supports the following attributes, but it's
+        // hard to tell which are really required for text input to
+        // work well; I have not seen any input method make use of them yet.
+        //
+        // NSFontAttributeName, NSForegroundColorAttributeName,
+        // NSBackgroundColorAttributeName, NSLanguageAttributeName,
+        // NSTextInputReplacementRangeAttributeName
+    }
+
+    return validAttributes;
 }
 
 - (unsigned int)characterIndexForPoint:(NSPoint)thePoint
@@ -4347,8 +4362,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    NSLog(@"location: %d  length: %d\n", theRange.location, theRange.length);
-
     if (![self hasMarkedText]) {
         return NSMakeRect(0,0,0,0);
     }
@@ -4362,8 +4375,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     NSRect resultRect = [self convertRect:[bridge firstRectForDOMRange:rectRange] toView:nil];
     resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
-
-    NSLog(@"(%d,%d) %dx%d\n", (int)resultRect.origin.x, (int)resultRect.origin.y, (int)resultRect.size.width, (int)resultRect.size.height);
 
     return resultRect;
 }
@@ -4406,7 +4417,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)unmarkText
 {
-    [[self _bridge] setMarkedTextDOMRange:nil];
+    [[self _bridge] setMarkedTextDOMRange:nil customAttributes:nil ranges:nil];
 }
 
 - (void)_selectMarkedText
@@ -4437,6 +4448,23 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityUpstream];
 }
 
+- (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
+{
+        int length = [[string string] length];
+        int i = 0;
+        NSMutableArray *attributes = [NSMutableArray array];
+        NSMutableArray *ranges = [NSMutableArray array];
+        while (i < length) {
+            NSRange effectiveRange;
+            NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
+            [attributes addObject:attrs];
+            [ranges addObject:[NSValue valueWithRange:effectiveRange]];
+            i = effectiveRange.location + effectiveRange.length;
+	}
+        *a = attributes;
+        *r = ranges;
+}
+
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
     WebBridge *bridge = [self _bridge];
@@ -4451,15 +4479,17 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _selectMarkedText];
 
     NSString *text;
+    NSArray *attributes = nil;
+    NSArray *ranges = nil;
     if ([string isKindOfClass:[NSAttributedString class]]) {
-	ERROR("TEXTINPUT: requested set marked text with attributed string");
 	text = [string string];
+        [self _extractAttributes:&attributes ranges:&ranges fromAttributedString:string];
     } else {
 	text = string;
     }
 
     [bridge replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
-    [bridge setMarkedTextDOMRange:[self _selectedRange]];
+    [bridge setMarkedTextDOMRange:[self _selectedRange] customAttributes:attributes ranges:ranges];
     if ([self hasMarkedText]) {
         [self _selectRangeInMarkedText:newSelRange];
     }
@@ -4519,19 +4549,13 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]]) {
-	ERROR("TEXTINPUT: requested insert of attributed string");
 	text = [string string];
-        int length = [text length];
-        int i = 0;
-        while (i < length) {
-            NSRange effectiveRange;
-            NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
-            i = effectiveRange.location + effectiveRange.length;
-            NSLog(@"attribute chunk: %@ from %d length %d\n", attrs, effectiveRange.location, effectiveRange.length);
-	}
+        // we don't yet support inserting an attributed string but input methods
+        // don't appear to require this.
     } else {
 	text = string;
     }
+
     [self _insertText:text selectInsertedText:NO];
 }
 

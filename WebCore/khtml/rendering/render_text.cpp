@@ -301,6 +301,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     // Determine whether or not we have marked text.
     Range markedTextRange = KWQ(object()->document()->part())->markedTextRange();
     bool haveMarkedText = markedTextRange.handle() != 0 && markedTextRange.startContainer() == object()->node();
+    bool markedTextUsesUnderlines = KWQ(object()->document()->part())->markedTextUsesUnderlines();
+
 
     // Set our font.
     RenderStyle* styleToUse = object()->style(m_firstLine);
@@ -311,7 +313,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 
     // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
     // and marked text.
-    if ((haveSelection || haveMarkedText) && i.phase != PaintActionSelection && !isPrinting) {
+    if ((haveSelection || haveMarkedText) && !markedTextUsesUnderlines && i.phase != PaintActionSelection && !isPrinting) {
         if (haveMarkedText)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange.startOffset(), markedTextRange.endOffset());
 
@@ -323,6 +325,12 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     if (m_len <= 0) return;
     QValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
     QValueListIterator <DocumentMarker> markerIt = markers.begin();
+
+    QValueList<KWQKHTMLPart::MarkedTextUnderline> underlines;
+    if (haveMarkedText && markedTextUsesUnderlines) {
+        underlines = KWQ(object()->document()->part())->markedTextUnderlines();
+    }
+    QValueListIterator<KWQKHTMLPart::MarkedTextUnderline> underlineIt = underlines.begin();
 
     QColor textColor = styleToUse->color();
     if (styleToUse->shouldCorrectTextColor())
@@ -438,6 +446,30 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                 // marker is completely after this run, bail.  A later run will paint it.
                 break;
         }
+
+
+        for ( ; underlineIt != underlines.end(); underlineIt++) {
+            KWQKHTMLPart::MarkedTextUnderline underline = *underlineIt;
+
+            if (underline.endOffset <= start())
+                // underline is completely before this run.  This might be an underlinethat sits
+                // before the first run we draw, or underlines that were within runs we skipped 
+                // due to truncation.
+                continue;
+            
+            if (underline.startOffset <= end()) {
+                // underline intersects this run.  Paint it.
+                paintMarkedTextUnderline(i.p, tx, ty, underline);
+                if (underline.endOffset > end() + 1)
+                    // underline also runs into the next run. Bail now, no more marker advancement.
+                    break;
+            } else
+                // underline is completely after this run, bail.  A later run will paint it.
+                break;
+        }
+
+
+
     }
 
     if (setShadow)
@@ -582,6 +614,41 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
     // leaves it a pixel too high with Times-24.  The former is the lesser evil.
     int underlineOffset = m_baseline + 1;
     pt->drawLineForMisspelling(_tx + start, _ty + underlineOffset, width);
+}
+
+void InlineTextBox::paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, KWQKHTMLPart::MarkedTextUnderline underline)
+{
+    _tx += m_x;
+    _ty += m_y;
+
+    if (m_truncation == cFullTruncation)
+        return;
+    
+    int start = 0;                  // start of line to draw, relative to _tx
+    int width = m_width;            // how much line to draw
+    bool useWholeWidth = true;
+    ulong paintStart = m_start;
+    ulong paintEnd = end()+1;      // end points at the last char, not past it
+    if (paintStart <= underline.startOffset) {
+        paintStart = underline.startOffset;
+        useWholeWidth = false;
+        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, m_firstLine);
+    }
+    if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
+        paintEnd = kMin(paintEnd, (ulong)underline.endOffset);
+        useWholeWidth = false;
+    }
+    if (m_truncation != cNoTruncation) {
+        paintEnd = kMin(paintEnd, (ulong)m_truncation);
+        useWholeWidth = false;
+    }
+    if (!useWholeWidth) {
+        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, m_firstLine);
+    }
+
+    int underlineOffset = m_height - 3;
+    pt->setPen(QPen(underline.color, underline.thick ? 2 : 0));
+    pt->drawLineForText(_tx + start, _ty, underlineOffset, width);
 }
 
 long InlineTextBox::caretMinOffset() const

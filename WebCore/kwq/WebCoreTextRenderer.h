@@ -97,7 +97,7 @@ extern void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 // drawing
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 - (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth:(int)width withColor:(NSColor *)color;
+- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness;
 - (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width;
 
 // selection point check

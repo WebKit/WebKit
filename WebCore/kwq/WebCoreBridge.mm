@@ -1547,9 +1547,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWithImpl:_part->mark().toRange().handle()];
 }
 
-- (void)setMarkedTextDOMRange:(DOMRange *)range
+- (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges
 {
-    _part->setMarkedTextRange([range _rangeImpl]);
+    _part->setMarkedTextRange([range _rangeImpl], attributes, ranges);
 }
 
 - (DOMRange *)markedTextDOMRange

@@ -348,8 +348,23 @@ public:
     // Implementation of CSS property -khtml-user-drag == auto
     bool shouldDragAutoNode(DOM::NodeImpl*, int x, int y) const;
 
+    struct MarkedTextUnderline {
+        MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const QColor &_color, bool _thick) 
+            : startOffset(_startOffset)
+            , endOffset(_endOffset)
+            , color(_color)
+            , thick(_thick)
+        {}
+        unsigned startOffset;
+        unsigned endOffset;
+        QColor color;
+        bool thick;
+    };
+    
+    void setMarkedTextRange(const DOM::Range &, NSArray *attributes, NSArray *ranges);
     DOM::Range markedTextRange() const;
-    void setMarkedTextRange(const DOM::Range &);
+    bool markedTextUsesUnderlines() const;
+    QValueList<MarkedTextUnderline> markedTextUnderlines() const;
 
     bool canGoBackOrForward(int distance) const;
 
@@ -448,6 +463,8 @@ private:
     mutable DOM::Node _elementToDraw;
 
     DOM::Range m_markedTextRange;
+    bool m_markedTextUsesUnderlines;
+    QValueList<MarkedTextUnderline> m_markedTextUnderlines;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }

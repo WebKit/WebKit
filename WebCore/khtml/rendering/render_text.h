@@ -32,6 +32,7 @@
 
 #include <qptrvector.h>
 #include <assert.h>
+#include "KWQKHTMLPart.h"
 
 class QPainter;
 class QFontMetrics;
@@ -118,7 +119,7 @@ public:
     void paintSelection(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font);
     void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font, int startPos, int endPos);
     void paintMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker);
-
+    void paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, KWQKHTMLPart::MarkedTextUnderline underline);
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;

@@ -712,8 +712,9 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
     [data->textRenderer
         drawLineForCharacters: NSMakePoint(x, y)
                yOffset:(float)yOffset
-             withWidth: width
-             withColor:data->state.pen.color().getNSColor()];
+                 width: width
+                 color:data->state.pen.color().getNSColor()
+             thickness:data->state.pen.width()];
 }
 
 void QPainter::drawLineForMisspelling(int x, int y, int width)

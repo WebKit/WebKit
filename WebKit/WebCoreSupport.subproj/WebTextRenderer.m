@@ -536,10 +536,8 @@ static BOOL alwaysUseATSU = NO;
     return [self _floatWidthForRun:run style:style widths:widthBuffer fonts:nil glyphs:nil startPosition:nil numGlyphs:nil];
 }
 
-- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth: (int)width withColor:(NSColor *)color
+- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness
 {
-    // XXX MJS
-
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext;
 
@@ -550,6 +548,8 @@ static BOOL alwaysUseATSU = NO;
     
     BOOL flag = [graphicsContext shouldAntialias];
 
+    [graphicsContext setShouldAntialias: NO];
+
     // We don't want antialiased lines on screen, but we do when printing (else they are too thick)
     if ([graphicsContext isDrawingToScreen]) {
         [graphicsContext setShouldAntialias:NO];
@@ -558,8 +558,19 @@ static BOOL alwaysUseATSU = NO;
     [color set];
 
     cgContext = (CGContextRef)[graphicsContext graphicsPort];
-    CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
-    CGContextSetLineWidth(cgContext, size.width);
+
+    // hack to make thickness 2 underlines for internation text input look right
+    if (thickness > 1.5 && thickness < 2.5) {
+        yOffset += .5;
+    }
+
+    if (thickness == 0.0) {
+        CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
+        CGContextSetLineWidth(cgContext, size.width);
+    } else {
+        CGContextSetLineWidth(cgContext, thickness);
+    }
+
 
 #if BUILDING_ON_PANTHER            
     CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);

@@ -3756,7 +3756,7 @@ bool KWQKHTMLPart::haveToldBridgeAboutLoad(const QString &urlString)
 void KWQKHTMLPart::clear()
 {
     urlsBridgeKnowsAbout.clear();
-    setMarkedTextRange(0);
+    setMarkedTextRange(0, nil, nil);
     KHTMLPart::clear();
 }
 
@@ -4024,10 +4024,51 @@ DOM::Range KWQKHTMLPart::markedTextRange() const
     return m_markedTextRange;
 }
 
-void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range)
+static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlines(const DOM::Range &markedTextRange, NSArray *attributes, NSArray *ranges)
+{
+    QValueList<KWQKHTMLPart::MarkedTextUnderline> result;
+
+    int baseOffset = markedTextRange.startOffset();
+
+    unsigned length = [attributes count];
+    ASSERT([ranges count] == length);
+
+    for (unsigned i = 0; i < length; i++) {
+        NSNumber *style = [[attributes objectAtIndex:i] objectForKey:NSUnderlineStyleAttributeName];
+        if (!style)
+            continue;
+        NSRange range = [[ranges objectAtIndex:i] rangeValue];
+        NSColor *color = [[attributes objectAtIndex:i] objectForKey:NSUnderlineColorAttributeName];
+        QColor qColor = Qt::black;
+        if (color) {
+            NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+            qColor = QColor(qRgba((int)(255 * [deviceColor redComponent]),
+                                  (int)(255 * [deviceColor blueComponent]),
+                                  (int)(255 * [deviceColor greenComponent]),
+                                  (int)(255 * [deviceColor alphaComponent])));
+        }
+
+        result.append(KWQKHTMLPart::MarkedTextUnderline(range.location + baseOffset, 
+                                                        range.location + baseOffset + range.length, 
+                                                        qColor,
+                                                        [style intValue] > 1));
+    }
+
+    return result;
+}
+
+void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range, NSArray *attributes, NSArray *ranges)
 {
     ASSERT(!range.handle() || range.startContainer() == range.endContainer());
     ASSERT(!range.handle() || range.collapsed() || range.startContainer().nodeType() == Node::TEXT_NODE);
+
+    if (attributes == nil) {
+        m_markedTextUsesUnderlines = false;
+        m_markedTextUnderlines.clear();
+    } else {
+        m_markedTextUsesUnderlines = true;
+        m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
+    }
 
     if (m_markedTextRange.handle() && xmlDocImpl() 
 	&& m_markedTextRange.startContainer().handle()->renderer()) {
@@ -4044,6 +4085,16 @@ void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range)
 	&& m_markedTextRange.startContainer().handle()->renderer()) {
 	m_markedTextRange.startContainer().handle()->renderer()->repaint();
     }
+}
+
+bool KWQKHTMLPart::markedTextUsesUnderlines() const
+{
+    return m_markedTextUsesUnderlines;
+}
+
+QValueList<KWQKHTMLPart::MarkedTextUnderline> KWQKHTMLPart::markedTextUnderlines() const
+{
+    return m_markedTextUnderlines;
 }
 
 bool KWQKHTMLPart::canGoBackOrForward(int distance) const

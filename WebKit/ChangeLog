@@ -1,3 +1,24 @@
+2005-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3758033> REGRESSION (Mail): Support attributes in marked text (International input)
+        
+	* WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]): Changed to support
+	underline thickness. Also added a bit of a hack here to move thickness 2 underlines down by
+	.5 pixels, since the rendering engine can't give a fractional pixel offset.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validAttributesForMarkedText]): Support underline, underline color and marked
+	clause attributes. Others that NSText supports are unimplemented for now.
+        (-[WebHTMLView firstRectForCharacterRange:]): Remove needless logging.
+        (-[WebHTMLView unmarkText]): Updated for new WebCore SPI.
+        (-[WebHTMLView _extractAttributes:ranges:fromAttributedString:]): New method to pull the attributes
+	and ranges out of an attributed string.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Extract attributes and pass to WebCore.
+        (-[WebHTMLView insertText:]): Add comment noting that we don't really handle attributed strings
+	here.
+
 2005-01-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

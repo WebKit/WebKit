@@ -1,3 +1,30 @@
+2005-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3758033> REGRESSION (Mail): Support attributes in marked text (International input)
+        
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint): Support painting custom underline markers for
+	marked text in place of generic yellow.
+        (InlineTextBox::paintMarkedTextUnderline): New method that handles this.
+        * khtml/rendering/render_text.h:
+        * kwq/KWQKHTMLPart.h: Declare new methods and structs.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::clear): Clear marked test underlines.
+        (KWQKHTMLPart::setMarkedTextRange): Takes attributes and ranges now.
+        (convertAttributesToUnderlines): Converts NSAttributedString attributes
+	to simplified and C++-friendly form.
+        (KWQKHTMLPart::markedTextUsesUnderlines): New method.
+        (KWQKHTMLPart::markedTextUnderlines): New method.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLineForText): Handle pen width.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setMarkedTextDOMRange:customAttributes:ranges:]): Take attributes
+	and ranges.
+        * kwq/WebCoreTextRenderer.h:
+
 2005-01-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt.
