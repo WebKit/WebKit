@@ -62,14 +62,16 @@ typedef struct {
     NSURLRequest *_request;
     NSString *_frameName;
     void *_notifyData;
+    BOOL _didStartFromUserGesture;
     BOOL _sendNotification;
 }
 
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification didStartFromUserGesture:(BOOL)currentEventIsUserGesture;
 
 - (NSURLRequest *)request;
 - (NSString *)frameName;
 - (void *)notifyData;
+- (BOOL)isCurrentEventUserGesture;
 - (BOOL)sendNotification;
 
 @end
@@ -323,7 +325,15 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 - (BOOL)sendEvent:(EventRecord *)event
 {
     ASSERT([self window]);
-
+    ASSERT(event);
+   
+    // If at any point the user clicks or presses a key from within a plugin, set the 
+    // currentEventIsUserGesture flag to true. This is important to differentiate legitimate 
+    // window.open() calls;  we still want to allow those.  See rdar://problem/4010765
+    if(event->what == mouseDown || event->what == keyDown || event->what == mouseUp || event->what == autoKey) {
+        currentEventIsUserGesture = YES;
+    }
+    
     suspendKeyUpEvents = NO;
     
     if (!isStarted) {
@@ -366,6 +376,8 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
     BOOL acceptedEvent = NPP_HandleEvent(instance, event);
 
+    currentEventIsUserGesture = NO;
+    
     if ([self currentWindow]) {
         [self restorePortState:portState];
     }
@@ -1105,7 +1117,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     instance = &instanceStruct;
     instance->ndata = self;
-
     streams = [[NSMutableArray alloc] init];
     pendingFrameLoads = [[NSMutableDictionary alloc] init];
 
@@ -1359,7 +1370,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
     ASSERT(JSString);
     
-    NSString *result = [[[self webFrame] _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+    NSString *result = [[[self webFrame] _bridge] stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:[JSPluginRequest isCurrentEventUserGesture]];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
     if (!isStarted) {
@@ -1499,7 +1510,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             return NPERR_INVALID_PARAM;
         }
         
-        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData sendNotification:sendNotification];
+        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData sendNotification:sendNotification didStartFromUserGesture:currentEventIsUserGesture];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
         if (target) {
@@ -1723,9 +1734,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 @implementation WebPluginRequest
 
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification didStartFromUserGesture:(BOOL)currentEventIsUserGesture
 {
     [super init];
+    _didStartFromUserGesture = currentEventIsUserGesture;
     _request = [request retain];
     _frameName = [frameName retain];
     _notifyData = notifyData;
@@ -1748,6 +1760,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (NSString *)frameName
 {
     return _frameName;
+}
+
+- (BOOL)isCurrentEventUserGesture
+{
+    return _didStartFromUserGesture;
 }
 
 - (BOOL)sendNotification

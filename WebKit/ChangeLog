@@ -1,3 +1,20 @@
+2005-02-19  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Chris.
+
+	Fixed <rdar://problem/4010765> Flash player can be used to arbitrarily open popup windows without user permission
+	
+	Our window.open() policy is to refuse the <script>window.open(...)</script> case and allow the inline the <a href="javascript:window.open('foo')> case.  Clever advertisers at some point realized that by executing their Javascript through the Flash plugin, Safari would always treat their code as the inline case, and thus, they were able to work around our popup blocker. 
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h: Addded currentEventIsUserGesture boolean ivar. 
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): If at any point the user clicks or presses a key from within a plugin, set the currentEventIsUserGesture flag to true. This is important to differentiate legitimate window.open() calls originating from plugins;  we still want to allow those. 
+        (-[WebBaseNetscapePluginView initWithFrame:]): In our asynchronous load, pass along currentEventIsUserGesture to the PluginRequest. 
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): Inform WebCore if this was a user originated gesture when calling executeScript(). 
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        (-[WebPluginRequest initWithRequest:frameName:notifyData:sendNotification:didStartFromUserGesture:]):
+        (-[WebPluginRequest isCurrentEventUserGesture]): Added. 
+
 2005-02-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3945271> REGRESSION (Mail): pasted plain text should pick up typing style instead of being unstyled
