@@ -1,3 +1,19 @@
+2005-03-13  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs.
+        
+        Fixed: <rdar://problem/3667701> crash in KHTMLPart::jScriptEnabled()
+        
+        The problem here was that the tokenizer would continue to receive chunks of data from the loader already
+        after the view and part had been destroyed.  Situations like this could arise when clicking on another link 
+        while still loading the current view, or during self test where we rapidly open, load, and close browser
+        windows very fast. 
+
+        * khtml/html/htmltokenizer.cpp: 
+        (khtml::HTMLTokenizer::write): Simple nil check against the view. 
+        * khtml/html/htmltokenizer.h: Changed the view pointer from a standard pointer to a QGuardedPtr.  The tokenizer's
+        handle to the view will now automatically nil-out and never dangle.
+
 2005-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by John and Ken.

@@ -370,7 +370,7 @@ protected:
     KCharsets *charsets;
     KHTMLParser *parser;
 
-    KHTMLView *view;
+    QGuardedPtr<KHTMLView> view;
 
 #ifndef NDEBUG
     bool inWrite;

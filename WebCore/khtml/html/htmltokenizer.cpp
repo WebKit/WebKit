@@ -1533,6 +1533,9 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
 
     if (!buffer)
         return;
+    
+    if (!view)
+        return;
 
     if ( ( m_executingScript && appendData ) || !cachedScript.isEmpty() ) {
         // don't parse; we will do this later
