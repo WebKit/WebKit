@@ -13,6 +13,7 @@
     [name autorelease];
     [view autorelease];
     [dataSource autorelease];
+    [super dealloc];
 }
 
 - (NSString *)name { return name; }

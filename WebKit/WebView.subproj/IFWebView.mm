@@ -36,6 +36,7 @@
 - (void)dealloc 
 {
     [_viewPrivate release];
+    [super dealloc];
 }
 
  

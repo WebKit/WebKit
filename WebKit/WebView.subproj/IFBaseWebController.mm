@@ -91,6 +91,7 @@
 - (void)dealloc
 {
     [_controllerPrivate release];
+    [super dealloc];
 }
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag

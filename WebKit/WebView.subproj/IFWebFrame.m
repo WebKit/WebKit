@@ -36,6 +36,7 @@
 - (void)dealloc
 {
     [_framePrivate release];
+    [super dealloc];
 }
 
 - (NSString *)name

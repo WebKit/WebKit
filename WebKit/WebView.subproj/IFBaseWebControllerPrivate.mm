@@ -18,6 +18,7 @@
 - (void)dealloc
 {
     [mainFrame autorelease];
+    [super dealloc];
 }
 
 @end

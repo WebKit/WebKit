@@ -33,6 +33,8 @@
 
     if (widget)
         delete widget;
+
+    [super dealloc];
 }
 
 

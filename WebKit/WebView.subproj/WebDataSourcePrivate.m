@@ -35,6 +35,8 @@
     [inputURL release];
     
     delete part;
+
+    [super dealloc];
 }
 
 @end

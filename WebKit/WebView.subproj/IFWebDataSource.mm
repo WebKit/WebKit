@@ -52,6 +52,7 @@
 - (void)dealloc
 {
     [_dataSourcePrivate release];
+    [super dealloc];
 }
 
 #ifdef TENTATIVE_API
