@@ -804,10 +804,12 @@ NodeImpl *KHTMLParser::getElement(Token* t)
 
 // form elements
     case ID_FORM:
-        // close all open forms...
-        popBlock(ID_FORM);
-        form = new HTMLFormElementImpl(document);
-        n = form;
+        if (!form) {
+            // Only create a new form if we're not already inside one.
+            // This is consistent with other browsers' behavior.
+            form = new HTMLFormElementImpl(document);
+            n = form;
+        }
         break;
     case ID_BUTTON:
         n = new HTMLButtonElementImpl(document, form);

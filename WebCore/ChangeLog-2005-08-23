@@ -1,3 +1,30 @@
+2003-07-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3311756 -- REGRESSION (76-77): radio buttons in different forms act as the same set
+	by rolling out old fix for 3158411 -- radio button groups are supposed to be per-form
+        The real bug at flyglobespan.com is what's fixed below.
+
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::radioClicked):
+        (HTMLInputElementImpl::~HTMLInputElementImpl):
+        (HTMLInputElementImpl::setType):
+        (HTMLInputElementImpl::parseAttribute):
+        (HTMLInputElementImpl::attach):
+        (HTMLInputElementImpl::reset):
+        (HTMLInputElementImpl::setChecked):
+        (HTMLInputElementImpl::isEditable):
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/dom_docimpl.h:
+
+        - fixed 3158411 -- re-opened form is one form in other browsers, multiple forms in Safari
+        (flyglobespan.com)
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::getElement): Don't open a form if we encounter
+        a form element inside another form.
+
 2003-07-29  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3346707 -- AutoFill does not fill in email address on 

@@ -82,6 +82,8 @@ public:
 
     virtual void parseAttribute(AttributeImpl *attr);
 
+    void radioClicked( HTMLGenericFormElementImpl *caller );
+
     void registerFormElement(khtml::RenderFormElement *);
     void removeFormElement(khtml::RenderFormElement *);
 
@@ -155,7 +157,7 @@ public:
     virtual void recalcStyle( StyleChange );
 
     DOMString name() const;
-    virtual void setName(const DOMString& name);
+    void setName(const DOMString& name);
 
     virtual bool isGenericFormElement() const { return true; }
 
@@ -292,7 +294,6 @@ public:
     void click();
 
     virtual void parseAttribute(AttributeImpl *attr);
-    virtual void setName(const DOMString& name);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -330,12 +331,6 @@ protected:
     bool m_haveType : 1;
     bool m_activeSubmit : 1;
     bool m_autocomplete : 1;
-
-private:
-
-    bool isCheckedRadioButtonForDocument() const;
-    void addCheckedRadioButtonToDocument();
-    void removeCheckedRadioButtonFromDocument();
 };
 
 // -------------------------------------------------------------------------

@@ -2264,28 +2264,6 @@ void DocumentImpl::timerEvent(QTimerEvent *)
     dispatchImageLoadEventsNow();
 }
 
-void DocumentImpl::addCheckedRadioButton(HTMLInputElementImpl *b)
-{
-    QString name = b->name().string();
-    
-    // Uncheck the old checked radio button.
-    QMap<QString, HTMLInputElementImpl *>::ConstIterator i = m_checkedRadioButtons.find(name);
-    if (i != m_checkedRadioButtons.end()) {
-        assert(i.data() != b);
-        i.data()->setChecked(false);
-        assert(m_checkedRadioButtons.find(name) == m_checkedRadioButtons.end());
-    }
-    
-    m_checkedRadioButtons.insert(name, b);
-}
-
-void DocumentImpl::removeCheckedRadioButton(HTMLInputElementImpl *b)
-{
-    QString name = b->name().string();
-    assert(m_checkedRadioButtons[name] == b);
-    m_checkedRadioButtons.remove(name);
-}
-
 ElementImpl *DocumentImpl::ownerElement()
 {
     KHTMLView *childView = view();
