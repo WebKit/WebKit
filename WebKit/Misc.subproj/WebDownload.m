@@ -4,12 +4,14 @@
 
 #import <WebKit/WebDownload.h>
 
-#import <Foundation/NSURLDownload.h>
 #import <Foundation/NSURLAuthenticationChallenge.h>
+#import <Foundation/NSURLDownload.h>
 #import <Foundation/NSURLDownloadPrivate.h>
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
 // FIXME: Remove these declarations because _initWithLoadingConnection is declared in NSURLDownloadPrivate.h
+// and _initWithLoadingResource is obsolete, once we compile only with the new Foundation.
 @interface NSURLDownload (WebDownloadCapability)
 - (id)_initWithLoadingConnection:(NSURLConnection *)connection
                          request:(NSURLRequest *)request
@@ -27,7 +29,6 @@
 {
 @public
     id realDelegate;
-    WebDownload *webDownload;
 }
 
 - (void)setRealDelegate:(id)rd;
@@ -36,19 +37,10 @@
 
 @implementation WebDownloadInternal
 
-- (id)initWithDownload:(WebDownload *)dl
-{
-    self = [super init];
-    if (self != nil) {
-	webDownload = [dl retain];
-    }
-    return self;
-}
-
 - (void)dealloc
 {
-    [webDownload release];
     [realDelegate release];
+    [super dealloc];
 }
 
 - (void)setRealDelegate:(id)rd
@@ -94,7 +86,7 @@
     } else {
 	NSWindow *window = nil;
 	if ([realDelegate respondsToSelector:@selector(downloadWindowForAuthenticationSheet:)]) {
-	    window = [realDelegate downloadWindowForAuthenticationSheet:webDownload];
+	    window = [realDelegate downloadWindowForAuthenticationSheet:(WebDownload *)download];
 	}
 
 	[[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
@@ -157,37 +149,50 @@
 
 @end
 
-
-
 @implementation WebDownload
+
+- (void)_setRealDelegate:(id)delegate
+{
+    if (_webInternal == nil) {
+        _webInternal = [[WebDownloadInternal alloc] init];
+        [_webInternal setRealDelegate:delegate];
+    } else {
+        ASSERT(_webInternal == delegate);
+    }
+}
 
 - (id)init
 {
     self = [super init];
     if (self != nil) {
-	_webInternal = [[WebDownloadInternal alloc] init];
+        // _webInternal can be set up before init by _setRealDelegate
+	if (_webInternal == nil) {
+            _webInternal = [[WebDownloadInternal alloc] init];
+        }
     }
     return self;
 }
 
+- (void)dealloc
+{
+    [_webInternal release];
+    [super dealloc];
+}
+
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate
 {
-    self = [self init];
-    [_webInternal setRealDelegate:delegate];
-    [super initWithRequest:request delegate:_webInternal];
-    return self;
+    [self _setRealDelegate:delegate];
+    return [super initWithRequest:request delegate:_webInternal];
 }
 
 - (id)_initWithLoadingConnection:(NSURLConnection *)connection
                          request:(NSURLRequest *)request
                         response:(NSURLResponse *)response
                         delegate:(id)delegate
-                           proxy:(NSURLConnectionDelegateProxy *)proxy;
+                           proxy:(NSURLConnectionDelegateProxy *)proxy
 {
-    self = [self init];
-    [_webInternal setRealDelegate:delegate];
-    [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
-    return self;
+    [self _setRealDelegate:delegate];
+    return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
 
 // FIXME: Remove this override because it no longer exists in newer Foundations.
@@ -195,22 +200,18 @@
                        request:(NSURLRequest *)request
                       response:(NSURLResponse *)response
                       delegate:(id)delegate
-                         proxy:(NSURLConnectionDelegateProxy *)proxy;
+                         proxy:(NSURLConnectionDelegateProxy *)proxy
 {
-    self = [self init];
-    [_webInternal setRealDelegate:delegate];
-    [super _initWithLoadingResource:connection request:request response:response delegate:_webInternal proxy:proxy];
-    return self;
+    [self _setRealDelegate:delegate];
+    return [super _initWithLoadingResource:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
 
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate
              directory:(NSString *)directory
 {
-    self = [self init];
-    [_webInternal setRealDelegate:delegate];
-    [super _initWithRequest:request delegate:_webInternal directory:directory];
-    return self;
+    [self _setRealDelegate:delegate];
+    return [super _initWithRequest:request delegate:_webInternal directory:directory];
 }
 
 @end

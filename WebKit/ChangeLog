@@ -1,3 +1,33 @@
+2003-11-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3470882 -- storage leaks in WebDownload code
+        - fixed 3470884 -- download is always nil in downloadWindowForAuthenticationSheet: call from WebDownload
+
+        * Misc.subproj/WebDownload.m:
+        (-[WebDownloadInternal initWithDownload:]): Removed this method, which was never called.
+        (-[WebDownloadInternal dealloc]): Added missing call to [super dealloc] to fix one cause
+        of a leak of the WebDownloadInternal object itself. Removed the release of webDownload,
+        which was always nil, and if it wasn't would end up causing a leak due to a reference cycle.
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]): Remove the use of
+        webDownload, which was always nil, and instead use the download parameter passed to us,
+        casting it to WebDownload, since it's guaranteed to be one.
+        (-[WebDownload _setRealDelegate:]): Added. Shared by the methods below to set up the real
+        delegate before calling init. The old code called init twice, causing an second call to the
+        superclass's init method, which caused it to create an extra copy of its internal structure,
+        as well as causing us to create two WebDownloadInternal objects.
+        (-[WebDownload init]): Don't allocate a second WebDownloadInternal if _setRealDelegate already
+        allocated it for us. Before we would allocate and leak an extra one each time.
+        (-[WebDownload dealloc]): Added. Releases the WebDownloadInternal. This is the second cause
+        of the leak of the WebDownloadInternal object.
+        (-[WebDownload initWithRequest:delegate:]): Call [self _setRealDelegate:] instead of calling
+        [self init] and then [_webInternal setRealDelegate:], avoiding the leaks caused by doing it
+        the other way.
+        (-[WebDownload _initWithLoadingConnection:request:response:delegate:proxy:]): Ditto.
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]): Ditto.
+        (-[WebDownload _initWithRequest:delegate:directory:]): Ditto.
+
 2003-10-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3466542, add a real minimum font size setting.
