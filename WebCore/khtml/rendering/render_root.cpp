@@ -254,9 +254,16 @@ void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool immediate, bo
 void RenderRoot::repaint(bool immediate)
 {
     if (m_view && !m_printingMode) {
-        if (immediate)
+        if (immediate) {
+            m_view->resizeContents(docWidth(), docHeight());
+            m_view->unscheduleRepaint();
+            if (!layouted()) {
+                m_view->scheduleRelayout();
+                return;
+            }
             m_view->updateContents(m_view->contentsX(), m_view->contentsY(),
                                    m_view->visibleWidth(), m_view->visibleHeight());
+        }
         else
             m_view->scheduleRepaint(m_view->contentsX(), m_view->contentsY(),
                                     m_view->visibleWidth(), m_view->visibleHeight());

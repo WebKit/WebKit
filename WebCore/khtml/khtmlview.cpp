@@ -1497,8 +1497,6 @@ void KHTMLView::scheduleRelayout()
     d->timerId = startTimer( parsing ? 1000 : 0 );
 }
 
-#if APPLE_CHANGES
-
 void KHTMLView::unscheduleRelayout()
 {
     if (!d->timerId)
@@ -1508,7 +1506,14 @@ void KHTMLView::unscheduleRelayout()
     d->timerId = 0;
 }
 
-#endif
+void KHTMLView::unscheduleRepaint()
+{
+    if (!d->repaintTimerId)
+        return;
+
+    killTimer(d->repaintTimerId);
+    d->repaintTimerId = 0;
+}
 
 void KHTMLView::scheduleRepaint(int x, int y, int w, int h)
 {
