@@ -1756,10 +1756,12 @@ void KHTMLPart::checkCompleted()
   if (d->m_view) {
 #endif
 
-  // check that the view has not been moved by the user
+#if !APPLE_CHANGES
+  // check that the view has not been moved by the user  
   if ( m_url.encodedHtmlRef().isEmpty() && d->m_view->contentsY() == 0 )
       d->m_view->setContentsPos( d->m_extension->urlArgs().xOffset,
                                  d->m_extension->urlArgs().yOffset );
+#endif
 
   d->m_view->complete();
 
