@@ -1,3 +1,14 @@
+2004-05-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3663644, repaints don't occur when the .innerHTML of a positioned element is changed.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_layer.h:
+        (khtml::RenderLayer::repaintRect):
+
 === Safari-141 ===
 
 2004-05-21  Darin Adler  <darin@apple.com>

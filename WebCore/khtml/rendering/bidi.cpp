@@ -25,6 +25,8 @@
 #include "render_block.h"
 #include "render_text.h"
 #include "render_arena.h"
+#include "render_canvas.h"
+#include "khtmlview.h"
 #include "xml/dom_docimpl.h"
 
 #include "kdebug.h"
@@ -1362,9 +1364,19 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         if (hasFloat)
             fullLayout = true; // FIXME: Will need to find a way to optimize floats some day.
         
-        if (fullLayout && !selfNeedsLayout())
+        if (fullLayout && !selfNeedsLayout()) {
             setNeedsLayout(true, false);  // Mark ourselves as needing a full layout. This way we'll repaint like
                                           // we're supposed to.
+            if (!document()->view()->needsFullRepaint() && m_layer) {
+                // Because we waited until we were already inside layout to discover
+                // that the block really needed a full layout, we missed our chance to repaint the layer
+                // before layout started.  Luckily the layer has cached the repaint rect for its original
+                // position and size, and so we can use that to make a repaint happen now.
+                RenderCanvas* c = canvas();
+                if (c && !c->printingMode())
+                    c->repaintViewRectangle(m_layer->repaintRect());
+            }
+        }
 
         BidiContext *startEmbed;
         if( style()->direction() == LTR ) {

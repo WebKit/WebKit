@@ -248,6 +248,8 @@ public:
     
     void updateHoverActiveState(RenderObject::NodeInfo& info);
     
+    QRect repaintRect() const { return m_repaintRect; }
+
     void detach(RenderArena* renderArena);
 
      // Overloaded new operator.  Derived classes must override operator new
