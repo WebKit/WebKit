@@ -1,3 +1,18 @@
+2003-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3254473 - REGRESSION: nike help page reloads on mouseovers, triggered by onresize function
+
+	REGRESSION: reload loop due to onresize handler (fortune.com, flipdog.com, stanford.edu)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:]): Go back to checking for at least one
+	layout instead of last layout event time. Measure size in a way that ignores
+	whether the scrollbares are there or not.
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove last layout event time and
+	add back laid out at least once boolean.
+
 2003-05-21  Chris Blumenberg  <cblu@apple.com>
 
 	These problems:

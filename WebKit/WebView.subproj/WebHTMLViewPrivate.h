@@ -30,8 +30,8 @@
 
     NSURL *draggingImageURL;
     
-    NSTimeInterval firstLayoutEventTime;
     NSSize lastLayoutSize;
+    BOOL laidOutAtLeastOnce;
     
     WebPluginController *pluginController;
 }
