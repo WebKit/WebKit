@@ -81,7 +81,7 @@
 {
     NSSize size = [image size];
     if (!NSEqualSizes(size, NSZeroSize)) {
-        return [NSString stringWithFormat:UI_STRING("%@ %.0fx%.0f pixels", "window title for a standalone image"), filename, size.width, size.height];
+        return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
     }
     return filename;
 }

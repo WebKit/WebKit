@@ -1,3 +1,13 @@
+2004-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3521379>: image dimensions uses lowercase x instead of multiplication sign
+
+        * WebView.subproj/WebImageRepresentation.m: (-[WebImageRepresentation title]):
+        Change string to use multiplication sign instead of x.
+        * English.lproj/Localizable.strings: Updated.
+
 2004-01-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
