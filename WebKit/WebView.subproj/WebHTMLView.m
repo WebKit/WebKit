@@ -1341,7 +1341,8 @@ static WebHTMLView *lastHitView = nil;
 + (void)initialize
 {
     WebKitInitializeUnicode();
-    [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:nil];
+    [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
+                             returnTypes:[[self class] _insertablePasteboardTypes]];
     _NSInitializeKillRing();
 }
 
@@ -1481,8 +1482,25 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    [self _writeSelectionToPasteboard:pasteboard];
+    [pasteboard declareTypes:types owner:nil];
+    [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
     return YES;
+}
+
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard
+{
+    [self _pasteWithPasteboard:pasteboard allowPlainText:YES];
+    return YES;
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
+{
+    if (sendType != nil && [[self pasteboardTypesForSelection] containsObject:sendType] && [self _hasSelection]) {
+        return self;
+    } else if (returnType != nil && [[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]) {
+        return self;
+    }
+    return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
 }
 
 - (void)selectAll:(id)sender
@@ -1520,15 +1538,6 @@ static WebHTMLView *lastHitView = nil;
     }
 
     return YES;
-}
-
-- (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
-{
-    if (sendType && ([[[self class] _selectionPasteboardTypes] containsObject:sendType]) && [self _hasSelection]){
-        return self;
-    }
-
-    return [super validRequestorForSendType:sendType returnType:returnType];
 }
 
 - (BOOL)acceptsFirstResponder

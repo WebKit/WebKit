@@ -1,3 +1,15 @@
+2004-10-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3802039> 8A259: Can't use Grab services to grab selection from screen
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView initialize]): register service "return types" which are types that can be inserted into a WebView
+        (-[WebHTMLView writeSelectionToPasteboard:types:]): service protocol method, be sure to only write specified types
+        (-[WebHTMLView readSelectionFromPasteboard:]): new, service protocol method, insert types
+        (-[WebHTMLView validRequestorForSendType:returnType:]): moved, handle return types
+
 2004-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
