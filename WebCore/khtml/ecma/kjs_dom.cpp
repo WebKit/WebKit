@@ -656,16 +656,20 @@ Value DOMNodeList::tryGet(ExecState *exec, const Identifier &p) const
       DOM::HTMLElement e;
       unsigned long l = list.length();
       bool found = false;
-
-      for ( unsigned long i = 0; i < l; i++ )
-        if ( ( e = list.item( i ) ).id() == p.string() ) {
-          result = getDOMNode(exec, list.item( i ) );
-          found = true;
-          break;
-        }
-
+      
+      for ( unsigned long i = 0; i < l; i++ ) {
+          DOM::Node node = list.item(i);
+          
+          if ( ( e = node ).id() == p.string() ) {
+              result = getDOMNode(exec, node);
+              found = true;
+              break;
+          }
+          
+      }
+      
       if ( !found )
-        result = ObjectImp::get(exec, p);
+          result = ObjectImp::get(exec, p);
     }
   }
 

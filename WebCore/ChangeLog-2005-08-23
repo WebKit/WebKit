@@ -1,3 +1,12 @@
+2004-11-10  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs.
+	
+	Fixed <rdar://problem/3875011> DOMNodeList::tryGet() performs unnecessary (and expensive) dom tree traversals. Improved a loop from 2-n-squared to just n-squared.  
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNodeList::tryGet): Got rid of an unnecessary node traversal. 
+
 2004-11-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
