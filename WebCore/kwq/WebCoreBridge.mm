@@ -164,7 +164,8 @@ static void updateRenderingForBindings (KJS::ExecState *exec, KJS::ObjectImp *ro
         return;
         
     DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->part()->document().handle());
-    doc->updateRendering();
+    if (doc)
+        doc->updateRendering();
 }
 
 

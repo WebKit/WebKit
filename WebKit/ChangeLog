@@ -1,5 +1,14 @@
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
+		Finished implementation of windowScriptObject.
+		
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView windowScriptObject]):
+
+2004-05-18  Richard Williamson   <rjw@apple.com>
+
 		Added WebKit portion of webView:windowScriptObjectAvailable:
 		implementation.  Still need to implement creating the WebScriptObject
 		wrapper on the WebCore side.

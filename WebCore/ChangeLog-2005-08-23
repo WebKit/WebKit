@@ -1,5 +1,21 @@
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
+	Finished implementing support for windowScriptObject.
+
+        Reviewed by Maciej.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::~KWQKHTMLPart):
+        (KWQKHTMLPart::windowScriptObject):
+        * kwq/WebCoreBridge.mm:
+        (updateRenderingForBindings):
+
+2004-05-18  Richard Williamson   <rjw@apple.com>
+
 	Added stubs to get the WebScriptObject for the window
 	JS object.
 	

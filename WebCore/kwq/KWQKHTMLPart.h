@@ -342,6 +342,7 @@ private:
     friend class KHTMLPart;
 
     QPtrList<KJS::Bindings::RootObject> rootObjects;
+    WebScriptObject *_windowScriptObject;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }

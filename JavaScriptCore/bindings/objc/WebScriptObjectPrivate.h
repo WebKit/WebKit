@@ -4,7 +4,7 @@
 #ifndef _WEB_SCRIPT_OBJECT_PRIVATE_H_
 #define _WEB_SCRIPT_OBJECT_PRIVATE_H_
 
-#import <WebScriptObject.h>
+#import <JavaScriptCore/WebScriptObject.h>
 
 #include <JavaScriptCore/internal.h>
 #include <JavaScriptCore/list.h>

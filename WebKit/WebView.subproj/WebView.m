@@ -1620,8 +1620,7 @@ NS_ENDHANDLER
 
 - (WebScriptObject *)windowScriptObject
 {
-    NSLog (@"%s:%d:  not yet implemented", __PRETTY_FUNCTION__, __LINE__);
-    return nil;
+    return [[[self mainFrame] _bridge] windowScriptObject];
 }
 
 

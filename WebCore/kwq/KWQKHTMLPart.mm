@@ -62,7 +62,7 @@
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
-#import <JavaScriptCore/WebScriptObject.h>
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 
 #undef _KWQ_TIMING
 
@@ -176,6 +176,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _windowWidget(NULL)
     , _usesInactiveTextBackgroundColor(false)
     , _showsFirstResponder(true)
+    , _windowScriptObject(0)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -200,6 +201,9 @@ KWQKHTMLPart::~KWQKHTMLPart()
     // exceptions.
     [_formValuesAboutToBeSubmitted release];
     [_formAboutToBeSubmitted release];
+    
+    [_windowScriptObject release];
+    
     delete _windowWidget;
 }
 
@@ -1133,8 +1137,16 @@ bool KWQKHTMLPart::tabsToAllControls() const
 
 WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
-    // FIXME:  Create a WindowScriptObject wrapper.
-    return 0;
+    if (!_windowScriptObject) {
+        KJS::Bindings::RootObject *root = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
+        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        root->setRootObjectImp (win);
+        root->setInterpreter (KJSProxy::proxy(this)->interpreter());
+        addPluginRootObject (root);
+        _windowScriptObject = [[WebScriptObject alloc] _initWithObjectImp:win root:root];
+    }
+
+    return _windowScriptObject;
 }
 
 void KWQKHTMLPart::bindObject(void *object, QString name)

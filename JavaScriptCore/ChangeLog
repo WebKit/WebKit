@@ -1,5 +1,16 @@
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
+	Finsished implementing support for windowScriptObject.
+	Had to make WebScriptObjectPrivate.h accessible from
+	WebCore.
+
+        Reviewed by Maciej.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/objc/WebScriptObjectPrivate.h:
+
+2004-05-18  Richard Williamson   <rjw@apple.com>
+
 	Use KVC to set/get values instead of directly accessing
 	ivars.
 
