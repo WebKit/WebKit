@@ -1,5 +1,23 @@
 2002-03-07  John Sullivan  <sullivan@apple.com>
 
+	First pass at adding error strings to IFError. They are
+	properly localized, but they don't include any parameters,
+	and the strings haven't been made user-friendly.
+
+	* Misc.subproj/IFError.m: 
+	(+[IFError initialize]): New method, set up a dictionary
+	mapping error code to localized error string.
+	(-[IFError errorDescription]): Read string from dictionary.
+
+	* English.lproj/IFError.strings: New file, auto-generated
+	by the genstrings tool.
+
+	* WebKit.pbproj/project.pbxproj: Removed stray -F /symroots.
+	This shouldn't have been in there since symroots location is
+	no longer hardwired.
+
+2002-03-07  John Sullivan  <sullivan@apple.com>
+
 	Defined more symbolic debug-level constants; specified ranges for use by
 	different software levels (core/kit/client==browser) to enable easier
 	isolation of debug messages.

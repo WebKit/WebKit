@@ -119,7 +119,6 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = /symroots;
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "";
@@ -203,6 +202,7 @@
 				089C1668FE841158C02AAC07,
 				35F3577501986B740ACA1520,
 				35F357800198AAB80ACA1520,
+				F515C2B90238249C01C1A525,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -347,6 +347,7 @@
 				25A5593201A5996D0ECA149E,
 				F5DE3CB2023575AA01A80181,
 				F5DE3CB3023575AA01A80181,
+				F515C2B70238249C01C1A525,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -996,6 +997,27 @@
 		};
 		F5143A380221DCCE01A80181 = {
 			fileRef = F5143A370221DCCE01A80181;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F515C2B70238249C01C1A525 = {
+			children = (
+				F515C2B80238249C01C1A525,
+			);
+			isa = PBXVariantGroup;
+			name = IFError.strings;
+			path = "";
+			refType = 4;
+		};
+		F515C2B80238249C01C1A525 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/IFError.strings;
+			refType = 4;
+		};
+		F515C2B90238249C01C1A525 = {
+			fileRef = F515C2B70238249C01C1A525;
 			isa = PBXBuildFile;
 			settings = {
 			};
