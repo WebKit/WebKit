@@ -1,3 +1,26 @@
+2005-01-04  Darin Adler  <darin@apple.com>
+
+        - rolled out my custom tag name change again -- it caused a 1 ms PLT regression
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/selection.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/html/dtd.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/htmlhashes.cpp:
+        * khtml/misc/htmlhashes.h:
+        * khtml/misc/htmltags.c:
+        * khtml/misc/htmltags.h:
+        * khtml/misc/maketags:
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_position.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+
 2005-01-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

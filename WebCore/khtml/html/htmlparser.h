@@ -5,7 +5,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1998 Waldo Bastian (bastian@kde.org)
               (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2004 Apple Computer, Inc.
+    Copyright (C) 2003 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -38,10 +38,10 @@
 #include <qdatetime.h>
 #endif
 
+
 #include "dom/dom_string.h"
 #include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
-#include "misc/htmltags.h"
 
 class KHTMLView;
 class HTMLStackElem;
@@ -139,6 +139,8 @@ protected:
     static bool isHeaderTag(int _id);
     void popNestedHeaderTag();
 
+    ushort *forbiddenTag;
+    
     /*
      * currently active form
      */
@@ -182,11 +184,10 @@ protected:
 
     bool includesCommentsInDOM;
     
-    ushort forbiddenTag[ID_LAST_TAG + 1];
-    
 #if SPEED_DEBUG > 0
     QTime qt;
 #endif
 };
 
 #endif // HTMLPARSER_H
+

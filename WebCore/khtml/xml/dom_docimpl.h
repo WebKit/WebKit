@@ -211,8 +211,7 @@ public:
     virtual bool isDocumentNode() const { return true; }
     virtual bool isHTMLDocument() const { return false; }
 
-    ElementImpl *createHTMLElement(const DOMString &tagName, int &exceptioncode);
-    ElementImpl *createHTMLElement(unsigned short tagID);
+    virtual ElementImpl *createHTMLElement ( const DOMString &tagName, int &exceptioncode );
 
     khtml::CSSStyleSelector *styleSelector() { return m_styleSelector; }
 
