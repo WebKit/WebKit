@@ -817,6 +817,11 @@ declaration:
         /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
         $$ = false;
     }
+    |
+    property ':' maybe_space {
+        /* div { font-family: } Just reduce away this property with no value. */
+        $$ = false;
+    }
   ;
 
 property:
