@@ -110,6 +110,9 @@
 				F5C2869302846DCD018635CA,
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
+				F8216299029F4FB501000131,
+				F821629A029F4FB501000131,
+				F821629B029F4FB501000131,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -137,7 +140,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-framework WebFoundation -framework JavaScriptCore -lwebcore -seg1addr 0x4000000";
+				OTHER_LDFLAGS = "-seg1addr 0x4000000";
 				PFE_FILE_C_DIALECTS = "objective-c objective-c++";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
@@ -310,6 +313,9 @@
 				F5C287BB02846DCD018635CA,
 				F5C287BC02846DCD018635CA,
 				F5C287BD02846DCD018635CA,
+				F82162D7029F4FB501000131,
+				F82162D8029F4FB501000131,
+				F82162D9029F4FB501000131,
 			);
 			isa = PBXFrameworksBuildPhase;
 		};
@@ -1882,6 +1888,39 @@
 //F82
 //F83
 //F84
+		F8216299029F4FB501000131 = {
+			isa = PBXFrameworkReference;
+			path = JavaScriptCore.framework;
+			refType = 3;
+		};
+		F821629A029F4FB501000131 = {
+			isa = PBXFrameworkReference;
+			path = WebCore.framework;
+			refType = 3;
+		};
+		F821629B029F4FB501000131 = {
+			isa = PBXFrameworkReference;
+			path = WebFoundation.framework;
+			refType = 3;
+		};
+		F82162D7029F4FB501000131 = {
+			fileRef = F8216299029F4FB501000131;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F82162D8029F4FB501000131 = {
+			fileRef = F821629A029F4FB501000131;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F82162D9029F4FB501000131 = {
+			fileRef = F821629B029F4FB501000131;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F83DCC71029D09F301000131 = {
 			isa = PBXFileReference;
 			name = IFPanelAuthenticationHandler.h;

@@ -1,3 +1,8 @@
+2002-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Link against WebCore.framework,
+	not libwebcore.dylib.
+
 === 0.3 ===
 
 2002-05-24  Shelley A Sheridan  <sheridan@apple.com>

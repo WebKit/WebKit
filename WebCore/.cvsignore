@@ -1,8 +1,8 @@
 Makefile
 Makefile.in
+WebCore-combined.exp
+framework-stamp
+framework-dylib-stamp
+framework-resource-stamp
 libwebcore.dylib
-libwebcorecombined.exp
-libwebcorenmedited.dylib
-libwebcoreunstripped.dylib
-webcore-install-stamp
 *.pfe
