@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 34;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -193,6 +193,7 @@
 				9CF0E24B021361B10ECA16EA,
 				F5B92B840223191D01C1A525,
 				F5DE3CB4023575AA01A80181,
+				F5D538EA02441F2601A80181,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -228,6 +229,7 @@
 				F520FB1C0221DEFD01C1A525,
 				F5B92B850223191D01C1A525,
 				F5DE3CB5023575AA01A80181,
+				F5D538ED02441FDD01A80181,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -952,6 +954,8 @@
 				9CF0E249021361B00ECA16EA,
 				9CF0E24A021361B00ECA16EA,
 				F5143A370221DCCE01A80181,
+				F5D538E802441F2601A80181,
+				F5D538EC02441FDD01A80181,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -1079,6 +1083,30 @@
 		};
 		F5B92B850223191D01C1A525 = {
 			fileRef = F5B92B830223191D01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D538E802441F2601A80181 = {
+			isa = PBXFileReference;
+			name = IFMainURLHandleClient.h;
+			path = WebView.subproj/IFMainURLHandleClient.h;
+			refType = 2;
+		};
+		F5D538EA02441F2601A80181 = {
+			fileRef = F5D538E802441F2601A80181;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D538EC02441FDD01A80181 = {
+			isa = PBXFileReference;
+			name = IFMainURLHandleClient.mm;
+			path = WebView.subproj/IFMainURLHandleClient.mm;
+			refType = 2;
+		};
+		F5D538ED02441FDD01A80181 = {
+			fileRef = F5D538EC02441FDD01A80181;
 			isa = PBXBuildFile;
 			settings = {
 			};

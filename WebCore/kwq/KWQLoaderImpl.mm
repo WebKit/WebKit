@@ -940,20 +940,33 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
+    id controller;
     void *userData;
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
+    QString urlString = job->url().url();
 
     [m_dataSource _removeURLHandle: job->handle()];
+    
+    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, urlString.latin1());
+
+    m_loader->slotFinished(job);
+    
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = -1;
+    loadProgress->bytesSoFar = -1;
+
+    controller = [m_dataSource controller];
+    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+
     [sender autorelease];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
-    id <IFLoadHandler> controller;
+    id controller;
     void *userData;
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
@@ -972,7 +985,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     loadProgress->bytesSoFar = [data length];
 
     controller = [m_dataSource controller];
-    [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
     [sender autorelease];
 }
@@ -990,7 +1003,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
-    id <IFLoadHandler> controller;
+    id controller;
     
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
@@ -998,7 +1011,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     loadProgress->bytesSoFar = [data length];
     
     controller = [m_dataSource controller];
-    [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
@@ -1008,7 +1021,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
+    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "dataSource = 0x%08x, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
 
@@ -1020,7 +1033,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [[sender availableResourceData] length];
 
-    [controller receivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
+    [controller _receivedError: error forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 
     [sender autorelease];
 }

@@ -1,3 +1,16 @@
+2002-03-16  Richard Williamson  <rjw@apple.com>
+
+        Fixed error handling.  Removed ObjC code for url handle client from KHTMLPart.
+        Need to sanitize KHTMLPart further.
+        
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::closeURL),
+	(KHTMLPart::requestFrameName), (KHTMLPart::requestFrame), (KHTMLPart::overURL):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidCancelLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* src/kwq/external.h:
+
 2002-03-15  Richard Williamson  <rjw@apple.com>
 
         Fixed crasher initializing items in popup button.

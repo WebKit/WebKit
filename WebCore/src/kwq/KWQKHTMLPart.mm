@@ -57,9 +57,8 @@
 
 #import <KWQView.h>
 
-#include <WCLoadProgress.h>
-#include <WCWebDataSource.h>
 #include <WCError.h>
+#include <WCWebDataSource.h>
 
 #include <loader.h>
 
@@ -97,109 +96,6 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     }
 }
 
-// Class KHTMLPartLoadClient ==============================================================
-
-@interface KHTMLPartLoadClient : NSObject <IFURLHandleClient>
-{
-    @public
-    KHTMLPart *m_part;
-    NSData *m_data;
-    id dataSource;
-}
-@end
-
-@implementation KHTMLPartLoadClient
-
--(id)init
-{
-    if ((self = [super init])) {
-        m_data = nil;
-    
-        return self;
-    }
-
-    return nil;
-}
-
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
-{
-    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
-}
-
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
-{
-    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
-    [sender autorelease];
-}
-
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
-{
-    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
-    m_part->closeURL();
-
-    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
-    loadProgress->totalToLoad = [data length];
-    loadProgress->bytesSoFar = [data length];
-    [[dataSource controller] receivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
-
-    [sender autorelease];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
-{
-    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
-    if (!m_data) {
-        m_data = [data retain];
-    }
-    m_part->slotData(sender, (const char *)[data bytes], [data length]);
-    
-    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [data length];
-    [[dataSource controller] receivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
-{
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
-
-    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [[sender availableResourceData] length];
-
-    IFError *error = WCIFErrorMake(result);
-    [[dataSource controller] receivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: dataSource];
-
-    [sender autorelease];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
-{
-}
-
-// Non-retained
-- (void)setDataSource: d
-{
-    dataSource = d;
-}
-
-
-/*
--(void)checkCompleted:(NSNotification *)notification
-{
-    m_part->checkCompleted();
-}
-*/
-
--(void)dealloc
-{
-    [m_data release];
-    
-    [super dealloc];
-}
-
-@end
-
 
 // Class KHTMLPartPrivate ================================================================================
 
@@ -220,7 +116,6 @@ public:
     KURL m_baseURL;
     
     KHTMLPart *m_part;
-    KHTMLPartLoadClient *m_recv;
     id m_handle;
 
     bool m_bFirstData:1;
@@ -251,8 +146,6 @@ public:
     QPoint m_dragLastPos;
 #endif
 
-    int m_frameNameId;
-
 #ifdef _KWQ_TIMING        
     double totalWriteTime;
 #endif
@@ -274,15 +167,11 @@ public:
         //m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
         m_settings = new KHTMLSettings();
         m_haveEncoding = false;
-        m_recv = [[KHTMLPartLoadClient alloc] init];
-        m_recv->m_part = part;
         m_handle = nil;
         
         m_jscript = 0L;
         m_runningScripts = 0;
         m_onlyLocalReferences = 0;
-
-        m_frameNameId = 1;
         
         m_documentSource = "";
         m_decodingStarted = 0;
@@ -291,8 +180,6 @@ public:
     ~KHTMLPartPrivate()
     {
         delete m_settings;
-
-        [m_recv autorelease];   
     }
 
 };
@@ -382,87 +269,17 @@ bool KHTMLPart::openURL( const KURL &url )
 {
     KWQDEBUG2 ("0x%08x openURL(): for url %s\n", (unsigned int)this, url.url().latin1());
 
-    // Close the previous URL.
-    closeURL();
-    
-    //if ( args.doPost() && (url.protocol().startsWith("http")) )
-    //{
-    //    d->m_job = KIO::http_post( url, args.postData, false );
-    //    d->m_job->addMetaData("content-type", args.contentType() );
-    //}
-    //else
-    //    d->m_job = KIO::get( url, args.reload, false );
-        
-    //connect( d->m_job, SIGNAL( result( KIO::Job * ) ),
-    //        SLOT( slotFinished( KIO::Job * ) ) );
-    //connect( d->m_job, SIGNAL( data( KIO::Job*, const QByteArray &)),
-    //        SLOT( slotData( KIO::Job*, const QByteArray &)));
-    //connect( d->m_job, SIGNAL(redirection(KIO::Job*, const KURL&) ),
-    //        SLOT( slotRedirection(KIO::Job*,const KURL&) ) );
-    
-    // Initiate request for URL data.
-    //d->m_job = KIO::get( url, false, false );
-    //d->m_job = KIO::get( url, false, false );
-    
-    // Keep a reference to the current working URL.
     d->m_workingURL = url;
     d->m_url = url;
 
     d->m_documentSource = "";
     d->m_decodingStarted = 0;
     
-    NSString *urlString;
-    NSURL *theURL;
-    
-    urlString = [NSString stringWithCString:d->m_workingURL.url().latin1()];
-    // FIXME: temporary hack to make file: URLs work right
-    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
-    }
-
-    if ([urlString hasSuffix:@"/"]) {
-        urlString = [urlString substringToIndex:([urlString length] - 1)];
-    }
-    theURL = [NSURL URLWithString:urlString];
-
-    [d->m_recv setDataSource: getDataSource()];
-    
-    d->m_handle = [[IFURLHandle alloc] initWithURL:theURL];
-    [d->m_handle addClient:d->m_recv];
-    [d->m_handle loadInBackground];
-
-/*    
-    [[NSNotificationCenter defaultCenter] addObserver:d->m_recv
-        selector:@selector(checkCompleted:) name:urlString object:nil];
-    
-    // tell anyone who's interested that we've started to load a uri
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-start" object:urlString];
-*/
-    
     return true;
 }
 
 bool KHTMLPart::closeURL()
 {
-    //if (d && d->m_doc) {
-    //    recursive(0, d->m_doc);
-    //}
-
-    // Cancel any pending loads.
-    NSString *urlString;
-    
-    urlString = [NSString stringWithCString:d->m_url.url().latin1()];
-    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
-    }
-
-    if ([urlString hasSuffix:@"/"]) {
-        urlString = [urlString substringToIndex:([urlString length] - 1)];
-    }
-
-/*
-    [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
-*/    
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
 
@@ -1551,10 +1368,11 @@ DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
     return 0L;
 }
 
+static int frameNameId = 1;
 
 QString KHTMLPart::requestFrameName()
 {
-    return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);
+    return QString::fromLatin1("<!--frame %1-->").arg(frameNameId++);
 }
 
 
@@ -1708,7 +1526,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         oldDataSource = getDataSource();
         controller = [oldDataSource controller];
 
-        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, oldDataSource = 0x%08x, [oldDataSource frame] = 0x%08x\n", (unsigned int)this, (unsigned int)frame, (unsigned int)oldDataSource, (unsigned int)[oldDataSource frame]);    
+        KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "requestFrame():  frame %s, URL = %s\n", frameName.latin1(), [[childURL absoluteString] cString]);    
 
         newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource];
         if (newFrame == nil){
@@ -1806,45 +1624,3 @@ void KHTMLPart::overURL( const QString &url, const QString &target )
 {
     _logNeverImplemented();
 }
-
-/*
-void KHTMLPart::checkCompleted()
-{
-    int requests;
-    
-    NSString *urlString;
-    urlString = [NSString stringWithCString:d->m_url.url().latin1()];
-    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
-    }
-    
-    if ([urlString hasSuffix:@"/"]) {
-	    urlString = [urlString substringToIndex:([urlString length] - 1)];
-    }
-    
-    // Still waiting for images/scripts from the loader ?
-    requests = khtml::Cache::loader()->numRequests([urlString cString]);
-    if (requests == 0) {
-        // FIXME: check for same URL with slash appended
-        // We should not have to do this
-        QString qurlString = [urlString cString];
-        qurlString += '/';
-        requests = khtml::Cache::loader()->numRequests(qurlString);
-    }
-    if (requests == 0) {
-        // remove us from the notification center that checks for the end of a load
-        [[NSNotificationCenter defaultCenter] removeObserver:d->m_recv name:urlString object:nil];
-        // tell anyone who's interested that we're done
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-done" object:urlString];
-
-        IFWebDataSource *dataSource;
-        id <IFWebController> controller;
-        
-        dataSource = getDataSource();
-        controller = [dataSource controller];
-        [controller locationChangeDone: nil forFrame: [dataSource frame]];
-        
-        end();
-    }
-}
-*/

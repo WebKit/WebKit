@@ -7,26 +7,39 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebFoundation.h>
 
 #import <WebKit/IFWebDataSource.h>
 
 // includes from kde
 #include <khtmlview.h>
 
+@class IFMainURLHandleClient;
+
 @interface IFWebDataSourcePrivate : NSObject
 {
     IFWebDataSource *parent;
     NSMutableArray *children;
+    
     id <IFWebController>controller;
+    
+    // The original URL as requested during initialization.
     NSURL *inputURL;
+    
     KHTMLPart *part;
     
     // Child frames of this frame.
     NSMutableDictionary *frames;
     
-    // Active IFURLHandles.
+    // The handle client for the main document associated with the
+    // datasource.
+    IFMainURLHandleClient *mainURLHandleClient;
+    
+    // Active IFURLHandles for resources associated with the
+    // datasource.
     NSMutableArray *urlHandles;
+    
+    bool primaryLoadComplete;
 }
 
 - init;
@@ -38,10 +51,11 @@
 - (void)_setController: (id <IFWebController>)controller;
 - (KHTMLPart *)_part;
 - (void)_setParent: (IFWebDataSource *)p;
-- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)flag;
+- (void)_startLoading: (BOOL)forceRefresh;
 
 - (void)_stopLoading;
 - (void)_recursiveStopLoading;
 - (void)_addURLHandle: (IFURLHandle *)handle;
 - (void)_removeURLHandle: (IFURLHandle *)handle;
+- (void)_setPrimaryLoadComplete: (BOOL)flag;
 @end

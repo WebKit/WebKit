@@ -6,6 +6,8 @@
         NSWebPageDataSource.
 */
 #import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFMainURLHandleClient.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -23,17 +25,21 @@
 
     part = new KHTMLPart();
     
+    primaryLoadComplete = NO;
+    
     return self;
 }
 
 - (void)dealloc
 {
     // controller is not retained!  IFWebControllers maintain
-    // a reference to their view and main data source.
+    // a reference to the main frame, which in turn refers to it's
+    // view and data source.
     [parent release];
     [frames release];
     [inputURL release];
     [urlHandles release];
+    [mainURLHandleClient release];
     
     delete part;
 
@@ -64,12 +70,44 @@
     ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = [p retain];
 }
 
-- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)byUserEvent
+- (void)_setPrimaryLoadComplete: (BOOL)flag
 {
-    KURL url = [[[self inputURL] absoluteString] cString];
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    
+    data->primaryLoadComplete = flag;
+}
 
+- (void)_startLoading: (BOOL)forceRefresh
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    NSString *urlString = [[self inputURL] absoluteString];
+    NSURL *theURL;
+    KURL url = [[[self inputURL] absoluteString] cString];
+    IFURLHandle *handle;
+
+    [self _setPrimaryLoadComplete: NO];
+    
     WEBKIT_ASSERT ([self frame] != nil);
     
+    [[self frame] _clearErrors];
+    
+    // FIXME [mjs]: temporary hack to make file: URLs work right
+    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
+        urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+    }
+    if ([urlString hasSuffix:@"/"]) {
+        urlString = [urlString substringToIndex:([urlString length] - 1)];
+    }
+    theURL = [NSURL URLWithString:urlString];
+
+    data->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: [self _part]];
+    
+    // The handle will be released by the client upon receipt of a 
+    // terminal callback.
+    handle = [[IFURLHandle alloc] initWithURL:theURL];
+    [handle addClient: data->mainURLHandleClient];
+    [handle loadInBackground];
+
     [self _part]->openURL (url);
     
     [[self controller] locationChangeStartedForFrame: [self frame]];
@@ -102,7 +140,7 @@
     count = [data->urlHandles count];
     for (i = 0; i < count; i++) {
         handle = [data->urlHandles objectAtIndex: i];
-        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "canceling %s\n", [[[handle url] absoluteString] cString] );
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelling %s\n", [[[handle url] absoluteString] cString] );
         [[data->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 

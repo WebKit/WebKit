@@ -217,7 +217,7 @@ static id IFWebDataSourceMake(void *url)
 // If forceRefresh is YES the document will load from the net, not the cache.
 - (void)startLoading: (BOOL)forceRefresh
 {
-    [self _startLoading: forceRefresh initiatedByUserEvent: NO];
+    [self _startLoading: forceRefresh];
 }
 
 
@@ -234,9 +234,13 @@ static id IFWebDataSourceMake(void *url)
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    WEBKITDEBUGLEVEL4 (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)data->primaryLoadComplete, [data->urlHandles count], [[[self inputURL] absoluteString] cString]);
+    if (data->primaryLoadComplete == NO)
+        return YES;
+        
     if ([data->urlHandles count])
         return YES;
     
@@ -246,6 +250,8 @@ static id IFWebDataSourceMake(void *url)
         
         childFrame = [[self children] objectAtIndex: i];
         if ([[childFrame dataSource] isLoading])
+            return YES;
+        if ([[childFrame provisionalDataSource] isLoading])
             return YES;
     }
     return NO;

@@ -379,13 +379,6 @@
 
 
 
-// Override superclass implementation.  We want to relayout when the frame size is changed.
-- (void)setFrame:(NSRect)rect
-{
-    WEBKITDEBUGLEVEL4 (WEBKIT_LOG_VIEW, "(%f,%f) width = %f, height = %f\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    [super setFrame:rect];
-}
-
 - (void)windowResized: (NSNotification *)notification
 {
     if ([notification object] == [self window])

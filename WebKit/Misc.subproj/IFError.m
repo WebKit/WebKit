@@ -137,4 +137,9 @@ static id IFErrorMake(int code)
     return [descriptions objectForKey: [NSNumber numberWithInt: errorCode]];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"code %d:  %@", errorCode, [self errorDescription]];
+}
+
 @end
