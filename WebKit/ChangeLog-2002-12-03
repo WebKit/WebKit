@@ -1,3 +1,8 @@
+2002-07-04  John Sullivan  <sullivan@apple.com>
+
+        * WebView.subproj/IFDynamicScrollBarsView.h:
+	Updated FIXME to mention bug number.
+
 2002-07-03  Chris Blumenberg  <cblu@apple.com>
 
 	- Fix for 2975750

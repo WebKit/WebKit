@@ -10,9 +10,8 @@
 
 #import <WebCoreFrameView.h>
 
-// FIXME: This has grown to be more than just a dynamic scroll bar view.
-// We want to rename this class at least, and perhaps break it up into
-// more than one class.
+// FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
+// and it no longer works outside of WebKit.
 
 @interface IFDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
