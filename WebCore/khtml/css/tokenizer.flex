@@ -68,7 +68,7 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 {num}Hz                 {yyTok = HERZ; return yyTok;}
 {num}kHz                {yyTok = KHERZ; return yyTok;}
 {num}{ident}            {yyTok = DIMEN; return yyTok;}
-{num}%                  {yyTok = PERCENTAGE; return yyTok;}
+{num}%+                 {yyTok = PERCENTAGE; return yyTok;}
 {num}                   {yyTok = NUMBER; return yyTok;}
 
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}

@@ -1,3 +1,16 @@
+2003-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3224077 -- REGRESSION: tables on MacNN forums messed up because we reject %% due to style parser
+
+        * khtml/css/tokenizer.flex: Add a + sign after the % in the percentage rule so we allow
+        any number of extra percent signs. This is a temporary hack.
+
+        * khtml/css/Makefile.am: Add make rules to build tokenizer.cpp so we don't have to do it by hand.
+        * khtml/css/maketokenizer: Added. Script used by the make rules.
+        * khtml/css/tokenizer.cpp: Regenerated. The only substantive change is in the state tables.
+
 2003-04-09  David Hyatt  <hyatt@apple.com>
 
         This first fix is a refinement of the patch I produced to fix <nobr>

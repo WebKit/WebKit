@@ -12,10 +12,16 @@ parser.cpp: $(srcdir)/parser.y
 	else mv parser.tab.h parser.h; fi \
 	else :; fi
 
+tokenizer.cpp: maketokenizer tokenizer.flex
+	cd $(srcdir); \
+	flex tokenizer.flex && perl maketokenizer lex.yy.c > $@; \
+	rm -f lex.yy.c
+
 noinst_HEADERS = \
 	cssproperties.c \
 	cssvalues.c \
 	parser.cpp \
+	tokenizer.cpp \
 	$(NULL)
 
 VALUEFILES = \
