@@ -35,7 +35,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { AppCodeName, AppName, AppVersion, Language, UserAgent, Platform,
-           _Plugins, _MimeTypes, Product, Vendor, CookieEnabled, JavaEnabled };
+           _Plugins, _MimeTypes, Product, ProductSub, Vendor, CookieEnabled, JavaEnabled };
     KHTMLPart *part() const { return m_part; }
   private:
     KHTMLPart *m_part;

@@ -332,12 +332,6 @@ void RenderFlow::layout()
             m_overflowHeight = m_height;
     }
     
-    // overflow:hidden will just clip, so we don't have overflow.
-    if (style()->overflow()==OHIDDEN) {
-        m_overflowHeight = m_height;
-        m_overflowWidth = m_width;
-    }
-    
     if (isTableCell()) {
         // Table cells need to grow to accommodate both overhanging floats and
         // blocks that have overflowed content.
@@ -378,7 +372,13 @@ void RenderFlow::layout()
     // Always ensure our overflow width is at least as large as our width.
     if (m_overflowWidth < m_width)
         m_overflowWidth = m_width;
-        
+    
+    // overflow:hidden will just clip, so we don't have overflow.
+    if (style()->overflow()==OHIDDEN) {
+        m_overflowHeight = m_height;
+        m_overflowWidth = m_width;
+    }
+
     setLayouted();
 }
 

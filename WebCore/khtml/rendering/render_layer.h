@@ -213,7 +213,7 @@ public:
     };
       
 private:
-    // The createZTree function creates a z-tree for a given layer hierarchy
+    // The constructZTree function creates a z-tree for a given layer hierarchy
     // rooted on this layer.  It will ensure that immediate child
     // elements of a given z-tree node are at least initially sorted
     // into <negative z-index children>, <this layer>, <non-negative z-index
@@ -240,7 +240,8 @@ private:
     // +-------> L(L5)
     // +-------> L(L6)
     //
-    RenderZTreeNode* constructZTree(QRect damageRect, 
+    RenderZTreeNode* constructZTree(QRect overflowClipRect,
+                                    QRect clipRect,
                                     RenderLayer* rootLayer,
                                     bool eventProcessing = false);
 

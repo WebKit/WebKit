@@ -281,7 +281,22 @@ void RenderObject::setLayouted(bool b)
         RenderObject *root = this;
         bool rootAlreadyNeedsLayout = false;
         
-        RenderObject* clippedObj = (style()->overflow() == OHIDDEN) ? this : 0;
+        RenderObject* clippedObj = 
+            (style()->overflow() == OHIDDEN && !isText()) ? this : 0;
+        
+        if (clippedObj) {
+            // Update our hack for positioned objects.  It doesn't work because
+            // this can be called from setStyle.  This whole clip hack is evil and must die. -dwh
+            bool positioned = style()->position() == ABSOLUTE || 
+                            style()->position() == FIXED;
+            bool relpositioned  = style()->position() == RELATIVE;
+            if (positioned && !isPositioned()) {
+                setPositioned(true);
+                setInline(false);
+            }
+            else if (relpositioned && !isRelPositioned())
+                setRelPositioned(true);
+        }
         
         while( o ) {
             root = o;
@@ -298,11 +313,11 @@ void RenderObject::setLayouted(bool b)
                 root->layout();
                 clippedObj->repaint();
                 gClipObject = 0;
+                m_layouted = true;
             }
             else
                 root->scheduleRelayout();
         }
-                
     }
 }
     

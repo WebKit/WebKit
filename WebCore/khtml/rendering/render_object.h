@@ -109,7 +109,10 @@ public:
     virtual void setHasChildLayers(bool hasLayers) { }
     virtual void positionChildLayers() { }
     
+    virtual QRect getOverflowClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     virtual QRect getClipRect(int tx, int ty) { return QRect(0,0,0,0); }
+    bool hasClip() { return isPositioned() &&  style()->hasClip(); }
+    bool hasOverflowClip() { return style()->overflow() == OHIDDEN; }
     
     // RenderObject tree manipulation
     //////////////////////////////////////////

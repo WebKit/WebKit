@@ -147,7 +147,7 @@ int KJS::PluginBase::m_refCount = 0;
 
 const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 /*
-@begin NavigatorTable 11
+@begin NavigatorTable 13
   appCodeName	Navigator::AppCodeName	DontDelete|ReadOnly
   appName	Navigator::AppName	DontDelete|ReadOnly
   appVersion	Navigator::AppVersion	DontDelete|ReadOnly
@@ -157,6 +157,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   plugins	Navigator::_Plugins	DontDelete|ReadOnly
   mimeTypes	Navigator::_MimeTypes	DontDelete|ReadOnly
   product	Navigator::Product	DontDelete|ReadOnly
+  productSub Navigator::ProductSub DontDelete|ReadOnly
   vendor	Navigator::Vendor	DontDelete|ReadOnly
   cookieEnabled	Navigator::CookieEnabled DontDelete|ReadOnly
   javaEnabled	Navigator::JavaEnabled	DontDelete|Function 0
@@ -223,6 +224,8 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
 #else
     return String("Konqueror/khtml");
 #endif
+  case ProductSub:
+    return String("20021225");
   case Vendor:
 #if APPLE_CHANGES
       // FIXME: Should we define a fallback result here besides "KDE"?  Perhaps "Apple"?

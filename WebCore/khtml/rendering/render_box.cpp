@@ -342,6 +342,18 @@ void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
     p->drawRect(_tx, _ty, m_width, m_height);
 }
 
+QRect RenderBox::getOverflowClipRect(int tx, int ty)
+{
+    // XXX When overflow-clip (CSS3) is implemented, we'll obtain the property
+    // here.
+    int bl=borderLeft(),bt=borderTop(),bb=borderBottom(),br=borderRight();
+    int clipx = tx+bl;
+    int clipy = ty+bt;
+    int clipw = m_width-bl-br;
+    int cliph = m_height-bt-bb;
+
+    return QRect(clipx,clipy,clipw,cliph);
+}
 
 QRect RenderBox::getClipRect(int tx, int ty)
 {

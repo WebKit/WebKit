@@ -1,3 +1,34 @@
+2002-12-14  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3016385, menus on webreference.com don't show up.
+	
+	Fixes to make webreference.com menus show up.  This involved
+	fixing layers to not clip positioned objects when overflow:hidden
+	is set, fixing the stupid clip/sync layout hack for livepage
+	so that it doesn't break webreference, and implementing 
+	navigator.productSub (right now the date is set to
+	Christmas 2002).
+	
+        Reviewed by gramps/maciej.
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (Navigator::getValueProperty):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_navigator.lut.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getOverflowClipRect):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):
+        (RenderLayer::nodeAtPoint):
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        * khtml/rendering/render_object.h:
+
 2002-12-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej
