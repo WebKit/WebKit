@@ -1,3 +1,17 @@
+2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
+
+        More work to fix this bug:
+
+        Radar 2883631 (need to implement support for META HTTP_EQUIV=REFRESH)
+
+        There was yet two more cases where the refresh timers were getting clobbered.
+        Fixed.
+
+	* khtml/ecma/kjs_window.cpp:
+	(WindowQObject::parentDestroyed)
+	* khtml/khtmlview.cpp:
+	(KHTMLView::clear)
+
 2002-05-23  Richard J. Williamson  <rjw@apple.com>
 
     Fixed crasher 2935757.  I still need to investigate the root cause

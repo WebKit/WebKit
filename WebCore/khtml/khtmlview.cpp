@@ -293,7 +293,14 @@ void KHTMLView::clear()
     setStaticBackground(true);
 
     d->reset();
+#ifdef APPLE_CHANGES
+        killTimer(d->timerId);
+        killTimer(d->repaintTimerId);
+        d->timerId = 0;
+        d->repaintTimerId = 0;
+#else
     killTimers();
+#endif
     emit cleared();
 
     QScrollView::setHScrollBarMode(d->hmode);
