@@ -1,3 +1,15 @@
+2004-03-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3570854.  Don't attempt to convert Null to strings.  We
+	were incorrectly converting to "Null".
+
+	Actually fixed by Scott Kovatch.
+
+        Reviewed by Richard.
+
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+
 === Safari-132 ===
 
 2004-03-11  Richard Williamson   <rjw@apple.com>
