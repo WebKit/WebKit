@@ -50,12 +50,14 @@ bool QObject::connect(const QObject *sender, const char *signal, const char *slo
 
 void QObject::emitAction(QObject::Actions action)
 {
-    target->performAction (action);
+    if (target != nil)
+        target->performAction (action);
 }
 
 
 void QObject::performAction(QObject::Actions action)
 {
+    KWQDEBUG1 ("action = %d\n", action);
 }
 
 

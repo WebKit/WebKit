@@ -71,9 +71,14 @@ class QVariant;
 
 class QObject : public Qt {
 public:
+
+#ifdef _KWQ_
     enum Actions {
-        ACTION_BUTTON_CLICKED = 1
+        ACTION_BUTTON_CLICKED = 1,
+        ACTION_TEXT_FIELD = 2,  // corresponds to [NSTextField action]
+        ACTION_TEXT_FIELD_END_EDITING = 3 // corresponds to NSTextField's delegate textDidEndEditing:
     };
+#endif
 
     // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------

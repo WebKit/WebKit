@@ -35,7 +35,23 @@
     formatter = [[KWQNSTextFieldFormatter alloc] init];
     [self setFormatter: formatter];
     widget = w;
+
+    [self setTarget: self];
+    [self setAction: @selector(action:)];
+
+    [self setDelegate: self];
+
     return self;
+}
+
+- (void)action: sender
+{
+    widget->emitAction(QObject::ACTION_TEXT_FIELD);
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+{
+    widget->emitAction(QObject::ACTION_TEXT_FIELD_END_EDITING);
 }
 
 - (void)dealloc
@@ -102,9 +118,14 @@
 
 - (void)setMaximumLength: (int)len
 {
-    [self setStringValue: @""];
-    if (secureField != nil)
-        [secureField setStringValue: @""];
+    NSString *oldValue, *truncatedValue;
+    
+    oldValue = [self stringValue];
+    if ((int)[oldValue length] > len){
+        truncatedValue = [oldValue substringToIndex: len];
+        [self setStringValue: truncatedValue];
+        [secureField setStringValue: truncatedValue];
+    }
     [formatter setMaximumLength: len];
 }
 
@@ -113,7 +134,6 @@
 {
     return [formatter maximumLength];
 }
-
 
 
 @end

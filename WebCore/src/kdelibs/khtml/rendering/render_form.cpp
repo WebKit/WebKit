@@ -260,7 +260,11 @@ bool RenderFormElement::eventFilter(QObject* /*o*/, QEvent* e)
 
 void RenderFormElement::performAction(QObject::Actions action)
 {
-    fprintf (stdout, "RenderFormElement::performAction():  %d\n", action);
+    //fprintf (stdout, "RenderFormElement::performAction():  %d\n", action);
+    
+    if (m_widget)
+        m_widget->endEditing();
+        
     if (action == QObject::ACTION_BUTTON_CLICKED)
         slotClicked();
 }
@@ -531,8 +535,11 @@ RenderLineEdit::RenderLineEdit(QScrollView *view, HTMLInputElementImpl *element)
 {
     LineEditWidget *edit = new LineEditWidget(view->viewport());
     edit->installEventFilter(this);
+
+#ifdef _KWQ_    
     connect(edit,"SIGNAL(returnPressed())", this, "SLOT(slotReturnPressed())");
     connect(edit,"SIGNAL(textChanged(const QString &))", this, "SLOT(slotTextChanged(const QString &))");
+#endif
 
     if(element->inputType() == HTMLInputElementImpl::PASSWORD)
         edit->setEchoMode( QLineEdit::Password );
@@ -546,8 +553,13 @@ RenderLineEdit::RenderLineEdit(QScrollView *view, HTMLInputElementImpl *element)
         }
     }
 
+#ifdef _KWQ_
     setQWidget(edit);
+
+    edit->setTarget (this);
+#endif
 }
+
 
 void RenderLineEdit::slotReturnPressed()
 {
@@ -617,6 +629,19 @@ void RenderLineEdit::layout()
 
     RenderFormElement::layout();
 }
+
+#ifdef _KWQ_
+void RenderLineEdit::performAction(QObject::Actions action)
+{
+    KLineEdit *edit = static_cast<KLineEdit*>(m_widget);
+
+    //fprintf (stdout, "RenderLineEdit::performAction():  %d text value = %s\n", action, edit->text().latin1());
+    if (action == QObject::ACTION_TEXT_FIELD_END_EDITING)
+        slotTextChanged(edit->text());
+    else if (action == QObject::ACTION_TEXT_FIELD)
+        slotReturnPressed();
+}
+#endif
 
 void RenderLineEdit::slotTextChanged(const QString &string)
 {

@@ -487,7 +487,6 @@ void QWidget::paint (void *)
     _logNotYetImplemented();
 }
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 NSView *QWidget::getView() const
 {
     return data->view;
@@ -502,21 +501,11 @@ void QWidget::setView(NSView *view)
         
     NSRect frame = [data->view frame];
 }
-#else
-void *QWidget::getView() const
-{
-    return data->view;
-}
 
-void QWidget::setView(void *view)
+void QWidget::endEditing()
 {
-    if (data->view)
-        [data->view release];
-    data->view = [view retain];
-        
-    NSRect frame = [data->view frame];
+    [[getView() window] endEditingFor: nil];
 }
-#endif
 
 #endif _KWQ_
 

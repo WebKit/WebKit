@@ -31,17 +31,17 @@ void KWQSetLogLevel(int mask) {
     KWQ_LOG_LEVEL = mask;    
 }
 
-bool checkedDefault = 0;
+bool kwq_checkedDefault = 0;
 
 unsigned int KWQGetLogLevel(){
-    if (!checkedDefault){
+    if (!kwq_checkedDefault){
         NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitLogLevel"];
         if (logLevelString != nil){
             if (![[NSScanner scannerWithString: logLevelString] scanHexInt: &KWQ_LOG_LEVEL]){
                 NSLog (@"Unable to scan hex value for WebKitLogLevel, default to value of %d", KWQ_LOG_LEVEL);
             }
         }
-        checkedDefault = 1; 
+        kwq_checkedDefault = 1; 
     }
     return KWQ_LOG_LEVEL;
 }

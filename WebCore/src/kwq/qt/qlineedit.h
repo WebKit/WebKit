@@ -58,6 +58,7 @@ public:
     virtual void setEchoMode(EchoMode);
     virtual void setCursorPosition(int);
     virtual void setText(const QString &);
+    virtual QString text();
     virtual void setMaxLength(int);
 
     bool isReadOnly() const;

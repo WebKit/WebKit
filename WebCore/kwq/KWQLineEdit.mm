@@ -68,6 +68,14 @@ void QLineEdit::setText(const QString &s)
 }
 
 
+QString QLineEdit::text()
+{
+    KWQNSTextField *textView = (KWQNSTextField *)getView();
+    
+    return NSSTRING_TO_QSTRING ([textView stringValue]);
+}
+
+
 void QLineEdit::setMaxLength(int len)
 {
     KWQNSTextField *field = (KWQNSTextField *)getView();

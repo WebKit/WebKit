@@ -79,7 +79,7 @@
 - (IFWebFrame *)frame;
 - (id <IFWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
-- (void)_startLoading: (BOOL)forceRefresh initiatedByMouseEvent: (BOOL)byMouseEvent;
+- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)byUserEvent;
 - frameNamed: (NSString *)f;
 - (void)_setParent: (IFWebDataSource *)p;
 - (IFWebDataSource *)parent;
@@ -1314,7 +1314,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         controller = [dataSource controller];
         
         if ([controller _changeLocationTo: url forFrame: frame parent: [[frame dataSource] parent]]){
-            [[frame dataSource] _startLoading: YES initiatedByMouseEvent: YES];
+            [[frame dataSource] _startLoading: YES initiatedByUserEvent: YES];
         }
 
 /*
@@ -1544,10 +1544,104 @@ void KHTMLPart::emitUnloadEvent()
 
 
 void KHTMLPart::submitForm( const char *action, const QString &url, const QByteArray &formData,
-                        const QString &target, const QString& contentType,
+                        const QString &_target, const QString& contentType,
                         const QString& boundary )
 {
-    _logNeverImplemented();
+  QString target = _target;
+  
+  //if ( target.isEmpty() )
+  //  target = d->m_baseTarget;
+
+  KURL u = completeURL( url, target );
+
+  if ( !u.isValid() )
+  {
+    // ### ERROR HANDLING!
+    return;
+  }
+
+  QString urlstring = u.url();
+
+  if ( urlstring.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
+      urlstring = KURL::decode_string(urlstring);
+      executeScript( urlstring.right( urlstring.length() - 11) );
+      return;
+  }
+
+#ifdef NEED_THIS
+  if (!checkLinkSecurity(u,
+			 i18n( "<qt>The form will be submitted to <BR><B>%1</B><BR>on your local filesystem.<BR>Do you want to submit the form?" ),
+			 i18n( "Submit" )))
+    return;
+#endif
+
+#ifdef NEED_THIS
+  KParts::URLArgs args;
+
+  if (!d->m_referrer.isEmpty())
+     args.metaData()["referrer"] = d->m_referrer;
+
+  args.metaData().insert("main_frame_request",
+                         parentPart() == 0 ? "TRUE":"FALSE");
+  args.metaData().insert("ssl_was_in_use", d->m_ssl_in_use ? "TRUE":"FALSE");
+  args.metaData().insert("ssl_activate_warnings", "TRUE");
+#endif
+
+  if ( strcmp( action, "get" ) == 0 )
+  {
+    u.setQuery( QString( formData.data(), formData.size() ) );
+
+#ifdef NEED_THIS
+    args.frameName = target;
+    args.setDoPost( false );
+#endif
+  }
+  else
+  {
+#ifdef NEED_THIS
+    args.postData = formData;
+    args.frameName = target;
+    args.setDoPost( true );
+
+    // construct some user headers if necessary
+    if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
+      args.setContentType( "Content-Type: application/x-www-form-urlencoded" );
+    else // contentType must be "multipart/form-data"
+      args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
+#endif
+  }
+
+#ifdef NEED_THIS
+  if ( d->m_bParsing || d->m_runningScripts > 0 ) {
+    if( d->m_submitForm ) {
+        return;
+    }
+    d->m_submitForm = new KHTMLPartPrivate::SubmitForm;
+    d->m_submitForm->submitAction = action;
+    d->m_submitForm->submitUrl = url;
+    d->m_submitForm->submitFormData = formData;
+    d->m_submitForm->target = _target;
+    d->m_submitForm->submitContentType = contentType;
+    d->m_submitForm->submitBoundary = boundary;
+    connect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
+  }
+  else
+    emit d->m_extension->openURLRequest( u, args );
+#endif
+
+    NSString *urlString = [NSString stringWithCString:u.url().latin1()];
+    NSURL *qurl = [NSURL URLWithString: urlString];
+    IFWebFrame *frame;
+    id <IFWebController>controller;
+    
+    dataSource = getDataSource();
+    frame = [dataSource frame];
+    controller = [dataSource controller];
+    
+    if ([controller _changeLocationTo: qurl forFrame: frame parent: [[frame dataSource] parent]]){
+        [[frame dataSource] _startLoading: YES initiatedByUserEvent: YES];
+    }
+
 }
 
 void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target )

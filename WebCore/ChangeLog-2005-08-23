@@ -1,3 +1,24 @@
+2002-02-12  Richard Williamson  <rjw@apple.com>
+
+    Made basic forms work.
+
+	* src/kdelibs/khtml/rendering/render_form.cpp:
+	(RenderFormElement::performAction), (RenderLineEdit::RenderLineEdit),
+	(RenderLineEdit::performAction):
+	* src/kdelibs/khtml/rendering/render_form.h:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent),
+	(KHTMLPart::submitForm):
+	* src/kwq/KWQLineEdit.mm: (QLineEdit::text):
+	* src/kwq/KWQNSTextField.mm: (-[KWQNSTextField initWithFrame:widget:]),
+	(-[KWQNSTextField action:]), (-[KWQNSTextField controlTextDidEndEditing:]),
+	(-[KWQNSTextField setMaximumLength:]), (-[KWQNSTextField maximumLength]):
+	* src/kwq/KWQObject.mm: (QObject::emitAction), (QObject::performAction):
+	* src/kwq/KWQWidget.mm: (QWidget::setView), (QWidget::endEditing):
+	* src/kwq/kwqdebug.mm: (KWQGetLogLevel):
+	* src/kwq/qt/qlineedit.h:
+	* src/kwq/qt/qobject.h:
+	* src/kwq/qt/qwidget.h:
+
 2002-02-12  Maciej Stachowiak  <mjs@apple.com>
 
 	Make some tweaks to glue together KDE's and CF's concepts of URLs

@@ -84,7 +84,9 @@ public:
 
     virtual bool eventFilter(QObject*, QEvent*);
 
+#ifdef _KWQ_
     void performAction(QObject::Actions action);
+#endif
 
 public slots:
     virtual void slotClicked();
@@ -219,6 +221,10 @@ public:
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
     void select();
+
+#ifdef _KWQ_
+    void performAction(QObject::Actions action);
+#endif
 
 public slots:
     void slotReturnPressed();
