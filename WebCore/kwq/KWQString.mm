@@ -46,10 +46,9 @@ QString QString::number(int n)
     return qs;
 }
 
-QString QString::fromLatin1(const char *, int)
+QString QString::fromLatin1(const char *chs)
 {
-    // FIXME: not yet implemented
-    return QString();
+    return QString(chs);
 }
 
 #ifdef USING_BORROWED_KURL
@@ -277,13 +276,38 @@ const char *QString::ascii() const
 
 QCString QString::utf8() const
 {
-    // FIXME: not yet implemented
+    uint len = length();
+    if (len) {
+        char *chs = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
+        if (chs) {
+            if (!CFStringGetCString(s, chs, len + 1, kCFStringEncodingUTF8)) {
+                *reinterpret_cast<char *>(chs) = '\0';
+            }
+            QCString qcs = QCString(chs);
+            CFAllocatorDeallocate(kCFAllocatorDefault, chs);
+            return qcs;
+        }
+    }
     return QCString();
 }
 
 QCString QString::local8Bit() const
 {
     // FIXME: not yet implemented
+    uint len = length();
+    if (len) {
+        char *chs = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
+        if (chs) {
+            // FIXME: is MacRoman the correct encoding?
+            if (!CFStringGetCString(s, chs, len + 1,
+                    kCFStringEncodingMacRoman)) {
+                *reinterpret_cast<char *>(chs) = '\0';
+            }
+            QCString qcs = QCString(chs);
+            CFAllocatorDeallocate(kCFAllocatorDefault, chs);
+            return qcs;
+        }
+    }
     return QCString();
 }
 
