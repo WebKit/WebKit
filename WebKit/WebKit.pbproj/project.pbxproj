@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 36;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -224,6 +224,7 @@
 				35F357800198AAB80ACA1520,
 				F515C2B90238249C01C1A525,
 				F5B67131023EDF8901C1A525,
+				25B2A7C5025D0A880ECA149E,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -283,6 +284,7 @@
 				089C1666FE841158C02AAC07,
 				35F3577401986B740ACA1520,
 				F5B67130023EDF8901C1A525,
+				25B2A7C4025D0A880ECA149E,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -455,6 +457,18 @@
 			name = History;
 			path = History.subproj;
 			refType = 4;
+		};
+		25B2A7C4025D0A880ECA149E = {
+			isa = PBXFileReference;
+			name = image_document_template.html;
+			path = Resources/image_document_template.html;
+			refType = 4;
+		};
+		25B2A7C5025D0A880ECA149E = {
+			fileRef = 25B2A7C4025D0A880ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		25C29825016E29620ECA149E = {
 			isa = PBXFileReference;

@@ -16,6 +16,7 @@
 {
     id dataSource;
     KHTMLPart *part;
+    BOOL sentFakeDocForNonHTMLContentType;
 }
 - initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;
 @end

@@ -1,3 +1,22 @@
+2002-04-04  Kenneth Kocienda  <kocienda@apple.com>
+
+        Hack to handle displaying image URLs. The trick is to sense when
+        the main URL is an image type and wrap the URL in a small generated
+        HTML document and hand that off to the engine to display.
+
+        Works like a charm! :)
+
+        There may be some longer-term issues, but for now, this lets us
+        do something we could not before. It also lets us handle some iframes
+        that contain only image URLs.
+
+	* Resources/image_document_template.html: Added.
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm: (loadImageDocumentTemplate),
+	(-[IFMainURLHandleClient initWithDataSource:part:]), (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-04-04  Chris Blumenberg  <cblu@apple.com>
 
 	* English.lproj/IFError.strings:
