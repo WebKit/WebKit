@@ -241,19 +241,21 @@ void RenderObject::setLayouted(bool b)
     else {
         RenderObject *o = m_parent;
         RenderObject *root = this;
-            
+        bool rootAlreadyNeedsLayout = false;
+        
         RenderObject* clippedObj = (style()->overflow() == OHIDDEN) ? this : 0;
         
         while( o ) {
+            root = o;
+            rootAlreadyNeedsLayout = !o->m_layouted;
             o->m_layouted = false;
             if (o->style()->overflow() == OHIDDEN && !clippedObj)
                 clippedObj = o;
-            root = o;
             o = o->m_parent;
         }
         
         if (!gClipObject) {
-            if (clippedObj) {
+            if (clippedObj && !rootAlreadyNeedsLayout) {
                 gClipObject = clippedObj;
                 root->layout();
                 clippedObj->repaint();
