@@ -1348,10 +1348,11 @@ void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         curr = blockStack;
     }
 
-    reopenResidualStyleTags(residualStyleStack);
+    reopenResidualStyleTags(residualStyleStack, false); // FIXME: Deal with stray table content some day
+                                                        // if it becomes necessary to do so.
 }
 
-void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem)
+void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, bool inMalformedTable)
 {
     // Nothing required.
     if (!elem)
@@ -1369,6 +1370,12 @@ void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem)
         // Now push a new stack element for this node we just created.
         pushBlock(elem->id, elem->level);
 
+        // Set our strayTableContent boolean if needed, so that the reopened tag also knows
+        // that it is inside a malformed table.
+        blockStack->strayTableContent = !inStrayTableContent && inMalformedTable;
+        if (blockStack->strayTableContent)
+            inStrayTableContent = true;
+        
         // Update |current| manually to point to the new node.
         current = newNode;
         
@@ -1424,14 +1431,25 @@ void KHTMLParser::popBlock( int _id )
 
     bool isAffectedByStyle = isAffectedByResidualStyle(Elem->id);
     HTMLStackElem* residualStyleStack = 0;
-    
+
+    bool residualStyleInMalformedTable = false;
     Elem = blockStack;
     while (Elem)
     {
         if (Elem->id == _id)
         {
+            bool strayTable = inStrayTableContent;
+            NodeImpl* shiftedContentParent = current ? current->parentNode() : 0;
             popOneBlock();
             Elem = 0;
+
+            // This element was the root of some malformed content just inside a <table>.  If
+            // we end up needing to reopen residual style tags, the root of the reopened chain
+            // must also know that it is the root of malformed content inside a <table>.
+            if (strayTable && !inStrayTableContent && residualStyleStack) {
+                residualStyleInMalformedTable = true;
+                current = shiftedContentParent;
+            }
         }
         else
         {
@@ -1467,7 +1485,7 @@ void KHTMLParser::popBlock( int _id )
         }
     }
 
-    reopenResidualStyleTags(residualStyleStack);
+    reopenResidualStyleTags(residualStyleStack, residualStyleInMalformedTable);
 }
 
 void KHTMLParser::popOneBlock(bool delBlock)

@@ -1,3 +1,19 @@
+2003-05-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3229799, images missing on geocities page.  Residual style
+	needs to understand when you reopen tags at a malformed table 
+	content boundary and make sure the newly-reopened tags also know
+	they are malformed table content so that they get cleaned up
+	properly.
+	
+        Reviewed by darin
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (KHTMLParser::reopenResidualStyleTags):
+        (KHTMLParser::popBlock):
+        * khtml/html/htmlparser.h:
+
 2003-05-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3248176, failed assertion on blizzard's world of warcraft
