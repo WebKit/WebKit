@@ -31,4 +31,9 @@ LDFLAGS = \
 
 libwebcore_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-all: install-am
+noinst_DATA = webcore-install-stamp
+
+webcore-install-stamp: libwebcore.dylib
+	$(MAKE) install-symrootsLIBRARIES
+	touch ./webcore-install-stamp
+

@@ -1,5 +1,16 @@
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix a couple of problems that kept `make -j3' from working from a
+	clean start (use stamp files to serialize build a bit more where
+	needed)
+
+	* src/Makefile.am:
+	* src/kdelibs/khtml/css/Makefile.am:
+	* src/kdelibs/khtml/misc/Makefile.am:
+	* src/kdelibs/kjs/Makefile.am:
+
+2002-01-17  Maciej Stachowiak  <mjs@apple.com>
+
 	* src/kwq/Makefile.am: Fix another bonehead mistake.
 
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>

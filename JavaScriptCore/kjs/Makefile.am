@@ -58,20 +58,24 @@ libkjs_o_SOURCES = \
 	ustring.h \
 	$(NULL)
 
-BUILT_SOURCES = grammar.cpp grammar.cpp.h grammar.h
-
 noinst_PROGRAMS = testkjs
 
 testkjs_SOURCES = testkjs.cpp
 
 testkjs_LDADD = $(srcdir)/libkjs.o
 
-CLEANFILES = $(BUILT_SOURCES) \
-	$(NULL)
-
 YACCFLAGS = -d --output-file=grammar.cpp --file-prefix=grammar --name-prefix=kjsyy
 
-grammar.h grammar.cpp.h grammar.cpp: grammar.y
+GRAMMAR_FILES = grammar.h grammar.cpp.h grammar.cpp
+
+$(GRAMMAR_FILES): grammar-stamp
+
+grammar-stamp: grammar.y
 	$(YACC) $(YACCFLAGS) $<
 	ln -sf grammar.cpp.h grammar.h
+	touch ./grammar-stamp
+
+BUILT_SOURCES = $(GRAMMAR_FILES) grammar-stamp
+
+CLEANFILES = $(BUILT_SOURCES)
 

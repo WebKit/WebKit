@@ -49,12 +49,18 @@ ATTRSFILES = \
 khtmldata.h:
 	touch $@
 
-$(TAGFILES):
+$(TAGFILES): tag-stamp
+
+tag-stamp: maketags
 	perl ./maketags
+	touch ./tag-stamp
 
-$(ATTRSFILES):
+$(ATTRSFILES): attr-stamp
+
+attr-stamp: makeattrs
 	perl ./makeattrs
+	touch ./attr-stamp
 
-BUILT_SOURCES = khtmldata.h $(TAGFILES) $(ATTRSFILES)
+BUILT_SOURCES = khtmldata.h $(TAGFILES) $(ATTRSFILES) tag-stamp attr-stamp
 
 CLEANFILES = $(BUILT_SOURCES)

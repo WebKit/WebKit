@@ -38,19 +38,23 @@ PROPFILES = \
 	cssproperties.gperf \
 	$(NULL)
 
-
-BUILT_SOURCES = $(VALUEFILES) $(PROPFILES)
-
-CLEANFILES = $(BUILT_SOURCES)
-
 INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(NULL)
 
-$(VALUEFILES):
+$(VALUEFILES): value-stamp
+
+value-stamp: makevalues
 	sh ./makevalues
+	touch ./value-stamp
 
-$(PROPFILES):
+$(PROPFILES): prop-stamp
+
+prop-stamp: makeprop
 	sh ./makeprop
+	touch ./prop-stamp
 
+BUILT_SOURCES = $(VALUEFILES) $(PROPFILES) value-stamp prop-stamp
+
+CLEANFILES = $(BUILT_SOURCES)
