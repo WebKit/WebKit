@@ -1500,7 +1500,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     if ( !buffer )
         return;
 
-    if ( ( m_executingScript && appendData ) || ( !m_executingScript && loadingExtScript ) ) {
+    if ( ( m_executingScript && appendData ) || !cachedScript.isEmpty() ) {
         // don't parse; we will do this later
 	if (currentPrependingSrc) {
 	    currentPrependingSrc->append(str);

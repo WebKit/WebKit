@@ -1,3 +1,21 @@
+ 2004-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - follow-on to my fix yesterday, which broke a layout test because I rolled out a fix that Maciej had done
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::write): Need to check the actual queue of external
+        scripts being loaded here. If the current code being run is the external script itself, then we don't want
+        to defer parsing. But loadingExtScript has to stay true until after the script runs. The old code would
+        assume that any time we're running a script there's no need to look at loadingExtScript, but that was also
+        wrong since there can be a script loading in that case too. Layout tests check for both problems.
+
+        * layout-tests/fast/tokenizer/external-script-document-write-expected.txt: Added.
+        * layout-tests/fast/tokenizer/external-script-document-write.html: Added.
+        * layout-tests/fast/tokenizer/resources/external-script-document-write.js: Added.
+
+        * layout-tests/fast/tokenizer/004.html: Fixed line endings (were CR, should be LF).
+
 2004-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.
