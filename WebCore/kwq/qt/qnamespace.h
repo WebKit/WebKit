@@ -30,6 +30,8 @@
 #include <config.h>
 #endif
 
+#include <KWQDef.h>
+
 class QColor;
 class QCursor;
 

@@ -12,7 +12,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../
+TOPSRCDIR = ../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -29,9 +29,9 @@ MMOBJECTS = \
 	KWQPainter.o \
 	KWQPen.o \
 	KWQPixmap.o \
-	KWQString.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
+# FIXME: add back in when this file builds ->  KWQString.o \
 	$(NULL)
 
 OBJECTS = $(MMOBJECTS) 
@@ -45,14 +45,19 @@ CLEAN_FILES = $(OBJECTS) \
 #----------------------------------------------------------------------
 # Set flags for this directory
 
-CMMFLAGS = $(BASECXXFLAGS) \
+CMMFLAGS = $(BASECMMFLAGS) \
+    -DQ_DELETING_VOID_UNDEFINED \
+    -DQT_NO_TEXTCODEC \
+    -DQT_NO_DATASTREAM \
+    -D_KWQ_COMPLETE_ \
+    -D_KWQ_IOSTREAM_ \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I. \
     $(NULL)
 
-DEPFLAGS = $(CXXFLAGS)
+DEPFLAGS = $(CMMFLAGS)
 
 #----------------------------------------------------------------------
 # Set targets for this directory

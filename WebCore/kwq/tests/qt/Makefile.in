@@ -54,7 +54,7 @@ all: $(OBJECTS) $(PROGRAM)
 $(PROGRAM): $(OBJECTS)
 	$(CXX) -o $@ $< $(LDFLAGS)
 
-depend:
+depend: 
 
 #----------------------------------------------------------------------
 # include make rules boilerplate
