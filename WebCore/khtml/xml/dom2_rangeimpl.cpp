@@ -30,6 +30,7 @@
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
 #include "misc/htmltags.h"
+#include "editing/visible_position.h"
 #include "editing/visible_text.h"
 #include "xml/dom_position.h"
 
@@ -826,7 +827,25 @@ DOMString RangeImpl::toString( int &exceptioncode ) const
     return text;
 }
 
-DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
+void RangeImpl::addCommentToHTMLMarkup(const DOMString &comment, QStringList &markups, EAddToMarkup appendOrPrepend) const
+ {
+    if (!m_ownerDocument)
+        return;
+        
+    CommentImpl *n = new CommentImpl(m_ownerDocument, comment);
+    n->ref();
+    switch (appendOrPrepend) {
+        case PrependToMarkup:
+            markups.prepend(n->startMarkup(this));
+            break;
+        case AppendToMarkup:
+            markups.append(n->startMarkup(this));
+            break;
+    }
+    n->deref();
+}
+
+DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes, EAnnotateForInterchange annotate) const
 {
     int exceptionCode;
     NodeImpl *commonAncestor = commonAncestorContainer(exceptionCode);
@@ -847,6 +866,13 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
     NodeImpl *next;
     for (NodeImpl *n = startNode(); n != pastEnd; n = next) {
         next = n->traverseNextNode();
+        if (!n->renderer())
+            continue;
+
+        if (n->isBlockFlow() && next == pastEnd) {
+            // Don't write out an empty block.
+            continue;
+        }
         
         // Add the node to the markup.
         markups.append(n->startMarkup(this));
@@ -860,7 +886,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
             lastClosed = n;
             
             // Check if the node is the last leaf of a tree.
-            if (n->nextSibling() == 0) {
+            if (n->nextSibling() == 0 || next == pastEnd) {
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
                     while (NodeImpl *ancestor = ancestorsToClose.last()) {
@@ -917,6 +943,15 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes) const
         }
     }
     
+    if (annotate) {
+        Position pos(m_endContainer, m_endOffset);
+        NodeImpl *block = pos.node()->enclosingBlockFlowElement();
+        NodeImpl *upstreamBlock = pos.upstream().node()->enclosingBlockFlowElement();
+        if (block != upstreamBlock) {
+            addCommentToHTMLMarkup(KHTMLInterchangeNewline, markups, AppendToMarkup);    
+        }
+    }
+        
     return markups.join("");
 }
 

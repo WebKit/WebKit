@@ -1,5 +1,86 @@
 2004-11-29  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+    
+        Rewrite of paste code (specifically the ReplaceSelectionCommand class). Many more cases
+        are handled correctly now, including selections that span multiple blocks, and cases
+        where content on the pasteboard ends in newlines (or what appear to be newlines to a
+        user, really block ends or BRs). I also made one small, but important change in the 
+        copy code to annotate the markup written to the pasteboard to support these selections 
+        ending in newlines.
+
+        New header that defines a couple of constants used in copying and pasting.
+
+        * ForwardingHeaders/editing/html_interchange.h: Added.
+        * khtml/editing/html_interchange.h: Added.
+        
+        Rewrite of the ReplaceSelectionCommand. There are several new helper functions, as well
+        as a new helper class, ReplacementFragment, which encapsulates information and functions
+        pertaining to a document fragment that is being inserted into a document.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment):
+        (khtml::ReplacementFragment::~ReplacementFragment):
+        (khtml::ReplacementFragment::firstChild): Simple accessor.
+        (khtml::ReplacementFragment::lastChild): Ditto.
+        (khtml::ReplacementFragment::mergeStartNode): Looks at the nodes in a fragment and determines
+        the starting node to use for merging into the block containing the start of the selection.
+        (khtml::ReplacementFragment::mergeEndNode): Same as above, but for the end of the selection.
+        (khtml::ReplacementFragment::pruneEmptyNodes): Simple helper.
+        (khtml::ReplacementFragment::isInterchangeNewlineComment): Determines if a node is the
+        special annotation comment added in by the copy code.
+        (khtml::ReplacementFragment::removeNode): Simple helper.
+        (khtml::isComment): Simple helper.
+        (khtml::isProbablyBlock): Determines if a node is of a type that is usually rendered as a block.
+        I would like to do better than this some day, but this check will hold us until I can do better.
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): Figures out the right ending selection.
+        * khtml/editing/htmlediting.h: Declarations for the new ReplacementFragment class.
+        (khtml::ReplacementFragment::root):
+        (khtml::ReplacementFragment::type):
+        (khtml::ReplacementFragment::isEmpty):
+        (khtml::ReplacementFragment::isSingleTextNode):
+        (khtml::ReplacementFragment::isTreeFragment):
+        (khtml::ReplacementFragment::hasMoreThanOneBlock):
+        (khtml::ReplacementFragment::hasLogicalNewlineAtEnd):
+        
+        This smaller set of changes markup generation to add the newline annotation described in the
+        comment at the start of this entry.
+        
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::addCommentToHTMLMarkup): Simple helper.
+        (DOM::RangeImpl::toHTML): Added new EAnnotateForInterchange default argument to control whether
+        comment annotations are added to the markup generated.
+        * khtml/xml/dom2_rangeimpl.h: Add some new declarations.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromRange:nodes:]): Request that markup resulting from call to 
+        DOM::RangeImpl::toHTML uses annotations when generating.
+        
+        New tests.        
+
+        * layout-tests/editing/pasteboard/paste-text-001-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-001.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-002-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-002.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-003-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-003.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-004-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-004.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-005-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-005.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-006-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-006.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-007-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-007.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-008-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-008.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-009-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-009.html: Added.
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Harrison
 
         Made two small changes that make it possible for comments to have DOM nodes made for them

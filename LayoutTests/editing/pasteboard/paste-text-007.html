@@ -1,0 +1,36 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 39; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    pasteCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+
+<div id="test" class="editing">There is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.<div class="editing">Omitted, all the voyage of their life,<div class="editing">Is bound in shallows and in miseries.</div></div></div></div>
+ 
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -481,6 +481,51 @@ private:
 //------------------------------------------------------------------------------------------
 // ReplaceSelectionCommand
 
+// --- ReplacementFragment helper class
+
+class ReplacementFragment
+{
+public:
+    ReplacementFragment(DOM::DocumentFragmentImpl *fragment);
+    ~ReplacementFragment();
+
+    enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
+
+    DOM::DocumentFragmentImpl *root() const { return m_fragment; }
+    DOM::NodeImpl *firstChild() const;
+    DOM::NodeImpl *lastChild() const;
+
+    DOM::NodeImpl *mergeStartNode() const;
+    DOM::NodeImpl *mergeEndNode() const;
+    
+    void pruneEmptyNodes();
+
+    EFragmentType type() const { return m_type; }
+    bool isEmpty() const { return m_type == EmptyFragment; }
+    bool isSingleTextNode() const { return m_type == SingleTextNodeFragment; }
+    bool isTreeFragment() const { return m_type == TreeFragment; }
+
+    bool hasMoreThanOneBlock() const { return m_hasMoreThanOneBlock; }
+    bool hasInterchangeNewlineComment() const { return m_hasInterchangeNewlineComment; }
+
+private:
+    // no copy construction or assignment
+    ReplacementFragment(const ReplacementFragment &);
+    ReplacementFragment &operator=(const ReplacementFragment &);
+
+    static bool isInterchangeNewlineComment(const DOM::NodeImpl *);
+    void removeNode(DOM::NodeImpl *);
+
+    EFragmentType m_type;
+    DOM::DocumentFragmentImpl *m_fragment;
+    bool m_hasInterchangeNewlineComment;
+    bool m_hasMoreThanOneBlock;
+};
+
+// free-floating helper functions
+bool isProbablyBlock(const DOM::NodeImpl *);
+bool isComment(const DOM::NodeImpl *);
+
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
@@ -490,7 +535,10 @@ public:
     virtual void doApply();
 
 private:
-    DOM::DocumentFragmentImpl *m_fragment;
+    void completeHTMLReplacement(const DOM::Position &, const DOM::Position &);
+    void completeHTMLReplacement(DOM::NodeImpl *, DOM::NodeImpl *);
+    
+    ReplacementFragment m_fragment;
     bool m_selectReplacement;
     bool m_smartReplace;
 };

@@ -41,6 +41,7 @@
 #include "dom2_rangeimpl.h"
 #include "html_elementimpl.h"
 #include "html_imageimpl.h"
+#include "html_interchange.h"
 #include "htmlattrs.h"
 #include "htmltags.h"
 #include "khtml_part.h"
@@ -65,9 +66,11 @@ using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
+using DOM::DoNotStayInBlock;
 using DOM::DoNotUpdateLayout;
 using DOM::EditingTextImpl;
 using DOM::ElementImpl;
+using DOM::EStayInBlock;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::NamedAttrMapImpl;
@@ -2670,139 +2673,419 @@ void JoinTextNodesCommand::doUnapply()
 //------------------------------------------------------------------------------------------
 // ReplaceSelectionCommand
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
-    : CompositeEditCommand(document), m_fragment(fragment), m_selectReplacement(selectReplacement), m_smartReplace(smartReplace)
+ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
+    : m_fragment(fragment), m_hasInterchangeNewlineComment(false), m_hasMoreThanOneBlock(false)
 {
-    ASSERT(m_fragment);
+    if (!m_fragment) {
+        m_type = EmptyFragment;
+        return;
+    }
+
     m_fragment->ref();
+
+    NodeImpl *firstChild = m_fragment->firstChild();
+    NodeImpl *lastChild = m_fragment->lastChild();
+
+    if (!firstChild) {
+        m_type = EmptyFragment;
+        return;
+    }
+
+    if (firstChild == lastChild && firstChild->isTextNode()) {
+        m_type = SingleTextNodeFragment;
+        return;
+    }
+    
+    m_type = TreeFragment;
+
+    NodeImpl *node = firstChild;
+    int blockCount = 0;
+    NodeImpl *commentToDelete = 0;
+    while (node) {
+        NodeImpl *next = node->traverseNextNode();
+        if (isInterchangeNewlineComment(node)) {
+            m_hasInterchangeNewlineComment = true;
+            commentToDelete = node;
+        }
+        else if (isProbablyBlock(node))
+            blockCount++;    
+        node = next;
+     }
+
+     if (commentToDelete)
+        removeNode(commentToDelete);
+
+    firstChild = m_fragment->firstChild();
+    lastChild = m_fragment->lastChild();
+    if (!isProbablyBlock(firstChild))
+        blockCount++;
+    if (!isProbablyBlock(lastChild) && firstChild != lastChild)
+        blockCount++;
+
+     if (blockCount > 1)
+        m_hasMoreThanOneBlock = true;
+}
+
+ReplacementFragment::~ReplacementFragment()
+{
+    if (m_fragment)
+        m_fragment->deref();
+}
+
+NodeImpl *ReplacementFragment::firstChild() const 
+{ 
+    return m_fragment->firstChild(); 
+}
+
+NodeImpl *ReplacementFragment::lastChild() const 
+{ 
+    return  m_fragment->lastChild(); 
+}
+
+NodeImpl *ReplacementFragment::mergeStartNode() const
+{
+    NodeImpl *node = m_fragment->firstChild();
+    while (node) {
+        NodeImpl *next = node->traverseNextNode();
+        if (!isProbablyBlock(node))
+            return node;
+        node = next;
+     }
+     return 0;
+}
+
+NodeImpl *ReplacementFragment::mergeEndNode() const
+{
+    NodeImpl *node = m_fragment->lastChild();
+    while (node && node->lastChild())
+        node = node->lastChild();
+    while (node) {
+        NodeImpl *prev = node->traversePreviousNode();
+        if (!isProbablyBlock(node)) {
+            NodeImpl *previousSibling = node->previousSibling();
+            while (1) {
+                if (!previousSibling || isProbablyBlock(previousSibling))
+                    return node;
+                node = previousSibling;
+            }
+        }
+        node = prev;
+    }
+    return 0;
+}
+
+void ReplacementFragment::pruneEmptyNodes()
+{
+    bool run = true;
+    while (run) {
+        run = false;
+        NodeImpl *node = m_fragment->firstChild();
+        while (node) {
+            if ((node->isTextNode() && static_cast<TextImpl *>(node)->length() == 0) ||
+                (isProbablyBlock(node) && node->childNodeCount() == 0)) {
+                NodeImpl *next = node->traverseNextSibling();
+                removeNode(node);
+                node = next;
+                run = true;
+            }
+            else {
+                node = node->traverseNextNode();
+            }
+         }
+    }
+}
+
+bool ReplacementFragment::isInterchangeNewlineComment(const NodeImpl *node)
+{
+    return isComment(node) && node->nodeValue() == KHTMLInterchangeNewline;
+}
+
+void ReplacementFragment::removeNode(NodeImpl *node)
+{
+    if (!node)
+        return;
+        
+    NodeImpl *parent = node->parentNode();
+    if (!parent)
+        return;
+        
+    int exceptionCode = 0;
+    parent->removeChild(node, exceptionCode);
+    ASSERT(exceptionCode == 0);
+ }
+
+bool isComment(const NodeImpl *node)
+{
+    return node && node->nodeType() == Node::COMMENT_NODE;
+}
+
+bool isProbablyBlock(const NodeImpl *node)
+{
+    if (!node)
+        return false;
+    
+    switch (node->id()) {
+        case ID_BLOCKQUOTE:
+        case ID_DD:
+        case ID_DIV:
+        case ID_DL:
+        case ID_DT:
+        case ID_H1:
+        case ID_H2:
+        case ID_H3:
+        case ID_H4:
+        case ID_H5:
+        case ID_H6:
+        case ID_HR:
+        case ID_LI:
+        case ID_OL:
+        case ID_P:
+        case ID_PRE:
+        case ID_TD:
+        case ID_TH:
+        case ID_TR:
+        case ID_UL:
+            return true;
+    }
+    
+    return false;
+}
+
+ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
+    : CompositeEditCommand(document), 
+      m_fragment(fragment),
+      m_selectReplacement(selectReplacement), 
+      m_smartReplace(smartReplace)
+{
 }
 
 ReplaceSelectionCommand::~ReplaceSelectionCommand()
 {
-    ASSERT(m_fragment);
-    m_fragment->deref();
 }
 
 void ReplaceSelectionCommand::doApply()
 {
-    NodeImpl *firstChild = m_fragment->firstChild();
-    NodeImpl *lastChild = m_fragment->lastChild();
-
     Selection selection = endingSelection();
+    VisiblePosition visibleStart(selection.start());
+    VisiblePosition visibleEnd(selection.end());
+    bool startAtStartOfLine = isFirstVisiblePositionOnLine(visibleStart);
+    bool startAtStartOfBlock = isFirstVisiblePositionInBlock(visibleStart);
+    bool startAtEndOfBlock = isLastVisiblePositionInBlock(visibleStart);
+    bool startAtBlockBoundary = startAtStartOfBlock || startAtEndOfBlock;
+    NodeImpl *startBlock = selection.start().node()->enclosingBlockFlowElement();
+    NodeImpl *endBlock = selection.end().node()->enclosingBlockFlowElement();
+
+    bool mergeStart = !(startAtStartOfLine && (m_fragment.hasInterchangeNewlineComment() || m_fragment.hasMoreThanOneBlock()));
+    bool mergeEnd = !m_fragment.hasInterchangeNewlineComment() && m_fragment.hasMoreThanOneBlock();
+    Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
+    Position endPos; 
+    EStayInBlock upstreamStayInBlock = StayInBlock;
 
     // Delete the current selection, or collapse whitespace, as needed
-    if (selection.isRange())
-        deleteSelection();
+    if (selection.isRange()) {
+        deleteSelection(false, !(m_fragment.hasInterchangeNewlineComment() || m_fragment.hasMoreThanOneBlock()));
+    }
+    else if (selection.isCaret() && mergeEnd && !startAtBlockBoundary) {
+        // The start and the end need to wind up in separate blocks.
+        // Insert a paragraph separator to make that happen.
+        insertParagraphSeparator();
+        upstreamStayInBlock = DoNotStayInBlock;
+    }
     
-    KHTMLPart *part = document()->part();
-    ASSERT(part);
+    selection = endingSelection();
+    if (!startAtBlockBoundary || !startPos.node()->inDocument())
+        startPos = selection.start().upstream(upstreamStayInBlock);
+    endPos = selection.end().downstream(); 
     
     // This command does not use any typing style that is set as a residual effect of
     // a delete.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    KHTMLPart *part = document()->part();
     part->clearTypingStyle();
     setTypingStyle(0);
-    
-    selection = endingSelection();
-    ASSERT(selection.isCaret());
 
+    if (!m_fragment.firstChild())
+        return;
+    
     // Now that we are about to add content, check to see if a placeholder element
     // can be removed.
-    Position pos = selection.start();
-    NodeImpl *block = pos.node()->enclosingBlockFlowElement();
+    NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
     if (removeBlockPlaceholderIfNeeded(block)) {
-        pos = Position(block, 0);
+        startPos = Position(block, 0);
     }
     
     bool addLeadingSpace = false;
     bool addTrailingSpace = false;
     if (m_smartReplace) {
-        addLeadingSpace = pos.leadingWhitespacePosition().isNull();
-        addTrailingSpace = pos.trailingWhitespacePosition().isNull();
+        addLeadingSpace = startPos.leadingWhitespacePosition().isNull();
+        addTrailingSpace = endPos.trailingWhitespacePosition().isNull();
     }
 
 #if APPLE_CHANGES
     if (addLeadingSpace) {
-        QChar previousChar = VisiblePosition(pos).previous().character();
+        QChar previousChar = VisiblePosition(startPos).previous().character();
         if (!previousChar.isNull()) {
             addLeadingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(previousChar, true);
         }
     }
     if (addTrailingSpace) {
-        QChar thisChar = VisiblePosition(pos).character();
+        QChar thisChar = VisiblePosition(endPos).character();
         if (!thisChar.isNull()) {
             addTrailingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(thisChar, false);
         }
     }
 #endif
+
+    document()->updateLayout();
+
+    NodeImpl *refBlock = startPos.node()->enclosingBlockFlowElement();
+    Position insertionPos = startPos;
+    bool insertBlocksBefore = true;
+
+    NodeImpl *firstNodeInserted = 0;
+    NodeImpl *lastNodeInserted = 0;
+    bool lastNodeInsertedInMergeEnd = false;
+
+    // prune empty nodes from fragment
+    m_fragment.pruneEmptyNodes();
+
+    // Merge content into the end block, if necessary.
+    if (mergeEnd) {
+        NodeImpl *node = m_fragment.mergeEndNode();
+        if (node) {
+            NodeImpl *refNode = node;
+            NodeImpl *node = refNode ? refNode->nextSibling() : 0;
+            insertNodeAt(refNode, endPos.node(), endPos.offset());
+            firstNodeInserted = refNode;
+            lastNodeInserted = refNode;
+            while (node && !isProbablyBlock(node)) {
+                NodeImpl *next = node->nextSibling();
+                insertNodeAfter(node, refNode);
+                lastNodeInserted = node;
+                refNode = node;
+                node = next;
+            }
+            lastNodeInsertedInMergeEnd = true;
+        }
+    }
     
-    if (!firstChild) {
-        // Pasting something that didn't parse or was empty.
-        ASSERT(!lastChild);
-    } else if (firstChild == lastChild && firstChild->isTextNode()) {
-        // FIXME: HTML fragment case needs to be improved to the point
-        // where we can remove this separate case.
-        
-        // Simple text paste. Treat as if the text were typed.
-        Position upstreamStart(pos.upstream(StayInBlock));
-        DOMString text = static_cast<TextImpl *>(firstChild)->data();
-        if (addLeadingSpace) {
-            text = " " + text;
+    // prune empty nodes from fragment
+    m_fragment.pruneEmptyNodes();
+
+    // Merge content into the start block, if necessary.
+    if (mergeStart) {
+        NodeImpl *node = m_fragment.mergeStartNode();
+        NodeImpl *insertionNode = 0;
+        if (node) {
+            NodeImpl *refNode = node;
+            NodeImpl *node = refNode ? refNode->nextSibling() : 0;
+            insertNodeAt(refNode, startPos.node(), startPos.offset());
+            firstNodeInserted = refNode;
+            if (!lastNodeInsertedInMergeEnd)
+                lastNodeInserted = refNode;
+            insertionNode = refNode;
+            while (node && !isProbablyBlock(node)) {
+                NodeImpl *next = node->nextSibling();
+                insertNodeAfter(node, refNode);
+                if (!lastNodeInsertedInMergeEnd)
+                    lastNodeInserted = node;
+                insertionNode = node;
+                refNode = node;
+                node = next;
+            }
         }
-        if (addTrailingSpace) {
-            text += " ";
+        if (insertionNode)
+            insertionPos = Position(insertionNode, insertionNode->caretMaxOffset());
+        insertBlocksBefore = false;
+    }
+
+    // prune empty nodes from fragment
+    m_fragment.pruneEmptyNodes();
+    
+    // Merge everything remaining.
+    NodeImpl *node = m_fragment.firstChild();
+    if (node) {
+        NodeImpl *refNode = node;
+        NodeImpl *node = refNode ? refNode->nextSibling() : 0;
+        if (isProbablyBlock(refNode) && (insertBlocksBefore || startAtStartOfBlock)) {
+            insertNodeBefore(refNode, refBlock);
         }
-        inputText(text, m_selectReplacement);
-    } 
-    else {
-        // HTML fragment paste.
-        
-        // FIXME: Add leading and trailing spaces to the fragment?
-        // Or just insert them as we insert it?
-        
-        NodeImpl *beforeNode = firstChild;
-        NodeImpl *node = firstChild->nextSibling();
-        
-        insertNodeAt(firstChild, pos.node(), pos.offset());
-        
-        // Insert the nodes from the fragment
+        else if (isProbablyBlock(refNode) && startAtEndOfBlock) {
+            insertNodeAfter(refNode, refBlock);
+        }
+        else {
+            insertNodeAt(refNode, insertionPos.node(), insertionPos.offset());
+        }
+        if (!firstNodeInserted)
+            firstNodeInserted = refNode;
+        if (!lastNodeInsertedInMergeEnd)
+            lastNodeInserted = refNode;
         while (node) {
             NodeImpl *next = node->nextSibling();
-            insertNodeAfter(node, beforeNode);
-            beforeNode = node;
+            insertNodeAfter(node, refNode);
+            if (!lastNodeInsertedInMergeEnd)
+                lastNodeInserted = node;
+            refNode = node;
             node = next;
         }
-        ASSERT(beforeNode);
-	
-        // Find the last leaf.
-        NodeImpl *lastLeaf = lastChild;
-        while (1) {
-            NodeImpl *nextChild = lastLeaf->lastChild();
-            if (!nextChild)
-                break;
-            lastLeaf = nextChild;
-        }
+        insertionPos = Position(lastNodeInserted, lastNodeInserted->caretMaxOffset());
+    }
 
-        // Find the first leaf.
-        NodeImpl *firstLeaf = firstChild;
-        while (1) {
-            NodeImpl *nextChild = firstLeaf->firstChild();
-            if (!nextChild)
-                break;
-            firstLeaf = nextChild;
+    if (m_fragment.hasInterchangeNewlineComment()) {
+        if (startBlock == endBlock && !isProbablyBlock(lastNodeInserted)) {
+            setEndingSelection(insertionPos);
+            insertParagraphSeparator();
+            endPos = endingSelection().end().downstream();
         }
-        
-        Selection replacementSelection(Position(firstLeaf, firstLeaf->caretMinOffset()), Position(lastLeaf, lastLeaf->caretMaxOffset()));
-	if (m_selectReplacement) {
-            // Select what was inserted.
-            setEndingSelection(replacementSelection);
-        } 
-        else {
-            // Place the cursor after what was inserted, and mark misspellings in the inserted content.
-            selection = Selection(Position(lastLeaf, lastLeaf->caretMaxOffset()));
-            setEndingSelection(selection);
-        }
+        completeHTMLReplacement(startPos, endPos);
+    }
+    else {
+        completeHTMLReplacement(firstNodeInserted, lastNodeInserted);
+    }
+}
+
+void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, const Position &end)
+ {
+    if (start.isNull() || !start.node()->inDocument() || end.isNull() || !end.node()->inDocument())
+        return;
+    m_selectReplacement ? setEndingSelection(Selection(start, end)) : setEndingSelection(end);
+}
+
+void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserted, NodeImpl *lastNodeInserted)
+{
+    if (!firstNodeInserted || !firstNodeInserted->inDocument() ||
+        !lastNodeInserted || !lastNodeInserted->inDocument())
+        return;
+
+    // Find the last leaf.
+    NodeImpl *lastLeaf = lastNodeInserted;
+    while (1) {
+        NodeImpl *nextChild = lastLeaf->lastChild();
+        if (!nextChild)
+            break;
+        lastLeaf = nextChild;
+    }
+
+    // Find the first leaf.
+    NodeImpl *firstLeaf = firstNodeInserted;
+    while (1) {
+        NodeImpl *nextChild = firstLeaf->firstChild();
+        if (!nextChild)
+            break;
+        firstLeaf = nextChild;
+    }
+    
+    Position start(firstLeaf, firstLeaf->caretMinOffset());
+    Position end(lastLeaf, lastLeaf->caretMaxOffset());
+    Selection replacementSelection(start, end);
+    if (m_selectReplacement) {
+        // Select what was inserted.
+        setEndingSelection(replacementSelection);
+    } 
+    else {
+        // Place the cursor after what was inserted, and mark misspellings in the inserted content.
+        setEndingSelection(end);
     }
 }
 

@@ -551,7 +551,7 @@ static bool initializedKJS = FALSE;
     if (nodes) {
         nodeList = new QPtrList<NodeImpl>;
     }
-    NSString *markupString = [range _rangeImpl]->toHTML(nodeList).string().getNSString();
+    NSString *markupString = [range _rangeImpl]->toHTML(nodeList, AnnotateForInterchange).string().getNSString();
     if (nodes) {
         *nodes = [self nodesFromList:nodeList];
         delete nodeList;
