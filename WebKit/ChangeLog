@@ -1,5 +1,11 @@
 2003-04-17  Richard Williamson   <rjw@apple.com>
 
+        Fixed typos in headerdoc comments.
+
+        * WebView.subproj/WebFrame.h:
+
+2003-04-17  Richard Williamson   <rjw@apple.com>
+
         Drop down yet one more level to avoid intialization horkage.
         Call objc_getClass() instead of NSClassFromString().
         

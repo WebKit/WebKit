@@ -27,11 +27,13 @@
 }
 
 /*!
-    @method initWithName:webFrameView:controller:
+    @method initWithName:webFrameView:webView:
     @abstract The designated initializer of WebFrame.
+    @discussion WebFrames are normally created for you by the WebView.  You should 
+    not need to invoke this method directly.
     @param name The name of the frame.
-    @param view The view for the frame.
-    @param controller The controller that manages the frame.
+    @param view The WebFrameView for the frame.
+    @param webView The WebView that manages the frame.
     @result Returns an initialized WebFrame.
 */
 - (id)initWithName: (NSString *)name webFrameView: (WebFrameView *)view webView: (WebView *)webView;
