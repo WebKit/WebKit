@@ -211,6 +211,7 @@ public:
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
+    bool allAscii() const;
 #endif
 
 protected:
@@ -239,6 +240,8 @@ protected: // members
     
     // 19 bits left
 #if APPLE_CHANGES
+    mutable bool m_allAsciiChecked:1;
+    mutable bool m_allAscii:1;
     int m_monospaceCharacterWidth;
 #endif
 };

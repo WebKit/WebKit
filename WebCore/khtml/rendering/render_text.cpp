@@ -327,6 +327,8 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 
 #ifdef APPLE_CHANGES
     m_monospaceCharacterWidth = 0;
+    m_allAsciiChecked = false;
+    m_allAscii = false;
 #endif
 
     str = _str;
@@ -824,9 +826,28 @@ void RenderText::paint(QPainter *p, int x, int y, int w, int h,
 
 #ifdef APPLE_CHANGES
 
+bool RenderText::allAscii() const
+{
+    if (m_allAsciiChecked)
+        return m_allAscii;
+    m_allAsciiChecked = true;
+    
+    unsigned int i;
+    for (i = 0; i < str->l; i++){
+        if (str->s[i].unicode() >= 0x7f){
+            m_allAscii = false;
+            return m_allAscii;
+        }
+    }
+    
+    m_allAscii = true;
+    
+    return m_allAscii;
+}
+
 bool RenderText::shouldUseMonospaceCache(const Font *f) const
 {
-    return (f && f->isFixedPitch());
+    return (f && f->isFixedPitch() && allAscii());
 }
 
 // We cache the width of the ' ' character for <pre> text.  We could go futher

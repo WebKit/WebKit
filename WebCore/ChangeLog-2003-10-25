@@ -1,5 +1,19 @@
 2003-06-13  Richard Williamson  <rjw@apple.com>
 
+	Fixed 3282087.  Don't use our <pre> optimizations
+	if text contains non-ascii, and consequently may
+	result in font substitution.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::RenderText):
+        (RenderText::allAscii):
+        (RenderText::shouldUseMonospaceCache):
+        * khtml/rendering/render_text.h:
+
+2003-06-13  Richard Williamson  <rjw@apple.com>
+
         Reviewed by NOBODY (OOPS!).
 
         * kwq/KWQObject.mm:
