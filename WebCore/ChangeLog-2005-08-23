@@ -1,3 +1,12 @@
+2002-11-15  David Hyatt  <hyatt@apple.com>
+
+	Fix Hixie's blog.  Background images can be transparent, so
+	if the root's color isn't valid always do a fixup even if you
+	have a valid background image.
+	
+        * khtml/rendering/render_html.cpp:
+        (RenderHtml::printBoxDecorations):
+
 2002-11-15  Darin Adler  <darin@apple.com>
 
         * kwq/KWQWindowWidget.mm: (KWQWindowWidget::setFrameGeometry):
