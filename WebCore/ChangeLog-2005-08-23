@@ -1,5 +1,14 @@
 2004-08-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Missed adding this file before.
+
+        * kwq/KWQTextUtilities.mm: Added.
+        (KWQFindNextWordFromIndex):
+
+2004-08-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Trey
 
         Efficiency improvements on string manipulations in these two new function
