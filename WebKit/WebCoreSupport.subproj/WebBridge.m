@@ -481,7 +481,7 @@
                                        baseURL:baseURL];
         }
         else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
-            return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0,0,0,0)
+            return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:URL
                                                                  baseURL:baseURL
@@ -493,9 +493,7 @@
             return nil;
         }
     }else{
-        return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0)
-                                                MIMEType:MIMEType
-                                              attributes:attributes] autorelease];
+        return [[[WebNullPluginView alloc] initWithFrame:NSZeroRect MIMEType:MIMEType attributes:attributes] autorelease];
     }
 }
 

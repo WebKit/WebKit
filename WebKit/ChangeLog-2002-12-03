@@ -1,5 +1,12 @@
 2002-10-25  Chris Blumenberg  <cblu@apple.com>
 
+	Minor non-mentionable clean-up.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
 	Cleaned up the plug-in API headers so they can be sent to other groups.
 
         * Plugins.subproj/WebPlugin.h:
