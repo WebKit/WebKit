@@ -1,5 +1,16 @@
 2003-02-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - Made it possible to run the layout tests in a Deployment version
+
+        * kwq/KWQRenderTreeDebug.cpp: (externalRepresentation): Remove #ifndef NDEBUG.
+        * kwq/KWQRenderTreeDebug.h: Remove #ifndef NDEBUG.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge renderTreeAsExternalRepresentation]):
+        Remove #ifndef NDEBUG.
+
+2003-02-21  Darin Adler  <darin@apple.com>
+
         * kwq/KWQRenderTreeDebug.cpp: (write): Add missing spaces in render
         tree dump format.
 

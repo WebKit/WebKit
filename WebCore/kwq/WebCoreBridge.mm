@@ -764,11 +764,7 @@ static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>elemen
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-#ifdef NDEBUG
-    return nil;
-#else
     return externalRepresentation(_part->renderer()).getNSString();
-#endif
 }
 
 @end

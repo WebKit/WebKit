@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef NDEBUG
-
 #include "KWQString.h"
 
 namespace khtml {
@@ -32,5 +30,3 @@ namespace khtml {
 }
 
 QString externalRepresentation(const khtml::RenderObject *);
-
-#endif

@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef NDEBUG
-
 #include "KWQRenderTreeDebug.h"
 
 #include "htmltags.h"
@@ -199,5 +197,3 @@ QString externalRepresentation(const RenderObject *o)
     }
     return s;
 }
-
-#endif // NDEBUG
