@@ -221,6 +221,14 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
 #else
 
+static inline CGFontRenderingMode _AppkitGetCGRenderingMode(NSFont *font) {
+    switch ([font renderingMode]) {
+        case NSFontIntegerAdvancementsRenderingMode: return kCGFontRenderingMode1BitPixelAligned;
+        case NSFontAntialiasedIntegerAdvancementsRenderingMode: return kCGFontRenderingModeAntialiasedPixelAligned;
+        default: return kCGFontRenderingModeAntialiased;
+    }
+}
+
 static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
     float pointSize;
@@ -232,7 +240,7 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
     pointSize = [font pointSize];
     m = CGAffineTransformMakeScale(pointSize, pointSize);
-    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, kCGFontRenderingModeAntialiased, &glyph, 1, &advance))
+    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, _AppkitGetCGRenderingMode(font), &glyph, 1, &advance))
         FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
 
     return advance.width;
@@ -913,7 +921,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         const float *matrix = [drawFont matrix];
         float flip = [[NSView focusView] isFlipped] ? -1 : 1;
         CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
-        CGContextSetFontRenderingMode (cgContext, kCGFontRenderingModeAntialiased);
+        CGContextSetFontRenderingMode (cgContext, _AppkitGetCGRenderingMode(drawFont));
         CGContextSetFontSize(cgContext, 1.0);
 #endif
 
