@@ -1,3 +1,19 @@
+2003-04-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris, Trey, Darin and Don.
+
+	- fixed 3223568 - site icons lost when moving from older Safari to 71
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]): Rename old database containing directory to
+	new, so we carry over old databases. The format is forward but not backward compatible.
+        (-[WebIconDatabase _loadIconDictionaries]): Treat no version at all as version 1, so we
+	can load old-style databases.
+
+	Reviewed by Trey.
+
+	* English.lproj/StringsNotToBeLocalized.txt: Updated.
+	
 2003-04-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3223022 - Plug-in content bleeds onto frontmost tab

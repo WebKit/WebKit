@@ -15,6 +15,9 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
+#define WebIconDatabaseOldContainingDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/com.apple.WebKit"])
+#define WebIconDatabaseNewContainingDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/WebKit"])
+
 #define WebIconDatabaseDefaultDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/WebKit/Icons"])
 
 NSString * const WebIconDatabaseVersionKey = @"WebIconDatabaseVersion";
@@ -217,6 +220,11 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_createFileDatabase
 {
+    // Move over the old database, if we have one. If the new database
+    // already exists, this call will fail with ENOTEMPTY, so we don't
+    // need to worry about overwriting it.
+    rename([WebIconDatabaseOldContainingDirectory fileSystemRepresentation], [WebIconDatabaseNewContainingDirectory fileSystemRepresentation]);
+
     // FIXME: Make defaults key public somehow
     NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebIconDatabaseDirectory"];
 
@@ -275,7 +283,15 @@ NSSize WebIconLargeSize = {128, 128};
     WebFileDatabase *fileDB = _private->fileDatabase;
 
     NSNumber *version = [fileDB objectForKey:WebIconDatabaseVersionKey];
-    if (version != nil && [version isKindOfClass:[NSNumber class]] && [version intValue] == WebIconDatabaseCurrentVersion) {
+    int v = 0;
+    // no version means first version
+    if (version == nil) {
+	v = 1;
+    } else if ([version isKindOfClass:[NSNumber class]]) {
+	v = [version intValue];
+    }
+
+    if (v == WebIconDatabaseCurrentVersion) {
 	_private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
 	_private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
 	_private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
