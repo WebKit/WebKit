@@ -1,5 +1,12 @@
 2002-09-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Fix another instance of the same problem:
+
+	* kwq/KWQString.mm:
+        (QString::detach):
+
+2002-09-06  Maciej Stachowiak  <mjs@apple.com>
+
 	Fix optimized build:
 	
         * kwq/KWQString.mm:

@@ -2229,7 +2229,7 @@ void QString::detach()
     
     // Copy data for this string so we can safely mutate it,
     // and put it in a new handle.
-    QStringData *newData;
+    QStringData *newData = NULL;
     if (oldData->_isAsciiValid)
         newData = new QStringData (oldData->ascii(), oldData->_length);
     else if (oldData->_isUnicodeValid)
