@@ -251,7 +251,7 @@ QString KWQTextDecoder::convertLatin1(const unsigned char *s, int length)
         return QString(reinterpret_cast<const char *>(s), length);
     }
 
-    QString result;
+    QString result("");
     
     result.reserve(length);
     
@@ -279,7 +279,7 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
     const unsigned char *p = s;
     unsigned len = length;
     
-    QString result;
+    QString result("");
     
     result.reserve(length / 2);
 
@@ -449,7 +449,7 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
         return QString();
     }
     
-    QString result;
+    QString result("");
 
     result.reserve(len);
 
@@ -554,8 +554,11 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
-    if (_error || !chs || (len <= 0 && !flush)) {
+    if (_error || !chs) {
         return QString();
+    }
+    if (len <= 0 && !flush) {
+        return "";
     }
 
     // Handle normal case.
@@ -592,7 +595,7 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
         int skip = BOMLength - numBufferedBytes;
         _numBufferedBytes = 0;
         _atStart = false;
-        return len == skip ? QString() : convert(chs + skip, len - skip, flush);
+        return len == skip ? QString("") : convert(chs + skip, len - skip, flush);
     }
 
     // Handle case where we know there is no BOM coming.
@@ -611,5 +614,5 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
     // Continue to look for the BOM.
     memcpy(&_bufferedBytes[numBufferedBytes], chs, len);
     _numBufferedBytes += len;
-    return QString();
+    return "";
 }

@@ -1,5 +1,18 @@
 2004-11-04  David Hyatt  <hyatt@apple.com>
 
+	Make sure the text decoder returns empty strings rather than null strings when the utf8 char ptr is non-null.
+	Ensures that <a href=""> works with libxml (which returns data in utf-8 buffers).
+
+        Reviewed by darin
+
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::convertLatin1):
+        (KWQTextDecoder::convertUTF16):
+        (KWQTextDecoder::convertUsingTEC):
+        (KWQTextDecoder::toUnicode):
+
+2004-11-04  David Hyatt  <hyatt@apple.com>
+
 	Make sure line-height returns the correct value for normal.
 	
         Reviewed by darin
