@@ -142,7 +142,11 @@ enum {
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    return [self _web_dragOperationForDraggingInfo:sender];
+    if([sender draggingSource] != [self documentView] && [self _web_bestURLForDraggingInfo:sender]) {
+        return NSDragOperationCopy;
+    } else {
+        return NSDragOperationNone;
+    }
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender

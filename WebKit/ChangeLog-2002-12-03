@@ -1,3 +1,10 @@
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+
+        Fixed 3043505.  Disallows drag drops on originating view.
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView draggingEntered:]):
+
 2002-09-05  Darin Adler  <darin@apple.com>
 
 	Update to use the new style of assertions.
