@@ -109,6 +109,7 @@ using khtml::ChildrenOnly;
 using khtml::createMarkup;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
+using khtml::DOWNSTREAM;
 using khtml::EAffinity;
 using khtml::EditAction;
 using khtml::EditCommandPtr;
@@ -124,6 +125,7 @@ using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::Selection;
+using khtml::setAffinityUsingLinePosition;
 using khtml::Tokenizer;
 using khtml::TypingCommand;
 using khtml::UPSTREAM;
@@ -1570,11 +1572,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     EAffinity affinity = static_cast<EAffinity>(selectionAffinity);
 
+    bool rangeCollapsed = [range collapsed];
+    if (!rangeCollapsed)
+        affinity = DOWNSTREAM;
+    
     // Work around bug where isRenderedContent returns false for <br> elements at the ends of lines.
     // If that bug wasn't an issue, we could just make the position from the range directly.
     Position start(startContainer, [range startOffset]);
     Position end(endContainer, [range endOffset]);
-    start = VisiblePosition(start, affinity, khtml::VisiblePosition::INIT_UP).deepEquivalent();
+    VisiblePosition visibleStart(start, affinity, khtml::VisiblePosition::INIT_UP);
+    start = visibleStart.deepEquivalent();
+
+    if (rangeCollapsed) {
+        setAffinityUsingLinePosition(visibleStart);
+        affinity = visibleStart.affinity();
+    }
 
     // FIXME: Can we provide extentAffinity?
     Selection selection(start, affinity, end, khtml::SEL_DEFAULT_AFFINITY);

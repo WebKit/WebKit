@@ -54,7 +54,8 @@ public:
 
     VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
     VisiblePosition(NodeImpl *, long offset, EAffinity, EInitHint initHint=INIT_DOWN);
-    explicit VisiblePosition(const Position &, EAffinity, EInitHint initHint=INIT_DOWN);
+    VisiblePosition(const Position &, EAffinity, EInitHint initHint=INIT_DOWN);
+    VisiblePosition(const VisiblePosition &);
 
     void clear() { m_deepPosition.clear(); }
 
@@ -69,6 +70,10 @@ public:
     Position downstreamDeepEquivalent() const;
 
     friend bool operator==(const VisiblePosition &a, const VisiblePosition &b);
+    friend bool operator!=(const VisiblePosition &a, const VisiblePosition &b);
+
+    friend bool isEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b);
+    friend bool isNotEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b);
 
     // next() and previous() will increment/decrement by a character cluster.
     VisiblePosition next() const;
@@ -105,7 +110,7 @@ private:
     static bool atEnd(const Position &);
 
     static bool isCandidate(const Position &);
-    
+        
     Position m_deepPosition;
     EAffinity m_affinity;
 };
@@ -114,7 +119,7 @@ inline bool operator==(const VisiblePosition &a, const VisiblePosition &b)
 {
     return a.m_deepPosition == b.m_deepPosition && a.m_affinity == b.m_affinity;
 }
-
+ 
 inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
 {
     return !(a == b);
@@ -129,6 +134,8 @@ VisiblePosition startVisiblePosition(const DOM::Range &, EAffinity);
 VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);
 VisiblePosition endVisiblePosition(const DOM::Range &, EAffinity);
 VisiblePosition endVisiblePosition(const DOM::RangeImpl *, EAffinity);
+
+void setAffinityUsingLinePosition(VisiblePosition &);
 
 bool visiblePositionsOnDifferentLines(const VisiblePosition &, const VisiblePosition &);
 bool visiblePositionsInDifferentBlocks(const VisiblePosition &, const VisiblePosition &);

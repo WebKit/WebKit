@@ -1,3 +1,37 @@
+2005-03-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+        
+        <rdar://problem/4032543> REGRESSION (Mail): Mail hangs when quoted text is pasted twice
+        
+        This code change fixes the bug in a non-obvious way. The root cause of the problem was
+        that a VisiblePosition created using an affinity originating in Mail code caused 
+        two VisiblePosition objects that should have been equal to differ only in their 
+        affinities, which in turn caused us to run a code path that should not have run.
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::VisiblePosition): Added copy constructor.
+        (khtml::VisiblePosition::next): Factored out inline code that used to be here into new
+        setAffinityUsingLinePosition() function.
+        (khtml::isEqualIgnoringAffinity): New helper to handle cases when affinity in equality check does
+        not matter. However, we want to know about such cases where a VisiblePosition differs only by affinity, 
+        and the code will assert in development when this happens.
+        (khtml::isNotEqualIgnoringAffinity): Ditto, but not. :)
+        (khtml::setAffinityUsingLinePosition): New helper function mentioned above. This will "correct"
+        upstream affinity to downstream if the affinity does not make a difference for the position.
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_range.h: Wacky bug. The operator== for this class took VisiblePosition classes!
+        * khtml/editing/visible_units.cpp:
+        (khtml::isStartOfParagraph): Now performs equality check without regard to affinity.
+        (khtml::isEndOfParagraph): Ditto.
+        (khtml::isStartOfBlock): Ditto.
+        (khtml::isEndOfBlock): Ditto.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): Adjusts the affinity using setAffinityUsingLinePosition()
+        if necessary.
+
 2005-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

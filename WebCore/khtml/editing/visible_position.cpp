@@ -62,6 +62,12 @@ VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity
     init(Position(node, offset), initHint, affinity);
 }
 
+VisiblePosition::VisiblePosition(const VisiblePosition &other)
+{
+    m_deepPosition = other.m_deepPosition;
+    m_affinity = other.m_affinity;
+}
+
 void VisiblePosition::init(const Position &pos, EInitHint initHint, EAffinity affinity)
 {
     m_affinity = affinity;
@@ -137,17 +143,7 @@ void VisiblePosition::initDownstream(const Position &pos)
 VisiblePosition VisiblePosition::next() const
 {
     VisiblePosition result = VisiblePosition(nextVisiblePosition(m_deepPosition), m_affinity);
-
-    // When moving across line wrap, make sure to end up with DOWNSTREAM affinity (i.e. at first
-    // character on next line).  Correct behavior regardless of whether the current position is
-    // at or after the last character on the current line.
-    if (result.isNotNull() && result.affinity() == UPSTREAM) {
-        VisiblePosition temp = result;
-        temp.setAffinity(DOWNSTREAM);
-        if (!visiblePositionsOnDifferentLines(temp, result))
-            result.setAffinity(DOWNSTREAM);
-    }
-
+    setAffinityUsingLinePosition(result);
     return result;
 }
 
@@ -412,6 +408,24 @@ QChar VisiblePosition::character() const
     return textNode->data()[offset];
 }
 
+bool isEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b)
+{
+    bool result = a.m_deepPosition == b.m_deepPosition;
+    if (result) {
+        // We want to catch cases where positions are equal, but affinities are not, since
+        // this is very likely a bug, given the places where this call is used. The difference
+        // is very likely due to code that set the affinity on a VisiblePosition "by hand" and 
+        // did so incorrectly.
+        ASSERT(a.m_affinity == b.m_affinity);
+    }
+    return result;
+}
+
+bool isNotEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b)
+{
+    return !isEqualIgnoringAffinity(a, b);
+}
+
 void VisiblePosition::debugPosition(const char *msg) const
 {
     if (isNull())
@@ -464,6 +478,17 @@ bool setEnd(Range &r, const VisiblePosition &c)
     int code = 0;
     ri->setEnd(p.node(), p.offset(), code);
     return code == 0;
+}
+
+void setAffinityUsingLinePosition(VisiblePosition &pos)
+{
+    // When not moving across line wrap, make sure to end up with DOWNSTREAM affinity.  
+    if (pos.isNotNull() && pos.affinity() == UPSTREAM) {
+        VisiblePosition temp(pos);
+        temp.setAffinity(DOWNSTREAM);
+        if (!visiblePositionsOnDifferentLines(temp, pos))
+            pos.setAffinity(DOWNSTREAM);
+    }
 }
 
 bool visiblePositionsOnDifferentLines(const VisiblePosition &pos1, const VisiblePosition &pos2)
