@@ -1,3 +1,17 @@
+2004-06-05  Trey Matteson  <trey@apple.com>
+
+	WebKit no longer causes an endless stream of dragexit events to
+	occur at the DHTML level when hovering over an element that is
+	not accepting the drag.
+
+        Reviewed by Chris
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _dragOperationForDraggingInfo:]):  If the potential target refuses
+	the item, don't turn around and immediately tell it to cancel the drag, which is
+	what leads to the exit event happening at the DOM level.  If the target just
+	refused the drag, it should not have anything it needs to cancel.
+
 2004-06-03  Trey Matteson  <trey@apple.com>
 
 	DHTML dragging uses the Cocoa NSDragOperation on both the source and dest ends.

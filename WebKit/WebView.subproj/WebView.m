@@ -1732,18 +1732,15 @@ NS_ENDHANDLER
         operation = [_private->draggingDocumentView draggingUpdatedWithDraggingInfo:draggingInfo];
         if (operation == NSDragOperationNone) {
             NSView *view = [self hitTest:[[self superview] convertPoint:windowPoint toView:nil]];
-            if ([view isKindOfClass:[WebBaseNetscapePluginView class]]) {
-                // Don't accept the drag over a plug-in since plug-ins may want to handle it.
-                operation = NSDragOperationNone;
-            } else if (!_private->editable && !_private->initiatedDrag) {
+            // Don't accept the drag over a plug-in since plug-ins may want to handle it.
+            if (![view isKindOfClass:[WebBaseNetscapePluginView class]]
+                && !_private->editable && !_private->initiatedDrag)
+            {
                 // If not editing or dragging, use _web_dragOperationForDraggingInfo to find a URL to load on the pasteboard.
                 operation = [self _web_dragOperationForDraggingInfo:draggingInfo];
             }
         }
-    }
-    
-    if (operation == NSDragOperationNone) {
-        // ??? this is bad, it is causing false exit events in WebCore
+    } else {
         [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
     }
     
