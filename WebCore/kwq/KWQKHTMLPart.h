@@ -273,11 +273,8 @@ public:
     
     void setMediaType(const QString &);
 
-    void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
-    bool usesInactiveTextBackgroundColor() const { return _usesInactiveTextBackgroundColor; }
-
-    void setShowsFirstResponder(bool flag);
-    bool showsFirstResponder() const { return _showsFirstResponder; }
+    void setDisplaysWithFocusAttributes(bool flag);
+    bool displaysWithFocusAttributes() const { return _displaysWithFocusAttributes; }
     
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
@@ -379,8 +376,7 @@ private:
 
     KWQWindowWidget *_windowWidget;
 
-    bool _usesInactiveTextBackgroundColor;
-    bool _showsFirstResponder;
+    bool _displaysWithFocusAttributes;
     mutable bool _drawSelectionOnly;
     bool _haveUndoRedoOperations;
     

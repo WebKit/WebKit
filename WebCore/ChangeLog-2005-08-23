@@ -1,3 +1,43 @@
+2004-07-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+        Fix for this bug:
+        
+        <rdar://problem/3738920> Caret blinks in inactive window
+
+        As part of the fix, I cleaned up the way we handle special drawing that needs
+        to be done in the HTML view that is first responder in the key window (e.g the
+        drawing of text selection highlight and caret blinking).
+
+        * khtml/khtml_part.cpp: Removed setCaretVisible function. Updating caret visibility
+        is now done in setDisplaysWithFocusAttributes, described below.
+        * khtml/khtml_part.h: Ditto.
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate): m_caretVisible now defaults to false. This prevents
+        the caret from blinking when an app is started from the command line and remains in the
+        background.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::focusInEvent): Remove caret code from here. Not needed.
+        (KHTMLView::focusOutEvent): Ditto.
+        * kwq/KWQKHTMLPart.h:
+        (KWQKHTMLPart::displaysWithFocusAttributes): New accessor to return cached value to other code
+        in WebCore.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes): Renamed from setShowsFirstResponder and modified
+        to do the display updating in a clearer way....and now has comments!
+        * kwq/WebCoreBridge.h: Remove several obsolete functions that use to try to do the work of the new
+        setDisplaysWithFocusAttributes function (and did so less well).
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:]): Now calls displaysWithFocusAttributes to figure out how to draw the
+        text selection background.
+        (-[WebCoreBridge setDisplaysWithFocusAttributes:]): Calls through to setDisplaysWithFocusAttributes in 
+        KWQKHTMLPart.
+        (-[WebCoreBridge selectionColor]): Flipped the value of this ternary expression to accommodate the
+        change from usesInactiveTextBackgroundColor to setDisplaysWithFocusAttributes.
+        (-[WebCoreBridge setCaretVisible:]): Removed.
+
 2004-07-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

@@ -183,8 +183,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
-    , _usesInactiveTextBackgroundColor(false)
-    , _showsFirstResponder(true)
+    , _displaysWithFocusAttributes(false)
     , _drawSelectionOnly(false)
     , _bindingRoot(0)
     , _windowScriptObject(0)
@@ -3267,17 +3266,28 @@ void KWQKHTMLPart::setMediaType(const QString &type)
     }
 }
 
-void KWQKHTMLPart::setShowsFirstResponder(bool flag)
+void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
 {
-    if (flag != _showsFirstResponder) {
-        _showsFirstResponder = flag;
-        DocumentImpl *doc = xmlDocImpl();
-        if (doc) {
-            NodeImpl *node = doc->focusNode();
-            if (node && node->renderer())
-                node->renderer()->repaint();
-        }
-        setCaretVisible(flag);
+    if (_displaysWithFocusAttributes == flag)
+        return;
+    _displaysWithFocusAttributes = flag;
+        
+    // This method does the job of updating the view based on whether the view is "active".
+    // This involves three kinds of drawing updates:
+
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    if (d->m_view)
+        d->m_view->updateContents(QRect(visibleSelectionRect()));
+
+    // 2. Caret blinking (blinks | does not blink)
+    setCaretVisible(flag);
+
+    // 3. The drawing of a focus ring around links in web pages.
+    DocumentImpl *doc = xmlDocImpl();
+    if (doc) {
+        NodeImpl *node = doc->focusNode();
+        if (node && node->renderer())
+            node->renderer()->repaint();
     }
 }
 

@@ -630,8 +630,9 @@ static BOOL nowPrinting(WebCoreBridge *self)
 - (void)drawRect:(NSRect)rect
 {
     QPainter painter(nowPrinting(self));
-    painter.setUsesInactiveTextBackgroundColor(_part->usesInactiveTextBackgroundColor());
-    painter.setDrawsFocusRing(_part->showsFirstResponder());
+    bool displaysWithFocusAttributes = _part->displaysWithFocusAttributes();
+    painter.setUsesInactiveTextBackgroundColor(!displaysWithFocusAttributes);
+    painter.setDrawsFocusRing(displaysWithFocusAttributes);
     [self drawRect:rect withPainter:&painter];
 }
 
@@ -1253,19 +1254,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return externalRepresentation(_part->renderer()).getNSString();
 }
 
-- (void)setUsesInactiveTextBackgroundColor:(BOOL)uses
+- (void)setDisplaysWithFocusAttributes:(BOOL)flag
 {
-    _part->setUsesInactiveTextBackgroundColor(uses);
-}
-
-- (BOOL)usesInactiveTextBackgroundColor
-{
-    return _part->usesInactiveTextBackgroundColor();
-}
-
-- (void)setShowsFirstResponder:(BOOL)flag
-{
-    _part->setShowsFirstResponder(flag);
+    _part->setDisplaysWithFocusAttributes(flag);
 }
 
 - (void)setShouldCreateRenderers:(BOOL)f
@@ -1301,7 +1292,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             return pseudoStyle->backgroundColor().getNSColor();
         }
     }
-    return _part->usesInactiveTextBackgroundColor() ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
+    return _part->displaysWithFocusAttributes() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
 }
 
 - (void)adjustViewSize
@@ -1495,14 +1486,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     TypingCommand::insertText(_part->xmlDocImpl(), text);
     [self ensureCaretVisible];
-}
-
-- (void)setCaretVisible:(BOOL)flag
-{
-    if (!_part)
-        return;
-        
-    _part->setCaretVisible(flag);
 }
 
 - (void)setSelectionToDragCaret

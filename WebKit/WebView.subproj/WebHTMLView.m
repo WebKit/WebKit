@@ -1253,23 +1253,6 @@ static WebHTMLView *lastHitView = nil;
     return YES;
 }
 
-- (void)updateTextBackgroundColor
-{
-    NSWindow *window = [self window];
-    BOOL shouldUseInactiveTextBackgroundColor = !([window isKeyWindow] && [window firstResponder] == self) ||
-        _private->resigningFirstResponder;
-    WebBridge *bridge = [self _bridge];
-    if ([bridge usesInactiveTextBackgroundColor] != shouldUseInactiveTextBackgroundColor) {
-        [bridge setUsesInactiveTextBackgroundColor:shouldUseInactiveTextBackgroundColor];
-        [self setNeedsDisplayInRect:[bridge visibleSelectionRect]];
-    }
-}
-
-- (void)setCaretVisible:(BOOL)flag
-{
-    [[self _bridge] setCaretVisible:flag];
-}
-
 - (BOOL)maintainsInactiveSelection
 {
     // This method helps to determing whether the view should maintain
@@ -1310,9 +1293,20 @@ static WebHTMLView *lastHitView = nil;
         name:NSMouseMovedNotification object:nil];
 }
 
-- (void)updateShowsFirstResponder
+- (void)updateFocusDisplay
 {
-    [[self _bridge] setShowsFirstResponder:[[self window] isKeyWindow]];
+    // This method does the job of updating the view based on the view's firstResponder-ness and
+    // the window key-ness of the window containing this view. This involves three kinds of 
+    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
+    // 
+    // The three display attributes are as follows:
+    // 
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    // 2. Caret blinking (blinks | does not blink)
+    // 3. The drawing of a focus ring around links in web pages.
+
+    BOOL flag = !_private->resigningFirstResponder && [[self window] isKeyWindow] && [self firstResponderIsSelfOrDescendantView];
+    [[self _bridge] setDisplaysWithFocusAttributes:flag];
 }
 
 - (void)addSuperviewObservers
@@ -1416,7 +1410,7 @@ static WebHTMLView *lastHitView = nil;
             [self addWindowObservers];
             [self addSuperviewObservers];
             [self addMouseMovedObserver];
-            [self updateTextBackgroundColor];
+            [self updateFocusDisplay];
     
             [[self _pluginController] startAllPlugins];
     
@@ -1717,20 +1711,14 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
-    if ([self firstResponderIsSelfOrDescendantView]) {
-        [self updateTextBackgroundColor];
-        [self updateShowsFirstResponder];
-    }
+    [self updateFocusDisplay];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
-    if ([self firstResponderIsSelfOrDescendantView]) {
-        [self updateTextBackgroundColor];
-        [self updateShowsFirstResponder];
-    }
+    [self updateFocusDisplay];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -2070,8 +2058,7 @@ static WebHTMLView *lastHitView = nil;
     if (view) {
         [[self window] makeFirstResponder:view];
     }
-    [self setCaretVisible:YES];
-    [self updateTextBackgroundColor];
+    [self updateFocusDisplay];
     return YES;
 }
 
@@ -2090,8 +2077,7 @@ static WebHTMLView *lastHitView = nil;
                 [self deselectAll];
             }
         }
-        [self setCaretVisible:NO];
-        [self updateTextBackgroundColor];
+        [self updateFocusDisplay];
         _private->resigningFirstResponder = NO;
     }
     return resign;
