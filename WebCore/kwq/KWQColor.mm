@@ -49,9 +49,9 @@ const QColor Qt::yellow   (0xFF, 0xFF, 0x00);
 
 QRgb qRgb(int r, int g, int b)
 {
-    ASSERT(r >= 0 && r <= 0xFF);
-    ASSERT(g >= 0 && g <= 0xFF);
-    ASSERT(b >= 0 && b <= 0xFF);
+    if (r < 0) r = 0; else if (r > 255) r = 255;
+    if (g < 0) g = 0; else if (g > 255) g = 255;
+    if (b < 0) b = 0; else if (b > 255) b = 255;
     return r << 16 | g << 8 | b;
 }
 

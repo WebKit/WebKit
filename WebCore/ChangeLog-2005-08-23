@@ -1,3 +1,11 @@
+2003-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3191027 -- REGRESSION: KWQColor assert at aol.com front page
+
+        * kwq/KWQColor.mm: (qRgb): Clamp to [0,0xFF] instead of asserting.
+
 2003-03-06  Trey Matteson  <trey@apple.com>
 
 	Refinement of routine that scans the DOM for field labels.
