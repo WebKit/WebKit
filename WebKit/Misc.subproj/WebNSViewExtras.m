@@ -3,8 +3,12 @@
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebController.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebView.h>
+
+#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
@@ -37,6 +41,47 @@
     if ([view isKindOfClass: [WebView class]])
         return view;
     return nil;
+}
+
+- (NSArray *)_web_acceptableDragTypes
+{
+    return [NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, NSFilenamesPboardType, nil];
+}
+
+- (NSURL *)_web_bestURLForDraggingInfo:(id <NSDraggingInfo>)sender
+{
+    NSPasteboard *draggingPasteboard = [sender draggingPasteboard];        
+    NSURL *bestURL = [NSURL URLFromPasteboard:draggingPasteboard];
+    NSString *scheme = [bestURL scheme];
+    
+    if(!bestURL || ![scheme isEqualToString:@"http"] || ![scheme isEqualToString:@"https"]){
+
+        NSString *URLString = [draggingPasteboard stringForType:NSStringPboardType];
+        if(URLString && [URLString _web_looksLikeAbsoluteURL]){
+            bestURL = [NSURL _web_URLWithString:URLString];
+        }
+
+        if(!bestURL){
+            NSArray *files = [draggingPasteboard propertyListForType:NSFilenamesPboardType];
+            if(files && [files count] == 1){
+                NSString *file = [files objectAtIndex:0];
+                if([WebController canShowFile:file]){
+                    bestURL = [NSURL fileURLWithPath:file];
+                }
+            }
+        }
+    }
+
+    return bestURL;
+}
+
+- (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
+{
+    if([self _web_bestURLForDraggingInfo:sender]){
+        return NSDragOperationCopy;
+    } else {
+        return NSDragOperationNone;
+    }
 }
 
 #ifdef DEBUG_VIEWS

@@ -20,9 +20,9 @@
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebCookieAdapter.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSViewExtras.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 
@@ -68,9 +68,7 @@ enum {
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
     
-    _private->draggingTypes = [[NSArray arrayWithObjects:@"NSFilenamesPboardType", 
-                                    @"NSURLPboardType", @"NSStringPboardType", nil] retain];
-    [self registerForDraggedTypes:_private->draggingTypes];
+    [self registerForDraggedTypes:[self _web_acceptableDragTypes]];
     
     ++WebViewCount;
     
@@ -138,25 +136,7 @@ enum {
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    NSString *dragType, *file, *URLString;
-    NSArray *files;
-        
-    dragType = [[sender draggingPasteboard] availableTypeFromArray:_private->draggingTypes];
-    if([dragType isEqualToString:@"NSFilenamesPboardType"]){
-        files = [[sender draggingPasteboard] propertyListForType:@"NSFilenamesPboardType"];
-        file = [files objectAtIndex:0];
-        
-        if([files count] == 1 && [WebController canShowFile:file])
-            return NSDragOperationCopy;
-            
-    }else if([dragType isEqualToString:@"NSURLPboardType"]){
-        return NSDragOperationCopy;
-    }else if([dragType isEqualToString:@"NSStringPboardType"]){
-        URLString = [[sender draggingPasteboard] stringForType:@"NSStringPboardType"];
-        if([URLString _web_looksLikeAbsoluteURL])
-            return NSDragOperationCopy;
-    }
-    return NSDragOperationNone;
+    return [self _web_dragOperationForDraggingInfo:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
@@ -171,33 +151,16 @@ enum {
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    WebDataSource *dataSource;
-    WebFrame *frame;
-    NSArray *files;
-    NSString *file, *dragType;
-    NSURL *URL=nil;
+    NSURL *URL = [self _web_bestURLForDraggingInfo:sender];
 
-    dragType = [[sender draggingPasteboard] availableTypeFromArray:_private->draggingTypes];
-    if([dragType isEqualToString:@"NSFilenamesPboardType"]){
-        files = [[sender draggingPasteboard] propertyListForType:@"NSFilenamesPboardType"];
-        file = [files objectAtIndex:0];
-        URL = [NSURL fileURLWithPath:file];
-    }else if([dragType isEqualToString:@"NSURLPboardType"]){
-        URL = [NSURL URLFromPasteboard:[sender draggingPasteboard]];
-    }else if([dragType isEqualToString:@"NSStringPboardType"]){
-        URL = [NSURL _web_URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
+    if(URL){
+        WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
+        WebFrame *frame = [[self controller] mainFrame];
+        if ([frame setProvisionalDataSource:dataSource]){
+            [frame startLoading];
+        }
+        [dataSource release];
     }
-
-    if(!URL){
-        return;
-    }
-    
-    dataSource = [[WebDataSource alloc] initWithURL:URL];
-    frame = [[self controller] mainFrame];
-    if ([frame setProvisionalDataSource:dataSource]) {
-        [frame startLoading];
-    }
-    [dataSource release];
 }
 
 + (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType

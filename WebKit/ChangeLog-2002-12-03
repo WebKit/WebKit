@@ -1,4 +1,19 @@
 2002-07-21  Chris Blumenberg  <cblu@apple.com>
+	Used darin-inspired code factoring to fix 3000801 (alex doesn't accept drag of webloc file) in 3 places where we accept drags.
+     
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_parentWebView]): no changes
+        (-[NSView _web_acceptableDragTypes]): added
+        (-[NSView _web_bestURLForDraggingInfo:]): added
+        (-[NSView _web_dragOperationForDraggingInfo:]): added
+        * WebKit.pbproj/project.pbxproj: made WebNSViewExtras.h public
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithFrame:]): calls _web_acceptableDragTypes
+        (-[WebView draggingEntered:]): calls _web_dragOperationForDraggingInfo
+        (-[WebView concludeDragOperation:]): calls _web_bestURLForDraggingInfo
+
+2002-07-21  Chris Blumenberg  <cblu@apple.com>
 
 	- We were loading icons when page loads ended in error. Fixed.
 	- Special-case file URLs once instead of twice by moving NSWorkspace
