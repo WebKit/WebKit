@@ -70,118 +70,12 @@ const time_t invalidDate = -1;
 
 using KJS::UString;
 
-#define gmtime(x) gmtimeUsingCF(x)
-#define localtime(x) localtimeUsingCF(x)
-#define mktime(x) mktimeUsingCF(x)
-#define timegm(x) timegmUsingCF(x)
-#define time(x) timeUsingCF(x)
-
 #define ctime(x) NotAllowedToCallThis()
 #define strftime(a, b, c, d) NotAllowedToCallThis()
 
 static const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 static const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
     
-static struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
-{
-    static struct tm result;
-    static char timeZoneCString[128];
-    
-    CFAbsoluteTime absoluteTime = clock - kCFAbsoluteTimeIntervalSince1970;
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone);
-
-    CFStringRef abbreviation = CFTimeZoneCopyAbbreviation(timeZone, absoluteTime);
-    CFStringGetCString(abbreviation, timeZoneCString, sizeof(timeZoneCString), kCFStringEncodingASCII);
-    CFRelease(abbreviation);
-
-    result.tm_sec = (int)date.second;
-    result.tm_min = date.minute;
-    result.tm_hour = date.hour;
-    result.tm_mday = date.day;
-    result.tm_mon = date.month - 1;
-    result.tm_year = date.year - 1900;
-    result.tm_wday = CFAbsoluteTimeGetDayOfWeek(absoluteTime, timeZone) % 7;
-    result.tm_yday = CFAbsoluteTimeGetDayOfYear(absoluteTime, timeZone) - 1;
-    result.tm_isdst = CFTimeZoneIsDaylightSavingTime(timeZone, absoluteTime);
-    result.tm_gmtoff = (int)CFTimeZoneGetSecondsFromGMT(timeZone, absoluteTime);
-    result.tm_zone = timeZoneCString;
-    
-    return &result;
-}
-
-static CFTimeZoneRef UTCTimeZone()
-{
-    static CFTimeZoneRef zone = CFTimeZoneCreateWithTimeIntervalFromGMT(NULL, 0.0);
-    return zone;
-}
-
-static CFTimeZoneRef CopyLocalTimeZone()
-{
-    CFTimeZoneRef zone = CFTimeZoneCopyDefault();
-    if (zone) {
-        return zone;
-    }
-    zone = UTCTimeZone();
-    CFRetain(zone);
-    return zone;
-}
-
-static struct tm *gmtimeUsingCF(const time_t *clock)
-{
-    return tmUsingCF(*clock, UTCTimeZone());
-}
-
-static struct tm *localtimeUsingCF(const time_t *clock)
-{
-    CFTimeZoneRef timeZone = CopyLocalTimeZone();
-    struct tm *result = tmUsingCF(*clock, timeZone);
-    CFRelease(timeZone);
-    return result;
-}
-
-static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
-{
-    CFGregorianDate date;
-    date.second = tm->tm_sec;
-    date.minute = tm->tm_min;
-    date.hour = tm->tm_hour;
-    date.day = tm->tm_mday;
-    date.month = tm->tm_mon + 1;
-    date.year = tm->tm_year + 1900;
-
-    // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large or small,
-    // so we pick an arbitrary cutoff.
-    if (date.year < -2500 || date.year > 2500) {
-        return invalidDate;
-    }
-
-    CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
-
-    return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
-}
-
-static time_t mktimeUsingCF(struct tm *tm)
-{
-    CFTimeZoneRef timeZone = CopyLocalTimeZone();
-    time_t result = timetUsingCF(tm, timeZone);
-    CFRelease(timeZone);
-    return result;
-}
-
-static time_t timegmUsingCF(struct tm *tm)
-{
-    return timetUsingCF(tm, UTCTimeZone());
-}
-
-static time_t timeUsingCF(time_t *clock)
-{
-    time_t result = (time_t)(CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970);
-    if (clock) {
-        *clock = result;
-    }
-    return result;
-}
-
 static UString formatDate(struct tm &tm)
 {
     char buffer[100];

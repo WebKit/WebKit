@@ -1,3 +1,11 @@
+2003-09-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * kjs/date_object.cpp: Removed our CF-based implementations of gmtime, localtime,
+        mktime, timegm, and time, since they no longer have the slow "hit the filesystem
+        every time" behavior.
+
 === Safari-100 ===
 
 === Safari-99 ===
