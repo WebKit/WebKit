@@ -189,13 +189,13 @@ void RenderBox::paintBoxDecorations(QPainter *p,int, int _y,
         paintBorder(p, _tx, _ty, w, h, style());
 }
 
-void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph, int _tx, int _ty, int w, int h)
+void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     if(c.isValid())
         p->fillRect(_tx, clipy, w, cliph, c);
     // no progressive loading of the background image
     if(bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage()) {
-        //kdDebug( 6040 ) << "printing bgimage at " << _tx << "/" << _ty << endl;
+        //kdDebug( 6040 ) << "painting bgimage at " << _tx << "/" << _ty << endl;
         // ### might need to add some correct offsets
         // ### use paddingX/Y
 
@@ -217,8 +217,8 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
         {
             //scroll
             int pw = m_width - vpab;
-            int h = isHtml() ? h : m_height;
-            if (isTableCell()) {
+            int h = isHtml() ? height : m_height;
+	    if (isTableCell()) {
                 // Table cells' m_height variable is wrong.  You have to take into
                 // account this hack extra stuff to get the right height. 
                 // Otherwise using background-position: bottom won't work in
@@ -284,7 +284,7 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
                 }
             }
 
-            if( (bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh ) {
+            if( (bgr == NO_REPEAT || bgr == REPEAT_X) && height > pixh ) {
                 ch = pixh;
                 cy = vr.y() + sptr->backgroundYPosition().minWidth(ph-pixh);
             } else {
@@ -298,7 +298,7 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
             }
 
             QRect fix(cx,cy,cw,ch);
-            QRect ele(_tx+borderLeft(),_ty+borderTop(),w-vpab,h-hpab);
+            QRect ele(_tx+borderLeft(),_ty+borderTop(),w-vpab,height-hpab);
             QRect b = fix.intersect(ele);
             sx+=b.x()-cx;
             sy+=b.y()-cy;
