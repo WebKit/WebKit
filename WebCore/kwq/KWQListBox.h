@@ -31,68 +31,61 @@
 #include <KWQSignal.h>
 
 class QListBoxItem;
-class QListBoxText;
 
 class QListBox : public QScrollView {
 friend class QListBoxItem;
 public:
-    enum SelectionMode { Single, Multi, Extended, NoSelection };
+    enum SelectionMode { Single, Extended };
 
     QListBox(QWidget *parent);
     ~QListBox();
 
-    int scrollBarWidth() const;
+    QSize sizeForNumberOfLines(int numLines) const;
     
     uint count() const;
     void clear();
     virtual void setSelectionMode(SelectionMode);
-    QListBoxItem *firstItem() const;
-    int currentItem() const;
-    void insertItem(const QString &, int index=-1);
-    void insertItem(const QListBoxItem *, int index=-1);
+
+    QListBoxItem *firstItem() const { return _head; }
+
     void beginBatchInsert();
+    void insertItem(const QString &, unsigned index);
+    void insertItem(QListBoxItem *, unsigned index);
     void endBatchInsert();
     void setSelected(int, bool);
-    bool isSelected(int);
+    bool isSelected(int) const;
     
-    void clicked() { m_clicked.call(); }
-    void selectionChanged() { m_selectionChanged.call(); }
+    void clicked() { _clicked.call(); }
+    void selectionChanged() { _selectionChanged.call(); }
 
 private:
-    QListBoxItem *head;
-    bool m_insertingItems;
+    QListBoxItem *_head;
+    bool _insertingItems;
     
-    KWQSignal m_clicked;
-    KWQSignal m_selectionChanged;
+    KWQSignal _clicked;
+    KWQSignal _selectionChanged;
 };
 
 class QListBoxItem {
 friend class QListBox;
-friend class QListBoxText;
 public:
-    QListBoxItem();
-    virtual ~QListBoxItem();
+    QListBoxItem(const QString &text);
 
-    void setSelectable(bool);
-    QListBox *listBox() const;
-    virtual int width(const QListBox *) const;
-    virtual int height(const QListBox *) const;
-    QListBoxItem *next() const;
-    QListBoxItem *prev() const;
-
-    QString text;
-    QListBoxItem *previousItem, *nextItem;
-    QListBox *box;
+    void setSelectable(bool) { }
+    QListBoxItem *next() const { return _next; }
+    QString text() const { return _text; }
 
 private:
+    QString _text;
+    QListBoxItem *_next;
+
     QListBoxItem(const QListBoxItem &);
     QListBoxItem &operator=(const QListBoxItem &);
 };
 
 class QListBoxText : public QListBoxItem {
 public:
-    QListBoxText(const QString &text=QString::null);
-    ~QListBoxText();
+    QListBoxText(const QString &text = QString::null) : QListBoxItem(text) { }
 };
 
 #endif

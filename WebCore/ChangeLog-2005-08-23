@@ -1,5 +1,21 @@
 2002-10-17  Darin Adler  <darin@apple.com>
 
+	- fixed 3052547 -- <select> doesn't size properly (size > 1)
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::slotReturnPressed): #if !APPLE_CHANGES around some unused
+	code in here.
+        (RenderSelect::updateFromElement): Fix bug where it was using Multi here, but
+	Extended elsewhere for the selection mode.
+        (RenderSelect::layout): Change code so that QListBox handles the sizing.
+
+        * kwq/KWQListBox.h: Removed a lot of unused stuff, made other things use inlines.
+        * kwq/KWQListBox.mm: Rewrote most of the file contents. Made a new
+	QListBox::sizeForNumberOfLines method. We will have to port this to NSTableView
+	rather than NSBrowser.
+
+2002-10-17  Darin Adler  <darin@apple.com>
+
 	- fixed 3078245 -- REGRESSION: lightgrey displays as black, used
 	to display as white, should display light gray
 

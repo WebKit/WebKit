@@ -464,10 +464,12 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
 
 void RenderLineEdit::slotReturnPressed()
 {
+#if !APPLE_CHANGES
     // don't submit the form when return was pressed in a completion-popup
     KCompletionBox *box = widget()->completionBox(false);
     if ( box && box->isVisible() && box->currentItem() != -1 )
 	return;
+#endif
 
     // Emit onChange if necessary
     // Works but might not be enough, dirk said he had another solution at
@@ -776,7 +778,7 @@ void RenderSelect::updateFromElement()
         }
 
         if (m_useListBox && oldMultiple != m_multiple) {
-            static_cast<KListBox*>(m_widget)->setSelectionMode(m_multiple ? QListBox::Multi : QListBox::Single);
+            static_cast<KListBox*>(m_widget)->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
         }
         m_selectionChanged = true;
         m_optionsChanged = true;
@@ -897,6 +899,7 @@ void RenderSelect::layout( )
     if(m_useListBox) {
         KListBox* w = static_cast<KListBox*>(m_widget);
 
+#if !APPLE_CHANGES
         QListBoxItem* p = w->firstItem();
         int width = 0;
         int height = 0;
@@ -905,6 +908,7 @@ void RenderSelect::layout( )
             height = QMAX(height, p->height(p->listBox()));
             p = p->next();
         }
+#endif
 
         int size = m_size;
         // check if multiple and size was not given or invalid
@@ -916,18 +920,17 @@ void RenderSelect::layout( )
             size = QMIN(static_cast<KListBox*>(m_widget)->count(), 10);
 
 #if APPLE_CHANGES
-        width += w->scrollBarWidth();
-        height = size*height;
-        // NSBrowser has problems drawing scrollbar correctly when its size is too small.
-        if (height < 60)
-            height = 60;
+        // Let the widget tell us how big it wants to be.
+        QSize s(w->sizeForNumberOfLines(size));
+        setIntrinsicWidth( s.width() );
+        setIntrinsicHeight( s.height() );
 #else
         width += 2*w->frameWidth() + w->verticalScrollBar()->sizeHint().width();
         height = size*height + 2*w->frameWidth();
-#endif
 
         setIntrinsicWidth( width );
         setIntrinsicHeight( height );
+#endif
     }
     else {
         QSize s(m_widget->sizeHint());
