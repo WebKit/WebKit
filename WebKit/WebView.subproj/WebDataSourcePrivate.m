@@ -61,13 +61,13 @@
     ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = [p retain];
 }
 
-- (void)_startLoading: (BOOL)forceRefresh initiatedByMouseEvent: (BOOL)byMouseEvent
+- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)byUserEvent
 {
     KURL url = [[[self inputURL] absoluteString] cString];
     
     [self _part]->openURL (url);
     
-    [[self controller] locationChangeStartedForFrame: [self frame] initiatedByMouseEvent: byMouseEvent];
+    [[self controller] locationChangeStartedForFrame: [self frame] initiatedByUserEvent: byUserEvent];
 }
 
 @end

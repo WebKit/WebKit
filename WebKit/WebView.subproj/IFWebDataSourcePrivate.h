@@ -33,5 +33,5 @@
 - (void)_setController: (id <IFWebController>)controller;
 - (KHTMLPart *)_part;
 - (void)_setParent: (IFWebDataSource *)p;
-- (void)_startLoading: (BOOL)forceRefresh initiatedByMouseEvent: (BOOL)flag;
+- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)flag;
 @end

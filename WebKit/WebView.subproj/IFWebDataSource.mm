@@ -20,7 +20,7 @@
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 //        @"0xffffffff", 		@"WebKitLogLevel",
         @"0x0", 		@"WebKitLogLevel",
-        @"Arial", 		@"WebKitStandardFont",
+        @"Times-Roman", 		@"WebKitStandardFont",
         @"Courier",  		@"WebKitFixedFont",
         @"Times-Roman", 	@"WebKitSerifFont",
         @"Arial", 		@"WebKitSansSerifFont", 
@@ -215,7 +215,7 @@
 // If forceRefresh is YES the document will load from the net, not the cache.
 - (void)startLoading: (BOOL)forceRefresh
 {
-    [self _startLoading: forceRefresh initiatedByMouseEvent: NO];
+    [self _startLoading: forceRefresh initiatedByUserEvent: NO];
 }
 
 

@@ -282,7 +282,7 @@
 }
 
 
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame initiatedByMouseEvent: (BOOL)flag;
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame initiatedByUserEvent: (BOOL)flag;
 {
     // Do nothing.
 }

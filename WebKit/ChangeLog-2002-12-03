@@ -1,3 +1,15 @@
+2002-02-12  Richard Williamson  <rjw@apple.com>
+
+    Made basic forms work.
+    
+	* WebView.subproj/IFBaseWebController.mm:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]),
+	(-[IFWebDataSource startLoading:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_startLoading:initiatedByUserEvent:]):
+
 2002-02-11  John Sullivan  <sullivan@apple.com>
 
 	Fixed bug where clicking on empty browser page would crash. This could
