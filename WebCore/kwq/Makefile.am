@@ -125,10 +125,9 @@ libkwq_o_SOURCES = \
 	KWQtextstream.mm \
 	KWQxml.mm \
 	kwqdebug.mm \
-	WKPlugin.mm \
-	WKPluginView.mm \
-	WKPluginDatabase.mm \
-	WKPluginWidget.mm \
+	WCPlugin.mm \
+	WCPluginDatabase.mm \
+	WCPluginWidget.mm \
 	npapi.mm \
 	$(NULL)
 

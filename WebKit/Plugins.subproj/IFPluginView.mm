@@ -1,19 +1,13 @@
-//
-//  WKPluginView.m
-//  
-//
-//  Created by Chris Blumenberg on Thu Dec 13 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
-//
+/*	
+    IFPluginView.mm
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
-#import "WKPluginView.h"
+#import "IFPluginView.h"
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 
-//#define USE_CARBON 1
-//#import <AppKit/NSWindow_Private.h>
-
-@implementation WKPluginViewNullEventSender
+@implementation IFPluginViewNullEventSender
 
 -(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
 {
@@ -33,7 +27,7 @@
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event);
     //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, event.when);
-    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
 }
 
 -(void) stop
@@ -43,9 +37,9 @@
 
 @end
 
-@implementation WKPluginView
+@implementation IFPluginView
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WKPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType  arguments:(NSDictionary *)arguments
+- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType  arguments:(NSDictionary *)arguments
 {
     NPError npErr;
     char cMime[200], *s;
@@ -102,7 +96,7 @@
     }
     transferred = FALSE;
     trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
-    eventSender = [[[WKPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent] autorelease];
+    eventSender = [[[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent] autorelease];
     [eventSender sendNullEvents];
     return self;
 }
@@ -112,10 +106,6 @@
     NPError npErr;
     char cMime[200], cURL[800];
     NSFileManager *fileManager;
-    //WindowRef windowRef;
-    
-    //windowRef = [[self window] _windowRef]; // give the window a WindowRef
-    //windowRef->port = [self qdPort];
     
     //MoveTo(0,0); // diagnol line test
     //LineTo((short)rect.size.width, (short)rect.size.height);
@@ -212,7 +202,7 @@
     streamOffset = 0;
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
         [file closeFile];
-        strcpy(filenameC, [rootName() cString]);
+        strcpy(filenameC, [startupVolumeName() cString]);
         strcat(filenameC, ":symroots:"); //FIXME: This should be the user's cache directory or somewhere else
         strcat(filenameC, [[url lastPathComponent] cString]);
         NPP_StreamAsFile(instance, stream, filenameC);
@@ -304,7 +294,7 @@
     NSPoint viewPoint;
     NSRect frame;
     
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:[[theEvent window] contentView]];
+    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     frame = [self frame];
     
     pt.v = (short)viewPoint.y; 
@@ -324,7 +314,7 @@
     NSPoint viewPoint;
     NSRect frame;
     
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:[[theEvent window] contentView]];
+    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     frame = [self frame];
     
     pt.v = (short)viewPoint.y; 
@@ -344,7 +334,7 @@
     NSPoint viewPoint;
     NSRect frame;
     
-    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:[[theEvent window] contentView]];
+    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     frame = [self frame];
     
     pt.v = (short)viewPoint.y; 
@@ -501,7 +491,7 @@
 
 @end
 
-NSString* rootName(void)
+NSString* startupVolumeName(void)
 {
     NSString* rootName = nil;
     FSRef rootRef;

@@ -83,6 +83,7 @@
 				9C7CABBB0190A37C0ECA16EA,
 				254DC334016E1D3F0ECA149E,
 				25A8176801B5474B0ECA149E,
+				F5EBC45202134BB601CA1520,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
@@ -122,7 +123,7 @@
 				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private";
+				OTHER_CFLAGS = "-Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/";
 				OTHER_LDFLAGS = "-lwebcore -framework WebFoundation";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
@@ -187,6 +188,8 @@
 				39446096020F50ED0ECA1767,
 				39446097020F50ED0ECA1767,
 				39446098020F50ED0ECA1767,
+				F5EBC45702134BC301CA1520,
+				F5EBC45802134BC301CA1520,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -217,6 +220,8 @@
 				394460A8020F50ED0ECA1767,
 				394460A9020F50ED0ECA1767,
 				394460AA020F50ED0ECA1767,
+				F5EBC45902134BC301CA1520,
+				F5EBC45A02134BC301CA1520,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -225,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1058C7B3FEA5585E11CA2CBB,
+				F5EBC45C02134C0C01CA1520,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -307,6 +313,7 @@
 			children = (
 				0867D69BFE84028FC02AAC07,
 				0867D6A5FE840307C02AAC07,
+				F5EBC45B02134C0C01CA1520,
 			);
 			isa = PBXGroup;
 			name = "Other Frameworks";
@@ -935,6 +942,87 @@
 			isa = PBXGroup;
 			name = WebView;
 			refType = 4;
+		};
+//9C0
+//9C1
+//9C2
+//9C3
+//9C4
+//F50
+//F51
+//F52
+//F53
+//F54
+		F5EBC45202134BB601CA1520 = {
+			children = (
+				F5EBC45302134BC301CA1520,
+				F5EBC45402134BC301CA1520,
+				F5EBC45502134BC301CA1520,
+				F5EBC45602134BC301CA1520,
+			);
+			isa = PBXGroup;
+			name = Plugins;
+			refType = 4;
+		};
+		F5EBC45302134BC301CA1520 = {
+			isa = PBXFileReference;
+			name = IFCarbonWindowView.h;
+			path = Plugins.subproj/IFCarbonWindowView.h;
+			refType = 4;
+		};
+		F5EBC45402134BC301CA1520 = {
+			isa = PBXFileReference;
+			name = IFCarbonWindowView.m;
+			path = Plugins.subproj/IFCarbonWindowView.m;
+			refType = 4;
+		};
+		F5EBC45502134BC301CA1520 = {
+			isa = PBXFileReference;
+			name = IFPluginView.h;
+			path = Plugins.subproj/IFPluginView.h;
+			refType = 4;
+		};
+		F5EBC45602134BC301CA1520 = {
+			isa = PBXFileReference;
+			name = IFPluginView.mm;
+			path = Plugins.subproj/IFPluginView.mm;
+			refType = 4;
+		};
+		F5EBC45702134BC301CA1520 = {
+			fileRef = F5EBC45302134BC301CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EBC45802134BC301CA1520 = {
+			fileRef = F5EBC45502134BC301CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EBC45902134BC301CA1520 = {
+			fileRef = F5EBC45402134BC301CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EBC45A02134BC301CA1520 = {
+			fileRef = F5EBC45602134BC301CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EBC45B02134C0C01CA1520 = {
+			isa = PBXFrameworkReference;
+			name = Carbon.framework;
+			path = /System/Library/Frameworks/Carbon.framework;
+			refType = 0;
+		};
+		F5EBC45C02134C0C01CA1520 = {
+			fileRef = F5EBC45B02134C0C01CA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 0867D690FE84028FC02AAC07;

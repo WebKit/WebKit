@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WKPluginWidget_H_
-#define WKPluginWidget_H_
+#ifndef WCPluginWidget_H_
+#define WCPluginWidget_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -32,13 +32,11 @@
 
 #include "qwidget.h"
 #include "qstring.h"
-
-#import <WKPluginView.h>
-#import <WKPlugin.h>
+#import <WCPlugin.h>
     
-// class WKPluginWidget ===============================================================
+// class WCPluginWidget ===============================================================
 
-class WKPluginWidget : public QWidget {
+class WCPluginWidget : public QWidget {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -48,8 +46,8 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    WKPluginWidget(QWidget *parent=0, const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
-    ~WKPluginWidget();
+    WCPluginWidget(QWidget *parent=0, const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
+    ~WCPluginWidget();
 
     // member functions --------------------------------------------------------
     
@@ -59,10 +57,10 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    WKPluginWidget(const WKPluginWidget &);
-    WKPluginWidget &operator=(const WKPluginWidget &);
+    WCPluginWidget(const WCPluginWidget &);
+    WCPluginWidget &operator=(const WCPluginWidget &);
     
 
-}; // class WKPluginWidget ============================================================
+}; // class WCPluginWidget ============================================================
 
 #endif

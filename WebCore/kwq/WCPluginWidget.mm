@@ -22,18 +22,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
-#include <WKPluginWidget.h>
-#include <WKPluginDatabase.h>
-#include <KWQView.h>
+ 
+#import <Foundation/Foundation.h>
+#import <WCPluginWidget.h>
+#import <WCPluginDatabase.h>
+#import <KWQView.h>
 #include <kwqdebug.h>
 
-WKPluginWidget::WKPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
+@interface IFPluginView : NSObject
+- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;
+@end
+
+
+WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
     NSString *arg;
     NSRange r1, r2, r3;
-    WKPlugin *plugin;
+    WCPlugin *plugin;
     uint i;
     
     arguments = [NSMutableDictionary dictionaryWithCapacity:10];
@@ -45,9 +51,9 @@ WKPluginWidget::WKPluginWidget(QWidget *parent, const QString &url, const QStrin
         r3.length = [arg length] - r2.location - 2; // don't include quotes
         [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
     }
-    plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
+    plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
     if(plugin == nil){
-        plugin = [[WKPluginDatabase installedPlugins] getPluginForURL:QSTRING_TO_NSSTRING(url)];
+        plugin = [[WCPluginDatabase installedPlugins] getPluginForURL:QSTRING_TO_NSSTRING(url)];
     }
     if(plugin == nil){
         //FIXME: Error dialog should be shown here
@@ -55,10 +61,10 @@ WKPluginWidget::WKPluginWidget(QWidget *parent, const QString &url, const QStrin
         return;
     }
     [plugin load];
-    setView([[[WKPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
+    setView([[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
 }
 
-WKPluginWidget::~WKPluginWidget()
+WCPluginWidget::~WCPluginWidget()
 {
 
 }

@@ -25,8 +25,8 @@
 
 #include <kwqdebug.h>
 #include <kconfig.h>
-#include <WKPlugin.h>
-#include <WKPluginDatabase.h>
+#import <WCPlugin.h>
+#import <WCPluginDatabase.h>
 
 enum files{
     pluginsinfo
@@ -78,13 +78,13 @@ QString KConfigBase::readEntry(const char *pKey,
     _logPartiallyImplemented();
     
     if(file == pluginsinfo){
-        WKPlugin *plugin;
+        WCPlugin *plugin;
         NSArray *mimeTypes;
         NSMutableString *bigMimeString;
         NSString *bigMimeString2;
         uint i;
         
-        plugin = [[[WKPluginDatabase installedPlugins] plugins] objectAtIndex:group];
+        plugin = [[[WCPluginDatabase installedPlugins] plugins] objectAtIndex:group];
         if(strcmp(pKey, "name") == 0){
             return NSSTRING_TO_QSTRING([plugin name]);
         }else if(strcmp(pKey, "file") == 0){
@@ -120,7 +120,7 @@ int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
     _logPartiallyImplemented();
     
     if(file == pluginsinfo){
-        return [[[WKPluginDatabase installedPlugins] plugins] count];
+        return [[[WCPluginDatabase installedPlugins] plugins] count];
     }
     return 0;
 }

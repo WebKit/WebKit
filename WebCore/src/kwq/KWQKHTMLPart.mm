@@ -51,7 +51,7 @@
 
 #import <WCURLHandle.h>
 
-#include <WKPluginWidget.h>
+#include <WCPluginWidget.h>
 #include <rendering/render_frames.h>
 
 #import <KWQView.h>
@@ -1608,12 +1608,12 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
                     const QStringList &args)
 {
 #ifdef _KWQ_
-    WKPluginWidget *pluginWidget;
+    WCPluginWidget *pluginWidget;
     
     if(url.isEmpty()){
         return FALSE;
     }
-    pluginWidget = new WKPluginWidget(0, url, serviceType, args);
+    pluginWidget = new WCPluginWidget(0, url, serviceType, args);
     frame->setWidget(pluginWidget);
 
     return TRUE;
