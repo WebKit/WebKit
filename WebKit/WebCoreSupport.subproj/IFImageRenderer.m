@@ -85,9 +85,7 @@
     if ([self frameCount] > 1) {
         imageRect = fr;
         targetRect = ir;
-        [view retain];
-        [frameView release];
-        frameView = view;
+        frameView = [view retain];
         frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                        target:self
                                                      selector:@selector(nextFrame:)
