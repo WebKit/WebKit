@@ -1,3 +1,13 @@
+2003-12-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3496960: nil-deref in idFromNode inside elementDoesAutoComplete:
+
+        * kwq/WebCoreBridge.mm:
+        (inputElementFromDOMElement): Added nil check.
+        (formElementFromDOMElement): Added nil check.
+
 2003-12-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3490959, collapsed border tables don't paint backgrounds.

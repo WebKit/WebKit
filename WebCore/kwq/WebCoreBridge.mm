@@ -611,7 +611,7 @@ static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>elemen
 {
     ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
     DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
-    if (idFromNode(domElement) == ID_INPUT) {
+    if (domElement && idFromNode(domElement) == ID_INPUT) {
         return static_cast<HTMLInputElementImpl *>(domElement);
     }
     return nil;
@@ -621,7 +621,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 {
     ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
     DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
-    if (idFromNode(domElement) == ID_FORM) {
+    if (domElement && idFromNode(domElement) == ID_FORM) {
         return static_cast<HTMLFormElementImpl *>(domElement);
     }
     return nil;
