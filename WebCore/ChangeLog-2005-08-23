@@ -1,3 +1,32 @@
+2003-11-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3471609, 'transparent' should be an acceptable named color value instead of a special
+	keyword used only by background/border.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::):
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackgroundExtended):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::BorderValue::BorderValue):
+        (khtml::BorderValue::isTransparent):
+        (khtml::BorderValue::operator==):
+        (khtml::CollapsedBorderValue::isTransparent):
+        (khtml::RenderStyle::setBorderLeftColor):
+        (khtml::RenderStyle::setBorderRightColor):
+        (khtml::RenderStyle::setBorderTopColor):
+        (khtml::RenderStyle::setBorderBottomColor):
+
 2003-11-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

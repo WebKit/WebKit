@@ -311,7 +311,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                                         int _tx, int _ty, int w, int h,
                                         int bleft, int bright)
 {
-    if(c.isValid())
+    if (c.isValid() && qAlpha(c.rgb()) > 0)
         p->fillRect(_tx, clipy, w, cliph, c);
     // no progressive loading of the background image
     if(bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage()) {

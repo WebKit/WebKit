@@ -1290,7 +1290,8 @@ void RenderObject::setStyle(RenderStyle *style)
         if(nb) nb->ref(this);
     }
 
-    setShouldPaintBackgroundOrBorder(m_style->backgroundColor().isValid() || 
+    setShouldPaintBackgroundOrBorder((m_style->backgroundColor().isValid() &&
+                                      qAlpha(m_style->backgroundColor().rgb()) > 0) || 
                                      m_style->hasBorder() || nb );
     
     if (affectsParentBlock)

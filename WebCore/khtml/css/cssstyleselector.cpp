@@ -1469,6 +1469,7 @@ static const colorMap cmap[] = {
     { CSS_VAL_WHITE, 0xFFFFFFFF },
     { CSS_VAL_YELLOW, 0xFFFFFF00 },
     { CSS_VAL_INVERT, invertedColor },
+    { CSS_VAL_TRANSPARENT, transparentColor },
     { CSS_VAL_GREY, 0xff808080 },
     { 0, 0 }
 };
@@ -2321,7 +2322,6 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_SCROLLBAR_ARROW_COLOR:
 
     {
-        bool transparentBorder = false;
         QColor col;
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
@@ -2331,19 +2331,15 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                 col = parentStyle->backgroundColor(); break;
             case CSS_PROP_BORDER_TOP_COLOR:
                 col = parentStyle->borderTopColor();
-                transparentBorder = parentStyle->borderTopIsTransparent();
                 break;
             case CSS_PROP_BORDER_RIGHT_COLOR:
                 col = parentStyle->borderRightColor();
-                transparentBorder = parentStyle->borderRightIsTransparent();
                 break;
             case CSS_PROP_BORDER_BOTTOM_COLOR:
                 col = parentStyle->borderBottomColor();
-                transparentBorder = parentStyle->borderBottomIsTransparent();
                 break;
             case CSS_PROP_BORDER_LEFT_COLOR:
                 col = parentStyle->borderLeftColor();
-                transparentBorder = parentStyle->borderLeftIsTransparent();
                 break;
             case CSS_PROP_COLOR:
                 col = parentStyle->color(); break;
@@ -2359,10 +2355,6 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             if ( ident ) {
                 if ( ident == CSS_VAL__KHTML_TEXT )
                     col = element->getDocument()->textColor();
-                else if ( ident == CSS_VAL_TRANSPARENT ) {
-                    col = QColor();
-                    transparentBorder = true;
-                }
                 else
                     col = colorForCSSValue( ident );
             } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR )
@@ -2377,13 +2369,13 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         case CSS_PROP_BACKGROUND_COLOR:
             style->setBackgroundColor(col); break;
         case CSS_PROP_BORDER_TOP_COLOR:
-            style->setBorderTopColor(col, transparentBorder); break;
+            style->setBorderTopColor(col); break;
         case CSS_PROP_BORDER_RIGHT_COLOR:
-            style->setBorderRightColor(col, transparentBorder); break;
+            style->setBorderRightColor(col); break;
         case CSS_PROP_BORDER_BOTTOM_COLOR:
-            style->setBorderBottomColor(col, transparentBorder); break;
+            style->setBorderBottomColor(col); break;
         case CSS_PROP_BORDER_LEFT_COLOR:
-            style->setBorderLeftColor(col, transparentBorder); break;
+            style->setBorderLeftColor(col); break;
         case CSS_PROP_COLOR:
             style->setColor(col); break;
         case CSS_PROP_OUTLINE_COLOR:

@@ -100,11 +100,6 @@ monospace
 -khtml-body
 #
 #
-# CSS_PROP_BACKGROUND_COLOR:
-#
-transparent
-#
-#
 # CSS_PROP_*_COLOR
 #
 aqua
@@ -124,6 +119,7 @@ silver
 teal
 white
 yellow
+transparent
 activeborder
 activecaption
 appworkspace

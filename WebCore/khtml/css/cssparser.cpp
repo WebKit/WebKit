@@ -730,20 +730,10 @@ bool CSSParser::parseValue( int propId, bool important )
 	}
 	/* nobreak */
     case CSS_PROP_BACKGROUND_COLOR:     // <color> | transparent | inherit
-	if ( propId == CSS_PROP_BACKGROUND_COLOR && id == CSS_VAL_TRANSPARENT ) {
-            valid_primitive = true;
-            break;
-	}
-	/* nobreak */
     case CSS_PROP_BORDER_TOP_COLOR:     // <color> | transparent | inherit
     case CSS_PROP_BORDER_RIGHT_COLOR:   // <color> | transparent | inherit
     case CSS_PROP_BORDER_BOTTOM_COLOR:  // <color> | transparent | inherit
     case CSS_PROP_BORDER_LEFT_COLOR:    // <color> | transparent | inherit
-        if (id == CSS_VAL_TRANSPARENT) {
-            valid_primitive = true;
-            break;
-        }
-        /* fall through */
     case CSS_PROP_COLOR:                // <color> | inherit
     case CSS_PROP_TEXT_DECORATION_COLOR:
         if (id == CSS_VAL__KHTML_TEXT)
