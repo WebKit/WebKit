@@ -1,3 +1,16 @@
+2003-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3160710 -- REGRESSION: bizrate.com front page ad in wrong position
+
+        The new code to compute port coordinates was screwing up somehow.
+        I had to roll it out and we'll have to try again to fix the problem Ed was fixing.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+        Roll back changes between 1.45 and 1.47.
+
 2003-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

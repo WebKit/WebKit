@@ -147,18 +147,9 @@ typedef struct {
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     
     // flip Y coordinates to convert NSWindow coordinates to Carbon window coordinates
-    float borderViewHeight = [[self window] frame].size.height;
-
-    boundsInWindow.origin.y = borderViewHeight - NSMaxY( boundsInWindow );
-    visibleRectInWindow.origin.y = borderViewHeight - NSMaxY( visibleRectInWindow );
-    
-    // OK, we now have top-left based window-relative rectangles. Move them into port coordinates.
-    
-    PixMapHandle pix = GetPortPixMap( port );
-    boundsInWindow.origin.x += (**pix).bounds.left;
-    boundsInWindow.origin.y += (**pix).bounds.top;
-    visibleRectInWindow.origin.x += (**pix).bounds.left;
-    visibleRectInWindow.origin.y += (**pix).bounds.top;
+    float contentViewHeight = [[[self window] contentView] frame].size.height;
+    boundsInWindow.origin.y = contentViewHeight - boundsInWindow.origin.y - boundsInWindow.size.height; 
+    visibleRectInWindow.origin.y = contentViewHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
     // Set up NS_Port.
     
