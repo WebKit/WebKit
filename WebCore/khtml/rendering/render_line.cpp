@@ -800,6 +800,42 @@ InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
     return box->closestLeafChildForXPos(_x, _tx);
 }
 
+void RootInlineBox::detach(RenderArena* arena)
+{
+    detachEllipsisBox(arena);
+    InlineFlowBox::detach(arena);
+}
+
+void RootInlineBox::detachEllipsisBox(RenderArena* arena)
+{
+    if (m_ellipsisBox) {
+        m_ellipsisBox->detach(arena);
+        m_ellipsisBox = 0;
+    }
+}
+
+bool RootInlineBox::canAccommodateEllipsis(int blockEdge, bool ltr, int ellipsisWidth)
+{
+    // First sanity-check the width of the whole line to see if there is sufficient room.
+    if (width() < ellipsisWidth)
+        return false;
+        
+    // Next iterate over all the line boxes on the line.  If we find a replaced element that intersects
+    // then we refuse to accommodate the ellipsis.  Otherwise we're ok.
+    return false;
+}
+
+void RootInlineBox::placeEllipsis(QChar* ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth)
+{
+    // Create an ellipsis box.
+    
+    // Position the ellipsis box vertically.
+    
+    // Now attempt to find the nearest glyph horizontally and place just to the right (or left in RTL)
+    // of that glyph.  Mark all of the objects that intersect the ellipsis box as not painting (as being
+    // truncated).
+}
+
 void RootInlineBox::adjustVerticalPosition(int delta)
 {
     InlineFlowBox::adjustVerticalPosition(delta);

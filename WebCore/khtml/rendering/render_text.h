@@ -203,8 +203,6 @@ public:
     virtual short marginLeft() const { return style()->marginLeft().minWidth(0); }
     virtual short marginRight() const { return style()->marginRight().minWidth(0); }
 
-    virtual int rightmostPosition() const;
-
     virtual QRect getAbsoluteRepaintRect();
 
     const QFontMetrics &metrics(bool firstLine) const;
@@ -218,6 +216,8 @@ public:
     
     virtual InlineBox *inlineBox(long offset);
     
+    void clearTextOverflowTruncation();
+
 #if APPLE_CHANGES
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;

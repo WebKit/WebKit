@@ -45,7 +45,7 @@ public:
 
     virtual ~InlineBox() {};
 
-    void detach(RenderArena* renderArena);
+    virtual void detach(RenderArena* renderArena);
 
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
@@ -273,9 +273,12 @@ class RootInlineBox : public InlineFlowBox
 public:
     RootInlineBox(RenderObject* obj)
     : InlineFlowBox(obj), m_topOverflow(0), m_bottomOverflow(0), m_lineBreakObj(0), m_lineBreakPos(0), 
-      m_blockHeight(0), m_endsWithBreak(false)
+      m_blockHeight(0), m_endsWithBreak(false), m_ellipsisBox(0)
     {}
     
+    virtual void detach(RenderArena* renderArena);
+    void detachEllipsisBox(RenderArena* renderArena);
+
     RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }
     RootInlineBox* prevRootBox() { return static_cast<RootInlineBox*>(m_prevLine); }
 
@@ -300,6 +303,9 @@ public:
 
     void childRemoved(InlineBox* box);
 
+    bool canAccommodateEllipsis(int blockEdge, bool ltr, int ellipsisWidth);
+    void placeEllipsis(QChar* ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth);
+
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further
@@ -317,6 +323,9 @@ protected:
     
     // Whether the line ends with a <br>.
     bool m_endsWithBreak;
+    
+    // An inline text box that represents our text truncation string.
+    InlineBox* m_ellipsisBox;
 };
 
 }; //namespace

@@ -1,3 +1,27 @@
+2004-06-15  David Hyatt  <hyatt@apple.com>
+
+	Initial work on text truncation.  Working top-down, I think I've made all the changes I will need to bidi.cpp
+	and to the block code itself.  The rest of the code can be concentrated in the render_line and render_text files.
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::findNextLineBreak):
+        (khtml::RenderBlock::deleteEllipsisLineBoxes):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_line.cpp:
+        (RootInlineBox::detach):
+        (RootInlineBox::detachEllipsisBox):
+        (RootInlineBox::canAccommodateEllipsis):
+        (RootInlineBox::placeEllipsis):
+        * khtml/rendering/render_line.h:
+        (khtml::RootInlineBox::RootInlineBox):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::clearTextOverflowTruncation):
+        * khtml/rendering/render_text.h:
+
 2004-06-14  Trey Matteson  <trey@apple.com>
 
 	3692690 - REGRESSION: canceling drag from WebView cause link to load
