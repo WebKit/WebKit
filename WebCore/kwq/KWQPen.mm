@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,9 @@
 
 #include <qpen.h>
 
-QPen::QPen(const QColor &color, uint width, PenStyle style) : penStyle((PenStyle)(style & MPenStyle)), penWidth(width), penColor(color), linest (style)
+QPen::QPen(const QColor &color, uint width, PenStyle style) : penStyle(style), penWidth(width), penColor(color)
 {
 }
-
 
 const QColor &QPen::color() const
 {
@@ -58,7 +57,6 @@ void QPen::setWidth(uint width)
 void QPen::setStyle(PenStyle style)
 {
     penStyle = style;
-    linest = (linest & ~MPenStyle) | style;
 }
 
 bool QPen::operator==(const QPen &compareTo) const
@@ -68,10 +66,9 @@ bool QPen::operator==(const QPen &compareTo) const
         (penColor == compareTo.penColor);
 }
 
-
 bool QPen::operator!=(const QPen &compareTo) const
 {
-    return !(operator==( compareTo ));
+    return !(*this == compareTo);
 }
 
 

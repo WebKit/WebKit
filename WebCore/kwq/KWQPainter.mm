@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,16 @@
 #import <WebCoreTextRenderer.h>
 
 
+struct QPState {				// painter state
+    QFont	font;
+    QPen	pen;
+    QBrush	brush;
+    NSCompositingOperation compositingOperation;
+};
+
+typedef QPtrStack<QPState> QPStateStack;
+
+
 struct QPainterPrivate {
 friend class QPainter;
 public:
@@ -46,9 +56,9 @@ public:
         qbrush(),
         qpen(), 
         isFocusLocked(0), 
-        ps_stack(0L),
+        ps_stack(0),
         compositingOperation(NSCompositeCopy), 
-        bufferDevice(0L)
+        bufferDevice(0)
     {
     }
     
@@ -60,20 +70,10 @@ private:
     QBrush qbrush;
     QPen qpen;
     uint isFocusLocked:1;
-    void *ps_stack;
+    QPStateStack *ps_stack;
     NSCompositingOperation compositingOperation;
     const QPaintDevice *bufferDevice;
 };
-
-
-struct QPState {				// painter state
-    QFont	font;
-    QPen	pen;
-    QBrush	brush;
-    NSCompositingOperation compositingOperation;
-};
-
-typedef QPtrStack<QPState> QPStateStack;
 
 
 QPainter::QPainter()
@@ -167,7 +167,7 @@ QRect QPainter::xForm(const QRect &) const
 
 void QPainter::save()
 {
-    QPStateStack *pss = (QPStateStack *)data->ps_stack;
+    QPStateStack *pss = data->ps_stack;
     if ( pss == 0 ) {
 	pss = new QPStateStack;
 	data->ps_stack = pss;
@@ -185,7 +185,7 @@ void QPainter::save()
 
 void QPainter::restore()
 {
-    QPStateStack *pss = (QPStateStack *)data->ps_stack;
+    QPStateStack *pss = data->ps_stack;
     if ( pss == 0 || pss->isEmpty() ) {
         KWQDEBUG("ERROR void QPainter::restore() stack is empty\n");
 	return;
@@ -208,11 +208,11 @@ void QPainter::restore()
 void QPainter::drawRect(int x, int y, int w, int h)
 {
     _lockFocus();
-    if (data->qbrush.style() != NoBrush){
+    if (data->qbrush.style() != NoBrush) {
         _setColorFromBrush();
         [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
-    if (data->qpen.style() != NoPen){
+    if (data->qpen.style() != NoPen) {
         _setColorFromPen();
         [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
     }
@@ -222,40 +222,64 @@ void QPainter::drawRect(int x, int y, int w, int h)
 
 void QPainter::_setColorFromBrush()
 {
-    [data->qbrush.color().color set];
+    [data->qbrush.color().getNSColor() set];
 }
 
 
 void QPainter::_setColorFromPen()
 {
-    [data->qpen.color().color set];
+    [data->qpen.color().getNSColor() set];
 }
 
 
+// This is only used to draw borders around text, and lines over text.
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
+    PenStyle penStyle = data->qpen.style();
+    if (penStyle == NoPen)
+        return;
+    float width = data->qpen.width();
+    if (width < 1)
+        width = 1;
+    
+    NSPoint p1 = NSMakePoint(x1 + width/2, y1 + width/2);
+    NSPoint p2 = NSMakePoint(x2 + width/2, y2 + width/2);
+    
+    // This hack makes sure we don't end up with lines hanging off the ends, while
+    // keeping lines horizontal or vertical.
+    if (x1 != x2)
+        p2.x -= width;
+    if (y1 != y2)
+        p2.y -= width;
+    
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path setLineWidth:width];
+#if 0
+    switch (penStyle) {
+    case NoPen:
+    case SolidLine:
+        break;
+    case DotLine:
+        {
+            const float dottedLine[2] = { 1, 1 };
+            [path setLineDash:dottedLine count:2 phase:0];
+        }
+        break;
+    case DashLine:
+        {
+            const float dashedLine[2] = { 3, 2 };
+            [path setLineDash:dashedLine count:2 phase:0];
+        }
+        break;
+    }
+#endif
+    [path moveToPoint:p1];
+    [path lineToPoint:p2];
+    [path closePath];
+
     _lockFocus();
     _setColorFromPen();
-
-    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    BOOL flag = [graphicsContext shouldAntialias];
-
-    [graphicsContext setShouldAntialias: NO];
-
-#if 0
-    NSBezierPath *path = [NSBezierPath bezierPath];
-    [path setLineWidth:(float)0.1];
-    [path moveToPoint:NSMakePoint(x1, y1)];
-    [path lineToPoint:NSMakePoint(x2, y2)];
-    [path closePath];
     [path stroke];
-#endif        
-
-    [NSBezierPath setDefaultLineWidth:1.0f];
-    [NSBezierPath strokeLineFromPoint: NSMakePoint (x1,y1-0.5f) toPoint: NSMakePoint (x2,y2-0.5f)];
-
-    [graphicsContext setShouldAntialias: flag];
-    
     _unlockFocus();
 }
 
@@ -268,11 +292,11 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
     
     _lockFocus();
-    if (data->qbrush.style() != NoBrush){
+    if (data->qbrush.style() != NoBrush) {
         _setColorFromBrush();
         [path fill];
     }
-    if (data->qpen.style() != NoPen){
+    if (data->qpen.style() != NoPen) {
         _setColorFromPen();
         [path stroke];
     }
@@ -484,7 +508,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
+        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withColor:data->qpen.color().getNSColor()];
 
     _unlockFocus();
 }
@@ -519,7 +543,7 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().color];
+        drawUnderlineForString:string atPoint:NSMakePoint(x,y) withColor:data->qpen.color().getNSColor()];
 
     _unlockFocus();
 }
@@ -555,7 +579,7 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
     
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().color paragraphStyle:style];
+        drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().getNSColor() paragraphStyle:style];
 
     _unlockFocus();
 }
@@ -565,8 +589,8 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
     _lockFocus();
-    if (brush.style() == SolidPattern){
-        [brush.color().color set];
+    if (brush.style() == SolidPattern) {
+        [brush.color().getNSColor() set];
         [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _unlockFocus();

@@ -1,3 +1,52 @@
+2002-05-19  Darin Adler  <darin@apple.com>
+
+	* khtml/rendering/render_object.cpp: (RenderObject::drawBorder):
+	Add missing break statement so borders don't draw strangely.
+
+	* khtml/rendering/render_style.h: Remove unneeded QColor workaround,
+	now that we handle invalid colors properly.
+
+	* kwq/KWQColor.mm:
+	(createStaticConstructorAutoreleasePool): New solution to the problem
+	of autorelease at static constructor time.
+	(getNamedColors): Function that creates this dictionary when needed
+	rather than creating it inside an init function.
+	(QColor::QColor): Share code with setRgb, get rid of _initialize.
+	(hex2int): Return -1 for bad digit rather than 0.
+	(decodeColorFromHexColorString): Make more robust and simpler.
+	(QColor::setNamedColor): Set color to invalid rather than black when
+	the passed in name is empty or unrecognized.
+	(QColor::red), (QColor::green), (QColor::blue): Round instead of truncating.
+	(QColor::setRgb): Set color to invalid if r, g, or b is out of range.
+	(QColor::operator=): Simplify.
+	(QColor::operator==): Handle invalid colors correctly.
+	(QColor::getNSColor): Return black of invalid colors.
+
+	* kwq/KWQCursor.mm: Simplify cursor globals.
+
+	* kwq/KWQPainter.mm:
+	(QPainter::_setColorFromBrush): Use getNSColor() to handle invalid colors correctly.
+	(QPainter::_setColorFromPen): Use getNSColor() to handle invalid colors correctly.
+	(QPainter::drawLine): Add code to respect style and width and handle endpoints in a
+	way that will make the lines look like Qt users expect.
+	(QPainter::drawText): Use getNSColor() to handle invalid colors correctly.
+	(QPainter::drawUnderlineForText): Use getNSColor() to handle invalid colors correctly.
+	(QPainter::fillRect): Use getNSColor() to handle invalid colors correctly.
+
+	* kwq/KWQPen.mm: (QPen::QPen): (QPen::setStyle): Remove use of MPenStyle.
+
+	* kwq/KWQPixmap.mm: (QPixmap::QPixmap): Add comments.
+
+	* kwq/qt/qcolor.h: Simplify ifdefs, remove cname, _initialize, globals_init, and
+	initGlobalColors.
+
+	* kwq/qt/qnamespace.h: Remove AlignTop, AlignBottom, SingleLine, ExpandTabs, DontPrint,
+	DashDotLine, DashDotDotLine, MPenStyle, WResizeNoRease, WRepaintNoErase, color0, color1,
+	darkRed, darkGreen, darkBlue, darkCyan, darkMagenta, darkYellow. Simplify the QColor
+	and QCursor globals.
+
+	* kwq/qt/qpen.h: QPainter is no longer a friend class. Remove linest.
+
 2002-05-17  Darin Adler  <darin@apple.com>
 
 	* khtml/rendering/render_list.cpp: (RenderListItem::setStyle):

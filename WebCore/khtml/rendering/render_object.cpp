@@ -241,6 +241,9 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
             case BSBottom:
             case BSTop:
                 p->drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
+#ifdef APPLE_CHANGES
+                break;
+#endif
             case BSRight:
             case BSLeft:
                 p->drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);

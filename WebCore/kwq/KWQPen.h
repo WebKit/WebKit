@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,12 @@
 #ifndef QPEN_H_
 #define QPEN_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qnamespace.h>
 #include <qcolor.h>
 
-class QPainter;
-
-// class QPen ==================================================================
-
 class QPen : public Qt {
-friend class QPainter;
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QPen(const QColor &c = Qt::black, uint w = 0, PenStyle ps = SolidLine);
-
-    // defaults are fine
-    // QPen(const QPen &pen);
-    // ~QPen();
-    // QPen &operator=(const QPen &);
-
-    // member functions --------------------------------------------------------
 
     const QColor &color() const;
     uint width() const;
@@ -65,20 +41,13 @@ public:
     void setWidth(uint);
     void setStyle(PenStyle);
 
-    // operators ---------------------------------------------------------------
-
     bool operator==(const QPen &) const;
     bool operator!=(const QPen &) const;
     
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
-
     PenStyle  penStyle;
     uint      penWidth;
     QColor    penColor;
-    Q_UINT16  linest;
- 
-}; // class QPen ===============================================================
+};
 
 #endif

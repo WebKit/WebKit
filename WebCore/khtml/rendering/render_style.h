@@ -198,9 +198,6 @@ public:
     {
 	width = 3; // medium is default value
 	style = BNONE;
-#ifdef APPLE_CHANGES
-	color = Qt::black;
-#endif /* APPLE_CHANGES */
     }
     QColor color;
     unsigned short width : 12;

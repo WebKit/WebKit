@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,9 +43,10 @@ QPixmap::QPixmap(const QByteArray &bytes)
 {
     NSData *data = [[NSData alloc] initWithBytes: bytes.data() length: bytes.size()];
     nsimage = [[NSImage alloc] initWithData: data];
-	NSArray *reps = [nsimage representations];
-	NSImageRep *rep = [reps objectAtIndex: 0];
-	[rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
+    NSArray *reps = [nsimage representations];
+    NSImageRep *rep = [reps objectAtIndex: 0];
+    // Force the image to use the pixel size and ignore the dpi.
+    [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
     [data release];
     if (nsimage == nil){
         KWQDEBUG("unable to create image\n");

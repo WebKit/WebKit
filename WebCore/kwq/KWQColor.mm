@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,211 @@
  */
 
 #include <qcolor.h>
-#include <qstring.h>
 
+#include <qnamespace.h>
+#include <qstring.h>
 #include <kwqdebug.h>
 
-static NSDictionary *namedColors = NULL;
+static void createStaticConstructorAutoreleasePool()
+{
+    static bool created;
+    if (created)
+        return;
+    created = true;
+    [[NSAutoreleasePool alloc] init];
+    // FIXME: It would be great if there was some way to release this
+    // without help from the application.
+}
 
-#define ROUND_TO_INT(f) ((int)rint((f)))
+const QColor Qt::black    (0x00, 0x00, 0x00);
+const QColor Qt::white    (0xFF, 0xFF, 0xFF);
+const QColor Qt::darkGray (0x80, 0x80, 0x80);
+const QColor Qt::gray     (0xA0, 0xA0, 0xA0);
+const QColor Qt::lightGray(0xC0, 0xC0, 0xC0);
+const QColor Qt::red      (0xFF, 0x00, 0x00);
+const QColor Qt::green    (0x00, 0xFF, 0x00);
+const QColor Qt::blue     (0x00, 0x00, 0xFF);
+const QColor Qt::cyan     (0x00, 0xFF, 0xFF);
+const QColor Qt::magenta  (0xFF, 0x00, 0xFF);
+const QColor Qt::yellow   (0xFF, 0xFF, 0x00);
+
+static NSDictionary *getNamedColors()
+{
+    static NSDictionary *namedColors;
+    
+    if (namedColors)
+        return namedColors;
+    
+    namedColors = [[NSDictionary alloc] initWithObjectsAndKeys:
+        @"#f0f8ff", @"aliceblue",
+        @"#faebd7", @"antiquewhite",
+        @"#00ffff", @"aqua",
+        @"#7fffd4", @"aquamarine",
+        @"#f0ffff", @"azure",
+        @"#f5f5dc", @"beige",
+        @"#ffe4c4", @"bisque",
+        @"#000000", @"black",
+        @"#ffebcd", @"blanchedalmond",
+        @"#0000ff", @"blue",
+        @"#8a2be2", @"blueviolet",
+        @"#a52a2a", @"brown",
+        @"#deb887", @"burlywood",
+        @"#5f9ea0", @"cadetblue",
+        @"#7fff00", @"chartreuse",
+        @"#d2691e", @"chocolate",
+        @"#ff7f50", @"coral",
+        @"#6495ed", @"cornflowerblue",
+        @"#fff8dc", @"cornsilk",
+        @"#dc143c", @"crimson",
+        @"#00ffff", @"cyan",
+        @"#00008b", @"darkblue",
+        @"#008b8b", @"darkcyan",
+        @"#b8860b", @"darkgoldenrod",
+        @"#a9a9a9", @"darkgray",
+        @"#006400", @"darkgreen",
+        @"#bdb76b", @"darkkhaki",
+        @"#8b008b", @"darkmagenta",
+        @"#556b2f", @"darkolivegreen",
+        @"#ff8c00", @"darkorange",
+        @"#9932cc", @"darkorchid",
+        @"#8b0000", @"darkred",
+        @"#e9967a", @"darksalmon",
+        @"#8fbc8f", @"darkseagreen",
+        @"#483d8b", @"darkslateblue",
+        @"#2f4f4f", @"darkslategray",
+        @"#00ced1", @"darkturquoise",
+        @"#9400d3", @"darkviolet",
+        @"#ff1493", @"deeppink",
+        @"#00bfff", @"deepskyblue",
+        @"#696969", @"dimgray",
+        @"#1e90ff", @"dodgerblue",
+        @"#b22222", @"firebrick",
+        @"#fffaf0", @"floralwhite",
+        @"#228b22", @"forestgreen",
+        @"#ff00ff", @"fuchsia",
+        @"#dcdcdc", @"gainsboro",
+        @"#f8f8ff", @"ghostwhite",
+        @"#ffd700", @"gold",
+        @"#daa520", @"goldenrod",
+        @"#808080", @"gray",
+        @"#008000", @"green",
+        @"#adff2f", @"greenyellow",
+        @"#f0fff0", @"honeydew",
+        @"#ff69b4", @"hotpink",
+        @"#cd5c5c", @"indianred ",
+        @"#4b0082", @"indigo ",
+        @"#fffff0", @"ivory",
+        @"#f0e68c", @"khaki",
+        @"#e6e6fa", @"lavender",
+        @"#fff0f5", @"lavenderblush",
+        @"#7cfc00", @"lawngreen",
+        @"#fffacd", @"lemonchiffon",
+        @"#add8e6", @"lightblue",
+        @"#f08080", @"lightcoral",
+        @"#e0ffff", @"lightcyan",
+        @"#fafad2", @"lightgoldenrodyellow",
+        @"#d3d3d3", @"lightgray",
+        @"#90ee90", @"lightgreen",
+        @"#ffb6c1", @"lightpink",
+        @"#ffa07a", @"lightsalmon",
+        @"#20b2aa", @"lightseagreen",
+        @"#87cefa", @"lightskyblue",
+        @"#8470ff", @"lightslateblue",
+        @"#778899", @"lightslategray",
+        @"#b0c4de", @"lightsteelblue",
+        @"#ffffe0", @"lightyellow",
+        @"#00ff00", @"lime",
+        @"#32cd32", @"limegreen",
+        @"#faf0e6", @"linen",
+        @"#ff00ff", @"magenta",
+        @"#800000", @"maroon",
+        @"#66cdaa", @"mediumaquamarine",
+        @"#0000cd", @"mediumblue",
+        @"#ba55d3", @"mediumorchid",
+        @"#9370d8", @"mediumpurple",
+        @"#3cb371", @"mediumseagreen",
+        @"#7b68ee", @"mediumslateblue",
+        @"#00fa9a", @"mediumspringgreen",
+        @"#48d1cc", @"mediumturquoise",
+        @"#c71585", @"mediumvioletred",
+        @"#191970", @"midnightblue",
+        @"#f5fffa", @"mintcream",
+        @"#ffe4e1", @"mistyrose",
+        @"#ffe4b5", @"moccasin",
+        @"#ffdead", @"navajowhite",
+        @"#000080", @"navy",
+        @"#fdf5e6", @"oldlace",
+        @"#808000", @"olive",
+        @"#6b8e23", @"olivedrab",
+        @"#ffa500", @"orange",
+        @"#ff4500", @"orangered",
+        @"#da70d6", @"orchid",
+        @"#eee8aa", @"palegoldenrod",
+        @"#98fb98", @"palegreen",
+        @"#afeeee", @"paleturquoise",
+        @"#d87093", @"palevioletred",
+        @"#ffefd5", @"papayawhip",
+        @"#ffdab9", @"peachpuff",
+        @"#cd853f", @"peru",
+        @"#ffc0cb", @"pink",
+        @"#dda0dd", @"plum",
+        @"#b0e0e6", @"powderblue",
+        @"#800080", @"purple",
+        @"#ff0000", @"red",
+        @"#bc8f8f", @"rosybrown",
+        @"#4169e1", @"royalblue",
+        @"#8b4513", @"saddlebrown",
+        @"#fa8072", @"salmon",
+        @"#f4a460", @"sandybrown",
+        @"#2e8b57", @"seagreen",
+        @"#fff5ee", @"seashell",
+        @"#a0522d", @"sienna",
+        @"#c0c0c0", @"silver",
+        @"#87ceeb", @"skyblue",
+        @"#6a5acd", @"slateblue",
+        @"#708090", @"slategray",
+        @"#fffafa", @"snow",
+        @"#00ff7f", @"springgreen",
+        @"#4682b4", @"steelblue",
+        @"#d2b48c", @"tan",
+        @"#008080", @"teal",
+        @"#d8bfd8", @"thistle",
+        @"#ff6347", @"tomato",
+        @"#40e0d0", @"turquoise",
+        @"#ee82ee", @"violet",
+        @"#d02090", @"violetred",
+        @"#f5deb3", @"wheat",
+        @"#ffffff", @"white",
+        @"#f5f5f5", @"whitesmoke",
+        @"#ffff00", @"yellow",
+        @"#9acd32", @"yellowgreen",
+    nil];
+    
+    return namedColors;
+}
 
 QRgb qRgb(int r, int g, int b)
 {
     return r << 16 | g << 8 | b;
 }
 
-
 QRgb qRgba(int r, int g, int b, int a)
 {
     return a << 24 | r << 16 | g << 8 | b;
 }
-
-
 
 QColor::QColor()
 {
     color = nil;
 }
 
-
 QColor::QColor(int r, int g, int b)
 {
+    // This function is used during static contructor time, and needs to set up an autorelease pool.
+    createStaticConstructorAutoreleasePool();
+    
     color = nil;
-    if (!globals_init) {
-	    initGlobalColors();
-	}
-    else {
-        _initialize (r, g, b);
-    }
+    setRgb(r, g, b);
 }
 
 QColor::QColor(const QString &name)
@@ -71,124 +240,81 @@ QColor::QColor(const QString &name)
 QColor::QColor(const char *name)
 {
     color = nil;
-    setNamedColor( QString(name) );
+    setNamedColor(name);
 }
 
-
-void QColor::_initialize(int r, int g, int b)
+QColor::~QColor()
 {
-    color = [[NSColor colorWithCalibratedRed: ((float)(r)) / (float)255.0
-                    green: ((float)(g)) / (float)255.0
-                    blue: ((float)(b)) / (float)255.0
-                    alpha: 1.0] retain];
+    [color release];
 }
-
-
-QColor::~QColor(){
-    if (color != nil)
-        [color release];
-}
-
 
 QColor::QColor(const QColor &copyFrom)
 {
-    if (copyFrom.color != nil) {
-        color = [copyFrom.color retain];
-    }
-    else {
-        color = nil;
-    }
+    color = [copyFrom.color retain];
 }
 
 QString QColor::name() const
 {
-    NSString *name;
-
-    name = [NSString stringWithFormat:@"#%02x%02x%02x", red(), green(), blue()];
-    
-    return NSSTRING_TO_QSTRING(name);
+    return QString::fromNSString([NSString stringWithFormat:@"#%02X%02X%02X", red(), green(), blue()]);
 }
 
-static int hex2int( QChar hexchar )
+static int hex2int(QChar hexchar)
 {
     int v;
-    if ( hexchar.isDigit() )
+    
+    if (hexchar.isDigit())
 	v = hexchar.digitValue();
-    else if ( hexchar >= 'A' && hexchar <= 'F' )
+    else if (hexchar >= 'A' && hexchar <= 'F')
 	v = hexchar.cell() - 'A' + 10;
-    else if ( hexchar >= 'a' && hexchar <= 'f' )
+    else if (hexchar >= 'a' && hexchar <= 'f')
 	v = hexchar.cell() - 'a' + 10;
     else
-	v = 0;
+	v = -1;
+    
     return v;
-}
-
-static bool looksLikeSixLetterHexColorString(const QString &string)
-{
-    bool result;
-    
-    result = TRUE;
-    
-    for (int i = 0; i < 6; i++) {
-        QChar c = string.at(i);
-        if ((c >= '0' && c <= '9') ||
-            (c >= 'a' && c <= 'f') ||
-            (c >= 'A' && c <= 'F')) {
-            continue;
-        }
-        else {
-            result = FALSE;
-            break;   
-        }
-    }
-    
-    return result;
 }
 
 static bool decodeColorFromHexColorString(const QString &string, int *r, int *g, int *b)
 {
-    bool decoded;
-    
-    decoded = FALSE;
+    int len = string.length();
+    if (len == 0)
+        return false;
 
-    if ((string.length() == 7 && string[0] == '#') ||
-        (string.length() == 4 && string[0] == '#') ||
-        (string.length() == 6 && looksLikeSixLetterHexColorString(string))) {
-        int offset = 0;
-        int len;
-        if (string[0] == '#') {
-            offset = 1;
-            len = string.length() - 1;
-        }
-        else {
-            len = string.length();
-        }
-        const QChar *p = string.unicode() + offset;
-        if (len == 12) {
-            *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-            *g = (hex2int(p[4]) << 4) + hex2int(p[5]);
-            *b = (hex2int(p[8]) << 4) + hex2int(p[9]);
-            decoded = TRUE;    
-        } else if (len == 9) {
-            *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-            *g = (hex2int(p[3]) << 4) + hex2int(p[4]);
-            *b = (hex2int(p[6]) << 4) + hex2int(p[7]);
-            decoded = TRUE;    
-        } else if (len == 6) {
-            *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-            *g = (hex2int(p[2]) << 4) + hex2int(p[3]);
-            *b = (hex2int(p[4]) << 4) + hex2int(p[5]);
-            decoded = TRUE;    
-        } else if (len == 3) {
-            // Convert 0 to 15, to 0 to 255.
-            *r = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[0]) * 255.0f);
-            *g = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[1]) * 255.0f);
-            *b = ROUND_TO_INT((1.0f/15.0f) * hex2int(p[2]) * 255.0f);
-            decoded = TRUE;    
-        }
+    const QChar *p = string.unicode();
+    if (string[0] == '#') {
+        len -= 1;
+        p += 1;
+    }
+    
+    for (int i = 0; i < len; i++)
+        if (hex2int(p[i]) == -1)
+            return false;
+    
+    switch (len) {
+    case 12:
+        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+        *g = (hex2int(p[4]) << 4) + hex2int(p[5]);
+        *b = (hex2int(p[8]) << 4) + hex2int(p[9]);
+        return true;
+    case 9:
+        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+        *g = (hex2int(p[3]) << 4) + hex2int(p[4]);
+        *b = (hex2int(p[6]) << 4) + hex2int(p[7]);
+        return true;
+    case 6:
+        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+        *g = (hex2int(p[2]) << 4) + hex2int(p[3]);
+        *b = (hex2int(p[4]) << 4) + hex2int(p[5]);
+        return true;
+    case 3:
+        // Convert 0 to F to 0 to 255.
+        *r = hex2int(p[0]) * 0x11;
+        *g = hex2int(p[1]) * 0x11;
+        *b = hex2int(p[2]) * 0x11;
+        return true;
     }
         
-    return decoded;
+    return false;
 }
 
 void QColor::setNamedColor(const QString &name)
@@ -204,96 +330,78 @@ void QColor::setNamedColor(const QString &name)
     
     int r, g, b;
     
-    r = g = b = 0;
-    
-    if ( name.isEmpty() ) {
-	    setRgb( 0 );
+    if (name.isEmpty()) {
+        [color release];
+        color = nil;
     } 
     else if (decodeColorFromHexColorString(name, &r, &g, &b)) {
-	    setRgb(r, g, b);
+        setRgb(r, g, b);
     } 
     else {
         NSString *hexString;
         
-        hexString = [namedColors objectForKey:[QSTRING_TO_NSSTRING(name) lowercaseString]];
+        hexString = [getNamedColors() objectForKey:[QSTRING_TO_NSSTRING(name) lowercaseString]];
         
         if (hexString && decodeColorFromHexColorString(NSSTRING_TO_QSTRING(hexString), &r, &g, &b)) {
             setRgb(r, g, b);
         }
         else {
-            KWQDEBUG ("couldn't create color using name %s\n", name.ascii());
-            setRgb(0, 0, 0);
+            KWQDEBUG("couldn't create color using name %s", name.ascii());
+            [color release];
+            color = nil;
         }
     }
 }
 
-
 bool QColor::isValid() const
 {
-    bool result;
-
-    result = TRUE;
-
-    if (color == nil) {
-        result = FALSE;
-    }
-
-    return result;
+    return color != nil;
 }
-
 
 int QColor::red() const
 {
     if (color == nil)
         return 0;
-    return (int)([color redComponent] * 255);
+    return (int)(rint([color redComponent] * 255));
 }
 
-
-int QColor::QColor::green() const
+int QColor::green() const
 {
     if (color == nil)
         return 0;
-    return (int)([color greenComponent] * 255);
+    return (int)(rint([color greenComponent] * 255));
 }
 
 int QColor::blue() const
 {
     if (color == nil)
         return 0;
-    return (int)([color blueComponent] * 255);
+    return (int)(rint([color blueComponent] * 255));
 }
-
 
 QRgb QColor::rgb() const
 {
     if (color == nil)
         return 0;
-    return qRgb (red(),green(),blue());
+    return qRgb(red(),green(),blue());
 }
-
 
 void QColor::setRgb(int r, int g, int b)
 {
-    if (color != nil)
-        [color release];
-    color = [[NSColor colorWithCalibratedRed: ((float)(r)) / (float)255.0
-                    green: ((float)(g)) / (float)255.0
-                    blue: ((float)(b)) / (float)255.0
-                    alpha: 1.0] retain];
+    [color release];
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+        color = nil;
+    else
+        color = [[NSColor colorWithCalibratedRed: r / 255.0
+                                           green: g / 255.0
+                                            blue: b / 255.0
+                                           alpha: 1.0] retain];
 }
-
 
 void QColor::setRgb(int rgb)
 {
-    if (color != nil)
-        [color release];
-    color = [[NSColor colorWithCalibratedRed: ((float)(rgb >> 16)) / 255.0
-                    green: ((float)(rgb >> 8)) / 255.0
-                    blue: ((float)(rgb & 0xff)) / 255.0
-                    alpha: 1.0] retain];
+    setRgb((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 }
-
 
 void QColor::hsv(int *h, int *s, int *v) const
 {
@@ -402,7 +510,6 @@ QColor QColor::light(int factor) const
     return result;
 }
 
-
 QColor QColor::dark(int factor) const
 {
     if (factor <= 0) {
@@ -425,241 +532,29 @@ QColor QColor::dark(int factor) const
     return result;
 }
 
-
 QColor &QColor::operator=(const QColor &assignFrom)
 {
-    if ( !globals_init )
-	initGlobalColors();
-    if (color != assignFrom.color){ 
-        if (color != nil)
-            [color release];
-        if (assignFrom.color != nil)
-            color = [assignFrom.color retain];
-        else
-            color = nil;
-    }
+    [assignFrom.color retain];
+    [color release];
+    color = assignFrom.color;
     return *this;
 }
 
-
 bool QColor::operator==(const QColor &compareTo) const
 {
-    return [color isEqual: compareTo.color];
+    if (color == compareTo.color)
+        return true;
+    if (color && compareTo.color)
+        return [color isEqual:compareTo.color];
+    return false;
 }
-
 
 bool QColor::operator!=(const QColor &compareTo) const
 {
-    return !(operator==(compareTo));
+    return !(*this == compareTo);
 }
 
-
-
-
-/*****************************************************************************
-  Global colors
- *****************************************************************************/
-
-bool QColor::globals_init = FALSE;		// global color not initialized
-
-
-static QColor stdcol[19];
-
-QT_STATIC_CONST_IMPL QColor & Qt::color0 = stdcol[0];
-QT_STATIC_CONST_IMPL QColor & Qt::color1  = stdcol[1];
-QT_STATIC_CONST_IMPL QColor & Qt::black  = stdcol[2];
-QT_STATIC_CONST_IMPL QColor & Qt::white = stdcol[3];
-QT_STATIC_CONST_IMPL QColor & Qt::darkGray = stdcol[4];
-QT_STATIC_CONST_IMPL QColor & Qt::gray = stdcol[5];
-QT_STATIC_CONST_IMPL QColor & Qt::lightGray = stdcol[6];
-QT_STATIC_CONST_IMPL QColor & Qt::red = stdcol[7];
-QT_STATIC_CONST_IMPL QColor & Qt::green = stdcol[8];
-QT_STATIC_CONST_IMPL QColor & Qt::blue = stdcol[9];
-QT_STATIC_CONST_IMPL QColor & Qt::cyan = stdcol[10];
-QT_STATIC_CONST_IMPL QColor & Qt::magenta = stdcol[11];
-QT_STATIC_CONST_IMPL QColor & Qt::yellow = stdcol[12];
-QT_STATIC_CONST_IMPL QColor & Qt::darkRed = stdcol[13];
-QT_STATIC_CONST_IMPL QColor & Qt::darkGreen = stdcol[14];
-QT_STATIC_CONST_IMPL QColor & Qt::darkBlue = stdcol[15];
-QT_STATIC_CONST_IMPL QColor & Qt::darkCyan = stdcol[16];
-QT_STATIC_CONST_IMPL QColor & Qt::darkMagenta = stdcol[17];
-QT_STATIC_CONST_IMPL QColor & Qt::darkYellow = stdcol[18];
-
-
-
-void QColor::initGlobalColors()
+NSColor *QColor::getNSColor() const
 {
-    NSAutoreleasePool *colorPool;
-    
-    colorPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-     
-    globals_init = TRUE;
-
-    stdcol[ 0].setRgb(255,   255,   255 );
-    stdcol[ 1].setRgb(   0,   0,   0 );
-    stdcol[ 2].setRgb(   0,   0,   0 );
-    stdcol[ 3].setRgb( 255, 255, 255 );
-    stdcol[ 4].setRgb( 128, 128, 128 );
-    stdcol[ 5].setRgb( 160, 160, 164 );
-    stdcol[ 6].setRgb( 192, 192, 192 );
-    stdcol[ 7].setRgb( 255,   0,   0 );
-    stdcol[ 8].setRgb(   0, 255,   0 );
-    stdcol[ 9].setRgb(   0,   0, 255 );
-    stdcol[10].setRgb(   0, 255, 255 );
-    stdcol[11].setRgb( 255,   0, 255 );
-    stdcol[12].setRgb( 255, 255,   0 );
-    stdcol[13].setRgb( 128,   0,   0 );
-    stdcol[14].setRgb(   0, 128,   0 );
-    stdcol[15].setRgb(   0,   0, 128 );
-    stdcol[16].setRgb(   0, 128, 128 );
-    stdcol[17].setRgb( 128,   0, 128 );
-    stdcol[18].setRgb( 128, 128,   0 );
-
-    namedColors = [NSDictionary dictionaryWithObjectsAndKeys: \
-        @"#f0f8ff",@"aliceblue", \
-        @"#faebd7",@"antiquewhite", \
-        @"#00ffff",@"aqua", \
-        @"#7fffd4",@"aquamarine", \
-        @"#f0ffff",@"azure", \
-        @"#f5f5dc",@"beige", \
-        @"#ffe4c4",@"bisque", \
-        @"#000000",@"black", \
-        @"#ffebcd",@"blanchedalmond", \
-        @"#0000ff",@"blue", \
-        @"#8a2be2",@"blueviolet", \
-        @"#a52a2a",@"brown", \
-        @"#deb887",@"burlywood", \
-        @"#5f9ea0",@"cadetblue", \
-        @"#7fff00",@"chartreuse", \
-        @"#d2691e",@"chocolate", \
-        @"#ff7f50",@"coral", \
-        @"#6495ed",@"cornflowerblue", \
-        @"#fff8dc",@"cornsilk", \
-        @"#dc143c",@"crimson", \
-        @"#00ffff",@"cyan", \
-        @"#00008b",@"darkblue", \
-        @"#008b8b",@"darkcyan", \
-        @"#b8860b",@"darkgoldenrod", \
-        @"#a9a9a9",@"darkgray", \
-        @"#006400",@"darkgreen", \
-        @"#bdb76b",@"darkkhaki", \
-        @"#8b008b",@"darkmagenta", \
-        @"#556b2f",@"darkolivegreen", \
-        @"#ff8c00",@"darkorange", \
-        @"#9932cc",@"darkorchid", \
-        @"#8b0000",@"darkred", \
-        @"#e9967a",@"darksalmon", \
-        @"#8fbc8f",@"darkseagreen", \
-        @"#483d8b",@"darkslateblue", \
-        @"#2f4f4f",@"darkslategray", \
-        @"#00ced1",@"darkturquoise", \
-        @"#9400d3",@"darkviolet", \
-        @"#ff1493",@"deeppink", \
-        @"#00bfff",@"deepskyblue", \
-        @"#696969",@"dimgray", \
-        @"#1e90ff",@"dodgerblue", \
-        @"#b22222",@"firebrick", \
-        @"#fffaf0",@"floralwhite", \
-        @"#228b22",@"forestgreen", \
-        @"#ff00ff",@"fuchsia", \
-        @"#dcdcdc",@"gainsboro", \
-        @"#f8f8ff",@"ghostwhite", \
-        @"#ffd700",@"gold", \
-        @"#daa520",@"goldenrod", \
-        @"#808080",@"gray", \
-        @"#008000",@"green", \
-        @"#adff2f",@"greenyellow", \
-        @"#f0fff0",@"honeydew", \
-        @"#ff69b4",@"hotpink", \
-        @"#cd5c5c",@"indianred ", \
-        @"#4b0082",@"indigo ", \
-        @"#fffff0",@"ivory", \
-        @"#f0e68c",@"khaki", \
-        @"#e6e6fa",@"lavender", \
-        @"#fff0f5",@"lavenderblush", \
-        @"#7cfc00",@"lawngreen", \
-        @"#fffacd",@"lemonchiffon", \
-        @"#add8e6",@"lightblue", \
-        @"#f08080",@"lightcoral", \
-        @"#e0ffff",@"lightcyan", \
-        @"#fafad2",@"lightgoldenrodyellow", \
-        @"#d3d3d3",@"lightgray", \
-        @"#90ee90",@"lightgreen", \
-        @"#ffb6c1",@"lightpink", \
-        @"#ffa07a",@"lightsalmon", \
-        @"#20b2aa",@"lightseagreen", \
-        @"#87cefa",@"lightskyblue", \
-        @"#8470ff",@"lightslateblue", \
-        @"#778899",@"lightslategray", \
-        @"#b0c4de",@"lightsteelblue", \
-        @"#ffffe0",@"lightyellow", \
-        @"#00ff00",@"lime", \
-        @"#32cd32",@"limegreen", \
-        @"#faf0e6",@"linen", \
-        @"#ff00ff",@"magenta", \
-        @"#800000",@"maroon", \
-        @"#66cdaa",@"mediumaquamarine", \
-        @"#0000cd",@"mediumblue", \
-        @"#ba55d3",@"mediumorchid", \
-        @"#9370d8",@"mediumpurple", \
-        @"#3cb371",@"mediumseagreen", \
-        @"#7b68ee",@"mediumslateblue", \
-        @"#00fa9a",@"mediumspringgreen", \
-        @"#48d1cc",@"mediumturquoise", \
-        @"#c71585",@"mediumvioletred", \
-        @"#191970",@"midnightblue", \
-        @"#f5fffa",@"mintcream", \
-        @"#ffe4e1",@"mistyrose", \
-        @"#ffe4b5",@"moccasin", \
-        @"#ffdead",@"navajowhite", \
-        @"#000080",@"navy", \
-        @"#fdf5e6",@"oldlace", \
-        @"#808000",@"olive", \
-        @"#6b8e23",@"olivedrab", \
-        @"#ffa500",@"orange", \
-        @"#ff4500",@"orangered", \
-        @"#da70d6",@"orchid", \
-        @"#eee8aa",@"palegoldenrod", \
-        @"#98fb98",@"palegreen", \
-        @"#afeeee",@"paleturquoise", \
-        @"#d87093",@"palevioletred", \
-        @"#ffefd5",@"papayawhip", \
-        @"#ffdab9",@"peachpuff", \
-        @"#cd853f",@"peru", \
-        @"#ffc0cb",@"pink", \
-        @"#dda0dd",@"plum", \
-        @"#b0e0e6",@"powderblue", \
-        @"#800080",@"purple", \
-        @"#ff0000",@"red", \
-        @"#bc8f8f",@"rosybrown", \
-        @"#4169e1",@"royalblue", \
-        @"#8b4513",@"saddlebrown", \
-        @"#fa8072",@"salmon", \
-        @"#f4a460",@"sandybrown", \
-        @"#2e8b57",@"seagreen", \
-        @"#fff5ee",@"seashell", \
-        @"#a0522d",@"sienna", \
-        @"#c0c0c0",@"silver", \
-        @"#87ceeb",@"skyblue", \
-        @"#6a5acd",@"slateblue", \
-        @"#708090",@"slategray", \
-        @"#fffafa",@"snow", \
-        @"#00ff7f",@"springgreen", \
-        @"#4682b4",@"steelblue", \
-        @"#d2b48c",@"tan", \
-        @"#008080",@"teal", \
-        @"#d8bfd8",@"thistle", \
-        @"#ff6347",@"tomato", \
-        @"#40e0d0",@"turquoise", \
-        @"#ee82ee",@"violet", \
-        @"#d02090",@"violetred", \
-        @"#f5deb3",@"wheat", \
-        @"#ffffff",@"white", \
-        @"#f5f5f5",@"whitesmoke", \
-        @"#ffff00",@"yellow", \
-        @"#9acd32",@"yellowgreen", \
-        NULL \
-    ];        
-    [namedColors retain];
+    return color ? color : [[NSColor blackColor] retain];
 }
-

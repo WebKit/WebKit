@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,21 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <qnamespace.h>
 #include <qstring.h>
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
+@class NSColor;
+#else
+typedef void NSColor;
 #endif
-
 
 typedef unsigned int QRgb;			// RGB triplet
 
 QRgb qRgb(int r, int g, int b);
 QRgb qRgba(int r, int g, int b, int a);
 
-// class QColor ================================================================
-
 class QColor {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
     QColor();
     QColor(int,int,int);
     QColor(const QString &);
@@ -62,8 +48,6 @@ public:
     QColor(const QColor &);
 
     ~QColor();
-
-    // member functions --------------------------------------------------------
 
     QString name() const;
     void setNamedColor(const QString&);
@@ -83,35 +67,14 @@ public:
     QColor light(int f = 150) const;
     QColor dark(int f = 200) const;
 
-    // operators ---------------------------------------------------------------
-
     QColor &operator=(const QColor &);
     bool operator==(const QColor &x) const;
     bool operator!=(const QColor &x) const;
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-    static bool globals_init;
+    NSColor *getNSColor() const;
 
-    void initGlobalColors();
-
-#ifdef _KWQ_
-    void _initialize(int,int,int);
-    
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    NSColor *getNSColor();
-#else
-    void *getNSColor();
-#endif
-
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+private:
     NSColor *color;
-#else
-    void *color;
-#endif
-    QString cname;
-#endif
-
-}; // class QColor =============================================================
+};
 
 #endif

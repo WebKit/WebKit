@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,6 @@
 #ifndef QNAMESPACE_H_
 #define QNAMESPACE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <KWQDef.h>
 
 class QColor;
@@ -37,15 +33,9 @@ class QCursor;
 
 typedef unsigned int QRgb;
 
-// class Qt ====================================================================
-
 class Qt {
 public:
 
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
- 
      enum ButtonState {
 	NoButton	= 0x0000,
 	LeftButton	= 0x0001,
@@ -65,27 +55,19 @@ public:
 	AlignLeft	= 0x0001,
 	AlignRight	= 0x0002,
 	AlignHCenter	= 0x0004,
-	AlignTop	= 0x0008,
-	AlignBottom	= 0x0010,
 	AlignVCenter	= 0x0020,
 	AlignCenter	= AlignVCenter | AlignHCenter,
 
-	SingleLine	= 0x0040,		// misc. flags
-	DontClip	= 0x0080,
-	ExpandTabs	= 0x0100,
+	DontClip	= 0x0080,		// misc. flags
 	ShowPrefix	= 0x0200,
 	WordBreak	= 0x0400,
-	DontPrint	= 0x1000		// internal
     };
 
     enum PenStyle {
         NoPen,
         SolidLine,
         DotLine,
-        DashLine,
-        DashDotLine,
-        DashDotDotLine,
-        MPenStyle = 0x0f
+        DashLine
     };
 
     enum BrushStyle {
@@ -244,52 +226,24 @@ public:
         XorROP,
     };
 
-    enum WidgetFlags {
-        WResizeNoErase = 0x00100000,
-        WRepaintNoErase = 0x00800000,
-    };
-
-    // constants ---------------------------------------------------------------
-
-
-    QT_STATIC_CONST QColor &color0;
-    QT_STATIC_CONST QColor &color1;
-    QT_STATIC_CONST QColor &black;
-    QT_STATIC_CONST QColor &white;
-    QT_STATIC_CONST QColor &darkGray;
-    QT_STATIC_CONST QColor &gray;
-    QT_STATIC_CONST QColor &lightGray;
-    QT_STATIC_CONST QColor &red;
-    QT_STATIC_CONST QColor &green;
-    QT_STATIC_CONST QColor &blue;
-    QT_STATIC_CONST QColor &cyan;
-    QT_STATIC_CONST QColor &magenta;
-    QT_STATIC_CONST QColor &yellow;
-    QT_STATIC_CONST QColor &darkRed;
-    QT_STATIC_CONST QColor &darkGreen;
-    QT_STATIC_CONST QColor &darkBlue;
-    QT_STATIC_CONST QColor &darkCyan;
-    QT_STATIC_CONST QColor &darkMagenta;
-    QT_STATIC_CONST QColor &darkYellow;
+    static const QColor black;
+    static const QColor white;
+    static const QColor darkGray;
+    static const QColor gray;
+    static const QColor lightGray;
+    static const QColor red;
+    static const QColor green;
+    static const QColor blue;
+    static const QColor cyan;
+    static const QColor magenta;
+    static const QColor yellow;
                   
-    static const QCursor &sizeAllCursor;
-    static const QCursor &splitHCursor;
-    static const QCursor &splitVCursor;
-    static const QCursor &sizeHorCursor;
-    static const QCursor &sizeVerCursor;
+    static const QCursor sizeAllCursor;
+    static const QCursor splitHCursor;
+    static const QCursor splitVCursor;
+    static const QCursor sizeHorCursor;
+    static const QCursor sizeVerCursor;
 
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-
-}; // class Qt =================================================================
+};
 
 #endif
