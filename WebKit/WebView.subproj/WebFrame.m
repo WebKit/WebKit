@@ -744,11 +744,18 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     }
 
                 } else {
-                    // update the URL in the BF list that we made before the redirect
-                    [[_private currentItem] setURL:[[ds request] URL]];
-                    // clear out the form data so we don't repost it to the wrong place if we
-                    // ever go back/forward to this item
-                    [[_private currentItem] _setFormInfoFromRequest:[ds request]];
+                    NSURLRequest *request = [ds request];
+                    
+                    // update the URL in the BF list that we made before the redirect, unless
+                    // this is alternate content for an unreachable URL (we want the BF list
+                    // item to remember the unreachable URL in case it becomes reachable later)
+                    if ([request _webDataRequestUnreachableURL] == nil) {
+                        [[_private currentItem] setURL:[request URL]];
+
+                        // clear out the form data so we don't repost it to the wrong place if we
+                        // ever go back/forward to this item
+                        [[_private currentItem] _setFormInfoFromRequest:request];
+                    }
                 }
                 [self _makeDocumentView];
                 break;

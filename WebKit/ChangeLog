@@ -1,3 +1,17 @@
+2004-07-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed <rdar://problem/3717147> folder icon used for error page in back/forward 
+        menu when iTunes is not installed
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        When displaying the error page for an unreachable URL, leave the requested URL
+        in the WebHistoryItem; don't clobber it with a bogus one that represents the
+        error page. This not only avoids the wrong-icon problem, but should also help
+        in cases where an unreachable URL becomes reachable later on.
+
 2004-07-06  Trey Matteson  <trey@apple.com>
 
 	3716053 - www.theage.com.au has extra back/forward items due to ads
@@ -42,6 +56,7 @@
         (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
 	Ask for slideback.
 
+>>>>>>> 1.2612
 2004-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
