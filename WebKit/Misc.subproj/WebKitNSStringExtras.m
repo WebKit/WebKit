@@ -43,7 +43,11 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     }
     else {
         // WebTextRenderer assumes drawing from baseline.
-        point.y -= [font ascender];
+        if ([[NSView focusView] isFlipped])
+            point.y -= [font ascender];
+        else {
+            point.y += [font descender];
+        }
         [self drawAtPoint:point withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, textColor, NSForegroundColorAttributeName, nil]];
     }
 

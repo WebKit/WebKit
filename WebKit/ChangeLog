@@ -1,3 +1,11 @@
+2003-08-07  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3362939.  Checked flippyness of view and adjust y coord accordingly.
+
+        Reviewed by John.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+
 2003-08-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3330742>: 1.0 Safari fails to send NPP_URLNotify with the error of NPRES_NETWORK_ERR to Flash
