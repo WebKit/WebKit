@@ -1,3 +1,16 @@
+2003-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3477528 -- array.sort(function) fails if the function returns a non-zero value that rounds to zero
+
+        * kjs/array_object.cpp:
+        (compareByStringForQSort): Added checks for undefined values to match what the specification calls for.
+        (compareWithCompareFunctionForQSort): Added checks for undefined values as above, and also changed the
+        code that looks at the compare function result to look at the number returned without rounding to an integer.
+        (ArrayProtoFuncImp::call): Changed the code that looks at the compare function result to look at the number
+        returned without rounding to an integer.
+
 === Safari-113 ===
 
 2003-11-03  Vicki Murley <vicki@apple.com>
