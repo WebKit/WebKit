@@ -181,7 +181,6 @@ struct NPClass
     NPGetPropertyFunctionPtr getProperty;
     NPSetPropertyFunctionPtr setProperty;
 };
-typedef struct NPClass NPClass;
 
 #define kNPClassStructVersion1 1
 #define kNPClassStructVersionCurrent kNPClassStructVersion1
