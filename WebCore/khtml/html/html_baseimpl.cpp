@@ -185,17 +185,18 @@ void HTMLBodyElementImpl::attach()
 {
     assert(!m_render);
     assert(parentNode());
-    assert(parentNode()->renderer());
-
-    RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
-    style->ref();
-    if (style->display() != NONE) {
-        m_render = new (getDocument()->renderArena()) RenderBody(this);
-        m_render->setStyle(style);
-        parentNode()->renderer()->addChild(m_render, nextRenderer());
+    
+    if (parentNode()->renderer()) {
+        RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
+        style->ref();
+        if (style->display() != NONE) {
+            m_render = new (getDocument()->renderArena()) RenderBody(this);
+            m_render->setStyle(style);
+            parentNode()->renderer()->addChild(m_render, nextRenderer());
+        }
+        style->deref();
     }
-    style->deref();
-
+    
     NodeBaseImpl::attach();
 }
 

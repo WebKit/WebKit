@@ -1,3 +1,19 @@
+2003-01-14  David Hyatt  <hyatt@apple.com>
+
+	Make FOUC work with XML.
+	
+        Reviewed by darin.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::attach):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (ProcessingInstructionImpl::checkStyleSheet):
+        (ProcessingInstructionImpl::isLoading):
+        (ProcessingInstructionImpl::sheetLoaded):
+        (ProcessingInstructionImpl::setStyleSheet):
+        * khtml/xml/dom_xmlimpl.h:
+
 2003-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
