@@ -1,3 +1,12 @@
+2003-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3464472>: REGRESSION: New CSS cursor support breaks style="cursor:default
+
+        Reviewed by dave.
+
+        * kwq/KWQWidget.mm:
+        (QWidget::cursor): break after we hit a view that responds to documentCursor as we do in setCursor. Without breaking we were returning the cursor of the most super HTML view which is not what we want.
+
 2003-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

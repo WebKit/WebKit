@@ -373,6 +373,7 @@ QCursor QWidget::cursor()
     while (view) {
         if ([view respondsToSelector:@selector(documentCursor)]) { 
             cursor = QCursor([view documentCursor]);
+            break;
         }
         view = [view superview];
     }
