@@ -1,1 +1,0 @@
-#include "KWQSize.h"

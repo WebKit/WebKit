@@ -1,5 +1,32 @@
 2002-10-26  Darin Adler  <darin@apple.com>
 
+	- removed forwarding headers that are not actually needed
+
+        * ForwardingHeaders/kcmdlineargs.h: Removed.
+        * ForwardingHeaders/kinstance.h: Removed.
+        * ForwardingHeaders/kio/kprinter.h: Removed.
+        * ForwardingHeaders/kio/ktrader.h: Removed.
+        * ForwardingHeaders/kio/scheduler.h: Removed.
+        * ForwardingHeaders/kparts/factory.h: Removed.
+        * ForwardingHeaders/kparts/historyprovider.h: Removed.
+        * ForwardingHeaders/kstddirs.h: Removed.
+        * ForwardingHeaders/qarray.h: Removed.
+        * ForwardingHeaders/qbrush.h: Removed.
+        * ForwardingHeaders/qbutton.h: Removed.
+        * ForwardingHeaders/qcollection.h: Removed.
+        * ForwardingHeaders/qcombobox.h: Removed.
+        * ForwardingHeaders/qframe.h: Removed.
+        * ForwardingHeaders/qglobal.h: Removed.
+        * ForwardingHeaders/qiodevice.h: Removed.
+        * ForwardingHeaders/qlineedit.h: Removed.
+        * ForwardingHeaders/qnamespace.h: Removed.
+        * ForwardingHeaders/qpen.h: Removed.
+        * ForwardingHeaders/qprinter.h: Removed.
+        * ForwardingHeaders/qsize.h: Removed.
+        * ForwardingHeaders/qstack.h: Removed.
+
+2002-10-26  Darin Adler  <darin@apple.com>
+
 	- fixed a couple of files accidentally checked in with KWQQ names
 
         * ForwardingHeaders/qasyncio.h: Change names.
