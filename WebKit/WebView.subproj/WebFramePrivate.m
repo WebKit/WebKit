@@ -1016,21 +1016,21 @@ static const char * const loadTypeNames[] = {
         {
             NSView *topViewInEventWindow = [[event window] contentView];
             NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-    
-            ASSERT(viewContainingPoint != nil);
-            ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
-    
-            NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-            NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
-    
-            return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-                elementInfo, WebActionElementKey,
-                [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
-                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-                URL, WebActionOriginalURLKey,
-                nil];
+            if ([viewContainingPoint isKindOfClass:[WebHTMLView class]]) {
+                NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
+                NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
+        
+                return [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                    elementInfo, WebActionElementKey,
+                    [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
+                    [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+                    URL, WebActionOriginalURLKey,
+                    nil];
+            }
         }
+        
+        // fall through
         
         default:
             return [NSDictionary dictionaryWithObjectsAndKeys:

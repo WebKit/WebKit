@@ -1,3 +1,13 @@
+2002-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed assert when you choose an item from a menu, for example, and that navigates
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]):
+	If the event is over some other element, just don't include the element info.
+
 2002-12-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3116294 - Need "Reload" feature in Downloads window
