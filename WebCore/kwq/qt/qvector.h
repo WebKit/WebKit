@@ -31,7 +31,7 @@
 #endif
 
 #include <KWQDef.h>
-#include <KWQCollection.h>
+#include <_qcollection.h>
 
 typedef void *Item;
 
@@ -85,6 +85,7 @@ public:
 
     // member functions --------------------------------------------------------
 
+    void clear();
     bool isEmpty() const;
     uint count() const;
     uint size() const;

@@ -92,6 +92,16 @@ program from any GNU archive site.
 	 exit 1    
 	 ;;
 
+  gperf)
+      echo 1>&2 "\
+*** ERROR: \`$1' is missing on your system.  It is required to build this
+tree. To obtain gperf, run the install-gperf.sh script that
+is available from cvs in the Labyrinth/Updates directory.
+If you have further questions, contact Ken Kocienda <kocienda@apple.com>
+"
+         exit 1
+         ;;
+
 	*) echo 1>&2 "
 *** ERROR: \`$1' is needed, and you do not seem to have it installed on 
 your system.  You might have modified some files in a manner that is not 

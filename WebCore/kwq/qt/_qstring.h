@@ -511,6 +511,12 @@ public:
     const char* ascii() const;
     const char* latin1() const;
     static QString fromLatin1(const char*, int len=-1);
+
+// FIXME: we need utf8() to compile khtml
+#ifdef QT_NO_TEXTCODEC
+    QCString utf8() const { return latin1(); }
+#endif
+
 #ifndef QT_NO_TEXTCODEC
     QCString utf8() const;
     static QString fromUtf8(const char*, int len=-1);

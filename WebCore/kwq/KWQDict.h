@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#include <KWQCollection.h>
+#include <_qcollection.h>
 #include "qstring.h"
 
 // class QDict =================================================================
@@ -51,6 +51,7 @@ public:
 
     // member functions --------------------------------------------------------
 
+    void clear();
     void insert(const QString &, const T *);
     bool remove(const QString &);
     T *find(const QString &) const;

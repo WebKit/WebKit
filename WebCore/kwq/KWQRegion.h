@@ -34,6 +34,9 @@
 
 #ifdef _KWQ_COMPLETE_
 #include <_qregion.h>
+#include "qpoint.h"
+#include "qimage.h"
+#include "qrect.h"
 #else
 
 #include "qpoint.h"

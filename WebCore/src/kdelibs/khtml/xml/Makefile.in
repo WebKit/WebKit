@@ -47,7 +47,11 @@ CLEAN_FILES = $(OBJECTS) \
 #----------------------------------------------------------------------
 # Set flags for this directory
 
+# FIXME: Need a hack here to give the xml tokenizer text stream
+# defines from Qt. The NEED_BOGUS_TEXTSTREAMS symbol
+# can be removed when we have Qt text streams implemented
 CXXFLAGS = $(BASECXXFLAGS) \
+    -DNEED_BOGUS_TEXTSTREAMS \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \

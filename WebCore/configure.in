@@ -101,6 +101,12 @@ if test -z "$ac_cv_prog_SED"; then
 	exit 1
 fi
 
+AC_CHECK_PROG(GPERF, gperf, gperf)
+if test -z "$ac_cv_prog_GPERF"; then 
+	$CONFIG_ERR gperf
+	exit 1
+fi
+
 AC_PROG_MAKE_SET 
 AC_PROG_INSTALL
 
