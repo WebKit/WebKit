@@ -7,7 +7,6 @@
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/NSURLProtocolClient.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 
@@ -142,9 +141,9 @@ NSString *WebDataProtocolScheme = @"applewebdata";
     return URL;
 }
 
-- (void)startLoadingWithCacheObject:(NSCachedURLResponse *)cacheObject
+- (void)startLoading
 {
-    NSObject<NSURLProtocolClient> *client = [self client];
+    id<NSURLProtocolClient> client = [self client];
     NSURLRequest *request = [self request];
     NSData *data = [request _webDataRequestData];
 
@@ -153,16 +152,16 @@ NSString *WebDataProtocolScheme = @"applewebdata";
         [response setURL:[request URL]];
         [response setMIMEType:@"text/html"];
         [response setTextEncodingName:[request _webDataRequestEncoding]];
-        [client responseAvailable:response];
-        [client didLoadBytes:[data bytes] length:[data length]];
-        [client finishedLoading];
+        [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+        [client URLProtocol:self didLoadData:data];
+        [client URLProtocolDidFinishLoading:self];
         [response release];
     } else {
         int resultCode;
 
         resultCode = WebFoundationErrorResourceUnavailable;
 
-        [client failedWithError:[WebError errorWithCode:resultCode inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]]];
+        [client URLProtocol:self didFailWithError:[WebError errorWithCode:resultCode inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]]];
     }
 }
 

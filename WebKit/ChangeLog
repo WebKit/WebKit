@@ -1,5 +1,15 @@
 2003-04-16  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by David
+
+        Moved this NSURLProtocolClient implementor to API-approved
+        interface.
+
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]):
+
+2003-04-16  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
 	Fix deployment build breaker caused by uninitialized variable.
