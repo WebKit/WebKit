@@ -26,6 +26,9 @@
 #include <kwqdebug.h>
 #include <kprinter.h>
 
+//FIX ME:
+static QSize tempQSize = QSize(0,0);
+
 bool KPrinter::setup(QWidget *parent=0)
 {
     _logNeverImplemented();
@@ -61,7 +64,7 @@ void KPrinter::setFullPage(bool)
 QSize KPrinter::margins() const
 {
     _logNeverImplemented();
-    return QSize();
+    return tempQSize;
 }
 
 

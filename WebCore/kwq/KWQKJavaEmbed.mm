@@ -27,6 +27,9 @@ to work better with java applets.
 #include <kwqdebug.h>
 #include <javaembed.h>
 
+//FIX ME:
+static QSize tempQSize = QSize(0,0);
+
 KJavaEmbed::KJavaEmbed( QWidget *parent=0, const char *name=0, WFlags f = 0 )
 {
     _logNotYetImplemented();
@@ -48,14 +51,14 @@ void KJavaEmbed::embed( WId w )
 QSize KJavaEmbed::sizeHint() const
 {
     _logNotYetImplemented();
-    return QSize();
+    return tempQSize;
 }
 
 
 QSize KJavaEmbed::minimumSizeHint() const
 {
     _logNotYetImplemented();
-    return QSize();
+    return tempQSize;
 }
 
 

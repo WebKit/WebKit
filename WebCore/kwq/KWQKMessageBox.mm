@@ -37,6 +37,7 @@ int KMessageBox::warningYesNo(QWidget *, const QString &,
     const QString &buttonNo=QString::null, 
     bool notify=true)
 {
+return 0;
 }
 
 
@@ -45,6 +46,7 @@ int KMessageBox::questionYesNo(QWidget *, const QString &,
     const QString &buttonYes=QString::null, 
     const QString &buttonNo=QString::null, bool notify=true)
 {
+return 0;
 }
 
 

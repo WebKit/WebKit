@@ -26,6 +26,9 @@
 #include <kwqdebug.h>
 #include <kmimetype.h>
 
+//FIX ME:
+static QString tempQString = QString();
+
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t=0, bool=false, bool)
 {
     _logNotYetImplemented();
@@ -41,5 +44,5 @@ KMimeType::~KMimeType()
 QString KMimeType::name() const
 {
     _logNotYetImplemented();
-    return QString();
+    return tempQString;
 }

@@ -26,6 +26,9 @@
 #include <kwqdebug.h>
 #include <netaccess.h>
 
+//FIX ME:
+static QString tempQString = QString();
+
 namespace KIO {
 
 bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
@@ -38,7 +41,7 @@ bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 QString NetAccess::lastErrorString()
 {
     _logNotYetImplemented();
-    return QString();
+    return tempQString;
 }
 
 

@@ -26,6 +26,9 @@
 #include <qstring.h>
 #include <klocale.h>
 
+//FIX ME:
+static QString tempQString = QString("en_US");
+
 QString i18n(const char* text)
 {
     NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
@@ -37,6 +40,6 @@ QString i18n(const char* text)
 QString KLocale::language() const
 {
     _logNotYetImplemented();
-    return QString();
+    return tempQString;
 }
 

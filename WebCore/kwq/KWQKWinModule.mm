@@ -26,6 +26,8 @@
 #include <kwqdebug.h>
 #include <kwinmodule.h>
 
+//FIX ME:
+static QRect tempQRect = QRect(0,0,0,0);
 
 KWinModule::KWinModule(QObject* parent=0)
 {
@@ -42,7 +44,7 @@ KWinModule::~KWinModule()
 QRect KWinModule::workArea(int desktop=-1) const
 {
     _logNotYetImplemented();
-    return QRect();
+    return tempQRect;
 }
 
 
