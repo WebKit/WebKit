@@ -1,3 +1,8 @@
+b2002-11-08  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQComboBox.mm: Bump fudge factor up one pixel. You could see
+	it was wrong with strings like "0".
+
 2002-11-08  Darin Adler  <darin@apple.com>
 
 	- fixed 3090452 -- REGRESSION: orbitz Box extends way over margins

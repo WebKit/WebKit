@@ -43,7 +43,7 @@
 // When we discovered we needed to measure text widths ourselves, I empirically
 // determined these widths. I don't know what exactly they correspond to in the
 // NSPopUpButtonCell code.
-#define WIDTH_NOT_INCLUDING_TEXT 30
+#define WIDTH_NOT_INCLUDING_TEXT 31
 #define MINIMUM_WIDTH 36
 
 @interface KWQComboBoxAdapter : NSObject
