@@ -621,13 +621,18 @@ void XMLTokenizer::insertErrorMessageBlock()
     fixed->appendChild(textNode, exceptioncode);
     reportDiv->appendChild(fixed, exceptioncode);
     h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
-    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
     reportDiv->appendChild(h3, exceptioncode);
     
+    h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
+    if (doc->transformSourceDocument()) {
+        ElementImpl* par = doc->createElementNS(XHTML_NAMESPACE, "p", exceptioncode);
+        reportDiv->appendChild(par, exceptioncode);
+        par->setAttribute(ATTR_STYLE, "white-space: normal");
+        par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);
+    }
     root->insertBefore(reportDiv, root->firstChild(), exceptioncode);
 
-    m_doc->document()->recalcStyle( NodeImpl::Inherit );
-    m_doc->document()->updateRendering();
+    doc->updateRendering();
 }
 
 void XMLTokenizer::addScripts(NodeImpl *n)

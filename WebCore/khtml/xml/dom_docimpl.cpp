@@ -3078,10 +3078,7 @@ void DocumentImpl::applyXSLTransform(ProcessingInstructionImpl* pi)
 {
     // Ref ourselves to keep from being destroyed.
     XSLTProcessorImpl processor(static_cast<XSLStyleSheetImpl*>(pi->sheet()), this);
-    DocumentImpl* result = processor.transformDocument(this);
-    if (result)
-        // Cache the source document.
-        result->setTransformSourceDocument(this);
+    processor.transformDocument(this);
 
     // FIXME: If the transform failed we should probably report an error (like Mozilla does) in this
     // case.

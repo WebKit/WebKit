@@ -1,5 +1,17 @@
 2004-08-24  David Hyatt  <hyatt@apple.com>
 
+	Polish the XML error message so that it indicates when a document is the result of an XSL transformation
+	when reporting line/col #s.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::applyXSLTransform):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+
+2004-08-24  David Hyatt  <hyatt@apple.com>
+
 	Add support for Atom and RSS MIME types to the set of XML types.
 	
         Reviewed by rjw

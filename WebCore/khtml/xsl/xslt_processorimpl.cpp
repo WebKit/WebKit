@@ -144,7 +144,8 @@ DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         result->setBaseURL(m_sourceDocument->baseURL());
         result->setDecoder(m_sourceDocument->decoder()); // FIXME: Should just be UTF-16.
         result->docLoader()->setShowAnimations(m_sourceDocument->docLoader()->showAnimations());
-        
+        result->setTransformSourceDocument(m_sourceDocument);
+
         if (xmlStrEqual(method, (const xmlChar*)"text")) {
             // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing
             // the text.
