@@ -173,6 +173,32 @@ void RenderFormElement::slotClicked()
     deref(arena);
 }
 
+#if APPLE_CHANGES
+void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
+{
+    if (_style->width().isVariable()) {
+        if (_style->marginLeft().quirk)
+            _style->setMarginLeft(Length(intrinsicMargin(), Fixed));
+        if (_style->marginRight().quirk)
+            _style->setMarginRight(Length(intrinsicMargin(), Fixed));
+    }
+
+    if (_style->height().isVariable()) {
+        if (_style->marginTop().quirk)
+            _style->setMarginTop(Length(intrinsicMargin(), Fixed));
+        if (_style->marginBottom().quirk)
+            _style->setMarginBottom(Length(intrinsicMargin(), Fixed));
+    }
+}
+
+void RenderFormElement::setStyle(RenderStyle* _style)
+{
+    if (canHaveIntrinsicMargins())
+        addIntrinsicMarginsIfAllowed(_style);
+    RenderWidget::setStyle(_style);
+}
+#endif
+
 // -------------------------------------------------------------------------
 
 RenderButton::RenderButton(HTMLGenericFormElementImpl *element)

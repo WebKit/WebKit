@@ -340,16 +340,7 @@ BUTTON:active {
    -dwh */
 INPUT, TEXTAREA {
 	font: 11px 'Lucida Grande';
-	margin: 3px;
-}
-
-input[type="button"], input[type="submit"], input[type="reset"]
-{
-    margin: 2px;
-}
-
-input[type="image"] {
-    margin: 0px;
+        margin: 0__qem;
 }
 
 INPUT[type="hidden"] {
@@ -360,14 +351,16 @@ INPUT[type="radio"], INPUT[type="checkbox"] {
         margin: 3px 0.5ex;
 }
 
+SELECT {
+        margin: 0__qem;
+}
+
 OPTION, 
 OPTGROUP, 
 AREA,
 PARAM  { 
 	display: none; 
 }
-
-SELECT { margin: 2px; }
 
 /*
  * inline elements

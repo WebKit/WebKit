@@ -82,6 +82,18 @@ public:
     int paddingBottom() const { return 0; }
     int paddingLeft() const { return 0; }
     int paddingRight() const { return 0; }
+
+    // Aqua controls use intrinsic margin values in order to leave space for focus rings
+    // and to keep controls from butting up against one another.  This intrinsic margin
+    // is only applied if the Web page allows the control to size intrinsically.  If the
+    // Web page specifies an explicit width for a control, then we go ahead and honor that
+    // precise width.  Similarly, if a Web page uses a specific margin value, we will go ahead
+    // and honor that value.  
+    void addIntrinsicMarginsIfAllowed(RenderStyle* _style);
+    virtual bool canHaveIntrinsicMargins() const { return false; }
+    virtual int intrinsicMargin() const { return 2; }
+
+    virtual void setStyle(RenderStyle* _style);
 #endif
 
     virtual void updateFromElement();
@@ -117,6 +129,7 @@ public:
 
 #if APPLE_CHANGES
     int calcReplacedHeight() const { return intrinsicHeight(); }
+    virtual bool canHaveIntrinsicMargins() const { return true; }
 #endif
 
     virtual const char *renderName() const { return "RenderButton"; }
@@ -229,6 +242,8 @@ public:
     virtual void calcMinMaxWidth();
 #if APPLE_CHANGES
     int calcReplacedHeight() const { return intrinsicHeight(); }
+    virtual bool canHaveIntrinsicMargins() const { return true; }
+    virtual int intrinsicMargin() const { return 3; }
 #endif
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
@@ -358,6 +373,7 @@ public:
 #if APPLE_CHANGES
     short baselinePosition( bool f ) const;
     int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
+    virtual bool canHaveIntrinsicMargins() const { return true; }
 #endif
 
     virtual void calcMinMaxWidth();
@@ -425,6 +441,11 @@ public:
     QString text();
 
     void select();
+
+#if APPLE_CHANGES
+    virtual bool canHaveIntrinsicMargins() const { return true; }
+    virtual int intrinsicMargin() const { return 3; }
+#endif
 
 protected slots:
     void slotTextChanged();

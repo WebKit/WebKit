@@ -818,14 +818,6 @@ short RenderBox::calcReplacedWidth() const
         const int cw = containingBlockWidth();
         if (cw > 0) {
             int result = w.minWidth(cw);
-#ifdef APPLE_CHANGES
-            // Because we put margins on our form controls, for percentage widths, it's best to subtract
-            // them out so the controls fit snugly and don't overflow.  This is gross.  Technically we
-            // should probably stop using margins and build the spacing into the form controls ourselves, but
-            // then how would the author override? -dwh
-            if (isFormElement())
-                result -= (marginLeft() + marginRight());
-#endif
             return result;
         }
     }
@@ -841,14 +833,6 @@ int RenderBox::calcReplacedHeight() const
     switch( h.type ) {
     case Percent: {
         int ah = availableHeight();
-#ifdef APPLE_CHANGES
-        // Because we put margins on our form controls, for percentage heights, it's best to subtract
-        // them out so the controls fit snugly and don't overflow.  This is gross.  Technically we
-        // should probably stop using margins and build the spacing into the form controls ourselves,
-        // but then how would the author override? -dwh
-        if (isFormElement())
-            ah -= (marginTop() + marginBottom());
-#endif
         return ah;
     }
     case Fixed:
