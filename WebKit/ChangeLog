@@ -1,3 +1,13 @@
+2003-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fix compile error from B&I Panther build; really, this time
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer extendUnicodeCharacterToGlyphMapToInclude:]): Use unsigned, not int.
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]): Ditto.
+
 2003-07-06  Darin Adler  <darin@apple.com>
 
         - fix compile error from B&I Panther build
