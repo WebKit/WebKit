@@ -1,3 +1,10 @@
+2003-07-16  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by kocienda. 
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString): set linkStartLocation to zero to fix deployment build 
+
 2003-07-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

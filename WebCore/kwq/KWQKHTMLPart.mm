@@ -1822,7 +1822,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     bool hasNewLine = true;
     bool hasParagraphBreak = true;
     const DOM::ElementImpl *linkStartNode = 0;
-    unsigned linkStartLocation;
+    unsigned linkStartLocation = 0;
     QPtrList<DOM::ElementImpl> listItems;
     QValueList<ListItemInfo> listItemLocations;
     float maxMarkerWidth = 0;
