@@ -1,3 +1,16 @@
+2004-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- two trivial changes for a 1% speedup, thanks to Shark
+	
+        * khtml/dom/dom_string.cpp:
+        * khtml/dom/dom_string.h:
+        (DOM::DOMString::~DOMString): inline this method because it's hot and the
+	function call overhead was very costly.
+        * WebCore.pbproj/project.pbxproj: Add -falign-loops=16
+	optimization flag, as suggested by Shark.
+
 2004-05-06  Chris Blumenberg  <cblu@apple.com>
 
 	Added alpha to DOMRGBColor as an extension.

@@ -23,6 +23,7 @@
 #define _DOM_DOMString_h_
 
 #include <qstring.h>
+#include <xml/dom_stringimpl.h>
 
 namespace khtml {
     class Length;
@@ -56,7 +57,8 @@ public:
     DOMString(const QString &);
     DOMString(const char *str);
     DOMString(DOMStringImpl *i);
-    ~DOMString();
+    ~DOMString() { if(impl) impl->deref(); }
+
 
     // assign and copy
     DOMString(const DOMString &str);
