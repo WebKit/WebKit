@@ -1,3 +1,14 @@
+2004-11-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3886042> should save history file as binary XML so serialization, 
+        parsing, reading and writing is faster
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate _saveHistoryGuts:URL:error:]):
+        convert dictionary to binary data before saving
+
 2004-11-18  Chris Blumenberg  <cblu@apple.com>
 
         * WebView.subproj/WebHTMLRepresentation.m:

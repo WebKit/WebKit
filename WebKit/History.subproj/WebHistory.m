@@ -478,7 +478,8 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         array, DatesArrayKey,
         [NSNumber numberWithInt:currentFileVersion], FileVersionKey,
         nil];
-    if (![dictionary writeToURL:URL atomically:YES]) {
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:dictionary format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+    if (![data writeToURL:URL atomically:YES]) {
         ERROR("attempt to save %@ to %@ failed", dictionary, URL);
         return NO;
     }
