@@ -1,3 +1,18 @@
+2002-09-16  Richard Williamson   <rjw@apple.com>
+
+        Remove fix (according to John, partial fix) for 3051288.
+        Canonicalizing the URL strings used in the history db
+        is very slow!  ~8% slower.
+        
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate addEntry:]):
+        (-[WebHistoryPrivate removeEntry:]):
+        (-[WebHistoryPrivate containsURL:]):
+        (-[WebHistoryPrivate entryForURL:]):
+        
+        * WebView.subproj/WebHTMLView.h:
+        Removed cruft from header.
+
 2002-09-16  Darin Adler  <darin@apple.com>
 
 	- fixed 3050810 -- while an image is loading progressively, it draws

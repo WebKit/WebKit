@@ -20,6 +20,8 @@
 
 @implementation WebHistoryPrivate
 
+#define FIX_VISITED
+
 #pragma mark OBJECT FRAMEWORK
 
 + (void)initialize
@@ -143,7 +145,11 @@
 
     ASSERT_ARG(entry, [entry lastVisitedDate] != nil);
 
+#ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];
+#else
+    URLString = [[entry URL] absoluteString];
+#endif
     [self removeEntryForURLString: URLString];
 
     if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
@@ -163,7 +169,11 @@
     WebHistoryItem *matchingEntry;
     NSString *URLString;
 
+#ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];
+#else
+    URLString = [[entry URL] absoluteString];
+#endif
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
@@ -293,12 +303,20 @@
 
 - (BOOL)containsURL: (NSURL *)URL
 {
+#ifdef FIX_VISITED
     return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]] != nil;
+#else
+    return [self _entryForURLString:[URL absoluteString]] != nil;
+#endif
 }
 
 - (WebHistoryItem *)entryForURL:(NSURL *)URL
 {
+#ifdef FIX_VISITED
     return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]];
+#else
+    return [self _entryForURLString:[URL absoluteString]];
+#endif
 }	
 
 #pragma mark ARCHIVING/UNARCHIVING

@@ -34,11 +34,6 @@
 // instead call setNeedsToApplyStyles:.
 - (void)reapplyStyles;
 
-// Returns an array of built-in context menu items for this node.
-// Generally called by WebContextMenuHandlers from contextMenuItemsForNode:
-#ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (WebDOMNode *);
-#endif
 - (void)setContextMenusEnabled: (BOOL)flag;
 - (BOOL)contextMenusEnabled;
 
@@ -50,19 +45,3 @@
 
 @end
 
-/*
-    Areas still to consider:
-
-        ALT image text and link URLs
-            Should this be built-in?  or able to be overriden?
-            
-        node events
-		
-	client access to form elements for auto-completion, passwords
-        
-        selection
-            Selection on data source is reflected in view.
-            Does the view also need a cover selection API?
-            
-        subclassing of WebView
-*/
