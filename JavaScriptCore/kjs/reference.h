@@ -23,6 +23,7 @@
 #ifndef _KJS_REFERENCE_H_
 #define _KJS_REFERENCE_H_
 
+#include "identifier.h"
 #include "value.h"
 
 namespace KJS {
@@ -31,9 +32,9 @@ namespace KJS {
     friend class ReferenceList;
     friend class ReferenceListIterator;
   public:
-    Reference(const Object& b, const UString& p);
+    Reference(const Object& b, const Identifier& p);
     Reference(const Object& b, unsigned p);
-    Reference(const Null& b, const UString& p);
+    Reference(const Null& b, const Identifier& p);
     Reference(const Null& b, unsigned p);
     static Reference makeValueReference(const Value& v);
     
@@ -49,7 +50,7 @@ namespace KJS {
      * Performs the GetPropertyName type conversion operation on this value
      * (ECMA 8.7)
      */
-    UString getPropertyName(ExecState *exec) const;
+    Identifier getPropertyName(ExecState *exec) const;
 
     /**
      * Performs the GetValue type conversion operation on this value
@@ -73,7 +74,7 @@ namespace KJS {
     unsigned propertyNameAsNumber;
     bool baseIsValue;
     bool propertyNameIsNumber;
-    mutable UString prop;
+    mutable Identifier prop;
   };
 }
 

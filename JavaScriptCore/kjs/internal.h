@@ -153,18 +153,18 @@ namespace KJS {
      * If id is not empty and is not in the stack already, puts it on top of
      * the stack and returns true, otherwise returns false
      */
-    bool push(const UString &id);
+    bool push(const Identifier &id);
     /**
      * Is the id in the stack?
      */
-    bool contains(const UString &id) const;
+    bool contains(const Identifier &id) const;
     /**
      * Removes from the stack the last pushed id (what else?)
      */
     void pop();
   private:
     struct StackElem {
-      UString id;
+      Identifier id;
       StackElem *prev;
     };
 

@@ -30,7 +30,7 @@ namespace KJS {
   public:
     DOMNodeIterator(ExecState *exec, DOM::NodeIterator ni);
     ~DOMNodeIterator();
-    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -46,7 +46,7 @@ namespace KJS {
   class NodeFilterConstructor : public DOMObject {
   public:
     NodeFilterConstructor(ExecState *) { }
-    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *exec, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -70,9 +70,9 @@ namespace KJS {
   public:
     DOMTreeWalker(ExecState *exec, DOM::TreeWalker tw);
     ~DOMTreeWalker();
-    virtual Value tryGet(ExecState *exec,const UString &p) const;
+    virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *exec, int token) const;
-    virtual void tryPut(ExecState *exec, const UString &propertyName,
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName,
                         const Value& value, int attr = None);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

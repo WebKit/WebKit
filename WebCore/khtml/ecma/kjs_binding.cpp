@@ -38,7 +38,7 @@ using namespace KJS;
  * these may be CSS exceptions - need to check - pmk
  */
 
-Value DOMObject::get(ExecState *exec, const UString &p) const
+Value DOMObject::get(ExecState *exec, const Identifier &p) const
 {
   Value result;
   try {
@@ -60,7 +60,7 @@ Value DOMObject::get(ExecState *exec, const UString &p) const
   return result;
 }
 
-void DOMObject::put(ExecState *exec, const UString &propertyName,
+void DOMObject::put(ExecState *exec, const Identifier &propertyName,
                     const Value &value, int attr)
 {
   try {
@@ -80,7 +80,7 @@ UString DOMObject::toString(ExecState *) const
   return "[object " + className() + "]";
 }
 
-Value DOMFunction::get(ExecState *exec, const UString &propertyName) const
+Value DOMFunction::get(ExecState *exec, const Identifier &propertyName) const
 {
   Value result;
   try {

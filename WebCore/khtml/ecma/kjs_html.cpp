@@ -134,7 +134,7 @@ const ClassInfo KJS::HTMLDocument::info =
 # ids
 @end
 */
-bool KJS::HTMLDocument::hasProperty(ExecState *exec, const UString &p) const
+bool KJS::HTMLDocument::hasProperty(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "KJS::HTMLDocument::hasProperty " << p.qstring() << endl;
@@ -145,7 +145,7 @@ bool KJS::HTMLDocument::hasProperty(ExecState *exec, const UString &p) const
   return DOMDocument::hasProperty(exec, p);
 }
 
-Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) const
+Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLDocument::tryGet " << propertyName.qstring() << endl;
@@ -264,7 +264,7 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const UString &propertyName) co
   return Undefined();
 }
 
-void KJS::HTMLDocument::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
+void KJS::HTMLDocument::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLDocument::tryPut " << propertyName.qstring() << endl;
@@ -972,7 +972,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
 @end
 */
 
-Value KJS::HTMLElement::tryGet(ExecState *exec, const UString &propertyName) const
+Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
 #ifdef KJS_VERBOSE
@@ -1698,7 +1698,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   return Undefined();
 }
 
-bool KJS::HTMLElement::hasProperty(ExecState *exec, const UString &propertyName) const
+bool KJS::HTMLElement::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "HTMLElement::hasProperty " << propertyName.qstring() << endl;
@@ -1911,7 +1911,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
   return Undefined();
 }
 
-void KJS::HTMLElement::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
+void KJS::HTMLElement::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
 #ifdef KJS_VERBOSE
   DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
@@ -2653,14 +2653,14 @@ HTMLCollection::~HTMLCollection()
 
 // We have to implement hasProperty since we don't use a hashtable for 'selectedIndex' and 'length'
 // ## this breaks "for (..in..)" though.
-bool KJS::HTMLCollection::hasProperty(ExecState *exec, const UString &p) const
+bool KJS::HTMLCollection::hasProperty(ExecState *exec, const Identifier &p) const
 {
   if (p == "selectedIndex" || p == "length")
     return true;
   return DOMObject::hasProperty(exec, p);
 }
 
-Value KJS::HTMLCollection::tryGet(ExecState *exec, const UString &propertyName) const
+Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   kdDebug() << "KJS::HTMLCollection::tryGet " << propertyName.ascii() << endl;
@@ -2757,7 +2757,7 @@ Value KJS::HTMLCollection::tryCall(ExecState *exec, Object &, const List &args)
   return Undefined();
 }
 
-Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const UString &propertyName) const
+Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
@@ -2829,13 +2829,13 @@ Value KJS::HTMLCollectionProtoFunc::tryCall(ExecState *exec, Object &thisObj, co
     return getDOMNodeList(exec, list);
   }
   case KJS::HTMLCollection::NamedItem:
-    return static_cast<HTMLCollection *>(thisObj.imp())->getNamedItems(exec,args[0].toString(exec).string());
+    return static_cast<HTMLCollection *>(thisObj.imp())->getNamedItems(exec, args[0].toString(exec));
   default:
     return Undefined();
   }
 }
 
-Value KJS::HTMLSelectCollection::tryGet(ExecState *exec, const UString &p) const
+Value KJS::HTMLSelectCollection::tryGet(ExecState *exec, const Identifier &p) const
 {
   if (p == "selectedIndex")
     return Number(element.selectedIndex());
@@ -2843,7 +2843,7 @@ Value KJS::HTMLSelectCollection::tryGet(ExecState *exec, const UString &p) const
   return  HTMLCollection::tryGet(exec, p);
 }
 
-void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int)
+void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLSelectCollection::tryPut " << propertyName.qstring() << endl;
@@ -2973,7 +2973,7 @@ const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
 @end
 */
 
-Value Image::tryGet(ExecState *exec, const UString &propertyName) const
+Value Image::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
   return DOMObjectLookupGetValue<Image,DOMObject>(exec, propertyName, &ImageTable, this);
 }
@@ -2991,7 +2991,7 @@ Value Image::getValueProperty(ExecState *, int token) const
   }
 }
 
-void Image::tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr)
+void Image::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
   // Not worth using the hashtable
   if (propertyName == "src") {

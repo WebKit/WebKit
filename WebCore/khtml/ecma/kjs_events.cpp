@@ -156,7 +156,7 @@ const ClassInfo EventConstructor::info = { "EventConstructor", 0, &EventConstruc
 @end
 */
 
-Value EventConstructor::tryGet(ExecState *exec, const UString &p) const
+Value EventConstructor::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<EventConstructor, DOMObject>(exec,p,&EventConstructorTable,this);
 }
@@ -206,7 +206,7 @@ DOMEvent::~DOMEvent()
   ScriptInterpreter::forgetDOMObject(event.handle());
 }
 
-Value DOMEvent::tryGet(ExecState *exec, const UString &p) const
+Value DOMEvent::tryGet(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
   kdDebug() << "KJS::DOMEvent::tryGet " << p.qstring() << endl;
@@ -239,7 +239,7 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-void DOMEvent::tryPut(ExecState *exec, const UString &propertyName,
+void DOMEvent::tryPut(ExecState *exec, const Identifier &propertyName,
                       const Value& value, int attr)
 {
   DOMObjectLookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr,
@@ -325,7 +325,7 @@ const ClassInfo EventExceptionConstructor::info = { "EventExceptionConstructor",
   UNSPECIFIED_EVENT_TYPE_ERR    DOM::EventException::UNSPECIFIED_EVENT_TYPE_ERR DontDelete|ReadOnly
 @end
 */
-Value EventExceptionConstructor::tryGet(ExecState *exec, const UString &p) const
+Value EventExceptionConstructor::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<EventExceptionConstructor, DOMObject>(exec,p,&EventExceptionConstructorTable,this);
 }
@@ -361,7 +361,7 @@ DOMUIEvent::~DOMUIEvent()
 {
 }
 
-Value DOMUIEvent::tryGet(ExecState *exec, const UString &p) const
+Value DOMUIEvent::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<DOMUIEvent,DOMEvent>(exec,p,&DOMUIEventTable,this);
 }
@@ -436,7 +436,7 @@ DOMMouseEvent::~DOMMouseEvent()
 {
 }
 
-Value DOMMouseEvent::tryGet(ExecState *exec, const UString &p) const
+Value DOMMouseEvent::tryGet(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMMouseEvent::tryGet " << p.qstring() << endl;
@@ -550,7 +550,7 @@ const ClassInfo MutationEventConstructor::info = { "MutationEventConstructor", 0
   REMOVAL	DOM::MutationEvent::REMOVAL		DontDelete|ReadOnly
 @end
 */
-Value MutationEventConstructor::tryGet(ExecState *exec, const UString &p) const
+Value MutationEventConstructor::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<MutationEventConstructor,DOMObject>(exec,p,&MutationEventConstructorTable,this);
 }
@@ -589,7 +589,7 @@ DOMMutationEvent::~DOMMutationEvent()
 {
 }
 
-Value DOMMutationEvent::tryGet(ExecState *exec, const UString &p) const
+Value DOMMutationEvent::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<DOMMutationEvent,DOMEvent>(exec,p,&DOMMutationEventTable,this);
 }

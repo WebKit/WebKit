@@ -40,7 +40,7 @@ DOMAbstractView::~DOMAbstractView()
   ScriptInterpreter::forgetDOMObject(abstractView.handle());
 }
 
-Value DOMAbstractView::tryGet(ExecState *exec, const UString &p) const
+Value DOMAbstractView::tryGet(ExecState *exec, const Identifier &p) const
 {
   if ( p == "document" )
     return getDOMNode(exec,abstractView.document());

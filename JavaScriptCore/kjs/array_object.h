@@ -33,13 +33,13 @@ namespace KJS {
     ArrayInstanceImp(const Object &proto, const List &initialValues);
     ~ArrayInstanceImp();
 
-    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual Value get(ExecState *exec, unsigned propertyName) const;
-    virtual void put(ExecState *exec, const UString &propertyName, const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
-    virtual bool hasProperty(ExecState *exec, const UString &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
-    virtual bool deleteProperty(ExecState *exec, const UString &propertyName);
+    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
 
     virtual void mark();
@@ -66,7 +66,7 @@ namespace KJS {
   public:
     ArrayPrototypeImp(ExecState *exec,
                       ObjectPrototypeImp *objProto);
-    Value get(ExecState *exec, const UString &p) const;
+    Value get(ExecState *exec, const Identifier &p) const;
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };

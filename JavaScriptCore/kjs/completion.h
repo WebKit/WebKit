@@ -25,6 +25,7 @@
 #ifndef _KJS_COMPLETION_H_
 #define _KJS_COMPLETION_H_
 
+#include "identifier.h"
 #include "value.h"
 
 namespace KJS {
@@ -47,16 +48,16 @@ namespace KJS {
   class Completion : private Value {
   public:
     Completion(ComplType c = Normal, const Value& v = Value(),
-               const UString &t = UString::null);
+               const Identifier &t = Identifier::null);
 
     ComplType complType() const { return comp; }
     Value value() const { return val; }
-    UString target() const { return tar; }
+    Identifier target() const { return tar; }
     bool isValueCompletion() const { return !val.isNull(); }
   private:
     ComplType comp;
     Value val;
-    UString tar;
+    Identifier tar;
   };
 
 }

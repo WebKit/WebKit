@@ -1595,8 +1595,8 @@ Value AssignExprNode::evaluate(ExecState *exec)
 
 // ------------------------------ VarDeclNode ----------------------------------
 
-VarDeclNode::VarDeclNode(const UString *id, AssignExprNode *in)
-    : ident(*id), init(in)
+VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in)
+    : ident(id), init(in)
 {
 }
 
@@ -2031,12 +2031,12 @@ ForInNode::ForInNode(Node *l, Node *e, StatementNode *s)
 {
 }
 
-ForInNode::ForInNode(const UString *i, AssignExprNode *in, Node *e, StatementNode *s)
-  : ident(*i), init(in), expr(e), statement(s)
+ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, StatementNode *s)
+  : ident(i), init(in), expr(e), statement(s)
 {
   // for( var foo = bar in baz )
-  varDecl = new VarDeclNode(&ident, init);
-  lexpr = new ResolveNode(&ident);
+  varDecl = new VarDeclNode(ident, init);
+  lexpr = new ResolveNode(ident);
 }
 
 void ForInNode::ref()
@@ -2090,7 +2090,7 @@ Completion ForInNode::execute(ExecState *exec)
   ReferenceListIterator propIt = propList.begin();
 
   while (propIt != propList.end()) {
-    UString name = propIt->getPropertyName(exec);
+    Identifier name = propIt->getPropertyName(exec);
     if (!v.hasProperty(exec,name)) {
       propIt++;
       continue;
@@ -2674,7 +2674,7 @@ bool ParameterNode::deref()
   return Node::deref();
 }
 
-ParameterNode* ParameterNode::append(const UString *i)
+ParameterNode* ParameterNode::append(const Identifier &i)
 {
   ParameterNode *p = this;
   while (p->next)
@@ -2820,7 +2820,7 @@ bool FuncExprNode::deref()
 Value FuncExprNode::evaluate(ExecState *exec)
 {
   const List sc = exec->context().scopeChain();
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, UString::null, body, sc);
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, body, sc);
   Value ret(fimp);
   List empty;
   Value proto = exec->interpreter()->builtinObject().construct(exec,empty);

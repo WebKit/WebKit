@@ -193,7 +193,7 @@ Object RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result) c
   return arr;
 }
 
-Value RegExpObjectImp::get(ExecState *exec, const UString &p) const
+Value RegExpObjectImp::get(ExecState *exec, const Identifier &p) const
 {
   if (p[0] == '$' && lastOvector)
   {

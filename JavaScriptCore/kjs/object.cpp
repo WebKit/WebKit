@@ -40,12 +40,12 @@
 
 namespace KJS {
 
-extern const UString argumentsPropertyName("arguments");
-extern const UString lengthPropertyName("length");
-extern const UString prototypePropertyName("prototype");
-extern const UString specialPrototypePropertyName("__proto__");
-extern const UString toStringPropertyName("toString");
-extern const UString valueOfPropertyName("valueOf");
+extern const Identifier argumentsPropertyName("arguments");
+extern const Identifier lengthPropertyName("length");
+extern const Identifier prototypePropertyName("prototype");
+extern const Identifier specialPrototypePropertyName("__proto__");
+extern const Identifier toStringPropertyName("toString");
+extern const Identifier valueOfPropertyName("valueOf");
 
 // ------------------------------ Object ---------------------------------------
 
@@ -137,7 +137,7 @@ UString ObjectImp::className() const
   return "Object";
 }
 
-Value ObjectImp::get(ExecState *exec, const UString &propertyName) const
+Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   ValueImp *imp = getDirect(propertyName);
   if ( imp )
@@ -156,20 +156,20 @@ Value ObjectImp::get(ExecState *exec, const UString &propertyName) const
 
 Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
 {
-  return get(exec, UString::from(propertyName));
+  return get(exec, Identifier::from(propertyName));
 }
 
 // This get method only looks at the property map.
 // A bit like hasProperty(recursive=false), this doesn't go to the prototype.
 // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
 // to look up in the prototype, it might already exist there)
-ValueImp* ObjectImp::getDirect(const UString& propertyName) const
+ValueImp* ObjectImp::getDirect(const Identifier& propertyName) const
 {
   return _prop.get(propertyName);
 }
 
 // ECMA 8.6.2.2
-void ObjectImp::put(ExecState *exec, const UString &propertyName,
+void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr)
 {
   assert(!value.isNull());
@@ -199,11 +199,11 @@ void ObjectImp::put(ExecState *exec, const UString &propertyName,
 void ObjectImp::put(ExecState *exec, unsigned propertyName,
                      const Value &value, int attr)
 {
-  put(exec, UString::from(propertyName), value, attr);
+  put(exec, Identifier::from(propertyName), value, attr);
 }
 
 // ECMA 8.6.2.3
-bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
+bool ObjectImp::canPut(ExecState *, const Identifier &propertyName) const
 {
   int attributes;
   ValueImp *v = _prop.get(propertyName, attributes);
@@ -221,7 +221,7 @@ bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 }
 
 // ECMA 8.6.2.4
-bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
+bool ObjectImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
   if (_prop.get(propertyName))
     return true;
@@ -241,11 +241,11 @@ bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
 
 bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const
 {
-  return hasProperty(exec, UString::from(propertyName));
+  return hasProperty(exec, Identifier::from(propertyName));
 }
 
 // ECMA 8.6.2.5
-bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
+bool ObjectImp::deleteProperty(ExecState */*exec*/, const Identifier &propertyName)
 {
   int attributes;
   ValueImp *v = _prop.get(propertyName, attributes);
@@ -265,7 +265,7 @@ bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
 
 bool ObjectImp::deleteProperty(ExecState *exec, unsigned propertyName)
 {
-  return deleteProperty(exec, UString::from(propertyName));
+  return deleteProperty(exec, Identifier::from(propertyName));
 }
 
 void ObjectImp::deleteAllProperties( ExecState * )
@@ -328,7 +328,7 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
   return err;
 }
 
-const HashEntry* ObjectImp::findPropertyHashEntry( const UString& propertyName ) const
+const HashEntry* ObjectImp::findPropertyHashEntry( const Identifier& propertyName ) const
 {
   const ClassInfo *info = classInfo();
   while (info) {

@@ -67,7 +67,7 @@ const HashEntry* Lookup::findEntry( const struct HashTable *table,
 }
 
 const HashEntry* Lookup::findEntry( const struct HashTable *table,
-                                const UString &s )
+                                const Identifier &s )
 {
   return findEntry( table, s.data(), s.size() );
 }
@@ -81,7 +81,7 @@ int Lookup::find(const struct HashTable *table,
   return -1;
 }
 
-int Lookup::find(const struct HashTable *table, const UString &s)
+int Lookup::find(const struct HashTable *table, const Identifier &s)
 {
   return find(table, s.data(), s.size());
 }
@@ -96,7 +96,7 @@ unsigned int Lookup::hash(const UChar *c, unsigned int len)
   return val;
 }
 
-unsigned int Lookup::hash(const UString &key)
+unsigned int Lookup::hash(const Identifier &key)
 {
   return hash(key.data(), key.size());
 }

@@ -1,8 +1,5 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2002 Apple Computer, Inc
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,13 +19,5 @@
  *
  */
 
-#include "completion.h"
+#include "identifier.h"
 
-using namespace KJS;
-
-// ------------------------------ Completion -----------------------------------
-
-Completion::Completion(ComplType c, const Value& v, const Identifier &t)
-    : comp(c), val(v), tar(t)
-{
-}

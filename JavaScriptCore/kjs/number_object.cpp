@@ -130,7 +130,7 @@ NumberObjectImp::NumberObjectImp(ExecState *exec,
   put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
 }
 
-Value NumberObjectImp::get(ExecState *exec, const UString &propertyName) const
+Value NumberObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   return lookupGetValue<NumberObjectImp, InternalFunctionImp>( exec, propertyName, &numberTable, this );
 }

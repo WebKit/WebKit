@@ -1,3 +1,31 @@
+2002-11-19  Darin Adler  <darin@apple.com>
+
+	- a first step towards atomic identifiers in JavaScript
+
+	Most places that work with identifiers now use Identifier
+	instead of UString.
+
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_range.cpp:
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/kjs_window.h:
+
 2002-11-18  Darin Adler  <darin@apple.com>
 
         * force-js-clean-timestamp: Another Object change.

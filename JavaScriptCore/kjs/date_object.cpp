@@ -278,7 +278,7 @@ DatePrototypeImp::DatePrototypeImp(ExecState *,
   // The constructor will be added later, after DateObjectImp has been built
 }
 
-Value DatePrototypeImp::get(ExecState *exec, const UString &propertyName) const
+Value DatePrototypeImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   return lookupGetFunction<DateProtoFuncImp, ObjectImp>( exec, propertyName, &dateTable, this );
 }

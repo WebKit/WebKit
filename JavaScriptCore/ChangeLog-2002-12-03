@@ -1,5 +1,51 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- a first step towards atomic identifiers in JavaScript
+
+	Most places that work with identifiers now use Identifier
+	instead of UString.
+
+        * kjs/identifier.cpp: Added.
+        * kjs/identifier.h: Added.
+        * JavaScriptCore.pbproj/project.pbxproj: Added files.
+
+        * kjs/array_object.cpp:
+        * kjs/array_object.h:
+        * kjs/completion.cpp:
+        * kjs/completion.h:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/function.cpp:
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        * kjs/grammar.cpp:
+        * kjs/grammar.cpp.h:
+        * kjs/grammar.h:
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/lexer.cpp:
+        * kjs/lookup.cpp:
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/number_object.cpp:
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+        * kjs/reference.cpp:
+        * kjs/reference.h:
+        * kjs/regexp_object.cpp:
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- fix hash function and key comparison for the other kind of hash table; yields 3%
 
         * kjs/lookup.cpp:

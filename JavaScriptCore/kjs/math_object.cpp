@@ -81,7 +81,7 @@ MathObjectImp::MathObjectImp(ExecState * /*exec*/,
 }
 
 // ECMA 15.8
-Value MathObjectImp::get(ExecState *exec, const UString &propertyName) const
+Value MathObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   return lookupGet<MathFuncImp, MathObjectImp, ObjectImp>( exec, propertyName, &mathTable, this );
 }

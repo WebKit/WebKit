@@ -282,7 +282,7 @@ LabelStack &LabelStack::operator=(const LabelStack &other)
   return *this;
 }
 
-bool LabelStack::push(const UString &id)
+bool LabelStack::push(const Identifier &id)
 {
   if (id.isEmpty() || contains(id))
     return false;
@@ -294,7 +294,7 @@ bool LabelStack::push(const UString &id)
   return true;
 }
 
-bool LabelStack::contains(const UString &id) const
+bool LabelStack::contains(const Identifier &id) const
 {
   if (id.isEmpty())
     return true;

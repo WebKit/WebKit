@@ -2,6 +2,7 @@ typedef union {
   int                 ival;
   double              dval;
   UString             *ustr;
+  Identifier          *ident;
   Node                *node;
   StatementNode       *stat;
   ParameterNode       *param;

@@ -69,7 +69,7 @@ DOMRange::~DOMRange()
   ScriptInterpreter::forgetDOMObject(range.handle());
 }
 
-Value DOMRange::tryGet(ExecState *exec, const UString &p) const
+Value DOMRange::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<DOMRange,DOMObject>(exec,p,&DOMRangeTable,this);
 }
@@ -196,7 +196,7 @@ const ClassInfo RangeConstructor::info = { "RangeConstructor", 0, &RangeConstruc
   END_TO_START		DOM::Range::END_TO_START	DontDelete|ReadOnly
 @end
 */
-Value RangeConstructor::tryGet(ExecState *exec, const UString &p) const
+Value RangeConstructor::tryGet(ExecState *exec, const Identifier &p) const
 {
   return DOMObjectLookupGetValue<RangeConstructor,DOMObject>(exec,p,&RangeConstructorTable,this);
 }

@@ -65,7 +65,7 @@ ArrayInstanceImp::~ArrayInstanceImp()
   free(storage);
 }
 
-Value ArrayInstanceImp::get(ExecState *exec, const UString &propertyName) const
+Value ArrayInstanceImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   if (propertyName == lengthPropertyName)
     return Number(length);
@@ -91,7 +91,7 @@ Value ArrayInstanceImp::get(ExecState *exec, unsigned index) const
 }
 
 // Special implementation of [[Put]] - see ECMA 15.4.5.1
-void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const Value &value, int attr)
+void ArrayInstanceImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
 {
   if (propertyName == lengthPropertyName) {
     setLength(value.toUInt32(exec));
@@ -117,7 +117,7 @@ void ArrayInstanceImp::put(ExecState *exec, unsigned index, const Value &value, 
   storage[index] = value.imp();
 }
 
-bool ArrayInstanceImp::hasProperty(ExecState *exec, const UString &propertyName) const
+bool ArrayInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
   if (propertyName == lengthPropertyName)
     return true;
@@ -142,7 +142,7 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, unsigned index) const
   return v && v != UndefinedImp::staticUndefined;
 }
 
-bool ArrayInstanceImp::deleteProperty(ExecState *exec, const UString &propertyName)
+bool ArrayInstanceImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
 {
   if (propertyName == lengthPropertyName)
     return false;
@@ -293,7 +293,7 @@ ArrayPrototypeImp::ArrayPrototypeImp(ExecState *exec,
   setInternalValue(Null());
 }
 
-Value ArrayPrototypeImp::get(ExecState *exec, const UString &propertyName) const
+Value ArrayPrototypeImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   //fprintf( stderr, "ArrayPrototypeImp::get(%s)\n", propertyName.ascii() );
   return lookupGetFunction<ArrayProtoFuncImp, ArrayInstanceImp>( exec, propertyName, &arrayTable, this );

@@ -46,7 +46,7 @@ namespace KJS {
   class DatePrototypeImp : public DateInstanceImp {
   public:
     DatePrototypeImp(ExecState *exec, ObjectPrototypeImp *objectProto);
-    Value get(ExecState *exec, const UString &p) const;
+    Value get(ExecState *exec, const Identifier &p) const;
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };

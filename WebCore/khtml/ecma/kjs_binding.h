@@ -41,13 +41,13 @@ namespace KJS {
   public:
     DOMObject(const Object &proto) : ObjectImp(proto) {}
     DOMObject() : ObjectImp() {}
-    virtual Value get(ExecState *exec, const UString &propertyName) const;
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const
       { return ObjectImp::get(exec, propertyName); }
 
-    virtual void put(ExecState *exec, const UString &propertyName,
+    virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);
-    virtual void tryPut(ExecState *exec, const UString &propertyName,
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName,
                         const Value& value, int attr = None)
       { ObjectImp::put(exec,propertyName,value,attr); }
 
@@ -62,8 +62,8 @@ namespace KJS {
   class DOMFunction : public ObjectImp {
   public:
     DOMFunction() : ObjectImp( /* proto? */ ) {}
-    virtual Value get(ExecState *exec, const UString &propertyName) const;
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const
       { return ObjectImp::get(exec, propertyName); }
 
     virtual bool implementsCall() const { return true; }
@@ -161,7 +161,7 @@ namespace KJS {
    * we call tryGet instead of get, in DOMObjects.
    */
   template <class FuncImp, class ThisImp, class ParentImp>
-  inline Value DOMObjectLookupGet(ExecState *exec, const UString &propertyName,
+  inline Value DOMObjectLookupGet(ExecState *exec, const Identifier &propertyName,
                                   const HashTable* table, const ThisImp* thisObj)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -179,7 +179,7 @@ namespace KJS {
    * functions, only "values".
    */
   template <class ThisImp, class ParentImp>
-  inline Value DOMObjectLookupGetValue(ExecState *exec, const UString &propertyName,
+  inline Value DOMObjectLookupGetValue(ExecState *exec, const Identifier &propertyName,
                                        const HashTable* table, const ThisImp* thisObj)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -197,7 +197,7 @@ namespace KJS {
    * we call tryPut instead of put, in DOMObjects.
    */
   template <class ThisImp, class ParentImp>
-  inline void DOMObjectLookupPut(ExecState *exec, const UString &propertyName,
+  inline void DOMObjectLookupPut(ExecState *exec, const Identifier &propertyName,
                                  const Value& value, int attr,
                                  const HashTable* table, ThisImp* thisObj)
   {
@@ -225,7 +225,7 @@ namespace KJS {
    * that cached object. Note that the object constructor must take 1 argument, exec.
    */
   template <class ClassCtor>
-  inline Object cacheGlobalObject(ExecState *exec, const UString &propertyName)
+  inline Object cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
   {
     ValueImp *obj = static_cast<ObjectImp*>(exec->interpreter()->globalObject().imp())->getDirect(propertyName);
     if (obj)
@@ -257,7 +257,7 @@ namespace KJS {
 #define DEFINE_PROTOTYPE(ClassName,ClassProto) \
   namespace KJS { \
   class ClassProto : public ObjectImp { \
-    friend Object cacheGlobalObject<ClassProto>(ExecState *exec, const UString &propertyName); \
+    friend Object cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
   public: \
     static Object self(ExecState *exec) \
     { \
@@ -270,25 +270,25 @@ namespace KJS {
   public: \
     virtual const ClassInfo *classInfo() const { return &info; } \
     static const ClassInfo info; \
-    Value get(ExecState *exec, const UString &propertyName) const; \
-    bool hasProperty(ExecState *exec, const UString &propertyName) const; \
+    Value get(ExecState *exec, const Identifier &propertyName) const; \
+    bool hasProperty(ExecState *exec, const Identifier &propertyName) const; \
   }; \
   const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
   };
 
 #define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
-    Value KJS::ClassProto::get(ExecState *exec, const UString &propertyName) const \
+    Value KJS::ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
     { \
       /*fprintf( stderr, "%sProto::get(%s) [in macro, no parent]\n", info.className, propertyName.ascii());*/ \
       return lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName) const \
+    bool KJS::ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
     { /*stupid but we need this to have a common macro for the declaration*/ \
       return ObjectImp::hasProperty(exec, propertyName); \
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
-    Value KJS::ClassProto::get(ExecState *exec, const UString &propertyName) const \
+    Value KJS::ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
     { \
       /*fprintf( stderr, "%sProto::get(%s) [in macro]\n", info.className, propertyName.ascii());*/ \
       Value val = lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
@@ -296,7 +296,7 @@ namespace KJS {
       /* Not found -> forward request to "parent" prototype */ \
       return ParentProto::self(exec).get( exec, propertyName ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const UString &propertyName) const \
+    bool KJS::ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
     { \
       if (ObjectImp::hasProperty(exec, propertyName)) \
         return true; \

@@ -23,7 +23,7 @@
 #ifndef _KJS_PROPERTY_MAP_H_
 #define _KJS_PROPERTY_MAP_H_
 
-#include "ustring.h"
+#include "identifier.h"
 
 namespace KJS {
 
@@ -46,10 +46,10 @@ namespace KJS {
 
         void clear();
         
-        void put(const UString &name, ValueImp *value, int attributes);
-        void remove(const UString &name);
-        ValueImp *get(const UString &name) const;
-        ValueImp *get(const UString &name, int &attributes) const;
+        void put(const Identifier &name, ValueImp *value, int attributes);
+        void remove(const Identifier &name);
+        ValueImp *get(const Identifier &name) const;
+        ValueImp *get(const Identifier &name, int &attributes) const;
 
         void mark() const;
         void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;

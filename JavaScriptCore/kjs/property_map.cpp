@@ -93,7 +93,7 @@ bool PropertyMap::keysMatch(const UString::Rep *a, const UString::Rep *b)
     return true;
 }
 
-ValueImp *PropertyMap::get(const UString &name, int &attributes) const
+ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
 {
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
@@ -115,7 +115,7 @@ ValueImp *PropertyMap::get(const UString &name, int &attributes) const
     return 0;
 }
 
-ValueImp *PropertyMap::get(const UString &name) const
+ValueImp *PropertyMap::get(const Identifier &name) const
 {
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
@@ -133,7 +133,7 @@ ValueImp *PropertyMap::get(const UString &name) const
     return 0;
 }
 
-void PropertyMap::put(const UString &name, ValueImp *value, int attributes)
+void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 {
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
@@ -209,7 +209,7 @@ void PropertyMap::expand()
     free(oldTable);
 }
 
-void PropertyMap::remove(const UString &name)
+void PropertyMap::remove(const Identifier &name)
 {
     UString::Rep *key;
 
@@ -269,11 +269,11 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
 {
     UString::Rep *key = _singleEntry.key;
     if (key && !(_singleEntry.attributes & DontEnum))
-        list.append(Reference(base, key));
+        list.append(Reference(base, Identifier(key)));
     for (int i = 0; i != _tableSize; ++i) {
         UString::Rep *key = _table[i].key;
         if (key && !(_table[i].attributes & DontEnum))
-            list.append(Reference(base, key));
+            list.append(Reference(base, Identifier(key)));
     }
 }
 

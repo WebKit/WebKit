@@ -136,7 +136,7 @@ namespace KJS {
      *
      * @return The specified property, or Undefined
      */
-    Value get(ExecState *exec, const UString &propertyName) const;
+    Value get(ExecState *exec, const Identifier &propertyName) const;
     Value get(ExecState *exec, unsigned propertyName) const;
 
     /**
@@ -148,7 +148,7 @@ namespace KJS {
      * @param propertyName The name of the property to set
      * @param propertyValue The value to set
      */
-    void put(ExecState *exec, const UString &propertyName,
+    void put(ExecState *exec, const Identifier &propertyName,
              const Value &value, int attr = None);
     void put(ExecState *exec, unsigned propertyName,
              const Value &value, int attr = None);
@@ -163,7 +163,7 @@ namespace KJS {
      * @param propertyName The name of the property
      * @return true if the property can be set, otherwise false
      */
-    bool canPut(ExecState *exec, const UString &propertyName) const;
+    bool canPut(ExecState *exec, const Identifier &propertyName) const;
 
     /**
      * Checks to see whether the object (or any object in it's prototype chain)
@@ -175,7 +175,7 @@ namespace KJS {
      * @param propertyName The name of the property to check for
      * @return true if the object has the property, otherwise false
      */
-    bool hasProperty(ExecState *exec, const UString &propertyName) const;
+    bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     bool hasProperty(ExecState *exec, unsigned propertyName) const;
 
     /**
@@ -189,7 +189,7 @@ namespace KJS {
      * exist on the object. false if deleting the specified property is not
      * allowed.
      */
-    bool deleteProperty(ExecState *exec, const UString &propertyName);
+    bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     bool deleteProperty(ExecState *exec, unsigned propertyName);
 
     /**
@@ -477,7 +477,7 @@ namespace KJS {
      * @see Object::get()
      */
     // [[Get]] - must be implemented by all Objects
-    virtual Value get(ExecState *exec, const UString &propertyName) const;
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual Value get(ExecState *exec, unsigned propertyName) const;
 
     /**
@@ -486,7 +486,7 @@ namespace KJS {
      *
      * @see Object::put()
      */
-    virtual void put(ExecState *exec, const UString &propertyName,
+    virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);
     virtual void put(ExecState *exec, unsigned propertyName,
                      const Value &value, int attr = None);
@@ -497,7 +497,7 @@ namespace KJS {
      *
      * @see Object::canPut()
      */
-    virtual bool canPut(ExecState *exec, const UString &propertyName) const;
+    virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
 
     /**
      * Implementation of the [[HasProperty]] internal property (implemented by
@@ -506,7 +506,7 @@ namespace KJS {
      * @see Object::hasProperty()
      */
     virtual bool hasProperty(ExecState *exec,
-			     const UString &propertyName) const;
+			     const Identifier &propertyName) const;
     virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
 
     /**
@@ -516,7 +516,7 @@ namespace KJS {
      * @see Object::deleteProperty()
      */
     virtual bool deleteProperty(ExecState *exec,
-                                const UString &propertyName);
+                                const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
 
     /**
@@ -579,9 +579,9 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     Object toObject(ExecState *exec) const;
 
-    ValueImp* getDirect(const UString& propertyName) const;
+    ValueImp* getDirect(const Identifier& propertyName) const;
   private:
-    const HashEntry* findPropertyHashEntry( const UString& propertyName ) const;
+    const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
     PropertyMap _prop;
     ValueImp *_proto;
     ValueImp *_internalValue;
@@ -640,28 +640,28 @@ namespace KJS {
   inline UString Object::className() const
     { return imp()->className(); }
 
-  inline Value Object::get(ExecState *exec, const UString &propertyName) const
+  inline Value Object::get(ExecState *exec, const Identifier &propertyName) const
     { return imp()->get(exec,propertyName); }
 
   inline Value Object::get(ExecState *exec, unsigned propertyName) const
     { return imp()->get(exec,propertyName); }
 
-  inline void Object::put(ExecState *exec, const UString &propertyName, const Value &value, int attr)
+  inline void Object::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
     { imp()->put(exec,propertyName,value,attr); }
 
   inline void Object::put(ExecState *exec, unsigned propertyName, const Value &value, int attr)
     { imp()->put(exec,propertyName,value,attr); }
 
-  inline bool Object::canPut(ExecState *exec, const UString &propertyName) const
+  inline bool Object::canPut(ExecState *exec, const Identifier &propertyName) const
     { return imp()->canPut(exec,propertyName); }
 
-  inline bool Object::hasProperty(ExecState *exec, const UString &propertyName) const
+  inline bool Object::hasProperty(ExecState *exec, const Identifier &propertyName) const
     { return imp()->hasProperty(exec, propertyName); }
 
   inline bool Object::hasProperty(ExecState *exec, unsigned propertyName) const
     { return imp()->hasProperty(exec, propertyName); }
 
-  inline bool Object::deleteProperty(ExecState *exec, const UString &propertyName)
+  inline bool Object::deleteProperty(ExecState *exec, const Identifier &propertyName)
     { return imp()->deleteProperty(exec,propertyName); }
 
   inline bool Object::deleteProperty(ExecState *exec, unsigned propertyName)
@@ -703,12 +703,12 @@ namespace KJS {
   inline void Object::setInternalValue(const Value &v)
     { imp()->setInternalValue(v); }
 
-  extern const UString argumentsPropertyName;
-  extern const UString lengthPropertyName;
-  extern const UString prototypePropertyName;
-  extern const UString specialPrototypePropertyName;
-  extern const UString toStringPropertyName;
-  extern const UString valueOfPropertyName;
+  extern const Identifier argumentsPropertyName;
+  extern const Identifier lengthPropertyName;
+  extern const Identifier prototypePropertyName;
+  extern const Identifier specialPrototypePropertyName;
+  extern const Identifier toStringPropertyName;
+  extern const Identifier valueOfPropertyName;
 
 }; // namespace
 

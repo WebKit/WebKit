@@ -39,10 +39,10 @@ namespace KJS {
   class HTMLDocument : public DOMDocument {
   public:
     HTMLDocument(ExecState *exec, const DOM::HTMLDocument &d) : DOMDocument(exec, d) { }
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
-    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
-    virtual bool hasProperty(ExecState *exec, const UString &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
@@ -55,11 +55,11 @@ namespace KJS {
   class HTMLElement : public DOMElement {
   public:
     HTMLElement(ExecState *exec, const DOM::HTMLElement &e) : DOMElement(exec, e) { }
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
-    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int);
-    virtual bool hasProperty(ExecState *exec, const UString &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual UString toString(ExecState *exec) const;
     virtual List eventHandlerScope(ExecState *exec) const;
     virtual const ClassInfo* classInfo() const;
@@ -163,14 +163,14 @@ namespace KJS {
   public:
     HTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
     ~HTMLCollection();
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
     virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args);
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual bool hasProperty(ExecState *exec, const UString &p) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &p) const;
     enum { Item, NamedItem, Tags };
-    Value getNamedItems(ExecState *exec, const UString &propertyName) const;
+    Value getNamedItems(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     DOM::HTMLCollection toCollection() const { return collection; }
@@ -182,8 +182,8 @@ namespace KJS {
   public:
     HTMLSelectCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e)
       : HTMLCollection(exec, c), element(e) { }
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
-    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
   private:
     DOM::HTMLSelectElement element;
   };
@@ -214,9 +214,9 @@ namespace KJS {
   public:
     Image(const DOM::Document &d);
     ~Image();
-    virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
-    virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
