@@ -221,6 +221,7 @@
 				651F6415039D5B5F0078395C,
 				65417211039E08B90058BFEB,
 				65417219039E0B390058BFEB,
+				937F4F25048E5B9900CA2AC4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -487,6 +488,7 @@
 				6541720E039E08B90058BFEB,
 				65417204039E02E70058BFEB,
 				65417205039E02E70058BFEB,
+				937F4F24048E5B9900CA2AC4,
 				65417206039E02E70058BFEB,
 				65417217039E0B280058BFEB,
 				6541720F039E08B90058BFEB,
@@ -709,6 +711,19 @@
 		};
 		9374D3AA038D9D74008635CE = {
 			fileRef = 9374D3A8038D9D74008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		937F4F24048E5B9900CA2AC4 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = internal.h;
+			path = pcre/internal.h;
+			refType = 4;
+		};
+		937F4F25048E5B9900CA2AC4 = {
+			fileRef = 937F4F24048E5B9900CA2AC4;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -41,26 +41,26 @@ namespace KJS {
   class RegExp {
   public:
     enum { None = 0, Global = 1, IgnoreCase = 2, Multiline = 4 };
-    RegExp(const UString &p, int f = None);
+
+    RegExp(const UString &pattern, int flags = None);
     ~RegExp();
-    int flags() const { return flgs; }
-    UString match(const UString &s, int i = -1, int *pos = 0L, int **ovector = 0L);
-    // test is unused. The JS spec says that RegExp.test should use
-    // RegExp.exec, so it has to store $1 etc.
-    // bool test(const UString &s, int i = -1);
-    uint subPatterns() const { return nrSubPatterns; }
+
+    int flags() const { return _flags; }
+
+    UString match(const UString &s, int i, int *pos = 0, int **ovector = 0);
+    uint subPatterns() const { return _numSubPatterns; }
+
   private:
-    const UString &pattern;
-    int flgs;
-
-#ifndef HAVE_PCREPOSIX
-    regex_t preg;
+#ifdef HAVE_PCREPOSIX
+    pcre *_regex;
 #else
-    pcre *pcregex;
+    regex_t _regex;
 #endif
-    uint nrSubPatterns;
+    int _flags;
+    uint _numSubPatterns;
 
-    RegExp();
+    RegExp(const RegExp &);
+    RegExp &operator=(const RegExp &);
   };
 
 }; // namespace

@@ -1,3 +1,27 @@
+2003-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3224031 -- can't search at rakuten.co.jp b/c of extra characters inserted by regexp replace (8-bit char)
+
+        Use PCRE UTF-8 regular expressions instead of just chopping off high bytes.
+
+        * kjs/regexp.h: Redo field names, remove some unused stuff.
+        * kjs/regexp.cpp:
+        (convertToUTF8): Added.
+        (compareStringOffsets): Added.
+        (createSortedOffsetsArray): Added.
+        (convertCharacterOffsetsToUTF8ByteOffsets): Added.
+        (convertUTF8ByteOffsetsToCharacterOffsets): Added.
+        (RegExp::RegExp): Set the PCRE_UTF8 flag, and convert the UString to UTF-8 instead of
+        using ascii() on it.
+        (RegExp::~RegExp): Remove unneeded if statement (pcre_free is 0-tolerant as free is).
+        (RegExp::match): Convert the UString to UTF-8 and convert the character offsets to and
+        from UTF-8 byte offsets. Also do fixes for the "no offset vector" case so we get the
+        correct position and matched string.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Add a PCRE header that was missing before.
+
 === Safari-82 ===
 
 === Safari-81 ===
