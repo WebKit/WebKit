@@ -25,10 +25,7 @@
 
 #include <KWQListImpl.h>
 
-#ifndef USING_BORROWED_QLIST
-
 #include <cstddef>
-
 #include <CoreFoundation/CFArray.h>
 
 // KWQListNode
@@ -159,6 +156,11 @@ KWQListImpl::KWQListImpl(const KWQListImpl &impl) :
 
 KWQListImpl::~KWQListImpl()
 {
+    for (KWQListNode *iterator = d->iterators; iterator != NULL; iterator = iterator->next) {
+	KWQListIteratorImpl::KWQListIteratorPrivate *p = ((KWQListIteratorImpl *)iterator->data)->d;
+        p->node = 0;
+	p->list = 0;
+    }
     delete d;
 }
      
@@ -661,5 +663,3 @@ KWQListIteratorImpl &KWQListIteratorImpl::operator=(const KWQListIteratorImpl &i
 
     return *this;
 }
-
-#endif

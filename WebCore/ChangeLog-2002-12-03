@@ -1,5 +1,10 @@
 2002-05-13  Darin Adler  <darin@apple.com>
 
+	* kwq/KWQListImpl.mm: (KWQListImpl::~KWQListImpl): Detach all the iterators from
+	the list when the list is destroyed. I thought this was done before, but it seems not.
+
+2002-05-13  Darin Adler  <darin@apple.com>
+
 	Fixed bug 2922884 (JavaScript object leak creating Image object from JavaScript).
 	There was a reference loop created when a document contained a variable that
 	referenced an image, because images held references to the document; the C++
