@@ -1750,3 +1750,10 @@ void KWQKHTMLPart::setBridge(WebCoreBridge *p)
     _bridge = p;
     _windowWidget = new KWQWindowWidget(_bridge);
 }
+
+void KWQKHTMLPart::setMediaType(const QString &type)
+{
+    if (d->m_view) {
+        d->m_view->setMediaType(type);
+    }
+}

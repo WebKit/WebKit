@@ -1,3 +1,18 @@
+2003-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3144287 -- CSS with media=print not used when printing
+
+        * kwq/KWQKHTMLPart.h: Added a setMediaType function, so the bridge can access
+        the KHTMLView::setMediaType function, which is private (KWQKHTMLPart is a friend).
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::setMediaType): Call setMediaType on the
+        KHTMLView.
+        
+        * kwq/WebCoreBridge.h: Added a device type parameter to reapplyStyles.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge reapplyStylesForDeviceType:]):
+        Call setMediaType with the appropriate media type for the passed in device type.
+
 2003-04-01  David Hyatt  <hyatt@apple.com>
 
 	Table code fixes.  Working to try to fix excite.com.

@@ -823,11 +823,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_opened
 {
     if ([[self dataSource] _loadingFromPageCache]){
-        // Force a layout to update view size and thereby
-        // update scrollbars.
-        [_private->bridge reapplyStyles];
-        [[[self frameView] documentView] setNeedsLayout: YES];
-        [[[self frameView] documentView] layout];
+        // Force a layout to update view size and thereby update scrollbars.
+        NSView <WebDocumentView> *view = [[self frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            [(WebHTMLView *)view setNeedsToApplyStyles:YES];
+        }
+        [view setNeedsLayout: YES];
+        [view layout];
         [self _restoreScrollPosition];
         
         NSArray *responses = [[self dataSource] _responses];

@@ -279,7 +279,8 @@
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    [[self _bridge] reapplyStyles];
+    [[self _bridge] reapplyStylesForDeviceType:
+        _private->printing ? WebCoreDevicePrinter : WebCoreDeviceScreen];
     
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
@@ -463,9 +464,10 @@
 {
     LOG(View, "%@ drawing", self);
     
-    if (_private->usingPrinterFonts) {
-        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:YES];
-    }
+    WebTextRendererFactory *textRendererFactory = [WebTextRendererFactory sharedFactory];
+    
+    BOOL wasUsingPrinterFonts = [textRendererFactory usingPrinterFonts];
+    [textRendererFactory setUsingPrinterFonts:_private->printing];
 
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
     if (subviewsWereSetAside) {
@@ -509,14 +511,14 @@
     
     NSView *focusView = [NSView focusView];
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-        [[WebTextRendererFactory sharedFactory] startCoalesceTextDrawing];
+        [textRendererFactory startCoalesceTextDrawing];
 
     //double start = CFAbsoluteTimeGetCurrent();
     [[self _bridge] drawRect:rect];
     //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
 
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-        [[WebTextRendererFactory sharedFactory] endCoalesceTextDrawing];
+        [textRendererFactory endCoalesceTextDrawing];
 
     [(WebClipView *)[self superview] resetAdditionalClip];
     
@@ -551,9 +553,7 @@
         [self _setAsideSubviews];
     }
 
-    if (_private->usingPrinterFonts) {
-        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:NO];
-    }
+    [textRendererFactory setUsingPrinterFonts:wasUsingPrinterFonts];
 }
 
 // Turn off the additional clip while computing our visibleRect.
@@ -759,7 +759,7 @@
 }
 
 // Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
-- (void)_setUsingPrinterFonts:(BOOL)usingPrinterFonts
+- (void)_setPrinting:(BOOL)printing
 {
     WebFrame *frame = [self _frame];
     NSArray *subframes = [frame children];
@@ -769,17 +769,23 @@
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([frameView isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setUsingPrinterFonts:usingPrinterFonts];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing];
         }
     }
 
-    if (usingPrinterFonts != _private->usingPrinterFonts) {
-        _private->usingPrinterFonts = usingPrinterFonts;
-        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:usingPrinterFonts];
+    if (printing != _private->printing) {
+        _private->printing = printing;
+        
+        // For now, the text renderer factory is never in printer font mode
+        // except when you are actually inside [WebHTMLView drawRect:].
+        ASSERT(![[WebTextRendererFactory sharedFactory] usingPrinterFonts]);
+        [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:printing];
+        
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layout];
         [self setNeedsDisplay:NO];
+        
         [[WebTextRendererFactory sharedFactory] setUsingPrinterFonts:NO];
     }
 }
@@ -789,7 +795,7 @@
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
-    [self _setUsingPrinterFonts:YES];
+    [self _setPrinting:YES];
     [super beginDocument];
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
@@ -799,7 +805,7 @@
 - (void)endDocument
 {
     [super endDocument];
-    [self _setUsingPrinterFonts:NO];
+    [self _setPrinting:NO];
 }
 
 @end

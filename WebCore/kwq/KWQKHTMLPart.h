@@ -190,9 +190,11 @@ public:
     NSString *searchForLabelsBeforeElement(NSArray *labels, DOM::ElementImpl *element);
     NSString *matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element);
 
-    void setSettings (KHTMLSettings *s);
+    void setSettings(KHTMLSettings *);
 
     KWQWindowWidget *topLevelWidget();
+    
+    void setMediaType(const QString &);
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

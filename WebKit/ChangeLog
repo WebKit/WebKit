@@ -1,3 +1,22 @@
+2003-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3213918 -- REGRESSION: printing Mapquest directions, screen font is used, causing exception, crashes
+	- fixed 3144287 -- CSS with media=print not used when printing
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _opened]): Don't call the reapplyStyles
+        method directly here, use setNeedsToApplyStyles instead.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView reapplyStyles]): Pass the appropriate device type here.
+        (-[WebHTMLView drawRect:]): Don't call setUsingPrinterFonts:NO at the end of this method
+        if we were already using printer fonts at the start. This was the bug fix.
+        (-[WebHTMLView _setPrinting:]): Renamed from _setUsingPrinterFonts since this now controls
+        the styles used too, not just the fonts.
+        (-[WebHTMLView beginDocument]): Updated for _setPrinting name change.
+        (-[WebHTMLView endDocument]): Ditto.
+        * WebView.subproj/WebHTMLViewPrivate.h: Renamed "usingPrinterFonts" field to "printing".
+
 2003-04-01  Richard Williamson  <rjw@apple.com>
 
         Fixed ~2% performance regression problem.  The regression

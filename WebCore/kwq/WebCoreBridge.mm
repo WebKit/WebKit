@@ -313,8 +313,9 @@ static bool initializedObjectCacheSize = FALSE;
     return _part->isFrameSet();
 }
 
-- (void)reapplyStyles
+- (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
+    _part->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
     return _part->reparseConfiguration();
 }
 
