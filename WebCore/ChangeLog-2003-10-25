@@ -1,3 +1,21 @@
+2002-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	A number of non-reproducible bugs look like they may be due to bad
+	event objects. I was assuming that callers retained the events until
+	the functions handling them returned, but that assumption may be wrong.
+	So I'm retaining/releasing the current event. This is correct in any case.
+	I'm also adding a new assertion, but since assertions are in Development
+	builds only that is very low risk.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::keyEvent): Add retain/release and a new assertion.
+        (KWQKHTMLPart::mouseDown): Ditto.
+        (KWQKHTMLPart::mouseDragged): Ditto.
+        (KWQKHTMLPart::mouseUp): Ditto.
+        (KWQKHTMLPart::mouseMoved): Ditto.
+
 === Alexander-41 ===
 
 2002-12-18  Richard Williamson   <rjw@apple.com>

@@ -669,7 +669,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     }
     
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = event;
+    _currentEvent = [event retain];
 
     const char *characters = [[event characters] lossyCString];
     int ascii = (characters != nil && strlen(characters) == 1) ? characters[0] : 0;
@@ -694,6 +694,8 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
         node->dispatchKeyEvent(&qEvent);
     }
 
+    ASSERT(_currentEvent == event);
+    [event release];
     _currentEvent = oldCurrentEvent;
 
     return result;
@@ -978,7 +980,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     _mouseDownView = nil;
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = event;
+    _currentEvent = [event retain];
     
     NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
     _firstResponderAtMouseDownTime = [[[d->m_view->getView() window] firstResponder] retain];
@@ -987,9 +989,12 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
         buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
     d->m_view->viewportMousePressEvent(&kEvent);
     
-    _currentEvent = oldCurrentEvent;
     [_firstResponderAtMouseDownTime release];
     _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
+
+    ASSERT(_currentEvent == event);
+    [event release];
+    _currentEvent = oldCurrentEvent;
 }
 
 void KWQKHTMLPart::mouseDragged(NSEvent *event)
@@ -999,11 +1004,13 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     }
 
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = event;
+    _currentEvent = [event retain];
 
     QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), Qt::LeftButton, Qt::LeftButton);
     d->m_view->viewportMouseMoveEvent(&kEvent);
     
+    ASSERT(_currentEvent == event);
+    [event release];
     _currentEvent = oldCurrentEvent;
 }
 
@@ -1012,9 +1019,9 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     if (!d->m_view || _sendingEventToSubview) {
         return;
     }
-    
+
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = event;
+    _currentEvent = [event retain];
 
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
@@ -1032,6 +1039,8 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
         d->m_view->viewportMouseReleaseEvent(&releaseEvent);
     }
     
+    ASSERT(_currentEvent == event);
+    [event release];
     _currentEvent = oldCurrentEvent;
     
     _mouseDownView = nil;
@@ -1044,11 +1053,13 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     }
     
     NSEvent *oldCurrentEvent = _currentEvent;
-    _currentEvent = event;
+    _currentEvent = [event retain];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), 0, stateForCurrentEvent());
     d->m_view->viewportMouseMoveEvent(&kEvent);
     
+    ASSERT(_currentEvent == event);
+    [event release];
     _currentEvent = oldCurrentEvent;
 }
 
