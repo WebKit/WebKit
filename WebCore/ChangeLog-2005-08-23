@@ -1,5 +1,14 @@
 2004-09-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed regression caused by change earlier today
+
+        * khtml/xml/dom_selection.cpp: (DOM::Selection::modifyExtendingRightForward):
+        Use CaretPosition for CHARACTER, not WORD.
+
+2004-09-13  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - fixed <rdar://problem/3798453> DIG failure: getting variable with same name as DOM element attribute gets attribute value instead

@@ -202,10 +202,10 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
     Position pos = extent();
     switch (granularity) {
         case CHARACTER:
-            pos = pos.nextCharacterPosition();
+            pos = CaretPosition(pos).next().deepEquivalent();
             break;
         case WORD:
-            pos = CaretPosition(pos).next().deepEquivalent();
+            pos = pos.nextWordPosition();
             break;
         case PARAGRAPH:
             // "Next paragraph" not implemented yet. Fall through to LINE.
