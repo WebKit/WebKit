@@ -47,6 +47,14 @@ QPixmap::QPixmap(const QSize&sz)
 }
 
 
+@interface NSData (NSDataOpenStepExtensions)
+
+- (id)initWithBytes:(void *)bytes length:(unsigned)length copy:(BOOL)copy freeWhenDone:(BOOL)freeBytes bytesAreVM:(BOOL)vm;
+
+- (BOOL)_bytesAreVM;
+
+@end
+
 QPixmap::QPixmap(const QByteArray&bytes)
 {
     /*

@@ -197,8 +197,11 @@ QPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
-    internalSetGeometry( x + data->rect.x(),
-			 y + data->rect.y(),
+//    internalSetGeometry( x + data->rect.x(),
+//			 y + data->rect.y(),
+//			 width(), height(), TRUE );
+    internalSetGeometry( x,
+			 y,
 			 width(), height(), TRUE );
 }
 

@@ -56,42 +56,44 @@ QWidget* QScrollView::viewport() const
 
 int QScrollView::visibleWidth() const
 {
-    //_logNeverImplemented();
-    return 800;
+    // ? Is this used to determined what is rendered
+    // by the engine.
+    NSRect bounds = [getView() bounds];
+    return (int)bounds.size.width;
 }
 
 
 int QScrollView::visibleHeight() const
 {
-    //_logNeverImplemented();
-    return 800;
+    // ? Is this used to determined what is rendered
+    // by the engine.
+    NSRect bounds = [getView() bounds];
+    return (int)bounds.size.height;
 }
 
 
 int QScrollView::contentsWidth() const
 {
-    _logNeverImplemented();
-    return 800;
+    NSRect bounds = [getView() bounds];
+    return (int)bounds.size.width;
 }
 
 
 int QScrollView::contentsHeight() const
 {
-    _logNeverImplemented();
-    return 800;
+    NSRect bounds = [getView() bounds];
+    return (int)bounds.size.height;
 }
 
 
 int QScrollView::contentsX() const
 {
-    _logNeverImplemented();
     return 0;
 }
 
 
 int QScrollView::contentsY() const
 {
-    _logNeverImplemented();
     return 0;
 }
 
@@ -140,6 +142,9 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     thisView = getView();
     subView = child->getView();
+    [subView removeFromSuperview];
+    
+    NSLog (@"Adding %@ at (%d,%d)\n", [[subView class] className], x, y);
     [thisView addSubview: subView];
 }
 

@@ -114,7 +114,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    KConfig(const QString &, bool bReadOnly=false);
+    KConfig(const QString &n, bool bReadOnly=false);
     virtual ~KConfig();
 
     // member functions --------------------------------------------------------

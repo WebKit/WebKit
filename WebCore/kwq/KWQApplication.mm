@@ -40,18 +40,22 @@ QPalette QApplication::palette(const QWidget *p)
 QWidget *QApplication::desktop()
 {
      NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    return 0;
 }
 
 
 int QApplication::startDragDistance()
 {
      NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+     return 2;
 }
 
 
 QSize QApplication::globalStrut()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    static QSize *structSize = new QSize(0,0); 
+    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    return *structSize;
 }
 
 
@@ -135,7 +139,7 @@ void QApplication::setMainWidget(QWidget *w)
     [sv setDocumentView: w->getView()];
     
     [((_KWQOwner *)application)->window setOpaque: FALSE];
-    [((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
+    //[((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
     
      
     [((_KWQOwner *)application)->containerView addSubview: sv];

@@ -25,6 +25,7 @@
 
 #include <qfontmetrics.h>
 
+#include <kwqdebug.h>
 
 QFontMetrics::QFontMetrics()
 {
@@ -130,33 +131,49 @@ int QFontMetrics::descent() const
 
 QRect QFontMetrics::boundingRect(const QString &, int len=-1) const
 {
-    NSLog (@"WARNING (NOT IMPLEMENTED) QRect QFontMetrics::boundingRect(const QString &, int len=-1)\n");
+    _logNotYetImplemented();
 }
 
 
 QRect QFontMetrics::boundingRect(QChar) const
 {
-    NSLog (@"WARNING (NOT IMPLEMENTED) QFontMetrics::boundingRect(QChar)\n");
+    _logNotYetImplemented();
 }
 
 
-QSize QFontMetrics::size(int, const QString &, int len=-1, int tabstops=0, 
-    int *tabarray=0, char **intern=0 ) const
+QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops, 
+    int *tabarray, char **intern ) const
 {
-    NSLog (@"WARNING (NOT IMPLEMENTED) QSize QFontMetrics::size(int, const QString &, int len=-1, int tabstops=0, int *tabarray=0, char **intern=0 )\n");
+    _logNotYetImplemented();
+    if (tabstops != 0){
+        NSLog (@"ERROR:  QFontMetrics::size() tabs not supported.\n");
+    }
+    
+    NSLog (@"string = %@\n", QSTRING_TO_NSSTRING(qstring));
+    int w, h;
+    NSString *string;
+
+    if (len != -1)
+        string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
+    else
+        string = QSTRING_TO_NSSTRING (qstring);
+    w = (int)[data->font widthOfString: string];
+    h = height();
+
+    return QSize (w,h);
 }
 
 
 int QFontMetrics::rightBearing(QChar) const
 {
-    NSLog (@"WARNING (NOT IMPLEMENTED) QFontMetrics::rightBearing(QChar)\n");
+    _logNotYetImplemented();
     return 0;
 }
 
 
 int QFontMetrics::leftBearing(QChar) const
 {
-    NSLog (@"WARNING (NOT IMPLEMENTED) leftBearing(QChar)\n");
+    _logNotYetImplemented();
     return 0;
 }
 
