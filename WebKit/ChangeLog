@@ -1,5 +1,34 @@
 2002-07-10  Darin Adler  <darin@apple.com>
 
+	Did some tweaks that weren't really necessary. But at least one is a significant
+	improvement so I decided to commit rather then just discarding the changes.
+
+        * Bookmarks.subproj/IFBookmark.m:
+        (-[IFBookmark title]): Take out special case for separator.
+        (-[IFBookmark setTitle:]): Take out special case for separator.
+        (-[IFBookmark image]): Take out special case for separator.
+        (-[IFBookmark setImage:]): Take out special case for separator.
+        (-[IFBookmark setURLString:]): Take out special case for non-leaf.
+        (-[IFBookmark children]): Take out request for concrete implementation;
+	this is not useful since it's specific to one subclass.
+        (-[IFBookmark numberOfChildren]): Take out request for concrete implementation;
+	this is not useful since it's specific to one subclass.
+        (-[IFBookmark _numberOfDescendants]): Take out request for concrete implementation;
+	this is not useful since it's specific to one subclass.
+        (-[IFBookmark insertChild:atIndex:]): Take out special case for non-list.
+        (-[IFBookmark removeChild:]): Take out special case for non-list.
+        (+[IFBookmark bookmarkFromDictionaryRepresentation:withGroup:]): Refactored to
+	eliminate repeated code.
+
+        * Bookmarks.subproj/IFBookmarkLeaf.m:
+        (-[IFBookmarkLeaf copyWithZone:]): Use allocWithZone to be more pedantically correct.
+
+        * Bookmarks.subproj/IFBookmarkSeparator.m:
+        (-[IFBookmarkSeparator title]): Override to return nil.
+        (-[IFBookmarkSeparator image]): Override to return nil.
+
+2002-07-10  Darin Adler  <darin@apple.com>
+
         * Misc.subproj/WebKitDebug.m: Remove workaround for long-ago fixed
 	C compiler bug.
 

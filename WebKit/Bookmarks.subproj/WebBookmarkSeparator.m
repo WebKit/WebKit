@@ -49,4 +49,14 @@
     return [[IFBookmarkSeparator alloc] initWithGroup:[self group]];
 }
 
+- (NSString *)title
+{
+    return nil;
+}
+
+- (NSImage *)image
+{
+    return nil;
+}
+
 @end

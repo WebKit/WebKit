@@ -64,7 +64,7 @@
 {
     NSMutableDictionary *dict;
 
-    dict = [NSMutableDictionary dictionaryWithCapacity: 3];
+    dict = [NSMutableDictionary dictionaryWithCapacity:3];
 
     [dict setObject:IFBookmarkTypeLeafValue forKey:IFBookmarkTypeKey];
     [dict setObject:[_entry dictionaryRepresentation] forKey:URIDictionaryKey];
@@ -84,10 +84,10 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[IFBookmarkLeaf alloc] initWithURLString:_URLString
-                                               title:[self title]
-                                               image:[self image]
-                                               group:[self group]];
+    return [[IFBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
+                                                            title:[self title]
+                                                            image:[self image]
+                                                            group:[self group]];
 }
 
 - (NSString *)title
@@ -141,6 +141,5 @@
 
     [[self group] _bookmarkDidChange:self];    
 }
-
 
 @end

@@ -24,7 +24,7 @@ static unsigned _highestUsedID = 0;
 
 + (NSString *)_generateUniqueIdentifier
 {
-    return [[NSNumber numberWithInt:_highestUsedID++] stringValue];
+    return [[NSNumber numberWithInt:++_highestUsedID] stringValue];
 }
 
 - (id)init
@@ -56,32 +56,24 @@ static unsigned _highestUsedID = 0;
 
 - (NSString *)title
 {
-    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }
 
 - (void)setTitle:(NSString *)title
 {
-    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
 - (NSImage *)image
 {
-    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }
 
 - (void)setImage:(NSImage *)image
 {
-    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
 - (IFBookmarkType)bookmarkType
@@ -97,47 +89,32 @@ static unsigned _highestUsedID = 0;
 
 - (void)setURLString:(NSString *)URLString
 {
-    if ([self bookmarkType] == IFBookmarkTypeLeaf) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
 - (NSArray *)children
 {
-    if ([self bookmarkType] == IFBookmarkTypeList) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
     return nil;
 }
 
 - (unsigned)numberOfChildren
 {
-    if ([self bookmarkType] == IFBookmarkTypeList) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
     return 0;
 }
 
 - (unsigned)_numberOfDescendants
 {
-    if ([self bookmarkType] == IFBookmarkTypeList) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
     return 0;
 }
 
 - (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
-    if ([self bookmarkType] == IFBookmarkTypeList) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
 - (void)removeChild:(IFBookmark *)bookmark
 {
-    if ([self bookmarkType] == IFBookmarkTypeList) {
-        NSRequestConcreteImplementation(self, _cmd, [self class]);
-    }
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
 - (IFBookmark *)parent
@@ -188,16 +165,20 @@ static unsigned _highestUsedID = 0;
 {
     NSString *typeString;
     
+    Class class = nil;
+    
     typeString = [dict objectForKey:IFBookmarkTypeKey];
     if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
-        return [[[IFBookmarkList alloc] initFromDictionaryRepresentation:dict
-                                                               withGroup:group] autorelease];
+        class = [IFBookmarkList class];
     } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
-        return [[[IFBookmarkLeaf alloc] initFromDictionaryRepresentation:dict
-                                                                withGroup:group] autorelease];
+        class = [IFBookmarkLeaf class];
     } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
-        return [[[IFBookmarkSeparator alloc] initFromDictionaryRepresentation:dict
-                                                                     withGroup:group] autorelease];
+        class = [IFBookmarkSeparator class];
+    }
+    
+    if (class) {
+        return [[[class alloc] initFromDictionaryRepresentation:dict
+                                                      withGroup:group] autorelease];
     }
 
     return nil;
@@ -214,6 +195,5 @@ static unsigned _highestUsedID = 0;
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }
-
 
 @end
