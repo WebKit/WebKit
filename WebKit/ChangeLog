@@ -1,3 +1,14 @@
+2004-08-19  Richard Williamson   <rjw@apple.com>
+
+        Continue to call old pollForAppletInView: in Tiger until
+        we get an plugin that supports the new API.
+		
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge getAppletInView:]):
+        * WebKit.pbproj/project.pbxproj:
+
 === Safari-158 ===
 
 2004-08-19  Chris Blumenberg  <cblu@apple.com>
