@@ -49,6 +49,7 @@
 
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
     [imageRenderer addRepresentation: rep];
+    [rep release];
     [imageRenderer setFlipped: YES];
 
     [imageRenderer setScalesWhenResized: NO];

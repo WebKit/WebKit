@@ -1,3 +1,8 @@
+2002-06-26  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFImageRendererFactory.m:
+        (-[IFImageRendererFactory imageRenderer]): Fix NSBitmapImageRep leak.
+
 2002-06-26  Chris Blumenberg  <cblu@apple.com>
 
 	- added "complete" to to progress methods to indicate last progress message
