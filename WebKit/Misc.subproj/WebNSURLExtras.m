@@ -258,7 +258,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [mutableCopy autorelease];
 }
 
-+ (NSURL *)_web_URLWithUserTypedString:(NSString *)string
++ (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
 {
     if (string == nil) {
         return nil;
@@ -293,7 +293,12 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     }
  
     NSData *data = [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
-    return [self _web_URLWithData:data relativeToURL:nil];
+    return [self _web_URLWithData:data relativeToURL:URL];
+}
+
++ (NSURL *)_web_URLWithUserTypedString:(NSString *)string
+{
+    return [self _web_URLWithUserTypedString:string relativeToURL:nil];
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
