@@ -40,9 +40,9 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
+#include <config.h>
+
 #ifndef USING_BORROWED_QPTRDICT
-#define USING_BORROWED_QPTRDICT
-#endif
 
 #include <KWQDef.h>
 #include <iostream>
@@ -110,6 +110,7 @@ public:
     type *operator+=(uint j)  { return (type *)QGDictIterator::operator+=(j);}
 };
 
+#if 0
 #ifdef _KWQ_IOSTREAM_
 template <class T>
 ostream &operator<<(ostream &o, const QPtrDict<T>&d)
@@ -131,6 +132,8 @@ ostream &operator<<(ostream &o, const QPtrDict<T>&d)
     return o;
 }
 #endif
+#endif
 
+#endif
 
 #endif // QPTRDICT_H

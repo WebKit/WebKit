@@ -1,3 +1,65 @@
+2002-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+	Reimplement QDict, QMap, QPtrDict and QSortedList.
+
+	Reimplement QDict in terms of CFDictionary:
+	
+	* src/kwq/qt/qdict.h:
+	* src/kwq/KWQDictImpl.h:
+	* src/kwq/KWQDictImpl.mm: (KWQDictImpl::KWQDictImpl), (KWQDictImpl::insert),
+	(KWQDictImpl::remove), (KWQDictImpl::find),
+	(KWQDictIteratorImpl::KWQDictIteratorImpl),
+	(KWQDictIteratorImpl::currentStringKey):
+
+	Reimplement QMap as a right-threaded red-black tree, splitting
+	the work between template classes that manipulate keys and values
+	and non-template base classes that handle all the pointer
+	manipulation:
+	
+	* src/kwq/qt/qmap.h:
+	* src/kwq/KWQMapImpl.h:
+	* src/kwq/KWQMapImpl.mm: (KWQMapNodeImpl::KWQMapNodeImpl),
+	(KWQMapNodeImpl::left), (KWQMapNodeImpl::right), (KWQMapNodeImpl::predecessor),
+	(KWQMapNodeImpl::successor), (KWQMapIteratorImpl::KWQMapIteratorImpl),
+	(KWQMapIteratorImpl::incrementInternal), (KWQMapImpl::KWQMapImpl),
+	(KWQMapImpl::rotateRight), (KWQMapImpl::rotateLeft),
+	(KWQMapImpl::rebalanceAfterInsert), (KWQMapImpl::rebalanceAfterRemove),
+	(KWQMapImpl::findInternal), (KWQMapImpl::insertInternal),
+	(KWQMapImpl::removeInternal), (KWQMapImpl::swap), (KWQMapImpl::countInternal),
+	(KWQMapImpl::clearInternal), (KWQMapImpl::beginInternal),
+	(KWQMapImpl::endInternal):
+
+	Reimplement QPtrDict in terms of CFDictionary:
+
+	* src/kwq/qt/qptrdict.h:
+	* src/kwq/KWQPtrDictImpl.h:
+	* src/kwq/KWQPtrDictImpl.mm:
+	(KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate),
+	(KWQPtrDictImpl::KWQPtrDictPrivate::~KWQPtrDictPrivate),
+	(KWQPtrDictImpl::KWQPtrDictImpl), (KWQPtrDictImpl::~KWQPtrDictImpl),
+	(invokeDeleteFuncOnValue), (KWQPtrDictImpl::clear), (KWQPtrDictImpl::count),
+	(KWQPtrDictImpl::insert), (KWQPtrDictImpl::remove), (KWQPtrDictImpl::find),
+	(KWQPtrDictImpl::swap), (KWQPtrDictImpl::assign), (KWQPtrDictImpl::take),
+	(KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate::KWQPtrDictIteratorPrivate),
+	(KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate::~KWQPtrDictIteratorPrivate),
+	(KWQPtrDictIteratorImpl::KWQPtrDictIteratorImpl),
+	(KWQPtrDictIteratorImpl::~KWQPtrDictIteratorImpl),
+	(KWQPtrDictIteratorImpl::count), (KWQPtrDictIteratorImpl::current),
+	(KWQPtrDictIteratorImpl::currentKey), (KWQPtrDictIteratorImpl::toFirst),
+	(KWQPtrDictIteratorImpl::operator++):
+
+	Reimplement QSortedList:
+	
+	* src/kwq/qt/qsortedlist.h:
+
+	* src/kwq/KWQArrayImpl.mm: Remove stray include.
+
+	* src/kwq/Makefile.am: Add new files to build.
+
+	* src/kwq/qt/_qdict.h, src/kwq/qt/_qgdict.h,
+	src/kwq/qt/_qptrdict.h: Avoid causing problems when the relevant
+	defines are not defined.
+
 2002-01-22  Richard Williamson  <rjw@apple.com>
 
     Implemented KWQDesktopWidget to represent main screen.  Used by javascript.

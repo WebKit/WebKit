@@ -50,18 +50,31 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
     
-    QSortedList();
-    QSortedList(const QSortedList<T> &);
-    ~QSortedList();
+    QSortedList() : QList<T>() {}
+    QSortedList(const QSortedList<T> &sl) : QList<T>(sl) {}
+    ~QSortedList() {}
     
-    // member functions --------------------------------------------------------
+    // Member functions --------------------------------------------------------
 
     // operators ---------------------------------------------------------------
 
-    QSortedList<T> &operator=(const QSortedList<T> &);
+    QSortedList<T> &operator=(const QSortedList<T> &sl) { QList<T>::operator=(sl); return *this; }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+
+    virtual int compareItems(void *a, void *b) 
+    { 
+	T *ta = (T *)a; 
+	T *tb = (T *)b; 
+	if (*ta == *tb) { 
+	    return 0; 
+	} else if (*ta < *tb) { 
+	    return -1; 
+	} else { 
+	    return 1; 
+	}
+    }
 
 }; // class QSortedList ========================================================
 

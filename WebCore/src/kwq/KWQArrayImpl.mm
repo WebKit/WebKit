@@ -27,7 +27,6 @@
 
 #ifndef USING_BORROWED_QARRAY
 
-#include <cstring>
 #include <new>
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))

@@ -39,6 +39,10 @@
 #include <KWQDef.h>
 #include <_qcollection.h>
 
+#include <KWQPtrDictImpl.h>
+
+template <class T> class QPtrDictIterator;
+
 // class QPtrDict ==============================================================
 
 template <class T> class QPtrDict : public QCollection {
@@ -51,27 +55,34 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QPtrDict(int size=17);
-    QPtrDict(const QPtrDict<T> &);
-    ~QPtrDict();
+    QPtrDict(int size=17) : impl(size, deleteFunc) {}
+    QPtrDict(const QPtrDict<T> &pd) : impl(pd.impl) {}
+    virtual ~QPtrDict() { impl.clear(del_item); }
 
     // member functions --------------------------------------------------------
 
-    void clear();
-    uint count() const;
-    T *take(void *);
+    virtual void clear() { impl.clear(del_item); }
+    virtual uint count() const { return impl.count(); }
 
-    void insert(void *, const T *);
-    void remove(void *);
+    T *take(void *key) { return (T *)impl.take(key); }
+    void insert(void *key, const T *value) { impl.insert(key, (void *)value); }
+    bool remove(void *key) { return impl.remove(key, del_item); }
 
     // operators ---------------------------------------------------------------
 
-    QPtrDict<T> &operator=(const QPtrDict<T> &);
-    T *operator[](void *) const; 
+    QPtrDict<T> &operator=(const QPtrDict<T> &pd) { impl.assign(pd.impl,del_item); QCollection::operator=(pd); return *this; }
+    T *operator[](void *key) const { return (T *)impl.find(key); } 
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+ private:
+    static void deleteFunc(void *item) {
+	delete (T *)item;
+    }
 
+    KWQPtrDictImpl impl;
+
+    friend class QPtrDictIterator<T>;
 }; // class QPtrDict ===========================================================
 
 
@@ -92,22 +103,24 @@ public:
     QPtrDictIterator() {}
 #endif
 
-    QPtrDictIterator(const QPtrDict<T> &);
+    QPtrDictIterator(const QPtrDict<T> &pd) : impl(pd.impl) {}
     ~QPtrDictIterator() {}
 
     // member functions --------------------------------------------------------
 
-    T *current() const;
-    void *currentKey() const;
+    uint count() { return impl.count(); }
+    T *current() const { return (T *)impl.current(); }
+    void *currentKey() const { return impl.currentKey(); }
 
     // operators ---------------------------------------------------------------
 
-    T *operator++();
+    T *operator++() { return (T *)(++impl); }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
 private:
+    KWQPtrDictIteratorImpl impl;
 
 // add copy constructor
 // this private declaration prevents copying

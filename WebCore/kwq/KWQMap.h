@@ -36,142 +36,386 @@
 #include <_qmap.h>
 #else
 
+#include <iostream>
 #include <KWQDef.h>
+
+#include <KWQMapImpl.h>
+
+template <class K, class V> class QMap;
+template <class K, class V> class QMapIterator;
+template <class K, class V> class QMapConstIterator;
+
+
+template <class K, class V> class QMapNode : private KWQMapNodeImpl
+{
+ private:
+    QMapNode(K k, V v) : 
+	key(k),
+	value(v)
+    {
+    }
+    
+    // intentionally not defined
+    QMapNode(const QMapNode<K,V>&node);
+
+    static QMapNode<K,V> *copyTree(const QMapNode<K,V> *node, 
+				   QMapNode<K,V> *subtreePredecessor, 
+				   QMapNode<K,V> *subtreeSuccessor)
+    {
+	if (node == NULL) {
+	    return NULL;
+	}
+
+	// FIXME: not exception-safe - use auto_ptr?
+	QMapNode<K,V> *copy = new QMapNode<K,V>(node->key, node->value);
+	copy->color = node->color;
+
+	if (node->prevIsChild) {
+	    copy->prevIsChild = true;
+	    copy->prev = copyTree((QMapNode<K,V> *)node->prev, subtreePredecessor, copy);
+	} else {
+	    copy->prevIsChild = false;
+	    copy->prev = subtreePredecessor;
+	}
+
+	if (node->nextIsChild) {
+	    copy->nextIsChild = true;
+	    copy->next = copyTree((QMapNode<K,V> *)node->next, copy, subtreeSuccessor);
+	} else {
+	    copy->nextIsChild = false;
+	    copy->next = subtreeSuccessor;
+	}
+
+	return copy;
+    }
+
+    ~QMapNode()
+    {
+	delete left();
+	delete right();
+    }
+
+    K key;
+    V value;
+
+    friend class QMap<K,V>;
+    friend class QMapIterator<K,V>;
+    friend class QMapConstIterator<K,V>;
+};
 
 // class QMapIterator ==========================================================
 
-template<class K, class T> class QMapIterator {
+template<class K, class V> class QMapIterator : private KWQMapIteratorImpl {
 public:
+    QMapIterator()
+    {
+    }
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    QMapIterator(const QMapIterator<K,V> &iter) : KWQMapIteratorImpl(iter)
+    {
+    }
 
-    // constructors, copy constructors, and destructors ------------------------
+    ~QMapIterator()
+    {
+    }
 
-    QMapIterator();
-    QMapIterator(const QMapIterator<K,T>&);
+    const K& key() const
+    {
+	return ((QMapNode<K,V> *)node)->key;
+    }
 
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QMapIterator() {}
-#endif
+    const V& data() const
+    {
+	return ((QMapNode<K,V> *)node)->value;
+    }
 
-    // member functions --------------------------------------------------------
+    QMapIterator<K,V> &operator=(const QMapIterator<K,V> &iter)
+    {
+	node = iter.node;
+	return *this;
+    }
 
-    const K& key() const;
-    const T& data() const;
+    bool operator==(const QMapIterator<K,V>&iter) const
+    {
+	return node == iter.node;
+    }
 
-    // operators ---------------------------------------------------------------
+    bool operator!=(const QMapIterator<K,V>&iter) const
+    {
+	return node != iter.node;
+    }
 
-    QMapIterator<K,T> &operator=(const QMapIterator<K,T> &);
-    bool operator==(const QMapIterator<K,T>&) const;
-    bool operator!=(const QMapIterator<K,T>&) const;
-    T& operator*();
-    const T& operator*() const;
-    QMapIterator<K,T>& operator++();
+    V& operator*()
+    {
+	return ((QMapNode<K,V> *)node)->value;
+    }
 
-    // this is not declared in the code, although assignment of this type
-    // is used in the code... i guess a pointer copy is what they want
-    //
-    //QMapIterator<K,T> &operator=(const QMapIterator<K,T> &);
-    //
+    const V& operator*() const
+    {
+	return ((QMapNode<K,V> *)node)->value;
+    }
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    QMapIterator<K,V>& operator++()
+    {
+	incrementInternal();
+	return *this;
+    }
 
+private:
+    QMapIterator(QMapNode<K,V> *n)
+    {
+	node = n;
+    }
 
+    friend class QMap<K,V>;
+    friend class QMapConstIterator<K,V>;
 }; // class QMapIterator =======================================================
 
 
 // class QMapConstIterator =====================================================
 
-template<class K, class T> class QMapConstIterator {
+template<class K, class V> class QMapConstIterator : private KWQMapIteratorImpl {
 public:
+    QMapConstIterator() : KWQMapIteratorImpl()
+    {
+    }
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    QMapConstIterator(const QMapConstIterator<K,V> &citer) : KWQMapIteratorImpl(citer)
+    {
+    }
 
-    // constructors, copy constructors, and destructors ------------------------
+    QMapConstIterator(const QMapIterator<K,V> &iter) : KWQMapIteratorImpl(iter)
+    {
+    }
 
-    QMapConstIterator();
-    QMapConstIterator(const QMapConstIterator<K,T> &);
-    QMapConstIterator(const QMapIterator<K,T> &);
+    ~QMapConstIterator()
+    {
+    }
 
-    ~QMapConstIterator();
+    const K& key() const
+    {
+	return ((QMapNode<K,V> *)node)->key;
+    }
 
-    // member functions --------------------------------------------------------
+    const V& data() const
+    {
+	return ((QMapNode<K,V> *)node)->value;
+    }
 
-    const K& key() const;
-    const T& data() const;
+    QMapConstIterator<K,V> &operator=(const QMapConstIterator<K,V> &citer)
+    {
+	node = citer.node;
+	return *this;
+    }
 
-    // operators ---------------------------------------------------------------
+    bool operator==(const QMapConstIterator<K,V> &citer) const
+    {
+	return node == citer.node;
+    }
 
-    QMapConstIterator<K,T> &operator=(const QMapConstIterator<K,T> &);
-    bool operator==(const QMapConstIterator<K,T> &) const;
-    bool operator!=(const QMapConstIterator<K,T> &) const;
-    const T &operator*() const;
-    QMapConstIterator<K,T>& operator++();
+    bool operator!=(const QMapConstIterator<K,V> &citer) const
+    {
+	return node != citer.node;
+    }
 
-    // this is not declared in the code, although assignment of this type
-    // is used in the code... i guess a pointer copy is what they want
-    //
-    //QMapConstIterator<K,T> &operator=(const QMapConstIterator<K,T> &);
-    //
+    const V &operator*() const
+    {
+	return ((QMapNode<K,V> *)node)->value;
+    }
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    QMapConstIterator<K,V>& operator++()
+    {
+	incrementInternal();
+	return *this;
+    }
 
+private:
+    QMapConstIterator(QMapNode<K,V> *n)
+    {
+	node = n;
+    }
+
+    friend class QMap<K,V>;
 }; // class QMapConstIterator ==================================================
+
 
 
 // class QMap ==================================================================
 
-template <class K, class T> class QMap {
+template <class K, class V> class QMap : public KWQMapImpl {
 public:
 
     // typedefs ----------------------------------------------------------------
 
-    typedef QMapIterator<K, T> Iterator;
-    typedef QMapConstIterator< K, T> ConstIterator;
+    typedef QMapIterator<K,V> Iterator;
+    typedef QMapConstIterator<K,V> ConstIterator;
 
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
-    
-    QMap();
-    QMap(const QMap<K,T>&);
-    ~QMap();
+
+
+    QMap() : 
+	KWQMapImpl(new QMapNode<K,V>(K(),V()), 0)
+    {
+    }
+
+    QMap(const QMap<K,V>& m) :
+	KWQMapImpl(QMapNode<K,V>::copyTree((QMapNode<K,V> *)m.endInternal(), NULL, NULL), m.count())
+    {
+    }
+
+    virtual ~QMap() 
+    { 
+	clear();
+	delete endInternal();
+    }
     
     // member functions --------------------------------------------------------
 
-    void clear();
-    uint count() const;
+    void clear() 
+    {
+	clearInternal();
+    }
 
-    Iterator begin();
-    Iterator end();
-    
-    ConstIterator begin() const;
-    ConstIterator end() const;
+    uint count() const
+    {
+	return countInternal();
+    }
 
-    Iterator insert(const K&, const T&);
-    void remove(const K&);
+    Iterator begin()
+    {
+	return Iterator((QMapNode<K,V> *)beginInternal());
+    }
 
-    ConstIterator find (const K &) const;
+    Iterator end()
+    {
+	return Iterator((QMapNode<K,V> *)endInternal());
+    }
+
+    ConstIterator begin() const
+    {
+	return ConstIterator((QMapNode<K,V> *)beginInternal());
+    }
+
+    ConstIterator end() const
+    {
+	return ConstIterator((QMapNode<K,V> *)endInternal());
+    }
+
+    Iterator insert(const K& key, const V& value)
+    {
+	QMapNode<K,V> tmp(key,value);
+
+	return Iterator((QMapNode<K,V> *)insertInternal(&tmp, true));
+    }
+
+    void remove(const K& key)
+    {
+	QMapNode<K,V> tmp(key, V());
+	removeInternal(&tmp);
+    }
+
+    ConstIterator find (const K &key) const
+    {
+	QMapNode<K,V> tmp(key, V());
+	QMapNode<K,V> *result = (QMapNode<K,V> *)findInternal(&tmp);
+	
+	if (result != NULL) {
+	    return ConstIterator(result);
+	} else {
+	    return ConstIterator(end());
+	}
+    }
 
     // operators ---------------------------------------------------------------
 
-    QMap<K,T>& operator=(const QMap<K,T>&);
-    T& operator[](const K& k);
+    QMap<K,V>& operator=(const QMap<K,V>&map)
+    {
+	QMap<K,V> tmp(map);
+	swap(tmp);
+	return *this;
+    }
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    V& operator[](const K& key)
+    {
+	QMapNode<K,V> tmp(key, V());
+
+	return ((QMapNode<K,V> *)insertInternal(&tmp, false))->value;
+    }
+
+
+protected:
+    virtual void copyNode(KWQMapNodeImpl *isrc, KWQMapNodeImpl *idst) 
+    {
+ 	QMapNode<K,V> *src = (QMapNode<K,V> *)isrc;
+ 	QMapNode<K,V> *dst = (QMapNode<K,V> *)idst;
+	dst->key = src->key;
+	dst->value = src->value;
+    }
+
+    virtual KWQMapNodeImpl *duplicateNode(KWQMapNodeImpl *isrc) 
+    {
+ 	QMapNode<K,V> *src = (QMapNode<K,V> *)isrc;
+	return new QMapNode<K,V>(src->key, src->value);
+    }
+
+    virtual CompareResult compareNodes(KWQMapNodeImpl *ia, KWQMapNodeImpl *ib) const
+    {
+ 	QMapNode<K,V> *a = (QMapNode<K,V> *)ia;
+ 	QMapNode<K,V> *b = (QMapNode<K,V> *)ib;
+
+	if (a->key == b->key) {
+	    return Equal;
+	} else if (a->key < b->key) {
+	    return Less;
+	} else {
+	    return Greater;
+	}
+    }
+
+    virtual void swapNodes(KWQMapNodeImpl *ia, KWQMapNodeImpl *ib)
+    {
+	QMapNode<K,V> *a = (QMapNode<K,V> *)ia;
+	QMapNode<K,V> *b = (QMapNode<K,V> *)ib;
+
+	K tmpKey = a->key;
+	V tmpValue = a->value;
+	a->key = b->key;
+	a->value = b->value;
+	b->key = tmpKey;
+	b->value = tmpValue;
+    }
+
+    virtual void deleteNode(KWQMapNodeImpl *inode)
+    {
+	delete (QMapNode<K,V> *)inode;
+    }
 
 }; // class QMap ===============================================================
+
+
+#ifdef _KWQ_IOSTREAM_
+template<class K, class V>
+inline ostream &operator<<(ostream &stream, const QMap<K,V> &m) 
+{
+    uint count = m.count();
+    stream << "QMap: [size: " << count << "; items: ";
+
+    QMapConstIterator<K,V> iter = m.begin();
+    
+    for (unsigned int i = 0; i < count; i++) {
+	stream << "(" << iter.key() << "," << iter.data() << ")";
+	if (i + 1 < count) {
+	    stream << ", ";
+	}
+	++iter;
+    }
+
+    return stream << "]";
+}
+#endif
 
 #endif // USING_BORROWED_QMAP
 

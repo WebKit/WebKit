@@ -27,6 +27,7 @@ libkwq_o_SOURCES = \
 	KWQCursor.mm \
 	KWQDCOPClient.mm \
 	KWQDateTime.mm \
+	KWQDictImpl.mm \
 	KWQDrawUtil.mm \
 	KWQEvent.mm \
 	KWQFont.mm \
@@ -36,6 +37,7 @@ libkwq_o_SOURCES = \
 	KWQFrame.mm \
 	KWQGuardedPtr.mm \
 	KWQPoint.mm \
+	KWQPtrDictImpl.mm \
 	KWQRect.mm \
 	KWQSize.mm \
 	KWQHBox.mm \
@@ -85,6 +87,7 @@ libkwq_o_SOURCES = \
 	KWQLabel.mm \
 	KWQLineEdit.mm \
 	KWQListBox.mm \
+	KWQMapImpl.mm \
 	KWQMovie.mm \
 	KWQNSTextField.mm \
 	KWQObject.mm \

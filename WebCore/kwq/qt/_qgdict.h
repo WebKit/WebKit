@@ -40,6 +40,8 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
+#include <config.h>
+
 #ifndef USING_BORROWED_QDICT
 #define USING_BORROWED_QDICT
 #endif
@@ -234,6 +236,5 @@ inline void *QGDictIterator::getKeyPtr() const
 {
     return curNode ? ((QPtrBucket*)curNode)->getKey() : 0;
 }
-
 
 #endif // QGDICT_H

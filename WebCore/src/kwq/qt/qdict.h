@@ -33,13 +33,18 @@
 // USING_BORROWED_QDICT ========================================================
 
 #ifdef USING_BORROWED_QDICT
+
 #include <_qdict.h>
+
 #else
 
 
 #include <_qcollection.h>
-#include "qstring.h"
+#include <qstring.h>
 
+#include <KWQDictImpl.h>
+
+template<class T> class QDictIterator;
 
 // class QDict =================================================================
 
@@ -53,25 +58,32 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QDict(int size=17, bool caseSensitive=TRUE);
-    QDict(const QDict<T> &);
-    ~QDict();
+    QDict(int size=17, bool caseSensitive=TRUE) : impl(size, caseSensitive, QDict::deleteFunc) {}
+    QDict(const QDict<T> &d) : impl(d.impl) {}
+    virtual ~QDict() { impl.clear(del_item); }
 
     // member functions --------------------------------------------------------
 
-    void clear();
-    void insert(const QString &, const T *);
-    bool remove(const QString &);
-    T *find(const QString &) const;
-    uint count() const;
+    virtual void clear() { impl.clear(del_item); }
+    virtual uint count() const { return impl.count(); }
+    void insert(const QString &key, const T *value) { impl.insert(key,(void *)value);}
+    bool remove(const QString &key) { return impl.remove(key,del_item); }
+    T *find(const QString &key) const { return (T *)impl.find(key); }
 
     // operators ---------------------------------------------------------------
 
-    QDict<T> &operator=(const QDict<T> &);
+    QDict<T> &operator=(const QDict<T> &d) { impl.assign(d.impl,del_item); QCollection::operator=(d); return *this;}
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+ private:
+    static void deleteFunc(void *item) {
+	delete (T *)item;
+    }
 
+    KWQDictImpl impl;
+
+    friend class QDictIterator<T>;
 }; // class QDict ==============================================================
 
 
@@ -92,23 +104,25 @@ public:
     QDictIterator() {}
 #endif
 
-    QDictIterator(const QDict<T> &);
-    ~QDictIterator();
+    QDictIterator(const QDict<T> &d) : impl(d.impl) {}
+    ~QDictIterator() {}
 
     // member functions --------------------------------------------------------
 
-    uint count() const;
-    T *current() const;
-    T *toFirst();
+    uint count() const { return impl.count(); }
+    T *current() const { return (T *) impl.current(); }
+    QString currentKey() const { return impl.currentStringKey(); }
+    T *toFirst() { return (T *)impl.toFirst(); }
 
     // operators ---------------------------------------------------------------
 
-    T *operator++();
+    T *operator++() { return (T *)(++impl); }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
 private:
+    KWQDictIteratorImpl impl;
 
 // add copy constructor
 // this private declaration prevents copying
