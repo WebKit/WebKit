@@ -2193,7 +2193,7 @@ void QString::detachInternal()
     QStringData *oldData = *dataHandle;
     
     if (oldData->refCount > 1 && oldData == &internalData) {
-        QStringData *newData;
+        QStringData *newData = NULL;
         if (oldData->_isAsciiValid)
             newData = new QStringData (oldData->ascii(), oldData->_length);
         else if (oldData->_isUnicodeValid){
