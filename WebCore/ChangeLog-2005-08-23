@@ -1,3 +1,13 @@
+2004-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3602202>: "feed:uuid:...." links in Emerson content are being changed into "feed:uuuid:...."
+
+        * kwq/KWQKURL.mm: (copyPathRemovingDots): Add special case for empty path. The old code had an
+        assertion that explicitly allowed this case, but it copied a character from the src buffer,
+        which was incorrect.
+
 2004-03-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3600642, letter magnet demo doesn't update until mouse move.  This patch also fixes problems

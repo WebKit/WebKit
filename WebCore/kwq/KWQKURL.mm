@@ -925,53 +925,56 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
 // copy a path, accounting for "." and ".." segments
 static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd)
 {
-    const char *baseStringStart = src + srcStart;
-    const char *baseStringEnd = src + srcEnd;
     char *bufferPathStart = dst;
-    const char *baseStringPos = baseStringStart;
 
-    // this code is unprepared for paths that do not begin with a
-    // slash and we should always have one in the source string (but a
-    // totally empty path is OK and does not need to start with a slash)
-    ASSERT(srcStart == srcEnd || baseStringPos[0] == '/');
+    // empty path is a special case, and need not have a leading slash
+    if (srcStart != srcEnd) {
+        const char *baseStringStart = src + srcStart;
+        const char *baseStringEnd = src + srcEnd;
+        const char *baseStringPos = baseStringStart;
 
-    // copy the leading slash into the destination
-    *dst = *baseStringPos;
-    baseStringPos++;
-    dst++;
+        // this code is unprepared for paths that do not begin with a
+        // slash and we should always have one in the source string
+        ASSERT(baseStringPos[0] == '/');
 
-    while (baseStringPos < baseStringEnd) {
-        if (baseStringPos[0] == '.' && dst[-1] == '/') {
-            if (baseStringPos[1] == '/' || baseStringPos + 1 == baseStringEnd) {
-                // skip over "." segment
-                baseStringPos += 2;
-                continue;
-            } else if (baseStringPos[1] == '.' && (baseStringPos[2] == '/' ||
-                                   baseStringPos + 2 == baseStringEnd)) {
-                // skip over ".." segment and rewind the last segment
-                // the RFC leaves it up to the app to decide what to do with excess
-                // ".." segments - we choose to drop them since some web content
-                // relies on this.
-                baseStringPos += 3;
-                if (dst > bufferPathStart + 1) {
-                    dst--;
-                }
-                // Note that these two while blocks differ subtly.
-                // The first helps to remove multiple adjoining slashes as we rewind.
-                // The +1 to bufferPathStart in the first while block prevents eating a leading slash
-                while (dst > bufferPathStart + 1 && dst[-1] == '/') {
-                    dst--;
-                }
-                while (dst > bufferPathStart && dst[-1] != '/') {
-                    dst--;
-                }
-                continue;
-            }
-        }
-
+        // copy the leading slash into the destination
         *dst = *baseStringPos;
         baseStringPos++;
         dst++;
+
+        while (baseStringPos < baseStringEnd) {
+            if (baseStringPos[0] == '.' && dst[-1] == '/') {
+                if (baseStringPos[1] == '/' || baseStringPos + 1 == baseStringEnd) {
+                    // skip over "." segment
+                    baseStringPos += 2;
+                    continue;
+                } else if (baseStringPos[1] == '.' && (baseStringPos[2] == '/' ||
+                                       baseStringPos + 2 == baseStringEnd)) {
+                    // skip over ".." segment and rewind the last segment
+                    // the RFC leaves it up to the app to decide what to do with excess
+                    // ".." segments - we choose to drop them since some web content
+                    // relies on this.
+                    baseStringPos += 3;
+                    if (dst > bufferPathStart + 1) {
+                        dst--;
+                    }
+                    // Note that these two while blocks differ subtly.
+                    // The first helps to remove multiple adjoining slashes as we rewind.
+                    // The +1 to bufferPathStart in the first while block prevents eating a leading slash
+                    while (dst > bufferPathStart + 1 && dst[-1] == '/') {
+                        dst--;
+                    }
+                    while (dst > bufferPathStart && dst[-1] != '/') {
+                        dst--;
+                    }
+                    continue;
+                }
+            }
+
+            *dst = *baseStringPos;
+            baseStringPos++;
+            dst++;
+        }
     }
     *dst = '\0';
     return dst - bufferPathStart;
