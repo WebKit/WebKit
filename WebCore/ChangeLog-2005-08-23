@@ -1,3 +1,13 @@
+2002-03-27  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/css/css_valueimpl.cpp:
+	(FontFamilyValueImpl::FontFamilyValueImpl): Disable misguided font matching
+        code in khtml.
+        
+	* src/kwq/KWQFont.mm: (QFont::getFont): Change the fallback so that it uses
+        the default font family, but the other settings as requested, rather than
+        using the default font.
+
 2002-03-27  Kenneth Kocienda  <kocienda@apple.com>
 
         Changed loadProgress->bytesSoFar to use [sender contentLengthReceived]

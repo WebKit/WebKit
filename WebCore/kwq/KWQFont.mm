@@ -165,11 +165,11 @@ NSFont *QFont::getFont()
         }
         fontKey = [[IFFontCacheKey alloc] initWithString: _family trait: _trait size: _size];
         font = [fontCache objectForKey:fontKey];
-        if (font == nil) { 
+        if (font == nil) {
             font = [[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size];
             if (font == nil) {
                 loadDefaultFont();
-                font = defaultFont;
+                font = [[NSFontManager sharedFontManager] fontWithFamily:defaultFontFamilyName traits:_trait weight:5 size:_size];
             }
             [fontCache setObject: font forKey: fontKey];
         }
