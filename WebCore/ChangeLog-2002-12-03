@@ -1,3 +1,11 @@
+2002-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        * khtml/ecma/kjs_window.cpp: Fix to build clean after
+	JavaScriptCore live class changes (this way of handling it is kind
+	of a hack, but kjs is unhappy to have Boolean defined so it can't
+	unconditionally include CoreFoundation.h in collector.h; will fix
+	better later).
+
 2002-08-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Add the ability to determine the classes of live JavaScript

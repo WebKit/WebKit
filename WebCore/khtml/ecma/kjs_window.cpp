@@ -33,6 +33,9 @@
 #include <assert.h>
 #include <qstyle.h>
 
+#if APPLE_CHANGES
+#define _COLLECTOR
+#endif
 #include <kjs/collector.h>
 #include "kjs_proxy.h"
 #include "kjs_window.h"
