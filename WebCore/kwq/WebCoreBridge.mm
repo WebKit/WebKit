@@ -114,6 +114,12 @@ using namespace khtml;
     width:(int)width height:(int)height
     marginWidth:(int)mw marginHeight:(int)mh
 {
+    // If we own the view, delete the old one - otherwise the render
+    // widget should take care of deleting the view
+    if (bridgeOwnsKHTMLView) {
+	delete part->impl->getView();
+    }
+
     KHTMLView *kview = new KHTMLView(part, 0);
     part->impl->setView(kview);
 

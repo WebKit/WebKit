@@ -138,6 +138,7 @@
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "-seg1addr 0x02200000 -no-c++filt";
+				PREBINDING = NO;
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebCorePrefix.h;
 				PRODUCT_NAME = WebCore;
@@ -3639,8 +3640,8 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				i386 = YES;
 				SKIP_INSTALL = YES;
+				i386 = YES;
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;

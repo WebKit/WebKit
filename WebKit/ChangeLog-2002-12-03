@@ -1,5 +1,15 @@
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
+	fixed 2974993 - window.open does not return the right window object
+	fixed 3017140 - WebKit creates a new KHTMLPart per page; should
+	reuse it like KHTML does
+	
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation setDataSource:]): Don't swap the part at
+	this point. Now it gets reused.
+
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
         * WebKit.pbproj/project.pbxproj: Fix tyops that broke Development
 	build.
 

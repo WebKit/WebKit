@@ -245,7 +245,6 @@ KHTMLView::~KHTMLView()
         killTimer(d->repaintTimerId);
         d->timerId = 0;
         d->repaintTimerId = 0;
-        m_part->impl->setView(0);
         m_part->deref();
 #endif
     }

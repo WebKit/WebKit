@@ -49,7 +49,6 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    [[dataSource webFrame] _changeBridge];
     _private->bridge = [[dataSource webFrame] _bridge];
 }
 
