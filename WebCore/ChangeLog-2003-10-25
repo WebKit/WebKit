@@ -1,5 +1,24 @@
 2002-11-12  Darin Adler  <darin@apple.com>
 
+	- fixed 3079499 -- blank page at http://www.sonyericsson.com/T68i/
+
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::checkNotify): Copy the clients list before iterating
+	over it, since clients can move around in the list or be removed.
+        (CachedScript::checkNotify): Ditto.
+        (CachedImage::do_notify): Ditto.
+        (CachedImage::movieStatus): Ditto.
+
+	- fixed double calls to openURL I noticed
+
+        * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest):
+	Don't call openURL here at all. That happens indirectly as a result
+	of the load we kick off.
+
+        * kwq/KWQKHTMLPart.mm: Tweaks.
+
+2002-11-12  Darin Adler  <darin@apple.com>
+
 	- fixed 3083043 -- Alex doesn't decode % sequences in javascript: URLs
 
 	Some places here did KURL::decode_string, but others didn't.

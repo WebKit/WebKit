@@ -137,20 +137,21 @@ void KWQKHTMLPart::openURL(const KURL &url)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
-        // FIXME: We need to report this error to someone.
-    } else {
-        // FIXME: The lack of args here to get the reload flag from
-        // indicates a problem in KHTMLPart::processObjectRequest,
-        // where we are opening the URL before the args are set up.
-        [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil];
+        // FIXME: Do we need to report an error to someone?
+        return;
     }
+    
+    // FIXME: The lack of args here to get the reload flag from
+    // indicates a problem in how we use KHTMLPart::processObjectRequest,
+    // where we are opening the URL before the args are set up.
+    [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil];
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
-        // FIXME: We need to report this error to someone.
+        // FIXME: Do we need to report an error to someone?
         return;
     }
     
@@ -171,7 +172,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
         part->begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();
     }
-
+    
     ASSERT(d->m_doc);
     ASSERT(d->m_doc->parsing());
     
@@ -192,7 +193,6 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
         return;
     }
     
-
     [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent];
 }
 
