@@ -28,7 +28,6 @@
     BOOL subviewsSetAside;
 
     NSEvent *mouseDownEvent;
-    NSDictionary *dragElement;
 
     NSURL *draggingImageURL;
     

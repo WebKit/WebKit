@@ -32,12 +32,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)dealloc
-{
-    [element release];
-    [super dealloc];
-}
-
 - (WebView *)webView: (WebView *)wv createWebViewWithRequest:(NSURLRequest *)request
 {
     return nil;

@@ -92,7 +92,6 @@ static BOOL forceRealHitTest = NO;
     [pluginController destroyAllPlugins];
     
     [mouseDownEvent release];
-    [dragElement release];
     [draggingImageURL release];
     [pluginController release];
     
@@ -503,7 +502,8 @@ static WebHTMLView *lastHitView = nil;
 	return;
     }
 
-    NSDictionary *element = _private->dragElement;
+    NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
+    NSDictionary *element = [self _elementAtPoint:mouseDownPoint];
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
@@ -516,7 +516,6 @@ static WebHTMLView *lastHitView = nil;
     ASSERT((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
            (!imageURL && linkURL) || isSelectedText); 
 
-    NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSPoint mouseDraggedPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     float deltaX = ABS(mouseDraggedPoint.x - mouseDownPoint.x);
     float deltaY = ABS(mouseDraggedPoint.y - mouseDownPoint.y);
@@ -577,13 +576,10 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)mouseDraggedEvent
 {
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    NSDictionary *mouseDownElement = [[self _elementAtPoint:mouseDownPoint] retain];
-    
-    [_private->dragElement release];
-    _private->dragElement = mouseDownElement;
+    NSDictionary *mouseDownElement = [self _elementAtPoint:mouseDownPoint];
 
     NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
-    
+
     if ((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
         (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey]) ||
         ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] &&

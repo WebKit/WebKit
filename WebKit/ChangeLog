@@ -1,3 +1,37 @@
+2003-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3250119 -- REGRESSION: WebFrame leaked after showing pop-up menu
+
+        The leak was caused by various code storing the "element" dictionary that describes where
+        a click took place.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        Don't store the element in a retained global. Instead attach it as the represented
+        object to each menu item.
+        (-[WebDefaultUIDelegate openNewWindowWithURL:element:]): Pass in an element.
+        (-[WebDefaultUIDelegate downloadURL:element:]): Ditto.
+        (-[WebDefaultUIDelegate openLinkInNewWindow:]): Get element from represented object.
+        (-[WebDefaultUIDelegate downloadLinkToDisk:]): Ditto.
+        (-[WebDefaultUIDelegate copyLinkToClipboard:]): Ditto.
+        (-[WebDefaultUIDelegate openImageInNewWindow:]): Ditto.
+        (-[WebDefaultUIDelegate downloadImageToDisk:]): Ditto.
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): Ditto.
+        (-[WebDefaultUIDelegate openFrameInNewWindow:]): Ditto.
+
+        * WebView.subproj/WebDefaultUIDelegate.h: Remove element field.
+        * WebView.subproj/WebDefaultUIDelegate.m: (-[WebDefaultUIDelegate dealloc]): No need
+        to release element any more.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove dragElement instance variable.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]): No need to release dragElement any more. 
+        (-[WebHTMLView _handleMouseDragged:]): Get element again here. The old code used to
+        get it from an instance variable, but that is unnecessary.
+        (-[WebHTMLView _mayStartDragWithMouseDragged:]): Don't store the element.
+
 2003-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -75,27 +75,23 @@
     return [menuItem autorelease];
 }
 
-- (NSArray *)webView: (WebView *)wv contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
+- (NSArray *)webView: (WebView *)wv contextMenuItemsForElement: (NSDictionary *)element  defaultMenuItems: (NSArray *)defaultMenuItems
 {
     NSMutableArray *menuItems = [NSMutableArray array];
-    NSURL *linkURL, *imageURL;
-    
-    [element release];
-    element = [theElement retain];
 
-    linkURL = [element objectForKey:WebElementLinkURLKey];
+    NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
 
     if (linkURL) {
-        if([NSURLConnection canHandleRequest:[NSURLRequest requestWithURL:linkURL]]){
+        if([NSURLConnection canHandleRequest:[NSURLRequest requestWithURL:linkURL]]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
         }
     }
 
-    imageURL = [element objectForKey:WebElementImageURLKey];
-    if(imageURL){
-        if(linkURL){
+    NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
+    if (imageURL) {
+        if (linkURL) {
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenImageInNewWindow]];
@@ -109,16 +105,19 @@
         } else {        
             WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     
-            if(webFrame != [[webFrame webView] mainFrame]){
+            if (webFrame != [[webFrame webView] mainFrame]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow]];
             }
         }
     }
 
+    // Attach element as the represented object to each item.
+    [menuItems makeObjectsPerformSelector:@selector(setRepresentedObject:) withObject:element];
+
     return menuItems;
 }
 
-- (void)openNewWindowWithURL:(NSURL *)URL
+- (void)openNewWindowWithURL:(NSURL *)URL element:(NSDictionary *)element
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebView *webView = [webFrame webView];
@@ -132,7 +131,7 @@
     [webView _openNewWindowWithRequest:request];
 }
 
-- (void)downloadURL:(NSURL *)URL
+- (void)downloadURL:(NSURL *)URL element:(NSDictionary *)element
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebView *webView = [webFrame webView];
@@ -141,16 +140,19 @@
 
 - (void)openLinkInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebElementLinkURLKey]];
+    NSDictionary *element = [sender representedObject];
+    [self openNewWindowWithURL:[element objectForKey:WebElementLinkURLKey] element:element];
 }
 
 - (void)downloadLinkToDisk:(id)sender
 {
-    [self downloadURL:[element objectForKey:WebElementLinkURLKey]];
+    NSDictionary *element = [sender representedObject];
+    [self downloadURL:[element objectForKey:WebElementLinkURLKey] element:element];
 }
 
 - (void)copyLinkToClipboard:(id)sender
 {
+    NSDictionary *element = [sender representedObject];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard _web_writeURL:[element objectForKey:WebElementLinkURLKey]
                      andTitle:[element objectForKey:WebElementLinkLabelKey]
@@ -159,29 +161,31 @@
 
 - (void)openImageInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebElementImageURLKey]];
+    NSDictionary *element = [sender representedObject];
+    [self openNewWindowWithURL:[element objectForKey:WebElementImageURLKey] element:element];
 }
 
 - (void)downloadImageToDisk:(id)sender
 {
-    [self downloadURL:[element objectForKey:WebElementImageURLKey]];
+    NSDictionary *element = [sender representedObject];
+    [self downloadURL:[element objectForKey:WebElementImageURLKey] element:element];
 }
 
 - (void)copyImageToClipboard:(id)sender
 {
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSDictionary *element = [sender representedObject];
     NSData *tiff = [[element objectForKey:WebElementImageKey] TIFFRepresentation];
     
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
     [pasteboard setData:tiff forType:NSTIFFPboardType];
 }
 
 - (void)openFrameInNewWindow:(id)sender
 {
+    NSDictionary *element = [sender representedObject];
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebDataSource *dataSource = [webFrame dataSource];
-    NSURL *URL = [dataSource _URL];
-    [self openNewWindowWithURL:URL];
+    [self openNewWindowWithURL:[[webFrame dataSource] _URL] element:element];
 }
 
 
