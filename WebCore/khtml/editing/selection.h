@@ -157,6 +157,6 @@ inline bool operator!=(const Selection &a, const Selection &b)
     return !(a == b);
 }
 
-} // namespace DOM
+} // namespace khtml
 
 #endif // KHTML_EDITING_SELECTION_H

@@ -2,6 +2,25 @@
 
         Reviewed by Ken.
 
+        - added new VisibleRange class; not used yet
+
+        * WebCore.pbproj/project.pbxproj: Added visible_range.h and visible_range.cpp.
+        * khtml/editing/visible_range.cpp: Added.
+        * khtml/editing/visible_range.h: Added.
+
+        - tweaks
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge alterCurrentSelection:direction:granularity:]):
+        Use switch statement instead of if statement so we get a warning if we ever add a new
+        granularity.
+
+        * khtml/editing/selection.h: khtml, not DOM, namespace
+        * khtml/editing/visible_position.h: Ditto.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3812758> 8S266: attaching mutation events to an editable div crashes Safari
 
         * khtml/xml/dom_nodeimpl.cpp:

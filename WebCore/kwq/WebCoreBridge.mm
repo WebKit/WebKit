@@ -1379,10 +1379,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
 
-    // save vertical navigation x position if necessary
+    // save vertical navigation x position if necessary; many types of motion blow it away
     int xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
-    if (granularity == WebSelectByLine || granularity == WebSelectByParagraph)
-        xPos = _part->xPosForVerticalArrowNavigation();
+    switch (granularity) {
+        case WebSelectByLine:
+        case WebSelectByParagraph:
+            xPos = _part->xPosForVerticalArrowNavigation();
+            break;
+        case WebSelectByCharacter:
+        case WebSelectByWord:
+        case WebSelectToLineBoundary:
+        case WebSelectToParagraphBoundary:
+        case WebSelectToDocumentBoundary:
+            break;
+    }
+
     
     // setting the selection always clears saved vertical navigation x position
     _part->setSelection(selection);
