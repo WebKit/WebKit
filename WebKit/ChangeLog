@@ -1,5 +1,13 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Added selection API.
+        
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation setSelectionFrom:startOffset:to:endOffset:]):
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         Add accessor for DOM document.
         
         * WebKit.pbproj/project.pbxproj:

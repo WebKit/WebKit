@@ -79,6 +79,10 @@
     return [_private->bridge DOMDocument];
 }
 
+- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
+{
+}
+
 - (NSString *)reconstructedDocumentSource
 {
     // FIXME implement

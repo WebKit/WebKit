@@ -53,6 +53,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 @protocol WebDOMDocument;
+@protocol WebDOMNode;
 
 #define WebCoreElementLinkURL  		@"WebCoreElementLinkURL"
 #define WebCoreElementLinkTarget  	@"WebCoreElementLinkTarget"
@@ -136,6 +137,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)executeJavaScriptFromString:(NSString *)string;
 
 - (id<WebDOMDocument>)DOMDocument;
+
+- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
 
 @end
 

@@ -1,5 +1,13 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Added bridge method set the selection.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]):
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         Added bridge method to get the DOM document.
         
         * kwq/WebCoreBridge.h:

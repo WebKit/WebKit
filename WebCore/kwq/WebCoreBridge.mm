@@ -547,5 +547,11 @@ using khtml::RenderPart;
     return [WebCoreDOMDocument documentWithImpl:doc];
 }
 
+- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
+{
+    DocumentImpl *doc = part->impl->document();
+    
+    doc->setSelection ([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
+}
 
 @end
