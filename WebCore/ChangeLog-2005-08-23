@@ -1,3 +1,24 @@
+2004-07-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3740855> REGRESSION: Flash incorrectly positioned at macromedia.com
+        
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptExecution): Do the prepending-src
+	trick as for inline script execution.
+
+	Added new layout tests covering this and other recent tokenizer
+	bugs.
+	
+        * layout-tests/fast/tokenizer/001-expected.txt: Added.
+        * layout-tests/fast/tokenizer/001.html: Added.
+        * layout-tests/fast/tokenizer/002-expected.txt: Added.
+        * layout-tests/fast/tokenizer/002.html: Added.
+        * layout-tests/fast/tokenizer/003-expected.txt: Added.
+        * layout-tests/fast/tokenizer/003.html: Added.
+        * layout-tests/fast/tokenizer/resources/003-script.js: Added.
+
 2004-07-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey

@@ -580,9 +580,39 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
     else
       url = scriptURL;
 
+    TokenizerString *savedPrependingSrc = currentPrependingSrc;
+    TokenizerString prependingSrc;
+    currentPrependingSrc = &prependingSrc;
+
     view->part()->executeScript(url,baseLine,Node(),str);
+
     m_executingScript--;
     script = oldscript;
+
+    if ( !m_executingScript && !loadingExtScript ) {
+	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
+	src.append(pendingSrc);
+	pendingSrc.clear();
+    } else if (!prependingSrc.isEmpty()) {
+	// restore first so that the write appends in the right place
+	// (does not hurt to do it again below)
+	currentPrependingSrc = savedPrependingSrc;
+
+	// we need to do this slightly modified bit of one of the write() cases
+	// because we want to prepend to pendingSrc rather than appending
+	// if there's no previous prependingSrc
+	if (loadingExtScript) {
+	    if (currentPrependingSrc) {
+		currentPrependingSrc->append(prependingSrc);
+	    } else {
+		pendingSrc.prepend(prependingSrc);
+	    }
+	} else {
+	    write(prependingSrc, false);
+	}
+    }
+
+    currentPrependingSrc = savedPrependingSrc;
 }
 
 void HTMLTokenizer::parseComment(TokenizerString &src)
