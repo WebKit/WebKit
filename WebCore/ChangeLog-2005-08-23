@@ -1,3 +1,31 @@
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed all Objective-C DOM classes from protocols to classes, using
+        a class cluster-like approach.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/html_object.cpp: Put code in DOM namespace.
+        * khtml/html/html_headimpl.cpp: Pull in entire DOM namespace in using directive to
+        make up for the removal of it from htmlattrs.
+        * khtml/html/htmltokenizer.cpp: Add using directives for the DOM classes used.
+        * khtml/misc/htmlattrs.c:
+        (getAttrName):
+        * khtml/misc/htmlattrs.h: 
+        * khtml/misc/htmltags.c:
+        (getTagName):
+        * khtml/misc/makeattrs: Some changes here to avoid pulling in the entire DOM namespace.
+        Explicitly use DOM namespace scoping for DOMString.
+        * khtml/misc/maketags: Explicitly use DOM namespace scoping for DOMString.
+        * khtml/rendering/render_form.cpp: Pull in entire DOM namespace in using directive to
+        make up for the removal of it from htmlattrs.
+        * kwq/DOM-compat.h:
+        * kwq/DOM.h:
+        * kwq/DOM.mm: Added.
+        * kwq/WebCoreDOM.h: Removed.
+        * kwq/WebCoreDOM.mm: Removed.
+
 2004-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

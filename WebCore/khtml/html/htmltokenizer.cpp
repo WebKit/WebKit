@@ -57,6 +57,16 @@
 #include <kdebug.h>
 #include <stdlib.h>
 
+using DOM::AtomicString;
+using DOM::AttributeImpl;
+using DOM::DOMString;
+using DOM::DOMStringImpl;
+using DOM::DocumentImpl;
+using DOM::FORBIDDEN;
+using DOM::Node;
+using DOM::emptyAtom;
+using DOM::endTag;
+
 // turn off inlining to void warning with newer gcc
 #undef __inline
 #define __inline

@@ -43,8 +43,13 @@
 #import "render_style.h"
 #import "render_text.h"
 
+using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
+using DOM::Node;
+using DOM::NodeImpl;
+using DOM::Range;
+
 using khtml::RenderObject;
 using khtml::RenderWidget;
 using khtml::RenderCanvas;

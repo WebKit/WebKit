@@ -66,7 +66,7 @@
 #import "KWQAccObjectCache.h"
 
 #import "DOM.h"
-#import "WebCoreDOM.h"
+#import "DOMInternal.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
@@ -74,9 +74,19 @@
 
 #import <AppKit/NSView.h>
 
+using DOM::AtomicString;
 using DOM::DocumentImpl;
+using DOM::DocumentTypeImpl;
+using DOM::DOMString;
+using DOM::Element;
+using DOM::ElementImpl;
+using DOM::HTMLFormElementImpl;
+using DOM::HTMLGenericFormElementImpl;
+using DOM::HTMLImageElementImpl;
+using DOM::HTMLInputElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::Range;
 
 using khtml::Decoder;
 using khtml::parseURL;
@@ -729,7 +739,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     return _part->sendContextMenuEvent(event);
 }
 
-- (id <DOMElement>)elementForView:(NSView *)view
+- (DOMElement *)elementForView:(NSView *)view
 {
     // FIXME: implemented currently for only a subset of the KWQ widgets
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
@@ -737,7 +747,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
         QWidget *widget = [widgetHolder widget];
         if (widget != nil) {
             NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
-            return [WebCoreDOMElement objectWithImpl:static_cast<ElementImpl *>(node)];
+            return [WebCoreDOMElement elementWithImpl:static_cast<ElementImpl *>(node)];
         }
     }
     return nil;
@@ -756,27 +766,25 @@ static NSView *viewForElement(DOM::ElementImpl *elementImpl)
     return nil;
 }
 
-static HTMLInputElementImpl *inputElementFromDOMElement(id <DOMElement> element)
+static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement * element)
 {
-    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
-    DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element impl];
+    DOM::ElementImpl *domElement = [element elementImpl];
     if (domElement && idFromNode(domElement) == ID_INPUT) {
         return static_cast<HTMLInputElementImpl *>(domElement);
     }
     return nil;
 }
 
-static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
+static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
-    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
-    DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element impl];
+    DOM::ElementImpl *domElement = [element elementImpl];
     if (domElement && idFromNode(domElement) == ID_FORM) {
         return static_cast<HTMLFormElementImpl *>(domElement);
     }
     return nil;
 }
 
-- (id <DOMElement>)elementWithName:(NSString *)name inForm:(id <DOMElement>)form
+- (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
@@ -786,14 +794,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
             HTMLGenericFormElementImpl *elt = elements.at(i);
             // Skip option elements, other duds
             if (elt->name() == targetName) {
-                return [WebCoreDOMElement objectWithImpl:elt];
+                return [WebCoreDOMElement elementWithImpl:elt];
             }
         }
     }
     return nil;
 }
 
-- (BOOL)elementDoesAutoComplete:(id <DOMElement>)element
+- (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
     return inputElement != nil
@@ -801,32 +809,32 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
         && inputElement->autoComplete();
 }
 
-- (BOOL)elementIsPassword:(id <DOMElement>)element
+- (BOOL)elementIsPassword:(DOMElement *)element
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
     return inputElement != nil
         && inputElement->inputType() == HTMLInputElementImpl::PASSWORD;
 }
 
-- (id <DOMElement>)formForElement:(id <DOMElement>)element;
+- (DOMElement *)formForElement:(DOMElement *)element;
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
     if (inputElement) {
         HTMLFormElementImpl *formElement = inputElement->form();
         if (formElement) {
-            return [WebCoreDOMElement objectWithImpl:formElement];
+            return [WebCoreDOMElement elementWithImpl:formElement];
         }
     }
     return nil;
 }
 
-- (id <DOMElement>)currentForm
+- (DOMElement *)currentForm
 {
     HTMLFormElementImpl *formElement = _part->currentForm();
-    return formElement ? [WebCoreDOMElement objectWithImpl:formElement] : nil;
+    return formElement ? [WebCoreDOMElement elementWithImpl:formElement] : nil;
 }
 
-- (NSArray *)controlsInForm:(id <DOMElement>)form
+- (NSArray *)controlsInForm:(DOMElement *)form
 {
     NSMutableArray *results = nil;
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
@@ -848,16 +856,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
     return results;
 }
 
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <DOMElement>)element
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
-    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
-    return _part->searchForLabelsBeforeElement(labels, [(WebCoreDOMElement *)element impl]);
+    return _part->searchForLabelsBeforeElement(labels, [element elementImpl]);
 }
 
-- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <DOMElement>)element
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
-    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
-    return _part->matchLabelsAgainstElement(labels, [(WebCoreDOMElement *)element impl]);
+    return _part->matchLabelsAgainstElement(labels, [element elementImpl]);
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
@@ -928,7 +934,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
         [element setObject:[NSNumber numberWithBool:node->isContentEditable()]
                     forKey:WebCoreElementIsEditableKey];
         
-        [element setObject:[WebCoreDOMNode objectWithImpl:node] forKey:WebCoreElementDOMNodeKey];
+        [element setObject:[WebCoreDOMNode nodeWithImpl:node] forKey:WebCoreElementDOMNodeKey];
     
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
@@ -1033,16 +1039,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
     return _part->executeScript(QString::fromNSString(string), true).asString().getNSString();
 }
 
-- (id<DOMDocument>)DOMDocument
+- (DOMDocument *)DOMDocument
 {
-    return [WebCoreDOMDocument objectWithImpl:_part->xmlDocImpl()];
+    return [WebCoreDOMDocument documentWithImpl:_part->xmlDocImpl()];
 }
 
-- (void)setSelectionFrom:(id<DOMNode>)start startOffset:(int)startOffset to:(id<DOMNode>)end endOffset:(int) endOffset
+- (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
 {
-    WebCoreDOMNode *startNode = start;
-    WebCoreDOMNode *endNode = end;
-    KHTMLSelection selection([startNode impl], startOffset, [endNode impl], endOffset);
+    DOMNode *startNode = start;
+    DOMNode *endNode = end;
+    KHTMLSelection selection([startNode nodeImpl], startOffset, [endNode nodeImpl], endOffset);
     _part->setSelection(selection);
 }
 
@@ -1051,16 +1057,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
     return _part->attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
 }
 
-- (NSAttributedString *)attributedStringFrom:(id<DOMNode>)start startOffset:(int)startOffset to:(id<DOMNode>)end endOffset:(int)endOffset
+- (NSAttributedString *)attributedStringFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset
 {
-    WebCoreDOMNode *startNode = start;
-    WebCoreDOMNode *endNode = end;
-    return _part->attributedString([startNode impl], startOffset, [endNode impl], endOffset);
+    DOMNode *startNode = start;
+    DOMNode *endNode = end;
+    return _part->attributedString([startNode nodeImpl], startOffset, [endNode nodeImpl], endOffset);
 }
 
-- (id<DOMNode>)selectionStart
+- (DOMNode *)selectionStart
 {
-    return [WebCoreDOMNode objectWithImpl:_part->selectionStart()];
+    return [WebCoreDOMNode nodeWithImpl:_part->selectionStart()];
 }
 
 - (int)selectionStartOffset
@@ -1068,9 +1074,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <DOMElement> element)
     return _part->selectionStartOffset();
 }
 
-- (id<DOMNode>)selectionEnd
+- (DOMNode *)selectionEnd
 {
-    return [WebCoreDOMNode objectWithImpl:_part->selectionEnd()];
+    return [WebCoreDOMNode nodeWithImpl:_part->selectionEnd()];
 }
 
 - (int)selectionEndOffset

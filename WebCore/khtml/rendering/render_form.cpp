@@ -50,6 +50,7 @@
 #endif
 
 using namespace khtml;
+using namespace DOM;
 
 RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
     : RenderWidget(element)

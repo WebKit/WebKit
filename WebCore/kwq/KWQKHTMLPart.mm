@@ -34,9 +34,9 @@
 #import "KWQPrinter.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
-#import "WebCoreDOM.h"
 #import "WebCoreViewFactory.h"
 #import "DOM.h"
+#import "DOMInternal.h"
 #import "csshelper.h"
 #import "html_documentimpl.h"
 #import "html_misc.h"
@@ -60,11 +60,19 @@
 
 #undef _KWQ_TIMING
 
+using DOM::AtomicString;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
+using DOM::HTMLDocumentImpl;
+using DOM::HTMLElementImpl;
+using DOM::HTMLFormElementImpl;
+using DOM::HTMLFrameElementImpl;
+using DOM::HTMLGenericFormElementImpl;
+using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
+using DOM::NodeImpl;
 
 using khtml::Cache;
 using khtml::ChildFrame;
@@ -574,11 +582,9 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
     if (!_formValuesAboutToBeSubmitted) {
         _formValuesAboutToBeSubmitted = [[NSMutableDictionary alloc] init];
         ASSERT(!_formAboutToBeSubmitted);
-        _formAboutToBeSubmitted = [[WebCoreDOMElement objectWithImpl:element] retain];
+        _formAboutToBeSubmitted = [[WebCoreDOMElement elementWithImpl:element] retain];
     } else {
-        if ([_formAboutToBeSubmitted isKindOfClass:[WebCoreDOMElement class]]) {
-            ASSERT([(WebCoreDOMElement *)_formAboutToBeSubmitted impl] == element);
-        }
+        ASSERT([_formAboutToBeSubmitted elementImpl] == element);
     }
     [_formValuesAboutToBeSubmitted setObject:value.getNSString() forKey:name.getNSString()];
 }

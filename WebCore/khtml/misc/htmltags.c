@@ -507,8 +507,8 @@ static const char * const tagList[] = {
     "/XMP",
     0
 };
-DOMString getTagName(unsigned short id)
+DOM::DOMString getTagName(unsigned short id)
 {
     if(id > ID_CLOSE_TAG*2) id = ID_CLOSE_TAG+1;
-    return DOMString(tagList[id]);
+    return DOM::DOMString(tagList[id]);
 };

@@ -6,7 +6,6 @@ htmlattrs.in by makeattrs, do not edit */
 #define HTML_ATTRS_H
 
 #include "dom/dom_string.h"
-using namespace DOM;
 
 #define ATTR_ABBR 1
 #define ATTR_ACCEPT_CHARSET 2
@@ -165,6 +164,6 @@ using namespace DOM;
 #define ATTR_WRAP 155
 #define ATTR_Z_INDEX 156
 #define ATTR_LAST_ATTR 156
-DOMString getAttrName(unsigned short id);
+DOM::DOMString getAttrName(unsigned short id);
 
 #endif

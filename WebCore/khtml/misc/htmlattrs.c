@@ -568,7 +568,7 @@ static const char * const attrList[] = {
     "Z-INDEX",
     0
 };
-DOMString getAttrName(unsigned short id)
+DOM::DOMString getAttrName(unsigned short id)
 {
     return attrList[id-1];
 };

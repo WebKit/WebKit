@@ -551,7 +551,7 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
@@ -573,7 +573,7 @@
     }
 }
 
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <DOMElement> *)form formValues:(NSDictionary *)values
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;

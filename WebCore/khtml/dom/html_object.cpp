@@ -25,6 +25,8 @@
 #include "html/html_objectimpl.h"
 #include "misc/htmlhashes.h"
 
+namespace DOM {
+
 HTMLAppletElement::HTMLAppletElement() : HTMLElement()
 {
 }
@@ -488,3 +490,4 @@ void HTMLParamElement::setValueType( const DOMString &value )
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_VALUETYPE, value);
 }
 
+} // namespace DOM

@@ -56,31 +56,40 @@ namespace KJS {
 }
 
 #ifdef __OBJC__
+
+// Avoid clashes with KJS::DOMElement in KHTML code.
+@class DOMElement;
+typedef DOMElement ObjCDOMElement;
+
+@class KWQPageState;
+@class NSArray;
 @class NSAttributedString;
+@class NSColor;
 @class NSEvent;
 @class NSFileWrapper;
+@class NSMutableDictionary;
 @class NSResponder;
+@class NSString;
 @class NSView;
 @class WebCoreBridge;
-@class KWQPageState;
-@class NSString;
-@class NSArray;
-@class NSMutableDictionary;
-@class WebCoreDOMElement;
-@class NSColor;
+
 #else
+
+// Avoid clashes with KJS::DOMElement in KHTML code.
+class ObjCDOMElement;
+
+class KWQPageState;
+class NSArray;
 class NSAttributedString;
+class NSColor;
 class NSEvent;
 class NSFileWrapper;
+class NSMutableDictionary;
 class NSResponder;
+class NSString;
 class NSView;
 class WebCoreBridge;
-class KWQPageState;
-class NSString;
-class NSArray;
-class NSMutableDictionary;
-class WebCoreDOMElement;
-class NSColor;
+
 #endif
 
 enum KWQSelectionDirection {
@@ -301,7 +310,7 @@ private:
     KURL _submittedFormURL;
 
     NSMutableDictionary *_formValuesAboutToBeSubmitted;
-    WebCoreDOMElement *_formAboutToBeSubmitted;
+    ObjCDOMElement *_formAboutToBeSubmitted;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 

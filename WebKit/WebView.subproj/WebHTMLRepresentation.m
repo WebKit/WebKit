@@ -91,12 +91,12 @@
     return [_private->dataSource _title];
 }
 
-- (id<DOMDocument>)DOMDocument
+- (DOMDocument *)DOMDocument
 {
     return [_private->bridge DOMDocument];
 }
 
-- (void)setSelectionFrom:(id<DOMNode>)start startOffset:(int)startOffset to:(id<DOMNode>)end endOffset:(int) endOffset
+- (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
 {
 }
 
@@ -112,52 +112,52 @@
     return nil;
 }
 
-- (NSAttributedString *)attributedStringFrom: (id<DOMNode>)startNode startOffset: (int)startOffset to: (id<DOMNode>)endNode endOffset: (int)endOffset
+- (NSAttributedString *)attributedStringFrom: (DOMNode *)startNode startOffset: (int)startOffset to: (DOMNode *)endNode endOffset: (int)endOffset
 {
     return [_private->bridge attributedStringFrom: startNode startOffset: startOffset to: endNode endOffset: endOffset];
 }
 
-- (id <DOMElement>)elementWithName:(NSString *)name inForm:(id <DOMElement>)form
+- (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
     return [_private->bridge elementWithName:name inForm:form];
 }
 
-- (id <DOMElement>)elementForView:(NSView *)view
+- (DOMElement *)elementForView:(NSView *)view
 {
     return [_private->bridge elementForView:view];
 }
 
-- (BOOL)elementDoesAutoComplete:(id <DOMElement>)element
+- (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
     return [_private->bridge elementDoesAutoComplete:element];
 }
 
-- (BOOL)elementIsPassword:(id <DOMElement>)element
+- (BOOL)elementIsPassword:(DOMElement *)element
 {
     return [_private->bridge elementIsPassword:element];
 }
 
-- (id <DOMElement>)formForElement:(id <DOMElement>)element
+- (DOMElement *)formForElement:(DOMElement *)element
 {
     return [_private->bridge formForElement:element];
 }
 
-- (id <DOMElement>)currentForm;
+- (DOMElement *)currentForm;
 {
     return [_private->bridge currentForm];
 }
 
-- (NSArray *)controlsInForm:(id <DOMElement>)form
+- (NSArray *)controlsInForm:(DOMElement *)form
 {
     return [_private->bridge controlsInForm:form];
 }
 
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <DOMElement>)element
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
     return [_private->bridge searchForLabels:labels beforeElement:element];
 }
 
-- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <DOMElement>)element
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
     return [_private->bridge matchLabels:labels againstElement:element];
 }

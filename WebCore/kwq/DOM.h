@@ -37,36 +37,36 @@
 //=========================================================================
 
 enum DOMNodeType {
-    ELEMENT_NODE                   = 1,
-    ATTRIBUTE_NODE                 = 2,
-    TEXT_NODE                      = 3,
-    CDATA_SECTION_NODE             = 4,
-    ENTITY_REFERENCE_NODE          = 5,
-    ENTITY_NODE                    = 6,
-    PROCESSING_INSTRUCTION_NODE    = 7,
-    COMMENT_NODE                   = 8,
-    DOCUMENT_NODE                  = 9,
-    DOCUMENT_TYPE_NODE             = 10,
-    DOCUMENT_FRAGMENT_NODE         = 11,
-    NOTATION_NODE                  = 12,
+    DOMElementNodeType                   = 1,
+    DOMAttributeNodeType                 = 2,
+    DOMTextNodeType                      = 3,
+    DOMCDATASectionNodeType              = 4,
+    DOMEntityReferenceNodeType           = 5,
+    DOMEntityNodeType                    = 6,
+    DOMProcessingInstructionNodeType     = 7,
+    DOMCommentNodeType                   = 8,
+    DOMDocumentNodeType                  = 9,
+    DOMDocumentTypeNodeType              = 10,
+    DOMDocumentFragmentNodeType          = 11,
+    DOMNotationNodeType                  = 12,
 };
 
-enum DOMExceptionCode {
-    INDEX_SIZE_ERR                 = 1,
-    DOMSTRING_SIZE_ERR             = 2,
-    HIERARCHY_REQUEST_ERR          = 3,
-    WRONG_DOCUMENT_ERR             = 4,
-    INVALID_CHARACTER_ERR          = 5,
-    NO_DATA_ALLOWED_ERR            = 6,
-    NO_MODIFICATION_ALLOWED_ERR    = 7,
-    NOT_FOUND_ERR                  = 8,
-    NOT_SUPPORTED_ERR              = 9,
-    INUSE_ATTRIBUTE_ERR            = 10,
-    INVALID_STATE_ERR              = 11,
-    SYNTAX_ERR                     = 12,
-    INVALID_MODIFICATION_ERR       = 13,
-    NAMESPACE_ERR                  = 14,
-    INVALID_ACCESS_ERR             = 15,
+enum DOMErrorCode {
+    DOMIndexSizeError                 = 1,
+    DOMStringSizeError                = 2,
+    DOMHierarchyRequestError          = 3,
+    DOMWrongDocumentError             = 4,
+    DOMInvalidCharacterError          = 5,
+    DOMNoDataAllowedError             = 6,
+    DOMNoModificationAllowedError     = 7,
+    DOMNotFoundError                  = 8,
+    DOMNotSupportedError              = 9,
+    DOMInUseAttributeError            = 10,
+    DOMInvalidStateError              = 11,
+    DOMSyntaxError                    = 12,
+    DOMInvalidModificationError       = 13,
+    DOMNamespaceError                 = 14,
+    DOMInvalidAccessError             = 15,
 };
 
 extern NSString * const DOMErrorDomain;
@@ -74,45 +74,43 @@ extern NSString * const DOMErrorDomain;
 @class NSError;
 @class NSString;
 
-@protocol NSObject;
-@protocol DOMNode;
-@protocol DOMNamedNodeMap;
-@protocol DOMNodeList;
-@protocol DOMImplementation;
-@protocol DOMDocumentFragment;
-@protocol DOMDocument;
-@protocol DOMCharacterData;
-@protocol DOMAttr;
-@protocol DOMElement;
-@protocol DOMText;
-@protocol DOMComment;
-@protocol DOMCDATASection;
-@protocol DOMDocumentType;
-@protocol DOMNotation;
-@protocol DOMEntity;
-@protocol DOMEntityReference;
-@protocol DOMProcessingInstruction;
-@protocol DOMRange;
+@class DOMNode;
+@class DOMNamedNodeMap;
+@class DOMNodeList;
+@class DOMDocumentFragment;
+@class DOMDocument;
+@class DOMCharacterData;
+@class DOMAttr;
+@class DOMElement;
+@class DOMText;
+@class DOMComment;
+@class DOMCDATASection;
+@class DOMDocumentType;
+@class DOMNotation;
+@class DOMEntity;
+@class DOMEntityReference;
+@class DOMProcessingInstruction;
+@class DOMRange;
 
-@protocol DOMNode <NSObject>
+@interface DOMNode : NSObject <NSCopying>
 - (NSString *)nodeName;
 - (NSString *)nodeValue;
 - (void)setNodeValue:(NSString *)string error:(NSError **)error;
 - (unsigned short)nodeType;
-- (id <DOMNode>)parentNode;
-- (id <DOMNodeList>)childNodes;
-- (id <DOMNode>)firstChild;
-- (id <DOMNode>)lastChild;
-- (id <DOMNode>)previousSibling;
-- (id <DOMNode>)nextSibling;
-- (id <DOMNamedNodeMap>)attributes;
-- (id <DOMDocument>)ownerDocument;
-- (id <DOMNode>)insertBefore:(id <DOMNode>)newChild :(id <DOMNode>)refChild error:(NSError **)error;
-- (id <DOMNode>)replaceChild:(id <DOMNode>)newChild :(id <DOMNode>)oldChild error:(NSError **)error;
-- (id <DOMNode>)removeChild:(id <DOMNode>)oldChild error:(NSError **)error;
-- (id <DOMNode>)appendChild:(id <DOMNode>)newChild error:(NSError **)error;
+- (DOMNode *)parentNode;
+- (DOMNodeList *)childNodes;
+- (DOMNode *)firstChild;
+- (DOMNode *)lastChild;
+- (DOMNode *)previousSibling;
+- (DOMNode *)nextSibling;
+- (DOMNamedNodeMap *)attributes;
+- (DOMDocument *)ownerDocument;
+- (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild error:(NSError **)error;
+- (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild error:(NSError **)error;
+- (DOMNode *)removeChild:(DOMNode *)oldChild error:(NSError **)error;
+- (DOMNode *)appendChild:(DOMNode *)newChild error:(NSError **)error;
 - (BOOL)hasChildNodes;
-- (id <DOMNode>)cloneNode:(BOOL)deep;
+- (DOMNode *)cloneNode:(BOOL)deep;
 - (void)normalize;
 - (BOOL)isSupported:(NSString *)feature :(NSString *)version;
 - (NSString *)namespaceURI;
@@ -121,86 +119,59 @@ extern NSString * const DOMErrorDomain;
 - (NSString *)localName;
 - (BOOL)hasAttributes;
 - (NSString *)HTMLString;
-// begin deprecated methods
-- (void)setNodeValue:(NSString *)string;
-- (id<DOMNode>)insert:(id<DOMNode>)newChild before:(id<DOMNode>)refChild;
-- (id<DOMNode>)replace:(id<DOMNode>)newChild child:(id<DOMNode>)oldChild;
-- (id<DOMNode>)removeChild:(id<DOMNode>)oldChild;
-- (id<DOMNode>)appendChild:(id<DOMNode>)newChild;
-- (void)setPrefix:(NSString *)prefix;
-// end deprecated methods
 @end
 
-@protocol DOMNamedNodeMap <NSObject>
-- (id <DOMNode>)getNamedItem:(NSString *)name;
-- (id <DOMNode>)setNamedItem:(id <DOMNode>)arg error:(NSError **)error;
-- (id <DOMNode>)removeNamedItem:(NSString *)name error:(NSError **)error;
-- (id <DOMNode>)item:(unsigned long)index;
+@interface DOMNamedNodeMap : NSObject <NSCopying>
+- (DOMNode *)getNamedItem:(NSString *)name;
+- (DOMNode *)setNamedItem:(DOMNode *)arg error:(NSError **)error;
+- (DOMNode *)removeNamedItem:(NSString *)name error:(NSError **)error;
+- (DOMNode *)item:(unsigned long)index;
 - (unsigned long)length;
-- (id <DOMNode>)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
-- (id <DOMNode>)setNamedItemNS:(id <DOMNode>)arg error:(NSError **)error;
-- (id <DOMNode>)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName error:(NSError **)error;
-// begin deprecated methods
-- (id<DOMNode>)setNamedItem:(id<DOMNode>)arg;
-- (id<DOMNode>)removeNamedItem:(NSString *)name;
-- (id<DOMNode>)setNamedItemNS:(id<DOMNode>)arg;
-- (id<DOMNode>)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
-// end deprecated methods
+- (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName;
+- (DOMNode *)setNamedItemNS:(DOMNode *)arg error:(NSError **)error;
+- (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName error:(NSError **)error;
 @end
 
 
-@protocol DOMNodeList <NSObject>
-- (id <DOMNode>)item:(unsigned long)index;
+@interface DOMNodeList : NSObject <NSCopying>
+- (DOMNode *)item:(unsigned long)index;
 - (unsigned long)length;
 @end
 
 
-@protocol DOMImplementation <NSObject>
+@interface DOMImplementation : NSObject <NSCopying>
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version;
-- (id <DOMDocumentType>)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId error:(NSError **)error;
-- (id <DOMDocument>)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(id <DOMDocumentType>)doctype error:(NSError **)error;
-// begin deprecated methods
-- (id<DOMDocumentType>)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId :(int *)exceptionCode;
-- (id<DOMDocument>)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(id<DOMDocumentType>)doctype;
-// end deprecated methods
+- (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId error:(NSError **)error;
+- (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype error:(NSError **)error;
 @end
 
 
-@protocol DOMDocumentFragment <DOMNode>
+@interface DOMDocumentFragment : DOMNode
 @end
 
 
-@protocol DOMDocument <DOMNode>
-- (id <DOMDocumentType>)doctype;
-- (id <DOMImplementation>)implementation;
-- (id <DOMElement>)documentElement;
-- (id <DOMElement>)createElement:(NSString *)tagName error:(NSError **)error;
-- (id <DOMDocumentFragment>)createDocumentFragment;
-- (id <DOMText>)createTextNode:(NSString *)data;
-- (id <DOMComment>)createComment:(NSString *)data;
-- (id <DOMCDATASection>)createCDATASection:(NSString *)data error:(NSError **)error;
-- (id <DOMProcessingInstruction>)createProcessingInstruction:(NSString *)target :(NSString *)data error:(NSError **)error;
-- (id <DOMAttr>)createAttribute:(NSString *)name error:(NSError **)error;
-- (id <DOMEntityReference>)createEntityReference:(NSString *)name error:(NSError **)error;
-- (id <DOMNodeList>)getElementsByTagName:(NSString *)tagname;
-- (id <DOMNode>)importNode:(id <DOMNode>)importedNode :(BOOL)deep error:(NSError **)error;
-- (id <DOMElement>)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName error:(NSError **)error;
-- (id <DOMAttr>)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName error:(NSError **)error;
-- (id <DOMNodeList>)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
-- (id <DOMElement>)getElementById:(NSString *)elementId;
-// begin deprecated methods
-- (id<DOMElement>)createElement:(NSString *)tagName;
-- (id<DOMElement>)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName;
-- (id<DOMCDATASection>)createCDATASection:(NSString *)data;
-- (id<DOMProcessingInstruction>)createProcessingInstruction:(NSString *)target :(NSString *)data;
-- (id<DOMAttr>)createAttribute:(NSString *)name;
-- (id<DOMEntityReference>)createEntityReference:(NSString *)name;
-- (id<DOMNode>)importNode:(id<DOMNode>)importedNode :(BOOL)deep;
-// end deprecated methods
+@interface DOMDocument : DOMNode
+- (DOMDocumentType *)doctype;
+- (DOMImplementation *)implementation;
+- (DOMElement *)documentElement;
+- (DOMElement *)createElement:(NSString *)tagName error:(NSError **)error;
+- (DOMDocumentFragment *)createDocumentFragment;
+- (DOMText *)createTextNode:(NSString *)data;
+- (DOMComment *)createComment:(NSString *)data;
+- (DOMCDATASection *)createCDATASection:(NSString *)data error:(NSError **)error;
+- (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target :(NSString *)data error:(NSError **)error;
+- (DOMAttr *)createAttribute:(NSString *)name error:(NSError **)error;
+- (DOMEntityReference *)createEntityReference:(NSString *)name error:(NSError **)error;
+- (DOMNodeList *)getElementsByTagName:(NSString *)tagname;
+- (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep error:(NSError **)error;
+- (DOMElement *)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName error:(NSError **)error;
+- (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName error:(NSError **)error;
+- (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
+- (DOMElement *)getElementById:(NSString *)elementId;
 @end
 
 
-@protocol DOMCharacterData <DOMNode>
+@interface DOMCharacterData : DOMNode
 - (NSString *)data;
 - (void)setData:(NSString *)data error:(NSError **)error;
 - (unsigned long)length;
@@ -209,142 +180,116 @@ extern NSString * const DOMErrorDomain;
 - (void)insertData:(unsigned long)offset :(NSString *)arg error:(NSError **)error;
 - (void)deleteData:(unsigned long)offset :(unsigned long) count error:(NSError **)error;
 - (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg error:(NSError **)error;
-// begin deprecated methods
-- (void)setData: (NSString *)data;
-- (NSString *)substringData: (unsigned long)offset :(unsigned long)count;
-- (void)appendData:(NSString *)arg;
-- (void)insertData:(unsigned long)offset :(NSString *)arg;
-- (void)deleteData:(unsigned long)offset :(unsigned long)count;
-- (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg;
-// end deprecated methods
 @end
 
 
-@protocol DOMAttr <DOMNode>
+@interface DOMAttr : DOMNode
 - (NSString *)name;
 - (BOOL)specified;
 - (NSString *)value;
 - (void)setValue:(NSString *)value error:(NSError **)error;
-- (id <DOMElement>)ownerElement;
-// begin deprecated methods
-- (void)setValue:(NSString *)value;
-// end deprecated methods
+- (DOMElement *)ownerElement;
 @end
 
 
-@protocol DOMElement <DOMNode>
+@interface DOMElement : DOMNode
 - (NSString *)tagName;
 - (NSString *)getAttribute:(NSString *)name;
 - (void)setAttribute:(NSString *)name :(NSString *)value error:(NSError **)error;
 - (void)removeAttribute:(NSString *)name error:(NSError **)error;
-- (id <DOMAttr>)getAttributeNode:(NSString *)name;
-- (id <DOMAttr>)setAttributeNode:(id <DOMAttr>)newAttr error:(NSError **)error;
-- (id <DOMAttr>)removeAttributeNode:(id <DOMAttr>)oldAttr error:(NSError **)error;
-- (id <DOMNodeList>)getElementsByTagName:(NSString *)name;
+- (DOMAttr *)getAttributeNode:(NSString *)name;
+- (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr error:(NSError **)error;
+- (DOMAttr *)removeAttributeNode:(DOMAttr *)oldAttr error:(NSError **)error;
+- (DOMNodeList *)getElementsByTagName:(NSString *)name;
 - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
 - (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value error:(NSError **)error;
 - (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName error:(NSError **)error;
-- (id <DOMAttr>)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName;
-- (id <DOMAttr>)setAttributeNodeNS:(id <DOMAttr>)newAttr error:(NSError **)error;
-- (id <DOMNodeList>)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
+- (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName;
+- (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr error:(NSError **)error;
+- (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 - (BOOL)hasAttribute:(NSString *)name;
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
-// begin deprecated methods
-- (void)setAttribute:(NSString *)name :(NSString *)value;
-- (void)removeAttribute:(NSString *)name;
-- (id<DOMAttr>)setAttributeNode:(id<DOMAttr>)newAttr;
-- (id<DOMAttr>)removeAttributeNode:(id<DOMAttr>)oldAttr;
-- (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value;
-- (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
-- (id<DOMAttr>)setAttributeNodeNS:(id<DOMAttr>)newAttr;
-// end deprecated methods
 @end
 
 
-@protocol DOMText <DOMCharacterData>
-- (id <DOMText>)splitText:(unsigned long)offset error:(NSError **)error;
-// begin deprecated methods
-- (id<DOMText>)splitText:(unsigned long)offset;
-// end deprecated methods
+@interface DOMText : DOMCharacterData
+- (DOMText *)splitText:(unsigned long)offset error:(NSError **)error;
 @end
 
 
-@protocol DOMComment <DOMCharacterData>
+@interface DOMComment : DOMCharacterData
 @end
 
 
-@protocol DOMCDATASection <DOMText>
+@interface DOMCDATASection : DOMText
 @end
 
 
-@protocol DOMDocumentType <DOMNode>
+@interface DOMDocumentType : DOMNode
 - (NSString *)name;
-- (id <DOMNamedNodeMap>)entities;
-- (id <DOMNamedNodeMap>)notations;
+- (DOMNamedNodeMap *)entities;
+- (DOMNamedNodeMap *)notations;
 - (NSString *)publicId;
 - (NSString *)systemId;
 - (NSString *)internalSubset;
 @end
 
 
-@protocol DOMNotation <DOMNode>
+@interface DOMNotation : DOMNode
 - (NSString *)publicId;
 - (NSString *)systemId;
 @end
 
 
-@protocol DOMEntity <DOMNode>
+@interface DOMEntity : DOMNode
 - (NSString *)publicId;
 - (NSString *)systemId;
 - (NSString *)notationName;
 @end
 
 
-@protocol DOMEntityReference <DOMNode>
+@interface DOMEntityReference : DOMNode
 @end
 
 
-@protocol DOMProcessingInstruction <DOMNode>
+@interface DOMProcessingInstruction : DOMNode
 - (NSString *)target;
 - (NSString *)data;
 - (void)setData:(NSString *)data error:(NSError **)error;
-// begin deprecated methods
-- (void)setData:(NSString *)data;
-// end deprecated methods
 @end
 
 
 enum DOMCompareHow
 {
-    START_TO_START = 0,
-    START_TO_END   = 1,
-    END_TO_END     = 2,
-    END_TO_START   = 3,
+    DOMCompareStartToStart = 0,
+    DOMCompareStartToEnd   = 1,
+    DOMCompareEndToEnd     = 2,
+    DOMCompareEndToStart   = 3,
 };
 
-@protocol DOMRange <NSObject>
-- (id <DOMNode>)startContainer:(NSError **)error;
+@interface DOMRange : NSObject
+- (DOMNode *)startContainer:(NSError **)error;
 - (long)startOffset:(NSError **)error;
-- (id <DOMNode>)endContainer:(NSError **)error;
+- (DOMNode *)endContainer:(NSError **)error;
 - (long)endOffset:(NSError **)error;
 - (BOOL)collapsed:(NSError **)error;
-- (id <DOMNode>)commonAncestorContainer:(NSError **)error;
-- (void)setStart:(id <DOMNode>)refNode :(long)offset error:(NSError **)error;
-- (void)setEnd:(id <DOMNode>)refNode :(long)offset error:(NSError **)error;
-- (void)setStartBefore:(id <DOMNode>)refNode error:(NSError **)error;
-- (void)setStartAfter:(id <DOMNode>)refNode error:(NSError **)error;
-- (void)setEndBefore:(id <DOMNode>)refNode error:(NSError **)error;
-- (void)setEndAfter:(id <DOMNode>)refNode error:(NSError **)error;
+- (DOMNode *)commonAncestorContainer:(NSError **)error;
+- (void)setStart:(DOMNode *)refNode :(long)offset error:(NSError **)error;
+- (void)setEnd:(DOMNode *)refNode :(long)offset error:(NSError **)error;
+- (void)setStartBefore:(DOMNode *)refNode error:(NSError **)error;
+- (void)setStartAfter:(DOMNode *)refNode error:(NSError **)error;
+- (void)setEndBefore:(DOMNode *)refNode error:(NSError **)error;
+- (void)setEndAfter:(DOMNode *)refNode error:(NSError **)error;
 - (void)collapse:(BOOL)toStart error:(NSError **)error;
-- (void)selectNode:(id <DOMNode>)refNode error:(NSError **)error;
-- (void)selectNodeContents:(id <DOMNode>)refNode error:(NSError **)error;
-- (short)compareBoundaryPoints:(unsigned short)how :(id <DOMRange>)sourceRange error:(NSError **)error;
+- (void)selectNode:(DOMNode *)refNode error:(NSError **)error;
+- (void)selectNodeContents:(DOMNode *)refNode error:(NSError **)error;
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange error:(NSError **)error;
 - (void)deleteContents:(NSError **)error;
-- (id <DOMDocumentFragment>)extractContents:(NSError **)error;
-- (id <DOMDocumentFragment>)cloneContents:(NSError **)error;
-- (void)insertNode:(id <DOMNode>)newNode error:(NSError **)error;
-- (void)surroundContents:(id <DOMNode>)newParent error:(NSError **)error;
-- (id <DOMRange>)cloneRange:(NSError **)error;
+- (DOMDocumentFragment *)extractContents:(NSError **)error;
+- (DOMDocumentFragment *)cloneContents:(NSError **)error;
+- (void)insertNode:(DOMNode *)newNode error:(NSError **)error;
+- (void)surroundContents:(DOMNode *)newParent error:(NSError **)error;
+- (DOMRange *)cloneRange:(NSError **)error;
 - (NSString *)toString:(NSError **)error;
 - (void)detach:(NSError **)error;
 @end

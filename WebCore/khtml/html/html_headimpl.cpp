@@ -41,6 +41,7 @@
 #include <kurl.h>
 #include <kdebug.h>
 
+using namespace DOM;
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)

@@ -57,7 +57,7 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(id <DOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
 {
     [listener continue];
 }

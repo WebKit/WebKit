@@ -7,9 +7,8 @@
 
 #import <AppKit/AppKit.h>
 
+@class DOMElement;
 @class WebFrame;
-@protocol DOMElement;
-
 
 /*!
     @protocol  WebFormSubmissionListener
@@ -43,7 +42,7 @@
 
 // Sent when a form is just about to be submitted (before the load is started)
 // listener must be sent continue when the delegate is done.
-- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(id <DOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
 @end
 
 /*!
