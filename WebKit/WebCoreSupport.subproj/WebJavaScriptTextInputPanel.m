@@ -8,6 +8,8 @@
 
 #import "WebJavaScriptTextInputPanel.h"
 
+#import <WebFoundation/WebAssertsions.h>
+
 @implementation WebJavaScriptTextInputPanel
 
 - (id)initWithPrompt:(NSString *)p text:(NSString *)t
