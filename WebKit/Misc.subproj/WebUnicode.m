@@ -14,6 +14,12 @@ static int _unicodeDigitValue(UChar32 c)
 
 static WebCoreUnicodeDirection _unicodeDirection(UChar32 c)
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+    // Panther gets the direction of the hyphen wrong.  It returns "ET" (European Terminator) when
+    // it should return "ES" (European Separator).
+    if (c == '-')
+        return DirectionES;
+#endif
     return u_charDirection(c);
 }
 
