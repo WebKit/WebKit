@@ -82,7 +82,7 @@ void HTMLTableElementImpl::attach()
         if ( getDocument()->parseMode() != DocumentImpl::Strict ) {
             addCSSProperty( CSS_PROP_FONT_SIZE, CSS_VAL_MEDIUM );
             addCSSProperty( CSS_PROP_COLOR, getDocument()->textColor() );
-            addCSSProperty( CSS_PROP_FONT_FAMILY, "konq_default" );
+            addCSSProperty( CSS_PROP_FONT_FAMILY, "konq_body" );
         }
     }
 

@@ -27,6 +27,7 @@
 #include "css/csshelper.h"
 #include "rendering/render_object.h"
 #include "html/html_documentimpl.h"
+#include "html/html_elementimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "dom/css_rule.h"
 #include "dom/css_value.h"
@@ -2568,6 +2569,28 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
                     // from an enclosing different family like monospace.
                     face = settings->stdFontName();
                     fontDef.setGenericFamily(FontDef::eStandard);
+                }
+                else if (face == "konq_body") {
+                    // Obtain the <body> element's font information,
+                    // and use its family list.
+                    DOM::DocumentImpl* doc = element->getDocument();
+                    if (doc && doc->isHTMLDocument()) {
+                        DOM::HTMLDocumentImpl* htmldoc = 
+                          static_cast<DOM::HTMLDocumentImpl*>(doc);
+                        DOM::HTMLElementImpl* body = htmldoc->body();
+                        if (body && body->renderer()) {
+                            FontDef& bodyFontDef = 
+                              (FontDef&)(body->renderer()->style()->htmlFont().fontDef);
+                            fontDef.family = bodyFontDef.firstFamily();
+                            fontDef.genericFamily = bodyFontDef.genericFamily;
+                            if (style->setFontDef( fontDef )) {
+                                fontDirty = true;
+                            }
+                            break;
+                        }
+                    }
+                    
+                    face = settings->stdFontName();
                 }
     
                 if ( !face.isEmpty() ) {
