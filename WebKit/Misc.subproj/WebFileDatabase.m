@@ -2,6 +2,12 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <pthread.h>
+
 #import "IFURLFileDatabase.h"
 #import "IFNSFileManagerExtensions.h"
 #import "IFURLCacheLoaderConstantsPrivate.h"
@@ -21,6 +27,140 @@ enum
     SYNC_INTERVAL = 5,
     SYNC_IDLE_THRESHOLD = 5,
 };
+
+// interface IFURLFileReader -------------------------------------------------------------
+
+@interface IFURLFileReader : NSObject
+{
+    NSData *data;
+    caddr_t mappedBytes;
+    size_t mappedLength;
+}
+
+- (id)initWithPath:(NSString *)path;
+- (NSData *)data;
+
+@end
+
+// implementation IFURLFileReader -------------------------------------------------------------
+
+/*
+ * FIXME: This is a bad hack which really should go away.
+ * Here we're using private API to hold us over until
+ * this API is made public (which is planned).
+ */
+@interface NSData (IFExtensions)
+- (id)initWithBytes:(void *)bytes length:(unsigned)length copy:(BOOL)copy freeWhenDone:(BOOL)freeBytes bytesAreVM:(BOOL)vm;
+@end
+
+static NSMutableSet *notMappableFileNameSet = nil;
+static NSLock *mutex;
+static pthread_once_t cacheFileReaderControl = PTHREAD_ONCE_INIT;
+
+static void URLFileReaderInit()
+{
+    mutex = [[NSLock alloc] init];
+    notMappableFileNameSet = [[NSMutableSet alloc] init];    
+}
+
+@implementation IFURLFileReader
+
+- (id)initWithPath:(NSString *)path
+{
+    int fd;
+    struct stat statInfo;
+    const char *fileSystemPath;
+    BOOL fileNotMappable;
+
+    pthread_once(&cacheFileReaderControl, URLFileReaderInit);
+
+    self = [super init];
+    
+    data = nil;
+    mappedBytes = NULL;
+    mappedLength = 0;
+
+    NS_DURING
+        fileSystemPath = [path fileSystemRepresentation];
+    NS_HANDLER
+        fileSystemPath = NULL;
+    NS_ENDHANDLER
+
+    [mutex lock];
+    fileNotMappable = [notMappableFileNameSet containsObject:path];
+    [mutex unlock];
+
+    if (fileNotMappable) {
+        data = [NSData dataWithContentsOfFile:path];
+    }
+    else if (fileSystemPath && (fd = open(fileSystemPath, O_RDONLY, 0)) >= 0) {
+        // File exists. Retrieve the file size.
+        if (fstat(fd, &statInfo) == 0) {
+            // Map the file into a read-only memory region.
+            mappedBytes = mmap(NULL, statInfo.st_size, PROT_READ, 0, fd, 0);
+            if (mappedBytes == MAP_FAILED) {
+                // map has failed but file exists
+                // add file to set of paths known not to be mappable
+                // then, read file from file system
+                [mutex lock];
+                [notMappableFileNameSet addObject:path];
+                [mutex unlock];
+                
+                mappedBytes = NULL;
+                data = [NSData dataWithContentsOfFile:path];
+            }
+            else {
+                // On success, create data object using mapped bytes.
+                mappedLength = statInfo.st_size;
+                data = [[NSData alloc] initWithBytes:mappedBytes length:mappedLength copy:NO freeWhenDone:YES bytesAreVM:YES];
+                // ok data creation failed but we know file exists
+                // be stubborn....try to read bytes again
+                if (!data) {
+                    munmap(mappedBytes, mappedLength);    
+                    data = [NSData dataWithContentsOfFile:path];
+                }
+            }
+        }
+        close(fd);
+    }
+    
+    if (data) {
+#ifdef WEBFOUNDATION_DEBUG
+        if (mappedBytes) {
+            WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - mmaped disk cache file - %@", path);
+        }
+        else {
+            WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - fs read disk cache file - %@", path);
+        }
+#endif
+        return self;
+    }
+    else {
+#ifdef WEBFOUNDATION_DEBUG
+        WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - no disk cache file - %@", path);
+#endif
+        [self dealloc];
+        return nil;
+    }
+}
+
+- (NSData *)data
+{
+    return data;
+}
+
+- (void)dealloc
+{
+    if (mappedBytes) {
+        munmap(mappedBytes, mappedLength); 
+    }
+    
+    [data release];
+    
+    [super dealloc];
+}
+
+@end
 
 // interface IFURLFileDatabaseOp -------------------------------------------------------------
 
@@ -242,11 +382,13 @@ enum
     id fileKey;
     id object;
     NSString *filePath;
+    IFURLFileReader *fileReader;
     NSData *data;
     NSUnarchiver *unarchiver;
         
     result = nil;
     fileKey = nil;
+    fileReader = nil;
     data = nil;
     unarchiver = nil;
 
@@ -265,16 +407,13 @@ enum
     [mutex unlock];
 
     // go to disk
-    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    fileReader = [[IFURLFileReader alloc] initWithPath:filePath];
+    if (fileReader && (data = [fileReader data])) {
+        unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
+    }
+    
     NS_DURING
-        data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
-        if (!data) {
-            data = [[NSData alloc] initWithContentsOfFile:filePath];
-        }
-        if (data) {
-            unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
-        }
         if (unarchiver) {
             fileKey = [unarchiver decodeObject];
             object = [unarchiver decodeObject];
@@ -292,7 +431,8 @@ enum
     NS_ENDHANDLER
 
     [unarchiver release];
-    [data release];
+    [fileReader release];
+    [filePath release];
 
     return result;
 }
@@ -341,7 +481,7 @@ enum
 
     defaultManager = [NSFileManager defaultManager];
 
-    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
 
     result = [defaultManager createFileAtPath:filePath contents:data attributes:attributes];
     if (!result) {
@@ -349,20 +489,20 @@ enum
     }
 
     [archiver release];
+    [filePath release];
 }
 
 -(void)performRemoveObjectForKey:(id)key
 {
     NSString *filePath;
 
-
 #ifdef WEBFOUNDATION_DEBUG
     WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performRemoveObjectForKey - %@", key);
 #endif
 
-    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
+    [filePath release];
 }
 
 // database management functions ---------------------------------------------------------------------------
