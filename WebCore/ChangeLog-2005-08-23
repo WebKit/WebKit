@@ -3,6 +3,17 @@
         Reviewed by John
 
         Fix for this bug:
+        
+        <rdar://problem/3914779> REGRESSION (Mail): Cannot arrow navigate to position before last character on text-wrapped line
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect): Code was not detecting space at the end of a line correctly. Now it does.
+
+2004-12-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
 
         <rdar://problem/3914755> REGRESSION (Mail): Insertion point disappears after pasting paragraph
 

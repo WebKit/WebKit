@@ -868,8 +868,11 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (affinity == DOWNSTREAM && offset == box->m_start + box->m_len) {
-            // We're at the end of a line and affinity is downstream.
+        int pastEnd = box->m_start + box->m_len + 1;
+        InlineTextBox *nextBox = box->nextTextBox();
+        if (affinity == DOWNSTREAM && nextBox && !box->nextOnLine() && 
+            offset == pastEnd && nextBox->m_start != pastEnd) {
+            // We're at the end of a line broken on a word boundary and affinity is downstream.
             // Try to jump down to the next line.
             if (box->nextTextBox()) {
                 // Use the next text box
