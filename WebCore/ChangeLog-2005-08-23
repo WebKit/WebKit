@@ -1,3 +1,14 @@
+2005-02-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed <rdar://problem/4006596> REGRESSION (183-184): crash in DOM::DocumentImpl::setFocusNode(DOM::NodeImpl*)
+
+        * khtml/xml/dom_docimpl.cpp:
+        (widgetForNode): Added helper.
+        (DocumentImpl::setFocusNode): Re-get the widget for the node after calling updateLayout.
+        The updateLayout can destroy the old widget, so we can't keep a stale widget pointer around.
+
 2005-02-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
