@@ -1,3 +1,9 @@
+2002-04-04  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQString.mm: (QString::unicode), (QString::latin1),
+	(QString::convertToQCString): Remove some excessive logging that
+	was getting in the way of important log messages.
+
 2002-04-03  Richard Williamson  <rjw@apple.com>
 
         Added support for finalURL in data source.

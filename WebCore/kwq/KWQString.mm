@@ -304,7 +304,6 @@ const QChar *QString::unicode() const
 
     if (cache == NULL || * (int *) cache != CacheUnicode) {
         flushCache();
-        KWQDEBUG("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
         cache = CFAllocatorAllocate(kCFAllocatorDefault, sizeof(int) + len * sizeof (UniChar), 0);
         * (int *) cache = CacheUnicode;
         CFStringGetCharacters(s, CFRangeMake(0, len), (UniChar *) ((int *) cache + 1));
@@ -325,11 +324,9 @@ const char *QString::latin1() const
         
     if (cache == NULL || * (int *) cache != CacheLatin1) {
         flushCache();
-        KWQDEBUG("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
         cache = CFAllocatorAllocate(kCFAllocatorDefault, sizeof(int) + len + 1, 0);
         * (int *) cache = CacheLatin1;
         if (!CFStringGetCString(s, (char *) ((int *) cache + 1), len + 1, kCFStringEncodingISOLatin1)) {
-            KWQDEBUG("WARNING %s:%s:%d (CFStringGetCString failed)\n", __FUNCTION__, __FILE__, __LINE__);
             * (char *) ((int *) cache + 1) = '\0';
         }
     }
@@ -1103,7 +1100,6 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
         char *chs = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
         if (chs) {
             if (!CFStringGetCString(s, chs, len + 1, enc)) {
-                KWQDEBUG("CFStringGetCString failed\n");
                 *reinterpret_cast<char *>(chs) = '\0';
             }
             QCString qcs = QCString(chs);
