@@ -560,16 +560,16 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             }
 
             case WebFrameLoadTypeStandard:
-                // Add item to history.
-                entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
-                if (ptitle)
-                    [entry setTitle: ptitle];
-
                 if (![ds _isClientRedirect]) {
+                    // Add item to history.
+                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
+                    if (ptitle)
+                        [entry setTitle: ptitle];
+
                     [self _addBackForwardItemClippedAtTarget:YES];
                 } else {
                     // update the URL in the BF list that we made before the redirect
-                    [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
+                    [[_private currentItem] setURL:[[ds request] URL]];
                 }
                 [[self webView] _makeDocumentViewForDataSource:ds];
                 break;
@@ -577,6 +577,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeInternal:
                 {  // braces because the silly compiler lets you declare vars everywhere but here?!
                 // Add an item to the item tree for this frame
+                ASSERT(![ds _isClientRedirect]);
                 WebHistoryItem *item = [self _createItem];
                 ASSERT([[self parent]->_private currentItem]);
                 [[[self parent]->_private currentItem] addChildItem:item];
@@ -1400,21 +1401,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkNavigationPolicyForRequest:request dataSource:oldDataSource
             andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
     } else {
-        WebFrameLoadType previousLoadType = [self _loadType];
-
         [self _loadRequest:request triggeringAction:action loadType:loadType];
         if (_private->quickRedirectComing) {
             _private->quickRedirectComing = NO;
             
-            // Inherit the loadType from the operation that spawned the redirect,
-            // unless the new load type is some kind of reload imposed by WebKit.
-            if (loadType != WebFrameLoadTypeReload
-                && loadType != WebFrameLoadTypeSame
-                && loadType != WebFrameLoadTypeReloadAllowingStaleData)
-            {
-                [self _setLoadType:previousLoadType];
-            }
-
             // need to transfer BF items from the dataSource that we're replacing
             WebDataSource *newDataSource = [self provisionalDataSource];
             [newDataSource _setIsClientRedirect:YES];

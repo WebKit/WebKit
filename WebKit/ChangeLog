@@ -1,3 +1,24 @@
+2002-12-13  Trey Matteson  <trey@apple.com>
+
+	3108976 - assert _private provisionalItem in -[WebFrame(WebPrivate) _transitionToCommitted
+	3108865 - frames not maintained going back at directory.apple.com
+
+	Both bugs are fixed by the same small change.  We no longer try to inherit loadType
+	across redirects.  Instead we just make sure the right thing happens in _transitionToCommitted:
+	for redirects in the loadType=Standard case.
+
+	3122721 - History stores both original and redirected sites
+
+	Easy fix while in the neighborhood.  We just don't add to History when doing a redirect.
+
+        Reviewed by rjw
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):  On redirect, update the URL of the frame's current
+	item, not the current item in the b/f list.  Also do not add to history on redirect.
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):  Cut out funny business
+	that tried to guess when to inherit loadtype across redirects.
+
 2002-12-13  Richard Williamson   <rjw@apple.com>
 
         Fixed 3127225.  Scale page cache based on available memory.
