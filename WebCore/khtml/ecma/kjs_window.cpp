@@ -1232,37 +1232,57 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
 	    QRect screen = QApplication::desktop()->screenGeometry(scnum);
             if (key == "left" || key == "screenx") {
-              winargs.x = (int)val.toFloat() + screen.x();
-	      if (winargs.x < screen.x() || winargs.x > screen.right())
-		  winargs.x = screen.x(); // only safe choice until size is determined
+              bool ok;
+              double d = val.toDouble(&ok);
+              if (d != 0 || ok) {
+                d += screen.x();
+                if (d < screen.x() || d > screen.right())
+		  d = screen.x(); // only safe choice until size is determined
+                winargs.x = (int)d;
 #if APPLE_CHANGES
-	      winargs.xSet = true;
+	        winargs.xSet = true;
 #endif
+              }
             } else if (key == "top" || key == "screeny") {
-              winargs.y = (int)val.toFloat() + screen.y();
-	      if (winargs.y < screen.y() || winargs.y > screen.bottom())
-		  winargs.y = screen.y(); // only safe choice until size is determined
+              bool ok;
+              double d = val.toDouble(&ok);
+              if (d != 0 || ok) {
+                d += screen.y();
+                if (d < screen.y() || d > screen.bottom())
+		  d = screen.y(); // only safe choice until size is determined
+                winargs.y = (int)d;
 #if APPLE_CHANGES
-	      winargs.ySet = true;
+	        winargs.ySet = true;
 #endif
+              }
             } else if (key == "height") {
-              winargs.height = (int)val.toFloat() + 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
-	      if (winargs.height > screen.height())  // should actually check workspace
-		  winargs.height = screen.height();
-              if (winargs.height < 100)
-		  winargs.height = 100;
+              bool ok;
+              double d = val.toDouble(&ok);
+              if (d != 0 || ok) {
+                d += 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
+	        if (d > screen.height())  // should actually check workspace
+		  d = screen.height();
+                if (d < 100)
+		  d = 100;
+                winargs.height = (int)d;
 #if APPLE_CHANGES
-	      winargs.heightSet = true;
+	        winargs.heightSet = true;
 #endif
+              }
             } else if (key == "width") {
-              winargs.width = (int)val.toFloat() + 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
-	      if (winargs.width > screen.width())    // should actually check workspace
-		  winargs.width = screen.width();
-              if (winargs.width < 100)
-		  winargs.width = 100;
+              bool ok;
+              double d = val.toDouble(&ok);
+              if (d != 0 || ok) {
+                d += 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
+	        if (d > screen.width())    // should actually check workspace
+		  d = screen.width();
+                if (d < 100)
+		  d = 100;
+                winargs.width = (int)d;
 #if APPLE_CHANGES
-	      winargs.widthSet = true;
+	        winargs.widthSet = true;
 #endif
+              }
             } else {
               goto boolargs;
 	    }

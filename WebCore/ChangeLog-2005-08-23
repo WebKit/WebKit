@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3539414>: pop-up windows appear very narrow because of bogus width (carad.com/ebaymotors)
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Check the "OK" result from toFloat in
+        window.open, and omit any parameters that can't be parsed.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3537371>: REGRESSION (100-125): optgroup labels are no longer indented as they were before
 
         * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
