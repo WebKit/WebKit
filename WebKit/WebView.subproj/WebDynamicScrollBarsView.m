@@ -103,10 +103,4 @@
     return !disallowsScrolling;
 }
 
-- (void)dealloc
-{
-    [cursor release];
-    [super dealloc];
-}
-
 @end

@@ -15,7 +15,6 @@
 
 @interface WebDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
-    NSCursor *cursor;
     BOOL disallowsScrolling;
     BOOL suppressLayout;
 }

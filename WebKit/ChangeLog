@@ -1,3 +1,12 @@
+2003-01-20  Trey Matteson  <trey@apple.com>
+
+	Nit fix to remove a dead "cursor" ivar found while grepping.
+
+        Reviewed by Richard.
+
+        * WebView.subproj/WebDynamicScrollBarsView.h:
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+
 2003-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
