@@ -1,5 +1,16 @@
 2002-08-14  David Hyatt  <hyatt@apple.com>
 
+	ROFL. The KHTML table code had a hardcoded "20" being
+	subtracted out of table heights instead of using the
+	actual margins on the <body> element.  This patch
+	removes the hardcoded "20" and replaces it with the
+	actual <body> margins.
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layoutRows):
+
+2002-08-14  David Hyatt  <hyatt@apple.com>
+
 	Fix marginwidth and marginheight on the <body> element.
 	These attributes were not applying the correct margins,
 	which would cause many many pages to mis-render!

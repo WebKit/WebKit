@@ -1444,8 +1444,10 @@ void RenderTable::layoutRows(int yoff)
             if (!ro)
             {
 		// we need to substract the bodys margins
-		// ### fixme: use exact values here.
-                th = h.width(viewRect().height() - 20 );
+		// The cb is the <body>. Subtract out its margins. -dwh
+                th = h.width(viewRect().height() 
+			     - containingBlock()->marginBottom()
+			     - containingBlock()->marginTop());
                 // not really, but this way the view height change
                 // gets propagated correctly
                 setOverhangingContents();
