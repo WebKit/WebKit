@@ -87,7 +87,7 @@
     }
 }
 
-- (void)receivedProgressWithHandle:(IFURLHandle *)handle complete: (BOOL)isComplete
+- (void)receivedProgressWithHandle:(IFURLHandle *)handle complete:(BOOL)isComplete
 {
     [[dataSource controller] _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
         forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
@@ -104,13 +104,11 @@
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
     [self receivedProgressWithHandle:handle complete: NO];
-    [loader addData:data];    
+    [loader addData:data];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-
     [loader cancel];
     
     [dataSource _removeURLHandle:handle];
@@ -137,7 +135,7 @@
             partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
     }
     
-    [self receivedProgressWithHandle:handle complete: YES];
+    [self receivedProgressWithHandle:handle complete:YES];
     
     [self didStopLoading];
 }

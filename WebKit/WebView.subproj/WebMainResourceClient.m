@@ -1,6 +1,6 @@
 /*	
     IFMainURLHandleClient.mm
-    Copyright (c) 2001, Apple, Inc. All rights reserved.
+    Copyright (c) 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
 #import <WebKit/IFDocument.h>
@@ -21,6 +21,7 @@
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFFileTypeMappings.h>
+#import <WebFoundation/IFURLHandle.h>
 
 // FIXME: This is quite similar IFResourceURLHandleClient; they should share code.
 
@@ -28,48 +29,68 @@
 
 - initWithDataSource: (IFWebDataSource *)ds
 {
-    if ((self = [super init])) {
+    self = [super init];
+    
+    if (self) {
         dataSource = [ds retain];
-        processedBufferedData = NO;
         isFirstChunk = YES;
-        return self;
     }
 
-    return nil;
+    return self;
+}
+
+- (void)didStartLoadingWithURL:(NSURL *)URL
+{
+    WEBKIT_ASSERT(currentURL == nil);
+    currentURL = [URL retain];
+    [[dataSource controller] _didStartLoading:currentURL];
+}
+
+- (void)didStopLoading
+{
+    WEBKIT_ASSERT(currentURL != nil);
+    [[dataSource controller] _didStopLoading:currentURL];
+    [currentURL release];
+    currentURL = nil;
 }
 
 - (void)dealloc
 {
-    WEBKIT_ASSERT(url == nil);
+    WEBKIT_ASSERT(currentURL == nil);
+    WEBKIT_ASSERT(downloadHandler == nil);
+    
     [downloadProgressHandler release];
     [dataSource release];
+    
     [super dealloc];
 }
 
-- (IFDownloadHandler *) downloadHandler
+- (IFDownloadHandler *)downloadHandler
 {
     return downloadHandler;
 }
 
-- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)theDataSource complete: (BOOL)isComplete
+- (void)receivedProgressWithHandle:(IFURLHandle *)handle complete:(BOOL)isComplete
 {
+    IFLoadProgress *progress = [IFLoadProgress progressWithURLHandle:handle];
+    
     if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave){
         if(isComplete)
             [dataSource _setPrimaryLoadComplete: YES];
             
-        if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){  
+        if (progress->bytesSoFar == -1 && progress->totalToLoad == -1) {  
             IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled 
                 inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
             [dataSource _setMainDocumentError: error];
-            [downloadProgressHandler receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+            [downloadProgressHandler receivedError: error forResourceHandle: handle partialProgress: progress fromDataSource: dataSource];
             [error release];
         }
         
-        [downloadProgressHandler receivedProgress:progress forResourceHandle:resourceHandle 
-            fromDataSource:theDataSource complete:isComplete];
-    }else{
-        [[dataSource controller] _mainReceivedProgress:progress forResourceHandle:resourceHandle 
-            fromDataSource:theDataSource complete:isComplete];
+        [downloadProgressHandler receivedProgress:progress forResourceHandle:handle 
+            fromDataSource:dataSource complete:isComplete];
+    } else {
+        [[dataSource controller] _mainReceivedProgress:progress forResourceHandle:handle 
+            fromDataSource:dataSource complete:isComplete];
     }
 }
 
@@ -84,41 +105,32 @@
     }
 }
 
-
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
     
-    WEBKIT_ASSERT(url == nil);
-    
-    url = [[sender url] retain];
-    [[dataSource controller] _didStartLoading:url];
+    [self didStartLoadingWithURL:[handle url]];
 }
 
-
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
-
-    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
     
-    [self _receivedProgress:[IFLoadProgress progress] forResourceHandle:sender fromDataSource: dataSource complete: YES];
-    
-    [[dataSource controller] _didStopLoading:url];
-    
-    [url release];
-    url = nil;
+    [self receivedProgressWithHandle:handle complete:YES];
     
     [downloadHandler release];
     downloadHandler = nil;
+
+    [self didStopLoading];
 }
 
-
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data: (NSData *)data
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
     
-    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([handle statusCode] == IFURLHandleStatusLoadComplete);
+    WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
     
     // Don't retain data for downloaded files
     if([dataSource contentPolicy] != IFContentPolicySave &&
@@ -130,51 +142,45 @@
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
     // Either send a final error message or a final progress message.
-    IFError *nonTerminalError = [sender error];
+    IFError *nonTerminalError = [handle error];
     if (nonTerminalError){
-        [self _receivedError:nonTerminalError forResourceHandle:sender 
-            partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
+        [self _receivedError:nonTerminalError forResourceHandle:handle 
+            partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
     }
     else {
-        // update progress
-        [self _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-            forResourceHandle:sender fromDataSource: dataSource complete: YES];
+        [self receivedProgressWithHandle:handle complete:YES];
     }
-    
-    [[dataSource controller] _didStopLoading:url];
-
-    [url release];
-    url = nil;    
     
     [downloadHandler finishedLoading];
     [downloadHandler release];
     downloadHandler = nil;
+    
+    [self didStopLoading];
 }
 
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)incomingData
+- (void)IFURLHandle:(IFURLHandle *)handle resourceDataDidBecomeAvailable:(NSData *)incomingData
 {
     IFWebController *controller = [dataSource controller];
-    NSString *contentType = [sender contentType];
+    NSString *contentType = [handle contentType];
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame webView];
 
     NSData *data = nil;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), incomingData, [incomingData length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([handle url]), incomingData, [incomingData length]);
     
-    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
     
         // Make assumption that if the contentType is the default 
         // and there is no extension, this is text/html
-        if([contentType isEqualToString:IFDefaultMIMEType] && [[[url path] pathExtension] isEqualToString:@""])
+        if([contentType isEqualToString:IFDefaultMIMEType] && [[[currentURL path] pathExtension] isEqualToString:@""])
             contentType = @"text/html";
         
         [dataSource _setContentType:contentType];
-        [dataSource _setEncoding:[sender characterSet]];
+        [dataSource _setEncoding:[handle characterSet]];
         
         // retain the downloadProgressHandler just in case this is a download.
         // Alexander releases the WebController if no window is created for it.
@@ -195,7 +201,7 @@
             if(isFirstChunk){
                 data = incomingData;
             }else{
-                data = [sender resourceData];
+                data = [handle resourceData];
             }
             processedBufferedData = YES;          
         }else{
@@ -216,7 +222,7 @@
         [downloadHandler receivedData:data];
     }
     else if(contentPolicy == IFContentPolicyIgnore){
-        [sender cancelLoadInBackground];
+        [handle cancelLoadInBackground];
         [frame->_private setProvisionalDataSource:nil];
         [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
     }
@@ -225,50 +231,44 @@
             @"haveContentPolicy: andPath:path forDataSource: set an invalid content policy."];
     }
     
-    //update progress
-    [self _receivedProgress:[IFLoadProgress progressWithURLHandle:sender] 
-        forResourceHandle:sender fromDataSource: dataSource complete: NO];
+    [self receivedProgressWithHandle:handle complete:NO];
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [handle contentLengthReceived], [handle contentLength]);
     isFirstChunk = NO;
 }
 
-
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
+- (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)result
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %s\n", DEBUG_OBJECT([sender url]), DEBUG_OBJECT([result errorDescription]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, result = %s\n", DEBUG_OBJECT([handle url]), DEBUG_OBJECT([result errorDescription]));
 
-    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
-    [self _receivedError:result forResourceHandle:sender 
-        partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
-    
-    [[dataSource controller] _didStopLoading:url];
-    [url release];
-    url = nil;
+    [self _receivedError:result forResourceHandle:handle 
+        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
     
     [downloadHandler cancel];
     [downloadHandler release];
     downloadHandler = nil;
+
+    [self didStopLoading];
 }
 
 
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)newURL
+- (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)URL
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", DEBUG_OBJECT(newURL));
-    
-    WEBKIT_ASSERT(url != nil);
-    
-    [[dataSource controller] _didStopLoading:url];
-    [newURL retain];
-    [url release];
-    url = newURL;
-    [[dataSource controller] _didStartLoading:url];
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "url = %s\n", DEBUG_OBJECT(URL));
 
-    [[dataSource _bridge] setURL:url];
-    [dataSource _setFinalURL:url];
+    WEBKIT_ASSERT(currentURL != nil);
+    WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
     
-    [[dataSource _locationChangeHandler] serverRedirectTo:url forDataSource:dataSource];
+    [[dataSource _bridge] setURL:URL];
+    
+    [dataSource _setFinalURL:URL];
+    
+    [[dataSource _locationChangeHandler] serverRedirectTo:URL forDataSource:dataSource];
+
+    [self didStopLoading];
+    [self didStartLoadingWithURL:URL];
 }
 
 @end

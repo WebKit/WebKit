@@ -1,3 +1,36 @@
+2002-07-10  Darin Adler  <darin@apple.com>
+
+	- fixed 2986273 -- assert currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]
+
+	Since cancel prevents further notification from getting through, currentURL can get
+	out of sync before cancelling, so we can't assert in the cancel function.
+
+        * WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+        (-[IFResourceURLHandleClient IFURLHandleResourceDidCancelLoading:]): Remove assert.
+
+        * WebView.subproj/IFMainURLHandleClient.h: Remove unnecessary includes. Change type
+	of dataSource to IFWebDataSource from id. Change url to currentURL to match
+	IFResourceURLHandleClient.
+
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient initWithDataSource:]): Simplify.
+        (-[IFMainURLHandleClient didStartLoadingWithURL:]): Copied here from IFResourceURLHandleClient
+	as a first step toward using a common superclass some day.
+        (-[IFMainURLHandleClient didStopLoading]): Copied here from IFResourceURLHandleClient
+	as a first step toward using a common superclass some day.
+        (-[IFMainURLHandleClient dealloc]): Add an assert.
+        (-[IFMainURLHandleClient receivedProgressWithHandle:complete:]): Removed most of the parameters
+	to make this match the one in IFResourceURLHandleClient.
+        (-[IFMainURLHandleClient IFURLHandleResourceDidBeginLoading:]): Use didStartLoadingWithURL.
+        (-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]): Use receivedProgressWithHandle and
+	didStopLoading.
+        (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]): Use receivedProgressWithHandle and
+	didStopLoading.
+        (-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): Use receivedProgressWithHandle.
+        (-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]): Use receivedProgressWithHandle and
+	didStopLoading.
+        (-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]): Use didStopLoading and didStartLoadingWithURL.
+
 2002-07-10  Maciej Stachowiak  <mjs@apple.com>
 
         WebKit part of fix for:
