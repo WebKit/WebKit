@@ -4,25 +4,4 @@ struct UserAgentSpoofTableEntry { const char *name; UserAgentStringType type; };
 # Entries must have either one dot or two dots in them.
 #
 # pretend to be Mac IE because these sites forbid unknown browsers
-bang-olufsen.com, MacIE
-hondacars.com, MacIE
-hondaredriders.com, MacIE
 jaguar.com, MacIE
-mazdausa.com, MacIE
-porsche.com, MacIE
-wap.sonyericsson.com, MacIE
-#
-# pretend to be Mac IE because otherwise the site tries to use layers
-nj.com, MacIE
-oregonlive.com, MacIE
-watch.com, MacIE
-#
-# pretend to be Mac IE because the site has JavaScript that works only for "Netscape" or "Microsoft"
-firstusa.com, MacIE
-#
-# pretend to be Mac IE to avoid bad-quality CSS the site gives us otherwise
-microsoft.com, MacIE
-olympic.org, MacIE
-#
-# pretend to be Mac IE to avoid gzipped HTML which we don't support yet
-freebsd.org, MacIE

@@ -1,3 +1,18 @@
+2003-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - removed all entries except for jaguar.com because:
+            a) most of these sites now work fine without the spoofing or have gone away
+            b) nj.com and oregonlive.com do not work, but the spoofing committee (Mark,
+               Don, Dave, and me) decided we should stop spoofing and get them to fix
+               the sites instead
+          If we can resolve jaguar.com in a similar way, we can remove the spoofing
+          feature altogether.
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Removed all but jaguar.com.
+        * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
+
 2003-05-21  Richard Williamson   <rjw@apple.com>
 
         *** Public API Change ***
