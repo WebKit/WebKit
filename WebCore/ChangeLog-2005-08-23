@@ -1,5 +1,11 @@
 2002-07-10  Darin Adler  <darin@apple.com>
 
+	- fixed 2979153 -- charset sjis page is gibberish
+
+        * kwq/character-sets.txt: Add x-sjis as an alias for Shift JIS.
+
+2002-07-10  Darin Adler  <darin@apple.com>
+
         * kwq/KWQPixmap.mm:
         (QPixmap::QPixmap): Restore the imageRenderer == nil case to fix a regression
 	related to resized images. Otherwise, isNull was returning true for all images.
