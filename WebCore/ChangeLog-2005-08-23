@@ -1,3 +1,14 @@
+2005-01-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John and Kevin.
+
+	<rdar://problem/3870317> REGRESSION(125.9-125.11) broken behavior at test.profoundlearning.com - used to
+        
+	* khtml/ecma/kjs_window.cpp:
+        (Window::get): Look up frame names before buitin window properties
+	to match other browsers. This regressed because we added a builtin
+	"toolbar" property but this site had a frame with that name.
+
 2004-12-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

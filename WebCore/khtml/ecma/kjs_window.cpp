@@ -470,6 +470,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       return Value(val);
   }
 
+  // Check for child frames by name before built-in properties to
+  // match behavior of other browsers.
+  KHTMLPart *childFrame = m_part->childFrameNamed(p.ustring().qstring());
+  if (childFrame) 
+    return retrieve(childFrame);
+
   const HashEntry* entry = Lookup::findEntry(&WindowTable, p);
   if (entry)
   {
