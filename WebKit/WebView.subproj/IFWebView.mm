@@ -120,11 +120,9 @@ enum {
     dragType = [[sender draggingPasteboard] availableTypeFromArray:_private->draggingTypes];
     if([dragType isEqualToString:@"NSFilenamesPboardType"]){
         files = [[sender draggingPasteboard] propertyListForType:@"NSFilenamesPboardType"];
-        
-        // FIXME: We only look at the first dragged file (2931225)
         file = [files objectAtIndex:0];
         
-        if([IFWebController canShowFile:file])
+        if([files count] == 1 && [IFWebController canShowFile:file])
             return NSDragOperationCopy;
             
     }else if([dragType isEqualToString:@"NSURLPboardType"]){

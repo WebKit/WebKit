@@ -1,3 +1,10 @@
+2002-07-12  Chris Blumenberg  <cblu@apple.com>
+
+	Only accept drags of 1 file.
+
+        * WebView.subproj/IFWebView.mm:
+        (-[IFWebView draggingEntered:]):
+
 2002-07-12  Darin Adler  <darin@apple.com>
 
 	Fix cancelling. My recent check-in broke it for downloads.
