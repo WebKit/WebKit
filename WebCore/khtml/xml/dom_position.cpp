@@ -361,36 +361,40 @@ Position Position::nextLinePosition(int x) const
 
 Position Position::upstream(EStayInBlock stayInBlock) const
 {
-    if (!node())
+    Position start = equivalentDeepPosition();
+    NodeImpl *startNode = start.node();
+    if (!startNode)
         return Position();
 
-    NodeImpl *block = node()->isBlockFlow() ? node() : node()->enclosingBlockFlowElement();
+    NodeImpl *block = startNode->isBlockFlow() ? startNode : startNode->enclosingBlockFlowElement();
     
-    PositionIterator it(equivalentDeepPosition());            
+    PositionIterator it(start);
     for (; !it.atStart(); it.previous()) {
+        NodeImpl *currentNode = it.current().node();
+
         if (stayInBlock) {
-            NodeImpl *currentBlock = it.current().node()->isBlockFlow() ? it.current().node() : it.current().node()->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = currentNode->isBlockFlow() ? currentNode : currentNode->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.next();
         }
 
-        RenderObject *renderer = it.current().node()->renderer();
+        RenderObject *renderer = currentNode->renderer();
         if (!renderer)
             continue;
 
         if (renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
+        if ((currentNode != startNode && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() >= renderer->caretMaxOffset())
-                return Position(it.current().node(), renderer->caretMaxOffset());
+                return Position(currentNode, renderer->caretMaxOffset());
             else
                 continue;
         }
 
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
-            if (it.current().node() != node())
-                return Position(it.current().node(), renderer->caretMaxOffset());
+            if (currentNode != startNode)
+                return Position(currentNode, renderer->caretMaxOffset());
 
             if (it.current().offset() < 0)
                 continue;
@@ -413,36 +417,40 @@ Position Position::upstream(EStayInBlock stayInBlock) const
 
 Position Position::downstream(EStayInBlock stayInBlock) const
 {
-    if (!node())
+    Position start = equivalentDeepPosition();
+    NodeImpl *startNode = start.node();
+    if (!startNode)
         return Position();
 
-    NodeImpl *block = node()->isBlockFlow() ? node() : node()->enclosingBlockFlowElement();
+    NodeImpl *block = startNode->isBlockFlow() ? startNode : startNode->enclosingBlockFlowElement();
     
-    PositionIterator it(equivalentDeepPosition());            
+    PositionIterator it(start);            
     for (; !it.atEnd(); it.next()) {   
+        NodeImpl *currentNode = it.current().node();
+
         if (stayInBlock) {
-            NodeImpl *currentBlock = it.current().node()->isBlockFlow() ? it.current().node() : it.current().node()->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = currentNode->isBlockFlow() ? currentNode : currentNode->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.previous();
         }
 
-        RenderObject *renderer = it.current().node()->renderer();
+        RenderObject *renderer = currentNode->renderer();
         if (!renderer)
             continue;
 
         if (renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
+        if ((currentNode != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() <= renderer->caretMinOffset())
-                return Position(it.current().node(), renderer->caretMinOffset());
+                return Position(currentNode, renderer->caretMinOffset());
             else
                 continue;
         }
 
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
-            if (it.current().node() != node())
-                return Position(it.current().node(), renderer->caretMinOffset());
+            if (currentNode != node())
+                return Position(currentNode, renderer->caretMinOffset());
 
             if (it.current().offset() < 0)
                 continue;

@@ -2,6 +2,19 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3831546> More text is copied than is visually selected
+
+        The bug here is that upstream was moving a position too far.
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream): Use the "deep equivalent" node rather than the original node passed
+        in for various checks. Also use local variables a bit more for slightly more efficiency.
+        (DOM::Position::downstream): Ditto.
+
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3833841> adding an event listener for keypress events does not work
 
         * khtml/xml/dom2_eventsimpl.h: Added numEventIds and made typeToId take a const DOMString &.
