@@ -610,13 +610,8 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
     // is translated, but the render box isn't, so we need to do this to get the
     // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
     // flag on the RenderObject has been cleared, so use the one on the style().
-#ifdef INCREMENTAL_REPAINTING
     if (style()->position() == RELATIVE && m_layer)
         m_layer->relativePositionOffset(x,y);
-#else
-    if (style()->position() == RELATIVE)
-        relativePositionOffset(x,y);
-#endif
     
     if (style()->position()==FIXED)
         f = true;
@@ -644,7 +639,6 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
     }
 }
 
-#ifdef INCREMENTAL_REPAINTING
 void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
 {
     int newX = m_x;
@@ -660,7 +654,6 @@ void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
         repaintFloatingDescendants();
     }
 }
-#endif
 
 void RenderBox::relativePositionOffset(int &tx, int &ty)
 {

@@ -583,11 +583,7 @@ void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 
 void RenderObject::setNeedsLayout(bool b, bool markParents) 
 {
-#ifdef INCREMENTAL_REPAINTING
     bool alreadyNeededLayout = m_needsLayout;
-#else
-    bool alreadyNeededLayout = false;
-#endif
     m_needsLayout = b;
     if (b) {
         if (!alreadyNeededLayout && markParents)
@@ -601,11 +597,7 @@ void RenderObject::setNeedsLayout(bool b, bool markParents)
 
 void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 {
-#ifdef INCREMENTAL_REPAINTING
     bool alreadyNeededLayout = m_normalChildNeedsLayout;
-#else
-    bool alreadyNeededLayout = false;
-#endif
     m_normalChildNeedsLayout = b;
     if (b) {
         if (!alreadyNeededLayout && markParents)
@@ -619,43 +611,26 @@ void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 
 void RenderObject::markContainingBlocksForLayout()
 {
-#ifndef INCREMENTAL_REPAINTING
-    RenderObject* clippedObj = (style()->hidesOverflow() && !isText()) ? this : 0;
-#endif
-    
     RenderObject *o = container();
     RenderObject *last = this;
 
     while (o) {
         if (!last->isText() && (last->style()->position() == FIXED || last->style()->position() == ABSOLUTE)) {
-#ifdef INCREMENTAL_REPAINTING
             if (o->m_posChildNeedsLayout)
                 return;
-#endif
             o->m_posChildNeedsLayout = true;
         }
         else {
-#ifdef INCREMENTAL_REPAINTING
             if (o->m_normalChildNeedsLayout)
                 return;
-#endif
             o->m_normalChildNeedsLayout = true;
         }
-
-#ifndef INCREMENTAL_REPAINTING
-        if (o->style()->hidesOverflow() && !clippedObj)
-            clippedObj = o;
-#endif
 
         last = o;
         o = o->container();
     }
 
-#ifdef INCREMENTAL_REPAINTING
     last->scheduleRelayout();
-#else
-    last->scheduleRelayout(clippedObj);
-#endif
 }
 
 RenderBlock* RenderObject::containingBlock() const
@@ -1158,7 +1133,6 @@ void RenderObject::repaintRectangle(const QRect& r, bool immediate)
     c->repaintViewRectangle(absRect, immediate);
 }
 
-#ifdef INCREMENTAL_REPAINTING
 void RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
 {
     QRect newBounds, newFullBounds;
@@ -1209,8 +1183,6 @@ void RenderObject::repaintObjectsBeforeLayout()
     }
 }
 
-#endif
-
 QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
 {
     QRect r(getAbsoluteRepaintRect());
@@ -1238,12 +1210,10 @@ QRect RenderObject::getAbsoluteRepaintRect()
     return QRect();
 }
 
-#ifdef INCREMENTAL_REPAINTING
 void RenderObject::getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds)
 {
     bounds = fullBounds = getAbsoluteRepaintRect();
 }
-#endif
 
 void RenderObject::computeAbsoluteRepaintRect(QRect& r, bool f)
 {
@@ -1687,16 +1657,6 @@ void RenderObject::remove()
 
 void RenderObject::detach()
 {
-#ifndef INCREMENTAL_REPAINTING
-    // If we're an overflow:hidden object that currently needs layout, we need
-    // to make sure the view isn't holding on to us.
-    if (needsLayout() && style()->hidesOverflow()) {
-        RenderCanvas* r = canvas();
-        if (r && r->view()->layoutObject() == this)
-            r->view()->unscheduleRelayout();
-    }
-#endif
-
     remove();
     
     // by default no refcounting
@@ -1994,20 +1954,12 @@ void RenderObject::recalcMinMaxWidths()
     m_recalcMinMax = false;
 }
 
-#ifdef INCREMENTAL_REPAINTING
 void RenderObject::scheduleRelayout()
-#else
-void RenderObject::scheduleRelayout(RenderObject* clippedObj)
-#endif
 {
     if (!isCanvas()) return;
     KHTMLView *view = static_cast<RenderCanvas *>(this)->view();
     if (view)
-#ifdef INCREMENTAL_REPAINTING
         view->scheduleRelayout();
-#else
-        view->scheduleRelayout(clippedObj);
-#endif
 }
 
 

@@ -160,9 +160,7 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     // disappears gets repainted properly.
     if (!documentBeingDestroyed()) {
         oldChild->setNeedsLayoutAndMinMaxRecalc();
-#ifdef INCREMENTAL_REPAINTING
         oldChild->repaint();
-#endif
         
         // Keep our layer hierarchy updated.
         oldChild->removeLayers(enclosingLayer());

@@ -93,11 +93,9 @@ public:
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     virtual void removeChild(RenderObject *oldChild);
 
-#ifdef INCREMENTAL_REPAINTING
     virtual void repaintObjectsBeforeLayout();
     virtual void repaintFloatingDescendants();
     virtual void getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds);
-#endif
 
     virtual void setStyle(RenderStyle* _style);
 

@@ -405,12 +405,10 @@ void RenderImage::layout()
     KHTMLAssert(needsLayout());
     KHTMLAssert( minMaxKnown() );
 
-#ifdef INCREMENTAL_REPAINTING
     QRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();
-#endif
     
     short oldwidth = m_width;
     int oldheight = m_height;
@@ -443,10 +441,8 @@ void RenderImage::layout()
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();
 
-#ifdef INCREMENTAL_REPAINTING
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-#endif
     
     setNeedsLayout(false);
 }

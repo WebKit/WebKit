@@ -32,9 +32,6 @@
 class QPainter;
 class QRect;
 
-// Uncomment to enable INCREMENTAL_REPAINTING
-#define INCREMENTAL_REPAINTING
-
 namespace DOM {
     class HTMLDocumentImpl;
     class DocumentImpl;
@@ -159,9 +156,7 @@ public:
 
     bool inLayout() const;
 
-#ifdef INCREMENTAL_REPAINTING
     bool needsFullRepaint() const;
-#endif
     
 #if APPLE_CHANGES
     void resetScrollBars();
@@ -227,11 +222,7 @@ private:
 
     void resetCursor();
 
-#ifdef INCREMENTAL_REPAINTING
     void scheduleRelayout();
-#else
-    void scheduleRelayout(khtml::RenderObject* clippedObj=0);
-#endif
     void unscheduleRelayout();
 
     /**
@@ -281,12 +272,7 @@ private:
     void complete();
 
     void applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
-    
-#ifndef INCREMENTAL_REPAINTING
-    // Returns the clipped object we will repaint when we perform our scheduled layout.
-    khtml::RenderObject* layoutObject() { return m_layoutObject; }
-#endif
-    
+
     // ------------------------------------- member variables ------------------------------------
  private:
     unsigned _refCount;
@@ -301,12 +287,6 @@ private:
     KHTMLViewPrivate *d;
 
     QString m_medium;   // media type
-
-#ifndef INCREMENTAL_REPAINTING
-    // An overflow: hidden clipped object.  If this is set, a scheduled layout will only repaint
-    // the object's clipped area, and it will not do a full repaint.
-    khtml::RenderObject* m_layoutObject;
-#endif
 };
 
 #endif
