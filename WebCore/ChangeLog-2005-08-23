@@ -1,3 +1,12 @@
+2004-05-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	Added a new simple layout test for outerText.
+
+        * layout-tests/fast/dom/outerText-expected.txt: Added.
+        * layout-tests/fast/dom/outerText.html: Added.
+
 2004-05-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
