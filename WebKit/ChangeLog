@@ -1,3 +1,8 @@
+2002-01-31  John Sullivan  <sullivan@apple.com>
+
+	* WebKit.pbproj:
+	Marked WKURIList.h as a public header
+
 2002-01-30  Richard Williamson  <rjw@apple.com>
 
 	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
