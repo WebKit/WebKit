@@ -1,3 +1,12 @@
+2002-11-19  Darin Adler  <darin@apple.com>
+
+	- another atomic identifier scrub pass; make the conversion to Identifier explicit
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLCollection::tryCall): Add explicit Identifier() conversion.
+        (KJS::HTMLCollectionProtoFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): And again.
+
 2002-11-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3049663.  Table cells don't grow to accommodate block

@@ -1278,7 +1278,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::SetTimeout:
     if (args.size() == 2 && v.isA(StringType)) {
       int i = args[1].toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
+      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, true /*single shot*/);
       return Number(r);
     }
     else if (args.size() >= 2 && v.isA(ObjectType) && Object::dynamicCast(v).implementsCall()) {
@@ -1290,7 +1290,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       funcArgs->removeFirst(); // all args after 2 go to the function
       funcArgs->removeFirst();
 #endif
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
+      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, true /*single shot*/);
       return Number(r);
     }
     else
@@ -1298,7 +1298,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::SetInterval:
     if (args.size() >= 2 && v.isA(StringType)) {
       int i = args[1].toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, false);
+      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, false);
       return Number(r);
     }
     else if (args.size() >= 2 && !Object::dynamicCast(v).isNull() &&
@@ -1311,7 +1311,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       funcArgs->removeFirst(); // all args after 2 go to the function
       funcArgs->removeFirst();
 #endif
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, false);
+      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, false);
       return Number(r);
     }
     else

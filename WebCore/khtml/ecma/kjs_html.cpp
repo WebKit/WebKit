@@ -2735,7 +2735,7 @@ Value KJS::HTMLCollection::tryCall(ExecState *exec, Object &, const List &args)
       return getDOMNode(exec,element);
     }
     // support for document.images('<name>') etc.
-    return getNamedItems(exec,s);
+    return getNamedItems(exec, Identifier(s));
   }
   else if (args.size() >= 1) // the second arg, if set, is the index of the item we want
   {
@@ -2829,7 +2829,7 @@ Value KJS::HTMLCollectionProtoFunc::tryCall(ExecState *exec, Object &thisObj, co
     return getDOMNodeList(exec, list);
   }
   case KJS::HTMLCollection::NamedItem:
-    return static_cast<HTMLCollection *>(thisObj.imp())->getNamedItems(exec, args[0].toString(exec));
+    return static_cast<HTMLCollection *>(thisObj.imp())->getNamedItems(exec, Identifier(args[0].toString(exec)));
   default:
     return Undefined();
   }
