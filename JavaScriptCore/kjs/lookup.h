@@ -24,7 +24,7 @@
 #define _KJSLOOKUP_H_
 
 #include "identifier.h"
-#include "value.h"
+#include "object.h"
 #include <stdio.h>
 
 namespace KJS {

@@ -26,6 +26,7 @@
 
 @interface WebScriptObjectPrivate : NSObject
 {
+@public
     KJS::ObjectImp *imp;
     const KJS::Bindings::RootObject *executionContext;
     const KJS::Bindings::RootObject *originExecutionContext;
