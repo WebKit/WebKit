@@ -341,7 +341,6 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURLString);
     
     NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
-    double start, duration;
     
     if(!icons){
         // Not in memory, check disk
