@@ -1,3 +1,12 @@
+2004-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3529943: REGRESSION (119-120): nil-deref in KHTMLPart::javaEnabled when hitting back button
+
+        * khtml/html/html_objectimpl.cpp: (HTMLAppletElementImpl::getAppletInstance):
+        Add missing nil check that the other call to javaEnabled has.
+
 === Safari-122 ===
 
 2004-01-14  David Hyatt  <hyatt@apple.com>
