@@ -69,17 +69,25 @@ static void buildDictionaries()
 
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName)
 {
+    CFStringEncoding encoding;
     const void *value;
     
     if (nameToEncoding == NULL) {
         buildDictionaries ();
     }
+
+    CFMutableStringRef lowercaseCharsetName = CFStringCreateMutableCopy(NULL, 0, charsetName);
+    CFStringLowercase(lowercaseCharsetName, NULL);
     
-    if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *)charsetName, &value)) {
-        return (CFStringEncoding)value;
+    if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *)lowercaseCharsetName, &value)) {
+        encoding = (CFStringEncoding)value;
     } else {
-        return kCFStringEncodingInvalidId;
+        encoding = kCFStringEncodingInvalidId;
     }
+
+    CFRelease(lowercaseCharsetName);
+
+    return encoding;
 }
 
 
