@@ -35,16 +35,16 @@ public:
 
 template <class T> class QValueList {
 public:
-	typedef QValueListIterator<T> Iterator;
-	bool isEmpty() const;
-	void append(const T& x);
-	void remove(const T& x);
-	Iterator remove(Iterator it);
-	const T& first() const;
-	const T& last() const;
-	Iterator begin();
-	Iterator end();
-	T& operator[] (uint i);
+    typedef QValueListIterator<T> Iterator;
+    bool isEmpty() const;
+    void append(const T& x);
+    void remove(const T& x);
+    Iterator remove(Iterator it);
+    const T& first() const;
+    const T& last() const;
+    Iterator begin();
+    Iterator end();
+    T& operator[] (uint i);
 };
 
 #endif

@@ -30,8 +30,8 @@ class QPaintDevice;
 
 class QPaintDeviceMetrics {
 public:
-	QPaintDeviceMetrics(const QPaintDevice *);
-	int logicalDpiY() const;
+    QPaintDeviceMetrics(const QPaintDevice *);
+    int logicalDpiY() const;
 };
 
 #endif

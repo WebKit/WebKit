@@ -31,13 +31,13 @@
 
 class QDataStream {
 public:
-	QDataStream( QByteArray, int mode );
-	virtual ~QDataStream();
+    QDataStream( QByteArray, int mode );
+    virtual ~QDataStream();
 
-	QDataStream &operator<<( const char *str );
-	QDataStream &operator<<( const QString &str );
-	QDataStream &operator<<( const QCString &str );
-	QDataStream &operator>>( const QString &str );
+    QDataStream &operator<<( const char *str );
+    QDataStream &operator<<( const QString &str );
+    QDataStream &operator<<( const QCString &str );
+    QDataStream &operator>>( const QString &str );
 };
 
 #endif

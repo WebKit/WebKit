@@ -30,7 +30,7 @@
 #include "qvaluelist.h"
 
 class QStringList : public QValueList<QString> {
-	
+    
 };
 
 #endif

@@ -19,6 +19,7 @@ include $(TOPSRCDIR)/Makefile.vars
 SUBDIRS = \
 	src/kdelibs/kjs \
 	src/kdelibs/khtml/dom \
+	src/kdelibs/khtml/xml \
 	$(NULL)
 
 #----------------------------------------------------------------------

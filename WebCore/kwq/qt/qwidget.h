@@ -30,7 +30,7 @@
 
 class QWidget : public QPaintDevice {
 public:
-	int winId() const;
+    int winId() const;
 };
 
 #endif

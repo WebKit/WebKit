@@ -28,9 +28,9 @@
 
 class QCollection {
 public:
-	typedef void *Item;
+    typedef void *Item;
 protected:
-	virtual Item newItem(Item);
+    virtual Item newItem(Item);
 };
 
 #endif

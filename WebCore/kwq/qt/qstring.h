@@ -52,7 +52,7 @@ public:
     friend inline int operator!=(QChar, char);
     operator char() const;
 
-	static const QChar null;
+    static const QChar null;
 
     enum Direction {
         // NOTE: alphabetical order
@@ -70,7 +70,7 @@ public:
     int toInt(bool *) const;
     bool isNull() const;
     const QChar *unicode() const;
-	bool contains(const char *s, bool b) const;
+    bool contains(const char *s, bool b) const;
     uint length() const;
     QString &sprintf(const char *format, ...);
     QString lower() const;

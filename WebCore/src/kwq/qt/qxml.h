@@ -30,14 +30,14 @@ class QString;
 
 class QXmlAttributes {
 public:
-	QString value(const QString& qName) const;
-	int length() const;
-	QString localName(int index) const;
+    QString value(const QString& qName) const;
+    int length() const;
+    QString localName(int index) const;
 };
 
 class QXmlInputSource {
 public:
-	virtual void setData(const QString& data);
+    virtual void setData(const QString& data);
 };
 
 class QXmlDTDHandler {
@@ -60,8 +60,8 @@ class QXmlDefaultHandler : public QXmlContentHandler, public QXmlLexicalHandler,
 
 class QXmlSimpleReader {
 public:
-	void setContentHandler(QXmlContentHandler* handler);
-	bool parse(const QXmlInputSource& input);
+    void setContentHandler(QXmlContentHandler* handler);
+    bool parse(const QXmlInputSource& input);
     void setLexicalHandler(QXmlLexicalHandler* handler);
     void setDTDHandler(QXmlDTDHandler* handler);
     void setDeclHandler(QXmlDeclHandler* handler);
@@ -70,9 +70,9 @@ public:
 
 class QXmlParseException {
 public:
-	QString message() const;
-	int columnNumber() const;
-	int lineNumber() const;
+    QString message() const;
+    int columnNumber() const;
+    int lineNumber() const;
 };
 
 #endif

@@ -28,14 +28,14 @@
 
 class Qt {
 public:
-	enum ButtonState {
-		LeftButton,
-		MidButton,
-		RightButton,
-		ControlButton,
-		AltButton,
-		ShiftButton,
-	};
+    enum ButtonState {
+        LeftButton,
+        MidButton,
+        RightButton,
+        ControlButton,
+        AltButton,
+        ShiftButton,
+    };
 };
 
 #endif

@@ -31,23 +31,23 @@
 
 class QEvent : public Qt {
 public:
-	enum Type {
-		MouseButtonPress,
-		MouseButtonRelease,
-		MouseButtonDblClick,
-		MouseMove,
-	};
-	Type type() const;
+    enum Type {
+        MouseButtonPress,
+        MouseButtonRelease,
+        MouseButtonDblClick,
+        MouseMove,
+    };
+    Type type() const;
 };
 
 class QMouseEvent : public QEvent {
 public:
-	int x();
-	int y();
-	int globalX();
-	int globalY();
-	ButtonState button();
-	ButtonState state();
+    int x();
+    int y();
+    int globalX();
+    int globalY();
+    ButtonState button();
+    ButtonState state();
 };
 
 class QFocusEvent : public QEvent {};

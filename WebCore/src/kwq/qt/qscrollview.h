@@ -29,7 +29,7 @@
 #include "qwidget.h"
 
 class QScrollView : public QWidget {
-	typedef int ScrollBarMode;
+    typedef int ScrollBarMode;
 };
 
 #endif

@@ -28,8 +28,8 @@
 
 class QRegExp {
 public:
-	QRegExp(const QString &);
-	QRegExp(const QRegExp &);	
+    QRegExp(const QString &);
+    QRegExp(const QRegExp &);    
 };
 
 #endif

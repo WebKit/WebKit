@@ -28,8 +28,8 @@
 
 class QRect {
 public:
-	QRect();
-	QRect(int l, int t, int w, int h);
+    QRect();
+    QRect(int l, int t, int w, int h);
 };
 
 #endif

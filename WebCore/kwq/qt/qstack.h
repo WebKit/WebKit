@@ -28,9 +28,9 @@
 
 template<class T> class QStack {
 public:
-	bool isEmpty() const;
-	void push(const T *d);
-	T *pop();
+    bool isEmpty() const;
+    void push(const T *d);
+    T *pop();
 };
 
 #endif

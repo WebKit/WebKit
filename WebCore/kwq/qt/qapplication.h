@@ -31,7 +31,7 @@
 
 class QApplication {
 public:
-	static QPalette palette(const QWidget* = 0);
+    static QPalette palette(const QWidget* = 0);
 };
 
 #endif

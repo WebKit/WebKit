@@ -29,7 +29,7 @@
 #include "qrect.h"
 
 class QPaintDevice {
-	friend class QPaintDeviceMetrics;
+    friend class QPaintDeviceMetrics;
 };
 
 #endif

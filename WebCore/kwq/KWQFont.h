@@ -30,10 +30,10 @@ class QString;
 
 class QFont {
 public:
-	void setFamily( const QString &);
-	bool operator==(const QFont &x) const;
-	bool operator!=(const QFont &x) const;
-	enum CharSet {};
+    void setFamily( const QString &);
+    bool operator==(const QFont &x) const;
+    bool operator!=(const QFont &x) const;
+    enum CharSet {};
 };
 
 #endif
