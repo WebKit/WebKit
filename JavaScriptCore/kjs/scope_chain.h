@@ -24,28 +24,25 @@
 
 namespace KJS {
 
-    class NoRefScopeChain;
     class ObjectImp;
     
     class ScopeChainNode {
     public:
-        ScopeChainNode(ScopeChainNode *n, ObjectImp *o);
+        ScopeChainNode(ScopeChainNode *n, ObjectImp *o)
+            : next(n), object(o), refCount(1) { }
 
         ScopeChainNode *next;
         ObjectImp *object;
-        short nodeAndObjectRefCount;
-        short nodeOnlyRefCount;
+        int refCount;
     };
 
     class ScopeChain {
-        friend class NoRefScopeChain;
     public:
         ScopeChain() : _node(0) { }
         ~ScopeChain() { deref(); }
 
         ScopeChain(const ScopeChain &c) : _node(c._node)
-            { if (_node) ++_node->nodeAndObjectRefCount; }
-        ScopeChain(const NoRefScopeChain &);
+            { if (_node) ++_node->refCount; }
         ScopeChain &operator=(const ScopeChain &);
 
         bool isEmpty() const { return !_node; }
@@ -55,35 +52,15 @@ namespace KJS {
         void push(ObjectImp *);
         void pop();
         
-    private:
-        ScopeChainNode *_node;
-        
-        void deref() { if (_node && --_node->nodeAndObjectRefCount == 0) release(); }
-        void ref() const;
-        
-        void release();
-    };
-
-    class NoRefScopeChain {
-        friend class ScopeChain;
-    public:
-        NoRefScopeChain() : _node(0) { }
-        ~NoRefScopeChain() { deref(); }
-
-        NoRefScopeChain &operator=(const ScopeChain &c);
-
         void mark();
-
+        
     private:
         ScopeChainNode *_node;
         
-        void deref() { if (_node && --_node->nodeOnlyRefCount == 0) release(); }
+        void deref() { if (_node && --_node->refCount == 0) release(); }
         void ref() const;
-
+        
         void release();
-
-        NoRefScopeChain(const NoRefScopeChain &);
-        NoRefScopeChain &operator=(const NoRefScopeChain &);
     };
 
 }; // namespace KJS

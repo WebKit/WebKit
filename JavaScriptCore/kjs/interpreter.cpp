@@ -41,37 +41,7 @@ using namespace KJS;
 
 // ------------------------------ Context --------------------------------------
 
-Context::Context(ContextImp *c)
-{
-  rep = c;
-}
-
-Context::Context(const Context &c)
-{
-  rep = c.rep;
-}
-
-Context& Context::operator=(const Context &c)
-{
-  rep = c.rep;
-  return *this;
-}
-
-Context::~Context()
-{
-}
-
-bool Context::isNull() const
-{
-  return (rep == 0);
-}
-
-ContextImp *Context::imp() const
-{
-  return rep;
-}
-
-const ScopeChain Context::scopeChain() const
+const ScopeChain &Context::scopeChain() const
 {
   return rep->scopeChain();
 }

@@ -205,7 +205,7 @@ Value RegExpNode::evaluate(ExecState *exec)
 // ECMA 11.1.1
 Value ThisNode::evaluate(ExecState *exec)
 {
-  return exec->context().thisValue();
+  return exec->context().imp()->thisValue();
 }
 
 // ------------------------------ ResolveNode ----------------------------------
@@ -218,7 +218,7 @@ Value ResolveNode::evaluate(ExecState *exec)
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
 {
-  ScopeChain chain = exec->context().scopeChain();
+  ScopeChain chain = exec->context().imp()->scopeChain();
 
   while (!chain.isEmpty()) {
     ObjectImp *o = chain.top();
@@ -1632,7 +1632,7 @@ bool VarDeclNode::deref()
 // ECMA 12.2
 Value VarDeclNode::evaluate(ExecState *exec)
 {
-  Object variable = Object::dynamicCast(exec->context().variableObject());
+  Object variable = Object::dynamicCast(exec->context().imp()->variableObject());
 
   Value val;
   if (init) {
@@ -1656,7 +1656,7 @@ Value VarDeclNode::evaluate(ExecState *exec)
 
 void VarDeclNode::processVarDecls(ExecState *exec)
 {
-  Object variable = exec->context().variableObject();
+  Object variable = exec->context().imp()->variableObject();
   variable.put(exec,ident, Undefined(), DontDelete);
 }
 
@@ -2779,10 +2779,8 @@ bool FuncDeclNode::deref()
 // ECMA 13
 void FuncDeclNode::processFuncDecl(ExecState *exec)
 {
-  const ScopeChain sc = exec->context().imp()->scopeChain();
-
   // TODO: let this be an object with [[Class]] property "Function"
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body, sc);
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body, exec->context().imp()->scopeChain());
   Object func(fimp); // protect from GC
 
   //  Value proto = exec->interpreter()->builtinObject().construct(exec,List::empty());
@@ -2834,8 +2832,7 @@ bool FuncExprNode::deref()
 // ECMA 13
 Value FuncExprNode::evaluate(ExecState *exec)
 {
-  const ScopeChain sc = exec->context().scopeChain();
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, body, sc);
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, body, exec->context().imp()->scopeChain());
   Value ret(fimp);
   List empty;
   Value proto = exec->interpreter()->builtinObject().construct(exec,empty);

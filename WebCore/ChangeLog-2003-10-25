@@ -1,3 +1,7 @@
+2002-11-24  Darin Adler  <darin@apple.com>
+
+        * force-js-clean-timestamp: Touch for ScopeChain change.
+
 2002-11-24  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3067939 - no support for window.document.lastModified

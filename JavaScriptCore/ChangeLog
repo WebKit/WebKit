@@ -1,3 +1,28 @@
+2002-11-24  Darin Adler  <darin@apple.com>
+
+	- changed ScopeChain to not ref each item in the chain, and use
+        marking instead; gains 1% on JavaScript iBench
+
+        * kjs/context.h: Return chain by reference.
+        * kjs/internal.cpp: (ContextImp::mark): Mark the scope chain.
+        * kjs/interpreter.cpp: (Context::scopeChain): Return chain by reference.
+        * kjs/interpreter.h: Make some Context methods inline.
+        * kjs/nodes.cpp:
+        (ThisNode::evaluate): Get at ContextImp directly.
+        (ResolveNode::evaluateReference): Ditto.
+        (VarDeclNode::evaluate): Ditto.
+        (VarDeclNode::processVarDecls): Ditto.
+        (FuncDeclNode::processFuncDecl): Pass ScopeChain directly to avoid copying.
+        (FuncExprNode::evaluate): Ditto.
+        * kjs/object.cpp: Make scope and setScope inline.
+        * kjs/object.h: Make scope return a chain by reference. Make scope and
+	setScope both be inline. Use a normal ScopeChain instead of NoRefScopeChain
+	since they are now one and the same.
+        * kjs/scope_chain.cpp: Remove all the code to ref and deref objects.
+	Merge NoRefScopeChain in with ScopeChain since they both work this way now.
+        * kjs/scope_chain.h: Remove NoRefScopeChain and simplify the ref counts.
+	Make more functions inline.
+
 2002-11-24  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3098356 - Hard hang on movie search at www.movietickets.com

@@ -25,25 +25,12 @@
 
 namespace KJS {
 
-ScopeChainNode::ScopeChainNode(ScopeChainNode *n, ObjectImp *o)
-    : next(n), object(o), nodeAndObjectRefCount(1), nodeOnlyRefCount(0)
-{
-    o->ref();
-}
-
 inline void ScopeChain::ref() const
 {
     for (ScopeChainNode *n = _node; n; n = n->next) {
-        if (n->nodeAndObjectRefCount++ != 0)
+        if (n->refCount++ != 0)
             break;
-        n->object->ref();
     }
-}
-
-ScopeChain::ScopeChain(const NoRefScopeChain &c)
-    : _node(c._node)
-{
-    ref();
 }
 
 ScopeChain &ScopeChain::operator=(const ScopeChain &c)
@@ -66,20 +53,11 @@ void ScopeChain::pop()
     ScopeChainNode *newNode = oldNode->next;
     _node = newNode;
     
-    // Three cases:
-    //   1) This was not the last reference of the old node.
-    //      In this case we move our ref from the old to the new node.
-    //   2) This was the last reference of the old node, but there are garbage collected references.
-    //      In this case, the new node doesn't get any new ref, and the object is deref'd.
-    //   3) This was the last reference of the old node.
-    //      In this case the object is deref'd and the entire node goes.
-    if (--oldNode->nodeAndObjectRefCount != 0) {
+    if (--oldNode->refCount != 0) {
         if (newNode)
-            ++newNode->nodeAndObjectRefCount;
+            ++newNode->refCount;
     } else {
-        oldNode->object->deref();
-        if (oldNode->nodeOnlyRefCount == 0)
-            delete oldNode;
+        delete oldNode;
     }
 }
 
@@ -88,46 +66,18 @@ void ScopeChain::release()
     ScopeChainNode *n = _node;
     do {
         ScopeChainNode *next = n->next;
-        n->object->deref();
-        if (n->nodeOnlyRefCount == 0)
-            delete n;
+        delete n;
         n = next;
-    } while (n && --n->nodeAndObjectRefCount == 0);
+    } while (n && --n->refCount == 0);
 }
 
-inline void NoRefScopeChain::ref() const
-{
-    for (ScopeChainNode *n = _node; n; n = n->next)
-        if (n->nodeOnlyRefCount++ != 0)
-            break;
-}
-
-NoRefScopeChain &NoRefScopeChain::operator=(const ScopeChain &c)
-{
-    c.ref();
-    deref();
-    _node = c._node;
-    return *this;
-}
-
-void NoRefScopeChain::mark()
+void ScopeChain::mark()
 {
     for (ScopeChainNode *n = _node; n; n = n->next) {
         ObjectImp *o = n->object;
         if (!o->marked())
             o->mark();
     }
-}
-
-void NoRefScopeChain::release()
-{
-    ScopeChainNode *n = _node;
-    do {
-        ScopeChainNode *next = n->next;
-        if (n->nodeAndObjectRefCount == 0)
-            delete n;
-        n = next;
-    } while (n && --n->nodeOnlyRefCount == 0);
 }
 
 } // namespace KJS
