@@ -6,9 +6,10 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebImageRepresentation;
+@protocol WebDocumentImage;
 @protocol WebDocumentView;
 
-@interface WebImageView : NSView <WebDocumentView>
+@interface WebImageView : NSView <WebDocumentView, WebDocumentImage>
 {
     WebImageRepresentation *rep;
     BOOL needsLayout;

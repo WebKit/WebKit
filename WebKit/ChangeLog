@@ -1,3 +1,25 @@
+2003-10-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3229530>: Dragging standalone image to desktop should save it, not re-download it
+
+        Reviewed by darin.
+
+	* English.lproj/Localizable.strings:
+        * WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/WebDocumentPrivate.h: Added.
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation dealloc]): release new filename and data ivars
+        (-[WebImageRepresentation doneLoading]): return YES if data is non-nil
+        (-[WebImageRepresentation setDataSource:]): store the filename
+        (-[WebImageRepresentation receivedError:withDataSource:]): store the data
+        (-[WebImageRepresentation finishedLoadingWithDataSource:]): store the data
+        (-[WebImageRepresentation data]): new
+        (-[WebImageRepresentation filename]): new
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]): just save the image, don't download it
+	(-[WebImageView image]): new
+
 2003-10-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3456176>: Assertion failure when loading atomfilms.com

@@ -11,10 +11,13 @@
 @interface WebImageRepresentation : NSObject <WebDocumentRepresentation>
 {
     WebImageRenderer *image;
-    BOOL doneLoading;
+    NSString *filename;
+    NSData *data;
     NSURL *URL;
 }
 - (WebImageRenderer *)image;
+- (NSString *)filename;
 - (BOOL)doneLoading;
+- (NSData *)data;
 - (NSURL *)URL;
 @end

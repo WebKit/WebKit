@@ -18,7 +18,9 @@
 
 - (void)dealloc
 {
+    [filename release];
     [image release];
+    [data release];
     [URL release];
     [super dealloc];
 }
@@ -35,12 +37,13 @@
 
 - (BOOL)doneLoading
 {
-    return doneLoading;
+    return data != nil;
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     URL = [[[dataSource request] URL] retain];
+    filename = [[[dataSource response] suggestedFilename] retain];
     image = [[[WebImageRendererFactory sharedFactory] imageRendererWithMIMEType:[[dataSource response] MIMEType]] retain];
 }
 
@@ -52,18 +55,16 @@
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
-    NSData *allData = [dataSource data];
-    if ([allData length] > 0) {
-        [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+    data = [[dataSource data] retain];
+    if ([data length] > 0) {
+        [image incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
     }
-    doneLoading = YES;
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    NSData *allData = [dataSource data];
-    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
-    doneLoading = YES;
+    data = [[dataSource data] retain];
+    [image incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
 }
 
 - (BOOL)canProvideDocumentSource
@@ -78,12 +79,21 @@
 
 - (NSString *)title
 {
-    NSString *lastPathComponent = [[URL path] lastPathComponent];
     NSSize size = [image size];
     if (!NSEqualSizes(size, NSZeroSize)) {
-        return [NSString stringWithFormat:UI_STRING("%@ %dx%d pixels", "window title for a standalone image"), lastPathComponent, (int)size.width, (int)size.height];
+        return [NSString stringWithFormat:UI_STRING("%@ %.0fx%.0f pixels", "window title for a standalone image"), filename, size.width, size.height];
     }
-    return lastPathComponent;
+    return filename;
+}
+
+- (NSData *)data
+{
+    return data;
+}
+
+- (NSString *)filename
+{
+    return filename;
 }
 
 @end

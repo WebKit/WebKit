@@ -319,6 +319,7 @@
 				BE07CEB1047538F000CA289C,
 				BE6DC39B04C62C4E004D0EF6,
 				ED21B9820528F7AA003299AC,
+				833987820543012D00EE146E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -790,6 +791,8 @@
 			fileRef = 35081D9A02B6D4D80ACA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+				);
 			};
 		};
 		35081DA502B6D4D80ACA2ACA = {
@@ -1874,6 +1877,23 @@
 //832
 //833
 //834
+		833987810543012D00EE146E = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebDocumentPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		833987820543012D00EE146E = {
+			fileRef = 833987810543012D00EE146E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		83402EF6035A588900BE770A = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
@@ -2467,6 +2487,7 @@
 				515E27D00458CA4B00CA2D3A,
 				35081DAE02B6D4F50ACA2ACA,
 				ED21B9810528F7AA003299AC,
+				833987810543012D00EE146E,
 				3944606B020F50ED0ECA1767,
 				3944606C020F50ED0ECA1767,
 				2D81DAB203EB0B2D00A80166,

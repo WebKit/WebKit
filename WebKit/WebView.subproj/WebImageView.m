@@ -5,6 +5,7 @@
 
 #import <WebKit/WebImageView.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameViewPrivate.h>
@@ -16,7 +17,7 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <WebKit/WebAssertions.h>
+#import <Foundation/NSFileManager_NSURLExtras.h>
 
 @implementation WebImageView
 
@@ -240,16 +241,11 @@
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    NSURL *URL = [rep URL];
-    [[self webView] _downloadURL:URL toDirectory:[dropDestination path]];
-
-    // FIXME: The file is supposed to be created at this point so the Finder places the file
-    // where the drag ended. Since we can't create the file until the download starts,
-    // this fails. Even if we did create the file at this point, the Finder doesn't
-    // place the file in the right place anyway (2825055).
-    // FIXME: We may return a different filename than the file that we will create.
-    // Since the file isn't created at this point anwyway, it doesn't matter what we return.
-    return [NSArray arrayWithObject:[[URL path] lastPathComponent]];
+    // FIXME: Report an error if we fail to create a file.
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:[rep filename]];
+    path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
+    [[rep data] writeToFile:path atomically:NO];
+    return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
@@ -259,6 +255,11 @@
 
     // Balance the previous retain from when the drag started.
     [self release];
+}
+
+- (NSImage *)image
+{
+    return [rep image];
 }
 
 @end
