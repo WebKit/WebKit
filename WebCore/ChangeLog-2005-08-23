@@ -1,3 +1,26 @@
+05-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken and John.
+
+	Re-fixed a specific case of the following:
+
+	<rdar://problem/3790449> REGRESSION (Mail): underline behavior is flaky because of how CSS handles text-decoration
+
+	Oddly, Cmd-B, Cmd-U, type some text, return, Cmd-U, Cmd-B, type
+	some text, worked fine. But hitting the second Cmd-B before the
+	second Cmd-U still failed to remove underlining. The reason for
+	this is that our code to compute the style of the current position
+	did not work when you had a typing style and were positioned right
+	at a <br> element. For various reasons, this did not show up for
+	bold and italic, since those are handled through the font manager.
+
+	The following change fixes this - for elements that can't have
+	children, we add the dummy span after the element of interest,
+	rather than as a child of it.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionComputedStyle): 
+
 2005-02-11  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
