@@ -50,6 +50,7 @@ public:
 
     bool isEmpty() const;
     bool isMalformed() const;
+    bool isValid() const { return !isMalformed(); }
     bool hasPath() const;
 
     QString url() const;

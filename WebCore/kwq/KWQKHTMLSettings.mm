@@ -90,6 +90,11 @@ bool KHTMLSettings::isFormCompletionEnabled() const
     return false;
 }
 
+KHTMLSettings::KAnimationAdvice KHTMLSettings::showAnimations() const
+{
+    return KAnimationEnabled;
+}
+
 int KHTMLSettings::maxFormCompletionItems() const
 {
     return 0;
@@ -134,4 +139,9 @@ bool KHTMLSettings::isJavaScriptEnabled() const
 bool KHTMLSettings::isJavaScriptDebugEnabled() const
 {
     return false;
+}
+
+QString KHTMLSettings::userStyleSheet() const
+{
+    return QString();
 }
