@@ -26,4 +26,13 @@
 #ifndef KCONFIG_H_
 #define KCONFIG_H_
 
+#include "kconfigbase.h"
+
+class QString;
+
+class KConfig : public KConfigBase {
+public:
+    KConfig(const QString &);
+};
+
 #endif

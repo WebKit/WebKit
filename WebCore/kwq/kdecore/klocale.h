@@ -26,6 +26,13 @@
 #ifndef KLOCALE_H_
 #define KLOCALE_H_
 
+class QString;
+
 QString i18n(const char* text);
+
+class KLocale {
+public:
+    QString language() const;
+};
 
 #endif

@@ -34,6 +34,8 @@ public:
     int visibleHeight() const;
     int contentsX() const;
     int contentsY() const;
+    void scrollBy(int dx, int dy);
+    virtual void setContentsPos(int x, int y);
     // NOTE: alphabetical order
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
 };

@@ -50,12 +50,16 @@ public:
     ButtonState state();
 };
 
+class QTimerEvent : public QEvent {
+public:
+    int timerId() const;
+};
+
 class QFocusEvent : public QEvent {};
 class QHideEvent : public QEvent {};
 class QKeyEvent : public QEvent {};
 class QResizeEvent : public QEvent {};
 class QShowEvent : public QEvent {};
-class QTimerEvent : public QEvent {};
 class QWheelEvent : public QEvent {};
 
 #endif

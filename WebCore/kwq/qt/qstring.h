@@ -95,6 +95,7 @@ public:
     QString &replace(const QRegExp &, const QString &);
     QString &insert(uint, char);
     void truncate(uint pos);
+    bool startsWith(const QString&) const;
 
     QString arg(const QString&, int fieldwidth = 0) const;
 

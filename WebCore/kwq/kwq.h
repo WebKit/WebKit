@@ -28,6 +28,8 @@
 
 #include <qsize.h>
 #include <qcolor.h>
+#include <qobject.h>
+#include <qvariant.h>
 
 typedef unsigned char uchar;
 typedef unsigned short ushort;

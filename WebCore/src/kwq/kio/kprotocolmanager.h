@@ -23,16 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCONFIG_H_
-#define KCONFIG_H_
-
-#include "kconfigbase.h"
+#ifndef KPROTOCOLMANAGER_H_
+#define KPROTOCOLMANAGER_H_
 
 class QString;
 
-class KConfig : public KConfigBase {
+class KProtocolManager {
 public:
-    KConfig(const QString &);
+    static QString userAgentForHost(const QString&);
 };
 
 #endif

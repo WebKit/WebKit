@@ -26,4 +26,14 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
+#include <qrect.h>
+
+class KWin {
+public:
+    struct Info {
+        QRect geometry;
+    };
+    static Info info(int win);
+};
+
 #endif

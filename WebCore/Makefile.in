@@ -20,6 +20,7 @@ SUBDIRS = \
 	src/kdelibs/kjs \
 	src/kdelibs/khtml/css \
 	src/kdelibs/khtml/dom \
+	src/kdelibs/khtml/ecma \
 	src/kdelibs/khtml/xml \
 	$(NULL)
 

@@ -26,4 +26,11 @@
 #ifndef KWINMODULE_H_
 #define KWINMODULE_H_
 
+class QRect;
+
+class KWinModule {
+public:
+    QRect workArea(int desktop = - 1) const;
+};
+
 #endif

@@ -42,6 +42,7 @@ SUBDIRS='
 	src/kdelibs/kjs
 	src/kdelibs/khtml/css
 	src/kdelibs/khtml/dom
+	src/kdelibs/khtml/ecma
 	src/kdelibs/khtml/xml
 '
 for subdir in $SUBDIRS; do
@@ -185,6 +186,7 @@ AC_OUTPUT(
 	src/kdelibs/kjs/Makefile 
 	src/kdelibs/khtml/css/Makefile
 	src/kdelibs/khtml/dom/Makefile
+	src/kdelibs/khtml/ecma/Makefile
 	src/kdelibs/khtml/xml/Makefile
 )
 

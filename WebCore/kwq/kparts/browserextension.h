@@ -29,6 +29,11 @@
 // Added for compilation of khtml/dom/html_document.cpp:184
 #include <qdatastream.h>
 
+// classes and includes added for ecma directory
+#include "part.h"
+#include "browserinterface.h"
+class KURL;
+
 // Added for compilation of khtml/khtml_part.h:734
 class QPoint;
 
@@ -39,11 +44,29 @@ namespace KParts {
 
 // Added for compilation of khtml/khtml_part.h:695
 struct URLArgs {
+    QString frameName;
+    QString serviceType;
+};
+
+struct WindowArgs {
+    int x;
+    int y;
+    int width;
+    int height;
+    bool menuBarVisible;
+    bool statusBarVisible;
+    bool toolBarsVisible;
+    bool resizable;
+    bool fullscreen;
 };
 
 class BrowserExtension {
+public:
+     BrowserInterface *browserInterface() const;
+     void openURLRequest(const KURL &url, const KParts::URLArgs &args = KParts::URLArgs());
+     void createNewWindow(const KURL &url, const KParts::URLArgs &args, const KParts::WindowArgs &windowArgs, KParts::ReadOnlyPart *&part);
 };
 
-};
+}; // namespace KParts
 
 #endif

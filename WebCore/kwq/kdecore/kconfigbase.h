@@ -23,16 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCONFIG_H_
-#define KCONFIG_H_
+#ifndef KCONFIGBASE_H_
+#define KCONFIGBASE_H_
 
-#include "kconfigbase.h"
-
-class QString;
-
-class KConfig : public KConfigBase {
+class KConfigBase {
 public:
-    KConfig(const QString &);
+    void setGroup(const QString& pGroup);
+    QString readEntry(const char *pKey, const QString& aDefault = QString::null) const;
+    int readNumEntry(const char *pKey, int nDefault = 0) const;
+    unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault = 0) const;
 };
 
 #endif

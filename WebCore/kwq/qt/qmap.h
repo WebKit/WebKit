@@ -26,10 +26,16 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
+template<class K, class T> class QMapIterator {
+};
+
 template <class K, class T> class QMap {
 public:
+    typedef QMapIterator<K,T> Iterator;
+    Iterator insert(const K&, const T&);
     void remove(const K&);
     void clear();
+    T& operator[](const K& k);
 };
 
 #endif

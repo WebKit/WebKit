@@ -26,4 +26,16 @@
 #ifndef KMESSAGEBOX_H_
 #define KMESSAGEBOX_H_
 
+class QWidget;
+
+class KMessageBox {
+public:
+    enum { Ok = 1, Cancel = 2, Yes = 3, No = 4, Continue = 5 };
+    static void error(QWidget *parent, const QString &text, const QString &caption = QString::null, bool notify=true);
+    static int warningYesNo(QWidget *parent, const QString &text, const QString &caption = QString::null,
+        const QString &buttonYes = QString::null, const QString &buttonNo = QString::null, bool notify=true);
+    static int questionYesNo(QWidget *parent, const QString &text, const QString &caption = QString::null,
+        const QString &buttonYes = QString::null, const QString &buttonNo = QString::null, bool notify=true);
+};
+
 #endif

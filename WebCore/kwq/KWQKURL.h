@@ -31,12 +31,27 @@ class QString;
 class KURL {
 public:
         KURL();
+        KURL(const char *url, int encoding_hint = 0);
+        KURL(const KURL& url, const QString &);
         KURL(const QString& url, int encoding_hint = 0);
+        bool hasPath() const;
+	unsigned short int port() const;
+	QString path() const;
+	QString query() const;
+	QString ref() const;
+	QString user() const;
+	QString pass() const;
 	QString url() const;
+	QString host() const;
+	QString protocol() const;
         void setQuery(const QString& _txt, int encoding_hint = 0);
+        void setProtocol(const QString&);
+        void setHost(const QString&);
         void setRef(const QString& _txt);
         void setPath(const QString& path);
+        void setPort(unsigned short int);
 	bool isEmpty() const;
+        QString prettyURL(int _trailing = 0) const;
 };
 
 #endif

@@ -48,6 +48,7 @@ public:
     QPoint mapToGlobal(const QPoint &) const;
     void setFocus();
     void clearFocus();
+    virtual void setActiveWindow();
 };
 
 #endif

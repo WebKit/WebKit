@@ -26,4 +26,16 @@
 #ifndef BROWSERINTERFACE_H_
 #define BROWSERINTERFACE_H_
 
+class QVariant;
+
+namespace KParts {
+
+class BrowserInterface : public QObject {
+public:
+    BrowserInterface(QObject *parent, const char *name = 0);
+    void callMethod(const char *name, const QVariant &argument);
+};
+
+} // namespace KParts
+
 #endif

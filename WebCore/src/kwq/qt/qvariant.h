@@ -26,11 +26,14 @@
 #ifndef QVARIANT_H_
 #define QVARIANT_H_
 
+typedef unsigned int uint;
+
 class QString;
 
 class QVariant {
 public:
     enum Type {
+        UInt,
         Bool
     };
 
@@ -41,6 +44,7 @@ public:
     
     Type type() const;
     bool toBool() const;
+    uint toUInt() const;
 };
 
 #endif

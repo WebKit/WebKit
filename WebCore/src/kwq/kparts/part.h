@@ -28,6 +28,9 @@
 
 #include <kurl.h>
 #include <qvariant.h>
+#include <qlist.h>
+#include <qstringlist.h>
+#include <qvaluelist.h>
 
 // added to help in compilation of khtml/khtml_part.h:867
 namespace KIO {
@@ -43,12 +46,19 @@ class QCursor;
 // forward declaration hack to help in compilation of khtml/khtml_part.h:631
 class QDataStream;
 
+// forward declaration hack to help in compilation of khtml/ecma/kjs_binding.cpp:28
+class QPainter;
+
 namespace KParts {
 
-class Part {
+class Part : public QObject {
+public:
+    QWidget *widget();
 };
 
 class ReadOnlyPart : public Part {
+public:
+    virtual const KURL & url() const;
 };
 
 // hack to help in compilation of khtml/khtml_part.h:785

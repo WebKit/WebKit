@@ -26,4 +26,9 @@
 #ifndef KSTDDIRS_H_
 #define KSTDDIRS_H_
 
+class KStandardDirs {
+public:
+    QString saveLocation(const char *type, const QString& suffix = QString::null, bool create = true) const;
+};
+
 #endif
