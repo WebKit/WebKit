@@ -347,10 +347,12 @@ static BOOL NSURLConnectionSupportsBufferedData;
     newRequest = [mutableRequest autorelease];
 
     clientRequest = [newRequest _webDataRequestExternalRequest];
-    if(!clientRequest)
+    if(!clientRequest) {
         clientRequest = newRequest;
-    else
+    }
+    else {
         haveDataSchemeRequest = YES;
+    }
     
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
@@ -373,8 +375,12 @@ static BOOL NSURLConnectionSupportsBufferedData;
         // If the delegate modified the request use that instead of
         // our applewebdata request, otherwise use the original
         // applewebdata request.
-        if (![updatedRequest isEqual:clientRequest])
+        if (![updatedRequest isEqual:clientRequest]) {
             newRequest = updatedRequest;
+            // Sanitize the request, so that the WebDataRequest properties
+            // don't end up getting cached.
+            [newRequest _webDataRequestSanitize];
+        }
     }
 
     // Store a copy of the request.
