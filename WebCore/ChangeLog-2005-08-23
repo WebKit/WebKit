@@ -1,3 +1,18 @@
+2005-03-14  Vicki Murley  <vicki@apple.com>
+
+	- roll out this change for now, since it was denied by CCC
+
+    2005-03-11  David Harrison  <harrison@apple.com>
+        
+        Reviewed by Darin.
+        
+        <rdar://problem/4046602> WebCore invokes undefined behavior when the spell checker isn't running
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::markMisspellings):
+        Nil check checker.
+
 2005-03-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
