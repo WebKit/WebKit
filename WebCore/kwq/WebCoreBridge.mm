@@ -67,6 +67,7 @@ using DOM::DocumentImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 
+using khtml::Decoder;
 using khtml::parseURL;
 using khtml::RenderImage;
 using khtml::RenderObject;
@@ -182,14 +183,14 @@ static bool initializedObjectCacheSize = FALSE;
     }
 }
 
-- (void)addData:(NSData *)data withEncoding:(NSString *)encoding
+- (void)setEncoding:(NSString *)encoding userChosen:(BOOL)userChosen
 {
-    _part->slotData(encoding, NO, (const char *)[data bytes], [data length], NO);
+    _part->setEncoding(QString::fromNSString(encoding), userChosen);
 }
 
-- (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding
+- (void)addData:(NSData *)data
 {
-    _part->slotData(encoding, YES, (const char *)[data bytes], [data length], NO);
+    _part->addData((const char *)[data bytes], [data length]);
 }
 
 - (void)closeURL

@@ -311,13 +311,15 @@
 {
     ASSERT([self dataSource] == withDataSource);
 
-    if ([withDataSource _overrideEncoding]) {
-	[self addData:data withOverrideEncoding:[withDataSource _overrideEncoding]];
-    } else if ([[withDataSource response] textEncodingName]) {
-	[self addData:data withEncoding:[[withDataSource response] textEncodingName]];
-    } else {
-        [self addData:data withEncoding:[[WebPreferences standardPreferences] defaultTextEncodingName]];
+    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
+    NSString *encoding = [withDataSource _overrideEncoding];
+    BOOL userChosen = encoding != nil;
+    if (encoding == nil) {
+        encoding = [[withDataSource response] textEncodingName];
     }
+    [self setEncoding:encoding userChosen:userChosen];
+
+    [self addData:data];
 }
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSString *)URL

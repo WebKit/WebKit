@@ -97,7 +97,8 @@ public:
     void scrollToAnchor(const KURL &);
     void jumpToSelection();
     
-    void slotData(NSString *, bool forceEncoding, const char *bytes, int length, bool complete = false);
+    void setEncoding(const QString &encoding, bool userChosen);
+    void addData(const char *bytes, int length);
 
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);

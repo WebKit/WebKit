@@ -541,21 +541,20 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
     clearRecordedFormValues();
 }
 
-void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
+void KWQKHTMLPart::setEncoding(const QString &name, bool userChosen)
 {
     if (!d->m_workingURL.isEmpty()) {
         receivedFirstData();
     }
-    
+    d->m_encoding = name;
+    d->m_haveEncoding = userChosen;
+}
+
+void KWQKHTMLPart::addData(const char *bytes, int length)
+{
+    ASSERT(d->m_workingURL.isEmpty());
     ASSERT(d->m_doc);
     ASSERT(d->m_doc->parsing());
-    
-    if (encoding) {
-        setEncoding(QString::fromNSString(encoding), forceEncoding);
-    } else {
-        setEncoding(QString::null, false);
-    }
-    
     write(bytes, length);
 }
 

@@ -1,3 +1,15 @@
+2003-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3210096 -- server identifies page as UTF-8, page identifies itself as windows-1252, server must win
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge receivedData:withDataSource:]):
+        Change for new WebCore API. Pass the encoding in a separate setEncoding call rather than
+        as a parameter in addData. Also don't handle default encoding here any more. Default encoding
+        is now handled the same way all the other preferences are, in a way that works better on the
+        WebCore side anyway; nil or empty string means use the default encoding.
+
 2003-04-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

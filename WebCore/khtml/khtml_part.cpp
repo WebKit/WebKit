@@ -96,6 +96,7 @@ using namespace DOM;
 #include <CoreServices/CoreServices.h>
 #endif
 
+using khtml::Decoder;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::TextRunArray;
@@ -1479,11 +1480,12 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 void KHTMLPart::write( const char *str, int len )
 {
     if ( !d->m_decoder ) {
-        d->m_decoder = new khtml::Decoder();
+        d->m_decoder = new Decoder;
         if (!d->m_encoding.isNull())
-            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
+            d->m_decoder->setEncoding(d->m_encoding.latin1(),
+                d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);
         else
-            d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+            d->m_decoder->setEncoding(settings()->encoding().latin1(), Decoder::DefaultEncoding);
 #if APPLE_CHANGES
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder);
@@ -1904,12 +1906,13 @@ void KHTMLPart::slotRedirection(KIO::Job*, const KURL& url)
   d->m_workingURL = url;
 }
 
+#if !APPLE_CHANGES
+
 bool KHTMLPart::setEncoding( const QString &name, bool override )
 {
     d->m_encoding = name;
     d->m_haveEncoding = override;
 
-#if !APPLE_CHANGES
     if( !m_url.isEmpty() ) {
         // reload document
         closeURL();
@@ -1919,10 +1922,11 @@ bool KHTMLPart::setEncoding( const QString &name, bool override )
         openURL(url);
         d->m_restored = false;
     }
-#endif
 
     return true;
 }
+
+#endif
 
 QString KHTMLPart::encoding() const
 {

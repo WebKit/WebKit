@@ -1,5 +1,50 @@
 2003-04-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+        - fixed 3210096 -- server identifies page as UTF-8, page identifies itself as windows-1252, server must win
+        - fixed 3105796 -- www.thai.com does not display with correct encoding (<body> tag in comment before <meta>)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::write): Pass in an EncodingType rather than just a boolean. This lets us tell
+        the difference between EncodingFromHTTPHeader (which wins out over an encoding in a meta tag)
+        and DefaultEncoding (which loses).
+        (KHTMLPart::setEncoding): Put ifdef around the whole function. We use our own version in
+        KWQKHTMLPart instead.
+        
+        * khtml/misc/decoder.h: Defined an EncodingType and changed the parameter to setEncoding to take
+        it instead of force and 8-bit-only parameters. Store it in m_type and get rid of haveEncoding.
+        * khtml/misc/decoder.cpp:
+        (Decoder::Decoder): Set m_type to DefaultEncoding.
+        (Decoder::setEncoding): Take a type parameter, instead of force and 8-bit-only parameters.
+        Use "eight-bit-only" mode for EncodingFromMetaTag only. Fix code so we don't clobber an existing
+        codec if we can't find a new one in a simpler way. Store the type in m_type, rather than using
+        the confusing "haveEncoding" flag.
+        (skipComment): Added. Used to skip comments found in the <head> section.
+        (Decoder::decode): Moved the check for the UTF-16 BOM out and do that check even when we have
+        an encoding (although not if we have one the user chose). Update check so that we look for a meta
+        tag when we have nothing except a default encoding. This fixes the bug where we have an encoding
+        from an HTTP header; in that case we do not want to look at the meta tag. Improve performance a bit
+        by not constructing a string just so we can append the data. Merged the APPLE_CHANGES case a bit
+        with the original case better. Added code to skip comments; this fixes the thai.com issue. Improved
+        the code to handle data after the first buffer full. We now avoid putting data into a QString once
+        we are past the header. Extended an APPLE_CHANGES ifdef to exclude more code we don't need.
+
+        * kwq/KWQKHTMLPart.h: Added setEncoding and addData to replace slotData.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setEncoding): Added. Needs to be called only once and does the first-time work as
+        well as setting up the encoding for the page. In practice it is called before each time addData is.
+        (KWQKHTMLPart::addData): Added. Needs to be called for each run of data. Now just calls write(),
+        but does some assertions, which is why I have not removed it and changed the bridge to call write().
+        
+        * kwq/WebCoreBridge.h: Replaced the old addData:withEncoding: and addData:withOverrideEncoding: with
+        setEncoding:userChosen: and addData:.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setEncoding:userChosen:]): Call setEncoding on the part.
+        (-[WebCoreBridge addData:]): Call addData on the part.
+
+2003-04-24  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - improved the text encoding database
