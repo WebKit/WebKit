@@ -1,3 +1,13 @@
+2005-01-19  Richard Williamson   <rjw@apple.com>
+
+	After further discussion with Real we have decided to NOT include the
+	additional CLSID for the real plugin.  See 3958601.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+
 2005-01-19  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.
