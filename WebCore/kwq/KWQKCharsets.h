@@ -27,15 +27,18 @@
 #define KCHARSETS_H_
 
 #include <qfont.h>
+
 class QString;
 class QTextCodec;
 
 class KCharsets {
 public:
-    QTextCodec *codecForName(const QString &name, bool &ok) const;
-    void setQFont(QFont &f, QString charset) const;
+    QTextCodec *codecForName(const QString &) const;
+    QTextCodec *codecForName(const QString &, bool &) const;
+    void setQFont(QFont &, QString) const;
+    QString name(QFont::CharSet);
     QString xCharsetName(QFont::CharSet) const;
-    bool supportsScript(const QFont &f, QFont::CharSet charset);
+    bool supportsScript(const QFont &, QFont::CharSet);
 };
 
 #endif

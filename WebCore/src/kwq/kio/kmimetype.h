@@ -26,4 +26,7 @@
 #ifndef KMIMETYPE_H_
 #define KMIMETYPE_H_
 
+// FIXME: grotesque hack to get khtml/html/html_formimpl.cpp:198 to compile
+#include <kdecore/kglobal.h>
+
 #endif
