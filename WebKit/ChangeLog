@@ -1,3 +1,13 @@
+2003-09-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3420112>: Reproducible Safari crash in in -[WebBaseNetscapePluginView sendEvent:]
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): temporarily retain self in case the plug-in view is released while sending an event. 
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:targetFrame:]): don't deliver the return value of the JS evaluation if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
+
 === WebKit-102 ===
 
 2003-09-11  Maciej Stachowiak  <mjs@apple.com>

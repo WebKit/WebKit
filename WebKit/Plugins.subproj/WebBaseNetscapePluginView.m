@@ -325,14 +325,21 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         ForeColor(blackColor);
     }
 #endif
+    
+    // Temporarily retain self in case the plug-in view is released while sending an event. 
+    [self retain];
 
     BOOL acceptedEvent = NPP_HandleEvent(instance, event);
 
-    [self restorePortState:portState];
+    if ([self currentWindow]) {
+        [self restorePortState:portState];
+    }
 
     if (!defers) {
         [[self webView] setDefersCallbacks:NO];
     }
+    
+    [self release];
     
     return acceptedEvent;
 }
@@ -1194,6 +1201,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)evaluateJavaScriptPluginRequest:(WebPluginRequest *)JSPluginRequest targetFrame:(WebFrame *)targetFrame
 {
+    // FIXME: Is this isStarted check needed here? evaluateJavaScriptPluginRequest should not be called
+    // if we are stopped since this method is called after a delay and we call 
+    // cancelPreviousPerformRequestsWithTarget inside of stop.
     if (!isStarted) {
         return;
     }
@@ -1204,6 +1214,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     WebFrame *evaluatingFrame = targetFrame ? targetFrame : [self webFrame];
     NSString *result = [[evaluatingFrame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+    
+    // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
+    if (!isStarted) {
+        return;
+    }
+    
     void *notifyData = [JSPluginRequest notifyData];
     
     if (targetFrame) {
