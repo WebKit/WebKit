@@ -1,3 +1,14 @@
+2004-01-06  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3520636, infinite loop in page breaking code when printing.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge computePageRectsWithPrintWidth:printHeight:]):
+
 2004-01-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3521466, generated image content should not try to calcWidth/height when it isn't yet rooted in

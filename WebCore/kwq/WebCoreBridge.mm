@@ -493,7 +493,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     for (float i = 0; i < docHeight; i += currPageHeight) {
         float proposedBottom = kMin(docHeight, i + printHeight);
         _part->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
-        currPageHeight = proposedBottom - i;
+        currPageHeight = kMin(1.0f, proposedBottom - i);
 		for (float j = 0; j < docWidth; j += printWidth) {
 			NSValue* val = [NSValue valueWithRect: NSMakeRect(j, i, printWidth, currPageHeight)];
 			[pages addObject: val];
