@@ -28,9 +28,11 @@
 
 #include "KWQString.h"
 
+struct KWQXmlNamespace;
+
 class QXmlAttributes {
 public:
-    QXmlAttributes() : _ref(0), _length(0), _names(0), _values(0) { }
+    QXmlAttributes() : _ref(0), _length(0), _names(0), _values(0), _uris(0) { }
     QXmlAttributes(const char **expatStyleAttributes);
     ~QXmlAttributes();
     
@@ -38,17 +40,21 @@ public:
     QXmlAttributes &operator=(const QXmlAttributes &);
     
     int length() const { return _length; }
-    QString localName(int index) const { return _names[index]; }
-    QString uri(int index) const;
+    QString qName(int index) const { return _names[index]; }
+    QString localName(int index) const;
+    QString uri(int index) const { if (!_uris) return QString::null; return _uris[index]; }
     QString value(int index) const { return _values[index]; }
 
     QString value(const QString &) const;
 
+    void split(KWQXmlNamespace* ns);
+    
 private:
     mutable int *_ref;
     int _length;
     QString *_names;
     QString *_values;
+    QString *_uris;
 };
 
 #endif

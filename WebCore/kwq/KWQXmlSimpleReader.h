@@ -27,6 +27,37 @@
 #define KWQXMLSIMPLEREADER_H
 
 #include "KWQString.h"
+#include "KWQPtrStack.h"
+
+struct KWQXmlNamespace {
+    QString m_prefix;
+    QString m_uri;
+    KWQXmlNamespace* m_parent;
+    
+    int m_ref;
+    
+    KWQXmlNamespace() :m_parent(0), m_ref(0) {}
+    
+    KWQXmlNamespace(const QString& p, const QString& u, KWQXmlNamespace* parent) 
+        :m_prefix(p),
+         m_uri(u),
+         m_parent(parent), 
+         m_ref(0) 
+    { 
+        if (m_parent) m_parent->ref();
+    }
+    
+    QString uriForPrefix(const QString& prefix) {
+        if (prefix == m_prefix)
+            return m_uri;
+        if (m_parent)
+            return m_parent->uriForPrefix(prefix);
+        return "";
+    }
+    
+    void ref() { m_ref++; }
+    void deref() { if (--m_ref == 0) { if (m_parent) m_parent->deref(); delete this; } }
+};
 
 class QXmlAttributes;
 
@@ -40,9 +71,14 @@ private:
 
 class QXmlParseException {
 public:
-    QString message() const;
-    int columnNumber() const;
-    int lineNumber() const;
+    QXmlParseException(const QString &m, int c, int l) : m_message(m), m_column(c), m_line(l) { }
+    QString message() const { return m_message; }
+    int columnNumber() const { return m_column; }
+    int lineNumber() const { return m_line; }
+private:
+    QString m_message;
+    int m_column;
+    int m_line;
 };
 
 class QXmlContentHandler {
@@ -105,16 +141,30 @@ public:
     void setLexicalHandler(QXmlLexicalHandler *handler) { _lexicalHandler = handler; }
     
     QXmlContentHandler *contentHandler() const { return _contentHandler; }
+    QXmlErrorHandler *errorHandler() const { return _errorHandler; }
     QXmlLexicalHandler *lexicalHandler() const { return _lexicalHandler; }
 
     bool parse(const QXmlInputSource &input);
 
+    KWQXmlNamespace* pushNamespaces(QXmlAttributes& attributes);
+    KWQXmlNamespace* popNamespaces();
+    KWQXmlNamespace* xmlNamespace() { return m_namespaceStack.current(); }
+
+    bool parserStopped() const { return m_parserStopped; }
+    void stopParsing();
+
+    int lineNumber() const;
+    int columnNumber() const;
+    
 private:
     QXmlContentHandler *_contentHandler;
     QXmlDeclHandler *_declarationHandler;
     QXmlDTDHandler *_DTDHandler;
     QXmlErrorHandler *_errorHandler;
     QXmlLexicalHandler *_lexicalHandler;
+    QPtrStack<KWQXmlNamespace> m_namespaceStack;
+    bool m_parserStopped;
+    struct _xmlParserCtxt *m_context;
 };
 
 #endif
