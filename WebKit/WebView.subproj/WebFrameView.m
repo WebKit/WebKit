@@ -96,10 +96,8 @@ enum {
 
 - (float)_verticalKeyboardScrollDistance
 {
-    // verticalLineScroll is quite small, to make scrolling from the scroll bar
-    // arrows relatively smooth. But this seemed too small for scrolling with
-    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self _scrollView] verticalLineScroll] * 4;
+    // Arrow keys scroll the same distance that clicking the scroll arrow does.
+    return [[self _scrollView] verticalLineScroll];
 }
 
 - (BOOL)_shouldDrawBorder
@@ -309,6 +307,7 @@ static NSMutableDictionary *viewTypes;
     [scrollView setHasVerticalScroller: NO];
     [scrollView setHasHorizontalScroller: NO];
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [scrollView setLineScroll:40.0];
     [self addSubview: scrollView];
     // don't call our overridden version here; we need to make the standard NSView link between us
     // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
@@ -529,10 +528,8 @@ static NSMutableDictionary *viewTypes;
 
 - (float)_horizontalKeyboardScrollDistance
 {
-    // horizontalLineScroll is quite small, to make scrolling from the scroll bar
-    // arrows relatively smooth. But this seemed too small for scrolling with
-    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self _scrollView] horizontalLineScroll] * 4;
+    // Arrow keys scroll the same distance that clicking the scroll arrow does.
+    return [[self _scrollView] horizontalLineScroll];
 }
 
 - (float)_horizontalPageScrollDistance

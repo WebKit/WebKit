@@ -1,3 +1,17 @@
+2005-04-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4077106, wheel scroll amount smaller in Tiger.  All along wheeling should have been 4x the default
+	line height of 10 (just as arrow keys did).  Scroll arrows should have done this too for scroll views (they did
+	already for overflow sections).  This patch puts the override into the scrollview itself, and removes the
+	multipliers in the private frame methods.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _verticalKeyboardScrollDistance]):
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView _horizontalKeyboardScrollDistance]):
+
 === WebKit-312.1 ===
 
 2005-03-31  Chris Blumenberg  <cblu@apple.com>
