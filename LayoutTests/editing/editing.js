@@ -242,3 +242,61 @@ function runEditingTest() {
 }
 
 //-------------------------------------------------------------------------------------------------------
+
+function execBackColorCommand() {
+    document.execCommand("BackColor", false, "Chartreuse");
+}
+function backColorCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execBackColorCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execBackColorCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execForeColorCommand() {
+    document.execCommand("ForeColor", false, "Purple");
+}
+function foreColorCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execForeColorCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execForeColorCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execFontNameCommand() {
+    document.execCommand("FontName", false, "Courier");
+}
+function fontNameCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execFontNameCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execFontNameCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execFontSizeCommand() {
+    document.execCommand("FontSize", false, "48px");
+}
+function fontSizeCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execFontSizeCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execFontSizeCommand();
+    }
+}

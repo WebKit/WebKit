@@ -1,3 +1,12 @@
+2004-07-06  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by kocienda.
+
+	- added backColorCommand, foreColorCommand, fontNameCommand, 
+	and fontSizeCommand
+  
+        * layout-tests/editing/editing.js:
+
 2004-07-06  Trey Matteson  <trey@apple.com>
 
 	3716053 - www.theage.com.au has extra back/forward items due to ads
