@@ -992,7 +992,7 @@ void RenderBox::calcAbsoluteVertical()
     Length hl = cb->style()->height();
     if (hl.isFixed())
         ch = hl.value + cb->paddingTop()
-             + cb->paddingBottom();
+             + cb->paddingBottom() + cb->borderTop() + cb->borderBottom();
     else if (cb->isHtml())
         ch = cb->availableHeight();
     else
@@ -1038,16 +1038,15 @@ void RenderBox::calcAbsoluteVertical()
         while ( ro && ro->isPositioned())
             ro = ro->previousSibling();
 
-        if (ro) static_top = ro->yPos()+ro->marginBottom()+ro->height();
-
+        if (ro)
+            static_top = ro->yPos() + ro->marginBottom() + ro->height();
+        
         for (RenderObject* po = parent(); po && po != cb; po = po->parent())
-            static_top+=po->yPos();
-            
+            static_top += po->yPos();
+        
         if (h==AUTO || style()->top().isStatic())
             t = static_top;
     }
-
-
 
     if (t!=AUTO && h!=AUTO && b!=AUTO)
     {

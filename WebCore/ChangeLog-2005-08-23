@@ -1,3 +1,13 @@
+2003-01-22  David Hyatt  <hyatt@apple.com>
+
+	Fix absolute positioning problem for bottom-positioned elements.  
+	This is a fix from the KHTML trunk.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteVertical):
+
 2003-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
