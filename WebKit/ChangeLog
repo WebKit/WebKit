@@ -1,5 +1,11 @@
 2004-12-06  Chris Blumenberg  <cblu@apple.com>
 
+	Forgot to commit copied header.
+
+        * DOM.subproj/DOMPrivate.h:
+
+2004-12-06  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3907381> NSURLConnection and WebKit buffer 2 copies of incoming data
 
         Reviewed by darin.
