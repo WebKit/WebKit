@@ -1,3 +1,13 @@
+2003-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3441656 -- constructor bad for objs created w/ function as prototype (www.moock.org/asdg/codedepot)
+
+        * kjs/nodes.cpp: (FuncDeclNode::processFuncDecl): Set up the constructor as
+        as specified in the JavaScript spec. We were already doing this right in the
+        other place we make functions.
+
 2003-09-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

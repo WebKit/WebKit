@@ -2798,7 +2798,8 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
   //  Value proto = exec->interpreter()->builtinObject().construct(exec,List::empty());
   List empty;
-  Value proto = exec->interpreter()->builtinObject().construct(exec,empty);
+  Object proto = exec->interpreter()->builtinObject().construct(exec,empty);
+  proto.put(exec, constructorPropertyName, func, ReadOnly|DontDelete|DontEnum);
   func.put(exec, prototypePropertyName, proto, Internal|DontDelete);
 
   int plen = 0;
