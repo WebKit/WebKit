@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+        - fixed part of <rdar://problem/3656948>: (HTML Editing: -[WebView replaceSelectionWithMarkupString:] doesn't seem to work)
+
+        * khtml/editing/htmlediting_impl.cpp: (khtml::PasteMarkupCommandImpl::doApply):
+        Changed code to handle case where contextual fragment parses to nothing without crashing.
+
+2004-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         * kwq/DOM-CSS.mm: Change DOMCSSStyleDeclaration methods to use strings with dash-separators in them
         rather than interCaps.
 
