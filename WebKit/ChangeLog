@@ -1,3 +1,34 @@
+2002-11-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3074108 - Decode macbinary files during download
+
+        * Downloads.subproj/WebDownloadDecoder.h:
+        * Downloads.subproj/WebDownloadHandler.h:
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler initWithDataSource:]):
+        (-[WebDownloadHandler dealloc]):
+        (-[WebDownloadHandler decodeHeaderData:dataForkData:resourceForkData:]):
+        (-[WebDownloadHandler decodeData:dataForkData:resourceForkData:]):
+        (-[WebDownloadHandler closeFile]):
+        (-[WebDownloadHandler cleanUpAfterFailure]):
+        (-[WebDownloadHandler createFileIfNecessary]):
+        (-[WebDownloadHandler writeData:toFork:]):
+        (-[WebDownloadHandler writeDataForkData:resourceForkData:]):
+        (-[WebDownloadHandler dataIfDoneBufferingData:]):
+        (-[WebDownloadHandler receivedData:]):
+        (-[WebDownloadHandler finishDecoding]):
+        (-[WebDownloadHandler finishedLoading]):
+        (-[WebDownloadHandler cancel]):
+        * Downloads.subproj/WebMacBinaryDecoder.h:
+        * Downloads.subproj/WebMacBinaryDecoder.m:
+        (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]):
+        (-[WebMacBinaryDecoder fileAttributes]):
+        (-[WebMacBinaryDecoder filename]):
+        * Misc.subproj/WebKitErrors.h: added new errors
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]): don't send response to download handler
+        (-[WebMainResourceClient handle:didReceiveData:]): watch for decoding errors
+
 2002-11-05  Ken Kocienda  <kocienda@apple.com>
 
 	Fix for this bug:

@@ -188,12 +188,6 @@
             // handle delegate callbacks to go to the controller's download delegate.
             downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
             [self setIsDownload: YES];
-            WebError *downloadError = [downloadHandler receivedResponse:r];
-            if (downloadError) {
-                [self receivedError:downloadError];
-                [handle cancel];
-                [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
-            }
         }
         break;
     
@@ -215,15 +209,21 @@
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
-            
+
     if (downloadHandler) {
-        [downloadHandler receivedData:data];
+        WebError *downloadError = [downloadHandler receivedData:data];
+        if (downloadError) {
+            [self receivedError:downloadError];
+            [handle cancel];
+            [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+            return;
+        }
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
         [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
-                                                         fromDataSource:dataSource
-                                                               complete:NO];
+                                          fromDataSource:dataSource
+                                                complete:NO];
     }
     
     [super handle: h didReceiveData: data];

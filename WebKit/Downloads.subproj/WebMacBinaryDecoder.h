@@ -12,7 +12,7 @@
 {
     int _offset;
     
-    char _name[64];
+    unsigned char _name[64];
     int _dataForkLength;
     int _resourceForkLength;
     int _commentLength;

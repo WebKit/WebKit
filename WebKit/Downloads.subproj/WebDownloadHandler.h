@@ -15,12 +15,20 @@
 @interface WebDownloadHandler : NSObject
 {
     WebDataSource *dataSource;
-    NSFileHandle *fileHandle;
+    
+    NSArray *decoderClasses;
+    NSMutableArray *decoderSequence;
+    NSMutableData *bufferedData;
+
+    FSRef fileRef;
+    FSRefPtr fileRefPtr;
+    
+    SInt16 dataForkRefNum;
+    SInt16 resourceForkRefNum;
 }
 
 - initWithDataSource:(WebDataSource *)dSource;
-- (WebError *)receivedResponse:(WebResourceResponse *)response; 
-- (void)receivedData:(NSData *)data;
+- (WebError *)receivedData:(NSData *)data;
 - (WebError *)finishedLoading;
-- (WebError *)cancel;
+- (void)cancel;
 @end

@@ -76,8 +76,8 @@ enum {
     if (_offset == 0) {
         const u_int8_t *header = [data bytes];
         
-        ASSERT(header[1] <= sizeof(_name));
-        memcpy(_name, header + 1, header[1]);	// Copy the name
+        ASSERT(header[1] < sizeof(_name));
+        memcpy(_name, header + 1, header[1] + 1);	// Copy the name
         _fileType = (((((header[65] << 8) | header[66]) << 8) | header[67]) << 8) | header[68];
         _fileCreator = (((((header[69] << 8) | header[70]) << 8) | header[71]) << 8) | header[72];
         _dataForkLength = (((((header[83] << 8) | header[84]) << 8) | header[85]) << 8) | header[86];
@@ -128,7 +128,6 @@ enum {
 {
     ASSERT(_offset >= HEADER_SIZE);
     
-    // FIXME: What about the name?
     // FIXME: What about other parts of Finder info? Bundle bit, for example.
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSDate dateWithTimeIntervalSinceReferenceDate:kCFAbsoluteTimeIntervalSince1904 + _creationDate], NSFileCreationDate,
@@ -137,5 +136,12 @@ enum {
         [NSNumber numberWithUnsignedLong:_fileCreator], NSFileHFSCreatorCode,
         nil];
 }
+
+- (NSString *)filename
+{
+    // FIXME: We should use the encoding specified in the header if one is present.
+    return [(NSString *)CFStringCreateWithPascalString(NULL, _name, kCFStringEncodingMacRoman) autorelease];
+}
+
 
 @end

@@ -25,23 +25,27 @@ extern NSString *WebErrorDomainWebKit;
     @constant WebErrorCannotShowURL
     @constant WebErrorCannotNotFindApplicationForURL
     @constant WebErrorLocationChangeInterruptedByPolicyChange
+    @constant WebErrorDownloadDecodingFailedMidStream
+    @constant WebErrorDownloadDecodingFailedToComplete
 */
 enum {
-    WebErrorCannotFindFile = 10000,
-    WebErrorCannotCreateFile = 10001,
-    WebErrorCannotOpenFile = 10002,
-    WebErrorCannotReadFile = 10003,
-    WebErrorCannotWriteToFile = 10004,
-    WebErrorCannotRemoveFile = 10005,
-    WebErrorCannotFindApplicationForFile = 10006,
-    WebErrorFinderCannotOpenDirectory = 10007,
-    WebErrorCannotShowDirectory = 10008,
-    WebErrorCannotShowMIMEType = 10009,
-    WebErrorCannotShowURL = 10010,
-    WebErrorCannotNotFindApplicationForURL = 10011,
-    WebErrorLocationChangeInterruptedByPolicyChange = 10012,
-    WebErrorResourceLoadInterruptedByPolicyChange = 10013,
-    WebErrorCannotFindPlugin = 10014,
-    WebErrorCannotLoadPlugin = 10015,
-    WebErrorJavaUnavailable = 10016
+    WebErrorCannotFindFile,
+    WebErrorCannotCreateFile,
+    WebErrorCannotOpenFile,
+    WebErrorCannotReadFile,
+    WebErrorCannotWriteToFile,
+    WebErrorCannotRemoveFile,
+    WebErrorCannotFindApplicationForFile,
+    WebErrorFinderCannotOpenDirectory,
+    WebErrorCannotShowDirectory,
+    WebErrorCannotShowMIMEType,
+    WebErrorCannotShowURL,
+    WebErrorCannotNotFindApplicationForURL,
+    WebErrorLocationChangeInterruptedByPolicyChange,
+    WebErrorResourceLoadInterruptedByPolicyChange,
+    WebErrorCannotFindPlugin,
+    WebErrorCannotLoadPlugin,
+    WebErrorJavaUnavailable,
+    WebErrorDownloadDecodingFailedMidStream,
+    WebErrorDownloadDecodingFailedToComplete,
 };
