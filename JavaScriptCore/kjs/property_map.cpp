@@ -25,8 +25,14 @@
 #include "object.h"
 #include "reference_list.h"
 
+#define DO_CONSISTENCY_CHECK 0
+
 // At the time I added this switch, the optimization still gave a 1.5% performance boost so I couldn't remove it.
 #define USE_SINGLE_ENTRY 1
+
+#if !DO_CONSISTENCY_CHECK
+#define check() ((void)0)
+#endif
 
 namespace KJS {
 
@@ -131,6 +137,8 @@ ValueImp *PropertyMap::get(const Identifier &name) const
 
 void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 {
+    check();
+
     UString::Rep *rep = name._ustring.rep;
     
 #if USE_SINGLE_ENTRY
@@ -138,7 +146,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
         UString::Rep *key = _singleEntry.key;
         if (key) {
             if (rep == key) {
-            	_singleEntry.value = value;
+                _singleEntry.value = value;
                 return;
             }
         } else {
@@ -147,6 +155,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
             _keyCount = 1;
+            check();
             return;
         }
     }
@@ -172,6 +181,8 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     _table[i].value = value;
     _table[i].attributes = attributes;
     ++_keyCount;
+
+    check();
 }
 
 inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes)
@@ -187,6 +198,8 @@ inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attribut
 
 void PropertyMap::expand()
 {
+    check();
+    
     int oldTableSize = _tableSize;
     Entry *oldTable = _table;
 
@@ -209,10 +222,14 @@ void PropertyMap::expand()
     }
 
     free(oldTable);
+
+    check();
 }
 
 void PropertyMap::remove(const Identifier &name)
 {
+    check();
+
     UString::Rep *rep = name._ustring.rep;
 
     UString::Rep *key;
@@ -224,6 +241,7 @@ void PropertyMap::remove(const Identifier &name)
             key->deref();
             _singleEntry.key = 0;
             _keyCount = 0;
+            check();
         }
 #endif
         return;
@@ -253,6 +271,8 @@ void PropertyMap::remove(const Identifier &name)
         _table[i].key = 0;
         insert(key, _table[i].value, _table[i].attributes);
     }
+
+    check();
 }
 
 void PropertyMap::mark() const
@@ -327,5 +347,37 @@ void PropertyMap::restore(const SavedProperties &p)
     for (int i = 0; i != p._count; ++i)
         put(p._properties[i].key, p._properties[i].value.imp(), 0);
 }
+
+#if DO_CONSISTENCY_CHECK
+
+void PropertyMap::check()
+{
+    int count = 0;
+    for (int j = 0; j != _tableSize; ++j) {
+        UString::Rep *rep = _table[j].key;
+        if (!rep)
+            continue;
+        int i = hash(rep);
+        while (UString::Rep *key = _table[i].key) {
+            if (rep == key)
+                break;
+            i = (i + 1) & _tableSizeMask;
+        }
+        assert(i == j);
+        count++;
+    }
+#if USE_SINGLE_ENTRY
+    if (_singleEntry.key)
+        count++;
+#endif
+    assert(count == _keyCount);
+    if (_table) {
+        assert(_tableSize);
+        assert(_tableSizeMask);
+        assert(_tableSize == _tableSizeMask + 1);
+    }
+}
+
+#endif // DO_CONSISTENCY_CHECK
 
 } // namespace KJS

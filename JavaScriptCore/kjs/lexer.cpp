@@ -117,10 +117,10 @@ void Lexer::setCode(const UChar *c, unsigned int len)
 #endif
 
   // read first characters
-  current = (length > 0) ? code[0].unicode() : 0;
-  next1 = (length > 1) ? code[1].unicode() : 0;
-  next2 = (length > 2) ? code[2].unicode() : 0;
-  next3 = (length > 3) ? code[3].unicode() : 0;
+  current = (length > 0) ? code[0].uc : 0;
+  next1 = (length > 1) ? code[1].uc : 0;
+  next2 = (length > 2) ? code[2].uc : 0;
+  next3 = (length > 3) ? code[3].uc : 0;
 }
 
 void Lexer::shift(unsigned int p)
@@ -130,7 +130,7 @@ void Lexer::shift(unsigned int p)
     current = next1;
     next1 = next2;
     next2 = next3;
-    next3 = (pos + 3 < length) ? code[pos+3].unicode() : 0;
+    next3 = (pos + 3 < length) ? code[pos+3].uc : 0;
   }
 }
 

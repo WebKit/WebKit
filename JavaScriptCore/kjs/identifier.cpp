@@ -49,7 +49,7 @@ bool Identifier::equal(UString::Rep *r, const char *s)
     int length = r->len;
     const UChar *d = r->dat;
     for (int i = 0; i != length; ++i)
-        if (d[i].unicode() != (unsigned char)s[i])
+        if (d[i].uc != (unsigned char)s[i])
             return false;
     return s[length] == 0;
 }
@@ -60,7 +60,7 @@ bool Identifier::equal(UString::Rep *r, const UChar *s, int length)
         return false;
     const UChar *d = r->dat;
     for (int i = 0; i != length; ++i)
-        if (d[i].unicode() != s[i].unicode())
+        if (d[i].uc != s[i].uc)
             return false;
     return true;
 }
@@ -73,7 +73,7 @@ bool Identifier::equal(UString::Rep *r, UString::Rep *b)
     const UChar *d = r->dat;
     const UChar *s = b->dat;
     for (int i = 0; i != length; ++i)
-        if (d[i].unicode() != s[i].unicode())
+        if (d[i].uc != s[i].uc)
             return false;
     return true;
 }

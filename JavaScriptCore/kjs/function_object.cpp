@@ -249,11 +249,11 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   while (i < len) {
       while (*c == ' ' && i < len)
 	  c++, i++;
-      if (Lexer::isIdentLetter(c->unicode())) {  // else error
+      if (Lexer::isIdentLetter(c->uc)) {  // else error
 	  param = UString(c, 1);
 	  c++, i++;
-	  while (i < len && (Lexer::isIdentLetter(c->unicode()) ||
-			     Lexer::isDecimalDigit(c->unicode()))) {
+	  while (i < len && (Lexer::isIdentLetter(c->uc) ||
+			     Lexer::isDecimalDigit(c->uc))) {
 	      param += UString(c, 1);
 	      c++, i++;
 	  }

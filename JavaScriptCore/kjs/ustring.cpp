@@ -182,9 +182,9 @@ unsigned UString::Rep::computeHash(const UChar *s, int length)
 
     unsigned h = length;
     for (int i = 0; i < prefixLength; i++)
-        h = 127 * h + s[i].unicode();
+        h = 127 * h + s[i].uc;
     for (int i = suffixPosition; i < length; i++)
-        h = 127 * h + s[i].unicode();
+        h = 127 * h + s[i].uc;
     if (h == 0)
         h = 0x80000000;
     return h;
@@ -720,7 +720,7 @@ int KJS::compare(const UString& s1, const UString& s2)
     l++;
   }
   if (l < lmin)
-    return (c1->unicode() > c2->unicode()) ? 1 : -1;
+    return (c1->uc > c2->uc) ? 1 : -1;
 
   if (l1 == l2) {
     return 0;

@@ -1,5 +1,24 @@
 2002-11-21  Darin Adler  <darin@apple.com>
 
+	- add self-check to property map in hopes of finding the cnet.com bug
+
+        * kjs/property_map.h: Add check() function.
+        * kjs/property_map.cpp: Add the checking, controlled by DO_CONSISTENCY_CHECK.
+
+	 - fixed UChar interface so it's not so slow in debug builds
+
+        * kjs/ustring.h: Nothing in UChar needs to be private.
+
+        * kjs/function.cpp: (GlobalFuncImp::call):
+        * kjs/function_object.cpp: (FunctionObjectImp::construct):
+        * kjs/identifier.cpp:
+        * kjs/lexer.cpp: (Lexer::setCode), (Lexer::shift):
+        * kjs/lookup.cpp: (keysMatch):
+        * kjs/ustring.cpp: (UString::Rep::computeHash), (KJS::compare):
+	Use the "uc" field instead of the "unicode()" inline function.
+
+2002-11-21  Darin Adler  <darin@apple.com>
+
 	- fixed a null-dereference I ran into while trying to reproduce bug 3107351
 
         * kjs/function.h: Change ActivationImp constructor to take context parameter.

@@ -98,12 +98,6 @@ namespace KJS {
      * A static instance of UChar(0).
      */
     static UChar null;
-  private:
-    friend class UCharReference;
-    friend class UString;
-    friend bool operator==(const UChar &c1, const UChar &c2);
-    friend bool operator==(const UString& s1, const char *s2);
-    friend bool operator<(const UString& s1, const UString& s2);
 
     unsigned short uc;
   };

@@ -505,7 +505,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     UString r = "", s, str = args[0].toString(exec);
     const UChar *c = str.data();
     for (int k = 0; k < str.size(); k++, c++) {
-      int u = c->unicode();
+      int u = c->uc;
       if (u > 255) {
 	char tmp[7];
 	sprintf(tmp, "%%u%04X", u);
@@ -529,12 +529,12 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     while (k < len) {
       const UChar *c = str.data() + k;
       if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
-	u = Lexer::convertUnicode((c+2)->unicode(), (c+3)->unicode(),
-				  (c+4)->unicode(), (c+5)->unicode());
+	u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
+				  (c+4)->uc, (c+5)->uc);
 	c = &u;
 	k += 5;
       } else if (*c == UChar('%') && k <= len - 3) {
-	u = UChar(Lexer::convertHex((c+1)->unicode(), (c+2)->unicode()));
+	u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
 	c = &u;
 	k += 2;
       }

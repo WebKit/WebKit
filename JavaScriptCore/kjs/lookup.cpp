@@ -33,7 +33,7 @@ using namespace KJS;
 static bool keysMatch(const UChar *c, unsigned len, const char *s)
 {
   for (unsigned i = 0; i != len; i++, c++, s++)
-    if (c->unicode() != (unsigned char)*s)
+    if (c->uc != (unsigned char)*s)
       return false;
   return *s == 0;
 }
