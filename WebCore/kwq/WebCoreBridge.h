@@ -347,6 +347,10 @@ typedef enum {
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style;
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
+- (void)applyEditingStyleToBodyElement;
+- (void)removeEditingStyleFromBodyElement;
+- (void)applyEditingStyleToElement:(DOMElement *)element;
+- (void)removeEditingStyleFromElement:(DOMElement *)element;
 
 - (void)ensureSelectionVisible;
 

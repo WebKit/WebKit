@@ -36,6 +36,11 @@
 
 #include "khtml_pagecache.h"
 
+#include "css/csshelper.h"
+#include "css/cssproperties.h"
+#include "css/cssstyleselector.h"
+#include "css/css_computedstyle.h"
+#include "css/css_valueimpl.h"
 #include "dom/dom_string.h"
 #include "dom/dom_element.h"
 #include "dom/html_document.h"
@@ -53,10 +58,6 @@
 #include "misc/loader.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
-#include "css/css_computedstyle.h"
-#include "css/cssstyleselector.h"
-#include "css/csshelper.h"
-#include "css/css_computedstyle.h"
 
 using namespace DOM;
 
@@ -95,6 +96,7 @@ using namespace DOM;
 #include <qclipboard.h>
 #include <qfile.h>
 #include <qmetaobject.h>
+#include <qptrlist.h>
 #include <private/qucomextra_p.h>
 
 #include "khtmlpart_p.h"
@@ -5486,6 +5488,80 @@ CSSStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&nodeToRemo
     }
 
     return new CSSComputedStyleDeclarationImpl(styleElement);
+}
+
+static CSSStyleDeclarationImpl *editingStyle()
+{
+    static CSSStyleDeclarationImpl *editingStyle = 0;
+    if (!editingStyle) {
+        QPtrList<CSSProperty> *propList = new QPtrList<CSSProperty>;
+        propList->setAutoDelete(true);
+        editingStyle = new CSSStyleDeclarationImpl(0, propList);
+        editingStyle->setCssText("word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;");
+    }
+    return editingStyle;
+}
+
+void KHTMLPart::applyEditingStyleToBodyElement() const
+{
+    if (!d->m_doc)
+        return;
+        
+    static DOMString body = "body";
+    NodeListImpl *list = d->m_doc->getElementsByTagNameNS(0, body.implementation());
+    list->ref();
+    for (unsigned i = 0; i < list->length(); i++) {
+        applyEditingStyleToElement(static_cast<ElementImpl *>(list->item(i)));    
+    }
+    list->deref();
+}
+
+void KHTMLPart::removeEditingStyleFromBodyElement() const
+{
+    if (!d->m_doc)
+        return;
+        
+    static DOMString body = "body";
+    NodeListImpl *list = d->m_doc->getElementsByTagNameNS(0, body.implementation());
+    list->ref();
+    for (unsigned i = 0; i < list->length(); i++) {
+        removeEditingStyleFromElement(static_cast<ElementImpl *>(list->item(i)));    
+    }
+    list->deref();
+}
+
+void KHTMLPart::applyEditingStyleToElement(ElementImpl *element) const
+{
+    if (!element || !element->isHTMLElement())
+        return;
+        
+    RenderObject *renderer = element->renderer();
+    if (!renderer || !renderer->isBlockFlow())
+        return;
+    
+    CSSStyleDeclarationImpl *currentStyle = static_cast<HTMLElementImpl *>(element)->getInlineStyleDecl();
+    CSSStyleDeclarationImpl *mergeStyle = editingStyle();
+    if (mergeStyle) {
+        currentStyle->merge(mergeStyle);
+        element->setAttribute(ATTR_STYLE, currentStyle->cssText());
+    }
+}
+
+void KHTMLPart::removeEditingStyleFromElement(ElementImpl *element) const
+{
+    if (!element || !element->isHTMLElement())
+        return;
+        
+    RenderObject *renderer = element->renderer();
+    if (!renderer || !renderer->isBlockFlow())
+        return;
+    
+    CSSStyleDeclarationImpl *currentStyle = static_cast<HTMLElementImpl *>(element)->getInlineStyleDecl();
+    currentStyle->removeProperty(CSS_PROP_WORD_WRAP, false);
+    currentStyle->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
+    currentStyle->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
+    currentStyle->setChanged();
+    element->setAttribute(ATTR_STYLE, currentStyle->cssText());
 }
 
 #if !APPLE_CHANGES

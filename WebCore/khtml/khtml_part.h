@@ -46,6 +46,7 @@ namespace DOM
   class DOMString;
   class Document;
   class DocumentImpl;
+  class ElementImpl;
   class EventListener;
   class HTMLAnchorElementImpl;
   class HTMLDocument;
@@ -883,6 +884,10 @@ public:
   TriState selectionHasStyle(DOM::CSSStyleDeclarationImpl *) const;
   bool selectionStartHasStyle(DOM::CSSStyleDeclarationImpl *) const;
   DOM::DOMString selectionStartStylePropertyValue(int stylePropertyID) const;
+  void applyEditingStyleToBodyElement() const;
+  void removeEditingStyleFromBodyElement() const;
+  void applyEditingStyleToElement(DOM::ElementImpl *) const;
+  void removeEditingStyleFromElement(DOM::ElementImpl *) const;
   void print();
 
   // Used to keep the part alive when running a script that might destroy it.

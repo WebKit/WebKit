@@ -15,6 +15,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebResourcePrivate.h>
+#import <WebKit/WebView.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLResponse.h>
@@ -124,7 +125,8 @@
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    if ([dataSource webFrame]) {
+    WebFrame *frame = [dataSource webFrame];
+    if (frame) {
         if ([self _isDisplayingWebArchive]) {
             [self loadArchive];
         } else {
@@ -132,6 +134,11 @@
             // way to get work done that is normally done when the first bit of data is
             // received, even for the case of a document with no data (like about:blank).
             [_private->bridge receivedData:nil textEncodingName:[[_private->dataSource response] textEncodingName]];
+        }
+        
+        WebView *webView = [frame webView];
+        if ([webView isEditable]) {
+            [_private->bridge applyEditingStyleToBodyElement];
         }
     }
 }

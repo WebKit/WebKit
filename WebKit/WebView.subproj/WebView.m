@@ -2536,9 +2536,15 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if (_private->editable != flag) {
         _private->editable = flag;
-        if (flag && [self selectedDOMRange] == nil) {
+        WebBridge *bridge = [[self mainFrame] _bridge];
+        if (flag) {
+            [bridge applyEditingStyleToBodyElement];
             // If the WebView is made editable and the selection is empty, set it to something.
-            [[[self mainFrame] _bridge] setSelectionFromNone];
+            if ([self selectedDOMRange] == nil)
+                [bridge setSelectionFromNone];
+        }
+        else {
+            [bridge removeEditingStyleFromBodyElement];
         }
     }
 }

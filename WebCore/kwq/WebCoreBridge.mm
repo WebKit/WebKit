@@ -1656,6 +1656,34 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->selectionStartHasStyle([style _styleDeclarationImpl]);
 }
 
+- (void)applyEditingStyleToBodyElement
+{
+    if (!_part)
+        return;
+    _part->applyEditingStyleToBodyElement();
+}
+
+- (void)removeEditingStyleFromBodyElement
+{
+    if (!_part)
+        return;
+    _part->removeEditingStyleFromBodyElement();
+}
+
+- (void)applyEditingStyleToElement:(DOMElement *)element
+{
+    if (!_part)
+        return;
+    _part->applyEditingStyleToElement([element _elementImpl]);
+}
+
+- (void)removeEditingStyleFromElement:(DOMElement *)element
+{
+    if (!_part)
+        return;
+    _part->removeEditingStyleFromElement([element _elementImpl]);
+}
+
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts
 {
     bool multipleFonts = false;

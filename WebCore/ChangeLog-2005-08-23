@@ -1,3 +1,37 @@
+2004-10-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Final fix for these bugs:
+        
+        <rdar://problem/3806306> HTML editing puts spaces at start of line
+        <rdar://problem/3814252> HTML editing groups space with word causing wrapping
+
+        This change sets some new CSS properties that have been added to WebCore to 
+        enable whitespace-handling and line-breaking features that make WebView work
+        more like a text editor.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty): Add and remove special editing CSS properties 
+        based on property value.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setContentEditable): Add and remove special editing CSS properties 
+        based on attribute value.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::applyEditingStyleToBodyElement): New helper. Calls applyEditingStyleToElement on
+        body element.
+        (KHTMLPart::removeEditingStyleFromBodyElement): New helper. Calls removeEditingStyleFromElement on
+        body element.
+        (KHTMLPart::applyEditingStyleToElement): Adds special editing CSS properties to passed in element.
+        (KHTMLPart::removeEditingStyleFromElement): Removes special editing CSS properties from passed in element.
+        * khtml/khtml_part.h: Add new declarations.
+        * kwq/WebCoreBridge.h: Ditto.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyEditingStyleToBodyElement]): Call through to similarly-named function on KHTMLPart.
+        (-[WebCoreBridge removeEditingStyleFromBodyElement]): Ditto.
+        (-[WebCoreBridge applyEditingStyleToElement:]): Ditto.
+        (-[WebCoreBridge removeEditingStyleFromElement:]): Ditto.
+
 2004-10-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

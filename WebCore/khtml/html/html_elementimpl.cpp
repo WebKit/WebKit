@@ -1006,13 +1006,23 @@ DOMString HTMLElementImpl::contentEditable() const
 
 void HTMLElementImpl::setContentEditable(HTMLAttributeImpl* attr) 
 {
+    KHTMLPart *part = getDocument()->part();
     const AtomicString& enabled = attr->value();
-    if (enabled.isEmpty() || strcasecmp(enabled, "true") == 0)
+    if (enabled.isEmpty() || strcasecmp(enabled, "true") == 0) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
-    else if (strcasecmp(enabled, "false") == 0)
+        if (part)
+            part->applyEditingStyleToElement(this);    
+    }
+    else if (strcasecmp(enabled, "false") == 0) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
-    else if (strcasecmp(enabled, "inherit") == 0)
+        if (part)
+            part->removeEditingStyleFromElement(this);    
+    }
+    else if (strcasecmp(enabled, "inherit") == 0) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
+        if (part)
+            part->removeEditingStyleFromElement(this);    
+    }
 }
 
 void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
