@@ -1309,9 +1309,9 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
     */
     if (paintAction == PaintActionForeground) {
         const Selection &s = document()->part()->selection();
-        NodeImpl *baseNode = s.base().node();
-        RenderObject *renderer = baseNode ? baseNode->renderer() : 0;
-        if (renderer && renderer->containingBlock() == this && baseNode->isContentEditable()) {
+        NodeImpl *caretNode = s.caretPosition().node();
+        RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
+        if (renderer && renderer->containingBlock() == this && caretNode->isContentEditable()) {
             document()->part()->paintCaret(i.p, i.r);
             document()->part()->paintDragCaret(i.p, i.r);
         }

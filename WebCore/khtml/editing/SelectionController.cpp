@@ -120,6 +120,7 @@ Selection::Selection(const Selection &o)
         m_caretX = o.m_caretX;
         m_caretY = o.m_caretY;
         m_caretSize = o.m_caretSize;
+        m_caretPosition = o.m_caretPosition;
     }
 }
 
@@ -130,6 +131,7 @@ void Selection::init()
     m_caretX = 0;
     m_caretY = 0;
     m_caretSize = 0;
+    m_caretPosition = emptyPosition();
     m_baseIsStart = true;
     m_needsCaretLayout = true;
     m_modifyBiasSet = false;
@@ -194,92 +196,121 @@ void Selection::moveTo(const Position &base, const Position &extent)
     validate();
 }
 
+Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
+{
+    if (!m_modifyBiasSet) {
+        m_modifyBiasSet = true;
+        assignBaseAndExtent(start(), end());
+    }
+    Position pos = extent().closestRenderedPosition(affinity());
+    switch (granularity) {
+        case CHARACTER:
+            pos = pos.nextCharacterPosition();
+            break;
+        case WORD:
+            pos = pos.nextWordPosition();
+            break;
+        case LINE:
+            pos = pos.nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+            break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+    }
+    return pos;
+}
+
+Position Selection::modifyMovingRightForward(ETextGranularity granularity)
+{
+    m_modifyBiasSet = false;
+    Position pos;
+    switch (granularity) {
+        case CHARACTER:
+            if (state() == RANGE) 
+                pos = end().closestRenderedPosition(affinity());
+            else
+                pos = extent().closestRenderedPosition(affinity()).nextCharacterPosition();
+            break;
+        case WORD:
+            pos = extent().closestRenderedPosition(affinity()).nextWordPosition();
+            break;
+        case LINE:
+            pos = end().closestRenderedPosition(affinity()).nextLinePosition(xPosForVerticalArrowNavigation(END, state() == RANGE));
+            break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+    }
+    return pos;
+}
+
+Position Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
+{
+    if (!m_modifyBiasSet) {
+        m_modifyBiasSet = true;
+        assignBaseAndExtent(end(), start());
+    }
+    Position pos = extent().closestRenderedPosition(affinity());
+    switch (granularity) {
+        case CHARACTER:
+            pos = pos.previousCharacterPosition();
+            break;
+        case WORD:
+            pos = pos.previousWordPosition();
+            break;
+        case LINE:
+            pos = pos.previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+            break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+    }
+    return pos;
+}
+
+Position Selection::modifyMovingLeftBackward(ETextGranularity granularity)
+{
+    m_modifyBiasSet = false;
+    Position pos;
+    switch (granularity) {
+        case CHARACTER:
+            if (state() == RANGE) 
+                pos = start().closestRenderedPosition(affinity());
+            else
+                pos = extent().closestRenderedPosition(affinity()).previousCharacterPosition();
+            break;
+        case WORD:
+            pos = extent().closestRenderedPosition(affinity()).previousWordPosition();
+            break;
+        case LINE:
+            pos = start().closestRenderedPosition(affinity()).previousLinePosition(xPosForVerticalArrowNavigation(START, state() == RANGE));
+            break;
+        case PARAGRAPH:
+            // not implemented
+            break;
+    }
+    return pos;
+}
+
 bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
 {
     Position pos;
-    
+
     switch (dir) {
-        // EDIT FIXME: This needs to handle bidi
+        // EDIT FIXME: These need to handle bidi
         case RIGHT:
         case FORWARD:
-            if (alter == EXTEND) {
-                if (!m_modifyBiasSet) {
-                    m_modifyBiasSet = true;
-                    assignBaseAndExtent(start(), end());
-                }
-                switch (granularity) {
-                    case CHARACTER:
-                        pos = extent().nextCharacterPosition();
-                        break;
-                    case WORD:
-                        pos = extent().nextWordPosition();
-                        break;
-                    case LINE:
-                        pos = extent().nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
-                        break;
-                    case PARAGRAPH:
-                        // not implemented
-                        break;
-                }
-            }
-            else {
-                m_modifyBiasSet = false;
-                switch (granularity) {
-                    case CHARACTER:
-                        pos = (state() == RANGE) ? end() : extent().nextCharacterPosition();
-                        break;
-                    case WORD:
-                        pos = extent().nextWordPosition();
-                        break;
-                    case LINE:
-                        pos = end().nextLinePosition(xPosForVerticalArrowNavigation(END, state() == RANGE));
-                        break;
-                    case PARAGRAPH:
-                        // not implemented
-                        break;
-                }
-            }
+            if (alter == EXTEND)
+                pos = modifyExtendingRightForward(granularity);
+            else
+                pos = modifyMovingRightForward(granularity);
             break;
-        // EDIT FIXME: This needs to handle bidi
         case LEFT:
         case BACKWARD:
-            if (alter == EXTEND) {
-                if (!m_modifyBiasSet) {
-                    m_modifyBiasSet = true;
-                    assignBaseAndExtent(end(), start());
-                }
-                switch (granularity) {
-                    case CHARACTER:
-                        pos = extent().previousCharacterPosition();
-                        break;
-                    case WORD:
-                        pos = extent().previousWordPosition();
-                        break;
-                    case LINE:
-                        pos = extent().previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
-                        break;
-                    case PARAGRAPH:
-                        // not implemented
-                        break;
-                }
-            }
-            else {
-                m_modifyBiasSet = false;
-                switch (granularity) {
-                    case CHARACTER:
-                        pos = (state() == RANGE) ? start() : extent().previousCharacterPosition();
-                        break;
-                    case WORD:
-                        pos = extent().previousWordPosition();
-                        break;
-                    case LINE:
-                        pos = start().previousLinePosition(xPosForVerticalArrowNavigation(START, state() == RANGE));
-                        break;
-                    case PARAGRAPH:
-                        // not implemented
-                        break;
-                }
-            }
+            if (alter == EXTEND)
+                pos = modifyExtendingLeftBackward(granularity);
+            else
+                pos = modifyMovingLeftBackward(granularity);
             break;
     }
     
@@ -439,15 +470,25 @@ Range Selection::toRange() const
 
 void Selection::layoutCaret()
 {
-    if (isEmpty() || !start().node()->renderer()) {
+    if (state() != CARET) {
         m_caretX = m_caretY = m_caretSize = 0;
+        return;
     }
-    else {
-        // EDIT FIXME: Enhance call to pass along selection 
-        // upstream/downstream affinity to get the right position.
-        int w;
-        start().node()->renderer()->caretPos(start().offset(), true, m_caretX, m_caretY, w, m_caretSize);
+    
+    Position pos = start();
+    if (!pos.inRenderedContent())
+        pos = pos.closestRenderedPosition(affinity());
+
+    if (pos.isEmpty() || !pos.inRenderedContent()) {
+        m_caretX = m_caretY = m_caretSize = 0;
+        return;
     }
+    
+    // EDIT FIXME: Enhance call to pass along selection 
+    // upstream/downstream affinity to get the right position.
+    int w;
+    m_caretPosition = pos;
+    pos.node()->renderer()->caretPos(pos.offset(), true, m_caretX, m_caretY, w, m_caretSize);
 
     m_needsCaretLayout = false;
 }
@@ -503,13 +544,8 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
     if (m_state != CARET)
         return;
 
-    if (m_needsCaretLayout) {
-        Position pos = start();
-        if (!pos.inRenderedContent()) {
-            moveToRenderedContent();
-        }
+    if (m_needsCaretLayout)
         layoutCaret();
-    }
 
     QRect caretRect(m_caretX, m_caretY, 1, m_caretSize);
     if (caretRect.intersects(rect)) {

@@ -1395,7 +1395,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     DocumentImpl *doc = startContainer->getDocument();
     doc->updateLayout();
     Selection selection(Position(startContainer, [range startOffset]), Position(endContainer, [range endOffset]));
-    selection.setAffinity(static_cast<Selection::EAffinity>(selectionAffinity));
+    selection.setAffinity(static_cast<DOM::EAffinity>(selectionAffinity));
     _part->setSelection(selection);
 }
 

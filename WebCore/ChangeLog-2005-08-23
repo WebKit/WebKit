@@ -1,3 +1,41 @@
+2004-07-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Some improvements to fix:
+        
+        <rdar://problem/3723111> Caret not drawn when selection set to unrendered content
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey): Adjust selection to delete if
+        selected position is not rendered.
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject): Use new caretPosition() function on Selection to
+        figure out whether to paint.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousCharacterPosition): Now correctly deals with a start
+        position that is not rendered.
+        (DOM::Position::nextCharacterPosition): Ditto.
+        (DOM::Position::closestRenderedPosition): New helper.
+        * khtml/xml/dom_position.h:
+        (DOM::): Moved in EAffinity from Selection header. Now used in closestRenderedPosition function.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): Added new m_caretPosition member. This is the position of the caret
+        after a caret layout. This may be different from start or end if start and end are not rendered. 
+        (DOM::Selection::init):
+        (DOM::Selection::modifyExtendingRightForward): New helper to clean up modify() and make it more readble.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::modify): Use new helpers to make this more readble.
+        (DOM::Selection::layoutCaret): Uses new closestRenderedPosition helper to place the caret if in unrendered
+        content.
+        (DOM::Selection::paintCaret): Remove moveToRenderedContent. obsolete.
+        * khtml/xml/dom_selection.h:
+        (DOM::Selection::caretPosition): New accessor.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): EAffinity no longer a member enum of Selection class.
+
 2004-07-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for the table layout test that failed because of a change in how innerText worked.  We need to do
