@@ -1,3 +1,27 @@
+2004-09-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3786848> REGRESSION (Mail): Typing styles and font panel updates broken
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::inRenderedContent): Check for inlines that can have kids is wrong.
+        I busted this the other day when making the PositionIterator class iterate over
+        all nodes and not just leaves of the DOM tree.
+        
+        Update all the following functions. These use the PositionIterator class, but still 
+        only want to consider leaf nodes.
+        
+        (DOM::Position::isFirstRenderedPositionOnLine)
+        (DOM::Position::isLastRenderedPositionOnLine)
+        (DOM::Position::isLastRenderedPositionInEditableBlock)
+        (DOM::Position::inFirstEditableInRootEditableElement)
+        (DOM::Position::inLastEditableInRootEditableElement)
+        (DOM::Position::inFirstEditableInContainingEditableBlock)
+        (DOM::Position::inLastEditableInContainingEditableBlock)
+
 2004-09-02  Richard Williamson   <rjw@apple.com>
 
 	Support for patterns in <canvas>

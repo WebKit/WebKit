@@ -33,6 +33,7 @@
 #include "khtml_text_operations.h"
 #include "qstring.h"
 #include "rendering/render_block.h"
+#include "rendering/render_flow.h"
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
@@ -54,6 +55,7 @@ using khtml::InlineBox;
 using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
 using khtml::RenderBlock;
+using khtml::RenderFlow;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::RootInlineBox;
@@ -869,8 +871,11 @@ bool Position::inRenderedContent() const
         }
     }
     else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
-        // return true for blocks if they are empty
-        if (renderer->inlineBox() || (node()->isBlockFlow() && !node()->firstChild()))
+        // return true for replaced elements, for inline flows if they have a line box
+        // and for blocks if they are empty
+        if (renderer->isReplaced() ||
+            (renderer->isInlineFlow() && static_cast<RenderFlow *>(renderer)->firstLineBox()) ||
+            (node()->isBlockFlow() && !node()->firstChild()))
             return true;
     }
     
@@ -1049,13 +1054,16 @@ bool Position::isFirstRenderedPositionOnLine() const
     
     if (!inRenderedContent())
         return false;
-    
-    Position pos(node(), offset());
-    PositionIterator it(pos);
+
+    PositionIterator it(*this);
     while (!it.atStart()) {
         it.previous();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
         if (it.current().inRenderedContent())
-            return renderersOnDifferentLine(renderer, offset(), it.current().node()->renderer(), it.current().offset());
+            return renderersOnDifferentLine(renderer, offset(), currentRenderer, it.current().offset());
     }
     
     return true;
@@ -1079,12 +1087,15 @@ bool Position::isLastRenderedPositionOnLine() const
     if (node()->id() == ID_BR)
         return true;
     
-    Position pos(node(), offset());
-    PositionIterator it(pos);
+    PositionIterator it(*this);
     while (!it.atEnd()) {
         it.next();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
         if (it.current().inRenderedContent())
-            return renderersOnDifferentLine(renderer, offset(), it.current().node()->renderer(), it.current().offset());
+            return renderersOnDifferentLine(renderer, offset(), currentRenderer, it.current().offset());
     }
     
     return true;
@@ -1105,12 +1116,15 @@ bool Position::isLastRenderedPositionInEditableBlock() const
     if (renderedOffset() != (long)node()->caretMaxRenderedOffset())
         return false;
 
-    Position pos(node(), offset());
-    PositionIterator it(pos);
+    PositionIterator it(*this);
     while (!it.atEnd()) {
         it.next();
         if (!it.current().node()->inSameContainingBlockFlowElement(node()))
             return true;
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
         if (it.current().inRenderedContent())
             return false;
     }
@@ -1124,7 +1138,12 @@ bool Position::inFirstEditableInRootEditableElement() const
 
     PositionIterator it(*this);
     while (!it.atStart()) {
-        if (it.previous().inRenderedContent())
+        it.previous();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
+        if (it.current().inRenderedContent())
             return false;
     }
 
@@ -1138,7 +1157,12 @@ bool Position::inLastEditableInRootEditableElement() const
 
     PositionIterator it(*this);
     while (!it.atEnd()) {
-        if (it.next().inRenderedContent())
+        it.next();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
+        if (it.current().inRenderedContent())
             return false;
     }
 
@@ -1155,6 +1179,10 @@ bool Position::inFirstEditableInContainingEditableBlock() const
     PositionIterator it(*this);
     while (!it.atStart()) {
         it.previous();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
         if (!it.current().inRenderedContent())
             continue;
         return block != it.current().node()->enclosingBlockFlowElement();
@@ -1173,6 +1201,10 @@ bool Position::inLastEditableInContainingEditableBlock() const
     PositionIterator it(*this);
     while (!it.atEnd()) {
         it.next();
+        RenderObject *currentRenderer = it.current().node()->renderer();
+        if (!currentRenderer || currentRenderer->firstChild())
+            // we want a leaf for this check
+            continue;
         if (!it.current().inRenderedContent())
             continue;
         return block != it.current().node()->enclosingBlockFlowElement();
