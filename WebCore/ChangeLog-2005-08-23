@@ -1,5 +1,17 @@
 2003-08-05  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3364251>: Modify KURL to call improved NSURL creation API
+
+        * kwq/KWQKURL.mm:
+        (KURL::getNSURL): Modify to use CFURLCreateAbsoluteURLWithBytes to create
+        the NSURL.
+
+2003-08-05  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
 
 	In KWQKURL.mm, we copy the contents of a URL path from a source buffer

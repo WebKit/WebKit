@@ -1274,77 +1274,19 @@ QString KURL::encode_string(const QString& notEncodedString)
     return result;
 }
 
-
-// The following three helper functions provide some temporary support for
-// converting a KURL to an NSURL.
-// These functions will be removed when the new CFURL API to create
-// "web-compatible" URLs are available.
-
-bool StringHasCaseInsensitivePrefix(NSString *string, NSString *prefix)
-{
-    return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
-}
-
-static NSString *StringByAddingPercentEscapes(NSString *string)
-{
-    return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, CFSTR("%"), NULL, kCFStringEncodingUTF8) autorelease];
-}
-
-static NSString *URLStringByAddingPercentEscapes(NSString *string)
-{
-    // Work around CFURL bug/issue 2711611.
-    
-    // Don't munge IPv6 host numbers.
-    unsigned afterIPv6HostNumber = 0;
-    if (StringHasCaseInsensitivePrefix(string, @"http://[")) {
-        NSRange endBracket = [string rangeOfString:@"]" options:NSLiteralSearch];
-        if (endBracket.location != NSNotFound) {
-            afterIPv6HostNumber = NSMaxRange(endBracket);
-        }
-    }
-    
-    // Don't munge the first # in the string.
-    NSRange firstPoundSign = [string rangeOfString:@"#" options:NSLiteralSearch
-        range:NSMakeRange(afterIPv6HostNumber, [string length] - afterIPv6HostNumber)];
-
-    // Handle the common case first for a little speed.
-    if (afterIPv6HostNumber == 0 && firstPoundSign.location == NSNotFound) {
-        return StringByAddingPercentEscapes(string);
-    }
-
-    // And the "no fragment" case.
-    if (firstPoundSign.location == NSNotFound) {
-        return [NSString stringWithFormat:@"%@%@",
-            [string substringToIndex:afterIPv6HostNumber],
-            StringByAddingPercentEscapes([string substringFromIndex:afterIPv6HostNumber])];
-    }
-
-    // Now the "with fragment" case.
-    ASSERT(afterIPv6HostNumber <= firstPoundSign.location);
-    return [NSString stringWithFormat:@"%@%@#%@",
-        [string substringToIndex:afterIPv6HostNumber],
-        StringByAddingPercentEscapes([string substringWithRange:NSMakeRange
-            (afterIPv6HostNumber, firstPoundSign.location - afterIPv6HostNumber)]),
-        StringByAddingPercentEscapes([string substringFromIndex:NSMaxRange(firstPoundSign)])];
-}
-
-
 NSURL *KURL::getNSURL() const
 {
-    // Use old-style conversion of a string to a URL until 
-    // new CF-level API is available to do conversion.
-    // This uses the same methodology to convert to an
-    // NSURL as is used inside Foundation:
-    NSMutableString *string = [[url().getNSString() mutableCopy] autorelease];
-    return [NSURL URLWithString:URLStringByAddingPercentEscapes(string)];
-
-#if 0
-    // This is the new-style conversion scheme we want to use when the new CFURL
-    // APIs are available
     const UInt8 *bytes = (const UInt8 *)(urlString.latin1());
-    return (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE);
-#endif
+    NSURL *result = nil;
+    if (urlString.length() > 0) {
+        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE);
+        [result autorelease];
+    }
+    else {
+        result = [NSURL URLWithString:@""];
+    }
     
+    return result;
 }
 
 NSData *KURL::getNSData() const
