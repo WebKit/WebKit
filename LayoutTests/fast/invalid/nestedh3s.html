@@ -1,0 +1,12 @@
+<html>
+<head>
+<style>
+h3 { border: 2px solid red; padding: 2px; }
+</style>
+</head>
+<body>
+In this sample, the H3s should not be nested.  While WinIE does allow the nesting, Firefox does not.  We have chosen
+to match Firefox, since we size H3s based off the current font size, and therefore nesting would lead to ever-increasing
+font sizes.
+
+<h3><i>One<h3><i>Two<h3><i>Three<h3><i>Four
