@@ -1193,6 +1193,10 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
             _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns = flag;
             break;
         }
+        case WebDashboardBehaviorAlwaysAcceptsFirstMouse: {
+            _private->dashboardBehaviorAlwaysAcceptsFirstMouse = flag;
+            break;
+        }
     }
 }
 
@@ -1204,6 +1208,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         }
         case WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns: {
             return _private->dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
+        }
+        case WebDashboardBehaviorAlwaysAcceptsFirstMouse: {
+            return _private->dashboardBehaviorAlwaysAcceptsFirstMouse;
         }
     }
     return NO;

@@ -2074,6 +2074,9 @@ static WebHTMLView *lastHitView = nil;
 {
     [self _setMouseDownEvent:event];
     
+    if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
+        return YES;
+        
     // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
     // the purposes of this method we want to really query the deepest view, so we forward to it.
     forceRealHitTest = YES;

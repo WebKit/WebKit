@@ -1,3 +1,20 @@
+2004-10-05  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3825442> first click lost for Dashboard
+	Allow dashboard to force acceptsFirstMouse:
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView acceptsFirstMouse:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _dashboardBehavior:]):
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        Comment change only
+
 2004-10-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3760920> Need to record plugin view instances

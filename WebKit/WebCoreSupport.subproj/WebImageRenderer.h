@@ -42,7 +42,7 @@
 
 @end
 
-#else
+#else   // Panther version of WebImageRenderer ------------------------------------
 
 
 @interface WebImageRenderer : NSImage <WebCoreImageRenderer>

@@ -85,6 +85,7 @@
     
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
+    BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
 }
 @end
 
