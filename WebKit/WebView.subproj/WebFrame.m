@@ -1644,11 +1644,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
     // Don't set the cookie policy URL if it's already been set.
-    if ([request HTTPCookiePolicyBaseURL] == nil){
+    if ([request mainDocumentURL] == nil){
         if (self == [[self webView] mainFrame] || f) {
-            [request setHTTPCookiePolicyBaseURL:[request URL]];
+            [request setMainDocumentURL:[request URL]];
         } else {
-            [request setHTTPCookiePolicyBaseURL:[[[[self webView] mainFrame] dataSource] _URL]];
+            [request setMainDocumentURL:[[[[self webView] mainFrame] dataSource] _URL]];
         }
     }
 }

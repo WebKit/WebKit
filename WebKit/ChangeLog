@@ -1,3 +1,17 @@
+2003-11-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- remove use of obsolete HTTLCookiePolicyBaseURL SPI
+        
+	* WebCoreSupport.subproj/WebSubresourceClient.m:
+	startLoadingResource:withURL:referrer:forDataSource:]): Use
+	setMainDocumentURL, not setHTTPCookiePolicyBaseURL.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]): Likewise.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]): Likewise.
+
 2003-11-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

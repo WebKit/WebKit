@@ -51,7 +51,7 @@
     [newRequest setHTTPReferrer:referrer];
     
     WebView *_webView = [source _webView];
-    [newRequest setHTTPCookiePolicyBaseURL:[[[[_webView mainFrame] dataSource]  request] URL]];
+    [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
     [newRequest setHTTPUserAgent:[_webView userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
