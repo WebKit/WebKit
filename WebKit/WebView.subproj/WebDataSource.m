@@ -118,7 +118,7 @@
 
 - (void)startLoading
 {
-    [self _startLoading];
+    [self _startLoading: nil];
 }
 
 

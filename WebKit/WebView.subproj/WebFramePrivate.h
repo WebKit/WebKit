@@ -103,7 +103,7 @@ typedef enum {
 - (void)_detachFromParent;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
-- (void)_transitionToCommitted;
+- (void)_transitionToCommitted: (NSDictionary *)pageCache;
 - (void)_transitionToLayoutAcceptable;
 - (WebFrameState)_state;
 - (void)_setState: (WebFrameState)newState;

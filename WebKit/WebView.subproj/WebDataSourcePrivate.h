@@ -85,6 +85,9 @@
     NSString *downloadPath;
 
     BOOL justOpenedForTargetedLink;
+
+    BOOL storedInPageCache;
+    BOOL loadingFromPageCache;
 }
 
 @end
@@ -95,7 +98,7 @@
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setController:(WebController *)controller;
-- (void)_startLoading;
+- (void)_startLoading: (NSDictionary *)pageCache;
 - (void)_stopLoading;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
@@ -128,7 +131,7 @@
 - (WebBridge *)_bridge;
 
 - (BOOL)_isCommitted;
-- (void)_commitIfReady;
+- (void)_commitIfReady: (NSDictionary *)pageCache;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
@@ -142,5 +145,7 @@
 - (void)_setDownloadPath:(NSString *)downloadPath;
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 - (BOOL)_justOpenedForTargetedLink;
+- (void)_setStoredInPageCache:(BOOL)f;
+- (BOOL)_storedInPageCache;
 
 @end

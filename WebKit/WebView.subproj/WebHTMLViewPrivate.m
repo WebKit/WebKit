@@ -169,7 +169,11 @@
     if ([frameName length] == 0) {
         [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
     } else {
-        [elementInfo _web_setObjectIfNotNil:[webFrame findFrameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
+        WebFrame *wf = [webFrame findFrameNamed:frameName];
+        if (wf != nil)
+            [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
+        else
+            [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
     }
 
     [elementInfo setObject:webFrame forKey:WebElementFrameKey];

@@ -74,6 +74,7 @@
     [anchor release];
     [_documentState release];
     [_subItems release];
+    [pageCache release];
     
     [super dealloc];
 }
@@ -388,5 +389,28 @@
 
     return self;
 }
-    
+
+@end
+
+@implementation WebHistoryItem (WebPrivate)
+
+- (BOOL)pageCacheEnabled;
+{
+    return pageCache != nil;
+}
+
+- (void)setPageCacheEnabled: (BOOL)f
+{
+    if (f && !pageCache)
+        pageCache = [[NSMutableDictionary alloc] init];
+    if (!f && pageCache){
+        [pageCache release];
+        pageCache = 0;
+    }
+}
+
+- pageCache
+{
+    return pageCache;
+}
 @end

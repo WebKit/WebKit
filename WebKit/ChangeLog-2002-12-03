@@ -1,3 +1,10 @@
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
+        Fixed exception thrown often when creating mouseover status text (3110186).
+        
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+
 2002-11-25  Darin Adler  <darin@apple.com>
 
 	- fixed a problem I discovered in testing where multiple identical bookmarks confuse us

@@ -322,6 +322,18 @@
     return [[frame _itemForRestoringDocState] documentState];
 }
 
+- (BOOL)saveDocumentToPageCache: documentInfo
+{
+    WebHistoryItem *item = [frame _itemForSavingDocState];
+    if (![item pageCacheEnabled]){
+        printf ("WebBridge saveDocumentToPageCache:  not saving\n");
+        return false;
+    }
+    [[item pageCache] setObject: documentInfo forKey: @"WebCorePageState"];
+    printf ("WebBridge saveDocumentToPageCache:  saving\n");
+    return true;
+}
+
 - (NSString *)userAgentForURL:(NSString *)URL
 {
     return [[frame controller] userAgentForURL:[NSURL _web_URLWithString:URL]];

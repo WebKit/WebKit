@@ -399,7 +399,7 @@ static const char * const stateNames[] = {
 }
 
 
-- (void)_transitionToCommitted
+- (void)_transitionToCommitted: (NSDictionary *)pageCache
 {
     ASSERT([self controller] != nil);
 
@@ -425,7 +425,16 @@ static const char * const stateNames[] = {
             }
 
             // Set the committed data source on the frame.
-            [self _setDataSource:_private->provisionalDataSource];
+            // Use the datasource from the pageCache if present, otherwise
+            // the provisional becomes the committed datasource.
+            if (pageCache){
+                WebDataSource *cachedDataSource = [pageCache objectForKey: @"WebKitDataSource"];
+                ASSERT (cachedDataSource != nil);
+                [self _setDataSource: cachedDataSource];
+            }
+            else
+                [self _setDataSource:_private->provisionalDataSource];
+                
             [_private setProvisionalDataSource: nil];
 
             [self _setState: WebFrameStateCommittedPage];
@@ -442,7 +451,16 @@ static const char * const stateNames[] = {
                 if ([[self controller] usesBackForwardList]) {
                     // Must grab the current scroll position before disturbing it
                     [self _saveScrollPositionToItem:[_private previousItem]];
-                    [[self webView] _makeDocumentViewForDataSource:ds];
+                    
+                    // Create a document view for this document, or used the cached view.
+                    if (pageCache){
+                        id <WebDocumentView> cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
+                        ASSERT (cachedView != nil);
+                        [[self webView] _setDocumentView: cachedView];
+                    }
+                    else
+                        [[self webView] _makeDocumentViewForDataSource:ds];
+                        
                     // FIXME - I'm not sure this call does anything.  Should be dealt with as
                     // part of 3024377
                     [self _restoreScrollPosition];
@@ -512,6 +530,16 @@ static const char * const stateNames[] = {
     }
 }
 
+- (BOOL)_canCachePage
+{
+    return YES;
+}
+
+- (void)_purgePageCache
+{
+    // This method implements the rule for purging the page cache.
+}
+
 - (WebFrameState)_state
 {
     return _private->state;
@@ -551,6 +579,17 @@ static const char * const stateNames[] = {
         [_private->scheduledLayoutTimer fire];
         ASSERT(_private->scheduledLayoutTimer == nil);
         [_private setPreviousItem:nil];
+
+        // Cache the page, if possible.
+        if ([_private->bridge canCachePage] && [self _canCachePage]){
+            LOG (PageCache, "enabling page cache for %@, %@", [self name], [[self dataSource] URL]);
+            [[_private currentItem] setPageCacheEnabled: YES];
+            [[self dataSource] _setStoredInPageCache: YES];
+            [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
+            [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
+            [_private->bridge saveDocumentToPageCache];
+            [self _purgePageCache];
+        }
     }
 }
 
@@ -1066,7 +1105,9 @@ static const char * const stateNames[] = {
         // adding the BF item will save away scroll state.
         [self _addBackForwardItemClippedAtTarget:NO];
     }
-    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil lastModified:nil];
+    
+    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil lastModified:nil pageCache: nil];
+    
     if (!isRedirect) {
         // This will clear previousItem from the rest of the frame tree tree that didn't
         // doing any loading.  We need to make a pass on this now, since for anchor nav
@@ -1352,7 +1393,16 @@ static const char * const stateNames[] = {
     if (self == [[self controller] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
-    [_private->provisionalDataSource startLoading];
+    WebFrameLoadType loadType = [self _loadType];
+    if ((loadType == WebFrameLoadTypeForward ||
+        loadType == WebFrameLoadTypeBack ||
+        loadType == WebFrameLoadTypeIndexedBackForward) &&
+        [[_private provisionalItem] pageCacheEnabled]){
+        printf ("Restoring page from state, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+        [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
+    }
+    else 
+        [_private->provisionalDataSource startLoading];
 }
 
 - (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType: (WebFrameLoadType)loadType

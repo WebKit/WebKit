@@ -137,7 +137,7 @@
 }
 
 
-- (void)_startLoading
+- (void)_startLoading: (NSDictionary *)pageCache
 {
     ASSERT([self _isStopping] == NO);
 
@@ -154,7 +154,11 @@
     
     [[_private->controller locationChangeDelegate] locationChangeStartedForDataSource:self];
 
-    if (!_private->mainClient) {
+    if (pageCache){
+        _private->loadingFromPageCache = YES;
+        [self _commitIfReady: pageCache];
+    }
+    else if (!_private->mainClient) {
 	if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
@@ -170,6 +174,11 @@
             [self _updateLoading];
         }
     }
+}
+
+- (void)_startLoading
+{
+    [self _startLoading: nil];
 }
 
 - (void)_addSubresourceClient:(WebSubresourceClient *)client
@@ -431,9 +440,9 @@
     return _private->committed;
 }
 
--(void)_commitIfReady
+-(void)_commitIfReady: (NSDictionary *)pageCache
 {
-    if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
+    if (_private->loadingFromPageCache || (![self isDownloading] && _private->gotFirstByte && !_private->committed)) {
         WebFrameLoadType loadType = [[self webFrame] _loadType];
         bool reload = loadType == WebFrameLoadTypeReload
             || loadType == WebFrameLoadTypeReloadAllowingStaleData;
@@ -443,10 +452,23 @@
 
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
-        [self _makeRepresentation];
-        [[self webFrame] _transitionToCommitted];
-	[[self _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:[_private->response lastModifiedDate]];
+        if (!pageCache)
+            [self _makeRepresentation];
+            
+        [[self webFrame] _transitionToCommitted: pageCache];
+	
+        if (pageCache){
+            WebDataSource *ds = [pageCache objectForKey: @"WebKitDataSource"];
+            [[ds _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:nil pageCache: pageCache];
+        }
+        else
+            [[self _bridge] openURL:[[_private->response URL] absoluteString] reload:reload headers:headers lastModified:[_private->response lastModifiedDate] pageCache: pageCache];
     }
+}
+
+- (void)_commitIfReady
+{
+    [self _commitIfReady: nil];
 }
 
 -(void)_makeRepresentation
@@ -619,5 +641,14 @@
     return _private->justOpenedForTargetedLink;
 }
 
+- (void)_setStoredInPageCache:(BOOL)f
+{
+    _private->storedInPageCache = f;
+}
+
+- (BOOL)_storedInPageCache
+{
+    return _private->storedInPageCache;
+}
 @end
 

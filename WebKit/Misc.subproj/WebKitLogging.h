@@ -24,3 +24,5 @@ extern WebLogChannel WebKitLogPlugins;
 extern WebLogChannel WebKitLogEvents;
 extern WebLogChannel WebKitLogView;
 extern WebLogChannel WebKitLogRedirect;
+
+extern WebLogChannel WebKitLogPageCache;
