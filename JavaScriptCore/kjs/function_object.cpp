@@ -236,7 +236,7 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   scopeChain.push(exec->interpreter()->globalObject().imp());
   FunctionBodyNode *bodyNode = progNode;
 
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, bodyNode,
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), bodyNode,
 					      scopeChain);
   Object ret(fimp); // protect from GC
 

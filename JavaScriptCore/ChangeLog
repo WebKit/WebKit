@@ -1,3 +1,19 @@
+2003-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - got rid of some framework initialization (working on bug 2959353)
+
+        * kjs/identifier.h: Turn Identifier:null into Identifier:null().
+        * kjs/identifier.cpp: Removed Identifier:null and added Identifier:null().
+
+        * kjs/internal.cpp: Made NaN_Bytes and Inf_Bytes const.
+
+        * kjs/completion.h: Use Identifier:null() instead of Identifier:null.
+        * kjs/function.h: Ditto.
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): Ditto.
+        * kjs/nodes.cpp: (FuncExprNode::evaluate): Use Identifier:null() instead of Identifier:null.
+
 2003-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

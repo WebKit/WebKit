@@ -2833,7 +2833,7 @@ bool FuncExprNode::deref()
 // ECMA 13
 Value FuncExprNode::evaluate(ExecState *exec)
 {
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, body, exec->context().imp()->scopeChain());
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), body, exec->context().imp()->scopeChain());
   Value ret(fimp);
   List empty;
   Value proto = exec->interpreter()->builtinObject().construct(exec,empty);

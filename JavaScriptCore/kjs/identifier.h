@@ -52,7 +52,7 @@ namespace KJS {
         uint32_t toUInt32(bool *ok) const { return _ustring.toUInt32(ok); }
         double toDouble() const { return _ustring.toDouble(); }
         
-        static Identifier null;
+        static const Identifier &null();
         
         friend bool operator==(const Identifier &, const Identifier &);
         friend bool operator!=(const Identifier &, const Identifier &);
