@@ -1,5 +1,13 @@
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
+	load and unload is only a WebNetscapePluginPackage thing since you can't unload an NSBundle.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+
+2002-10-22  Chris Blumenberg  <cblu@apple.com>
+
 	More moving stuff around for the new plug-in API. Added WebBasePluginPackage and added subclass WebPluginPackage. Also made WebNetscapePluginPackage a subclass of WebBasePluginPackage. 
 
         * Plugins.subproj/WebBasePluginPackage.h: Added.

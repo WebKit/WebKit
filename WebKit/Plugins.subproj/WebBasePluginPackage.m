@@ -61,26 +61,10 @@
     return MIMEToDescription;
 }
 
-- (BOOL)load
-{
-    // Overriden by subclasses.
-    return NO;
-}
-
-- (void)unload
-{
-    // Overriden by subclasses.
-}
-
-- (BOOL)isLoaded
-{
-    return isLoaded;
-}
-
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"name: %@\npath: %@\nisLoaded: %d\nmimeTypes:\n%@\npluginDescription:%@",
-        name, path, isLoaded, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
+    return [NSString stringWithFormat:@"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@",
+        name, path, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
 }
 
 @end
