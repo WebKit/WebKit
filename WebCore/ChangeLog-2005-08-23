@@ -2,6 +2,22 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3425232> textarea won't trigger onchange action when clicking to new field
+
+        * khtml/rendering/render_form.h: Added new m_dirty data member.
+        * khtml/rendering/render_form.cpp:
+        (RenderTextArea::RenderTextArea): Initialize m_dirty to false.
+        (RenderTextArea::detach): Call value() on the DOM element to cause it to fetch the value from this object.
+        (RenderTextArea::handleFocusOut): Ditto. Also send the onchange event based only on the m_dirty flag.
+        (RenderTextArea::updateFromElement): Clear the m_dirty flag if the edited value is blown away by a value
+        that comes from the DOM element. Remove code to clear the element's m_dirtyvalue flag; that's an unnecessary
+        optimization, and ideally we'll stop having code in the render object that knows about that flag later.
+        (RenderTextArea::slotTextChanged): Set the m_dirty flag.
+
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - re-fixed <rdar://problem/3760910> please add support for custom tag names in HTML
 
         * khtml/xml/dom_docimpl.cpp:
