@@ -1793,7 +1793,7 @@ bool CSSParser::parseShadow( int propId, bool important )
             if (isColor) {
                 if (!context.allowColor)
                     return context.failed();
-                parsedColor = new CSSPrimitiveValueImpl(id);
+                parsedColor = new CSSPrimitiveValueImpl(val->id);
             }
 
             if (!parsedColor)

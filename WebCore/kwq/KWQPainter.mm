@@ -586,11 +586,25 @@ void QPainter::endTransparencyLayer()
 
 void QPainter::setShadow(int x, int y, int blur, const QColor& color)
 {
-    // FIXME: When CG supports setting the shadow color, we will use it here. An invalid
-    // color should be checked for, as this means that the color was not set for the shadow
-    // and we should therefore do nothing in that case.
+    // Check for an invalid color, as this means that the color was not set for the shadow
+    // and we should therefore just use the default shadow color.
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
-    CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
+    if (!color.isValid())
+        CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
+    else {
+        NSColor* deviceColor = [color.getNSColor() colorUsingColorSpaceName: @"NSDeviceRGBColorSpace"];
+        float red = [deviceColor redComponent];
+        float green = [deviceColor greenComponent];
+        float blue = [deviceColor blueComponent];
+        float alpha = [deviceColor alphaComponent];
+        const float components[] = { red, green, blue, alpha };
+        
+        CGContextSetShadowWithColor(context,
+                                    CGSizeMake(x,-y), // y is flipped.
+                                    blur, 
+                                    CGColorCreate(CGColorSpaceCreateDeviceRGB(),
+                                                  components));
+    }
 }
 
 void QPainter::clearShadow()

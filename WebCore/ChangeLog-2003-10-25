@@ -1,3 +1,15 @@
+2003-07-30  Dave Hyatt  <hyatt@apple.com>
+
+	Add support for setting the text-shadow's color.  This uses a new CG API,
+	so updating to a fairly recent Panther is required.
+	
+        Reviewed by rjw
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseShadow):
+	* kwq/KWQPainter.mm:
+        (QPainter::setShadow):
+
 2003-07-30  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3346460 -- images > area (2048x2048) are compressed vertically 
