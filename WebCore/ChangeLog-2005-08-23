@@ -1,3 +1,26 @@
+2003-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3370085 - new frames with javascript: URLs should be populated with the result of the JavaScript code
+	
+        * ChangeLog:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::updateForNewURL): Skip special filtering of
+	javascript:.
+        (HTMLFrameElementImpl::attach): Ditto.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::replaceContentsWithScriptResult): New method to execute
+	script and if the result is a string, set it as the new document contents.
+	(KHTMLPart::requestFrame): Removed APPLE_CHANGES around
+	javascript: handling. Use new
+	replaceContentsWithScriptResult method. This executes the
+	JS in the new child frame, not the parent frame, as in other
+	browsers.
+        * khtml/khtml_part.h: Prototype new method.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::openURLRequest): Use new part method.
+
 2003-11-03  Vicki Murley  <vicki@apple.com>
 
         Reviewed by kocienda.

@@ -1103,6 +1103,8 @@ private:
   
   void receivedFirstData();
 
+  void replaceContentsWithScriptResult( const KURL &url );
+
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
 
