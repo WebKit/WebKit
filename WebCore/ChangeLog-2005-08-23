@@ -7,6 +7,8 @@
         * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::applyDeclarations):
         Added CSS_PROP_BACKGROUND to the list of properties that must be applied in the first pass.
 
+=== Safari-140 ===
+
 2004-05-13  David Hyatt  <hyatt@apple.com>
 
 	Fix image loading for <input type=image> and <object>.  Make sure it works dynamically and make sure
@@ -26,8 +28,6 @@
         (HTMLObjectElementImpl::parseHTMLAttribute):
         (HTMLObjectElementImpl::attach):
         * khtml/html/html_objectimpl.h:
-
-=== Safari-140 ===
 
 2004-05-14  Chris Blumenberg  <cblu@apple.com>
 
