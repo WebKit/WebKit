@@ -150,7 +150,6 @@
 "image/png"
 "lastVisitedDate"
 "nullplugin"
-"pluginspage"
 "text/"
 "text/html"
 "text/rtf"

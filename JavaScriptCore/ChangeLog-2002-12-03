@@ -1,3 +1,8 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+        * kjs/object.cpp: Make the same change Maciej just did, but to the
+	other constructor right next to the one he changed.
+
 2002-10-31  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3082660 - REGRESSION: one ListImp leaks opening/closing nearly empty web page

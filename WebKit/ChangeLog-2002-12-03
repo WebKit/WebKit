@@ -1,3 +1,7 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-11-01  Chris Blumenberg  <cblu@apple.com>
 
 	Check that the plug-in is loaded before calling it.
