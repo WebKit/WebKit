@@ -7,8 +7,7 @@ layer at (0,0) size 800x64
         RenderText {TEXT} at (0,0) size 603x18
           text run at (0,0) width 282: "Random tests of some bizarre combinations. "
           text run at (282,0) width 321: "H2 should allow a form inside it, but p should not. "
-        RenderText {TEXT} at (603,0) size 4x18
-          text run at (603,0) width 4: "  "
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {FORM} at (0,18) size 784x22
         RenderSelect {SELECT} at (2,2) size 39x18
         RenderText {TEXT} at (0,0) size 0x0

@@ -2,7 +2,7 @@
  * This file is part of the html renderer for KDE.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1718,17 +1718,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     // This variable is used only if whitespace isn't set to PRE, and it tells us whether
     // or not we are currently ignoring whitespace.
     bool ignoringSpaces = false;
+    BidiIterator ignoreStart;
     
     // This variable tracks whether the very last character we saw was a space.  We use
     // this to detect when we encounter a second space so we know we have to terminate
     // a run.
     bool currentCharacterIsSpace = false;
     RenderObject* trailingSpaceObject = 0;
-    
-    // The pos of the last whitespace char we saw, not to be confused with the lastSpace
-    // variable below, which is really the last breakable char.
-    int lastSpacePos = 0;
-    
+
     BidiIterator lBreak = start;
 
     RenderObject *o = start.obj;
@@ -1803,12 +1800,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // then start ignoring spaces again.
                 if (needToSetStaticX || needToSetStaticY) {
                     trailingSpaceObject = 0;
+                    ignoreStart.obj = o;
+                    ignoreStart.pos = 0;
                     if (ignoringSpaces) {
-                        BidiIterator startMid( 0, o, 0 );
-                        BidiIterator stopMid ( 0, o, 1 );
-                        addMidpoint(startMid); // Stop ignoring spaces.
-                        addMidpoint(stopMid); // Start ignoring again.
+                        addMidpoint(ignoreStart); // Stop ignoring spaces.
+                        addMidpoint(ignoreStart); // Start ignoring again.
                     }
+                    
                 }
             }
         } else if (o->isInlineFlow()) {
@@ -1848,7 +1846,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             isLineEmpty = false;
             ignoringSpaces = false;
             currentCharacterIsSpace = false;
-            lastSpacePos = 0;
             trailingSpaceObject = 0;
             
             if (o->isListMarker() && o->style()->listStylePosition() == OUTSIDE) {
@@ -1924,7 +1921,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             // Stop ignoring spaces and begin at this
                             // new point.
                             ignoringSpaces = false;
-                            lastSpacePos = 0;
                             lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                             BidiIterator startMid ( 0, o, pos );
                             addMidpoint(startMid);
@@ -1937,8 +1933,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                     }
 
-                    if (currentCharacterIsSpace && !previousCharacterIsSpace)
-                        lastSpacePos = pos;
                     tmpW += t->width(lastSpace, pos - lastSpace, f);
                     if (!appliedStartWidth) {
                         tmpW += inlineWidth(o, true, false);
@@ -2007,16 +2001,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         // If we encounter a newline, or if we encounter a
                         // second space, we need to go ahead and break up this
                         // run and enter a mode where we start collapsing spaces.
-                        if (currentCharacterIsSpace && previousCharacterIsSpace){
+                        if (currentCharacterIsSpace && previousCharacterIsSpace) {
                             ignoringSpaces = true;
-                        }
-                        
-                        if (ignoringSpaces) {
+                            
                             // We just entered a mode where we are ignoring
                             // spaces. Create a midpoint to terminate the run
                             // before the second space. 
-                            BidiIterator endMid ( 0, trailingSpaceObject ? trailingSpaceObject : o, lastSpacePos );
-                            addMidpoint(endMid);
+                            addMidpoint(ignoreStart);
                             lastSpace = pos;
                         }
                     }
@@ -2025,10 +2016,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     // Stop ignoring spaces and begin at this
                     // new point.
                     ignoringSpaces = false;
-                    lastSpacePos = 0;
                     lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                     BidiIterator startMid ( 0, o, pos );
                     addMidpoint(startMid);
+                }
+
+                if (currentCharacterIsSpace && !previousCharacterIsSpace) {
+                    ignoreStart.obj = o;
+                    ignoreStart.pos = pos;
                 }
                 
                 if (!isPre && currentCharacterIsSpace && !ignoringSpaces)

@@ -1,3 +1,13 @@
+2004-03-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3604241, simple space collapsing results in a doubled character.  Simplify the ignoring of
+	whitespace and make sure it works across absolutely positioned spans.
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2004-03-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
