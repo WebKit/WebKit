@@ -51,6 +51,7 @@ using khtml::RenderWidget;
 #import "KWQDOMNode.h"
 #import "KWQFont.h"
 #import "KWQFrame.h"
+#import "KWQLoader.h"
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
 #import "KWQView.h"
@@ -942,6 +943,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return _shouldCreateRenderers;
 }
 
-
+- (int)numPendingOrLoadingRequests
+{
+    DocumentImpl *doc = _part->xmlDocImpl();
+    
+    if (doc)
+        return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
+    return 0;
+}
+    
 
 @end

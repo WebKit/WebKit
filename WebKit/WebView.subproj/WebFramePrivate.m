@@ -981,6 +981,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
+                [[self webView] _progressCompleted];
+                
                 if ([ds _mainDocumentError]) {
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                      didFailLoadWithError:[ds _mainDocumentError]
@@ -2188,6 +2190,23 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [_private->bridge shouldCreateRenderers];
 }
 
+- (int)_numPendingOrLoadingRequests:(BOOL)recurse
+{
+    int num;
+
+    if (!recurse)
+        return [[self _bridge] numPendingOrLoadingRequests];
+
+    num = [[self _bridge] numPendingOrLoadingRequests];
+    NSArray *children = [self childFrames];
+    int i, count = [children count];
+    WebFrame *child;
+    for (i = 0; i < count; i++){
+        child = [children objectAtIndex: 0];
+        num += [child _numPendingOrLoadingRequests:recurse];
+    }
+    return num;
+}
 
 @end
 

@@ -176,6 +176,8 @@
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
     [self _setLoading:YES];
+
+    [_private->webView _progressStarted];
     
     [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                      didStartProvisionalLoadForFrame:[self webFrame]];

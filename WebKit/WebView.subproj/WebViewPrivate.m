@@ -1,11 +1,12 @@
 /*	
-    WebControllerPrivate.m
+    WebViewPrivate.m
     Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultFrameLoadDelegate.h>
@@ -27,6 +28,7 @@
 
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSData_NSURLExtras.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
@@ -36,6 +38,17 @@
 #import <WebCore/WebCoreSettings.h>
 
 static NSMutableSet *schemesWithRepresentationsSet;
+
+@interface WebProgressItem : NSObject
+{
+@public
+    long long bytesReceived;
+    long long estimatedLength;
+}
+@end
+
+@implementation WebProgressItem
+@end
 
 @implementation WebViewPrivate
 
@@ -69,6 +82,8 @@ static NSMutableSet *schemesWithRepresentationsSet;
     [resourceProgressDelegateForwarder release];
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
+    
+    [progressItems release];
     
     [super dealloc];
 }
@@ -617,6 +632,108 @@ static NSMutableSet *schemesWithRepresentationsSet;
 - (BOOL)_isPerformingProgrammaticFocus
 {
     return _private->programmaticFocusCount != 0;
+}
+
+#define UnknownTotalBytes -1
+#define WebProgressItemDefaultEstimatedLength 1024*16
+
+- (void)_progressStarted
+{
+    if (_private->numProgressTrackedFrames == 0){
+        _private->totalPageAndResourceBytesToLoad = 0;
+        _private->totalBytesReceived = 0;
+        _private->progressValue = 0;
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
+    }
+    _private->numProgressTrackedFrames++;
+}
+
+- (void)_progressCompleted
+{
+    _private->numProgressTrackedFrames--;
+    ASSERT (_private->numProgressTrackedFrames >= 0);
+    if (_private->numProgressTrackedFrames == 0){
+        [_private->progressItems release];
+        _private->progressItems = nil;
+        _private->progressValue = 1;
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
+    }
+}
+
+- (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
+{
+    if (!con)
+        return;
+
+    WebProgressItem *item = [[WebProgressItem alloc] init];
+
+    if (!item)
+        return;
+
+    long long length = [response expectedContentLength];
+    if (length < 0){
+        length = WebProgressItemDefaultEstimatedLength;
+    }
+    item->estimatedLength = length;
+    _private->totalPageAndResourceBytesToLoad += length;
+    
+    if (!_private->progressItems)
+        _private->progressItems = [[NSMutableDictionary alloc] init];
+        
+    [_private->progressItems _web_setObject:item forUncopiedKey:con];
+    [item release];
+}
+
+- (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)data
+{
+    if (!con)
+        return;
+
+    WebProgressItem *item = [_private->progressItems objectForKey:con];
+
+    if (!item)
+        return;
+
+    unsigned bytesReceived = [data length];
+    double increment = 0, percentOfRemainingBytes;
+    long long remainingBytes, estimatedBytesForPendingRequests;
+
+    item->bytesReceived += bytesReceived;
+    if (item->bytesReceived > item->estimatedLength){
+        _private->totalPageAndResourceBytesToLoad += ((item->bytesReceived*2) - item->estimatedLength);
+        item->estimatedLength = item->bytesReceived*2;
+    }
+    
+    int numPendingOrLoadingRequests = [[self mainFrame] _numPendingOrLoadingRequests:YES];
+    estimatedBytesForPendingRequests = WebProgressItemDefaultEstimatedLength * numPendingOrLoadingRequests;
+    remainingBytes = ((_private->totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - _private->totalBytesReceived);
+    percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
+    increment = (1.0 - _private->progressValue) * percentOfRemainingBytes;
+    
+    _private->totalBytesReceived += bytesReceived;
+    
+    _private->progressValue += increment;
+
+    if (_private->progressValue < 0.0)
+        _private->progressValue = 0.0;
+
+    if (_private->progressValue > 1.0)
+        _private->progressValue = 1.0;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
+}
+
+- (void)_completeProgressForConnection:(NSURLConnection *)con
+{
+    WebProgressItem *item = [_private->progressItems objectForKey:con];
+
+    if (!item)
+        return;
+        
+    // Adjust the total expected bytes to account for any overage/underage.
+    long long delta = item->bytesReceived - item->estimatedLength;
+    _private->totalPageAndResourceBytesToLoad += delta;
+    item->estimatedLength = item->bytesReceived;
 }
 
 @end

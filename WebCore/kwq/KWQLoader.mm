@@ -32,6 +32,7 @@
 #import "loader.h"
 #import "WebCoreBridge.h"
 
+using khtml::Cache;
 using khtml::CachedObject;
 using khtml::CachedImage;
 using khtml::DocLoader;
@@ -53,6 +54,11 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     [resourceLoader release];
 
     return handle != nil;
+}
+
+int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
+{
+    return Cache::loader()->numRequests(dl);
 }
 
 bool KWQCheckIfReloading(DocLoader *loader)

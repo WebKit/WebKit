@@ -183,4 +183,6 @@ typedef enum {
 - (void)_setShouldCreateRenderers:(BOOL)f;
 - (BOOL)_shouldCreateRenderers;
 
+- (int)_numPendingOrLoadingRequests:(BOOL)recurse;
+
 @end

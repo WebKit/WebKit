@@ -30,6 +30,20 @@ extern NSString *WebElementLinkTargetFrameKey;	// NSString of the target of the 
 extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
 extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
 
+/*
+ @discussion Notification sent by WebView when the value of estimatedProgress.
+ @constant WebViewProgressStartedNotification Posted from whenever a load begins in the WebView, including
+ a load that is initiated in a subframe.  After receiving this notification zero or more
+ WebViewProgressEstimateChangedNotifications will be sent.  The userInfo will be nil.
+ @constant WebViewProgressEstimateChangedNotification Posted from whenever the value of
+ estimatedProgress changes.  The userInfo will be nil.
+ @constant WebViewProgressFinishedNotification Posted when the load for a WebView has finished.
+ The userInfo will be nil.
+*/
+extern NSString *WebViewProgressStartedNotification;
+extern NSString *WebViewProgressEstimateChangedNotification;
+extern NSString *WebViewProgressFinishedNotification;
+
 /*!
     @class WebView
     WebView manages the interaction between WebFrameViews and WebDataSources.  Modification
@@ -384,6 +398,19 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @discussion The group name for this WebView.
 */
 - (NSString *)groupName;
+
+
+/*!
+    @method estimatedProgress
+    @discussion An estimate of the percent complete for a document load.  This
+    value will range from 0 to 1.0 and, once a load completes, will remain at 1.0 
+    until a new load starts, at which point it will be reset to 0.  The value is an
+    estimate based on the total number of bytes expected to be received
+    for a document, including all it's possible subresources.  For more accurate progress
+    indication it is recommended that you implement a WebFrameLoadDelegate and a
+    WebResourceLoadDelegate.
+*/
+- (double)estimatedProgress;
 
 @end
 

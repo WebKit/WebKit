@@ -1,3 +1,20 @@
+2003-05-29  Richard Williamson   <rjw@apple.com>
+
+	Support for the 'estimatedProgress' method on
+	WebView.  Added bridge access to the number of pending or still
+	loading requests (from KHTML's perspective).  This is used to
+	more accurately guess at the total remaining bytes to load.
+
+        Reviewed by Chris.
+
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        (KWQNumberOfPendingOrLoadingRequests):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge numPendingOrLoadingRequests]):
+
 2003-05-29  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

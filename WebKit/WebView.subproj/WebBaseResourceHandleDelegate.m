@@ -281,7 +281,9 @@
     response = r;
 
     [dataSource _addResponse: r];
-    
+
+    [webView _incrementProgressForConnection:con response:r];
+        
     if (implementations.delegateImplementsDidReceiveResponse)
         [resourceLoadDelegate webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else
@@ -292,6 +294,8 @@
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
+
+    [webView _incrementProgressForConnection:con data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
         [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
@@ -310,6 +314,8 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
+    [webView _completeProgressForConnection:con];
+
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
         [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
     else
@@ -322,7 +328,9 @@
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
-    
+
+    [webView _completeProgressForConnection:con];
+
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     [self releaseResources];
@@ -346,7 +354,9 @@
     currentWebChallenge = nil;
 
     [connection cancel];
-    
+
+    [webView _completeProgressForConnection:connection];
+
     if (error) {
         [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }

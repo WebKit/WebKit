@@ -96,9 +96,9 @@ static NSMutableArray *activeImageRenderers;
     self = [super init];
     if (self != nil) {
         MIMEType = [MIME copy];
+        isNull = YES;
+        loadStatus = NSImageRepLoadStatusUnknownType;
     }
-    isNull = YES;
-    loadStatus = NSImageRepLoadStatusUnknownType;
     return self;
 }
 
@@ -115,8 +115,8 @@ static NSMutableArray *activeImageRenderers;
             isNull = NO;
         else
             isNull = YES;
+        loadStatus = NSImageRepLoadStatusUnknownType;
     }
-    loadStatus = NSImageRepLoadStatusUnknownType;
     return self;
 }
 
@@ -125,9 +125,10 @@ static NSMutableArray *activeImageRenderers;
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
     self = [super initWithContentsOfFile:imagePath];
-    if (self)
+    if (self){
         isNull = NO;
-    loadStatus = NSImageRepLoadStatusUnknownType;
+        loadStatus = NSImageRepLoadStatusUnknownType;
+    }
     return self;
 }
 

@@ -1,5 +1,46 @@
 2003-05-29  Richard Williamson   <rjw@apple.com>
 
+	Implemented 'estimatedProgress' method on WebView.  This should
+	eventually replace the broken algorithm on WebBrowser.  Maybe
+	for panther.
+
+        Reviewed by Chris.
+
+        * WebKit.exp:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate connection:didFailWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _numPendingOrLoadingRequests:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView estimatedProgress]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _isPerformingProgrammaticFocus]):
+        (-[WebView _progressStarted]):
+        (-[WebView _progressCompleted]):
+        (-[WebView _incrementProgressForConnection:data:]):
+        (-[WebView _completeProgressForConnection:]):
+
+	Code cleanup.  Moved variable initialization into block that
+	check for non-nil self.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithMIMEType:]):
+        (-[WebImageRenderer initWithData:MIMEType:]):
+        (-[WebImageRenderer initWithContentsOfFile:]):
+
+2003-05-29  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3272226.  The shared image factory was being released
 	when any renderer had 0 reps!
 

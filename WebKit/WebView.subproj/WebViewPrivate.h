@@ -67,6 +67,13 @@ typedef struct _WebResourceDelegateImplementationCache {
     int programmaticFocusCount;
     
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
+
+    long long totalPageAndResourceBytesToLoad;
+    long long totalBytesReceived;
+    double progressValue;
+    
+    int numProgressTrackedFrames;
+    NSMutableDictionary *progressItems;
 }
 @end
 
@@ -200,6 +207,13 @@ Could be worth adding to the API.
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
 - (BOOL)_isPerformingProgrammaticFocus;
+
+// Methods dealing with the estimated progress completion.
+- (void)_progressStarted;
+- (void)_progressCompleted;
+- (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
+- (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)dataSource;
+- (void)_completeProgressForConnection:(NSURLConnection *)con;
 
 @end
 

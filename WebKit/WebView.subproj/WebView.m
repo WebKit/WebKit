@@ -52,6 +52,9 @@ NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
+NSString *WebViewProgressStartedNotification = @"WebProgressStartedNotification";
+NSString *WebViewProgressEstimateChangedNotification = @"WebProgressEstimateChangedNotification";
+NSString *WebViewProgressFinishedNotification = @"WebProgressFinishedNotification";
 
 enum { WebViewVersion = 1 };
 
@@ -661,6 +664,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->setName;
 }
 
+- (double)estimatedProgress
+{
+    return _private->progressValue;
+}
 
 @end
 
@@ -773,5 +780,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
     return YES;
 }
+
 
 @end

@@ -66,6 +66,9 @@ _WebReportError
 _WebReportFatalError
 _WebURLNamePboardType
 _WebURLPboardType
+_WebViewProgressStartedNotification
+_WebViewProgressEstimateChangedNotification
+_WebViewProgressFinishedNotification
 
 ##
 ## Carbon Support
