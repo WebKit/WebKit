@@ -18,10 +18,10 @@ static NSNumber *IFURLFilePosixPermissions;
 +(void)initialize
 {
     // set file perms to owner read/write/execute only
-    IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:700] retain];
+    IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE | IF_UEXEC)] retain];
 
     // set file perms to owner read/write only
-    IFURLFilePosixPermissions = [[NSNumber numberWithInt:600] retain];
+    IFURLFilePosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE)] retain];
 }
 
 -(id)initWithPath:(NSString *)thePath
@@ -88,20 +88,21 @@ static NSNumber *IFURLFilePosixPermissions;
     [archiver encodeObject:key];
     [archiver encodeObject:object];
     
-    // FIXME: [kocienda] Radar 2859368 (IFURLFileDatabase must set correct permissions when creating files)
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSDate date], @"NSFileModificationDate",
         NSUserName(), @"NSFileOwnerAccountName",
+        IFURLFilePosixPermissions, @"NSFilePosixPermissions",
         NULL
     ];
 
     directoryAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSDate date], @"NSFileModificationDate",
         NSUserName(), @"NSFileOwnerAccountName",
+        IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
         NULL
     ];
 
-//        IFURLFilePosixPermissions, @"NSFilePosixPermissions",
+//        
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     result = [[NSFileManager defaultManager] createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
@@ -180,6 +181,7 @@ static NSNumber *IFURLFilePosixPermissions;
             isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
                 [NSDate date], @"NSFileModificationDate",
                 NSUserName(), @"NSFileOwnerAccountName",
+                IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
                 NULL
             ]];
         }
@@ -187,8 +189,6 @@ static NSNumber *IFURLFilePosixPermissions;
     
     return isOpen;
 }
-//                IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
-
 
 -(BOOL)close
 {
