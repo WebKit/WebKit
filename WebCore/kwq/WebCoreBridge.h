@@ -170,6 +170,7 @@ typedef enum {
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendResizeEvent;
+- (void)sendScrollEvent;
 - (BOOL)needsLayout;
 - (void)setNeedsLayout;
 - (void)drawRect:(NSRect)rect;

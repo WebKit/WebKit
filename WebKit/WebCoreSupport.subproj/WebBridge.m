@@ -74,7 +74,6 @@
 - (jobject)pollForAppletInWindow: (NSWindow *)window;
 @end
 
-
 @implementation WebBridge
 
 - (id)initWithWebFrame:(WebFrame *)webFrame

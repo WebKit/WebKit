@@ -35,6 +35,8 @@
     NSSize lastLayoutFrameSize;
     BOOL laidOutAtLeastOnce;
     
+    NSPoint lastScrollPosition;
+
     WebPluginController *pluginController;
     
     NSString *toolTip;

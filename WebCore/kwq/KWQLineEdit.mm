@@ -31,6 +31,11 @@
 #import "KWQTextField.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "WebCoreViewFactory.h"
+
+@interface NSSearchField (SearchFieldSecrets)
+- (void) _addStringToRecentSearches:(NSString*)string;
+@end
 
 QLineEdit::QLineEdit(Type type)
     : m_returnPressed(this, SIGNAL(returnPressed()))
@@ -285,12 +290,21 @@ void QLineEdit::setMaxResults(int maxResults)
         return;
     
     NSSearchField *searchField = (NSSearchField *)getView();
-    if (!maxResults)
-        [[searchField cell] setSearchButtonCell:nil];
-    else
-        [[searchField cell] resetSearchButtonCell];
-
-    [[searchField cell] setMaximumRecents:maxResults];
+    id searchCell = [searchField cell];
+    if (!maxResults) {
+        [searchCell setSearchButtonCell:nil];
+        [searchCell setSearchMenuTemplate:nil];
+    }
+    else {
+        NSMenu* cellMenu = [searchCell searchMenuTemplate];
+        NSButtonCell* buttonCell = [searchCell searchButtonCell];
+        if (!buttonCell)
+            [searchCell resetSearchButtonCell];
+        if (!cellMenu)
+            [searchCell setSearchMenuTemplate:[[WebCoreViewFactory sharedFactory] cellMenuForSearchField]];
+    }
+    
+    [searchCell setMaximumRecents:maxResults];
 }
 
 void QLineEdit::setPlaceholderString(const QString& placeholder)
@@ -300,5 +314,14 @@ void QLineEdit::setPlaceholderString(const QString& placeholder)
     
     NSSearchField *searchField = (NSSearchField *)getView();
     [[searchField cell] setPlaceholderString:placeholder.getNSString()];
+}
+
+void QLineEdit::addSearchResult()
+{
+    if (m_type != Search)
+        return;
+    
+    NSSearchField *searchField = (NSSearchField *)getView();
+    [[searchField cell] _addStringToRecentSearches:[searchField stringValue]];
 }
 

@@ -585,6 +585,11 @@ static BOOL nowPrinting(WebCoreBridge *self)
     _part->sendResizeEvent();
 }
 
+- (void)sendScrollEvent
+{
+    _part->sendScrollEvent();
+}
+
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     [self _setupRootForPrinting:YES];

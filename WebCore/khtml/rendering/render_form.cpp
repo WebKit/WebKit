@@ -598,6 +598,12 @@ void RenderLineEdit::slotPerformSearch()
     // Fire the "search" DOM event.
     element()->dispatchHTMLEvent(EventImpl::SEARCH_EVENT, true, false);
 }
+
+void RenderLineEdit::addSearchResult()
+{
+    if (widget())
+        widget()->addSearchResult();
+}
 #endif
 
 void RenderLineEdit::handleFocusOut()

@@ -197,6 +197,11 @@ static BOOL forceRealHitTest = NO;
         [self setNeedsDisplay:YES];
     }
 
+    NSPoint origin = [[self superview] bounds].origin;
+    if (!NSEqualPoints(_private->lastScrollPosition, origin))
+        [[self _bridge] sendScrollEvent];
+    _private->lastScrollPosition = origin;
+
     SEL selector = @selector(_updateMouseoverWithFakeEvent);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
     [self performSelector:selector withObject:nil afterDelay:0];
@@ -1183,6 +1188,7 @@ static WebHTMLView *lastHitView = nil;
     if (_private) {
         [self _stopAutoscrollTimer];
         if ([self window]) {
+            _private->lastScrollPosition = [[self superview] bounds].origin;
             [self addWindowObservers];
             [self addSuperviewObservers];
             [self addMouseMovedObserver];
@@ -1190,6 +1196,8 @@ static WebHTMLView *lastHitView = nil;
     
             [[self _pluginController] startAllPlugins];
     
+            _private->lastScrollPosition = NSZeroPoint;
+            
             _private->inWindow = YES;
         } else {
             // Reset when we are moved out of a window after being moved into one.

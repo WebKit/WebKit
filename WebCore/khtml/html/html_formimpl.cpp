@@ -521,9 +521,12 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
         if (current->id() == ID_INPUT) {
             HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl*>(current);
             if (input->inputType() == HTMLInputElementImpl::TEXT
-                || input->inputType() ==  HTMLInputElementImpl::PASSWORD)
+                || input->inputType() ==  HTMLInputElementImpl::PASSWORD
+                || input->inputType() == HTMLInputElementImpl::SEARCH)
             {
                 KWQ(part)->recordFormValue(input->name().string(), input->value().string(), this);
+                if (input->renderer() && input->inputType() == HTMLInputElementImpl::SEARCH)
+                    static_cast<RenderLineEdit*>(input->renderer())->addSearchResult();
             }
         }
 #else

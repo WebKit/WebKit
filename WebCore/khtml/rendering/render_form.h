@@ -265,6 +265,8 @@ public slots:
     void slotTextChanged(const QString &string);
 #if APPLE_CHANGES
     void slotPerformSearch();
+public:
+    void addSearchResult();
 #endif
 
 protected:
