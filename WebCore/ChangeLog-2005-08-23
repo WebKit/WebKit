@@ -1,5 +1,12 @@
 2002-11-16  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3078240, <pre> should not establish its own text-align,
+	but should instead inherit from its parent.
+	
+        * khtml/css/html4.css:
+
+2002-11-16  David Hyatt  <hyatt@apple.com>
+
 	Rewrite the calculation of min and max width for <pre>s.  This
 	is the second stage of the whitespace rewrite (third stage
 	will be to stop morphing newlines).
