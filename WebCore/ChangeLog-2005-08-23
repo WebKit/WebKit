@@ -1,3 +1,16 @@
+2002-02-05  Kenneth Kocienda  <kocienda@apple.com>
+
+	Changes to move these last bits of code to the new cache API.
+
+	* src/kwq/KWQKjobclasses.mm:
+	* src/kwq/WKPluginView.h:
+	* src/kwq/WKPluginView.mm: (-[WKPluginView drawRect:]), (-[WKPluginView
+	WCURLHandleResourceDidBeginLoading:userData:]), (-[WKPluginView
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[WKPluginView
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[WKPluginView
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]), (-[WKPluginView
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]):
+
 2002-02-04  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix everything for WK --> IF rename.

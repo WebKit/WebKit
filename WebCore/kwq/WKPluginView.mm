@@ -7,8 +7,6 @@
 //
 
 #import "WKPluginView.h"
-#include <WCURICacheData.h>
-#include <WCURICache.h>
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 
@@ -113,7 +111,6 @@
 {
     NPError npErr;
     char cMime[200], cURL[800];
-    id <WCURICache> cache;
     //WindowRef windowRef;
     
     //windowRef = [[self window] _windowRef]; // give the window a WindowRef
@@ -135,15 +132,15 @@
         npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
         KWQDebug("NPP_NewStream: %d\n", npErr);
         
-        cache = WCGetDefaultURICache();
         if(transferMode == NP_NORMAL){
             KWQDebug("Stream type: NP_NORMAL\n");
-            [cache requestWithString:url requestor:self userData:nil];
+            //[cache requestWithString:url requestor:self userData:nil];
+            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
         }else if(transferMode == NP_ASFILEONLY){
             KWQDebug("Stream type: NP_ASFILEONLY not yet supported\n");
         }else if(transferMode == NP_ASFILE){
             KWQDebug("Stream type: NP_ASFILE not fully supported\n");
-            [cache requestWithString:url requestor:self userData:nil];
+            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
         }else if(transferMode == NP_SEEK){
             KWQDebug("Stream type: NP_SEEK not yet supported\n");
         }
@@ -187,6 +184,44 @@
 
 // cache methods
 
+- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
+{
+}
+
+- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
+{
+}
+
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+{
+    NPError npErr;
+    
+    streamOffset = 0;
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+        NPP_StreamAsFile(instance, stream, NULL);
+    }
+    npErr = NPP_DestroyStream(instance, stream, NPRES_DONE);
+    KWQDebug("NPP_DestroyStream: %d\n", npErr);
+}
+
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
+{
+    int32 bytes;
+    
+    bytes = NPP_WriteReady(instance, stream);
+    KWQDebug("NPP_WriteReady bytes=%d\n", (int)bytes);
+    
+    bytes = NPP_Write(instance, stream, streamOffset, [data length], (void *)[data bytes]);
+    KWQDebug("NPP_Write bytes=%d\n", (int)bytes);
+    streamOffset += [data length];
+}
+
+- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+{
+}
+
+// FIXME: Remove old cache code
+#if 0
 -(void)cacheDataAvailable:(NSNotification *)notification
 {
     id <WCURICacheData> data;
@@ -212,6 +247,7 @@
     npErr = NPP_DestroyStream(instance, stream, NPRES_DONE);
     KWQDebug("NPP_DestroyStream: %d\n", npErr);
 }
+#endif
 
 // event methods
 

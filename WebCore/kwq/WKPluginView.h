@@ -10,6 +10,7 @@
 #include <qwidget.h>
 #import <WKPlugin.h>
 #include "npapi.h"
+#include <WCURLHandle.h>
 
 
 typedef NPStream* NPS;
@@ -24,7 +25,7 @@ typedef NPStream* NPS;
 -(void)stop;
 @end
 
-@interface WKPluginView : NSQuickDrawView {
+@interface WKPluginView : NSQuickDrawView <WCURLHandleClient> {
     QWidget *widget;
     WKPlugin *plugin;
     WKPluginViewNullEventSender *eventSender;

@@ -163,9 +163,7 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
 
 void TransferJob::kill(bool quietly=TRUE)
 {
-#if 0
-    [WCGetDefaultURICache() cancelRequestWithURL:d->url requestor:d->requestor];
-#endif
+    [d->handle cancelLoadInBackground];
 }
 
 void TransferJob::begin(id <WCURLHandleClient> client, void *userData)
