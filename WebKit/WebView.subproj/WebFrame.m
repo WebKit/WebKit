@@ -3,47 +3,40 @@
         Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebFrame.h>
-
-#import <Cocoa/Cocoa.h>
+#import <WebKit/WebFramePrivate.h>
 
 #import <WebKit/DOM.h>
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryPrivate.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURLRequest.h>
 #import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 #import <objc/objc-runtime.h>
-#import <Foundation/NSURLRequestPrivate.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebHistoryPrivate.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-
 
 #ifndef NDEBUG
 static const char * const stateNames[] = {

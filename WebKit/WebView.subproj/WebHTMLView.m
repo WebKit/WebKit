@@ -6,46 +6,45 @@
 #import <WebKit/WebHTMLView.h>
 
 #import <WebKit/DOM.h>
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperations.h>
 #import <WebKit/WebException.h>
-#import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNSEventExtras.h>
+#import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSPrintOperationExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourcePrivate.h>
+#import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebUnicode.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <AppKit/NSAccessibility.h>
 #import <AppKit/NSGraphicsContextPrivate.h>
 #import <AppKit/NSResponder_Private.h>
-#import <CoreGraphics/CGContextGState.h>
-
-#import <AppKit/NSAccessibility.h>
-
-#import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSEventExtras.h>
-#import <WebKit/WebNSImageExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebStringTruncator.h>
 
 #import <Foundation/NSFileManager_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+
+#import <CoreGraphics/CGContextGState.h>
 
 // The link drag hysteresis is much larger than the others because there
 // needs to be enough space to cancel the link press without starting a link drag,
@@ -541,7 +540,7 @@ static WebHTMLView *lastHitView = nil;
     NSString *markupString;
     WebArchive *archive = [self _selectedArchive:&markupString];
     [pasteboard setString:markupString forType:NSHTMLPboardType];
-    [pasteboard setData:[archive dataRepresentation] forType:WebArchivePboardType];
+    [pasteboard setData:[archive data] forType:WebArchivePboardType];
     
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];

@@ -1,3 +1,21 @@
+2004-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	Moved WebArchive to its own file.
+
+        Reviewed by kocienda.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebArchive.h: Added.
+        * WebView.subproj/WebArchive.m: Added.
+        (-[WebArchive data]): renamed from dataRepresentation
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call renamed [WebArchive data]
+        * WebView.subproj/WebResource.h:
+        * WebView.subproj/WebResource.m:
+
 2004-04-07  Chris Blumenberg  <cblu@apple.com>
 
 	Created WebDOMOperations which are WebKit-specific categories on DOM objects.

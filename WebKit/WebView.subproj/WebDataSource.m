@@ -3,9 +3,11 @@
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebDataSourcePrivate.h>
+
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
