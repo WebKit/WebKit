@@ -24,7 +24,9 @@
  */
 #import "KWQView.h"
 
-#import <qwidget.h>
+#include <khtmlview.h>
+#include <qwidget.h>
+#include <qpainter.h>
 
 @implementation KWQView
 
@@ -75,3 +77,43 @@
 }
 
 @end
+
+
+@implementation KWQHTMLView
+
+- initWithFrame: (NSRect) r widget: (QWidget *)w 
+{
+    [super initWithFrame: r];
+    widget = w;
+    isFlipped = YES;
+}
+
+
+// This should eventually be removed.
+- (void)drawRect:(NSRect)rect {
+    if (widget != 0l){
+        //widget->paint((void *)0);
+        
+        QPainter p(widget);
+        NSRect frame = [self frame];
+        
+        ((KHTMLView *)widget)->drawContents( &p, (int)frame.origin.x, 
+                    (int)frame.origin.y, 
+                    (int)frame.size.width, 
+                    (int)frame.size.height );
+    }
+}
+
+- (void)setIsFlipped: (bool)flag
+{
+    isFlipped = flag;
+}
+
+
+- (BOOL)isFlipped 
+{
+    return isFlipped;
+}
+
+@end
+

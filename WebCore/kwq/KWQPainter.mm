@@ -67,6 +67,7 @@ void QPainter::_initialize(QWidget *widget)
     data->qpen = QPen (Qt::black);
     data->isFocusLocked = 0;
     data->compositingOperation = NSCompositeCopy;
+    data->bufferDevice = 0L;
 }
 
 
@@ -540,15 +541,15 @@ void QPainter::scale(double dx, double dy)
 }
 
 
-bool QPainter::begin(const QPaintDevice *)
+bool QPainter::begin(const QPaintDevice *bd)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    data->bufferDevice = bd;
 }
 
 
 bool QPainter::end()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    data->bufferDevice = 0L;
 }
 
 
@@ -559,14 +560,26 @@ QPaintDevice *QPainter::device() const
 
 void QPainter::_lockFocus(){
     if (data->isFocusLocked == 0){
-        [data->widget->getView() lockFocus];
+        if (data->bufferDevice != 0L){
+            const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
+            [pixmap->nsimage lockFocus];
+        }
+        else {
+            [data->widget->getView() lockFocus];
+        }
         data->isFocusLocked = 1;
     }	
 }
 
 void QPainter::_unlockFocus(){
     if (data->isFocusLocked == 1){
-        [data->widget->getView() unlockFocus];
+        if (data->bufferDevice != 0L){
+            const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
+            [pixmap->nsimage unlockFocus];
+        }
+        else  {
+            [data->widget->getView() unlockFocus];
+        }
         data->isFocusLocked = 0;
     }	
 }

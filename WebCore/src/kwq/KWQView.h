@@ -59,5 +59,17 @@ class QWidget;
 @end
 
 
+@interface KWQHTMLView : NSView
+{
+    QWidget *widget;
+    bool isFlipped;
+}
+- initWithFrame: (NSRect)r widget: (QWidget *)w; 
+- (void)setIsFlipped: (bool)flag;
+@end
+
+
+
+
 
 

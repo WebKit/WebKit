@@ -198,6 +198,7 @@ private:
 #else
         uint compositingOperation;
 #endif
+        const QPaintDevice  *bufferDevice;
     } *data;
 #endif
 }; // end class QPainter

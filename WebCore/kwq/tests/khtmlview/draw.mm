@@ -26,6 +26,8 @@
 #include <qapplication.h>
 #include <khtmlview.h>
 
+#include <KWQView.h>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -70,6 +72,9 @@ int main( int argc, char **argv )
     // WebPageView. 
     // [[WebPageView alloc] initWithFrame: (NSRect)rect document: (WebPageDocument *)doc]
     KHTMLView   *htmlView = new KHTMLView (w, 0);
+    KWQHTMLView *kwqHTMLView = [[[KWQHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: htmlView] autorelease];
+    
+    htmlView->setView (kwqHTMLView);
     
     htmlView->resize(500, 400);
  

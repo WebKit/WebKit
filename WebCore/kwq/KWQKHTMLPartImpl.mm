@@ -171,7 +171,7 @@ void KHTMLPart::slotData(id <WCURICacheData> data)
 bool KHTMLPart::openURL( const KURL &url )
 {
     // Close the previous URL.
-    closeURL();
+    //closeURL();
     
     //if ( args.doPost() && (url.protocol().startsWith("http")) )
     //{
@@ -629,13 +629,15 @@ QString KHTMLPart::jsDefaultStatusBarText() const
 
 DOM::HTMLDocumentImpl *KHTMLPart::docImpl() const
 {
-    _logNeverImplemented();
+    _logPartiallyImplemented();
+    return dynamic_cast<DOM::HTMLDocumentImpl *>(d->m_doc);
 }
 
 
 DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
 {
-    _logNeverImplemented();
+    _logPartiallyImplemented();
+    return d->m_doc;
 }
 
 
