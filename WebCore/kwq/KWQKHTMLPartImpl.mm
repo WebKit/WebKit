@@ -461,7 +461,9 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
     
     if ([_bridge modifierTrackingEnabled]) {
         if (modifierState & MetaButton) {
-            if (modifierState & ShiftButton) {
+            // FIXME 2935687: We are waffling about support for command-shift for open-behind,
+            // so I'm commenting out this message until this is addressed.
+            if (modifierState & ShiftButton && NO) {
                 format = @"Open \"%@\" in a new window, behind the current window";
             } else {
                 format = @"Open \"%@\" in a new window";

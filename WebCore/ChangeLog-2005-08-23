@@ -1,3 +1,12 @@
+2002-08-21  John Sullivan  <sullivan@apple.com>
+
+	- commented out (with FIXME 2935687) the code that was advertising in
+	the status bar that shift-command would open a link behind the
+	current window, since it doesn't.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::overURL):
+
 2002-08-21  Darin Adler  <darin@apple.com>
 
 	Fix for two problems with password fields.
