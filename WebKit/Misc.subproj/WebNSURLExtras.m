@@ -13,10 +13,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
-#if 0
-// URL API FIXME: Use new URL API when available
 static int URLBytesBufferLength = 2048;
-#endif
 
 static inline void ReleaseIfNotNULL(CFTypeRef object)
 {
@@ -29,87 +26,91 @@ static inline void ReleaseIfNotNULL(CFTypeRef object)
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
 {
-    return [NSURL _web_URLWithString:string relativeToURL:nil];
-#if 0
-    // URL API FIXME: Use new URL API when available
+    if (string == nil) {
+        return nil;
+    }
     return [self _web_URLWithDataAsString:string relativeToURL:nil];
-#endif 
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL
 {
-    return [NSURL _web_URLWithString:string relativeToURL:baseURL];
-#if 0
-    // URL API FIXME: Use new URL API when available
+    if (string == nil) {
+        return nil;
+    }
     string = [string _web_stringByTrimmingWhitespace];
     NSData *data = [string dataUsingEncoding:NSISOLatin1StringEncoding];
     return [self _web_URLWithData:data relativeToURL:baseURL];
-#endif 
 }
 
 + (NSURL *)_web_URLWithData:(NSData *)data
 {
+    if (data == nil) {
+        return nil;
+    }
     return [self _web_URLWithData:data relativeToURL:nil];
 }      
 
 + (NSURL *)_web_URLWithData:(NSData *)data relativeToURL:(NSURL *)baseURL
 {
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding] autorelease];
-    return [NSURL _web_URLWithString:string relativeToURL:baseURL];
-#if 0
-    // URL API FIXME: Use new URL API when available
-    return (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, [data bytes], [data length], kCFStringEncodingISOLatin1, baseURL, YES);
-#endif 
+    if (data == nil) {
+        return nil;
+    }
+
+    NSURL *result = nil;
+    int length = [data length];
+    if (length > 0) {
+        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, [data bytes], [data length], kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES);
+        [result autorelease];
+    }
+    else {
+        result = [NSURL URLWithString:@""];
+    }
+    return result;
 }
 
 - (NSData *)_web_originalData
 {
-    return [[self absoluteString] dataUsingEncoding:NSISOLatin1StringEncoding allowLossyConversion:YES];
-#if 0
-    // URL API FIXME: Use new URL API when available
-    NSData *result = nil;
+    NSData *data = nil;
 
     UInt8 static_buffer[URLBytesBufferLength];
     CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, static_buffer, URLBytesBufferLength);
     if (bytesFilled != -1) {
-        result = [NSData dataWithBytes:static_buffer length:bytesFilled];
+        data = [NSData dataWithBytes:static_buffer length:bytesFilled];
     }
     else {
         CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
         UInt8 *buffer = malloc(bytesToAllocate);
         bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, bytesToAllocate);
-        NSURL_ASSERT(bytesFilled == bytesToAllocate);
+        ASSERT(bytesFilled == bytesToAllocate);
         // buffer is adopted by the NSData
-        result = [NSData dataWithBytesNoCopy:buffer length:bytesFilled];
+        data = [NSData dataWithBytesNoCopy:buffer length:bytesFilled];
     }
 
-    return result;
-#endif
+    NSURL *baseURL = (NSURL *)CFURLGetBaseURL((CFURLRef)self);
+    if (baseURL) {
+        NSURL *URL = [NSURL _web_URLWithData:data relativeToURL:baseURL];
+        return [URL _web_originalData];
+    }
+    else {
+        return data;
+    }
 }
 
 - (NSString *)_web_displayableString
 {
-    return [self absoluteString];
-#if 0
-    // URL API FIXME: Use new URL API when available
-    return [[[NSString alloc] initWithData:[self _originalData] encoding:NSISOLatin1StringEncoding] autorelease];
-#endif
+    return [[[NSString alloc] initWithData:[self _web_originalData] encoding:NSISOLatin1StringEncoding] autorelease];
 }
 
 - (int)_web_URLStringLength
 {
-    return [[self _web_displayableString] length];
-#if 0
-    // URL API FIXME: Convert to new URL API when available
     int length = 0;
     if (!CFURLGetBaseURL((CFURLRef)self)) {
         length = CFURLGetBytes((CFURLRef)self, NULL, 0);
     }
     else {
-        length = [[self _displayableString] length];
+        length = [[self _web_displayableString] length];
     }
     return length;
-#endif
 }
 
 - (NSURL *)_webkit_canonicalize

@@ -1,3 +1,23 @@
+2003-08-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3365035>: Modify WebNSURLExtras to call improved NSURL creation API
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithDataAsString:]): Call through to _web_URLWithDataAsString:relativeToURL:.
+        (+[NSURL _web_URLWithDataAsString:relativeToURL:]): Call through to _web_URLWithData:relativeToURL:.
+        (+[NSURL _web_URLWithData:]): Ditto.
+        (+[NSURL _web_URLWithData:relativeToURL:]): Call CFURLCreateAbsoluteURLWithBytes API in
+	CoreFoundation.
+        (-[NSURL _web_originalData]): Use CFURLGetBytes API in CoreFoundation. Also make sure
+	that a relative URL is resolved against its base.
+        (-[NSURL _web_displayableString]): Call _web_originalData to get bytes to use
+	to create the string.
+        (-[NSURL _web_URLStringLength]): Use CFURLGetBytes API in CoreFoundation.
+
 2003-08-04  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3363011.  Pass b/f related key down events to super if b/f is disabled.
