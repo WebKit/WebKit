@@ -42,6 +42,6 @@
 
 // drawing
 - (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families;
-- (void)drawLineForCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point yOffset:(float)yOffset withPadding: (int)padding withColor:(NSColor *)color rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families;
+- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth: (int)width withColor:(NSColor *)color;
 
 @end

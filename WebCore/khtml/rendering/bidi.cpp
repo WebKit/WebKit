@@ -666,10 +666,15 @@ void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrLi
 {
     lineBox->verticallyAlignBoxes(m_height);
 
+    // See if the line spilled out.  If so set overflow height accordingly.
+    int bottomOfLine = lineBox->bottomOverflow();
+    if (bottomOfLine > m_height && bottomOfLine > m_overflowHeight)
+        m_overflowHeight = bottomOfLine;
+        
     // Now make sure we place replaced render objects correctly.
     BidiRun* r = runs.first();
     while (r) {
-        r->obj->position(r->box, r->box->yPos(), r->start, r->stop - r->start, r->level%2);
+        r->obj->position(r->box, r->start, r->stop - r->start, r->level%2);
         r = runs.next();
     }    
 }
@@ -1249,10 +1254,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     ++end;
                     adjustEmbeddding = false;
                 }
-    
+
+                m_firstLine = false;
                 newLine();
             }
-            m_firstLine = false;
             deleteMidpoints(renderArena(), smidpoints);
         }
         startEmbed->deref();
@@ -1268,7 +1273,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
     positionNewFloats();
 
     // Always make sure this is at least our height.
-    m_overflowHeight = m_height;
+    if (m_overflowHeight < m_height)
+        m_overflowHeight = m_height;
     
 #if BIDI_DEBUG > 1
     kdDebug(6041) << " ------- bidi end " << this << " -------" << endl;

@@ -85,7 +85,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 }
 
 StyleVisualData::StyleVisualData()
-    : hasClip(false), colspan( 1 ), counter_increment( 0 ), counter_reset( 0 ),
+    : hasClip(false), textDecoration(TDNONE), colspan( 1 ), counter_increment( 0 ), counter_reset( 0 ),
       palette( QApplication::palette() )
 {
 }
@@ -95,7 +95,7 @@ StyleVisualData::~StyleVisualData() {
 
 StyleVisualData::StyleVisualData(const StyleVisualData& o )
     : Shared<StyleVisualData>(),
-      clip( o.clip ), hasClip( o.hasClip ), colspan( o.colspan ),
+      clip( o.clip ), hasClip( o.hasClip ), textDecoration(o.textDecoration), colspan( o.colspan ),
       counter_increment( o.counter_increment ), counter_reset( o.counter_reset ),
       palette( o.palette )
 {
@@ -130,7 +130,7 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 
 StyleInheritedData::StyleInheritedData()
     : indent( Fixed ), line_height( -100, Percent ), style_image( 0 ),
-      cursor_image( 0 ), font(), color( Qt::black ), decoration_color( Qt::black ), border_spacing( 0 )
+      cursor_image( 0 ), font(), color( Qt::black ), border_spacing( 0 )
 {
 }
 
@@ -142,7 +142,7 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
     : Shared<StyleInheritedData>(),
       indent( o.indent ), line_height( o.line_height ), style_image( o.style_image ),
       cursor_image( o.cursor_image ), font( o.font ),
-      color( o.color ), decoration_color( o.decoration_color ),
+      color( o.color ),
       border_spacing( o.border_spacing )
 {
 }
@@ -156,8 +156,7 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 	style_image == o.style_image &&
 	cursor_image == o.cursor_image &&
 	font == o.font &&
-	color == o.color &&
-	decoration_color == o.decoration_color;
+	color == o.color;
 
     // doesn't work because structs are not packed
     //return memcmp(this, &o, sizeof(*this))==0;
@@ -338,7 +337,6 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 //     DataRef<StyleInheritedData> inherited;
 
     if ( *box.get() != *other->box.get() ||
-        *visual.get() != *other->visual.get() ||
         *surround.get() != *other->surround.get() ||
         !(inherited->indent == other->inherited->indent) ||
         !(inherited->line_height == other->inherited->line_height) ||
@@ -349,7 +347,10 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(inherited_flags._visuallyOrdered == other->inherited_flags._visuallyOrdered) ||
         !(inherited_flags._htmlHacks == other->inherited_flags._htmlHacks) ||
         !(noninherited_flags._position == other->noninherited_flags._position) ||
-        !(noninherited_flags._floating == other->noninherited_flags._floating) )
+        !(noninherited_flags._floating == other->noninherited_flags._floating) ||
+         visual->colspan != other->visual->colspan ||
+         visual->counter_increment != other->visual->counter_increment ||
+         visual->counter_reset != other->visual->counter_reset)
         return CbLayout;
    
     // changes causing Layout changes:
@@ -412,13 +413,16 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 // 	int _text_decoration : 4;
 //     DataRef<StyleBackgroundData> background;
     if (inherited->color != other->inherited->color ||
-        inherited->decoration_color != other->inherited->decoration_color ||
         !(inherited_flags._visibility == other->inherited_flags._visibility) ||
         !(noninherited_flags._overflow == other->noninherited_flags._overflow) ||
         !(noninherited_flags._bg_repeat == other->noninherited_flags._bg_repeat) ||
         !(noninherited_flags._bg_attachment == other->noninherited_flags._bg_attachment) ||
-        !(inherited_flags._text_decoration == other->inherited_flags._text_decoration) ||
-        *background.get() != *other->background.get()
+        !(inherited_flags._text_decorations == other->inherited_flags._text_decorations) ||
+        *background.get() != *other->background.get() ||
+        !(visual->clip == other->visual->clip) ||
+        visual->hasClip != other->visual->hasClip ||
+        visual->textDecoration != other->visual->textDecoration ||
+        !(visual->palette == other->visual->palette)
 	)
         return Visible;
 

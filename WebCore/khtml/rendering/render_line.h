@@ -59,6 +59,7 @@ public:
     virtual bool isInlineFlowBox() { return false; }
     virtual bool isContainer() { return false; }
     virtual bool isTextRun() { return false; }
+    virtual bool isRootInlineBox() { return false; }
     
     bool isConstructed() { return m_constructed; }
     virtual void setConstructed() {
@@ -92,6 +93,9 @@ public:
     int baseline() { return m_baseline; }
 
     virtual bool hasTextChildren() { return true; }
+
+    virtual int topOverflow() { return yPos(); }
+    virtual int bottomOverflow() { return yPos()+height(); }
     
 public: // FIXME: Would like to make this protected, but methods are accessing these
         // members over in the part.
@@ -126,6 +130,11 @@ public:
     InlineRunBox* nextLineBox() { return m_nextLine; }
     void setNextLineBox(InlineRunBox* n) { m_nextLine = n; }
     void setPreviousLineBox(InlineRunBox* p) { m_prevLine = p; }
+
+    virtual void paintBackgroundAndBorder(QPainter *p, int _x, int _y,
+                       int _w, int _h, int _tx, int _ty, int xOffsetOnLine) {};
+    virtual void paintDecorations(QPainter *p, int _x, int _y,
+                       int _w, int _h, int _tx, int _ty) {};
     
 protected:
     InlineRunBox* m_prevLine;  // The previous box that also uses our RenderObject
@@ -168,6 +177,11 @@ public:
             m_hasTextChildren = true;
     }
 
+    virtual void paintBackgroundAndBorder(QPainter *p, int _x, int _y,
+                       int _w, int _h, int _tx, int _ty, int xOffsetOnLine);
+    virtual void paintDecorations(QPainter *p, int _x, int _y,
+                       int _w, int _h, int _tx, int _ty);
+    
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();
     int marginLeft();
@@ -184,7 +198,7 @@ public:
         m_includeRightEdge = includeRight;
     }
     virtual bool hasTextChildren() { return m_hasTextChildren; }
-    
+
     // Helper functions used during line construction and placement.
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingWidth();
@@ -197,7 +211,11 @@ public:
                                   int& maxAscent, int& maxDescent, bool strictMode);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
-    void placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode);
+    void placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode,
+                              int& topPosition, int& bottomPosition);
+    void shrinkBoxesWithNoTextChildren(int topPosition, int bottomPosition);
+    
+    virtual void setOverflowPositions(int top, int bottom) {}
     
 protected:
     InlineBox* m_firstChild;
@@ -205,6 +223,25 @@ protected:
     bool m_includeLeftEdge : 1;
     bool m_includeRightEdge : 1;
     bool m_hasTextChildren : 1;
+};
+
+class RootInlineBox : public InlineFlowBox
+{
+public:
+    RootInlineBox(RenderObject* obj)
+    :InlineFlowBox(obj)
+    {
+        m_topOverflow = m_bottomOverflow = 0;
+    }
+    
+    virtual bool isRootInlineBox() { return true; }
+    virtual int topOverflow() { return m_topOverflow; }
+    virtual int bottomOverflow() { return m_bottomOverflow; }
+    virtual void setOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
+
+protected:
+    int m_topOverflow;
+    int m_bottomOverflow;
 };
 
 }; //namespace

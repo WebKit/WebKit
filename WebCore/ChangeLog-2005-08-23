@@ -1,3 +1,79 @@
+2003-02-14  David Hyatt  <hyatt@apple.com>
+
+	Make the inline box model live.  Borders/backgrounds and text
+	decorations have been rewritten.
+
+	Also fixed a bug with clip rects.  They didn't include borders.
+
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/font.cpp:
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackground):
+        (RenderBox::paintBackgroundExtended):
+        (RenderBox::getClipRect):
+        (RenderBox::position):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createInlineBox):
+        (RenderFlow::paintLineBoxBackgroundBorder):
+        (RenderFlow::paintLineBoxDecorations):
+        (RenderFlow::repaint):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintObject):
+        (RenderInline::width):
+        (RenderInline::height):
+        (RenderInline::offsetLeft):
+        (RenderInline::offsetTop):
+        (RenderInline::nodeAtPoint):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::verticallyAlignBoxes):
+        (InlineFlowBox::computeLogicalBoxHeights):
+        (InlineFlowBox::placeBoxesVertically):
+        (InlineFlowBox::shrinkBoxesWithNoTextChildren):
+        (InlineFlowBox::paintBackgroundAndBorder):
+        (shouldDrawDecoration):
+        (InlineFlowBox::paintDecorations):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        (RenderObject::lineHeight):
+        (RenderObject::getTextDecorationColors):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_root.cpp:
+        (enclosingPositionedRect):
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData):
+        (StyleInheritedData::StyleInheritedData):
+        (StyleInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::repaintRectangle):
+        * khtml/rendering/render_text.cpp:
+        (TextRun::paintDecoration):
+        (TextRun::checkSelectionPoint):
+        (RenderText::nodeAtPoint):
+        (RenderText::cursorPos):
+        (RenderText::absolutePosition):
+        (RenderText::paintObject):
+        (RenderText::paint):
+        (RenderText::position):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLineForText):
+        * kwq/WebCoreTextRenderer.h:
+
 2003-02-13  Trey Matteson  <trey@apple.com>
 
 	First checkin for working forms autocomplete.

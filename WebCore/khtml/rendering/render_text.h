@@ -49,7 +49,6 @@ public:
     {
         m_start = 0;
         m_len = 0;
-        m_baseline = 0;
         m_reversed = false;
         m_toAdd = 0;
     }
@@ -73,13 +72,7 @@ public:
 
     virtual bool isTextRun() { return true; }
     
-#ifdef APPLE_CHANGES
-    void paintDecoration( QPainter *pt, const Font *, RenderText* p,
-                          int _tx, int _ty, int decoration, bool begin, bool end, int from=-1, int to=-1);
-#else
-    void paintDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end);
-#endif
-    void paintBoxDecorations(QPainter *p, RenderStyle* style, RenderText *parent, int _tx, int _ty, bool begin, bool end);
+    void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
     void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
 
     // Return before, after (offset set to max), or inside the text, at @p offset
@@ -90,12 +83,11 @@ public:
      * of a view, would the @ref _y -coordinate be inside the vertical range
      * of this object's representation?
      */
-    bool checkVerticalPoint(int _y, int _ty, int _h, int height)
-    { if((_ty + m_y > _y + _h) || (_ty + m_y + m_baseline + height < _y)) return false; return true; }
+    bool checkVerticalPoint(int _y, int _ty, int _h)
+    { if((_ty + m_y > _y + _h) || (_ty + m_y + m_baseline + height() < _y)) return false; return true; }
 
     int m_start;
     unsigned short m_len;
-    unsigned short m_baseline;
     
     bool m_reversed : 1;
     int m_toAdd : 14; // for justified text
@@ -158,7 +150,7 @@ public:
     unsigned int length() const { return str->l; }
     QChar *text() const { return str->s; }
     unsigned int stringLength() const { return str->l; } // non virtual implementation of length()
-    virtual void position(InlineBox* box, int y, int from, int len, bool reverse);
+    virtual void position(InlineBox* box, int from, int len, bool reverse);
 
     virtual unsigned int width(unsigned int from, unsigned int len, const Font *f) const;
     virtual unsigned int width(unsigned int from, unsigned int len, bool firstLine = false) const;

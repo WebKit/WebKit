@@ -276,6 +276,10 @@ public:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
                                      int _w, int _h, int _tx, int _ty) {};
 
+    virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
+                                         int _tx, int _ty, int w, int height,
+                                         int bleft, int bright) {};
+
     /*
      * This function calculates the minimum & maximum width that the object
      * can be set to.
@@ -330,6 +334,7 @@ public:
     {
         friend class RenderImage;
         friend class RenderText;
+        friend class RenderInline;
         friend class RenderObject;
         friend class RenderFrameSet;
         friend class DOM::HTMLAreaElementImpl;
@@ -482,6 +487,9 @@ public:
 	return s;
     }
 
+    void getTextDecorationColors(int& decorations, QColor& underline, QColor& overline,
+                                 QColor& linethrough);
+
     enum BorderSide {
         BSTop, BSBottom, BSLeft, BSRight
     };
@@ -505,7 +513,7 @@ public:
     virtual bool hasOverhangingFloats() { return false; }
 
     // positioning of inline childs (bidi)
-    virtual void position(InlineBox*, int, int, int, bool) {}
+    virtual void position(InlineBox*, int, int, bool) {}
 
     enum SelectionState {
         SelectionNone,

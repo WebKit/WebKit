@@ -83,7 +83,7 @@ public:
     // shifted. -dwh
     void calcHorizontalMargins(const Length& ml, const Length& mr, int cw);
 
-    virtual void position(InlineBox* box, int y, int from, int len, bool reverse);
+    virtual void position(InlineBox* box, int from, int len, bool reverse);
     
     virtual int lowestPosition() const;
     virtual int rightmostPosition() const;
@@ -111,6 +111,10 @@ public:
     void relativePositionOffset(int &tx, int &ty);
 
     virtual RenderLayer* layer() const { return m_layer; }
+
+    virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
+                                         int _tx, int _ty, int w, int height,
+                                         int bleft, int bright);
     
 protected:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,

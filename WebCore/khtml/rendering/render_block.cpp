@@ -1030,13 +1030,19 @@ void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, in
     // check if we need to do anything at all...
     if (!overhangingContents() && !isRelPositioned() && !isPositioned() )
     {
-        int h = m_height;
-        if(m_specialObjects && floatBottom() > h) h = floatBottom();
-        if((_ty > _y + _h) || (_ty + h < _y))
-        {
-            //kdDebug( 6040 ) << "cut!" << endl;
+        int h = m_overflowHeight;
+        int yPos = _ty;
+        if (m_specialObjects && floatBottom() > h)
+            h = floatBottom();
+
+        // Sanity check the first line
+        // to see if it extended a little above our box. Overflow out the bottom is already handled via
+        // overflowHeight(), so we don't need to check that.
+        if (m_firstLineBox && m_firstLineBox->topOverflow() < 0)
+            yPos += m_firstLineBox->topOverflow();
+        
+        if( (yPos > _y + _h) || (_ty + h < _y))
             return;
-        }
     }
 
     paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
@@ -1059,6 +1065,7 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
     // 2. paint contents
+    paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
     RenderObject *child = firstChild();
     while(child != 0)
     {
@@ -1066,7 +1073,8 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
             child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
         child = child->nextSibling();
     }
-
+    paintLineBoxDecorations(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    
     // 3. paint floats.
     if (!inlineRunIn && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
         paintFloats(p, _x, _y, _w, _h, _tx, _ty, paintAction == PaintActionSelection);

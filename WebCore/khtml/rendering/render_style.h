@@ -323,11 +323,11 @@ public:
 
     bool operator==( const StyleVisualData &o ) const {
 	return ( clip == o.clip &&
-         hasClip == o.hasClip &&
+                 hasClip == o.hasClip &&
 		 colspan == o.colspan &&
 		 counter_increment == o.counter_increment &&
 		 counter_reset == o.counter_reset &&
-		 palette == o.palette );
+		 palette == o.palette && textDecoration == o.textDecoration);
     }
     bool operator!=( const StyleVisualData &o ) const {
         return !(*this == o);
@@ -335,6 +335,7 @@ public:
 
     LengthBox clip;
     bool hasClip : 1;
+    int textDecoration : 4; // Text decorations defined *only* by this element.
     
     short colspan; // for html, not a css2 attribute
 
@@ -424,8 +425,7 @@ public:
 
     khtml::Font font;
     QColor color;
-    QColor decoration_color;
-
+    
     short border_spacing;
 };
 
@@ -519,7 +519,7 @@ protected:
 	EVisibility _visibility : 2;
 	ETextAlign _text_align : 3;
 	ETextTransform _text_transform : 2;
-	int _text_decoration : 4;
+	int _text_decorations : 4;
 	ECursor _cursor_style : 4;
 	EDirection _direction : 1;
 	bool _border_collapse : 1 ;
@@ -588,7 +588,7 @@ protected:
 	inherited_flags._visibility = VISIBLE;
 	inherited_flags._text_align = TAAUTO;
 	inherited_flags._text_transform = TTNONE;
-	inherited_flags._text_decoration = TDNONE;
+	inherited_flags._text_decorations = TDNONE;
 	inherited_flags._cursor_style = CURSOR_AUTO;
 	inherited_flags._direction = LTR;
 	inherited_flags._border_collapse = true;
@@ -717,8 +717,8 @@ public:
     Length textIndent() const { return inherited->indent; }
     ETextAlign textAlign() const { return inherited_flags._text_align; }
     ETextTransform textTransform() const { return inherited_flags._text_transform; }
-    int textDecoration() const { return inherited_flags._text_decoration; }
-    const QColor &textDecorationColor() const { return inherited->decoration_color; }
+    int textDecorationsInEffect() const { return inherited_flags._text_decorations; }
+    int textDecoration() const { return visual->textDecoration; }
     int wordSpacing() const { return inherited->font.wordSpacing; }
     int letterSpacing() const { return inherited->font.letterSpacing; }
 
@@ -830,8 +830,8 @@ public:
     void setTextIndent(Length v) { SET_VAR(inherited,indent,v) }
     void setTextAlign(ETextAlign v) { inherited_flags._text_align = v; }
     void setTextTransform(ETextTransform v) { inherited_flags._text_transform = v; }
-    void setTextDecoration(int v) { inherited_flags._text_decoration = v; }
-    void setTextDecorationColor(const QColor &v) { SET_VAR(inherited,decoration_color,v) }
+    void addToTextDecorationsInEffect(int v) { inherited_flags._text_decorations |= v; }
+    void setTextDecoration(int v) { SET_VAR(visual, textDecoration, v); }
     void setDirection(EDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length v) { SET_VAR(inherited,line_height,v) }
 

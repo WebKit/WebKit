@@ -1429,7 +1429,8 @@ void RenderTableCell::close()
 
 void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
-    RenderBlock::repaintRectangle(x, y, w, h+_topExtra+_bottomExtra, immediate, f);
+    y += _topExtra;
+    RenderBlock::repaintRectangle(x, y, w, h, immediate, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)

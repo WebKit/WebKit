@@ -98,92 +98,59 @@ void TextRun::paintSelection(const Font *f, RenderText *text, QPainter *p, Rende
 }
 
 #ifdef APPLE_CHANGES
-void TextRun::paintDecoration( QPainter *pt, const Font *f, RenderText* p,
-                                 int _tx, int _ty, int deco, bool begin, bool end, int from, int to)
+void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
 {
     _tx += m_x;
     _ty += m_y;
+
+    // Get the text decoration colors.
+    QColor underline, overline, linethrough;
+    object()->getTextDecorationColors(deco, underline, overline, linethrough);
     
     // Use a special function for underlines to get the positioning exactly right.
     if (deco & UNDERLINE) {
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                           m_toAdd, m_baseline, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+        pt->setPen(underline);
+        pt->drawLineForText(_tx, _ty, m_baseline, m_width);
     }
     if (deco & OVERLINE) {
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                           m_toAdd, 0, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+        pt->setPen(overline);
+        pt->drawLineForText(_tx, _ty, 0, m_width);
     }
     if (deco & LINE_THROUGH) {
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                           m_toAdd, 2*m_baseline/3, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+        pt->setPen(linethrough);
+        pt->drawLineForText(_tx, _ty, 2*m_baseline/3, m_width);
     }
 }
 #else
-void TextRun::paintDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end)
+void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int decoration)
 {
     _tx += m_x;
     _ty += m_y;
 
     int width = m_width - 1;
 
-    if( begin )
- 	width -= p->paddingLeft() + p->borderLeft();
-
-    if ( end )
-        width -= p->paddingRight() + p->borderRight();
-
+    QColor underline, overline, linethrough;
+    object()->getTextDecorationColors(decoration, underline, overline, linethrough);
+    
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;
 
     if(deco & UNDERLINE){
+        pt->setPen(underline);
         pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
     }
-    if(deco & OVERLINE)
+    if (deco & OVERLINE) {
+        pt->setPen(overline);
         pt->drawLine(_tx, _ty, _tx + width, _ty );
-    if(deco & LINE_THROUGH)
+    }
+    if(deco & LINE_THROUGH) {
+        pt->setPen(linethrough);
         pt->drawLine(_tx, _ty + 2*m_baseline/3, _tx + width, _ty + 2*m_baseline/3 );
+    }
     // NO! Do NOT add BLINK! It is the most annouing feature of Netscape, and IE has a reason not to
     // support it. Lars
 }
 #endif
-
-
-void TextRun::paintBoxDecorations(QPainter *pt, RenderStyle* style, RenderText *p, int _tx, int _ty, bool begin, bool end)
-{
-    int topExtra = p->borderTop() + p->paddingTop();
-    int bottomExtra = p->borderBottom() + p->paddingBottom();
-    // ### firstline
-    int halfleading = (p->m_lineHeight - style->font().pixelSize() ) / 2;
-
-    _tx += m_x;
-    _ty += m_y + halfleading - topExtra;
-
-    int width = m_width + p->borderLeft() + p->borderRight() + p->paddingLeft() + p->paddingRight();
-
-    // the height of the decorations is:  topBorder + topPadding + CSS font-size + bottomPadding + bottomBorder
-    int height = style->font().pixelSize() + topExtra + bottomExtra;
-
-    if( begin )
-	_tx -= p->paddingLeft() + p->borderLeft();
-
-    QColor c = style->backgroundColor();
-    CachedImage *i = style->backgroundImage();
-    if(c.isValid() && (!i || i->tiled_pixmap(c).mask()))
-         pt->fillRect(_tx, _ty, width, height, c);
-
-    if(i) {
-        // ### might need to add some correct offsets
-        // ### use paddingX/Y
-        pt->drawTiledPixmap(_tx, _ty, width, height, i->tiled_pixmap(c));
-    }
-
-#ifdef DEBUG_VALIGN
-    pt->fillRect(_tx, _ty, width, height, Qt::cyan );
-#endif
-
-    if(style->hasBorder())
-        p->paintBorder(pt, _tx, _ty, width, height, style, begin, end);
-}
 
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
@@ -196,7 +163,7 @@ FindSelectionResult TextRun::checkSelectionPoint(int _x, int _y, int _tx, int _t
     if ( _y < _ty + m_y )
         return SelectionPointBefore; // above -> before
 
-    if ( _y > _ty + m_y + lineHeight ) {
+    if ( _y > _ty + m_y + m_height ) {
         // below -> after
         // Set the offset to the max
         offset = m_len;
@@ -450,12 +417,10 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, b
 {
     assert(parent());
 
-    int height = m_lineHeight;
-
     TextRun *s = m_lines.count() ? m_lines[0] : 0;
     int si = 0;
     while(s) {
-        if((_y >=_ty + s->m_y) && (_y < _ty + s->m_y + height) &&
+        if((_y >=_ty + s->m_y) && (_y < _ty + s->m_y + s->height()) &&
            (_x >= _tx + s->m_x) && (_x <_tx + s->m_x + s->m_width) ) {
             inside = true;
             break;
@@ -543,9 +508,9 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
   int pos;
   TextRun * s = findTextRun( offset, pos );
   _y = s->m_y;
-  height = m_lineHeight; // ### firstLine!!! s->m_height;
+  height = s->m_height;
 
-  const QFontMetrics &fm = metrics( false ); // #### wrong for first-line!
+  const QFontMetrics &fm = metrics( s->m_firstLine );
   QString tekst(str->s + s->m_start, s->m_len);
   _x = s->m_x + (fm.boundingRect(tekst, pos)).right();
   if(pos)
@@ -569,14 +534,6 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
 bool RenderText::absolutePosition(int &xPos, int &yPos, bool)
 {
     return RenderObject::absolutePosition(xPos, yPos, false);
-
-    if(parent() && parent()->absolutePosition(xPos, yPos, false)) {
-        xPos -= paddingLeft() + borderLeft();
-        yPos -= borderTop() + paddingTop();
-        return true;
-    }
-    xPos = yPos = 0;
-    return false;
 }
 
 void RenderText::posOfChar(int chr, int &x, int &y)
@@ -616,7 +573,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 {
     int ow = style()->outlineWidth();
     RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
-    int d = style()->textDecoration();
+    int d = style()->textDecorationsInEffect();
     TextRun f(0, y-ty);
     int si = m_lines.findFirstMatching(&f);
     // something matching found, find the first one to print
@@ -624,7 +581,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
     if(si >= 0)
     {
         // Move up until out of area to be printed
-        while(si > 0 && m_lines[si-1]->checkVerticalPoint(y, ty, h, m_lineHeight))
+        while(si > 0 && m_lines[si-1]->checkVerticalPoint(y, ty, h))
             si--;
 
         // Now calculate startPos and endPos, for printing selection.
@@ -668,7 +625,6 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
         for (int pass = 0; pass < (haveSelection ? 2 : 1); pass++) {
             si = startLine;
             
-            bool drawDecorations = !haveSelection || pass == 0;
             bool drawSelectionBackground = haveSelection && pass == 0 && paintAction != PaintActionSelection;
             bool drawText = !haveSelection || pass == 1;
 #endif
@@ -680,6 +636,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
 	    if (isPrinting)
 	    {
+                // FIXME: Need to understand what this section is doing.
                 int lh = lineHeight( false ) + paddingBottom() + borderBottom();
                 if (ty+s->m_y < y)
                 {
@@ -705,14 +662,6 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 	    }
 
 #if APPLE_CHANGES
-            if (drawDecorations)
-#endif
-            if((shouldPaintBackgroundOrBorder()  &&
-                (parent()->isInline() || pseudoStyle)) &&
-               (!pseudoStyle || s->m_firstLine))
-                s->paintBoxDecorations(p, _style, this, tx, ty, si == 0, si == (int)m_lines.count()-1);
-
-#if APPLE_CHANGES
             if (drawText) {
 #endif
 
@@ -734,18 +683,15 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 }
             }
 
-            if(d != TDNONE)
+            if (d != TDNONE && paintAction == PaintActionForeground)
             {
-                p->setPen(_style->textDecorationColor());
-                if (paintAction == PaintActionSelection) {
-                    int offset = s->m_start;
-                    int sPos = QMAX( startPos - offset, 0 );
-                    int ePos = QMIN( endPos - offset, s->m_len );
-                    if ( sPos < ePos ){
-                        s->paintDecoration(p, font, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1, sPos, ePos);
-                    }
-                } else {
-                    s->paintDecoration(p, font, this, tx, ty, d,si == 0, si == ( int ) m_lines.count()-1);
+                RenderObject* curr = this;
+                while (curr && !curr->element())
+                    curr = curr->container();
+                bool quirksMode = (curr && curr->element()->getDocument()->inQuirksMode());
+                if (quirksMode) {
+                    p->setPen(_style->color());
+                    s->paintDecoration(p, tx, ty, d);
                 }
             }
 
@@ -800,7 +746,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
             }
 #endif
 
-        } while (++si < (int)m_lines.count() && m_lines[si]->checkVerticalPoint(y-ow, ty, h, m_lineHeight));
+        } while (++si < (int)m_lines.count() && m_lines[si]->checkVerticalPoint(y-ow, ty, h));
 
 #if APPLE_CHANGES
         } // end of for loop
@@ -819,19 +765,18 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 void RenderText::paint(QPainter *p, int x, int y, int w, int h,
                        int tx, int ty, PaintAction paintAction)
 {
-    if (paintAction != PaintActionForeground && paintAction != PaintActionSelection) {
+    if (paintAction != PaintActionForeground && paintAction != PaintActionSelection)
         return;
-    }
-    if (style()->visibility() != VISIBLE) {
+    
+    if (style()->visibility() != VISIBLE)
         return;
-    }
 
     int s = m_lines.count() - 1;
-    if ( s < 0 ) return;
+    if ( s < 0 )
+        return;
 
-    // ### incorporate padding/border here!
-    if ( ty + m_lines[0]->m_y > y + h + 64 ) return;
-    if ( ty + m_lines[s]->m_y + m_lines[s]->m_baseline + m_lineHeight + 64 < y ) return;
+    if (ty + m_lines[0]->yPos() > y + h) return;
+    if (ty + m_lines[s]->yPos() + m_lines[s]->height() < y ) return;
 
     paintObject(p, x, y, w, h, tx, ty, paintAction);
 }
@@ -1193,7 +1138,7 @@ InlineBox* RenderText::createInlineBox()
     return new (renderArena()) TextRun(this);
 }
 
-void RenderText::position(InlineBox* box, int y, int from, int len, bool reverse)
+void RenderText::position(InlineBox* box, int from, int len, bool reverse)
 {
     // ### should not be needed!!!
     if (len == 0 || (str->l && len == 1 && *(str->s+from) == '\n'))
@@ -1209,10 +1154,8 @@ void RenderText::position(InlineBox* box, int y, int from, int len, bool reverse
 
     TextRun *s = static_cast<TextRun*>(box);
     s->m_reversed = reverse;
-    s->m_y = y;
     s->m_start = from;
     s->m_len = len;
-    s->m_baseline = baselinePosition(s->m_firstLine);
     
     if(m_lines.count() == m_lines.size())
         m_lines.resize(m_lines.size()*2+1);

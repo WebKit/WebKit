@@ -878,7 +878,7 @@ void RenderObject::setStyle(RenderStyle *style)
         //qDebug("triggering relayout");
         setMinMaxKnown(false);
         setLayouted(false);
-    } else if ( m_parent ) {
+    } else if ( m_parent && !isText()) {
         //qDebug("triggering repaint");
     	repaint();
     }
@@ -1294,21 +1294,14 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 
 short RenderObject::lineHeight( bool firstLine ) const
 {
-    Length lh;
-    if( firstLine && hasFirstLine() ) {
-	RenderStyle *pseudoStyle  = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
-	if ( pseudoStyle )
-            lh = pseudoStyle->lineHeight();
-    }
-    else
-        lh = style()->lineHeight();
+    Length lh = style(firstLine)->lineHeight();
 
     // its "unset", choose nice default
     if ( lh.value < 0 )
-        return style()->fontMetrics().lineSpacing();
+        return style(firstLine)->fontMetrics().lineSpacing();
 
     if ( lh.isPercent() )
-        return lh.minWidth( style()->font().pixelSize() );
+        return lh.minWidth( style(firstLine)->font().pixelSize() );
 
     // its fixed
     return lh.value;
@@ -1388,3 +1381,33 @@ InlineBox* RenderObject::createInlineBox()
     return new (renderArena()) InlineBox(this);
 }
 
+void RenderObject::getTextDecorationColors(int& decorations, QColor& underline, QColor& overline,
+                                           QColor& linethrough)
+{
+    int newDecorations = decorations;
+    RenderObject* curr = this;
+    do {
+        int currDecs = curr->style()->textDecoration();
+        if (currDecs) {
+            if (currDecs & UNDERLINE) {
+                newDecorations &= ~UNDERLINE;
+                underline = curr->style()->color();
+            }
+            if (currDecs & OVERLINE) {
+                newDecorations &= ~OVERLINE;
+                overline = curr->style()->color();
+            }
+            if (currDecs & LINE_THROUGH) {
+                newDecorations &= ~LINE_THROUGH;
+                linethrough = curr->style()->color();
+            }
+        }
+        curr = curr->parent();
+        if (curr && curr->isRenderBlock() && curr->continuation())
+            curr = curr->continuation();
+    } while (curr && newDecorations);
+
+    if (newDecorations)
+        // Null out everything that's left.
+        decorations &= ~newDecorations;
+}

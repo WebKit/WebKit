@@ -53,15 +53,18 @@ public:
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
                              int tx, int ty, PaintAction paintAction);
 
+    virtual bool nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside);
+    
     virtual void calcMinMaxWidth();
 
     // overrides RenderObject
     virtual bool requiresLayer() { return isRelPositioned(); }
 
+    virtual short width() const;
+    virtual int height() const;
+    
     // used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) to return
     // the remaining width on a given line (and the height of a single line).
-    virtual short offsetWidth() const;
-    virtual int offsetHeight() const;
     virtual int offsetLeft() const;
     virtual int offsetTop() const;
 };

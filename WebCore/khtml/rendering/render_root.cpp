@@ -291,15 +291,10 @@ void RenderRoot::close()
 
 static QRect enclosingPositionedRect (RenderObject *n)
 {
-    RenderObject *enclosingParent = (RenderObject*)n;
-    QRect rect;
-    
-    while (enclosingParent && (enclosingParent->isText() || (enclosingParent->width() == 0 && enclosingParent->height() == 0))){
-        enclosingParent = enclosingParent->parent();
-    }
-    if (enclosingParent){
+    RenderObject *enclosingParent =  n->containingBlock();
+    QRect rect(0,0,0,0);
+    if (enclosingParent) {
         int ox, oy;
-        
         enclosingParent->absolutePosition(ox, oy);
         rect.setX(ox);
         rect.setY(oy);

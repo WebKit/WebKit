@@ -59,10 +59,17 @@ public:
     void deleteLineBoxes(RenderArena* arena=0);
     virtual void detach(RenderArena* arena);
 
-    InlineFlowBox* firstLineBox() { return m_firstLineBox; }
-    InlineFlowBox* lastLineBox() { return m_lastLineBox; }
+    InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
+    InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
 
     virtual InlineBox* createInlineBox();
+
+    void paintLineBoxBackgroundBorder(QPainter *p, int _x, int _y,
+                        int _w, int _h, int _tx, int _ty, PaintAction paintAction);
+    void paintLineBoxDecorations(QPainter *p, int _x, int _y,
+                                 int _w, int _h, int _tx, int _ty, PaintAction paintAction);
+
+    virtual void repaint(bool immediate = false);
     
 protected:
     // An inline can be split with blocks occurring in between the inline content.

@@ -417,27 +417,16 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         fontFamilies: families];
 }
 
-void QPainter::drawLineForText(int x, int y, const QChar *str, int length, int from, int to, int toAdd, int yOffset, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
+void QPainter::drawLineForText(int x, int y, int yOffset, int width)
 {
     if (data->state.paintingDisabled)
         return;
 
-    CREATE_FAMILY_ARRAY(data->state.font, families);
-        
-    _updateRenderer(families);
-
     [data->lastTextRenderer
-        drawLineForCharacters:(const UniChar *)str stringLength:length
- fromCharacterPosition:from
-   toCharacterPosition:to
-               atPoint:NSMakePoint(x, y)
+        drawLineForCharacters: NSMakePoint(x, y)
                yOffset:(float)yOffset
-           withPadding: toAdd
-         withColor:data->state.pen.color().getNSColor()
-           rightToLeft: d == RTL ? true : false
-         letterSpacing: letterSpacing
-           wordSpacing: wordSpacing
-          fontFamilies: families];
+             withWidth: width
+             withColor:data->state.pen.color().getNSColor()];
 }
 
 QColor QPainter::selectedTextBackgroundColor()

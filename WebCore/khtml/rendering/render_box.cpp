@@ -198,6 +198,14 @@ void RenderBox::paintBoxDecorations(QPainter *p,int, int _y,
 
 void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
+    paintBackgroundExtended(p, c, bg, clipy, cliph, _tx, _ty, w, height,
+                            borderLeft(), borderRight());
+}
+
+void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
+                                        int _tx, int _ty, int w, int h,
+                                        int bleft, int bright)
+{
     if(c.isValid())
         p->fillRect(_tx, clipy, w, cliph, c);
     // no progressive loading of the background image
@@ -215,24 +223,15 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
         int sy = 0;
 	    int cw,ch;
         int cx,cy;
-        int vpab = borderRight() + borderLeft();
+        int vpab = bleft + bright;
         int hpab = borderTop() + borderBottom();
-
+        
         // CSS2 chapter 14.2.1
 
         if (sptr->backgroundAttachment())
         {
             //scroll
-            int pw = m_width - vpab;
-            int h = isHtml() ? height : m_height;
-            if (isTableCell()) {
-                // Table cells' m_height variable is wrong.  You have to take into
-                // account this hack extra stuff to get the right height. 
-                // Otherwise using background-position: bottom won't work in
-                // a table cell that has the extra height. -dwh
-                RenderTableCell* tableCell = static_cast<RenderTableCell*>(this);
-                h += tableCell->borderTopExtra() + tableCell->borderBottomExtra();
-            }
+            int pw = w - vpab;
             int ph = h - hpab;
             
             int pixw = bg->pixmap_size().width();
@@ -262,7 +261,7 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
                 }
             }
 
-            cx += borderLeft();
+            cx += bleft;
 
             if( (bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh ) {
                 ch = pixh;
@@ -313,7 +312,7 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
                 }
             }
 
-            if( (bgr == NO_REPEAT || bgr == REPEAT_X) && height > pixh ) {
+            if( (bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh ) {
                 ch = pixh;
                 cy = vr.y() + sptr->backgroundYPosition().minWidth(ph-pixh);
             } else {
@@ -327,7 +326,7 @@ void RenderBox::paintBackground(QPainter *p, const QColor &c, CachedImage *bg, i
             }
 
             QRect fix(cx,cy,cw,ch);
-            QRect ele(_tx+borderLeft(),_ty+borderTop(),w-vpab,height-hpab);
+            QRect ele(_tx+bleft,_ty+borderTop(),w-vpab,h-hpab);
             QRect b = fix.intersect(ele);
             sx+=b.x()-cx;
             sy+=b.y()-cy;
@@ -364,35 +363,34 @@ QRect RenderBox::getOverflowClipRect(int tx, int ty)
 
 QRect RenderBox::getClipRect(int tx, int ty)
 {
-    int bl=borderLeft(),bt=borderTop(),bb=borderBottom(),br=borderRight();
-    int clipx = tx+bl;
-    int clipy = ty+bt;
-    int clipw = m_width-bl-br;
-    int cliph = m_height-bt-bb;
+    int clipx = tx;
+    int clipy = ty;
+    int clipw = m_width;
+    int cliph = m_height;
 
     if (!style()->clipLeft().isVariable())
     {
-        int c=style()->clipLeft().width(m_width-bl-br);
+        int c=style()->clipLeft().width(m_width);
         clipx+=c;
         clipw-=c;
     }
         
     if (!style()->clipRight().isVariable())
     {
-        int w = style()->clipRight().width(m_width-bl-br);
-        clipw -= m_width - bl - br - w;
+        int w = style()->clipRight().width(m_width);
+        clipw -= m_width - w;
     }
     
     if (!style()->clipTop().isVariable())
     {
-        int c=style()->clipTop().width(m_height-bt-bb);
+        int c=style()->clipTop().width(m_height);
         clipy+=c;
         cliph-=c;
     }
     if (!style()->clipBottom().isVariable())
     {
-        int h = style()->clipBottom().width(m_height-bt-bb);
-        cliph -= m_height - bt - bb - h;
+        int h = style()->clipBottom().width(m_height);
+        cliph -= m_height - h;
     }
     //kdDebug( 6040 ) << "setting clip("<<clipx<<","<<clipy<<","<<clipw<<","<<cliph<<")"<<endl;
 
@@ -437,10 +435,10 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-void RenderBox::position(InlineBox* box, int y, int from, int len, bool reverse)
+void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
 {
     m_x = box->xPos();
-    m_y = y + marginTop();
+    m_y = box->yPos();
 }
 
 void RenderBox::repaint(bool immediate)

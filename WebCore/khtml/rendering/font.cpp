@@ -39,14 +39,6 @@
 
 using namespace khtml;
 
-#if APPLE_CHANGES
-void Font::drawLineForText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
-                     int toAdd, int yOffset, QPainter::TextDirection d, int from, int to) const
-{
-    p->drawLineForText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, yOffset, d, letterSpacing, wordSpacing);
-}
-#endif
-
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
                      int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {

@@ -153,7 +153,12 @@ void RenderFlow::detach(RenderArena* renderArena)
 
 InlineBox* RenderFlow::createInlineBox()
 {
-    InlineFlowBox* flowBox = new (renderArena()) InlineFlowBox(this);
+    InlineFlowBox* flowBox = 0;
+    if (isInlineFlow())
+        flowBox = new (renderArena()) InlineFlowBox(this);
+    else
+        flowBox = new (renderArena()) RootInlineBox(this);
+    
     if (!m_firstLineBox)
         m_firstLineBox = m_lastLineBox = flowBox;
     else {
@@ -163,5 +168,94 @@ InlineBox* RenderFlow::createInlineBox()
     }
 
     return flowBox;
+}
+
+void RenderFlow::paintLineBoxBackgroundBorder(QPainter *p, int _x, int _y,
+                                int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+{
+    if (!firstLineBox())
+        return;
+    
+    if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
+        // We can check the first box and last box and avoid painting if we don't
+        // intersect.
+        int yPos = _ty + firstLineBox()->yPos();
+        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+        if( (yPos > _y + _h) || (yPos + h < _y))
+            return;
+
+        // See if our boxes intersect with the dirty rect.  If so, then we paint
+        // them.  Note that boxes can easily overlap, so we can't make any assumptions
+        // based off positions of our first line box or our last line box.
+        int xOffsetWithinLineBoxes = 0;
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+            yPos = _ty + curr->yPos();
+            h = curr->height();
+            if ((yPos <= _y + _h) && (yPos + h >= _y))
+                curr->paintBackgroundAndBorder(p, _x, _y, _w, _h, _tx, _ty, xOffsetWithinLineBoxes);
+            xOffsetWithinLineBoxes += curr->width();
+        }
+    }
+}
+
+void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
+                                         int _w, int _h, int _tx, int _ty, PaintAction paintAction)
+{
+    if (!firstLineBox())
+        return;
+
+    if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
+        // We only paint line box decorations in strict or almost strict mode.
+        // Otherwise we let the TextRuns paint their own decorations.
+        RenderObject* curr = this;
+        while (curr && !curr->element())
+            curr = curr->container();
+        bool quirksMode = (curr && curr->element()->getDocument()->inQuirksMode());
+        if (quirksMode)
+            return;
+        
+        // We can check the first box and last box and avoid painting if we don't
+        // intersect.
+        int yPos = _ty + firstLineBox()->yPos();;
+        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+        if( (yPos > _y + _h) || (yPos + h < _y))
+            return;
+
+        // See if our boxes intersect with the dirty rect.  If so, then we paint
+        // them.  Note that boxes can easily overlap, so we can't make any assumptions
+        // based off positions of our first line box or our last line box.
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+            yPos = _ty + curr->yPos();
+            h = curr->height();
+            if ((yPos <= _y + _h) && (yPos + h >= _y))
+                curr->paintDecorations(p, _x, _y, _w, _h, _tx, _ty);
+        }
+    }
+}
+
+void RenderFlow::repaint(bool immediate)
+{
+    if (isInlineFlow()) {
+        // Find our leftmost position.
+        int left = 0;
+        int top = firstLineBox() ? firstLineBox()->yPos() : 0;
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+            if (curr == firstLineBox() || curr->xPos() < left)
+                left = curr->xPos();
+
+        // Now invalidate a rectangle.
+        int ow = style() ? style()->outlineWidth() : 0;
+        containingBlock()->repaintRectangle(-ow+left, -ow+top,
+                                            width()+ow*2, height()+ow*2, immediate);
+    }
+    else {
+        if (firstLineBox() && firstLineBox()->topOverflow() < 0) {
+            int ow = style() ? style()->outlineWidth() : 0;
+            repaintRectangle(-ow, -ow+firstLineBox()->topOverflow(),
+                             overflowWidth()+ow*2, overflowHeight()+ow*2, immediate);
+        }
+        else
+            return RenderBox::repaint();
+    }
 }
 

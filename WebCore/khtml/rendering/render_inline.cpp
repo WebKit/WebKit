@@ -24,6 +24,7 @@
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"
+#include "xml/dom_nodeimpl.h"
 
 using namespace khtml;
 
@@ -243,13 +244,12 @@ void RenderInline::paint(QPainter *p, int _x, int _y, int _w, int _h,
 void RenderInline::paintObject(QPainter *p, int _x, int _y,
                              int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
-
 #ifdef DEBUG_LAYOUT
     //    kdDebug( 6040 ) << renderName() << "(RenderInline) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
 
-    // FIXME: This function will eventually get much more complicated. :) - dwh
-    // paint contents
+    paintLineBoxBackgroundBorder(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+    
     RenderObject *child = firstChild();
     while(child != 0)
     {
@@ -257,6 +257,8 @@ void RenderInline::paintObject(QPainter *p, int _x, int _y,
             child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
         child = child->nextSibling();
     }
+
+    paintLineBoxDecorations(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderInline::calcMinMaxWidth()
@@ -274,43 +276,42 @@ void RenderInline::calcMinMaxWidth()
     setMinMaxKnown();
 }
 
-short RenderInline::offsetWidth() const
+short RenderInline::width() const
 {
-    short w = 0;
-    RenderObject* object = firstChild();
-    while (object) {
-        w += object->offsetWidth();
-        object = object->nextSibling();
+    // Return the width of the minimal left side and the maximal right side.
+    short leftSide = 0;
+    short rightSide = 0;
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        if (curr == firstLineBox() || curr->xPos() < leftSide)
+            leftSide = curr->xPos();
+        if (curr == firstLineBox() || curr->xPos() + curr->width() > rightSide)
+            rightSide = curr->xPos() + curr->width();
     }
-    return w;
+    
+    return rightSide - leftSide;
 }
 
-int RenderInline::offsetHeight() const
+int RenderInline::height() const
 {
-    if (firstChild())
-        return firstChild()->offsetHeight();
-    return height();
+    int h = 0;
+    if (firstLineBox())
+        h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+    return h;
 }
 
 int RenderInline::offsetLeft() const
 {
     int x = RenderFlow::offsetLeft();
-    RenderObject* textChild = (RenderObject*)this;
-    while (textChild && textChild->isInline() && !textChild->isText())
-        textChild = textChild->firstChild();
-    if (textChild && textChild != this)
-        x += textChild->xPos() - textChild->borderLeft() - textChild->paddingLeft();
+    if (firstLineBox())
+        x += firstLineBox()->xPos();
     return x;
 }
 
 int RenderInline::offsetTop() const
 {
-    RenderObject* textChild = (RenderObject*)this;
-    while (textChild && textChild->isInline() && !textChild->isText())
-        textChild = textChild->firstChild();
     int y = RenderFlow::offsetTop();
-    if (textChild && textChild != this)
-        y += textChild->yPos() - textChild->borderTop() - textChild->paddingTop();
+    if (firstLineBox())
+        y += firstLineBox()->yPos();
     return y;
 }
 
@@ -322,3 +323,67 @@ const char *RenderInline::renderName() const
         return "RenderInline (anonymous)";
     return "RenderInline";
 }
+
+bool RenderInline::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
+{
+    // Always check our kids.
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling())
+        if (!child->layer() && child->nodeAtPoint(info, _x, _y, _tx, _ty))
+            inside = true;
+
+    // Check our line boxes if we're still not inside.
+    if (!inside && style()->visibility() != HIDDEN) {
+        // See if we're inside one of our line boxes.
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+            if((_y >=_ty + curr->m_y) && (_y < _ty + curr->m_y + curr->m_height) &&
+               (_x >= _tx + curr->m_x) && (_x <_tx + curr->m_x + curr->m_width) ) {
+                inside = true;
+                break;
+            }
+        }
+    }
+
+    if (inside && element()) {
+        if (info.innerNode() && info.innerNode()->renderer() &&
+            !info.innerNode()->renderer()->isInline()) {
+            // Within the same layer, inlines are ALWAYS fully above blocks.  Change inner node.
+            info.setInnerNode(element());
+
+            // Clear everything else.
+            info.setInnerNonSharedNode(0);
+            info.setURLElement(0);
+        }
+
+        if (!info.innerNode())
+            info.setInnerNode(element());
+
+        if(!info.innerNonSharedNode())
+            info.setInnerNonSharedNode(element());
+
+        if (!info.URLElement()) {
+            RenderObject* p = this;
+            while (p) {
+                if (p->element() && p->element()->hasAnchor()) {
+                    info.setURLElement(p->element());
+                    break;
+                }
+                if (!isSpecial()) break;
+                p = p->parent();
+            }
+        }
+        
+    }
+
+    if (!info.readonly()) {
+        // lets see if we need a new style
+        bool oldinside = mouseInside();
+        setMouseInside(inside);
+
+        setHoverAndActive(info, oldinside, inside);
+        if (!isInline() && continuation())
+            continuation()->setHoverAndActive(info, oldinside, inside);
+    }
+    
+    return inside;
+}
+

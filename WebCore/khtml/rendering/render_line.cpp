@@ -272,7 +272,16 @@ void InlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
         adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
 
     int maxHeight = maxAscent + maxDescent;
-    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode);
+    int topPosition = heightOfBlock;
+    int bottomPosition = heightOfBlock;
+    placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode, topPosition, bottomPosition);
+
+    setOverflowPositions(topPosition, bottomPosition);
+
+    // Shrink boxes with no text children in quirks and almost strict mode.
+    if (!strictMode)
+        shrinkBoxesWithNoTextChildren(topPosition, bottomPosition);
+    
     heightOfBlock += maxHeight;
 }
 
@@ -304,7 +313,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
 void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                              int& maxAscent, int& maxDescent, bool strictMode)
 {
-    if (!parent()) {
+    if (isRootInlineBox()) {
         // Examine our root box.
         setHeight(object()->lineHeight(m_firstLine));
         bool isTableCell = object()->isTableCell();
@@ -350,29 +359,193 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
     }
 }
 
-void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode)
+void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode,
+                                         int& topPosition, int& bottomPosition)
 {
-    if (!parent()) {
-        if (hasTextChildren() || strictMode)
-            setYPos(y + maxAscent - baseline());// Place our root box.
-        // FIXME: Use the tallest y/height out of our children. 
-    }
+    if (isRootInlineBox())
+        setYPos(y + maxAscent - baseline());// Place our root box.
     
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        // Adjust boxes to use their real box y/height and not the logical height (as dictated by
+        // line-height).
+        if (curr->isInlineFlowBox())
+            static_cast<InlineFlowBox*>(curr)->placeBoxesVertically(y, maxHeight, maxAscent, strictMode,
+                                                                    topPosition, bottomPosition);
+
+        bool childAffectsTopBottomPos = true;
         if (curr->yPos() == PositionTop)
             curr->setYPos(y);
         else if (curr->yPos() == PositionBottom)
             curr->setYPos(y + maxHeight - curr->height());
-        else if (curr->hasTextChildren() || strictMode)
-            // FIXME: Use the tallest y/height out of our children. 
+        else {
+            if (!curr->hasTextChildren() && !strictMode)
+                childAffectsTopBottomPos = false;
             curr->setYPos(curr->yPos() + y + maxAscent - curr->baseline());
+        }
+        
+        int newY = curr->yPos();
+        int newHeight = curr->height();
+        int newBaseline = curr->baseline();
+        if (curr->isTextRun() || curr->isInlineFlowBox()) {
+            const QFontMetrics &fm = curr->object()->fontMetrics( m_firstLine );
+            newBaseline = fm.ascent();
+            newY += curr->baseline() - newBaseline;
+            newHeight = newBaseline+fm.descent();
+            if (curr->isInlineFlowBox()) {
+                newHeight += curr->object()->borderTop() + curr->object()->paddingTop() +
+                            curr->object()->borderBottom() + curr->object()->paddingBottom();
+                newY -= curr->object()->borderTop() + curr->object()->paddingTop();
+                newBaseline += curr->object()->borderTop() + curr->object()->paddingTop();
+            }	
+        }
+        else {
+            newY += curr->object()->marginTop();
+            newHeight = curr->height() - (curr->object()->marginTop() + curr->object()->marginBottom());
+        }
 
-        // FIXME: Adjust the y position and heights of replaced elements for margins.
-        // Adjust inline flows to use the font box height and not the logical height.
-        if (curr->isInlineFlowBox())
-            static_cast<InlineFlowBox*>(curr)->placeBoxesVertically(y, maxHeight, maxAscent,
-                                                                    strictMode);
+        curr->setYPos(newY);
+        curr->setHeight(newHeight);
+        curr->setBaseline(newBaseline);
+
+        if (childAffectsTopBottomPos) {
+            if (newY < topPosition)
+                topPosition = newY;
+            if (newY + newHeight > bottomPosition)
+                bottomPosition = newY + newHeight;
+        }
+    }
+
+    if (isRootInlineBox()) {
+        const QFontMetrics &fm = object()->fontMetrics( m_firstLine );
+        setHeight(fm.ascent()+fm.descent());
+        setYPos(yPos() + baseline() - fm.ascent());
+        setBaseline(fm.ascent());
+        if (hasTextChildren() || strictMode) {
+            if (yPos() < topPosition)
+                topPosition = yPos();
+            if (yPos() + height() > bottomPosition)
+                bottomPosition = yPos() + height();
+        }
     }
 }
 
+void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
+{
+    // First shrink our kids.
+    for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->isInlineFlowBox())
+            static_cast<InlineFlowBox*>(curr)->shrinkBoxesWithNoTextChildren(topPos, bottomPos);
+    }
 
+    // See if we have text children. If not, then we need to shrink ourselves to fit on the line.
+    if (!hasTextChildren()) {
+        if (yPos() < topPos)
+            setYPos(topPos);
+        if (height() > bottomPos - topPos)
+            setHeight(bottomPos - topPos);
+        if (baseline() > height())
+            setBaseline(height());
+    }
+}
+
+void InlineFlowBox::paintBackgroundAndBorder(QPainter *p, int _x, int _y,
+                                             int _w, int _h, int _tx, int _ty, int xOffsetOnLine)
+{
+    // Move x/y to our coordinates.
+    _tx += m_x;
+    _ty += m_y;
+    
+    int w = width();
+    int h = height();
+
+    int my = QMAX(_ty,_y);
+    int mh;
+    if (_ty<_y)
+        mh= QMAX(0,h-(_y-_ty));
+    else
+        mh = QMIN(_h,h);
+
+    // You can use p::first-line to specify a background. If so, the root line boxes for
+    // a line may actually have to paint a background.
+    RenderStyle* styleToUse = object()->style(m_firstLine);
+    if (object()->hasFirstLine() || (parent() && object()->shouldPaintBackgroundOrBorder())) {
+        CachedImage* bg = styleToUse->backgroundImage();
+        bool hasBackgroundImage = bg && (bg->pixmap_size() == bg->valid_rect().size()) &&
+                                  !bg->isTransparent() && !bg->isErrorImage();
+        if (!hasBackgroundImage || (!prevLineBox() && !nextLineBox()) || !parent())
+            object()->paintBackgroundExtended(p, styleToUse->backgroundColor(),
+                                              bg, my, mh, _tx, _ty, w, h,
+                                              borderLeft(), borderRight());
+        else {
+            // We have a background image that spans multiple lines.
+            // We need to adjust _tx and _ty by the width of all previous lines.
+            // Think of background painting on inlines as though you had one long line, a single continuous
+            // strip.  Even though that strip has been broken up across multiple lines, you still paint it
+            // as though you had one single line.  This means each line has to pick up the background where
+            // the previous line left off.
+            int startX = _tx - xOffsetOnLine;
+            int totalWidth = xOffsetOnLine;
+            for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
+                totalWidth += curr->width();
+            QRect clipRect(_tx, _ty, width(), height());
+            clipRect = p->xForm(clipRect);
+            p->save();
+            p->addClip(clipRect);
+            object()->paintBackgroundExtended(p, object()->style()->backgroundColor(),
+                                              object()->style()->backgroundImage(), my, mh, startX, _ty,
+                                              totalWidth, h,
+                                              borderLeft(), borderRight());
+            p->restore();
+        }
+
+        // :first-line cannot be used to put borders on a line. Always paint borders with our
+        // non-first-line style.
+        if (parent() && object()->style()->hasBorder())
+            object()->paintBorder(p, _tx, _ty, w, h, object()->style(), includeLeftEdge(), includeRightEdge());
+    }
+}
+
+static bool shouldDrawDecoration(RenderObject* obj)
+{
+    bool shouldDraw = false;
+    for (RenderObject* curr = obj->firstChild();
+         curr; curr = curr->nextSibling()) {
+        if (curr->isInlineFlow() || curr->isText()) {
+            shouldDraw = true;
+            break;
+        }
+    }
+    return shouldDraw;
+}
+
+void InlineFlowBox::paintDecorations(QPainter *p, int _x, int _y,
+                                     int _w, int _h, int _tx, int _ty)
+{
+    // Now paint our text decorations. We only do this if we aren't in quirks mode (i.e., in
+    // almost-strict mode or strict mode).
+    _tx += m_x;
+    _ty += m_y;
+    RenderStyle* styleToUse = object()->style(m_firstLine);
+    int deco = parent() ? styleToUse->textDecoration() : styleToUse->textDecorationsInEffect();
+    if (deco != TDNONE && shouldDrawDecoration(object())) {
+        // We must have child boxes and have decorations defined.
+        _tx += borderLeft() + paddingLeft();
+        int w = m_width - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
+        QColor underline, overline, linethrough;
+        underline = overline = linethrough = styleToUse->color();
+        if (!parent())
+            object()->getTextDecorationColors(deco, underline, overline, linethrough);
+        if (deco & UNDERLINE) {
+            p->setPen(underline);
+            p->drawLineForText(_tx, _ty, m_baseline, w);
+        }
+        if (deco & OVERLINE) {
+            p->setPen(overline);
+            p->drawLineForText(_tx, _ty, 0, w);
+        }
+        if (deco & LINE_THROUGH) {
+            p->setPen(linethrough);
+            p->drawLineForText(_tx, _ty, 2*m_baseline/3, w);
+        }
+    }
+}

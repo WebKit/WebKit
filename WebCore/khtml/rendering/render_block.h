@@ -94,7 +94,7 @@ public:
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start, QPtrList<BidiIterator>& midpoints);
     InlineFlowBox* constructLine(QPtrList<BidiRun>& runs, const BidiIterator& start,
-                             const BidiIterator& end);
+                                 const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);
     void computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs,
                                            BidiContext* endEmbed);
