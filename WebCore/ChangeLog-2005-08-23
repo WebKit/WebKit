@@ -1,3 +1,21 @@
+2005-03-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/4039661> crash in ApplyStyleCommand::applyBlockStyle pasting contents of webpage into Mail or Blot
+        <rdar://problem/4039672> hang in moveParagraphContentsToNewBlockIfNecessary after pasting contents of webpage into Blot
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Fix for 4039672. Iteration needs to do
+        a traverseNextSibling(), not a traverseNextNode(). The latter might iterate into a child that already got moved, and
+        the code can infinite loop as a result.
+        (khtml::ApplyStyleCommand::applyBlockStyle): Fix for 4039661. This function iterates over a set of nodes to apply
+        block styles. Before, the iteration would go from the start to the end of the selection, and apply block styles
+        as it went. However, the act of applying style could confuse the iteration. Now I iterate and store the relevant
+        nodes in QPtrList before doing any style manipulation, and then iterate that set of nodes.
+
 2005-03-08  Darin Adler  <darin@apple.com>
 
         Change written by Hyatt, reviewed by me.

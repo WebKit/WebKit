@@ -1208,7 +1208,7 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     }
 
     while (moveNode && !moveNode->isBlockFlow()) {
-        NodeImpl *next = moveNode->traverseNextNode();
+        NodeImpl *next = moveNode->traverseNextSibling();
         removeNode(moveNode);
         appendNode(moveNode, newBlock);
         if (moveNode == endNode)
@@ -1326,10 +1326,17 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     
     // remove current values, if any, of the specified styles from the blocks
     // NOTE: tracks the previous block to avoid repeated processing
+    // Also, gather up all the nodes we want to process in a QPtrList before
+    // doing anything. This averts any bugs iterating over these nodes
+    // once you start removing and applying style.
     NodeImpl *beyondEnd = end.node()->traverseNextNode();
+    QPtrList<NodeImpl> nodes;
+    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
+        nodes.append(node);
+        
     NodeImpl *prevBlock = 0;
-    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
-        NodeImpl *block = node->enclosingBlockFlowElement();
+    for (QPtrListIterator<NodeImpl> it(nodes); it.current(); ++it) {
+        NodeImpl *block = it.current()->enclosingBlockFlowElement();
         if (block != prevBlock && block->isHTMLElement()) {
             removeCSSStyle(style, static_cast<HTMLElementImpl *>(block));
             prevBlock = block;
@@ -1338,9 +1345,8 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     
     // apply specified styles to the block flow elements in the selected range
     prevBlock = 0;
-    NodeImpl *node = start.node();
-    while (node != beyondEnd) {
-        NodeImpl *next = node->traverseNextNode();
+    for (QPtrListIterator<NodeImpl> it(nodes); it.current(); ++it) {
+        NodeImpl *node = it.current();
         if (node->renderer()) {
             NodeImpl *block = node->enclosingBlockFlowElement();
             if (block != prevBlock) {
@@ -1348,7 +1354,6 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
                 prevBlock = block;
             }
         }
-        node = next;
     }
 }
 
