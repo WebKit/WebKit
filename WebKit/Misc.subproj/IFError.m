@@ -54,7 +54,7 @@ static id IFErrorMake(int code)
         [NSNumber numberWithInt: IFURLHandleResultDNSLookupError],
         NSLocalizedStringFromTable (@"HTTP redirection loop error", @"IFError", @"IFURLHandleResultHTTPRedirectionLoopError description"),
         [NSNumber numberWithInt: IFURLHandleResultHTTPRedirectionLoopError],
-        NSLocalizedStringFromTable (@"resource unvailable", @"IFError", @"IFURLHandleResultResourceUnavailableError description"),
+        NSLocalizedStringFromTable (@"resource unavailable", @"IFError", @"IFURLHandleResultResourceUnavailableError description"),
         [NSNumber numberWithInt: IFURLHandleResultResourceUnavailableError],
         NSLocalizedStringFromTable (@"can't load from network", @"IFError", @"IFURLHandleResultCantLoadFromNetworkError description"),
         [NSNumber numberWithInt: IFURLHandleResultCantLoadFromNetworkError],

@@ -1,3 +1,12 @@
+2002-03-26  Darin Adler  <darin@apple.com>
+
+	* Misc.subproj/IFError.m: (+[IFError initialize]): Fix a typo where
+        we said "unvailable".
+        
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]): Change
+        the default sans-serif font to "Lucida Grande" to match the OS X
+        system font, and also make that the defalt standard font.
+
 2002-03-26  John Sullivan  <sullivan@apple.com>
 
 	* WebKit.pbproj/project.pbxproj:
