@@ -1,3 +1,8 @@
+2003-08-21  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _setPrinting:pageWidth:adjustViewSize:]):
+        Tweak to printing fix: Be sure to call adjustViewSize after applying styles and doing layout.
+
 2003-08-21  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3378810.  Avoid resizing frame from drawRect: when printing.  This will corrupt the graphics context.

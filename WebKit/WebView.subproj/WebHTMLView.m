@@ -25,7 +25,6 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <AppKit/NSResponder_Private.h>
-#import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
 
 @interface WebHTMLView (WebHTMLViewPrivate)
@@ -890,16 +889,15 @@
         }
     }
 
-    if (adjustViewSize){
-        [[self _bridge] adjustViewSize];
-    }
-    
     if (printing != _private->printing) {
         _private->printing = printing;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layoutToPageWidth:pageWidth];
         [self setNeedsDisplay:NO];
+        if (adjustViewSize) {
+            [[self _bridge] adjustViewSize];
+        }
     }
 }
 
