@@ -1,3 +1,8 @@
+2002-03-22  Chris Blumenberg  <cblu@apple.com>
+
+	* WebKit.pbproj/project.pbxproj:
+	Added the MIME clases to WebKit.
+
 2002-03-22  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]):
