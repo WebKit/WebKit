@@ -473,9 +473,15 @@ enum ContentType {
 };
 
 struct ContentData {
+    ContentData() :_contentType(CONTENT_NONE), _nextContent(0) {}
     ~ContentData();
     void clearContent();
 
+    ContentType contentType() { return _contentType; }
+
+    DOM::DOMStringImpl* contentText() { if (contentType() == CONTENT_TEXT) return _content.text; return 0; }
+    CachedObject* contentObject() { if (contentType() == CONTENT_OBJECT) return _content.object; return 0; }
+    
     ContentType _contentType;
 
     union {
@@ -483,6 +489,8 @@ struct ContentData {
         DOM::DOMStringImpl* text;
         // counters...
     } _content ;
+
+    ContentData* _nextContent;
 };
 
 //------------------------------------------------
@@ -922,27 +930,9 @@ public:
         const_cast<StyleVisualData *>(visual.get())->palette = QApplication::palette();
     }
 
-
-    ContentType contentType() { return content ? content->_contentType : CONTENT_NONE; }
-
-    DOM::DOMStringImpl* contentText()
-    {
-	if (content && content->_contentType==CONTENT_TEXT)
-	    return content->_content.text;
-	else
-	    return 0;
-    }
-
-    CachedObject* contentObject()
-    {
-	if (content && content->_contentType==CONTENT_OBJECT)
-	    return content->_content.object;
-	else
-	    return 0;
-    }
-
+    ContentData* contentData() { return content; }
     void setContent(DOM::DOMStringImpl* s, bool add = false);
-    void setContent(CachedObject* o);
+    void setContent(CachedObject* o, bool add = false);
 
     bool inheritedNotEqual( RenderStyle *other ) const;
 

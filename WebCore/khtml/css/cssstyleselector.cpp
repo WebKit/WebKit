@@ -2851,7 +2851,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI)
             {
                 CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(val);
-                style->setContent(image->image());
+                style->setContent(image->image(), i != 0);
             }
 
         }

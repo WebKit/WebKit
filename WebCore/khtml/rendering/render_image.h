@@ -71,6 +71,9 @@ public:
 
     virtual void detach(RenderArena *);
 
+    // Called to set generated content images (e.g., :before/:after generated images).
+    void setContentObject(CachedObject* co);
+    
 private:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;

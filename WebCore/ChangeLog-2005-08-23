@@ -1,3 +1,31 @@
+2003-05-04  David Hyatt  <hyatt@apple.com>
+
+	When using the content property in CSS, you can string together
+	an intermixed list of strings and image URLs.  The old code
+	only supported a single image URL, and if you tried to mix
+	text in with images, you ended up crashing.
+
+	The crash bug is 3248172.  The fix is to maintain a list of
+	ContentData objects instead of just a single object and to
+	ensure that a whole list of generated content gets made (and
+	not just a single RenderObject).
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+	(applyRule)
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setStyle):
+        (RenderImage::setContentObject):
+        (RenderImage::updateFromElement):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::setContent):
+        (ContentData::clearContent):
+        * khtml/rendering/render_style.h:
+
 2003-05-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -444,18 +444,6 @@ void RenderStyle::cleanup()
 //    SharedData::counter = 0;
 }
 
-void RenderStyle::setContent(CachedObject* o)
-{
-    if ( !content )
-	content = new ContentData;
-    else
-	content->clearContent();
-//    o->ref();
-    content->_content.object = o;
-    content->_contentType = CONTENT_OBJECT;
-}
-
-
 void RenderStyle::setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c)
 {
     visual.access()->palette.setColor(g,r,c);
@@ -470,34 +458,75 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.left = left;
 }
 
+void RenderStyle::setContent(CachedObject* o, bool add)
+{
+    if (!o)
+        return; // The object is null. Nothing to do. Just bail.
+
+    ContentData* lastContent = content;
+    while (lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
+
+    bool reuseContent = !add;
+    ContentData* newContentData = 0;
+    if (reuseContent && content) {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData;
+
+    if (lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
+
+    //    o->ref();
+    newContentData->_content.object = o;
+    newContentData->_contentType = CONTENT_OBJECT;
+}
+
 void RenderStyle::setContent(DOMStringImpl* s, bool add)
 {
-    if (add && content && content->_contentType == CONTENT_TEXT) {
-        if (!s)
+    if (!s)
+        return; // The string is null. Nothing to do. Just bail.
+    
+    ContentData* lastContent = content;
+    while (lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
+
+    bool reuseContent = !add;
+    if (add) {
+        if (!lastContent)
+            return; // Something's wrong.  We had no previous content, and we should have.
+
+        if (lastContent->_contentType == CONTENT_TEXT) {
+            // We can augment the existing string and share this ContentData node.
+            DOMStringImpl* oldStr = lastContent->_content.text;
+            DOMStringImpl* newStr = oldStr->copy();
+            oldStr->deref();
+            newStr->append(s);
+            lastContent->_content.text = newStr;
             return;
-        
-        DOMStringImpl* oldStr = content->_content.text;
-        DOMStringImpl* newStr = oldStr->copy();
-        oldStr->deref();
-        newStr->append(s);
-
-        content->_content.text = newStr;
-    }
-    else {
-        // FIXME: If we try to add a string, and the old content was an object,
-        // then we just clobber the object. This is probably not right, but it's
-        // better than just trashing memory the way this code did before we added
-        // the check of contentType above.
-
-        if (!content)
-            content = new ContentData;
-        else
-            content->clearContent();
-        content->_content.text = s ? s : new DOMStringImpl("");
+        }
     }
 
-    content->_content.text->ref();
-    content->_contentType = CONTENT_TEXT;
+    ContentData* newContentData = 0;
+    if (reuseContent && content) {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData;
+    
+    if (lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
+    
+    newContentData->_content.text = s;
+    newContentData->_content.text->ref();
+    newContentData->_contentType = CONTENT_TEXT;
 }
 
 ContentData::~ContentData()
@@ -507,6 +536,9 @@ ContentData::~ContentData()
 
 void ContentData::clearContent()
 {
+    delete _nextContent;
+    _nextContent = 0;
+    
     switch (_contentType)
     {
         case CONTENT_OBJECT:
@@ -519,5 +551,4 @@ void ContentData::clearContent()
         default:
             ;
     }
-
 }

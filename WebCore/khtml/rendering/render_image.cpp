@@ -71,11 +71,13 @@ void RenderImage::setStyle(RenderStyle* _style)
     
     setOverhangingContents(style()->height().isPercent());
     setShouldPaintBackgroundOrBorder(true);
+}
 
-    CachedObject* co = style()->contentObject();
-    if (co && image != co ) {
+void RenderImage::setContentObject(CachedObject* co)
+{
+    if (co && image != co) {
         if (image) image->deref(this);
-        image = static_cast<CachedImage*>(style()->contentObject());
+        image = static_cast<CachedImage*>(co);
         if (image) image->ref(this);
     }
 }
@@ -418,7 +420,7 @@ void RenderImage::updateFromElement()
         new_image = element()->getDocument()->docLoader()->requestImage(khtml::parseURL(attr));
     }
 
-    if(new_image && new_image != image && (!style() || !style()->contentObject())) {
+    if(new_image && new_image != image && (!style() || !style()->contentData())) {
         loadEventSent = false;
         CachedImage *old_image = image;
         image = new_image;
