@@ -1,3 +1,14 @@
+2003-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+	Rolled in fix from Safari-89-branch
+	
+    2003-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+	Try to fix OS build by making the Frameworks link in both SYMROOT
+	and DSTROOT, and at both build time and install time.
+
+        * WebKit.pbproj/project.pbxproj:
+
 2003-07-14  Dave Hyatt  <hyatt@apple.com>
 
 	Roll this change out.  It was a bad change that I only made
