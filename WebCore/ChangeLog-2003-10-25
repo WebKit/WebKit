@@ -1,5 +1,16 @@
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3119663 - document.lastModified returns the wrong date format
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+	Instead of using NSDate's default date format, use the format that
+	IE and Gecko use.
+
+2003-03-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         * khtml/ecma/kjs_window.cpp:

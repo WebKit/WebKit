@@ -175,7 +175,8 @@ static bool initializedObjectCacheSize = FALSE;
         _part->addMetaData("http-refresh", QString::fromNSString(refresh));
     }
     if (lastModified) {
-	_part->addMetaData("modified", QString::fromNSString([lastModified description]));
+	NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
+	_part->addMetaData("modified", QString::fromNSString(modifiedString));
     }
 }
 
