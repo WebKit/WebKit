@@ -89,6 +89,8 @@ static NSMutableArray *activeImageRenderers;
     }
 }
 
+#endif
+
 - (id)initWithMIMEType:(NSString *)MIME
 {
     [super init];
@@ -99,13 +101,14 @@ static NSMutableArray *activeImageRenderers;
 // Part of the workaround for bug 3090341.
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     [self checkDataForGIFExtensionSignature:data];
+#endif
     [super initWithData:data];
     MIMEType = [MIME copy];
     return self;
 }
 
-#endif
 
 - copyWithZone:(NSZone *)zone
 {
