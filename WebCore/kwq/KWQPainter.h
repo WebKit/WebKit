@@ -142,7 +142,6 @@ public:
 			    int sx=0, int sy=0, int sw=-1, int sh=-1 );
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0);
     void drawText(int x, int y, const QString &, int len=-1);
-    void drawText(int, int, int, int, AlignmentFlags, const QString &);
     void drawText(int, int, int, int, int flags, const QString&, int len=-1, 
         QRect *br=0, char **internal=0);
     void fillRect(int, int, int, int, const QBrush &);

@@ -122,6 +122,11 @@ void QApplication::setMainWidget(QWidget *w)
     [sv setHasVerticalScroller: YES];
     [sv setHasHorizontalScroller: YES];
     [sv setDocumentView: w->getView()];
+    
+    [((_KWQOwner *)application)->window setOpaque: FALSE];
+    [((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
+    
+     
     [((_KWQOwner *)application)->window setContentView: sv];
 }
 

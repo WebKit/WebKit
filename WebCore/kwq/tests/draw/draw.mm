@@ -216,6 +216,23 @@ void drawFonts( QPainter *p )
         }
         f++;
     }
+    
+    QFont font;
+    font.setFamily ("Helvetica");
+    font.setPixelSizeFloat ((float)12);
+    p->setFont( font );
+    p->setBrush ( Qt::white );
+    p->drawRect(700, 600, 150, 60);
+    p->drawText(700, 600, 150, 60 , Qt::WordBreak, "Some text in a box that should word break." );
+    p->drawRect(700, 670, 150, 60);
+    p->drawText(700, 670, 150, 60 , Qt::AlignLeft, "Some text in a box that should align left." );
+    p->drawRect(700, 740, 150, 60);
+    p->drawText(700, 740, 150, 60 , Qt::AlignRight, "Some text in a box that should align right." );
+    p->drawRect(700, 810, 100, 60);
+    p->drawText(700, 810, 100, 60 , Qt::AlignLeft|Qt::WordBreak, "Some text in a box that should align left and word break." );
+    p->drawRect(700, 880, 100, 60);
+    p->drawText(700, 880, 100, 60 , Qt::AlignRight|Qt::WordBreak, "Some text in a box that should align right and word break." );
+    
     p->restore();
 }
 

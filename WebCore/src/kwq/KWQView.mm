@@ -12,7 +12,6 @@
 
 
 - (void)drawRect:(NSRect)rect {
-    NSLog (@"drawRect\n", nil);
     widget->paint((void *)0);
 }
 

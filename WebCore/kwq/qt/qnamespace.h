@@ -47,21 +47,33 @@ public:
     // enums -------------------------------------------------------------------
  
      enum ButtonState {
-        LeftButton,
-        MidButton,
-        RightButton,
-        ControlButton,
-        AltButton,
-        ShiftButton,
+	NoButton	= 0x0000,
+	LeftButton	= 0x0001,
+	RightButton	= 0x0002,
+	MidButton	= 0x0004,
+	MouseButtonMask = 0x0007,
+	ShiftButton	= 0x0008,
+	ControlButton   = 0x0010,
+	AltButton	= 0x0020,
+	KeyButtonMask	= 0x0038,
+	Keypad		= 0x4000
     };
 
     enum AlignmentFlags {
-        AlignLeft,
-        AlignCenter,
-        AlignRight,
-        WordBreak,
-        ShowPrefix,
-        DontClip,
+	AlignLeft	= 0x0001,		// text alignment
+	AlignRight	= 0x0002,
+	AlignHCenter	= 0x0004,
+	AlignTop	= 0x0008,
+	AlignBottom	= 0x0010,
+	AlignVCenter	= 0x0020,
+	AlignCenter	= AlignVCenter | AlignHCenter,
+
+	SingleLine	= 0x0040,		// misc. flags
+	DontClip	= 0x0080,
+	ExpandTabs	= 0x0100,
+	ShowPrefix	= 0x0200,
+	WordBreak	= 0x0400,
+	DontPrint	= 0x1000		// internal
     };
 
     enum PenStyle {

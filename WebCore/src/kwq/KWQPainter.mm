@@ -415,18 +415,43 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 }
 
 
-void QPainter::drawText(int x, int y , int w, int h, AlignmentFlags flags, const QString &qstring)
-{
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QPainter::drawText(int x, int y , int w, int h, AlignmentFlags flags, const QString &qstring)\n");
-}
-
-
 void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qstring, int len, 
     QRect *br, char **internal)
 {
-    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qstring, int len, 
-    QRect *br, char **internal)\n");
+    NSString *string;
+    NSFont *font;
+    const char *ascii;
+    NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
+    
+    _lockFocus();
+    
+    font = data->qfont.data->font;    
+    
+    if (len == -1)
+        string = QSTRING_TO_NSSTRING(qstring);
+    else
+        string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
+
+    if (flags & Qt::WordBreak){
+        [style setLineBreakMode: NSLineBreakByWordWrapping];
+    }
+    else {
+        [style setLineBreakMode: NSLineBreakByClipping];
+    }
+    
+    if (flags & Qt::AlignRight){
+        [style setAlignment: NSRightTextAlignment];
+    }
+    
+    if (flags & Qt::AlignLeft){
+        [style setAlignment: NSLeftTextAlignment];
+    }
+    
+    [string drawInRect:NSMakeRect(x, y, w, h) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.qcolor.color, NSForegroundColorAttributeName, style, NSParagraphStyleAttributeName, nil]];
+
+    _unlockFocus();
 }
+
 
 
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
