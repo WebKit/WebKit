@@ -37,13 +37,12 @@ enum {
     @description Policy errors
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
-    @constant WebKitErrorLocationChangeInterruptedByPolicyChange
-    @constant WebKitErrorResourceLoadInterruptedByPolicyChange
+    @constant WebKitErrorFrameLoadInterruptedByPolicyChange
 */
 enum {
     WebKitErrorCannotShowMIMEType = 				100,
     WebKitErrorCannotShowURL = 					101,
-    WebKitErrorLocationChangeInterruptedByPolicyChange = 	102,
+    WebKitErrorFrameLoadInterruptedByPolicyChange = 		102,
 };
 
 /*!

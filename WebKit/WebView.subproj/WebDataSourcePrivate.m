@@ -9,6 +9,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistory.h>
@@ -22,7 +23,6 @@
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -180,7 +180,8 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller locationChangeStartedForDataSource:self];
+    [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+                                     didStartProvisionalLoadForFrame:[self webFrame]];
 
     if (pageCache){
         _private->loadingFromPageCache = YES;
@@ -306,7 +307,9 @@
         // Must update the entries in the back-forward list too.
         [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
-        [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+                                                         didReceiveTitle:_private->pageTitle
+                                                                forFrame:[self webFrame]];
     }
 }
 
@@ -337,10 +340,11 @@
 
     _private->request = [request retain];
 
-    // Only send serverRedirectedForDataSource: if URL changed.
+    // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     if (![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller serverRedirectedForDataSource:self];
+        [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+                      didReceiveServerRedirectForProvisionalLoadForFrame:[self webFrame]];
     }
         
     [oldRequest release];
@@ -595,7 +599,9 @@
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
     NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
-    [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller receivedPageIcon:icon forDataSource:self];
+    [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+                                                      didReceiveIcon:icon
+                                                            forFrame:[self webFrame]];
 }
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader

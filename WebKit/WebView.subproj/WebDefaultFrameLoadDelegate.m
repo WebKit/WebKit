@@ -1,8 +1,8 @@
 /*	
-        WebLocationChangeDelegate.m
+        WebDefaultFrameLoadDelegate.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
-#import <WebKit/WebDefaultLocationChangeDelegate.h>
+#import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 
@@ -10,36 +10,42 @@
 #import <WebFoundation/NSError.h>
 #endif
 
-@implementation WebDefaultLocationChangeDelegate
+@implementation WebDefaultFrameLoadDelegate
 
-static WebDefaultLocationChangeDelegate *sharedDelegate = nil;
+static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
 
 // Return a object with vanilla implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless
-+ (WebDefaultLocationChangeDelegate *)sharedLocationChangeDelegate
++ (WebDefaultFrameLoadDelegate *)sharedFrameLoadDelegate
 {
     if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultLocationChangeDelegate alloc] init];
+        sharedDelegate = [[WebDefaultFrameLoadDelegate alloc] init];
     }
     return sharedDelegate;
 }
 
-- (void)webView: (WebView *)wv locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv serverRedirectedForDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didReceiveServerRedirectForProvisionalLoadForFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
-- (void)webView: (WebView *)wv receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv willCloseLocationForDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame { }
 
-- (void)webView: (WebView *)wv clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
-- (void)webView: (WebView *)wv clientRedirectCancelledForFrame:(WebFrame *)frame { }
+- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame { }
+
+- (void)webView:(WebView *)sender didChangeLocationWithinPageForFrame:(WebFrame *)frame { }
+
+- (void)webView:(WebView *)sender willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
+
+- (void)webView:(WebView *)sender didCancelClientRedirectForFrame:(WebFrame *)frame { }
+
+- (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame { }
 
 @end

@@ -203,16 +203,16 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return _private->policyDelegate;
 }
 
-- (void)setLocationChangeDelegate:delegate
+- (void)setFrameLoadDelegate:delegate
 {
-    _private->locationChangeDelegate = delegate;
-    [_private->locationChangeDelegateForwarder release];
-    _private->locationChangeDelegateForwarder = nil;
+    _private->frameLoadDelegate = delegate;
+    [_private->frameLoadDelegateForwarder release];
+    _private->frameLoadDelegateForwarder = nil;
 }
 
-- locationChangeDelegate
+- frameLoadDelegate
 {
-    return _private->locationChangeDelegate;
+    return _private->frameLoadDelegate;
 }
 
 - (WebFrame *)mainFrame

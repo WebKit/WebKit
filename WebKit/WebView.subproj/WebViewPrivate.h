@@ -38,8 +38,8 @@ typedef struct _WebResourceDelegateImplementationCache {
     id downloadDelegate;
     id policyDelegate;
     id policyDelegateForwarder;
-    id locationChangeDelegate;
-    id locationChangeDelegateForwarder;
+    id frameLoadDelegate;
+    id frameLoadDelegateForwarder;
     id <WebFormDelegate> formDelegate;
     
     WebBackForwardList *backForwardList;
@@ -156,7 +156,7 @@ Could be worth adding to the API.
 - (WebCoreSettings *)_settings;
 - (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)prefs;
 
-- _locationChangeDelegateForwarder;
+- _frameLoadDelegateForwarder;
 - _resourceLoadDelegateForwarder;
 - (void)_cacheResourceLoadDelegateImplementations;
 - (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;

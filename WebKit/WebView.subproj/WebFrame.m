@@ -18,7 +18,6 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 

@@ -15,6 +15,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -24,7 +25,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -390,7 +390,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         }
     }
     if (_private->dataSource) {
-        [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller willCloseLocationForDataSource:_private->dataSource];
+        [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller willCloseFrame:self];
     }
 }
 
@@ -708,12 +708,14 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             
             // Tell the client we've committed this URL.
             ASSERT([[self frameView] documentView] != nil);
-            [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeCommittedForDataSource:ds];
+            [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller didCommitLoadForFrame:self];
             
             // If we have a title let the controller know about it.
             if (ptitle) {
                 [entry setTitle:ptitle];
-                [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller receivedPageTitle:ptitle forDataSource:ds];
+                [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                                                           didReceiveTitle:ptitle
+                                                                  forFrame:self];
             }
             break;
         }
@@ -893,7 +895,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                                               didFailProvisionalLoadWithError:[pd _mainDocumentError]
+                                                                      forFrame:self];
 
                     // We know the provisional data source didn't cut the muster, release it.
                     [self _setProvisionalDataSource:nil];
@@ -972,7 +976,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
+                if ([ds _mainDocumentError]) {
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                                                     didFailLoadWithError:[ds _mainDocumentError]
+                                                                 forFrame:self];
+                } else {
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                                                    didFinishLoadForFrame:self];
+                }
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -1122,7 +1133,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self dataSource] __setRequest: [[hackedRequest copy] autorelease]];
         [hackedRequest release];
         
-        [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:_private->dataSource];
+        [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                               didChangeLocationWithinPageForFrame:self];
     } else {
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
@@ -1530,7 +1542,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkLoadComplete];
     }
 
-    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:dataSrc];
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                           didChangeLocationWithinPageForFrame:self];
 }
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f
@@ -1742,7 +1755,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
-    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                                willPerformClientRedirectToURL:URL
+                                                         delay:seconds
+                                                      fireDate:date
+                                                      forFrame:self];
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
 
@@ -1757,7 +1774,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectCancelled
 {
-    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller clientRedirectCancelledForFrame:self];
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                               didCancelClientRedirectForFrame:self];
     _private->quickRedirectComing = NO;
 }
 

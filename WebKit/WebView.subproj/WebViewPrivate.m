@@ -6,16 +6,16 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultLocationChangeDelegate.h>
+#import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFormDelegatePrivate.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -87,7 +87,7 @@
     [policyDelegateForwarder release];
     [resourceProgressDelegateForwarder release];
     [UIDelegateForwarder release];
-    [locationChangeDelegateForwarder release];
+    [frameLoadDelegateForwarder release];
     
     [super dealloc];
 }
@@ -455,11 +455,11 @@
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
-- _locationChangeDelegateForwarder
+- _frameLoadDelegateForwarder
 {
-    if (!_private->locationChangeDelegateForwarder)
-        _private->locationChangeDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self locationChangeDelegate]  defaultTarget: [WebDefaultLocationChangeDelegate sharedLocationChangeDelegate] templateClass: [WebDefaultLocationChangeDelegate class]];
-    return _private->locationChangeDelegateForwarder;
+    if (!_private->frameLoadDelegateForwarder)
+        _private->frameLoadDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self frameLoadDelegate]  defaultTarget: [WebDefaultFrameLoadDelegate sharedFrameLoadDelegate] templateClass: [WebDefaultFrameLoadDelegate class]];
+    return _private->frameLoadDelegateForwarder;
 }
 
 - _resourceLoadDelegateForwarder

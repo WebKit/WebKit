@@ -1,3 +1,61 @@
+2003-04-25  Chris Blumenberg  <cblu@apple.com>
+
+	Turned WebLocationChangeDelegate into WebFrameLoadDelegate. Renamed WebFrameLoadDelegate all methods to pass a frame instead of the data source.
+
+        Reviewed by rjw.
+
+        * English.lproj/Localizable.strings:
+        * Misc.subproj/WebKit.h:
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        * WebView.subproj/WebDefaultFrameLoadDelegate.h: Added.
+        * WebView.subproj/WebDefaultFrameLoadDelegate.m: Added.
+        (+[WebDefaultFrameLoadDelegate sharedFrameLoadDelegate]):
+        (-[WebDefaultFrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didReceiveServerRedirectForProvisionalLoadForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didReceiveIcon:forFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didChangeLocationWithinPageForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:didCancelClientRedirectForFrame:]):
+        (-[WebDefaultFrameLoadDelegate webView:willCloseFrame:]):
+        * WebView.subproj/WebDefaultLocationChangeDelegate.h: Removed.
+        * WebView.subproj/WebDefaultLocationChangeDelegate.m: Removed.
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFrameLoadDelegate.h: Added.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _closeOldDataSources]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:]):
+        (-[WebFrame _clientRedirectCancelled]):
+        * WebView.subproj/WebLocationChangeDelegate.h: Removed.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeError]):
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView setFrameLoadDelegate:]):
+        (-[WebView frameLoadDelegate]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _frameLoadDelegateForwarder]):
+
 2003-04-25  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3240676 -- REGRESSION: Using old Safari then new one 

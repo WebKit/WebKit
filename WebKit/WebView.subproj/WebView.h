@@ -137,18 +137,18 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 - (id)downloadDelegate;
 
 /*!
-    @method setLocationChangeDelegate:
-    @abstract Set the WebView's WebLocationChangeDelegate delegate.
-    @param delegate The WebLocationChangeDelegate to set as the delegate.
+    @method setFrameLoadDelegate:
+    @abstract Set the WebView's WebFrameLoadDelegate delegate.
+    @param delegate The WebFrameLoadDelegate to set as the delegate.
 */    
-- (void)setLocationChangeDelegate: (id)delegate;
+- (void)setFrameLoadDelegate: (id)delegate;
 
 /*!
-    @method locationChangeDelegate
-    @abstract Return the WebView's WebLocationChangeDelegate delegate.
-    @result The WebView's WebLocationChangeDelegate delegate.
+    @method frameLoadDelegate
+    @abstract Return the WebView's WebFrameLoadDelegate delegate.
+    @result The WebView's WebFrameLoadDelegate delegate.
 */    
-- (id)locationChangeDelegate;
+- (id)frameLoadDelegate;
 
 /*!
     @method setPolicyDelegate:

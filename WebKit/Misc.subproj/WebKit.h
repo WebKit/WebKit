@@ -8,11 +8,11 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>

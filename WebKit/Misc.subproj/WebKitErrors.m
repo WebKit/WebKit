@@ -33,10 +33,7 @@ NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURL
 // Policy errors
 #define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebKitErrorCannotShowMIMEType description")
 #define WebKitErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebKitErrorCannotShowURL description")
-#define WebKitErrorDescriptionLocationChangeInterruptedByPolicyChange UI_STRING("Location change interrupted", "WebKitErrorLocationChangeInterruptedByPolicyChange description")
-
-// FIXME: Delete this error once localization is unfrozen. It isn't used.
-#define WebKitErrorDescriptionResourceLoadInterruptedByPolicyChange UI_STRING("Resource load interrupted", "WebKitErrorResourceLoadInterruptedByPolicyChange description")
+#define WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description")
 
 // Plug-in and java errors
 #define WebKitErrorDescriptionCannotFindPlugin UI_STRING("Cannot find plug-in", "WebKitErrorCannotFindPlugin description")
@@ -112,7 +109,7 @@ static void registerErrors()
         // Policy errors
         WebKitErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
         WebKitErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebKitErrorCannotShowURL],
-        WebKitErrorDescriptionLocationChangeInterruptedByPolicyChange, 	[NSNumber numberWithInt: WebKitErrorLocationChangeInterruptedByPolicyChange],
+        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,[NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
 
         // Plug-in and java errors
         WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],

@@ -22,12 +22,12 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -84,7 +84,7 @@
 
 - (NSError *)interruptForPolicyChangeError
 {
-    return [NSError _webKitErrorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
+    return [NSError _webKitErrorWithCode:WebKitErrorFrameLoadInterruptedByPolicyChange
                               failingURL:[[request URL] absoluteString]];
 }
 

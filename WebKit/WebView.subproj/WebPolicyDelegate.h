@@ -155,7 +155,8 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 
 /*!
     @method decidePolicyForMIMEType:request:frame:
-    @discussion Returns the policy for content which has been partially loaded. Sent after locationChangeStarted. 
+    @discussion Returns the policy for content which has been partially loaded.
+    Sent after webView:didStartProvisionalLoadForFrame: is sent on the WebFrameLoadDelegate.
     @param type MIME type for the resource.
     @param request A NSURLRequest for the partially loaded content.
     @param frame The frame which is loading the URL.

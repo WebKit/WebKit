@@ -23,7 +23,6 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNullPluginView.h>
