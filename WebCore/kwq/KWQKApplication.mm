@@ -26,6 +26,7 @@
 #include <kapp.h>
 
 
+KApplication *KApplication::KApp;
 
 
 KApplication::KApplication()

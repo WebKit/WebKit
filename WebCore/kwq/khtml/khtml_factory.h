@@ -34,6 +34,7 @@ public:
   KHTMLFactory( bool clone = false );
   virtual ~KHTMLFactory();
 
+  virtual KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *className, const QStringList &args );
 
   static KInstance *instance();
 
@@ -42,7 +43,8 @@ public:
     return KParts::HistoryProvider::self();
   }
 
-
+private:
+  static QList<KHTMLPart> *s_parts;
 };
 
 #endif

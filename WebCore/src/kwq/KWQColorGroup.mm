@@ -45,7 +45,7 @@ const QBrush &QColorGroup::brush(QColorGroup::ColorRole cr) const
 {
 }
 
-const QColor &color(QColorGroup::ColorRole cr)
+const QColor &QColorGroup::color(QColorGroup::ColorRole cr) const
 {
 }
 

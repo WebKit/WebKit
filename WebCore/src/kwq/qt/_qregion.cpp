@@ -145,6 +145,12 @@ QRegion QRegion::subtract( const QRegion &r ) const
 }
 
 
+QRegion QRegion::intersect( const QRegion &) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
 QRegion QRegion::unite( const QRegion &r ) const
 {
     fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
@@ -400,6 +406,13 @@ QRegion& QRegion::operator-=( const QRegion &r )
 */
 QRegion& QRegion::operator^=( const QRegion &r )
     { return *this = *this ^ r; }
+
+
+bool QRegion::operator==( const QRegion &r ) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
 
 // KWQ hacks ---------------------------------------------------------------
 

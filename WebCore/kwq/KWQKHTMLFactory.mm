@@ -19,6 +19,8 @@
 */
 #include <khtml_factory.h>
 
+QList<KHTMLPart> *KHTMLFactory::s_parts;
+
 
 KHTMLFactory::KHTMLFactory( bool clone = false )
 {
@@ -26,6 +28,10 @@ KHTMLFactory::KHTMLFactory( bool clone = false )
 
 
 KHTMLFactory::~KHTMLFactory()
+{
+}
+
+KParts::Part *KHTMLFactory::createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *className, const QStringList &args )
 {
 }
 

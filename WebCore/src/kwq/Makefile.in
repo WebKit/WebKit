@@ -28,6 +28,7 @@ MMOBJECTS = \
 	KWQtextcodec.o \
 	KWQtextstream.o \
 	KWQApplication.o \
+	KWQBitmap.o \
 	KWQBrush.o \
 	KWQButton.o \
         KWQCheckBox.o \
@@ -36,6 +37,7 @@ MMOBJECTS = \
         KWQComboBox.o \
         KWQCompletion.o \
         KWQCursor.o \
+        KWQDrawUtil.o \
         KWQEvent.o \
 	KWQFont.o \
 	KWQFontDatabase.o \
@@ -79,6 +81,7 @@ MMOBJECTS = \
         KWQKStringHandler.o \
         KWQKWin.o \
         KWQKWinModule.o \
+        KWQLabel.o \
         KWQListBox.o \
         KWQLineEdit.o \
         KWQMovie.o \
@@ -94,6 +97,7 @@ MMOBJECTS = \
 	KWQPushButton.o \
 	KWQRadioButton.o \
 	KWQScrollView.o \
+	KWQStyle.o \
 	KWQTextEdit.o \
 	KWQToolTip.o \
 	KWQView.o \

@@ -23,90 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpalette.h>
-#include <qcolor.h>
+#include <qdrawutil.h>
 
-QColorGroup::QColorGroup()
+void qDrawShadePanel(QPainter *, int, int, int, int, const QColorGroup &, bool
+        sunken = FALSE, int lineWidth = 1, const QBrush *fill = 0)
 {
+    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
-
-
-QColorGroup::QColorGroup(const QColorGroup &)
-{
-}
-
-
-QColorGroup::~QColorGroup()
-{
-}
-
-
-const QBrush &QColorGroup::brush(QColorGroup::ColorRole cr) const
-{
-}
-
-const QColor &QColorGroup::color(QColorGroup::ColorRole cr) const
-{
-}
-
-
-void setColor(QColorGroup::ColorRole cr, const QColor &)
-{
-}
-
-
-const QColor &QColorGroup::foreground() const
-{
-}
-
-
-const QColor &QColorGroup::shadow() const
-{
-}
-
-
-const QColor &QColorGroup::light() const
-{
-}
-
-
-const QColor &QColorGroup::midlight() const
-{
-}
-
-
-const QColor &QColorGroup::dark() const
-{
-}
-
-
-const QColor &QColorGroup::base() const
-{
-}
-
-
-const QColor &QColorGroup::buttonText() const
-{
-}
-
-
-const QColor &QColorGroup::button() const
-{
-}
-
-
-const QColor &QColorGroup::text() const
-{
-}
-
-
-const QColor &QColorGroup::background() const
-{
-}
-
-
-QColorGroup &QColorGroup::operator=(const QColorGroup &)
-{
-}
-
 
