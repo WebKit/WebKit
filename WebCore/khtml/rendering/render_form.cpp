@@ -1186,12 +1186,15 @@ void RenderTextArea::updateFromElement()
 {
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     w->setReadOnly(element()->readOnly());
-    w->blockSignals(true);
-    int line, col;
-    w->getCursorPosition( &line, &col );
-    w->setText(element()->value().string());
-    w->setCursorPosition( line, col );
-    w->blockSignals(false);
+    QString text = element()->value().string();
+    if (w->text() != text) {
+        w->blockSignals(true);
+        int line, col;
+        w->getCursorPosition( &line, &col );
+        w->setText(text);
+        w->setCursorPosition( line, col );
+        w->blockSignals(false);
+    }
     element()->m_dirtyvalue = false;
 
     RenderFormElement::updateFromElement();

@@ -26,10 +26,8 @@
 #ifndef QLINEEDIT_H_
 #define QLINEEDIT_H_
 
-#include "KWQWidget.h"
-#include "KWQEvent.h"
 #include "KWQString.h"
-#include "KWQSignal.h"
+#include "KWQWidget.h"
 
 class QLineEdit : public QWidget {
 public:
@@ -45,7 +43,6 @@ public:
 
     bool isReadOnly() const;
     void setReadOnly(bool);
-    bool frame() const;
     int cursorPosition() const;
     int maxLength() const;
     void selectAll();

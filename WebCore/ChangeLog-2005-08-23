@@ -1,3 +1,56 @@
+2003-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3144966 -- problems typing in form at http://www.mobile.att.net/messagecenter
+
+        The bug was that doing a focus would always select the entire contents of the field.
+        While this behavior does match Mozilla's behavior for text fields, it doesn't match
+        WinIE; we're going to imitate WinIE and not do it. Also fix the same issue for text areas.
+
+        * kwq/KWQTextField.h: Add lastSelectedRange field.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField initWithFrame:]): Initialize lastSelectedRange (to nothing).
+        (-[KWQTextField initWithQLineEdit:]): Use [self init] instead of [super init]. The same
+        thing, but you should never call [super xxx] where xxx is a non-designated initializer
+        of the superclass.
+        (-[KWQTextField currentEditorForEitherField]): Added. Returns the current editor of either
+        the text field or the secure text field.
+        (-[KWQTextField selectedRange]): Added.
+        (-[KWQTextField setSelectedRange:]): Added.
+        (-[KWQTextField controlTextDidEndEditing:]): Store the selected text range in the
+        lastSelectedRange variable, so it can be used later. Also move the code that sends the
+        FocusOut event here.
+        (-[KWQTextField control:textShouldBeginEditing:]): Do the "scroll frame into view" here
+        isntead of in becomeFirstResponder so it can be shared.
+        (-[KWQTextField control:textShouldEndEditing:]): Moved FocusOut to controlTextDidEndEditing:.
+        (-[KWQTextField didBecomeFirstResponder]): Added. Sets the selected range back to what it
+        was in textShouldEndEditing, but only if we are not tabbing into the field. If we don't set
+        the selected range, then we inherit the behavior from NSTextField, all text selected.
+        We can't do the selected range work in textDidEndEditing because that's called too early.
+        (-[KWQTextField becomeFirstResponder]): Call didBecomeFirstResponder.
+        (-[KWQSecureTextField currentEditorForSecureField]): Added. Factored out of selectText:.
+        (-[KWQSecureTextField selectText:]): Use currentEditorForSecureField for clarity.
+        (-[KWQSecureTextField becomeFirstResponder]): Call didBecomeFirstResponder.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Rearrange a bit.
+        (-[KWQTextArea setWordWrap:]): Ditto.
+        (-[KWQTextAreaTextView becomeFirstResponder]): Only do the selectAll: operation here
+        if we are tabbing into the field. Otherwise keep the selection from last time.
+        
+        * khtml/rendering/render_form.cpp: (RenderTextArea::updateFromElement): Don't do the
+        whole "save cursor position, set text, restore cursor position" dance for the case
+        where the field already has the correct contents. Without this change, selections can be
+        collapsed to an insertion point at the start of the selection at seemingly random times.
+        
+        * khtml/khtmlview.cpp: (KHTMLView::dispatchMouseEvent): Don't deselect the currently
+        focused node on mouse down. This created a symptom where a text field would lose
+        focus when you clicked on a button.
+        
+        * kwq/KWQLineEdit.h: Remove unused frame() method.
+        * kwq/KWQLineEdit.mm: Remove unused, unimplemented frame() method.
+
 2003-04-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

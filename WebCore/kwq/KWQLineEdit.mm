@@ -99,12 +99,6 @@ void QLineEdit::setReadOnly(bool flag)
     return [textField setEditable:!flag];
 }
 
-bool QLineEdit::frame() const
-{
-    ERROR("not yet implemented");
-    return FALSE;
-}
-
 int QLineEdit::maxLength() const
 {
     KWQTextField *textField = (KWQTextField *)getView();

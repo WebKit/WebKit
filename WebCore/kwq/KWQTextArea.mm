@@ -61,15 +61,11 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)_createTextView
 {
-    NSDictionary *attr;
-    NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
-    NSRect frame, textFrame;
-
-    frame = [self frame];
-    
+    NSSize size = [self frame].size;
+    NSRect textFrame;
     textFrame.origin.x = textFrame.origin.y = 0;
-    if (frame.size.width > 0 && frame.size.height > 0)
-        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size
+    if (size.width > 0 && size.height > 0)
+        textFrame.size = [NSScrollView contentSizeForFrameSize:size
             hasHorizontalScroller:NO hasVerticalScroller:YES borderType:[self borderType]];
     else {
         textFrame.size.width = LargeNumberForText;
@@ -77,15 +73,18 @@ const float LargeNumberForText = 1.0e7;
     }
         
     textView = [[KWQTextAreaTextView alloc] initWithFrame:textFrame];
-    [[textView textContainer] setWidthTracksTextView:YES];
     [textView setRichText:NO];
+    [[textView textContainer] setWidthTracksTextView:YES];
 
-    // Setup attributes for default cases WRAP=SOFT|VIRTUAL and WRAP=HARD|PHYSICAL.
+    // Set up attributes for default case, WRAP=SOFT|VIRTUAL or WRAP=HARD|PHYSICAL.
     // If WRAP=OFF we reset many of these attributes.
+
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     [style setLineBreakMode:NSLineBreakByWordWrapping];
     [style setAlignment:NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName];
-    [textView setTypingAttributes:attr];
+    [textView setTypingAttributes:[NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName]];
+    [style release];
+    
     [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
     [textView setDelegate:self];
@@ -133,15 +132,19 @@ const float LargeNumberForText = 1.0e7;
     if (f == wrap) {
         return;
     }
-        
+    
     // This widget may have issues toggling back and forth between WRAP=YES and WRAP=NO.
-    NSDictionary *attr;
-    NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
+    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
     
     if (f) {
         [self setHasHorizontalScroller:NO];
-        [textView setHorizontallyResizable:NO];
+
         [[textView textContainer] setWidthTracksTextView:NO];
+
+        // FIXME: Same as else below. Is this right?
+        [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
+        [textView setHorizontallyResizable:NO];
+
         [style setLineBreakMode:NSLineBreakByWordWrapping];
     } else {
         [self setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
@@ -160,10 +163,9 @@ const float LargeNumberForText = 1.0e7;
     }
     
     [style setAlignment:NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName];
     
-    [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-    [textView setTypingAttributes:attr];
+    [textView setTypingAttributes:[NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName]];
+    [style release];
     
     wrap = f;
 }
@@ -445,7 +447,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     BOOL become = [super becomeFirstResponder];
 
     if (become) {
-	[self selectAll:nil];
+        // Select all the text if we are tabbing in, but otherwise preserve/remember
+        // the selection from last time we had focus (to match WinIE).
+        if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
+            [self selectAll:nil];
+        }
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
 	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
