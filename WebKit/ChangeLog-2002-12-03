@@ -1,3 +1,13 @@
+2002-09-17  Darin Adler  <darin@apple.com>
+
+	Fix bug where image documents were broken.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]): loadStatus of 0
+	means the whole image is ready, not 0 scan lines; so check > 0, not >= 0.
+
+        * WebKit.pbproj/project.pbxproj: Let Project Builder be the boss of me.
+
 2002-09-17  Richard Williamson   <rjw@apple.com>
 
         * History.subproj/WebHistory.h:

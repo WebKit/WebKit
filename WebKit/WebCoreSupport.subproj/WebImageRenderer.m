@@ -149,7 +149,7 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
 {
-    if (loadStatus >= 0) {
+    if (loadStatus > 0) {
         int pixelsHigh = [[[self representations] objectAtIndex:0] pixelsHigh];
         if (pixelsHigh > loadStatus) {
             // Figure out how much of the image is OK to draw.
