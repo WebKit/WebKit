@@ -43,6 +43,7 @@ ScopeChain &ScopeChain::operator=(const ScopeChain &c)
 
 void ScopeChain::push(ObjectImp *o)
 {
+    assert(o);
     _node = new ScopeChainNode(_node, o);
 }
 
@@ -64,11 +65,11 @@ void ScopeChain::pop()
 void ScopeChain::release()
 {
     ScopeChainNode *n = _node;
-    do {
+    while (n && --n->refCount == 0) {
         ScopeChainNode *next = n->next;
         delete n;
         n = next;
-    } while (n && --n->refCount == 0);
+    }
 }
 
 void ScopeChain::mark()

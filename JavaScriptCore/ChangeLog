@@ -1,3 +1,13 @@
+2003-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3137084 -- Many non-reproducible crashers in ContextImp::mark / ScopeChain::mark
+
+        * kjs/scope_chain.cpp: (ScopeChain::push): Add assertion.
+        (ScopeChain::release): Fix while loop so that it decrements refCount of the first node in
+        the chain too.
+
 2003-01-21  Darin Adler  <darin@apple.com>
 
         - correct our copyrights to 2003; copyright is based on year of publication, not year worked on
