@@ -28,11 +28,11 @@ DYLIB_NAME = libwebcore.dylib
 EMBED_HOST = $(SYMROOTS)/Alexander.app
 EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
 
-libwebcorenmedited.dylib: libwebcoreunstripped.dylib
-	cp $< $@
+libwebcorenmedited.dylib: libwebcoreunstripped.dylib libwebcore.exp
+	nmedit -s $(srcdir)/libwebcore.exp -o $@ - $<
 
 libwebcore.dylib: libwebcorenmedited.dylib
-	cp $< $@
+	strip $(STRIP_FLAGS) -o $@ - $< 
 
 embed:
 	@if test -f "$(DYLIB_NAME)"; then \
@@ -69,7 +69,7 @@ LDFLAGS = \
         -install_name $(LIBWEBCORE_INSTALL_PATH)/libwebcore.dylib \
 	$(NULL)
 
-libwebcore_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
+libwebcoreunstripped_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
 noinst_DATA = webcore-install-stamp
 
@@ -77,4 +77,3 @@ webcore-install-stamp: libwebcore.dylib
 	$(MAKE) install-symrootsLIBRARIES
 	$(MAKE) embed
 	touch ./webcore-install-stamp
-
