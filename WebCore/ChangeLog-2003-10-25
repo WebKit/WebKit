@@ -1,5 +1,12 @@
 2002-07-18  David Hyatt  <hyatt@apple.com>
 
+        * khtml/css/css_valueimpl.cpp:
+        Changed the QRegExps used for font family matching to statics.  Helped out
+        one page on the base tests a fair bit.  Overall (spread over all 40 pages)
+        it's not that big though.
+        
+2002-07-18  David Hyatt  <hyatt@apple.com>
+
         Small change that gives us 25% speedup (uncached) on the cvs-base suite.
 
         * khtml/css/cssstyleselector.cpp:

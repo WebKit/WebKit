@@ -653,20 +653,23 @@ CSSImageValueImpl::~CSSImageValueImpl()
 FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
     : CSSPrimitiveValueImpl( DOMString(string), CSSPrimitiveValue::CSS_STRING)
 {
+    static QRegExp parenReg = QRegExp(" \\(.*\\)$");
+    static QRegExp braceReg = QRegExp(" \\[.*\\]$");
+
 #ifdef APPLE_CHANGES
     parsedFontName = string;
     // a language tag is often added in braces at the end. Remove it.
-    parsedFontName.replace(QRegExp(" \\(.*\\)$"), "");
+    parsedFontName.replace(parenReg, "");
     // remove [Xft] qualifiers
-    parsedFontName.replace(QRegExp(" \\[.*\\]$"), "");
+    parsedFontName.replace(braceReg, "");
 #else
     const QString &available = KHTMLSettings::availableFamilies();
 
     QString face = string.lower();
     // a languge tag is often added in braces at the end. Remove it.
-    face = face.replace(QRegExp(" \\(.*\\)$"), "");
+    face = face.replace(parenReg, "");
     // remove [Xft] qualifiers
-    face = face.replace(QRegExp(" \\[.*\\]$"), "");
+    face = face.replace(braceReg, "");
     //kdDebug(0) << "searching for face '" << face << "'" << endl;
     if(face == "serif" ||
        face == "sans-serif" ||
