@@ -104,7 +104,7 @@
 - (void)interruptForPolicyChangeAndKeepLoading:(BOOL)keepLoading
 {
     // Terminate the locationChangeDelegate correctly.
-    WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+    WebError *interruptError = [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
 
     // Must call receivedError before _clearProvisionalDataSource because
     // if we remove the data source from the frame, we can't get back to the frame any more.
@@ -176,7 +176,7 @@
     switch (contentPolicy) {
     case WebPolicyShow:
 	if (![WebController canShowMIMEType:[r contentType]]) {
-	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotShowMIMEType forURL:[req URL]];
+	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
 	}
@@ -213,11 +213,11 @@
     case WebPolicyOpenURL:
 	if ([[req URL] isFileURL]) {
 	    if(![[NSWorkspace sharedWorkspace] openFile:[[req URL] path]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotFindApplicationForFile forURL:[req URL]];
+		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotFindApplicationForFile forURL:[req URL]];
 	    }
 	} else {
 	    if(![[NSWorkspace sharedWorkspace] openURL:[req URL]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[req URL]];
+		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotNotFindApplicationForURL forURL:[req URL]];
 	    }
 	}
 
@@ -229,7 +229,7 @@
 	if (![[req URL] isFileURL]) {
 	    ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
 	} else if (![[NSWorkspace sharedWorkspace] selectFile:[[req URL] path] inFileViewerRootedAtPath:@""]) {
-	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:[req URL]];
+	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorFinderCannotOpenDirectory forURL:[req URL]];
 	}
 
 	[self stopLoadingForPolicyChange];

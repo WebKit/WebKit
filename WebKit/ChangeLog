@@ -1,3 +1,33 @@
+2003-02-06  Richard Williamson   <rjw@apple.com>
+
+        Rename WebError to WebKitError.
+        
+        Reviewed by maciej.
+
+        * API-Issues.rtf:
+        * Bookmarks.subproj/WebBookmarkImporter.m:
+        (-[WebBookmarkImporter initWithPath:]):
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler createFileIfNecessary]):
+        (-[WebDownloadHandler writeDataForkData:resourceForkData:]):
+        (-[WebDownloadHandler decodeData:]):
+        (-[WebDownloadHandler finishedLoading]):
+        * Misc.subproj/WebKitErrors.h:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate notifyDelegatesOfInterruptionByPolicyChange]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]):
+
 2003-02-05  Chris Blumenberg  <cblu@apple.com>
 
         Comment should have been "Made WebPluginError constructors private."

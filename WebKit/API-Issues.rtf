@@ -1,18 +1,21 @@
 {\rtf1\mac\ansicpg10000\cocoartf102
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
-\margl1440\margr1440\vieww14640\viewh12640\viewkind0
+\margl1440\margr1440\vieww16540\viewh12180\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\b\fs24 \cf0 API Cleanup:
 \f1\b0 \
 \
-1.  WebHistory currently inherits from WebCoreHistory.  No WebCore related APIs should be publicly visible. (1day)\
-2.  Methods from specific representations (WebHTMLView and WebHTMLRepresentation) need to be factored into protocols or moved to WebView and WebDataSource.  This task is mostly complete already. (3083733, 1 day)\
-3.  Need closure on whether WebFoundation APIs will be public or not.  If public, not much work needs to be done.  If private, we need to expose relevant WebFoundation APIs in WebKit (WebError, WebResourceRequest, WebResourceResponse, WebHandle).  (2 days)\
+1.  WebHistory currently inherits from WebCoreHistory.  No WebCore related APIs should be publicly visible. (1day) (DONE)\
+2.  Methods from specific representations (WebHTMLView and WebHTMLRepresentation) need to be factored into protocols or moved to WebView and WebDataSource.  This task is mostly complete already. (3083733, 1 day) (DONE)\
+3.  Need closure on whether WebFoundation APIs will be public or not.  If public, not much work needs to be done.  If private, we need to expose relevant WebFoundation APIs in WebKit (WebError, WebResourceRequest, WebResourceResponse, WebHandle).  (2 days) (DONE)\
 3a.  Need to finalize decision on use of NSString or NSURL to express URLs in APIs.  (1 day)\
-4.  WebKit error codes should use WebKit prefix.  (3078996, .5 day).\
-5.  Remove all references to DOM classes from public API and make DOM classes SPI. (.5 day)\
+4.  WebKit error codes should use WebKit prefix.  (3078996, .5 day). (DONE, still need to update WebFoundation errors)\
+5.  Remove all references to DOM classes from public API and make DOM classes SPI. (.5 day) DONE\
+6.  Separate download behavior from WebResourceLoadDelegate.\
+7.  Make NSMenuItems identifiable in WebContentMenuDelegate.\
+\
 \
 
 \f0\b Incomplete API:

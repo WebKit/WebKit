@@ -467,11 +467,11 @@
                         format:@"Plugin package class not recognized"];
         }
     }else{
-        errorCode = WebErrorCannotFindPlugin;
+        errorCode = WebKitErrorCannotFindPlugin;
     }
 
     if(!errorCode && !view){
-        errorCode = WebErrorCannotLoadPlugin;
+        errorCode = WebKitErrorCannotLoadPlugin;
     }
 
     if(errorCode){
@@ -522,7 +522,7 @@
     }
 
     if(!view){
-        WebPluginError *error = [WebPluginError pluginErrorWithCode:WebErrorJavaUnavailable
+        WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorJavaUnavailable
                                                          contentURL:nil
                                                       pluginPageURL:nil
                                                          pluginName:[pluginPackage name]

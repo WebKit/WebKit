@@ -1313,11 +1313,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     case WebPolicyOpenURL:
         if ([[request URL] isFileURL]) {
             if (![[NSWorkspace sharedWorkspace] openFile:[[request URL] path]]) {
-                [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
+                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotFindApplicationForFile forURL:[request URL]];
             }
         } else {
             if (![[NSWorkspace sharedWorkspace] openURL:[request URL]]) {
-                [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
+                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotNotFindApplicationForURL forURL:[request URL]];
             }
         }
         break;
@@ -1335,12 +1335,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [NSException raise:NSInvalidArgumentException
                         format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
         } else if (![[NSWorkspace sharedWorkspace] selectFile:[[request URL] path] inFileViewerRootedAtPath:@""]) {
-            [self _handleUnimplementablePolicy:policy errorCode:WebErrorFinderCannotOpenDirectory forURL:[request URL]];
+            [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorFinderCannotOpenDirectory forURL:[request URL]];
         }
         break;
     case WebPolicyUse:
         if (![WebResourceHandle canInitWithRequest:request]) {
-            [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotShowURL forURL:[request URL]];
+            [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
             shouldContinue = YES;
         }

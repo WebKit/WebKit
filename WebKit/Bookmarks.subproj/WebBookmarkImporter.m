@@ -184,7 +184,7 @@ static NSString *_linkTextFromSpec(NSString *spec)
     
     NSData *data = [[NSData alloc] initWithContentsOfFile:path];
     if (!data) {
-        error = [[WebError alloc] initWithErrorCode:WebErrorCannotOpenFile inDomain:WebErrorDomainWebKit failingURL:path];
+        error = [[WebError alloc] initWithErrorCode:WebKitErrorCannotOpenFile inDomain:WebErrorDomainWebKit failingURL:path];
     }
 
     NSString *string = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];

@@ -12,36 +12,36 @@ extern NSString *WebErrorDomainWebKit;
 
 /*!
     @enum
-    @constant WebErrorCannotCreateFile
-    @constant WebErrorCannotOpenFile
-    @constant WebErrorCannotWriteToFile
-    @constant WebErrorCannotRemoveFile
-    @constant WebErrorCannotFindApplicationForFile
-    @constant WebErrorFinderCannotOpenDirectory
-    @constant WebErrorCannotShowDirectory
-    @constant WebErrorCannotShowMIMEType
-    @constant WebErrorCannotShowURL
-    @constant WebErrorCannotNotFindApplicationForURL
-    @constant WebErrorLocationChangeInterruptedByPolicyChange
-    @constant WebErrorDownloadDecodingFailedMidStream
-    @constant WebErrorDownloadDecodingFailedToComplete
+    @constant WebKitErrorCannotCreateFile
+    @constant WebKitErrorCannotOpenFile
+    @constant WebKitErrorCannotWriteToFile
+    @constant WebKitErrorCannotRemoveFile
+    @constant WebKitErrorCannotFindApplicationForFile
+    @constant WebKitErrorFinderCannotOpenDirectory
+    @constant WebKitErrorCannotShowDirectory
+    @constant WebKitErrorCannotShowMIMEType
+    @constant WebKitErrorCannotShowURL
+    @constant WebKitErrorCannotNotFindApplicationForURL
+    @constant WebKitErrorLocationChangeInterruptedByPolicyChange
+    @constant WebKitErrorDownloadDecodingFailedMidStream
+    @constant WebKitErrorDownloadDecodingFailedToComplete
 */
 enum {
-    WebErrorCannotCreateFile,
-    WebErrorCannotOpenFile,
-    WebErrorCannotWriteToFile,
-    WebErrorCannotRemoveFile,
-    WebErrorCannotFindApplicationForFile,
-    WebErrorFinderCannotOpenDirectory,
-    WebErrorCannotShowDirectory,
-    WebErrorCannotShowMIMEType,
-    WebErrorCannotShowURL,
-    WebErrorCannotNotFindApplicationForURL,
-    WebErrorLocationChangeInterruptedByPolicyChange,
-    WebErrorResourceLoadInterruptedByPolicyChange,
-    WebErrorCannotFindPlugin,
-    WebErrorCannotLoadPlugin,
-    WebErrorJavaUnavailable,
-    WebErrorDownloadDecodingFailedMidStream,
-    WebErrorDownloadDecodingFailedToComplete,
+    WebKitErrorCannotCreateFile,
+    WebKitErrorCannotOpenFile,
+    WebKitErrorCannotWriteToFile,
+    WebKitErrorCannotRemoveFile,
+    WebKitErrorCannotFindApplicationForFile,
+    WebKitErrorFinderCannotOpenDirectory,
+    WebKitErrorCannotShowDirectory,
+    WebKitErrorCannotShowMIMEType,
+    WebKitErrorCannotShowURL,
+    WebKitErrorCannotNotFindApplicationForURL,
+    WebKitErrorLocationChangeInterruptedByPolicyChange,
+    WebKitErrorResourceLoadInterruptedByPolicyChange,
+    WebKitErrorCannotFindPlugin,
+    WebKitErrorCannotLoadPlugin,
+    WebKitErrorJavaUnavailable,
+    WebKitErrorDownloadDecodingFailedMidStream,
+    WebKitErrorDownloadDecodingFailedToComplete,
 };

@@ -207,7 +207,7 @@
     
     if (![fileManager _web_createFileAtPath:path contents:nil attributes:fileAttributes]) {
         ERROR("-[NSFileManager _web_createFileAtPath:contents:attributes:] failed.");
-        return [self errorWithCode:WebErrorCannotCreateFile];
+        return [self errorWithCode:WebKitErrorCannotCreateFile];
     }
 
     [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
@@ -218,7 +218,7 @@
     } else {
         ERROR("FSPathMakeRef failed.");
         [self cleanUpAfterFailure];
-        return [self errorWithCode:WebErrorCannotCreateFile];
+        return [self errorWithCode:WebKitErrorCannotCreateFile];
     }
 
     return nil;
@@ -277,7 +277,7 @@
     if (!didWrite) {
         ERROR("Writing to download file failed.");
         [self cleanUpAfterFailure];
-        return [self errorWithCode:WebErrorCannotWriteToFile];
+        return [self errorWithCode:WebKitErrorCannotWriteToFile];
     }
 
     return nil;
@@ -319,7 +319,7 @@
     if (![self decodeData:data dataForkData:&dataForkData resourceForkData:&resourceForkData]) {
         ERROR("Download decoding failed.");
         [self cleanUpAfterFailure];
-        return [self errorWithCode:WebErrorDownloadDecodingFailedMidStream];
+        return [self errorWithCode:WebKitErrorDownloadDecodingFailedMidStream];
     }
 
     WebError *error = [self writeDataForkData:dataForkData resourceForkData:resourceForkData];
@@ -364,7 +364,7 @@
     if (![self finishDecoding]) {
         ERROR("Download decoding failed.");
         [self cleanUpAfterFailure];
-        return [self errorWithCode:WebErrorDownloadDecodingFailedToComplete];
+        return [self errorWithCode:WebKitErrorDownloadDecodingFailedToComplete];
     }
 
     [self closeFile];

@@ -58,21 +58,21 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 + (void)initialize
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-    WebErrorDescriptionCannotCreateFile, 		[NSNumber numberWithInt: WebErrorCannotCreateFile],
-    WebErrorDescriptionCannotOpenFile, 			[NSNumber numberWithInt: WebErrorCannotOpenFile],
-    WebErrorDescriptionCannotWriteToFile, 		[NSNumber numberWithInt: WebErrorCannotWriteToFile],
-    WebErrorDescriptionCannotRemoveFile, 		[NSNumber numberWithInt: WebErrorCannotRemoveFile],
-    WebErrorDescriptionCannotFindApplicationForFile, 	[NSNumber numberWithInt: WebErrorCannotFindApplicationForFile],
-    WebErrorDescriptionFinderCannotOpenDirectory, 	[NSNumber numberWithInt: WebErrorFinderCannotOpenDirectory],
-    WebErrorDescriptionCannotShowDirectory, 		[NSNumber numberWithInt: WebErrorCannotShowDirectory],
-    WebErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebErrorCannotShowMIMEType],
-    WebErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebErrorCannotShowURL],
-    WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebErrorCannotNotFindApplicationForURL],
-    WebErrorDescriptionWebErrorCannotFindPlugin,	[NSNumber numberWithInt: WebErrorCannotFindPlugin],
-    WebErrorDescriptionWebErrorCannotLoadPlugin,	[NSNumber numberWithInt: WebErrorCannotLoadPlugin],
-    WebErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebErrorJavaUnavailable],
-    WebErrorDescriptionDownloadDecodingFailedToComplete,[NSNumber numberWithInt: WebErrorDownloadDecodingFailedToComplete],
-    WebErrorDescriptionDownloadDecodingFailedMidStream, [NSNumber numberWithInt: WebErrorDownloadDecodingFailedMidStream],
+    WebErrorDescriptionCannotCreateFile, 		[NSNumber numberWithInt: WebKitErrorCannotCreateFile],
+    WebErrorDescriptionCannotOpenFile, 			[NSNumber numberWithInt: WebKitErrorCannotOpenFile],
+    WebErrorDescriptionCannotWriteToFile, 		[NSNumber numberWithInt: WebKitErrorCannotWriteToFile],
+    WebErrorDescriptionCannotRemoveFile, 		[NSNumber numberWithInt: WebKitErrorCannotRemoveFile],
+    WebErrorDescriptionCannotFindApplicationForFile, 	[NSNumber numberWithInt: WebKitErrorCannotFindApplicationForFile],
+    WebErrorDescriptionFinderCannotOpenDirectory, 	[NSNumber numberWithInt: WebKitErrorFinderCannotOpenDirectory],
+    WebErrorDescriptionCannotShowDirectory, 		[NSNumber numberWithInt: WebKitErrorCannotShowDirectory],
+    WebErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
+    WebErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebKitErrorCannotShowURL],
+    WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebKitErrorCannotNotFindApplicationForURL],
+    WebErrorDescriptionWebErrorCannotFindPlugin,	[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],
+    WebErrorDescriptionWebErrorCannotLoadPlugin,	[NSNumber numberWithInt: WebKitErrorCannotLoadPlugin],
+    WebErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
+    WebErrorDescriptionDownloadDecodingFailedToComplete,[NSNumber numberWithInt: WebKitErrorDownloadDecodingFailedToComplete],
+    WebErrorDescriptionDownloadDecodingFailedMidStream, [NSNumber numberWithInt: WebKitErrorDownloadDecodingFailedMidStream],
     nil];
 
     [WebError addErrorsWithCodesAndDescriptions:dict inDomain:WebErrorDomainWebKit];

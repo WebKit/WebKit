@@ -274,7 +274,7 @@
 
 - (void)notifyDelegatesOfInterruptionByPolicyChange
 {
-    WebError *error = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange
+    WebError *error = [WebError errorWithCode:WebKitErrorResourceLoadInterruptedByPolicyChange
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:nil];
     
