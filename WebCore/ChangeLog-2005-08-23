@@ -31,6 +31,19 @@
         (-[WebCoreBridge baseWritingDirectionForSelectionStart]): Accessor to help WebKit do a toggle operation on 
         writing direction.
 
+        Fix for this bug:
+        
+        <rdar://problem/3985035> REGRESSION (Mail): Text copied from wrapped line contains extra character when pasted
+
+        * khtml/editing/markup.cpp:
+        (khtml::renderedText): Add an enum and a flag to this command that controls whether to force all
+        This is the result of an error in the code that computes the rendered text that is selected 
+        when copying. Since spaces collapse at the end of lines, and these spaces need to be copied 
+        when the selection spans line endings, code runs to compute this text. However, this code 
+        was also running incorrectly in cases where lines wrapped. I have now added the missing 
+        test to check that the selection does indeed extend to the end of the line.
+
+
 2005-02-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
