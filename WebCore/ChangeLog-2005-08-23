@@ -1,3 +1,20 @@
+2004-10-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug::
+        
+        <rdar://problem/3851164> mail crashed when I pasted a large amount of text into a reply
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): This now returns bool to
+        let the caller know if a placeholder was removed.
+        (khtml::ReplaceSelectionCommand::doApply): Use the bool return value from the call to
+        removeBlockPlaceholderIfNeeded. If true, shift the selection to the now-empty block. In
+        some cases, the selection was still set on the removed BR, and this was the cause of the
+        crash.
+        * khtml/editing/htmlediting.h: Change removeBlockPlaceholderIfNeeded return type.
+
 2004-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

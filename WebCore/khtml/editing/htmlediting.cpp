@@ -875,13 +875,13 @@ void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
     appendNode(breakNode, node);
 }
 
-void CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
+bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
 {
     document()->updateLayout();
 
     RenderObject *renderer = node->renderer();
     if (!renderer->isBlockFlow())
-        return;
+        return false;
 
     // This code will remove a block placeholder if it still is at the end
     // of a block, where we placed it in insertBlockPlaceholderIfNeeded().
@@ -890,9 +890,12 @@ void CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     NodeImpl *last = node->lastChild();
     if (last && last->isHTMLElement()) {
         ElementImpl *element = static_cast<ElementImpl *>(last);
-        if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString())
+        if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
             removeNode(element);
+            return true;
+        }
     }
+    return false;
 }
 
 //==========================================================================================
@@ -2124,13 +2127,17 @@ void ReplaceSelectionCommand::doApply()
 
     // Now that we are about to add content, check to see if a placeholder element
     // can be removed.
-    removeBlockPlaceholderIfNeeded(selection.start().node()->enclosingBlockFlowElement());
+    Position pos = selection.start();
+    NodeImpl *block = pos.node()->enclosingBlockFlowElement();
+    if (removeBlockPlaceholderIfNeeded(block)) {
+        pos = Position(block, 0);
+    }
     
     bool addLeadingSpace = false;
     bool addTrailingSpace = false;
     if (m_smartReplace) {
-        addLeadingSpace = selection.start().leadingWhitespacePosition().isNull();
-        addTrailingSpace = selection.start().trailingWhitespacePosition().isNull();
+        addLeadingSpace = pos.leadingWhitespacePosition().isNull();
+        addTrailingSpace = pos.trailingWhitespacePosition().isNull();
     }
     
     if (!firstChild) {
@@ -2141,7 +2148,7 @@ void ReplaceSelectionCommand::doApply()
         // where we can remove this separate case.
         
         // Simple text paste. Treat as if the text were typed.
-        Position upstreamStart(selection.start().upstream(StayInBlock));
+        Position upstreamStart(pos.upstream(StayInBlock));
         DOMString text = static_cast<TextImpl *>(firstChild)->data();
         if (addLeadingSpace) {
             text = " " + text;
@@ -2160,7 +2167,7 @@ void ReplaceSelectionCommand::doApply()
         NodeImpl *beforeNode = firstChild;
         NodeImpl *node = firstChild->nextSibling();
         
-        insertNodeAt(firstChild, selection.start().node(), selection.start().offset());
+        insertNodeAt(firstChild, pos.node(), pos.offset());
         
         // Insert the nodes from the fragment
         while (node) {

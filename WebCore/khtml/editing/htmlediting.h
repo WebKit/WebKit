@@ -201,7 +201,7 @@ protected:
     void deleteInsignificantTextDownstream(const DOM::Position &);
 
     void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
-    void removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
+    bool removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
 
     QValueList<EditCommandPtr> m_cmds;
 };
