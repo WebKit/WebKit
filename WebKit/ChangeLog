@@ -1,3 +1,8 @@
+2002-10-04  Darin Adler  <darin@apple.com>
+
+        * Panels.subproj/WebPanelCookieAcceptHandler.h: Removed.
+        * Panels.subproj/WebPanelCookieAcceptHandler.m: Removed.
+
 2002-10-04  Richard Williamson   <rjw@apple.com>
 
         Danger Will Robinson.  We have to poseAsClass: as early as possible
