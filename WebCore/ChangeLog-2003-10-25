@@ -1,3 +1,11 @@
+2002-05-23  Richard J. Williamson  <rjw@apple.com>
+
+    Fixed crasher 2935757.  I still need to investigate the root cause
+    of this problem.
+    
+	* khtml/rendering/render_text.cpp:
+	(RenderText::setText):
+
 2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
 
         Fixes for these bugs:

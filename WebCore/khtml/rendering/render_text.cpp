@@ -725,6 +725,10 @@ const QFont &RenderText::font()
 
 void RenderText::setText(DOMStringImpl *text, bool force)
 {
+#ifdef APPLE_CHANGES
+    if (!text)
+        return;
+#endif
     if( !force && str == text ) return;
     if(str) str->deref();
     str = text;
