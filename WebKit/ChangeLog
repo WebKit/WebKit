@@ -1,5 +1,17 @@
 2003-07-31  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3359152.  SPI to get the background color for a frame.
+
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer checkSelectionPoint:style:position:reversed:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _bodyBackgroundColor]):
+
+2003-07-31  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3358870.  Fall back on 'user defaults' values when a value
 	in a custom instance of WebPreferences hasn't been overriden.
 

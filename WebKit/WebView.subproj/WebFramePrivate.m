@@ -2273,6 +2273,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return num;
 }
 
+- (NSColor *)_bodyBackgroundColor
+{
+    return [_private->bridge bodyBackgroundColor];
+}
+
 @end
 
 @implementation WebFormState : NSObject

@@ -221,6 +221,8 @@ enum FrameBorderStyle {
 
 - (int)numPendingOrLoadingRequests;
 
+- (NSColor *)bodyBackgroundColor;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

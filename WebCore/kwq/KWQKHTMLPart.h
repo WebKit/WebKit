@@ -58,6 +58,7 @@ namespace KJS {
 @class NSArray;
 @class NSMutableDictionary;
 @class WebCoreDOMElement;
+@class NSColor;
 #else
 class NSAttributedString;
 class NSEvent;
@@ -69,6 +70,7 @@ class NSString;
 class NSArray;
 class NSMutableDictionary;
 class WebCoreDOMElement;
+class NSColor;
 #endif
 
 enum KWQSelectionDirection {
@@ -211,6 +213,8 @@ public:
 
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
+
+    NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const;
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

@@ -193,4 +193,6 @@ extern NSString *WebCorePageCacheStateKey;
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse;
 
+- (NSColor *)_bodyBackgroundColor;
+
 @end

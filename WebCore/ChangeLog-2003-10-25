@@ -1,3 +1,16 @@
+2003-07-31  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3359152.  SPI to get the background color for a frame.
+
+        Reviewed by hyatt.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bodyBackgroundColor):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge bodyBackgroundColor]):
+
 2003-07-31  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for "The Matrix" stylesheet on meyerweb.com and for 26(!) of the

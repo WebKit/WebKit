@@ -2237,3 +2237,19 @@ QChar KWQKHTMLPart::backslashAsCurrencySymbol() const
     }
     return codec->backslashAsCurrencySymbol();
 }
+
+NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const
+{
+    HTMLDocumentImpl *doc = docImpl();
+    
+    if (doc){
+        HTMLElementImpl *body = doc->body();
+        QColor bgColor =  body->renderer()->style()->backgroundColor();
+        
+        if (bgColor.isValid())
+            return bgColor.getNSColor();
+    }
+    return [NSColor whiteColor];
+}
+
+

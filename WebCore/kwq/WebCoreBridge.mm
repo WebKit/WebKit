@@ -976,6 +976,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
     return 0;
 }
-    
+
+- (NSColor *)bodyBackgroundColor
+{
+    return _part->bodyBackgroundColor();
+}
+
 
 @end
