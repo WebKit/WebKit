@@ -152,20 +152,29 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
         m_disabledState = (attr->val() != 0) ? 2 : 1;
         if (oldDisabledState != m_disabledState) {
             // If we change the disabled state while the sheet is still loading, then we have to
-            // perform two checks:
-            // Check #1: If the sheet becomes disabled while it was loading, and if it was either
-            // a main sheet or a sheet that was previously enabled via script, then we need
-            // to remove it from the list of pending sheets.
-            if (isLoading() && m_disabledState == 2 && (!m_alternate || oldDisabledState == 1))
-                getDocument()->stylesheetLoaded();
-                
-            // Check #2: An alternate sheet becomes enabled while it is still loading.
-            if (isLoading() && m_alternate && m_disabledState == 1)
-                getDocument()->addPendingSheet();
-                
-            // If the sheet is already loading just bail.
-            if (isLoading())
+            // perform three checks:
+            if (isLoading()) {
+                // Check #1: If the sheet becomes disabled while it was loading, and if it was either
+                // a main sheet or a sheet that was previously enabled via script, then we need
+                // to remove it from the list of pending sheets.
+                if (m_disabledState == 2 && (!m_alternate || oldDisabledState == 1))
+                    getDocument()->stylesheetLoaded();
+                    
+                // Check #2: An alternate sheet becomes enabled while it is still loading.
+                if (m_alternate && m_disabledState == 1)
+                    getDocument()->addPendingSheet();
+    
+                // Check #3: A main sheet becomes enabled while it was still loading and
+                // after it was disabled via script.  It takes really terrible code to make this
+                // happen (a double toggle for no reason essentially).  This happens on
+                // virtualplastic.net, which manages to do about 12 enable/disables on only 3
+                // sheets. :)
+                if (!m_alternate && m_disabledState == 1 && oldDisabledState == 2)
+                    getDocument()->addPendingSheet();
+
+                // If the sheet is already loading just bail.
                 break;
+            }
             
             // Load the sheet, since it's never been loaded before.
             if (!m_sheet && m_disabledState == 1)

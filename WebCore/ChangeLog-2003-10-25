@@ -1,5 +1,16 @@
 2003-04-02  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3216650.  Needed an additional check when the disabled
+	attribute is changed on <link> elements for stylesheets to keep
+	the pending sheet count in sync.
+	
+        Reviewed by gramps
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::parseAttribute):
+
+2003-04-02  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3212011.  Avoid applying a fixup to the minwidth
 	of overflow:hidden table cells, since we don't really have
 	an accurate width to compare against.
