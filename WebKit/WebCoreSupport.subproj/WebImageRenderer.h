@@ -24,6 +24,8 @@
     NSPoint tilePoint;
     BOOL animatedTile;
 
+    int compositeOperator;
+    
     NSString *MIMEType;
     BOOL isNull;
 @public    

@@ -178,6 +178,14 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	    }
 	    oldIdAttr = newIdAttr;
 	}
+#if APPLE_CHANGES
+    case ATTR_COMPOSITE:
+        {
+	    _compositeOperator = attr->value().string();
+            if (m_render)
+                m_render->updateFromElement();
+        }
+#endif
 	// fall through
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);

@@ -61,12 +61,19 @@ public:
     DOMString imageMap() const { return usemap; }
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
+
+#if APPLE_CHANGES
+    QString compositeOperator() const { return _compositeOperator; }
+#endif
     
 protected:
     DOMString usemap;
     bool ismap;
     QString oldIdAttr;
     QString oldNameAttr;
+#if APPLE_CHANGES
+    QString _compositeOperator;
+#endif
 };
 
 

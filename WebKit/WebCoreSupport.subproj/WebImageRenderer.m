@@ -55,7 +55,9 @@ static NSMutableSet *activeImageRenderers;
         loadStatus = NSImageRepLoadStatusUnknownType;
         MIMEType = [MIME copy];
         isNull = YES;
+        compositeOperator = (int)NSCompositeSourceOver;
     }
+    
     return self;
 }
 
@@ -74,6 +76,7 @@ static NSMutableSet *activeImageRenderers;
             result->loadStatus = NSImageRepLoadStatusUnknownType;
             result->MIMEType = [MIME copy];
             result->isNull = [data length] == 0;
+            result->compositeOperator = (int)NSCompositeSourceOver;
         }
 
     NS_HANDLER
@@ -100,6 +103,7 @@ static NSMutableSet *activeImageRenderers;
             [result setCacheMode:NSImageCacheNever];
     
             result->loadStatus = NSImageRepLoadStatusUnknownType;
+            result->compositeOperator = (int)NSCompositeSourceOver;
         }
         
     NS_HANDLER
@@ -136,6 +140,7 @@ static NSMutableSet *activeImageRenderers;
     copy->frameTimer = nil;
     copy->frameView = nil;
     copy->patternColor = nil;
+    copy->compositeOperator = compositeOperator;
         
     return copy;
 }
@@ -320,7 +325,7 @@ static NSMutableSet *activeImageRenderers;
     }
     
     // This is the operation that handles transparent portions of the source image correctly.
-    [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction: 1.0];
+    [self drawInRect:ir fromRect:fr operation:compositeOperator fraction: 1.0];
 }
 
 - (void)nextFrame:(id)context
@@ -365,6 +370,12 @@ static NSMutableSet *activeImageRenderers;
         targetRect = ir;
         [self startAnimationIfNecessary];
     }
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)operator
+{
+    compositeOperator = operator;
+    [self drawImageInRect:ir fromRect:fr];
 }
 
 - (void)startAnimationIfNecessary

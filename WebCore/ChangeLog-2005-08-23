@@ -1,3 +1,45 @@
+2004-04-26  Richard Williamson   <rjw@apple.com>
+
+	Added support for specifying composite operation on an
+	image element.  Attribute name is "composite", possible values
+	are:
+
+	clear,
+	copy
+	source-over
+	source-in
+	source-out
+	source-atop
+	destination-over
+	destination-in
+	destination-out
+	destination-atop
+	xor
+	darker
+	highlight
+	lighter
+
+	<img composite="source-over" src="triangle.png">
+	<img style="position:relative; left:-200px;" composite="destination-in" src="circle.png">
+
+        Reviewed by Ken.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseHTMLAttribute):
+        * khtml/html/html_imageimpl.h:
+        (DOM::HTMLImageElementImpl::compositeOperator):
+        * khtml/misc/htmlattrs.c:
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (compositeOperatorFromString):
+        (QPainter::drawPixmap):
+        * kwq/WebCoreImageRenderer.h:
+
 2004-04-26  Darin Adler  <darin@apple.com>
 
         - fixed <rdar://problem/3634145>: "REGRESSION: nil-deref in QTextCodec::toUnicode every time loading page at wiki.wordpress.org"

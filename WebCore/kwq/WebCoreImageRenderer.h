@@ -32,6 +32,7 @@
 - (NSSize)size;
 - (void)resize:(NSSize)s;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator;
 - (void)stopAnimation;
 - (void)tileInRect:(NSRect)r fromPoint:(NSPoint)p;
 - (BOOL)isNull;

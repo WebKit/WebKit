@@ -437,8 +437,50 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
     drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
 
+struct CompositeOperator
+{
+    const char *name;
+    NSCompositingOperation value;
+};
+
+#define NUM_COMPOSITE_OPERATORS 14
+struct CompositeOperator compositeOperators[NUM_COMPOSITE_OPERATORS] = {
+    { "clear", NSCompositeClear },
+    { "copy", NSCompositeCopy },
+    { "source-over", NSCompositeSourceOver },
+    { "source-in", NSCompositeSourceIn },
+    { "source-out", NSCompositeSourceOut },
+    { "source-atop", NSCompositeSourceAtop },
+    { "destination-over", NSCompositeDestinationOver },
+    { "destination-in", NSCompositeDestinationIn },
+    { "destination-out", NSCompositeDestinationOut },
+    { "destination-atop", NSCompositeDestinationAtop },
+    { "xor", NSCompositeXOR },
+    { "darker", NSCompositePlusDarker },
+    { "highlight", NSCompositeHighlight },
+    { "lighter", NSCompositePlusLighter }
+};
+
+static NSCompositingOperation compositeOperatorFromString (QString aString)
+{
+    const char *operatorString = aString.ascii();
+    int i;
+    
+    for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
+        if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
+            return compositeOperators[i].value;
+        }
+    }
+    return NSCompositeSourceOver;
+}
+
+void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r, const QString &compositeOperator)
+{
+    drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), (int)compositeOperatorFromString(compositeOperator));
+}
+
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
-                           int sx, int sy, int sw, int sh )
+                           int sx, int sy, int sw, int sh, int compositeOperator )
 {
     if (data->state.paintingDisabled)
         return;
@@ -453,7 +495,7 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
     
     KWQ_BLOCK_EXCEPTIONS;
     [pixmap.imageRenderer drawImageInRect:inRect
-                                      fromRect:fromRect];
+                                      fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
