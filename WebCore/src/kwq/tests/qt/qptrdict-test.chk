@@ -1,8 +1,14 @@
-item keyed to 1: 1
-item keyed to 2: 2
-item keyed to 3: 3
-item keyed to 4: 4
-item keyed to 5: 5
-item keyed to 2: 0x0
+d1: QPtrDict: [size: 5; items: (0xbffffa48,4), (0xbffffa4c,5), (0xbffffa3c,1), (0xbffffa40,2), (0xbffffa44,3)]
+d1 find 1: 1
+d1 find 2: 2
+d1 find 3: 3
+d1 find 4: 4
+d1 find 5: 5
+d1 take 4: 4
+d1 remove 2: QPtrDict: [size: 3; items: (0xbffffa4c,5), (0xbffffa3c,1), (0xbffffa44,3)]
+d1 find 2: 0x0
 d0 is empty: 1
 d1 is empty: 0
+d1 count: 3
+d2 = d1: QPtrDict: [size: 3; items: (0xbffffa4c,5), (0xbffffa3c,1), (0xbffffa44,3)]
+d1 clear: QPtrDict: [size: 0; items: ]
