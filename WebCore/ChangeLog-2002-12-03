@@ -1,5 +1,11 @@
 2002-08-19  Darin Adler  <darin@apple.com>
 
+	- fixed 3027791 -- Crash when pressing "tab" after going to http://slashdot.org/
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::nextKeyViewInFrame): Add null check.
+
+2002-08-19  Darin Adler  <darin@apple.com>
+
 	Put in more robust version of the next/previous key view checking
 	that matches what I did in WebHTMLView.
 

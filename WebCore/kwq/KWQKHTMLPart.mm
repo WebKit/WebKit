@@ -550,23 +550,19 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
             return nil;
         }
         RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(node->renderer());
-        QWidget *widget = renderWidget->widget();
-        KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
-        NSView *view;
-        if (childFrameWidget) {
-            NodeImpl *nullNode = 0;
-            view = childFrameWidget->part()->impl->nextKeyViewInFrame(nullNode, direction);
-        } else {
-            view = widget->getView();
-#if 0
-            NSView *fieldEditor = [[view window] fieldEditor:NO forObject:view];
-            if (fieldEditor) {
-                view = fieldEditor;
+        if (renderWidget) {
+            QWidget *widget = renderWidget->widget();
+            KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
+            NSView *view;
+            if (childFrameWidget) {
+                NodeImpl *nullNode = 0;
+                view = childFrameWidget->part()->impl->nextKeyViewInFrame(nullNode, direction);
+            } else {
+                view = widget->getView();
             }
-#endif
-        }
-        if (view) {
-            return view;
+            if (view) {
+                return view;
+            }
         }
     }
 }
