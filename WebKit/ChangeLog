@@ -1,5 +1,18 @@
 2002-12-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard.
+
+	- fixed 3124837 -- Crash trying to handle weird javascript URL in page address field
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+	Use the new _web_scriptIfJavaScriptURL to simplify the check for JavaScript URLs,
+	and to use a more tolerant unescaper.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated.
+
+2002-12-11  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- turned on the mechanism that passes events through WebCore, now that it's working better

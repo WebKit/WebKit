@@ -698,14 +698,16 @@ QString KURL::prettyURL(int trailing) const
     return result;
 }
 
-QString KURL::decode_string(const QString& urlString)
+QString KURL::decode_string(const QString &urlString)
 {
-    // FIXME: do it yerself
-
     CFStringRef unescaped = CFURLCreateStringByReplacingPercentEscapes(NULL, urlString.getCFString(), CFSTR(""));
+    if (!unescaped) {
+        // FIXME: To avoid this error, we need to write our own unescaping function.
+        ERROR("CFURL found ill-formed escape sequences in %s", urlString.ascii());
+        return urlString;
+    }
     QString qUnescaped = QString::fromCFString(unescaped);
     CFRelease(unescaped);
-
     return qUnescaped;
 }
 
@@ -722,8 +724,8 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
 	    *p++ = *str++;
 	} else if (IS_BAD_CHAR(*str)) {
 	    *p++ = '%';
-	    *p++ = hexDigits[(*str) / 16];
-	    *p++ = hexDigits[(*str) % 16];
+	    *p++ = hexDigits[(*str >> 4) & 0xF];
+	    *p++ = hexDigits[*str & 0xF];
 	    str++;
 	} else {
 	    *p++ = *str++;

@@ -831,8 +831,8 @@
             return NPERR_INVALID_URL;
         }
     } else {
-        if([[URL scheme] _web_isCaseInsensitiveEqualToString:@"javascript"]){
-            NSString *JSString = [(id)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)[[URL absoluteString] substringFromIndex:11], (CFStringRef)@"") autorelease];
+        NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+        if(JSString){
             [[self controller] stringByEvaluatingJavaScriptFromString:JSString];
             if(notifyData){
                NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);

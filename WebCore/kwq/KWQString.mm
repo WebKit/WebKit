@@ -705,6 +705,9 @@ QString QString::number(double n)
 
 void QString::setBufferFromCFString(CFStringRef cfs)
 {
+    if (!cfs) {
+        return;
+    }
     CFIndex size = CFStringGetLength(cfs);
     UniChar fixedSizeBuffer[1024];
     UniChar *buffer;

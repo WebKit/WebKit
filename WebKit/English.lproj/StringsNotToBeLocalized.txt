@@ -207,7 +207,6 @@
 "html"
 "http"
 "https"
-"javascript"
 "lastVisitedDate"
 "nullplugin"
 "text/"

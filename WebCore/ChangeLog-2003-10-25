@@ -1,5 +1,24 @@
 2002-12-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard.
+
+	- fixed 3124263 -- REGRESSION: Crash running development build of PLT
+
+        * kwq/KWQWidget.mm:
+        (QWidget::~QWidget): Don't worry about the outer view here, since we can never hit one of those.
+	Just pass the view to KWQKHTMLPart::widgetWillReleaseView.
+        (QWidget::getOuterView): Re-add the assertion I had removed.
+
+	- fixed 3124837 -- Crash trying to handle weird javascript URL in page address field
+
+        * kwq/KWQKURL.mm: (KURL::decode_string): Made this function return the URL still encoded
+	rather than a null string (actually, crashing) when CFURLCreateStringByReplacingPercentEscapes
+	rejects the passed-in string. Also updated the FIXME.
+        (appendEscapingBadChars): Fixed problem with high-bit-set characters.
+        * kwq/KWQString.mm: (QString::setBufferFromCFString): Made this tolerant of NULL.
+
+2002-12-11  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- fixed handling of mouse events so I could turn the mechanism on all the way
