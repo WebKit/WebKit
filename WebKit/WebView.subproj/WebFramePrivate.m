@@ -581,7 +581,7 @@ static const char * const stateNames[] = {
                 BOOL isDirectory;
                 BOOL fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
                 NSString *type = [WebController _MIMETypeForFile: path];
-                WebFileURLPolicy *fileURLPolicy = [policyHandler fileURLPolicyForMIMEType:type inFrame:self isDirectory:YES];
+                WebFileURLPolicy *fileURLPolicy = [policyHandler fileURLPolicyForMIMEType:type inFrame:self isDirectory:isDirectory];
 
                 if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
                     return NO;
