@@ -1,5 +1,13 @@
 2005-03-04  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * layout-tests/editing/style/create-block-for-style-012-expected.txt: Shame on me!
+        I landed my last fix without running layout tests. This one changes in a subtle, but
+        acceptable way.
+
+2005-03-04  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Harrison
 
         Fix for this bug:
