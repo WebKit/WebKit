@@ -1,5 +1,40 @@
 2005-01-18  Richard Williamson   <rjw@apple.com>
 
+	Fixed several issues all arising from analysis of plugin detection code at ifilm.com:
+
+	Fixed <rdar://problem/3958592> can't script plug-ins if plug-in is invoked with <object> element instead of <embed>
+	Fixed <rdar://problem/3958597> <object> elements with IDs do not show up as named properties of the document
+	Fixed <rdar://problem/3960973> DOM objects for plugin elements are not accessible
+	Fixed <rdar://problem/3958601> need an additional class ID in WebCore for the Real plug-in
+
+	We now support accessing scriptable plugin objects that are specified with <applet>, <embed>, or <object>
+	tags.  Also, if any of these elements are named they can be accessed from the document or window objects.
+	Finally, DOM methods are properties will be forwarded appropriately for the plugin's root scriptable object.
+
+        Reviewed by Chris.
+
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::supportsSetValueOfUndefinedField):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::supportsSetValueOfUndefinedField):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+        (RuntimeObjectImp::defaultValue):
+        * bindings/runtime_object.h:
+        (KJS::RuntimeObjectImp::fallbackObject):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::ObjectImp):
+        * kjs/object.h:
+        (KJS::ObjectImp::forwardingScriptMessage):
+        (KJS::ObjectImp::setForwardingScriptMessage):
+
+2005-01-18  Richard Williamson   <rjw@apple.com>
+
 	Back out a change that was incorrectly committed yesterday.
 
         Reviewed by Chris.

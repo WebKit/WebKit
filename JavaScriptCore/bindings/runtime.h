@@ -157,6 +157,7 @@ public:
     virtual Value getValueOfField (ExecState *exec, const Field *aField) const;
     virtual Value getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); };
     virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
+    virtual bool supportsSetValueOfUndefinedField () { return false; };
     virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue) {};
     
     virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args) = 0;

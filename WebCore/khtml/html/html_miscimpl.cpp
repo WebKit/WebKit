@@ -168,6 +168,10 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
                 if(e->id() == ID_EMBED)
                     found = true;
                 break;
+            case DOC_OBJECTS:   // all OBJECT elements
+                if(e->id() == ID_OBJECT)
+                    found = true;
+                break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
                 if(e->id() == ID_A || e->id() == ID_AREA)
                     if(!e->getAttribute(ATTR_HREF).isNull())

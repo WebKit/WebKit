@@ -62,6 +62,8 @@
 #include "xml/dom_position.h"
 #include "html/html_documentimpl.h"
 
+#include "misc/htmltags.h"
+
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::Node;
@@ -848,9 +850,21 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   if (isSafeScript(exec) &&
       m_part->document().isHTMLDocument()) { // might be XML
     DOM::HTMLCollection coll = m_part->htmlDocument().all();
-    DOM::HTMLElement element = coll.namedItem(p.string());
+    DOM::HTMLElement element = coll.namedItem(p.string());    
     if (!element.isNull()) {
+#if APPLE_CHANGES
+	Value domValue = getDOMNode(exec,element);
+	ObjectImp *imp = static_cast<ObjectImp *>(domValue.imp());
+	if (!imp->forwardingScriptMessage() && 
+		(element.handle()->id() == ID_APPLET || element.handle()->id() == ID_EMBED || element.handle()->id() == ID_OBJECT)) {
+	    Value v = getRuntimeObject(exec,element,domValue);
+	    if (!v.isNull())
+		return v;
+	}
+	return domValue;
+#else
       return getDOMNode(exec,element);
+#endif
     }
   }
 

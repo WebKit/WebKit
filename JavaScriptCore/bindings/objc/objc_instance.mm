@@ -302,6 +302,16 @@ void ObjcInstance::setValueOfField (KJS::ExecState *exec, const Field *aField, c
     aField->setValueToInstance (exec, this, aValue);
 }
 
+bool ObjcInstance::supportsSetValueOfUndefinedField ()
+{
+    id targetObject = getObject();
+    
+    if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
+	return true;
+	
+    return false;
+}
+
 void ObjcInstance::setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue)
 {
     id targetObject = getObject();

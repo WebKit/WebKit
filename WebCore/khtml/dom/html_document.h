@@ -164,6 +164,13 @@ public:
     HTMLCollection embeds() const;
 
     /**
+     * A collection of all the <object> OBJECT </object> elements that
+     * include embedded elements in a document.
+     *
+     */
+    HTMLCollection objects() const;
+
+    /**
      * A collection of all <code> AREA </code> elements and anchor (
      * <code> A </code> ) elements in a document with a value for the
      * <code> href </code> attribute.

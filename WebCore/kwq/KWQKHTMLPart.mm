@@ -3812,6 +3812,21 @@ KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
     return 0;
 }
 
+KJS::Bindings::Instance *KWQKHTMLPart::getObjectInstanceForView (NSView *aView)
+{
+    if ([aView respondsToSelector:@selector(objectForWebScript)]){
+        id object = [aView objectForWebScript];
+        if (object)
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object);
+    }
+    else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
+        void *object = [aView pluginScriptableObject];
+        if (object)
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object);
+    }
+    return 0;
+}
+
 void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)
 {
     rootObjects.append (root);

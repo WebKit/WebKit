@@ -203,7 +203,7 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         r->createWidgetIfNecessary();
         if (r->widget()){
             // Call into the part (and over the bridge) to pull the Bindings::Instance
-            // from the guts of the Java VM.
+            // from the guts of the plugin.
             void *_view = r->widget()->getView();
             appletInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
         }
@@ -362,7 +362,11 @@ bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
 // -------------------------------------------------------------------------
 
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) 
+#if APPLE_CHANGES
+: HTMLElementImpl(doc), m_imageLoader(0), objectInstance(0)
+#else
 : HTMLElementImpl(doc), m_imageLoader(0)
+#endif
 {
     needWidgetUpdate = false;
 }
@@ -376,6 +380,29 @@ NodeImpl::Id HTMLObjectElementImpl::id() const
 {
     return ID_OBJECT;
 }
+
+#if APPLE_CHANGES
+KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
+{
+    KHTMLPart* part = getDocument()->part();
+    if (!part)
+        return 0;
+
+    if (objectInstance)
+        return objectInstance;
+    
+    RenderPartObject *r = static_cast<RenderPartObject*>(m_render);
+    if (r) {
+        if (r->widget()){
+            // Call into the part (and over the bridge) to pull the Bindings::Instance
+            // from the guts of the plugin.
+            void *_view = r->widget()->getView();
+            objectInstance = KWQ(part)->getObjectInstanceForView((NSView *)_view);
+        }
+    }
+    return objectInstance;
+}
+#endif
 
 HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 {

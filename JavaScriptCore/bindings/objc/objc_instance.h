@@ -60,6 +60,7 @@ public:
     virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
 
     virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
+    virtual bool supportsSetValueOfUndefinedField ();
     virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue);
     
     virtual Value ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;

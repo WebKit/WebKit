@@ -136,11 +136,20 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
+#if APPLE_CHANGES
+    KJS::Bindings::Instance *getObjectInstance() const;
+#endif
+
     QString serviceType;
     QString url;
     QString classId;
     bool needWidgetUpdate;
     HTMLImageLoader* m_imageLoader;
+
+#if APPLE_CHANGES
+private:
+    mutable KJS::Bindings::Instance *objectInstance;
+#endif
 };
 
 // -------------------------------------------------------------------------

@@ -783,6 +783,8 @@ void RenderPartObject::updateWidget()
               serviceType = "application/x-shockwave-flash";
           } else if (o->classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")) {
               serviceType = "audio/x-pn-realaudio-plugin";
+          } else if (o->classId.contains("FDC7A535-4070-4B92-A0EA-D9994BCC0DC5")) {
+              serviceType = "audio/x-pn-realaudio-plugin";
           } else if (o->classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")) {
               serviceType = "video/quicktime";
           } else if (o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
