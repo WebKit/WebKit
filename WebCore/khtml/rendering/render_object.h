@@ -128,6 +128,13 @@ public:
 
     virtual int getBaselineOfFirstLineBox() { return -1; } // Tables and blocks implement this.
     virtual InlineFlowBox* getFirstLineBox() { return 0; } // Tables and blocks implement this.
+
+    // Whether or not a positioned element requires normal flow x/y to be computed
+    // to determine its position.
+    bool hasStaticX() const;
+    bool hasStaticY() const;
+    virtual void setStaticX(short staticX) {};
+    virtual void setStaticY(int staticY) {};
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
@@ -266,7 +273,7 @@ public:
 
     void scheduleRelayout(RenderObject* clippedObj = 0);
 
-    virtual InlineBox* createInlineBox();
+    virtual InlineBox* createInlineBox(bool makePlaceHolderBox);
     
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine ) const;

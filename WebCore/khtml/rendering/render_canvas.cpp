@@ -154,14 +154,17 @@ void RenderCanvas::layout()
 
     RenderBlock::layout();
 
-#ifdef APPLE_CHANGES
+    int docw = docWidth();
+    int doch = docHeight();
+
+#if APPLE_CHANGES
     // always do the resizeContents, since we need the view to change size for Cocoa builtin
     // pagination to work
-    m_view->resizeContents(docWidth(), docHeight());
+    m_view->resizeContents(docw, doch);
     if (!m_printingMode) {
 #else
     if (!m_printingMode) {
-        m_view->resizeContents(docWidth(), docHeight());
+        m_view->resizeContents(docw, doch);
 #endif
         setWidth( m_viewportWidth = m_view->visibleWidth() );
         setHeight(  m_viewportHeight = m_view->visibleHeight() );
@@ -174,8 +177,8 @@ void RenderCanvas::layout()
     kdDebug() << "RenderCanvas::end time used=" << qt.elapsed() << endl;
 #endif
 
-    layer()->setHeight(m_height);
-    layer()->setWidth(m_width);
+    layer()->setHeight(QMAX(doch, m_height));
+    layer()->setWidth(QMAX(docw, m_width));
 
     setNeedsLayout(false);
 }

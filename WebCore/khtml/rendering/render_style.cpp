@@ -322,7 +322,7 @@ bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 {
     // we anyway assume they are the same
-// 	EDisplay _display : 5;
+// 	EDisplay _effectiveDisplay : 5;
 
     // NonVisible:
 // 	ECursor _cursor_style : 4;
@@ -350,6 +350,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(inherited_flags._htmlHacks == other->inherited_flags._htmlHacks) ||
         !(noninherited_flags._position == other->noninherited_flags._position) ||
         !(noninherited_flags._floating == other->noninherited_flags._floating) ||
+        !(noninherited_flags._originalDisplay == other->noninherited_flags._originalDisplay) ||
          visual->colspan != other->visual->colspan ||
          visual->counter_increment != other->visual->counter_increment ||
          visual->counter_reset != other->visual->counter_reset)
@@ -364,7 +365,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 //     ETableLayout _table_layout : 1;
 //     EPosition _position : 2;
 //     EFloat _floating : 2;
-    if ( ((int)noninherited_flags._display) >= TABLE ) {
+    if ( ((int)noninherited_flags._effectiveDisplay) >= TABLE ) {
 	// Stupid gcc gives a compile error on
 	// a != other->b if a and b are bitflags. Using
 	// !(a== other->b) instead.
@@ -378,7 +379,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 // only for lists:
 // 	EListStyleType _list_style_type : 5 ;
 // 	EListStylePosition _list_style_position :1;
-    if (noninherited_flags._display == LIST_ITEM ) {
+    if (noninherited_flags._effectiveDisplay == LIST_ITEM ) {
 	if ( !(inherited_flags._list_style_type == other->inherited_flags._list_style_type) ||
 	     !(inherited_flags._list_style_position == other->inherited_flags._list_style_position) )
 	    return Layout;
@@ -403,7 +404,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 // only for inline:
 //     EVerticalAlign _vertical_align : 4;
 
-    if ( !(noninherited_flags._display == INLINE) &&
+    if ( !(noninherited_flags._effectiveDisplay == INLINE) &&
          !(noninherited_flags._vertical_align == other->noninherited_flags._vertical_align))
         return Layout;
 

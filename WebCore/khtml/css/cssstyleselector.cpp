@@ -472,7 +472,10 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     }
 
     // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
-    // position or float an inline, compact, or run-in.
+    // position or float an inline, compact, or run-in.  Cache the original display, since it
+    // may be needed for positioned elements that have to compute their static normal flow
+    // positions.
+    style->setOriginalDisplay(style->display());
     if (style->display() != NONE && style->display() != BLOCK && style->display() != TABLE &&
         (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE)) {
         if (style->display() == INLINE_TABLE)

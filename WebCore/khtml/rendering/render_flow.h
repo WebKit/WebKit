@@ -62,7 +62,7 @@ public:
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
 
-    virtual InlineBox* createInlineBox();
+    virtual InlineBox* createInlineBox(bool makePlaceHolderBox);
 
     void paintLineBoxBackgroundBorder(QPainter *p, int _x, int _y,
                         int _w, int _h, int _tx, int _ty, PaintAction paintAction);

@@ -545,9 +545,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     int minHeight = m_height + toAdd;
     m_overflowHeight = m_height;
 
-    if( style()->direction() == RTL ) {
-        xPos = marginLeft() + m_width - paddingRight() - borderRight();
-    }
+    if( style()->direction() == RTL )
+        xPos = m_width - paddingRight() - borderRight();
 
     RenderObject *child = firstChild();
     RenderBlock *prevFlow = 0;
@@ -626,6 +625,18 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (child->isPositioned())
         {
             child->containingBlock()->insertPositionedObject(child);
+            if (child->hasStaticX()) {
+                if (style()->direction() == LTR)
+                    child->setStaticX(xPos);
+                else
+                    child->setStaticX(borderRight()+paddingRight());
+            }
+            if (child->hasStaticY()) {
+                int yPosEstimate = m_height;
+                if (prevFlow)
+                    yPosEstimate += prevFlow->collapsedMarginBottom();
+                child->setStaticY(yPosEstimate);
+            }
             child = child->nextSibling();
             continue;
         } else if (child->isReplaced())

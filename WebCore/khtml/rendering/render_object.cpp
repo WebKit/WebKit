@@ -385,6 +385,20 @@ RenderObject::scrollHeight() const
     return (style()->hidesOverflow() && layer()) ? layer()->scrollHeight() : clientHeight();
 }
 
+bool
+RenderObject::hasStaticX() const
+{
+    return (style()->left().isVariable() && style()->right().isVariable()) ||
+            style()->left().isStatic() ||
+            style()->right().isStatic();
+}
+
+bool
+RenderObject::hasStaticY() const
+{
+    return (style()->top().isVariable() && style()->bottom().isVariable()) || style()->top().isStatic();
+}
+
 void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 {
 }
@@ -392,15 +406,7 @@ void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 void RenderObject::setNeedsLayout(bool b) 
 {
     m_needsLayout = b;
-    if (!b) {
-        RenderLayer* l = layer();
-        if (l) {
-            l->setWidth(width());
-            l->setHeight(height());
-            l->updateLayerPosition();
-        }
-    }
-    else {
+    if (b) {
         RenderObject *o = container();
         RenderObject *root = this;
 
@@ -1514,7 +1520,7 @@ void RenderObject::removeLeftoverAnonymousBoxes()
 {
 }
 
-InlineBox* RenderObject::createInlineBox()
+InlineBox* RenderObject::createInlineBox(bool makePlaceHolderBox)
 {
     return new (renderArena()) InlineBox(this);
 }

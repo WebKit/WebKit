@@ -398,7 +398,8 @@ static void addMidpoint(const BidiIterator& midpoint)
 
 static void appendRunsForObject(int start, int end, RenderObject* obj)
 {
-    if (start > end || obj->isFloatingOrPositioned())
+    if (start > end || obj->isFloating() ||
+        (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY()))
         return;
 
     bool haveNextMidpoint = (smidpoints && sCurrMidpoint < sNumMidpoints);
@@ -552,7 +553,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     if (!box || box->isConstructed() || box->nextOnLine()) {
         // We need to make a new box for this render object.  Once
         // made, we need to place it at the end of the current line.
-        InlineBox* newBox = obj->createInlineBox();
+        InlineBox* newBox = obj->createInlineBox(false);
         KHTMLAssert(newBox->isInlineFlowBox());
         box = static_cast<InlineFlowBox*>(newBox);
         box->setFirstLineStyleBit(m_firstLine);
@@ -578,7 +579,7 @@ InlineFlowBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
     InlineFlowBox* parentBox = 0;
     for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun) {
         // Create a box for our object.
-        r->box = r->obj->createInlineBox();
+        r->box = r->obj->createInlineBox(r->obj->isPositioned());
         
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
@@ -618,6 +619,9 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
     int totWidth = lineBox->getFlowSpacingWidth();
     BidiRun* r = 0;
     for (r = sFirstBidiRun; r; r = r->nextRun) {
+        if (r->obj->isPositioned())
+            continue; // Positioned objects are only participating to figure out their
+                      // correct static x position.  They have no effect on the width.
         if (r->obj->isText())
             r->box->setWidth(static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine));
         else if (!r->obj->isInlineFlow()) {
@@ -698,8 +702,16 @@ void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox)
         m_overflowHeight = bottomOfLine;
         
     // Now make sure we place replaced render objects correctly.
-    for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun)
+    for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun) {
+        // Align positioned boxes with the top of the line box.  This is
+        // a reasonable approximation of an appropriate y position.
+        if (r->obj->isPositioned())
+            r->box->setYPos(m_height);
+
+        // Position is used to properly position both replaced elements and
+        // to update the static normal flow x/y of positioned elements.
         r->obj->position(r->box, r->start, r->stop - r->start, r->level%2);
+    }
 }
 
 // collects one line of the paragraph and transforms it to visual order
@@ -1367,7 +1379,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
         if( start.obj->isFloatingOrPositioned() ) {
             RenderObject *o = start.obj;
             // add to special objects...
-            if(o->isFloating()) {
+            if (o->isFloating()) {
                 insertFloatingObject(o);
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
@@ -1377,8 +1389,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     width = lineWidth(m_height);
                 }
             }
-            else if (o->isPositioned())
-                o->containingBlock()->insertPositionedObject(o);
+            else if (o->isPositioned()) {
+                if (o->hasStaticX())
+                    o->setStaticX(style()->direction() == LTR ?
+                                  borderLeft()+paddingLeft() :
+                                  borderRight()+paddingRight());
+                if (o->hasStaticY())
+                    o->setStaticY(m_height);
+            }
         }
         
         adjustEmbeddding = true;
@@ -1453,8 +1471,36 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     width = lineWidth(m_height);
                 }
             }
-            else if (o->isPositioned())
-                o->containingBlock()->insertPositionedObject(o);
+            else if (o->isPositioned()) {
+                // If our original display wasn't an INLINE type, then we can
+                // go ahead and determine our static x position now.
+                bool isInlineType = o->style()->originalDisplay() == INLINE ||
+                                    o->style()->originalDisplay() == INLINE_TABLE;
+                bool needToSetStaticX = o->hasStaticX();
+                if (o->hasStaticX() && !isInlineType) {
+                    o->setStaticX(o->parent()->style()->direction() == LTR ?
+                                  borderLeft()+paddingLeft() :
+                                  borderRight()+paddingRight());
+                    needToSetStaticX = false;
+                }
+
+                // If our original display was an INLINE type, then we can go ahead
+                // and determine our static y position now.
+                bool needToSetStaticY = o->hasStaticY();
+                if (o->hasStaticY() && isInlineType) {
+                    o->setStaticY(m_height);
+                    needToSetStaticY = false;
+                }
+                
+                // If we're ignoring spaces, we have to stop and include this object and
+                // then start ignoring spaces again.
+                if (ignoringSpaces && (needToSetStaticX || needToSetStaticY)) {
+                    BidiIterator startMid = { 0, o, 0 };
+                    BidiIterator stopMid = { 0, o, 1 };
+                    addMidpoint(startMid); // Stop ignoring spaces.
+                    addMidpoint(stopMid); // Start ignoring again.
+                }
+            }
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
             KHTMLAssert(!o->firstChild());

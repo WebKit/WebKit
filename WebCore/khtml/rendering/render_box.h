@@ -74,8 +74,8 @@ public:
     virtual short marginLeft() const { return m_marginLeft; }
     virtual short marginRight() const { return m_marginRight; }
 
-    virtual void setWidth( int width ) { m_width = width; if (m_layer) m_layer->setWidth(width); }
-    virtual void setHeight( int height ) { m_height = height; if (m_layer) m_layer->setHeight(height); }
+    virtual void setWidth( int width ) { m_width = width; }
+    virtual void setHeight( int height ) { m_height = height; }
 
     // This method is now public so that centered objects like tables that are
     // shifted right by left-aligned floats can recompute their left and
@@ -115,7 +115,10 @@ public:
     virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,
                                          int bleft, int bright);
-    
+
+    virtual void setStaticX(short staticX);
+    virtual void setStaticY(int staticY);
+
 protected:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
                                      int _w, int _h, int _tx, int _ty);
@@ -157,6 +160,10 @@ protected:
      * ( = the width of the element with line breaking disabled)
      */
     short m_maxWidth;
+
+    // Cached normal flow values for absolute positioned elements with static left/top values.
+    short m_staticX;
+    int m_staticY;
     
     // A pointer to our layer if we have one.  Currently only positioned elements
     // and floaters have layers.

@@ -59,6 +59,8 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
     m_marginBottom = 0;
     m_marginLeft = 0;
     m_marginRight = 0;
+    m_staticX = 0;
+    m_staticY = 0;
     m_layer = 0;
 }
 
@@ -500,7 +502,27 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
 
 void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
 {
-    if (isReplaced()) {
+    if (isPositioned()) {
+        // Cache the x position only if we were an INLINE type originally.
+        bool wasInline = style()->originalDisplay() == INLINE ||
+                         style()->originalDisplay() == INLINE_TABLE;
+        if (wasInline && hasStaticX()) {
+            // The value is cached in the xPos of the box.  We only need this value if
+            // our object was inline originally, since otherwise it would have ended up underneath
+            // the inlines.
+            m_staticX = box->xPos();
+        }
+        else if (!wasInline && hasStaticY())
+            // Our object was a block originally, so we make our normal flow position be
+            // just below the line box (as though all the inlines that came before us got
+            // wrapped in an anonymous block, which is what would have happened had we been
+            // in flow).  This value was cached in the yPos() of the box.
+            m_staticY = box->yPos();
+
+        // Nuke the box.
+        box->detach(renderArena());
+    }
+    else if (isReplaced()) {
         m_x = box->xPos();
         m_y = box->yPos();
 
@@ -886,6 +908,16 @@ void RenderBox::calcVerticalMargins()
     m_marginBottom = bm.minWidth(cw);
 }
 
+void RenderBox::setStaticX(short staticX)
+{
+    m_staticX = staticX;
+}
+
+void RenderBox::setStaticY(int staticY)
+{
+    m_staticY = staticY;
+}
+
 void RenderBox::calcAbsoluteHorizontal()
 {
     const int AUTO = -666666;
@@ -894,8 +926,9 @@ void RenderBox::calcAbsoluteHorizontal()
     int pab = borderLeft()+ borderRight()+ paddingLeft()+ paddingRight();
 
     l=r=ml=mr=w=AUTO;
-    cw = containingBlockWidth()
-        +containingBlock()->paddingLeft() +containingBlock()->paddingRight();
+
+    RenderBlock* cb = containingBlock();
+    cw = containingBlockWidth() + cb->paddingLeft() + cb->paddingRight();
 
     if(!style()->left().isVariable())
         l = style()->left().width(cw);
@@ -914,38 +947,28 @@ void RenderBox::calcAbsoluteHorizontal()
 //    printf("h1: w=%d, l=%d, r=%d, ml=%d, mr=%d\n",w,l,r,ml,mr);
 
     int static_distance=0;
-    if ((style()->direction()==LTR && (l==AUTO && r==AUTO ))
+    if ((parent()->style()->direction()==LTR && (l==AUTO && r==AUTO ))
             || style()->left().isStatic())
     {
-        // calc hypothetical location in the normal flow
-        // used for 1) left=static-position
-        //          2) left, right, width are all auto -> calc top -> 3.
-        //          3) precalc for case 2 below
-
-        // all positioned elements are blocks, so that
-        // would be at the left edge, but inset by our border/padding.
+        static_distance = m_staticX - cb->borderLeft(); // Should already have been set through layout of the parent().
         RenderObject* po = parent();
-        static_distance += po->borderLeft() + po->paddingLeft();
-        while (po && po!=containingBlock()) {
-            static_distance+=po->xPos();
-            po=po->parent();
-        }
+        for (; po && po != cb; po = po->parent())
+            static_distance += po->xPos();
 
         if (l==AUTO || style()->left().isStatic())
             l = static_distance;
     }
 
-    else if ((style()->direction()==RTL && (l==AUTO && r==AUTO ))
+    else if ((parent()->style()->direction()==RTL && (l==AUTO && r==AUTO ))
             || style()->right().isStatic())
     {
-            RenderObject* po = parent();
-
-            static_distance = cw - po->width();
-            static_distance -= po->borderRight() + po->paddingRight();
-            while (po && po!=containingBlock()) {
-                static_distance-=po->xPos();
-                po=po->parent();
-            }
+        RenderObject* po = parent();
+        RenderBlock* cb = containingBlock();
+        static_distance = m_staticX - cb->borderLeft(); // Should already have been set through layout of the parent().
+        while (po && po!=containingBlock()) {
+            static_distance+=po->xPos();
+            po=po->parent();
+        }
 
         if (r==AUTO || style()->right().isStatic())
             r = static_distance;
@@ -1037,7 +1060,7 @@ void RenderBox::calcAbsoluteHorizontal()
     m_width = w + pab;
     m_marginLeft = ml;
     m_marginRight = mr;
-    m_x = l + ml + containingBlock()->borderLeft();
+    m_x = l + ml + cb->borderLeft();
 //    printf("h: w=%d, l=%d, r=%d, ml=%d, mr=%d\n",w,l,r,ml,mr);
 }
 
@@ -1100,20 +1123,11 @@ void RenderBox::calcAbsoluteVertical()
         // used for 1) top=static-position
         //          2) top, bottom, height are all auto -> calc top -> 3.
         //          3) precalc for case 2 below
-
-        RenderObject* ro = previousSibling();
-        while ( ro && ro->isFloatingOrPositioned())
-            ro = ro->previousSibling();
-
+        static_top = m_staticY; // Should already have been set through layout of the parent().
         RenderObject* po = parent();
-        if (ro)
-            static_top = ro->yPos() + ro->marginBottom() + ro->height();
-        else
-            static_top += po->borderTop() + po->paddingTop();
-        
         for (; po && po != cb; po = po->parent())
             static_top += po->yPos();
-        
+
         if (h==AUTO || style()->top().isStatic())
             t = static_top;
     }

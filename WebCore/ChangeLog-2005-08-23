@@ -1,3 +1,61 @@
+2003-05-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3256376, absolute positioned content that had to be
+	scrolled into view would not respond to events.  This is a 
+	regression caused by fixing the size of the HTML element.
+
+	I stopped all of the updating of layer widths/heights in
+	setLayouted and in setWidth/Height of RenderBox and special-cased
+	the sizing of the RenderCanvas layer so that it always encloses
+	all content.
+
+	This patch also contains a fix for 3211915, left/top positions
+	not computed properly when auto or static.  The patch adds
+	staticX/Y member variables to RenderBox that holds the cached
+	values that can then be used by positioned elements to determine
+	their correct positions in the flow.  RenderStyles also now
+	remember both the original display of an element as well as
+	the mutated display (e.g., when an inline becomes a block
+	because of absolute positioning).
+	
+        Reviewed by darin (canvas fix) and kocienda (left/top fix)
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::RenderBox):
+        (RenderBox::position):
+        (RenderBox::setStaticX):
+        (RenderBox::setStaticY):
+        (RenderBox::calcAbsoluteHorizontal):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createInlineBox):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::placeBoxesHorizontally):
+        (InlineFlowBox::adjustMaxAscentAndDescent):
+        (InlineFlowBox::computeLogicalBoxHeights):
+        (InlineFlowBox::placeBoxesVertically):
+        (InlineFlowBox::shrinkBoxesWithNoTextChildren):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::hasStaticX):
+        (RenderObject::hasStaticY):
+        (RenderObject::setNeedsLayout):
+        (RenderObject::createInlineBox):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::createInlineBox):
+        * khtml/rendering/render_text.h:
+
 2003-05-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3014661.  We now display (a lame Lemay) image

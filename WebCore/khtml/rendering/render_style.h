@@ -547,15 +547,29 @@ protected:
 
 // don't inherit
     struct NonInheritedFlags {
-    // 32 bit non-inherited, don't add to the struct, or the operator will break.
-	bool operator==( const NonInheritedFlags &other ) const {
-	    return *((Q_UINT32 *)this) == *((Q_UINT32 *)&other);
-	}
-	bool operator!=( const NonInheritedFlags &other ) const {
-	    return *((Q_UINT32 *)this) != *((Q_UINT32 *)&other);
+        bool operator==( const NonInheritedFlags &other ) const {
+            return (_effectiveDisplay == other._effectiveDisplay) &&
+            (_originalDisplay == other._originalDisplay) &&
+            (_bg_repeat == other._bg_repeat) &&
+            (_overflow == other._overflow) &&
+            (_vertical_align == other._vertical_align) &&
+            (_clear == other._clear) &&
+            (_position == other._position) &&
+            (_floating == other._floating) &&
+            (_table_layout == other._table_layout) &&
+            (_flowAroundFloats == other._flowAroundFloats) &&
+            (_styleType == other._styleType) &&
+            (_affectedByHover == other._affectedByHover) &&
+            (_affectedByActive == other._affectedByActive) &&
+            (_unicodeBidi == other._unicodeBidi);
 	}
 
-        EDisplay _display : 5;
+        bool operator!=( const NonInheritedFlags &other ) const {
+            return !(*this == other);
+        }
+        
+        EDisplay _effectiveDisplay : 5;
+        EDisplay _originalDisplay : 5;
         EBackgroundRepeat _bg_repeat : 2;
         bool _bg_attachment : 1;
         EOverflow _overflow : 4 ;
@@ -612,7 +626,7 @@ protected:
 	inherited_flags._htmlHacks=false;
 	inherited_flags._unused = 0;
 
-	noninherited_flags._display = INLINE;
+	noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = INLINE;
 	noninherited_flags._bg_repeat = REPEAT;
 	noninherited_flags._bg_attachment = true;
 	noninherited_flags._overflow = OVISIBLE;
@@ -623,8 +637,8 @@ protected:
 	noninherited_flags._table_layout = TAUTO;
 	noninherited_flags._flowAroundFloats=false;
 	noninherited_flags._styleType = NOPSEUDO;
-    noninherited_flags._affectedByHover = false;
-    noninherited_flags._affectedByActive = false;
+        noninherited_flags._affectedByHover = false;
+        noninherited_flags._affectedByActive = false;
 	noninherited_flags._unicodeBidi = UBNormal;
     }
 
@@ -665,8 +679,9 @@ public:
     
 // attribute getter methods
 
-    EDisplay 	display() const { return noninherited_flags._display; }
-
+    EDisplay 	display() const { return noninherited_flags._effectiveDisplay; }
+    EDisplay    originalDisplay() const { return noninherited_flags._originalDisplay; }
+    
     Length  	left() const {  return surround->offset.left; }
     Length  	right() const {  return surround->offset.right; }
     Length  	top() const {  return surround->offset.top; }
@@ -787,7 +802,8 @@ public:
 
 // attribute setter methods
 
-    void setDisplay(EDisplay v) {  noninherited_flags._display = v; }
+    void setDisplay(EDisplay v) {  noninherited_flags._effectiveDisplay = v; }
+    void setOriginalDisplay(EDisplay v) {  noninherited_flags._originalDisplay = v; }
     void setPosition(EPosition v) {  noninherited_flags._position = v; }
     void setFloating(EFloat v) {  noninherited_flags._floating = v; }
 

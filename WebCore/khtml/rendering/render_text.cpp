@@ -1164,7 +1164,7 @@ short RenderText::baselinePosition( bool firstLine ) const
         ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
-InlineBox* RenderText::createInlineBox()
+InlineBox* RenderText::createInlineBox(bool)
 {
     // FIXME: Either ditch the array or get this object into it.
     return new (renderArena()) TextRun(this);

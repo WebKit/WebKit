@@ -233,6 +233,20 @@ int InlineFlowBox::placeBoxesHorizontally(int x)
             x += text->width();
         }
         else {
+            if (curr->object()->isPositioned()) {
+                if (curr->object()->parent()->style()->direction() == LTR)
+                    curr->setXPos(x);
+                else {
+                    // Our offset that we cache needs to be from the edge of the right border box and
+                    // not the left border box.  We have to subtract |x| from the width of the block
+                    // (which can be obtained by walking up to the root line box).
+                    InlineBox* root = this;
+                    while (!root->isRootInlineBox())
+                        root = root->parent();
+                    curr->setXPos(root->object()->width()-x);
+                }
+                continue; // The positioned object has no effect on the width.
+            }
             if (curr->object()->isInlineFlow()) {
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
                 if (curr->object()->isCompact()) {
@@ -296,6 +310,8 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         // The computed lineheight needs to be extended for the
         // positioned elements
+        if (curr->object()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
         if (curr->yPos() == PositionTop || curr->yPos() == PositionBottom) {
             if (curr->yPos() == PositionTop) {
                 if (maxAscent + maxDescent < curr->height())
@@ -339,6 +355,9 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
     }
     
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->object()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+        
         curr->setHeight(curr->object()->lineHeight(m_firstLine));
         curr->setBaseline(curr->object()->baselinePosition(m_firstLine));
         curr->setYPos(curr->object()->verticalPositionHint(m_firstLine));
@@ -371,6 +390,9 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         setYPos(y + maxAscent - baseline());// Place our root box.
     
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->object()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+        
         // Adjust boxes to use their real box y/height and not the logical height (as dictated by
         // line-height).
         if (curr->isInlineFlowBox())
@@ -438,6 +460,9 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
 {
     // First shrink our kids.
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->object()->isPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+        
         if (curr->isInlineFlowBox())
             static_cast<InlineFlowBox*>(curr)->shrinkBoxesWithNoTextChildren(topPos, bottomPos);
     }
