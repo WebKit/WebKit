@@ -315,7 +315,7 @@ FIELDSET {
 }
 
 BUTTON {
-        display: block;
+        display: inline-block;
         border: 2px outset ButtonFace;
         background-color: ButtonFace;
         color: ButtonText;
