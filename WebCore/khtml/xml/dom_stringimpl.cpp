@@ -219,10 +219,14 @@ DOMStringImpl *DOMStringImpl::substring(uint pos, uint len)
     return new DOMStringImpl(s + pos, len);
 }
 
-static Length parseLength(QChar *s, unsigned int l)
+static Length parseLength(QChar *s, unsigned int l) //kevin was here
 {
     const QChar* last = s+l-1;
-
+    
+    if(!s->isDigit()) {
+        return Length(1,Relative);
+    }
+    
     if ( *last == QChar('%')) {
         // CSS allows one decimal after the point, like
         //  42.2%, but not 42.22%
