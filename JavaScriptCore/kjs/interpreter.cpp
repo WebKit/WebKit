@@ -100,6 +100,11 @@ void Interpreter::unlock()
   InterpreterImp::unlock();
 }
 
+int Interpreter::lockCount()
+{
+  return InterpreterImp::lockCount();
+}
+
 ExecState *Interpreter::globalExec()
 {
   return rep->globalExec();

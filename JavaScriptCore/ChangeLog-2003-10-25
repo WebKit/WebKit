@@ -1,3 +1,24 @@
+2003-04-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- JavaScriptCore part of fix for 3158769 - JavaScript triggers not as async as they used to be
+
+	Added a way to get the current interpreter lock count, so Sherlock
+	can unlock the interpreter inside JS method implementations that
+	spend a long time waiting for I/O, allowing more efficient
+	multi-threaded operation.
+
+        * kjs/internal.cpp:
+        (lockInterpreter):
+        (unlockInterpreter):
+        (InterpreterImp::lock):
+        (InterpreterImp::lockCount):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (Interpreter::lockCount):
+        * kjs/interpreter.h:
+
 === Safari-73 ===
 
 === Safari-72 ===

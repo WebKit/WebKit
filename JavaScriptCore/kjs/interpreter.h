@@ -148,6 +148,7 @@ namespace KJS {
 
     static void lock();
     static void unlock();
+    static int lockCount();
 
     /**
      * Returns the execution state object which can be used to execute

@@ -72,6 +72,7 @@ namespace KJS {
 
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
+static int interpreterLockCount = 0;
 
 static void initializeInterpreterLock()
 {
@@ -87,10 +88,12 @@ static inline void lockInterpreter()
 {
   pthread_once(&interpreterLockOnce, initializeInterpreterLock);
   pthread_mutex_lock(&interpreterLock);
+  interpreterLockCount++;
 }
 
 static inline void unlockInterpreter()
 {
+  interpreterLockCount--;
   pthread_mutex_unlock(&interpreterLock);
 }
 
@@ -530,6 +533,11 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
 void InterpreterImp::lock()
 {
   lockInterpreter();
+}
+
+int InterpreterImp::lockCount()
+{
+  return interpreterLockCount;
 }
 
 void InterpreterImp::unlock()
