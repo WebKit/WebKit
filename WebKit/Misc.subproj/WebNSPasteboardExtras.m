@@ -36,35 +36,26 @@ NSString *WebURLNamePboardType = nil;
     NSArray *types = [self types];
 
     if ([types containsObject:NSURLPboardType]) {
-        NSURL *URLFromPasteboard;
-        NSString *scheme;
-
-        URLFromPasteboard = [NSURL URLFromPasteboard:self];
-        scheme = [URLFromPasteboard scheme];
+        NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:self];
+        NSString *scheme = [URLFromPasteboard scheme];
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-            return URLFromPasteboard;
+            return [URLFromPasteboard _web_canonicalize];
         }
     }
 
     if ([types containsObject:NSStringPboardType]) {
-        NSString *URLString;
-
-        URLString = [[self stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
+        NSString *URLString = [[self stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
         if ([URLString _web_looksLikeAbsoluteURL]) {
-            return [NSURL _web_URLWithString:URLString];
+            return [[NSURL _web_URLWithString:URLString] _web_canonicalize];
         }
     }
 
     if ([types containsObject:NSFilenamesPboardType]) {
-        NSArray *files;
-
-        files = [self propertyListForType:NSFilenamesPboardType];
+        NSArray *files = [self propertyListForType:NSFilenamesPboardType];
         if ([files count] == 1) {
-            NSString *file;
-
-            file = [files objectAtIndex:0];
+            NSString *file = [files objectAtIndex:0];
             if ([WebController canShowFile:file]) {
-                return [NSURL fileURLWithPath:file];
+                return [[NSURL fileURLWithPath:file] _web_canonicalize];
             }
         }
     }

@@ -1,3 +1,11 @@
+2002-10-15  Darin Adler  <darin@apple.com>
+
+	Fixed bug where URLs dragged to the content area were not made canonical
+	the way URLs dragged to the page address field are.
+
+        * Misc.subproj/WebNSPasteboardExtras.m: (-[NSPasteboard _web_bestURL]):
+	Make URLs canonical before returning them.
+
 2002-10-15  Chris Blumenberg  <cblu@apple.com>
 
 	If a file is renamed during download because a file of the same name already exists, show this in the UI.
