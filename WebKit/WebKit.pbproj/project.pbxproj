@@ -201,7 +201,6 @@
 				39446092020F50ED0ECA1767,
 				39446093020F50ED0ECA1767,
 				39446094020F50ED0ECA1767,
-				39446095020F50ED0ECA1767,
 				39446096020F50ED0ECA1767,
 				39446097020F50ED0ECA1767,
 				39446098020F50ED0ECA1767,
@@ -436,7 +435,6 @@
 		};
 		25A8176801B5474B0ECA149E = {
 			children = (
-				3944607C020F50ED0ECA1767,
 				3944607D020F50ED0ECA1767,
 				3944607E020F50ED0ECA1767,
 				3944607F020F50ED0ECA1767,
@@ -728,11 +726,6 @@
 			path = Misc.subproj/IFException.m;
 			refType = 4;
 		};
-		3944607C020F50ED0ECA1767 = {
-			isa = PBXFileReference;
-			path = IFAttributedURL.h;
-			refType = 4;
-		};
 		3944607D020F50ED0ECA1767 = {
 			isa = PBXFileReference;
 			path = IFBackForwardList.h;
@@ -854,15 +847,6 @@
 			fileRef = 3944607A020F50ED0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
-			};
-		};
-		39446095020F50ED0ECA1767 = {
-			fileRef = 3944607C020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
 			};
 		};
 		39446096020F50ED0ECA1767 = {

@@ -13,20 +13,15 @@
 
 -(id)init
 {
-    return [self initWithURL:nil title:nil image:nil comment:nil];
+    return [self initWithURL:nil title:nil image:nil];
 }
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title
 {
-    return [self initWithURL:url title:title image:nil comment:nil];
+    return [self initWithURL:url title:title image:nil];
 }
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image
-{
-    return [self initWithURL:url title:title image:image comment:nil];
-}
-
--(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image comment:(NSString *)comment
 {
     if (self != [super init])
     {
@@ -36,9 +31,6 @@
     _url = [url retain];
     _title = [title retain];
     _image = [image retain];
-    _comment = [comment retain];
-    _creationDate = [[NSCalendarDate alloc] init];
-    _modificationDate = [[NSCalendarDate alloc] init];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
     
     return self;
@@ -49,9 +41,6 @@
     [_url release];
     [_title release];
     [_image release];
-    [_comment release];
-    [_creationDate release];
-    [_modificationDate release];
     [_lastVisitedDate release];
     
     [super dealloc];
@@ -95,21 +84,6 @@
     return defaultImage;
 }
 
--(NSString *)comment
-{
-    return _comment;
-}
-
--(NSCalendarDate *)creationDate;
-{
-    return _creationDate;
-}
-
--(NSCalendarDate *)modificationDate;
-{
-    return _modificationDate;
-}
-
 -(NSCalendarDate *)lastVisitedDate
 {
     return _lastVisitedDate;
@@ -144,22 +118,6 @@
     if (image != _image) {
         [_image release];
         _image = [image retain];
-    }
-}
-
--(void)setComment:(NSString *)comment
-{
-    if (comment != _comment) {
-        [_comment release];
-        _comment = [comment retain];
-    }
-}
-
--(void)setModificationDate:(NSCalendarDate *)date
-{
-    if (date != _modificationDate) {
-        [_modificationDate release];
-        _modificationDate = [date retain];
     }
 }
 
@@ -209,17 +167,6 @@
     if (_displayTitle != nil) {
         [dict setObject: _displayTitle forKey: @"displayTitle"];
     }
-    if (_comment != nil) {
-        [dict setObject: _comment forKey: @"comment"];
-    }
-    if (_creationDate != nil) {
-        [dict setObject: [NSString stringWithFormat:@"%lf", [_creationDate timeIntervalSinceReferenceDate]]
-                 forKey: @"creationDate"];
-    }
-    if (_modificationDate != nil) {
-        [dict setObject: [NSString stringWithFormat:@"%lf", [_modificationDate timeIntervalSinceReferenceDate]]
-                 forKey: @"modificationDate"];
-    }
     if (_lastVisitedDate != nil) {
         [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey: @"lastVisitedDate"];
@@ -241,11 +188,6 @@
     }
     _title = [[dict objectForKey: @"title"] retain];
     _displayTitle = [[dict objectForKey: @"displayTitle"] retain];
-    _comment = [[dict objectForKey: @"comment"] retain];
-    _creationDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
-        [[dict objectForKey: @"creationDate"] doubleValue]] retain];
-    _modificationDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
-        [[dict objectForKey: @"modificationDate"] doubleValue]] retain];
     _lastVisitedDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
         [[dict objectForKey: @"lastVisitedDate"] doubleValue]] retain];
 
