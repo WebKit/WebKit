@@ -49,6 +49,8 @@ using khtml::RenderPart;
 using khtml::RenderText;
 using khtml::RenderWidget;
 
+using KParts::URLArgs;
+
 void KHTMLPart::onURL(const QString &)
 {
 }
@@ -70,8 +72,8 @@ static void redirectionTimerMonitor(void *context)
 
 void KHTMLPart::completed()
 {
-    if (parentPart() != 0) {
-	KWQ_ASSERT (parentPart()->frame(this) != NULL);
+    if (parentPart()) {
+	KWQ_ASSERT(parentPart()->frame(this));
 	parentPart()->frame(this)->m_bCompleted = true;
 	parentPart()->slotChildCompleted();
     }
@@ -79,8 +81,8 @@ void KHTMLPart::completed()
 
 void KHTMLPart::completed(bool arg)
 {
-    if (parentPart() != 0) {
-	KWQ_ASSERT (parentPart()->frame(this) != NULL);
+    if (parentPart()) {
+	KWQ_ASSERT(parentPart()->frame(this));
 	parentPart()->frame(this)->m_bCompleted = true;
 	parentPart()->slotChildCompleted(arg);
     }
@@ -96,41 +98,48 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
 }
 
-bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
+WebCoreBridge *KWQKHTMLPartImpl::getBridgeForFrameName(const QString &frameName)
+{
+    WebCoreBridge *frame;
+    if (frameName.isEmpty()) {
+        // If we're the only frame in a frameset then pop the frame.
+        KHTMLPart *parentPart = part->parentPart();
+        frame = parentPart ? parentPart->impl->bridge : nil;
+        if ([[frame childFrames] count] != 1) {
+            frame = bridge;
+        }
+    } else {
+        frame = [bridge descendantFrameNamed:frameName.getNSString()];
+        if (frame == nil) {
+            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name. New window will not be named until 2959902 is fixed.\n", frameName.getNSString());
+            frame = [bridge descendantFrameNamed:@"_blank"];
+        }
+    }
+    
+    return frame;
+}
+
+void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return false;
+        // FIXME: We need to report this error to someone.
+        return;
     }
 
-    WebCoreBridge *frame;
-    if (!urlArgs.frameName.isEmpty()) {
-        frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
-        if (frame == nil) {
-            frame = [bridge mainFrame];
-        }
-    } else {
-        frame = bridge;
-    }
-
-    [frame loadURL:cocoaURL];
-    return true;
+    [getBridgeForFrameName(args.frameName) loadURL:cocoaURL];
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
 // NOTE: This code emulates the interface used by the original khtml part  
-    QString enc;
-
     if (!d->m_workingURL.isEmpty()) {
         part->begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();
     }
 
-    if (encoding != NULL) {
-        enc = QString::fromCFString((CFStringRef) encoding);
-        part->setEncoding(enc, forceEncoding);
+    if (encoding) {
+        part->setEncoding(QString::fromNSString(encoding), forceEncoding);
     } else {
         part->setEncoding(QString::null, false);
     }
@@ -140,15 +149,14 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const ch
     part->write(bytes, length);
 }
 
-void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
+void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, const QString &_target, const URLArgs &args)
 {
     QString target = _target;
     if (target.isEmpty() && d->m_doc) {
         target = d->m_doc->baseTarget();
     }
 
-    if ( url.find( "javascript:", 0, false ) == 0 )
-    {
+    if (url.find("javascript:", 0, false) == 0) {
         part->executeScript( url.right( url.length() - 11) );
         return;
     }
@@ -166,34 +174,20 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
         return;
     }
 
+    // FIXME: KHTML does this in openURL -- we should consider doing that too, because
+    // this won't work when there's targeting involved.
     KURL refLess(clickedURL);
     part->m_url.setRef("");
     refLess.setRef("");
     if (refLess.url() == part->m_url.url()) {
         part->m_url = clickedURL;
-        part->gotoAnchor (clickedURL.ref());
+        part->gotoAnchor(clickedURL.ref());
         // This URL needs to be added to the back/forward list.
         [bridge addBackForwardItemWithURL:cocoaURL anchor:clickedURL.ref().getNSString()];
         return;
     }
     
-    WebCoreBridge *frame;
-    if (target.isEmpty()) {
-        // If we're the only frame in a frameset then pop the frame.
-        KHTMLPart *parentPart = part->parentPart();
-        frame = parentPart ? parentPart->impl->bridge : nil;
-        if ([[frame childFrames] count] != 1) {
-            frame = bridge;
-        }
-    } else {
-        frame = [bridge descendantFrameNamed:target.getNSString()];
-        if (frame == nil) {
-            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name.  New window will not be named until 2959902 is fixed.\n", target.getNSString());
-                frame = [bridge descendantFrameNamed:@"_blank"];
-        }
-    }
-    
-    [frame loadURL:cocoaURL];
+    [getBridgeForFrameName(target) loadURL:cocoaURL];
 }
 
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
@@ -254,7 +248,7 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
     }
     NSURL *cocoaURL = part->completeURL(url).getNSURL();
     if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
+        // FIXME: We need to report an error to someone.
         return false;
     }
 
@@ -277,28 +271,25 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
     return true;
 }
 
-void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary )
+void KWQKHTMLPartImpl::submitForm(const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary)
 {
-  QString target = _target;
-  
-  //if ( target.isEmpty() )
-  //  target = d->m_baseTarget;
+    QString target = _target;
+    if (target.isEmpty() && d->m_doc) {
+        target = d->m_doc->baseTarget();
+    }
 
-  KURL u = part->completeURL( url );
+    KURL u = part->completeURL( url );
+    if (u.isMalformed()) {
+        // ### ERROR HANDLING!
+        return;
+    }
 
-  if ( u.isMalformed() )
-  {
-    // ### ERROR HANDLING!
-    return;
-  }
-
-  QString urlstring = u.url();
-
-  if ( urlstring.find( "javascript:", 0, false ) == 0 ) {
-    urlstring = KURL::decode_string(urlstring);
-    part->executeScript( urlstring.right( urlstring.length() - 11) );
-    return;
-  }
+    QString urlstring = u.url();
+    if (urlstring.find("javascript:", 0, false) == 0) {
+        urlstring = KURL::decode_string(urlstring);
+        part->executeScript(urlstring.right(urlstring.length() - 11));
+        return;
+    }
 
 #ifdef NEED_THIS
   if (!checkLinkSecurity(u,
@@ -308,44 +299,28 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
 #endif
 
 #ifdef NEED_THIS
-  KParts::URLArgs args;
-
   if (!d->m_referrer.isEmpty())
      args.metaData()["referrer"] = d->m_referrer;
-
   args.metaData().insert("main_frame_request",
                          parentPart() == 0 ? "TRUE":"FALSE");
   args.metaData().insert("ssl_was_in_use", d->m_ssl_in_use ? "TRUE":"FALSE");
   args.metaData().insert("ssl_activate_warnings", "TRUE");
-  args.frameName = _target.isEmpty() ? d->m_doc->baseTarget() : _target ;
 #endif
 
-  if ( strcmp( action, "get" ) == 0 )
-  {
-    u.setQuery( QString( formData.data(), formData.size() ) );
-    [bridge loadURL:u.getNSURL()];
-
+    if (strcmp(action, "get") == 0) {
+	u.setQuery(QString(formData.data(), formData.size()));
+	[getBridgeForFrameName(target) loadURL:u.getNSURL()];
+    } else {
 #ifdef NEED_THIS
-    args.frameName = target;
-    args.setDoPost( false );
-#endif
-  }
-  else
-  {
-#ifdef NEED_THIS
-    args.postData = formData;
-    args.frameName = target;
-    args.setDoPost( true );
-
     // construct some user headers if necessary
     if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
       args.setContentType( "Content-Type: application/x-www-form-urlencoded" );
     else // contentType must be "multipart/form-data"
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
 #endif
-    NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
-    [bridge postWithURL:u.getNSURL() data:postData];
-  }
+	NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
+	[getBridgeForFrameName(target) postWithURL:u.getNSURL() data:postData];
+    }
 
 #ifdef NEED_THIS
   if ( d->m_bParsing || d->m_runningScripts > 0 ) {
@@ -366,7 +341,7 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
 #endif
 }
 
-bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
+bool KWQKHTMLPartImpl::frameExists(const QString &frameName)
 {
     return [bridge frameNamed:frameName.getNSString()] != nil;
 }
@@ -420,47 +395,42 @@ void KWQKHTMLPartImpl::unfocusWindow()
     [bridge unfocusWindow];
 }
 
-void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int modifierState)
+void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int modifierState)
 {
     if (url.isEmpty()) {
-        setStatusBarText(QString());
+        [bridge setStatusText:@""];
         return;
     }
 
-    NSString *message;
-    
-    // FIXME: This would do strange things with a link that said "xjavascript:".
     int position = url.find("javascript:", 0, false);
-    if (position != -1) {
+    if (position == 0) {
         // FIXME: Is it worthwhile to special-case scripts that do a window.open and nothing else?
-        const QString scriptName = url.mid(position + strlen("javascript:"));
-        message = [NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()];
-        setStatusBarText(QString::fromNSString(message));
+        const QString scriptName = url.mid(strlen("javascript:"));
+        [bridge setStatusText:[NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()]];
         return;
     }
     
     KURL u = part->completeURL(url);
     
     if (u.protocol() == QString("mailto")) {
-        // FIXME: addressbook integration? probably not worth it...
+        // FIXME: Add address book integration so we show the real name instead?
         const QString address = KURL::decode_string(u.path());
-        setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", address.getNSString()]));
+        [bridge setStatusText:[NSString stringWithFormat:@"Send email to %@", address.getNSString()]];
         return;
     }
     
     NSString *format;
     
-    if (target == QString("_blank")) {
-        // FIXME: should use curly quotes
+    QString target = _target;
+    if (target.isEmpty() && d->m_doc) {
+        target = d->m_doc->baseTarget();
+    }
+
+    if (target == "_blank") {
         format = @"Open \"%@\" in a new window";
-        
-    } else if (!target.isEmpty() &&
-                (target != QString("_top")) &&
-                (target != QString("_self")) &&
-                (target != QString("_parent"))) {
+    } else if (!target.isEmpty() && target != "_self" && target == "_top" && target != "_parent") {
         if (frameExists(target)) {
-            // FIXME: distinguish existing frame in same window from
-            // existing frame name for other window
+            // FIXME: Distinguish existing frame in same window from existing frame in other window.
             format = @"Go to \"%@\" in another frame";
         } else {
             format = @"Open \"%@\" in a new window";
@@ -481,7 +451,7 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
         }
     }
     
-    setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
+    [bridge setStatusText:[NSString stringWithFormat:format, u.url().getNSString()]];
 }
 
 void KWQKHTMLPartImpl::jumpToSelection()

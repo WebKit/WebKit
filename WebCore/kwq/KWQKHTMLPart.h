@@ -67,7 +67,7 @@ public:
     void setView(KHTMLView *view);
     KHTMLView *getView() const;
 
-    bool openURLInFrame(const KURL &, const KParts::URLArgs &);
+    void openURLRequest(const KURL &, const KParts::URLArgs &);
     
     void slotData(NSString *, bool forceEncoding, const char *bytes, int length, bool complete = false);
 
@@ -78,7 +78,7 @@ public:
     KHTMLPart *findFrame(const QString &frameName);
     QPtrList<KParts::ReadOnlyPart> frames() const;
 
-    void urlSelected(const QString &url, int button, int state, const QString &_target, KParts::URLArgs);
+    void urlSelected(const QString &url, int button, int state, const QString &_target, const KParts::URLArgs &);
     bool requestFrame(khtml::RenderPart *frame, const QString &url, const QString &frameName, const QStringList &params, bool isIFrame);
     bool requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args);
 
@@ -106,6 +106,8 @@ public:
     void redirectionTimerStartedOrStopped();
     
 private:
+    WebCoreBridge *getBridgeForFrameName(const QString &frameName);
+
     KHTMLPart *part;
     KHTMLPartPrivate *d;
     

@@ -35,7 +35,7 @@ KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
 void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
 					       const KParts::URLArgs &args)
 {
-    m_part->openURLInFrame(url, args);
+    m_part->impl->openURLRequest(url, args);
 }
 
 void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
@@ -105,12 +105,6 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
     [[[bridge window] windowController] showWindow:nil];
 
-    // We can't return a KHTMLPart in all cases, because the new window might not even
-    // have HTML in it. And we don't create the KHTMLPart until we become "committed".
-    // So it's better not to try to return the KHTMLPart, and no callers currently need it.
-    //if (partResult) {
-	//    *partResult = 0;
-    //}
     *partResult = [bridge part];
 }
 
