@@ -1,3 +1,15 @@
+2002-09-03  John Sullivan  <sullivan@apple.com>
+
+	- removed small folder image used for bookmark lists; it is now
+	up to clients to display an icon for bookmark lists.
+
+        * Bookmarks.subproj/WebBookmarkList.h: Removed _icon ivar
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList dealloc]): Don't release _icon
+        (-[WebBookmarkList icon]): just return nil
+        * Resources/bookmark_folder.tiff: Removed.
+        * WebKit.pbproj/project.pbxproj: Updated for removed file.
+
 2002-09-03  Chris Blumenberg  <cblu@apple.com>
 
 	- Moved the default icon method to WebIconDatabase

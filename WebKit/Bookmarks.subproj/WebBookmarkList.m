@@ -97,7 +97,6 @@
 - (void)dealloc
 {
     [_title release];
-    [_icon release];
     [_list release];
     [super dealloc];
 }
@@ -139,25 +138,7 @@
 
 - (NSImage *)icon
 {
-    static NSImage *defaultImage = nil;
-    static BOOL loadedDefaultImage = NO;
-
-    if (_icon != nil) {
-        return _icon;
-    }
-    
-    // Attempt to load default image only once, to avoid performance penalty of repeatedly
-    // trying and failing to find it.
-    if (!loadedDefaultImage) {
-        NSString *pathForDefaultImage =
-        [[NSBundle bundleForClass:[self class]] pathForResource:@"bookmark_folder" ofType:@"tiff"];
-        if (pathForDefaultImage != nil) {
-            defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
-        }
-        loadedDefaultImage = YES;
-    }
-
-    return defaultImage;
+    return nil;
 }
 
 - (WebBookmarkType)bookmarkType

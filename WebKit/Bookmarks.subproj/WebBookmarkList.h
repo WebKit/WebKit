@@ -10,7 +10,6 @@
 
 @interface WebBookmarkList : WebBookmark {
     NSString *_title;
-    NSImage *_icon;
     NSMutableArray *_list;
 }
 
