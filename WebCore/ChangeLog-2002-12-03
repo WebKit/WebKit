@@ -1,5 +1,17 @@
 2002-12-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3078227, hanging in table code.  Make sure <form>s
+	don't get wrapped in anonymous rows and cells.
+	
+        Reviewed by: rjw
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTableSection::addChild):
+        (RenderTableRow::addChild):
+
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
 	Backing out a file that I did not intend to check in.
 
         * khtml/misc/loader.cpp:

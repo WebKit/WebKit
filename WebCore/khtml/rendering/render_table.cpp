@@ -157,8 +157,13 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
     kdDebug( 6040 ) << renderName() << "(Table)::addChild( " << child->renderName() << ", " <<
                        (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
+    if (child->element() && child->element()->id() == ID_FORM) {
+        RenderContainer::addChild(child,beforeChild);
+        return;
+    }
+            
     RenderObject *o = child;
-
+    
     switch(child->style()->display())
     {
     case TABLE_CAPTION:
@@ -1877,8 +1882,12 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 #endif
     RenderObject *row = child;
 
+    if (child->element() && child->element()->id() == ID_FORM) {
+        RenderContainer::addChild(child,beforeChild);
+        return;
+    }
+    
     if ( !child->isTableRow() ) {
-
         if( !beforeChild )
             beforeChild = lastChild();
 
@@ -1968,6 +1977,11 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
                        (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
     RenderTableCell *cell;
+
+    if (child->element() && child->element()->id() == ID_FORM) {
+        RenderContainer::addChild(child,beforeChild);
+        return;
+    }
 
     if ( !child->isTableCell() ) {
         if ( !beforeChild )
