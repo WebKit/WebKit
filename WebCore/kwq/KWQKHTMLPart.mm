@@ -1914,10 +1914,10 @@ bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool dec
         // also done for security, as it erases data from the last drag
         [pasteboard declareTypes:[NSArray array] owner:nil];
     }
-    KWQClipboard *clipboard = new KWQClipboard(true, pasteboard);
+    KWQClipboard *clipboard = new KWQClipboard(true, pasteboard, KWQClipboard::Writable);
     clipboard->ref();
     bool DHTMLBailed = d->m_view->dispatchDragEvent(eventId, _dragSrc.handle(), loc, clipboard);
-    // FIXME - invalidate clipboard here for security
+    clipboard->becomeNumb();    // invalidate clipboard here for security
 
     if (dragImage) {
         *dragImage = clipboard->dragNSImage();

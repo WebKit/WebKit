@@ -28,9 +28,10 @@
 
 using DOM::DOMString;
 
-KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard)
-  : m_pasteboard([pasteboard retain]), m_forDragging(forDragging)
+KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy)
+  : m_pasteboard([pasteboard retain]), m_forDragging(forDragging), m_policy(policy)
 {
+    m_changeCount = [m_pasteboard changeCount];
 }
 
 KWQClipboard::~KWQClipboard()
@@ -41,6 +42,11 @@ KWQClipboard::~KWQClipboard()
 bool KWQClipboard::isForDragging() const
 {
     return m_forDragging;
+}
+
+void KWQClipboard::becomeNumb()
+{
+    m_policy = Numb;
 }
 
 // FIXME hardwired for now, will use UTI
@@ -95,6 +101,11 @@ static QString MIMETypeFromCocoaType(NSString *type)
 
 void KWQClipboard::clearData(const DOMString &type)
 {
+    if (m_policy != Writable) {
+        return;
+    }
+    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
+
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     if (cocoaType) {
         [m_pasteboard setString:@"" forType:cocoaType];
@@ -103,12 +114,21 @@ void KWQClipboard::clearData(const DOMString &type)
 
 void KWQClipboard::clearAllData()
 {
+    if (m_policy != Writable) {
+        return;
+    }
+    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
+
     [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
 DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
 {
     success = false;
+    if (m_policy != Readable) {
+        return DOMString();
+    }
+    
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaValue = nil;
     NSArray *availableTypes = [m_pasteboard types];
@@ -153,7 +173,9 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
         cocoaValue = [m_pasteboard stringForType:cocoaType];
     }
 
-    if (cocoaValue) {
+    // Enforce changeCount ourselves for security.  We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (cocoaValue && m_changeCount == [m_pasteboard changeCount]) {
         success = true;
         return DOMString(QString::fromNSString(cocoaValue));
     } else {
@@ -163,6 +185,11 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
 
 bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 {
+    if (m_policy != Writable) {
+        return false;
+    }
+    // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
+
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaData = data.string().getNSString();
     if (cocoaType == NSURLPboardType) {
@@ -189,7 +216,18 @@ bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 
 QStringList KWQClipboard::types() const
 {
+    if (m_policy != Readable && m_policy != TypesReadable) {
+        return QStringList();
+    }
+
     NSArray *types = [m_pasteboard types];
+
+    // Enforce changeCount ourselves for security.  We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (m_changeCount != [m_pasteboard changeCount]) {
+        return QStringList();
+    }
+
     QStringList result;
     if (types) {
         unsigned count = [types count];
@@ -204,6 +242,8 @@ QStringList KWQClipboard::types() const
     return result;
 }
 
+// The rest of these getters don't really have any impact on security, so for now make no checks
+
 QPoint KWQClipboard::dragLocation() const
 {
     return m_dragLoc;
@@ -211,7 +251,9 @@ QPoint KWQClipboard::dragLocation() const
 
 void KWQClipboard::setDragLocation(const QPoint &p)
 {
-    m_dragLoc = p;
+    if (m_policy == Writable) {
+        m_dragLoc = p;
+    }
 }
 
 QPixmap KWQClipboard::dragImage() const
@@ -221,7 +263,9 @@ QPixmap KWQClipboard::dragImage() const
 
 void KWQClipboard::setDragImage(const QPixmap &pm)
 {
-    m_dragImage = pm;
+    if (m_policy == Writable) {
+        m_dragImage = pm;
+    }
 }
 
 NSImage *KWQClipboard::dragNSImage()
@@ -236,7 +280,9 @@ DOM::DOMString KWQClipboard::dropEffect() const
 
 void KWQClipboard::setDropEffect(const DOM::DOMString &s)
 {
-    m_dropEffect = s;
+    if (m_policy == Writable) {
+        m_dropEffect = s;
+    }
 }
 
 DOM::DOMString KWQClipboard::effectAllowed() const
@@ -246,8 +292,13 @@ DOM::DOMString KWQClipboard::effectAllowed() const
 
 void KWQClipboard::setEffectAllowed(const DOM::DOMString &s)
 {
-    m_effectAllowed = s;
+    if (m_policy == Writable) {
+        m_effectAllowed = s;
+    }
 }
+
+// These "conversion" methods are called by the bridge and part, and never make sense to JS, so we don't
+// worry about security for these.  The don't allow access to the pasteboard anyway.
 
 static NSDragOperation cocoaOpFromIEOp(const DOMString &op) {
     // yep, it's really just this fixed set

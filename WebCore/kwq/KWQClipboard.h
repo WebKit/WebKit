@@ -34,7 +34,12 @@
 class KWQClipboard : public DOM::ClipboardImpl
 {
 public:
-    KWQClipboard(bool forDragging, NSPasteboard *pasteboard);
+    // security mechanism
+    typedef enum {
+        Numb, Writable, TypesReadable, Readable
+    } AccessPolicy;
+
+    KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy);
     virtual ~KWQClipboard();
 
     bool isForDragging() const;
@@ -48,9 +53,7 @@ public:
     void clearAllData();
     DOM::DOMString getData(const DOM::DOMString &type, bool &success) const;
     bool setData(const DOM::DOMString &type, const DOM::DOMString &data);
-    
-    //FIXME: need invalidate method for security
-    
+        
     // extensions beyond IE's API
     virtual QStringList types() const;
 
@@ -66,6 +69,9 @@ public:
     void setSourceOperation(NSDragOperation op);
     void setDestinationOperation(NSDragOperation op);
 
+    // sets AccessPolicy = Numb - trap door, once this is set, no going back
+    void becomeNumb();
+
 private:
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
@@ -73,6 +79,8 @@ private:
     DOM::DOMString m_effectAllowed;
     QPoint m_dragLoc;
     QPixmap m_dragImage;
+    AccessPolicy m_policy;
+    int m_changeCount;
 };
 
 

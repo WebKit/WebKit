@@ -1,3 +1,32 @@
+2004-06-07  Trey Matteson  <trey@apple.com>
+
+	Clipboard access during DHTML dragging is made secure.
+
+        Reviewed by John.
+
+        * kwq/KWQClipboard.h:
+        (KWQClipboard::):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::KWQClipboard):    Init new policy and changeCount members.
+        (KWQClipboard::becomeNumb):  Set policy to numb.
+        (KWQClipboard::clearData):   Check policy.
+        (KWQClipboard::clearAllData):   Check policy.
+        (KWQClipboard::getData):   Check policy and changeCount.
+        (KWQClipboard::setData):   Check policy.
+        (KWQClipboard::types):   Check policy and ChangeCount.
+        (KWQClipboard::setDragLocation):   Check policy.
+        (KWQClipboard::setDragImage):   Check policy.
+        (KWQClipboard::setDropEffect):   Check policy.
+        (KWQClipboard::setEffectAllowed):   Check policy.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dispatchDragSrcEvent):  Set policy when creating clipboard,
+	and numb-ify it when we're done.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragOperationForDraggingInfo:]): Set policy when creating clipboard,
+	and numb-ify it when we're done.
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):  Ditto
+        (-[WebCoreBridge concludeDragForDraggingInfo:]):  Ditto
+
 2004-06-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -1560,7 +1560,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             v->ref();
             
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::TypesReadable);
             clipboard->ref();
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
@@ -1585,6 +1585,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                     op = NSDragOperationNone;
                 }
             }
+            clipboard->becomeNumb();    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();
@@ -1602,10 +1603,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             v->ref();
 
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::TypesReadable);
             clipboard->ref();
             
             v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);
+            clipboard->becomeNumb();    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();
@@ -1621,10 +1623,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             v->ref();
 
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
             clipboard->ref();
 
             BOOL result = v->performDragAndDrop(QPoint([info draggingLocation]), clipboard);
+            clipboard->becomeNumb();    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();
