@@ -1,3 +1,15 @@
+2005-02-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/4021370> REGRESSION (Tiger): WebKit part of fix for 
+        shift-tab on tivofaq doing the wrong thing
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView becomeFirstResponder]):
+        If our previousValidKeyView is nil or self (same as nil modulo AppKit oddness),
+        look out of the box and get the previousValidKeyView of our webview.
+
 2005-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

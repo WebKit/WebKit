@@ -373,6 +373,15 @@ static NSMutableDictionary *viewTypes;
         NSWindow *window = [self window];
         if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
             NSView *previousValidKeyView = [self previousValidKeyView];
+            // If we couldn't find a previous valid key view, ask the webview. This handles frameset
+            // cases like 3748628. Note that previousValidKeyView should never be self but can be
+            // due to AppKit oddness (mentioned in 3748628).
+            if (previousValidKeyView == nil || previousValidKeyView == self) {
+                previousValidKeyView = [[[self webFrame] webView] previousValidKeyView];
+            }
+            // I don't know if the following cases ever occur anymore, but I'm leaving in the old test for
+            // now to avoid causing trouble just before shipping Tiger.
+            ASSERT((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView]));
             if ((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView])) {
                 [window makeFirstResponder:previousValidKeyView];
             }
