@@ -1,5 +1,11 @@
 2004-09-08  Chris Blumenberg  <cblu@apple.com>
 
+	Forgot to add this in previous check-in.	
+
+        * English.lproj/WebViewEditingContextMenu.nib: Added.
+
+2004-09-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3791240> WebKit uses the NSTextViewContextMenu nib from inside AppKit
 
         Reviewed by john.
