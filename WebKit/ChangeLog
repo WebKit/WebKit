@@ -1,3 +1,14 @@
+2004-09-22  Richard Williamson   <rjw@apple.com>
+
+	Pass dashboard regions to UI delegate.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dashboardRegionsChanged:]):
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        * copy-webcore-files-to-webkit:
+
 2004-09-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed build that I just broke.

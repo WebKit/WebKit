@@ -1,3 +1,36 @@
+2004-09-22  Richard Williamson   <rjw@apple.com>
+	
+	Pass dashboard regions up to WebKit.
+	
+	Don't collect regions from RenderTexts.
+
+	Made more args and return types references to avoid
+	copying value lists.
+
+        Reviewed by Hyatt.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::collectDashboardRegions):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::dashboardRegions):
+        (DocumentImpl::setDashboardRegions):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::didFirstLayout):
+        (KWQKHTMLPart::dashboardRegionsChanged):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebDashboardRegion.h: Added.
+        * kwq/WebDashboardRegion.m: Added.
+        (-[WebDashboardRegion initWithRect:type:]):
+        (-[WebDashboardRegion copyWithZone:]):
+        (-[WebDashboardRegion dashboardRegionRect]):
+        (-[WebDashboardRegion dashboardRegionType]):
+        (-[WebDashboardRegion description]):
+
 2004-09-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

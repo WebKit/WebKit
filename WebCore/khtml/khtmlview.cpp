@@ -707,7 +707,7 @@ void KHTMLView::layout()
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
         if (!(newRegions == currentRegions)) {
             document->setDashboardRegions(newRegions);
-            // FIXME:  Pass the regions on up to webkit.
+            KWQ(m_part)->dashboardRegionsChanged(newRegions);
         }
     }
 #endif

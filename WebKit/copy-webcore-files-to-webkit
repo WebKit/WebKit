@@ -19,6 +19,7 @@ my %WebCoreFiles = (
     'kwq/DOMStylesheets.h' => 'DOM.subproj/DOMStylesheets.h',
     'kwq/DOMTraversal.h' => 'DOM.subproj/DOMTraversal.h',
     'kwq/DOMViews.h' => 'DOM.subproj/DOMViews.h',
+    'kwq/WebDashboardRegion.h' => 'WebCoreSupport.subproj/WebDashboardRegion.h',
 );
 
 my %JavaScriptCoreFiles = (

@@ -1382,6 +1382,14 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
 }
 
+- (void)dashboardRegionsChanged:(NSDictionary *)regions
+{
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
+    if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)])
+        [wd webView:wv dashboardRegionsChanged:regions];
+}
+
 // This method exists to hold localizable strings for action names for the Undo menu item. It contains
 // all of the names used in NSTextView. We will wire some or all of these up eventually; for now we are
 // just putting them here to get them localized before the localization freeze for Tiger.

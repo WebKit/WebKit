@@ -70,6 +70,8 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
+#import "WebDashboardRegion.h"
+
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
@@ -102,6 +104,7 @@ using khtml::Cache;
 using khtml::CharacterIterator;
 using khtml::ChildFrame;
 using khtml::Decoder;
+using khtml::DashboardRegionValue;
 using khtml::findPlainText;
 using khtml::InlineTextBox;
 using khtml::MouseDoubleClickEvent;
@@ -3925,4 +3928,36 @@ void KWQKHTMLPart::prepareForUserAction()
 void KWQKHTMLPart::didFirstLayout()
 {
     [_bridge didFirstLayout];
+}
+
+void KWQKHTMLPart::dashboardRegionsChanged(const QValueList<DashboardRegionValue>& regions)
+{
+    uint i, count = regions.count();
+
+    // Convert the QValueList<DashboardRegionValue> into a NSDictionary of WebDashboardRegions
+    NSMutableDictionary *webRegions = [[NSMutableDictionary alloc] initWithCapacity:count];
+    for (i = 0; i < count; i++) {
+        DashboardRegionValue region = regions[i];
+        NSRect rect;
+        rect.origin.x = region.bounds.x();
+        rect.origin.y = region.bounds.y();
+        rect.size.width = region.bounds.width();
+        rect.size.height = region.bounds.height();
+        NSString *label = region.label.getNSString();
+        WebDashboardRegionType type = WebDashboardRegionTypeNone;
+        if (region.type == khtml::StyleDashboardRegion::Circle)
+            type = WebDashboardRegionTypeCircle;
+        else if (region.type == khtml::StyleDashboardRegion::Rectangle)
+            type = WebDashboardRegionTypeRectangle;
+        NSMutableArray *regionValues = [webRegions objectForKey:label];
+        if (!regionValues) {
+            regionValues = [NSMutableArray array];
+            [webRegions setObject:regionValues forKey:label];
+        }
+        
+        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:rect type:type] autorelease];
+        [regionValues addObject:webRegion];
+    }
+    
+    [_bridge dashboardRegionsChanged:webRegions];
 }
