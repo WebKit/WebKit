@@ -422,18 +422,6 @@
     }
 }
 
--(BOOL)_gotFirstByte
-{
-    return _private->gotFirstByte;
-}
-
--(void)_setGotFirstByte
-{
-    _private->gotFirstByte = TRUE;
-    [self _commitIfReady];
-}
-
-
 -(void)_makeRepresentation
 {
     Class repClass = [self _representationClass];
@@ -454,6 +442,18 @@
 
     return _private->contentPolicy != WebContentPolicyNone &&
 	(_private->committed || _private->contentPolicy != WebContentPolicyShow);
+}
+
+-(void)_receivedData:(NSData *)data
+{
+    if (!_private->gotFirstByte) {
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "got first byte for resource = %s\n", [[[self inputURL] absoluteString] cString]);
+	_private->gotFirstByte = YES;
+	[self _commitIfReady];
+    }
+
+    [[self representation] receivedData:data withDataSource:self];
+    [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 
 @end

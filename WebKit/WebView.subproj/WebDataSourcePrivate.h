@@ -110,7 +110,6 @@
 
 - (void)_commitIfReady;
 - (void)_makeRepresentation;
-- (void)_setGotFirstByte;
-- (BOOL)_gotFirstByte;
-- (BOOL)_isReadyForData;
+- (void)_receivedData:(NSData *)data;
+
 @end

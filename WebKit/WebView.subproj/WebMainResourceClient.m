@@ -162,7 +162,6 @@
     WebController *controller = [dataSource controller];
     NSString *contentType = [handle contentType];
     WebFrame *frame = [dataSource webFrame];
-    WebView *view = [frame webView];
 
     NSData *data = nil;
     
@@ -191,18 +190,9 @@
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
 
-    // Check to see if this is these are the first bits of a provisional data source,
-    // if so we need to tell the data source it got the first byte.
-    // It will transition from provisional to committed when and if it gets a policy of
-    // WebContentPolicyShow policy.
-    if(![dataSource _gotFirstByte]) {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "got first byte for resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-	[dataSource _setGotFirstByte];
-    }
-    
     WebContentPolicy contentPolicy = [dataSource contentPolicy];
 
-    if([dataSource _isReadyForData]){
+    if (contentPolicy != WebContentPolicyNone) {
         if (!processedBufferedData && !isFirstChunk) {
             // Process all data that has been received now that we are ready for data
 	    data = [handle resourceData];
@@ -214,8 +204,7 @@
 
 	switch (contentPolicy) {
 	case WebContentPolicyShow:
-	    [[dataSource representation] receivedData:data withDataSource:dataSource];
-	    [[view documentView] dataSourceUpdated:dataSource];
+	    [dataSource _receivedData:data];
 	    break;
 	case WebContentPolicySave:
 	case WebContentPolicySaveAndOpenExternally:

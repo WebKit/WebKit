@@ -1,5 +1,23 @@
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
 
+	More refactoring: Simplify a bit more by moving more logic into
+	the data source.
+	
+        * WebView.subproj/WebDataSourcePrivate.h, WebView.subproj/WebDataSourcePrivate.m:
+	(-[WebDataSource _gotFirstByte]): Removed.
+	(-[WebDataSource _setGotFirstByte]): Removed.
+        (-[WebDataSource _isReadyForData]): Removed.
+        (-[WebDataSource _receivedData:]): Commit if appropriate, and pass data to
+	representation and documentView.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient
+	WebResourceHandle:resourceDataDidBecomeAvailable:]): Change the
+	check back to policy != None, because the first chunk will trigger
+	a commit in the policy == Show case, so there is no need to worry
+	about it.
+
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
         Rename some methods for clarity. These two methods are defined by
 	the end state, not the start state (in fact,
 	transitionToLayoutAcceptable does most of it's work when it starts
