@@ -67,6 +67,7 @@ public:
     ConstIterator end() const;
     T& operator[] (uint);
     const T& operator[] (uint) const;
+    QValueList<T> &operator+=(const T &);
 };
 
 #endif
