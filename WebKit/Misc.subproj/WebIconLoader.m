@@ -89,8 +89,8 @@
         return;
     }
     
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:self URL:_private->URL];
-    _private->handle = [[WebResourceHandle alloc] initWithRequest:request];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
+    _private->handle = [[WebResourceHandle alloc] initWithRequest:request client:self];
     [request release];
     if (_private->handle) {
         [_private->handle loadInBackground];

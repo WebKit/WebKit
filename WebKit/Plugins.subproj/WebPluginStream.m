@@ -100,8 +100,8 @@
 
 - (void)startLoad
 {
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:self URL:URL attributes:attributes flags:0];
-    resource = [[WebResourceHandle alloc] initWithRequest:request];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL attributes:attributes flags:0];
+    resource = [[WebResourceHandle alloc] initWithRequest:request client:self];
     [resource loadInBackground];
     [request release];
     [[view webController] _didStartLoading:[resource URL]];

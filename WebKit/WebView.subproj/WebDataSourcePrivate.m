@@ -181,8 +181,8 @@
     // Fire this guy up.
     if (!_private->mainHandle) {
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-        WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:_private->mainClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
-        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request];
+        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->inputURL attributes:_private->attributes flags:_private->flags];
+        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request client:_private->mainClient];
         [request release];
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];

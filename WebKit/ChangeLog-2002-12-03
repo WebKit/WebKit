@@ -1,3 +1,24 @@
+2002-09-10  Ken Kocienda  <kocienda@apple.com>
+
+        Changed API for setting the WebResourceClient for a request/load.
+
+        This has been removed from WebResourceRequest, and has been moved to 
+        WebResourceHandle. The result is that the init method for a WebResourceHandle
+        now takes a WebResourceRequest and a WebResourceClient.
+
+        All of the changes below are simple code modifications to use the new API.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad])
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:])
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:])
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:])
+
 2002-09-10  Chris Blumenberg  <cblu@apple.com>
 
         * History.subproj/WebHistory.h:
