@@ -1,3 +1,15 @@
+2004-10-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3822218> REGRESSION (164-165): images don't update on rollover on directv.com page
+
+        I introduced a major regression where various JavaScript window properties would not be found when I
+        fixed bug 3809600.
+
+        * khtml/ecma/kjs_window.h: Added hasProperty.
+        * khtml/ecma/kjs_window.cpp: (Window::hasProperty): Return true in all the cases where get returns something.
+
 2004-09-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

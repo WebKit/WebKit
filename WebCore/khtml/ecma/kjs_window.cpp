@@ -458,7 +458,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   if ( p == "closed" )
     return Boolean(m_part.isNull());
 
-  // we don't want any operations on a closed window
+  // we don't want any properties other than "closed" on a closed window
   if (m_part.isNull())
     return Undefined();
 
@@ -836,6 +836,28 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   kdDebug(6070) << "WARNING: Window::get property not found: " << p.qstring() << endl;
 #endif
   return Undefined();
+}
+
+bool Window::hasProperty(ExecState *exec, const Identifier &p) const
+{
+  // matches logic in get function above, but no need to handle numeric values (frame indices)
+
+  if (m_part.isNull())
+    return p == "closed";
+
+  if (getDirect(p))
+    return true;
+
+  if (Lookup::findEntry(&WindowTable, p))
+    return true;
+
+  if (m_part->findFrame(p.qstring()))
+    return true;
+
+  if (!m_part->htmlDocument().all().namedItem(p.string()).isNull())
+    return true;
+
+  return false;
 }
 
 void Window::put(ExecState* exec, const Identifier &propertyName, const Value &value, int attr)
