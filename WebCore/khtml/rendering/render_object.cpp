@@ -191,18 +191,33 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
-void RenderObject::addLayers(RenderLayer* parentLayer, RenderLayer* beforeChild)
+static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*& newObject,
+                      RenderLayer*& beforeChild)
+{
+    if (obj->layer()) {
+        if (!beforeChild && newObject) {
+            // We need to figure out the layer that follows newObject.  We only do
+            // this the first time we find a child layer, and then we update the
+            // pointer values for newObject and beforeChild used by everyone else.
+            beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
+            newObject = 0;
+        }
+        parentLayer->addChild(obj->layer(), beforeChild);
+        return;
+    }
+
+    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling())
+        addLayers(curr, parentLayer, newObject, beforeChild);
+}
+
+void RenderObject::addLayers(RenderLayer* parentLayer, RenderObject* newObject)
 {
     if (!parentLayer)
         return;
     
-    if (layer()) {
-        parentLayer->addChild(layer(), beforeChild);
-        return;
-    }
-
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->addLayers(parentLayer, beforeChild);
+    RenderObject* object = newObject;
+    RenderLayer* beforeChild = 0;
+    ::addLayers(this, parentLayer, object, beforeChild);
 }
 
 void RenderObject::removeLayers(RenderLayer* parentLayer)
@@ -388,14 +403,15 @@ RenderBlock* RenderObject::containingBlock() const
         while (o && o->style()->position() == STATIC && !o->isHtml() && !o->isRoot())
             o = o->parent();
     } else {
-        while(o && (o->isInline() || o->isTableRow() || o->isTableSection() || o->isTableCol()))
+        while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
+                     || o->isTableCol()))
             o = o->parent();
     }
 
-    if (!o) // This can happen because of setOverhangingContents in RenderImage's setStyle method.
+    if (!o || !o->isRenderBlock())
+        // This can happen because of setOverhangingContents in RenderImage's setStyle method.
         return 0;
     
-    KHTMLAssert(o->isRenderBlock());
     return static_cast<RenderBlock*>(o);
 }
 
@@ -997,7 +1013,8 @@ RenderRoot* RenderObject::root() const
     return static_cast<RenderRoot*>( o );
 }
 
-RenderObject *RenderObject::container() const
+// Inlined because it is called by setLayouted below.
+inline RenderObject *RenderObject::container() const
 {
     EPosition pos = m_style->position();
     RenderObject *o = 0;
@@ -1011,8 +1028,14 @@ RenderObject *RenderObject::container() const
         o = parent();
         while ( o && o->parent() ) o = o->parent();
     }
-    else if ( pos == ABSOLUTE )
-	o = containingBlock();
+    else if ( pos == ABSOLUTE ) {
+        // Same goes here.  We technically just want our containing block, but
+        // we may not have one if we're part of an uninstalled subtree.  We'll
+        // climb as high as we can though.
+        o = parent();
+        while (o && o->style()->position() == STATIC && !o->isHtml() && !o->isRoot())
+            o = o->parent();
+    }
     else
 	o = parent();
     return o;

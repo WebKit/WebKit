@@ -276,7 +276,7 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     
     // Keep our layer hierarchy updated.
     RenderLayer* layer = enclosingLayer();
-    newChild->addLayers(layer, findNextLayer(layer, newChild));
+    newChild->addLayers(layer, newChild);
          
     newChild->setMinMaxKnown( false );
     newChild->setLayouted( false );
@@ -307,7 +307,7 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     
     // Keep our layer hierarchy updated.
     RenderLayer* layer = enclosingLayer();
-    child->addLayers(layer, findNextLayer(layer, child));
+    child->addLayers(layer, child);
            
     child->setMinMaxKnown( false );
     child->setLayouted( false );

@@ -1,3 +1,21 @@
+2003-02-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for findNextLayer problems.  There was nothing wrong with
+	findNextLayer per se... it was just getting called *way* more
+	often than it needed to be.
+
+	Fixes two bugs, 3159866 and 3168815.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_object.cpp:
+        (addLayers):
+        (RenderObject::addLayers):
+        * khtml/rendering/render_object.h:
+
 2003-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
