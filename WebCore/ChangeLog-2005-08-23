@@ -12,8 +12,9 @@
         (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Recent change to block placeholder removal code 
         caused this regression. The code became too aggressive in removing block placeholders, and would remove them
         from blocks other than the block containing the selection.
-        * layout-tests/editing/inserting/insert-div-023-expected.txt: This file had a spur
-        * layout-tests/editing/inserting/insert-div-024-expected.txt:
+        * layout-tests/editing/inserting/insert-div-023-expected.txt: This file had a spurious BR element in it that
+        I did not notice earlier.
+        * layout-tests/editing/inserting/insert-div-024-expected.txt: Ditto.
 
 2005-01-20  David Hyatt  <hyatt@apple.com>
 
