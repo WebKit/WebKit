@@ -225,7 +225,6 @@
 - (WebHistoryItem *)updateURL:(NSString *)newURLString
                         title:(NSString *)newTitle
                  displayTitle:(NSString *)newDisplayTitle
-                      iconURL:(NSURL *)iconURL
                        forURL:(NSString *)oldURLString
 {
     WebHistoryItem *entry;
@@ -249,10 +248,6 @@
         [entry setDisplayTitle:newDisplayTitle];
     }
     
-    if(iconURL != nil){
-        [entry setIconURL:iconURL];
-    }
-
     return entry;
 }
 

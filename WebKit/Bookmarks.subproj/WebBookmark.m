@@ -71,17 +71,6 @@ static unsigned _highestUsedID = 0;
     return nil;
 }
 
-- (NSURL *)iconURL
-{
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return nil;
-}
-
-- (void)setIconURL:(NSURL *)iconURL
-{
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
-}
-
 - (WebBookmarkType)bookmarkType
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);

@@ -68,7 +68,6 @@
     [_title release];
     [_displayTitle release];
     [_icon release];
-    [_iconURL release];
     [_lastVisitedDate release];
     
     [super dealloc];
@@ -77,11 +76,6 @@
 -(NSURL *)URL
 {
     return _URL;
-}
-
-- (NSURL *)iconURL
-{
-    return _iconURL;
 }
 
 -(NSString *)target
@@ -134,19 +128,10 @@
         [self _retainIconInDatabase:NO];
         [_URL release];
         _URL = [URL retain];
+        _loadedIcon = NO;
         [self _retainIconInDatabase:YES];
     }
 }
-
-- (void)setIconURL:(NSURL *)iconURL
-{
-    if (iconURL != _iconURL) {
-        [_iconURL release];
-        _iconURL = [iconURL retain];
-        _loadedIcon = NO;
-    }
-}
-
 
 -(void)setTitle:(NSString *)title
 {
@@ -252,28 +237,18 @@
         [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey: @"lastVisitedDate"];
     }
-    if (_iconURL != nil) {
-        [dict setObject: [_iconURL absoluteString] forKey: @"iconURL"];
-    }
 
     return dict;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
-    NSString *storedURLString, *iconURLString;
-
     [super init];
     
-    storedURLString = [dict objectForKey: @""];
+    NSString *storedURLString = [dict objectForKey: @""];
     if (storedURLString != nil) {
         _URL = [[NSURL _web_URLWithString:storedURLString] retain];
         [self _retainIconInDatabase:YES];
-    }
-    
-    iconURLString = [dict objectForKey:@"iconURL"];
-    if(iconURLString){
-        _iconURL = [[NSURL _web_URLWithString:iconURLString] retain];
     }
     
     _title = [[dict objectForKey: @"title"] copy];

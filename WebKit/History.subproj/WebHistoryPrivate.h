@@ -28,7 +28,6 @@
 - (WebHistoryItem *)updateURL:(NSString *)newURLString
                     title:(NSString *)newTitle
              displayTitle:(NSString *)newDisplayTitle
-                  iconURL:(NSURL *)iconURL
                    forURL:(NSString *)oldURLString;
 
 - (NSArray *)orderedLastVisitedDays;

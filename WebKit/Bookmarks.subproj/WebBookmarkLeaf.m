@@ -29,7 +29,6 @@
 
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
-                iconURL:(NSURL *)iconURL
                   group:(WebBookmarkGroup *)group;
 {
     [self init];
@@ -38,7 +37,6 @@
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the WebHistoryItem.
     [self setTitle:title];
-    [self setIconURL:iconURL];
     [self setURLString:URLString];
     [self _setGroup:group];
 
@@ -86,7 +84,6 @@
 {
     return [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
                                                             title:[self title]
-                                                          iconURL:[self iconURL]
                                                             group:[self group]];
 }
 
@@ -110,17 +107,6 @@
 - (NSImage *)icon
 {
     return [_entry icon];
-}
-
-- (NSURL *)iconURL
-{
-    return [_entry iconURL];
-}
-
-- (void)setIconURL:(NSURL *)iconURL
-{
-    [_entry setIconURL:iconURL];
-    [[self group] _bookmarkDidChange:self];  
 }
 
 - (WebBookmarkType)bookmarkType

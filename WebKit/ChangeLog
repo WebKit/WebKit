@@ -1,5 +1,23 @@
 2002-09-04  Darin Adler  <darin@apple.com>
 
+	Removed the now-unnecessary iconURL from bookmarks and history.
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        * Bookmarks.subproj/WebBookmarkLeaf.h:
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+	Removed iconURL instance variables, methods, and parameters.
+
+2002-09-04  Darin Adler  <darin@apple.com>
+
 	Did some minor plugin cleanup, mostly to make sure we don't
 	change pages while a plugin is tracking.
 

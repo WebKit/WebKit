@@ -35,7 +35,6 @@ extern NSString *WebHistoryEntriesChangedNotification;
 - (void)updateURL:(NSString *)newURLString
             title:(NSString *)newTitle
      displayTitle:(NSString *)newDisplayTitle
-          iconURL:(NSURL *)iconURL
            forURL:(NSString *)oldURLString;
 
 // retrieving contents for date-based presentation

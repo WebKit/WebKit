@@ -140,14 +140,12 @@
 
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                   iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType
 {
     return [self insertNewBookmarkAtIndex:[parent numberOfChildren]
                                ofBookmark:parent
                                 withTitle:newTitle
-                                  iconURL:iconURL
                                 URLString:newURLString
                                      type:bookmarkType];
 }
@@ -155,7 +153,6 @@
 - (WebBookmark *)insertNewBookmarkAtIndex:(unsigned)index
                               ofBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
-                                  iconURL:(NSURL *)iconURL
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType
 {
@@ -168,7 +165,6 @@
     if (bookmarkType == WebBookmarkTypeLeaf) {
         bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
-                                                      iconURL:iconURL
                                                         group:self];
     } else if (bookmarkType == WebBookmarkTypeSeparator) {
         bookmark = [[WebBookmarkSeparator alloc] initWithGroup:self];
