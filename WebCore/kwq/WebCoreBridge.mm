@@ -32,6 +32,7 @@
 #import <dom_docimpl.h>
 #import <render_root.h>
 #import <render_frames.h>
+#import <kwqdebug.h>
 #include <html/html_documentimpl.h>
 #include <xml/dom_nodeimpl.h>
 
@@ -262,6 +263,11 @@
     part->impl->getView()->setView(view);
 
     KHTMLRenderPart *renderPart = [[self frame] renderPart];
+
+    // If this isn't the main frame, it must have a render part set, or it
+    // won't ever get installed in the view hierarchy.
+    KWQ_ASSERT([self frame] == [self mainFrame] || renderPart != nil);
+
     if (renderPart) {
         renderPart->setWidget(part->impl->getView());
         // Now that the render part is holding the widget, we don't own it any more.

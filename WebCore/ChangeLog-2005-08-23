@@ -1,3 +1,12 @@
+2002-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge installInFrame:]): Assert that this bridge is
+	either for the main frame, or that it's frame has a render
+	part. If neither of these conditions is met, the view will never
+	get installed in the view hiearchy leading to nasty silent
+	failure; and this condition should be guaranteed.
+
 2002-07-18  David Hyatt  <hyatt@apple.com>
 
         * khtml/css/css_valueimpl.cpp:
