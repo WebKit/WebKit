@@ -3695,17 +3695,6 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             return;
         EUserModify userModify = EUserModify(primitiveValue->getIdent() - CSS_VAL_READ_ONLY);
         style->setUserModify(userModify);
-        KHTMLPart *part = element->getDocument()->part();
-        if (part) {
-            switch (userModify) {
-                case READ_ONLY:
-                    part->removeEditingStyleFromElement(element);
-                    break;
-                case READ_WRITE:
-                    part->applyEditingStyleToElement(element);
-                    break;
-            }
-        }
         break;
     }
     case CSS_PROP__KHTML_USER_SELECT: {

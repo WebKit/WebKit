@@ -1,3 +1,13 @@
+2005-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/4006509> REGRESSION (171-172): Setting CSS -khtml-user-modify property triggers crash
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::applyProperty):
+        Removed the code that changes the style of the element. This was never needed, and caused the
+        style to be modified while we were iterating it.
+
 2005-02-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
