@@ -36,34 +36,31 @@
 #include <_qregexp.h>
 #else
 
-#include "qstring.h"
+#include <qstring.h>
+
+#include <KWQRefPtr.h>
 
 // class QRegExp ===============================================================
 
 class QRegExp {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QRegExp();
-    QRegExp(const QString &);
+    QRegExp(const QString &, bool, bool);
+    QRegExp(const char *);
     QRegExp(const QRegExp &);    
     ~QRegExp();
 
-    // member functions --------------------------------------------------------
-
-    // operators ---------------------------------------------------------------
-
     QRegExp &operator=(const QRegExp &);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    QString pattern() const;
+    int match (const QString &, int startFrom = 0, int *matchLength = 0,
+		       bool treatStartAsStartOfInput = TRUE) const;
 
+private:
+    class KWQRegExpPrivate;
+    
+    KWQRefPtr<KWQRegExpPrivate> d;
 }; // class QRegExp ============================================================
 
 #endif // USING_BORROWED_QREGEXP

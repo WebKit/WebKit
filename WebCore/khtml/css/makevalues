@@ -42,7 +42,7 @@ echo -e '#endif\n' >> cssvalues.h
 
 cat cssvalues.strip | awk '{ \
 i=1; \
-print "static const char * valueList[] = {"; \
+print "static const char * const valueList[] = {"; \
 print "\"\","; \
 do { print "\"" $0 "\", "; i = i + 1 } while (getline); \
 print "    0"; \

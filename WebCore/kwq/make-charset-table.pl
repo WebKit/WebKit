@@ -17,7 +17,7 @@ my $already_wrote_one = 0;
 
 sub emit_prefix
 {
-    print TABLE "static CharsetEntry table[] = {\n";
+    print TABLE "static const CharsetEntry table[] = {\n";
 }
 
 sub emit_suffix

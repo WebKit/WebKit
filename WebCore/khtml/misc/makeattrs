@@ -64,7 +64,7 @@ system("/bin/sh", "-c", "gperf -c -a -L 'ANSI-C' -E -C -o -t -k '*' -NfindAttr -
 system("/bin/sh", "-c", 'perl -pi -e "s/\"\"}/\"\", 0}/g" htmlattrs.c');
 
 open(OUT, ">>htmlattrs.c");
-print OUT "\n\nstatic const char *attrList[$len] = {\n";
+print OUT "\n\nstatic const char * const attrList[$len] = {\n";
 while(defined ($line = shift @a))
 {
     print OUT $line."\n";

@@ -69,7 +69,7 @@ close header;
 system("/bin/sh", "-c", "gperf -a -L 'ANSI-C' -D -E -C -l -o -t -k '*' -NfindTag -Hhash_tag -Wwordlist_tag htmltags.gperf > htmltags.c");
 
 open(OUT, ">>htmltags.c");
-print OUT "\n\nstatic const char * tagList[] = {\n";
+print OUT "\n\nstatic const char * const tagList[] = {\n";
 print OUT "\"\",\n";
 while(defined ($line = shift @a))
 {

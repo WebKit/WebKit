@@ -1,3 +1,53 @@
+2002-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+	Reimplemented QRegExp in terms of POSIX regexp facilities. This
+	will only support Latin1, however, it won't support all languages.
+	
+	* src/kwq/qt/qregexp.h:
+	* src/kwq/KWQRegExp.mm: (QRegExp::KWQRegExpPrivate::KWQRegExpPrivate),
+	(QRegExp::KWQRegExpPrivate::compile),
+	(QRegExp::KWQRegExpPrivate::~KWQRegExpPrivate), (QRegExp::QRegExp),
+	(QRegExp::~QRegExp), (QRegExp::operator=), (QRegExp::pattern), (QRegExp::match):
+
+	Reimplement QValueList as a doubly-linked list, using a generic
+	implementation class and a templatized facade.
+	
+	* src/kwq/qt/qvaluelist.h:
+	* src/kwq/KWQValueListImpl.h:
+	* src/kwq/KWQValueListImpl.mm: (KWQValueListNodeImpl::KWQValueListNodeImpl),
+	(KWQValueListNodeImpl::~KWQValueListNodeImpl),
+	(KWQValueListIteratorImpl::KWQValueListIteratorImpl),
+	(KWQValueListIteratorImpl::~KWQValueListIteratorImpl),
+	(KWQValueListIteratorImpl::operator=), (KWQValueListIteratorImpl::operator==),
+	(KWQValueListIteratorImpl::operator!=), (KWQValueListIteratorImpl::node),
+	(KWQValueListIteratorImpl::operator++), (KWQValueListIteratorImpl::operator--),
+	(KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate),
+	(KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate),
+	(KWQValueListImpl::KWQValueListPrivate::copyList),
+	(KWQValueListImpl::KWQValueListPrivate::deleteList),
+	(KWQValueListImpl::KWQValueListImpl), (KWQValueListImpl::~KWQValueListImpl),
+	(KWQValueListImpl::clear), (KWQValueListImpl::count),
+	(KWQValueListImpl::isEmpty), (KWQValueListImpl::appendNode),
+	(KWQValueListImpl::prependNode), (KWQValueListImpl::removeEqualNodes),
+	(KWQValueListImpl::containsEqualNodes), (KWQValueListImpl::removeIterator),
+	(KWQValueListImpl::fromLast), (KWQValueListImpl::firstNode),
+	(KWQValueListImpl::lastNode), (KWQValueListImpl::begin), (KWQValueListImpl::end),
+	(KWQValueListImpl::nodeAt), (KWQValueListImpl::operator=),
+	(KWQValueListImpl::copyOnWrite):
+	* src/kwq/Makefile.am:
+
+	* src/kwq/kio/netaccess.h: Don't declare private copy constructor
+	- this class needs to be copyable to be stored in a QValueList!
+
+	Hack these scripts a bit so the large tables they generate are
+	constant data.
+	
+	* src/kwq/make-charset-table.pl:
+	* src/kdelibs/khtml/css/makeprop:
+	* src/kdelibs/khtml/css/makevalues:
+	* src/kdelibs/khtml/misc/makeattrs:
+	* src/kdelibs/khtml/misc/maketags:
+
 2002-02-23  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/WCLoadProgress.h: Add the forgotten WCLoadProgress.h.

@@ -37,74 +37,74 @@
 #else
 
 #include <KWQDef.h>
+#include <KWQValueListImpl.h>
+
+#include <iostream>
+
+template <class T> class QValueList;
+template <class T> class QValueListConstIterator;
+
+template<class T> class QValueListNode : private KWQValueListNodeImpl {
+public:
+    QValueListNode(const T &val) : KWQValueListNodeImpl(), value(val) {}
+    ~QValueListNode() {}
+
+    T value;
+    friend class QValueList<T>;
+};
+
 
 // class QValueListIterator ====================================================
-
 template<class T> class QValueListIterator {
 public: 
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QValueListIterator();
-    QValueListIterator(const QValueListIterator<T>&);
+    QValueListIterator() : impl() {}
+    QValueListIterator(const QValueListIterator<T> &other) : impl(other.impl) {}
      
-    ~QValueListIterator();
+    ~QValueListIterator() {}
+
+    QValueListIterator &operator=(const QValueListIterator &other) { impl = other.impl; return *this; }
+
+    bool operator==(const QValueListIterator<T> &other) { return impl == other.impl; }
+    bool operator!=(const QValueListIterator<T> &other) { return impl != other.impl; }
+    const T& operator*() const { return ((const QValueListNode<T> *)impl.node())->value; } 
+    QValueListIterator operator++() { ++impl; return *this; }
     
-    // member functions --------------------------------------------------------
+    T& operator*() { return ((QValueListNode<T> *)impl.node())->value; } 
+    QValueListIterator<T>& operator--() { --impl; return *this; }
+    QValueListIterator operator++(int) { return QValueListIterator<T>(impl++); }
 
-    // operators ---------------------------------------------------------------
+private:
+    QValueListIterator(const KWQValueListIteratorImpl &pImp) : impl(pImp) {}
 
-    QValueListIterator &operator=(const QValueListIterator &);
-    bool operator==(const QValueListIterator<T>&);
-    bool operator!=(const QValueListIterator<T>&);
-    T& operator*();
-    const T& operator*() const;
-    QValueListIterator<T>& operator++();
-    QValueListIterator<T>& operator++(int);
-    QValueListIterator<T>& operator--();
+    KWQValueListIteratorImpl impl;
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
+    friend class QValueList<T>;
+    friend class QValueListConstIterator<T>;
 }; // class QValueListIterator =================================================
 
 
 // class QValueListConstIterator ===============================================
-
 template<class T> class QValueListConstIterator {
 public:
+    QValueListConstIterator() : impl() {}
+    QValueListConstIterator(const QValueListConstIterator<T> &other) : impl(other.impl) {}
+    QValueListConstIterator(const QValueListIterator<T> &other) : impl(other.impl) {}
+     
+    ~QValueListConstIterator() {}
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    QValueListConstIterator &operator=(const QValueListConstIterator &other) { impl = other.impl; return *this; }
+    bool operator==(const QValueListConstIterator<T> &other) { return impl == other.impl; }
+    bool operator!=(const QValueListConstIterator<T> &other) { return impl != other.impl; }
+    const T& operator*() const { return ((const QValueListNode<T> *)impl.node())->value; } 
+    QValueListConstIterator operator++() { ++impl; return *this; }
+    QValueListConstIterator operator++(int) { return QValueListConstIterator<T>(impl++); }
 
-    // constructors, copy constructors, and destructors ------------------------
+private:
+    QValueListConstIterator(const KWQValueListIteratorImpl &pImp) : impl(pImp) {}
 
-    QValueListConstIterator();
-    QValueListConstIterator(const QValueListIterator<T>&);
+    KWQValueListIteratorImpl impl;
 
-    ~QValueListConstIterator();
-
-    // member functions --------------------------------------------------------
-
-    // operators ---------------------------------------------------------------
-
-    QValueListConstIterator &operator=(const QValueListConstIterator &);
-    bool operator==(const QValueListConstIterator<T>&);
-    bool operator!=(const QValueListConstIterator<T>&);
-    T& operator*();
-    QValueListConstIterator operator++();
-    QValueListConstIterator operator++(int);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
+    friend class QValueList<T>;
 }; // class QValueListConstIterator ============================================
 
 
@@ -113,56 +113,75 @@ public:
 template <class T> class QValueList {
 public:
 
-    // typedefs ----------------------------------------------------------------
-
     typedef QValueListIterator<T> Iterator;
     typedef QValueListConstIterator<T> ConstIterator;
 
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
     // constructors, copy constructors, and destructors ------------------------
     
-    QValueList();
-    QValueList(const QValueList<T>&);
+    QValueList() : impl(deleteNode, copyNode) {}
+    QValueList(const QValueList<T>&other) : impl(other.impl) {}
     
-    ~QValueList();
+    ~QValueList() {}
         
     // member functions --------------------------------------------------------
 
-    void clear();
-    uint count() const;
-    bool isEmpty() const;
+    void clear() { impl.clear(); }
+    uint count() const { return impl.count(); }
+    bool isEmpty() const { return impl.isEmpty(); }
 
-    void append(const T&);
-    void remove(const T&);
+    void append(const T &val) { impl.appendNode(new QValueListNode<T>(val)); } 
+    void prepend(const T &val) { impl.prependNode(new QValueListNode<T>(val)); } 
+    void remove(const T &val) { QValueListNode<T> node(val); impl.removeEqualNodes(&node, nodesEqual); }
+    uint contains(const T &val) { QValueListNode<T> node(val); return impl.containsEqualNodes(&node, nodesEqual); }
 
-    uint contains(const T&);
+    Iterator remove(Iterator iter) { return QValueListIterator<T>(impl.removeIterator(iter.impl)); }
+    Iterator fromLast() { return QValueListIterator<T>(impl.fromLast()); }
 
-    Iterator remove(Iterator);
-    Iterator fromLast();
+    const T& first() const { return ((QValueListNode<T> *)impl.firstNode())->value; }
+    const T& last() const { return ((QValueListNode<T> *)impl.lastNode())->value; }
 
-    const T& first() const;
-    const T& last() const;
+    Iterator begin() { return QValueListIterator<T>(impl.begin()); }
+    Iterator end() { return QValueListIterator<T>(impl.end()); }
 
-    Iterator begin();
-    Iterator end();
-
-    ConstIterator begin() const;
-    ConstIterator end() const;
+    ConstIterator begin() const { return QValueListConstIterator<T>(impl.begin()); }
+    ConstIterator end() const  { return QValueListConstIterator<T>(impl.end()); }
 
     // operators ---------------------------------------------------------------
 
-    QValueList<T>& operator=(const QValueList<T>&);
-    T& operator[] (uint);
-    const T& operator[] (uint) const;
-    QValueList<T> &operator+=(const T &);
+    QValueList<T>& operator=(const QValueList<T>&other) { impl = other.impl; return *this; }
+    T& operator[] (uint index) { return ((QValueListNode<T> *)impl.nodeAt(index))->value; }
+    const T& operator[] (uint index) const { return ((const QValueListNode<T> *)impl.nodeAt(index))->value; }
+    QValueList<T> &operator+=(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    QValueList<T> &operator<<(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
 
+private:
+    KWQValueListImpl impl;
+
+    static void deleteNode(KWQValueListNodeImpl *node) { delete (QValueListNode<T> *)node; }
+    static bool nodesEqual(KWQValueListNodeImpl *a, KWQValueListNodeImpl *b) { return ((QValueListNode<T> *)a)->value == ((QValueListNode<T> *)b)->value; }	
+    static KWQValueListNodeImpl *copyNode(KWQValueListNodeImpl *node) { return new QValueListNode<T>(((QValueListNode<T> *)node)->value); }
 }; // class QValueList =========================================================
+
+
+template<class T>
+inline ostream &operator<<(ostream &o, const QValueList<T>&p)
+{
+    o <<
+        "QValueList: [size: " <<
+        (Q_UINT32)p.count() <<
+        "; items: ";
+        QValueListConstIterator<T> it = p.begin();
+        while (it != p.end()) {
+            o << *it;
+            if (++it != p.end()) {
+                o << ", ";
+            }
+        }
+        o << "]";
+    return o;
+}
+
 
 #endif // USING_BORROWED_QVALUELIST
 

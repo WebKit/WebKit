@@ -69,20 +69,6 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    UDSAtom(const UDSAtom &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    UDSAtom &operator=(const UDSAtom &);
-#endif
-
 }; // class UDSAtom ============================================================
 
 

@@ -104,6 +104,7 @@ libkwq_o_SOURCES = \
 	KWQPointArray.mm \
 	KWQPushButton.mm \
 	KWQRadioButton.mm \
+	KWQRegExp.mm \
 	KWQRegion.mm \
 	KWQScrollView.mm \
 	KWQString.mm \
@@ -115,6 +116,7 @@ libkwq_o_SOURCES = \
 	KWQTextStorage.mm \
 	KWQTimer.mm \
 	KWQToolTip.mm \
+	KWQValueListImpl.mm \
 	KWQVariant.mm \
 	KWQVectorImpl.mm \
 	KWQView.mm \

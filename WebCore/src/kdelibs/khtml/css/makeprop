@@ -42,7 +42,7 @@ echo -e '#endif\n' >> cssproperties.h
 
 cat cssproperties.strip | awk '{ \
 i=1; \
-print "static const char * propertyList[] = {"; \
+print "static const char * const propertyList[] = {"; \
 print "\"\","; \
 do { print "\"" $0 "\", "; i = i + 1 } while (getline); \
 print "    0"; \
