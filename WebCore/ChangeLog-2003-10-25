@@ -1,3 +1,14 @@
+2002-12-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for the CSS test suite link.  Need to make sure inlines
+	that are obscured by blocks are properly considered to be
+	above the block background.
+	
+        Reviewed by LUCKY WINNER
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+
 2002-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
