@@ -55,7 +55,7 @@
 			sourceTree = "<group>";
 		};
 		034768E0FF38A50411DB9C8B = {
-			expectedFileType = wrapper.framework;
+			explicitFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = WebKit.framework;
@@ -495,9 +495,9 @@
 			sourceTree = "<group>";
 		};
 		089C1667FE841158C02AAC07 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 10;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
@@ -589,9 +589,9 @@
 			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 		2568C72C0174912D0ECA149E = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKit.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -635,9 +635,9 @@
 //2D3
 //2D4
 		2D36FD5E03F78F9E00A80166 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFormDelegatePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -649,17 +649,17 @@
 			};
 		};
 		2D81DAB203EB0B2D00A80166 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFormDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		2D81DAB303EB0B2D00A80166 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebFormDelegate.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -690,73 +690,73 @@
 //353
 //354
 		35081D9202B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHTMLRepresentation.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9302B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebHTMLRepresentation.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9402B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHTMLView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9502B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebHTMLView.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9602B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHTMLViewPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9802B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebImageRepresentation.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9902B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebImageRepresentation.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9A02B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebImageView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081D9B02B6D4D80ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebImageView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -827,33 +827,33 @@
 			};
 		};
 		35081DA602B6D4E40ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebTextRepresentation.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081DA702B6D4E40ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebTextRepresentation.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081DA802B6D4E40ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebTextView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		35081DA902B6D4E40ACA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebTextView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -885,9 +885,9 @@
 			};
 		};
 		35081DAE02B6D4F50ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDocument.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -912,9 +912,9 @@
 			sourceTree = "<group>";
 		};
 		35F3577F0198AAB80ACA1520 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/Localizable.strings;
 			refType = 4;
@@ -937,105 +937,105 @@
 //393
 //394
 		3944606B020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDynamicScrollBarsView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944606C020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDynamicScrollBarsView.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944606E020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPreferences.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39446070020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDataSource.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39446071020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDataSource.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39446072020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDataSourcePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39446074020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFrame.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944607A020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebException.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944607B020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebException.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944607D020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBackForwardList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944607E020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebBackForwardList.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3944607F020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHistoryItem.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39446080020F50ED0ECA1767 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebHistoryItem.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1150,8 +1150,8 @@
 //513
 //514
 		5128F1F904719A4200CA2D3A = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = missing_image.tiff;
 			path = Resources/missing_image.tiff;
 			refType = 4;
@@ -1164,34 +1164,34 @@
 			};
 		};
 		513D422E034CF55A00CA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebResourceLoadDelegate.h;
 			path = WebView.subproj/WebResourceLoadDelegate.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		51443F9A0429392B00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPolicyDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		51443F9B0429392B00CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPolicyDelegate.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		51443F9C0429392B00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPolicyDelegatePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1221,36 +1221,36 @@
 			};
 		};
 		5152FADD033FC50400CA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDefaultContextMenuDelegate.h;
 			path = WebView.subproj/WebDefaultContextMenuDelegate.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		5152FADE033FC50400CA2ACD = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebDefaultContextMenuDelegate.m;
 			path = WebView.subproj/WebDefaultContextMenuDelegate.m;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		5152FADF033FC50400CA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDefaultPolicyDelegate.h;
 			path = WebView.subproj/WebDefaultPolicyDelegate.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		5152FAE0033FC50400CA2ACD = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebDefaultPolicyDelegate.m;
 			path = WebView.subproj/WebDefaultPolicyDelegate.m;
 			refType = 2;
@@ -1286,9 +1286,9 @@
 			};
 		};
 		5152FAE5033FC52200CA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebFrameLoadDelegate.h;
 			path = WebView.subproj/WebFrameLoadDelegate.h;
 			refType = 2;
@@ -1304,9 +1304,9 @@
 			};
 		};
 		515E27CC0458C86500CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebUIDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1321,17 +1321,17 @@
 			};
 		};
 		515E27CF0458CA4B00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDefaultUIDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		515E27D00458CA4B00CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDefaultUIDelegate.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1349,9 +1349,9 @@
 			};
 		};
 		516F296F03A6C45A00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHistoryItemPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1366,25 +1366,25 @@
 			};
 		};
 		517FA6A903709FCE00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebUnicode.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		517FA6AA03709FCE00CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebUnicode.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		517FA6AB03709FCE00CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebUnicodeTables.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1408,17 +1408,17 @@
 			};
 		};
 		51A8B52E04282B5900CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFrameView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		51A8B52F04282B5900CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebFrameView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1439,9 +1439,9 @@
 			};
 		};
 		51A8B53204282BD200CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFrameViewPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1453,17 +1453,17 @@
 			};
 		};
 		51A8B579042834F700CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		51A8B57A042834F700CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1484,9 +1484,9 @@
 			};
 		};
 		51A8B57D0428353A00CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebViewPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1501,18 +1501,18 @@
 			};
 		};
 		51F6866C0366057300CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebBaseResourceHandleDelegate.h;
 			path = WebView.subproj/WebBaseResourceHandleDelegate.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		51F6866D0366057300CA2D3A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebBaseResourceHandleDelegate.m;
 			path = WebView.subproj/WebBaseResourceHandleDelegate.m;
 			refType = 2;
@@ -1535,17 +1535,17 @@
 //653
 //654
 		6523FACF032DA06B005EFCFF = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebControllerSets.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		6523FAD0032DA06B005EFCFF = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebControllerSets.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1649,17 +1649,17 @@
 			shellScript = "ln -sf Versions/Current/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/Current/Frameworks ${DSTROOT}/System/Library/Frameworks/WebKit.framework/Frameworks; echo -n \"\"";
 		};
 		6578F5DE045F817400000128 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDownload.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		6578F5DF045F817400000128 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDownload.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1746,9 +1746,9 @@
 			};
 		};
 		65A7D44A0568AB2600E70EF6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebUIDelegatePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1772,9 +1772,9 @@
 			shellScript = "ln -sf Versions/Current/Frameworks ${SYMROOT}/WebKit.framework/Frameworks; ln -sf Versions/Current/Frameworks ${DSTROOT}/System/Library/Frameworks/WebKit.framework/Frameworks; echo -n \"\"";
 		};
 		65DA2608052CC18700A97B31 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebHistory.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1796,17 +1796,17 @@
 //703
 //704
 		700BC50B04144DA100A80182 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDefaultResourceLoadDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		700BC50C04144DA100A80182 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDefaultResourceLoadDelegate.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1824,17 +1824,17 @@
 			};
 		};
 		7082F56F038EADAA00A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitNSStringExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		7082F570038EADAA00A80180 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKitNSStringExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1855,9 +1855,9 @@
 			};
 		};
 		70BC9ED604144F3200A80182 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDefaultFrameLoadDelegate.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1869,9 +1869,9 @@
 			};
 		};
 		70BC9ED804144FC500A80182 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDefaultFrameLoadDelegate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1883,18 +1883,18 @@
 			};
 		};
 		70ECD6CC043B727400A80181 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDataProtocol.h;
 			path = WebView.subproj/WebDataProtocol.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		70ECD6CD043B727400A80181 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebDataProtocol.m;
 			path = WebView.subproj/WebDataProtocol.m;
 			refType = 2;
@@ -1923,17 +1923,17 @@
 //833
 //834
 		830E81830585375700AD0891 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKeyGeneration.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		830E81840585375700AD0891 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = WebKeyGeneration.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1951,8 +1951,8 @@
 			};
 		};
 		830E81E005853AC000AD0891 = {
-			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Security.framework;
 			path = /System/Library/Frameworks/Security.framework;
 			refType = 0;
@@ -1965,17 +1965,17 @@
 			};
 		};
 		830E821505853B0B00AD0891 = {
-			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = SecurityNssAsn1.framework;
 			path = /System/Library/PrivateFrameworks/SecurityNssAsn1.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		833987810543012D00EE146E = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDocumentPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1990,17 +1990,17 @@
 			};
 		};
 		83402EF6035A588900BE770A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNetscapePluginRepresentation.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		83402EF7035A588900BE770A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNetscapePluginRepresentation.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2012,17 +2012,17 @@
 			};
 		};
 		83402EFA035A58D100BE770A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNetscapePluginStream.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		83402EFB035A58D100BE770A = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNetscapePluginStream.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2034,25 +2034,25 @@
 			};
 		};
 		83730F9803FB1E660004736E = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKitErrors.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		8398847A03426FB000BC5F5E = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSImageExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		8398847B03426FB000BC5F5E = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSImageExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2064,17 +2064,17 @@
 			};
 		};
 		83E4AF46036652150000E506 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBasePluginPackage.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		83E4AF47036652150000E506 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebBasePluginPackage.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2086,17 +2086,17 @@
 			};
 		};
 		83E4AF4B036659440000E506 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPluginPackage.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		83E4AF4C036659440000E506 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPluginPackage.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2118,17 +2118,17 @@
 //843
 //844
 		84311A1205EAAAF00088EDA4 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebResource.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84311A1305EAAAF00088EDA4 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebResource.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2149,9 +2149,9 @@
 			};
 		};
 		84311AF105EAB12B0088EDA4 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebResourcePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2166,17 +2166,17 @@
 			};
 		};
 		8467275C0367158500CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPluginController.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		8467275D0367158500CA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPluginController.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2197,17 +2197,17 @@
 			};
 		};
 		84723BE3056D719E0044BFEA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKeyGenerator.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84723BE4056D719E0044BFEA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKeyGenerator.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2268,25 +2268,25 @@
 			sourceTree = "<group>";
 		};
 		848DFF840365FE6A00CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPlugin.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		848DFF850365FE6A00CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPluginContainer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		848DFF860365FE6A00CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPluginViewFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2305,9 +2305,9 @@
 			shellScript = "if [ -f /usr/local/lib/libnssasn1.a ]\nthen if [ /usr/local/lib/libnssasn1.a -nt \"$OBJECT_FILE_DIR/WebKitSecurity.a\" -o /usr/local/lib/libCdsaUtils.a -nt \"$OBJECT_FILE_DIR/WebKitSecurity.a\" ]\n        then mkdir -p \"$OBJECT_FILE_DIR\"\n             libtool -static -o \"$OBJECT_FILE_DIR/WebKitSecurity.a\" /usr/local/lib/libnssasn1.a /usr/local/lib/libCdsaUtils.a\n\tfi\nelse if [ ! -f \"$OBJECT_FILE_DIR/WebKitSecurity.a\" ]\n        then gcc -c \"$SRCROOT/WebKitSecurityDummy.c\" -o \"$TEMP_DIR/WebKitSecurityDummy.o\"\n             mkdir -p \"$OBJECT_FILE_DIR\"\n             libtool -static -o \"$OBJECT_FILE_DIR/WebKitSecurity.a\" \"$TEMP_DIR/WebKitSecurityDummy.o\"\n    fi\nfi";
 		};
 		84CA5F7E042685E800CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitErrorsPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2322,17 +2322,17 @@
 			};
 		};
 		84D4BFF70348EF7600CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNetscapePluginEmbeddedView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84D4BFF80348EF7600CA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNetscapePluginEmbeddedView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2344,17 +2344,17 @@
 			};
 		};
 		84D4BFFB0348EF9D00CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNetscapePluginDocumentView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84D4BFFC0348EF9D00CA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNetscapePluginDocumentView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2376,17 +2376,17 @@
 //933
 //934
 		9311022803667CF1008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFileButton.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9311022903667CF1008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebFileButton.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2404,17 +2404,17 @@
 			};
 		};
 		93154EF103A41270008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPanelAuthenticationHandler.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93154EF203A41270008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPanelAuthenticationHandler.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2438,9 +2438,9 @@
 			};
 		};
 		931A72D203265920008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBaseNetscapePluginViewPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2462,26 +2462,26 @@
 			sourceTree = "<group>";
 		};
 		932399D8034CF7F6008635CE = {
-			expectedFileType = text;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = English;
 			path = English.lproj/StringsNotToBeLocalized.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		933D659903413FF2008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebClipView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		933D659A03413FF2008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebClipView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2503,8 +2503,8 @@
 			sourceTree = "<group>";
 		};
 		9345D17C0365BF35008635CE = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = Panels.subproj/English.lproj/WebAuthenticationPanel.nib;
 			refType = 4;
@@ -2527,8 +2527,8 @@
 			sourceTree = "<group>";
 		};
 		9345D4E80365C58D008635CE = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/WebJavaScriptTextInputPanel.nib;
 			refType = 4;
@@ -2541,17 +2541,17 @@
 			};
 		};
 		9345D4EA0365C5B2008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebJavaScriptTextInputPanel.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9345D4EB0365C5B2008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebJavaScriptTextInputPanel.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2563,17 +2563,17 @@
 			};
 		};
 		9345DDAE0365FB27008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSWindowExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9345DDAF0365FB27008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSWindowExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2585,17 +2585,17 @@
 			};
 		};
 		9345DDB20365FFD0008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSControlExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9345DDB30365FFD0008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSControlExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2607,17 +2607,17 @@
 			};
 		};
 		93AEB17D032C1735008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitLogging.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93AEB17E032C1735008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKitLogging.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2637,8 +2637,8 @@
 			};
 		};
 		93D623DD051E791F002F47DD = {
-			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
 			name = libicucore.dylib;
 			path = /usr/lib/libicucore.dylib;
 			refType = 0;
@@ -2726,9 +2726,9 @@
 			sourceTree = "<group>";
 		};
 		9CAE9D070252A4130ECA16EA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPreferencesPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2743,33 +2743,33 @@
 			};
 		};
 		9CE1F8A002A5C6F30ECA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebImageRenderer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9CE1F8A102A5C6F30ECA2ACD = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebImageRenderer.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9CE1F8A202A5C6F30ECA2ACD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebImageRendererFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9CE1F8A302A5C6F30ECA2ACD = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebImageRendererFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2799,9 +2799,9 @@
 			};
 		};
 		9CF0E249021361B00ECA16EA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFramePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2826,49 +2826,49 @@
 //BE3
 //BE4
 		BE07CEA7047538F000CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDatabase.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE07CEA8047538F000CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebDatabase.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE07CEA9047538F000CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebFileDatabase.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE07CEAA047538F000CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebFileDatabase.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE07CEAB047538F000CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebLRUFileList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE07CEAC047538F000CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebLRUFileList.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2910,9 +2910,9 @@
 			};
 		};
 		BE1B2F5504755C7700CA289C = {
-			expectedFileType = file;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = file;
 			path = Foundation.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -2924,17 +2924,17 @@
 			};
 		};
 		BE26F18D05517E0800BFA0C3 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebGraphicsBridge.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE26F18E05517E0800BFA0C3 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebGraphicsBridge.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2952,17 +2952,17 @@
 			};
 		};
 		BE6DC39904C62C4E004D0EF6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSURLExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE6DC39A04C62C4E004D0EF6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSURLExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2983,17 +2983,17 @@
 			};
 		};
 		BE887BFF056D3A6E009BB3E7 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSEventExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE887C00056D3A6E009BB3E7 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSEventExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3014,18 +3014,18 @@
 			};
 		};
 		BE91865E05EE618F0081354D = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = DOM.h;
 			path = DOM.subproj/DOM.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE91865F05EE618F0081354D = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = "DOM-compat.h";
 			path = "DOM.subproj/DOM-compat.h";
 			refType = 4;
@@ -3063,17 +3063,17 @@
 			shellScript = "if [ -f ./copy-webcore-files-to-webkit ]; then ./copy-webcore-files-to-webkit; fi";
 		};
 		BECD14290565830A005BB09C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSDataExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BECD142A0565830A005BB09C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSDataExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3091,17 +3091,17 @@
 			};
 		};
 		BEE18F920472A0CF00CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebAssertions.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BEE18F930472A0CF00CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebAssertions.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3122,17 +3122,17 @@
 			};
 		};
 		BEE18F990472B73200CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebLocalizableStrings.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BEE18F9A0472B73200CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebLocalizableStrings.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3153,17 +3153,17 @@
 			};
 		};
 		BEE52D4A0473032500CA289C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitSystemBits.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BEE52D4B0473032500CA289C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKitSystemBits.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3191,9 +3191,9 @@
 //ED3
 //ED4
 		ED21B9810528F7AA003299AC = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebDocumentInternal.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3205,17 +3205,17 @@
 			};
 		};
 		ED2B2474033A2DA800C1A526 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSPasteboardExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		ED2B2475033A2DA800C1A526 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSPasteboardExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3236,17 +3236,17 @@
 			};
 		};
 		EDD1A5C605C83987008E3150 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSPrintOperationExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		EDD1A5C705C83987008E3150 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSPrintOperationExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3274,17 +3274,17 @@
 //F53
 //F54
 		F508946902B71D59018A9CD4 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNSViewExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F508946A02B71D59018A9CD4 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNSViewExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3305,9 +3305,9 @@
 			};
 		};
 		F5143A370221DCCE01A80181 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebFrame.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3319,9 +3319,9 @@
 			};
 		};
 		F520FB190221DEFD01C1A525 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHistory.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3336,25 +3336,25 @@
 			};
 		};
 		F528E3E9031E91AD01CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebIconDatabase.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F528E3EA031E91AD01CA2ACA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebIconDatabase.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F528E3EB031E91AD01CA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebIconDatabasePrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3445,17 +3445,17 @@
 			sourceTree = SOURCE_ROOT;
 		};
 		F53444CE02E87CBA018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitStatistics.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F53444CF02E87CBA018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebKitStatistics.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3476,9 +3476,9 @@
 			};
 		};
 		F53444D202E87D4B018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitStatisticsPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3490,17 +3490,17 @@
 			};
 		};
 		F5488CF402CB04EE01FF6274 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCookieAdapter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5488CF502CB04EE01FF6274 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCookieAdapter.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3518,17 +3518,17 @@
 			};
 		};
 		F560BEBC030DAF4401C1A526 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebSearchableTextView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F560BEBD030DAF4401C1A526 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebSearchableTextView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3562,45 +3562,45 @@
 			sourceTree = "<group>";
 		};
 		F57D194B034E734901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMDocument.h;
 			path = DOM.subproj/WebDOMDocument.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F57D194D034E734901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMElement.h;
 			path = DOM.subproj/WebDOMElement.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F57D1951034E734901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMNode.h;
 			path = DOM.subproj/WebDOMNode.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F57FB8C4034E180101A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDebugDOMNode.h;
 			path = WebView.subproj/WebDebugDOMNode.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F57FB8C5034E180101A80180 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebDebugDOMNode.m;
 			path = WebView.subproj/WebDebugDOMNode.m;
 			refType = 2;
@@ -3613,8 +3613,8 @@
 			};
 		};
 		F5883BDE025E5C6A01000102 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = nullplugin.tiff;
 			path = Resources/nullplugin.tiff;
 			refType = 4;
@@ -3627,17 +3627,17 @@
 			};
 		};
 		F5883BE0025E5E9D01000102 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNullPluginView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5883BE1025E5E9D01000102 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNullPluginView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3667,9 +3667,9 @@
 			name = OptimizedWithSymbols;
 		};
 		F5927D4E02D26C5E01CA2DBB = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebKitErrors.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3684,17 +3684,17 @@
 			};
 		};
 		F5934C8802E894F50197FBCF = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebIconLoader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5934C8902E894F50197FBCF = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebIconLoader.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3714,17 +3714,17 @@
 			};
 		};
 		F59668C802AD2923018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebStringTruncator.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F59668C902AD2923018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebStringTruncator.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3745,9 +3745,9 @@
 			};
 		};
 		F59EAE3E0253C7EE018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreStatistics.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3762,9 +3762,9 @@
 			};
 		};
 		F59EAE410253C8DE018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreStatistics.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3776,9 +3776,9 @@
 			};
 		};
 		F5A55DC702BAA2E8018635CC = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHTMLRepresentationPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3790,17 +3790,17 @@
 			};
 		};
 		F5A672B90263866E01000102 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBaseNetscapePluginStream.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5A672BA0263866E01000102 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebBaseNetscapePluginStream.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3818,9 +3818,9 @@
 			};
 		};
 		F5AEBB3D024A527601C1A526 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPreferences.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3832,17 +3832,17 @@
 			};
 		};
 		F5AFB45E02B94DC8018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBridge.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5AFB45F02B94DC8018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebBridge.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3897,17 +3897,17 @@
 			sourceTree = "<group>";
 		};
 		F5B36B410281DF55018635CB = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebTextRenderer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5B36B420281DF55018635CB = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebTextRenderer.m;
 			path = WebCoreSupport.subproj/WebTextRenderer.m;
 			refType = 2;
@@ -3928,17 +3928,17 @@
 			};
 		};
 		F5B36B450281DF9C018635CB = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebTextRendererFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5B36B460281DF9C018635CB = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebTextRendererFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3950,8 +3950,8 @@
 			};
 		};
 		F5B67130023EDF8901C1A525 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = url_icon.tiff;
 			path = Resources/url_icon.tiff;
 			refType = 4;
@@ -3964,9 +3964,9 @@
 			};
 		};
 		F5B92B820223191D01C1A525 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebHistoryPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3981,9 +3981,9 @@
 			};
 		};
 		F5C283730284676D018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebKitPrefix.h;
 			path = ../WebKitPrefix.h;
 			refType = 4;
@@ -3996,27 +3996,27 @@
 			};
 		};
 		F5C2869302846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = ApplicationServices.framework;
 			path = /System/Library/Frameworks/ApplicationServices.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F5C2869402846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Carbon.framework;
 			path = /System/Library/Frameworks/Carbon.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F5C2869502846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
@@ -4041,9 +4041,9 @@
 			};
 		};
 		F5D538E802441F2601A80181 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebMainResourceClient.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4055,9 +4055,9 @@
 			};
 		};
 		F5D538EC02441FDD01A80181 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebMainResourceClient.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4069,17 +4069,17 @@
 			};
 		};
 		F5E0A76E02B8FEE401C1A525 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebURLsWithTitles.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5E0A76F02B8FEE401C1A525 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebURLsWithTitles.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4100,17 +4100,17 @@
 			};
 		};
 		F5E0E10802BC45F8018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebSubresourceClient.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5E0E10902BC45F8018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebSubresourceClient.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4128,18 +4128,18 @@
 			};
 		};
 		F5E7B24503025CE801A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebGlyphBuffer.h;
 			path = WebCoreSupport.subproj/WebGlyphBuffer.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5E7B24603025CE801A80180 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebGlyphBuffer.m;
 			path = WebCoreSupport.subproj/WebGlyphBuffer.m;
 			refType = 2;
@@ -4175,17 +4175,17 @@
 			sourceTree = SOURCE_ROOT;
 		};
 		F5EBC45502134BC301CA1520 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebBaseNetscapePluginView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5EBC45602134BC301CA1520 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebBaseNetscapePluginView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4203,49 +4203,49 @@
 			};
 		};
 		F5F7171E0288493C018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebNetscapePluginPackage.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F7171F0288493C018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebNetscapePluginPackage.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F717200288493C018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebPluginDatabase.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F717210288493C018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebPluginDatabase.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F717220288493C018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = npapi.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F717230288493C018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = npapi.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4296,17 +4296,17 @@
 			};
 		};
 		F5F7174C02885C5B018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebViewFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F7174D02885C5B018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebViewFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4326,9 +4326,9 @@
 			};
 		};
 		F5F732D202FF4D4F01A80180 = {
-			expectedFileType = sourcecode.exports;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.exports;
 			path = WebKit.exp;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
@@ -4340,18 +4340,18 @@
 			};
 		};
 		F5F81C3902B67C26018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebRenderNode.h;
 			path = ../WebView.subproj/WebRenderNode.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F81C3A02B67C26018635CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebRenderNode.m;
 			path = ../WebView.subproj/WebRenderNode.m;
 			refType = 4;
@@ -4383,18 +4383,18 @@
 //F73
 //F74
 		F738C9E903FAD3DF0321FBE0 = {
-			expectedFileType = file;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = file;
 			name = JavaScriptCore.framework;
 			path = build/JavaScriptCore.framework;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F738C9EA03FAD3DF0321FBE0 = {
-			expectedFileType = file;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = file;
 			name = WebCore.framework;
 			path = build/WebCore.framework;
 			refType = 4;
@@ -4413,17 +4413,17 @@
 			};
 		};
 		F79B974804019934036909D2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = CarbonUtils.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F79B974904019934036909D2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = CarbonUtils.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4451,81 +4451,81 @@
 			sourceTree = SOURCE_ROOT;
 		};
 		F7EBEE9003F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = CarbonWindowAdapter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9103F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = CarbonWindowAdapter.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9203F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = CarbonWindowContentView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9303F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = CarbonWindowContentView.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9403F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = CarbonWindowFrame.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9503F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = CarbonWindowFrame.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9A03F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = HIViewAdapter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEE9B03F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = HIViewAdapter.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEEAA03F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = HIWebView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F7EBEEAB03F9DBA103CA0DE6 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = HIWebView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4667,17 +4667,17 @@
 			sourceTree = "<group>";
 		};
 		F8CA15B5029A39D901000122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebAuthenticationPanel.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F8CA15B6029A39D901000122 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebAuthenticationPanel.m;
 			refType = 4;
 			sourceTree = "<group>";
