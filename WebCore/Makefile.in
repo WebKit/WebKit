@@ -63,6 +63,8 @@ test:
 	./harness
 
 local-all:
+	./makelibkde
+
 local-dep:
 local-install:
 local-setup:
