@@ -488,7 +488,8 @@ static void appendRun()
         start = 0;
         obj = Bidinext( sor.par, obj );
     }
-    appendRunsForObject(start, eor.pos+1, obj);
+    if (obj)
+        appendRunsForObject(start, eor.pos+1, obj);
     
     ++eor;
     sor = eor;

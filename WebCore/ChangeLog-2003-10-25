@@ -1,3 +1,17 @@
+2003-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3197728 -- REGRESSION: crash at http://transitive.com/company.htm
+
+        * khtml/rendering/bidi.cpp: (appendRun): Added an if statement to handle
+        the case where obj is 0; the while loop already handled that case.
+
+        - did the "no inlining workaround" needed for newer versions of gcc
+
+        * khtml/css/parser.y: Added #define __inline as we have elsewhere.
+        * khtml/css/parser.cpp: Regenerated.
+
 2003-03-13  David Hyatt  <hyatt@apple.com>
 
 	Add color dumping and bgcolor dumping to the render dump tool.
