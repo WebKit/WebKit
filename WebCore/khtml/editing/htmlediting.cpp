@@ -1300,7 +1300,7 @@ static bool isSpecialElement(NodeImpl *n)
     return false;
 }
 
-// This version of the function is menat to be called on positons in a document fragment,
+// This version of the function is meant to be called on positions in a document fragment,
 // so it does not check for a root editable element, it is assumed these nodes will be put
 // somewhere editable in the future
 static bool isFirstVisiblePositionInSpecialElementInFragment(const Position& pos)
@@ -1357,7 +1357,11 @@ static Position positionBeforeContainingSpecialElement(const Position& pos)
     
     ASSERT(outermostSpecialElement);
 
-    return positionBeforeNode(outermostSpecialElement);
+    Position result = positionBeforeNode(outermostSpecialElement);
+    if (result.isNull() || !result.node()->rootEditableElement())
+        return pos;
+    
+    return result;
 }
 
 static bool isLastVisiblePositionInSpecialElement(const Position& pos)
@@ -1406,7 +1410,11 @@ static Position positionAfterContainingSpecialElement(const Position& pos)
     
     ASSERT(outermostSpecialElement);
 
-    return positionAfterNode(outermostSpecialElement);
+    Position result = positionAfterNode(outermostSpecialElement);
+    if (result.isNull() || !result.node()->rootEditableElement())
+        return pos;
+    
+    return result;
 }
 
 static Position positionOutsideContainingSpecialElement(const Position &pos)

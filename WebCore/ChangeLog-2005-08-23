@@ -1,3 +1,14 @@
+2005-03-22  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/4061443> REGRESSION (8A420-8A421): Pasting in the Stickies widget is broken again
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::positionBeforeContainingSpecialElement):
+        (khtml::positionAfterContainingSpecialElement):
+        Return unchanged Position rather than a null or non-editable one.
+
 === Safari-409 ===
 
 2005-03-20  Ken Kocienda  <kocienda@apple.com>
