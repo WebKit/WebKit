@@ -1,3 +1,29 @@
+2002-11-05  Darin Adler  <darin@apple.com>
+
+	- re-fixed 3070484 -- icon rollovers are very slow on Mac OS X website
+
+	Had to roll back some of the files I changed yesterday. I had missed the
+	one line of useful code among much stuff we don't need.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::~KHTMLPart):
+        (KHTMLPart::slotLoaderRequestStarted):
+        (KHTMLPart::slotLoaderRequestDone):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::call):
+        * kwq/KWQSignalStubs.mm:
+        (Loader::requestDone):
+        (Loader::requestFailed):
+        (Loader::requestStarted):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+	Just roll back all the changes from my 3091714 check-in below, except
+	for the bug fix itself in loader.cpp and KWQResourceLoader.mm.
+
 2002-11-05  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3027404 - pop-up ads not always suppressed

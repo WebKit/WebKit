@@ -53,6 +53,8 @@ enum FunctionNumber {
     slotChildStarted,
     slotClicked,
     slotFinishedParsing,
+    slotLoaderRequestDone,
+    slotLoaderRequestStarted,
     slotParentCompleted,
     slotParentDestroyed,
     slotRedirect,
@@ -88,6 +90,12 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotFinishedParsing()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotFinishedParsing;
+    } else if (KWQNamesMatch(member, SLOT(slotLoaderRequestDone(khtml::DocLoader *, khtml::CachedObject *)))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotLoaderRequestDone;
+    } else if (KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotLoaderRequestStarted;
     } else if (KWQNamesMatch(member, SLOT(slotParentCompleted()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotParentCompleted;
@@ -224,6 +232,24 @@ void KWQSlot::call(Job *job) const
     switch (m_function) {
         case slotChildStarted:
             static_cast<KHTMLPart *>(m_object.pointer())->slotChildStarted(job);
+            return;
+    }
+    
+    call();
+}
+
+void KWQSlot::call(DocLoader *loader, CachedObject *cachedObject) const
+{
+    if (!m_object) {
+        return;
+    }
+    
+    switch (m_function) {
+        case slotLoaderRequestDone:
+            static_cast<KHTMLPart *>(m_object.pointer())->slotLoaderRequestDone(loader, cachedObject);
+            return;
+        case slotLoaderRequestStarted:
+            static_cast<KHTMLPart *>(m_object.pointer())->slotLoaderRequestStarted(loader, cachedObject);
             return;
     }
     
