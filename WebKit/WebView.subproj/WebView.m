@@ -1337,6 +1337,11 @@ static bool debugWidget = true;
     return NO;
 }
 
+- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
+{
+    [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:self resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
+}
+
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {
     shouldUseFontSmoothing = f;
