@@ -1505,6 +1505,7 @@ bool DeleteSelectionCommand::canPerformSpecialCaseBRDelete()
 void DeleteSelectionCommand::performGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
+
     if (startOffset >= m_startNode->caretMaxOffset()) {
         if (m_startNode->isTextNode()) {
             // Delete any insignificant text from this node.
@@ -1512,6 +1513,7 @@ void DeleteSelectionCommand::performGeneralDelete()
             if (text->length() > (unsigned)m_startNode->caretMaxOffset())
                 deleteTextFromNode(text, m_startNode->caretMaxOffset(), text->length() - m_startNode->caretMaxOffset());
         }
+        
         // shift the start node to the next
         NodeImpl *old = m_startNode;
         m_startNode = old->traverseNextNode();
@@ -1556,9 +1558,10 @@ void DeleteSelectionCommand::performGeneralDelete()
                 while (n && n->lastChild())
                     n = n->lastChild();
                 if (n == m_downstreamEnd.node() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMaxOffset()) {
-                    NodeImpl *nextNode = node->traverseNextSibling();
+                    // remove an ancestor of m_downstreamEnd.node(), and thus m_downstreamEnd.node() itself
                     removeFullySelectedNode(node);
-                    node = nextNode;
+                    m_trailingWhitespaceValid = false;
+                    node = 0;
                 } 
                 else {
                     node = node->traverseNextNode();
@@ -1581,8 +1584,6 @@ void DeleteSelectionCommand::performGeneralDelete()
                     m_trailingWhitespaceValid = false;
                 }
             }
-            if (!m_downstreamEnd.node()->inDocument() && m_downstreamEnd.node()->inDocument())
-                m_endingPosition = Position(m_downstreamEnd.node(), 0);
         }
     }
 }

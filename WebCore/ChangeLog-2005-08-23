@@ -1,3 +1,18 @@
+2004-11-08  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+		<rdar://problem/3865854> Deleting first line deletes all lines
+		
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::performGeneralDelete):
+        Problem was that the code that deletes fully selected m_downstreamEnd.node() by deleting one
+        of its ancestors, failed to end the loop that deletes all fully selected nodes.  Also,
+        fixed this code to clear m_trailingWhitespaceValid.  Also removed dead m_endingPosition
+        update because it is handled in calculateEndingPosition now.
+        * layout-tests/editing/deleting/delete-3865854-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3865854-fix.html: Added.
+
 2004-11-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
