@@ -30,6 +30,11 @@
 #import <kwqdebug.h>
 #import <KWQWindowWidget.h>
 
+#import <khtmlview.h>
+#import <render_replaced.h>
+
+using khtml::RenderWidget;
+
 /*
     A QWidget roughly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
     from a QWidget.  In Cocoa a NSWindow does not inherit from NSView.  We
@@ -184,6 +189,14 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
 
 void QWidget::setFocus()
 {
+    // KHTML will call setFocus on us without first putting us in our
+    // superview and positioning us. This works around that issue.
+    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(eventFilterObject()));
+    int x, y;
+    if (renderWidget && renderWidget->absolutePosition(x, y)) {
+        renderWidget->view()->addChild(this, x, y);
+    }
+    
     [[getView() window] makeFirstResponder:getView()];
 }
 

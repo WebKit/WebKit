@@ -27,6 +27,7 @@
 
 #import <qlineedit.h>
 #import <KWQKHTMLPartImpl.h>
+#import <KWQNSViewExtras.h>
 
 // KWQTextFieldCell is larger than a normal text field cell, so it includes
 // the focus border as well as the rest of the text field.
@@ -250,6 +251,12 @@
     return view;
 }
 
+- (BOOL)becomeFirstResponder
+{
+    [self _KWQ_scrollFrameToVisible];
+    return [super becomeFirstResponder];
+}
+
 @end
 
 // This cell is used so that our frame includes the place where the focus rectangle is drawn.
@@ -390,6 +397,12 @@
     inSetFrameSize = YES;
     [super setFrameSize:size];
     inSetFrameSize = NO;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [self _KWQ_scrollFrameToVisible];
+    return [super becomeFirstResponder];
 }
 
 @end

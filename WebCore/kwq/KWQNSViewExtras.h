@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQINVISIBLEBUTTON_H_
-#define KWQINVISIBLEBUTTON_H_
+#import <Cocoa/Cocoa.h>
 
-#ifdef __OBJC__
-@class KWQInvisibleButtonView;
-#else
-class KWQInvisibleButtonView;
-#endif
+@interface NSView (KWQNSViewExtras)
 
-class KHTMLView;
+- (void)_KWQ_scrollFrameToVisible;
+- (void)_KWQ_scrollRectToVisible:(NSRect)rect;
+- (void)_KWQ_scrollRectToVisible:(NSRect)rect inView:(NSView *)view;
 
-namespace khtml {
-    class RenderImageButton;
-}
-
-class KWQInvisibleButton {
-public:
-    KWQInvisibleButton(khtml::RenderImageButton *);
-    ~KWQInvisibleButton();
-
-    void setFrameInView(int x, int y, int w, int h, KHTMLView *);
-
-private:
-    khtml::RenderImageButton *imageButton;
-    KWQInvisibleButtonView *buttonView;
-};
-
-#endif
+@end

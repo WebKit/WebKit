@@ -545,7 +545,8 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
 {
     DocumentImpl *doc = document();
     for (;;) {
-        node = direction == KWQSelectingNext ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
+        node = direction == KWQSelectingNext
+            ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
         if (!node) {
             return nil;
         }
@@ -553,14 +554,21 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
         if (renderWidget) {
             QWidget *widget = renderWidget->widget();
             KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
-            NSView *view;
             if (childFrameWidget) {
-                view = childFrameWidget->part()->impl->nextKeyViewInFrame(0, direction);
+                NSView *view = childFrameWidget->part()->impl->nextKeyViewInFrame(0, direction);
+                if (view) {
+                    return view;
+                }
             } else {
-                view = widget->getView();
-            }
-            if (view) {
-                return view;
+                NSView *view = widget->getView();
+                // AppKit won't be able to handle scrolling and making us the first responder
+                // well unless we are actually installed in the correct place. KHTML only does
+                // that for visible widgets, so we need to do it explicitly here.
+                int x, y;
+                if (view && renderWidget->absolutePosition(x, y)) {
+                    renderWidget->view()->addChild(widget, x, y);
+                    return view;
+                }
             }
         }
     }

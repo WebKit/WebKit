@@ -31,7 +31,7 @@
 #import <render_form.h>
 #import <dom2_eventsimpl.h>
 
-@interface InvisibleButtonView : NSView
+@interface KWQInvisibleButtonView : NSView
 {
     khtml::RenderImageButton *imageButton;
 }
@@ -41,7 +41,7 @@
 @end
 
 
-@implementation InvisibleButtonView
+@implementation KWQInvisibleButtonView
 
 -(void)setImageButton:(khtml::RenderImageButton *)theImageButton
 {
@@ -73,7 +73,6 @@
 
 @end
 
-
 KWQInvisibleButton::KWQInvisibleButton(khtml::RenderImageButton *theImageButton)
 {
     imageButton = theImageButton;
@@ -88,18 +87,15 @@ KWQInvisibleButton::~KWQInvisibleButton()
 
 void KWQInvisibleButton::setFrameInView(int x, int y, int w, int h, KHTMLView *khtmlview)
 {
-    if (buttonView) {
-        [buttonView setFrame:NSMakeRect(x, y, w, h)];
-    }
-    else {
-        buttonView = [[InvisibleButtonView alloc] initWithFrame:NSMakeRect(x, y, w, h)];
+    if (!buttonView) {
+        buttonView = [[KWQInvisibleButtonView alloc] init];
         [buttonView setImageButton:imageButton];
         NSView *nsview = khtmlview->getView();    
-        if ([nsview isKindOfClass: [NSScrollView class]]) {
+        if ([nsview isKindOfClass:[NSScrollView class]]) {
             NSScrollView *scrollView = (NSScrollView *)nsview;
             nsview = [scrollView documentView];
         }
-
         [nsview addSubview:buttonView];
     }
+    [buttonView setFrame:NSMakeRect(x, y, w, h)];
 }

@@ -1,5 +1,28 @@
 2002-08-21  Darin Adler  <darin@apple.com>
 
+	- fixed 3027927 -- selected text fields do not cause the web view to scroll to reveal them
+
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField becomeFirstResponder]): Call [self _KWQ_scrollFrameToVisible].
+        (-[KWQSecureTextField becomeFirstResponder]): Call [self _KWQ_scrollFrameToVisible].
+
+        * kwq/KWQNSViewExtras.h: Added. New scrolling functions.
+        * kwq/KWQNSViewExtras.m: Added. New scrolling functions.
+        * WebCore.pbproj/project.pbxproj: Added KWQNSViewExtras.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::nextKeyViewInFrame):
+	Make sure superview and position is set up properly before we try to tab to something.
+        * kwq/KWQWidget.mm: (QWidget::setFocus):
+	Make sure superview and position is set up properly before we try to focus something.
+
+	Unrelated change.
+
+        * kwq/KWQInvisibleButton.h:
+        * kwq/KWQInvisibleButton.mm:
+	Add KWQ prefix to the name of the private Objective C class to avoid potential conflicts.
+
+2002-08-21  Darin Adler  <darin@apple.com>
+
 	Implemented baseline alignment for form elements. We decided that this was better
 	than what we're currently doing. But it will look even better when the font of the
 	text field matches the font of the surrounding text, so we should consider that.
