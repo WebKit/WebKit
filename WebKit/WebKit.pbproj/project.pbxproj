@@ -194,9 +194,9 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>164</string>
 	<key>CFBundleVersion</key>
-	<string>164u</string>
+	<string>164</string>
 </dict>
 </plist>
 ";
