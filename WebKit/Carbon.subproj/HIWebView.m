@@ -144,7 +144,7 @@ static const EventTypeSpec kEvents[] = {
 
 static HIWebView*		HIWebViewConstructor( HIViewRef inView );
 static void				HIWebViewDestructor( HIWebView* view );
-static void             HIWebViewRegisterClass( void );
+void                    HIWebViewRegisterClass( void );
 
 static OSStatus			HIWebViewEventHandler(
 								EventHandlerCallRef	inCallRef,
@@ -302,7 +302,6 @@ HIWebViewDestructor( HIWebView* inView )
 // HIWebViewRegisterClass
 //----------------------------------------------------------------------------------
 //
-static
 void
 HIWebViewRegisterClass()
 {

@@ -1,8 +1,17 @@
-=== Safari-170 ===
-
 2004-11-05  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3845307> WebKit needs to export _HIWebViewRegisterClass so HIWebViews can work in Carbon nib files
+        Fixed <rdar://problem/3810702> _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector: ASSERTS when reentered from Xcode's man page viewer
+
+        Reviewed by Maciej (a long time ago).
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+
+        Fixed <rdar://problem/3845307> WebKit needs to export _HIWebViewRegisterClass so HIWebViews can work in Carbon nib files
+
+        As suggested in the bug, the fix is to actually call 
+        HIWebViewRegisterClass in WebKitInitForCarbon, rather than
+        exporting the symbol.
 
         Reviewed by Chris.
 
@@ -10,6 +19,8 @@
         (WebInitForCarbon):
         * Carbon.subproj/HIWebView.m:
         * WebKit.pbproj/project.pbxproj:
+
+=== Safari-170 ===
 
 2004-11-05  Darin Adler  <darin@apple.com>
 

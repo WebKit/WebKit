@@ -2283,6 +2283,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
     _private->justOpenedForTargetedLink = NO;
 
+    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+
     [self _setPolicyDataSource:newDataSource];
 
     [self _checkNavigationPolicyForRequest:[newDataSource request]
