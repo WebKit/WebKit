@@ -1,3 +1,15 @@
+2003-06-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3287870, the <embed hidden=true> feature didn't work.
+	hidden should turn the embed into a plugin with a width and
+	height of 0.
+	
+        Reviewed by gramps
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::HTMLEmbedElementImpl):
+        (HTMLEmbedElementImpl::attach):
+        
 2003-06-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

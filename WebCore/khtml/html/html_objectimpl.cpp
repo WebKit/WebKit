@@ -169,6 +169,7 @@ bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList &
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
+    hidden = false;
 }
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
@@ -254,6 +255,13 @@ RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderSty
 
 void HTMLEmbedElementImpl::attach()
 {
+    if (hidden) {
+        // FIXME: Not dynamic, but it's not really important that such a rarely-used
+        // feature work dynamically.
+        addCSSLength( CSS_PROP_WIDTH, "0" );
+        addCSSLength( CSS_PROP_HEIGHT, "0" );
+    }
+    
     createRendererIfNeeded();
     if (m_render) {
         static_cast<RenderPartObject*>(m_render)->updateWidget();
