@@ -1,12 +1,9 @@
-//
-//  WebDOMNode.m
-//  WebKit
-//
-//  Created by Darin Adler on Tue Jun 11 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebDebugDOMNode.m
+    Copyright (c) 2002, Apple, Inc. All rights reserved.
+*/
 
-#import "WebDOMNode.h"
+#import "WebDebugDOMNode.h"
 
 #import <WebKit/WebView.h>
 #import <WebKit/WebBridge.h>
@@ -15,7 +12,7 @@
 @interface WebKitDOMTreeCopier : NSObject <WebCoreDOMTreeCopier>
 @end
 
-@implementation WebDOMNode
+@implementation WebDebugDOMNode
 
 - initWithName:(NSString *)n value:(NSString *)v source:(NSString *)s children:(NSArray *)c
 {
@@ -83,7 +80,7 @@
 
 - (NSObject *)nodeWithName:(NSString *)n value:(NSString *)v source:(NSString *)s children:(NSArray *)c
 {
-    return [[[WebDOMNode alloc] initWithName:n value:v source:s children:c] autorelease];
+    return [[[WebDebugDOMNode alloc] initWithName:n value:v source:s children:c] autorelease];
 }
 
 @end

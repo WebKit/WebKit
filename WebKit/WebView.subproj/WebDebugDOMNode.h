@@ -1,16 +1,14 @@
-//
-//  WebDOMNode.h
-//  WebKit
-//
-//  Created by Darin Adler on Tue Jun 11 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebDebugDOMNode.h
+    Copyright (c) 2002, Apple, Inc. All rights reserved.
+*/
+
 
 #import <Foundation/Foundation.h>
 
 @class WebView;
 
-@interface WebDOMNode : NSObject
+@interface WebDebugDOMNode : NSObject
 {
     NSArray *children;
     NSString *name;
