@@ -203,7 +203,6 @@
         }
     
         imageMIMETypes = [[mimes allObjects] retain];
-        NSLog([imageMIMETypes description]);
     }
 
     return imageMIMETypes;

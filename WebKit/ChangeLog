@@ -1,5 +1,12 @@
 2002-11-26  Chris Blumenberg  <cblu@apple.com>
 
+	Removed some logging.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (+[WebController _supportedImageMIMETypes]):
+
+2002-11-26  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3112003 - Show standalone tiffs using AppKit not QT plug-in
 
 	We now dynamically check NSImage for supported image types when registering WebImageView's and WebImageRepresentation's supported MIME types. 
