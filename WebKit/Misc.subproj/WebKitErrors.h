@@ -1,10 +1,29 @@
-/*	WebKitErrors.h
+/*	
+        WebKitErrors.h
 	Copyright 2002, Apple, Inc. All rights reserved.
+        
+        Public header file.
 */
 
 // WebFoundation error codes < 10000
 // WebKit error codes >= 10000
 
+/*!
+    @enum WebErrorCode
+    @constant WebErrorNoError
+    @constant WebErrorCannotFindFile
+    @constant WebErrorCannotCreateFile
+    @constant WebErrorCannotOpenFile
+    @constant WebErrorCannotReadFile
+    @constant WebErrorCannotWriteToFile
+    @constant WebErrorCannotRemoveFile
+    @constant WebErrorCannotFindApplicationForFile
+    @constant WebErrorFinderCannotOpenDirectory
+    @constant WebErrorCannotShowDirectory
+    @constant WebErrorCannotShowMIMEType
+    @constant WebErrorCannotShowURL
+    @constant WebErrorCannotNotFindApplicationForURL
+*/
 typedef enum {
     WebErrorNoError = 0,
     WebErrorCannotFindFile = 10000,

@@ -249,17 +249,6 @@
     return [[self representation] isKindOfClass: [WebHTMLRepresentation class]];
 }
 
-// Get the actual source of the docment.
-// FIXME: Move to WebHTMLRepresentation
-- (NSString *)documentSource
-{
-    // FIMXE: Converting to string with ASCII encoding is not appropriate, although it works for some pages.
-    if ([self isDocumentHTML]) {
-        return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
-    }
-    return nil;
-}
-
 // URL reference point, these should probably not be public for 1.0.
 - (NSURL *)base
 {

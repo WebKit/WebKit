@@ -173,12 +173,6 @@
 - (BOOL)isDocumentHTML;
 
 /*!
-    @method documentSource
-    @abstract Get the actual source of the document.
-*/
-- (NSString *)documentSource;
-
-/*!
     @method base	
     @abstract URL reference point, these should probably not be public for 1.0.
 */

@@ -13,13 +13,13 @@
 
 /*!
     @enum WebPolicyAction
-    @constant WebPolicyNone,
-    @constant WebPolicyUse,
-    @constant WebPolicyRevealInFinder,
-    @constant WebPolicySave,
-    @constant WebPolicyOpenURL,
-    @constant WebPolicySaveAndOpen,
-    @constant WebPolicyOpenNewWindow,
+    @constant WebPolicyNone
+    @constant WebPolicyUse
+    @constant WebPolicyRevealInFinder
+    @constant WebPolicySave
+    @constant WebPolicyOpenURL
+    @constant WebPolicySaveAndOpen
+    @constant WebPolicyOpenNewWindow
     @constant WebPolicyIgnore
 */
 typedef enum {

@@ -65,4 +65,19 @@
 {
 }
 
+- (NSString *)documentSource
+{
+    
+    // FIMXE: Converting to string with ASCII encoding is not appropriate, although it works for some pages.
+    return [[[NSString alloc] initWithData:[[_private->bridge dataSource] data] encoding:NSASCIIStringEncoding] autorelease];
+}
+
+
+- (NSString *)reconstructedDocumentSource
+{
+    // FIXME implement
+    return @"";
+}
+
+
 @end
