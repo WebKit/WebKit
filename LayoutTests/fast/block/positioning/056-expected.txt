@@ -8,13 +8,13 @@ layer at (0,0) size 800x34
 layer at (8,26) size 96x370
   RenderBlock (positioned) {DIV} at (8,26) size 96x370
     RenderInline {A} at (0,0) size 46x370 [color=#008000] [bgcolor=#008000]
-      RenderInline {SPAN} at (0,0) size 46x74 [bgcolor=#000000]
+      RenderInline {SPAN} at (0,0) size 46x74
         RenderText {TEXT} at (0,0) size 46x74
           text run at (0,0) width 46: "A"
       RenderText {TEXT} at (0,74) size 46x74
         text run at (0,74) width 46: "A"
       RenderBR {BR} at (0,0) size 0x0
-      RenderInline {SPAN} at (0,0) size 46x74 [bgcolor=#000000]
+      RenderInline {SPAN} at (0,0) size 46x74
         RenderText {TEXT} at (0,148) size 46x74
           text run at (0,148) width 46: "A"
       RenderText {TEXT} at (0,222) size 46x148

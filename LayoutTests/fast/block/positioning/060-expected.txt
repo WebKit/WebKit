@@ -10,7 +10,7 @@ layer at (0,0) size 800x34
       RenderText {TEXT} at (0,0) size 0x0
 layer at (10,40) size 100x100
   RenderBlock (positioned) {DIV} at (10,40) size 100x100 [bgcolor=#008000]
-    RenderBlock {DIV} at (0,0) size 100x0 [bgcolor=#000000]
+    RenderBlock {DIV} at (0,0) size 100x0
 layer at (10,150) size 100x100
   RenderBlock (positioned) {DIV} at (10,150) size 100x100 [bgcolor=#008000]
-    RenderBlock {DIV} at (0,0) size 100x0 [bgcolor=#000000]
+    RenderBlock {DIV} at (0,0) size 100x0

@@ -3,10 +3,10 @@ layer at (0,0) size 800x1028
 layer at (0,0) size 800x1028
   RenderBlock {HTML} at (0,0) size 800x1028
     RenderBody {BODY} at (8,8) size 784x1012 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (20,0) size 764x18 [bgcolor=#000000]
+      RenderBlock {P} at (20,0) size 764x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x105 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,34) size 784x105
         RenderText {TEXT} at (0,0) size 344x105
           text run at (0,0) width 144: "P {margin-left: 20"
           text run at (144,0) width 32: "px;}"
@@ -18,20 +18,20 @@ layer at (0,0) size 800x1028
           text run at (0,75) width 328: ".threec {border-left: blue medium solid;}"
           text run at (0,90) width 192: "TD {border-left: green 2"
           text run at (192,90) width 80: "px solid;}"
-      RenderBlock {HR} at (0,152) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
-      RenderBlock {P} at (20,170) size 764x36 [bgcolor=#000000]
+      RenderBlock {HR} at (0,152) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (20,170) size 764x36
         RenderText {TEXT} at (0,0) size 755x36
           text run at (0,0) width 634: "Note that all table cells on this page should have a two-pixel solid green border along their left sides. "
           text run at (634,0) width 121: "This border applies"
           text run at (0,18) width 317: "only to the cells, not the rows which contain them."
-      RenderBlock {P} at (20,222) size 764x18 [bgcolor=#000000] [border: (10px double #800080)]
+      RenderBlock {P} at (20,222) size 764x18 [border: (10px double #800080)]
         RenderText {TEXT} at (10,0) size 414x18
           text run at (10,0) width 310: "This paragraph should have a purple, double, 10-"
           text run at (320,0) width 104: "pixel left border."
-      RenderBlock {P} at (20,256) size 764x18 [bgcolor=#000000] [border: (1px solid #800080)]
+      RenderBlock {P} at (20,256) size 764x18 [border: (1px solid #800080)]
         RenderText {TEXT} at (1,0) size 331x18
           text run at (1,0) width 331: "This paragraph should have a thin purple left border."
-      RenderTable {TABLE} at (0,290) size 784x107 [bgcolor=#000000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,290) size 784x107 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x105
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (5,5) size 772x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -54,7 +54,7 @@ layer at (0,0) size 800x1028
                     RenderTableCell {TD} at (2,2) size 156x22 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {TEXT} at (3,2) size 151x18
                         text run at (3,2) width 151: "Nested single-cell table!"
-      RenderBlock {UL} at (0,413) size 784x144 [bgcolor=#000000]
+      RenderBlock {UL} at (0,413) size 784x144
         RenderListItem {LI} at (40,0) size 744x72 [border: (3px solid #000000)]
           RenderBlock (anonymous) at (3,0) size 741x18
             RenderListMarker at (0,0) size 0x14
@@ -84,11 +84,11 @@ layer at (0,0) size 800x1028
             text run at (698,0) width 25: "The"
             text run at (3,18) width 719: "first item's border should travel the entire height the nested list (to end near the baseline of the line \"...nested within"
             text run at (3,36) width 490: "the list item.\"), even though the nested list does not have any border styles set."
-      RenderTable {TABLE} at (0,573) size 784x439 [bgcolor=#000000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,573) size 784x439 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x437
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
+              RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (5,4) size 163x18
                   text run at (5,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0

@@ -12,9 +12,9 @@ layer at (0,0) size 800x260
         RenderText {TEXT} at (0,0) size 284x18
           text run at (0,0) width 284: "There should be a big square green H below:"
       RenderBlock {DIV} at (40,92) size 120x120 [bgcolor=#008000]
-        RenderBlock {DIV} at (40,0) size 40x40 [color=#FFFFFF] [bgcolor=#000000]
+        RenderBlock {DIV} at (40,0) size 40x40 [color=#FFFFFF]
           RenderText {TEXT} at (0,0) size 40x40
             text run at (0,0) width 40: "X"
-        RenderBlock {DIV} at (40,80) size 40x40 [color=#FFFFFF] [bgcolor=#000000]
+        RenderBlock {DIV} at (40,80) size 40x40 [color=#FFFFFF]
           RenderText {TEXT} at (0,0) size 40x40
             text run at (0,0) width 40: "X"

@@ -16,7 +16,7 @@ layer at (0,0) size 800x499
               RenderText {TEXT} at (1,1) size 253x18
                 text run at (1,1) width 253: "Alongwordtogiveyouanicebigminwidth."
       RenderTable {TABLE} at (0,51) size 100x104 [bgcolor=#FF0000] [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 0x100 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (2,2) size 0x100
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,48) size 92x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
       RenderTable {TABLE} at (0,155) size 183x124 [border: (2px outset #808080)]

@@ -3,10 +3,10 @@ layer at (0,0) size 800x1175
 layer at (0,0) size 800x1175
   RenderBlock {HTML} at (0,0) size 800x1175
     RenderBody {BODY} at (8,8) size 784x1159 [bgcolor=#FFFFFF]
-      RenderBlock {H1} at (0,0) size 784x37 [bgcolor=#000000]
+      RenderBlock {H1} at (0,0) size 784x37
         RenderText {TEXT} at (0,0) size 351x37
           text run at (0,0) width 351: "Safari 1.0 PRE width bug"
-      RenderBlock (anonymous) at (0,58) size 784x72 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,58) size 784x72
         RenderText {TEXT} at (0,0) size 101x18
           text run at (0,0) width 101: "As noted in my "
         RenderInline {A} at (0,0) size 28x18 [color=#0000EE]
@@ -23,20 +23,20 @@ layer at (0,0) size 800x1175
           text run at (331,36) width 436: "In the examples below, the nested element is a SPAN whose content "
           text run at (767,36) width 10: "is"
           text run at (0,54) width 212: "the days-of-week line, as follows:"
-      RenderBlock {PRE} at (0,143) size 784x15 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,143) size 784x15
         RenderText {TEXT} at (0,0) size 376x15
           text run at (0,0) width 376: "    <SPAN CLASS=dow> D  M  T  W  J  F  S</SPAN>"
-      RenderBlock {H2} at (0,177) size 784x28 [bgcolor=#000000]
+      RenderBlock {H2} at (0,177) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 1"
-      RenderTable {TABLE} at (0,224) size 784x170 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,224) size 784x170
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (0,0) size 160x18 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 160x15
                     text run at (7,37) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -50,20 +50,20 @@ layer at (0,0) size 800x1175
               RenderText {TEXT} at (1,1) size 483x18
                 text run at (1,1) width 341: "The blank line between '2003' and the nested element "
                 text run at (342,1) width 142: "triggers the width bug."
-      RenderBlock (anonymous) at (0,394) size 784x18 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,394) size 784x18
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {H2} at (0,431) size 784x28 [bgcolor=#000000]
+      RenderBlock {H2} at (0,431) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 2"
-      RenderTable {TABLE} at (0,478) size 784x170 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,478) size 784x170
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 96x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (0,0) size 96x18 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 96x15
                     text run at (7,37) width 96: " D  M  TWJFS"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -83,20 +83,20 @@ layer at (0,0) size 800x1175
                   text run at (0,0) width 351: "Here, the excess whitespace is reduced by reducing the "
                   text run at (351,0) width 240: "number of characters contained by the"
                   text run at (0,18) width 97: "nested element."
-      RenderBlock (anonymous) at (0,648) size 784x18 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,648) size 784x18
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {H2} at (0,685) size 784x28 [bgcolor=#000000]
+      RenderBlock {H2} at (0,685) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 3"
-      RenderTable {TABLE} at (0,732) size 784x155 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,732) size 784x155
         RenderTableSection {TBODY} at (0,0) size 0x155
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x151 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 174x149 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (0,0) size 160x18 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,22) size 160x15
                     text run at (7,22) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,52) size 160x90
@@ -111,22 +111,22 @@ layer at (0,0) size 800x1175
                 text run at (1,1) width 341: "The blank line between '2003' and the nested element "
                 text run at (342,1) width 225: "has been removed, so the bug is not"
                 text run at (1,19) width 60: "triggered."
-      RenderBlock (anonymous) at (0,887) size 784x18 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,887) size 784x18
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {H2} at (0,924) size 784x28 [bgcolor=#000000]
+      RenderBlock {H2} at (0,924) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 4"
-      RenderTable {TABLE} at (0,971) size 784x170 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,971) size 784x170
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderInline {SPAN} at (0,0) size 96x15 [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 96x15
                   RenderText {TEXT} at (7,7) size 96x15
                     text run at (7,7) width 96: "        2003"
                 RenderText {TEXT} at (0,0) size 0x0
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
+                RenderInline {SPAN} at (0,0) size 160x18 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 160x15
                     text run at (7,37) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -142,7 +142,7 @@ layer at (0,0) size 800x1175
                 text run at (342,1) width 206: "no longer triggers the width bug,"
                 text run at (1,19) width 284: "because now the '2003' is itself contained by "
                 text run at (285,19) width 292: "a nested element (in this case, another SPAN)."
-      RenderBlock (anonymous) at (0,1141) size 784x18 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,1141) size 784x18
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0

@@ -12,12 +12,12 @@ layer at (0,0) size 800x224
             RenderTableCell {TD} at (16,16) size 134x134 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 128x128 [bgcolor=#00FF00]
                 RenderBlock (floating) {DIV} at (0,0) size 64x64 [bgcolor=#00FFFF]
-                RenderBlock (anonymous) at (0,0) size 128x0 [bgcolor=#000000]
+                RenderBlock (anonymous) at (0,0) size 128x0
                   RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock {DIV} at (0,64) size 128x0 [bgcolor=#FF0000]
-                RenderBlock {DIV} at (0,64) size 128x64 [bgcolor=#000000] [border: (32px solid #FFFF00)]
+                RenderBlock {DIV} at (0,64) size 128x64 [border: (32px solid #FFFF00)]
             RenderTableCell {TD} at (166,16) size 134x134 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (3,3) size 128x128 [bgcolor=#000000]
+              RenderTable {TABLE} at (3,3) size 128x128
                 RenderTableSection {TBODY} at (0,0) size 0x128
                   RenderTableRow {TR} at (0,0) size 0x0
                     RenderTableCell {TD} at (0,32) size 64x0 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]

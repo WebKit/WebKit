@@ -21,4 +21,4 @@ layer at (8,42) size 782x36
       text run at (0,18) width 27: "text "
     RenderText {TEXT} at (0,0) size 0x0
 layer at (236,42) size 42x42
-  RenderImage {IMG} at (0,0) size 42x42 [bgcolor=#000000] [border: (1px solid #000000)]
+  RenderImage {IMG} at (0,0) size 42x42 [border: (1px solid #000000)]

@@ -2,7 +2,7 @@ layer at (0,0) size 812x585
   RenderCanvas at (0,0) size 800x585
 layer at (0,0) size 812x585
   RenderBlock {HTML} at (0,0) size 800x585 [bgcolor=#FFFFFF]
-    RenderBody {BODY} at (0,0) size 800x585 [bgcolor=#000000]
+    RenderBody {BODY} at (0,0) size 800x585
       RenderFlexibleBox {DIV} at (0,0) size 800x585
         RenderBlock {DIV} at (0,0) size 800x54
           RenderText {TEXT} at (0,0) size 800x54

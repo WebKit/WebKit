@@ -6,7 +6,7 @@ layer at (0,0) size 800x8
       RenderText {TEXT} at (0,0) size 0x0
 layer at (8,64) size 800x123
   RenderBlock (positioned) {DIV} at (8,64) size 800x108 [bgcolor=#0000FF]
-    RenderBlock (anonymous) at (0,8) size 800x0 [bgcolor=#000000]
+    RenderBlock (anonymous) at (0,8) size 800x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {DIV} at (38,8) size 723x57 [bgcolor=#008000] [border: (2px solid #888878) none]
       RenderText {TEXT} at (0,0) size 182x18

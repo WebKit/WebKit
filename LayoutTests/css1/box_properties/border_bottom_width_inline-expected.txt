@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x378
   RenderBlock {HTML} at (0,0) size 800x378
     RenderBody {BODY} at (8,8) size 784x362 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#000000]
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x45 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 432x45
           text run at (0,0) width 232: ".one {border-bottom-width: 25"
           text run at (232,0) width 200: "px; border-style: solid;}"
           text run at (0,15) width 432: ".two {border-bottom-width: thin; border-style: solid;}"
           text run at (0,30) width 248: ".three {border-bottom-width: 25"
           text run at (248,30) width 32: "px;}"
-      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
-      RenderBlock {P} at (0,110) size 784x100 [bgcolor=#000000] [border: (3px solid #000000) (25px solid #000000) (3px solid #000000)]
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,110) size 784x100 [border: (3px solid #000000) (25px solid #000000) (3px solid #000000)]
         RenderText {TEXT} at (3,3) size 172x18
           text run at (3,3) width 172: "This element has a class of "
         RenderInline {TT} at (0,0) size 24x15
@@ -43,11 +43,11 @@ layer at (0,0) size 800x378
         RenderText {TEXT} at (234,39) size 770x36
           text run at (234,39) width 539: ", which should have no bottom border width or visible border because no border style"
           text run at (3,57) width 50: "was set."
-      RenderTable {TABLE} at (0,226) size 784x136 [bgcolor=#000000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,226) size 784x136 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x134
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
+              RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0

@@ -6,7 +6,7 @@ layer at (0,0) size 800x102
       RenderBlock {DIV} at (0,0) size 770x86 [bgcolor=#000000]
 layer at (8,8) size 770x86
   RenderBlock (relative positioned) {DIV} at (0,0) size 770x86 [bgcolor=#FF0000]
-    RenderTable {TABLE} at (0,0) size 96x68 [bgcolor=#000000]
+    RenderTable {TABLE} at (0,0) size 96x68
       RenderTableSection {TBODY} at (0,0) size 0x68
         RenderTableRow {TR} at (0,0) size 0x0
           RenderTableCell {TD} at (2,2) size 92x20 [r=0 c=0 rs=1 cs=1]

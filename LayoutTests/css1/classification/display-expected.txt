@@ -3,10 +3,10 @@ layer at (0,0) size 800x816
 layer at (0,0) size 800x816
   RenderBlock {HTML} at (0,0) size 800x816
     RenderBody {BODY} at (8,8) size 784x800 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#000000]
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x75 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,34) size 784x75
         RenderText {TEXT} at (0,0) size 568x75
           text run at (0,0) width 176: ".one {display: block;}"
           text run at (0,15) width 184: ".two {display: inline;}"
@@ -14,11 +14,11 @@ layer at (0,0) size 800x816
           text run at (536,30) width 32: "em;}"
           text run at (0,45) width 272: ".four {display: none; color: red;}"
           text run at (0,60) width 152: "I {display: block;}"
-      RenderBlock {HR} at (0,122) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
-      RenderBlock {P} at (0,140) size 784x18 [bgcolor=#000000]
+      RenderBlock {HR} at (0,122) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,140) size 784x18
         RenderText {TEXT} at (0,0) size 293x18
           text run at (0,0) width 293: "This sentence should be a block-level element."
-      RenderBlock (anonymous) at (0,174) size 784x54 [bgcolor=#000000]
+      RenderBlock (anonymous) at (0,174) size 784x54
         RenderInline {P} at (0,0) size 448x18
           RenderText {TEXT} at (0,0) size 448x18
             text run at (0,0) width 448: "This sentence should be part of an inline element, as are the next three. "
@@ -35,7 +35,7 @@ layer at (0,0) size 800x816
           RenderText {TEXT} at (334,36) size 109x18
             text run at (334,36) width 109: " is being ignored."
         RenderText {TEXT} at (0,0) size 0x0
-      RenderListItem {P} at (48,244) size 736x54 [bgcolor=#000000]
+      RenderListItem {P} at (48,244) size 736x54
         RenderListMarker at (0,0) size 0x14
         RenderText {TEXT} at (0,0) size 733x18
           text run at (0,0) width 733: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items (if"
@@ -47,14 +47,14 @@ layer at (0,0) size 800x816
           text run at (479,18) width 24: "A 3"
           text run at (503,18) width 216: "em left margin has been applied in"
           text run at (0,36) width 360: "order to ensure that there is space for the list-item marker."
-      RenderBlock {P} at (0,314) size 784x18 [bgcolor=#000000]
+      RenderBlock {P} at (0,314) size 784x18
         RenderText {TEXT} at (0,0) size 456x18
           text run at (0,0) width 456: "The next paragraph should be invisible (if it's visible, you'll see red text)."
-      RenderBlock {P} at (0,348) size 784x18 [bgcolor=#000000]
+      RenderBlock {P} at (0,348) size 784x18
         RenderText {TEXT} at (0,0) size 247x18
           text run at (0,0) width 247: "There should be no text after the colon:"
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (0,382) size 784x54 [bgcolor=#000000]
+      RenderBlock {P} at (0,382) size 784x54
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {TEXT} at (0,0) size 112x18
             text run at (0,0) width 112: "The italicized text"
@@ -64,11 +64,11 @@ layer at (0,0) size 800x816
         RenderBlock (anonymous) at (0,36) size 784x18
           RenderText {TEXT} at (0,0) size 203x18
             text run at (0,0) width 203: "should be a block-level element."
-      RenderTable {TABLE} at (0,452) size 784x348 [bgcolor=#000000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,452) size 784x348 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x346
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
+              RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0

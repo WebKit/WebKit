@@ -3,10 +3,10 @@ layer at (0,0) size 800x2295
 layer at (0,0) size 800x2295
   RenderBlock {HTML} at (0,0) size 800x2295
     RenderBody {BODY} at (8,8) size 784x2279 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#000000]
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x270 [bgcolor=#000000]
+      RenderBlock {PRE} at (0,34) size 784x270
         RenderText {TEXT} at (0,0) size 536x255
           text run at (0,0) width 160: "P.one {font-size: 14"
           text run at (160,0) width 152: "px; line-height: 20"
@@ -46,8 +46,8 @@ layer at (0,0) size 800x2295
           text run at (0,240) width 168: "     border-width: 10"
           text run at (168,240) width 120: "px; margin: -10"
           text run at (288,240) width 32: "px;}"
-      RenderBlock {HR} at (0,317) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
-      RenderBlock {P} at (0,333) size 784x442 [bgcolor=#000000]
+      RenderBlock {HR} at (0,317) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,333) size 784x442
         RenderText {TEXT} at (0,1) size 779x242
           text run at (0,1) width 252: "This paragraph should have a font size of 14"
           text run at (252,1) width 146: "px and a line height of 20"
@@ -64,7 +64,7 @@ layer at (0,0) size 800x2295
           text run at (698,223) width 8: ". "
           text run at (706,223) width 38: "This is"
           text run at (0,423) width 780: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
-      RenderBlock {P} at (0,789) size 784x482 [bgcolor=#000000]
+      RenderBlock {P} at (0,789) size 784x482
         RenderText {TEXT} at (0,1) size 770x202
           text run at (0,1) width 252: "This paragraph should have a font size of 14"
           text run at (252,1) width 146: "px and a line height of 20"
@@ -95,11 +95,11 @@ layer at (0,0) size 800x2295
           text run at (173,422) width 227: "The last image in this paragraph has -10"
           text run at (400,422) width 349: "px margins set on it, so that should pull the text in toward the"
           text run at (0,463) width 379: "image in the vertical direction, and also in the horizontal direction."
-      RenderTable {TABLE} at (0,1285) size 784x994 [bgcolor=#000000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1285) size 784x994 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x992
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
+              RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x420
   RenderBlock {HTML} at (0,0) size 800x420 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderBody {BODY} at (15,15) size 490x390 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
-      RenderBlock {DL} at (5,5) size 480x10 [bgcolor=#000000]
+      RenderBlock {DL} at (5,5) size 480x10
         RenderBlock (floating) {DT} at (5,5) size 77x310 [bgcolor=#CC0000] [border: (5px solid #000000)]
           RenderText {TEXT} at (15,14) size 31x10
             text run at (15,14) width 31: "toggle"
@@ -15,13 +15,13 @@ layer at (0,0) size 800x420
                 text run at (15,14) width 40: "the way"
             RenderText {TEXT} at (0,0) size 0x0
             RenderBlock (floating) {LI} at (90,0) size 159x110 [bgcolor=#000000]
-              RenderBlock {P} at (10,10) size 139x10 [bgcolor=#000000]
+              RenderBlock {P} at (10,10) size 139x10
                 RenderText {TEXT} at (0,-1) size 74x10
                   text run at (0,-1) width 74: "the world ends"
-              RenderBlock (anonymous) at (10,20) size 139x0 [bgcolor=#000000]
+              RenderBlock (anonymous) at (10,20) size 139x0
                 RenderInline {FORM} at (0,0) size 0x0
                   RenderText {TEXT} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,20) size 139x38 [bgcolor=#000000]
+              RenderBlock (anonymous) at (10,20) size 139x38
                 RenderBlock {P} at (0,0) size 139x19
                   RenderText {TEXT} at (0,4) size 28x18
                     text run at (0,4) width 28: "bang "
@@ -32,7 +32,7 @@ layer at (0,0) size 800x420
                     text run at (0,4) width 47: "whimper "
                   RenderRadioButton {INPUT} at (50,3) size 12x13
                   RenderText {TEXT} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,58) size 139x0 [bgcolor=#000000]
+              RenderBlock (anonymous) at (10,58) size 139x0
                 RenderInline {FORM} at (0,0) size 0x0
                 RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
@@ -45,7 +45,7 @@ layer at (0,0) size 800x420
                 text run at (10,9) width 30: "pluot?"
             RenderText {TEXT} at (0,0) size 0x0
           RenderBlock (floating) {BLOCKQUOTE} at (160,150) size 70x140 [color=#000000] [bgcolor=#FFCC00] [border: (10px solid #000000) (15px solid #000000) (20px solid #000000) (5px solid #000000)]
-            RenderBlock {ADDRESS} at (5,20) size 50x20 [bgcolor=#000000]
+            RenderBlock {ADDRESS} at (5,20) size 50x20
               RenderText {TEXT} at (0,-1) size 34x20
                 text run at (0,-1) width 16: "bar"
                 text run at (0,9) width 34: "maids,"
@@ -54,7 +54,7 @@ layer at (0,0) size 800x420
               text run at (10,9) width 58: "sing to me,"
               text run at (10,19) width 66: "erbarme dich"
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {P} at (5,320) size 480x65 [color=#000000] [bgcolor=#000000]
+      RenderBlock {P} at (5,320) size 480x65 [color=#000000]
         RenderText {TEXT} at (0,0) size 480x39
           text run at (0,0) width 385: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-"
           text run at (385,0) width 88: "conformant CSS1"
