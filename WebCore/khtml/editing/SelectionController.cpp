@@ -870,27 +870,25 @@ void Selection::validate(ETextGranularity granularity)
                 m_end = m_base;
             }
             break;
-        case WORD:
-            if (isCaret()) {
-                // When double clicking (i.e. selection is a caret), generally select the previous word.
-                // One exception is double-clicking after a hard line break. The check for a hard line break is "end of paragraph".
-                // Another exception is when double-clicking at the start of a line.
-                // However, the end of the document is an exception and always selects the previous word even though it could be
-                // both the start of a line and after a hard line break.
-                VisiblePosition pos(m_base, m_affinity);
-                EWordSide side = LeftWordIfOnBoundary;
-                if ((isEndOfParagraph(pos) || isStartOfLine(pos, m_affinity)) && !isEndOfDocument(pos))
-                    side = RightWordIfOnBoundary;
-                m_start = startOfWord(pos, side).deepEquivalent();
-                m_end = endOfWord(pos, side).deepEquivalent();
-            } else if (m_baseIsStart) {
-                m_start = startOfWord(VisiblePosition(m_base, m_affinity)).deepEquivalent();
-                m_end = endOfWord(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
-            } else {
-                m_start = startOfWord(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
-                m_end = endOfWord(VisiblePosition(m_base, m_affinity)).deepEquivalent();
-            }
+        case WORD: {
+            // General case: Select the word the caret is positioned inside of, or at the start of (RightWordIfOnBoundary).
+            // Edge case: If the caret is after the last word in a soft-wrapped line or the last word in
+            // the document, select that last word (LeftWordIfOnBoundary).
+            // Edge case: If the caret is after the last word in a paragraph, select from the the end of the
+            // last word to the line break (also RightWordIfOnBoundary);
+            VisiblePosition start = m_baseIsStart ? VisiblePosition(m_base, m_affinity)   : VisiblePosition(m_extent, m_affinity);
+            VisiblePosition end   = m_baseIsStart ? VisiblePosition(m_extent, m_affinity) : VisiblePosition(m_base, m_affinity);
+            EWordSide side = RightWordIfOnBoundary;
+            if (isEndOfDocument(start) || (isEndOfLine(start, m_affinity) && !isStartOfLine(start, m_affinity) && !isEndOfParagraph(start)))
+                side = LeftWordIfOnBoundary;
+            m_start = startOfWord(start, side).deepEquivalent();
+            side = RightWordIfOnBoundary;
+            if (isEndOfDocument(end) || (isEndOfLine(end, m_affinity) && !isStartOfLine(end, m_affinity) && !isEndOfParagraph(end)))
+                side = LeftWordIfOnBoundary;
+            m_end = endOfWord(end, side).deepEquivalent();
+            
             break;
+            }
         case LINE:
         case LINE_BOUNDARY:
             if (m_baseIsStart) {
