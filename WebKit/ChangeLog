@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+	Some simple renames:
+
+	sharedURLCredentialStorage --> sharedCredentialStorage
+	URLCredentialWithUser:password:persistence: --> credentialWithUser:password:persistence:
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	Changed things to use WebAuthenticationChallenge for
 	WebResoureceLoadDelegate auth callbacks.
 
