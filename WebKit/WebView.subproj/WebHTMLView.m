@@ -2690,6 +2690,11 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (BOOL)canPrintHeadersAndFooters
+{
+    return YES;
+}
+
 // This is needed for the case where the webview is embedded in the view that's being printed.
 // It shouldn't be called when the webview is being printed directly.
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit

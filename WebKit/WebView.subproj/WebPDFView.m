@@ -15,6 +15,13 @@
 
 #import <Quartz/Quartz.h>
 
+// QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
+// Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
+
+@interface PDFView (PDFKitSecretsIKnow)
+- (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
+@end
+
 NSString *_NSPathForSystemFramework(NSString *framework);
 
 @implementation WebPDFView
@@ -242,6 +249,16 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         return [PDFSubview currentSelection] != nil;
     }
     return YES;
+}
+
+- (BOOL)canPrintHeadersAndFooters
+{
+    return NO;
+}
+
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo
+{
+    return [PDFSubview getPrintOperationForPrintInfo:printInfo autoRotate:YES];
 }
 
 @end

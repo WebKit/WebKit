@@ -316,4 +316,9 @@
     [self adjustFrameSize];
 }
 
+- (BOOL)canPrintHeadersAndFooters
+{
+    return YES;
+}
+
 @end

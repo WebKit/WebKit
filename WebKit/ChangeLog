@@ -1,3 +1,28 @@
+2005-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John and Richard.
+
+        - fixed <rdar://problem/3907453> printing a multi-page PDF document from Safari doesn't produce correct output
+
+        * WebView.subproj/WebFrameViewPrivate.h: Added.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView canPrintHeadersAndFooters]): Added. Returnes NO for documents that can't print headers or footers,
+        and delegates to the document view to answer the question. Defaults to NO, since only a view that actively does
+        the work is compatible with our header and footer code.
+        (-[WebFrameView printOperationWithPrintInfo:]): Added. Returns an NSPrintOperation set up for printing. The reason
+        we return this rather than an NSView is that in the PDFView case, the print info is changed around before creating
+        the NSPrintOperation, and also the PDFKit SPI works this way.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView canPrintHeadersAndFooters]): Added. Returns YES.
+        * WebView.subproj/WebImageView.m: (-[WebImageView canPrintHeadersAndFooters]): Ditto.
+        * WebView.subproj/WebTextView.m: (-[WebTextView canPrintHeadersAndFooters]): Ditto.
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView canPrintHeadersAndFooters]): Added. Returns NO.
+        (-[WebPDFView printOperationWithPrintInfo:]): Added. Calls getPrintOperationForPrintInfo: autoRotate:YES on the PDFView.
+
+        * WebKit.pbproj/project.pbxproj: Added WebFrameViewPrivate.h as a new private header.
+
 2005-01-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3932107> Safari does not load QT Cocoa plug-in if the WebPluginMIMETypes key is not in the info.plist

@@ -336,6 +336,11 @@
     return [super knowsPageRange:range];
 }
 
+- (BOOL)canPrintHeadersAndFooters
+{
+    return YES;
+}
+
 @end
 
 @implementation WebTextView (TextSizing)

@@ -772,3 +772,28 @@ static NSMutableDictionary *viewTypes;
 }
 
 @end
+
+@implementation WebFrameView (WebPrivate)
+
+- (BOOL)canPrintHeadersAndFooters
+{
+    NSView *documentView = [[self _scrollView] documentView];
+    if ([documentView respondsToSelector:@selector(canPrintHeadersAndFooters)]) {
+        return [(id)documentView canPrintHeadersAndFooters];
+    }
+    return NO;
+}
+
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo
+{
+    NSView *documentView = [[self _scrollView] documentView];
+    if (!documentView) {
+        return nil;
+    }
+    if ([documentView respondsToSelector:@selector(printOperationWithPrintInfo:)]) {
+        return [(id)documentView printOperationWithPrintInfo:printInfo];
+    }
+    return [NSPrintOperation printOperationWithView:documentView printInfo:printInfo];
+}
+
+@end
