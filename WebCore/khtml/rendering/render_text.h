@@ -211,9 +211,6 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     
-    bool precedesLineBreak() const;
-    bool followsLineBreak() const;
-            
 #if APPLE_CHANGES
 public:
 #endif

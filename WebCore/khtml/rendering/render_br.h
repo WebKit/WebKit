@@ -41,23 +41,32 @@ public:
     virtual void paint( QPainter *, int, int, int, int, int, int, int) {}
     virtual void paintObject( QPainter *, int, int, int, int, int, int, int) {}
 
-    virtual void position(int, int, int, int, int, bool, bool, int) {}
+    virtual void position(InlineBox* box, int from, int len, bool reverse);
     virtual unsigned int width(unsigned int, unsigned int, const Font *) const { return 0; }
     virtual unsigned int width( unsigned int, unsigned int, bool) const { return 0; }
-
-    virtual int height() const { return 0; }
 
     // overrides
     virtual void calcMinMaxWidth() {}
     virtual short minWidth() const { return 0; }
     virtual short maxWidth() const { return 0; }
 
+    virtual int xPos() const { return m_x; }
+    virtual int yPos() const { return m_y; }
+    virtual int height() const { return m_height; }
+
     virtual bool isBR() const { return true; }
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     
+    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
+    
     virtual FindSelectionResult checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset);
+
+private:
+    int m_x;
+    int m_y;
+    int m_height;
 };
 
 }

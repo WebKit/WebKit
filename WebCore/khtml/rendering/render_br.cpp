@@ -25,12 +25,26 @@ using namespace khtml;
 
 
 RenderBR::RenderBR(DOM::NodeImpl* node)
-    : RenderText(node, new DOM::DOMStringImpl(QChar('\n')))
+    : RenderText(node, new DOM::DOMStringImpl(QChar('\n'))), m_x(0), m_y(0), m_height(0)
 {
 }
 
 RenderBR::~RenderBR()
 {
+}
+
+void RenderBR::position(InlineBox* box, int from, int len, bool reverse)
+{
+    InlineTextBox *s = static_cast<InlineTextBox*>(box);
+    
+    // We want the box to be destroyed, but get the position of it first.
+    m_x = s->xPos();
+    m_y = s->yPos();
+    m_height = s->height();
+    
+    s->remove();
+    s->detach(renderArena());
+    m_firstTextBox = m_lastTextBox = 0;
 }
 
 FindSelectionResult RenderBR::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
@@ -55,5 +69,19 @@ long RenderBR::caretMinOffset() const
 
 long RenderBR::caretMaxOffset() const 
 { 
-    return 0; 
+    return 1; 
+}
+
+void RenderBR::caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h)
+{
+    // EDIT FIXME: This does not work yet. Some other changes are need before
+    // an accurate position can be determined.
+    _h = height();
+    _x = xPos();
+    _y = yPos();
+
+    int absx, absy;
+    absolutePosition(absx,absy);
+    _x += absx;
+    _y += absy;
 }

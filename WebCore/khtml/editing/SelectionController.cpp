@@ -38,17 +38,21 @@
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_textimpl.h"
 
 #if APPLE_CHANGES
 #include <KWQAssertions.h>
 #include <CoreServices/CoreServices.h>
+
+#define EDIT_DEBUG 0
 #endif
 
 using DOM::DocumentImpl;
 using DOM::DOMPosition;
 using DOM::DOMString;
+using DOM::ElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Range;
@@ -132,6 +136,9 @@ void KHTMLSelection::setSelection(DOM::NodeImpl *node, long offset)
 	setBaseOffset(offset);
 	setExtentOffset(offset);
 	update();
+#if EDIT_DEBUG
+    debugPosition();
+#endif
 }
 
 void KHTMLSelection::setSelection(const DOM::Range &r)
@@ -152,6 +159,9 @@ void KHTMLSelection::setSelection(DOM::NodeImpl *baseNode, long baseOffset, DOM:
 	setBaseOffset(baseOffset);
 	setExtentOffset(extentOffset);
 	update();
+#if EDIT_DEBUG
+    debugPosition();
+#endif
 }
 
 void KHTMLSelection::setBase(DOM::NodeImpl *node, long offset)
@@ -187,6 +197,7 @@ bool KHTMLSelection::alterSelection(EAlter alter, EDirection dir, ETextElement e
         case BACKWARD:
             switch (elem) {
                 case CHARACTER:
+                    pos = previousCharacterPosition();
                     break;
                 case WORD:
                     break;
@@ -329,7 +340,7 @@ void KHTMLSelection::update()
     m_caretX = newX;
     m_caretY = newY;
     m_caretSize = newSize;
-
+    
     // paint the caret if it is visible
     if (m_visible && m_caretSize != 0) {
         m_caretPaint = true;
@@ -584,51 +595,130 @@ void KHTMLSelection::calculateStartAndEnd(ETextElement select)
     m_startEndValid = true;
 }
 
-DOMPosition KHTMLSelection::nextCharacterPosition()
+DOMPosition KHTMLSelection::previousCharacterPosition()
 {
-    DOMPosition result;
-	NodeImpl *node = endNode();
-	long offset = endOffset();
-    long desiredOffset = offset + 1;
+    if (!startNode())
+        return DOMPosition();
 
-    if (!node)
-        return result;
-    
+	NodeImpl *node = startNode();
+	long offset = startOffset() - 1;
+
     //
     // Look in this renderer
     //
     RenderObject *renderer = node->renderer();
     if (renderer->isText()) {
-        RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
-        for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            long start = box->m_start;
-            long end = box->m_start + box->m_len;
-            if (desiredOffset > end) {
-                // Skip this node.
-                // It is too early in the text runs to be involved.
-                continue;
-            }
-            else if (desiredOffset >= start && 
-                (desiredOffset < end || (desiredOffset == end && !box->nextTextBox() && !renderer->nextEditable())) ||
-                (desiredOffset == end && textRenderer->precedesLineBreak() && !textRenderer->followsLineBreak())) {
-                // Desired offset is in this node.
-                // Either it is:
-                // 1. at or after the start and before, but not at the end
-                // 2. at the end of a text run and is immediately followed by a line break
-                //    but does not precede a line break
-                // 3. at the end of the editable content of the document
-                return DOMPosition(renderer->element(), desiredOffset);
-            }
-            else if (desiredOffset <= start) {
-                // The offset we're looking for is before this node
-                // this means the offset must be in text that is
-                // not rendered. Just return the start of the node.
-                return DOMPosition(renderer->element(), start);
+        if (!renderer->isBR()) {
+            RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
+            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                long start = box->m_start;
+                long end = box->m_start + box->m_len;
+                if (offset > end) {
+                    // Skip this node.
+                    // It is too early in the text runs to be involved.
+                    continue;
+                }
+                else if (offset >= start) {
+                    // Offset is in this node, return the start
+                    return DOMPosition(node, offset);
+                }
             }
         }
     }
-    else if (desiredOffset < renderer->caretMaxOffset() || (desiredOffset == renderer->caretMaxOffset() && !renderer->nextEditable())) {
-        return DOMPosition(node, desiredOffset);
+    else {
+        // Offset is in this node, if:
+        // 1. greater than the min offset and less than or equal to the max caret offset
+        // 2. at the start of the editable content of the document
+        if ((offset > renderer->caretMinOffset() && offset <= renderer->caretMaxOffset()) || 
+            (offset == renderer->caretMinOffset() && !renderer->previousEditable()))
+            return DOMPosition(node, offset);
+    }
+
+    //
+    // Look in previous renderer(s)
+    //
+    renderer = renderer->previousEditable();
+    while (renderer) {
+        // Offset is in this node, if:
+        // 1. it is a BR which follows a line break
+        // 2. it is an element with content
+    	if (renderer->isBR()) {
+			if (renderer->followsLineBreak())
+				return DOMPosition(renderer->element(), renderer->caretMinOffset());
+    	}
+    	else {
+    		if (renderer->isText()) {
+    			 RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
+    			 if (!textRenderer->lastTextBox()) 
+    			 	continue;
+    		}
+            offset = renderer->caretMaxOffset();
+            if (!renderer->precedesLineBreak())
+                offset--;
+            assert(offset >= 0);
+            return DOMPosition(renderer->element(), offset);
+    	}
+        renderer = renderer->previousEditable();
+    }
+
+    // can't move the position
+    return DOMPosition(startNode(), startOffset());
+}
+
+DOMPosition KHTMLSelection::nextCharacterPosition()
+{
+    if (!endNode())
+        return DOMPosition();
+
+	NodeImpl *node = endNode();
+	long offset = endOffset() + 1;
+
+    //
+    // Look in this renderer
+    //
+    RenderObject *renderer = node->renderer();
+    if (renderer->isText()) {
+        if (!renderer->isBR()) {
+            RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
+            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                long start = box->m_start;
+                long end = box->m_start + box->m_len;
+                if (offset > end) {
+                    // Skip this node.
+                    // It is too early in the text runs to be involved.
+                    continue;
+                }
+                else if (offset >= start) {
+                    // Offset is in this node, if:
+                    // Either it is:
+                    // 1. at or after the start and before, but not at the end
+                    // 2. at the end of a text run and is immediately followed by a line break
+                    // 3. at the end of the editable content of the document
+                    if (offset < end)
+                        return DOMPosition(node, offset);
+                    else if (offset == end && renderer->precedesLineBreak())
+                        return DOMPosition(node, offset);
+                    else if (offset == end && !box->nextTextBox() && !renderer->nextEditable())
+                        return DOMPosition(node, offset);
+                }
+                else if (offset < start) {
+                    // The offset we're looking for is before this node
+                    // this means the offset must be in content that is
+                    // not rendered. Just return the start of the node.
+                    return DOMPosition(node, start);
+                }
+            }
+        }
+    }
+    else {
+        // Offset is in this node, if:
+        // 1. before the max caret offset
+        // 2. equal to the max caret offset and is immediately preceded by a line break
+        // 3. at the end of the editable content of the document
+        if (offset < renderer->caretMaxOffset() ||
+            (offset == renderer->caretMaxOffset() && renderer->precedesLineBreak()) ||
+            (offset == renderer->caretMaxOffset() && !renderer->nextEditable()))
+                return DOMPosition(node, offset);
     }
 
     //
@@ -636,7 +726,15 @@ DOMPosition KHTMLSelection::nextCharacterPosition()
     //
     renderer = renderer->nextEditable();
     while (renderer) {
-        if (renderer->isText()) {
+		// Offset is in this node, if:
+		// 1. it is a BR which follows a line break
+		// 2. it is a text element with content
+        // 3. it is a non-text element with content
+		if (renderer->isBR()) {
+			if (renderer->followsLineBreak())
+				return DOMPosition(renderer->element(), renderer->caretMinOffset());
+		}
+		else if (renderer->isText()) {
             RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
             if (textRenderer->firstTextBox())
                 return DOMPosition(renderer->element(), textRenderer->firstTextBox()->m_start);
@@ -647,8 +745,8 @@ DOMPosition KHTMLSelection::nextCharacterPosition()
         renderer = renderer->nextEditable();
     }
 
-    result = DOMPosition(node, offset);
-    return result;
+    // can't move the position
+    return DOMPosition(endNode(), endOffset());
 }
 
 bool KHTMLSelection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
@@ -853,6 +951,127 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, K
         return true;
     }
     return false;
+}
+
+void KHTMLSelection::debugRenderer(RenderObject *r, bool selected) const
+{
+    if (r->node()->isElementNode()) {
+        ElementImpl *element = static_cast<ElementImpl *>(r->node());
+        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->tagName().string().latin1());
+    }
+    else if (r->isText()) {
+        RenderText *textRenderer = static_cast<RenderText *>(r);
+        if (textRenderer->stringLength() == 0 || !textRenderer->firstTextBox()) {
+            fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
+            return;
+        }
+        
+        static const int max = 36;
+        QString text = DOMString(textRenderer->string()).string();
+        int textLength = text.length();
+        if (selected) {
+            int offset = 0;
+            if (r->node() == startNode())
+                offset = startOffset();
+            else if (r->node() == endNode())
+                offset = endOffset();
+                
+            int pos;
+            InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
+            text = text.mid(box->m_start, box->m_len);
+            
+            QString show;
+            int mid = max / 2;
+            int caret = 0;
+            
+            // text is shorter than max
+            if (textLength < max) {
+                show = text;
+                caret = pos;
+            }
+            
+            // too few characters to left
+            else if (pos - mid < 0) {
+                show = text.left(max - 3) + "...";
+                caret = pos;
+            }
+            
+            // enough characters on each side
+            else if (pos - mid >= 0 && pos + mid <= textLength) {
+                show = "..." + text.mid(pos - mid + 3, max - 6) + "...";
+                caret = mid;
+            }
+            
+            // too few characters on right
+            else {
+                show = "..." + text.right(max - 3);
+                caret = pos - (textLength - show.length());
+            }
+            
+            show = show.replace("\n", " ");
+            show = show.replace("\r", " ");
+            fprintf(stderr, "==> #text : %s at %d\n", show.latin1(), pos);
+            fprintf(stderr, "           ");
+            for (int i = 0; i < caret; i++)
+                fprintf(stderr, " ");
+            fprintf(stderr, "^\n");
+        }
+        else {
+            if ((int)text.length() > max)
+                text = text.left(max - 3) + "...";
+            else
+                text = text.left(max);
+            fprintf(stderr, "    #text : %s\n", text.latin1());
+        }
+    }
+}
+
+void KHTMLSelection::debugPosition() const
+{
+    if (!startNode())
+        return;
+
+    static int context = 5;
+    
+    RenderObject *r = 0;
+
+    fprintf(stderr, "KHTMLSelection =================\n");
+    
+    int back = 0;
+    r = startNode()->renderer();
+    for (int i = 0; i < context; i++, back++) {
+        if (r->previousRenderer())
+            r = r->previousRenderer();
+        else
+            break;
+    }
+    for (int i = 0; i < back; i++) {
+        debugRenderer(r, false);
+        r = r->nextRenderer();
+    }
+
+
+    fprintf(stderr, "\n");
+
+    if (startNode() == endNode())
+        debugRenderer(startNode()->renderer(), true);
+    else
+        for (r = startNode()->renderer(); r && r != endNode()->renderer(); r = r->nextRenderer())
+            debugRenderer(r, true);
+    
+    fprintf(stderr, "\n");
+    
+    r = endNode()->renderer();
+    for (int i = 0; i < context; i++) {
+        if (r->nextRenderer()) {
+            r = r->nextRenderer();
+            debugRenderer(r, false);
+        }
+        else
+            break;
+    }
+
+    fprintf(stderr, "================================\n");
 }
 
 #endif

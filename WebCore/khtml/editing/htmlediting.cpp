@@ -32,6 +32,7 @@
 #include "khtmlview.h"
 #include "khtml_part.h"
 #include "khtml_selection.h"
+#include "dom/dom_position.h"
 #include "rendering/render_object.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
@@ -79,52 +80,6 @@ void EditCommand::deleteSelection()
     range.deleteContents();
     selection.setSelection(selection.startNode(), selection.startOffset());
     m_document->clearSelection();
-}
-
-void EditCommand::pruneEmptyNodes() const
-{
-    return;
-
-#if 0
-    KHTMLView *view = document()->view();
-    if (!view)
-        return;
-
-    KHTMLPart *part = view->part();
-    if (!part)
-        return;
-
-    KHTMLSelection &selection = part->getKHTMLSelection();
-    
-    bool prunedNodes = false;
-    NodeImpl *node = selection.startNode();
-    while (1) {
-        if (node->isTextNode()) {
-            TextImpl *textNode = static_cast<TextImpl *>(node);
-            if (textNode->length() == 0) {
-                node = textNode->traversePreviousNode();
-                removeNode(textNode);
-                prunedNodes = true;
-            }
-            else {
-                break;
-            }
-        }
-        else if (!node->hasChildNodes()) {
-            NodeImpl *n = node;
-            node = node->traversePreviousNode();
-            removeNode(n);
-            prunedNodes = true;
-        }
-        else {
-            break;
-        }
-    }
-    
-    if (prunedNodes) {
-        selection.setSelection(node, node->caretMaxOffset());
-    }
-#endif
 }
 
 void EditCommand::removeNode(DOM::NodeImpl *node) const
@@ -189,23 +144,38 @@ bool InputTextCommand::apply()
     int exceptionCode;
     
     if (isLineBreak()) {
-        TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
-        textNode->deleteData(0, selection.startOffset(), exceptionCode);
         ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
-        textNode->parentNode()->insertBefore(textBeforeNode, textNode, exceptionCode);
-        textNode->parentNode()->insertBefore(breakNode, textNode, exceptionCode);
-        textBeforeNode->deref();
-        breakNode->deref();
         
-        // Set the cursor at the beginning of the node after the split.
-        selection.setSelection(textNode, 0);
+        bool atStart = selection.startOffset() == textNode->renderer()->caretMinOffset();
+        bool atEnd = selection.startOffset() == textNode->renderer()->caretMaxOffset();
+        if (atStart) {
+            textNode->parentNode()->insertBefore(breakNode, textNode, exceptionCode);
+            // Set the cursor at the beginning of text node now following the new BR.
+            selection.setSelection(textNode, 0);
+        }
+        else if (atEnd) {
+            if (textNode->parentNode()->lastChild() == textNode)
+                textNode->parentNode()->appendChild(breakNode, exceptionCode);
+            else
+                textNode->parentNode()->insertBefore(breakNode, textNode->nextSibling(), exceptionCode);
+            // Set the cursor at the beginning of the the BR.
+            selection.setSelection(selection.nextCharacterPosition());
+        }
+        else {
+            TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
+            textNode->deleteData(0, selection.startOffset(), exceptionCode);
+            textNode->parentNode()->insertBefore(textBeforeNode, textNode, exceptionCode);
+            textNode->parentNode()->insertBefore(breakNode, textNode, exceptionCode);
+            textBeforeNode->deref();
+            // Set the cursor at the beginning of the node after the BR.
+            selection.setSelection(textNode, 0);
+        }
+        
+        breakNode->deref();
     }
     else {
         textNode->insertData(selection.startOffset(), text(), exceptionCode);
-        // EDIT FIXME: this is a hack for now
-        // advance the cursor
-        int textLength = text().length();
-        selection.setSelection(selection.startNode(), selection.startOffset() + textLength);
+        selection.setSelection(selection.startNode(), selection.startOffset() + text().length());
     }
 
     return true;
@@ -259,7 +229,6 @@ bool DeleteTextCommand::apply()
             TextImpl *textNode = static_cast<TextImpl *>(caretNode);
             textNode->deleteData(offset, 1, exceptionCode);
             selection.setSelection(textNode, offset);
-            pruneEmptyNodes();
             return true;
         }
         
@@ -278,7 +247,6 @@ bool DeleteTextCommand::apply()
             offset = previousLeafNode->caretMaxOffset() - 1;
             textNode->deleteData(offset, 1, exceptionCode);
             selection.setSelection(textNode, offset);
-            pruneEmptyNodes();
             return true;
         }
     }

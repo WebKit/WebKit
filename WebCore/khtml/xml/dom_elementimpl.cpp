@@ -382,7 +382,11 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
             }
         }
         else if (k->keyIdentifier() == "Left") {
-            // EDIT FIXME: unimplemented
+            KHTMLPart *part = getDocument()->part();
+            if (part) {
+                part->getKHTMLSelection().alterSelection(KHTMLSelection::MOVE, KHTMLSelection::BACKWARD, KHTMLSelection::CHARACTER);
+                evt->setDefaultHandled();
+            }
         }
         else if (k->keyIdentifier() == "Up") {
             // EDIT FIXME: unimplemented

@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef _DOM_Position_h_
+#define _DOM_Position_h_
+
 namespace DOM {
 
 class NodeImpl;
@@ -61,3 +64,5 @@ inline bool operator!=(const DOMPosition &a, const DOMPosition &b)
 }
 
 }; // namespace DOM
+
+#endif // _DOM_Position_h_

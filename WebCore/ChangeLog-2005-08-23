@@ -1,3 +1,57 @@
+2004-01-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+	A small collection of fixes and improvements to editing.
+
+	Added a forwarding header for dom_position.h
+	Added some debugging output to KHTMLSelection
+	Added support for left arrow navigation.
+	Greatly improved support for right arrow navigation.
+	Added include guards to dom_position.h. Oops!
+	Removed pruneEmptyNodes() function from htmlediting.cpp. That was crack.
+	Improved the text insert command so that it splits the text node being
+	    operated on only when necessary.
+	Added support for placing the caret in and arrowing into BR elements.
+	Moved precedesLineBreak/followsLineBreak from RenderText to RenderObject.	
+
+        * ForwardingHeaders/dom/dom_position.h: Added.
+        * khtml/dom/dom_position.h:
+        * khtml/editing/htmlediting.cpp:
+        (InputTextCommand::apply):
+        (DeleteTextCommand::apply):
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::setSelection):
+        (KHTMLSelection::alterSelection):
+        (KHTMLSelection::update):
+        (KHTMLSelection::previousCharacterPosition):
+        (KHTMLSelection::nextCharacterPosition):
+        (startAndEndLineNodesIncludingNode):
+        (KHTMLSelection::debugRenderer):
+        (KHTMLSelection::debugPosition):
+        * khtml/khtml_selection.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::RenderBR):
+        (RenderBR::position):
+        (RenderBR::caretMaxOffset):
+        (RenderBR::caretPos):
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::xPos):
+        (khtml::RenderBR::yPos):
+        (khtml::RenderBR::height):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::precedesLineBreak):
+        (RenderObject::followsLineBreak):
+        (RenderObject::isEditable):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretPos):
+        (RenderText::position):
+        (RenderText::caretMaxOffset):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::defaultEventHandler):
+
 2004-01-28  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3537694, make blocks for parents of inline children be axobjects.

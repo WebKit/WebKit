@@ -440,7 +440,7 @@ FindSelectionResult RenderText::checkSelectionPointIgnoringContinuations(int _x,
 
 void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
 {
-    if (!firstTextBox()) {
+    if (!firstTextBox() || stringLength() == 0) {
         _x = _y = height = -1;
         return;
     }
@@ -1211,9 +1211,8 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse)
     InlineTextBox *s = static_cast<InlineTextBox*>(box);
     
     // ### should not be needed!!!
-    if (len == 0 || isBR()) {
-        // We want the box to be destroyed.  This is a <br>, and we don't
-        // need <br>s to be included.
+    if (len == 0) {
+        // We want the box to be destroyed.
         s->remove();
         s->detach(renderArena());
         m_firstTextBox = m_lastTextBox = 0;
@@ -1325,34 +1324,6 @@ long RenderText::caretMaxOffset() const
     // or maintain an index (needs much mem),
     // or calculate and store it in bidi.cpp (needs calculation even if not needed)
     return lastTextBox()->m_start + lastTextBox()->m_len;
-}
-
-bool RenderText::precedesLineBreak() const
-{
-    RenderObject *r = nextRenderer();
-    while (r) {
-        if (r->isBR() || r->isRenderBlock())
-            return true;
-        if (r->isText() || r->isReplaced())
-            return false;
-        r = r->nextRenderer();
-    }
-    
-    return false;
-}
-
-bool RenderText::followsLineBreak() const
-{
-    RenderObject *r = previousRenderer();
-    while (r) {
-        if (r->isBR() || r->isRenderBlock())
-            return true;
-        if (r->isText() || r->isReplaced())
-            return false;
-        r = r->previousRenderer();
-    }
-    
-    return false;
 }
 
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,

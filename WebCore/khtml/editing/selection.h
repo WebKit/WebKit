@@ -41,6 +41,10 @@ namespace DOM {
     class Range;
 };
 
+namespace khtml {
+    class RenderObject;
+}
+
 class KHTMLSelection : public QObject
 {
   Q_OBJECT
@@ -81,7 +85,10 @@ public:
 
     void setVisible(bool flag=true);
     bool visible() const { return m_visible; }
-    
+
+    DOM::DOMPosition previousCharacterPosition();
+    DOM::DOMPosition nextCharacterPosition();
+        
     void invalidate();
     
     bool isEmpty() const;
@@ -97,12 +104,9 @@ public:
     
     friend class KHTMLPart;
 
-    void dump() {
-        fprintf(stderr, "selection: %p:%d ; %p:%d (%p:%d ; %p:%d)\n", 
-            m_baseNode, m_baseOffset, m_extentNode, m_extentOffset,
-            startNode(), startOffset(), endNode(), endOffset());
-    }
-    
+    void debugPosition() const;
+    void debugRenderer(khtml::RenderObject *r, bool selected) const;
+
 private:
     void setPart(KHTMLPart *part);
 
@@ -126,8 +130,6 @@ private:
     bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
 
     void calculateStartAndEnd(ETextElement select=CHARACTER);
-    
-    DOM::DOMPosition nextCharacterPosition();
     
     KHTMLPart *m_part;            // part for this selection
 
