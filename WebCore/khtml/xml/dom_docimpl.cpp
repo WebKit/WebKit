@@ -1634,15 +1634,19 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
 
 DOMString DocumentImpl::attrName(NodeImpl::Id _id) const
 {
+    DOMString result;
     if (_id >= ATTR_LAST_ATTR)
-        return m_attrNames[_id-ATTR_LAST_ATTR];
-    else {
-        // ### put them in a cache
-        if (getDocument()->htmlMode() == DocumentImpl::XHtml)
-            return getAttrName(_id).lower();
-        else
-            return getAttrName(_id);
-    }
+        result = m_attrNames[_id-ATTR_LAST_ATTR];
+    else
+        result = getAttrName(_id);
+
+    // Attribute names are always lowercase in the DOM for both
+    // HTML and XHTML.
+    if (getDocument()->isHTMLDocument() ||
+        getDocument()->htmlMode() == DocumentImpl::XHtml)
+        return result.lower();
+
+    return result;
 }
 
 NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly)
