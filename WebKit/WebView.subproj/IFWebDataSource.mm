@@ -26,7 +26,7 @@ static id IFWebDataSourceMake(void *url)
 + (void)initialize {
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *fontSizeArray = [NSArray arrayWithObjects:@"7", @"8", @"9", @"10", @"12", @"13", @"14", @"16", nil];
+    NSArray *fontSizeArray = [NSArray arrayWithObjects:@"6", @"8", @"10", @"12", @"14", @"18", @"30", nil];
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     

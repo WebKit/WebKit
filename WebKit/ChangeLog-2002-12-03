@@ -1,3 +1,10 @@
+2002-03-05  John Sullivan  <sullivan@apple.com>
+
+	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]):
+	Changed default font sizes to match scheme used in Alexander. There are
+	some serious wackinesses with KDE engine font size handling; if and when
+	we address those we might revisit these default sizes.
+
 2002-03-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed references to IFAuthenticationHandler, since that protocol
