@@ -137,6 +137,32 @@ QString QTextCodec::toUnicode(const char *chs) const
 }
 
 #else // USING_BORROWED_QSTRING
-// This will help to keep the linker from complaining about empty archives
-void KWQtextcodec_Dummy() {}
+
+QTextCodec *QTextCodec::codecForMib(int)
+{
+    // FIXME: danger Will Robinson!!!
+    _logNotYetImplemented();
+    return NULL;
+}
+
+QTextCodec *QTextCodec::codecForName(const char *, int)
+{
+    // FIXME: danger Will Robinson!!!
+    _logNotYetImplemented();
+    return NULL;
+}
+
+QTextCodec *QTextCodec::codecForLocale()
+{
+    // FIXME: danger Will Robinson!!!
+    _logNotYetImplemented();
+    return NULL;
+}
+
+QCString QTextCodec::fromUnicode(const QString &qcs) const
+{
+    // FIXME: is there a more efficient way to do this?
+    return QCString(qcs.latin1());
+}
+
 #endif // USING_BORROWED_QSTRING
