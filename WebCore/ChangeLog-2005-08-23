@@ -1,3 +1,14 @@
+2003-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3167642 - crash in renderArena.
+
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close): Clear the tokenizer early to avoid
+	re-entering the onload handler - this was causing a massive
+	overload of frames which finally caused a crash.
+
 2003-02-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
