@@ -1,5 +1,19 @@
 2004-03-23  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3513627, HTML mail prints upside down occasionally.  Change printing so that it never resizes the
+        WebHTMLView when formatting for printing.  When computing page rects, instead of using the view's bounds,
+        use the root layer's width instead.
+
+        Reviewed by darin
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+
+2004-03-23  David Hyatt  <hyatt@apple.com>
+
 	Fix for crasher 3598204, previousKeyView was calling nextKeyView instead.
 	
         Reviewed by darin
@@ -14,9 +28,6 @@
         Reviewed by Vicki.
 
         - fixed deployment build
-
-        * kwq/KWQLineEdit.mm: (QLineEdit::QLineEdit): Move view initializer inside
-        block with exceptions blocked.
 
 2004-03-22  David Hyatt  <hyatt@apple.com>
 

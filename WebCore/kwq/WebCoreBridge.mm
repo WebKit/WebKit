@@ -605,22 +605,26 @@ static BOOL nowPrinting(WebCoreBridge *self)
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.
-- (NSArray*)computePageRectsWithPrintWidth:(float)printWidth printHeight:(float)printHeight
+- (NSArray*)computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight
 {
     [self _setupRootForPrinting:YES];
     NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
-	if (printWidth == 0 || printHeight == 0) {
-		return pages;
-	}
+    if (printWidthScaleFactor == 0 || printHeight == 0)
+        return pages;
 	
+    if (!_part || !_part->xmlDocImpl() || !_part->view()) return pages;
+    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
+    if (!root) return pages;
+    
     KHTMLView* view = _part->view();
     NSView* documentView = view->getDocumentView();
     if (!documentView)
         return pages;
 	
     float currPageHeight = printHeight;
-    float docHeight = NSHeight([documentView bounds]);
-    float docWidth = NSWidth([documentView bounds]);
+    float docHeight = root->layer()->height();
+    float docWidth = root->layer()->width();
+    float printWidth = docWidth/printWidthScaleFactor;
     
     // We need to give the part the opportunity to adjust the page height at each step.
     for (float i = 0; i < docHeight; i += currPageHeight) {
