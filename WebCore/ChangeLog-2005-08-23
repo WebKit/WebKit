@@ -1,3 +1,44 @@
+2002-07-25  Darin Adler  <darin@apple.com>
+
+        * WebCore.pbproj/project.pbxproj: Add DeploymentFat build style.
+
+	- fixed 3007532 -- Main documentation frame doesn't load on Apple docs page
+
+	This was caused by my recent fix for the "checkboxes in wrong place" bug.
+	While discussing that bug fix with Richard, I realized that I needed to do the
+	work at layout time, not print time. Luckily, this code ends up being simpler
+	than the original solution.
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::resizeWidget): Take out size limits based on X limits.
+        (RenderWidget::layout): Move widgets off into far away coordinate space when
+	layout happens. They get moved back on to the right position during the print process.
+
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm: Removed paint, buildViewsNotYetAddedSet, viewsNotYetAdded,
+	and addedWidget.
+        * kwq/KWQScrollView.mm: (QScrollView::addChild): Removed call to addedWidget.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge drawRect:withPainter:]): Put the call to the
+	renderer to print back in here, since it's simple again.
+
+        * kwq/KWQWidget.mm: (QWidget::internalSetGeometry): Left in a couple of asserts that
+	were useful in narrowing this one down.
+
+2002-07-25  Darin Adler  <darin@apple.com>
+
+	Once I realized that, Richard and I talked it over and found an even better fix
+	that sidesteps the problem. Removing the widgets from the superview was not necessary.
+
+        * kwq/KWQKHTMLPartImpl.h: Removed buildViewsNotYetAddedSet, viewsNotYetAdded, and
+	addedWidget. Added moveWidgetsAside.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::paint):
+        (KWQKHTMLPartImpl::moveWidgetsAside):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild):
+        * kwq/KWQWidget.mm:
+        (QWidget::internalSetGeometry):
+
 2002-07-25  David Hyatt  <hyatt@apple.com>
 
 	Floated images using "align" should have margins to prevent the text from running right

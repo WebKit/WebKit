@@ -109,12 +109,6 @@ public:
 
     void overURL(const QString &url, const QString &target, int modifierState);
 
-    // Draw the contents of the view, with the side effect of putting all the widgets into place.
-    void paint(QPainter &, int x, int y, int width, int height);
-    
-    // Used by KWQWidget to tell the paint call that this widget should stay.
-    static void addedWidget(QWidget *);
-
 private:
     KHTMLPart *part;
     KHTMLPartPrivate *d;
@@ -126,9 +120,6 @@ private:
     KURL m_baseURL;
     QString m_documentSource;
     bool m_decodingStarted;
-    
-    static void buildViewsNotYetAddedSet(khtml::RenderObject *);
-    static NSMutableSet *viewsNotYetAdded;
     
     friend class KHTMLPart;
 };

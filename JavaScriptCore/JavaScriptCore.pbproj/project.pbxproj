@@ -67,6 +67,7 @@
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
 				F58C8A1D025BD408018635CA,
+				F531DDEB02F0C2DD018635CA,
 			);
 			isa = PBXProject;
 			mainGroup = 0867D691FE84028FC02AAC07;
@@ -421,6 +422,17 @@
 //F52
 //F53
 //F54
+		F531DDEB02F0C2DD018635CA = {
+			buildRules = (
+			);
+			buildSettings = {
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "\U0001-arch ppc -arch i386";
+				SKIP_INSTALL = YES;
+			};
+			isa = PBXBuildStyle;
+			name = DeploymentFat;
+		};
 		F58C8A1D025BD408018635CA = {
 			buildRules = (
 			);

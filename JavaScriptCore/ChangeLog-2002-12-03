@@ -1,3 +1,7 @@
+2002-07-25  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj: Add DeploymentFat build style.
+
 === Alexander-14 ===
 
 2002-07-21  Darin Adler  <darin@apple.com>

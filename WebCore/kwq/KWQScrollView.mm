@@ -29,8 +29,6 @@
 
 #import <kwqdebug.h>
 
-#import <KWQKHTMLPartImpl.h>
-
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
     It does provide an implementation that khtml will use to interact with
@@ -195,8 +193,6 @@ void QScrollView::addChild(QWidget* child, int x, int y)
 
     KWQ_ASSERT(child != this);
     
-    KWQKHTMLPartImpl::addedWidget(child);
-
     child->move(x, y);
     
     thisView = getView();

@@ -1,5 +1,9 @@
 2002-07-25  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Add DeploymentFat build style.
+
+2002-07-25  Darin Adler  <darin@apple.com>
+
 	WebKit part of fix for 3006054 -- assert error failingURL != nil
 
         * WebCoreSupport.subproj/WebBridge.m:

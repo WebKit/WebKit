@@ -155,9 +155,11 @@ RenderWidget::~RenderWidget()
 
 void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
 {
+#ifndef APPLE_CHANGES
     // ugly hack to limit the maximum size of the widget (as X11 has problems i
     h = QMIN( h, 3072 );
     w = QMIN( w, 2000 );
+#endif
 
     if (widget->width() != w || widget->height() != h) {
         ref();
@@ -202,6 +204,11 @@ void RenderWidget::layout( )
     KHTMLAssert( !layouted() );
     KHTMLAssert( minMaxKnown() );
     if ( m_widget ) {
+#ifdef APPLE_CHANGES
+        // Since not all widgets will get a print call, it's important to move them away
+        // so that they won't linger in an old position left over from a previous print.
+        m_widget->move(999999, 0);
+#endif
 	resizeWidget( m_widget,
 		      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
 		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );

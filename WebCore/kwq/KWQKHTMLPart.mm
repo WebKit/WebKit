@@ -44,8 +44,6 @@ using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderWidget;
 
-NSMutableSet *KWQKHTMLPartImpl::viewsNotYetAdded = nil;
-
 void KHTMLPart::onURL(const QString &)
 {
 }
@@ -722,56 +720,4 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
     }
     
     setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
-}
-
-void KWQKHTMLPartImpl::paint(QPainter &p, int x, int y, int width, int height)
-{
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (!doc) {
-        return;
-    }
-    RenderObject *renderer = doc->renderer();
-    if (!renderer) {
-        return;
-    }
-    
-    // Walk the render tree, putting all the views into a set.
-    KWQ_ASSERT(viewsNotYetAdded == nil);
-    viewsNotYetAdded = [[NSMutableSet alloc] init];
-    buildViewsNotYetAddedSet(renderer);
-    
-    // We will remove views from the set when the corresponding widget gets an addChild call.
-    
-    renderer->print(&p, x, y, width, height, 0, 0);
-
-    // Call removeFromSuperview on any that are still in the set at the end.
-    [viewsNotYetAdded makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [viewsNotYetAdded release];
-    viewsNotYetAdded = nil;
-}
-
-void KWQKHTMLPartImpl::addedWidget(QWidget *widget)
-{
-    NSView *view = widget->getView();
-    if (view) {
-        [viewsNotYetAdded removeObject:view];
-    }
-}
-
-void KWQKHTMLPartImpl::buildViewsNotYetAddedSet(RenderObject *renderObject)
-{
-    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(renderObject);
-    if (renderWidget) {
-        QWidget *widget = renderWidget->widget();
-        if (widget) {
-            NSView *view = widget->getView();
-            if (view) {
-                [viewsNotYetAdded addObject:view];
-            }
-        }
-    }
-    
-    for (RenderObject *child = renderObject->firstChild(); child; child = child->nextSibling()) {
-        buildViewsNotYetAddedSet(child);
-    }
 }

@@ -293,12 +293,15 @@ void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
     NSView *view = getView();
     
+    KWQ_ASSERT(view);
+    
     // A QScrollView is a widget only used to represent a frame.  If
     // this widget's view is a WebCoreFrameView the we resize it's containing
     // view,  an WebView.  The scrollview contained by the WebView
     // will be autosized.
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
+        KWQ_ASSERT(view);
     }
     
     [view setFrame:NSMakeRect(x, y, w, h)];

@@ -70,6 +70,7 @@
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
 				F58C8A07025BD3BC018635CA,
+				F531DDEC02F0C34D018635CA,
 			);
 			isa = PBXProject;
 			knownRegions = (
@@ -3579,6 +3580,18 @@
 			isa = PBXGroup;
 			path = xml;
 			refType = 4;
+		};
+		F531DDEC02F0C34D018635CA = {
+			buildRules = (
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "\U0001-arch ppc -arch i386";
+				SKIP_INSTALL = YES;
+			};
+			isa = PBXBuildStyle;
+			name = DeploymentFat;
 		};
 		F54A61D302E3523B01A80180 = {
 			isa = PBXFileReference;

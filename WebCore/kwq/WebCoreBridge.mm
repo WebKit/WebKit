@@ -190,7 +190,13 @@ using namespace khtml;
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    part->impl->paint(*p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc) {
+        RenderObject *renderer = doc->renderer();
+        if (renderer) {
+            renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
+        }
+    }    
 }
 
 - (void)drawRect:(NSRect)rect
