@@ -1,3 +1,11 @@
+2002-11-20  David Hyatt  <hyatt@apple.com>
+
+	Fix the mac.com line-breaking bug.  This was not a regression
+	but was present in Konq.
+	
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+
 2002-11-20  Maciej Stachowiak  <mjs@apple.com>
 
         * force-js-clean-timestamp: Work around PB lameness yet again.

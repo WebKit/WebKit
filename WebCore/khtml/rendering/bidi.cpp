@@ -1201,6 +1201,13 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                 static_cast<RenderFlow*>(o->containingBlock())->insertSpecialObject(o);
             }
         } else if ( o->isReplaced() ) {
+            if (o->style()->whiteSpace() != NOWRAP || (!last || last->style()->whiteSpace() != NOWRAP)) {
+                w += tmpW;
+                tmpW = 0;
+                lBreak.obj = last;
+                lBreak.pos = last ? last->length() : 0;
+            }
+
             tmpW += o->width()+o->marginLeft()+o->marginRight();
             if (ignoringSpaces) {
                 BidiIterator* startMid = new (o->renderArena()) BidiIterator();
@@ -1282,7 +1289,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
 
                     lBreak.obj = o;
                     lBreak.pos = pos;
-    
+                    
                     if( *(str+pos) == '\n' && isPre) {
 #ifdef DEBUG_LINEBREAKS
                         kdDebug(6041) << "forced break sol: " << start.obj << " " << start.pos << "   end: " << lBreak.obj << " " << lBreak.pos << "   width=" << w << endl;
@@ -1344,7 +1351,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
         } else
             KHTMLAssert( false );
 
-        if( w + tmpW > width+1 && style()->whiteSpace() != NOWRAP && o->style()->whiteSpace() != NOWRAP ) {
+        if( w + tmpW > width+1 && o->style()->whiteSpace() != NOWRAP ) {
             //kdDebug() << " too wide w=" << w << " tmpW = " << tmpW << " width = " << width << endl;
             //kdDebug() << "start=" << start.obj << " current=" << o << endl;
             // if we have floats, try to get below them.
@@ -1366,17 +1373,25 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                 lBreak.obj = o;
                 if(last != o) {
                     //kdDebug() << " using last " << last << endl;
-                    //lBreak.obj = last;
-                    lBreak.pos = 0;//last->length() - 1;
+                    lBreak.pos = 0;
                 }
                 else if ( unsigned ( pos ) >= o->length() ) {
                     lBreak.obj = Bidinext( start.par, o );
                     lBreak.pos = 0;
                 }
-                else
+                else {
                     lBreak.pos = pos;
+                }
             }
             goto end;
+        }
+
+        if (o->isReplaced() && o->style()->whiteSpace() != NOWRAP) {
+            // Go ahead and add in tmpW.
+            w += tmpW;
+            tmpW = 0;
+            lBreak.obj = o;
+            lBreak.pos = 0;
         }
 
         last = o;
