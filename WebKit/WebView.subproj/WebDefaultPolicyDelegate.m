@@ -65,7 +65,7 @@
     NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL ", mime, URL);
 }
 
-- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierFlags: (unsigned int)modifierFlags
 {
     return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow URL:nil andPath:nil];
 }

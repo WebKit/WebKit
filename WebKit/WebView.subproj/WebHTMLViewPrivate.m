@@ -142,8 +142,8 @@ BOOL _modifierTrackingEnabled = FALSE;
     WebClickPolicy *clickPolicy;
 
     clickPolicy = [[controller policyDelegate] clickPolicyForElement:[self _elementAtPoint:point]
-                                                             button:[event type]
-                                                       modifierMask:[event modifierFlags]];
+                                                              button:[event type]
+                                                       modifierFlags:[event modifierFlags]];
 
     WebPolicyAction clickAction = [clickPolicy policyAction];
     NSURL *URL = [clickPolicy URL];
@@ -162,7 +162,7 @@ BOOL _modifierTrackingEnabled = FALSE;
             break;
         default:
             [NSException raise:NSInvalidArgumentException
-                        format:@"clickPolicyForElement:button:modifierMask: returned an invalid WebClickPolicy"];
+                        format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
     }
     return NO;
 }

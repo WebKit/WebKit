@@ -189,7 +189,7 @@ typedef enum {
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 
-    clickPolicyForElement:button:modifierMask:<BR>
+    clickPolicyForElement:button:modifierFlags:<BR>
     URLPolicyForURL:inFrame:<BR>
     fileURLPolicyForMIMEType:inFrame:isDirectory:<BR>
     contentPolicyForMIMEType:URL:inFrame:<BR>
@@ -197,14 +197,14 @@ typedef enum {
 @protocol WebControllerPolicyDelegate <NSObject>
 
 /*!
-     @method clickPolicyForElement:button:modifierMask:
+     @method clickPolicyForElement:button:modifierFlags:
      @discussion Called right after the user clicks on a link.
      @param elementInformation Dictionary that describes the clicked element.
      @param eventType The type of event.
-     @param eventMask The event mask as described in NSEvents.h.
+     @param modifierFlags The modifier flags as described in NSEvent.h.
      @result The WebClickPolicy for WebKit to implement
 */
-- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask;
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierFlags: (unsigned int)modifierFlags;
 
 /*!
     @method URLPolicyForURL:inFrame:

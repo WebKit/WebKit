@@ -1,5 +1,14 @@
 2002-10-02  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebControllerPolicyDelegate.h: Change modifierMask to
+	modifierFlags to match NSEvent.
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate clickPolicyForElement:button:modifierFlags:]): Ditto.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): Ditto.
+
+2002-10-02  Darin Adler  <darin@apple.com>
+
 	Get rid of uses of canonicalURL.
 
         * WebCoreSupport.subproj/WebSubresourceClient.m:
