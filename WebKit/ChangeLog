@@ -1,5 +1,15 @@
 2003-08-15  Richard Williamson  <rjw@apple.com>
 
+	Fixed 3378530.  Ensure that line is always drawn within bounds
+	of element.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForCharacters:yOffset:withWidth:withColor:]):
+
+2003-08-15  Richard Williamson  <rjw@apple.com>
+
 	Fixed 3379439.  Remove checks for CG symbols.  No longer needed.
 
         Reviewed by Darin.

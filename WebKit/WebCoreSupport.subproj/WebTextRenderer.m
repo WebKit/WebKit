@@ -1154,7 +1154,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
     CGContextSetLineWidth(cgContext, lineWidth);
     CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
-    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
+    // Subtract 1 to ensure that the line is always within bounds of element.
+    CGContextAddLineToPoint(cgContext, point.x + width - 1.0, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];
