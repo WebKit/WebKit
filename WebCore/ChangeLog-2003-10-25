@@ -1,3 +1,15 @@
+2002-12-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3133081, slashdot messed up when changing font sizes.
+	setStyle in RenderFlow was messed up for continuations.  A
+	block in the middle of a continuation incorrectly propagated
+	its style to the following inlines.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::setStyle):
+
 2002-12-20  Richard Williamson   <rjw@apple.com>
 
         Fix for 3133601.  Play the same trick we do in

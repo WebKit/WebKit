@@ -102,16 +102,23 @@ void RenderFlow::setStyle(RenderStyle *_style)
         child = child->nextSibling();
     }
     
-    // Ensure that all of the split inlines pick up the new style.
-    RenderFlow* currCont = continuation();
-    while (currCont) {
-        if (currCont->isInline()) {
-            RenderFlow* nextCont = currCont->continuation();
-            currCont->setContinuation(0);
-            currCont->setStyle(style());
-            currCont->setContinuation(nextCont);
+    // Ensure that all of the split inlines pick up the new style. We
+    // only do this if we're an inline, since we don't want to propagate
+    // a block's style to the other inlines.
+    // e.g., <font>foo <h4>goo</h4> moo</font>.  The <font> inlines before
+    // and after the block share the same style, but the block doesn't
+    // need to pass its style on to anyone else.
+    if (isInline()) {
+        RenderFlow* currCont = continuation();
+        while (currCont) {
+            if (currCont->isInline()) {
+                RenderFlow* nextCont = currCont->continuation();
+                currCont->setContinuation(0);
+                currCont->setStyle(style());
+                currCont->setContinuation(nextCont);
+            }
+            currCont = currCont->continuation();
         }
-        currCont = currCont->continuation();
     }
 }
 
