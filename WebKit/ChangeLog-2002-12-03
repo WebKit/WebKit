@@ -1,5 +1,13 @@
 2002-07-15  Darin Adler  <darin@apple.com>
 
+	More weaning from C++.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView initWithFrame:plugin:url:baseURL:mime:arguments:]): Use malloc instead of new.
+        (-[IFPluginView dealloc]): Use free instead of delete.
+
+2002-07-15  Darin Adler  <darin@apple.com>
+
 	Fixes so we are ready to compile as Objective C, not C++.
 	The C++ front end misses a lot of things the C front end catches.
 

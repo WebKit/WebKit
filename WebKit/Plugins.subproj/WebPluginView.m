@@ -264,17 +264,9 @@
 
 #pragma mark IFPLUGINVIEW
 
-// Could do this as a category on NSString if we wanted.
-static char *newCString(NSString *string)
-{
-    char *cString = new char[[string cStringLength] + 1];
-    [string getCString:cString];
-    return cString;
-}
-
 - (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
     
     instance = &instanceStruct;
     instance->ndata = self;
@@ -308,25 +300,23 @@ static char *newCString(NSString *string)
     // These arrays are passed to NPP_New, but the strings need to be
     // modifiable and live the entire life of the plugin.
     
-    argsCount = 0;
-    
     // The Java plug-in requires the first argument to be the base URL
-    if([mime isEqualToString:@"application/x-java-applet"]){
-        cAttributes = new char * [[arguments count]+1];
-        cValues = new char * [[arguments count]+1]; 
-        cAttributes[0] = newCString(@"DOCBASE");
-        cValues[0] = newCString([baseURL absoluteString]);
+    if ([mime isEqualToString:@"application/x-java-applet"]) {
+        cAttributes = (char **)malloc(([arguments count] + 1) * sizeof(char *));
+        cValues = (char **)malloc(([arguments count] + 1) * sizeof(char *));
+        cAttributes[0] = strdup("DOCBASE");
+        cValues[0] = strdup([[baseURL absoluteString] UTF8String]);
         argsCount++;
-    }else{
-        cAttributes = new char * [[arguments count]];
-        cValues = new char * [[arguments count]];
+    } else {
+        cAttributes = (char **)malloc([arguments count] * sizeof(char *));
+        cValues = (char **)malloc([arguments count] * sizeof(char *));
     }
-        
+    
     NSEnumerator *e = [arguments keyEnumerator];
     NSString *key;
     while ((key = [e nextObject])) {
-        cAttributes[argsCount] = newCString(key);
-        cValues[argsCount] = newCString([arguments objectForKey:key]);
+        cAttributes[argsCount] = strdup([key UTF8String]);
+        cValues[argsCount] = strdup([[arguments objectForKey:key] UTF8String]);
         argsCount++;
     }
     
@@ -335,8 +325,6 @@ static char *newCString(NSString *string)
     
     // Initialize globals
     canRestart = YES;
-    isStarted = NO;
-    fullMode = NO;
     
     return self;
 }
@@ -348,8 +336,8 @@ static char *newCString(NSString *string)
     [self stop];
     
     for (i = 0; i < argsCount; i++) {
-        delete [] cAttributes[i];
-        delete [] cValues[i];
+        free(cAttributes[i]);
+        free(cValues[i]);
     }
     [streams removeAllObjects];
     [streams release];
@@ -357,8 +345,8 @@ static char *newCString(NSString *string)
     [srcURL release];
     [baseURL release];
     [notificationData release];
-    delete [] cAttributes;
-    delete [] cValues;
+    free(cAttributes);
+    free(cValues);
     [super dealloc];
 }
 
@@ -549,12 +537,7 @@ static char *newCString(NSString *string)
     instance = &instanceStruct;
     instance->ndata = self;
     
-    argsCount = 0;
-    cAttributes = 0;
-    cValues = 0;
-    
     canRestart = YES;
-    isStarted = NO;
     fullMode = YES;
     
     [self setFrame:NSMakeRect(0, 0, 1, 1)];
@@ -931,4 +914,5 @@ static char *newCString(NSString *string)
 {
     return NPP_HandleEvent;
 }
+
 @end
