@@ -988,10 +988,11 @@ namespace KJS {
 
 const struct HashEntry ImageTableEntries[] = {
    { 0, 0, 0, 0, 0 },
-   { "src", Image::Src, DontDelete, 0, 0 },
-   { "complete", Image::Complete, DontDelete|ReadOnly, 0, 0 }
+   { "src", Image::Src, DontDelete, 0, &ImageTableEntries[3] },
+   { "complete", Image::Complete, DontDelete|ReadOnly, 0, 0 },
+   { "onload", Image::OnLoad, DontDelete, 0, 0 }
 };
 
-const struct HashTable ImageTable = { 2, 3, ImageTableEntries, 3 };
+const struct HashTable ImageTable = { 2, 4, ImageTableEntries, 3 };
 
 }; // namespace

@@ -1,3 +1,22 @@
+2003-05-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3168588 - Can't click on links at Nike site (Image onload handler problem)
+
+	The fix was to implement the onload property for Image objects
+	(which are entirely different from <img> HTML elements).
+
+        * khtml/ecma/kjs_html.cpp:
+        (Image::getValueProperty): Implement access to onload attribte.
+        (Image::tryPut): Use putValue cause we're gonna use the hashtable now.
+        (Image::putValue): Moved guts of tryPut here. Implement setting of
+	onload attribute.
+        (Image::notifyFinished): Fire onload event if there is a listener.
+        (Image::Image): initialize onload listener to null.
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_html.lut.h: Regenerated.
+
 === Safari-79 ===
 
 2003-05-14  David Hyatt  <hyatt@apple.com>
