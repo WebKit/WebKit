@@ -27,13 +27,9 @@
 
 #import <qtextstream.h>
 
-// class QTextStream ===========================================================
-
 QTextStream::QTextStream()
 {
-    ERROR("not yet implemented");
 }
-
 
 QTextStream::QTextStream(QByteArray, int)
 {
@@ -45,48 +41,34 @@ QTextStream::QTextStream(QString *, int)
     ERROR("not yet implemented");
 }
 
-
 QTextStream::~QTextStream()
 {
-    ERROR("not yet implemented");
 }
-
 
 QTextStream &QTextStream::operator<<(char)
 {
-    ERROR("not yet implemented");
     return *this;
 }
-
 
 QTextStream &QTextStream::operator<<(const char *)
 {
-    ERROR("not yet implemented");
     return *this;
 }
-
 
 QTextStream &QTextStream::operator<<(const QCString &)
 {
-    ERROR("not yet implemented");
     return *this;
 }
-
 
 QTextStream &QTextStream::operator<<(const QString &)
 {
-    ERROR("not yet implemented");
     return *this;
 }
-
-
-// class QTextIStream ==========================================================
 
 QTextIStream::QTextIStream(QString *)
 {
     ERROR("not yet implemented");
 }
-
 
 QString QTextIStream::readLine()
 {
@@ -94,14 +76,10 @@ QString QTextIStream::readLine()
     return QString();
 }
 
-
-// class QTextOStream ==========================================================
-
 QTextOStream::QTextOStream(QString *)
 {
     ERROR("not yet implemented");
 }
-
 
 QTextOStream::QTextOStream(QByteArray)
 {
@@ -114,21 +92,17 @@ QString QTextOStream::readLine()
     return QString();
 }
 
-
 QTextStream &QTextStream::operator<<(QTextStream &(*const &)(QTextStream &)) 
 {
-    ERROR("not yet implemented");
     return *this;
 }
 
 QTextStream &QTextStream::operator<<(void const *)
 {
-    ERROR("not yet implemented");
     return *this;
 }
 
 QTextStream &endl(QTextStream& stream)
 {
-    ERROR("not yet implemented");
     return stream;
 }

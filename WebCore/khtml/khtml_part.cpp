@@ -2745,11 +2745,13 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
           emit d->m_extension->openURLNotify();
   }
 
-  if ( !child->m_services.contains( mimetype ) )
+#if APPLE_CHANGES
+  if ( !child->m_part )
   {
-#ifdef APPLE_CHANGES
     KParts::ReadOnlyPart *part = impl->createPart(*child, url, mimetype);
 #else
+  if ( !child->m_services.contains( mimetype ) )
+  {
     KParts::ReadOnlyPart *part = createPart( d->m_view->viewport(), child->m_name.ascii(), this, child->m_name.ascii(), mimetype, child->m_serviceName, child->m_services, child->m_params );
 #endif
 
@@ -2802,7 +2804,9 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
                part, SLOT( slotParentCompleted() ) );
     }
 
-#ifndef APPLE_CHANGES
+#if APPLE_CHANGES
+  }
+#else
     child->m_extension = KParts::BrowserExtension::childObject( part );
 
     if ( child->m_extension )
@@ -2832,8 +2836,8 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
 
       child->m_extension->setBrowserInterface( d->m_extension->browserInterface() );
     }
-#endif
   }
+#endif
 
   checkEmitLoadEvent();
   // Some JS code in the load event may have destroyed the part

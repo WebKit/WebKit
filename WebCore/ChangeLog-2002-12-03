@@ -1,3 +1,14 @@
+2002-09-20  Darin Adler  <darin@apple.com>
+
+	- fixed 3055339 -- repro crash in RenderPartObject::updateWidget()
+
+        * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest):
+	Only create a new part if we have no old part.
+
+        * kwq/KWQtextstream.mm: Remove some of the "not implemented" logging.
+	Once we have logged that the stream is not created correctly, there's no need
+	to continue logging each time something is written out to the non-stream.
+
 2002-09-19  Richard Williamson   <rjw@apple.com>
 
         Implemented double and triple click selection.
