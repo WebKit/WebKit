@@ -1625,7 +1625,7 @@ void NodeBaseImpl::setActive(bool down)
     NodeImpl::setActive(down);
 
     // note that we need to recalc the style
-    if (m_render && m_render->style()->hasActive())
+    if (m_render && m_render->style()->affectedByActiveRules())
         setChanged();
 }
 

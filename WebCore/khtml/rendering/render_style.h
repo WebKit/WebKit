@@ -553,8 +553,8 @@ protected:
         bool _flowAroundFloats :1;
 
         PseudoId _styleType : 3;
-        bool _hasHover : 1;
-        bool _hasActive : 1;
+        bool _affectedByHover : 1;
+        bool _affectedByActive : 1;
         EUnicodeBidi _unicodeBidi : 2;
     } noninherited_flags;
 
@@ -609,8 +609,8 @@ protected:
 	noninherited_flags._table_layout = TAUTO;
 	noninherited_flags._flowAroundFloats=false;
 	noninherited_flags._styleType = NOPSEUDO;
-	noninherited_flags._hasHover = false;
-	noninherited_flags._hasActive = false;
+    noninherited_flags._affectedByHover = false;
+    noninherited_flags._affectedByActive = false;
 	noninherited_flags._unicodeBidi = UBNormal;
     }
 
@@ -632,12 +632,12 @@ public:
     bool hasPseudoStyle() const { return pseudoStyle; }
     void removePseudoStyle(PseudoId pi);
 
-    bool hasHover() const { return  noninherited_flags._hasHover; }
-    bool hasActive() const { return  noninherited_flags._hasActive; }
+    bool affectedByHoverRules() const { return  noninherited_flags._affectedByHover; }
+    bool affectedByActiveRules() const { return  noninherited_flags._affectedByActive; }
 
-    void setHasHover() {  noninherited_flags._hasHover = true; }
-    void setHasActive() {  noninherited_flags._hasActive = true; }
-
+    void setAffectedByHoverRules(bool b) {  noninherited_flags._affectedByHover = b; }
+    void setAffectedByActiveRules(bool b) {  noninherited_flags._affectedByActive = b; }
+ 
     bool operator==(const RenderStyle& other) const;
     bool        isFloating() const { return !(noninherited_flags._floating == FNONE); }
     bool        hasMargin() const { return surround->margin.nonZero(); }

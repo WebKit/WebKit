@@ -75,9 +75,12 @@ public:
     RenderLayer *firstChild() const { return m_first; }
     RenderLayer *lastChild() const { return m_last; }
 
-    void addChild(RenderLayer *newChild);
+    void addChild(RenderLayer *newChild, RenderLayer* beforeChild = 0);
     RenderLayer* removeChild(RenderLayer *oldChild);
 
+    void removeOnlyThisLayer();
+    void insertOnlyThisLayer();
+    
     RenderLayer* root() {
         RenderLayer* curr = this;
         while (curr->parent()) curr = curr->parent();
@@ -117,6 +120,9 @@ public:
     // layers that intersect the point from front to back.
     void paint(QPainter *p, int x, int y, int w, int h);
     bool nodeAtPoint(RenderObject::NodeInfo& info, int x, int y);
+    
+    void clearOtherLayersHoverActiveState();
+    void clearHoverAndActiveState(RenderObject* obj);
     
     void detach(RenderArena* renderArena);
     

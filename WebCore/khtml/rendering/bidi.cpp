@@ -1441,7 +1441,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
         last = o;
         o = Bidinext( start.par, o );
 
-        if (last->isReplaced() && last->style()->whiteSpace() != NOWRAP) {
+        if (!last->isSpecial() && last->isReplaced() && last->style()->whiteSpace() != NOWRAP) {
             // Go ahead and add in tmpW.
             w += tmpW;
             tmpW = 0;

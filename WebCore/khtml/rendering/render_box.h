@@ -154,7 +154,6 @@ protected:
     // A pointer to our layer if we have one.  Currently only positioned elements
     // and floaters have layers.
     RenderLayer* m_layer;
-    bool m_hasChildLayers : 1;
 };
 
 

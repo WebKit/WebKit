@@ -181,18 +181,18 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
-void RenderObject::appendLayers(RenderLayer* parentLayer)
+void RenderObject::addLayers(RenderLayer* parentLayer, RenderLayer* beforeChild)
 {
     if (!parentLayer)
         return;
     
     if (layer()) {
-        parentLayer->addChild(layer());
+        parentLayer->addChild(layer(), beforeChild);
         return;
     }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->appendLayers(parentLayer);
+        curr->addLayers(parentLayer, beforeChild);
 }
 
 void RenderObject::removeLayers(RenderLayer* parentLayer)
@@ -209,6 +209,61 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
         curr->removeLayers(parentLayer);
 }
 
+void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
+{
+    if (!newParent)
+        return;
+    
+    if (layer()) {
+        if (oldParent)
+            oldParent->removeChild(layer());
+        newParent->addChild(layer());
+        return;
+    }
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->moveLayers(oldParent, newParent);
+}
+
+RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint,
+                                         bool checkParent)
+{
+    // Error check the parent layer passed in.  If it's null, we can't find anything.
+    if (!parentLayer)
+        return 0;
+        
+    // Step 1: Descend into our siblings trying to find the next layer.  If we do find
+    // a layer, and if its parent layer matches our desired parent layer, then we have
+    // a match.
+    for (RenderObject* curr = startPoint ? startPoint->nextSibling() : firstChild();
+         curr; curr = curr->nextSibling()) {
+        RenderLayer* nextLayer = curr->findNextLayer(parentLayer, 0, false);
+        if (nextLayer) {
+            if (nextLayer->parent() == parentLayer)
+                return nextLayer;
+            return 0;
+        }
+    }
+    
+    // Step 2: If our layer is the desired parent layer, then we're finished.  We didn't
+    // find anything.
+    RenderLayer* ourLayer = layer();
+    if (parentLayer == ourLayer)
+        return 0;
+    
+    // Step 3: If we have a layer, then return that layer.  It will be checked against
+    // the desired parent layer in the for loop above.
+    if (ourLayer)
+        return ourLayer;
+    
+    // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
+    // follow us to see if we can locate a layer.
+    if (checkParent && parent())
+        return parent()->findNextLayer(parentLayer, this, true);
+    
+    return 0;
+}
+    
 RenderLayer* RenderObject::enclosingLayer()
 {
     RenderObject* curr = this;
@@ -765,6 +820,15 @@ void RenderObject::setStyle(RenderStyle *style)
         return;
 
     RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
+    if (isFloating() || isPositioned()) {
+        // For changes in float or position, we need to conceivably remove ourselves
+        // from the special objects list.
+        bool floatOrPos = style->isFloating() || style->position() == ABSOLUTE ||
+                          style->position() == FIXED;
+        if (!floatOrPos)
+            removeFromSpecialObjects();
+    }
+    
     //qDebug("new style, diff=%d", d);
     // reset style flags
     m_floating = false;
@@ -1077,8 +1141,8 @@ void RenderObject::setHoverAndActive(NodeInfo& info, bool oldinside, bool inside
             bool oldactive = elt->active();
             if (oldactive != (inside && info.active() && elt == info.innerNode()))
                 elt->setActive(inside && info.active() && elt == info.innerNode());
-            if ( ((oldinside != mouseInside()) && style()->hasHover()) ||
-                ((oldactive != elt->active()) && style()->hasActive()))
+            if ((oldinside != mouseInside() && style()->affectedByHoverRules()) ||
+                (oldactive != elt->active() && style()->affectedByActiveRules()))
                 elt->setChanged();
         }
     }

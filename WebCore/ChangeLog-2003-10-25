@@ -1,3 +1,71 @@
+2003-01-19  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3150561 (blog articles vanish on stylesheet switch) and
+        and 3150560 (crash changing fixed positioned element to normal
+        positioning dynamically).
+
+        This change makes layers able to deal with dynamic changes in
+        position that cause you to have to either remove a layer from
+        the hierarchy while preserving the children or to insert a
+        layer into the hierarchy in between a parent and its descendants.
+
+	This patch also rewrites :hover/:active so that they can actually
+	be used in selectors other than the rightmost selector (e.g., so you
+	can write a rule like "li:hover > a").  
+
+	Also, layers will now properly clear out their hover/active state
+	when the mouse is no longer inside them.
+
+	With these fixes, Eric Meyer's "Pure CSS Menus" work (perfectly)
+	and the repainting problems on sites like brainjar.com and
+	diveintomark.org and wired.com are fixed.
+	
+        Reviewed by mjs and john.
+
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseSelector):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/dom/html_head.cpp:
+        (HTMLLinkElement::setDisabled):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::setStyle):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::addChild):
+        (RenderLayer::removeOnlyThisLayer):
+        (RenderLayer::insertOnlyThisLayer):
+        (RenderLayer::clearOtherLayersHoverActiveState):
+        (RenderLayer::clearHoverAndActiveState):
+        (RenderLayer::nodeAtPoint):
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::addLayers):
+        (RenderObject::moveLayers):
+        (RenderObject::findNextLayer):
+        (RenderObject::setStyle):
+        (RenderObject::setHoverAndActive):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::setActive):
+
 2003-01-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

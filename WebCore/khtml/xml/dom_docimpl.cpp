@@ -288,7 +288,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_inDocument = true;
     m_styleSelectorDirty = false;
     m_inStyleRecalc = false;
-
+    m_usesDescendantRules = false;
+    
     m_styleSelector = new CSSStyleSelector( this, m_usersheet, m_styleSheets, m_url,
                                             pMode == Strict );
     m_windowEventListeners.setAutoDelete(true);

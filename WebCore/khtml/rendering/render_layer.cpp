@@ -144,18 +144,23 @@ void RenderLayer::detach(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
-void RenderLayer::addChild(RenderLayer *child)
+void RenderLayer::addChild(RenderLayer *child, RenderLayer* beforeChild)
 {
-    if (!firstChild()) {
-        setFirstChild(child);
-        setLastChild(child);
-    } else {
-        RenderLayer* last = lastChild();
-        setLastChild(child);
-        child->setPreviousSibling(last);
-        last->setNextSibling(child);
+    RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
+    if (prevSibling) {
+        child->setPreviousSibling(prevSibling);
+        prevSibling->setNextSibling(child);
     }
+    else
+        setFirstChild(child);
 
+    if (beforeChild) {
+        beforeChild->setPreviousSibling(child);
+        child->setNextSibling(beforeChild);
+    }
+    else
+        setLastChild(child);
+   
     child->setParent(this);
 }
 
@@ -177,6 +182,44 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
     oldChild->setParent(0);
     
     return oldChild;
+}
+
+void RenderLayer::removeOnlyThisLayer()
+{
+    if (!m_parent)
+        return;
+    
+    // Remove us from the parent.
+    RenderLayer* parent = m_parent;
+    RenderLayer* nextSib = nextSibling();
+    parent->removeChild(this);
+    
+    // Now walk our kids and reattach them to our parent.
+    RenderLayer* current = m_first;
+    while (current) {
+        RenderLayer* next = current->nextSibling();
+        removeChild(current);
+        parent->addChild(current, nextSib);
+        current = next;
+    }
+    
+    detach(renderer()->renderArena());
+}
+
+void RenderLayer::insertOnlyThisLayer()
+{
+    if (!m_parent && renderer()->parent()) {
+        // We need to connect ourselves when our renderer() has a parent.
+        // Find our enclosingLayer and add ourselves.
+        RenderLayer* parentLayer = renderer()->parent()->enclosingLayer();
+        if (parentLayer)
+            parentLayer->addChild(this, 
+                                  renderer()->parent()->findNextLayer(parentLayer, renderer()));
+    }
+    
+    // Remove all descendant layers from the hierarchy and add them to the new position.
+    for (RenderObject* curr = renderer()->firstChild(); curr; curr = curr->nextSibling())
+        curr->moveLayers(m_parent, this);
 }
 
 void 
@@ -314,10 +357,44 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
     node->detach(renderer()->renderArena());
 }
 
+void
+RenderLayer::clearOtherLayersHoverActiveState()
+{
+    if (!m_parent)
+        return;
+        
+    for (RenderLayer* curr = m_parent->firstChild(); curr; curr = curr->nextSibling()) {
+        if (curr == this)
+            continue;
+        curr->clearHoverAndActiveState(curr->renderer());
+    }
+    
+    m_parent->clearOtherLayersHoverActiveState();
+}
+
+void
+RenderLayer::clearHoverAndActiveState(RenderObject* obj)
+{
+    if (!obj->mouseInside())
+        return;
+    
+    obj->setMouseInside(false);
+    if (obj->element()) {
+        obj->element()->setActive(false);
+        if (obj->style()->affectedByHoverRules() || obj->style()->affectedByActiveRules())
+            obj->element()->setChanged(true);
+    }
+    
+    for (RenderObject* child = obj->firstChild(); child; child = child->nextSibling())
+        if (child->mouseInside())
+            clearHoverAndActiveState(child);
+}
+
 bool
 RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 {
     bool inside = false;
+    RenderLayer* insideLayer = 0;
     QRect damageRect(m_x, m_y, m_width, m_height);
     RenderZTreeNode* node = constructZTree(damageRect, damageRect, this, true, x, y);
     if (!node)
@@ -341,11 +418,23 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
         inside = elt->layer->renderer()->nodeAtPoint(info, x, y,
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                       elt->absBounds.y() - elt->layer->renderer()->yPos());
-        if (inside)
+        if (inside) {
+            insideLayer = elt->layer;
             break;
+        }
     }
     node->detach(renderer()->renderArena());
 
+    if (insideLayer) {
+        // Clear out the other layers' hover/active state
+        insideLayer->clearOtherLayersHoverActiveState();
+    
+        // Now clear out our descendant layers
+        for (RenderLayer* child = insideLayer->firstChild();
+             child; child = child->nextSibling())
+            child->clearHoverAndActiveState(child->renderer());
+    }
+    
     return inside;
 }
 
@@ -458,7 +547,7 @@ RenderLayer::constructZTree(QRect overflowClipRect, QRect posClipRect,
         }
         else
             returnNode->layerElement = layerElt;
-    }
+    } 
     
     // Now look for children that have a negative z-index.
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {

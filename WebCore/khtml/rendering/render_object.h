@@ -105,10 +105,13 @@ public:
 
     virtual RenderLayer* layer() const { return 0; }
     RenderLayer* enclosingLayer();
-    void appendLayers(RenderLayer* parentLayer);
+    void addLayers(RenderLayer* parentLayer, RenderLayer* beforeChild=0);
     void removeLayers(RenderLayer* parentLayer);
-    virtual void setHasChildLayers(bool hasLayers) { }
+    void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
+    RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint,
+                               bool checkParent=true);
     virtual void positionChildLayers() { }
+    virtual bool requiresLayer() { return !isTableCell() && (isPositioned() || isRelPositioned()); }
     
     virtual QRect getOverflowClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     virtual QRect getClipRect(int tx, int ty) { return QRect(0,0,0,0); }

@@ -85,8 +85,16 @@ void RenderBox::setStyle(RenderStyle *_style)
             setRelPositioned(true);
     }
     
-    if (!isTableCell() && (isPositioned() || isRelPositioned()) && !m_layer)
-        m_layer = new (renderArena()) RenderLayer(this);
+    if (requiresLayer()) {
+        if (!m_layer) {
+            m_layer = new (renderArena()) RenderLayer(this);
+            m_layer->insertOnlyThisLayer();
+        }
+    }
+    else if (m_layer && !isHtml() && !isRoot()) {
+        m_layer->removeOnlyThisLayer();
+        m_layer = 0;
+    }
 }
 
 RenderBox::~RenderBox()

@@ -115,6 +115,9 @@ bool HTMLLinkElement::disabled() const
 
 void HTMLLinkElement::setDisabled( bool _disabled )
 {
+    if (disabled() == _disabled)
+        return;
+        
     if(impl)
         ((ElementImpl *)impl)->setAttribute(ATTR_DISABLED, _disabled ? "" : 0);
 }

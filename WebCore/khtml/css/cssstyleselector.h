@@ -85,7 +85,7 @@ namespace khtml
 	   the virtual methods until then, so the class has no vptr.
 	*/
 // 	virtual ~StyleSelector() {};
-// 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e, int = None) = 0;
+// 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e) = 0;
 
 	enum State {
 	    None = 0x00,
@@ -124,7 +124,7 @@ namespace khtml
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
 	static void clear();
 
-	RenderStyle *styleForElement(DOM::ElementImpl *e, int state = None );
+	RenderStyle *styleForElement(DOM::ElementImpl *e);
 
         QValueList<int> fontSizes() const { return m_fontSizes; }
 	QValueList<int> fixedFontSizes() const { return m_fixedFontSizes; }
@@ -212,11 +212,8 @@ public:
 	unsigned int pseudoPropsSize;
 
 
-	int dynamicState;
 	RenderStyle::PseudoId dynamicPseudo;
-	int usedDynamicStates;
-	int selectorDynamicState;
-
+	
 	RenderStyle *style;
 	RenderStyle *parentStyle;
 	DOM::ElementImpl *element;

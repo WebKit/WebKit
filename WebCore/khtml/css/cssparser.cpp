@@ -689,6 +689,27 @@ StyleBaseImpl::parseSelector(const QChar *curP, const QChar *endP)
                 slist->setAutoDelete(true);
             }
             slist->append(selector);
+            if (!sawDescendantRule && 
+                (selector->relation == CSSSelector::Descendant || 
+                 selector->relation == CSSSelector::Child)) {
+                // We encountered a descendant rule.  Get our document and set its
+                // descendant rule flag to true.
+                sawDescendantRule = true;
+                StyleBaseImpl *b = this;
+                StyleBaseImpl *root = this;
+                while (b) {
+                    root = b;
+                    b = b->m_parent;
+                }
+            
+                if (root && root->isStyleSheet()) {
+                    StyleSheetImpl *sheet = static_cast<StyleSheetImpl *>(root);
+                    if (sheet->ownerNode()) {
+                        DocumentImpl *doc = sheet->ownerNode()->getDocument();
+                        doc->setUsesDescendantRules(true);
+                    }
+                }
+            }
         }
         else
         {
