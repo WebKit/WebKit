@@ -204,6 +204,9 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
                     aValue = Object([jsobject _imp]);
                 }
+                else if (*obj == 0) {
+                    return Undefined();
+                }
                 else {
                     aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));
                 }

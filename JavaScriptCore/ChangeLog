@@ -1,3 +1,16 @@
+2004-06-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3696112>: nil from an Objective-C class seems to get wrapped as a JavaScript proxy that will not print.
+
+	This turned out to be a show stopper for Dashboard.  We now
+	return Undefined() when nil is returned from a ObjC method
+	that returns an object type.
+	
+        Reviewed by Maciej.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+
 === Safari-145 ===
 
 2004-06-15  Richard Williamson   <rjw@apple.com>
