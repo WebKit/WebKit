@@ -1,3 +1,25 @@
+2002-12-02  Maciej Stachowiak  <mjs@apple.com>
+
+	- added original URL field to action dictionary so that policy delegates
+	can avoid prompting over and over on redirects.
+	
+        * WebKit.exp:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:andCall:withSelector:]):
+        (-[WebFrame _addExtraFieldsToRequest:]):
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:]):
+
 2002-11-28  Darin Adler  <darin@apple.com>
 
         * Downloads.subproj/WebDownloadHandler.m:

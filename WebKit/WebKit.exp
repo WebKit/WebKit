@@ -48,3 +48,4 @@ _WebActionNavigationTypeKey
 _WebActionElementKey
 _WebActionButtonKey
 _WebActionModifierFlagsKey
+_WebActionOriginalURLKey

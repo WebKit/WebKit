@@ -33,6 +33,7 @@ extern NSString *WebActionNavigationTypeKey; // NSNumber (WebActionType)
 extern NSString *WebActionElementKey; // NSDictionary of element info
 extern NSString *WebActionButtonKey;  // NSEventType
 extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
+extern NSString *WebActionOriginalURLKey; // NSURL
 
 
 /*!

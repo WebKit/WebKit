@@ -10,7 +10,7 @@ NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
 NSString *WebActionElementKey = @"WebActionNavigationTypeKey";
 NSString *WebActionButtonKey = @"WebActionButtonKey"; 
 NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
-
+NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 
 @interface WebPolicyDecisionListenerPrivate : NSObject

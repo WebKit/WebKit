@@ -48,8 +48,8 @@
     }
     
     _private = [[WebDataSourcePrivate alloc] init];
-    _private->originalRequest = [request retain];
-    _private->request = [request retain];
+    _private->originalRequest = [request copy];
+    _private->request = [_private->originalRequest retain];
 
     ++WebDataSourceCount;
     

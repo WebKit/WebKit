@@ -105,7 +105,9 @@
 
 - (void)loadRequest:(WebResourceRequest *)request
 {
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    WebResourceRequest *r = [request copy];
+    [self _addExtraFieldsToRequest:r];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:r];
     [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeStandard];
     [newDataSource release];
 }

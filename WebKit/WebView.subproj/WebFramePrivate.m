@@ -998,7 +998,7 @@ static const char * const loadTypeNames[] = {
     [newDataSource release];
 }
 
--(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event
+-(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
 {
     if (event != nil) {
         NSView *topViewInEventWindow = [[event window] contentView];
@@ -1015,11 +1015,14 @@ static const char * const loadTypeNames[] = {
             elementInfo, WebActionElementKey,
             [NSNumber numberWithInt:[event type]], WebActionButtonKey,
             [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+	    URL, WebActionOriginalURLKey,
             nil];
     }
 
-    return [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:navigationType]
-                                       forKey:WebActionNavigationTypeKey];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+	[NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+        URL, WebActionOriginalURLKey,
+        nil];
 }
 
 - (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
@@ -1048,7 +1051,7 @@ static const char * const loadTypeNames[] = {
 {
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
         [dataSource _setTriggeringAction:action];
     }
 
@@ -1170,11 +1173,22 @@ static const char * const loadTypeNames[] = {
     [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
 }
 
+- (void)_addExtraFieldsToRequest:(WebResourceRequest *)request
+{
+    [request setUserAgent:[[self controller] userAgentForURL:[request URL]]];
+    if (self == [[self controller] mainFrame]) {
+	[request setCookiePolicyBaseURL:[request URL]];
+    } else {
+	[request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] URL]];
+    }
+}
+
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
 - (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
+    [self _addExtraFieldsToRequest:request];
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
@@ -1182,11 +1196,11 @@ static const char * const loadTypeNames[] = {
     NSDictionary *action = nil;
 
     if (isFormSubmission) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event originalURL:URL];
     } else if (event == nil) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event originalURL:URL];
     } else {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event originalURL:URL];
     }
 
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
@@ -1276,7 +1290,7 @@ static const char * const loadTypeNames[] = {
     [request setContentType:contentType];
     [request setReferrer:[_private->bridge referrer]];
 
-    NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
+    NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event originalURL:URL];
 
     [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard];
 

@@ -157,8 +157,7 @@
     if (pageCache){
         _private->loadingFromPageCache = YES;
         [self _commitIfReady: pageCache];
-    }
-    else if (!_private->mainClient) {
+    } else if (!_private->mainClient) {
         if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
