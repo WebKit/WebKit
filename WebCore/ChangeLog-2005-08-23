@@ -1,3 +1,13 @@
+2003-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed Dave's fix to my fix to my fix:
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::width): Put back m_render check, consider
+	the case of image with no width/height attributes and display:none
+	set. We don't want to crash on that.
+        (HTMLImageElementImpl::height): Ditto.
+
 2003-10-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
