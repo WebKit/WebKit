@@ -1,3 +1,13 @@
+2005-02-24  David Harrison  <harrison@apple.com>
+
+        Reviewed by Vicki.
+
+        <rdar://problem/4004279> 3 AXSelectedTextChanged notifications are firing each time I type a character
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        Send notification only if the selection is not null.  This safely ignores transitory selections set during editing.
+
 2005-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

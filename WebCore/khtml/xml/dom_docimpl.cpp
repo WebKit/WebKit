@@ -1291,10 +1291,6 @@ void DocumentImpl::updateSelection()
     Selection s = part()->selection();
     if (!s.isRange()) {
         canvas->clearSelection();
-#if APPLE_CHANGES
-        if (KWQAccObjectCache::accessibilityEnabled())
-            getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
-#endif
     }
     else {
         Position startPos = VisiblePosition(s.start(), s.startAffinity(), khtml::VisiblePosition::INIT_UP).deepEquivalent();
@@ -1303,13 +1299,17 @@ void DocumentImpl::updateSelection()
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
             static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
-#if APPLE_CHANGES
-            if (KWQAccObjectCache::accessibilityEnabled()) {
-                getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
-            }
-#endif
         }
     }
+    
+#if APPLE_CHANGES
+    // send the AXSelectedTextChanged notification only if the new selection is non-null,
+    // because null selections are only transitory (e.g. when starting an EditCommand, currently)
+    if (KWQAccObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
+        getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
+    }
+#endif
+
 }
 
 Tokenizer *DocumentImpl::createTokenizer()
