@@ -1,3 +1,63 @@
+2005-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+	<rdar://problem/4003774> REGRESSION(125-181): JavaScript problems @ Yankee/Dixie quiz
+        
+	Reworked how scopes are set up for event handlers to match other
+	browser. This includes the following changes:
+
+	- Special scope entries are set up at the time the event handler
+	is created, not at the time it fires.
+
+	- Special scope is only set up for event handlers set in the html
+	source through an html attribute, not for handlers set using
+	addEventHandler or setting JS properties like onclick through
+	JavaScript.
+
+	- Special scope is based on the DOM node on which the handler is
+	an attribute, not the event target.
+
+	This fixes the regression while allowing the fix to
+	<rdar://problem/3798453> (DIG: getting variable with same name as
+	DOM element attribute gets attribute value instead) to keep
+	working correctly.
+	
+	* khtml/ecma/kjs_events.cpp:
+        (JSEventListener::handleEvent):
+        (JSLazyEventListener::JSLazyEventListener):
+        (JSLazyEventListener::parseCode):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::createHTMLEventHandler):
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::getJSLazyEventListener):
+        * khtml/ecma/kjs_window.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseHTMLAttribute):
+        (HTMLFrameElementImpl::parseHTMLAttribute):
+        (HTMLFrameSetElementImpl::parseHTMLAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseHTMLAttribute):
+        (DOM::HTMLButtonElementImpl::parseHTMLAttribute):
+        (DOM::HTMLInputElementImpl::parseHTMLAttribute):
+        (DOM::HTMLLabelElementImpl::parseHTMLAttribute):
+        (DOM::HTMLSelectElementImpl::parseHTMLAttribute):
+        (DOM::HTMLTextAreaElementImpl::parseHTMLAttribute):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseHTMLAttribute):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::parseHTMLAttribute):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::createHTMLEventListener):
+        * khtml/khtml_part.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLEventListener):
+        * khtml/xml/dom_docimpl.h:
+
 2005-03-01  David Harrison  <harrison@apple.com>
 
         Reviewed by Chris.

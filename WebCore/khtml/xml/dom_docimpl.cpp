@@ -2726,10 +2726,10 @@ bool DocumentImpl::hasWindowEventListener(int id)
     return false;
 }
 
-EventListener *DocumentImpl::createHTMLEventListener(QString code)
+EventListener *DocumentImpl::createHTMLEventListener(QString code, NodeImpl *node)
 {
     if (part()) {
-	return part()->createHTMLEventListener(code);
+	return part()->createHTMLEventListener(code, node);
     } else {
 	return NULL;
     }

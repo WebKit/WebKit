@@ -434,111 +434,111 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 // standard events
     case ATTR_ONCLICK:
 	setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCONTEXTMENU:
 	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDBLCLICK:
 	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONMOUSEDOWN:
         setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONMOUSEMOVE:
         setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONMOUSEOUT:
         setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONMOUSEOVER:
         setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONMOUSEUP:
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONKEYDOWN:
         setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
 	break;
     case ATTR_ONKEYPRESS:
         setHTMLEventListener(EventImpl::KEYPRESS_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
 	break;
     case ATTR_ONKEYUP:
         setHTMLEventListener(EventImpl::KEYUP_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONSCROLL:
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBEFORECUT:
         setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCUT:
         setHTMLEventListener(EventImpl::CUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBEFORECOPY:
         setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCOPY:
         setHTMLEventListener(EventImpl::COPY_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBEFOREPASTE:
         setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONPASTE:
         setHTMLEventListener(EventImpl::PASTE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;        
     case ATTR_ONDRAGENTER:
         setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDRAGOVER:
         setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDRAGLEAVE:
         setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDROP:
         setHTMLEventListener(EventImpl::DROP_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDRAGSTART:
         setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDRAG:
         setHTMLEventListener(EventImpl::DRAG_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONDRAGEND:
         setHTMLEventListener(EventImpl::DRAGEND_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONSELECTSTART:
         setHTMLEventListener(EventImpl::SELECTSTART_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
         // other misc attributes
     default:

@@ -168,27 +168,27 @@ void HTMLBodyElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     }
     case ATTR_ONLOAD:
         getDocument()->setHTMLWindowEventListener(EventImpl::LOAD_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONUNLOAD:
         getDocument()->setHTMLWindowEventListener(EventImpl::UNLOAD_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         getDocument()->setHTMLWindowEventListener(EventImpl::BLUR_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONFOCUS:
         getDocument()->setHTMLWindowEventListener(EventImpl::FOCUS_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONRESIZE:
         getDocument()->setHTMLWindowEventListener(EventImpl::RESIZE_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONSCROLL:
         getDocument()->setHTMLWindowEventListener(EventImpl::SCROLL_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string()));
+                                                  getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_NOSAVE:
 	break;
@@ -389,11 +389,11 @@ void HTMLFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().string()));
+                                getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONUNLOAD:
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().string()));
+                                getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
@@ -590,11 +590,11 @@ void HTMLFrameSetElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONUNLOAD:
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);

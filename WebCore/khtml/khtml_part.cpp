@@ -5250,14 +5250,14 @@ DOM::Node KHTMLPart::activeNode() const
     return DOM::Node(d->m_doc?d->m_doc->focusNode():0);
 }
 
-DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
+DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code, NodeImpl *node )
 {
   KJSProxy *proxy = jScript();
 
   if (!proxy)
     return 0;
 
-  return proxy->createHTMLEventHandler( m_url.url(), code );
+  return proxy->createHTMLEventHandler( m_url.url(), code, node );
 }
 
 KHTMLPart *KHTMLPart::opener()

@@ -671,11 +671,11 @@ void HTMLFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONSUBMIT:
         setHTMLEventListener(EventImpl::SUBMIT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONRESET:
         setHTMLEventListener(EventImpl::RESET_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_NAME:
 	{
@@ -1129,11 +1129,11 @@ void HTMLButtonElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
@@ -1582,30 +1582,30 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONSELECT:
         setHTMLEventListener(EventImpl::SELECT_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCHANGE:
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONINPUT:
         setHTMLEventListener(EventImpl::INPUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
 #if APPLE_CHANGES
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     case ATTR_ONSEARCH:
         setHTMLEventListener(EventImpl::SEARCH_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string()));
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_RESULTS:
         m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
@@ -2139,11 +2139,11 @@ void HTMLLabelElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     {
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
@@ -2469,15 +2469,15 @@ void HTMLSelectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCHANGE:
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string()));
+            getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
@@ -3028,19 +3028,19 @@ void HTMLTextAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONBLUR:
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONSELECT:
         setHTMLEventListener(EventImpl::SELECT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONCHANGE:
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);

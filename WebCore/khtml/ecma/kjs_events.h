@@ -50,7 +50,7 @@ namespace KJS {
 
   class JSLazyEventListener : public JSEventListener {
   public:
-    JSLazyEventListener(QString _code, const Object &_win, bool _html = false, int lineno = 0);
+    JSLazyEventListener(QString _code, const Object &_win, DOM::NodeImpl *node, int lineno = 0);
     virtual void handleEvent(DOM::Event &evt, bool isWindowEvent);
     Object listenerObj() const;
     
@@ -60,6 +60,7 @@ namespace KJS {
     mutable QString code;
     mutable bool parsed;
     int lineNumber;
+    DOM::NodeImpl *originalNode;
   };
 
 

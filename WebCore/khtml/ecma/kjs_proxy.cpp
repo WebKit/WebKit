@@ -40,7 +40,7 @@ public:
   virtual ~KJSProxyImpl();
   virtual QVariant evaluate(QString filename, int baseLine, const QString&str, const DOM::Node &n);
   virtual void clear();
-  virtual DOM::EventListener *createHTMLEventHandler(QString sourceUrl, QString code);
+  virtual DOM::EventListener *createHTMLEventHandler(QString sourceUrl, QString code, DOM::NodeImpl *node);
   virtual void finishedWithEvent(const DOM::Event &event);
   virtual KJS::ScriptInterpreter *interpreter();
 
@@ -162,7 +162,7 @@ void KJSProxyImpl::clear() {
   }
 }
 
-DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QString code)
+DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QString code, DOM::NodeImpl *node)
 {
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance())
@@ -172,7 +172,7 @@ DOM::EventListener *KJSProxyImpl::createHTMLEventHandler(QString sourceUrl, QStr
 #endif
 
   initScript();
-  return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code,true,m_handlerLineno);
+  return KJS::Window::retrieveWindow(m_part)->getJSLazyEventListener(code,node,m_handlerLineno);
 }
 
 void KJSProxyImpl::finishedWithEvent(const DOM::Event &event)

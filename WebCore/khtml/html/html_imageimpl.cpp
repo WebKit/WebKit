@@ -226,15 +226,15 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_ONABORT: // ### add support for this
         setHTMLEventListener(EventImpl::ABORT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONERROR:
         setHTMLEventListener(EventImpl::ERROR_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string()));
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     case ATTR_NOSAVE:
 	break;
