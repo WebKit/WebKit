@@ -1603,16 +1603,20 @@
 //BC3
 //BC4
 		BC32C2EC048BF95C00A8000B = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = render_flexbox.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		BC32C2ED048BF95C00A8000B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = render_flexbox.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		BC32C2EE048BF95C00A8000B = {
 			fileRef = BC32C2EC048BF95C00A8000B;

@@ -1,5 +1,11 @@
 2003-07-08  Chris Blumenberg  <cblu@apple.com>
 
+        * WebCore.pbproj/project.pbxproj: Xcode-ified
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag): fulfilled promise to Darin that I would add a comment about using tolower() instead of | 0x20
+
+2003-07-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3272398>: Safari strips/modifies underscores in EMBED tags
 
         Reviewed by darin.

@@ -911,6 +911,9 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     finish = true;
                     break;
                 }
+                // Use tolower() instead of | 0x20 to lowercase the char because there is no 
+                // performance gain in using | 0x20 since tolower() is optimized and 
+                // | 0x20 turns characters such as '_' into junk.
                 cBuffer[cBufferPos++] = tolower(curchar);
                 ++src;
             }
@@ -1024,6 +1027,9 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         break;
                     }
                 }
+                // Use tolower() instead of | 0x20 to lowercase the char because there is no 
+                // performance gain in using | 0x20 since tolower() is optimized and 
+                // | 0x20 turns characters such as '_' into junk.
                 cBuffer[cBufferPos++] = tolower(curchar);
                 ++src;
             }
