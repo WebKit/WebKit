@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+	- fixed 3471226 - HTML document that's less than 16 bytes comes out blank
+	
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::toUnicode): When flushing, don't bail out early
+	if there are no new characters!
+
+2003-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	- don't resolve Null href or src attributes, since the distinction
 	between empty and absent attribute is important.
 
