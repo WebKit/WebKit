@@ -1,3 +1,13 @@
+2003-12-19  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3515590.  Return Undefined to JS for applet if
+	Java is disabled.
+
+        Reviewed by Chris.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::getAppletInstance):
+
 2003-12-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.
