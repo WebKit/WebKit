@@ -118,10 +118,6 @@ public:
     QChar(int);
     QChar(uint);
 
-    QChar(const QChar &);
-
-    ~QChar();
-
     // member functions --------------------------------------------------------
 
     ushort unicode() const;
@@ -185,52 +181,62 @@ private:
 
 }; // class QChar ==============================================================
 
-#if defined (_KWQ_QCHAR_INLINES_) && ! defined (_KWQ_QCHAR_INLINES_INCLUDED_)
-#define _KWQ_QCHAR_INLINES_INCLUDED_
-
-inline QChar::QChar()
+inline QChar::QChar() : c(0)
 {
-    c = 0;
 }
 
-inline QChar::QChar(char ch)
+inline QChar::QChar(char ch) : c((uchar) ch)
 {
-    c = ch;
 }
 
-inline QChar::QChar(uchar uch)
+inline QChar::QChar(uchar uch) : c(uch)
 {
-    c = uch;
 }
 
-inline QChar::QChar(short n)
+inline QChar::QChar(short n) : c(n)
 {
-    c = n;
 }
 
-inline QChar::QChar(ushort n)
+inline QChar::QChar(ushort n) : c(n)
 {
-    c = n;
 }
 
-inline QChar::QChar(uint n)
+inline QChar::QChar(uint n) : c(n)
 {
-    c = n;
 }
 
-inline QChar::QChar(int n)
+inline QChar::QChar(int n) : c(n)
 {
-    c = n;
 }
 
-inline QChar::QChar(const QChar &qc)
+inline ushort QChar::unicode() const
 {
-    c = qc.c;
+    return c;
 }
 
-inline QChar::~QChar()
+inline uchar QChar::cell() const
 {
-    // do nothing because the single data member is a UniChar
+    return c;
+}
+
+inline bool QChar::isNull() const
+{
+    return c == 0;
+}
+
+inline uchar QChar::row() const
+{
+    return c >> 8;
+}
+
+inline char QChar::latin1() const
+{
+    return c > 0xff ? 0 : c;
+}
+
+inline QChar::operator char() const
+{
+    return c > 0xff ? 0 : c;
 }
 
 inline bool operator==(QChar qc1, QChar qc2)
@@ -240,12 +246,12 @@ inline bool operator==(QChar qc1, QChar qc2)
 
 inline bool operator==(QChar qc, char ch)
 {
-    return qc.c == ch;
+    return qc.c == (uchar) ch;
 }
 
 inline bool operator==(char ch, QChar qc)
 {
-    return ch == qc.c;
+    return (uchar) ch == qc.c;
 }
 
 inline bool operator!=(QChar qc1, QChar qc2)
@@ -255,12 +261,12 @@ inline bool operator!=(QChar qc1, QChar qc2)
 
 inline bool operator!=(QChar qc, char ch)
 {
-    return qc.c != ch;
+    return qc.c != (uchar) ch;
 }
 
 inline bool operator!=(char ch, QChar qc)
 {
-    return ch != qc.c;
+    return (uchar) ch != qc.c;
 }
 
 inline bool operator>=(QChar qc1, QChar qc2)
@@ -270,12 +276,12 @@ inline bool operator>=(QChar qc1, QChar qc2)
 
 inline bool operator>=(QChar qc, char ch)
 {
-    return qc.c >= ch;
+    return qc.c >= (uchar) ch;
 }
 
 inline bool operator>=(char ch, QChar qc)
 {
-    return ch >= qc.c;
+    return (uchar) ch >= qc.c;
 }
 
 inline bool operator>(QChar qc1, QChar qc2)
@@ -285,12 +291,12 @@ inline bool operator>(QChar qc1, QChar qc2)
 
 inline bool operator>(QChar qc, char ch)
 {
-    return qc.c > ch;
+    return qc.c > (uchar) ch;
 }
 
 inline bool operator>(char ch, QChar qc)
 {
-    return ch > qc.c;
+    return (uchar) ch > qc.c;
 }
 
 inline bool operator<=(QChar qc1, QChar qc2)
@@ -300,12 +306,12 @@ inline bool operator<=(QChar qc1, QChar qc2)
 
 inline bool operator<=(QChar qc, char ch)
 {
-    return qc.c <= ch;
+    return qc.c <= (uchar) ch;
 }
 
 inline bool operator<=(char ch, QChar qc)
 {
-    return ch <= qc.c;
+    return (uchar) ch <= qc.c;
 }
 
 inline bool operator<(QChar qc1, QChar qc2)
@@ -315,15 +321,13 @@ inline bool operator<(QChar qc1, QChar qc2)
 
 inline bool operator<(QChar qc, char ch)
 {
-    return qc.c < ch;
+    return qc.c < (uchar) ch;
 }
 
 inline bool operator<(char ch, QChar qc)
 {
-    return ch < qc.c;
+    return (uchar) ch < qc.c;
 }
-
-#endif  // _KWQ_QCHAR_INLINES_
 
 // QString class ===============================================================
 
@@ -411,10 +415,8 @@ public:
     // NOTE: toShort, toUShort, toULong, and toDouble are NOT used but are kept
     // for completeness
     short toShort(bool *ok=NULL, int base=10) const;
-//#ifdef USING_BORROWED_KURL
     // NOTE: ok and base NOT used for toUShort
     ushort toUShort(bool *ok=NULL, int base=10) const;
-//#endif
     int toInt(bool *ok=NULL, int base=10) const;
     // NOTE: base NOT used for toUInt
     uint toUInt(bool *ok=NULL, int base=10) const;
@@ -437,9 +439,7 @@ public:
     QString mid(uint, uint len=0xffffffff) const;
 
     // NOTE: copy is simple enough to keep for completeness
-//#ifdef USING_BORROWED_KURL
     QString copy() const;
-//#endif
 
     QString lower() const;
     QString stripWhiteSpace() const;
@@ -494,7 +494,8 @@ private:
     // private enums -----------------------------------------------------------
 
     enum CacheType {
-        CacheInvalid, CacheUnicode, CacheLatin1
+        CacheInvalid, CacheUnicode, CacheLatin1,
+        CacheAllocatedUnicode, CacheAllocatedLatin1
     };
 
     // private member functions ------------------------------------------------
@@ -540,18 +541,7 @@ private:
     friend class QConstString;
     friend class QGDict;
 
-#ifdef _KWQ_
     void _copyIfNeededInternalString();
-#endif
-
-#ifdef KWQ_STRING_DEBUG
-    // Added for debugging purposes.  Compiler should optimize.
-    void _cf_release(CFStringRef) const;
-    void _cf_retain(CFStringRef) const;
-#else
-#define _cf_release(s) CFRelease(s)
-#define _cf_retain(s) CFRetain(s)
-#endif
 
 }; // class QString ============================================================
 
@@ -566,45 +556,9 @@ QString operator+(const char *, const QString &);
 QString operator+(QChar, const QString &);
 QString operator+(char, const QString &);
 
-#if defined (_KWQ_QSTRING_INLINES_) && ! defined (_KWQ_QSTRING_INLINES_INCLUDED_)
-#define _KWQ_QSTRING_INLINES_INCLUDED_
-
-inline QString::QString()
-{
-    s = NULL;
-    cache = NULL;
-    cacheType = CacheInvalid;
-}
-
-inline QString::~QString()
-{
-    if (s) {
-        CFRelease(s);
-    }
-    if (cache) {
-        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
-    }
-}
-
-inline QString &QString::operator=(QChar qc)
-{
-    return *this = QString(qc);
-}
-
-inline QString &QString::operator=(char ch)
-{
-    return *this = QString(QChar(ch));
-}
-
 inline uint QString::length() const
 {
-    return s ? CFStringGetLength(s) : 0;
-}
-
-inline bool QString::isNull() const
-{
-    // NOTE: do NOT use "unicode() == NULL"
-    return s == NULL;
+    return CFStringGetLength(s);
 }
 
 inline bool QString::isEmpty() const
@@ -612,61 +566,139 @@ inline bool QString::isEmpty() const
     return length() == 0;
 }
 
-inline QChar QString::at(uint index) const
+inline int QString::compare(const QString &qs) const
 {
-    // FIXME: this might cause some errors on *big* indexes
-    CFIndex signedIndex = (CFIndex)index;
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (signedIndex < len) {
-            return QChar(CFStringGetCharacterAtIndex(s, signedIndex));
-        }
-    }
-    return QChar(0);
+    return CFStringCompare(s, qs.s, 0);
 }
 
-#endif // _KWQ_QSTRING_INLINES_
+inline bool QString::startsWith(const QString &qs) const
+{
+    return CFStringHasPrefix(s, qs.s);
+}
+
+inline QString QString::fromLatin1(const char *chs)
+{
+    return chs;
+}
+
+inline const char *QString::ascii() const
+{
+    return latin1();
+}
+
+inline float QString::toFloat(bool *ok) const
+{
+    return toDouble(ok);
+}
+
+inline bool QString::operator!() const
+{
+    return isNull();
+}
+
+inline const QChar QString::operator[](int index) const
+{
+    return at(index);
+}
+
+inline QString::operator const char *() const
+{
+    return latin1();
+}
+
+inline CFMutableStringRef QString::getCFMutableString() const
+{
+    // not sure this is right, but if it is, it must be inline
+    return s;
+}
+
+inline bool operator==(const char *chs, const QString &qs)
+{
+    return qs == chs;
+}
+
+inline bool operator!=(const QString &qs1, const QString &qs2)
+{
+    return !(qs1 == qs2);
+}
+
+inline bool operator!=(const QString &qs, const char *chs)
+{
+    return !(qs == chs);
+}
+
+inline bool operator!=(const char *chs, const QString &qs)
+{
+    return !(qs == chs);
+}
+
+inline bool operator<(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) < 0;
+}
+
+inline bool operator<(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) < 0;
+}
+
+inline bool operator<(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) > 0;
+}
+
+inline bool operator<=(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) <= 0;
+}
+
+inline bool operator<=(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) <= 0;
+}
+
+inline bool operator<=(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) >= 0;
+}
+
+inline bool operator>(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) > 0;
+}
+
+inline bool operator>(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) > 0;
+}
+
+inline bool operator>(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) < 0;
+}
+
+inline bool operator>=(const QString &qs1, const QString &qs2)
+{
+    return qs1.compare(qs2) >= 0;
+}
+
+inline bool operator>=(const QString &qs, const char *chs)
+{
+    return qs.compareToLatin1(chs) >= 0;
+}
+
+inline bool operator>=(const char *chs, const QString &qs)
+{
+    return qs.compareToLatin1(chs) <= 0;
+}
 
 // class QConstString ==========================================================
 
 class QConstString : private QString {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QConstString(QChar *, uint);
-#ifdef _KWQ_PEDANTIC_
-    // NOTE: copy constructor not needed
-    // QConstString(const QConstString &);
-#endif
-
-    // NOTE: destructor not needed
-    //~QConstString();
-
-    // member functions --------------------------------------------------------
-
-    const QString &string() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-// private:
-
-    // assignment operators ----------------------------------------------------
-
-    // private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    // NOTE: assignment operator not needed
-    // QConstString &operator=(const QConstString &);
-#endif
+    const QString &string() const { return *this; }
 
 }; // class QConstString =======================================================
 

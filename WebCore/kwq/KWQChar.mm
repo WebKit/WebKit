@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: obviously many functions here can be made inline
-
 #include <kwqdebug.h>
 #include <Foundation/Foundation.h>
 #include <qstring.h>
@@ -39,7 +37,6 @@ static CFMutableStringRef GetScratchUniCharString()
     static CFMutableStringRef s = NULL;
 
     if (!s) {
-        // FIXME: this CFMutableString will be leaked exactly once
         s = CFStringCreateMutableWithExternalCharactersNoCopy(
                 kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
     }
@@ -50,90 +47,7 @@ static CFMutableStringRef GetScratchUniCharString()
 
 const QChar QChar::null;
 
-// constructors, copy constructors, and destructors ----------------------------
-
-#ifndef _KWQ_QCHAR_INLINES_
-
-QChar::QChar()
-{
-    c = 0;
-}
-
-QChar::QChar(char ch)
-{
-    c = (uchar) ch;
-}
-
-QChar::QChar(uchar uch)
-{
-    c = uch;
-}
-
-QChar::QChar(short n)
-{
-    c = n;
-}
-
-QChar::QChar(ushort n)
-{
-    c = n;
-}
-
-QChar::QChar(uint n)
-{
-    c = n;
-}
-
-QChar::QChar(int n)
-{
-    c = n;
-}
-
-QChar::QChar(const QChar &qc)
-{
-    c = qc.c;
-}
-
-QChar::~QChar()
-{
-    // do nothing because the single data member is a UniChar
-}
-
-#endif  // _KWQ_QCHAR_INLINES_
-
 // member functions ------------------------------------------------------------
-
-ushort QChar::unicode() const
-{
-    return c;
-}
-
-uchar QChar::cell() const
-{
-    // return least significant byte
-    return c;
-}
-
-uchar QChar::row() const
-{
-    // return most significant byte
-    return c >> 8;
-}
-
-char QChar::latin1() const
-{
-    return c > 0xff ? 0 : c;
-}
-
-QChar::operator char() const
-{
-    return c > 0xff ? 0 : c;
-}
-
-bool QChar::isNull() const
-{
-    return c == 0;
-}
 
 bool QChar::isSpace() const
 {
@@ -143,20 +57,20 @@ bool QChar::isSpace() const
 	return isspace(c);
     }
 #endif
-    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetWhitespaceAndNewline), c);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
+    return CFCharacterSetIsCharacterMember(set, c);
 }
 
 bool QChar::isDigit() const
 {
-    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetDecimalDigit), c);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetDecimalDigit);
+    return CFCharacterSetIsCharacterMember(set, c);
 }
 
 bool QChar::isLetter() const
 {
-    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetLetter), c);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetLetter);
+    return CFCharacterSetIsCharacterMember(set, c);
 }
 
 bool QChar::isNumber() const
@@ -166,14 +80,14 @@ bool QChar::isNumber() const
 
 bool QChar::isLetterOrNumber() const
 {
-    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetAlphaNumeric), c);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
+    return CFCharacterSetIsCharacterMember(set, c);
 }
 
 bool QChar::isPunct() const
 {
-    return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetPunctuation), c);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetPunctuation);
+    return CFCharacterSetIsCharacterMember(set, c);
 }
 
 QChar QChar::lower() const
@@ -183,7 +97,7 @@ QChar QChar::lower() const
         scratchUniChar = c;
         CFStringLowercase(scratchUniCharString, NULL);
         if (scratchUniChar) {
-            return QChar(scratchUniChar);
+            return scratchUniChar;
         }
     }
     return *this;
@@ -196,7 +110,7 @@ QChar QChar::upper() const
         scratchUniChar = c;
         CFStringUppercase(scratchUniCharString, NULL);
         if (scratchUniChar) {
-            return QChar(scratchUniChar);
+            return scratchUniChar;
         }
     }
     return *this;
@@ -228,109 +142,10 @@ QChar QChar::mirroredChar() const
 int QChar::digitValue() const
 {
     // ##### just latin1
-    if ( c < '0' || c > '9' )
+    if (c < '0' || c > '9')
 	return -1;
     else
 	return c - '0';
 }
 
-// operators -------------------------------------------------------------------
-
-#ifndef _KWQ_QCHAR_INLINES_
-
-bool operator==(QChar qc1, QChar qc2)
-{
-    return qc1.c == qc2.c;
-}
-
-bool operator==(QChar qc, char ch)
-{
-    return qc.c == (uchar) ch;
-}
-
-bool operator==(char ch, QChar qc)
-{
-    return (uchar) ch == qc.c;
-}
-
-bool operator!=(QChar qc1, QChar qc2)
-{
-    return qc1.c != qc2.c;
-}
-
-bool operator!=(QChar qc, char ch)
-{
-    return qc.c != (uchar) ch;
-}
-
-bool operator!=(char ch, QChar qc)
-{
-    return (uchar) ch != qc.c;
-}
-
-bool operator>=(QChar qc1, QChar qc2)
-{
-    return qc1.c >= qc2.c;
-}
-
-bool operator>=(QChar qc, char ch)
-{
-    return qc.c >= (uchar) ch;
-}
-
-bool operator>=(char ch, QChar qc)
-{
-    return (uchar) ch >= qc.c;
-}
-
-bool operator>(QChar qc1, QChar qc2)
-{
-    return qc1.c > qc2.c;
-}
-
-bool operator>(QChar qc, char ch)
-{
-    return qc.c > ch;
-}
-
-bool operator>(char ch, QChar qc)
-{
-    return (uchar) ch > qc.c;
-}
-
-bool operator<=(QChar qc1, QChar qc2)
-{
-    return qc1.c <= qc2.c;
-}
-
-bool operator<=(QChar qc, char ch)
-{
-    return qc.c <= (uchar) ch;
-}
-
-bool operator<=(char ch, QChar qc)
-{
-    return (uchar) ch <= qc.c;
-}
-
-bool operator<(QChar qc1, QChar qc2)
-{
-    return qc1.c < qc2.c;
-}
-
-bool operator<(QChar qc, char ch)
-{
-    return qc.c < (uchar) ch;
-}
-
-bool operator<(char ch, QChar qc)
-{
-    return (uchar) ch < qc.c;
-}
-
-#endif  // _KWQ_QCHAR_INLINES_
-
-#else // USING_BORROWED_QSTRING
-// This will help to keep the linker from complaining about empty archives
-void KWQChar_Dummy() {}
-#endif // USING_BORROWED_QSTRING
+#endif

@@ -755,7 +755,7 @@ int QFontMetrics::height() const
 
 int QFontMetrics::width(QChar qc) const
 {
-    ushort c = qc.unicode();
+    unichar c = qc.unicode();
     switch (c) {
         // cheesy, we use the char version of width to do the work here,
         // and since it doesn't have the optimization, we don't get an
@@ -769,14 +769,13 @@ int QFontMetrics::width(QChar qc) const
                 data->xWidth = width('x');
             return data->xWidth;
     }
-    NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
-    return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
+    return ROUND_TO_INT(_rectForString(data->getInfo(), &c, 1).size.width);
 }
 
 int QFontMetrics::width(char c) const
 {
-    NSString *string = [NSString stringWithCString: &c length: 1];
-    return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
+    unichar ch = (uchar) c;
+    return ROUND_TO_INT(_rectForString(data->getInfo(), &ch, 1).size.width);
 }
 
 int QFontMetrics::width(const QString &qstring, int len) const

@@ -1,3 +1,18 @@
+2002-03-18  Darin Adler  <darin@apple.com>
+
+        Redo inlining of QChar and QString and some other small speed improvements.
+        Sadly, this doesn't seem to make things measurably faster, but I decided to
+        commit my work rather than discarding it; it doesn't make things slower.
+
+	* src/kwq/qt/qstring.h:
+	* src/kwq/KWQChar.mm:
+	* src/kwq/KWQString.mm:
+        Do a lot more inlining. Also, the CFStringRef inside a QString is now never
+        nil, so we can get rid of many checks for nil.
+
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::width): Use _rectForString() a
+        couple more places.
+
 2002-03-18  Richard Williamson  <rjw@apple.com>
 
         Changed to use non direct _rectForString() function.   Avoids
