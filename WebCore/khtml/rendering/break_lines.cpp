@@ -78,31 +78,30 @@ bool isBreakable( const QChar *s, int pos, int len)
     }
     return false;
 #else
-    OSStatus status, findStatus = 0;
-    TextBreakLocatorRef breakLocator;
+    OSStatus status = 0, findStatus = 0;
+    static TextBreakLocatorRef breakLocator = 0;
     UniCharArrayOffset end;
     const QChar *c = s+pos;
     unsigned short ch = c->unicode();
-    
-    if (ch == '\n'){
+
+    // Newlines are always breakable.
+    if (ch == '\n')
         return true;
-    }
 
     // If current character, or the previous character aren't simple latin1 then
     // use the UC line break locator.  UCFindTextBreak will report false if we
     // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
     // case.
     unsigned short lastCh = pos > 0 ? (s+pos-1)->unicode() : 0;
-    if (ch > 0x7f || (lastCh > 0x7f && lastCh != 0xa0)){
-        status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakLineMask, &breakLocator);
-        if (status == 0){
+    if ((ch > 0x7f && ch != 0xa0) || (lastCh > 0x7f && lastCh != 0xa0)) {
+        if (!breakLocator)
+            status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakLineMask, &breakLocator);
+        if (status == 0)
             findStatus = UCFindTextBreak (breakLocator, kUCTextBreakLineMask, NULL, (const UniChar *)s, len, pos, &end);
-            UCDisposeTextBreakLocator(&breakLocator);
-        }
+
         // If carbon fails, fail back on simple white space detection.
-        if (findStatus == 0){
+        if (findStatus == 0)
             return ((int)end == pos) ? true : false;
-        }    
     }
     // What about hypenation?
     return c->direction() == QChar::DirWS;

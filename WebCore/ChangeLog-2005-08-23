@@ -1,3 +1,13 @@
+2003-10-02  David Hyatt  <hyatt@apple.com>
+
+	Remove the speed hit from using the UC break locators by not using them when
+	checking if the current character is &nbsp; and by also using a global text
+	break locator object.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/break_lines.cpp:
+
 === Safari-108 ===
 
 2003-10-02  Maciej Stachowiak  <mjs@apple.com>
