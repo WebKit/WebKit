@@ -84,6 +84,8 @@
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
+    
+    BOOL shouldUseFontSmoothing;
 }
 @end
 

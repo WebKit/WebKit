@@ -128,6 +128,8 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 @implementation WebProgressItem
 @end
 
+static BOOL shouldUseFontSmoothing = YES;
+
 @implementation WebViewPrivate
 
 - init 
@@ -171,6 +173,31 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 @end
 
 @implementation WebView (WebPrivate)
+
+#ifdef DEBUG_WIDGET_DRAWING
+static bool debugWidget = false;
+- (void)drawRect:(NSRect)rect
+{
+    [[NSColor blueColor] set];
+    NSRectFill (rect);
+    
+    NSRect htmlViewRect = [[[[self mainFrame] frameView] documentView] frame];
+
+    if (debugWidget) {
+	bool flag = false;
+	while (flag) {
+	    sleep (1);
+	}
+    }
+
+    NSLog (@"%s:   rect:  (%0.f,%0.f) %0.f %0.f, htmlViewRect:  (%0.f,%0.f) %0.f %0.f\n", 
+	__PRETTY_FUNCTION__, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height,
+	htmlViewRect.origin.x, htmlViewRect.origin.y, htmlViewRect.size.width, htmlViewRect.size.height
+	);
+
+    [super drawRect:rect];
+}
+#endif
 
 + (NSArray *)_supportedMIMETypes
 {
@@ -1213,6 +1240,16 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         }
     }
     return NO;
+}
+
++ (void)_setShouldUseFontSmoothing:(BOOL)f
+{
+    shouldUseFontSmoothing = f;
+}
+
++ (BOOL)_shouldUseFontSmoothing
+{
+    return shouldUseFontSmoothing;
 }
 
 @end

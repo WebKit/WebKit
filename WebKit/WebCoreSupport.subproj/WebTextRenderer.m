@@ -20,6 +20,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUnicode.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <float.h>
 
@@ -913,6 +914,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
         cgContext = (CGContextRef)[gContext graphicsPort];
         // Setup the color and font.
+
+	bool originalShouldUseFontSmoothing;
+	
+	originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts (cgContext);
+	CGContextSetShouldSmoothFonts (cgContext, [WebView _shouldUseFontSmoothing]);
         
 #if BUILDING_ON_PANTHER        
         if ([gContext isDrawingToScreen]){
@@ -949,11 +955,13 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
             }
         }
         
+	NSView *v = [NSView focusView];
+
         CGContextSetFont (cgContext, [drawFont _backingCGSFont]);
         
         // Deal will flipping flippyness.
         const float *matrix = [drawFont matrix];
-        float flip = [[NSView focusView] isFlipped] ? -1 : 1;
+        float flip = [v isFlipped] ? -1 : 1;
         CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
         CGContextSetFontRenderingMode (cgContext, _AppkitGetCGRenderingMode(drawFont));
         CGContextSetFontSize(cgContext, 1.0);
@@ -963,6 +971,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
         CGContextSetTextPosition (cgContext, x, y);
         CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+
+	CGContextSetShouldSmoothFonts (cgContext, originalShouldUseFontSmoothing);
     }
 }
 
