@@ -1,3 +1,5 @@
+=== Safari-181 ===
+
 2005-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3973272> REGRESSION: Safari uses QT plugin to display PNG images
