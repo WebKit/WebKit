@@ -22,13 +22,23 @@ SOURCES = $(wildcard *.mm)
 HEADERS = $(wildcard *.h)
 
 MMOBJECTS = \
+	_KWQOwner.o \
 	KWQApplication.o \
 	KWQBrush.o \
+        KWQColor.o \
+        KWQColorGroup.o \
+        KWQCursor.o \
 	KWQFont.o \
 	KWQFontMetrics.o \
+        KWQObject.o \
 	KWQPainter.o \
+        KWQPaintDevice.o \
+        KWQPaintDeviceMetrics.o \
+        KWQPalette.o \
 	KWQPen.o \
 	KWQPixmap.o \
+	KWQPointArray.o \
+	KWQView.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
 	KWQChar.o \
@@ -36,7 +46,10 @@ MMOBJECTS = \
 	KWQCString.o \
 	$(NULL)
 
-OBJECTS = $(MMOBJECTS) 
+MOBJECTS = \
+	$(NULL)
+
+OBJECTS = $(MMOBJECTS) $(MOBJECTS)
 
 LIBRARY = libkwq.a
 
@@ -48,6 +61,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CMMFLAGS = $(BASECMMFLAGS) \
+    -g \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
@@ -56,13 +70,22 @@ CMMFLAGS = $(BASECMMFLAGS) \
 
 DEPFLAGS = $(CMMFLAGS)
 
+CMFLAGS = $(BASECMFLAGS) \
+    -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/src/kwq \
+    -I$(TOPSRCDIR)/src/kwq/qt \
+    -I. \
+    $(NULL)
+
+DEPFLAGS = $(CMFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
 all: $(OBJECTS) $(LIBRARY)
 
-$(LIBRARY): $(MMOBJECTS)
-	$(AR) $(ARFLAGS) $(LIBRARY) $(MMOBJECTS)
+$(LIBRARY): $(OBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJECTS)
 	$(RANLIB) $(LIBRARY)
 
 #----------------------------------------------------------------------

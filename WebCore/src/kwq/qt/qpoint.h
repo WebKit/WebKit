@@ -119,19 +119,24 @@ public:
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
 
-    QPointArray(int);
+    QPointArray() {}
+    ~QPointArray() {}
+    QPointArray(int size) : QArray<QPoint> (size){};
+
     QPointArray(const QPointArray &);
     QPointArray(int, const QCOORD *);
-    ~QPointArray();
 
     // member functions --------------------------------------------------------
 
     void setPoint(uint, int, int);
     bool setPoints(int, int, int, ...);
-
+    bool setPoints( int nPoints, const QCOORD *points );
+    
     // operators ---------------------------------------------------------------
 
-    QPointArray &operator=(const QPointArray &);
+    //QPointArray &operator=(const QPointArray &);
+    QPointArray	 &operator=( const QPointArray &a )
+	{ return (QPointArray&)assign( a ); }
 
 #ifdef _KWQ_IOSTREAM_
     friend ostream &operator<<(ostream &, const QPoint &);

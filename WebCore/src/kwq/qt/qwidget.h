@@ -41,7 +41,23 @@
 #include "qevent.h"
 #include <KWQStyle.h>
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
+
+#import <Cocoa/Cocoa.h>
+
+#import "KWQView.h"
+
+#undef Fixed
+#undef Rect
+#undef Boolean
+#endif
+
 // class QWidget ===============================================================
+
+// FIX ME!  RJW - need to check if inheritance from QPaintDevice is really necessary.
 
 class QWidget : public QObject, public QPaintDevice {
 public:
@@ -116,6 +132,19 @@ public:
     virtual void show();
     virtual void hide();
 
+    // Required for KWQ
+#ifdef _KWQ_
+
+    virtual void paint (void *);
+    
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    KWQView 	*getView();
+#else
+    void 	*getView();
+#endif
+
+#endif _KWQ_
+    
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
@@ -126,6 +155,26 @@ private:
     // note that these are "standard" (no pendantic stuff needed)
     QWidget(const QWidget &);
     QWidget &operator=(const QWidget &);
+
+    void setCRect( const QRect &r );
+    void internalSetGeometry( int x, int y, int w, int h, bool isMove );
+
+    void _initialize();
+
+    struct KWQWidgetData {	// Widget data.
+        QPoint	pos;
+        QRect	rect;
+        FocusPolicy focusPolicy;
+        QStyle	*style;
+        QFont	*font;
+        QCursor	*cursor;
+        QPalette pal;
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+        KWQView	*view;
+#else
+        void 	*view;
+#endif
+    } *data;
 
 }; // class QWidget ============================================================
 

@@ -32,6 +32,10 @@
 
 class QString;
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#import <Cocoa/Cocoa.h>
+#endif
+
 // class QFont =================================================================
 
 class QFont {
@@ -51,6 +55,7 @@ public:
 
     QFont();
     QFont(const QFont &);
+
     ~QFont();
 
     // member functions --------------------------------------------------------
@@ -71,8 +76,32 @@ public:
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const;
 
+#ifdef _KWQ_
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    static NSFont *QFont::defaultNSFont();
+#endif
+#endif
+
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+#ifdef _KWQ_
+    void _initialize();
+    void _initializeWithFont(const QFont *);
+    void _free();
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    void _setTrait (NSFontTraitMask mask);
+#endif
+    
+    struct KWQFontData {
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+        NSFont *font;
+#else
+        void *font;
+#endif
+    } *data;
+
+    void _freeWithData(struct KWQFontData *);
+#endif
 
 }; // class QFont ==============================================================
 

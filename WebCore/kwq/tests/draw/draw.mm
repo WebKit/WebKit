@@ -44,14 +44,15 @@
  *	QString
  *	QWidget
  *	QWMatrix
- *
- *  Also needs QPaintEvent.  This is only used by the Qt version of the app.
-*/
+ */
 
 #include <qwidget.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qapplication.h>
+#include <qpoint.h>
+
+#include <config.h>
 
 // Voodoo required to get compiler to compile correctly.
 #undef DEBUG
@@ -70,9 +71,12 @@ void drawColors( QPainter *p )
     int x = 0, y = 0, height, r = 0, g = 255, b = 125;
     p->save();
     
-    QFont f( "helvetica", 10, QFont::Bold );
+    QFont f;
+    f.setFamily( "helvetica" );
+    f.setPixelSizeFloat ((float) 10);
+    f.setWeight ( QFont::Bold );
     p->setFont( f );
-    p->setPen( Qt::black );
+    p->setPen( QPen(Qt::black) );
 
     QFontMetrics fm = p->fontMetrics();
     height = fm.height();
@@ -102,14 +106,19 @@ void drawImages( QPainter *p)
 {
     QByteArray *byteArray[3];
     QPixmap *pixmap[3];
-    NSString *files[3] = { @"qt.png", @"powermac.jpg", @"yahoo.gif" };
+    NSString *files[3] = { @"qt.png", @"powermac.jpg", @"yahoo.gif" }, *filename;
     NSData *data[3];
     int i;
     QPoint *point;
     
     for (i = 0; i < 3; i++){
         point = new QPoint (10 + 60 * i, 200);
+#ifdef _KWQ_
+        filename = [NSString stringWithFormat: @"%@/%@", [[NSBundle mainBundle] resourcePath], files[i], nil];
+        data[i] = [[NSData alloc] initWithContentsOfFile: filename];
+#else
         data[i] = [[NSData alloc] initWithContentsOfFile: files[i]];
+#endif
         byteArray[i] = new QByteArray();
         byteArray[i]->setRawData ((const char *)[data[i] bytes], (unsigned int)[data[i] length]);
         pixmap[i] = new QPixmap (*byteArray[i]);
@@ -133,7 +142,8 @@ void drawImages( QPainter *p)
 
         QSize imageSize = pixmap[i]->size();
         
-        p->setPen( Qt::yellow );
+        // This should draw an empty rect, as brush isn't set to any color.
+        p->setPen( QPen(Qt::yellow) );
         p->drawRect (point->x(), point->y(), imageSize.width(), imageSize.height());
 
         p->setPen( Qt::blue );
@@ -147,10 +157,15 @@ void drawImages( QPainter *p)
     p->drawLine (x, y, x + w, y + h);
     p->drawLine (x, y + h, x + w, y);
     
+    x = 530; y = 70; w = 380, h = 325;
+    p->drawTiledPixmap (x, y, w, h, *pixmap[0], 0, 0);
+    p->drawLine (x, y, x + w, y + h);
+    p->drawLine (x, y + h, x + w, y);
+    
     for (i = 0; i < 3; i++){
-        delete byteArray[i];
+        // Problematic, as QByteArray expects ownership.  It will free() the bytes set from setRawData. 
+        //delete byteArray[i];
         delete pixmap[i];
-        // Problematic, as QByteArray expects ownership.
         //[data[i] release];
     }
 }
@@ -183,12 +198,17 @@ void drawFonts( QPainter *p )
     while ( fonts[f] ) {
         int s = 0;
         while ( sizes[s] ) {
-            QFont font( fonts[f], sizes[s] );
+            QFont font;
+            font.setFamily ( fonts[f] );
+            font.setPixelSizeFloat ( (float)sizes[s] );
             p->setFont( font );
             QFontMetrics fm = p->fontMetrics();
             y += fm.ascent();
             p->drawText( 10, y, fonts[f] );
-            p->drawText( 10 + p->fontMetrics().width(fonts[f]), y, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz" );
+            QString n;
+            n.sprintf( " size = %d, h = %d, a = %d, d = %d ", sizes[s], fm.height(),fm.ascent(),fm.descent() );
+            p->drawText( 10 + p->fontMetrics().width(fonts[f]), y, n );
+            p->drawText( 10 + p->fontMetrics().width(n) + p->fontMetrics().width(fonts[f]) , y, "pqX-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz" );
             y += fm.descent();
             s++;
         }
@@ -207,9 +227,9 @@ void drawFonts( QPainter *p )
 void drawShapes( QPainter *p )
 {
     QBrush b1( Qt::blue );
-    QBrush b2( Qt::green, Qt::Dense6Pattern );		// green 12% fill
-    QBrush b3( Qt::NoBrush );				// void brush
-    QBrush b4( Qt::CrossPattern );			// black cross pattern
+    QBrush b2( Qt::green);		// green
+    QBrush b3( Qt::lightGray );		// 
+    QBrush b4( Qt::red );		// red
 
     int y = 10;
     
@@ -227,9 +247,30 @@ void drawShapes( QPainter *p )
     p->drawRect( 10, y, 200, 100 );
     p->setBrush( b3 );
     p->drawEllipse( 250, y, 200, 100 );
-    p->setBrush( b4 );
-    p->drawArc( 250, y+140, 200, 100, 45*16, 90*16 );
 
+    p->drawArc( 500, y, 200, 200, 0*16, 360*16 );
+    p->drawArc( 500, y + 20, 100, 100, 0*16, 360*16 );
+    p->setPen( Qt::white );
+    p->drawArc( 500, y, 200, 200, 45*16, 90*16 );
+    p->drawArc( 500, y + 20, 100, 100, 180*16, 45*16 );
+
+    int x = 10, offset = 40;
+    y += 110;
+    QCOORD points1[] = { x,y, x+offset,y, x+offset,y+offset, x,y+offset, x,y };
+    QPointArray a1( 5, points1 );
+    
+    p->setPen( Qt::green );
+    p->drawPolyline( a1 );
+
+    x = 200, offset = 40;
+    QCOORD points2[] = { x,y, x+offset,y, x+offset*2,y+offset, x,y+offset, x-10,y };
+    QPointArray a2( 5, points2 );
+    
+    p->setBrush( Qt::lightGray );
+    p->setPen( Qt::darkRed );
+    p->drawPolygon( a2 );
+
+    
     p->restore();
 }
 
@@ -240,7 +281,12 @@ public:
     DrawView();
     ~DrawView();
 protected:
+
+#ifdef _KWQ_
+    void   paint( void * );
+#else
     void   paintEvent( QPaintEvent * );
+#endif
 private:
 };
 
@@ -251,9 +297,7 @@ private:
 
 DrawView::DrawView()
 {
-    setCaption( "Qt Draw Demo Application" );
-    setBackgroundColor( white );    
-    resize( 900,900 );
+    resize( 980,980 );
 }
 
 //
@@ -267,6 +311,17 @@ DrawView::~DrawView()
 // Called when the widget needs to be updated.
 //
 
+#ifdef _KWQ_
+void DrawView::paint( void *arg )
+{
+    QPainter paint( this );
+    
+    drawColors (&paint);
+    drawImages (&paint);
+    drawFonts (&paint);
+    drawShapes (&paint);
+}    
+#else
 void DrawView::paintEvent( QPaintEvent * )
 {
     QPainter paint( this );
@@ -276,6 +331,7 @@ void DrawView::paintEvent( QPaintEvent * )
     drawFonts (&paint);
     drawShapes (&paint);
 }
+#endif
 
 
 //

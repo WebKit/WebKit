@@ -35,6 +35,10 @@
 #include "qstring.h"
 #include "qfont.h"
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#import <Cocoa/Cocoa.h>
+#endif
+
 // class QFontMetrics ==========================================================
 
 class QFontMetrics {
@@ -73,6 +77,21 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+#ifdef _KWQ_
+    void _initialize();
+    void _initializeWithFont(NSFont *);
+    void _free();
+    
+    struct KWQFontMetricsData {
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+        NSFont *font;
+#else
+        void *font;
+#endif
+    } *data;
+#endif
+
+    void _freeWithData(struct KWQFontMetricsData *);
 
 }; // class QFontMetrics =======================================================
 
