@@ -1,3 +1,12 @@
+2003-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3145442 -- toString(16) is not working, causing non-ASCII characters in mac.com homepage to be munged
+
+        * kjs/number_object.cpp: (NumberProtoFuncImp::call): Add handling for toString with a radix other than
+        10 passed as an argument.
+
 2003-02-11  Trey Matteson  <trey@apple.com>
 
 	Set -seg1addr in our build styles, but not for the B&I build.

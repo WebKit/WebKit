@@ -77,7 +77,7 @@ bool NumberProtoFuncImp::implementsCall() const
 }
 
 // ECMA 15.7.4.2 - 15.7.4.7
-Value NumberProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*args*/)
+Value NumberProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
   Value result;
 
@@ -91,7 +91,25 @@ Value NumberProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*a
   // execute "toString()" or "valueOf()", respectively
   Value v = thisObj.internalValue();
   switch (id) {
-  case ToString:
+  case ToString: {
+    int radix = 10;
+    if (!args.isEmpty() && args[0].type() != UndefinedType)
+      radix = args[0].toInteger(exec);
+    if (radix < 2 || radix > 36 || radix == 10)
+      result = String(v.toString(exec));
+    else {
+      unsigned i = v.toUInt32(exec);
+      char s[33];
+      char *p = s + sizeof(s);
+      *--p = '\0';
+      do {
+        *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[i % radix];
+        i /= radix;
+      } while (i);
+      result = String(p);
+    }
+    break;
+  }
   case ToLocaleString: /* TODO */
     result = String(v.toString(exec));
     break;
