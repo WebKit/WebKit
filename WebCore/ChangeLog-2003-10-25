@@ -1,3 +1,10 @@
+2003-07-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        * khtml/html/html_formimpl.cpp: (HTMLSelectElementImpl::parseAttribute):
+        Remove livepage.apple.com hack since the site has been changed.
+
 2003-07-02  Darin Adler  <darin@apple.com>
 
         Rolled out accidentally-checked-in changes.
@@ -24,15 +31,7 @@
 
         * khtml/html/html_inlineimpl.cpp: (HTMLAnchorElementImpl::defaultEventHandler):
         Added a check for nil document or nil view.
-        
-        * khtml/xml/dom_nodeimpl.cpp:
-        (NodeImpl::dispatchEvent):
-        * kwq/KWQCharsetData.c:
-        * kwq/KWQCharsets.mm:
-        * kwq/KWQTextArea.mm:
-        (-[KWQTextArea _createTextView]):
-        * kwq/mac-encodings.txt:
-        * kwq/make-charset-table.pl:
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::dispatchEvent): ref/deref view for safety.
 
 2003-07-02  Ken Kocienda  <kocienda@apple.com>
 
