@@ -1,3 +1,32 @@
+2003-11-13  David Hyatt  <hyatt@apple.com>
+
+	Implement a custom unfurl marquee style.
+	
+        Reviewed by john
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_layer.cpp:
+        (m_direction):
+        (Marquee::isUnfurlMarquee):
+        (Marquee::start):
+        (Marquee::updateMarqueePosition):
+        (Marquee::updateMarqueeStyle):
+        (Marquee::timerEvent):
+        * khtml/rendering/render_layer.h:
+        (khtml::):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+
 2003-11-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -263,7 +263,8 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_INFINITE 252
 #define CSS_VAL_SLIDE 253
 #define CSS_VAL_ALTERNATE 254
+#define CSS_VAL_UNFURL 255
 
-#define CSS_VAL_TOTAL 255
+#define CSS_VAL_TOTAL 256
 #endif
 

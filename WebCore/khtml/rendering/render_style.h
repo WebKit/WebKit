@@ -418,7 +418,7 @@ public:
 //------------------------------------------------
 // CSS3 Marquee Properties
 
-enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };
+enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE, MUNFURL };
 enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
 
 class StyleMarqueeData : public Shared<StyleMarqueeData>
@@ -437,7 +437,7 @@ public:
     
     int loops; // -1 means infinite.
     
-    EMarqueeBehavior behavior : 2;
+    EMarqueeBehavior behavior : 3;
     EMarqueeDirection direction : 3;
 };
     

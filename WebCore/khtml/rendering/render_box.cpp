@@ -933,6 +933,13 @@ void RenderBox::calcHeight()
             }
         }
     }
+    
+    // Unfurling marquees override with the furled height.
+    if (style()->overflow() == OMARQUEE && m_layer && m_layer->marquee() && 
+        m_layer->marquee()->isUnfurlMarquee() && !m_layer->marquee()->isHorizontal()) {
+        m_layer->marquee()->setEnd(m_height);
+        m_height = kMin(m_height, m_layer->marquee()->unfurlPos());
+    }
 }
 
 short RenderBox::calcReplacedWidth() const

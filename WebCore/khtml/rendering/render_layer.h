@@ -93,16 +93,21 @@ public:
     EMarqueeDirection direction() const;
     EMarqueeDirection reverseDirection() const { return static_cast<EMarqueeDirection>(-direction()); }
     bool isHorizontal() const;
+    bool isUnfurlMarquee() const;
+    int unfurlPos() const { return m_unfurlPos; }
+
     EWhiteSpace whiteSpace() { return m_whiteSpace; }
     
     int computePosition(EMarqueeDirection dir, bool stopAtClientEdge);
+
+    void setEnd(int end) { m_end = end; }
     
     void start();
     void stop();
     
     void updateMarqueeStyle();
     void updateMarqueePosition();
-    
+
 private:
     RenderLayer* m_layer;
     int m_currentLoop;
@@ -111,8 +116,10 @@ private:
     int m_start;
     int m_end;
     int m_speed;
+    int m_unfurlPos;
     bool m_reset;
     EWhiteSpace m_whiteSpace : 2;
+    EMarqueeDirection m_direction : 4;
 };
 
 class RenderLayer
