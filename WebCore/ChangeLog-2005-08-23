@@ -1,3 +1,22 @@
+2004-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3656719>: Implement outerHTML and setOuterHTML DOM extensions
+
+	They were already implemented (by Chris), all that was required
+	was exporting them to JavaScript.
+
+        * khtml/dom/html_element.cpp:
+        (HTMLElement::outerHTML): Call impl.
+        (HTMLElement::setOuterHTML): Ditto.
+        * khtml/dom/html_element.h: Prototype new methods.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): Add OuterHTML.
+        (KJS::HTMLElement::putValue): Add OuterHTML.
+        * khtml/ecma/kjs_html.h: Add new enum values.
+        * khtml/ecma/kjs_html.lut.h: Regenerated.
+
 2004-05-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

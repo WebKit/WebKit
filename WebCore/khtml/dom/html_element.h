@@ -176,6 +176,18 @@ public:
     DOMString innerText() const;
 
     /**
+     * The HTML code of this element, including the element itself.
+     * This function is not part of the DOM specifications as defined by the w3c.
+     */
+    DOMString outerHTML() const;
+
+    /**
+     * Replace the HTML code of this element, including the element itself.
+     * This function is not part of the DOM specifications as defined by the w3c.
+     */
+    void setOuterHTML( const DOMString &html );
+
+    /**
      * Set the text content of this node.
      *
      * @exception DOMException

@@ -51,25 +51,25 @@ const struct HashTable HTMLDocumentTable = { 2, 39, HTMLDocumentTableEntries, 30
 namespace KJS {
 
 const struct HashEntry HTMLElementTableEntries[] = {
-   { "lang", KJS::HTMLElement::ElementLang, DontDelete, 0, &HTMLElementTableEntries[12] },
+   { "title", KJS::HTMLElement::ElementTitle, DontDelete, 0, 0 },
    { 0, 0, 0, 0, 0 },
+   { "lang", KJS::HTMLElement::ElementLang, DontDelete, 0, 0 },
+   { "isContentEditable", KJS::HTMLElement::ElementIsContentEditable, DontDelete|ReadOnly, 0, 0 },
    { "innerHTML", KJS::HTMLElement::ElementInnerHTML, DontDelete, 0, 0 },
+   { "document", KJS::HTMLElement::ElementDocument, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "dir", KJS::HTMLElement::ElementDir, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "className", KJS::HTMLElement::ElementClassName, DontDelete, 0, &HTMLElementTableEntries[14] },
+   { "id", KJS::HTMLElement::ElementId, DontDelete, 0, &HTMLElementTableEntries[13] },
    { 0, 0, 0, 0, 0 },
    { "innerText", KJS::HTMLElement::ElementInnerText, DontDelete, 0, 0 },
-   { "document", KJS::HTMLElement::ElementDocument, DontDelete|ReadOnly, 0, &HTMLElementTableEntries[13] },
-   { "className", KJS::HTMLElement::ElementClassName, DontDelete, 0, &HTMLElementTableEntries[14] },
-   { "id", KJS::HTMLElement::ElementId, DontDelete, 0, &HTMLElementTableEntries[11] },
-   { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { "title", KJS::HTMLElement::ElementTitle, DontDelete, 0, &HTMLElementTableEntries[15] },
-   { "dir", KJS::HTMLElement::ElementDir, DontDelete, 0, 0 },
+   { "outerHTML", KJS::HTMLElement::ElementOuterHTML, DontDelete, 0, &HTMLElementTableEntries[15] },
    { "children", KJS::HTMLElement::ElementChildren, DontDelete|ReadOnly, 0, 0 },
-   { "contentEditable", KJS::HTMLElement::ElementContentEditable, DontDelete, 0, 0 },
-   { "isContentEditable", KJS::HTMLElement::ElementIsContentEditable, DontDelete|ReadOnly, 0, 0 }
+   { "contentEditable", KJS::HTMLElement::ElementContentEditable, DontDelete, 0, 0 }
 };
 
-const struct HashTable HTMLElementTable = { 2, 16, HTMLElementTableEntries, 11 };
+const struct HashTable HTMLElementTable = { 2, 16, HTMLElementTableEntries, 13 };
 
 } // namespace
 
