@@ -1,5 +1,9 @@
 2003-06-07  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2003-06-07  Darin Adler  <darin@apple.com>
+
         Rolled out Chris's fix for 3156169 because it was causing a lot of crashes
         and problems with basic behavior. We can try again later.
         
