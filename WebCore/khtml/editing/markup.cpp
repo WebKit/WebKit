@@ -379,6 +379,8 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
         return 0;
 
     DocumentFragmentImpl *fragment = document->createDocumentFragment();
+    fragment->ref();
+    
     QString string = text;
 
     // Replace tabs with four plain spaces.
@@ -434,6 +436,12 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
             assert(exceptionCode == 0);
         }
     }
+    
+    // Trick to get the fragment back to the floating state, with 0
+    // refs but not destroyed.
+    fragment->setParent(document);
+    fragment->deref();
+    fragment->setParent(0);
     
     return fragment;
 }
