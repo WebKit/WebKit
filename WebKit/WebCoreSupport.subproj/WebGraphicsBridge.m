@@ -210,17 +210,17 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 
 - (CGColorSpaceRef)createRGBColorSpace
 {
-    WebCGColorSpaceCreateRGB();
+    return WebCGColorSpaceCreateRGB();
 }
 
 - (CGColorSpaceRef)createGrayColorSpace
 {
-    WebCGColorSpaceCreateGray();
+    return WebCGColorSpaceCreateGray();
 }
 
 - (CGColorSpaceRef)createCMYKColorSpace
 {
-    WebCGColorSpaceCreateCMYK();
+    return WebCGColorSpaceCreateCMYK();
 }
 
 @end

@@ -1,3 +1,15 @@
+2004-10-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        Fix build breakage. These three functions need to return the values from their
+        calls to WebCGColorSpaceCreateXXX.
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge createRGBColorSpace])
+        (-[WebGraphicsBridge createGrayColorSpace])
+        (-[WebGraphicsBridge createCMYKColorSpace])
+
 2004-10-13  Richard Williamson   <rjw@apple.com>
 
 	Addressed concerns in <rdar://problem/3803117> RESP: High complexity in icu uidna_IDNToASCII called by [NSString(WebNSURLExtras) _web_mapHostNameWithRange:encode:makeString:]
