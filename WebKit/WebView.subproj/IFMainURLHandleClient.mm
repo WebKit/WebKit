@@ -221,7 +221,7 @@
                 contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:handlerType];
                 fakeHTMLDocument = [contentHandler HTMLDocument];
                 fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-                part->impl->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), allDataReceived);
+                part->impl->slotData(encoding, fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), allDataReceived);
                 [contentHandler release];
                 sentFakeDocForNonHTMLContentType = YES;
             }
@@ -263,7 +263,7 @@
             contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:IFMIMEHANDLERTYPE_TEXT];
             fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
             fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-            part->impl->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), YES);
+            part->impl->slotData(encoding, fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), YES);
             [contentHandler release];
         }
     }

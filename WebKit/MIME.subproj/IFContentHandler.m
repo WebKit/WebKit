@@ -9,14 +9,12 @@ static NSString *imageDocumentTemplate = nil;
 static NSString *pluginDocumentTemplate = nil;
 static NSString *textDocumentTemplate = nil;
 
-static BOOL imageDocumentLoaded = NO;
-static BOOL pluginDocumentLoaded = NO;
-static BOOL textDocumentLoaded = NO;
-
 @implementation IFContentHandler
 
 - initWithURL:(NSURL *)URL MIMEType:(NSString *)theMIMEType MIMEHandlerType:(IFMIMEHandlerType)theMIMEHandlerType;
 {
+    [super init];
+    
     handlerType = theMIMEHandlerType;
     MIMEType = [theMIMEType retain];
     URLString = [[URL absoluteString] retain];
@@ -24,55 +22,35 @@ static BOOL textDocumentLoaded = NO;
     return self;
 }
 
-- (NSString *) HTMLDocument
+- (NSString *)useTemplate:(NSString *)templateName withGlobal:(NSString **)global
 {
-    NSString *path;
     NSBundle *bundle;
+    NSString *path;
     NSData *data;
     
-    if(handlerType == IFMIMEHANDLERTYPE_IMAGE){
-        if(!imageDocumentLoaded){
-            bundle = [NSBundle bundleForClass:[IFContentHandler class]];
-            if ((path = [bundle pathForResource:@"image_document_template" ofType:@"html"])) {
-                data = [[NSData alloc] initWithContentsOfFile:path];
-                if (data) {
-                    imageDocumentTemplate = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                    [data release];
-                }
+    if (!*global) {
+        bundle = [NSBundle bundleForClass:[IFContentHandler class]];
+        path = [bundle pathForResource:templateName ofType:@"html"];
+        if (path) {
+            data = [[NSData alloc] initWithContentsOfFile:path];
+            if (data) {
+                *global = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+                [data release];
             }
-            imageDocumentLoaded = YES;
         }
-        return [NSString stringWithFormat:imageDocumentTemplate, URLString, URLString];
     }
-    
-    else if(handlerType == IFMIMEHANDLERTYPE_PLUGIN){
-        if(!pluginDocumentLoaded){
-            bundle = [NSBundle bundleForClass:[IFContentHandler class]];
-            if ((path = [bundle pathForResource:@"plugin_document_template" ofType:@"html"])) {
-                data = [[NSData alloc] initWithContentsOfFile:path];
-                if (data) {
-                    pluginDocumentTemplate = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                    [data release];
-                }
-            }    
-            pluginDocumentLoaded = YES;        
-        }
-        return [NSString stringWithFormat:pluginDocumentTemplate, URLString, URLString, MIMEType, @"%", @"%"];    
-    }
+    return [NSString stringWithFormat:*global, URLString, MIMEType];
+}
 
-    else if(handlerType == IFMIMEHANDLERTYPE_TEXT){    
-        if(!textDocumentLoaded){
-            bundle = [NSBundle bundleForClass:[IFContentHandler class]];
-            if ((path = [bundle pathForResource:@"text_document_template" ofType:@"html"])) {
-                data = [[NSData alloc] initWithContentsOfFile:path];
-                if (data) {
-                    textDocumentTemplate = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                    [data release];
-                }
-            }
-            textDocumentLoaded = YES;        
-        }
-        return [NSString stringWithFormat:textDocumentTemplate, URLString];
+- (NSString *) HTMLDocument
+{
+    switch (handlerType) {
+    case IFMIMEHANDLERTYPE_IMAGE:
+        return [self useTemplate:@"image_document_template" withGlobal:&imageDocumentTemplate];
+    case IFMIMEHANDLERTYPE_PLUGIN:
+        return [self useTemplate:@"plugin_document_template" withGlobal:&pluginDocumentTemplate];
+    case IFMIMEHANDLERTYPE_TEXT:
+        return [self useTemplate:@"text_document_template" withGlobal:&textDocumentTemplate];
     }
     return nil;
 }
@@ -86,5 +64,7 @@ static BOOL textDocumentLoaded = NO;
 {
     [MIMEType release];
     [URLString release];
+    [super dealloc];
 }
+
 @end

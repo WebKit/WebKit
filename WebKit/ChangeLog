@@ -1,3 +1,22 @@
+2002-06-06  Darin Adler  <darin@apple.com>
+
+	* MIME.subproj/IFContentHandler.m:
+	(-[IFContentHandler initWithURL:MIMEType:MIMEHandlerType:]): Add call to
+	[super init].
+	(-[IFContentHandler useTemplate:withGlobal:]): New helper function.
+	Also got rid of <title> from templates, since there's no need for us to
+	provide a fake title if it's just the URL.
+	(-[IFContentHandler HTMLDocument]): Reduce use of copied and pasted code.
+	(-[IFContentHandler dealloc]): Add call to [super dealloc].
+
+	* Resources/image_document_template.html: Remove <title>.
+	* Resources/plugin_document_template.html: Remove <title>.
+	* Resources/text_document_template.html: Remove <title>.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient processData:isComplete:allDataReceived:]):
+	Remove some unneeded type casts.
+
 2002-06-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed Radar 2936155 - crash in IFAuthenticationPanel
