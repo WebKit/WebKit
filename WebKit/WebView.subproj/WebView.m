@@ -126,6 +126,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 
 - (id<WebControllerPolicyDelegate>)policyDelegate
 {
+    // FIXME: This leaks!
     if (!_private->policyDelegate)
         _private->policyDelegate = [[WebDefaultPolicyDelegate alloc] initWithWebController: self];
     return _private->policyDelegate;

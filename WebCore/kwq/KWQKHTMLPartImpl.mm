@@ -34,7 +34,6 @@
 #import <khtmlview.h>
 
 #import <WebCoreBridge.h>
-#import <WebCoreViewFactory.h>
 
 #import <KWQLogging.h>
 

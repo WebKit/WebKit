@@ -25,7 +25,7 @@
 
 #import <qinputdialog.h>
 
-#import <WebCoreViewFactory.h>
+#import "WebCoreViewFactory.h"
 
 QString QInputDialog::getText(const QString &, const QString &prompt, QLineEdit::EchoMode, const QString &defaultValue, bool *ok)
 {

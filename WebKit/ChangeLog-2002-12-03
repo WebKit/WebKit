@@ -1,3 +1,28 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	- finished up the job of moving the file button here from WebCore.
+
+	I did this mainly for localization reasons.
+
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton initWithFrame:]): Set up button control size, font, bezel style,
+	target, and action. Also add it as a subview.
+        (-[WebFileButton drawRect:]): Center icon in the "visual frame" part of the view,
+	not the entire bounds.
+        (-[WebFileButton setFilename:]): Don't show any icon when the filename is empty.
+        (-[WebFileButton bestVisualFrameSize]): Implemented this.
+        (-[WebFileButton visualFrame]): Ditto.
+        (-[WebFileButton setVisualFrame:]): Ditto.
+        (-[WebFileButton baseline]): Ditto.
+        (-[WebFileButton beginSheet]): Added. Shared between button presses and other clicks.
+        (-[WebFileButton chooseButtonPressed:]): Call beginSheet.
+        (-[WebFileButton mouseDown:]): Ditto.
+        (-[WebFileButton openPanelDidEnd:returnCode:contextInfo:]): Send the notification,
+	WebCoreFileButtonFilenameChanged, when the filename is changed.
+
+        * WebView.subproj/WebController.m: (-[WebController policyDelegate]):
+	Add a FIXME about the leak I found here.
+
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
 	Call the arguments for plug-ins "attributes" everywhere.

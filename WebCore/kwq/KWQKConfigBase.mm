@@ -25,11 +25,11 @@
 
 #import <kconfig.h>
 
-#import <KWQLogging.h>
+#import "KWQLogging.h"
 #import <qcolor.h>
 #import <qstringlist.h>
-#import <WebCoreSettings.h>
-#import <WebCoreViewFactory.h>
+#import "WebCoreSettings.h"
+#import "WebCoreViewFactory.h"
 
 class KWQKConfigImpl
 {

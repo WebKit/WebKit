@@ -96,7 +96,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotRedirect;
     } else if (KWQNamesMatch(member, SLOT(slotReturnPressed()))) {
-        ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
+        ASSERT(dynamic_cast<RenderLineEdit *>(object));
         m_function = slotReturnPressed;
     } else if (KWQNamesMatch(member, SLOT(slotSelected(int)))) {
         ASSERT(dynamic_cast<RenderSelect *>(object));
@@ -143,21 +143,10 @@ void KWQSlot::call() const
         CASE(slotParentCompleted, KHTMLPart, slotParentCompleted)
         CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
         CASE(slotRedirect, KHTMLPart, slotRedirect)
+        CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
-        
-        case slotReturnPressed: {
-            RenderLineEdit *edit = dynamic_cast<RenderLineEdit *>(m_object.pointer());
-            if (edit) {
-                edit->slotReturnPressed();
-            }
-            RenderFileButton *button = dynamic_cast<RenderFileButton *>(m_object.pointer());
-            if (button) {
-                button->slotReturnPressed();
-            }
-            return;
-        }
     }
     
     #undef CASE

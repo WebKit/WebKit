@@ -62,8 +62,10 @@
 @protocol WebCoreFileButton <NSObject>
 - (void)setFilename:(NSString *)filename;
 - (NSString *)filename;
-- (NSSize)bestSize;
 - (float)baseline;
+- (void)setVisualFrame:(NSRect)rect;
+- (NSRect)visualFrame;
+- (NSSize)bestVisualFrameSize;
 @end
 
 extern NSString *WebCoreFileButtonFilenameChanged;

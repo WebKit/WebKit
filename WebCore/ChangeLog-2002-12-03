@@ -1,3 +1,39 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	- finished up the job of moving the file button to WebKit
+
+	I did this mainly for localization reasons.
+
+        * kwq/KWQFileButton.h: Remove filename(), add filenameChanged(),
+	make KWQFileButton be a QWidget subclass, not a QPushButton one.
+	Remove clicked() and paint() virtual functions, _filename, _icon,
+	and _label data members.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Just make a WebCoreFileButton.
+        (KWQFileButton::~KWQFileButton): Less to do here now.
+        (KWQFileButton::setFilename): Call the button to do the work.
+        (KWQFileButton::sizeHint): Ditto.
+        (KWQFileButton::frameGeometry): Ditto.
+        (KWQFileButton::setFrameGeometry): Ditto.
+        (KWQFileButton::baselinePosition): Ditto.
+        (KWQFileButton::filenameChanged): Added. Sends message.
+        (-[KWQFileButtonAdapter initWithKWQFileButton:]): Observe the "filename
+	changed notification".
+        (-[KWQFileButtonAdapter dealloc]): Stop observing.
+        (-[KWQFileButtonAdapter filenameChanged:]): Send a signal when the notification
+	comes in, so KHTML finds out.
+
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Remove handling for RenderFileButton slotReturnPressed.
+        (KWQSlot::call): Ditto.
+
+        * kwq/WebCoreViewFactory.h: Remove bestSize. Add setVisualFrame, visualFrame, and
+	bestVisualFrameSize.
+
+        * kwq/KWQInputDialog.mm: Tweaked includes. Long-term we want to use "", not <>.
+        * kwq/KWQKConfigBase.mm: Ditto.
+        * kwq/KWQKHTMLPartImpl.mm: Ditto.
+
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
 	Call the arguments for plug-ins "attributes" everywhere.
