@@ -1,3 +1,14 @@
+2003-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+	- fixed 3173276 - hang in kjs string at iteslj.org page
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::addPending): Leave whitespace unmolested inside
+	<script>, so that literal tabs in strings come through as tabs,
+	not spaces.
+
 2003-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

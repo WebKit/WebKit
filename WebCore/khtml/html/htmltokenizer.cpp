@@ -1324,7 +1324,7 @@ void HTMLTokenizer::addPending()
     {
         *dest++ = ' ';
     }
-    else if ( textarea )
+    else if ( textarea || script )
     {
         switch(pending) {
         case LFPending:  *dest++ = '\n'; prePos = 0; break;
