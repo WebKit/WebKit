@@ -30,6 +30,7 @@
 
 #include <Foundation/Foundation.h>
 #include <WCURICache.h>
+#include <WCURLHandle.h>
 
 static const QString *DEFAULT_ERROR_TEXT = NULL;
 
@@ -99,13 +100,15 @@ public:
     ~TransferJobPrivate() {
         [metaData autorelease];
         [url autorelease];
+        [handle autorelease];
     }
 
 private:
     TransferJob *parent;
     NSMutableDictionary *metaData;
     NSURL *url;
-    id requestor;
+    id handle;
+    id <WCURLHandleClient> client;
 };
 
 // class TransferJob ===========================================================
@@ -160,14 +163,16 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
 
 void TransferJob::kill(bool quietly=TRUE)
 {
+#if 0
     [WCGetDefaultURICache() cancelRequestWithURL:d->url requestor:d->requestor];
+#endif
 }
 
-void TransferJob::begin(id requestor, void *userData)
+void TransferJob::begin(id <WCURLHandleClient> client, void *userData)
 {
-    //FIXME: load uri
-    d->requestor = requestor;
-    [WCGetDefaultURICache() requestWithURL:d->url requestor:requestor userData:userData];
+    d->client = client;
+    d->handle = WCURLHandleCreate(d->url, client, userData);
+    [d->handle loadInBackground];
 }
 
 } // namespace KIO

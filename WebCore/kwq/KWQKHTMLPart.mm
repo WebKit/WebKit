@@ -49,8 +49,7 @@
 
 #include <KWQKHTMLPart.h>
 
-#import <WCURICache.h>
-#import <WCURICacheData.h>
+#import <WCURLHandle.h>
 
 #include <WKPluginWidget.h>
 #include <rendering/render_frames.h>
@@ -72,31 +71,70 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     }
 }
 
-// Class KHTMLPartNotificationReceiver ==============================================================
+// Class KHTMLPartLoadClient ==============================================================
 
-@interface KHTMLPartNotificationReceiver : NSObject
+@interface KHTMLPartLoadClient : NSObject <WCURLHandleClient>
 {
     @public
     KHTMLPart *m_part;
+    NSData *m_data;
 }
 @end
 
-@implementation KHTMLPartNotificationReceiver
+@implementation KHTMLPartLoadClient
 
--(void)cacheDataAvailable:(NSNotification *)notification
+-(id)init
 {
-    m_part->slotData([notification object]);
+    if ((self = [super init])) {
+        m_data = nil;
+    
+        return self;
+    }
+
+    return nil;
 }
 
--(void)cacheFinished:(NSNotification *)notification
+- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
-    // FIXME: need an implementation for this
+}
+
+- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
+{
+}
+
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+{
     m_part->closeURL();
 }
+
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
+{
+    char *bytes;
+
+    if (!m_data) {
+        m_data = [data retain];
+    }
+    
+    bytes = ((char *)[data bytes]) + offset;    
+    
+    m_part->slotData(sender, (const char *)bytes, length);
+}
+
+- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+{
+}
+
 
 -(void)checkCompleted:(NSNotification *)notification
 {
     m_part->checkCompleted();
+}
+
+-(void)dealloc
+{
+    [m_data release];
+    
+    [super dealloc];
 }
 
 @end
@@ -121,7 +159,7 @@ public:
     KURL m_baseURL;
     
     KHTMLPart *m_part;
-    KHTMLPartNotificationReceiver *m_recv;
+    KHTMLPartLoadClient *m_recv;
 
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
@@ -162,7 +200,7 @@ public:
         //m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
         m_settings = new KHTMLSettings();
         m_haveEncoding = false;
-        m_recv = [[KHTMLPartNotificationReceiver alloc] init];
+        m_recv = [[KHTMLPartLoadClient alloc] init];
         m_recv->m_part = part;
         
         m_jscript = 0L;
@@ -172,7 +210,7 @@ public:
 
     ~KHTMLPartPrivate()
     {
-        [m_recv autorelease];   
+        [m_recv release];   
     }
 
 };
@@ -204,6 +242,7 @@ KHTMLPart::~KHTMLPart()
     NSLog(@"destructing KHTMLPart");
 }
 
+#if 0
 static NSString *
 encodingFromContentType (NSString *contentType)
 {
@@ -224,11 +263,12 @@ encodingFromContentType (NSString *contentType)
 
     return result;
 }
+#endif
 
 // NOTE: This code emulates the interface used by the original khtml part  
-void KHTMLPart::slotData(id <WCURICacheData> data) 
+void KHTMLPart::slotData(id handle, const char *bytes, int length)
 {
-    NSString *encoding;
+    //NSString *encoding;
     QString enc;
 
     if (!d->m_workingURL.isEmpty()) {
@@ -236,15 +276,18 @@ void KHTMLPart::slotData(id <WCURICacheData> data)
         begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();
     }
-
+    
+    // FIXME: need to turn this back on
+    #if 0
     encoding = encodingFromContentType ([[data headers] objectForKey:@"Content-Type"]);
     if (encoding != NULL) {
         enc = QString::fromCFString((CFStringRef) encoding);
 
         setEncoding (enc, true);
     }
-
-    write((const char *)[data cacheData], [data cacheDataSize]);    
+    #endif
+    
+    write(bytes, length);
 }
 
 bool KHTMLPart::openURL( const KURL &url )
@@ -275,19 +318,19 @@ bool KHTMLPart::openURL( const KURL &url )
     d->m_workingURL = url;
     d->m_url = url;
 
-    id <WCURICache> cache;
-
-    cache = WCGetDefaultURICache();
-
+    id handle;
     NSString *urlString;
+    NSURL *theURL;
     
     urlString = [NSString stringWithCString:d->m_workingURL.url().latin1()];
     if ([urlString hasSuffix:@"/"]) {
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
+    theURL = [NSURL URLWithString:urlString];
     
-    [cache requestWithString:urlString requestor:d->m_recv userData:nil];
-
+    handle = WCURLHandleCreate(theURL, d->m_recv, NULL);
+    [handle loadInBackground];
+    
     [[NSNotificationCenter defaultCenter] addObserver:d->m_recv
         selector:@selector(checkCompleted:) name:urlString object:nil];
     

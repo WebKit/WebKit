@@ -34,6 +34,13 @@
 #include <qobject.h>
 #include <qstring.h>
 
+#ifdef _KWQ_
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#include <WCURLHandle.h>
+#endif
+#endif
+
+
 namespace KIO {
 
 class TransferJobPrivate;
@@ -161,7 +168,7 @@ public:
 
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void begin(id requestor, void *userData);
+    void begin(id <WCURLHandleClient> client, void *userData);
 #else
     void begin(void *requestor, void *userData);
 #endif

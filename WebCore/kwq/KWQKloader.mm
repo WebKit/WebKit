@@ -898,53 +898,70 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 // ------------------------------------------------------------------------------------------
 
-// Class LoaderNotificationReceiver ==============================================================
+// Class URLLoadClient ======================================================================
 
-@interface LoaderNotificationReceiver : NSObject
+@interface URLLoadClient : NSObject <WCURLHandleClient>
 {
     @public
     Loader *m_loader;
+    NSData *m_data;
 }
 
 -(id)initWithLoader:(Loader *)loader;
 
 @end
 
-@implementation LoaderNotificationReceiver
+@implementation URLLoadClient
 
 -(id)initWithLoader:(Loader *)loader
 {
-    m_loader = loader;
-    return self;
+    if ((self = [super init])) {
+        m_loader = loader;
+        m_data = nil;
+    
+        return self;
+    }
+    
+    return nil;
 }
 
--(void)cacheDataAvailable:(NSNotification *)notification
+- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
-    NSString *notificationName = [notification name];
-    if ([notificationName rangeOfString: @"uri"].location != 0){
-        KWQDEBUG1("cacheDataAvailable: Received invalid notication, %s\n", DEBUG_OBJECT(notificationName));
-    }
-    else {
-        KWQDEBUG1("cacheDataAvailable: Received notication, %s\n", DEBUG_OBJECT(notificationName));
-        id <WCURICacheData> data = [notification object];
-        KIO::Job *job = static_cast<KIO::Job *>([data userData]);
-        m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
-    }
 }
 
--(void)cacheFinished:(NSNotification *)notification
+- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
 {
-    NSString *notificationName = [notification name];
-    if ([notificationName rangeOfString: @"uri"].location != 0){
-        KWQDEBUG1 ("cacheFinished: Received invalid notication, %s\n", DEBUG_OBJECT(notificationName));
+}
+
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+{
+    KIO::Job *job = static_cast<KIO::Job *>(userData);
+    m_loader->slotFinished(job);
+}
+
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
+{
+    char *bytes;
+
+    if (!m_data) {
+        m_data = [data retain];
     }
-    else {
-        KWQDEBUG1 ("cacheFinished: Received notication, %s\n", DEBUG_OBJECT(notificationName));
-        // FIXME: need an implementation for this
-        id <WCURICacheData> data = [notification object];
-        KIO::Job *job = static_cast<KIO::Job *>([data userData]);
-        m_loader->slotFinished(job);
-    }
+    
+    bytes = ((char *)[data bytes]) + offset;    
+    
+    KIO::Job *job = static_cast<KIO::Job *>(userData);
+    m_loader->slotData(job, (const char *)bytes, length);
+}
+
+- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+{
+}
+
+-(void)dealloc
+{
+    [m_data release];
+    
+    [super dealloc];
 }
 
 @end
@@ -958,7 +975,7 @@ public:
     LoaderPrivate(Loader *parent)
     {
         _parent = parent;
-        m_recv = [[LoaderNotificationReceiver alloc] initWithLoader:parent];
+        m_recv = [[URLLoadClient alloc] initWithLoader:parent];
     } 
     
     ~LoaderPrivate()
@@ -968,7 +985,7 @@ public:
 
 private:
     Loader *_parent;
-    LoaderNotificationReceiver *m_recv;
+    URLLoadClient *m_recv;
 };
 
 } // namespace khtml

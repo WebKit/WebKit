@@ -1,3 +1,25 @@
+2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changed over to the new cache loader in WebFoundation
+        
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient init]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidBeginLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:offset:length:userData:]),
+	(-[KHTMLPartLoadClient WCURLHandle:resourceDidFailLoadingWithResult:userData:]),
+	(-[KHTMLPartLoadClient dealloc]), (KHTMLPart::slotData), (KHTMLPart::openURL):
+	* src/kwq/KWQKjobclasses.mm:
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient initWithLoader:]), (-[URLLoadClient
+	WCURLHandleResourceDidBeginLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:offset:length:userData:]),
+	(-[URLLoadClient WCURLHandle:resourceDidFailLoadingWithResult:userData:]),
+	(-[URLLoadClient dealloc]):
+	* src/kwq/kio/jobclasses.h:
+
 2002-01-29  Maciej Stachowiak  <mjs@apple.com>
 
 	Reimplement QDict, QMap, QPtrDict and QSortedList.

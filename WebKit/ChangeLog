@@ -1,3 +1,10 @@
+2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
+
+        WebKit now links with WebFoundation
+        
+	* WebKit.pbproj/kocienda.pbxuser:
+	* WebKit.pbproj/project.pbxproj:
+
 2002-01-23  Ken Kocienda  <kocienda@apple.com>
 
 	Took out @executable_path hack added for Alexander demo.
