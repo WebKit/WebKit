@@ -21,8 +21,7 @@
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFFileTypeMappings.h>
 
-// FIXME: This is almost completely redundant with the KWQURLLoadClient in WebCore.
-// We shouldn't have two almost-identical classes that don't share code.
+// FIXME: This is quite similar IFResourceURLHandleClient; they should share code.
 
 @implementation IFMainURLHandleClient
 

@@ -1,5 +1,9 @@
 2002-07-02  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/IFMainURLHandleClient.mm: Fix comment.
+
+2002-07-02  Darin Adler  <darin@apple.com>
+
 	- fixed 2975790 - Ads on salon.com scribble all over page
 
         * Plugins.subproj/IFPluginView.mm:
