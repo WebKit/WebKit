@@ -31,13 +31,3 @@ enum {
 #define LowSurrogatePair(c) (((c - 0x10000)&0x3ff) + 0xdc00)
 #define IsHighSurrogatePair(c)  (( c & 0xFC00 ) == HighSurrogateRangeStart )
 #define IsLowSurrogatePair(c)  (( c & 0xFC00 ) == LowSurrogateRangeStart )
-
-typedef struct CharacterShapeIterator CharacterShapeIterator;
-struct CharacterShapeIterator
-{
-    const WebCoreTextRun *run;
-    const UniChar *currentCharacter;
-};
-extern bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const WebCoreTextRun *run);
-extern UniChar shapeForNextCharacter (CharacterShapeIterator *iterator);
-extern bool hasShapeForNextCharacter (const CharacterShapeIterator *iterator);

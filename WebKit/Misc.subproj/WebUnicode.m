@@ -46,30 +46,3 @@ void WebKitInitializeUnicode(void)
     WebCoreUnicodeLowerFunction = _unicodeLower;
     WebCoreUnicodeUpperFunction = _unicodeUpper;
 }
-
-bool hasShapeForNextCharacter (const CharacterShapeIterator *iterator)
-{
-    if (iterator->currentCharacter - iterator->run->characters >= iterator->run->to)
-        return false;
-    return true;
-}
-
-UniChar shapeForNextCharacter (CharacterShapeIterator *iterator)
-{
-    if (!hasShapeForNextCharacter(iterator))
-        return 0;
-    
-    UniChar currentCharacter = *iterator->currentCharacter;
-    iterator->currentCharacter++;
-
-    return currentCharacter;
-}
-
-// Assumes input characters are logically ordered.
-bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const WebCoreTextRun *run)
-{        
-    iterator->currentCharacter = run->characters + run->from;
-    iterator->run = run;
-    
-    return true;
-}

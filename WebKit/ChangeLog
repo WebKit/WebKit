@@ -1,3 +1,23 @@
+2003-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3497879: REGRESSION (100-115): all non-BMP characters (including Deseret) are broken
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:]): Bump offset by getting it from
+        the iterator; don't assume we can just bump it by one each time. It would be even nicer to have
+        a bit more abstraction.
+        (initializeCharacterWidthIterator): Remove call to initializeCharacterShapeIterator.
+        (widthForNextCharacter): Move handling of surrogate pairs (non-BMP) in here and unify it with
+        the handling of BMP characters; this removes the broken code that was returning the wrong font,
+        and changes us to use the code that was already doing the right thing for the surrogate pair case.
+        Also get rid of the use of 0 width to mean "no glyph", which fixes the doubled glyph problem.
+        Also got rid of remnants of use of the shape iterator.
+
+        * Misc.subproj/WebUnicode.h: Remove obsolete shape iterator.
+        * Misc.subproj/WebUnicode.m: Ditto.
+
 === Safari-116 ===
 
 2003-12-04  Darin Adler  <darin@apple.com>

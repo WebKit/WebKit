@@ -104,8 +104,6 @@ struct CharacterWidthIterator
     const WebCoreTextRun *run;
     const WebCoreTextStyle *style;
     unsigned currentCharacter;
-    CharacterShapeIterator shapeIterator;
-    unsigned needsShaping;
     float runWidthSoFar;
     float widthToStart;
     int padding;
@@ -1605,7 +1603,7 @@ static const char *joiningNames[] = {
     if (reversed) {
         width = [self floatWidthForRun:run style:style widths:nil];
         delta -= width;
-        while(offset < run->length) {
+        while (offset < run->length) {
             float w = widthForNextCharacter(&widthIterator, 0, 0);
             if (w == INVALID_WIDTH){
                 // Something very bad happened, like we only have half of a surrogate pair.
@@ -1620,7 +1618,7 @@ static const char *joiningNames[] = {
                         break;
                     delta += w;
                 }
-                offset++;
+                offset = widthIterator.currentCharacter;
             }
         }
     } else {
@@ -1639,7 +1637,7 @@ static const char *joiningNames[] = {
                         break;
                     delta -= w;
                 }
-                offset++;
+                offset = widthIterator.currentCharacter;
             }
         }
     }
@@ -1731,7 +1729,6 @@ static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *rend
 
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
 {
-    iterator->needsShaping = initializeCharacterShapeIterator (&iterator->shapeIterator, run);
     iterator->renderer = renderer;
     iterator->run = run;
     iterator->style = style;
@@ -1776,38 +1773,6 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
         iterator->widthToStart = 0;
 }
 
-static float widthAndGlyphForSurrogate (WebTextRenderer *renderer, UniChar high, UniChar low, ATSGlyphRef *glyphID, NSString **families, NSFont **fontUsed)
-{
-    UnicodeChar uc = UnicodeValueForSurrogatePair(high, low);
-    float width;
-
-    *glyphID = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, uc, fontUsed);
-    if (*glyphID == nonGlyphID) {
-        *glyphID = [renderer _extendUnicodeCharacterToGlyphMapToInclude: uc];
-    }
-
-    if (*glyphID == 0){
-        UniChar surrogates[2];
-        unsigned clusterLength;
-        
-        clusterLength = 2;
-        surrogates[0] = high;
-        surrogates[1] = low;
-        *fontUsed = [renderer _substituteFontForCharacters:&surrogates[0] length: clusterLength families: families];
-        if (*fontUsed){
-            WebTextRenderer *substituteRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:*fontUsed usingPrinterFont:renderer->usingPrinterFont];
-            *glyphID = glyphForUnicodeCharacter(substituteRenderer->unicodeCharacterToGlyphMap, uc, fontUsed);
-            if (*glyphID == nonGlyphID)
-                *glyphID = [substituteRenderer _extendUnicodeCharacterToGlyphMapToInclude: uc];
-            return widthForGlyph (substituteRenderer, *glyphID, *fontUsed);
-       }
-    }
-    
-    width = widthForGlyph (renderer, *glyphID, *fontUsed);
-    
-    return width;
-}
-
 static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
 {
     float delta = CEIL_TO_INT(iterator->widthToStart + iterator->runWidthSoFar) - (iterator->widthToStart + iterator->runWidthSoFar);
@@ -1816,113 +1781,102 @@ static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
 }
 
 // Return INVALID_WIDTH if an error is encountered or we're at the end of the range in the run.
-static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
+static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
 {
     WebTextRenderer *renderer = iterator->renderer;
     const WebCoreTextRun *run = iterator->run;
-    UniChar c;
-    unsigned offset = iterator->currentCharacter;
-    WebGlyphWidth width;
-    NSFont *_fontUsed = 0;
+    unsigned currentCharacter = iterator->currentCharacter;
+
+    NSFont *_fontUsed = nil;
     ATSGlyphRef _glyphUsed;
-    BOOL useSmallCapsFont = NO;
 
     if (!fontUsed)
         fontUsed = &_fontUsed;
     if (!glyphUsed)
         glyphUsed = &_glyphUsed;
         
-    if (offset >= (unsigned)run->to)
-        // Error!  Offset specified beyond end of run.
+    if (currentCharacter >= (unsigned)run->to)
+        // Error! Offset specified beyond end of run.
         return INVALID_WIDTH;
-        
-    // Determine if the string requires any shaping, i.e. Arabic.
-    if (iterator->needsShaping)
-        c = shapeForNextCharacter(&iterator->shapeIterator);
-    else
-        c = run->characters[offset];
-    iterator->currentCharacter++;
-    
-    // It's legit to sometimes get 0 from the shape iterator, return a zero width.
-    if (c == 0)
-        return 0;
+
+    const UniChar *cp = &run->characters[currentCharacter];
+    UnicodeChar c = *cp;
+
+    if (IsLowSurrogatePair(c))
+        return INVALID_WIDTH;
+
+    // Do we have a surrogate pair?  If so, determine the full Unicode (32 bit)
+    // code point before glyph lookup.
+    unsigned clusterLength = 1;
+    if (IsHighSurrogatePair(c)) {
+        // Make sure we have another character and it's a low surrogate.
+        UniChar low;
+        if (currentCharacter + 1 >= run->length || !IsLowSurrogatePair((low = cp[1]))) {
+            // Error!  The second component of the surrogate pair is missing.
+            return INVALID_WIDTH;
+        }
+
+        c = UnicodeValueForSurrogatePair(c, low);
+        clusterLength = 2;
+    }
 
     // If small-caps convert lowercase to upper.
+    BOOL useSmallCapsFont = NO;
     if (renderer->isSmallCapsRenderer) {
         if (!u_isUUppercase(c)) {
             // Only use small cap font if the the uppercase version of the character
             // is different than the lowercase.
-            UniChar newC = u_toupper(c);
+            UnicodeChar newC = u_toupper(c);
             if (newC != c) {
                 useSmallCapsFont = YES;
                 c = newC;
             }
         }
     }
-            
-    // Get a glyph for the next characters.  Somewhat complicated by surrogate
-    // pairs.
-    //
-    // Do we have a surrogate pair?  If so, determine the full Unicode (32bit)
-    // code point before glyph lookup.  We only provide a width when the offset
-    // specifies the first component of the surrogate pair.
-    if (c >= HighSurrogateRangeStart && c <= HighSurrogateRangeEnd) {
-        UniChar high = c, low;
 
-        // Make sure we have another character and it's a low surrogate.
-        if (offset+1 >= run->length || !IsLowSurrogatePair((low = run->characters[offset+1]))) {
-            // Error!  The second component of the surrogate pair is missing.
-            return INVALID_WIDTH;
-        }
-
-        width = widthAndGlyphForSurrogate (renderer, high, low, glyphUsed, iterator->style->families, fontUsed);
-    }
-    else if (c >= LowSurrogateRangeStart && c <= LowSurrogateRangeEnd) {
-        // Return 0 width for second component of the surrogate pair.
-        return 0;
-    }
-    else {
+    if (clusterLength == 1) {
         *glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, fontUsed);
-
         if (*glyphUsed == nonGlyphID) {
-            *glyphUsed = [renderer _extendCharacterToGlyphMapToInclude: c];
+            *glyphUsed = [renderer _extendCharacterToGlyphMapToInclude:c];
         }
-
-        // Check to see if we're rendering in 'small-caps' mode.
-        // ASSUMPTION:  We assume the same font in a smaller size has
-        // the same glyphs as the large font.
-        if (useSmallCapsFont) {
-            if (*fontUsed == 0)
-                *fontUsed = [renderer _smallCapsFont];
-            else {
-                // Potential for optimization.  This path should only be taken if we're
-                // using a cached substituted font.
-                *fontUsed = [[NSFontManager sharedFontManager] convertFont:*fontUsed toSize:[*fontUsed pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER];
-            }
+    } else {
+        *glyphUsed = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, c, fontUsed);
+        if (*glyphUsed == nonGlyphID) {
+            *glyphUsed = [renderer _extendUnicodeCharacterToGlyphMapToInclude:c];
         }
-
-        // Now that we have glyph and font get it's width.  We special case spaces.
-        // They are always an even integer width.
-        if (*glyphUsed == renderer->spaceGlyph)
-            width = renderer->adjustedSpaceWidth;
-        else
-            width = widthForGlyph (renderer, *glyphUsed, *fontUsed);
     }
+
+    // Check to see if we're rendering in 'small-caps' mode.
+    // ASSUMPTION:  We assume the same font in a smaller size has
+    // the same glyphs as the large font.
+    if (useSmallCapsFont) {
+        if (*fontUsed == nil)
+            *fontUsed = [renderer _smallCapsFont];
+        else {
+            // Potential for optimization.  This path should only be taken if we're
+            // using a cached substituted font.
+            *fontUsed = [[NSFontManager sharedFontManager] convertFont:*fontUsed toSize:[*fontUsed pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER];
+        }
+    }
+
+    // Now that we have glyph and font get it's width.  We special case spaces.
+    // They are always an even integer width.
+    WebGlyphWidth width;
+    if (*glyphUsed == renderer->spaceGlyph)
+        width = renderer->adjustedSpaceWidth;
+    else
+        width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
 
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
     if (*glyphUsed == 0 && iterator->style->attemptFontSubstitution) {
-        UniChar _characters[1];
-        NSFont *substituteFont;
-
-        _characters[0] = c;
-        substituteFont = [renderer _substituteFontForCharacters:_characters length:1 families:iterator->style->families];
+        NSFont *substituteFont = [renderer _substituteFontForCharacters:cp length:clusterLength families:iterator->style->families];
         if (substituteFont) {
             int cNumGlyphs = 0;
             ATSGlyphRef localGlyphBuffer[4];
             
             WebCoreTextRun clusterRun;
-            WebCoreInitializeTextRun(&clusterRun, _characters, 1, 0, 1);
+            WebCoreInitializeTextRun(&clusterRun, cp, clusterLength, 0, clusterLength);
             WebCoreTextStyle clusterStyle = *iterator->style;
             clusterStyle.padding = 0;
             clusterStyle.applyRounding = false;
@@ -1942,14 +1896,12 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
             *fontUsed = substituteFont;
             *glyphUsed = localGlyphBuffer[0];
             
-            if (cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
-                [renderer _updateGlyphEntryForCharacter:_characters[0] glyphID:localGlyphBuffer[0] font:substituteFont];
+            if (clusterLength == 1 && cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
+                [renderer _updateGlyphEntryForCharacter:c glyphID:localGlyphBuffer[0] font:substituteFont];
             }
-            else
-                NSLog (@"Unable to find appropriate match for character\n");
         }
     }
-    
+
     if (!*fontUsed)
         *fontUsed = renderer->font;
 
@@ -1959,7 +1911,7 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
 
     // Account for padding.  khtml uses space padding to justify text.  We
     // distribute the specified padding over the available spaces in the run.
-    if (c == SPACE){
+    if (c == SPACE) {
         if (iterator->padding > 0){
             // Only use left over padding if note evenly divisible by 
             // number of spaces.
@@ -1975,19 +1927,23 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
         
         // Account for word-spacing.  We apply additional space between "words" by
         // adding width to the space character.
-        if (iterator->currentCharacter > 1 && !isSpace(run->characters[iterator->currentCharacter-2]))
+        if (currentCharacter > 0 && !isSpace(cp[-1]))
             width += iterator->style->wordSpacing;
     }
 
     iterator->runWidthSoFar += width;
-    
+
+    // Advance past the character we just dealt with.
+    currentCharacter += clusterLength;
+    iterator->currentCharacter = currentCharacter;
+
     // Account for float/integer impedance mismatch between CG and khtml.  "Words" (characters 
     // followed by a character defined by isSpace()) are always an integer width.  We adjust the 
     // width of the last character of a "word" to ensure an integer width.  When we move khtml to
     // floats we can remove this (and related) hacks.
     //
     // Check to see if the next character is a space, if so, adjust.
-    if (offset+1 < run->length && isSpace(run->characters[offset+1])) {
+    if (currentCharacter < run->length && isSpace(cp[clusterLength])) {
         width += ceilCurrentWidth(iterator);
     }
 
@@ -1995,7 +1951,7 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
     // 1) The string is longer than one character
     // 2) or the entire stringLength is one character
     int len = run->to - run->from;
-    if (iterator->currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRounding){
+    if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRounding){
         width += ceilCurrentWidth(iterator);
     }
     
