@@ -125,6 +125,12 @@ JavaClass *JavaClass::classForInstance (jobject instance)
     _createClassesByNameIfNecessary();
     
     jobject classOfInstance = callJNIObjectMethod(instance, "getClass", "()Ljava/lang/Class;");
+	
+    if (!classOfInstance) {
+        fprintf (stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, instance);
+        return 0;
+    }
+	
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
 
     const char *classNameC = getCharactersFromJString (className);

@@ -65,29 +65,42 @@ const char *signatureFromPrimitiveType(JNIType type);
 
 jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName);
 
-jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
+jvalue getJNIField (jobject obj, JNIType type, const char *name, const char *signature);
 
-jobject callJNIObjectMethod( jobject obj, const char *name, const char *sig, ... );
-void callJNIVoidMethod( jobject obj, const char *name, const char *sig, ... );
-jboolean callJNIBooleanMethod( jobject obj, const char *name, const char *sig, ... );
-jbyte callJNIByteMethod( jobject obj, const char *name, const char *sig, ... );
-jchar callJNICharMethod( jobject obj, const char *name, const char *sig, ... );
-jshort callJNIShortMethod( jobject obj, const char *name, const char *sig, ... );
-jint callJNIIntMethod( jobject obj, const char *name, const char *sig, ... );
-jlong callJNILongMethod( jobject obj, const char *name, const char *sig, ... );
-jfloat callJNIFloatMethod( jobject obj, const char *name, const char *sig, ... );
-jdouble callJNIDoubleMethod( jobject obj, const char *name, const char *sig, ... );
+jmethodID getMethodID (jobject obj, const char *name, const char *sig);
 
-jobject callJNIObjectMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-void callJNIVoidMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jboolean callJNIBooleanMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jbyte callJNIByteMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jchar callJNICharMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jshort callJNIShortMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jint callJNIIntMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jlong callJNILongMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jfloat callJNIFloatMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-jdouble callJNIDoubleMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
+jobject callJNIObjectMethod (jobject obj, const char *name, const char *sig, ... );
+void callJNIVoidMethod (jobject obj, const char *name, const char *sig, ... );
+jboolean callJNIBooleanMethod (jobject obj, const char *name, const char *sig, ... );
+jbyte callJNIByteMethod (jobject obj, const char *name, const char *sig, ... );
+jchar callJNICharMethod (jobject obj, const char *name, const char *sig, ... );
+jshort callJNIShortMethod (jobject obj, const char *name, const char *sig, ... );
+jint callJNIIntMethod (jobject obj, const char *name, const char *sig, ... );
+jlong callJNILongMethod (jobject obj, const char *name, const char *sig, ... );
+jfloat callJNIFloatMethod (jobject obj, const char *name, const char *sig, ... );
+jdouble callJNIDoubleMethod (jobject obj, const char *name, const char *sig, ... );
+
+jobject callJNIObjectMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+void callJNIVoidMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jboolean callJNIBooleanMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jbyte callJNIByteMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jchar callJNICharMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jshort callJNIShortMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jint callJNIIntMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jlong callJNILongMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jfloat callJNIFloatMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+jdouble callJNIDoubleMethodA (jobject obj, const char *name, const char *sig, jvalue *args);
+
+jobject callJNIObjectMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+void callJNIVoidMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jboolean callJNIBooleanMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jbyte callJNIByteMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jchar callJNICharMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jshort callJNIShortMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jint callJNIIntMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jlong callJNILongMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jfloat callJNIFloatMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
+jdouble callJNIDoubleMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
 
 JavaVM *getJavaVM();
 JNIEnv *getJNIEnv();

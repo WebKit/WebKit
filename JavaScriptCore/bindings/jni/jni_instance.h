@@ -52,10 +52,8 @@ protected:
             delete this;
     }
     
-    ~JObjectWrapper() {
-        _env->DeleteGlobalRef (_instance);
-    }
-
+    ~JObjectWrapper();
+	
     jobject _instance;
 
 private:
@@ -82,6 +80,9 @@ public:
         _instance = other._instance;
         _instance->ref();
         _oldInstance->deref();
+		
+        // Classes are kept around forever.
+        _class = other._class;
         
         return *this;
     };
@@ -99,6 +100,7 @@ public:
     
 private:
     JObjectWrapper *_instance;
+	mutable JavaClass *_class;
 };
 
 } // namespace Bindings

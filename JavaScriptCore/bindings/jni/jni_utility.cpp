@@ -68,7 +68,7 @@ JNIEnv *KJS::Bindings::getJNIEnv()
     return NULL;
 }
 
-static jvalue callJNIMethod( JNIType type, jobject obj, const char *name, const char *sig, va_list args)
+static jvalue callJNIMethod (JNIType type, jobject obj, const char *name, const char *sig, va_list args)
 {
     JavaVM *jvm = getJavaVM();
     JNIEnv *env = getJNIEnv();
@@ -118,22 +118,70 @@ static jvalue callJNIMethod( JNIType type, jobject obj, const char *name, const 
             }
             else
             {
-                fprintf(stderr, "%s: Could not find method: %s\n", __PRETTY_FUNCTION__, name);
+                fprintf(stderr, "%s: Could not find method: %s for %p\n", __PRETTY_FUNCTION__, name, obj);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
+                fprintf (stderr, "\n");
             }
 
             env->DeleteLocalRef(cls);
         }
         else {
-            fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
+            fprintf(stderr, "%s: Could not find class for %p\n", __PRETTY_FUNCTION__, obj);
         }
     }
 
     return result;
 }
 
-static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const char *sig, jvalue *args)
+static jvalue callJNIMethodIDA (JNIType type, jobject obj, jmethodID mid, jvalue *args)
+{
+    JNIEnv *env = getJNIEnv();
+    jvalue result;
+    
+    bzero (&result, sizeof(jvalue));
+    if ( obj != NULL && mid != NULL )
+    {
+        switch (type) {
+        case void_type:
+            env->functions->CallVoidMethodA(env, obj, mid, args);
+            break;
+        case object_type:
+            result.l = env->functions->CallObjectMethodA(env, obj, mid, args);
+            break;
+        case boolean_type:
+            result.z = env->functions->CallBooleanMethodA(env, obj, mid, args);
+            break;
+        case byte_type:
+            result.b = env->functions->CallByteMethodA(env, obj, mid, args);
+            break;
+        case char_type:
+            result.c = env->functions->CallCharMethodA(env, obj, mid, args);
+            break;
+        case short_type:
+            result.s = env->functions->CallShortMethodA(env, obj, mid, args);
+            break;
+        case int_type:
+            result.i = env->functions->CallIntMethodA(env, obj, mid, args);
+            break;
+        case long_type:
+            result.j = env->functions->CallLongMethodA(env, obj, mid, args);
+            break;
+        case float_type:
+            result.f = env->functions->CallFloatMethodA(env, obj, mid, args);
+            break;
+        case double_type:
+            result.d = env->functions->CallDoubleMethodA(env, obj, mid, args);
+            break;
+        default:
+            fprintf(stderr, "%s: invalid function type (%d)\n", __PRETTY_FUNCTION__, (int)type);
+        }
+    }
+
+    return result;
+}
+
+static jvalue callJNIMethodA (JNIType type, jobject obj, const char *name, const char *sig, jvalue *args)
 {
     JavaVM *jvm = getJavaVM();
     JNIEnv *env = getJNIEnv();
@@ -144,48 +192,14 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
         jclass cls = env->GetObjectClass(obj);
         if ( cls != NULL ) {
             jmethodID mid = env->GetMethodID(cls, name, sig);
-            if ( mid != NULL )
-            {
-                switch (type) {
-                case void_type:
-                    env->functions->CallVoidMethodA(env, obj, mid, args);
-                    break;
-                case object_type:
-                    result.l = env->functions->CallObjectMethodA(env, obj, mid, args);
-                    break;
-                case boolean_type:
-                    result.z = env->functions->CallBooleanMethodA(env, obj, mid, args);
-                    break;
-                case byte_type:
-                    result.b = env->functions->CallByteMethodA(env, obj, mid, args);
-                    break;
-                case char_type:
-                    result.c = env->functions->CallCharMethodA(env, obj, mid, args);
-                    break;
-                case short_type:
-                    result.s = env->functions->CallShortMethodA(env, obj, mid, args);
-                    break;
-                case int_type:
-                    result.i = env->functions->CallIntMethodA(env, obj, mid, args);
-                    break;
-                case long_type:
-                    result.j = env->functions->CallLongMethodA(env, obj, mid, args);
-                    break;
-                case float_type:
-                    result.f = env->functions->CallFloatMethodA(env, obj, mid, args);
-                    break;
-                case double_type:
-                    result.d = env->functions->CallDoubleMethodA(env, obj, mid, args);
-                    break;
-                default:
-                    fprintf(stderr, "%s: invalid function type (%d)\n", __PRETTY_FUNCTION__, (int)type);
-                }
+            if ( mid != NULL ) {
+                result = callJNIMethodIDA (type, obj, mid, args);
             }
-            else
-            {
+            else {
                 fprintf(stderr, "%s: Could not find method: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
+                fprintf (stderr, "\n");
             }
 
             env->DeleteLocalRef(cls);
@@ -197,6 +211,22 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
 
     return result;
 }
+
+jmethodID KJS::Bindings::getMethodID (jobject obj, const char *name, const char *sig)
+{
+    JNIEnv *env = getJNIEnv();
+    jmethodID mid = 0;
+	
+    if ( env != NULL) {
+    jclass cls = env->GetObjectClass(obj);
+    if ( cls != NULL ) {
+            mid = env->GetMethodID(cls, name, sig);
+        }
+        env->DeleteLocalRef(cls);
+    }
+    return mid;
+}
+
 
 #define CALL_JNI_METHOD(function_type,obj,name,sig) \
     va_list args;\
@@ -324,6 +354,65 @@ jboolean KJS::Bindings::callJNIBooleanMethodA (jobject obj, const char *name, co
     return result.z;
 }
 
+void KJS::Bindings::callJNIVoidMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (void_type, obj, methodID, args);
+}
+
+jobject KJS::Bindings::callJNIObjectMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (object_type, obj, methodID, args);
+    return result.l;
+}
+
+jbyte KJS::Bindings::callJNIByteMethodIDA ( jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (byte_type, obj, methodID, args);
+    return result.b;
+}
+
+jchar KJS::Bindings::callJNICharMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (char_type, obj, methodID, args);
+    return result.c;
+}
+
+jshort KJS::Bindings::callJNIShortMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (short_type, obj, methodID, args);
+    return result.s;
+}
+
+jint KJS::Bindings::callJNIIntMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (int_type, obj, methodID, args);
+    return result.i;
+}
+
+jlong KJS::Bindings::callJNILongMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (long_type, obj, methodID, args);
+    return result.j;
+}
+
+jfloat KJS::Bindings::callJNIFloatMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA  (float_type, obj, methodID, args);
+    return result.f;
+}
+
+jdouble KJS::Bindings::callJNIDoubleMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (double_type, obj, methodID, args);
+    return result.d;
+}
+
+jboolean KJS::Bindings::callJNIBooleanMethodIDA (jobject obj, jmethodID methodID, jvalue *args)
+{
+    jvalue result = callJNIMethodIDA (boolean_type, obj, methodID, args);
+    return result.z;
+}
+
 const char *KJS::Bindings::getCharactersFromJString (jstring aJString)
 {
     return getCharactersFromJStringInEnv (getJNIEnv(), aJString);
@@ -341,6 +430,7 @@ const char *KJS::Bindings::getCharactersFromJStringInEnv (JNIEnv *env, jstring a
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
+		fprintf (stderr, "\n");
     }
     return s;
 }
@@ -357,6 +447,7 @@ const jchar *KJS::Bindings::getUCharactersFromJStringInEnv (JNIEnv *env, jstring
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
+		fprintf (stderr, "\n");
     }
     return s;
 }
@@ -523,6 +614,7 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
                 fprintf(stderr, "%s: Could not find field: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
+				fprintf (stderr, "\n");
             }
 
             env->DeleteLocalRef(cls);

@@ -32,7 +32,7 @@
 #define JS_LOG(formatAndArgs...) ((void)0)
 #else
 #define JS_LOG(formatAndArgs...) { \
-    fprintf (stderr, "%s:  ", __PRETTY_FUNCTION__); \
+    fprintf (stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
     fprintf(stderr, formatAndArgs); \
 }
 #endif
@@ -43,6 +43,7 @@ using namespace KJS;
 JavaInstance::JavaInstance (jobject instance) 
 {
     _instance = new JObjectWrapper (instance);
+    _class = 0;
 };
 
 JavaInstance::~JavaInstance () 
@@ -55,11 +56,15 @@ JavaInstance::JavaInstance (const JavaInstance &other) : Instance()
 {
     _instance = other._instance;
     _instance->ref();
+    // Classes are kept around forever.
+    _class = other._class;
 };
 
 Class *JavaInstance::getClass() const 
 {
-    return JavaClass::classForInstance (_instance->_instance);
+    if (_class == 0)
+        _class = JavaClass::classForInstance (_instance->_instance);
+    return _class;
 }
 
 KJS::Value JavaInstance::stringValue() const
@@ -93,7 +98,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
     jvalue *jArgs;
     Value resultValue;
     
-    JS_LOG ("%s\n", method->name());
+    JS_LOG ("call %s on %p\n", method->name(), _instance->_instance);
     
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));
@@ -107,15 +112,16 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
     }
     
     jvalue result;
+	jobject obj = _instance->_instance;
     switch (jMethod->JNIReturnType()){
         case void_type: {
-            callJNIVoidMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            callJNIVoidMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Undefined();
         }
         break;
         
         case object_type: {
-            result.l = callJNIObjectMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.l = callJNIObjectMethodIDA (obj, jMethod->methodID(obj), jArgs);
             if (result.l != 0) {
                 resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
             }
@@ -126,49 +132,49 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
         break;
         
         case boolean_type: {
-            result.z = callJNIBooleanMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.z = callJNIBooleanMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = KJS::Boolean(result.z);
         }
         break;
         
         case byte_type: {
-            result.b = callJNIByteMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.b = callJNIByteMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.b);
         }
         break;
         
         case char_type: {
-            result.c = callJNICharMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.c = callJNICharMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.c);
         }
         break;
         
         case short_type: {
-            result.s = callJNIShortMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.s = callJNIShortMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.s);
         }
         break;
         
         case int_type: {
-            result.i = callJNIIntMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.i = callJNIIntMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.i);
         }
         break;
         
         case long_type: {
-            result.j = callJNILongMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.j = callJNILongMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number((long int)result.j);
         }
         break;
         
         case float_type: {
-            result.f = callJNIFloatMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.f = callJNIFloatMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.f);
         }
         break;
         
         case double_type: {
-            result.d = callJNIDoubleMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+            result.d = callJNIDoubleMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.d);
         }
         break;
@@ -230,7 +236,14 @@ JObjectWrapper::JObjectWrapper(jobject instance)
     _instance = _env->NewGlobalRef (instance);
     _env->DeleteLocalRef (instance);
     
+	JS_LOG ("new global ref %p for %p\n", _instance, instance);
+	
     if  (_instance == NULL) {
         fprintf (stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
     }
+}
+
+JObjectWrapper::~JObjectWrapper() {
+	JS_LOG ("deleting global ref %p\n", _instance);
+	_env->DeleteGlobalRef (_instance);
 }

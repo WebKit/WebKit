@@ -240,7 +240,7 @@ private:
 class JavaMethod : public Method
 {
 public:
-    JavaMethod() : Method(), _signature(0) {};
+    JavaMethod() : Method(), _signature(0), _methodID(0) {};
     
     JavaMethod (JNIEnv *env, jobject aMethod);
     
@@ -289,7 +289,9 @@ public:
     
     const char *signature() const;
     JNIType JNIReturnType() const;
-    
+
+    jmethodID methodID (jobject obj) const;
+	
 private:
     JavaParameter *_parameters;
     long _numParameters;
@@ -297,6 +299,7 @@ private:
     mutable KJS::UString *_signature;
     JavaString _returnType;
     JNIType _JNIReturnType;
+    mutable jmethodID _methodID;
 };
 
 class JavaArray : public Array

@@ -210,9 +210,9 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
         _parameters[i] = JavaParameter(env, parameterName);
     }
 
-    
     // Created lazily.
     _signature = 0;
+    _methodID = 0;
 }
 
 // JNI method signatures use '/' between components of a class name, but
@@ -264,6 +264,15 @@ JNIType JavaMethod::JNIReturnType() const
 {
     return _JNIReturnType;
 }
+
+jmethodID JavaMethod::methodID (jobject obj) const
+{
+    if (_methodID == 0) {
+        _methodID = getMethodID (obj, name(), signature());
+    }
+    return _methodID;
+}
+
 
 JavaArray::JavaArray (jobject a, const char *t) 
 {

@@ -1,3 +1,47 @@
+2004-01-05  Richard Williamson   <rjw@apple.com>
+
+	Added cache of JNI method IDs to minimize allocations.  This mitigates the problem
+	described by 3515579.
+
+	Also cleanup up logging of Java exceptions.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::classForInstance):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::getClass):
+        (JavaInstance::invokeMethod):
+        (JObjectWrapper::JObjectWrapper):
+        (JObjectWrapper::~JObjectWrapper):
+        * bindings/jni/jni_instance.h:
+        (KJS::Bindings::JavaInstance::operator=):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod):
+        (JavaMethod::methodID):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaMethod::JavaMethod):
+        * bindings/jni/jni_utility.cpp:
+        (callJNIMethod):
+        (callJNIMethodIDA):
+        (callJNIMethodA):
+        (KJS::Bindings::getMethodID):
+        (KJS::Bindings::callJNIVoidMethodIDA):
+        (KJS::Bindings::callJNIObjectMethodIDA):
+        (KJS::Bindings::callJNIByteMethodIDA):
+        (KJS::Bindings::callJNICharMethodIDA):
+        (KJS::Bindings::callJNIShortMethodIDA):
+        (KJS::Bindings::callJNIIntMethodIDA):
+        (KJS::Bindings::callJNILongMethodIDA):
+        (KJS::Bindings::callJNIFloatMethodIDA):
+        (KJS::Bindings::callJNIDoubleMethodIDA):
+        (KJS::Bindings::callJNIBooleanMethodIDA):
+        (KJS::Bindings::getCharactersFromJStringInEnv):
+        (KJS::Bindings::getUCharactersFromJStringInEnv):
+        (KJS::Bindings::getJNIField):
+        * bindings/jni/jni_utility.h:
+
 l2003-12-23  John Sullivan  <sullivan@apple.com>
 
         * JavaScriptCore.pbproj/project.pbxproj:
