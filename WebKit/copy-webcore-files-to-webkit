@@ -100,14 +100,18 @@ sub CopyFilesIfNeeded {
 		if (-e $dest && ! -f $dest) {
 			Fail("$dest is not a plain file");	
 		}
-		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
-			Say("$ProgramName: copying files...") if $blab == 0;
-			$blab = 1;
-			#ExecuteCommand("cp -f $source $dest");
-			ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
-			ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest");
-			ExecuteCommand("rm $dest-X");
-		}
+
+        Say("$ProgramName: comparing files...") if $blab == 0;
+        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+        ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest-Y");
+        ExecuteCommand("rm $dest-X");
+        if (! -e $dest || system("cmp $dest $dest-Y > /dev/null 2>&1")){
+            Say("$ProgramName: copying files...") if $blab == 0;
+            $blab = 1;
+            ExecuteCommand("cp -f $dest-Y $dest");
+       }
+       ExecuteCommand("rm $dest-Y");
+
 	}
 
 	for my $file (keys(%JavaScriptCoreFiles)) {
@@ -119,14 +123,18 @@ sub CopyFilesIfNeeded {
 		if (-e $dest && ! -f $dest) {
 			Fail("$dest is not a plain file");	
 		}
-		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
-			Say("$ProgramName: copying files...") if $blab == 0;
-			$blab = 1;
-			#ExecuteCommand("cp -f $source $dest");
-			ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
-			ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest");
-			ExecuteCommand("rm $dest-X");
-		}
+		
+        Say("$ProgramName: comparing files...") if $blab == 0;
+        ExecuteCommand("sed -e 's%#import .*<WebCore/\\(.*\\)>%#import <WebKit/\\1>%' $source > $dest-X");
+        ExecuteCommand("sed -e 's%#import .*<JavaScriptCore/\\(.*\\)>%#import <WebKit/\\1>%' $dest-X > $dest-Y");
+        ExecuteCommand("rm $dest-X");
+        if (! -e $dest || system("cmp $dest $dest-Y > /dev/null 2>&1")){
+            Say("$ProgramName: copying files...") if $blab == 0;
+            $blab = 1;
+            ExecuteCommand("cp -f $dest-Y $dest");
+       }
+       ExecuteCommand("rm $dest-Y");
+       
 	}
 }
 

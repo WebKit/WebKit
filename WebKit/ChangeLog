@@ -1,3 +1,10 @@
+2004-05-19  Richard Williamson   <rjw@apple.com>
+
+        Updated header copy script to only copy if modified headers
+        are different.
+
+        * copy-webcore-files-to-webkit:
+
 2004-05-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt and Darin
