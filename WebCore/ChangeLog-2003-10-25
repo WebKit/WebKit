@@ -1,3 +1,20 @@
+2002-09-22  Darin Adler  <darin@apple.com>
+
+	Change code that moves NSViews out of the way to run inside drawRect
+	after a layout change rather than running at layout time. This makes
+	sure that views are in the right place when propagating dirty rects.
+
+        * kwq/KWQKHTMLPartImpl.h: Add paint method and _needsToSetWidgetsAside flag.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::KWQKHTMLPartImpl): Set _needsToSetWidgetsAside to false.
+        (KWQKHTMLPartImpl::layout): Set _needsToSetWidgetsAside to true. Don't call
+	moveWidgetsAside any more.
+        (KWQKHTMLPartImpl::paint): Moved the code here from the bridge, but also call
+	moveWidgetsAside if _needsToSetWidgetsAside flag is set.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:withPainter:]): Call KWQKHTMLPartImpl::paint, which
+	is where I moved this code.
+
 2002-09-21  Darin Adler  <darin@apple.com>
 
 	- fixed 3057265 -- REGRESSION: Crash loading http://www.undetectables.co.uk/

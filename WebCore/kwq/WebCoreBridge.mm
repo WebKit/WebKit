@@ -215,15 +215,7 @@ using khtml::RenderPart;
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    RenderObject *renderer = part->impl->renderer();
-
-#ifdef DEBUG_DRAWING
-    [[NSColor redColor] set];
-    [NSBezierPath fillRect:[part->impl->view()->getView() visibleRect]];
-#endif
-
-    if (renderer && renderer->layer())
-        renderer->layer()->paint(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
+    part->impl->paint(p, QRect(rect));
 }
 
 - (void)drawRect:(NSRect)rect

@@ -91,6 +91,7 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     , _started(p, SIGNAL(started(KIO::Job *)))
     , _completed(p, SIGNAL(completed()))
     , _completedWithBool(p, SIGNAL(completed(bool)))
+    , _needsToSetWidgetsAside(false)
 {
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
@@ -390,8 +391,22 @@ void KWQKHTMLPartImpl::layout()
 {
     // Since not all widgets will get a print call, it's important to move them away
     // so that they won't linger in an old position left over from a previous print.
+    _needsToSetWidgetsAside = true;
+}
+
+void KWQKHTMLPartImpl::paint(QPainter *p, const QRect &rect)
+{
+#ifdef DEBUG_DRAWING
+    [[NSColor redColor] set];
+    [NSBezierPath fillRect:[view()->getView() visibleRect]];
+#endif
+
     if (renderer()) {
-        moveWidgetsAside(renderer());
+        if (_needsToSetWidgetsAside) {
+            moveWidgetsAside(renderer());
+            _needsToSetWidgetsAside = false;
+        }
+        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height());
     }
 }
 

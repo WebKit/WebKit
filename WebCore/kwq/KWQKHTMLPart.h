@@ -118,6 +118,7 @@ public:
     
     DOM::DocumentImpl *document();
     khtml::RenderObject *renderer();
+    void paint(QPainter *, const QRect &);
 
     // Used internally, but need to be public because they are used by non-member functions.
 
@@ -142,6 +143,8 @@ private:
     KWQSignal _started;
     KWQSignal _completed;
     KWQSignal _completedWithBool;
+    
+    bool _needsToSetWidgetsAside;
 
     static QPtrList<KWQKHTMLPartImpl> &mutableInstances();
 
