@@ -1,3 +1,12 @@
+2004-11-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3874577> Opening restricted (parental) content in new window/tab reveals Safari's "Resources" folder
+	
+        Reviewed by john.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate openFrameInNewWindow:]): use the unreachable URL if there is one
+
 === Safari-171 ===
 
 2004-11-11  Richard Williamson   <rjw@apple.com>

@@ -323,8 +323,12 @@
 - (void)openFrameInNewWindow:(id)sender
 {
     NSDictionary *element = [sender representedObject];
-    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    [self openNewWindowWithURL:[[webFrame dataSource] _URL] element:element];
+    WebDataSource *dataSource = [[element objectForKey:WebElementFrameKey] dataSource];
+    NSURL *URL = [dataSource unreachableURL];
+    if (URL == nil) {
+        URL = [[dataSource request] URL];
+    }    
+    [self openNewWindowWithURL:URL element:element];
 }
 
 @end
