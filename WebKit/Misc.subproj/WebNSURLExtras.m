@@ -111,7 +111,15 @@ static char hexDigit(int i) {
     NSURL *result = nil;
     int length = [data length];
     if (length > 0) {
-        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, [data bytes], [data length], kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES);
+        const UInt8 *bytes = [data bytes];
+        // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
+        // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
+        // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
+        // onto using ISO Latin 1 in those cases.
+        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES);
+        if (!result) {
+            result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES);
+        }
         [result autorelease];
     }
     else {

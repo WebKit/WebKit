@@ -4,6 +4,29 @@
 
         Fix for this bug:
 
+	<rdar://problem/3374458>: Choose UTF-8 for encoding when calling 
+	CFURLCreateAbsoluteURLWithBytes in WebKit
+
+        Calling CFURLCreateAbsoluteURLWithBytes with ISO Latin 1 string
+        encoding results in some issues when trying to decode a URL path in
+        preparation for doing file I/O. Instead of doing a redecoding step
+        whenever a path is needed to perform I/O, use UTF-8 as the encoding
+        right from the start. This will mean that illegal UTF-8 sequences will
+        be rejected by CFURLCreateAbsoluteURLWithBytes. However, we can work
+        around this by falling back on ISO Latin1 in this case. The end result
+        is that existing code throughout the URL loading system can remain
+        unchanged and simply call the path method on NSURL as it does now and
+        get the right result for its I/O requirements.
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:relativeToURL:])
+
+2003-08-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+
         <rdar://problem/3374487>: URLs with UTF-8 escape sequences can't be accessed         
 	when typed in the Safari location bar
 
