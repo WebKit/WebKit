@@ -1099,7 +1099,8 @@ QPtrList<KWQKHTMLPart> &KWQKHTMLPart::mutableInstances()
 
 void KWQKHTMLPart::updatePolicyBaseURL()
 {
-    if (parentPart()) {
+    // FIXME: docImpl() returns null for everything other than HTML documents; is this causing problems? -dwh
+    if (parentPart() && parentPart()->docImpl()) {
         setPolicyBaseURL(parentPart()->docImpl()->policyBaseURL());
     } else {
         setPolicyBaseURL(m_url.url());
@@ -1108,7 +1109,7 @@ void KWQKHTMLPart::updatePolicyBaseURL()
 
 void KWQKHTMLPart::setPolicyBaseURL(const DOMString &s)
 {
-    // XML documents will cause this to return null.  docImpl() is
+    // FIXME: XML documents will cause this to return null.  docImpl() is
     // an HTMLdocument only. -dwh
     if (docImpl())
         docImpl()->setPolicyBaseURL(s);

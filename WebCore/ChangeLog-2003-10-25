@@ -1,5 +1,16 @@
 2003-06-05  David Hyatt  <hyatt@apple.com>
 
+	Fix for crash on an XHTML frameset page.  It was assuming
+	that all docs were HTML. The bug # is 3277973.
+	
+        Reviewed by john
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::updatePolicyBaseURL):
+        (KWQKHTMLPart::setPolicyBaseURL):
+
+2003-06-05  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3281030, stylesheets can't be enabled properly via
 	script.  Test case from Dirk.  The fix is to make the setting
 	of the state happen independently of the attribute setting.
