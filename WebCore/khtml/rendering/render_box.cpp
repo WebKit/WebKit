@@ -137,8 +137,6 @@ void RenderBox::setPos( int xPos, int yPos )
         return; // Optimize for the case where we don't move at all.
     
     m_x = xPos; m_y = yPos;
-    if (m_layer)
-        m_layer->updateLayerPosition();
 }
 
 short RenderBox::width() const
