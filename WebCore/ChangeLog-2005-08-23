@@ -1,3 +1,12 @@
+2005-03-17  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin, Ken.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::setEndingSelection):
+        Fixed typo so that it calls setEndingSelection rather than setStartingSelection.
+        Commented out this unused method, tho, since this is late in Tiger.  Proved unused by successful build after temporarily removing method declaration or implemenation.
+
 2005-03-16  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs.
