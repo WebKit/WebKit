@@ -1,5 +1,11 @@
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Set directories for the group
+	folders, so that creating new files in them will put them in the
+	right directory by default.
+
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
         More refactoring. Change bridge to get the data source via a
 	method instead of straight from the ivar, and in the method,
 	assert that the data source is not nil and is not
