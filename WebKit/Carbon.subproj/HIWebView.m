@@ -487,7 +487,10 @@ Click( HIWebView* inView, EventRef inEvent )
 	UInt32					modifiers;
 	Rect					windRect;
 	
-	GetEventPlatformEventRecord( inEvent, &eventRec );
+	if (!GetEventPlatformEventRecord( inEvent, &eventRec )) {
+            NSLog (@"Unable to get platform event");
+            require_noerr( err, CantAllocNewEvent );
+        }
 
 	// We need to make the event be a kEventMouseDown event, or the webkit might trip up when
 	// we click on a Netscape plugin. It calls ConvertEventRefToEventRecord, assuming
@@ -721,7 +724,8 @@ OwningWindowChanged(
             { kEventClassMouse, kEventMouseWheelMoved },
             { kEventClassKeyboard, kEventRawKeyDown },
             { kEventClassKeyboard, kEventRawKeyRepeat },
-            { kEventClassKeyboard, kEventRawKeyUp }
+            { kEventClassKeyboard, kEventRawKeyUp },
+            { kEventClassControl, kEventControlClick },
             };
             
             view->fKitWindow = [[CarbonWindowAdapter alloc] initWithCarbonWindowRef: newWindow takingOwnership: NO disableOrdering:NO carbon:YES];
@@ -762,6 +766,25 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 
     switch( GetEventClass( inEvent ) )
     {
+    	case kEventClassControl:
+            {
+            switch( GetEventKind( inEvent ) )
+            {
+                case kEventControlClick:
+                    {
+                        CarbonWindowAdapter *kitWindow;
+                        OSStatus err;
+                        
+                        err = GetWindowProperty( window, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &kitWindow);
+                        
+                        // We must be outside the HIWebView, relinquish focus.
+                        [kitWindow relinquishFocus];
+                    }
+                    break;
+                }
+            }
+            break;
+            
     	case kEventClassKeyboard:
     		{
                 NSWindow*		kitWindow;

@@ -408,6 +408,20 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     if (!ignoreEvent) [super sendEvent:inEvent];
 }
 
+- (void)relinquishFocus
+{
+    NSResponder*  firstResponder;
+
+    // Carbon thinks that a control has the keyboard focus,
+    // or we wouldn't be being asked to relinquish focus.
+
+	firstResponder = [self firstResponder];
+	if ([firstResponder isKindOfClass:[NSView class]] ){
+		// Make the window the first responder, so that no view is the key view.
+        [self makeFirstResponder:self];
+    }
+}
+
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
     // Let NSWindow focus the appropriate NSView.

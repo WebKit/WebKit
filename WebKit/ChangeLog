@@ -1,3 +1,50 @@
+2004-08-03  Richard Williamson   <rjw@apple.com>
+
+        First cut at dirt simple PDF support.  This feature
+        depends on Quartz.framework (parent of PDFKit), which only exists
+        on Tiger.  So, we "weak" link against Quartz.
+		
+        We do very basic PDF rendering.  Coming up are support for
+        "Find..." and linearized PDF (incremental).  Linearized PDF 
+        support will require API changes in PDFKit.
+		
+        No UI is added to Safari, yet.
+		
+        Reviewed by John.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebPDFRepresentation.h: Added.
+        * WebView.subproj/WebPDFRepresentation.m: Added.
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]):
+        (-[WebPDFRepresentation canProvideDocumentSource]):
+        (-[WebPDFRepresentation documentSource]):
+        (-[WebPDFRepresentation title]):
+        * WebView.subproj/WebPDFView.h: Added.
+        * WebView.subproj/WebPDFView.m: Added.
+        (-[WebPDFView initWithFrame:]):
+        (-[WebPDFView setDataSource:]):
+        (-[WebPDFView dataSourceUpdated:]):
+        (-[WebPDFView setNeedsLayout:]):
+        (-[WebPDFView layout]):
+        (-[WebPDFView viewWillMoveToHostWindow:]):
+        (-[WebPDFView viewDidMoveToHostWindow]):
+
+        Copied fix from Jaguar carbon/cocoa work.
+		
+        Reviewed by Darin (Jaguar version)
+
+        * Carbon.subproj/CarbonWindowAdapter.h:
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter relinquishFocus]):
+        * Carbon.subproj/HIWebView.m:
+        (Click):
+        (OwningWindowChanged):
+        (WindowHandler):
+
 2004-08-03  David Hyatt  <hyatt@apple.com>
 
 	Add the text/xsl MIME type as one that can be displayed.
