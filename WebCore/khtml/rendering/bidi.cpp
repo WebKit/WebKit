@@ -1367,6 +1367,8 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     if (hasTextOverflow)
          deleteEllipsisLineBoxes();
 
+    int oldLineBottom = lastRootBox() ? lastRootBox()->bottomOverflow() : m_height;
+    
     if (firstChild()) {
         // layout replaced elements
         bool endOfInline = false;
@@ -1443,10 +1445,9 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         int endLineYPos;
         RootInlineBox* endLine = (fullLayout || !startLine) ? 
                                  0 : determineEndPosition(startLine, cleanLineStart, endLineYPos);
-        
         if (startLine) {
             useRepaintRect = true;
-            repaintRect.setY(m_height);
+            repaintRect.setY(kMin(m_height, startLine->topOverflow()));
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
             while (box) {
@@ -1585,7 +1586,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     if (useRepaintRect) {
         repaintRect.setWidth(kMax((int)m_width, m_overflowWidth));
         if (repaintRect.height() == 0)
-            repaintRect.setHeight(m_overflowHeight - repaintRect.y());
+            repaintRect.setHeight(kMax(oldLineBottom, m_overflowHeight) - repaintRect.y());
     }
     
     setLinesAppended(false);
