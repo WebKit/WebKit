@@ -44,39 +44,44 @@ namespace KParts {
 
 class Part : public QObject {
 public:
-    Part() : m_widget(0), m_ref(1) { }
+    Part() : _widget(0), _ref(1) { }
     
-    QWidget *widget() const { return m_widget; }
-    void setWidget(QWidget *widget) { m_widget = widget; }
+    QWidget *widget() const { return _widget; }
+    void setWidget(QWidget *widget) { _widget = widget; }
     
-    void ref() { ++m_ref; }
-    void deref() { if (!--m_ref) delete this; }
+    void ref() { ++_ref; }
+    void deref() { if (!--_ref) delete this; }
     
     bool event(QEvent *event) { customEvent((QCustomEvent *)event); return true; }
     virtual void customEvent(QCustomEvent *) { }
     
 private:
-    QWidget *m_widget;
-    unsigned int m_ref;
+    QWidget *_widget;
+    unsigned int _ref;
 };
 
 class ReadOnlyPart : public Part {
 public:
-    ReadOnlyPart(QObject * = 0, const char * = 0) : m_parent(0) { }
+    ReadOnlyPart(QObject *parent = 0, const char *name = 0) : _parent(parent), _name(name) { }
     
     KURL url() const { return m_url; }
     KURL m_url;
     
+    void setParent(QObject *parent) { _parent = parent; }
+    QObject *parent() const { return _parent; }
+
+    void setName(const QString &name) { _name = name; }
+    QString name() { return _name; }
+
     void setXMLFile(const char *) { }
-    void setParent(QObject *parent) { m_parent = parent; }
-    QObject *parent() const { return m_parent; }
     void setInstance(KInstance *, bool) { }
     
     virtual bool openURL(const KURL &) = 0;
     virtual bool closeURL() = 0;
 
 private:
-    QObject *m_parent;
+    QObject *_parent;
+    QString _name;
 };
 
 class GUIActivateEvent { };

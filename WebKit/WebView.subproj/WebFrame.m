@@ -37,20 +37,21 @@
 
     _private = [[WebFramePrivate alloc] init];
 
-    [self setController: c];
+    [self setController:c];
 
     _private->bridge = [[WebBridge alloc] init];
     [_private->bridge setFrame:self];
+    [_private->bridge setName:n];
 
-    if (d != nil && [self setProvisionalDataSource: d] == NO){
+    [_private setName:n];
+    
+    if (d && ![self setProvisionalDataSource:d]) {
         [self release];
         return nil;
     }
     
-    [_private setName: n];
-    
     if (v)
-        [self setWebView: v];
+        [self setWebView:v];
     
     ++WebFrameCount;
     

@@ -1,3 +1,21 @@
+2002-10-15  Darin Adler  <darin@apple.com>
+
+	- fixed 3074558 -- frames multiply at: http://www.iarsn.com/
+
+	The key was to make the name attribute work properly.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Enable the "name" attribute.
+        (Window::put): Enable the "name" attribute, but don't do the
+	conversion to an 8-bit string -- leave it as a QString.
+        * kwq/WebCoreBridge.h: Add setName/name methods.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setName:]): Added. Calls part->setName().
+        (-[WebCoreBridge name]): Added. Calls part->name().
+        * kwq/kparts/part.h: Added setName/name to ReadOnlyPart.
+
+        * kwq/KWQKHTMLPartImpl.mm: Remove old bogusish comment.
+
 2002-10-15  Richard Williamson  <rjw@apple.com>
 
         Added text color to attributed string conversion.

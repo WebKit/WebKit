@@ -144,7 +144,6 @@ void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
-// NOTE: This code emulates the interface used by the original khtml part  
     if (!d->m_workingURL.isEmpty()) {
         part->begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();

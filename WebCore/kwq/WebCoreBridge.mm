@@ -750,5 +750,14 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return part->impl->selectionEndOffset();
 }
 
+- (void)setName:(NSString *)name
+{
+    part->setName(QString::fromNSString(name));
+}
+
+- (NSString *)name
+{
+    return part->name().getNSString();
+}
 
 @end

@@ -440,10 +440,8 @@ Value Window::get(ExecState *exec, const UString &p) const
         return Value(location());
       else
         return Undefined();
-#ifndef APPLE_CHANGES
     case Name:
       return String(m_part->name());
-#endif
     case _Navigator:
     case ClientInformation:
       return Value(new Navigator(exec, m_part));
@@ -820,12 +818,14 @@ void Window::put(ExecState* exec, const UString &propertyName, const Value &valu
       if (isSafeScript(exec))
         setListener(exec,DOM::EventImpl::UNLOAD_EVENT,value);
       return;
-#ifndef APPLE_CHANGES
     case Name:
       if (isSafeScript(exec))
+#if APPLE_CHANGES
+        m_part->setName( value.toString(exec).qstring() );
+#else
         m_part->setName( value.toString(exec).qstring().local8Bit().data() );
-      return;
 #endif
+      return;
     default:
       break;
     }

@@ -82,6 +82,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;
 - (KHTMLRenderPart *)renderPart;
 
+- (void)setName:(NSString *)name;
+- (NSString *)name;
+
 - (KHTMLPart *)part;
 
 - (void)setParent:(WebCoreBridge *)parent;
@@ -133,19 +136,19 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)executeJavaScriptFromString:(NSString *)string;
 
-- (id<WebDOMDocument>)DOMDocument;
+- (id <WebDOMDocument>)DOMDocument;
 
-- (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
+- (void)setSelectionFrom:(id <WebDOMNode>)start startOffset:(int)startOffset to:(id <WebDOMNode>)end endOffset:(int) endOffset;
 
 - (NSString *)selectedText;
 - (void)selectAll;
 
-- (id<WebDOMNode>)selectionStart;
+- (id <WebDOMNode>)selectionStart;
 - (int)selectionStartOffset;
-- (id<WebDOMNode>)selectionEnd;
+- (id <WebDOMNode>)selectionEnd;
 - (int)selectionEndOffset;
 
-- (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
+- (NSAttributedString *)attributedStringFrom:(id <WebDOMNode>)startNode startOffset:(int)startOffset to:(id <WebDOMNode>)endNode endOffset:(int)endOffset;
 
 @end
 
@@ -189,7 +192,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL referrer:(NSString *)referrer;
 - (void)reportBadURL:(NSString *)badURL;
-- (void)objectLoadedFromCache:(NSURL *)URL response: response size:(unsigned)bytes;
+- (void)objectLoadedFromCache:(NSURL *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
@@ -206,7 +209,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (BOOL)defersLoading;
 - (void)setDefersLoading:(BOOL)loading;
-- (void)saveDocumentState: (NSArray *)documentState;
+- (void)saveDocumentState:(NSArray *)documentState;
 - (NSArray *)documentState;
 
 - (void)setNeedsReapplyStyles;
