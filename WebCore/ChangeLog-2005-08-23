@@ -1,3 +1,19 @@
+2004-03-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me.
+
+	I neglected to check in these required changes when I landed previously.
+	This is what I get for trying to commit when I had other changes in
+	my tree.
+
+        * khtml/dom/html_form.cpp:
+        (HTMLSelectElement::add): Uses new-style call.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::add): Change the interface for this call to use
+	impl objects instead of API objects. This works around the fact that the
+	API object's constructor that takes an impl is protected.
+        * khtml/html/html_formimpl.h: Uses new-style call.
+
 2004-03-24  Ken Kocienda <kocienda@apple.com>
 
         Implemented the remainder of the HTML DOM API.
