@@ -1,5 +1,13 @@
 2002-10-01  David Hyatt  <hyatt@apple.com>
 
+	Make sure to keep the fix checked in for 1.18.  That fix is
+	good.
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addColInfo):
+
+2002-10-01  David Hyatt  <hyatt@apple.com>
+
 	Backing out change to render_table.cpp.  The original logic
 	(in version 1.16) is correct.
 	
