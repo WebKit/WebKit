@@ -778,6 +778,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
   // as a root set for garbage collection
 #ifdef APPLE_CHANGES
   Collector::lock();
+  m_interpreter = interp;
 #endif
   if (s_hook) {
     prev = s_hook;
@@ -793,7 +794,9 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
   Collector::unlock();
 #endif
 
+#ifndef APPLE_CHANGES
   m_interpreter = interp;
+#endif
   global = glob;
   globExec = new ExecState(m_interpreter,0);
   dbg = 0;

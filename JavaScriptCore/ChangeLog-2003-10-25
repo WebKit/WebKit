@@ -1,3 +1,12 @@
+2002-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed Radar 2928775 - Sherlock crashes sitting in stocks channel
+
+	* kjs/internal.cpp:
+	(InterpreterImp::InterpreterImp): Set the interp pointer earlier,
+	in case garbage collection takes place while creating the global
+	values.
+
 2002-05-15  Darin Adler  <darin@apple.com>
 
 	* Makefile.am:
