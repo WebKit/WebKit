@@ -1703,6 +1703,12 @@ void RenderFlow::calcMinMaxWidth()
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
 
+    // Scrolling marquees like to use this trick:
+    // <td><div style="overflow:hidden; width:300px"><nobr>.....[lots of text].....</nobr></div></td>
+    // We need to sanity-check our m_minWidth, and not let it exceed our clipped boundary. -dwh
+    if (style()->overflow() == OHIDDEN && m_minWidth > m_width)
+        m_minWidth = m_width;
+
     setMinMaxKnown();
 
     //kdDebug( 6040 ) << "Text::calcMinMaxWidth(" << this << "): min = " << m_minWidth << " max = " << m_maxWidth << endl;

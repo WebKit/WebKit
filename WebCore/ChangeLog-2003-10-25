@@ -1,5 +1,18 @@
 2002-12-16  David Hyatt  <hyatt@apple.com>
 
+	Code needs to go in calcMinMaxWidth instead, so parents computing
+	their own minmax widths will get the correct value during the ifrst
+	pass.  With this change weather.com is actually fixed.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidth):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::calcMinMaxWidth):
+
+2002-12-16  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3128843, horked layout on weather.com.  Ensure that
 	overflow: hidden elements bounds-check their minwidth and maxwidth
 	values to ensure that you don't grow the clipped element.
