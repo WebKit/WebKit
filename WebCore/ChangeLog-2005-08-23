@@ -1,3 +1,14 @@
+2004-09-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - fixed <rdar://problem/3528339> Turn on full keyboard access shows 
+        invisible <input> elements
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLGenericFormElementImpl::isFocusable):
+        reject elements that have zero width or height, even if they aren't hidden
+
 2004-09-24  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed deployment build
