@@ -346,7 +346,23 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                                         int bleft, int bright)
 {
     CachedImage* bg = bgLayer->backgroundImage();
+    bool shouldPaintBackgroundImage = bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage();
     QColor bgColor = c;
+    
+    // When this style flag is set, change existing background colors and images to a solid white background.
+    // If there's no bg color or image, leave it untouched to avoid affecting transparency.
+    // We don't try to avoid loading the background images, because this style flag is only set
+    // when printing, and at that point we've already loaded the background images anyway. (To avoid
+    // loading the background images we'd have to do this check when applying styles rather than
+    // while rendering.)
+    if (style()->forceBackgroundsToWhite()) {
+        // Note that we can't reuse this variable below because the bgColor might be changed
+        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && qAlpha(bgColor.rgb()) > 0;
+        if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {
+            bgColor = Qt::white;
+            shouldPaintBackgroundImage = false;
+        }
+    }
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
@@ -383,7 +399,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
     }
     
     // no progressive loading of the background image
-    if (bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage()) {
+    if (shouldPaintBackgroundImage) {
         int sx = 0;
         int sy = 0;
         int cw,ch;

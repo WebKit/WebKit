@@ -801,7 +801,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(inherited_flags._visibility == other->inherited_flags._visibility) ||
         !(noninherited_flags._overflow == other->noninherited_flags._overflow) ||
         !(inherited_flags._text_decorations == other->inherited_flags._text_decorations) ||
-        !(inherited_flags._should_correct_text_color == other->inherited_flags._should_correct_text_color) ||
+        !(inherited_flags._force_backgrounds_to_white == other->inherited_flags._force_backgrounds_to_white) ||
         !(surround->border == other->surround->border) ||
         *background.get() != *other->background.get() ||
         visual->textDecoration != other->visual->textDecoration ||

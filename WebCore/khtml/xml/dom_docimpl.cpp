@@ -1036,7 +1036,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
             const KHTMLSettings *settings = m_view->part()->settings();
 #if APPLE_CHANGES
             if (printing && !settings->shouldPrintBackgrounds()) {
-                _style->setShouldCorrectTextColor(true);
+                _style->setForceBackgroundsToWhite(true);
             }
 #endif
             QString stdfont = settings->stdFontName();

@@ -641,14 +641,6 @@ static bool initializedKJS = FALSE;
     return _part->isFrameSet();
 }
 
-- (NSString *)styleSheetForPrinting
-{
-    if (!_part->settings()->shouldPrintBackgrounds()) {
-        return @"* { background-image: none !important; background-color: white !important;}";
-    }
-    return nil;
-}
-
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
     _part->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
@@ -657,9 +649,6 @@ static bool initializedKJS = FALSE;
         static QPaintDevice screen;
         static QPrinter printer;
     	doc->setPaintDevice(deviceType == WebCoreDeviceScreen ? &screen : &printer);
-        if (deviceType != WebCoreDeviceScreen) {
-            doc->setPrintStyleSheet(QString::fromNSString([self styleSheetForPrinting]));
-        }
     }
     return _part->reparseConfiguration();
 }

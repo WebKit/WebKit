@@ -1,3 +1,49 @@
+2005-03-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/4002164> maps that include start and end 
+        location don't print right from maps.google.com
+
+	I thought I checked this in yesterday but a ChangeLog conflict aborted my checkin
+	without me noticing.
+
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        flag name changed from _should_correct_text_color to _force_backgrounds_to_white
+        
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::InheritedFlags::operator==):
+        flag name changed from _should_correct_text_color to _force_backgrounds_to_white
+        (khtml::RenderStyle::setBitDefaults):
+        ditto
+        (khtml::RenderStyle::forceBackgroundsToWhite):
+        ditto, and method name changed too
+        (khtml::RenderStyle::setForceBackgroundsToWhite):
+        ditto
+        
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint):
+        updated for name change; also, compare text against white instead of current bg color
+        because we no longer actually modify the bg color (previously we would always set
+        the bg color to white, so the result is the same)
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+        updated for name change
+        
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge styleSheetForPrinting]):
+        removed this method
+        (-[WebCoreBridge reapplyStylesForDeviceType:]):
+        removed the code that called styleSheetForPrinting; we no longer use a stylesheet
+        for this behavior.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackgroundExtended):
+        If forceBackgroundsToWhite flag is set, convert background images and
+        background colors to white background color with no background image.
+        
 2005-03-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -343,8 +343,10 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     QValueListIterator<KWQKHTMLPart::MarkedTextUnderline> underlineIt = underlines.begin();
 
     QColor textColor = styleToUse->color();
-    if (styleToUse->shouldCorrectTextColor())
-        textColor = correctedTextColor(textColor, styleToUse->backgroundColor());
+    
+    // Make the text color legible against a white background
+    if (styleToUse->forceBackgroundsToWhite())
+        textColor = correctedTextColor(textColor, Qt::white);
 
     if (textColor != i.p->pen().color())
         i.p->setPen(textColor);
