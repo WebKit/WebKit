@@ -37,21 +37,25 @@ using namespace KJS;
 
 // ------------------------------ ArrayInstanceImp -----------------------------
 
+const unsigned sparseArrayCutoff = 10000;
+
 const ClassInfo ArrayInstanceImp::info = {"Array", 0, 0, 0};
 
 ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, unsigned initialLength)
   : ObjectImp(proto)
   , length(initialLength)
-  , capacity(length)
-  , storage(length ? (ValueImp **)calloc(length, sizeof(ValueImp *)) : 0)
+  , storageLength(initialLength)
+  , capacity(storageLength)
+  , storage(capacity ? (ValueImp **)calloc(capacity, sizeof(ValueImp *)) : 0)
 {
 }
 
 ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, const List &list)
   : ObjectImp(proto)
   , length(list.size())
-  , capacity(length)
-  , storage(length ? (ValueImp **)malloc(sizeof(ValueImp *) * length) : 0)
+  , storageLength(length)
+  , capacity(storageLength)
+  , storage(capacity ? (ValueImp **)malloc(sizeof(ValueImp *) * capacity) : 0)
 {
   ListIterator it = list.begin();
   unsigned l = length;
@@ -75,8 +79,10 @@ Value ArrayInstanceImp::get(ExecState *exec, const Identifier &propertyName) con
   if (ok) {
     if (index >= length)
       return Undefined();
-    ValueImp *v = storage[index];
-    return v ? Value(v) : Undefined();
+    if (index < storageLength) {
+      ValueImp *v = storage[index];
+      return v ? Value(v) : Undefined();
+    }
   }
 
   return ObjectImp::get(exec, propertyName);
@@ -86,8 +92,12 @@ Value ArrayInstanceImp::get(ExecState *exec, unsigned index) const
 {
   if (index >= length)
     return Undefined();
-  ValueImp *v = storage[index];
-  return v ? Value(v) : Undefined();
+  if (index < storageLength) {
+    ValueImp *v = storage[index];
+    return v ? Value(v) : Undefined();
+  }
+  
+  return ObjectImp::get(exec, Identifier::from(index));
 }
 
 // Special implementation of [[Put]] - see ECMA 15.4.5.1
@@ -103,8 +113,10 @@ void ArrayInstanceImp::put(ExecState *exec, const Identifier &propertyName, cons
   if (ok) {
     if (length <= index)
       setLength(index + 1);
-    storage[index] = value.imp();
-    return;
+    if (index < storageLength) {
+      storage[index] = value.imp();
+      return;
+    }
   }
   
   ObjectImp::put(exec, propertyName, value, attr);
@@ -114,7 +126,12 @@ void ArrayInstanceImp::put(ExecState *exec, unsigned index, const Value &value, 
 {
   if (length <= index)
     setLength(index + 1);
-  storage[index] = value.imp();
+  if (index < storageLength) {
+    storage[index] = value.imp();
+    return;
+  }
+  
+  ObjectImp::put(exec, Identifier::from(index), value, attr);
 }
 
 bool ArrayInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
@@ -127,8 +144,10 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyNa
   if (ok) {
     if (index >= length)
       return false;
-    ValueImp *v = storage[index];
-    return v && v != UndefinedImp::staticUndefined;
+    if (index < storageLength) {
+      ValueImp *v = storage[index];
+      return v && v != UndefinedImp::staticUndefined;
+    }
   }
   
   return ObjectImp::hasProperty(exec, propertyName);
@@ -138,8 +157,12 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, unsigned index) const
 {
   if (index >= length)
     return false;
-  ValueImp *v = storage[index];
-  return v && v != UndefinedImp::staticUndefined;
+  if (index < storageLength) {
+    ValueImp *v = storage[index];
+    return v && v != UndefinedImp::staticUndefined;
+  }
+  
+  return ObjectImp::hasProperty(exec, Identifier::from(index));
 }
 
 bool ArrayInstanceImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
@@ -152,8 +175,10 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, const Identifier &propert
   if (ok) {
     if (index >= length)
       return true;
-    storage[index] = 0;
-    return true;
+    if (index < storageLength) {
+      storage[index] = 0;
+      return true;
+    }
   }
   
   return ObjectImp::deleteProperty(exec, propertyName);
@@ -163,28 +188,39 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, unsigned index)
 {
   if (index >= length)
     return true;
-  storage[index] = 0;
-  return true;
+  if (index < storageLength) {
+    storage[index] = 0;
+    return true;
+  }
+  
+  return ObjectImp::deleteProperty(exec, Identifier::from(index));
 }
 
 void ArrayInstanceImp::setLength(unsigned newLength)
 {
-  if (newLength < length) {
-    memset(storage + newLength, 0, sizeof(ValueImp *) * (length - newLength));
+  if (newLength <= sparseArrayCutoff || newLength == length + 1) {
+    if (newLength < storageLength) {
+      memset(storage + newLength, 0, sizeof(ValueImp *) * (storageLength - newLength));
+    }
+    if (newLength > capacity) {
+      unsigned newCapacity = (newLength * 3 + 1) / 2;
+      storage = (ValueImp **)realloc(storage, newCapacity * sizeof (ValueImp *));
+      memset(storage + capacity, 0, sizeof(ValueImp *) * (newCapacity - capacity));
+      capacity = newCapacity;
+    }
+    storageLength = newLength;
   }
-  if (newLength > capacity) {
-    unsigned newCapacity = (newLength * 3 + 1) / 2;
-    storage = (ValueImp **)realloc(storage, newCapacity * sizeof (ValueImp *));
-    memset(storage + capacity, 0, sizeof(ValueImp *) * (newCapacity - capacity));
-    capacity = newCapacity;
-  }
+  
+  // FIXME: Need to remove items from the property map when making a sparse
+  // list shorter.
+  
   length = newLength;
 }
 
 void ArrayInstanceImp::mark()
 {
   ObjectImp::mark();
-  unsigned l = length;
+  unsigned l = storageLength;
   for (unsigned i = 0; i < l; ++i) {
     ValueImp *imp = storage[i];
     if (imp && !imp->marked())
@@ -252,7 +288,8 @@ unsigned ArrayInstanceImp::pushUndefinedObjectsToEnd()
     ValueImp *undefined = UndefinedImp::staticUndefined;
 
     unsigned o = 0;
-    for (unsigned i = 0; i != length; ++i) {
+    
+    for (unsigned i = 0; i != storageLength; ++i) {
         ValueImp *v = storage[i];
         if (v && v != undefined) {
             if (o != i)
@@ -260,8 +297,12 @@ unsigned ArrayInstanceImp::pushUndefinedObjectsToEnd()
             o++;
         }
     }
-    if (o != length)
-        memset(storage + o, 0, sizeof(ValueImp *) * (length - o));
+    
+    // FIXME: Get sparse items down here.
+    
+    if (o != storageLength)
+        memset(storage + o, 0, sizeof(ValueImp *) * (storageLength - o));
+    
     return o;
 }
 

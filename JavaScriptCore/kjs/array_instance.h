@@ -57,6 +57,7 @@ namespace KJS {
     unsigned pushUndefinedObjectsToEnd();
     
     unsigned length;
+    unsigned storageLength;
     unsigned capacity;
     ValueImp **storage;
   };

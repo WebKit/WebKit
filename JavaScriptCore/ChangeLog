@@ -1,5 +1,25 @@
 2002-11-20  Darin Adler  <darin@apple.com>
 
+	- oops, checked in big regression instead of 5% speedup
+
+        * kjs/function.cpp: (ActivationImp::ActivationImp): Make a marking
+	list, not a refing list.
+
+	- a cut at the sparse array implementation
+
+        * kjs/array_instance.h: Keep storageLength separate from length.
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp): Start with storageLength == length.
+        (ArrayInstanceImp::get): Check against storage length.
+        (ArrayInstanceImp::put): Ditto.
+        (ArrayInstanceImp::hasProperty): Ditto.
+        (ArrayInstanceImp::deleteProperty): Ditto.
+        (ArrayInstanceImp::setLength): Only enlarge storage length up to a cutoff.
+        (ArrayInstanceImp::mark): Use storageLength.
+        (ArrayInstanceImp::pushUndefinedObjectsToEnd): Added FIXME.
+
+2002-11-20  Darin Adler  <darin@apple.com>
+
 	- decrease ref/deref -- 5% speedup in iBench
 
         * JavaScriptCore.pbproj/project.pbxproj: Added array_instance.h
