@@ -276,10 +276,12 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       // Exec
       if ((reg->flags() & RegExp::Global) == 0) {
 	// case without 'g' flag is handled like RegExp.prototype.exec
-	if (mstr.isNull())
-	  return Null(); // no match
-	regExpObj->setSubPatterns(reg->subPatterns());
-	result = regExpObj->arrayOfMatches(exec,mstr);
+	if (mstr.isNull()) {
+	  result = Null();
+	} else {
+	  regExpObj->setSubPatterns(reg->subPatterns());
+	  result = regExpObj->arrayOfMatches(exec,mstr);
+	}
       } else {
 	// return array of matches
 	List list;

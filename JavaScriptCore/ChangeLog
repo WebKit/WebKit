@@ -1,3 +1,13 @@
+2003-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- fixed 3427069 - browsing mp3.com causes leaks (KJS)
+	
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::call): Don't do an early return, since that
+	could leak a temporary regexp.
+
 2003-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
