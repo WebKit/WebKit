@@ -66,6 +66,14 @@ using namespace khtml;
 
 namespace DOM {
 
+struct FormDataListItem {
+    FormDataListItem(const QCString &data) : m_data(data) { }
+    FormDataListItem(const QString &path) : m_path(path) { }
+
+    QString m_path;
+    QCString m_data;
+};
+
 class FormDataList {
 public:
     FormDataList(QTextCodec *);
@@ -80,16 +88,17 @@ public:
         { appendString(key.string()); appendString(QString::number(value)); }
     void appendFile(const DOMString &key, const DOMString &filename);
 
-    // Temporary API.
-    QValueListConstIterator<QCString> begin() const;
-    QValueListConstIterator<QCString> end() const;
+    QValueListConstIterator<FormDataListItem> begin() const
+        { return m_list.begin(); }
+    QValueListConstIterator<FormDataListItem> end() const
+        { return m_list.end(); }
 
 private:
     void appendString(const QCString &s);
     void appendString(const QString &s);
 
     QTextCodec *m_codec;
-    QValueList<QCString> m_strings;
+    QValueList<FormDataListItem> m_list;
 };
 
 HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
@@ -358,24 +367,24 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
         if (!current->disabled() && current->appendFormData(lst, m_multipart))
         {
             //kdDebug(6030) << "adding name " << current->name().string() << endl;
-            for(QValueListConstIterator<QCString> it = lst.begin(); it != lst.end(); ++it )
+            for(QValueListConstIterator<FormDataListItem> it = lst.begin(); it != lst.end(); ++it )
             {
                 if (!m_multipart)
                 {
                     // handle ISINDEX / <input name=isindex> special
                     // but only if its the first entry
-                    if ( enc_string.isEmpty() && *it == "isindex" ) {
+                    if ( enc_string.isEmpty() && (*it).m_data == "isindex" ) {
                         ++it;
-                        enc_string += encodeCString( *it );
+                        enc_string += encodeCString( (*it).m_data );
                     }
                     else {
                         if(!enc_string.isEmpty())
                             enc_string += '&';
 
-                        enc_string += encodeCString(*it);
+                        enc_string += encodeCString((*it).m_data);
                         enc_string += "=";
                         ++it;
-                        enc_string += encodeCString(*it);
+                        enc_string += encodeCString((*it).m_data);
                     }
                 }
                 else
@@ -384,7 +393,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
                     hstr += m_boundary.string().latin1();
                     hstr += "\r\n";
                     hstr += "Content-Disposition: form-data; name=\"";
-                    hstr += (*it).data();
+                    hstr += (*it).m_data.data();
                     hstr += "\"";
 
                     // if the current type is FILE, then we also need to
@@ -425,7 +434,16 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
 
                     // append body
                     form_data.appendData(hstr.data(), hstr.length());
-                    form_data.appendData(*it, (*it).size() - 1);
+#if APPLE_CHANGES
+                    const FormDataListItem &item = *it;
+                    size_t dataSize = item.m_data.size();
+                    if (dataSize != 0)
+                        form_data.appendData(item.m_data, dataSize - 1);
+                    else if (!item.m_path.isEmpty())
+                        form_data.appendFile(item.m_path);
+#else
+                    form_data.appendData((*it).m_data, (*it).m_data.size() - 1);
+#endif
                     form_data.appendData("\r\n", 2);
                 }
             }
@@ -1818,16 +1836,15 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
                 return true;
             }
 
+#if APPLE_CHANGES
+            encoding.appendFile(name(), value());
+#else
             KURL fileurl("file:///");
             fileurl.setPath(value().string());
             KIO::UDSEntry filestat;
 
             if (!KIO::NetAccess::stat(fileurl, filestat)) {
-#if APPLE_CHANGES
-                // FIXME: Figure out how to report this error.
-#else
                 KMessageBox::sorry(0L, i18n("Error fetching file for submission:\n%1").arg(KIO::NetAccess::lastErrorString()));
-#endif
                 return false;
             }
 
@@ -1856,14 +1873,11 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
                 return false;
             }
             else {
-#if APPLE_CHANGES
-                // FIXME: Figure out how to report this error.
-#else
                 KMessageBox::sorry(0L, i18n("Error fetching file for submission:\n%1").arg(KIO::NetAccess::lastErrorString()));
-#endif
                 return false;
             }
             break;
+#endif
         }
         case ISINDEX:
             encoding.appendData(name(), value());
@@ -3144,24 +3158,20 @@ FormDataList::FormDataList(QTextCodec *c)
 
 void FormDataList::appendString(const QCString &s)
 {
-    m_strings.append(s);
+    m_list.append(s);
 }
 
 void FormDataList::appendString(const QString &s)
 {
     QCString cstr = fixLineBreaks(m_codec->fromUnicode(s));
     cstr.truncate(cstr.length());
-    m_strings.append(cstr);
+    m_list.append(cstr);
 }
 
-QValueListConstIterator<QCString> FormDataList::begin() const
+void FormDataList::appendFile(const DOMString &key, const DOMString &filename)
 {
-    return m_strings.begin();
-}
-
-QValueListConstIterator<QCString> FormDataList::end() const
-{
-    return m_strings.end();
+    appendString(key.string());
+    m_list.append(filename.string());
 }
 
 } // namespace

@@ -1,3 +1,31 @@
+2005-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3686434> Safari uses too much RAM on file upload, leading to malloc errors and crashes (HP printers)
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::FormDataList::begin): Updated to use a list of FormDataListItem instead of QCString.
+        (DOM::FormDataList::end): Ditto.
+        (DOM::HTMLFormElementImpl::formData): Same here, and also use appendFile rather than appendData
+        when we encounter a path name rather than data.
+        (DOM::HTMLInputElementImpl::appendFormData): Use appendFile here rather than reading the file
+        in; the reading now happens inside WebKit.
+        (DOM::FormDataList::appendString): Updated for FormDataListItem.
+        (DOM::FormDataList::appendFile): Added.
+
+        * ForwardingHeaders/kfileitem.h: Emptied out the file; no longer includes KWQKFileItem.h.
+        * ForwardingHeaders/netaccess.h: Emptied out the file; no longer includes KWQKIONetAccess.h.
+        * kwq/KWQKFileItem.h: Removed.
+        * kwq/KWQKFileItem.mm: Removed.
+        * kwq/KWQKIONetAccess.h: Removed.
+        * kwq/KWQKIONetAccess.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed the 4 files above.
+
+        - small unrelated fix (not reviewed by John)
+
+        * khtml/ecma/kjs_window.cpp: (Window::isSafeScript): Put some logging code outside if statements so it works all the time.
+
 2005-02-14  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

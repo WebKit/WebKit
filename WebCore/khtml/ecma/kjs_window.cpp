@@ -1157,11 +1157,11 @@ bool Window::isSafeScript (const KJS::ScriptInterpreter *origin, const KJS::Scri
     if (Interpreter::shouldPrintExceptions()) {
 	printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
 	     targetDocument->URL().latin1(), originDocument->URL().latin1());
-	QString message;
-	message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
-		      targetDocument->URL().latin1(), originDocument->URL().latin1());
-	KWQ(targetPart)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
     }
+    QString message;
+    message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+                  targetDocument->URL().latin1(), originDocument->URL().latin1());
+    KWQ(targetPart)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
 
     return false;
 }
@@ -1223,11 +1223,11 @@ bool Window::isSafeScript(ExecState *exec) const
   if (Interpreter::shouldPrintExceptions()) {
       printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
              thisDocument->URL().latin1(), actDocument->URL().latin1());
-      QString message;
-      message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
-                      thisDocument->URL().latin1(), actDocument->URL().latin1());
-      KWQ(m_part)->addMessageToConsole(message, 1, QString()); //fixme: provide a real line number and sourceurl
   }
+  QString message;
+  message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+                  thisDocument->URL().latin1(), actDocument->URL().latin1());
+  KWQ(m_part)->addMessageToConsole(message, 1, QString());
 #endif
   
   kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.string() << "' to frame '" << thisDomain.string() << "'" << endl;
