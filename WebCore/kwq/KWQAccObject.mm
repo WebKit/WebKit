@@ -1494,8 +1494,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at nextVisiblePos. 
     Selection sel = Selection(nextVisiblePos, nextVisiblePos);
-    (void)sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
-    (void)sel.modify(Selection::EXTEND, Selection::LEFT, khtml::LINE_BOUNDARY);
+    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
+    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker range for the selection start to end
     VisiblePosition startPosition = VisiblePosition(sel.start());
