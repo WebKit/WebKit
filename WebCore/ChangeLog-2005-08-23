@@ -1,5 +1,18 @@
 2003-11-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+	
+	I am an idiot for just assuming that these elements implement a focus()
+	function, without actually compiling and testing. I will have to add 
+	this function to these elements so I can make this work.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLButtonElementImpl::accessKeyAction): These elements do not implement focus().
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::accessKeyAction): Ditto.
+
+2003-11-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Richard
 
         * khtml/html/html_formimpl.cpp:

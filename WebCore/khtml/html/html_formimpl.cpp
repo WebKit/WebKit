@@ -1103,7 +1103,6 @@ void HTMLButtonElementImpl::click()
 
 void HTMLButtonElementImpl::accessKeyAction()
 {   
-    focus();
     click();
 }
 
