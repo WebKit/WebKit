@@ -1,5 +1,17 @@
 2003-05-22  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3266464.  Build problem on panther caused by overly
+	pedantic gcc.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithCoder:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithCoder:]):
+
+2003-05-22  Richard Williamson   <rjw@apple.com>
+
 	Add _web to method in category name.
 
 	Fixed 3266102.  @selector missing ":".

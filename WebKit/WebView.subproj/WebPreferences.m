@@ -97,10 +97,10 @@ enum { WebPreferencesVersion = 1 };
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
+NS_DURING
     int version;
     id result = nil;
 
-NS_DURING
 
     _private = [[WebPreferencesPrivate alloc] init];
     [decoder decodeValueOfObjCType:@encode(int) at:&version];
@@ -119,17 +119,11 @@ NS_DURING
             result = self;
         }
     }
-    
-NS_HANDLER
-
-    result = nil;
-
-NS_ENDHANDLER
-
-    if (result == nil)
-        [self release];
-
     return result;
+NS_HANDLER
+    [self release];
+    return nil;
+NS_ENDHANDLER
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder

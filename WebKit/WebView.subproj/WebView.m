@@ -131,33 +131,28 @@ enum { WebViewVersion = 1 };
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
+NS_DURING
+
     id result = nil;
     int version;
 
-NS_DURING
-    self = [super initWithCoder:decoder];
+    result = [super initWithCoder:decoder];
 
     [decoder decodeValueOfObjCType:@encode(int) at:&version];
     if (version == 1){
         NSString *frameName = [decoder decodeObject];
         NSString *groupName = [decoder decodeObject];
-        [self _commonInitializationFrameName:frameName groupName:groupName];
-        
-        [self setPreferences: [decoder decodeObject]];
-        
-        result = self;
+        [result _commonInitializationFrameName:frameName groupName:groupName];
+        [result setPreferences: [decoder decodeObject]];
     }
-
+    return result;
+    
 NS_HANDLER
 
-    result = nil;
+    [self release];
+    return nil;
 
 NS_ENDHANDLER
-
-    if (result == nil)
-        [self release];
-        
-    return result;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
