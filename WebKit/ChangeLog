@@ -1,3 +1,11 @@
+2002-11-27  Richard Williamson   <rjw@apple.com>
+
+        Fixed measurement error for Ahem font (and any font that
+        has a tiny fractional value). 3112745, 3112742
+         
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:]):
+
 2002-11-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3090834 - Launch WMP (Window Media Player) when encountering WMP content

@@ -407,7 +407,7 @@ static BOOL bufferTextDrawing = NO;
     UniChar c = ' ';
     spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
     spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph);
-    adjustedSpaceWidth = (float)ceil(spaceWidth);
+    adjustedSpaceWidth = (float)CEIL_TO_INT(spaceWidth);
     
     return self;
 }
