@@ -1351,9 +1351,20 @@ void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
     RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
-        root->setWidth((int)ceil(pageWidth));
+        int pageW = (int)ceil(pageWidth);
+        root->setWidth(pageW);
         root->setNeedsLayoutAndMinMaxRecalc();
         forceLayout();
+        
+        // See if we spilled outside our page width.  If we did, then we'll do one more layout in an
+        // attempt to fit.  FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
+        // implementation should not do this!
+        int rightmostPos = root->rightmostPosition();
+        if (rightmostPos > pageWidth) {
+            root->setWidth(rightmostPos);
+            root->setNeedsLayoutAndMinMaxRecalc();
+            forceLayout();
+        }
     }
 }
 
