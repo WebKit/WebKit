@@ -190,7 +190,6 @@
 				39446097020F50ED0ECA1767,
 				39446098020F50ED0ECA1767,
 				F520FB1B0221DEFD01C1A525,
-				F5EBC45702134BC301CA1520,
 				F5EBC45802134BC301CA1520,
 				9CF0E24B021361B10ECA16EA,
 				F5B92B840223191D01C1A525,
@@ -221,7 +220,6 @@
 				394460A8020F50ED0ECA1767,
 				394460A9020F50ED0ECA1767,
 				394460AA020F50ED0ECA1767,
-				F5EBC45902134BC301CA1520,
 				F5EBC45A02134BC301CA1520,
 				9CF0E24C021361B10ECA16EA,
 				F5143A380221DCCE01A80181,
@@ -1047,25 +1045,11 @@
 		};
 		F5EBC45202134BB601CA1520 = {
 			children = (
-				F5EBC45302134BC301CA1520,
-				F5EBC45402134BC301CA1520,
 				F5EBC45502134BC301CA1520,
 				F5EBC45602134BC301CA1520,
 			);
 			isa = PBXGroup;
 			name = Plugins;
-			refType = 4;
-		};
-		F5EBC45302134BC301CA1520 = {
-			isa = PBXFileReference;
-			name = IFCarbonWindowView.h;
-			path = Plugins.subproj/IFCarbonWindowView.h;
-			refType = 4;
-		};
-		F5EBC45402134BC301CA1520 = {
-			isa = PBXFileReference;
-			name = IFCarbonWindowView.m;
-			path = Plugins.subproj/IFCarbonWindowView.m;
 			refType = 4;
 		};
 		F5EBC45502134BC301CA1520 = {
@@ -1080,20 +1064,8 @@
 			path = Plugins.subproj/IFPluginView.mm;
 			refType = 4;
 		};
-		F5EBC45702134BC301CA1520 = {
-			fileRef = F5EBC45302134BC301CA1520;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5EBC45802134BC301CA1520 = {
 			fileRef = F5EBC45502134BC301CA1520;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5EBC45902134BC301CA1520 = {
-			fileRef = F5EBC45402134BC301CA1520;
 			isa = PBXBuildFile;
 			settings = {
 			};
