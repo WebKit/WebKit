@@ -6,20 +6,22 @@
 
 #import <WebKit/WebFramePrivate.h>
 
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebLocationChangeHandler.h>
-#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebKitErrors.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
 
@@ -91,6 +93,13 @@ static const char * const stateNames[6] = {
     provisionalDataSource = d;
 }
 
+- (WebFrameLoadType)loadType { return loadType; }
+- (void)setLoadType: (WebFrameLoadType)t
+{
+    loadType = t;
+}
+
+
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -111,6 +120,17 @@ static const char * const stateNames[6] = {
 {
     [_private setDataSource: ds];
     [ds _setController: [self controller]];
+}
+
+- (void)_setLoadType: (WebFrameLoadType)t
+{
+    [_private setLoadType: t];
+}
+
+
+- (WebFrameLoadType)_loadType
+{
+    return [_private loadType];
 }
 
 - (void)_scheduleLayout:(NSTimeInterval)inSeconds
@@ -243,6 +263,14 @@ static const char * const stateNames[6] = {
         
             [self _setState: WebFrameStateCommittedPage];
         
+            // Handle adding the URL to the back/forward list.
+            if ([self _loadType] == WebFrameLoadTypeStandard){
+                WebHistoryItem *item = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] title:[[self dataSource] pageTitle] image: nil];
+                [[[self controller] backForwardList] addEntry: item];
+                [item release];
+            }
+            
+            // Tell the client we've committed this URL.
             [[[self dataSource] _locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
             
             // If we have a title let the controller know about it.

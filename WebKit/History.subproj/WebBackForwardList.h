@@ -10,7 +10,6 @@
 @interface WebBackForwardList : NSObject {
     WebHistoryList *uriList;
     int index;
-    NSLock *mutex;
     int state;
 }
 
@@ -21,7 +20,9 @@
 
 // change position in the list
 -(void)goBack;
+-(void)goBackToIndex: (int)pos;
 -(void)goForward;
+-(void)goForwardToIndex: (int)pos;
 
 // examine entries without changing position
 -(WebHistoryItem *)backEntry;

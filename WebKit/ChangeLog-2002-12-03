@@ -1,3 +1,41 @@
+2002-07-25  Richard Williamson (Local)  <rjw@apple.com>
+
+        More incremental changes for back/forward migration.
+
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList addEntry:]):
+        (-[WebBackForwardList goBack]):
+        (-[WebBackForwardList goBackToIndex:]):
+        (-[WebBackForwardList backEntry]):
+        (-[WebBackForwardList currentEntry]):
+        (-[WebBackForwardList forwardEntry]):
+        (-[WebBackForwardList goForward]):
+        (-[WebBackForwardList goForwardToIndex:]):
+        (-[WebBackForwardList canGoBack]):
+        (-[WebBackForwardList canGoForward]):
+        (-[WebBackForwardList description]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURL:title:]):
+        (-[WebHistoryItem initWithURL:title:image:]):
+        (-[WebHistoryItem initWithURL:target:title:image:]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem target]):
+        (-[WebHistoryItem setTarget:]):
+        (-[WebHistoryItem setLastVisitedDate:]):
+        (-[WebHistoryItem scrollPoint]):
+        (-[WebHistoryItem setScrollPoint:]):
+        * History.subproj/WebHistoryList.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate setLoadType:]):
+        (-[WebFrame _setLoadType:]):
+        (-[WebFrame _loadType]):
+        (-[WebFrame _transitionToCommitted]):
+
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
 	Made some WebPolicy API's private

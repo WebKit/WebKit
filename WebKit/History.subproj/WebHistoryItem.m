@@ -1,10 +1,7 @@
-//
-//  WebHistoryItem.m
-//  WebKit
-//
-//  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001, 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebHistoryItem.m
+    Copyright 2001, 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebIconLoader.h>
@@ -21,10 +18,15 @@
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title
 {
-    return [self initWithURL:url title:title image:nil];
+    return [self initWithURL:url target: nil title:title image:nil];
 }
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image
+{
+    return [self initWithURL:url target: nil title:title image:image];
+}
+
+-(id)initWithURL:(NSURL *)url target: (NSString *)target title:(NSString *)title image:(NSImage *)image
 {
     if (self != [super init])
     {
@@ -32,6 +34,7 @@
     }
     
     _url = [url retain];
+    _target = [target copy];
     _title = [title copy];
     _image = [image retain];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
@@ -42,6 +45,7 @@
 - (void)dealloc
 {
     [_url release];
+    [_target release];
     [_title release];
     [_displayTitle release];
     [_image release];
@@ -53,6 +57,11 @@
 -(NSURL *)url
 {
     return _url;
+}
+
+-(NSString *)target
+{
+    return _target;
 }
 
 -(NSString *)title
@@ -95,6 +104,14 @@
     }
 }
 
+-(void)setTarget:(NSString *)target
+{
+    if (target != _target) {
+        [_target release];
+        _target = [target copy];
+    }
+}
+
 -(void)setDisplayTitle:(NSString *)displayTitle
 {
     if (displayTitle != _displayTitle) {
@@ -117,6 +134,16 @@
         [_lastVisitedDate release];
         _lastVisitedDate = [date retain];
     }
+}
+
+-(NSPoint)scrollPoint
+{
+    return _scrollPoint;
+}
+
+-(void)setScrollPoint: (NSPoint)scrollPoint
+{
+    _scrollPoint = scrollPoint;
 }
 
 -(unsigned)hash

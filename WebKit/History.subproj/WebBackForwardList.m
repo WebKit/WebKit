@@ -23,7 +23,6 @@
     uriList = [[WebHistoryList alloc] init];
     [uriList setAllowsDuplicates:YES];
     index = 0;
-    mutex = [[NSLock alloc] init];
 
     return self;
 }
@@ -31,27 +30,25 @@
 -(void)dealloc
 {
     [uriList release];
-    [mutex release];
-
     [super dealloc];
 }
 
 -(void)addEntry:(WebHistoryItem *)entry
 {
-    [mutex lock];
     if (index > 0) {
         [uriList removeEntriesToIndex:index];
         index = 0;
     }
     [uriList addEntry:entry];
-    [mutex unlock];
 }
 
 -(void)goBack
 {
-    [mutex lock];
     index++;
-    [mutex unlock];
+}
+
+-(void)goBackToIndex: (int)pos
+{
 }
 
 -(WebHistoryItem *)backEntry
@@ -59,14 +56,12 @@
     WebHistoryItem *result;
     int count;
     
-    [mutex lock];
     count = [uriList count];
     if (count > 1 && index < (count - 1)) {
         result = [uriList entryAtIndex:index+1];
     } else {
         result = nil;
     }
-    [mutex unlock];
 
     return result;
 }
@@ -75,9 +70,7 @@
 {
     WebHistoryItem *result;
     
-    [mutex lock];
     result = [uriList entryAtIndex:index];
-    [mutex unlock];
 
     return result;
 }
@@ -86,22 +79,22 @@
 {
     WebHistoryItem *result;
 
-    [mutex lock];
     if (index > 0) {
         result = [uriList entryAtIndex:index-1];
     } else {
         result = nil;
     }
-    [mutex unlock];
 
     return result;
 }
 
 -(void)goForward
 {
-    [mutex lock];
     index--;
-    [mutex unlock];
+}
+
+-(void)goForwardToIndex: (int)pos
+{
 }
 
 -(BOOL)canGoBack
@@ -109,10 +102,8 @@
     BOOL result;
     int count;
     
-    [mutex lock];
     count = [uriList count];
     result = (count > 1 && index < (count - 1));
-    [mutex unlock];
     
     return result;
 }
@@ -121,9 +112,7 @@
 {
     BOOL result;
 
-    [mutex lock];
     result = (index > 0);
-    [mutex unlock];
     
     return result;
 }
@@ -144,8 +133,6 @@
 {
     NSMutableString *result;
     int i;
-
-    [mutex lock];
     
     result = [NSMutableString stringWithCapacity:512];
     
@@ -165,8 +152,6 @@
     }
 
     [result appendString:@"\n--------------------------------------------\n"];    
-
-    [mutex unlock];
 
     return result;
 }
