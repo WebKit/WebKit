@@ -84,6 +84,9 @@ namespace KJS {
     virtual bool toBoolean(ExecState *) const { return true; }
     static const ClassInfo info;
     DOM::NodeList nodeList() const { return list; }
+
+    virtual Value toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
+
   private:
     DOM::NodeList list;
   };

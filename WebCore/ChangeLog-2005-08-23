@@ -1,3 +1,14 @@
+2003-12-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3395759>: results of parent.document.getElementsByTagName can't be added to string
+        
+	* khtml/ecma/kjs_dom.cpp:
+        (DOMNodeList::toPrimitive): Always convert to string instead of trying to convert
+	to number and failing, as is done for DOMNode.
+        * khtml/ecma/kjs_dom.h: Prototype new method.
+
 2003-12-02  Richard Williamson   <rjw@apple.com>
 
 	Return a value that is backed by RuntimeObjectImpl, instead

@@ -496,6 +496,16 @@ DOMNodeList::~DOMNodeList()
   ScriptInterpreter::forgetDOMObject(list.handle());
 }
 
+Value DOMNodeList::toPrimitive(ExecState *exec, Type /*preferred*/) const
+{
+  if (list.isNull())
+    return Null();
+
+  return String(toString(exec));
+}
+
+
+
 // We have to implement hasProperty since we don't use a hashtable for 'length' and 'item'
 // ## this breaks "for (..in..)" though.
 bool DOMNodeList::hasProperty(ExecState *exec, const Identifier &p) const
