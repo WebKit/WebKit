@@ -1,5 +1,13 @@
 2003-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+	- fixed 3213900 -- REGRESSION: crash in CSS parser at http://radioalice.com/
+
+        * khtml/css/cssparser.cpp: (CSSParser::parseColor): Add a missing check for nil.
+
+2003-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3202542 -- REGRESSION: preinitialized password inputs do not show dots (affects mac.com)

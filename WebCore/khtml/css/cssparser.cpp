@@ -1556,6 +1556,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColor()
               value->unit == CSSPrimitiveValue::CSS_DIMENSION )
 	c = ::parseColor( qString( value->string ));
     else if ( value->unit == Value::Function &&
+		value->function->args != 0 &&
 		value->function->args->numValues == 5 /* rgb + two commas */ &&
 		qString( value->function->name ).lower() == "rgb(" ) {
 	ValueList *args = value->function->args;
