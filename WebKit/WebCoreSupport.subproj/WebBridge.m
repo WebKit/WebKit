@@ -13,7 +13,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/DOMHTML.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
 #import <WebKit/WebFormDelegate.h>
@@ -597,7 +596,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // This method prevents this exploit:
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
     
-    NSString *thisDomain = [(DOMHTMLDocument *)[_frame DOMDocument] domain];
+    // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
+    // Jaguar as well where the DOM API doesn't exist.
+    NSString *thisDomain = [self domain];
     if ([thisDomain length] == 0) {
         // Allow if the request is made from a local file.
         return YES;
@@ -609,7 +610,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return YES;
     }
     
-    NSString *parentDomain = [(DOMHTMLDocument *)[parentFrame DOMDocument] domain];
+    NSString *parentDomain = [[parentFrame _bridge] domain];
     if (parentDomain != nil && [thisDomain _web_isCaseInsensitiveEqualToString:parentDomain]) {
         // Allow if the domain of the parent of the targeted frame equals this domain.
         return YES;
