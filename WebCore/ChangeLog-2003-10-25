@@ -1,3 +1,12 @@
+2003-09-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3332460>: nil-deref in khtml::RenderWidget::eventFilter with onchange handler
+
+        Reviewed by darin.
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField controlTextDidEndEditing:]): call setHasFocus:NO last so we have the widget that lets us get to the bridge and lets us call controlTextDidEndEditing
+
 2003-09-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3425053, text past the bottom of a positioned table doesn't repaint.

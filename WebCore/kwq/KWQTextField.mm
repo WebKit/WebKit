@@ -246,14 +246,14 @@
 
 -(void)controlTextDidEndEditing:(NSNotification *)notification
 {
-    [self setHasFocus:NO];
-
     if (!widget) {
 	return;
     }
 
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidEndEditing:notification];
+    
+    [self setHasFocus:NO];
 }
 
 -(void)controlTextDidChange:(NSNotification *)notification
