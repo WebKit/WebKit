@@ -1,3 +1,18 @@
+2002-10-25  Richard Williamson   <rjw@apple.com>
+
+        Implemented support for bidi text layout.  WebCore
+        temporarily depends on SPI to get unicode character
+        attribute from CF.  This will change shortly.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        * kwq/KWQChar.mm:
+        (QChar::direction):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/qt/qpainter.h:
+
 2002-10-25  Chris Blumenberg  <cblu@apple.com>
 
 	Cleaned up the frame searching shenanigans. Things are much cleaner and clearer now.

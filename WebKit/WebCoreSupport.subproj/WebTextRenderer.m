@@ -406,8 +406,28 @@ static BOOL bufferTextDrawing = NO;
 
 
 // Useful page for testing http://home.att.net/~jameskass
+static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs)
+{
+    CGContextRef cgContext;
 
-- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
+    if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
+        // Add buffered glyphs and advances
+        // FIXME:  If we ever use this again, need to add RTL.
+        WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: font andColor: color];
+        [gBuffer addGlyphs: glyphs advances: advances count: numGlyphs at: x : y];
+    }
+    else {
+        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        // Setup the color and font.
+        [color set];
+        [font set];
+
+        CGContextSetTextPosition (cgContext, x, y);
+        CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+    }
+}
+
+- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor rightToLeft: (BOOL)rtl
 {
     float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
     CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
@@ -416,7 +436,6 @@ static BOOL bufferTextDrawing = NO;
     int numGlyphs, i;
     float startX, nextX, backgroundWidth = 0.0;
     NSFont *currentFont;
-    CGContextRef cgContext;
     
     if (length == 0)
         return;
@@ -473,25 +492,39 @@ static BOOL bufferTextDrawing = NO;
     if (from < (int)numGlyphs){
         int lastFrom = from;
         int pos = from;
+
+        if (rtl && numGlyphs > 1){
+            int i;
+            int end = numGlyphs;
+            CGGlyph gswap1, gswap2;
+            CGSize aswap1, aswap2;
+            NSFont *fswap1, *fswap2;
+            
+            for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
+                gswap1 = glyphBuffer[i];
+                gswap2 = glyphBuffer[--end];
+                glyphBuffer[i] = gswap2;
+                glyphBuffer[end] = gswap1;
+            }
+            for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
+                aswap1 = advances[i];
+                aswap2 = advances[--end];
+                advances[i] = aswap2;
+                advances[end] = aswap1;
+            }
+            for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
+                fswap1 = fontBuffer[i];
+                fswap2 = fontBuffer[--end];
+                fontBuffer[i] = fswap2;
+                fontBuffer[end] = fswap1;
+            }
+        }
         
         currentFont = fontBuffer[pos];
         nextX = startX;
         while (pos < to){
             if ((fontBuffer[pos] != 0 && fontBuffer[pos] != currentFont)){
-                if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
-                    // Add buffered glyphs and advances
-                    WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: currentFont andColor: textColor];
-                    [gBuffer addGlyphs: &glyphBuffer[lastFrom] advances: &advances[lastFrom] count: pos - lastFrom at: startX : point.y];
-                }
-                else {
-                    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-                    // Setup the color and font.
-                    [textColor set];
-                    [currentFont set];
-            
-                    CGContextSetTextPosition (cgContext, startX, point.y);
-                    CGContextShowGlyphsWithAdvances (cgContext, &glyphBuffer[lastFrom], &advances[lastFrom], pos - lastFrom);
-                }
+                _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, pos - lastFrom);
                 lastFrom = pos;
                 currentFont = fontBuffer[pos];
                 startX = nextX;
@@ -499,20 +532,7 @@ static BOOL bufferTextDrawing = NO;
             nextX += advances[pos].width;
             pos++;
         }
-        if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
-            // Add buffered glyphs and advances
-            WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: currentFont andColor: textColor];
-            [gBuffer addGlyphs: &glyphBuffer[lastFrom] advances: &advances[lastFrom] count: pos - lastFrom at: startX : point.y];
-        }
-        else {
-            cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-            // Setup the color and font.
-            [textColor set];
-            [currentFont set];
-    
-            CGContextSetTextPosition (cgContext, startX, point.y);
-            CGContextShowGlyphsWithAdvances (cgContext, &glyphBuffer[lastFrom], &advances[lastFrom], pos - lastFrom);
-        }
+        _drawGlyphs(currentFont, textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, pos - lastFrom);
     }
 
     if (advances != localAdvanceBuffer) {

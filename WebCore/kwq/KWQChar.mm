@@ -27,6 +27,9 @@
 #import <KWQLogging.h>
 #import <Foundation/Foundation.h>
 
+#import <CoreFoundation/CFBidi.h>
+
+
 static UniChar scratchUniChar;
 
 static CFMutableStringRef GetScratchUniCharString()
@@ -100,13 +103,76 @@ QChar QChar::upper() const
     return scratchUniChar;
 }
 
+extern "C" {
+}
+
 QChar::Direction QChar::direction() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    LOG(NotYetImplemented, "not yet implemented");
-    if (c == ' ')
-        return DirWS;
-    return DirL;
+    uint8_t type;
+    QChar::Direction dir = DirL;
+
+    CFUniCharGetBidiCategory (&c, 1, &type);
+    switch (type){
+        case kCFUniCharBiDiPropertyON:
+            dir = DirON;
+            break;
+        case kCFUniCharBiDiPropertyL:
+            dir = DirL;
+            break;
+        case kCFUniCharBiDiPropertyR:
+            dir = DirR;
+            break;
+        case kCFUniCharBiDiPropertyAN:
+            dir = DirAN;
+            break;
+        case kCFUniCharBiDiPropertyEN:
+            dir = DirEN;
+            break;
+        case kCFUniCharBiDiPropertyAL:
+            dir = DirAL;
+            break;
+        case kCFUniCharBiDiPropertyNSM:
+            dir = DirNSM;
+            break;
+        case kCFUniCharBiDiPropertyCS:
+            dir = DirCS;
+            break;
+        case kCFUniCharBiDiPropertyES:
+            dir = DirES;
+            break;
+        case kCFUniCharBiDiPropertyET:
+            dir = DirET;
+            break;
+        case kCFUniCharBiDiPropertyBN:
+            dir = DirBN;
+            break;
+        case kCFUniCharBiDiPropertyS:
+            dir = DirS;
+            break;
+        case kCFUniCharBiDiPropertyWS:
+            dir = DirWS;
+            break;
+        case kCFUniCharBiDiPropertyB:
+            dir = DirB;
+            break;
+        case kCFUniCharBiDiPropertyRLO:
+            dir = DirRLO;
+            break;
+        case kCFUniCharBiDiPropertyRLE:
+            dir = DirRLE;
+            break;
+        case kCFUniCharBiDiPropertyLRO:
+            dir = DirLRO;
+            break;
+        case kCFUniCharBiDiPropertyLRE:
+            dir = DirLRE;
+            break;
+        case kCFUniCharBiDiPropertyPDF:
+            dir = DirPDF;
+            break;
+    }
+    return dir;
 }
 
 bool QChar::mirrored() const

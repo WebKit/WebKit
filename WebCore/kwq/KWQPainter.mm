@@ -368,10 +368,11 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
         atPoint:NSMakePoint(x, y)
         withPadding: 0
         withTextColor:data->state.pen.color().getNSColor() 
-        backgroundColor:nil];
+        backgroundColor:nil
+        rightToLeft: false];
 }
 
-void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor)
+void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -384,7 +385,8 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         atPoint:NSMakePoint(x, y)
         withPadding: toAdd
         withTextColor:data->state.pen.color().getNSColor() 
-        backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
+        backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil
+        rightToLeft: d == RTL ? true : false];
 }
 
 void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)

@@ -41,7 +41,7 @@
 - (float)floatWidthForCharacters:(const unichar *)characters stringLength:(unsigned)length fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptFontSubstitution widths: (float *)buffer;
 
 // drawing
-- (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor;
+- (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor rightToLeft: (BOOL)rtl;
 - (void)drawUnderlineForCharacters:(const UniChar *)characters stringLength:(unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color;
 
 @end
