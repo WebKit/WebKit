@@ -341,11 +341,11 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     NSString *availableFont;
     while ((availableFont = [availableFonts nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-            NSFont *nameMatchedFont = [NSFont fontWithName:desiredFamily size:size];
+            NSFont *nameMatchedFont = [NSFont fontWithName:availableFont size:size];
             NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
             
             if ((traits & desiredTraits) == desiredTraits){
-                font = [fontManager convertFont: [NSFont fontWithName:availableFont size:size] toHaveTrait:desiredTraits];
+                font = [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
                 LOG (FontSelection, "returning exact match (%@)\n\n", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
                 return font;
             }

@@ -1,3 +1,15 @@
+2003-09-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3406140 - REGRESSION (7B52-7B55): time spent in NSFont makes Safari 50% slower in Five Apps test
+	
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]): Make font
+	using the font name we found, not the one we were looking
+	for. Since the compare is case-insensitive, it makes a
+	difference. Also, don't make the font twice.
+
 2003-09-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3316704>: Shockwave: getnetText steam is not functioning correctly
