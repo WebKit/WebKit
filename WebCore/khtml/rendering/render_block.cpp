@@ -547,15 +547,10 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     kdDebug( 6040 ) << renderName() << " layoutBlockChildren( " << this <<" ), relayoutChildren="<< relayoutChildren << endl;
 #endif
 
-    int xPos = 0;
-    int toAdd = 0;
+    int xPos = borderLeft() + paddingLeft();
+    int toAdd = borderBottom() + paddingBottom();
 
-    m_height = 0;
-
-    xPos += borderLeft() + paddingLeft();
-    m_height += borderTop() + paddingTop();
-    toAdd += borderBottom() + paddingBottom();
-
+    m_height = borderTop() + paddingTop();
     int minHeight = m_height + toAdd;
     m_overflowHeight = m_height;
 
@@ -581,8 +576,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     // For now we only worry about the top border/padding.  We will update the variable's
     // value when it comes time to check against the bottom border/padding.
     bool canCollapseWithChildren = !isRoot() && !isHtml() && !isPositioned() &&
-        !isFloating() && !isTableCell() && (m_height == 0) && !style()->hidesOverflow();
-
+        !isFloating() && !isTableCell() && !style()->hidesOverflow();
+    bool canCollapseTopWithChildren = canCollapseWithChildren && (m_height == 0);
+    
     // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
     // margins in our container.
     bool quirkContainer = isTableCell() || isBody();
@@ -600,8 +596,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     bool topMarginContributor = true;
 
     // These flags track the previous maximal positive and negative margins.
-    int prevPosMargin = canCollapseWithChildren ? maxTopMargin(true) : 0;
-    int prevNegMargin = canCollapseWithChildren ? maxTopMargin(false) : 0;
+    int prevPosMargin = canCollapseTopWithChildren ? maxTopMargin(true) : 0;
+    int prevNegMargin = canCollapseTopWithChildren ? maxTopMargin(false) : 0;
 
     // Whether or not we encountered an element with clear set that actually had to
     // be pushed down below a float.
@@ -766,7 +762,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             else
                 prevFlow=0;
         }
-        else if (!canCollapseWithChildren || !topMarginContributor)
+        else if (!canCollapseTopWithChildren || !topMarginContributor)
             yPosEstimate += child->marginTop();
 
         // Go ahead and position the child as though it didn't collapse with the top.
@@ -785,7 +781,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // margins that will collapse with us.
             bool topQuirk = child->isTopMarginQuirk();
 
-            if (canCollapseWithChildren && topMarginContributor && !clearOccurred) {
+            if (canCollapseTopWithChildren && topMarginContributor && !clearOccurred) {
                 // This child is collapsing with the top of the
                 // block.  If it has larger margin values, then we need to update
                 // our own maximal values.
@@ -836,7 +832,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
             else {
                 if (!topMarginContributor ||
-                    (!canCollapseWithChildren
+                    (!canCollapseTopWithChildren
                      && (strictMode || !quirkContainer || !topChildQuirk)
                      )) {
                     // We're collapsing with a previous sibling's margins and not
@@ -990,18 +986,16 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         child = child->nextSibling();
     }
 
-    bool autoHeight = style()->height().isVariable() && style()->height().value == 0;
-
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
     // margins with our children's margins.  To do otherwise would be to risk odd visual
     // effects when the children overflow out of the parent block and yet still collapse
     // with it.  We also don't collapse if we had any bottom border/padding (represented by
     // |toAdd|).
-    if (canCollapseWithChildren && (toAdd || !autoHeight))
-        canCollapseWithChildren = false;
-
+    bool canCollapseBottomWithChildren = canCollapseWithChildren && (toAdd == 0) &&
+        (style()->height().isVariable() && style()->height().value == 0);
+    
     // If we can't collapse with children then go ahead and add in the bottom margins.
-    if (!canCollapseWithChildren
+    if (!canCollapseBottomWithChildren
         && (strictMode || !quirkContainer || !bottomChildQuirk))
         m_height += prevPosMargin - prevNegMargin;
 
@@ -1016,7 +1010,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     if (m_overflowHeight < m_height)
         m_overflowHeight = m_height;
 
-    if (canCollapseWithChildren && !topMarginContributor) {
+    if (canCollapseBottomWithChildren && !topMarginContributor) {
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.
         if (prevPosMargin > m_maxBottomPosMargin)

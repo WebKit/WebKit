@@ -1,3 +1,14 @@
+2003-05-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3184113, bottom margins didn't collapse with their children
+	like they were supposed to.  The problem is fixed by separately
+	caching whether or not the top and bottom margins can collapse
+	with their kids instead of having one global canCollapse variable.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+
 2003-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
