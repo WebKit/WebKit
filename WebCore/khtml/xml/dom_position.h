@@ -40,7 +40,6 @@ class NodeImpl;
 enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
 enum EStayInBlock { DoNotStayInBlock = false, StayInBlock = true };
-enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
 
 class Position
 {
@@ -79,9 +78,6 @@ public:
 
     Position previousLinePosition(int x) const;
     Position nextLinePosition(int x) const;
-
-    Position startParagraphBoundary() const;
-    Position endParagraphBoundary(EIncludeLineBreak includeLineBreak = DoNotIncludeLineBreak) const;
 
     Position leadingWhitespacePosition() const;
     Position trailingWhitespacePosition() const;

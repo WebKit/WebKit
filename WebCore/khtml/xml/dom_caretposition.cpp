@@ -42,7 +42,9 @@
 #endif
 
 using khtml::InlineTextBox;
+using khtml::PRE;
 using khtml::RenderObject;
+using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::VISIBLE;
 
@@ -376,6 +378,101 @@ Range makeRange(const CaretPosition &start, const CaretPosition &end)
     Position s = start.position();
     Position e = end.position();
     return Range(s.node(), s.offset(), e.node(), e.offset());
+}
+
+CaretPosition startParagraphBoundary(const CaretPosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *startNode = p.node();
+    if (!startNode)
+        return CaretPosition();
+
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+
+    NodeImpl *node = startNode;
+    long offset = p.offset();
+
+    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBR() || r->isBlockFlow())
+            break;
+        if (r->isText()) {
+            if (style->whiteSpace() == PRE) {
+                QChar *text = static_cast<RenderText *>(r)->text();
+                long i = static_cast<RenderText *>(r)->length();
+                long o = offset;
+                if (n == startNode && o < i)
+                    i = kMax(0L, o);
+                while (--i >= 0)
+                    if (text[i] == '\n')
+                        return CaretPosition(n, i + 1);
+            }
+            node = n;
+            offset = 0;
+        } else if (r->isReplaced()) {
+            node = n;
+            offset = 0;
+        }
+    }
+
+    return CaretPosition(node, offset);
+}
+
+CaretPosition endParagraphBoundary(const CaretPosition &c, EIncludeLineBreak includeLineBreak)
+{
+    Position p = c.deepEquivalent();
+
+    NodeImpl *startNode = p.node();
+    if (!startNode)
+        return CaretPosition();
+
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+
+    NodeImpl *node = startNode;
+    long offset = p.offset();
+
+    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(startBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBR()) {
+            if (includeLineBreak)
+                return CaretPosition(n, 0).next();
+            break;
+        }
+        if (r->isBlockFlow()) {
+            if (includeLineBreak)
+                return CaretPosition(n, n->childNodeCount());
+            break;
+        }
+        if (r->isText()) {
+            long length = static_cast<RenderText *>(r)->length();
+            if (style->whiteSpace() == PRE) {
+                QChar *text = static_cast<RenderText *>(r)->text();
+                long o = offset;
+                if (n == startNode && o < length)
+                    length = kMax(0L, o);
+                for (long i = 0; i < length; ++i)
+                    if (text[i] == '\n')
+                        return CaretPosition(n, i);
+            }
+            node = n;
+            offset = length;
+        } else if (r->isReplaced()) {
+            node = n;
+            offset = 1;
+        }
+    }
+
+    return CaretPosition(node, offset);
 }
 
 }  // namespace DOM

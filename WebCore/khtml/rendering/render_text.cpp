@@ -677,7 +677,7 @@ Position RenderText::positionForCoordinates(int _x, int _y)
 QRect RenderText::caretRect(int offset, bool override)
 {
     if (!firstTextBox() || stringLength() == 0) {
-        return QRect(-1, -1, 1, -1);
+        return QRect();
     }
 
     // Find the text box for the given offset
@@ -688,35 +688,33 @@ QRect RenderText::caretRect(int offset, bool override)
     }
     
     if (!box) {
-        return QRect(-1, -1, 1, -1);
+        return QRect();
     }
 
-    int _x, _y, height;
-
-    height = box->root()->bottomOverflow() - box->root()->topOverflow();
-    _y = box->root()->topOverflow();
+    int height = box->root()->bottomOverflow() - box->root()->topOverflow();
+    int top = box->root()->topOverflow();
 
     const QFontMetrics &fm = metrics(box->isFirstLineStyle());
     QString string(str->s + box->m_start, box->m_len);
     long pos = offset - box->m_start; // the number of characters we are into the string
-    _x = box->m_x + (fm.boundingRect(string, pos)).right();
+    int left = box->m_x + fm.boundingRect(string, pos).right();
 
 #if 0
     // EDIT FIXME
     if (pos)
-        _x += fm.rightBearing(*(str->s + box->m_start + offset));
+        left += fm.rightBearing(*(str->s + box->m_start + offset));
 #endif
 
     int absx, absy;
     absolutePosition(absx,absy);
-    _x += absx;
-    _y += absy;
+    left += absx;
+    top += absy;
 
     // FIXME: Need the +1 to match caret position of other programs on Macintosh.
     // Would be better to somehow derive it once we understand exactly why it's needed.
-    _x += 1;
+    left += 1;
 
-    return QRect(_x, _y, 1, height);
+    return QRect(left, top, 1, height);
 }
 
 void RenderText::posOfChar(int chr, int &x, int &y)

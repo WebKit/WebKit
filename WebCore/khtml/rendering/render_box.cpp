@@ -1491,7 +1491,7 @@ QRect RenderBox::caretRect(int offset, bool override)
     if (child) {
         QRect result = child->caretRect(offset, override);
         // FIXME: in-band signalling!
-        if (result.x() != -1)
+        if (result.isEmpty())
             return result;
     }
     
@@ -1531,7 +1531,7 @@ QRect RenderBox::caretRect(int offset, bool override)
     else {
         // we don't know our absolute position, and there is no point returning
         // just a relative one
-        _x = _y = -1;
+        return QRect();
     }
 
     return QRect(_x, _y, width, height);

@@ -1,3 +1,61 @@
+2004-09-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3803280> crash in selectAll on page with no contents
+
+        * khtml/khtml_part.cpp: (KHTMLPart::selectAll): Handle case of 0 for documentElement().
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordPosition): Ditto.
+        (DOM::Position::nextWordPosition): Ditto.
+
+        - cleaned up caret code
+        - changed DOM::Selection to use CaretPosition more
+
+        * khtml/rendering/render_box.cpp: (RenderBox::caretRect): Change to use empty rectangles
+        instead of an X value of -1 to mean no rectangle.
+        * khtml/rendering/render_image.cpp: (RenderImage::selectionRect): Take advantage of the
+        fixed QRect constructor.
+        * khtml/rendering/render_object.cpp: (RenderObject::caretRect): Change to use empty
+        rectangle instead of an X value of -1 to mean no rectangle.
+        * khtml/rendering/render_text.cpp: (RenderText::caretRect): Cleaned up, and changed to use
+        an empty rectangle instead of an X value of -1 to mean no rectangle.
+
+        * khtml/xml/dom_caretposition.h: Made conversion from Position to CaretPosition something you
+        can do implicitly, since it's an unambiguous conversion. Conversion in the other direction
+        needs to be done explicitly. Moved EIncludeLineBreak here, and added startParagraphBoundary
+        and endParagraphBoundary functions.
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::startParagraphBoundary): Added. Replaces, and made from, member function of DOM::Position.
+        (DOM::endParagraphBoundary): Ditto.
+
+        * khtml/xml/dom_position.h: Removed EIncludeLineBreak and startParagraphBoundary and
+        endParagraphBoundary.
+        * khtml/xml/dom_position.cpp: Removed startParagraphBoundary and endParagraphBoundary.
+
+        * khtml/xml/dom_selection.h: Use CaretPosition instead of Position in a few places.
+        Use a QRect for the caret rect. Change nodeIsBeforeNode to be a static member function.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): Change caret to store QRect instead of 3 separate fields.
+        (DOM::Selection::init): Ditto.
+        (DOM::Selection::operator=): Ditto.
+        (DOM::Selection::modifyExtendingRightForward): Change to use CaretPosition instead of Position.
+        Check for 0.
+        (DOM::Selection::modifyMovingRightForward): Ditto. Check for 0.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::modify): Ditto.
+        (DOM::Selection::layoutCaret): Change to use a QRect for the caret rect, and use an empty
+        one to mean no rectangle.
+        (DOM::Selection::getRepaintRect): Ditto.
+        (DOM::Selection::paintCaret): Ditto.
+        (DOM::Selection::validate): Change to use CaretPosition instead of Position. Also fixed
+        PARAGRAPH_BOUNDARY, which was broken and doing the same thing as PARAGRAPH before, but
+        it's not really used so that didn't matter. Check for 0.
+        (DOM::Selection::nodeIsBeforeNode): Tightened up a bit and added some FIXMEs. This function
+        has a number of problems and should probably be discarded in favor of the DOMStringImpl
+        method that does the same thing.
+
 2004-09-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
@@ -619,7 +677,6 @@
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
 
->>>>>>> 1.3216
 2004-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
@@ -650,7 +707,6 @@
         * khtml/rendering/render_text.cpp:
         (RenderText::caretRect):
 
->>>>>>> 1.3214
 2004-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

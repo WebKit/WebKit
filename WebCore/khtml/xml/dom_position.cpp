@@ -387,11 +387,18 @@ Position Position::nextWordBoundary() const
 
 Position Position::previousWordPosition() const
 {
-    if (isEmpty())
+    NodeImpl *n = node();
+    if (!n)
+        return Position();
+    DocumentImpl *d = n->getDocument();
+    if (!d)
+        return Position();
+    NodeImpl *de = d->documentElement();
+    if (!de)
         return Position();
 
-    Range searchRange(node()->getDocument());
-    searchRange.setStartBefore(node()->getDocument()->documentElement());
+    Range searchRange(d);
+    searchRange.setStartBefore(de);
     Position end(equivalentRangeCompliantPosition());
     searchRange.setEnd(end.node(), end.offset());
     SimplifiedBackwardsTextIterator it(searchRange);
@@ -452,13 +459,20 @@ Position Position::previousWordPosition() const
 
 Position Position::nextWordPosition() const
 {
-    if (isEmpty())
+    NodeImpl *n = node();
+    if (!n)
+        return Position();
+    DocumentImpl *d = n->getDocument();
+    if (!d)
+        return Position();
+    NodeImpl *de = d->documentElement();
+    if (!de)
         return Position();
 
-    Range searchRange(node()->getDocument());
+    Range searchRange(d);
     Position start(equivalentRangeCompliantPosition());
     searchRange.setStart(start.node(), start.offset());
-    searchRange.setEndAfter(node()->getDocument()->documentElement());
+    searchRange.setEndAfter(de);
     TextIterator it(searchRange);
     QString string;
     unsigned next = 0;
@@ -621,94 +635,6 @@ Position Position::nextLinePosition(int x) const
     // to the end of the line we're on.
     ElementImpl *rootElement = node()->rootEditableElement();
     return Position(rootElement, rootElement ? rootElement->childNodeCount() : 0);
-}
-
-Position Position::startParagraphBoundary() const
-{
-    NodeImpl *startNode = m_node;
-    if (!startNode)
-        return *this;
-
-    Position p = *this;
-    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-
-    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
-        RenderObject *r = n->renderer();
-        if (!r)
-            continue;
-        RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
-            continue;
-        if (r->isBR() || r->isBlockFlow())
-            break;
-        if (r->isText()) {
-            if (style->whiteSpace() == PRE) {
-                QChar *text = static_cast<RenderText *>(r)->text();
-                long i = static_cast<RenderText *>(r)->length();
-                long o = m_offset;
-                if (n == startNode && o < i)
-                    i = kMax(0L, o);
-                while (--i >= 0)
-                    if (text[i] == '\n')
-                        return Position(n, i + 1);
-            }
-            p.m_node = n;
-            p.m_offset = 0;
-        } else if (r->isReplaced()) {
-            p.m_node = n;
-            p.m_offset = 0;
-        }
-    }
-
-    return p;
-}
-
-Position Position::endParagraphBoundary(EIncludeLineBreak includeLineBreak) const
-{
-    NodeImpl *startNode = m_node;
-    if (!startNode)
-        return *this;
-
-    Position p = *this;
-    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-
-    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(startBlock)) {
-        RenderObject *r = n->renderer();
-        if (!r)
-            continue;
-        RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
-            continue;
-        if (r->isBR()) {
-            if (includeLineBreak)
-                return Position(n, 1).downstream();
-            break;
-        }
-        if (r->isBlockFlow()) {
-            if (includeLineBreak)
-                return Position(n, n->childNodeCount()).downstream();
-            break;
-        }
-        if (r->isText()) {
-            long length = static_cast<RenderText *>(r)->length();
-            if (style->whiteSpace() == PRE) {
-                QChar *text = static_cast<RenderText *>(r)->text();
-                long o = m_offset;
-                if (n == startNode && o < length)
-                    length = kMax(0L, o);
-                for (long i = 0; i < length; ++i)
-                    if (text[i] == '\n')
-                        return Position(n, i);
-            }
-            p.m_node = n;
-            p.m_offset = length;
-        } else if (r->isReplaced()) {
-            p.m_node = n;
-            p.m_offset = 1;
-        }
-    }
-
-    return p;
 }
 
 Position Position::upstream(EStayInBlock stayInBlock) const

@@ -78,14 +78,14 @@ void RenderImage::setStyle(RenderStyle* _style)
 QRect RenderImage::selectionRect()
 {
     if (selectionState() == SelectionNone)
-        return QRect(0,0,0,0);
+        return QRect();
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
         return absoluteBoundingBoxRect();
 
     RenderBlock* cb =  containingBlock();
     if (!cb)
-        return QRect(0,0,0,0);
+        return QRect();
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
     int selectionTop = root->prevRootBox() ? root->prevRootBox()->bottomOverflow() : root->topOverflow();
