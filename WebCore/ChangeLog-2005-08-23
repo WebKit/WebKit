@@ -1,3 +1,13 @@
+2004-07-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3621138, crash on hrweb.apple.com.  Make sure that in the case where objects get pulled up from merging
+	blocks that we just delete all line boxes.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild):
+
 2004-07-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
