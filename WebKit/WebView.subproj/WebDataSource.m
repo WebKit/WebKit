@@ -210,7 +210,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
         return NO;
         
     //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self webFrame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
-    if (_private->primaryLoadComplete == NO)
+    if (_private->primaryLoadComplete == NO && _private->loading)
         return YES;
         
     if ([_private->urlHandles count])
