@@ -392,7 +392,10 @@ RenderBlock* RenderObject::containingBlock() const
             o = o->parent();
     }
 
-    KHTMLAssert(o && o->isRenderBlock());
+    if (!o) // This can happen because of setOverhangingContents in RenderImage's setStyle method.
+        return 0;
+    
+    KHTMLAssert(o->isRenderBlock());
     return static_cast<RenderBlock*>(o);
 }
 
@@ -890,7 +893,7 @@ void RenderObject::setOverhangingContents(bool p)
     if (p)
     {
         m_overhangingContents = true;
-        if (cb != this)
+        if (cb && cb != this)
             cb->setOverhangingContents();
     }
     else
@@ -909,7 +912,7 @@ void RenderObject::setOverhangingContents(bool p)
         else
         {
             m_overhangingContents = false;
-            if (cb != this)
+            if (cb && cb != this)
                 cb->setOverhangingContents(false);
         }
     }

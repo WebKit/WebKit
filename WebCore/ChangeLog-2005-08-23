@@ -1,3 +1,20 @@
+2003-02-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for assertion on nasdaq.com.  Patch containingBlock
+	to return 0 when it can't find a containingBlock at all (e.g.,
+	when the object is orphaned).
+
+	Patch setOverhangingContents to deal with a null containingBlock
+	caused by it being called from RenderImage::setStyle().
+
+	The bug # is 3162989.
+	
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::containingBlock):
+        (RenderObject::setOverhangingContents):
+
 2003-02-02  David Hyatt  <hyatt@apple.com>
 
 	Enable support for the "run-in" and "compact" display types.
