@@ -164,7 +164,9 @@ MethodList JavaClass::methodsNamed(const char *name) const
     CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     MethodList *methodList = (MethodList *)CFDictionaryGetValue(_methods, methodName);
     CFRelease (methodName);
-    return *methodList;
+    if (methodList)
+        return *methodList;
+    return MethodList();
 }
 
 
