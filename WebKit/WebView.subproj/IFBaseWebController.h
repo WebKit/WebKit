@@ -37,6 +37,4 @@
 - (void)setMainDataSource: (WKWebDataSource *)dataSource;
 - (WKWebDataSource *)mainDataSource;
 
-- (void)addFrame: (WKWebFrame *)childFrame toParent: (WKWebDataSource *)parent;
-
 @end

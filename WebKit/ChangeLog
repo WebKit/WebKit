@@ -1,3 +1,14 @@
+2002-01-30  Richard Williamson  <rjw@apple.com>
+
+    Cleaned up API w/ respect to frames.
+    
+	* WebView.subproj/WKDefaultWebController.h:
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
+	setView:andDataSource:]), (-[WKDefaultWebController
+	createFrameNamed:for:inParent:]):
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebDataSource.h:
+
 2002-01-30  Kenneth Kocienda  <kocienda@apple.com>
 
         Added *.lo, *.la, Icon, and .libs to .cvsignore files

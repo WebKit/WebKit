@@ -6,6 +6,7 @@
 #import <WebKit/WKDefaultWebControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebDataSourcePrivate.h>
+#import <WebKit/WKWebFrame.h>
 #import <WebKit/WKException.h>
 
 
@@ -104,6 +105,7 @@
 
 - (void)setView: (WKWebView *)view andDataSource: (WKWebDataSource *)dataSource
 {
+    // FIXME:  this needs to be implemented in terms of WKWebFrame.
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
 
     [data->viewMap autorelease];
@@ -130,21 +132,28 @@
         [view dataSourceChanged];
 }
 
-
-- (void)addFrame: (WKWebFrame *)childFrame toParent: (WKWebDataSource *)parent;
+- (WKWebFrame *)createFrameNamed: (NSString *)fname for: (WKWebDataSource *)childDataSource inParent: (WKWebDataSource *)parentDataSource
 {
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    id view = [childFrame view];
-    WKWebDataSource *child = [childFrame dataSource];
+    WKWebView *childView;
+    WKWebFrame *newFrame;
 
-    [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:child]];
-    [view _setController: self];
-    [data->dataSourceMap setObject: child forKey: [WKObjectHolder holderWithObject:view]];
-    [child _setController: self];
+    childView = [[WKWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
 
-    [view dataSourceChanged];
+    newFrame = [[[WKWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource] autorelease];
+
+    [parentDataSource addFrame: newFrame];
+
+    [data->viewMap setObject: childView forKey: [WKObjectHolder holderWithObject:childDataSource]];
+    [childView _setController: self];
+    [data->dataSourceMap setObject: childDataSource forKey: [WKObjectHolder holderWithObject:childView]];
+    [childDataSource _setController: self];
+
+    [childView dataSourceChanged];
     
-    [child startLoading: YES];
+    //[child startLoading: YES];
+    
+    return newFrame;
 }
 
 

@@ -99,8 +99,9 @@
 - (WKWebDataSource *)parent;
 
 
-// Add a child frame.  [Should this be private?  Only called when a 
-// data source is created automatically in a frame set.
+// Add a child frame.  This should only be called by the data source's controller
+// as a result of a createFrame:inParent:.
+// [Should this be private?]
 - (void)addFrame: (WKWebFrame *)frame;
 
 
