@@ -189,17 +189,19 @@
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.2, Copyright 2004 Apple Computer, Inc.</string>
+	<string>1.3, Copyright 2004 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>WebKit</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2</string>
+	<string>1.3</string>
 	<key>CFBundleVersion</key>
-	<string>131u</string>
+	<string>131</string>
 </dict>
 </plist>
 ";
@@ -2902,7 +2904,7 @@
 		BE1B2F5504755C7700CA289C = {
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
-			lastKnownFileType = file;
+			lastKnownFileType = wrapper.framework;
 			path = Foundation.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
