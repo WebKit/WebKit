@@ -1251,6 +1251,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             // proportional font, needs a bit more work.
             int lastSpace = pos;
             bool isPre = o->style()->whiteSpace() == PRE;
+            
             //QChar space[1]; space[0] = ' ';
             //int spaceWidth = f->width(space, 1, 0);
             while(len) {
@@ -1305,7 +1306,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                         }
                     }
         
-                    if ( !isPre && w + tmpW > width )
+                    if (w + tmpW > width && o->style()->whiteSpace() == NORMAL)
                         goto end;
 
                     lBreak.obj = o;
@@ -1425,7 +1426,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
 #ifdef DEBUG_LINEBREAKS
     kdDebug( 6041 ) << "end of par, width = " << width << " linewidth = " << w + tmpW << endl;
 #endif
-    if( w + tmpW <= width ) {
+    if( w + tmpW <= width || (last && last->style()->whiteSpace() == NOWRAP)) {
         lBreak.obj = 0;
         lBreak.pos = 0;
     }
