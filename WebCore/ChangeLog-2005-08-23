@@ -1,5 +1,13 @@
 2002-08-21  Darin Adler  <darin@apple.com>
 
+	- fixed 3021908 -- text areas should be plain text only
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): setRichText:NO
+        (-[KWQTextArea dealloc]): Release the text view so we don't leak.
+
+2002-08-21  Darin Adler  <darin@apple.com>
+
         * kwq/KWQNSViewExtras.m: (-[NSClipView _KWQ_scrollRectToVisible:inView:]):
 	Use bounds, not visibleRect. Seems to work better.
 

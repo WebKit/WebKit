@@ -70,6 +70,7 @@ const float LargeNumberForText = 1.0e7;
         
     textView = [[NSTextView alloc] initWithFrame:textFrame];
     [[textView textContainer] setWidthTracksTextView:YES];
+    [textView setRichText:NO];
     
     // Setup attributes for default cases WRAP=SOFT|VIRTUAL and WRAP=HARD|PHYSICAL.
     // If WRAP=OFF we reset many of these attributes.
@@ -102,6 +103,13 @@ const float LargeNumberForText = 1.0e7;
     [super init];
     widget = w;
     return self;
+}
+
+- (void)dealloc
+{    
+    [textView release];
+    
+    [super dealloc];
 }
 
 - (void)textDidEndEditing:(NSNotification *)aNotification
