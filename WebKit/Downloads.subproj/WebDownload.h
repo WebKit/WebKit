@@ -7,7 +7,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebDataSource;
 @class WebDownload;
 @class WebDownloadPrivate;
 @class WebError;
@@ -42,13 +41,12 @@
 @interface NSObject (WebDownloadDelegate)
 
 /*!
-    @method download:startedFromDataSource:
+    @method download:didStartFromRequest:
     @abstract This method is called immediately after the download has started.
-    @discussion A download is started from a data source if the WebPolicySave WebPolicyAction was chosen for a request.
     @param download The download that just started downloading.
-    @param response The data source that the download started from. Nil if the download was not started from a data source.
+    @param request The request that the download started from.
  */
-- (void)download:(WebDownload *)download didStartFromDataSource:(WebDataSource *)dataSource;
+- (void)download:(WebDownload *)download didStartFromRequest:(WebRequest *)request;
 
 /*!
     @method download:willSendRequest:

@@ -12,5 +12,5 @@
 
 @interface WebDownload (WebPrivate)
 - _initWithLoadingResource:(WebResource *)resource dataSource:(WebDataSource *)dataSource;
-- (void)_setPath:(NSString *)path;
+- (void)_setDirectoryPath:(NSString *)directoryPath;
 @end

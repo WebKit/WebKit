@@ -109,19 +109,6 @@
 - (WebError *)mainDocumentError;
 
 /*!
-    @method isDownloading
-    @result Description forthcoming.
-*/
-- (BOOL)isDownloading;
-
-/*!
-    @method downloadPath
-    @result Description forthcoming.
-*/
-- (NSString *)downloadPath;
-
-
-/*!
     @method registerRepresentationClass:forMIMEType:
     @discussion A class that implements WebDocumentRepresentation may be registered 
     with this method.

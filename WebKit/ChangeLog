@@ -1,3 +1,38 @@
+2003-03-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3191052 - Predetermined downloads should not be started from the browser window
+	- Stripped the rest of WebKit of download related code.
+
+        Reviewed by trey.
+
+        * Downloads.subproj/WebDownload.h: Changed the download delegate method from download:didStartFromDataSource: download:didStartFromRequest:. Passing the data source wasn't that helpful. It was also quirky that the data source would sometimes be nil.
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownloadPrivate dealloc]): release directory path
+        (-[WebDownload _initWithLoadingResource:dataSource:]): call _loadStarted and _loadEnded
+        (-[WebDownload loadWithDelegate:]): call _loadStarted
+        (-[WebDownload _loadStarted]): set flag, retain self
+        (-[WebDownload _loadEnded]): set flag, release self
+        (-[WebDownload resource:willSendRequest:]): call _loadEnded if the returned request is nil
+        (-[WebDownload resourceDidFinishLoading:]): call _loadEnded
+        (-[WebDownload resource:didFailLoadingWithError:]): call _loadEnded
+        (-[WebDownload _createFileIfNecessary]): handle a predetermined download directory, not path
+        (-[WebDownload _cancelWithError:]): call _loadEnded
+        (-[WebDownload _setDirectoryPath:]): new private method
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:fromDataSource:complete:]): don't call [dataSource isDownloading]
+        (-[WebController _downloadURL:toDirectory:]): create and start a self retained WebDownload
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m: removed download related methods
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m: removed download related methods
+        (-[WebDataSource _commitIfReady:]): don't call isDownloading
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): when handing off the load to the download, don't deal with the download path
+        (-[WebMainResourceClient resource:didReceiveResponse:]): no more predetermined downloads come through here
+
 2003-03-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

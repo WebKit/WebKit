@@ -143,14 +143,4 @@
     [[self _repTypes] setObject:repClass forKey:MIMEType];
 }
 
-- (BOOL)isDownloading
-{
-    return _private->isDownloading;
-}
-
-- (NSString *)downloadPath
-{
-    return [[_private->downloadPath retain] autorelease];
-}
-
 @end

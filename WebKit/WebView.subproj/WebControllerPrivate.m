@@ -13,6 +13,7 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
@@ -164,10 +165,9 @@
 {
     ASSERT(dataSource);
 #ifndef NDEBUG
-    if (![dataSource isDownloading])
-        ASSERT([dataSource webFrame]);
-#endif    
-
+    ASSERT([dataSource webFrame]);
+#endif
+    
     [dataSource _setMainDocumentError: error];
 
     if (isComplete) {
@@ -233,12 +233,18 @@
 - (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directory
 {
     ASSERT(URL);
-    
-    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
-    WebFrame *webFrame = [self mainFrame];
 
-    [webFrame _downloadRequest:request toDirectory:directory];
+    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
+    WebDownload *download = [[WebDownload alloc] initWithRequest:request];
     [request release];
+    
+    if (directory != nil && [directory isAbsolutePath]) {
+        [download _setDirectoryPath:directory];
+    }
+
+    // The download retains itself in loadWithDelegate.
+    [download loadWithDelegate:_private->downloadDelegate];
+    [download release];
 }
 
 - (BOOL)defersCallbacks

@@ -170,20 +170,13 @@
         break;
         
     case WebPolicySave:
-        ASSERT([self downloadDelegate]);
-
+    {
         WebDownload *download = [[WebDownload alloc] _initWithLoadingResource:resource dataSource:dataSource];
-        NSString *directory = [dataSource _downloadDirectory];
-        if (directory != nil && [directory isAbsolutePath]) {
-            // FIXME: Predetermined downloads should not be using this code path (3191052).
-            NSString *path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
-            [download _setPath:path];
-        }
-
         [proxy setDelegate:(id <WebResourceDelegate>)download];
         [download release];
         
         [self interruptForPolicyChangeAndKeepLoading:YES];
+    }
         break;
 
     case WebPolicyIgnore:
@@ -224,20 +217,15 @@
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([dataSource isDownloading] || ![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _controller] defersCallbacks]);
     [dataSource _setResponse:r];
 
     LOG(Loading, "main content type: %@", [r contentType]);
 
     [[dataSource _controller] setDefersCallbacks:YES];
 
-    // FIXME: Predetermined downloads should not be using this code path (3191052).
     // Figure out the content policy.
-    if (![dataSource isDownloading]) {
-	[self checkContentPolicyForResponse:r andCallSelector:@selector(continueAfterContentPolicy:response:)];
-    } else {
-	[self continueAfterContentPolicy:WebPolicySave response:r];
-    }
+    [self checkContentPolicyForResponse:r andCallSelector:@selector(continueAfterContentPolicy:response:)];
 
     _contentLength = [r contentLength];
 }

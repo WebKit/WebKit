@@ -1768,8 +1768,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
 
-    // This is commented out because for the download reload feature, we need to be able to start a load without a WebView involved.
-    //ASSERT([self webView] != nil);
+    ASSERT([self webView] != nil);
 
     [self stopLoading];
 
@@ -1787,20 +1786,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT([newDataSource webFrame] == self);
 
     [self _checkNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:formState:)];
-}
-
-- (void)_downloadRequest:(WebRequest *)request toDirectory:(NSString *)directory
-{
-    WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
-    [dataSource _setIsDownloading:YES];
-
-    if (directory != nil && [directory isAbsolutePath]) {
-        [dataSource _setDownloadDirectory:directory];
-    }
-
-    [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard formState:nil];
-
-    [dataSource release];
 }
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened

@@ -63,6 +63,7 @@ typedef struct WebFSRefParam
 
     NSString *path;
     NSString *tempPath;
+    NSString *directoryPath;
 }
 @end
 
@@ -73,6 +74,9 @@ static void CloseCompletionCallback(ParmBlkPtr paramBlock);
 static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @interface WebDownload (ForwardDeclarations)
+#pragma mark LOADING
+- (void)_loadStarted;
+- (void)_loadEnded;
 #pragma mark CREATING
 - (NSString *)_pathWithUniqueFilenameForPath:(NSString *)path;
 - (BOOL)_createFSRefForPath:(NSString *)path;
@@ -100,6 +104,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)_cancelWithError:(WebError *)error;
 - (void)_cancelWithErrorCode:(int)code;
 #pragma mark MISC
+- (void)_setPath:(NSString *)path;
 - (NSString *)_currentPath;
 - (WebError *)_errorWithCode:(int)code;
 - (SInt16)_dataForkReferenceNumber;
@@ -133,6 +138,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     ASSERT(!resource);
     ASSERT(!delegate);
+    ASSERT(!isLoading);
 
     free(fileRefPtr);
     
@@ -143,6 +149,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     [response release];
     [path release];
     [tempPath release];
+    [directoryPath release];
     [super dealloc];
 }
 
@@ -177,26 +184,29 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     _private->request = [[dataSource request] retain];
     _private->response = [[dataSource response] retain];
     _private->delegate = [[dataSource _controller] downloadDelegate];
-    _private->isLoading = YES;
+    [self _loadStarted];
 
     // Replay the delegate methods that would be called in the standalone download case.
-    if ([_private->delegate respondsToSelector:@selector(download:didStartFromDataSource:)]) {
-        [_private->delegate download:self didStartFromDataSource:dataSource];
+    if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
+        [_private->delegate download:self didStartFromRequest:_private->request];
     }
 
-    // If the request is altered, cancel the previous resource and start a new one.
     if ([_private->delegate respondsToSelector:@selector(download:willSendRequest:)]) {
         WebRequest *request = [_private->delegate download:self willSendRequest:_private->request];
         if (request != _private->request) {
+            // If the request is altered, cancel the resource and start a new one.
             [self cancel];
             if (request) {
                 _private->resource = [[WebResource alloc] initWithRequest:request];
+                ASSERT(_private->resource);                
                 [_private->resource loadWithDelegate:(id <WebResourceDelegate>)self];
+            } else {
+                [self _loadEnded];
             }
             return self;
         }
     }
-    
+
     if ([_private->delegate respondsToSelector:@selector(download:didReceiveResponse:)]) {
         [_private->delegate download:self didReceiveResponse:_private->response];
     }
@@ -215,10 +225,11 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if (!_private->isLoading) {
         _private->delegate = delegate;
         [_private->resource loadWithDelegate:(id <WebResourceDelegate>)self];
-        _private->isLoading = YES;
-    
-        if ([_private->delegate respondsToSelector:@selector(download:didStartFromDataSource:)]) {
-            [_private->delegate download:self didStartFromDataSource:nil];
+
+        [self _loadStarted];
+        
+        if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
+            [_private->delegate download:self didStartFromRequest:_private->request];
         }
     }
 }
@@ -241,12 +252,27 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 #pragma mark LOADING
 
-- (void)_loadFinished
+- (void)_loadStarted
 {
-    _private->isLoading = NO;
+    if (!_private->isLoading) {
+        _private->isLoading = YES;
+        
+        // Retain self while loading so we aren't released during the load.
+        [self retain];
+    }
+}
+
+- (void)_loadEnded
+{
+    if (_private->isLoading) {
+        _private->isLoading = NO;
     
-    [_private->resource release];
-    _private->resource = nil;
+        [_private->resource release];
+        _private->resource = nil;
+
+        // Balance the retain from when the load started.
+        [self release];
+    }
 }
 
 -(WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)theRequest
@@ -260,7 +286,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
     
     if (!request) {
-        [self _loadFinished];
+        [self _loadEnded];
     }
 
     if (_private->request != request) {
@@ -295,7 +321,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 -(void)resourceDidFinishLoading:(WebResource *)resource
 {
-    [self _loadFinished];
+    [self _loadEnded];
     
     WebError *error = [self _decodeData:_private->bufferedData];
     [_private->bufferedData release];
@@ -316,7 +342,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 -(void)resource:(WebResource *)resource didFailLoadingWithError:(WebError *)error
 {
-    [self _loadFinished];
+    [self _loadEnded];
     
     [self _cancelWithError:error];
 }
@@ -390,13 +416,20 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         [attributes setObject:[_private->response createdDate] forKey:NSFileModificationDate];
     }
 
-    // Check if the path is predetermined. If not, ask for one.
-    if (!_private->path) {
-        NSString *filename = [[lastDecoder filename] _web_filenameByFixingIllegalCharacters];
-        if ([filename length] == 0) {
-            filename = [_private->response suggestedFilenameForSaving];
-        }
+    NSString *filename = [[lastDecoder filename] _web_filenameByFixingIllegalCharacters];
+    if ([filename length] == 0) {
+        filename = [_private->response suggestedFilenameForSaving];
+    }
 
+    ASSERT(!_private->path);
+
+    NSString *path = nil;
+        
+    // Check if the directory is predetermined. If not, ask for a path.
+    if (_private->directoryPath) {
+        path = [_private->directoryPath stringByAppendingPathComponent:filename];
+        [self _setPath:path];
+    } else {
         if ([_private->delegate respondsToSelector:@selector(download:decidePathWithListener:suggestedFilename:)]) {
             [_private->delegate download:self
                   decidePathWithListener:(id <WebDownloadDecisionListener>)self
@@ -404,7 +437,6 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         }
     }
 
-    NSString *path = nil;
     if (_private->path) {
         // Path was immeditately set.
         path = _private->path;
@@ -742,7 +774,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)_cancelWithError:(WebError *)error
 {
     [_private->resource cancel];
-    [self _loadFinished];
+    
+    [self _loadEnded];
 
     if (error) {
         if ([_private->delegate respondsToSelector:@selector(download:didFailDownloadingWithError:)]) {
@@ -804,6 +837,13 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
             [_private->delegate download:self didCreateFileAtPath:_private->path];
         }
     }
+}
+
+- (void)_setDirectoryPath:(NSString *)directoryPath
+{
+    NSString *copy = [directoryPath copy];
+    [_private->directoryPath release];
+    _private->directoryPath = copy;
 }
 
 - (NSString *)_currentPath

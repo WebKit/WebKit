@@ -477,7 +477,7 @@
 
 - (void)_commitIfReady: (NSDictionary *)pageCache
 {
-    if (_private->loadingFromPageCache || (![self isDownloading] && _private->gotFirstByte && !_private->committed)) {
+    if (_private->loadingFromPageCache || (_private->gotFirstByte && !_private->committed)) {
         WebFrame *frame = [self webFrame];
         WebFrameLoadType loadType = [frame _loadType];
         bool reload = loadType == WebFrameLoadTypeReload
@@ -670,45 +670,6 @@
     WebRequest *oldRequest = _private->lastCheckedRequest;
     _private->lastCheckedRequest = [request copy];
     [oldRequest release];
-}
-
-- (void)_setIsDownloading:(BOOL)isDownloading
-{
-    _private->isDownloading = isDownloading;
-}
-
-- (void)_setDownloadPath:(NSString *)downloadPath
-{
-    if (_private->downloadPath == downloadPath) {
-        return;
-    }
-    [_private->downloadPath release];
-    _private->downloadPath = [downloadPath copy];
-    
-    // Have either a download path or directory, not both at once.
-    [_private->downloadDirectory release];
-    _private->downloadDirectory = nil;
-}
-
-- (void)_setDownloadDirectory:(NSString *)downloadDirectory
-{
-    ASSERT(_private->downloadPath == nil);
-    
-    if (_private->downloadDirectory == downloadDirectory) {
-        return;
-    }
-    [_private->downloadDirectory release];
-    _private->downloadDirectory = [downloadDirectory copy];
-}
-
-- (NSString *)_downloadDirectory
-{
-    if (_private->downloadPath) {
-        ASSERT(_private->downloadDirectory == nil);
-        return [_private->downloadPath stringByDeletingLastPathComponent];
-    }
-
-    return _private->downloadDirectory;
 }
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened
