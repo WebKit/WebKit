@@ -1,3 +1,23 @@
+2003-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3332280: REGRESSION (74-85): setting src of iframe results in two GETs
+
+        * khtml/html/html_baseimpl.h: Added openURL virtual function.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::updateForNewURL): Call openURL to do the meat of the work,
+        since it's different for frames and iframes.
+        (HTMLFrameElementImpl::openURL): Move the part that's different for frames in here.
+        (HTMLFrameElementImpl::parseAttribute): Call setLocation to share code.
+        (HTMLFrameElementImpl::setLocation): Do nothing if the location is not changing.
+        Not needed to fix this bug, but could eliminate other cases of extra GETs.
+        (HTMLIFrameElementImpl::parseAttribute): Remove special handling of SRC, because now
+        we will end up calling openURL, which will do the right thing for iframes.
+        (HTMLIFrameElementImpl::openURL): Instead of doing the change to the frame directly,
+        use updateWidget, since that's what we do for other changes to iframes. To trigger a
+        call to updateWidget(), set needWidgetUpdate and mark the node changed.
+
 2003-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
