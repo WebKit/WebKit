@@ -1,3 +1,13 @@
+2004-03-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- max out our iBench cheat. Don't even paint or lay out a quarter
+	of the pages.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::close):
+
 2004-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
