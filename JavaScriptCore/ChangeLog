@@ -1,3 +1,10 @@
+2003-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        * kjs/config.h: Added HAVE_SYS_PARAM_H, since KJS does look for this header, and we do
+        indeed have it. Just something I noticed in passing while cleaning up configure.in.
+
 2003-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
