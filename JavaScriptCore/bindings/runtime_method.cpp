@@ -74,8 +74,17 @@ bool RuntimeMethodImp::implementsCall() const
 Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
     if (_methodList.length() > 0) {
-	Value runtimeObject = thisObj.get(exec, "__apple_runtime_object");
-        RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
+	RuntimeObjectImp *imp;
+	
+	// If thisObj is the DOM object for a plugin, get the corresponding
+	// runtime object from the DOM object.
+	if (thisObj.classInfo() != &KJS::RuntimeObjectImp::info) {
+	    Value runtimeObject = thisObj.get(exec, "__apple_runtime_object");
+	    imp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
+	}
+	else {
+	    imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
+	}
         if (imp) {
             Instance *instance = imp->getInternalInstance();
             

@@ -1,3 +1,22 @@
+2005-01-28  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3980389> JavaScript bindings access incorrect runtime object
+
+	Only use special 'back door' property to get the runtime object if thisObj isn't
+	already a runtime object.
+
+	<gratuitous> Cleaned up a couple of strcmp on ClassInfo name.  Used == on
+	ClassInfo pointer instead.
+
+        Reviewed by Chris.
+
+        * bindings/c/c_utility.cpp:
+        (convertValueToNPVariant):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::call):
+
 === Safari-181 ===
 
 2005-01-26  Richard Williamson   <rjw@apple.com>
