@@ -447,11 +447,12 @@ void RenderWidget::updateWidgetPositions()
     
     int x, y, width, height;
     absolutePosition(x,y);
-    width = m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight();
-    height = m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight();
+    x += borderLeft() + paddingLeft();
+    y += borderTop() + paddingTop();
+    width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
+    height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
     QRect newBounds(x,y,width,height);
-    const QRect& oldBounds = m_widget->frameGeometry();
-    if (newBounds != oldBounds) {
+    if (newBounds != m_widget->frameGeometry()) {
         // The widget changed positions.  Update the frame geometry.
         RenderArena *arena = ref();
         element()->ref();

@@ -1,3 +1,23 @@
+2003-10-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3460726, the user agent string was returning nil.  
+
+	Fix for 3386544, empty documents did not get a layout, and so they looked white.  Also fixed the positioning
+	of widgets to account for border/padding in updateWidgetPositions.
+
+	Fix for espn.com crasher, 3458143, caused by layout object not being properly cleared when layouts were
+	unscheduled.
+	
+        Reviewed by darin
+
+        * khtml/khtmlview.cpp:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::RenderCanvas):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::updateWidgetPositions):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::userAgent):
+
 2003-10-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by 

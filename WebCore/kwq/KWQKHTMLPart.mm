@@ -901,15 +901,13 @@ RenderObject *KWQKHTMLPart::renderer()
 
 QString KWQKHTMLPart::userAgent() const
 {
-    NSString *us = nil;
+    NSString * volatile us = nil;
 
     KWQ_BLOCK_NS_EXCEPTIONS;
-    [_bridge userAgentForURL:m_url.getNSURL()];
+    us = [_bridge userAgentForURL:m_url.getNSURL()];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
          
-    if (us)
-        return QString::fromNSString(us);
-    return QString();
+    return QString::fromNSString(us);
 }
 
 QString KWQKHTMLPart::mimeTypeForFileName(const QString &fileName) const

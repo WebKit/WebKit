@@ -1823,6 +1823,10 @@ void KHTMLView::scheduleRelayout(khtml::RenderObject* clippedObj)
 
 void KHTMLView::unscheduleRelayout()
 {
+#ifndef INCREMENTAL_REPAINTING
+    m_layoutObject = 0;
+#endif
+
     if (!d->layoutTimerId)
         return;
 
