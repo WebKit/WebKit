@@ -31,7 +31,6 @@
 #include "khtml_part.h"
 
 #include "rendering/render_frames.h"
-#include "rendering/render_body.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssproperties.h"
@@ -178,17 +177,6 @@ void HTMLBodyElementImpl::insertedIntoDocument()
         addCSSProperty(CSS_PROP_COLOR, "#000000");
 
     getDocument()->updateStyleSelector();
-}
-
-RenderObject *HTMLBodyElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
-{
-    return new (arena) RenderBody(this);
-}
-
-void HTMLBodyElementImpl::attach()
-{
-    createRendererIfNeeded();
-    NodeBaseImpl::attach();
 }
 
 // -------------------------------------------------------------------------

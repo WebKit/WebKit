@@ -304,7 +304,6 @@
 				F523D2CF02DE4438018635CA,
 				BC7294FE03804B5600A80166,
 				BC7C965303E9EE7000A80004,
-				F523D2D102DE4438018635CA,
 				F523D2D302DE4438018635CA,
 				F523D2D502DE4438018635CA,
 				F523D2D702DE4438018635CA,
@@ -688,7 +687,6 @@
 				F523D2CA02DE4438018635CA,
 				F523D2CC02DE4438018635CA,
 				F523D2CE02DE4438018635CA,
-				F523D2D002DE4438018635CA,
 				F523D2D202DE4438018635CA,
 				F523D2D402DE4438018635CA,
 				F523D2D602DE4438018635CA,
@@ -4468,22 +4466,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F523D2A502DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = render_body.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F523D2A602DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = render_body.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F523D2A702DE4438018635CA = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -4740,18 +4722,6 @@
 			settings = {
 			};
 		};
-		F523D2D002DE4438018635CA = {
-			fileRef = F523D2A502DE4438018635CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F523D2D102DE4438018635CA = {
-			fileRef = F523D2A602DE4438018635CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F523D2D202DE4438018635CA = {
 			fileRef = F523D2A702DE4438018635CA;
 			isa = PBXBuildFile;
@@ -4922,8 +4892,6 @@
 				BC7294FB03804B5600A80166,
 				BC7C964F03E9EE7000A80004,
 				BC7C964E03E9EE7000A80004,
-				F523D2A602DE4438018635CA,
-				F523D2A502DE4438018635CA,
 				F523D2A802DE4438018635CA,
 				F523D2A702DE4438018635CA,
 				F523D2AA02DE4438018635CA,
@@ -9509,7 +9477,7 @@
 //F83
 //F84
 		F8216299029F4FB501000131 = {
-			expectedFileType = wrapper.framework;
+			expectedFileType = file;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = JavaScriptCore.framework;

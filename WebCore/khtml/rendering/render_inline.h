@@ -61,7 +61,7 @@ public:
     virtual void calcMinMaxWidth();
 
     // overrides RenderObject
-    virtual bool requiresLayer() { return isRelPositioned() || style()->opacity() < 1.0f; }
+    virtual bool requiresLayer();
 
     virtual short width() const;
     virtual int height() const;

@@ -164,9 +164,15 @@ RenderObject::~RenderObject()
         m_style->deref();
 }
 
-bool RenderObject::isRoot() const {
+bool RenderObject::isRoot() const
+{
     return element() && element()->renderer() == this &&
            element()->getDocument()->documentElement() == element();
+}
+
+bool RenderObject::isBody() const
+{
+    return element() && element()->renderer() == this && element()->id() == ID_BODY;
 }
 
 bool RenderObject::canHaveChildren() const

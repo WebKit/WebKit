@@ -315,8 +315,8 @@ RenderStyle *ElementImpl::styleForRenderer(RenderObject *parentRenderer)
 
 RenderObject *ElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    if (getDocument()->documentElement() == this) {
-        // FIXME: We're a root object. For now, force a display of block.
+    if (getDocument()->documentElement() == this && style->display() == NONE) {
+        // Ignore display: none on root elements.  Force a display of block in that case.
         RenderBlock* result = new (arena) RenderBlock(this);
         if (result) result->setStyle(style);
         return result;

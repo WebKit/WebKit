@@ -1,3 +1,33 @@
+2003-07-22  Dave Hyatt  <hyatt@apple.com>
+
+	Allow HTML and BODY to be any display type.  This patch primarily eliminates the
+	RenderBody class and makes the code that deals with background propagation smart
+	enough to locate the correct renderers for the HTML and BODY elements (by crossing
+	back into the DOM tree).
+	
+        Reviewed by darin
+
+        * ForwardingHeaders/rendering/render_body.h: Removed.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::insertedIntoDocument):
+        * khtml/html/html_baseimpl.h:
+        * khtml/rendering/render_body.cpp: Removed.
+        * khtml/rendering/render_body.h: Removed.
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBoxDecorations):
+        (RenderBox::repaint):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintObject):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isBody):
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::createRenderer):
+
 2003-07-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
