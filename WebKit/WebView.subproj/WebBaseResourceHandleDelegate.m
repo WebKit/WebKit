@@ -34,8 +34,8 @@
     [identifier release];
     identifier = nil;
 
-    [resource release];
-    resource = nil;
+    [connection release];
+    connection = nil;
 
     [controller release];
     controller = nil;
@@ -65,19 +65,19 @@
 
 - (void)startLoading:(NSURLRequest *)r
 {
-    [resource loadWithDelegate:self];
+    [connection loadWithDelegate:self];
 }
 
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
-    ASSERT(resource == nil);
+    ASSERT(connection == nil);
     
-    resource = [[NSURLConnection alloc] initWithRequest:r];
-    if (!resource) {
+    connection = [[NSURLConnection alloc] initWithRequest:r];
+    if (!connection) {
         return NO;
     }
     if (defersCallbacks) {
-        [resource setDefersCallbacks:YES];
+        [connection setDefersCallbacks:YES];
     }
 
     [self startLoading:r];
@@ -88,7 +88,7 @@
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-    [resource setDefersCallbacks:defers];
+    [connection setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
@@ -130,9 +130,9 @@
     return downloadDelegate;
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    ASSERT(resource == connection);
+    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
     
     NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
@@ -179,9 +179,9 @@
     return request;
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT(resource == connection);
+    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     [r retain];
@@ -192,17 +192,17 @@
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
-    ASSERT(resource == connection);
+    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    ASSERT(resource == connection);
+    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
@@ -213,9 +213,9 @@
     [self _releaseResources];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)result
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)result
 {
-    ASSERT(resource == connection);
+    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
     
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
@@ -231,7 +231,7 @@
 {
     ASSERT(!reachedTerminalState);
 
-    [resource cancel];
+    [connection cancel];
     
     // currentURL may be nil if the request was aborted
     if (currentURL)

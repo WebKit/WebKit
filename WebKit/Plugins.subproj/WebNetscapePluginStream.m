@@ -74,13 +74,13 @@
     }
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse
+- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)theResponse
 {
     [self setResponse:theResponse];
-    [super connection:connection didReceiveResponse:theResponse];    
+    [super connection:con didReceiveResponse:theResponse];    
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         [resourceData appendData:data];
@@ -88,10 +88,10 @@
     
     [self receivedData:data];
 
-    [super connection:connection didReceiveData:data];
+    [super connection:con didReceiveData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     [[view controller] _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
@@ -99,10 +99,10 @@
     [view release];
     view = nil;
     
-    [super connectionDidFinishLoading:connection];
+    [super connectionDidFinishLoading:con];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)result
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)result
 {
     [[view controller] _receivedError:result fromDataSource:[view dataSource]];
 
@@ -111,7 +111,7 @@
     [view release];
     view = nil;
     
-    [super connection:connection didFailLoadingWithError:result];
+    [super connection:con didFailLoadingWithError:result];
 }
 
 @end

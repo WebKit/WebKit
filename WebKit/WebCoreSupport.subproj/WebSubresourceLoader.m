@@ -78,7 +78,7 @@
     [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
@@ -88,23 +88,23 @@
     // properly on redirect when we have the new redirect
     // request-adjusting API
 
-    return [super connection:connection willSendRequest:newRequest redirectResponse:redirectResponse];
+    return [super connection:con willSendRequest:newRequest redirectResponse:redirectResponse];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
     [loader receivedResponse:r];
-    [super connection:connection didReceiveResponse:r];
+    [super connection:con didReceiveResponse:r];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
     [loader addData:data];
-    [super connection:connection didReceiveData:data];
+    [super connection:con didReceiveData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -117,10 +117,10 @@
     
     [self release];
     
-    [super connectionDidFinishLoading:connection];
+    [super connectionDidFinishLoading:con];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -128,7 +128,7 @@
     [loader reportError];
     [dataSource _removeSubresourceClient:self];
     [self receivedError:error];
-    [super connection:connection didFailLoadingWithError:error];
+    [super connection:con didFailLoadingWithError:error];
 
     [self release];
 }

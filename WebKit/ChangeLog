@@ -2,6 +2,61 @@
 
         Reviewed by Darin
 
+        Cosmetic change. Instances of 'resource' as a local variable
+        name have been changed to 'connection'. Some other changes
+        related to this cosmetic cleanup were done as well.
+
+	As part of this change, I needed to change some 'connection'
+	method arguments to 'con' to avoid the name conflict now
+	that instance variables are named .connection'.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownloadPrivate dealloc]):
+        (-[WebDownload initWithRequest:]):
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (+[WebDownload _downloadWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload loadWithDelegate:]):
+        (-[WebDownload _downloadEnded]):
+        (-[WebDownload _cancelWithError:]):
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream connection:didReceiveResponse:]):
+        (-[WebNetscapePluginStream connection:didReceiveData:]):
+        (-[WebNetscapePluginStream connectionDidFinishLoading:]):
+        (-[WebNetscapePluginStream connection:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:willSendRequest:redirectResponse:]):
+        (-[WebSubresourceClient connection:didReceiveResponse:]):
+        (-[WebSubresourceClient connection:didReceiveData:]):
+        (-[WebSubresourceClient connectionDidFinishLoading:]):
+        (-[WebSubresourceClient connection:didFailLoadingWithError:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _releaseResources]):
+        (-[WebBaseResourceHandleDelegate startLoading:]):
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]):
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]):
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate connection:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient cancelWithError:]):
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient connection:didReceiveResponse:]):
+        (-[WebMainResourceClient connection:didReceiveData:]):
+        (-[WebMainResourceClient connectionDidFinishLoading:]):
+        (-[WebMainResourceClient connection:didFailLoadingWithError:]):
+        (-[WebMainResourceClient startLoading:]):
+
+2003-03-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         Changed names for URL connection callback methods to       
         use the API-approved names. No functional changes.
 

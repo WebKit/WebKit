@@ -55,7 +55,7 @@ typedef struct WebFSRefParam
     BOOL areWritesCancelled;
     BOOL encounteredCloseError;
 
-    NSURLConnection *resource;
+    NSURLConnection *connection;
     NSURLRequest *request;
     NSURLResponse *response;
     WebResourceDelegateProxy *proxy;
@@ -136,7 +136,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - (void)dealloc
 {
-    ASSERT(!resource);
+    ASSERT(!connection);
     ASSERT(!delegate);
     ASSERT(!isDownloading);
 
@@ -145,7 +145,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     [bufferedData release];
     [decoderSequence release];
     [request release];
-    [resource release];
+    [connection release];
     [response release];
     [proxy setDelegate:nil];
     [proxy release];
@@ -168,8 +168,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     _private = [[WebDownloadPrivate alloc] init];
     _private->request = [request retain];
     
-    _private->resource = [[NSURLConnection alloc] initWithRequest:request];
-    if (!_private->resource) {
+    _private->connection = [[NSURLConnection alloc] initWithRequest:request];
+    if (!_private->connection) {
         [self release];
         return nil;
     }
@@ -177,7 +177,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return self;
 }
 
-- _initWithLoadingResource:(NSURLConnection *)resource
+- _initWithLoadingResource:(NSURLConnection *)connection
                    request:(NSURLRequest *)request
                   response:(NSURLResponse *)response
                   delegate:(id)delegate
@@ -189,7 +189,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     [self _downloadStarted];
     
     _private->request =  [request retain];
-    _private->resource = [resource retain];
+    _private->connection = [connection retain];
     _private->response = [response retain];
     _private->proxy = 	 [proxy retain];
     [self _setDelegate:delegate];
@@ -203,18 +203,18 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if ([_private->delegate respondsToSelector:@selector(download:willSendRequest:redirectResponse:)]) {
         NSURLRequest *request = [_private->delegate download:self willSendRequest:_private->request redirectResponse:nil];
         if (request != _private->request) {
-            // If the request is altered, cancel the resource and start a new one.
+            // If the request is altered, cancel the connection and start a new one.
             [self cancel];
             if (request) {
                 [self _setRequest:request];
                 [self _setResponse:nil];
-                [_private->resource release];
-                _private->resource = [[NSURLConnection alloc] initWithRequest:request];
-                if (!_private->resource) {
+                [_private->connection release];
+                _private->connection = [[NSURLConnection alloc] initWithRequest:request];
+                if (!_private->connection) {
                     [self release];
                     return nil;
                 }
-                [_private->resource loadWithDelegate:(id <NSURLConnectionDelegate>)self];
+                [_private->connection loadWithDelegate:(id <NSURLConnectionDelegate>)self];
                 [self _downloadStarted];
             }
             return self;
@@ -228,13 +228,13 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return self;
 }
 
-+ _downloadWithLoadingResource:(NSURLConnection *)resource
++ _downloadWithLoadingResource:(NSURLConnection *)connection
                        request:(NSURLRequest *)request
                       response:(NSURLResponse *)response
                       delegate:(id)delegate
                          proxy:(WebResourceDelegateProxy *)proxy
 {
-    return [[[WebDownload alloc] _initWithLoadingResource:resource
+    return [[[WebDownload alloc] _initWithLoadingResource:connection
                                                   request:request
                                                  response:response
                                                  delegate:delegate
@@ -253,7 +253,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         [self _downloadStarted];
         
         [self _setDelegate:delegate];
-        [_private->resource loadWithDelegate:(id <NSURLConnectionDelegate>)self];
+        [_private->connection loadWithDelegate:(id <NSURLConnectionDelegate>)self];
         
         if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
             [_private->delegate download:self didStartFromRequest:_private->request];
@@ -294,8 +294,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if (_private->isDownloading) {
         _private->isDownloading = NO;
 
-        [_private->resource release];
-        _private->resource = nil;
+        [_private->connection release];
+        _private->connection = nil;
 
         [self _setDelegate:nil];
 
@@ -810,7 +810,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - (void)_cancelWithError:(WebError *)error
 {
-    [_private->resource cancel];
+    [_private->connection cancel];
     
     if (error) {
         if ([_private->delegate respondsToSelector:@selector(download:didFailDownloadingWithError:)]) {

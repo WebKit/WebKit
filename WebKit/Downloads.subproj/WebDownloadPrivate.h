@@ -13,7 +13,7 @@
 @class WebResourceDelegateProxy;
 
 @interface WebDownload (WebPrivate)
-+ _downloadWithLoadingResource:(NSURLConnection *)resource
++ _downloadWithLoadingResource:(NSURLConnection *)connection
                        request:(NSURLRequest *)request
                       response:(NSURLResponse *)response
                       delegate:(id)delegate
