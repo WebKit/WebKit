@@ -40,6 +40,7 @@ PROGRAMS = \
     qdate-test \
     qtime-test \
     qdatetime-test \
+    qsortedlist-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -135,7 +136,11 @@ qtime-test: qtime-test.o
 
 qdatetime-test: qdatetime-test.o
 	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
+        
+qsortedlist-test: qsortedlist-test.o
+	$(CXX) -o $@ $< $(LDFLAGS) $(LIBS)
 
+        
 depend: 
 
 #----------------------------------------------------------------------

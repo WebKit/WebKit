@@ -18,3 +18,4 @@ qt/qtime-test
 qt/qdatetime-test
 qt/qstring-test
 qt/qvector-test
+qt/qsortedlist-test
