@@ -230,6 +230,10 @@ public:
 
     int m_frameNameId;
 
+#ifdef _KWQ_TIMING        
+    double totalWriteTime;
+#endif
+
     KHTMLPartPrivate(KHTMLPart *part)
     {
         if (!cache_init) {
@@ -576,9 +580,6 @@ bool KHTMLPart::onlyLocalReferences() const
     return d->m_onlyLocalReferences;
 }
 
-#ifdef _KWQ_TIMING        
-    static double totalWriteTime = 0;
-#endif
 
 
 
@@ -630,7 +631,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
     
     d->m_doc->open();    
 
-    totalWriteTime = 0;
+    d->totalWriteTime = 0;
 }
 
 
@@ -708,8 +709,8 @@ void KHTMLPart::write(const char *str, int len)
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    totalWriteTime += thisTime;
-    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %f, total = %f\n", len, thisTime, totalWriteTime);
+    d->totalWriteTime += thisTime;
+    KWQDEBUGLEVEL4 (0x200, "%s bytes = %d, seconds = %f, total = %f\n", d->m_url.url().latin1(), len, thisTime, d->totalWriteTime);
 #endif
 
 }
