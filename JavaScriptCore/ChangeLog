@@ -1,3 +1,5 @@
+=== Safari-187 ===
+
 2005-02-11  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3985118> DOM objects not being marshaled on JS->native calls

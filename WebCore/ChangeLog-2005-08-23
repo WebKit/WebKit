@@ -1,3 +1,5 @@
+=== Safari-187 ===
+
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4008163> dynamic support for -apple-dashboard-region is flakey

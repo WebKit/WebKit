@@ -1,3 +1,5 @@
+=== Safari-187 ===
+
 2005-02-17  Vicki Murley <vicki@apple.com>
 
 	- roll out this change, since it causes a 1.5% performance regression
