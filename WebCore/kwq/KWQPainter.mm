@@ -392,10 +392,10 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
             sw = (int)[pixmap.nsimage size].width;
         if (sh == -1)
             sh = (int)[pixmap.nsimage size].height;
-        [pixmap.nsimage drawInRect: NSMakeRect(x, y, sw, sh) 
-                    fromRect: NSMakeRect(sx, sy, sw, sh)
-                    operation: NSCompositeSourceOver	// Renders transparency correctly
-                    fraction: 1.0];
+		[pixmap.nsimage drawInRect: NSMakeRect(x, y, sw, sh) 
+				fromRect: NSMakeRect(sx, sy, sw, sh)
+				operation: NSCompositeSourceOver	// Renders transparency correctly
+				fraction: 1.0];
     }
     
     _unlockFocus();

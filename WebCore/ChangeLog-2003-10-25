@@ -1,5 +1,14 @@
 2002-05-16  Richard J. Williamson  <rjw@apple.com>
 
+	Fixed 2896350.  Ignore DPI in images and render directly at pixel size.
+	
+	* kwq/KWQPainter.mm:
+	(QPainter::drawPixmap):
+	* kwq/KWQPixmap.mm:
+	(QPixmap::QPixmap):
+
+2002-05-16  Richard J. Williamson  <rjw@apple.com>
+
 	Fixed 2925638.  Don't send last progress message from resourceDataDidBecomeAvailable,
 	it is sent from IFURLHandleResourceDidFinishLoading, avoiding duplication.
 	

@@ -43,6 +43,9 @@ QPixmap::QPixmap(const QByteArray &bytes)
 {
     NSData *data = [[NSData alloc] initWithBytes: bytes.data() length: bytes.size()];
     nsimage = [[NSImage alloc] initWithData: data];
+	NSArray *reps = [nsimage representations];
+	NSImageRep *rep = [reps objectAtIndex: 0];
+	[rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
     [data release];
     if (nsimage == nil){
         KWQDEBUG("unable to create image\n");
