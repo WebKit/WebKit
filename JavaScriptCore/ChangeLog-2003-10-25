@@ -1,5 +1,7 @@
 2002-04-08  Darin Adler  <darin@apple.com>
 
+	Reviwed by: Maciej Stachowiak  <mjs@apple.com>
+
 	* JavaScriptCore.pbproj/project.pbxproj: Re-added -Wno-format-y2k.
 
 2002-04-04  Darin Adler  <darin@apple.com>
