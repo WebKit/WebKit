@@ -2338,42 +2338,55 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     return false;
 }
 
+void DeleteSelectionCommand::setStartNode(NodeImpl *node)
+{
+    NodeImpl *old = m_startNode;
+    m_startNode = node;
+    if (m_startNode)
+        m_startNode->ref();
+    if (old)
+        old->deref();
+}
+
 void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
+    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd);
+    bool endAtEndOfBlock = isEndOfBlock(visibleEnd);
 
-    if (startOffset == 0 && m_startNode->isBlockFlow() && m_startBlock != m_endBlock && !m_endBlock->isAncestor(m_startBlock)) {
-        // The block containing the start of the selection is completely selected. 
-        // See if it can be deleted in one step right here.
-        ASSERT(!m_downstreamEnd.node()->isAncestor(m_startNode));
-
-        // The next few lines help us deal with a bit of a quirk.
-        //     1. Open a new Blot or Mail document
-        //     2. hit Return ten times or so
-        //     3. Type a letter (do not hit Return after it)
-        //     4. Type shift-up-arrow to select the line containing the letter and the previous blank line
-        //     5. Hit Delete
-        // You expect the insertion point to wind up at the start of the line where your selection began.
-        // Because of the nature of HTML, the editing code needs to perform a special check to get
-        // this behavior. So:
-        // If the entire start block is selected, and
-        //     a) the selection does not extend to the end of the document, then delete the start block, otherwise
-        //     b) the selection extends to the end of the document, then do not delete the start block.
-        //
-        NodeImpl *old = m_startNode;
-        VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd);
-        if (isEndOfDocument(visibleEnd) && !isFirstVisiblePositionOnLine(visibleEnd)) {
-            m_startNode = m_startBlock->firstChild();
+    // Handle some special cases where the selection begins and ends on specific visible units.
+    // Sometimes a node that is actually selected needs to be retained in order to maintain
+    // user expectations for the delete operation. Here is an example:
+    //     1. Open a new Blot or Mail document
+    //     2. hit Return ten times or so
+    //     3. Type a letter (do not hit Return after it)
+    //     4. Type shift-up-arrow to select the line containing the letter and the previous blank line
+    //     5. Hit Delete
+    // You expect the insertion point to wind up at the start of the line where your selection began.
+    // Because of the nature of HTML, the editing code needs to perform a special check to get
+    // this behavior. So:
+    // If the entire start block is selected, and the selection does not extend to the end of the 
+    // end of a block other than the block containing the selection start, then do not delete the 
+    // start block, otherwise delete the start block.
+    // A similar case is provided to cover selections starting in BR elements.
+    if (startOffset == 1 && m_startNode->id() == ID_BR) {
+        setStartNode(m_startNode->traverseNextNode());
+        startOffset = 0;
+    }
+    if (m_startBlock != m_endBlock && startOffset == 0 && m_startNode->id() == ID_BR && endAtEndOfBlock) {
+        // Don't delete the BR element
+        setStartNode(m_startNode->traverseNextNode());
+    }
+    else if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart))) {
+        if (!isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
+            // Delete all the children of the block, but not the block itself.
+            setStartNode(m_startBlock->firstChild());
         }
         else {
-            // shift the start node to the start of the next block.
-            m_startNode = m_startBlock->traverseNextSibling();
+            // The whole block can be deleted.
+            setStartNode(m_startBlock->traverseNextSibling());
             removeFullySelectedNode(m_startBlock);
         }
-
-        if (m_startNode)
-            m_startNode->ref();
-        old->deref();
         startOffset = 0;
     }
     else if (startOffset >= m_startNode->caretMaxOffset()) {
@@ -2388,10 +2401,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
         
         // shift the start node to the next
-        NodeImpl *old = m_startNode;
-        m_startNode = old->traverseNextNode();
-        m_startNode->ref();
-        old->deref();
+        setStartNode(m_startNode->traverseNextNode());
         startOffset = 0;
     }
 

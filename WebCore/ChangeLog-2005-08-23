@@ -1,3 +1,34 @@
+2005-02-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3986155> Insertion point goes to beginning of doc after deleting
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::setStartNode): New convenience to handle reference counting when setting.
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): This contains the crux of the bug fix. Improve tests
+        that detect when a selected node needs to be retained, rather than deleted, to preserve the intent of the user.
+        This has the side effect of causing the insertion point placement code to succeed rather than fail. Before
+        this fix, the failure of the insertion point placement code caused the insertion point to jump to the start
+        of the document, which is the symptom that can be perceived by users when editing.
+        * khtml/editing/htmlediting.h: Add setStartNode declaration.
+        * khtml/editing/visible_units.cpp:
+        (khtml::startOfBlock): This function had a stubbed-in non-tested implementation. Implement and 
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-001.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-002.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-003.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-004.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-005-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-005.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-006-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-006.html: Added.
+
 === Safari-183 ===
 
 2005-02-03  Richard Williamson   <rjw@apple.com>

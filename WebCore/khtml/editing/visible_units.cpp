@@ -53,9 +53,16 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     NodeImpl *de = d->documentElement();
     if (!de)
         return VisiblePosition();
+    NodeImpl *boundary = n->enclosingBlockFlowElement();
+    if (!boundary)
+        return VisiblePosition();
+    bool isContentEditable = boundary->isContentEditable();
+    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable()) {
+        boundary = boundary->parentNode();
+    }
 
     Range searchRange(d);
-    searchRange.setStartBefore(de);
+    searchRange.setStartBefore(boundary);
     Position end(pos.equivalentRangeCompliantPosition());
     searchRange.setEnd(end.node(), end.offset());
     SimplifiedBackwardsTextIterator it(searchRange);
@@ -122,11 +129,18 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     NodeImpl *de = d->documentElement();
     if (!de)
         return VisiblePosition();
+    NodeImpl *boundary = n->enclosingBlockFlowElement();
+    if (!boundary)
+        return VisiblePosition();
+    bool isContentEditable = boundary->isContentEditable();
+    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable()) {
+        boundary = boundary->parentNode();
+    }
 
     Range searchRange(d);
     Position start(pos.equivalentRangeCompliantPosition());
     searchRange.setStart(start.node(), start.offset());
-    searchRange.setEndAfter(de);
+    searchRange.setEndAfter(boundary);
     TextIterator it(searchRange, RUNFINDER);
     QString string;
     unsigned next = 0;
@@ -437,6 +451,8 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
     long offset = p.offset();
 
     for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
+        if (n->isContentEditable() != startNode->isContentEditable())
+            break;
         RenderObject *r = n->renderer();
         if (!r)
             continue;
@@ -520,38 +536,13 @@ VisiblePosition nextParagraphPosition(const VisiblePosition &p, EAffinity affini
 
 // ---------
 
-// written, but not yet tested
 VisiblePosition startOfBlock(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();
     NodeImpl *startNode = p.node();
     if (!startNode)
         return VisiblePosition();
-
-    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-
-    NodeImpl *node = startNode;
-    long offset = p.offset();
-
-    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
-        RenderObject *r = n->renderer();
-        if (!r)
-            continue;
-        RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
-            continue;
-        if (r->isBlockFlow())
-            break;
-        if (r->isText()) {
-            node = n;
-            offset = 0;
-        } else if (r->isReplaced()) {
-            node = n;
-            offset = 0;
-        }
-    }
-
-    return VisiblePosition(node, offset);
+    return VisiblePosition(Position(startNode->enclosingBlockFlowElement(), 0));
 }
 
 // written, but not yet tested
