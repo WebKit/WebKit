@@ -938,6 +938,7 @@ DOM::ElementImpl *createStyleSpanElement(DOM::DocumentImpl *document);
 
 bool isNodeRendered(const DOM::NodeImpl *);
 bool isProbablyBlock(const DOM::NodeImpl *);
+bool isProbablyTableStructureNode(const DOM::NodeImpl *);
 bool isMailBlockquote(const DOM::NodeImpl *);
 DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *);
 

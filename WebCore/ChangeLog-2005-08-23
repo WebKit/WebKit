@@ -1,3 +1,18 @@
+2005-02-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/4026906> Paste of HTML table content can break table structure
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::pruneEmptyNodes): Call new isProbablyTableStructureNode() function to prevent
+        removal of empty table structure nodes.
+        (khtml::ReplacementFragment::removeUnrenderedNodesUsingTestRendering): Ditto.
+        (khtml::isProbablyTableStructureNode): New helper function.
+        * khtml/editing/htmlediting.h: Declare new helper.
+
 2005-02-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4023566> Stickies: Crash in ReplacementFragment::insertFragmentForTestRendering on paste

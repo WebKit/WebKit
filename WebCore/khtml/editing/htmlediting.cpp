@@ -4171,7 +4171,7 @@ void ReplacementFragment::pruneEmptyNodes()
         NodeImpl *node = m_fragment->firstChild();
         while (node) {
             if ((node->isTextNode() && static_cast<TextImpl *>(node)->length() == 0) ||
-                (isProbablyBlock(node) && node->childNodeCount() == 0)) {
+                (isProbablyBlock(node) && !isProbablyTableStructureNode(node) && node->childNodeCount() == 0)) {
                 NodeImpl *next = node->traverseNextSibling();
                 removeNode(node);
                 node = next;
@@ -4310,7 +4310,7 @@ void ReplacementFragment::removeUnrenderedNodesUsingTestRendering(NodeImpl *hold
     QPtrList<NodeImpl> unrendered;
 
     for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-        if (!isNodeRendered(node))
+        if (!isNodeRendered(node) && !isTableStructureNode(node))
             unrendered.append(node);
     }
 
@@ -5649,6 +5649,23 @@ bool isProbablyBlock(const NodeImpl *node)
             return true;
     }
     
+    return false;
+}
+
+bool isProbablyTableStructureNode(const NodeImpl *node)
+{
+    if (!node)
+        return false;
+    
+    switch (node->id()) {
+        case ID_TABLE:
+        case ID_TBODY:
+        case ID_TD:
+        case ID_TFOOT:
+        case ID_THEAD:
+        case ID_TR:
+            return true;
+    }
     return false;
 }
 
