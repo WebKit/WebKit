@@ -1,3 +1,20 @@
+2003-07-29  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3346707 -- AutoFill does not fill in email address on 
+	Apple Store new account page
+
+        Reviewed by Darin
+
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRegExp.mm:
+        (QRegExp::searchRev):
+	This method (that Trey had added) used a placeholder 2nd parameter
+	that was always -1 and should have been ignored. But it was
+	being passed into QRegExp::match as the starting index, which
+	happened to work in many cases, but not if the byte of memory
+	before the string happened to be a null character. Fixed by
+	eliminating the placeholder parameter entirely.
+
 2003-07-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

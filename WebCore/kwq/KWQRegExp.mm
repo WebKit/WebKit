@@ -147,7 +147,7 @@ QString QRegExp::pattern() const
 }
 
 int QRegExp::match(const QString &str, int startFrom, int *matchLength, bool treatStartAsStartOfInput) const
-{
+{    
     const char *cstring = str.latin1() + startFrom;
 
     int flags = 0;
@@ -181,9 +181,8 @@ int QRegExp::search(const QString &str, int startFrom) const
     return match(str, startFrom, NULL, false);
 }
 
-int QRegExp::searchRev(const QString &str, int startFrom) const
+int QRegExp::searchRev(const QString &str) const
 {
-    ASSERT(startFrom == -1);
     // FIXME: Total hack for now.  Search forward, return the last, greedy match
     int start = 0;
     int pos;
@@ -191,14 +190,14 @@ int QRegExp::searchRev(const QString &str, int startFrom) const
     int lastMatchLength = -1;
     do {
         int matchLength;
-        pos = match(str, startFrom, &matchLength, start == 0);
+        pos = match(str, start, &matchLength, start == 0);
         if (pos >= 0) {
             if ((pos+matchLength) > (lastPos+lastMatchLength)) {
                 // replace last match if this one is later and not a subset of the last match
                 lastPos = pos;
                 lastMatchLength = matchLength;
             }
-            startFrom = pos + 1;
+            start = pos + 1;
         }
     } while (pos != -1);
     d->lastMatchPos = lastPos;
