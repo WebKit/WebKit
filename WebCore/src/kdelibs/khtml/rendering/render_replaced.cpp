@@ -142,7 +142,7 @@ void RenderWidget::detach()
         if ( m_view )
             m_view->removeChild( m_widget );
 
-#ifdef APPLE_CHANGES
+#ifndef APPLE_CHANGES
         // References the widget here is not safe.
         m_widget->removeEventFilter( this );
         m_widget->setMouseTracking( false );

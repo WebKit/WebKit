@@ -1,5 +1,11 @@
 2002-04-02  Richard Williamson  <rjw@apple.com>
 
+        Fixed a fix, shoulda' been a #ifndef to exclude unnecessary code.
+        
+	* src/kdelibs/khtml/rendering/render_replaced.cpp: (RenderWidget::detach):
+
+2002-04-02  Richard Williamson  <rjw@apple.com>
+
         More noisy bulletproofing.  Still need to find source of problem.
         
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::~KHTMLPart), (KHTMLPart::slotData),
