@@ -119,6 +119,18 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
                 if(e->id() == ID_FORM)
                     found = true;
                 break;
+            case DOC_NAMEABLE_ITEMS:
+                if(e->id() == ID_IMG)
+                    found = true;
+                if(e->id() == ID_FORM)
+                    found = true;
+                if(e->id() == ID_APPLET)
+                    found = true;
+                if(e->id() == ID_EMBED)
+                    found = true;
+                if(e->id() == ID_OBJECT)
+                    found = true;
+                break;
             case TABLE_TBODIES:
                 if(e->id() == ID_TBODY)
                     found = true;
@@ -352,7 +364,7 @@ void HTMLCollectionImpl::updateNameCache() const
                  e->id() == ID_APPLET || e->id() == ID_OBJECT ||
                  e->id() == ID_EMBED))) {
             // add to name cache
-            QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+            QPtrVector<NodeImpl> *nameVector = info->nameCache.find(nameAttr);
             if (!nameVector) {
                 nameVector = new QPtrVector<NodeImpl>;
                 info->nameCache.insert(nameAttr, nameVector);
@@ -656,7 +668,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
         }
         if (!nameAttr.isEmpty() && idAttr != nameAttr && !foundInputElements.find(nameAttr)) {
             // add to name cache
-            QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+            QPtrVector<NodeImpl> *nameVector = info->nameCache.find(nameAttr);
             if (!nameVector) {
                 nameVector = new QPtrVector<NodeImpl>;
                 info->nameCache.insert(nameAttr, nameVector);

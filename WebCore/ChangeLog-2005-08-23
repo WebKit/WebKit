@@ -1,3 +1,23 @@
+2004-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3907705> REGRESSION (172-173): DHTML menus are broken at hrweb.apple.com
+        
+	* khtml/dom/html_document.cpp:
+        (HTMLDocument::nameableItems): New method, wrapper for HTMLCollection creation.
+        * khtml/dom/html_document.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet): use doc.nameableItems(), not doc.all()!
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::traverseNextItem): Added new DOC_NAMEABLE_ITEMS type, this represents
+	the items that can be accessed directly as a document propery, in particular forms, images,
+	objects, applets and embeds.
+        (HTMLCollectionImpl::updateNameCache): Fix some nameCache/idCache confusion.
+        (HTMLFormCollectionImpl::updateNameCache): Ditto.
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::): Added new type.
+
 2004-12-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -190,6 +190,12 @@ HTMLCollection HTMLDocument::all() const
     return HTMLCollection(impl, HTMLCollectionImpl::DOC_ALL);
 }
 
+HTMLCollection HTMLDocument::nameableItems() const
+{
+    if(!impl) return HTMLCollection();
+    return HTMLCollection(impl, HTMLCollectionImpl::DOC_NAMEABLE_ITEMS);
+}
+
 DOMString HTMLDocument::cookie() const
 {
    if (!impl) return DOMString();

@@ -300,6 +300,15 @@ public:
      */
     HTMLCollection all() const;
 
+    /**
+     * Not part of the DOM
+     *
+     * A collection of all the <code>IMG</code>, <code>OBJECT</code>,
+     * <code>EMBED</code>, <code>APPLET</code>, and <code>FORM</code> tags in
+     * a document. Used when looking up elements by name as properties on the document
+     * object, e.g. document.myForm for a form with name attribute of "myForm".
+     */
+    HTMLCollection nameableItems() const;
 };
 
 }; //namespace
