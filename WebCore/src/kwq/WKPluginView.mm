@@ -74,7 +74,6 @@
     npErr = NPP_SetWindow(instance, &window);
     KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d rect.origin.x=%f rect.origin.y=%f\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port, rect.origin.x, rect.origin.y);
     KWQDebug("frame.size.height=%d frame.size.width=%d frame.origin.x=%f frame.origin.y=%f\n", (int)frame.size.height, (int)frame.size.width, frame.origin.x, frame.origin.y);
-    KWQDebug("bounds.size.height=%d bounds.size.width=%d  bounds.origin.x=%f bounds.origin.y=%f\n\n", (int)bounds.size.height, (int)bounds.size.width, bounds.origin.x, bounds.origin.y);
     
     if(!transferred){
         [url getCString:cURL];
