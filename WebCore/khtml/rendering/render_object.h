@@ -117,7 +117,9 @@ public:
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint,
                                bool checkParent=true);
     virtual void positionChildLayers() { }
-    virtual bool requiresLayer() { return !isTableCell() && (isPositioned() || isRelPositioned()); }
+    virtual bool requiresLayer() {
+        return isRoot() || (!isTableCell() && (isPositioned() || isRelPositioned()));
+    }
     
     virtual QRect getOverflowClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     virtual QRect getClipRect(int tx, int ty) { return QRect(0,0,0,0); }
@@ -184,7 +186,7 @@ public:
     virtual bool isListItem() const { return false; }
     virtual bool isListMarker() const { return false; }
     virtual bool isCanvas() const { return false; }
-    bool isRoot() const { return parent() && parent()->isCanvas(); }
+    bool isRoot() const;
     virtual bool isBR() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableRow() const { return false; }

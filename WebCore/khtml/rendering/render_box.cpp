@@ -64,8 +64,17 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
 
 void RenderBox::setStyle(RenderStyle *_style)
 {
+    // Make sure the root element retains its display:block type even across style
+    // changes.
+    if (isRoot() && _style->display() != NONE)
+        _style->setDisplay(BLOCK);
+    
     RenderObject::setStyle(_style);
 
+    // The root always paints its background/border.
+    if (isRoot())
+        setShouldPaintBackgroundOrBorder(true);
+    
     // ### move this into the parser. --> should work. Lars
     // if only horizontal position was defined, vertical should be 50%
     //if(!_style->backgroundXPosition().isVariable() && _style->backgroundYPosition().isVariable())

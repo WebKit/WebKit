@@ -57,6 +57,9 @@ public:
                        PaintAction paintAction);
     void paintObject(QPainter *p, int _x, int _y,
                      int _w, int _h, int _tx, int _ty, PaintAction paintAction);
+
+    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
+                                     int _w, int _h, int _tx, int _ty);
     
     virtual void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
     virtual void clearSelection(bool doRepaint=true);

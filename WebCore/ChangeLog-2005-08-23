@@ -1,5 +1,28 @@
 2003-05-08  David Hyatt  <hyatt@apple.com>
 
+	Fix the definition of isRoot() so that it doesn't depend on
+	the object being in the render tree yet (and to avoid any
+	virtual function calls as well).
+
+	Make sure that requiresLayer() returns true if the object is
+	the root.  This way the layer isn't destroyed when you e.g.,
+	hit Cmd+ to increase font size.  
+
+	This fixes bug 3252496.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isRoot):
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::createRenderer):
+
+2003-05-08  David Hyatt  <hyatt@apple.com>
+
 	Background-position-x and y should be length|percentage.  Number
 	is not a valid option.  Need to remove this so that the quirk will
 	kick in that translates numbers to pixels.  Fixes an issue on
