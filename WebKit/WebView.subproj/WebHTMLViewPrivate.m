@@ -667,7 +667,15 @@ static BOOL inNSTextViewDrawRect;
     [super drawInsertionPointInRect:rect color:color turnedOn:NO];
     if (turnedOn) {
         rect.size.width = 1;
-        [self setNeedsDisplayInRect:rect];
+        
+        // Call the setNeedsDisplayInRect function in NSView.
+        // If we call the one in NSTextView through the normal Objective-C dispatch
+        // we will reenter the caret blinking code and end up with a nasty crash
+        // (see Radar 3250608).
+        SEL selector = @selector(setNeedsDisplayInRect:);
+        typedef void (*IMPWithNSRect)(id, SEL, NSRect);
+        IMPWithNSRect implementation = (IMPWithNSRect)[NSView instanceMethodForSelector:selector];
+        implementation(self, selector, rect);
     }
 }
 

@@ -1,3 +1,18 @@
+2003-07-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3250608 -- REGRESSION (74-85): reproducible Safari crash in blinkCaretTimerAction
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebNSTextView drawInsertionPointInRect:color:turnedOn:]):
+        Use NSView's setNeedsDisplayInRect: instead of the one in NSTextView.
+        This avoids the layout that the NSTextView version of the call might do.
+        By definition, we don't need layout to draw the insertion point, because we did
+        the layout to find where the insertion point should display. If we do the layout
+        we can end up recursing into the insertion point drawing code, which wreaks major
+        havoc. Still no idea why this happened less in version 74.
+
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
