@@ -1,6 +1,6 @@
 SUBDIRS = khtml kwq
 
-all-am: previous-clean-timestamp
+all-am:
 	pbxbuild -buildstyle $(BUILDSTYLE)
 clean-am:
 	pbxbuild clean
@@ -15,5 +15,6 @@ noinst_DATA = WebCore-combined.exp
 BUILT_SOURCES = $(noinst_DATA)
 CLEANFILES = $(BUILT_SOURCES)
 
+all: previous-clean-timestamp
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@
