@@ -1,5 +1,12 @@
 2003-07-13  Darin Adler  <darin@apple.com>
 
+        Fixed symbolic link path as Matt Reda suggested.
+
+        * WebKit.pbproj/project.pbxproj: Changed paths in both of Maciej's new build phases
+        to use Versions/Current instead of Versions/A.
+
+2003-07-13  Darin Adler  <darin@apple.com>
+
         Fixed DSTROOT path as Eric Weiss suggested.
 
         * WebKit.pbproj/project.pbxproj: Changed paths in both of Maciej's new build phases.
