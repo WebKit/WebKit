@@ -283,9 +283,13 @@ QString NodeImpl::recursive_toHTML(bool start) const
                 me += " " + attrs.item(j).nodeName().string() + "=\"" + attrs.item(j).nodeValue().string() + "\"";
         }
         // print ending bracket of start tag
-        if( firstChild() == 0 )     // if element has no endtag
-                me += " />\n";
-        else                        // if element has endtag
+        if( firstChild() == 0 ) {    // if element has no endtag
+	    if (isHTMLElement()) {
+		me +=">";
+	    } else {
+                me +="/>";
+	    }
+	} else                        // if element has endtag
         {
                 NodeImpl* temp = nextSibling();
                 if(temp)

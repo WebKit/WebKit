@@ -1,5 +1,14 @@
 2003-08-01  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3265419 - homepage preview doesn't show Images with names longer than 17 chars
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTML):
+
+2003-08-01  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed 3339255 - REGRESSION (73-85): javascript failure at gia.apple.com
