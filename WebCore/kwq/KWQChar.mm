@@ -43,6 +43,8 @@ static CFMutableStringRef GetScratchUniCharString()
     return s;
 }
 
+// constructors, copy constructors, and destructors ----------------------------
+
 QChar::QChar()
 {
     c = 0;
@@ -87,6 +89,8 @@ QChar::~QChar()
 {
     // do nothing because the single data member is a UniChar
 }
+
+// member functions ------------------------------------------------------------
 
 ushort QChar::unicode() const
 {
@@ -158,20 +162,26 @@ bool QChar::isPunct() const
 
 QChar QChar::lower() const
 {
-    scratchUniChar = c;
-    CFStringLowercase(GetScratchUniCharString(), NULL);
-    if (scratchUniChar) {
-	return QChar(scratchUniChar);
+    CFMutableStringRef scratchUniCharString = GetScratchUniCharString();
+    if (scratchUniCharString) {
+        scratchUniChar = c;
+        CFStringLowercase(scratchUniCharString, NULL);
+        if (scratchUniChar) {
+            return QChar(scratchUniChar);
+        }
     }
     return *this;
 }
 
 QChar QChar::upper() const
 {
-    scratchUniChar = c;
-    CFStringUppercase(GetScratchUniCharString(), NULL);
-    if (scratchUniChar) {
-	return QChar(scratchUniChar);
+    CFMutableStringRef scratchUniCharString = GetScratchUniCharString();
+    if (scratchUniCharString) {
+        scratchUniChar = c;
+        CFStringUppercase(scratchUniCharString, NULL);
+        if (scratchUniChar) {
+            return QChar(scratchUniChar);
+        }
     }
     return *this;
 }
@@ -196,6 +206,8 @@ QChar QChar::mirroredChar() const
     // return mirrored character if it is mirrored else return itself
     return *this;
 }
+
+// operators -------------------------------------------------------------------
 
 int operator==(QChar qc1, QChar qc2)
 {
