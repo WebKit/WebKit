@@ -225,6 +225,8 @@ public:
   // Made this static so frame names are globally unique and unsigned
   // so overflow is handled more gracefully.
   static unsigned m_frameNameId;
+  bool m_savingPageState:1;
+  bool m_restoringPageState:1;
 #else
   int m_frameNameId;
 #endif

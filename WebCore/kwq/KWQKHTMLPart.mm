@@ -32,6 +32,8 @@
 #import "render_text.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
+#import "kjs_window.h"
+#import <kjs/property_map.h>
 
 #import "WebCoreBridge.h"
 #import "WebCoreBridgePrivate.h"
@@ -40,6 +42,8 @@
 #import "KWQDummyView.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
+
+#import "xml/dom2_eventsimpl.h"
 
 #undef _KWQ_TIMING
 
@@ -219,7 +223,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     
 void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 {
-    if (_ownsView) {
+    if (_ownsView && !d->m_doc->inPageCache()) {
         delete d->m_view;
     }
     d->m_view = view;
@@ -330,7 +334,11 @@ RenderObject *KWQKHTMLPart::renderer()
 
 QString KWQKHTMLPart::userAgent() const
 {
-    return QString::fromNSString([_bridge userAgentForURL:part->m_url.url().getNSString()]);
+    NSString *us = [_bridge userAgentForURL:part->m_url.url().getNSString()];
+         
+    if (us)
+        return QString::fromNSString(us);
+    return QString();
 }
 
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
@@ -412,6 +420,118 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
     // Then get the next key view in the order determined by the DOM.
     NodeImpl *node = nodeForWidget(startingWidget);
     return partForNode(node)->nextKeyView(node, direction);
+}
+
+bool KWQKHTMLPart::canCachePage()
+{
+    // Only save page state if:
+    // 1.  We're not a frame or frameset.
+    // 2.  The page has no javascript timers.
+    // 3.  The page has no unload handler.
+    // 4.  The page has no plugins.
+    if (d->m_doc &&
+        (d->m_frames.count() ||
+        part->parentPart() ||
+        d->m_objects.count() ||
+        d->m_doc->getWindowEventListener (DOM::EventImpl::UNLOAD_EVENT) ||
+        (d->m_jscript && KJS::Window::retrieveWindow(part)->hasTimeouts()))){
+        printf ("Not saving page state for %s\n", part->m_url.url().latin1());
+        return false;
+    }
+    return true;
+}
+
+void KWQKHTMLPart::saveWindowProperties(KJS::SavedProperties *windowProperties)
+{
+    KJS::Window::retrieveWindow(part)->saveProperties(*windowProperties);
+}
+
+void KWQKHTMLPart::saveLocationProperties(KJS::SavedProperties *locationProperties)
+{
+    KJS::Window::retrieveWindow(part)->location()->saveProperties(*locationProperties);
+}
+
+void KWQKHTMLPart::restoreWindowProperties(KJS::SavedProperties *windowProperties)
+{
+    KJS::Window::retrieveWindow(part)->restoreProperties(*windowProperties);
+}
+
+void KWQKHTMLPart::restoreLocationProperties(KJS::SavedProperties *locationProperties)
+{
+    KJS::Window::retrieveWindow(part)->location()->restoreProperties(*locationProperties);
+}
+
+void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties)
+{
+    printf ("KWQKHTMLPart::openURLFromPageCache\n");
+
+    d->m_redirectionTimer.stop();
+
+    // We still have to close the previous part page.
+    if (!d->m_restored){
+        part->closeURL();
+    }
+            
+    d->m_bComplete = false;
+    
+    // Don't re-emit the load event.
+    d->m_bLoadEventEmitted = true;
+    
+    // delete old status bar msg's from kjs (if it _was_ activated on last URL)
+    if( d->m_bJScriptEnabled )
+    {
+        d->m_kjsStatusBarText = QString::null;
+        d->m_kjsDefaultStatusBarText = QString::null;
+    }
+
+    part->m_url = *url;
+    
+    // set the javascript flags according to the current url
+    d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(part->m_url.host());
+    d->m_bJScriptDebugEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptDebugEnabled();
+    d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled(part->m_url.host());
+    d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled(part->m_url.host());
+    
+    // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
+    // data arrives) (Simon)
+    if(part->m_url.protocol().startsWith( "http" ) && !part->m_url.host().isEmpty() && part->m_url.path().isEmpty()) {
+        part->m_url.setPath("/");
+        emit d->m_extension->setLocationBarURL( part->m_url.prettyURL() );
+    }
+    
+    // copy to m_workingURL after fixing m_url above
+    d->m_workingURL = part->m_url;
+        
+    emit part->started( 0L );
+    
+    // -----------begin-----------
+    part->clear();
+    
+    d->m_bCleared = false;
+    d->m_cacheId = 0;
+    d->m_bComplete = false;
+    d->m_bLoadEventEmitted = false;
+            
+    d->m_referrer = part->m_url.url();
+    part->m_url = *url;
+    KURL baseurl;
+    
+    // We don't need KDE chained URI handling or window caption setting
+    if ( !part->m_url.isEmpty() ){
+        baseurl = part->m_url;
+    }
+    
+    d->m_doc = doc;
+    d->m_doc->ref();
+
+    setView (doc->view(), true);
+    
+    updatePolicyBaseURL();
+    
+    d->m_doc->setParsing(true);
+    
+    restoreWindowProperties (windowProperties);
+    restoreLocationProperties (locationProperties);
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForWidget(QWidget *widget)

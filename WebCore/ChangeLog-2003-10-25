@@ -1,3 +1,42 @@
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
+        Changes for back/forward.
+
+        * ForwardingHeaders/kjs/property_map.h: Added.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::hasTimeouts):
+        (WindowQObject::hasTimeouts):
+        * khtml/ecma/kjs_window.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::detach):
+        (DocumentImpl::inPageCache):
+        (DocumentImpl::setInPageCache):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setView):
+        (KWQKHTMLPart::userAgent):
+        (KWQKHTMLPart::nextKeyViewForWidget):
+        (KWQKHTMLPart::canCachePage):
+        (KWQKHTMLPart::saveWindowProperties):
+        (KWQKHTMLPart::saveLocationProperties):
+        (KWQKHTMLPart::restoreWindowProperties):
+        (KWQKHTMLPart::restoreLocationProperties):
+        (KWQKHTMLPart::openURLFromPageCache):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:headers:lastModified:pageCache:]):
+        (-[WebCoreBridge saveDocumentToPageCache]):
+        (-[WebCoreBridge canCachePage]):
+        (attributedString):
+        (-[KWQPageState initWithDocument:DOM::URL:windowProperties:KJS::locationProperties:KJS::]):
+        (-[KWQPageState dealloc]):
+        (-[KWQPageState DOM::]):
+        (-[KWQPageState URL]):
+        (-[KWQPageState KJS::]):
+
 2002-11-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3025963.  Ensure that KJS looks for the form on the

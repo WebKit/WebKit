@@ -852,6 +852,13 @@ void Window::clearTimeout(int timerId)
   winq->clearTimeout(timerId);
 }
 
+#if APPLE_CHANGES
+bool Window::hasTimeouts()
+{
+    return winq->hasTimeouts();
+}
+#endif
+
 void Window::scheduleClose()
 {
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
@@ -1518,6 +1525,13 @@ void WindowQObject::timeoutClose()
     delete parent->m_part;
   }
 }
+
+#if APPLE_CHANGES
+bool WindowQObject::hasTimeouts()
+{
+    return scheduledActions.count();
+}
+#endif
 
 Value FrameArray::get(ExecState *exec, const Identifier &p) const
 {

@@ -1,3 +1,10 @@
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
+        Changes for back/forward.  Currently disabled.
+
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+
 2002-11-25  Darin Adler  <darin@apple.com>
 
         * kjs/property_map.cpp: Rearrange code a little bit and tweak indentation.

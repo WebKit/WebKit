@@ -412,6 +412,12 @@ public:
     KWQSignal m_finishedParsing;
 
     static Document createInstance (DocumentImpl *impl);
+
+    bool inPageCache();
+    void setInPageCache (bool flag);
+   
+private:
+    bool m_inPageCache;
 #endif
 
 protected:

@@ -52,6 +52,8 @@
 
 #import "WebCoreDOMPrivate.h"
 
+#import <kjs/property_map.h>
+
 using KParts::URLArgs;
 
 using DOM::DocumentImpl;
@@ -60,6 +62,8 @@ using khtml::parseURL;
 using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
+
+using KJS::SavedProperties;
 
 NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
@@ -72,6 +76,20 @@ NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
 NSString *WebCoreElementNameKey = 		@"WebElementName";
 NSString *WebCoreElementStringKey = 		@"WebElementString";
+
+@interface KWQPageState : NSObject
+{
+    DOM::DocumentImpl *document;
+    KURL *URL;
+    KJS::SavedProperties *windowProperties;
+    KJS::SavedProperties *locationProperties;
+}
+- initWithDocument: (DOM::DocumentImpl *)doc URL: (KURL)u windowProperties: (KJS::SavedProperties *)wp locationProperties: (KJS::SavedProperties *)lp;
+- (DOM::DocumentImpl *)document;
+- (KURL *)URL;
+- (KJS::SavedProperties *)windowProperties;
+- (KJS::SavedProperties *)locationProperties;
+@end
 
 @implementation WebCoreBridge
 
@@ -122,7 +140,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache: (NSDictionary *)pageCache
 {
     URLArgs args(_part->browserExtension()->urlArgs());
 
@@ -138,7 +156,12 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->browserExtension()->setURLArgs(args);
 
     // URL
-    _part->openURL([URL cString]);
+    if (pageCache){
+        KWQPageState *state = [pageCache objectForKey: @"WebCorePageState"];
+        _part->kwq->openURLFromPageCache([state document], [state URL], [state windowProperties], [state locationProperties]);
+    }
+    else
+        _part->openURL([URL cString]);
     
     // Refresh
     NSString *refreshHeader = [headers objectForKey:@"Refresh"];
@@ -197,6 +220,26 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
             
         doc->setRestoreState(s);
     }
+}
+
+- (BOOL)saveDocumentToPageCache
+{
+    DocumentImpl *doc = _part->kwq->document();
+    if (doc != 0){
+        KJS::SavedProperties *windowProperties = new KJS::SavedProperties();
+        KJS::SavedProperties *locationProperties = new KJS::SavedProperties();
+
+        _part->kwq->saveWindowProperties(windowProperties);
+        _part->kwq->saveLocationProperties(locationProperties);
+        KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument: doc URL:_part->m_url windowProperties:windowProperties locationProperties:locationProperties] autorelease];
+        return [self saveDocumentToPageCache: pageState];
+    }
+    return false;
+}
+
+- (BOOL)canCachePage
+{
+    return _part->kwq->canCachePage();
 }
 
 - (void)end
@@ -607,8 +650,8 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 {
     bool hasNewLine = true;
     bool hasParagraphBreak = true;
-DOM::Node n = _startNode;
-khtml::RenderObject *renderer;
+    DOM::Node n = _startNode;
+    khtml::RenderObject *renderer;
     NSFont *font;
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
     NSAttributedString *partialString;
@@ -842,3 +885,53 @@ DOM::Node next = n.firstChild();
 }
 
 @end
+
+@implementation KWQPageState
+- initWithDocument: (DOM::DocumentImpl *)doc URL: (KURL)u windowProperties: (KJS::SavedProperties *)wp locationProperties: (KJS::SavedProperties *)lp
+{
+    [super init];
+    doc->ref();
+    document = doc;
+    document->setInPageCache(YES);
+    URL = new KURL(u);
+    windowProperties = wp;
+    locationProperties =lp;
+    return self;
+
+}
+
+- (void)dealloc
+{
+    document->setInPageCache(NO);
+    document->deref();
+    document = 0;
+    delete URL;
+    URL = 0;
+    delete windowProperties;
+    delete locationProperties;
+    [super dealloc];
+}
+
+- (DOM::DocumentImpl *)document
+{
+    return document;
+}
+
+- (KURL *)URL
+{
+    return URL;
+}
+
+- (KJS::SavedProperties *)windowProperties
+{
+    return windowProperties;
+}
+
+- (KJS::SavedProperties *)locationProperties
+{
+    return locationProperties;
+}
+
+
+@end
+

@@ -1,5 +1,37 @@
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
+        Changes for back/forward.  Currently disabled.
+
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem setPageCacheEnabled:]):
+        (-[WebHistoryItem pageCache]):
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge saveDocumentToPageCache:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource startLoading]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _commitIfReady:]):
+        (-[WebDataSource _commitIfReady]):
+        (-[WebDataSource _setStoredInPageCache:]):
+        (-[WebDataSource _storedInPageCache]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _purgePageCache]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
         Fixed exception thrown often when creating mouseover status text (3110186).
         
         * WebView.subproj/WebHTMLViewPrivate.m:

@@ -38,7 +38,7 @@ namespace KJS {
     class SavedProperties {
     friend class PropertyMap;
     public:
-        SavedProperties() : _count(0), _properties(0) { }
+        SavedProperties();
         ~SavedProperties();
         
     private:

@@ -532,7 +532,7 @@ static const char * const stateNames[] = {
 
 - (BOOL)_canCachePage
 {
-    return YES;
+    return NO;
 }
 
 - (void)_purgePageCache

@@ -51,6 +51,10 @@ namespace khtml {
     class RenderPart;
 }
 
+namespace KJS {
+    class SavedProperties;
+}
+
 #ifdef __OBJC__
 @class NSView;
 @class WebCoreBridge;
@@ -94,6 +98,13 @@ public:
     void scheduleClose();
 
     void unfocusWindow();
+
+    bool canCachePage();
+    void saveWindowProperties(KJS::SavedProperties *windowProperties);
+    void saveLocationProperties(KJS::SavedProperties *locationProperties);
+    void restoreWindowProperties(KJS::SavedProperties *windowProperties);
+    void restoreLocationProperties(KJS::SavedProperties *locationProperties);
+    void openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties);
 
     void saveDocumentState();
     void restoreDocumentState();
