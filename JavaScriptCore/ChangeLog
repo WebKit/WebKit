@@ -7,7 +7,7 @@
         in the copy constructor.
         (KJS::CString::operator=): Use memcpy instead of strcpy for speed.
 
-        * JavaScriptCorePrefix.h: Add a definition of NULL here that matches the one in Merlot.
-        This makes us see warnings that otherwise would be Merlot-only warnings.
+        * JavaScriptCorePrefix.h: Add a definition of NULL here that takes advantage of the GNU
+        __null feature even if the system C library doesn't.
 
 == Rolled over to ChangeLog-2003-10-25 ==
