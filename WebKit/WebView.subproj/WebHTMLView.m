@@ -73,6 +73,7 @@ void _NSResetKillRingOperationFlag(void);
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
+- (void)_propagateDirtyRectsToOpaqueAncestors;
 @end
 
 @interface NSApplication (AppKitSecretsIKnowAbout)
@@ -169,6 +170,7 @@ static BOOL forceRealHitTest = NO;
 @interface NSView (WebHTMLViewFileInternal)
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_clearPrintingModeRecursive;
+- (void)_web_layoutIfNeededRecursive;
 - (void)_web_layoutIfNeededRecursive:(NSRect)rect testDirtyRect:(bool)testDirtyRect;
 @end
 
@@ -555,6 +557,19 @@ static BOOL forceRealHitTest = NO;
     _subviews = _private->savedSubviews;
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
+}
+
+// This is called when we are about to draw, but before our dirty rect is propagated to our ancestors.
+// That's the perfect time to do a layout, except that ideally we'd want to be sure that we're dirty
+// before doing it. As a compromise, when we're opaque we do the layout only when actually asked to
+// draw, but when we're transparent we do the layout at this stage so views behind us know that they
+// need to be redrawn (in case the layout causes some things to get dirtied).
+- (void)_propagateDirtyRectsToOpaqueAncestors
+{
+    if (![[self _webView] drawsBackground]) {
+        [self _web_layoutIfNeededRecursive];
+    }
+    [super _propagateDirtyRectsToOpaqueAncestors];
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
@@ -1162,6 +1177,22 @@ static WebHTMLView *lastHitView = nil;
     [super _web_clearPrintingModeRecursive];
 }
 
+- (void)_layoutIfNeeded
+{
+    ASSERT(!_private->subviewsSetAside);
+
+    if ([[self _bridge] needsLayout])
+        _private->needsLayout = YES;
+    if (_private->needsToApplyStyles || _private->needsLayout)
+        [self layout];
+}
+
+- (void)_web_layoutIfNeededRecursive
+{
+    [self _layoutIfNeeded];
+    [super _web_layoutIfNeededRecursive];
+}
+
 - (void)_web_layoutIfNeededRecursive:(NSRect)displayRect testDirtyRect:(bool)testDirtyRect
 {
     ASSERT(!_private->subviewsSetAside);
@@ -1173,14 +1204,11 @@ static WebHTMLView *lastHitView = nil;
             displayRect = NSIntersectionRect(displayRect, dirtyRect);
         }
         if (!NSIsEmptyRect(displayRect)) {
-            if ([[self _bridge] needsLayout])
-                _private->needsLayout = YES;
-            if (_private->needsToApplyStyles || _private->needsLayout)
-                [self layout];
+            [self _layoutIfNeeded];
         }
     }
 
-    [super _web_layoutIfNeededRecursive: displayRect testDirtyRect: NO];
+    [super _web_layoutIfNeededRecursive:displayRect testDirtyRect:NO];
 }
 
 - (NSRect)_selectionRect
@@ -1352,6 +1380,11 @@ static WebHTMLView *lastHitView = nil;
 - (void)_web_clearPrintingModeRecursive
 {
     [_subviews makeObjectsPerformSelector:@selector(_web_clearPrintingModeRecursive)];
+}
+
+- (void)_web_layoutIfNeededRecursive
+{
+    [_subviews makeObjectsPerformSelector:@selector(_web_layoutIfNeededRecursive)];
 }
 
 - (void)_web_layoutIfNeededRecursive: (NSRect)rect testDirtyRect:(bool)testDirtyRect

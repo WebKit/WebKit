@@ -157,9 +157,9 @@ static CFDictionaryRef imageSourceOptions;
 - (CFDictionaryRef)_imageSourceOptions
 {
     if (!imageSourceOptions) {
-        CFStringRef keys[1] = { kCGImageSourceShouldCache };
-        CFBooleanRef values[1] = { kCFBooleanTrue };
-        imageSourceOptions = CFDictionaryCreate (NULL, (const void **)&keys, (const void **)&values, 1, 
+        const void * keys[1] = { kCGImageSourceShouldCache };
+        const void * values[1] = { kCFBooleanTrue };
+        imageSourceOptions = CFDictionaryCreate (NULL, keys, values, 1, 
                 &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     return imageSourceOptions;
@@ -174,9 +174,9 @@ static CFDictionaryRef imageSourceOptions;
 	CFStringRef colorModel = CFDictionaryGetValue (props, kCGImagePropertyColorModel);
 	
 	if (colorModel) {
-	    if (CFStringCompare (colorModel, (CFStringRef)@"RGB", 0) == kCFCompareEqualTo)
+	    if (CFStringCompare (colorModel, CFSTR("RGB"), 0) == kCFCompareEqualTo)
 		uncorrectedColorSpace = CGColorSpaceCreateDisplayRGB();
-	    else if (CFStringCompare (colorModel, (CFStringRef)@"Gray", 0) == kCFCompareEqualTo)
+	    else if (CFStringCompare (colorModel, CFSTR("Gray"), 0) == kCFCompareEqualTo)
 		uncorrectedColorSpace = CGColorSpaceCreateDisplayGray();
 	}
 	
@@ -654,7 +654,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         frameDurationsSize = num;
     }
     else if (frameDurations[currentFrame] == 0.f) {
-            frameDurations[currentFrame] = [self _frameDurationAt:currentFrame];
+        frameDurations[currentFrame] = [self _frameDurationAt:currentFrame];
     }
 
     return frameDurations[currentFrame];
@@ -683,25 +683,17 @@ static NSMutableSet *activeAnimations;
     // in the view.  It is necessary to gather the all renderers to stop
     // before actually stopping them because the process of stopping them
     // will modify the active animations and animating renderer collections.
-    NSSet *renderersInView;
     while ((animation = [objectEnumerator nextObject])) {
-	renderersInView = (NSSet *)CFDictionaryGetValue (animation->animatingRenderers, aView);
+	NSSet *renderersInView = (NSSet *)CFDictionaryGetValue (animation->animatingRenderers, aView);
         if (renderersInView) {
 	    if (!renderersToStop)
 		renderersToStop = [[NSMutableSet alloc] init];
-            [renderersToStop addObject: renderersInView];
+            [renderersToStop unionSet:renderersInView];
         }
     }
 
     // Now tell them all to stop drawing.
-    if (renderersToStop) {
-        objectEnumerator = [renderersToStop objectEnumerator];
-        while ((renderersInView = [objectEnumerator nextObject])) {
-            [renderersInView makeObjectsPerformSelector:@selector(stopAnimation)];
-        }
-        
-        [renderersToStop release];
-    }
+    [renderersToStop makeObjectsPerformSelector:@selector(stopAnimation)];
 }
 
 - (void)addAnimatingRenderer:(WebImageRenderer *)r inView:(NSView *)view

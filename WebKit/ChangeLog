@@ -1,3 +1,39 @@
+2005-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3848257> WebView will draw more than AppKit asks it to, so views behind won't redraw enough (transparent WebView)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _propagateDirtyRectsToOpaqueAncestors]): As recommended by Troy Stephens, do the
+        layouts here in this call, since it's before propagating the dirty rects to our ancestors.
+        This fixes the bug, but we only do it if the WebView is not opaque, because otherwise we can
+        optimize by only doing layouts you really need, and doing them later on is safe because we
+        know we don't need to draw any of the views behind us.
+        (-[WebHTMLView _layoutIfNeeded]): Added. Factored out from the method below.
+        (-[WebHTMLView _web_layoutIfNeededRecursive]): Added. Like the other "layout if needed" call,
+        but unconditional.
+        (-[WebHTMLView _web_layoutIfNeededRecursive:testDirtyRect:]): Factored out the guts into the
+        _layoutIfNeeded method above. Otherwise unchanged.
+        (-[NSView _web_layoutIfNeededRecursive]): Added.
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame _updateDrawsBackground]): Call setDrawsBackground:NO
+        on the scroll view when changing the frame to no longer be in "draws background" mode. This
+        is needed because the frame manages the "draws background" mode of the scroll view. It won't
+        have any effect if you call setDrawsBackground:NO before starting to use a WebView, but without
+        it calling setDrawsBackground:NO later won't have an immediate effect (easily visible in Safari).
+        This was hidden before because the HTML view was filling with transparent color, which blew away
+        the fill that was done by NSScrollView.
+
+        - fixed <rdar://problem/3921129> reproducible crash at www.funnychristmas.com in CFSet manipulation in WebImageData
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _imageSourceOptions]): Changed types so we don't need a cast.
+        (+[WebImageData stopAnimationsInView:]): Instead of building a set of sets, by putting in the sets with addObject,
+        build a single set using unionSet, and then iterate the objects instead of having to iterate the sets and then the
+        objects in each set. The old code ended up sharing the sets with the live code, when the whole idea was to gather
+        all the renderers because the process of stopping modifies the active sets.
+
 2005-01-12  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3926825> Safari ignores GIF loop count
