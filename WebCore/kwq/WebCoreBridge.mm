@@ -75,7 +75,6 @@
 #import "WebCoreSettings.h"
 
 #import <AppKit/NSView.h>
-#import <WebKit/WebArchive.h>
 
 using DOM::AtomicString;
 using DOM::DocumentImpl;
@@ -464,7 +463,7 @@ static bool initializedKJS = FALSE;
     if (subresourceURLStrings) {
         subresourceURLs = new QStringList();
     }
-    NSString *markupString = [node _nodeImpl]->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
+    NSString *markupString = [node _nodeImpl]->recursive_toHTMLWithOptions(false, NULL, subresourceURLs).getNSString();
     if (subresourceURLStrings) {
         *subresourceURLStrings = subresourceURLs->getNSArray();
     }
@@ -477,7 +476,7 @@ static bool initializedKJS = FALSE;
     if (subresourceURLStrings) {
         subresourceURLs = new QStringList();
     }
-    NSString *markupString = [range _rangeImpl]->toHTMLWithOptions(false, subresourceURLs).string().getNSString();
+    NSString *markupString = [range _rangeImpl]->toHTMLWithOptions(subresourceURLs).string().getNSString();
     if (subresourceURLStrings) {
         *subresourceURLStrings = subresourceURLs->getNSArray();
     }
@@ -1367,18 +1366,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::insertText(_part->xmlDocImpl(), s);
 }
 
-- (void)replaceSelectionWithMarkupString:(NSString *)markupString
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
     if (!_part || !_part->xmlDocImpl() || !markupString)
         return;
     
-    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString);
+    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString, baseURLString);
     cmd.apply();
-}
-
-- (void)replaceSelectionWithWebArchive:(WebArchive *)archive
-{
-    ERROR("unimplemented");
 }
 
 - (void)replaceSelectionWithNewline

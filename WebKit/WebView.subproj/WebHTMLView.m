@@ -19,7 +19,6 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -579,18 +578,9 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] isSelectionEditable];
 }
 
-- (void)_pasteMarkupString:(NSString *)markupString
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    if ([markupString length] > 0) {
-        [[self _bridge] replaceSelectionWithMarkupString:markupString];
-    }
-}
-
-- (void)_pasteImageResource:(WebResource *)resource
-{
-    ASSERT(resource);
-    [[self _dataSource] addSubresource:resource];
-    [self _pasteMarkupString:[NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]]];
+    [[self _dataSource] _replaceSelectionWithMarkupString:markupString baseURL:nil];
 }
 
 - (void)_pasteFromPasteboard:(NSPasteboard *)pasteboard
@@ -598,18 +588,11 @@ static WebHTMLView *lastHitView = nil;
     NSArray *types = [pasteboard types];
 
     if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [[[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]] autorelease];
-        WebResource *mainResource = [archive mainResource];
-        if (mainResource) {
-            NSString *MIMEType = [mainResource MIMEType];
-            if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
-                NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
-                [[self _dataSource] addSubresources:[archive subresources]];
-                [self _pasteMarkupString:markupString];
-                [markupString release];
-                return;
-            } else if ([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
-                [self _pasteImageResource:mainResource];
+        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        if (archive) {
+            BOOL didPaste = [[self _dataSource] _replaceSelectionWithWebArchive:archive];
+            [archive release];
+            if (didPaste) {
                 return;
             }
         }
@@ -618,37 +601,37 @@ static WebHTMLView *lastHitView = nil;
     NSURL *URL;
     
     if ([types containsObject:NSHTMLPboardType]) {
-        [self _pasteMarkupString:[pasteboard stringForType:NSHTMLPboardType]];
+        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSHTMLPboardType]];
     } else if ([types containsObject:NSTIFFPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
                                                          MIMEType:@"image/tiff" 
                                                  textEncodingName:nil];
-        [self _pasteImageResource:resource];
+        [[self _dataSource] _replaceSelectionWithImageResource:resource];
         [resource release];
     } else if ([types containsObject:NSPICTPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
                                                          MIMEType:@"image/pict" 
                                                  textEncodingName:nil];
-        [self _pasteImageResource:resource];
+        [[self _dataSource] _replaceSelectionWithImageResource:resource];
         [resource release];
     } else if ((URL = [pasteboard _web_bestURL])) {
         NSString *URLString = [URL _web_originalDataAsString];
         NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
         linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
         NSString *markupString = [NSString stringWithFormat:@"<A HREF=\"%@\">%@</A>", URLString, linkLabel];
-        [self _pasteMarkupString:markupString];
+        [self _replaceSelectionWithMarkupString:markupString];
     } else if ([types containsObject:NSRTFDPboardType]) {
         // FIXME: Support RTFD to HTML (or DOM) conversion.
         ERROR("RTFD to HTML conversion not yet supported.");
-        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]]; 
+        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]]; 
     } else if ([types containsObject:NSRTFPboardType]) {
         // FIXME: Support RTF to HTML (or DOM) conversion.
         ERROR("RTF to HTML conversion not yet supported.");
-        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]];      
+        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]];      
     } else if ([types containsObject:NSStringPboardType]) {
-        [self _pasteMarkupString:[pasteboard stringForType:NSStringPboardType]];
+        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]];
     }
 }
 

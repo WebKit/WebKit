@@ -1,3 +1,31 @@
+2004-04-12  Chris Blumenberg  <cblu@apple.com>
+
+	- Fixed build failure by removing references to WebArchive in WebCore.
+	- For HTML copy/paste, relative URLs are now made absolute at paste time instead of at copy time. This allows relative URLs to be kept relative if the destination page has the same base URL as the source page.
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (PasteMarkupCommand::PasteMarkupCommand): take the base URL of the clipping
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (PasteMarkupCommandImpl::PasteMarkupCommandImpl): take the base URL of the clipping
+        (PasteMarkupCommandImpl::doApply): if we have a base URL and it is different than the base URL of the document, fix the URLs in the new DOM tree
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (RangeImpl::toHTMLWithOptions): removed completeURLs param
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): removed completeURLs param
+        (NodeImpl::recursive_toHTML): ditto
+        (NodeImpl::recursive_completeURLs): new
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromNode:subresourceURLStrings:]): call recursive_toHTML with less params
+        (-[WebCoreBridge markupStringFromRange:subresourceURLStrings:]): ditto
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:]): take a base URL
+
 2004-04-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave

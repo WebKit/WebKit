@@ -343,7 +343,7 @@ private:
 class PasteMarkupCommandImpl : public CompositeEditCommandImpl
 {
 public:
-    PasteMarkupCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &markupString);
+    PasteMarkupCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &markupString, const DOM::DOMString &baseURL);
     virtual ~PasteMarkupCommandImpl();
     
     virtual int commandID() const;
@@ -354,6 +354,7 @@ public:
 
 private:
     DOM::DOMString m_markupString;
+    DOM::DOMString m_baseURL;
 };
 
 //------------------------------------------------------------------------------------------

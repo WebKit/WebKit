@@ -38,6 +38,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebImageView.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -150,6 +151,40 @@
     [subresources release];
     
     return webArchive;
+}
+
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
+{
+    if ([markupString length] > 0) {
+        [[self _bridge] replaceSelectionWithMarkupString:markupString baseURLString:[baseURL _web_originalDataAsString]];
+    }
+}
+
+- (void)_replaceSelectionWithImageResource:(WebResource *)resource
+{
+    ASSERT(resource);
+    [self addSubresource:resource];
+    [self _replaceSelectionWithMarkupString:[NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]] baseURL:nil];
+}
+
+- (BOOL)_replaceSelectionWithWebArchive:(WebArchive *)archive
+{
+    ASSERT(archive);
+    WebResource *mainResource = [archive mainResource];
+    if (mainResource) {
+        NSString *MIMEType = [mainResource MIMEType];
+        if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
+            NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
+            [self addSubresources:[archive subresources]];
+            [self _replaceSelectionWithMarkupString:markupString baseURL:[mainResource URL]];
+            [markupString release];
+            return YES;
+        } else if ([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
+            [self _replaceSelectionWithImageResource:mainResource];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (WebView *)_webView

@@ -1,3 +1,21 @@
+2004-04-12  Chris Blumenberg  <cblu@apple.com>
+
+	Factored out WebArchive to DOM code so that it could be used by both [WebHTMLView _pasteFromPasteboard:] and [WebView insertWebArchive:replacingDOMRange:].
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _replaceSelectionWithMarkupString:baseURL:]): moved from WebHTMLView
+        (-[WebDataSource _replaceSelectionWithImageResource:]): ditto
+        (-[WebDataSource _replaceSelectionWithWebArchive:]): ditto
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _replaceSelectionWithMarkupString:]): renamed
+        (-[WebHTMLView _pasteFromPasteboard:]): call renamed methods
+        * WebView.subproj/WebView.m:
+        (-[WebView insertMarkupString:replacingDOMRange:]): call renamed methods
+        (-[WebView insertWebArchive:replacingDOMRange:]): have data source handle the archive instead of the bridge
+
 2004-04-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave

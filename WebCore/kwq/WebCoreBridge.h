@@ -57,7 +57,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class DOMHTMLImageElement;
 @class DOMNode;
 @class DOMRange;
-@class WebArchive;
 @class WebCoreSettings;
 
 @protocol WebCoreDOMTreeCopier;
@@ -285,8 +284,7 @@ typedef enum {
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (void)replaceSelectionWithText:(NSString *)text;
 - (void)replaceSelectionWithNode:(DOMNode *)node;
-- (void)replaceSelectionWithMarkupString:(NSString *)markupString;
-- (void)replaceSelectionWithWebArchive:(WebArchive *)archive;
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (void)replaceSelectionWithNewline;
 - (void)deleteSelection;
 - (void)deleteKeyPressed;

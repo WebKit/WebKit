@@ -2193,17 +2193,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
     [bridge setSelectedDOMRange:range];
-    [bridge replaceSelectionWithMarkupString:markupString];
+    [bridge replaceSelectionWithMarkupString:markupString baseURLString:nil];
 }
 
-- (void)insertWebArchive:(WebArchive *)webArchive replacingDOMRange:(DOMRange *)range
+- (void)insertWebArchive:(WebArchive *)archive replacingDOMRange:(DOMRange *)range
 {
     if (!range)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
     [bridge setSelectedDOMRange:range];
-    [bridge replaceSelectionWithWebArchive:webArchive];
+    [[[bridge webFrame] dataSource] _replaceSelectionWithWebArchive:archive];
 }
 
 - (void)deleteDOMRange:(DOMRange *)range

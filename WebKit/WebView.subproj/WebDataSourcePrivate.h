@@ -125,6 +125,9 @@
 // Other private methods
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 - (WebArchive *)_archiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings;
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
+- (BOOL)_replaceSelectionWithWebArchive:(WebArchive *)archive;
+- (void)_replaceSelectionWithImageResource:(WebResource *)resource;
 
 - (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;
