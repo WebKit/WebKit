@@ -1,3 +1,13 @@
+2004-05-19  Darin Adler  <darin@apple.com>
+
+        - fixed headers with licenses mangled by Xcode auto-indenting
+
+        * bindings/jni/jni_jsobject.cpp:
+        * bindings/jni/jni_jsobject.h:
+        * bindings/runtime_array.h:
+        * bindings/runtime_root.cpp:
+        * bindings/runtime_root.h:
+
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
 	Added exception logging.  Also check for exception and
