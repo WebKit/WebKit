@@ -1464,7 +1464,7 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 {
     [super addSubview:view];
 
-    if ([view respondsToSelector:@selector(webPlugInInitialize)]) {
+    if ([view respondsToSelector:@selector(webPlugInInitialize)] || [view respondsToSelector:@selector(pluginInitialize)]) {
         [[self _pluginController] addPlugin:view];
     }
 }

@@ -1,3 +1,44 @@
+2004-06-09  Richard Williamson   <rjw@apple.com>
+
+        Implemented PDF rendering for the drawImage() function
+        in Context2D.  This allows PDF files to be drawn in scaled
+        or rotated context without rasterization artifacts.
+        
+        The PDF image is currently NOT cached.  Caching can/will be added
+        as an optimization.  The hooks are already in place to flush
+        the cache as necessary.
+        
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer _needsRasterFlush]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        (-[WebImageRenderer _PDFDocumentRef]):
+        (-[WebImageRenderer _PDFDraw]):
+        (-[WebImageRenderer _PDFDrawFromRect:toRect:operation:alpha:flipped:]):
+        (-[WebImageRenderer MIMEType]):
+        (ReleasePDFDocumentData):
+        (-[WebPDFDocument initWithData:]):
+        (-[WebPDFDocument dealloc]):
+        (-[WebPDFDocument documentRef]):
+        (-[WebPDFDocument mediaBox]):
+        (-[WebPDFDocument bounds]):
+        (-[WebPDFDocument adjustCTM:]):
+        (-[WebPDFDocument setCurrentPage:]):
+        (-[WebPDFDocument currentPage]):
+        (-[WebPDFDocument pageCount]):
+
+        Added back check for old plugin API.
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:URL:]):
+
 2004-06-08  Trey Matteson  <trey@apple.com>
 
 	In DHTML dragging there is no notion of registering for types, so we'd

@@ -967,7 +967,7 @@ static BOOL loggedObjectCacheSize = NO;
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
     return !([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] ||
-             [viewClass respondsToSelector:@selector(webPlugInInitialize)]);
+             [viewClass respondsToSelector:@selector(webPlugInInitialize)] || [viewClass respondsToSelector:@selector(pluginInitialize)] );
 }
 
 - (void)loadEmptyDocumentSynchronously

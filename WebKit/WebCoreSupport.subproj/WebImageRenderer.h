@@ -34,6 +34,8 @@
     NSString *MIMEType;
     BOOL isNull;
     int useCount;
+
+    id _PDFDoc;
 @public    
     NSData *originalData;
 }

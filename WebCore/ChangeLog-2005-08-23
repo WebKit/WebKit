@@ -1,3 +1,12 @@
+2004-06-09  Richard Williamson   <rjw@apple.com>
+
+	Added support for drawing un-rasterized transformed PDFs.
+
+        Reviewed by John.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+
 2004-06-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

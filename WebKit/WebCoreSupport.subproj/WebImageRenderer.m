@@ -10,6 +10,8 @@
 #import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebAssertions.h>
 
+#import <CoreGraphics/CGContextGState.h>
+
 extern NSString *NSImageLoopCount;
 
 /*
@@ -35,6 +37,24 @@ extern NSString *NSImageLoopCount;
 }
 - (id)initWithBounds:(NSRect)b context:(CGContextRef)context;
 - (NSRect)bounds;
+@end
+
+@interface WebPDFDocument : NSObject
+{
+    CGPDFDocumentRef _document;
+    CGRect           _mediaBox;
+    NSRect           _cropBox;
+    float            _rotation;
+    int              _currentPage;
+}
+- (id)               initWithData:(NSData*)data;
+- (CGPDFDocumentRef) documentRef;
+- (CGRect)           mediaBox;
+- (NSRect)           bounds;	// adjust for rotation
+- (void)             setCurrentPage:(int)page;
+- (int)              currentPage;
+- (int)              pageCount;
+- (void)             adjustCTM:(CGContextRef)context;
 @end
 
 @implementation WebImageContext
@@ -110,6 +130,7 @@ extern NSString *NSImageLoopCount;
 - (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext;
 - (void)_endRedirectContext:(NSGraphicsContext *)aContext;
 - (void)_needsRasterFlush;
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped;
 @end
 
 @implementation WebImageRenderer
@@ -352,6 +373,8 @@ static NSMutableSet *activeImageRenderers;
         context = 0;
     }
     
+    [_PDFDoc release];
+    
     [super dealloc];
 }
 
@@ -451,17 +474,8 @@ static NSMutableSet *activeImageRenderers;
 - (void)_needsRasterFlush
 {
 #if 0
-    // This doesn't work.  The PDF is always rasterized and cached!  Leaving
-    // this code in place, but excluded, pending response from AP.
-    NSImageRep *imageRep = [[self representations] objectAtIndex:0];
-    rasterFlushing = NO;
-    if (needFlushRasterCache && [imageRep isKindOfClass:[NSCachedImageRep class]] && [MIMEType isEqual: @"application/pdf"]) {
-        [self removeRepresentation:imageRep];
-        Class repClass = [NSImageRep imageRepClassForData:originalData];
-        if (repClass) {
-            NSImageRep *rep = [[repClass alloc] initWithData:originalData];
-            [self addRepresentation:rep];
-        }
+    if (needFlushRasterCache && [MIMEType isEqual: @"application/pdf"]) {
+        // FIXME:  At this point we need to flush the cached rasterized PDF.
     }
 #endif
 }
@@ -500,13 +514,88 @@ static NSMutableSet *activeImageRenderers;
         }
     }
     
-    NSGraphicsContext *oldContext = [self _beginRedirectContext:context];
-    [self _needsRasterFlush];
+    if (context) {
+        NSGraphicsContext *oldContext = [self _beginRedirectContext:context];
+        [self _needsRasterFlush];
 
-    // This is the operation that handles transparent portions of the source image correctly.
-    [self drawInRect:ir fromRect:fr operation:compositeOperator fraction: 1.0];
+        // If we have PDF then draw the PDF ourselves, bypassing the NSImage caching mechanisms,
+        // but only do this when we're rendering to an offscreen context.  NSImage will always
+        // cache the PDF image at it's native resolution, thus, causing artifacts when the image
+        // is drawn into a scaled or rotated context.
+        if ([MIMEType isEqual:@"application/pdf"])
+            [self _PDFDrawFromRect:fr toRect:ir operation:compositeOperator alpha:1.0 flipped:YES];
+        else
+            [self drawInRect:ir fromRect:fr operation:compositeOperator fraction: 1.0];
 
-    [self _endRedirectContext:oldContext];
+        [self _endRedirectContext:oldContext];
+    }
+    else {
+        [self drawInRect:ir fromRect:fr operation:compositeOperator fraction: 1.0];
+    }
+}
+
+- (CGPDFDocumentRef)_PDFDocumentRef
+{
+    if (!_PDFDoc) {
+        _PDFDoc = [[WebPDFDocument alloc] initWithData:originalData];
+    }
+        
+    return [_PDFDoc documentRef];
+}
+
+- (void)_PDFDraw
+{
+    CGPDFDocumentRef document = [self _PDFDocumentRef];
+    if (document != NULL) {
+        CGContextRef _context  = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        CGRect       mediaBox = [_PDFDoc mediaBox];
+        
+        CGContextSaveGState(_context);
+        // Rotate translate image into position according to doc properties.
+        [_PDFDoc adjustCTM:_context];	
+
+        // Media box may have non-zero origin which we ignore. CGPDFDocumentShowPage pages start
+        // at 1, not 0.
+        CGContextDrawPDFDocument(_context, CGRectMake(0, 0, mediaBox.size.width, mediaBox.size.height), document, 1);
+
+        CGContextRestoreGState(_context);
+    }
+}
+
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped
+{
+    // FIXME:  The rasterized PDF should be drawn into a cache, and the raster then composited.
+    
+    CGContextRef _context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    float hScale, vScale;
+
+    CGContextSaveGState(_context);
+
+    CGContextSetCompositeOperation (_context, op);
+
+    // Scale and translate so the document is rendered in the correct location.
+    hScale = dstRect.size.width  / srcRect.size.width;
+    vScale = dstRect.size.height / srcRect.size.height;
+
+    CGContextTranslateCTM (_context, dstRect.origin.x - srcRect.origin.x * hScale, dstRect.origin.y - srcRect.origin.y * vScale);
+    CGContextScaleCTM (_context, hScale, vScale);
+
+    // Reverse if flipped image.
+    if (flipped) {
+        CGContextScaleCTM(_context, 1, -1);
+        CGContextTranslateCTM (_context, 0, -(dstRect.origin.y + dstRect.size.height));
+    }
+
+    // Clip to destination in case we are imaging part of the source only
+    CGContextClipToRect(_context, CGRectIntegral(*(CGRect*)&srcRect));
+
+    // and draw
+    [self _PDFDraw];
+
+    // done with our fancy transforms
+    CGContextRestoreGState(_context);
+
+    return YES;
 }
 
 - (void)nextFrame:(id)context
@@ -684,6 +773,128 @@ static NSMutableSet *activeImageRenderers;
 - (NSString *)MIMEType
 {
     return MIMEType;
+}
+
+@end
+
+
+//------------------------------------------------------------------------------------
+
+@implementation WebPDFDocument
+
+static void ReleasePDFDocumentData(void *info, const void *data, size_t size) {
+    [(NSData*)info autorelease];
+}
+
+- (id) initWithData:(NSData*)data
+{
+    self = [super init];
+    if (self != nil)
+    {
+        if (data != nil) {
+            CGDataProviderRef dataProvider = CGDataProviderCreateWithData([data retain], [data bytes], [data length], ReleasePDFDocumentData);
+            _document = CGPDFDocumentCreateWithProvider(dataProvider);
+            CGDataProviderRelease(dataProvider);
+        }
+        _currentPage = -1;
+        [self setCurrentPage:0];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    if (_document != NULL) CGPDFDocumentRelease(_document);
+    [super dealloc];
+}
+
+- (CGPDFDocumentRef) documentRef
+{
+    return _document;
+}
+
+- (CGRect) mediaBox
+{
+    return _mediaBox;
+}
+
+- (NSRect) bounds
+{
+    NSRect rotatedRect;
+
+    // rotate the media box and calculate bounding box
+    float sina   = sin (_rotation);
+    float cosa   = cos (_rotation);
+    float width  = NSWidth (_cropBox);
+    float height = NSHeight(_cropBox);
+
+    // calculate rotated x and y axis
+    NSPoint rx = NSMakePoint( width  * cosa, width  * sina);
+    NSPoint ry = NSMakePoint(-height * sina, height * cosa);
+
+    // find delta width and height of rotated points
+    rotatedRect.origin      = _cropBox.origin;
+    rotatedRect.size.width  = ceil(fabs(rx.x - ry.x));
+    rotatedRect.size.height = ceil(fabs(ry.y - rx.y));
+
+    return rotatedRect;
+}
+
+- (void) adjustCTM:(CGContextRef)context
+{
+    // rotate the crop box and calculate bounding box
+    float sina   = sin (-_rotation);
+    float cosa   = cos (-_rotation);
+    float width  = NSWidth (_cropBox);
+    float height = NSHeight(_cropBox);
+
+    // calculate rotated x and y edges of the corp box. if they're negative, it means part of the image has
+    // been rotated outside of the bounds and we need to shift over the image so it lies inside the bounds again
+    NSPoint rx = NSMakePoint( width  * cosa, width  * sina);
+    NSPoint ry = NSMakePoint(-height * sina, height * cosa);
+
+    // adjust so we are at the crop box origin
+    CGContextTranslateCTM(context, floor(-MIN(0,MIN(rx.x, ry.x))), floor(-MIN(0,MIN(rx.y, ry.y))));
+
+    // rotate -ve to remove rotation
+    CGContextRotateCTM(context, -_rotation);
+
+    // shift so we are completely within media box
+    CGContextTranslateCTM(context, _mediaBox.origin.x - _cropBox.origin.x, _mediaBox.origin.y - _cropBox.origin.y);
+}
+
+- (void) setCurrentPage:(int)page
+{
+    if (page != _currentPage && page >= 0 && page < [self pageCount]) {
+
+        CGRect r;
+
+        _currentPage = page;
+
+        // get media box (guaranteed)
+        _mediaBox = CGPDFDocumentGetMediaBox(_document, page + 1);
+
+        // get crop box (not always there). if not, use _mediaBox
+        r = CGPDFDocumentGetCropBox(_document, page + 1);
+        if (!CGRectIsEmpty(r)) {
+            _cropBox = NSMakeRect(r.origin.x, r.origin.y, r.size.width, r.size.height);
+        } else {
+            _cropBox = NSMakeRect(_mediaBox.origin.x, _mediaBox.origin.y, _mediaBox.size.width, _mediaBox.size.height);
+        }
+
+        // get page rotation angle
+        _rotation = CGPDFDocumentGetRotationAngle(_document, page + 1) * M_PI / 180.0;	// to radians
+    }
+}
+
+- (int) currentPage
+{
+    return _currentPage;
+}
+
+- (int) pageCount
+{
+    return CGPDFDocumentGetNumberOfPages(_document);
 }
 
 @end
