@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,15 @@
 
 @implementation WebCoreScrollView
 
+#if !BUILDING_ON_PANTHER
+
+- (BOOL)autoforwardsScrollWheelEvents
+{
+    return YES;
+}
+
+#else
+
 - (void)scrollWheel:(NSEvent *)event
 {
     NSPoint origin = [[self contentView] bounds].origin;
@@ -52,5 +61,7 @@
         [super scrollWheel:event];
     }
 }
+
+#endif
 
 @end
