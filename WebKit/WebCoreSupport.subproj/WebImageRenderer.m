@@ -284,11 +284,17 @@ static NSMutableSet *activeImageRenderers;
 - (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
 {
     if (loadStatus >= 0) {
+        // The last line might be a partial line, so the number of complete lines is the number
+        // we get from NSImage minus one.
+        int numCompleteLines = loadStatus - 1;
+        if (numCompleteLines <= 0) {
+            return;
+        }
         int pixelsHigh = [[[self representations] objectAtIndex:0] pixelsHigh];
-        if (pixelsHigh > loadStatus) {
+        if (pixelsHigh > numCompleteLines) {
             // Figure out how much of the image is OK to draw.  We can't simply
-            // use loadStatus because the image may be scaled.
-            float clippedImageHeight = floor([self size].height * loadStatus / pixelsHigh);
+            // use numCompleteLines because the image may be scaled.
+            float clippedImageHeight = floor([self size].height * numCompleteLines / pixelsHigh);
             
             // Figure out how much of the source is OK to draw from.
             float clippedSourceHeight = clippedImageHeight - fr.origin.y;
@@ -300,12 +306,10 @@ static NSMutableSet *activeImageRenderers;
             float clippedDestinationHeight = ir.size.height * clippedSourceHeight / fr.size.height;
 
             // Reduce heights of both rectangles without changing their positions.
-            // In the non-flipped case, this means moving the origins up from the bottom left.
             // In the flipped case, just adjusting the height is sufficient.
             ASSERT([self isFlipped]);
             ASSERT([[NSView focusView] isFlipped]);
             ir.size.height = clippedDestinationHeight;
-            fr.origin.y += fr.size.height - clippedSourceHeight;
             fr.size.height = clippedSourceHeight;
         }
     }
@@ -392,6 +396,7 @@ static NSMutableSet *activeImageRenderers;
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
     // These calculations are only correct for the flipped case.
+    ASSERT([self isFlipped]);
     ASSERT([[NSView focusView] isFlipped]);
 
     NSSize size = [self size];

@@ -1,3 +1,18 @@
+2003-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3382179 -- REGRESSION: many images scroll down while loading (e.g., homepage.mac.com slide show)
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]): While loading, always draw one less line than
+        the number NSImage says we have, since that last line is a partial line and draws unwanted white. This
+        is not what the bug report complains about, but is a longstanding and very minor issue. Remove the code
+        that adjust the Y origin. This is what the bug report is about. That adjustment is incorrect and was
+        unknowingly compensating for some kind of NSImage bug that is now fixed.
+        (-[WebImageRenderer tileInRect:fromPoint:]): Added an assertion that the WebImageRenderer is flipped.
+        The code does assume that it's flipped.
+
 2003-08-22  John Sullivan  <sullivan@apple.com>
 	
 	- fixed 3385837 -- REGRESSION: can't paste link from Safari into 
