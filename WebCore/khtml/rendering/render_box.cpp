@@ -262,13 +262,7 @@ void RenderBox::printBackground(QPainter *p, const QColor &c, CachedImage *bg, i
 //        kdDebug() << "cx="<<cx << " cy="<<cy<< " cw="<<cw << " ch="<<ch << " sx="<<sx << " sy="<<sy << endl;
 
         if (cw>0 && ch>0)
-#ifdef APPLE_CHANGES
-            // This is a change in behavior. The difference is that we 
-            // do not do a fill of the passed in color before tiling.
-            p->drawTiledPixmap(cx, cy, cw, ch, bg->pixmap(), sx, sy);
-#else /* APPLE_CHANGES not defined */
             p->drawTiledPixmap(cx, cy, cw, ch, bg->tiled_pixmap(c), sx, sy);
-#endif /* APPLE_CHANGES not defined */
     }
 }
 

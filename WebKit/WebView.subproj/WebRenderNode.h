@@ -13,19 +13,17 @@
 @interface IFRenderNode : NSObject
 {
     NSArray *children;
-    int x, y;
-    int width;
-    int height;
     NSString *name;
+    NSRect rect;
 }
 
 - initWithWebView:(IFWebView *)view;
 
 - (NSArray *)children;
 
+- (NSString *)name;
 - (NSString *)positionString;
 - (NSString *)widthString;
 - (NSString *)heightString;
-- (NSString *)name;
 
 @end

@@ -389,4 +389,11 @@
     return [[self _repTypes] _IF_objectForMIMEType:MIMEType] != nil;
 }
 
+- (void)_removeFromFrame
+{
+    [[self _bridge] removeFromFrame];
+    [self _setController:nil];
+    [self _setLocationChangeHandler:nil];
+}
+
 @end

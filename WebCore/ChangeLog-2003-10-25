@@ -1,3 +1,93 @@
+2002-07-14  Darin Adler  <darin@apple.com>
+
+	Changes to WebCore that allow WebKit to work through Objective C without going
+	straight to the KHTML headers. Also remove a bunch of unused stuff, especially
+	in QPainter.
+
+        * WebCore.exp: Export the new classes WebCoreCache and WebCoreJavaScript.
+	Don't export any C++ symbols at all.
+
+        * WebCore.pbproj/project.pbxproj: Remove KWQWMatrix.mm, add WebCoreCache.*
+	and WebCoreJavaScript.*.
+
+        * khtml/khtml_part.cpp: Put more unused code inside ifndef APPLE_CHANGES.
+        * khtml/khtmlview.cpp: Put unused code inside #ifndef APPLE_CHANGES
+        * khtml/khtmlview.h: Put unused virtual functions inside #ifndef APPLE_CHANGES.
+        * khtml/misc/loader.cpp: (CachedImage::tiled_pixmap): Change this so it
+	always returns pixmap(). Handling it at this level is better than changing
+	all the callers for now.
+        * khtml/rendering/render_box.cpp: (RenderBox::printBackground): Took out the
+	APPLE_CHANGES now that tiled_pixmap() always just returns pixmap().
+        * khtml/rendering/render_frames.cpp: (RenderFrameSet::userResize): Put some
+	unused code inside APPLE_CHANGES.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::requestFrame): Made it get the view using the bridge, since we
+	don't have a [widget] method on the frame any more.
+        (KWQKHTMLPartImpl::findFrame): Used committedBridge instead of bridge, since
+	I changed bridge to return the provisional if available.
+        (KWQKHTMLPartImpl::frames): Used committedBridge instead of bridge, since
+	I changed bridge to return the provisional if available.
+
+        * kwq/qt/qpixmap.h: Put an empty version of QWMatrix in here. We don't actually ever
+	need a real matrix, just a class to let us compile.
+
+        * kwq/qt/qpainter.h: Moved QWMatrix into qpixmap.h. Removed constructors that take
+	QPixmap and QWidget. Removed unused variants of drawText. Removed unused setClipping,
+	setClipRect, hasClipping, translate, scale, begin, end, and device functions.
+        * kwq/KWQPainter.mm:
+        (QPainter::QPainter): Remove the constructors that take a paint device, widget,
+	or pixmap. We can get away without them.
+        (QPainter::save): Simplify. Also remove the optimization for painters without
+	stacks, since having an empty stack is very inexpensive.
+        (QPainter::restore): Simplify.
+        (QPainter::_drawPoints): Move paintingDisabled check in here.
+        (QPainter::drawText): Removed many unused drawText variants.
+
+        * kwq/KWQView.h: Tweaked.
+        * kwq/KWQView.mm: Removed [KWQView drawRect:].
+
+        * kwq/KWQWMatrix.mm: Removed.
+
+        * kwq/qt/qwidget.h: Removed paint() virtual function.
+        * kwq/KWQWidget.mm: Removed QWidget::paint().
+
+        * kwq/WebCoreBridge.h: Added new methods installInFrame:, removeFromFrame,
+	mouseDown:, mouseUp:, mouseMoved:, mouseDragged:, copyDOMTree:, and copyRenderTree:.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dealloc]): Call removeFromFrame.
+        (-[WebCoreBridge createKHTMLViewWithNSView:width:height:marginWidth:marginHeight:]):
+	Don't return the view any more, also set bridgeOwnsKHTMLView to YES.
+        (-[WebCoreBridge copyDOMNode:DOM::copier:]): Added helper method for copyDOMTree.
+        (-[WebCoreBridge copyDOMTree:]): Added method to be used by IFDOMNode to get at DOM
+	tree without using C++.
+        (-[WebCoreBridge copyRenderNode:khtml::copier:]): Added helper method for copyRenderTree.
+        (-[WebCoreBridge copyRenderTree:]): Added method to be used by IFRenderNode to get at
+	render tree without using C++.
+        (-[WebCoreBridge removeFromFrame]): Added. Deletes the view if we own it. We don't want
+	to wait for dealloc time to do this, since a lingering view might be visible.
+        (-[WebCoreBridge installInFrame:]): Added. Does a set of things we need to do at the
+	time we commit a provisional data source.
+        (-[WebCoreBridge addModifiers:toState:]): Moved here from IFHTMLView.
+        (-[WebCoreBridge mouseUp:]): Added. Used to get a mouse up event to the KHTMLView.
+        (-[WebCoreBridge mouseDown:]): Added. Used to get a mouse down event to the KHTMLView.
+        (-[WebCoreBridge mouseMoved:]): Added. Used to get a mouse moved event to the KHTMLView.
+        (-[WebCoreBridge mouseDragged:]): Added. Used to get a mouse moved event to the KHTMLView
+	in the case where we are dragging -- perhaps could be merged with mouseMoved.
+
+        * kwq/WebCoreCache.h: Added. Allows control of the WebCore cache; previously done directly
+	in IFCache in WebKit.
+        * kwq/WebCoreCache.mm: Added.
+
+        * kwq/WebCoreFrame.h: Remove widget method. Change semantics of bridge method to return
+	provisional bridge if available, which corresponds to what the widget method did before.
+	Added a committedBridge method that has the semantics that bridge did before.
+
+        * kwq/WebCoreJavaScript.h: Added. Returns statistics about the state of JavaScript objects;
+	previously done directly in IFCache in WebKit.
+        * kwq/WebCoreJavaScript.mm: Added.
+
 2002-07-13  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Add a few files that are sources

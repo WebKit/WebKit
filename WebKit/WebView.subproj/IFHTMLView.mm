@@ -3,6 +3,8 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/IFHTMLView.h>
+
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLViewPrivate.h>
@@ -15,13 +17,8 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
-// Needed for the mouse move notification.
+// Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
-
-#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
-#import <khtmlview.h>
-#import <rendering/render_frames.h>
-#endif
 
 @implementation IFHTMLView
 
@@ -124,7 +121,7 @@
 // the data source is changed.
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource 
 {
-    _private->provisionalWidget = [[dataSource _bridge]
+    [[dataSource _bridge]
         createKHTMLViewWithNSView:[[[dataSource webFrame] webView] documentView]
 	width:(int)[self frame].size.width height:(int)[self frame].size.height
         marginWidth:[[[dataSource webFrame] webView] _marginWidth]
@@ -133,22 +130,7 @@
 
 - (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource 
 {
-    if (_private->widgetOwned) {
-        delete _private->widget;
-    }
-
-    _private->widget = _private->provisionalWidget;
-    _private->widgetOwned = YES;
-    _private->provisionalWidget = 0;
-
-    _private->widget->setView([[self _IF_parentWebView] frameScrollView]);
-
-    KHTMLRenderPart *renderPart = [[[self _bridge] frame] renderPart];
-    if (renderPart) {
-        // Setting the widget will delete the previous KHTMLView associated with the frame.
-        _private->widgetOwned = NO;
-        renderPart->setWidget(_private->widget);
-    }
+    [[self _bridge] installInFrame:[[self _IF_parentWebView] frameScrollView]];
 }
 
 - (void)dataSourceUpdated:(IFWebDataSource *)dataSource
@@ -378,114 +360,30 @@
         [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
 }
 
-
-- (void)_addModifiers:(unsigned)modifiers toState:(int *)state
-{
-    if (modifiers & NSControlKeyMask)
-        *state |= Qt::ControlButton;
-    if (modifiers & NSShiftKeyMask)
-        *state |= Qt::ShiftButton;
-    if (modifiers & NSAlternateKeyMask)
-        *state |= Qt::AltButton;
-    // Mapping command to meta is slightly questionable
-    if (modifiers & NSCommandKeyMask)
-        *state |= Qt::MetaButton;
-}
-
 - (void)mouseUp: (NSEvent *)event
 {
-    int button, state;
-     
-    if ([event type] == NSLeftMouseUp){
-        button = Qt::LeftButton;
-        state = Qt::LeftButton;
-    }
-    else if ([event type] == NSRightMouseUp){
-        button = Qt::RightButton;
-        state = Qt::RightButton;
-    }
-    else if ([event type] == NSOtherMouseUp){
-        button = Qt::MidButton;
-        state = Qt::MidButton;
-    }
-    else {
-        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
-        button = 0; state = 0; // Shutup the compiler.
-    }
-    NSPoint p = [event locationInWindow];
-    
-    [self _addModifiers:[event modifierFlags] toState:&state];
-
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
-    KHTMLView *widget = _private->widget;
-    if (widget) {
-        widget->viewportMouseReleaseEvent(&kEvent);
-    }
+    [[self _bridge] mouseUp:event];
 }
 
 - (void)mouseDown: (NSEvent *)event
 {
-    int button, state;
-     
-    if ([event type] == NSLeftMouseDown){
-        button = Qt::LeftButton;
-        state = Qt::LeftButton;
-    }
-    else if ([event type] == NSRightMouseDown){
-        button = Qt::RightButton;
-        state = Qt::RightButton;
-    }
-    else if ([event type] == NSOtherMouseDown){
-        button = Qt::MidButton;
-        state = Qt::MidButton;
-    }
-    else {
-        [NSException raise:IFRuntimeError format:@"IFWebView::mouseDown: unknown button type"];
-        button = 0; state = 0; // Shutup the compiler.
-    }
-    NSPoint p = [event locationInWindow];
-    
-    [self _addModifiers:[event modifierFlags] toState:&state];
+    [[self _bridge] mouseDown:event];
+}
 
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
-    KHTMLView *widget = _private->widget;
-    if (widget) {
-        widget->viewportMousePressEvent(&kEvent);
+- (void)mouseMovedNotification:(NSNotification *)notification
+{
+    // Only act on the mouse move event if it's inside this view (and not inside a subview).
+    NSEvent *event = [[notification userInfo] objectForKey:@"NSEvent"];
+    if ([event window] == [self window] && [[self window] isMainWindow]
+            && [[[self window] contentView] hitTest:[event locationInWindow]] == self) {
+        [[self _bridge] mouseMoved:event];
     }
 }
 
-- (void)mouseMovedNotification: (NSNotification *)notification
+- (void)mouseDragged:(NSEvent *)event
 {
-    NSEvent *event = [(NSDictionary *)[notification userInfo] objectForKey: @"NSEvent"];
-    NSPoint p = [event locationInWindow];
-    NSWindow *thisWindow = [self window];
-    
-    // Only act on the mouse move event if it's inside this view (and
-    // not inside a subview)
-    if ([thisWindow isMainWindow] &&
-        [[[notification userInfo] objectForKey: @"NSEvent"] window] == thisWindow &&
-        [[thisWindow contentView] hitTest:p] == self) {
-	int state = 0;
-	[self _addModifiers:[event modifierFlags] toState:&state];
-        QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, state);
-        KHTMLView *widget = _private->widget;
-        if (widget) {
-            widget->viewportMouseMoveEvent(&kEvent);
-        }
-    }
-}
-
-- (void)mouseDragged: (NSEvent *)event
-{
-    NSPoint p = [event locationInWindow];
-    
-    [self autoscroll: event];
-    
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
-    KHTMLView *widget = _private->widget;
-    if (widget) {
-        widget->viewportMouseMoveEvent(&kEvent);
-    }
+    [self autoscroll:event];
+    [[self _bridge] mouseDragged:event];
 }
 
 #if 0

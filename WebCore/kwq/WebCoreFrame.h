@@ -48,9 +48,8 @@
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
-- (KHTMLView *)widget; // returns provisional widget if present, otherwise committed (avoid calling this for that reason)
-
-- (WebCoreBridge *)bridge; // always returns committed bridge, not provisional (avoid calling this for that reason)
+- (WebCoreBridge *)bridge; // returns provisional bridge if present (avoid calling this for that reason)
+- (WebCoreBridge *)committedBridge; // always returns committed bridge, not provisional (avoid calling this for that reason)
 
 @end
 

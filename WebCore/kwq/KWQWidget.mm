@@ -368,10 +368,6 @@ QPoint QWidget::mapFromGlobal(const QPoint &p) const
     return QPoint((int)bp.x, (int)bp.y);
 }
 
-void QWidget::paint(void *)
-{
-}
-
 NSView *QWidget::getView() const
 {
     return data->view;

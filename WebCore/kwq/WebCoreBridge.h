@@ -49,6 +49,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 @class WebCoreFrame;
 
+@protocol WebCoreDOMTreeCopier;
+@protocol WebCoreRenderTreeCopier;
 @protocol WebCoreResourceLoader;
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
@@ -63,6 +65,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @interface WebCoreBridge : NSObject
 {
     KHTMLPart *part;
+    BOOL bridgeOwnsKHTMLView;
 }
 
 - (KHTMLPart *)part;
@@ -72,13 +75,16 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)closeURL;
 - (void)end;
 
+- (void)installInFrame:(NSView *)view;
+- (void)removeFromFrame;
+
 - (void)setURL:(NSURL *)URL;
 
 - (void)scrollToBaseAnchor;
 
 - (NSString *)documentTextFromDOM;
 
-- (KHTMLView *)createKHTMLViewWithNSView:(NSView *)view
+- (void)createKHTMLViewWithNSView:(NSView *)view
     width:(int)width height:(int)height
     marginWidth:(int)mw marginHeight:(int)mh;
 
@@ -87,8 +93,16 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)reapplyStyles;
 - (void)forceLayout;
-- (void)adjustFrames: (NSRect)rect;
+- (void)adjustFrames:(NSRect)rect;
 - (void)drawRect:(NSRect)rect;
+
+- (void)mouseDown:(NSEvent *)event;
+- (void)mouseUp:(NSEvent *)event;
+- (void)mouseMoved:(NSEvent *)event;
+- (void)mouseDragged:(NSEvent *)event;
+
+- (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
+- (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 
 @end
 
@@ -127,10 +141,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 
-- (BOOL) openedByScript;
-- (void) setOpenedByScript:(BOOL)openedByScript;
+- (BOOL)openedByScript;
+- (void)setOpenedByScript:(BOOL)openedByScript;
 
-- (void) unfocusWindow;
+- (void)unfocusWindow;
 
 @end
 
@@ -139,4 +153,12 @@ typedef khtml::RenderPart KHTMLRenderPart;
 // This idiom is appropriate because WebCoreBridge is an abstract class.
 
 @interface WebCoreBridge (SubclassResponsibility) <WebCoreBridge>
+@end
+
+@protocol WebCoreDOMTreeCopier <NSObject>
+- (NSObject *)nodeWithName:(NSString *)name value:(NSString *)value source:(NSString *)source children:(NSArray *)children;
+@end
+
+@protocol WebCoreRenderTreeCopier <NSObject>
+- (NSObject *)nodeWithName:(NSString *)name rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
 @end

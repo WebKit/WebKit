@@ -5,9 +5,10 @@
         in WebCore.  Instances of this class are referenced by _private in 
         NSWebPageView.
 */
-#import <WebKit/WebKitDebug.h>
 
 #import <WebKit/IFHTMLViewPrivate.h>
+
+#import <WebKit/WebKitDebug.h>
 #import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFPluginView.h>
@@ -15,10 +16,6 @@
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
-
-#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
-#import <khtmlview.h>
-#endif
 
 @interface NSView (IFHTMLViewPrivate)
 - (void)_IF_stopIfPluginView;
@@ -52,7 +49,7 @@
     // the frame origins during drawing!  So we have to 
     // layout and do a draw with rendering disabled to
     // correclty adjust the frames.
-    [[self _bridge] adjustFrames: [self frame]];
+    [[self _bridge] adjustFrames:[self frame]];
 }
 
 
@@ -62,37 +59,20 @@
     [subviews makeObjectsPerformSelector:@selector(_IF_stopIfPluginView)];
     [subviews release];
 
-    [IFImageRenderer stopAnimationsInView: self];
-    
-    delete _private->provisionalWidget;
-    _private->provisionalWidget = 0;
-    if (_private->widgetOwned)
-        delete _private->widget;
-    _private->widget = 0;
-    _private->widgetOwned = NO;
+    [IFImageRenderer stopAnimationsInView:self];
 }
 
-- (void)_setController: (IFWebController *)controller
+- (void)_setController:(IFWebController *)controller
 {
     // Not retained; the controller owns the view.
     _private->controller = controller;    
-}
-
-- (KHTMLView *)_widget
-{
-    return _private->widget;    
-}
-
-- (KHTMLView *)_provisionalWidget
-{
-    return _private->provisionalWidget;    
 }
 
 // Required so view can access the part's selection.
 - (IFWebCoreBridge *)_bridge
 {
     IFWebView *webView = [self _IF_parentWebView];
-    IFWebFrame *webFrame = [[webView _controller] frameForView: webView];
+    IFWebFrame *webFrame = [[webView _controller] frameForView:webView];
     return [[webFrame dataSource] _bridge];
 }
 

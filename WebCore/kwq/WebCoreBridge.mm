@@ -25,10 +25,12 @@
 
 #import <WebCoreBridge.h>
 
+#import <WebCoreFrame.h>
+
 #import <KWQKHTMLPartImpl.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
-#import <render_object.h>
+#import <render_frames.h>
 
 @implementation WebCoreBridge
 
@@ -44,6 +46,8 @@
 
 - (void)dealloc
 {
+    [self removeFromFrame];
+    
     part->deref();
     
     [super dealloc];
@@ -79,11 +83,10 @@
     part->impl->setBaseURL([[URL absoluteString] cString]);
 }
 
-- (KHTMLView *)createKHTMLViewWithNSView:(NSView *)view
+- (void)createKHTMLViewWithNSView:(NSView *)view
     width:(int)width height:(int)height
     marginWidth:(int)mw marginHeight:(int)mh
 {
-    // Nasty! Set up the cross references between the KHTMLView and the KHTMLPart.
     KHTMLView *kview = new KHTMLView(part, 0);
     part->impl->setView(kview);
 
@@ -94,7 +97,7 @@
         kview->setMarginHeight(mh);
     kview->resize(width, height);
     
-    return kview;
+    bridgeOwnsKHTMLView = YES;
 }
 
 - (NSString *)documentTextFromDOM
@@ -149,7 +152,7 @@
     }
 }
 
-- (void)_drawRect:(NSRect)rect withPainter: (QPainter *)p
+- (void)_drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     DOM::DocumentImpl *doc = part->xmlDocImpl();
     if (doc) {
@@ -163,21 +166,189 @@
 - (void)drawRect:(NSRect)rect
 {
     QPainter p;
-    [self _drawRect:rect withPainter: &p];
+    [self _drawRect:rect withPainter:&p];
 }
 
-- (void)adjustFrames: (NSRect)rect
+- (void)adjustFrames:(NSRect)rect
 {
     // Ick!  khtml sets the frame size during layout and
     // the frame origins during drawing!  So we have to 
     // layout and do a draw with rendering disabled to
-    // correclty adjust the frames.
+    // correctly adjust the frames.
     [self forceLayout];
     QPainter p;
     p.setPaintingDisabled(YES);
-    [self _drawRect:rect withPainter: &p];
+    [self _drawRect:rect withPainter:&p];
 }
 
+- (NSObject *)copyDOMNode:(DOM::NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier
+{
+    NSMutableArray *children = [[NSMutableArray alloc] init];
+    for (DOM::NodeImpl *child = node->firstChild(); child; child = child->nextSibling()) {
+        [children addObject:[self copyDOMNode:child copier:copier]];
+    }
+    NSObject *copiedNode = [copier nodeWithName:node->nodeName().string().getNSString()
+                                          value:node->nodeValue().string().getNSString()
+                                         source:node->recursive_toHTML(1).getNSString()
+                                       children:children];
+    [children release];
+    return copiedNode;
+}
 
+- (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    return [self copyDOMNode:doc copier:copier];
+}
+
+- (NSObject *)copyRenderNode:(khtml::RenderObject *)node copier:(id <WebCoreRenderTreeCopier>)copier
+{
+    NSMutableArray *children = [[NSMutableArray alloc] init];
+    for (khtml::RenderObject *child = node->firstChild(); child; child = child->nextSibling()) {
+        [children addObject:[self copyRenderNode:child copier:copier]];
+    }
+    
+    NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
+    
+    khtml::RenderPart *renderPart = dynamic_cast<khtml::RenderPart *>(node);
+    QWidget *widget = renderPart ? renderPart->widget() : 0;
+    NSView *view = widget ? widget->getView() : nil;
+    
+    NSObject *copiedNode = [copier nodeWithName:name
+                                           rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
+                                           view:view
+                                       children:children];
+    
+    [name release];
+    [children release];
+    
+    return copiedNode;
+}
+
+- (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    khtml::RenderObject *renderer = doc->renderer();
+    if (!renderer) {
+        return nil;
+    }
+    return [self copyRenderNode:renderer copier:copier];
+}
+
+- (void)removeFromFrame
+{
+    if (bridgeOwnsKHTMLView) {
+        delete part->impl->getView();
+    }
+    bridgeOwnsKHTMLView = NO;
+}
+
+- (void)installInFrame:(NSView *)view
+{
+    part->impl->getView()->setView(view);
+
+    KHTMLRenderPart *renderPart = [[self frame] renderPart];
+    if (renderPart) {
+        renderPart->setWidget(part->impl->getView());
+        // Now that the render part is holding the widget, we don't own it any more.
+        bridgeOwnsKHTMLView = NO;
+    }
+}
+
+- (void)addModifiers:(unsigned)modifiers toState:(int *)state
+{
+    if (modifiers & NSControlKeyMask)
+        *state |= Qt::ControlButton;
+    if (modifiers & NSShiftKeyMask)
+        *state |= Qt::ShiftButton;
+    if (modifiers & NSAlternateKeyMask)
+        *state |= Qt::AltButton;
+    // Mapping command to meta is slightly questionable
+    if (modifiers & NSCommandKeyMask)
+        *state |= Qt::MetaButton;
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+    NSPoint p = [event locationInWindow];
+
+    int button, state;
+    switch ([event type]) {
+    case NSRightMouseUp:
+        button = Qt::RightButton;
+        state = Qt::RightButton;
+        break;
+    case NSOtherMouseUp:
+        button = Qt::MidButton;
+        state = Qt::MidButton;
+        break;
+    default:
+        button = Qt::LeftButton;
+        state = Qt::LeftButton;
+        break;
+    }
+    [self addModifiers:[event modifierFlags] toState:&state];
+    
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    if (part->impl->getView()) {
+        part->impl->getView()->viewportMouseReleaseEvent(&kEvent);
+    }
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    NSPoint p = [event locationInWindow];
+
+    int button, state;     
+    switch ([event type]) {
+    case NSRightMouseUp:
+        button = Qt::RightButton;
+        state = Qt::RightButton;
+        break;
+    case NSOtherMouseUp:
+        button = Qt::MidButton;
+        state = Qt::MidButton;
+        break;
+    default:
+        button = Qt::LeftButton;
+        state = Qt::LeftButton;
+        break;
+    }
+    [self addModifiers:[event modifierFlags] toState:&state];
+    
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    if (part->impl->getView()) {
+        part->impl->getView()->viewportMousePressEvent(&kEvent);
+    }
+}
+
+- (void)mouseMoved:(NSEvent *)event
+{
+    NSPoint p = [event locationInWindow];
+    
+    int state = 0;
+    [self addModifiers:[event modifierFlags] toState:&state];
+    
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, state);
+    if (part->impl->getView()) {
+        part->impl->getView()->viewportMouseMoveEvent(&kEvent);
+    }
+}
+
+- (void)mouseDragged:(NSEvent *)event
+{
+    NSPoint p = [event locationInWindow];
+    
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
+    if (part->impl->getView()) {
+        part->impl->getView()->viewportMouseMoveEvent(&kEvent);
+    }
+}
 
 @end

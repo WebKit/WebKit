@@ -42,16 +42,16 @@
 
 - (WebCoreBridge *)bridge
 {
+    WebCoreBridge *bridge = [[frame provisionalDataSource] _bridge];
+    if (bridge) {
+        return bridge;
+    }
     return [[frame dataSource] _bridge];
 }
 
-- (KHTMLView *)widget
+- (WebCoreBridge *)committedBridge
 {
-    KHTMLView *widget = [[self HTMLView] _provisionalWidget];
-    if (widget) {
-        return widget;
-    }
-    return [[self HTMLView] _widget];
+    return [[frame dataSource] _bridge];
 }
 
 - (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(IFWebDataSource *)parent

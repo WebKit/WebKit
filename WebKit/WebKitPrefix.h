@@ -1,5 +1,3 @@
-#import <config.h>
-
 #import <stddef.h>
 #import <stdio.h>
 #import <fcntl.h>

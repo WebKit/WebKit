@@ -127,8 +127,6 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
-    WEBKIT_ASSERT (frame != nil);
-
     [dataSource _addError: error forResource:
         (resourceHandle != nil ? [[resourceHandle url] absoluteString] : [[error failingURL] absoluteString])];
     
@@ -142,8 +140,6 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
-    WEBKIT_ASSERT (frame != nil);
-
     [dataSource _setPrimaryLoadComplete: YES];
 
     [dataSource _setMainDocumentError: error];

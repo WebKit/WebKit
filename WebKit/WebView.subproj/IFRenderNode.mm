@@ -8,65 +8,62 @@
 
 #import "IFRenderNode.h"
 
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
 
-#ifndef WEBKIT_INDEPENDENT_OF_WEBCORE
-
-#import <khtmlview.h>
-#import <khtml_part.h>
-#import <xml/dom_docimpl.h>
-#import <rendering/render_frames.h>
-
-#endif
+@interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>
+@end
 
 @implementation IFRenderNode
 
-- initWithRenderObject:(khtml::RenderObject *)node
+- initWithName:(NSString *)n rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
 {
     NSMutableArray *collectChildren;
     
     [super init];
 
-    collectChildren = [NSMutableArray array];
+    collectChildren = [c mutableCopy];
 
-    name = [[NSString stringWithCString:node->renderName()] retain];
-    x = node->xPos();
-    y = node->yPos();
-    width = node->width();
-    height = node->height();
+    name = [n retain];
+    rect = r;
 
-    for (khtml::RenderObject *child = node->firstChild(); child; child = child->nextSibling()) {
-        [collectChildren addObject:[[[IFRenderNode alloc] initWithRenderObject: child] autorelease]];
+    if ([view isKindOfClass:[NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)view;
+        view = [scrollView superview];
     }
-
-    khtml::RenderPart *part = dynamic_cast<khtml::RenderPart *>(node);
-    if (part) {
-        NSView *view = part->widget()->getView();
-        if ([view isKindOfClass:[NSScrollView class]]) {
-            NSScrollView *scrollView = (NSScrollView *)view;
-            view = [scrollView superview];
-        }
-        if ([view isKindOfClass:[IFWebView class]]) {
-            IFWebView *webView = (IFWebView *)view;
-            [collectChildren addObject:[[[IFRenderNode alloc] initWithWebView:webView] autorelease]];
-        }
+    if ([view isKindOfClass:[IFWebView class]]) {
+        IFWebView *webView = (IFWebView *)view;
+        [collectChildren addObject:[[[IFRenderNode alloc] initWithWebView:webView] autorelease]];
     }
     
     children = [collectChildren copy];
+    [collectChildren release];
     
     return self;
 }
 
 - initWithWebView:(IFWebView *)view
 {
-    return [self initWithRenderObject:[(IFHTMLView *)[view documentView] _widget]->part()->xmlDocImpl()->renderer()];
+    WebKitRenderTreeCopier *copier;
+    
+    [self dealloc];
+
+    if (![[view documentView] isMemberOfClass:[IFHTMLView class]]) {
+        return nil;
+    }
+    
+    copier = [[WebKitRenderTreeCopier alloc] init];
+    self = [[[(IFHTMLView *)[view documentView] _bridge] copyRenderTree:copier] retain];
+    [copier release];
+    
+    return self;
 }
 
 - (void)dealloc
 {
-    [name release];
     [children release];
+    [name release];
     [super dealloc];
 }
 
@@ -82,17 +79,26 @@
 
 - (NSString *)positionString
 {
-    return [NSString stringWithFormat:@"(%d, %d)", x, y];
+    return [NSString stringWithFormat:@"(%.0f, %.0f)", rect.origin.x, rect.origin.y];
 }
 
 - (NSString *)widthString
 {
-    return [NSString stringWithFormat:@"%d", width];
+    return [NSString stringWithFormat:@"%.0f", rect.size.width];
 }
 
 - (NSString *)heightString
 {
-    return [NSString stringWithFormat:@"%d", height];
+    return [NSString stringWithFormat:@"%.0f", rect.size.height];
+}
+
+@end
+
+@implementation WebKitRenderTreeCopier
+
+- (NSObject *)nodeWithName:(NSString *)name rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children
+{
+    return [[[IFRenderNode alloc] initWithName:name rect:rect view:view children:children] autorelease];
 }
 
 @end

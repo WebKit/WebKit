@@ -130,9 +130,7 @@ public:
     void setBackgroundMode(BackgroundMode) { }
 
     void setAcceptDrops(bool) { }
-    
-    virtual void paint(void *);
-    
+        
     NSView *getView() const;
     void setView(NSView *aView);
     

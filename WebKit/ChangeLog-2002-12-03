@@ -1,3 +1,65 @@
+2002-07-14  Darin Adler  <darin@apple.com>
+
+	Wean WebKit completely from getting at the C++ parts of WebCore.
+	We probably don't need to use C++ at all for WebKit any more.
+
+        * WebKit.pbproj/project.pbxproj: Remove all the header search paths; we don't need any
+	special ones now.
+
+        * WebKitPrefix.h: Remove <config.h>; we don't need it any more.
+
+        * Misc.subproj/IFCache.h: Rename getStatistics to statistics.
+        * Misc.subproj/IFCache.mm:
+        (+[IFCache statistics]):
+        (+[IFCache empty]):
+        (+[IFCache setDisabled:]):
+	Call through WebCoreCache instead of going directly to khtml::Cache.
+        (+[IFCache javaScriptObjectsCount]):
+        (+[IFCache javaScriptInterpretersCount]):
+        (+[IFCache javaScriptNoGCAllowedObjectsCount]):
+        (+[IFCache javaScriptReferencedObjectsCount]):
+        (+[IFCache garbageCollectJavaScriptObjects]):
+	Call through WebCoreJavaScript instead of going directly to kjs::Collector.
+
+        * WebCoreSupport.subproj/IFWebCoreFrame.m:
+        (-[IFWebCoreFrame bridge]): Change to return bridge from the provisional data
+	source if it exists.
+        (-[IFWebCoreFrame committedBridge]): Do what [bridge] used to do, always returning
+	the bridge from the committed data source and never the provisional one.
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView provisionalDataSourceChanged:]): Don't store the provisional widget.
+	It's stored in the bridge for the provisional data source.
+        (-[IFHTMLView provisionalDataSourceCommitted:]): Use the bridge method installInFrame:
+	to do most of the work that used to be here. The rest is don in removeFromFrame which
+	is called elsewhere.
+        (-[IFHTMLView mouseUp:]): Use the bridge's mouseUp method.
+        (-[IFHTMLView mouseDown:]): Use the bridge's mouseDown method.
+        (-[IFHTMLView mouseMovedNotification:]): Use the bridge's mouseMoved method.
+        (-[IFHTMLView mouseDragged:]): Use the bridge's mouseDragged method.
+
+        * WebView.subproj/IFHTMLViewPrivate.h: Remove the widget, widgetOwned, and
+	provisionalWidget instance variables, and the _widget and _provisionalWidget methods.
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[IFHTMLView _reset]): Remove the code that deleted the widget and the provisional widget.
+	This is now handled elsewhere.
+
+        * WebView.subproj/IFDOMNode.mm: Redo to use the copyDOMTree feature of the bridge.
+        * WebView.subproj/IFRenderNode.mm: Redo to use the copyRenderTree feature of the bridge.
+
+        * WebView.subproj/IFRenderNode.h: Use an NSRect instead of four integers
+	(the switch to floating point is OK).
+
+        * WebView.subproj/IFWebDataSourcePrivate.h: Add private _removeFromFrame method.
+        * WebView.subproj/IFWebDataSourcePrivate.mm:
+        (-[IFWebDataSource _removeFromFrame]): Set the controller and location change handler
+	references to nil, and also call [WebCoreBridge removeFromFrame].
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFramePrivate setDataSource:]): Use _removeFromFrame where we formerly would
+	set the controller and location change handler references to nil.
+
+        * WebCoreSupport.subproj/IFWebCoreBridge.h: Tweak.
+
 2002-07-13  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView dealloc]):

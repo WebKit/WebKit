@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,40 +22,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import "KWQView.h"
-
-#import "kwqdebug.h"
-
-#import <khtmlview.h>
-#import <khtml_part.h>
 #import <qwidget.h>
-#import <qpainter.h>
-#import <qevent.h>
-#import <html_documentimpl.h>
-
-
 
 @implementation KWQView
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame:(NSRect)r widget:(QWidget *)w 
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
     widget = w;
     isFlipped = YES;
     return self;
 }
 
-
-// This should eventually be removed.
-- (void)drawRect:(NSRect)rect {
-    widget->paint((void *)0);
-}
-
-- (void)setIsFlipped: (bool)flag
+- (void)setIsFlipped:(bool)flag
 {
     isFlipped = flag;
 }
-
 
 - (BOOL)isFlipped 
 {
@@ -64,58 +48,55 @@
 
 @end
 
-
 @implementation KWQNSButton
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame:(NSRect)r widget:(QWidget *)w 
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
     [self setBordered:YES];
     [self setBezelStyle:NSRoundedBezelStyle];
     widget = w;
     
-    [self setTarget: self];
-    [self setAction: @selector(action:)];
+    [self setTarget:self];
+    [self setAction:@selector(action:)];
     return self;
 }
 
-- (void)action: sender
+- (void)action:(id)sender
 {
     widget->emitAction(QObject::ACTION_BUTTON_CLICKED);
 }
 
-- (void)stateChanged: sender
+- (void)stateChanged:(id)sender
 {
     widget->emitAction(QObject::ACTION_CHECKBOX_CLICKED);
 }
 
 @end
 
-
 @implementation KWQNSComboBox
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame:(NSRect)r widget:(QWidget *)w 
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
     widget = w;
-    [self setTarget: self];
-    [self setAction: @selector(action:)];
+    [self setTarget:self];
+    [self setAction:@selector(action:)];
     return self;
 }
 
-- (void)action: sender
+- (void)action:(id)sender
 {
     widget->emitAction(QObject::ACTION_COMBOBOX_CLICKED);
 }
 
 @end
 
-
 @implementation KWQNSScrollView
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame:(NSRect)r widget:(QWidget *)w 
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
     widget = w;
     return self;
 }

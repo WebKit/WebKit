@@ -8,20 +8,11 @@
 
 #import <WebKit/IFHTMLView.h>
 
-#ifdef __cplusplus
-class KHTMLView;
-#else
-@class KHTMLView;
-#endif
-
 @class IFWebCoreBridge;
 
 @interface IFHTMLViewPrivate : NSObject
 {
     IFWebController *controller;
-    KHTMLView *widget;
-    BOOL widgetOwned;
-    KHTMLView *provisionalWidget;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
@@ -30,16 +21,11 @@ class KHTMLView;
     BOOL liveAllowsScrolling;
     BOOL inWindow;
 }
-
 @end
 
 @interface IFHTMLView (IFPrivate)
 - (void)_reset;
-
 - (void)_setController: (IFWebController *)controller;
-
-- (KHTMLView *)_widget;
-- (KHTMLView *)_provisionalWidget;
 - (IFWebCoreBridge *)_bridge;
 - (void)_adjustFrames;
 @end

@@ -430,7 +430,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     WebCoreFrame *wcFrame = [bridge childFrameNamed:name];
     if (wcFrame) {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
-        frame->setWidget([wcFrame widget]);
+        frame->setWidget([[wcFrame bridge] part]->impl->getView());
     }
     else {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "creating %s\n", DEBUG_OBJECT(name));
@@ -592,7 +592,7 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 
 KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
 {
-    return [[[bridge frameNamed:frameName.getNSString()] bridge] part];
+    return [[[bridge frameNamed:frameName.getNSString()] committedBridge] part];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
@@ -601,7 +601,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
     NSEnumerator *e = [[bridge childFrames] objectEnumerator];
     WebCoreFrame *childFrame;
     while ((childFrame = [e nextObject])) {
-        KHTMLPart *childPart = [[childFrame bridge] part];
+        KHTMLPart *childPart = [[childFrame committedBridge] part];
         if (childPart)
             parts.append(childPart);
     }

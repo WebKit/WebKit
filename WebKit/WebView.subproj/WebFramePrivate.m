@@ -70,8 +70,7 @@ static const char * const stateNames[6] = {
 - (void)setDataSource: (IFWebDataSource *)d
 {
     if (dataSource != d) {
-        [dataSource _setController: nil];
-        [dataSource _setLocationChangeHandler: nil];
+        [dataSource _removeFromFrame];
         [dataSource autorelease];
         dataSource = [d retain];
     }

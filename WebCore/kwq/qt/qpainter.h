@@ -42,34 +42,21 @@ class QPixmap;
 class QWidget;
 class QPainterPrivate;
 
-class QWMatrix {
-friend class QPainter;
-friend class QPixmap;
-public:
-    QWMatrix();
-    QWMatrix &scale(double, double);
-
-private:
-    bool empty;
-    double sx;
-    double sy;
-};
-
 class QPainter : public Qt {
 public:
     typedef enum { RTL, LTR } TextDirection;
 
     QPainter();
-    QPainter(QPixmap *);
-    QPainter(QWidget *);
     ~QPainter();
     
     const QFont &font() const;
     void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
+    
     const QPen &pen() const;
     void setPen(const QPen &);
     void setPen(PenStyle);
+    
     const QBrush &QPainter::brush() const;
     void setBrush(const QBrush &);
     void setBrush(BrushStyle);
@@ -85,53 +72,33 @@ public:
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
     void drawPolyline(const QPointArray &, int index=0, int npoints=-1);
-    void drawPolygon(const QPointArray &, bool winding=FALSE, int index=0,
-        int npoints=-1);
+    void drawPolygon(const QPointArray &, bool winding=FALSE, int index=0, int npoints=-1);
+    void drawConvexPolygon(const QPointArray &);
+
+    void fillRect(int, int, int, int, const QBrush &);
+
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawPixmap( int x, int y, const QPixmap &,
 			    int sx=0, int sy=0, int sw=-1, int sh=-1 );
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0);
-    void drawText(int x, int y, const QString &, int len=-1);
-    void drawText(int, int, int, int, int flags, const QString&, int len=-1, 
-        QRect *br=0, char **internal=0);
-    void drawText(int, int, const QString &, int, TextDirection);
-    void drawText(int, int, const QString &, int, int, TextDirection);
-    void drawText(int, int, const QString &, int, int, const QColor& backgroundColor);
 
-    void fillRect(int, int, int, int, const QBrush &);
-    void drawConvexPolygon(const QPointArray &);
-
-    void setClipping(bool);
     void setClipRegion(const QRegion &);
-    void setClipRect(const QRect &);
-    void setClipRect(int,int,int,int);
     const QRegion &clipRegion() const;
-    bool hasClipping() const;
+
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
 
-    void translate(double dx, double dy);
-    void scale(double dx, double dy);
-
-    void begin(QPixmap *) { }
-    void end() { }
-    QPaintDevice *device() const { return 0; }
-
-    void drawUnderlineForText(int x, int y, const QString &, int len=-1);
-
+    void drawText(int x, int y, const QString &, int from, int to, const QColor& backgroundColor);
+    void drawUnderlineForText(int x, int y, const QString &);
     static QColor selectedTextBackgroundColor();
     
     void setPaintingDisabled(bool f);
     
 private:
     // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
     QPainter(const QPainter &);
     QPainter &operator=(const QPainter &);
-
-    void _lockFocus();
-    void _unlockFocus();
 
     void _setColorFromBrush();
     void _setColorFromPen();
