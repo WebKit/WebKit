@@ -1,5 +1,12 @@
 2002-06-27  Richard Williamson  <rjw@apple.com>
 
+        Method name changes in preparation for fixing
+        TextSlave::checkSelectionPoint().
+        
+        * kwq/WebCoreTextRenderer.h:
+
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
         Removed calls to old method.
         
         * kwq/KWQPainter.mm:

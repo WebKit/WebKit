@@ -43,4 +43,8 @@
 // A way to bypass NSString for speed.
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length;
 
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len;
+
+- (int)widthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len;
+
 @end

@@ -688,7 +688,7 @@ cleanup:
 }
 
 
-- (float)slowFloatWidthForCharacters: (const UniChar *)characters length: (unsigned)length applyRounding: (BOOL)applyRounding
+- (float)slowFloatWidthForCharacters: (const UniChar *)characters stringLength: (unsigned)length fromCharacterPostion: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding
 {
     float totalWidth = 0;
     unsigned int i, numGlyphs;
@@ -722,7 +722,13 @@ cleanup:
 }
 
 
-- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len
+{
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len applyRounding: YES attemptFontSubstitution: YES];
+}
+
+
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
@@ -732,14 +738,14 @@ cleanup:
     
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
     
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < stringLength; i++) {
         UniChar c = characters[i];
         
         if (c == NON_BREAKING_SPACE) {
             c = SPACE;
         }
         else if (IsNonBaseChar(c)){
-            return [self slowFloatWidthForCharacters: characters length: length applyRounding: applyRounding];
+            return [self slowFloatWidthForCharacters: characters stringLength: stringLength fromCharacterPostion: pos numberOfCharacters: len applyRounding: applyRounding];
         }
         
         glyphID = glyphForCharacter(characterToGlyphMap, c);
@@ -750,11 +756,11 @@ cleanup:
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyphID == 0 && attemptSubstitution) {
-            clusterLength = findLengthOfCharacterCluster (&characters[i], length - i);
+            clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
                 //WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
-                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES attemptFontSubstitution: NO];
+                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len applyRounding: YES attemptFontSubstitution: NO];
             }
         }
         
@@ -775,10 +781,14 @@ cleanup:
     return totalWidth;
 }
 
-
-- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
+- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
 {
-    return ROUND_TO_INT([self floatWidthForCharacters:characters length:length applyRounding:YES attemptFontSubstitution: YES]);
+    return [self widthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength];
+}
+
+- (int)widthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len
+{
+    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 

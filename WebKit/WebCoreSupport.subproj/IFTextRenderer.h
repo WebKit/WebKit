@@ -29,6 +29,6 @@ typedef struct GlyphMap GlyphMap;
 - initWithFont:(NSFont *)font;
 
 // Set applyRounding = NO to get an Cocoa equivalent width.
-- (float)floatWidthForCharacters:(const unichar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptFontSubstitution;
+- (float)floatWidthForCharacters:(const unichar *)characters stringLength:(unsigned)length  fromCharacterPosition: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptFontSubstitution;
 
 @end
