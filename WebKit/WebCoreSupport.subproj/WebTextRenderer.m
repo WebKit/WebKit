@@ -204,20 +204,41 @@ static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *rend
 static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font);
 static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font);
 
+#if BUILDING_ON_PANTHER
+
 static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
     WebGlyphWidth width;
-    BOOL errorResult;
 
-    if (font)
-        errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize]);
-    else
-        errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &width, [renderer->font pointSize]);
-    if (errorResult == 0)
-        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [renderer->font displayName], [renderer->font pointSize]);
+    if (font == NULL)
+        font = renderer->font;
+
+    if (!CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize]))
+        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [font displayName], [font pointSize]);
 
     return width;
 }
+
+#else
+
+static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+{
+    float pointSize;
+    CGAffineTransform m;
+    CGSize advance;
+
+    if (font == NULL)
+        font = renderer->font;
+
+    pointSize = [font pointSize];
+    m = CGAffineTransformMakeScale(pointSize, pointSize);
+    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, kCGFontRenderingModeAntialiased, &glyph, 1, &advance))
+        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+
+    return advance.width;
+}
+
+#endif
 
 static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
@@ -851,6 +872,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         cgContext = (CGContextRef)[gContext graphicsPort];
         // Setup the color and font.
         
+#if BUILDING_ON_PANTHER        
         if ([gContext isDrawingToScreen]){
             NSFont *screenFont = [font screenFont];
             if (screenFont != font){
@@ -867,6 +889,34 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
             }
             [printerFont set];
         }
+#else
+        NSFont *drawFont;
+        
+        if ([gContext isDrawingToScreen]){
+            drawFont = [font screenFont];
+            if (drawFont != font){
+                // We are getting this in too many places (3406411); use ERROR so it only prints on
+                // debug versions for now. (We should debug this also, eventually).
+                ERROR ("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+            }
+        }
+        else {
+            drawFont = [font printerFont];
+            if (drawFont != font){
+                NSLog (@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+            }
+        }
+        
+        CGContextSetFont (cgContext, [drawFont _backingCGSFont]);
+        
+        // Deal will flipping flippyness.
+        const float *matrix = [drawFont matrix];
+        float flip = [[NSView focusView] isFlipped] ? -1 : 1;
+        CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
+        CGContextSetFontRenderingMode (cgContext, kCGFontRenderingModeAntialiased);
+        CGContextSetFontSize(cgContext, 1.0);
+#endif
+
         [color set];
 
         CGContextSetTextPosition (cgContext, x, y);

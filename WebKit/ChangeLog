@@ -1,3 +1,16 @@
+2004-12-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3903749> REGRESSION (8A321): WebKit gets incorrect glyph metrics due to change in how AppKit uses CGFont
+
+	Use CGFontRef direction when both getting font metrics and drawing
+	glyphs, instead on depending on [NSFont set].
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth):
+        (_drawGlyphs):
+
 2004-12-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison
