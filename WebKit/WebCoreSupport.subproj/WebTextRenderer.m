@@ -361,7 +361,7 @@ static BOOL alwaysUseATSU = NO;
     float pointSize = [font pointSize];
     float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
     float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
-    float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
+    float _lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
     float adjustment;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
@@ -380,7 +380,9 @@ static BOOL alwaysUseATSU = NO;
     ascent = ROUND_TO_INT(asc + adjustment);
     descent = ROUND_TO_INT(dsc);
 
-    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0);
+    _lineGap = (_lineGap > 0.0 ? floor(_lineGap + 0.5) : 0.0);
+    lineGap = (int)_lineGap;
+    lineSpacing =  ascent + descent + lineGap;
 
 #ifdef COMPARE_APPKIT_CG_METRICS
     printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[font displayName] cString], [font pointSize], lineGap, adjustment, (int)[font _canDrawOutsideLineHeight], (int)[font _isSystemFont]);
@@ -926,7 +928,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
             backgroundWidth += advances[i].width;
 
         [style->backgroundColor set];
-        
+
+        float yPos = point.y - [self ascent] - (lineGap/2);
         if (style->rtl){
             WebCoreTextRun completeRun = *run;
             completeRun.from = 0;
@@ -939,10 +942,10 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
                         startPosition:nil
                         numGlyphs: &numGlyphs];
 
-            [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - startPosition - backgroundWidth, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
+            [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
         }
         else
-            [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
+            [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, [self lineSpacing])];
     }
     
     if (advances != localAdvanceBuffer) {

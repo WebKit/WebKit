@@ -135,7 +135,8 @@ int QFontMetrics::height() const
 {
     // According to Qt documentation: 
     // "This is always equal to ascent()+descent()+1 (the 1 is for the base line)."
-    return ascent() + descent() + 1;
+    // We DO NOT match the Qt behavior here.  This is intentional.
+    return ascent() + descent();
 }
 
 int QFontMetrics::lineSpacing() const

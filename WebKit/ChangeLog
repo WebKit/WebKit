@@ -1,3 +1,15 @@
+2003-10-22  Richard Williamson   <rjw@apple.com>
+
+	Match WebCore's notion of distributing linegap between top and bottom of 
+	line.  WebKit used to put it all at the bottom of the line.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:atPoint:]):
+
 2003-10-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

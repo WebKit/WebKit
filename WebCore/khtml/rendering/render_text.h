@@ -202,7 +202,7 @@ public:
 
     virtual int rightmostPosition() const;
 
-    virtual void repaint(bool immediate=false);
+    virtual QRect getAbsoluteRepaintRect();
 
     const QFontMetrics &metrics(bool firstLine) const;
     const Font *htmlFont(bool firstLine) const;

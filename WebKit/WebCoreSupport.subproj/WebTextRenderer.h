@@ -21,6 +21,7 @@ typedef struct CharacterWidthIterator CharacterWidthIterator;
     int ascent;
     int descent;
     int lineSpacing;
+    int lineGap;
     
     ATSStyleGroupPtr styleGroup;
     

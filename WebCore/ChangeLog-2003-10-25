@@ -1,3 +1,17 @@
+2003-10-22  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3454067.  RenderText's repaint wasn't called because of recent changes to de-virtualize repaint.  Modified getAbsoluteRepaintRect() to return containing block's getAbsoluteRepaintRect().
+	
+	Also removed the long standing +1 from QFontMetrics::height().
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::getAbsoluteRepaintRect):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::height):
+
 2003-10-22  David Hyatt  <hyatt@apple.com>
 
 	Fix visibility to be done when widgets are added or when styles are set rather than at paint time.  Fixes
