@@ -1,5 +1,14 @@
 2003-11-10  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3473531, text nested in hr inside h3 did not get the h3's style.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
+2003-11-10  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3478435, <hr> tags should be centered by default.  Ditched the 1px margin as well.
 
 	Fix for 3479441, <h1>-<h6> tags should *not* be centered by default.  They should also use bold instead of
