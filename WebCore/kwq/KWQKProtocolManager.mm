@@ -30,5 +30,5 @@
 QString KProtocolManager::userAgentForHost( const QString& )
 {
     // make us look like msie for now
-    return QString("Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)");
+    return QString("Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715");
 }
