@@ -24,5 +24,6 @@ extern NSString *WebSubresourcesKey;
 
 - (id)_propertyListRepresentation;
 - (NSCachedURLResponse *)_cachedResponseRepresentation;
+- (NSURLResponse *)_response;
 
 @end

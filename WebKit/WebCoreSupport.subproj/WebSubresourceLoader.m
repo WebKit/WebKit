@@ -5,18 +5,16 @@
 
 #import <WebKit/WebSubresourceClient.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLResponse.h>
-#import <WebKit/WebAssertions.h>
-#import <Foundation/NSError_NSURLExtras.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -122,10 +120,10 @@
     [[dataSource _webView] _receivedError:error fromDataSource:dataSource];
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
 {
     NSURL *oldURL = [request URL];
-    NSURLRequest *clientRequest = [super connection:con willSendRequest:newRequest redirectResponse:redirectResponse];
+    NSURLRequest *clientRequest = [super willSendRequest:newRequest redirectResponse:redirectResponse];
     
     if (![oldURL isEqual:[clientRequest URL]]) {
 	[loader redirectedToURL:[clientRequest URL]];
@@ -134,28 +132,28 @@
     return clientRequest;
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
+- (void)didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [loader receivedResponse:r];
-    [super connection:con didReceiveResponse:r];
+    [super didReceiveResponse:r];
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [loader addData:data];
-    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
+    [super didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)con
+- (void)didFinishLoading
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -166,12 +164,12 @@
     
     [[dataSource _webView] _finishedLoadingResourceFromDataSource:dataSource];
 
-    [super connectionDidFinishLoading:con];
+    [super didFinishLoading];
 
     [self release];    
 }
 
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
+- (void)didFailWithError:(NSError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -179,7 +177,7 @@
     [loader reportError];
     [dataSource _removeSubresourceClient:self];
     [self receivedError:error];
-    [super connection:con didFailWithError:error];
+    [super didFailWithError:error];
 
     [self release];
 }

@@ -240,9 +240,9 @@ Could be worth adding to the API.
 // Methods dealing with the estimated progress completion.
 - (void)_progressStarted:(WebFrame *)frame;
 - (void)_progressCompleted:(WebFrame *)frame;
-- (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
-- (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)dataSource;
-- (void)_completeProgressForConnection:(NSURLConnection *)con;
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)dataSource;
+- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate;
 
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;

@@ -1,3 +1,63 @@
+2004-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	- Made WebResource loading not use Foundation at all. This allows "Mail Page" and paste to more directly load subresources without any indirection involving NSURLConnection and the Foundation cache.
+	- Made WebIconLoader a subclass of WebBaseResourceHandleDelegate. This makes favicons appear in the activity window among other things.
+
+        Reviewed by kocienda.
+
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m: removed connection and data ivars since WebBaseResourceHandleDelegate holds these 
+        (-[WebIconLoaderPrivate dealloc]): removed calls to deleted ivars
+        (-[WebIconLoader URL]): call renamed request ivar
+        (-[WebIconLoader startLoading]): call loadWithRequest
+        (-[WebIconLoader stopLoading]): call cancel
+        (-[WebIconLoader didFinishLoading]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate didReceiveResponse:]): renamed to be connection-less since callbacks may came from a WebResource and not an NSURLConnection
+        (-[WebNetscapePluginConnectionDelegate didReceiveData:lengthReceived:]): ditto
+        (-[WebNetscapePluginConnectionDelegate didFinishLoading]): ditto
+        (-[WebNetscapePluginConnectionDelegate didFailWithError:]): ditto
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient didReceiveResponse:]): ditto
+        (-[WebSubresourceClient didReceiveData:lengthReceived:]): ditto
+        (-[WebSubresourceClient didFinishLoading]): ditto
+        (-[WebSubresourceClient didFailWithError:]): ditto
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): instead of storing the resource in the Foundation cache in order to later load it from the cache, deliver the callbacks ourselves after a delay
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]): call deliverResource if callbacks are turned back on
+        (-[WebBaseResourceHandleDelegate deliverResource]): new, calls didReceiveResponse:, didReceiveData:lengthReceived:, and didFinishLoading
+        (-[WebBaseResourceHandleDelegate willSendRequest:redirectResponse:]): renamed to be connection-less since callbacks may came from a WebResource and not an NSURLConnection
+        (-[WebBaseResourceHandleDelegate didReceiveAuthenticationChallenge:]): ditto
+        (-[WebBaseResourceHandleDelegate didCancelAuthenticationChallenge:]): ditto
+        (-[WebBaseResourceHandleDelegate didReceiveResponse:]): ditto
+        (-[WebBaseResourceHandleDelegate didReceiveData:lengthReceived:]): ditto
+        (-[WebBaseResourceHandleDelegate didFinishLoading]): ditto
+        (-[WebBaseResourceHandleDelegate didFailWithError:]): ditto
+        (-[WebBaseResourceHandleDelegate willCacheResponse:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]): calls connection-less version of this method
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:lengthReceived:]): ditto
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:didFailWithError:]): ditto
+        (-[WebBaseResourceHandleDelegate connection:willCacheResponse:]): ditto
+        (-[WebBaseResourceHandleDelegate cancelWithError:]): call renamed _completeProgressForConnectionDelegate on WebView
+        (-[WebBaseResourceHandleDelegate cancelledError]): tweak
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _loadIcon]): set the data source on the icon loader so it can callback
+        * WebView.subproj/WebResource.m:
+        (-[WebResource _response]): new, factored out from _cachedResponseRepresentation
+        (-[WebResource _cachedResponseRepresentation]): call _response
+        * WebView.subproj/WebResourcePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _incrementProgressForConnectionDelegate:response:]): renamed to be connection-less
+        (-[WebView _incrementProgressForConnectionDelegate:data:]): ditto
+        (-[WebView _completeProgressForConnectionDelegate:]): ditto
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

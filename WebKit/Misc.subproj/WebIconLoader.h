@@ -1,17 +1,16 @@
 /*
      WebIconLoader.h
-     Copyright 2002, Apple, Inc. All rights reserved.
+     Copyright 2004, Apple, Inc. All rights reserved.
 */
 
-#import <Cocoa/Cocoa.h>
+#import <WebKit/WebBaseResourceHandleDelegate.h>
 
-@class NSURLRequest;
 @class WebIconLoaderPrivate;
 
 /*!
     @class WebIconLoader
 */
-@interface WebIconLoader : NSObject
+@interface WebIconLoader : WebBaseResourceHandleDelegate
 {
     WebIconLoaderPrivate *_private;
 }

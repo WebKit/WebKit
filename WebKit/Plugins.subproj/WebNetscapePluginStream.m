@@ -104,7 +104,7 @@
     [super releaseResources];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)theResponse
+- (void)didReceiveResponse:(NSURLResponse *)theResponse
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
@@ -113,7 +113,7 @@
     
     // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
     if (stream) {
-        [super connection:con didReceiveResponse:theResponse];
+        [super didReceiveResponse:theResponse];
         if (stream) {
             if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
                 [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
@@ -128,17 +128,17 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [stream receivedData:data];
-    [super connection:con didReceiveData:data lengthReceived:lengthReceived];
+    [super didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)con
+- (void)didFinishLoading
 {
     // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -146,12 +146,12 @@
     [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [stream finishedLoadingWithData:[self resourceData]];
-    [super connectionDidFinishLoading:con];
+    [super didFinishLoading];
 
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
+- (void)didFailWithError:(NSError *)error
 {
     // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
     // The other additional processing can do anything including possibly releasing self;
@@ -161,7 +161,7 @@
     [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _receivedError:error fromDataSource:[self dataSource]];
     [stream receivedError:error];
-    [super connection:con didFailWithError:error];
+    [super didFailWithError:error];
 
     [self release];
 }

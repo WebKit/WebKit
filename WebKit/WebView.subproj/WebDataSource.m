@@ -726,6 +726,7 @@
             _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
             [request release];
             [_private->iconLoader setDelegate:self];
+            [_private->iconLoader setDataSource:self];
             [_private->iconLoader startLoading];
         }
     }

@@ -12,20 +12,13 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 
-#import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLRequestPrivate.h>
-
-
 #define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)
 
 @interface WebIconLoaderPrivate : NSObject
 {
 @public
-    NSURLConnection *handle;
     id delegate;
-    NSURLRequest *request;
-    NSMutableData *resourceData;
+    NSURLRequest *initialRequest;
 }
 
 @end;
@@ -34,9 +27,7 @@
 
 - (void)dealloc
 {
-    [request release];
-    [handle release];
-    [resourceData release];
+    [initialRequest release];
     [super dealloc];
 }
 
@@ -44,12 +35,11 @@
 
 @implementation WebIconLoader
 
-- (id)initWithRequest:(NSURLRequest *)request;
+- (id)initWithRequest:(NSURLRequest *)initialRequest;
 {
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
-    _private->request = [request retain];
-    _private->resourceData = [[NSMutableData alloc] init];
+    _private->initialRequest = [initialRequest copy];
     return self;
 }
 
@@ -61,7 +51,7 @@
 
 - (NSURL *)URL
 {
-    return [_private->request URL];
+    return [_private->initialRequest URL];
 }
 
 - (id)delegate
@@ -76,40 +66,34 @@
 
 - (void)startLoading
 {
-    if (_private->handle != nil) {
-        return;
-    }
-
-    _private->handle = [[NSURLConnection alloc] initWithRequest:_private->request delegate:self];
+    [self loadWithRequest:_private->initialRequest];
 }
 
 - (void)stopLoading
 {
-    [_private->handle cancel];
-    [_private->handle release];
-    _private->handle = nil;
+    [self cancel];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)didFinishLoading
 {
-    [_private->resourceData appendData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    NSImage *icon;
+    NSImage *icon = nil;
     NS_DURING
-        icon = [[NSImage alloc] initWithData:_private->resourceData];
+        NSData *data = [self resourceData];
+        if ([data length] > 0) {
+            icon = [[NSImage alloc] initWithData:data];
+        }
     NS_HANDLER
         icon = nil;
     NS_ENDHANDLER
-    if (icon && [[icon representations] count]) {
+    if ([[icon representations] count] > 0) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
     } else {
-	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
+        [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
     [_private->delegate _iconLoaderReceivedPageIcon:self];    
     [icon release];
+    
+    [super didFinishLoading];
 }
 
 @end

@@ -838,9 +838,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
-- (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
 {
-    if (!con)
+    if (!connectionDelegate)
         return;
 
     LOG (Progress, "_private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
@@ -863,16 +863,16 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     if (!_private->progressItems)
         _private->progressItems = [[NSMutableDictionary alloc] init];
         
-    [_private->progressItems _web_setObject:item forUncopiedKey:con];
+    [_private->progressItems _web_setObject:item forUncopiedKey:connectionDelegate];
     [item release];
 }
 
-- (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)data
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)data
 {
-    if (!con)
+    if (!connectionDelegate)
         return;
 
-    WebProgressItem *item = [_private->progressItems objectForKey:con];
+    WebProgressItem *item = [_private->progressItems objectForKey:connectionDelegate];
 
     if (!item)
         return;
@@ -925,9 +925,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
-- (void)_completeProgressForConnection:(NSURLConnection *)con
+- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate
 {
-    WebProgressItem *item = [_private->progressItems objectForKey:con];
+    WebProgressItem *item = [_private->progressItems objectForKey:connectionDelegate];
 
     if (!item)
         return;

@@ -121,6 +121,20 @@
     [super dealloc];
 }
 
+- (void)deliverResource
+{
+    ASSERT(resource);
+    ASSERT(waitingToDeliverResource);
+    
+    if (!defersCallbacks) {
+        [self didReceiveResponse:[resource _response]];
+        NSData *data = [resource data];
+        [self didReceiveData:data lengthReceived:[data length]];
+        [self didFinishLoading];
+        waitingToDeliverResource = NO;
+    }
+}
+
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
@@ -135,12 +149,16 @@
     if ([[r URL] isEqual:originalURL]) {
         resource = [dataSource subresourceForURL:originalURL];
         if (resource) {
-            // FIXME: This is a hack to make Foundation hand us back the data that we're caching. We need something more direct.
             [resource retain];
-            [[NSURLCache sharedURLCache] storeCachedResponse:[resource _cachedResponseRepresentation] forRequest:r];
+            waitingToDeliverResource = YES;
+            if (!defersCallbacks) {
+                // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+                [self performSelector:@selector(deliverResource) withObject:nil afterDelay:0];
+            }
+            return YES;
         }
     }
-
+    
     connection = [[NSURLConnection alloc] initWithRequest:r delegate:self];
     if (defersCallbacks) {
         [connection setDefersCallbacks:YES];
@@ -153,6 +171,9 @@
 {
     defersCallbacks = defers;
     [connection setDefersCallbacks:defers];
+    if (!defersCallbacks && waitingToDeliverResource) {
+        [self deliverResource];
+    }
 }
 
 - (BOOL)defersCallbacks
@@ -234,9 +255,8 @@
     return resource ? [resource data] : resourceData;
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
     NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
     NSURLRequest *clientRequest, *updatedRequest;
@@ -295,11 +315,9 @@
     return request;
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
-
     ASSERT(!currentConnectionChallenge);
     ASSERT(!currentWebChallenge);
 
@@ -317,11 +335,9 @@
     [self release];
 }
 
--(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
-
     ASSERT(currentConnectionChallenge);
     ASSERT(currentWebChallenge);
     ASSERT(currentConnectionChallenge = challenge);
@@ -337,9 +353,8 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
+- (void)didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     // retain/release self in this delegate method since the additional processing can do
@@ -362,7 +377,7 @@
 
     [dataSource _addResponse: r];
 
-    [webView _incrementProgressForConnection:con response:r];
+    [webView _incrementProgressForConnectionDelegate:self response:r];
         
     if (implementations.delegateImplementsDidReceiveResponse)
         [resourceLoadDelegate webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
@@ -371,12 +386,7 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
-{
-    [self connection:con didReceiveData:data lengthReceived:[data length]];
-}
-
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData: in a way that invalidates them. This
@@ -390,7 +400,7 @@
     
     [self addData:data];
     
-    [webView _incrementProgressForConnection:con data:data];
+    [webView _incrementProgressForConnectionDelegate:self data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
         [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:lengthReceived fromDataSource:dataSource];
@@ -399,7 +409,7 @@
     [self release];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)con
+- (void)didFinishLoading
 {
     // If load has been cancelled after finishing (which could happen with a 
     // javascript that changes the window location), do nothing.
@@ -407,12 +417,11 @@
         return;
     }
     
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     [self saveResource];
     
-    [webView _completeProgressForConnection:con];
+    [webView _completeProgressForConnectionDelegate:self];
 
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
         [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
@@ -422,26 +431,73 @@
     [self releaseResources];
 }
 
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
+- (void)didFailWithError:(NSError *)error
 {
-    ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [webView _completeProgressForConnection:con];
+    [webView _completeProgressForConnectionDelegate:self];
 
-    [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
+    [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
 
     [self releaseResources];
     [self release];
 }
 
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+- (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
     [self saveResourceWithCachedResponse:cachedResponse];
     return cachedResponse;
+}
+
+- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+{
+    ASSERT(con == connection);
+    return [self willSendRequest:newRequest redirectResponse:redirectResponse];
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    ASSERT(con == connection);
+    [self didReceiveAuthenticationChallenge:challenge];
+}
+
+- (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    ASSERT(con == connection);
+    [self didCancelAuthenticationChallenge:challenge];
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
+{
+    ASSERT(con == connection);
+    [self didReceiveResponse:r];
+}
+
+- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+{
+    ASSERT(con == connection);
+    [self didReceiveData:data lengthReceived:lengthReceived];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)con
+{
+    ASSERT(con == connection);
+    [self didFinishLoading];
+}
+
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
+{
+    ASSERT(con == connection);
+    [self didFailWithError:error];
+}
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)con willCacheResponse:(NSCachedURLResponse *)cachedResponse
+{
+    ASSERT(con == connection);
+    return [self willCacheResponse:cachedResponse];
 }
 
 - (void)cancelWithError:(NSError *)error
@@ -463,7 +519,7 @@
 
     [connection cancel];
 
-    [webView _completeProgressForConnection:connection];
+    [webView _completeProgressForConnectionDelegate:self];
 
     if (error) {
         [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
@@ -482,8 +538,8 @@
 - (NSError *)cancelledError
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                    code:NSURLErrorCancelled
-                                     URL:[request URL]];
+                                      code:NSURLErrorCancelled
+                                       URL:[request URL]];
 }
 
 - (void)setIdentifier: ident

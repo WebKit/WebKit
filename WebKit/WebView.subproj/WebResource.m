@@ -162,16 +162,17 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     return propertyList;
 }
 
+- (NSURLResponse *)_response
+{
+    return [[[NSURLResponse alloc] initWithURL:_private->URL
+                                      MIMEType:_private->MIMEType 
+                         expectedContentLength:[_private->data length]
+                              textEncodingName:_private->textEncodingName] autorelease];
+}
+
 - (NSCachedURLResponse *)_cachedResponseRepresentation
 {
-    unsigned length = [_private->data length];
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:_private->URL
-                                                        MIMEType:_private->MIMEType 
-                                           expectedContentLength:length
-                                                textEncodingName:_private->textEncodingName];
-    NSCachedURLResponse *cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:response data:_private->data] autorelease];
-    [response release];
-    return cachedResponse;
+    return [[[NSCachedURLResponse alloc] initWithResponse:[self _response] data:_private->data] autorelease];
 }
 
 @end
