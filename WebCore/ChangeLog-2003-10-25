@@ -1,3 +1,12 @@
+2003-08-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3373462, XML shows up as blank because the root is inline.  The fix is
+	to just disallow inline roots.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-08-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3349142, blocks inside inlines with generated content cause the generated
