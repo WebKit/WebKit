@@ -1,3 +1,12 @@
+2002-05-14  Richard J. Williamson  <rjw@apple.com>
+
+    Added another symbol for stack based event constructor.
+    Change to support onLoad.
+    
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::end):    
+	* libwebcore.exp:
+
 2002-05-14  Chris Blumenberg  <cblu@apple.com>
 
 	Changed slotData to slotData(NSString *encoding, const char *bytes, int length)

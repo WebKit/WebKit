@@ -9,7 +9,6 @@
 
 @class IFError;
 @class IFWebDataSource;
-@class IFDownloadHandler;
 
 /*
    ============================================================================= 

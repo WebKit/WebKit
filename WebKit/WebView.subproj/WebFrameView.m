@@ -12,6 +12,9 @@
 #import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
+// Needed for the mouse move notification.
+#import <Appkit/NSResponder_Private.h>
+
 // KDE related includes
 #import <khtmlview.h>
 #import <qwidget.h>
@@ -34,7 +37,9 @@
     _private->isFlipped = YES;
     _private->needsLayout = YES;
 
+
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
         
     return self;
 }
@@ -147,7 +152,6 @@
 }
 
 
-
 // This method should not be public until we have more completely
 // understood how IFWebView will be subclassed.
 - (void)layout
@@ -157,6 +161,7 @@
 
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
+    [[self window] _setShouldPostEventNotifications: YES];
 
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
@@ -415,10 +420,10 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
-        widget->viewportMouseReleaseEvent(kEvent);
+        widget->viewportMouseReleaseEvent(&kEvent);
     }
 }
 
@@ -444,23 +449,22 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
-        widget->viewportMousePressEvent(kEvent);
+        widget->viewportMousePressEvent(&kEvent);
     }
 }
 
-// FIXME: This needs to use the mouse moved notification rather than the mouse moved event so
-// it works even when this view is not in the responder chain.
-- (void)mouseMoved: (NSEvent *)event
+- (void)mouseMovedNotification: (NSNotification *)notification
 {
+    NSEvent *event = [(NSDictionary *)[notification userInfo] objectForKey: @"NSEvent"];
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
-        widget->viewportMouseMoveEvent(kEvent);
+        widget->viewportMouseMoveEvent(&kEvent);
     }
 }
 

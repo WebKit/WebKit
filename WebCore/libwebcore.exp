@@ -12,6 +12,7 @@ __ZN5khtml5Cache13getStatisticsEv
 __ZN5khtml5Cache16setCacheDisabledEb
 __ZN5khtml5Cache8flushAllEv
 __ZN6QPointC1Eii
+__ZN6QEventD2Ev
 __ZN7QStringD1Ev
 __ZN7QWidget7setViewEP6NSView
 __ZN8QPainterC1EP7QWidget

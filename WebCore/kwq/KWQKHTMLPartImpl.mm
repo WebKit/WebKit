@@ -655,10 +655,11 @@ void KHTMLPart::end()
     d->m_doc->finishParsing();
 #endif /* not APPLE_CHANGES */
 
+    d->m_doc->setParsing(false);
+
     d->m_doc->close();
     KURL::clearCaches();
     
-    d->m_doc->setParsing(false);
     d->m_view->complete();
 }
 

@@ -1,3 +1,19 @@
+2002-05-14  Richard J. Williamson  <rjw@apple.com>
+
+    Fixed 2926153, not getting correct messages after cancel.
+    Fixed leak of mouse events (Darin wanted this ASAP).
+    
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFLocationChangeHandler.h:
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView initWithFrame:]):
+	(-[IFWebView layout]):
+	(-[IFWebView mouseUp:]):
+	(-[IFWebView mouseDown:]):
+	(-[IFWebView mouseMovedNotification:]):
+
 2002-05-14  Chris Blumenberg  <cblu@apple.com>
 
 	Removed retain of the URL handle. This was causing everything to leak.
