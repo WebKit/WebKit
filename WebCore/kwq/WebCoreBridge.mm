@@ -56,6 +56,7 @@
 #import "render_style.h"
 #import "selection.h"
 #import "visible_position.h"
+#import "visible_text.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
 
@@ -129,6 +130,7 @@ using khtml::ReplaceSelectionCommand;
 using khtml::Selection;
 using khtml::setAffinityUsingLinePosition;
 using khtml::Tokenizer;
+using khtml::TextIterator;
 using khtml::TypingCommand;
 using khtml::UPSTREAM;
 using khtml::VisiblePosition;
@@ -1624,6 +1626,52 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
 }
 
+- (NSRange)convertToNSRange:(DOM::RangeImpl *)drange
+{
+    Range toStartRange, toEndRange;
+    Range actualRange = Range(drange);
+    long startPosition, endPosition;
+
+    toStartRange = Range (_part->xmlDocImpl()->createRange());
+    toStartRange.setEnd (actualRange.startContainer(), actualRange.startOffset());
+    toEndRange = Range (_part->xmlDocImpl()->createRange());
+    toEndRange.setEnd (actualRange.endContainer(), actualRange.endOffset());
+    
+    startPosition = TextIterator::rangeLength (toStartRange);
+    endPosition = TextIterator::rangeLength (toEndRange);
+    
+    return NSMakeRange(startPosition, endPosition - startPosition);
+}
+
+- (DOM::Range)convertToDOMRange:(NSRange)nsrange
+{
+    // Set the range to cover the entire document.  This assumes that the start
+    // and end node of the range are the document node.
+    DOM::Range docRange = Range (_part->xmlDocImpl()->createRange());
+    docRange.setEnd (docRange.endContainer(), docRange.endContainer().handle()->childNodeCount());
+
+    DOM::Range resultRange = Range (_part->xmlDocImpl()->createRange());
+    TextIterator::setRangeFromLocationAndLength (docRange, resultRange, nsrange.location, nsrange.length);
+    
+    return resultRange;
+}
+
+- (DOMRange *)convertToObjCDOMRange:(NSRange)nsrange
+{
+    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange].handle()];
+}
+
+- (void)selectNSRange:(NSRange)range
+{
+    DOM::Range replaceRange = [self convertToDOMRange:range];
+    _part->setSelection(Selection(replaceRange.handle(), khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+}
+
+- (NSRange)selectedNSRange
+{
+    return [self convertToNSRange:_part->selection().toRange().handle()];
+}
+
 - (NSSelectionAffinity)selectionAffinity
 {
     return static_cast<NSSelectionAffinity>(_part->selection().startAffinity());
@@ -1647,6 +1695,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)markedTextDOMRange
 {
     return [DOMRange _rangeWithImpl:_part->markedTextRange().handle()];
+}
+
+- (NSRange)markedTextNSRange
+{
+    return [self convertToNSRange:_part->markedTextRange().handle()];
 }
 
 - (void)replaceMarkedTextWithText:(NSString *)text

@@ -374,6 +374,10 @@ typedef enum {
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 - (BOOL)canDeleteRange:(DOMRange *)range;
+- (void)selectNSRange:(NSRange)range;
+- (NSRange)selectedNSRange;
+- (NSRange)markedTextNSRange;
+- (DOMRange *)convertToObjCDOMRange:(NSRange)range;
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text;

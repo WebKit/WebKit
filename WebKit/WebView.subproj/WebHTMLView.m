@@ -65,6 +65,7 @@
 
 // need to declare this because AppKit does not make it available as API or SPI
 extern NSString *NSMarkedClauseSegmentAttributeName; 
+extern NSString *NSTextInputReplacementRangeAttributeName; 
 
 // Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
 void _NSInitializeKillRing(void);
@@ -4880,7 +4881,7 @@ static NSArray *validAttributes = nil;
 - (NSArray *)validAttributesForMarkedText
 {
     if (!validAttributes) {
-        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName, nil];
+        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
         // work well; I have not seen any input method make use of them yet.
@@ -4901,48 +4902,34 @@ static NSArray *validAttributes = nil;
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    NSRect resultRect = NSMakeRect(0,0,0,0);
     WebBridge *bridge = [self _bridge];
-    DOMRange *rectRange = nil;
     
-    if ([self hasMarkedText]) {
-        rectRange = [[bridge DOMDocument] createRange];
-        DOMRange *markedRange = [bridge markedTextDOMRange];
-        [rectRange setStart:[markedRange startContainer] :theRange.location];
-        [rectRange setEnd:[markedRange startContainer] :(theRange.location + theRange.length)];
-    } else {
-        // no marked text, so use current selection instead
-        // this helps for text input methods that unmark and delete the typed characters,
-        // then put up a word selector at the current insertion point
-        rectRange = [self _selectedRange];
-    }
-
-    if ([rectRange startContainer]) {
-        resultRect = [self convertRect:[bridge firstRectForDOMRange:rectRange] toView:nil];
-        resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
-    }
+    DOMRange *range = [bridge convertToObjCDOMRange:theRange];
+    
+    NSRect resultRect = [self convertRect:[bridge firstRectForDOMRange:range] toView:nil];
+    resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
     
     return resultRect;
 }
 
 - (NSRange)selectedRange
 {
-    ERROR("TEXTINPUT: selectedRange not yet implemented");
-    return NSMakeRange(0,0);
+    WebBridge *bridge = [self _bridge];
+    
+    NSRange range = [bridge selectedNSRange];
+
+    return range;
 }
 
 - (NSRange)markedRange
 {
     if (![self hasMarkedText]) {
-	return NSMakeRange(NSNotFound,0);
+        return NSMakeRange(NSNotFound,0);
     }
 
-    DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
+    NSRange range = [[self _bridge] markedTextNSRange];
 
-    unsigned rangeLocation = [markedTextDOMRange startOffset];
-    unsigned rangeLength = [markedTextDOMRange endOffset] - rangeLocation;
-
-    return NSMakeRange(rangeLocation, rangeLength);
+    return range;
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
@@ -4969,9 +4956,9 @@ static NSArray *validAttributes = nil;
 - (void)_selectMarkedText
 {
     if ([self hasMarkedText]) {
-	WebBridge *bridge = [self _bridge];
-	DOMRange *markedTextRange = [bridge markedTextDOMRange];
-	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
+        WebBridge *bridge = [self _bridge];
+        DOMRange *markedTextRange = [bridge markedTextDOMRange];
+        [bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
     }
 }
 
@@ -5016,7 +5003,20 @@ static NSArray *validAttributes = nil;
     WebBridge *bridge = [self _bridge];
 
     if (![self _isEditable])
-	return;
+        return;
+
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+
+    if (isAttributedString) {
+        unsigned markedTextLength = [(NSString *)string length];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, markedTextLength)];
+        // The AppKit adds a 'secret' property to the string that contains the replacement
+        // range.  The replacement range is the range of the the text that should be replaced
+        // with the new string.
+        if (rangeString) {
+            [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
+        }
+    }
 
     _private->ignoreMarkedTextSelectionChange = YES;
 
@@ -5027,11 +5027,11 @@ static NSArray *validAttributes = nil;
     NSString *text;
     NSArray *attributes = nil;
     NSArray *ranges = nil;
-    if ([string isKindOfClass:[NSAttributedString class]]) {
-	text = [string string];
+    if (isAttributedString) {
+        text = [string string];
         [self _extractAttributes:&attributes ranges:&ranges fromAttributedString:string];
     } else {
-	text = string;
+        text = string;
     }
 
     [bridge replaceMarkedTextWithText:text];

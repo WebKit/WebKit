@@ -1,3 +1,24 @@
+2005-03-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4053515> REGRESSION (Mail): Kotoeri input method reconversion does not work in WebViews
+
+	We now use actual document NSRanges to represent both marked text
+	ranges and selection ranges.
+
+        Reviewed by Ken.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::rangeLength):
+        (khtml::TextIterator::setRangeFromLocationAndLength):
+        * khtml/editing/visible_text.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge convertToNSRange:DOM::]):
+        (-[WebCoreBridge DOM::convertToDOMRange:]):
+        (-[WebCoreBridge selectNSRange:]):
+        (-[WebCoreBridge markedTextDOMRange]):
+        (-[WebCoreBridge markedTextNSRange]):
+
 2005-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Vicki.

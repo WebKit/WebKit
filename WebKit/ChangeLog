@@ -1,3 +1,20 @@
+2005-03-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4053515> REGRESSION (Mail): Kotoeri input method reconversion does not work in WebViews
+
+	We now use actual document NSRanges to represent both marked text
+	ranges and selection ranges.
+
+        Reviewed by Ken Kocienda.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validAttributesForMarkedText]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView selectedRange]):
+        (-[WebHTMLView markedRange]):
+        (-[WebHTMLView _selectMarkedText]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+
 === Safari-410 ===
 
 2005-03-22  Darin Adler  <darin@apple.com>

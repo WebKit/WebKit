@@ -978,6 +978,36 @@ bool CircularSearchBuffer::isMatch() const
         && memcmp(m_buffer, m_target.unicode() + tailSpace, headSpace * sizeof(QChar)) == 0;
 }
 
+long TextIterator::rangeLength(const Range &r)
+{
+    // Allocate string at the right size, rather than building it up by successive append calls.
+    long length = 0;
+    for (TextIterator it(r); !it.atEnd(); it.advance()) {
+        length += it.length();
+    }
+    return length;
+}
+
+void TextIterator::setRangeFromLocationAndLength (const Range &range, Range &resultRange, long rangeLocation, long rangeLength)
+{
+    long docTextPosition = 0;
+    long rangeEnd = rangeLocation + rangeLength;
+
+    for (TextIterator it(range); !it.atEnd(); it.advance()) {
+        long len = it.length();
+        if (rangeLocation >= docTextPosition && rangeLocation < docTextPosition + len) {
+            resultRange.setStart(it.m_node, rangeLocation - docTextPosition);
+        }
+        if (rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len) {
+            if ( !(rangeLength == 0 && rangeEnd == docTextPosition + len) ) {
+                resultRange.setEnd(it.m_node, rangeEnd - docTextPosition);
+                break;
+            }
+        }
+        docTextPosition += it.length();
+    }
+}
+
 QString plainText(const Range &r)
 {
     // Allocate string at the right size, rather than building it up by successive append calls.
