@@ -117,7 +117,7 @@ typedef enum {
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
-- (void)_addExtraFieldsToRequest:(WebResourceRequest *)request;
+- (void)_addExtraFieldsToRequest:(WebResourceRequest *)request alwaysFromRequest: (BOOL)f;
 
 - (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector;
 

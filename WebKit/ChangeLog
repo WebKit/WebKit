@@ -1,3 +1,24 @@
+2002-12-18  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3109590.  We now set the cookie policy URL to a frame's URL if the
+        contents of the frame changes as a result of user action.  The site mentioned
+        is this bug branded a service by wrapping it in their own frameset.  That frameset
+        had a different domain than the service, so our cookie policy prevented cookies
+        from being set.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:]):
+
 2002-12-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3131714 - System becomes unresponsive while downloading

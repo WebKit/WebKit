@@ -164,12 +164,7 @@
         [self _commitIfReady: pageCache];
     } else if (!_private->mainClient) {
         _private->loadingFromPageCache = NO;
-        if ([self webFrame] == [[self controller] mainFrame]) {
-	    [_private->request setCookiePolicyBaseURL:[self URL]];
-	} else {
-	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
-	}
-
+        [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         if (![_private->mainClient loadWithRequest:_private->request]) {
             ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level",

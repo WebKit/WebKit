@@ -1008,7 +1008,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
         else {
             WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:itemURL];
-            [self _addExtraFieldsToRequest:request];
+            [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
             NSDictionary *action;
@@ -1346,10 +1346,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
 }
 
-- (void)_addExtraFieldsToRequest:(WebResourceRequest *)request
+- (void)_addExtraFieldsToRequest:(WebResourceRequest *)request alwaysFromRequest: (BOOL)f
 {
     [request setUserAgent:[[self controller] userAgentForURL:[request URL]]];
-    if (self == [[self controller] mainFrame]) {
+    if (self == [[self controller] mainFrame] || f) {
 	[request setCookiePolicyBaseURL:[request URL]];
     } else {
 	[request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] URL]];
@@ -1361,7 +1361,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
-    [self _addExtraFieldsToRequest:request];
+    [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission) ? YES : NO ];
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
@@ -1473,7 +1473,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [self _addExtraFieldsToRequest:request];
+    [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
     [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     [request setMethod:@"POST"];
     [request setData:data];

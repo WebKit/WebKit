@@ -112,7 +112,7 @@
     // note this copies request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     WebResourceRequest *r = [newDataSource request];
-    [self _addExtraFieldsToRequest:r];
+    [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
     if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
         loadType = WebFrameLoadTypeSame;
