@@ -54,7 +54,6 @@
 "WebBookmarkType"
 "WebBookmarkTypeLeaf"
 "WebBookmarkTypeList"
-"WebBookmarkTypeSeparator"
 "WebCurrentFrameState"
 "WebElementFrame"
 "WebElementImage"

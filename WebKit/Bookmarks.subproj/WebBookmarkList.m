@@ -8,7 +8,6 @@
 
 #import <WebKit/WebBookmarkList.h>
 #import <WebKit/WebBookmarkLeaf.h>
-#import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebBookmarkPrivate.h>
 #import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebFoundation/WebAssertions.h>
@@ -32,29 +31,26 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
-    NSArray *storedChildren;
-    WebBookmark *child;
-    unsigned index, count;
-    
     ASSERT_ARG(dict, dict != nil);
 
     [super init];
 
     [self _setGroup:group];
 
-    // FIXME: doesn't restore images
     _title = [[dict objectForKey:TitleKey] retain];
     _list = [[NSMutableArray alloc] init];
 
-    storedChildren = [dict objectForKey:ChildrenKey];
+    NSArray *storedChildren = [dict objectForKey:ChildrenKey];
     if (storedChildren != nil) {
-        count = [storedChildren count];
-        for (index = 0; index < count; ++index) {
-            child = [WebBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:index]
+        unsigned count = [storedChildren count];
+        unsigned indexRead;
+        unsigned indexWritten = 0;
+        for (indexRead = 0; indexRead < count; ++indexRead) {
+            WebBookmark *child = [WebBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:indexRead]
                                                            withGroup:group];	
 
             if (child != nil) {
-                [self insertChild:child atIndex:index];
+                [self insertChild:child atIndex:indexWritten++];
             }
         }
     }

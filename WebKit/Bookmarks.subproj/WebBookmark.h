@@ -13,7 +13,6 @@
 typedef enum {
     WebBookmarkTypeLeaf,
     WebBookmarkTypeList,
-    WebBookmarkTypeSeparator,
 } WebBookmarkType;
 
 @interface WebBookmark : NSObject <NSCopying> {

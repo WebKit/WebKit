@@ -12,7 +12,6 @@
 #import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebKit/WebBookmarkLeaf.h>
 #import <WebKit/WebBookmarkList.h>
-#import <WebKit/WebBookmarkSeparator.h>
 #import <WebFoundation/WebAssertions.h>
 
 // to get NSRequestConcreteImplementation
@@ -148,8 +147,6 @@ static unsigned _highestUsedID = 0;
         return [[[WebBookmarkList alloc] init] autorelease];
     } else if (type == WebBookmarkTypeLeaf) {
         return [[[WebBookmarkLeaf alloc] init] autorelease];
-    } else if (type == WebBookmarkTypeSeparator) {
-        return [[[WebBookmarkSeparator alloc] init] autorelease];
     }
 
     return nil;
@@ -167,8 +164,6 @@ static unsigned _highestUsedID = 0;
         class = [WebBookmarkList class];
     } else if ([typeString isEqualToString:WebBookmarkTypeLeafValue]) {
         class = [WebBookmarkLeaf class];
-    } else if ([typeString isEqualToString:WebBookmarkTypeSeparatorValue]) {
-        class = [WebBookmarkSeparator class];
     }
     
     if (class) {

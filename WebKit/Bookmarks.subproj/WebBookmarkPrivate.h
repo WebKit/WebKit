@@ -10,9 +10,8 @@
 #import <WebKit/WebBookmark.h>
 
 #define WebBookmarkTypeKey		@"WebBookmarkType"
-#define WebBookmarkTypeLeafValue		@"WebBookmarkTypeLeaf"
-#define WebBookmarkTypeListValue		@"WebBookmarkTypeList"
-#define WebBookmarkTypeSeparatorValue	@"WebBookmarkTypeSeparator"
+#define WebBookmarkTypeLeafValue	@"WebBookmarkTypeLeaf"
+#define WebBookmarkTypeListValue	@"WebBookmarkTypeList"
 
 @interface WebBookmark(WebPrivate)
 

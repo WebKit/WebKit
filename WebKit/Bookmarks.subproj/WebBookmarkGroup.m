@@ -11,7 +11,6 @@
 #import <WebKit/WebBookmarkPrivate.h>
 #import <WebKit/WebBookmarkList.h>
 #import <WebKit/WebBookmarkLeaf.h>
-#import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebKitLogging.h>
 
 @interface WebBookmarkGroup (WebForwardDeclarations)
@@ -166,8 +165,6 @@
         bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
                                                         group:self];
-    } else if (bookmarkType == WebBookmarkTypeSeparator) {
-        bookmark = [[WebBookmarkSeparator alloc] initWithGroup:self];
     } else {
         ASSERT(bookmarkType == WebBookmarkTypeList);
         bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
