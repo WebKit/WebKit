@@ -1,3 +1,20 @@
+2005-02-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Richard.
+
+        <rdar://problem/3991652> REGRESSION (Mail): Deleting entire line in reply deletes extra blank line and moves insertion point
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:isTypingAction:]):
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]):
+        (-[WebHTMLView selectToMark:]):
+        (-[WebHTMLView swapWithMark:]):
+        (-[WebHTMLView transpose:]):
+        (-[WebHTMLView _selectMarkedText]):
+        (-[WebHTMLView _selectRangeInMarkedText:]):
+        Adopt new default affinity of NSSelectionAffinityDownstream as of <rdar://problem/3937447>.
+        
 2005-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.

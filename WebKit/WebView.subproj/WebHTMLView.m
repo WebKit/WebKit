@@ -503,7 +503,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         return;
     }
     WebBridge *bridge = [self _bridge];
-    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
+    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
     [self _handleKillRing:killRing prepend:prepend];
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
     if (isTypingAction) {
@@ -1171,7 +1171,7 @@ static WebHTMLView *lastHitView = nil;
             // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
             DOMHTMLElement *imageElement = [element objectForKey:WebElementDOMNodeKey];
             ASSERT(imageElement != nil);
-            [webView setSelectedDOMRange:[[[self _bridge] DOMDocument] _createRangeWithNode:imageElement] affinity:NSSelectionAffinityUpstream];
+            [webView setSelectedDOMRange:[[[self _bridge] DOMDocument] _createRangeWithNode:imageElement] affinity:NSSelectionAffinityDownstream];
             _private->draggingImageURL = [imageURL retain];
             source = [pasteboard _web_declareAndWriteDragImage:image
                                                            URL:linkURL ? linkURL : imageURL
@@ -4095,13 +4095,13 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             case WebSelectForward:
             case WebSelectRight:
                 [self _handleKillRing:killRing prepend:NO];
-                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
+                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
                 [bridge forwardDeleteKeyPressedWithSmartDelete:NO];
                 break;
             case WebSelectBackward:
             case WebSelectLeft:
                 [self _handleKillRing:killRing prepend:YES];
-                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
+                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
                 [bridge deleteKeyPressedWithSmartDelete:NO];
                 break;
         }
@@ -4375,7 +4375,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     DOMRange *selection = [self _selectedRange];
     @try {
-        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityUpstream];
+        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityDownstream];
     } @catch (NSException *exception) {
         NSBeep();
     }
@@ -4391,7 +4391,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     DOMRange *selection = [self _selectedRange];
     @try {
-        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityUpstream];
+        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityDownstream];
     } @catch (NSException *exception) {
         NSBeep();
         return;
@@ -4415,10 +4415,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     NSString *transposed = [[characters substringFromIndex:1] stringByAppendingString:[characters substringToIndex:1]];
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:r affinity:NSSelectionAffinityUpstream stillSelecting:NO]) {
+    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO]) {
         return;
     }
-    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityUpstream];
+    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityDownstream];
     if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped]) {
         [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
     }
@@ -4761,7 +4761,7 @@ static NSArray *validAttributes = nil;
     if ([self hasMarkedText]) {
 	WebBridge *bridge = [self _bridge];
 	DOMRange *markedTextRange = [bridge markedTextDOMRange];
-	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityUpstream];
+	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream];
     }
 }
 
@@ -4781,7 +4781,7 @@ static NSArray *validAttributes = nil;
     [selectedRange setStart:[markedTextRange startContainer] :selectionStart];
     [selectedRange setEnd:[markedTextRange startContainer] :selectionEnd];
 
-    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityUpstream];
+    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityDownstream];
 }
 
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
