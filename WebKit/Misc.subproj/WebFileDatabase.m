@@ -15,8 +15,6 @@
 #import "WebFoundationLogging.h"
 #import "WebSystemBits.h"
 
-#define SIZE_FILE_NAME @"size"
-#define SIZE_FILE_NAME_CSTRING "size"
 
 #if ERROR_DISABLED
 #define BEGIN_EXCEPTION_HANDLER
@@ -34,6 +32,9 @@ static NSNumber *WebFileDirectoryPOSIXPermissions;
 static NSNumber *WebFilePOSIXPermissions;
 static NSRunLoop *syncRunLoop;
 
+#define UniqueFilePathSize (34)
+static void UniqueFilePathForKey(id key, char *buffer);
+
 typedef enum
 {
     WebFileDatabaseSetObjectOp,
@@ -45,73 +46,6 @@ enum
     MAX_UNSIGNED_LENGTH = 20, // long enough to hold the string representation of a 64-bit unsigned number
     SYNC_IDLE_THRESHOLD = 3,
 };
-
-// support for expiring cache files using file system access times --------------------------------------------
-
-typedef struct
-{   
-    NSString *path;
-    time_t time;
-} FileAccessTime;
-
-static CFComparisonResult compare_atimes(const void *val1, const void *val2, void *context)
-{
-    int t1 = ((FileAccessTime *)val1)->time;
-    int t2 = ((FileAccessTime *)val2)->time;
-    
-    if (t1 > t2) return kCFCompareGreaterThan;
-    if (t1 < t2) return kCFCompareLessThan;
-    return kCFCompareEqualTo;
-}
-
-static Boolean PointerEqual(const void *p1, const void *p2)
-{
-    return p1 == p2;  
-}
-
-static void FileAccessTimeRelease(CFAllocatorRef allocator, const void *value)
-{
-    FileAccessTime *spec;
-    
-    spec = (FileAccessTime *)value;
-    [spec->path release];
-    free(spec);
-}
-
-static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
-{
-    FTS *fts;
-    FTSENT *ent;
-    CFMutableArrayRef atimeArray;
-    char *paths[2];
-    NSFileManager *defaultManager;
-    
-    CFArrayCallBacks callBacks = {0, NULL, FileAccessTimeRelease, NULL, PointerEqual};
-    
-    defaultManager = [NSFileManager defaultManager];
-    paths[0] = (char *)path;
-    paths[1] = NULL;
-    
-    atimeArray = CFArrayCreateMutable(NULL, 0, &callBacks);
-    fts = fts_open(paths, FTS_COMFOLLOW | FTS_LOGICAL, NULL);
-    
-    ent = fts_read(fts);
-    while (ent) {
-        if (ent->fts_statp->st_mode & S_IFREG && strcmp(ent->fts_name, SIZE_FILE_NAME_CSTRING) != 0) {
-            FileAccessTime *spec = malloc(sizeof(FileAccessTime));
-            spec->path = [[defaultManager stringWithFileSystemRepresentation:ent->fts_accpath length:strlen(ent->fts_accpath)] retain];
-            spec->time = ent->fts_statp->st_atimespec.tv_sec;
-            CFArrayAppendValue(atimeArray, spec);
-        }
-        ent = fts_read(fts);
-    }
-
-    CFArraySortValues(atimeArray, CFRangeMake(0, CFArrayGetCount(atimeArray)), compare_atimes, NULL);
-
-    fts_close(fts);
-    
-    return atimeArray;
-}
 
 // interface WebFileDatabaseOp -------------------------------------------------------------
 
@@ -205,9 +139,7 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
 
 @interface WebFileDatabase (WebFileDatabasePrivate)
 
-+(NSString *)uniqueFilePathForKey:(id)key;
--(void)writeSizeFile:(unsigned)value;
--(unsigned)readSizeFile;
+-(void)_createLRUList:(id)arg;
 -(void)_truncateToSizeLimit:(unsigned)size;
 
 @end
@@ -216,7 +148,7 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
 
 @implementation WebFileDatabase (WebFileDatabasePrivate)
 
-+(NSString *)uniqueFilePathForKey:(id)key
+static void UniqueFilePathForKey(id key, char *buffer)
 {
     const char *s;
     UInt32 hash1;
@@ -240,67 +172,33 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
         hash2 = (37 * hash2) ^ s[cnt];
     }
 
-    // create the path and return it
-    return [NSString stringWithFormat:@"%.2u/%.2u/%.10u-%.10u.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2];
+    snprintf(buffer, UniqueFilePathSize, "%.2lu/%.2lu/%.10lu-%.10lu.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2);
 }
 
-
--(void)writeSizeFile:(unsigned)value
+-(void)_createLRUList:(id)arg
 {
-    void *buf;
-    int fd;
-    
-    [mutex lock];
-    
-    fd = open(sizeFilePath, O_WRONLY | O_CREAT, [WebFilePOSIXPermissions intValue]);
-    if (fd > 0) {
-        buf = calloc(1, MAX_UNSIGNED_LENGTH);
-        sprintf(buf, "%d", value);
-        write(fd, buf, MAX_UNSIGNED_LENGTH);
-        free(buf);
-        close(fd);
-    }
+    WebSetThreadPriority(WebMinThreadPriority + 1); // make this a little higher priority than the syncRunLoop thread
 
-    LOG(DiskCacheActivity, "writing size file - %u", value);
-    
-    [mutex unlock];
-}
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
--(unsigned)readSizeFile
-{
-    unsigned result;
-    void *buf;
-    int fd;
+    BEGIN_EXCEPTION_HANDLER
     
-    result = 0;
+    WebLRUFileList *fileList = WebLRUFileListCreate();
+    WebLRUFileListRebuildFileDataUsingRootDirectory(fileList, [path fileSystemRepresentation]);
+    lru = fileList;
 
-    [mutex lock];
-    
-    fd = open(sizeFilePath, O_RDONLY, 0);
-    if (fd > 0) {
-        buf = calloc(1, MAX_UNSIGNED_LENGTH);
-        read(fd, buf, MAX_UNSIGNED_LENGTH);
-        result = strtol(buf, NULL, 10);
-        free(buf);
-        close(fd);
-    }
-    
-    [mutex unlock];
+    END_EXCEPTION_HANDLER
 
-    return result;
+    LOG(WebFileDatabaseActivity, "lru list created");
+
+    [pool release];
 }
 
 -(void)_truncateToSizeLimit:(unsigned)size
 {
     NSFileManager *defaultManager;
-    NSDictionary *attributes;
-    NSNumber *fileSize;
-    CFArrayRef atimeArray;
-    unsigned aTimeArrayCount;
-    unsigned i;
-    FileAccessTime *spec;
     
-    if (size > usage) {
+    if (!lru || size > [self usage]) {
         return;
     }
 
@@ -310,22 +208,15 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
     else {
         defaultManager = [NSFileManager defaultManager];
         [mutex lock];
-        atimeArray = CreateArrayListingFilesSortedByAccessTime([defaultManager fileSystemRepresentationWithPath:path]);
-        aTimeArrayCount = CFArrayGetCount(atimeArray);
-        for (i = 0; i < aTimeArrayCount && usage > size; i++) {
-            spec = (FileAccessTime *)CFArrayGetValueAtIndex(atimeArray, i);
-            attributes = [defaultManager fileAttributesAtPath:spec->path traverseLink:YES];
-            if (attributes) {
-                fileSize = [attributes objectForKey:NSFileSize];
-                if (fileSize) {
-                    usage -= [fileSize unsignedIntValue];
-                    LOG(DiskCacheActivity, "_truncateToSizeLimit - %u - %u - %u, %@", size, usage, [fileSize unsignedIntValue], spec->path);
-                    [defaultManager removeFileAtPath:spec->path handler:nil];
-                }
+        while ([self usage] > size) {
+            char uniqueKey[UniqueFilePathSize];
+            if (!WebLRUFileListGetPathOfOldestFile(lru, uniqueKey, UniqueFilePathSize)) {
+                break;
             }
+            NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
+            [defaultManager removeFileAtPath:filePath handler:nil];
+            WebLRUFileListRemoveOldestFileFromList(lru);
         }
-        CFRelease(atimeArray);
-        [self writeSizeFile:usage];
         [mutex unlock];
     }
 }
@@ -393,7 +284,6 @@ static void databaseInit()
     removeCache = [[NSMutableSet alloc] init];
     timer = nil;
     mutex = [[NSRecursiveLock alloc] init];
-    sizeFilePath = NULL;
     
     return self;
 }
@@ -417,7 +307,9 @@ static void databaseInit()
 -(void)setTimer
 {
     if (timer == nil) {
-        timer = [[NSTimer timerWithTimeInterval:SYNC_IDLE_THRESHOLD target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
+        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceNow:SYNC_IDLE_THRESHOLD];
+        timer = [[NSTimer alloc] initWithFireDate:fireDate interval:SYNC_IDLE_THRESHOLD target:self selector:@selector(lazySync:) userInfo:nil repeats:YES];
+        [fireDate release];
         [syncRunLoop addTimer:timer forMode:NSDefaultRunLoopMode];
     }
 }
@@ -434,7 +326,7 @@ static void databaseInit()
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    LOG(DiskCacheActivity, "setObject - %p - %@", object, key);
+    LOG(WebFileDatabaseActivity, "%p - %@", object, key);
     
     [mutex lock];
     
@@ -477,11 +369,9 @@ static void databaseInit()
     [self close];
     [[NSFileManager defaultManager] _web_backgroundRemoveFileAtPath:path];
     [self open];
-    [self writeSizeFile:0];
-    usage = 0;
     [mutex unlock];
 
-    LOG(DiskCacheActivity, "removeAllObjects");
+    LOG(WebFileDatabaseActivity, "removeAllObjects");
 }
 
 -(id)objectForKey:(id)key
@@ -505,7 +395,9 @@ static void databaseInit()
     [mutex unlock];
 
     // go to disk
-    NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
+    char uniqueKey[UniqueFilePathSize];
+    UniqueFilePathForKey(key, uniqueKey);
+    NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
     NSData *data = [[NSData alloc] initWithContentsOfFile:filePath];
     NSUnarchiver * volatile unarchiver = nil;
 
@@ -520,13 +412,18 @@ static void databaseInit()
                         // Decoded objects go away when the unarchiver does, so we need to
                         // retain this so we can return it to our caller.
                         result = [[object retain] autorelease];
-                        LOG(DiskCacheActivity, "read disk cache file - %@", key);
+                        if (lru) {
+                            // if we can't update the list yet, that's too bad
+                            // but not critically bad
+                            WebLRUFileListTouchFileWithPath(lru, uniqueKey);
+                        }
+                        LOG(WebFileDatabaseActivity, "read disk cache file - %@", key);
                     }
                 }
             }
         }
     NS_HANDLER
-        LOG(DiskCacheActivity, "cannot unarchive cache file - %@", key);
+        LOG(WebFileDatabaseActivity, "cannot unarchive cache file - %@", key);
         result = nil;
     NS_ENDHANDLER
 
@@ -545,13 +442,15 @@ static void databaseInit()
     NSDictionary *directoryAttributes;
     NSArchiver *archiver;
     NSFileManager *defaultManager;
-    NSNumber *oldSize;
+    char uniqueKey[UniqueFilePathSize];
     BOOL result;
 
     ASSERT(object);
     ASSERT(key);
 
-    LOG(DiskCacheActivity, "performSetObject - %@ - %@", key, [WebFileDatabase uniqueFilePathForKey:key]);
+    UniqueFilePathForKey(key, uniqueKey);
+
+    LOG(WebFileDatabaseActivity, "%@ - %s", key, uniqueKey);
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
@@ -572,30 +471,18 @@ static void databaseInit()
 
     defaultManager = [NSFileManager defaultManager];
 
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
+    filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
     attributes = [defaultManager fileAttributesAtPath:filePath traverseLink:YES];
 
     // update usage and truncate before writing file
     // this has the effect of _always_ keeping disk usage under sizeLimit by clearing away space in anticipation of the write.
-    usage += [data length];
+    WebLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
     [self _truncateToSizeLimit:[self sizeLimit]];
 
     result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
-    if (result) {
-        // we're going to write a new file
-        // if there was an old file, we have to subtract the size of the old file before adding the new size
-        if (attributes) {
-            oldSize = [attributes objectForKey:NSFileSize];
-            if (oldSize) {
-                usage -= [oldSize unsignedIntValue];
-            }
-        }
-        [self writeSizeFile:usage];
-    }
-    else {
-        // we failed to write the file. don't charge this against usage.
-        usage -= [data length];
+    if (!result) {
+        WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     }
 
     [archiver release];
@@ -605,24 +492,16 @@ static void databaseInit()
 -(void)performRemoveObjectForKey:(id)key
 {
     NSString *filePath;
-    NSDictionary *attributes;
-    NSNumber *size;
-    BOOL result;
+    char uniqueKey[UniqueFilePathSize];
     
     ASSERT(key);
-    
-    LOG(DiskCacheActivity, "performRemoveObjectForKey - %@", key);
 
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
-    attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
-    result = [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
-    if (result && attributes) {
-        size = [attributes objectForKey:NSFileSize];
-        if (size) {
-            usage -= [size unsignedIntValue];
-            [self writeSizeFile:usage];
-        }
-    }
+    LOG(WebFileDatabaseActivity, "%@", key);
+
+    UniqueFilePathForKey(key, uniqueKey);
+    filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
+    [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
+    WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     [filePath release];
 }
 
@@ -634,8 +513,6 @@ static void databaseInit()
     NSFileManager *manager;
     NSDictionary *attributes;
     BOOL isDir;
-    const char *tmp;
-    NSString *sizeFilePathString;
     
     if (!isOpen) {
         manager = [NSFileManager defaultManager];
@@ -655,13 +532,12 @@ static void databaseInit()
 	    isOpen = [manager _web_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
 	}
 
-        sizeFilePathString = [NSString stringWithFormat:@"%@/%@", path, SIZE_FILE_NAME];
-        tmp = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:sizeFilePathString];
-        sizeFilePath = strdup(tmp);
-        usage = [self readSizeFile];
-
         // remove any leftover turds
         [manager _web_deleteBackgroundRemoveLeftoverFiles:path];
+        
+        if (isOpen) {
+            [NSThread detachNewThreadSelector:@selector(_createLRUList:) toTarget:self withObject:nil];
+        }
     }
     
     return isOpen;
@@ -671,10 +547,9 @@ static void databaseInit()
 {
     if (isOpen) {
         isOpen = NO;
-
-        if (sizeFilePath) {
-            free(sizeFilePath);
-            sizeFilePath = NULL;
+        if (lru) {
+            WebLRUFileListRelease(lru);
+            lru = NULL;
         }
     }
     
@@ -683,6 +558,17 @@ static void databaseInit()
 
 -(void)lazySync:(NSTimer *)theTimer
 {
+    if (!lru) {
+        // wait for lru to finish getting created        
+        return;
+    }
+
+#ifndef NDEBUG
+    CFTimeInterval mark = CFAbsoluteTimeGetCurrent();
+#endif
+
+    LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", WebLRUFileListDescription(lru));
+
     WebFileDatabaseOp *op;
 
     ASSERT(theTimer);
@@ -715,13 +601,27 @@ static void databaseInit()
         [self setTimer];
         [mutex unlock];
     }
+
+    LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", WebLRUFileListDescription(lru));
+
+#ifndef NDEBUG
+    CFTimeInterval now = CFAbsoluteTimeGetCurrent();
+    LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
+#endif
 }
 
 -(void)sync
 {
     NSArray *array;
 
+    if (!lru) {
+        // wait for lru to finish getting created        
+        return;
+    }
+
     touch = CFAbsoluteTimeGetCurrent();
+
+    LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", WebLRUFileListDescription(lru));
     
     [mutex lock];
     array = [ops copy];
@@ -735,18 +635,30 @@ static void databaseInit()
 
     [array makeObjectsPerformSelector:@selector(perform:) withObject:self];
     [array release];
+
+    LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", WebLRUFileListDescription(lru));
 }
 
 -(unsigned)count
 {
-    // FIXME: [kocienda] Radar 2922874 (On-disk cache does not know how many elements it is storing)
+    if (lru)
+        return WebLRUFileListCountItems(lru);
+    
+    return 0;
+}
+
+-(unsigned)usage
+{
+    if (lru)
+        return WebLRUFileListGetTotalSize(lru);
+    
     return 0;
 }
 
 -(void)setSizeLimit:(unsigned)limit
 {
     sizeLimit = limit;
-    if (limit < usage) {
+    if (limit < [self usage]) {
         [self _truncateToSizeLimit:limit];
     }
 }
