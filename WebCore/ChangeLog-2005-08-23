@@ -1,3 +1,11 @@
+2003-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Don.
+
+        - fixed 3417604 -- REGRESSION: dragging scroll thumb causes textarea contents to vanish
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea initWithFrame:]): Deallocated cached graphics state for
+        the text view as well as for the clip view.
 
 2003-09-13  Darin Adler  <darin@apple.com>
 

@@ -113,6 +113,7 @@ const float LargeNumberForText = 1.0e7;
     // See these bugs for more information:
     // <rdar://problem/3310943>: REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
     [[self contentView] releaseGState];
+    [[self documentView] releaseGState];
     
     return self;
 }
