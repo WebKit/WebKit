@@ -1,3 +1,10 @@
+2002-11-05  John Sullivan  <sullivan@apple.com>
+
+        * Resources/url_icon.tiff:
+	reverted generic URL icon back to the one that
+	looks like a document until we get something from
+	HI that SJ likes
+
 2002-11-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3074108 - Decode macbinary files during download
