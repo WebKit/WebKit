@@ -1,5 +1,12 @@
 2002-11-06  Darin Adler  <darin@apple.com>
 
+        * Downloads.subproj/WebMacBinaryDecoder.m: (+[WebMacBinaryDecoder canDecodeHeaderData:]):
+	Fix == 129 check that was supposed to be <= 129.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
+2002-11-06  Darin Adler  <darin@apple.com>
+
         * Downloads.subproj/WebBinHexDecoder.m: (-[WebBinHexDecoder decodeIntoBuffer:size:]):
 	Fix an off-by-one error handling repeat counts.
 

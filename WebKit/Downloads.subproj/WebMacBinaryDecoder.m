@@ -42,8 +42,8 @@
         // CRC matches, so we have MacBinary II or III.
         
         // Version 129 is MacBinary II, and MacBinary III is compatible.
-        // If we see any other value here, it's something newer that we can't handle.
-        if (header[123] != 129) {
+        // If we see a higher value here, it's something newer that we can't handle.
+        if (header[123] > 129) {
             return NO;
         }
         
