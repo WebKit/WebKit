@@ -95,7 +95,6 @@ void HTMLAppletElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_ARCHIVE:
     case ATTR_CODE:
     case ATTR_CODEBASE:
-    case ATTR_ID:
     case ATTR_MAYSCRIPT:
     case ATTR_NAME:
     case ATTR_OBJECT:
@@ -533,6 +532,8 @@ void HTMLParamElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     switch( attr->id() )
     {
     case ATTR_ID:
+        // Must call base class so that hasID bit gets set.
+        HTMLElementImpl::parseHTMLAttribute(attr);
         if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
         // fall through
     case ATTR_NAME:

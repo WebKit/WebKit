@@ -225,6 +225,11 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_NOSAVE:
 	break;
+#if APPLE_CHANGES
+    case ATTR_COMPOSITE:
+        _compositeOperator = attr->value().string();
+        break;
+#endif
     case ATTR_NAME:
 	{
 	    QString newNameAttr = attr->value().string();
@@ -246,10 +251,6 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	    }
 	    oldIdAttr = newIdAttr;
 	}
-#if APPLE_CHANGES
-    case ATTR_COMPOSITE:
-	    _compositeOperator = attr->value().string();
-#endif
 	// fall through
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
@@ -434,6 +435,8 @@ void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     switch (attr->id())
     {
     case ATTR_ID:
+        // Must call base class so that hasID bit gets set.
+        HTMLElementImpl::parseHTMLAttribute(attr);
         if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
         // fall through
     case ATTR_NAME:

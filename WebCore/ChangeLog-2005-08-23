@@ -1,3 +1,21 @@
+2004-06-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3645846>: (REGRESSION: Stuck "Loading" when logging into Google's Gmail on newer versions of Safari)
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::parseHTMLAttribute):
+        Call through to base class for ATTR_ID so the "has ID" bit gets set.
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseHTMLAttribute): Move ATTR_COMPOSITE code up and out of the way so
+        it doesn't screw up ATTR_ID parsing.
+        (HTMLMapElementImpl::parseHTMLAttribute): Call through to base class for ATTR_ID
+        so the "has ID" bit gets set.
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::parseHTMLAttribute): Remove ATTR_ID case; not needed.
+        (HTMLParamElementImpl::parseHTMLAttribute): Call through to base class for ATTR_ID
+        so the "has ID" bit gets set.
+
 2004-06-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
