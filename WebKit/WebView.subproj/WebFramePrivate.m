@@ -40,8 +40,6 @@ static const char * const stateNames[6] = {
     [view autorelease];
     [dataSource autorelease];
     [provisionalDataSource autorelease];
-    [errors release];
-    [mainDocumentError release];
     if (renderFramePart)
         renderFramePart->deref();
     [super dealloc];
@@ -273,14 +271,6 @@ static const char * const stateNames[6] = {
     _private->state = newState;
 }
 
-- (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription
-{
-    if (_private->errors == 0)
-        _private->errors = [[NSMutableDictionary alloc] init];
-        
-    [_private->errors setObject: error forKey: resourceDescription];
-}
-
 - (void)_isLoadComplete
 {
     WEBKIT_ASSERT ([self controller] != nil);
@@ -295,17 +285,18 @@ static const char * const stateNames[6] = {
         
         case IFWEBFRAMESTATE_PROVISIONAL:
         {
+            IFWebDataSource *pd = [self provisionalDataSource];
+            
             WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL\n", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
-            if ([[self errors] count] != 0) {
+            if ([[pd errors] count] != 0) {
                 // Check all children first.
-                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[self errors] count]);
-                if (![[self provisionalDataSource] isLoading]) {
+                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[pd errors] count]);
+                if (![pd isLoading]) {
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
 
-                    [[[self provisionalDataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
-
+                    [[pd _locationChangeHandler] locationChangeDone: [pd mainDocumentError]];
 
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
@@ -320,16 +311,16 @@ static const char * const stateNames[6] = {
         case IFWEBFRAMESTATE_COMMITTED_PAGE:
         case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
         {
+            IFWebDataSource *ds = [self dataSource];
+            
             WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
-            if (![[self dataSource] isLoading]) {
+            if (![ds isLoading]) {
                 id mainView = [[[self controller] mainFrame] view];
                 id thisView = [self view];
 
-                WEBKIT_ASSERT ([self dataSource] != nil);
-
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
-                [[self dataSource] _part]->end();
+                [ds _part]->end();
                 
                 // May need to relayout each time a frame is completely
                 // loaded.
@@ -351,9 +342,9 @@ static const char * const stateNames[6] = {
                 }
  
                 // Jump to anchor point, if necessary.
-                [[self dataSource] _part]->gotoBaseAnchor();
+                [ds _part]->gotoBaseAnchor();
                    
-                [[[self dataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
+                [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
                 
                 return;
             }
@@ -404,35 +395,14 @@ static const char * const stateNames[6] = {
 }
 
 // Called every time a resource is completely loaded, or an error is received.
-- (void)_checkLoadCompleteResource: (NSString *)resourceDescription error: (IFError *)error isMainDocument: (BOOL)mainDocument
+- (void)_checkLoadComplete
 {
 
     WEBKIT_ASSERT ([self controller] != nil);
-
-    if (error) {
-        if (mainDocument)
-            [self _setMainDocumentError: error];
-        [self _addError: error forResource: resourceDescription];
-    }
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
     [IFWebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
-
-- (void)_setMainDocumentError: (IFError *)error
-{
-    [error retain];
-    [_private->mainDocumentError release];
-    _private->mainDocumentError = error;
-}
-
-- (void)_clearErrors
-{
-    [_private->errors release];
-    _private->errors = nil;
-    [_private->mainDocumentError release];
-    _private->mainDocumentError = nil;
-}
 
 @end

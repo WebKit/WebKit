@@ -43,7 +43,12 @@
     [super dealloc];
 }
 
- 
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
 // Note that the controller is not retained.
 - (id <IFWebController>)controller
 {
@@ -136,6 +141,10 @@
 - (void)layout
 {
     KHTMLView *widget = _private->widget;
+
+
+    // Ensure that we will receive mouse move events.  Is this the best place to put this?
+    [[self window] setAcceptsMouseMovedEvents: YES];
 
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
@@ -296,9 +305,6 @@
     //    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
     //    return;
     //}
-
-    // Ensure that we will receive mouse move events.  Is this the best place to put this?
-    [[self window] setAcceptsMouseMovedEvents: YES];
     
     // Draw plain white bg in empty case, to avoid redraw weirdness when
     // no page is yet loaded (2890818). We may need to modify this to always

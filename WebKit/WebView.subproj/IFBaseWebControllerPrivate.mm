@@ -69,8 +69,10 @@
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         if (frame != nil) {
-            IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
-            [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: NO];
+            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]];
+            [dataSource _addError: error forResource: resourceDescription];
+            [error release];
+            [frame _checkLoadComplete];
         }
         return;
     }
@@ -81,7 +83,7 @@
     if (progress->bytesSoFar == progress->totalToLoad){
         if (frame != nil){
             [frame _transitionProvisionalToLayoutAcceptable];
-            [frame _checkLoadCompleteResource: resourceDescription error: nil isMainDocument: NO];
+            [frame _checkLoadComplete];
         }
     }
 }
@@ -96,8 +98,10 @@
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
         if (frame != nil) {
-            IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
-            [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: YES];
+            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]];
+            [dataSource _setMainDocumentError: error];
+            [error release];
+            [frame _checkLoadComplete];
         }
         return;
     }
@@ -121,7 +125,7 @@
         // If the load is complete, mark the primary load as done.  The primary load is the load
         // of the main document.  Other resources may still be arriving.
         [dataSource _setPrimaryLoadComplete: YES];
-        [frame _checkLoadCompleteResource: resourceDescription error: nil  isMainDocument: YES];
+        [frame _checkLoadComplete];
     }
     else {
         // If the frame isn't complete it might be ready for a layout.  Perform that check here.
@@ -146,7 +150,9 @@
     
     WEBKIT_ASSERT (frame != nil);
 
-    [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: NO];
+    [dataSource _addError: error forResource: resourceDescription];
+    
+    [frame _checkLoadComplete];
 }
 
 
@@ -163,7 +169,8 @@
 
     [dataSource _setPrimaryLoadComplete: YES];
 
-    [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: YES];
+    [dataSource _setMainDocumentError: error];
+    [frame _checkLoadComplete];
 }
 
 

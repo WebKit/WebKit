@@ -12,6 +12,7 @@
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/IFError.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <khtml_part.h>
 
@@ -53,7 +54,10 @@
     [mainURLHandleClient release];
     [pageTitle autorelease];
     [(NSObject *)locationChangeHandler release];
-    
+ 
+    [errors release];
+    [mainDocumentError release];
+   
     part->deref();
 
     [super dealloc];
@@ -132,7 +136,7 @@
     
     WEBKIT_ASSERT ([self webFrame] != nil);
     
-    [[self webFrame] _clearErrors];
+    [self _clearErrors];
     
     // FIXME [mjs]: temporary hack to make file: URLs work right
     if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
@@ -312,5 +316,30 @@
     }
     return nil;
 }
+
+- (void)_setMainDocumentError: (IFError *)error
+{
+    [error retain];
+    [_private->mainDocumentError release];
+    _private->mainDocumentError = error;
+}
+
+- (void)_clearErrors
+{
+    [_private->errors release];
+    _private->errors = nil;
+    [_private->mainDocumentError release];
+    _private->mainDocumentError = nil;
+}
+
+- (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription
+{
+    if (_private->errors == 0)
+        _private->errors = [[NSMutableDictionary alloc] init];
+        
+    [_private->errors setObject: error forKey: resourceDescription];
+}
+
+
 
 @end

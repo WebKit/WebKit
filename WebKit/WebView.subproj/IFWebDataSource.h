@@ -147,4 +147,13 @@
 
 - (IFContentPolicy)contentPolicy;
 
+/*
+*/
+- (NSDictionary *)errors;
+
+/*
+*/
+- (IFError *)mainDocumentError;
+
+
 @end

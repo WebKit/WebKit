@@ -1,3 +1,41 @@
+2002-04-25  Richard Williamson  <rjw@apple.com>
+
+        Fixed problem with errors potentially being reported on
+        wrong data source by moving collected errors from frame
+        to datasource.
+        
+        Little changes in preparation for events.
+        
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _receivedError:forResource:partialProgress:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedError:forResource:partialProgress:fromDataSource:]):
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource errors]):
+	(-[IFWebDataSource mainDocumentError]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSourcePrivate dealloc]):
+	(-[IFWebDataSource _startLoading:]):
+	(-[IFWebDataSource _setMainDocumentError:]):
+	(-[IFWebDataSource _clearErrors]):
+	(-[IFWebDataSource _addError:forResource:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame reload:]):
+	(-[IFWebFrame reset]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFramePrivate dealloc]):
+	(-[IFWebFrame _isLoadComplete]):
+	(-[IFWebFrame _checkLoadComplete]):
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView acceptsFirstResponder]):
+	(-[IFWebView layout]):
+	(-[IFWebView drawRect:]):
+
 2002-04-25  Darin Adler  <darin@apple.com>
 
 	Rework plugin code to prepare to move more of here from WebCore.

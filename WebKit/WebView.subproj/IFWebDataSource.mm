@@ -318,4 +318,15 @@ static id IFWebDataSourceMake(void *handle)
     return _private->contentPolicy;
 }
 
+- (NSDictionary *)errors
+{
+    return _private->errors;
+}
+
+- (IFError *)mainDocumentError
+{
+    return _private->mainDocumentError;
+}
+
+
 @end

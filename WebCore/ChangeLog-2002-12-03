@@ -1,3 +1,12 @@
+2002-04-25  Richard Williamson  <rjw@apple.com>
+
+        Little changes in preparation for events.
+
+	* khtml/ecma/kjs_proxy.cpp:
+	(KJSProxyImpl::createHTMLEventHandler):
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::createHTMLEventListener):
+
 2002-04-25  Darin Adler  <darin@apple.com>
 
 	Add a workaround for Radar 2912404 (kCFStringEncodingInvalidId is negative even

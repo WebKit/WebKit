@@ -1510,8 +1510,12 @@ void KHTMLPart::selectAll()
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
 {
-    _logNeverImplemented();
-    return 0L;
+  KJSProxy *proxy = jScript();
+
+  if (!proxy)
+    return 0;
+
+  return proxy->createHTMLEventHandler( d->m_url.url(), code );
 }
 
 KHTMLPart *KHTMLPart::opener()

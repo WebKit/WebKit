@@ -96,6 +96,8 @@
 }
 
 
+// FIXME:  The name of this method is a little misleading, perhaps
+// we could call it prepareProvisionalDataSource?.
 - (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
 {
     IFWebDataSource *oldDataSource;
@@ -167,7 +169,7 @@
 
 - (void)reload: (BOOL)forceRefresh
 {
-    [self _clearErrors];
+    [_private->dataSource _clearErrors];
 
     [_private->dataSource startLoading: forceRefresh];
 }
@@ -178,16 +180,6 @@
     [_private setDataSource: nil];
     [[_private view] _resetWidget];
     [_private setView: nil];
-}
-
-- (NSDictionary *)errors
-{
-    return _private->errors;
-}
-
-- (IFError *)mainDocumentError
-{
-    return _private->mainDocumentError;
 }
 
 @end
