@@ -129,8 +129,6 @@ extern "C" {
     activeURLHandles = [NSMutableArray arrayWithCapacity:1];
     [activeURLHandles retain];
     [[self window] _windowRef];
-    eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
-    [eventSender sendNullEvents];
     return self;
 }
 
@@ -144,6 +142,8 @@ extern "C" {
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
         [self sendActivateEvent];
         [self newStream:URL mimeType:mime notifyData:NULL];
+        eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
+        [eventSender sendNullEvents];
         transferred = TRUE;
     }
     [self sendUpdateEvent];
@@ -254,8 +254,10 @@ extern "C" {
         streamData->data = [NSMutableData dataWithCapacity:0];
         [streamData->data retain];
         urlHandle = (IFURLHandle *)WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData);
-        [activeURLHandles addObject:urlHandle];
-        [urlHandle loadInBackground];
+        if(urlHandle!=nil){
+            [activeURLHandles addObject:urlHandle];
+            [urlHandle loadInBackground];
+        }
     }else if(transferMode == NP_SEEK){
         KWQDebug("Stream type: NP_SEEK not yet supported\n");
     }
