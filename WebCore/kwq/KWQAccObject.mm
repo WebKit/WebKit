@@ -1111,6 +1111,7 @@ static QRect boundingBoxRect(RenderObject* obj)
  
     // convert our rectangle to screen coordinates
     NSRect rect = NSMakeRect(ourrect.left(), ourrect.top(), ourrect.width(), ourrect.height());
+    rect = NSOffsetRect(rect, -[self topView]->contentsX(), -[self topView]->contentsY());
     rect = [view convertRect:rect toView:nil];
     rect.origin = [[view window] convertBaseToScreen:rect.origin];
     

@@ -1,3 +1,13 @@
+2005-02-23  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4010059> BoundsForTextMarkerRange does not update with scrolled web area
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject doAXBoundsForTextMarkerRange:]):
+        Adjust for scrolling.
+
 2005-02-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
