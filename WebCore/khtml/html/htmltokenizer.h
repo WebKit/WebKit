@@ -84,10 +84,10 @@ public:
     {
         DOM::AttributeImpl* a = 0;
         if(buffer->unicode())
-            a = new DOM::AttributeImpl(buffer->unicode(), v);
+            a = new DOM::HTMLAttributeImpl(buffer->unicode(), v);
         else if ( !attrName.isEmpty() && attrName != "/" )
-            a = new DOM::AttributeImpl(doc->attrId(0, DOM::DOMString(attrName).implementation(), false),
-                                       v);
+            a = new DOM::HTMLAttributeImpl(doc->attrId(0, DOM::DOMString(attrName).implementation(), false),
+                                           v);
 
         if (a) {
             if(!attrs) {

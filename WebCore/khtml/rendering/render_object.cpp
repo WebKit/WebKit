@@ -153,11 +153,6 @@ m_isSelectionBorder( false )
 
 RenderObject::~RenderObject()
 {
-    if(m_style->backgroundImage())
-        m_style->backgroundImage()->deref(this);
-
-    if (m_style)
-        m_style->deref();
 }
 
 bool RenderObject::isRoot() const
@@ -1335,7 +1330,7 @@ void RenderObject::selectionStartEnd(int& spos, int& epos)
 
 RenderBlock* RenderObject::createAnonymousBlock()
 {
-    RenderStyle *newStyle = new RenderStyle();
+    RenderStyle *newStyle = new (renderArena()) RenderStyle();
     newStyle->inheritFrom(m_style);
     newStyle->setDisplay(BLOCK);
 
@@ -1443,7 +1438,7 @@ void RenderObject::setStyle(RenderStyle *style)
     if (oldStyle)
     {
         ob = oldStyle->backgroundImage();
-        oldStyle->deref();
+        oldStyle->deref(renderArena());
     }
 
     if( ob != nb ) {
@@ -1681,6 +1676,12 @@ void RenderObject::remove()
     if (parent())
         //have parent, take care of the tree integrity
         parent()->removeChild(this);
+
+    if (m_style->backgroundImage())
+        m_style->backgroundImage()->deref(this);
+    if (m_style)
+        m_style->deref(renderArena());
+    m_style = 0;
 }
 
 void RenderObject::detach()

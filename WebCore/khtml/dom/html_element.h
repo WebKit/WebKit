@@ -190,16 +190,6 @@ public:
      */
     HTMLCollection children() const;
 
-    /*
-     * @internal
-     */
-    void removeCSSProperty( const DOMString& property );
-
-    /*
-     * @internal
-     */
-    void addCSSProperty( const DOMString &property, const DOMString &value );
-
     bool isContentEditable() const;
     DOMString contentEditable() const;
     void setContentEditable(const DOMString &enabled);

@@ -252,20 +252,6 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
     //kdDebug() << "CSSStyleSelector: default style has " << defaultStyle->count() << " elements"<< endl;
 }
 
-void CSSStyleSelector::clear()
-{
-    delete defaultStyle;
-    delete defaultQuirksStyle;
-    delete defaultPrintStyle;
-    delete defaultSheet;
-    delete styleNotYetAvailable;
-    defaultStyle = 0;
-    defaultQuirksStyle = 0;
-    defaultPrintStyle = 0;
-    defaultSheet = 0;
-    styleNotYetAvailable = 0;
-}
-
 void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
 {
     if (m_matchedRules.size() <= m_matchedRuleCount)
@@ -427,6 +413,11 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     pseudoStyle = RenderStyle::NOPSEUDO;
     
     element = e;
+    if (element && element->isHTMLElement())
+        htmlElement = static_cast<HTMLElementImpl*>(element);
+    else
+        htmlElement = 0;
+
     parentNode = e->parentNode();
     if (defaultParent)
         parentStyle = defaultParent;
@@ -451,7 +442,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
 {
     if (!e->getDocument()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
-            styleNotYetAvailable = new RenderStyle();
+            styleNotYetAvailable = ::new RenderStyle();
             styleNotYetAvailable->setDisplay(NONE);
             styleNotYetAvailable->ref();
         }
@@ -460,9 +451,9 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     
     initForStyleResolve(e, defaultParent);
 
-    style = new RenderStyle();
-    if( parentStyle )
-        style->inheritFrom( parentStyle );
+    style = new (e->getDocument()->renderArena()) RenderStyle();
+    if (parentStyle)
+        style->inheritFrom(parentStyle);
     else
         parentStyle = style;
     
@@ -481,33 +472,47 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     // 4. Now we check user sheet rules.
     int firstUserRule = -1, lastUserRule = -1;
     matchRules(m_userStyle, firstUserRule, lastUserRule);
-    
+
     // 5. Now check author rules, beginning first with presentational attributes
     // mapped from HTML.
     int firstAuthorRule = -1, lastAuthorRule = -1;
-    CSSStyleDeclarationImpl* attributeDecl = e->attributeStyleDecl();
-    if (attributeDecl) {
-        firstAuthorRule = lastAuthorRule = m_matchedDeclCount;
-        addMatchedDeclaration(attributeDecl);
-    }
-    
-    // Table cells share an additional mapped rule.
-    attributeDecl = e->additionalAttributeStyleDecl();
-    if (attributeDecl) {
-        if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
-        lastAuthorRule = m_matchedDeclCount;
-        addMatchedDeclaration(attributeDecl);
+    if (htmlElement) {
+        // Ask if the HTML element has mapped attributes.
+        if (htmlElement->hasMappedAttributes()) {
+            // Walk our attribute list and add in each decl.
+            const HTMLNamedAttrMapImpl* map = htmlElement->htmlAttributes();
+            for (uint i = 0; i < map->length(); i++) {
+                HTMLAttributeImpl* attr = map->attributeItem(i);
+                if (attr->decl()) {
+                    if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
+                    lastAuthorRule = m_matchedDeclCount;
+                    addMatchedDeclaration(attr->decl());
+                }
+            }
+        }
+
+        // Now we check additional mapped declarations.
+        // Tables and table cells share an additional mapped rule that must be applied
+        // after all attributes, since their mapped style depends on the values of multiple attributes.
+        CSSStyleDeclarationImpl* attributeDecl = htmlElement->additionalAttributeStyleDecl();
+        if (attributeDecl) {
+            if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
+            lastAuthorRule = m_matchedDeclCount;
+            addMatchedDeclaration(attributeDecl);
+        }
     }
     
     // 6. Check the rules in author sheets next.
     matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     
     // 7. Now check our inline style attribute.
-    CSSStyleDeclarationImpl* inlineDecl = e->inlineStyleDecl();
-    if (inlineDecl) {
-        if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
-        lastAuthorRule = m_matchedDeclCount;
-        addMatchedDeclaration(inlineDecl);
+    if (htmlElement) {
+        CSSStyleDeclarationImpl* inlineDecl = htmlElement->inlineStyleDecl();
+        if (inlineDecl) {
+            if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
+            lastAuthorRule = m_matchedDeclCount;
+            addMatchedDeclaration(inlineDecl);
+        }
     }
     
     // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
@@ -555,7 +560,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     
     if (!e->getDocument()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
-            styleNotYetAvailable = new RenderStyle();
+            styleNotYetAvailable = ::new RenderStyle();
             styleNotYetAvailable->setDisplay(NONE);
             styleNotYetAvailable->ref();
         }
@@ -577,9 +582,9 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     if (m_matchedDeclCount == 0)
         return 0;
     
-    style = new RenderStyle();
-    if( parentStyle )
-        style->inheritFrom( parentStyle );
+    style = new (e->getDocument()->renderArena()) RenderStyle();
+    if (parentStyle)
+        style->inheritFrom(parentStyle);
     else
         parentStyle = style;
     style->noninherited_flags._styleType = pseudoStyle;
@@ -2211,7 +2216,8 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     {
         HANDLE_INHERIT_AND_INITIAL(backgroundImage, BackgroundImage)
 	if (!primitiveValue) return;
-	style->setBackgroundImage(static_cast<CSSImageValueImpl *>(primitiveValue)->image());
+	style->setBackgroundImage(static_cast<CSSImageValueImpl *>(primitiveValue)
+                                  ->image(element->getDocument()->docLoader()));
         //kdDebug( 6080 ) << "setting image in style to " << image->image() << endl;
         break;
     }
@@ -2219,7 +2225,8 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
         if (!primitiveValue) return;
-	style->setListStyleImage(static_cast<CSSImageValueImpl *>(primitiveValue)->image());
+	style->setListStyleImage(static_cast<CSSImageValueImpl *>(primitiveValue)
+                                 ->image(element->getDocument()->docLoader()));
         //kdDebug( 6080 ) << "setting image in list to " << image->image() << endl;
         break;
     }
@@ -2783,7 +2790,7 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI)
             {
                 CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(val);
-                style->setContent(image->image(), i != 0);
+                style->setContent(image->image(element->getDocument()->docLoader()), i != 0);
             }
 
         }

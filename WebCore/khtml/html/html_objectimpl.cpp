@@ -71,10 +71,26 @@ NodeImpl::Id HTMLAppletElementImpl::id() const
     return ID_APPLET;
 }
 
-void HTMLAppletElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLAppletElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
 {
-    switch( attr->id() )
-    {
+    switch (attr->id()) {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+            result = eUniversal;
+            return false;
+        case ATTR_ALIGN:
+            result = eReplaced; // Share with <img> since the alignment behavior is the same.
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLAppletElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+{
+    switch (attr->id()) {
     case ATTR_ALT:
     case ATTR_ARCHIVE:
     case ATTR_CODE:
@@ -85,16 +101,16 @@ void HTMLAppletElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_OBJECT:
         break;
     case ATTR_WIDTH:
-        addCSSLength(CSS_PROP_WIDTH, attr->value());
+        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
         break;
     case ATTR_HEIGHT:
-        addCSSLength(CSS_PROP_HEIGHT, attr->value());
+        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
         break;
     case ATTR_ALIGN:
-	addHTMLAlignment( attr->value() );
+	addHTMLAlignment(attr);
 	break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -201,9 +217,7 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
-{
-    hidden = false;
-}
+{}
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
 {
@@ -214,7 +228,29 @@ NodeImpl::Id HTMLEmbedElementImpl::id() const
     return ID_EMBED;
 }
 
-void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLEmbedElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+        case ATTR_BORDER:
+        case ATTR_VSPACE:
+        case ATTR_HSPACE:
+        case ATTR_VALIGN:
+        case ATTR_HIDDEN:
+            result = eUniversal;
+            return false;
+        case ATTR_ALIGN:
+            result = eReplaced; // Share with <img> since the alignment behavior is the same.
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLEmbedElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
   QString val = attr->value().string();
   
@@ -232,44 +268,46 @@ void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
          url = khtml::parseURL(attr->value()).string();
          break;
      case ATTR_WIDTH:
-        addCSSLength( CSS_PROP_WIDTH, attr->value() );
+        addCSSLength( attr, CSS_PROP_WIDTH, attr->value() );
         break;
      case ATTR_HEIGHT:
-        addCSSLength( CSS_PROP_HEIGHT, attr->value());
+        addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
         break;
      case ATTR_BORDER:
-        addCSSLength(CSS_PROP_BORDER_WIDTH, attr->value());
-        addCSSProperty( CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID );
+        addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
+        addCSSProperty( attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID );
+        addCSSProperty( attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID );
+        addCSSProperty( attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID );
+        addCSSProperty( attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID );
         break;
      case ATTR_VSPACE:
-        addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
         break;
      case ATTR_HSPACE:
-        addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
         break;
      case ATTR_ALIGN:
-	addHTMLAlignment( attr->value() );
+	addHTMLAlignment(attr);
 	break;
      case ATTR_VALIGN:
-        addCSSProperty(CSS_PROP_VERTICAL_ALIGN, attr->value());
+        addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
         break;
      case ATTR_PLUGINPAGE:
      case ATTR_PLUGINSPAGE:
         pluginPage = val;
         break;
      case ATTR_HIDDEN:
-        if (val.lower()=="yes" || val.lower()=="true")
-           hidden = true;
-        else
-           hidden = false;
+        if (val.lower()=="yes" || val.lower()=="true") {
+            // FIXME: Not dynamic, but it's not really important that such a rarely-used
+            // feature work dynamically.
+            addCSSLength( attr, CSS_PROP_WIDTH, "0" );
+            addCSSLength( attr, CSS_PROP_HEIGHT, "0" );
+        }
         break;
      default:
-        HTMLElementImpl::parseAttribute( attr );
+        HTMLElementImpl::parseHTMLAttribute( attr );
   }
 }
 
@@ -288,13 +326,6 @@ RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderSty
 
 void HTMLEmbedElementImpl::attach()
 {
-    if (hidden) {
-        // FIXME: Not dynamic, but it's not really important that such a rarely-used
-        // feature work dynamically.
-        addCSSLength( CSS_PROP_WIDTH, "0" );
-        addCSSLength( CSS_PROP_HEIGHT, "0" );
-    }
-    
     HTMLElementImpl::attach();
     if (m_render) {
         static_cast<RenderPartObject*>(m_render)->updateWidget();
@@ -322,7 +353,21 @@ HTMLFormElementImpl *HTMLObjectElementImpl::form() const
   return 0;
 }
 
-void HTMLObjectElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLObjectElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+            result = eUniversal;
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLObjectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
   QString val = attr->value().string();
   int pos;
@@ -340,10 +385,10 @@ void HTMLObjectElementImpl::parseAttribute(AttributeImpl *attr)
       needWidgetUpdate = true;
       break;
     case ATTR_WIDTH:
-      addCSSLength( CSS_PROP_WIDTH, attr->value());
+      addCSSLength( attr, CSS_PROP_WIDTH, attr->value());
       break;
     case ATTR_HEIGHT:
-      addCSSLength( CSS_PROP_HEIGHT, attr->value());
+      addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
       break;
     case ATTR_CLASSID:
       classId = val;
@@ -358,7 +403,7 @@ void HTMLObjectElementImpl::parseAttribute(AttributeImpl *attr)
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     default:
-      HTMLElementImpl::parseAttribute( attr );
+      HTMLElementImpl::parseHTMLAttribute( attr );
   }
 }
 
@@ -456,7 +501,7 @@ NodeImpl::Id HTMLParamElementImpl::id() const
     return ID_PARAM;
 }
 
-void HTMLParamElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLParamElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch( attr->id() )
     {

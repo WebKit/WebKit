@@ -25,6 +25,7 @@
 
 #include "render_style.h"
 #include "css/cssstyleselector.h"
+#include "render_arena.h"
 
 #include "kdebug.h"
 
@@ -299,11 +300,47 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
         page_break_inside == o.page_break_inside;
 }
 
+// ----------------------------------------------------------
+
+void* RenderStyle::operator new(size_t sz, RenderArena* renderArena) throw()
+{
+    return renderArena->allocate(sz);
+}
+
+void RenderStyle::operator delete(void* ptr, size_t sz)
+{
+    // Stash size where detach can find it.
+    *(size_t *)ptr = sz;
+}
+
+void RenderStyle::arenaDelete(RenderArena *arena)
+{
+    RenderStyle *ps = pseudoStyle;
+    RenderStyle *prev = 0;
+    
+    while (ps) {
+        prev = ps;
+        ps = ps->pseudoStyle;
+	// to prevent a double deletion.
+	// this works only because the styles below aren't really shared
+	// Dirk said we need another construct as soon as these are shared
+        prev->pseudoStyle = 0;
+        prev->deref(arena);
+    }
+    delete content;
+    
+    delete this;
+    
+    // Recover the size left there for us by operator delete and free the memory.
+    arena->free(*(size_t *)this, this);
+}
+
 RenderStyle::RenderStyle()
 {
-//    counter++;
+    m_ref = 0;
+    
     if (!_default)
-	_default = new RenderStyle(true);
+	_default = ::new RenderStyle(true);
 
     box = _default->box;
     visual = _default->visual;
@@ -336,15 +373,16 @@ RenderStyle::RenderStyle(bool)
 
     pseudoStyle = 0;
     content = 0;
+    m_ref = 1;
 }
 
 RenderStyle::RenderStyle(const RenderStyle& o)
-    : Shared<RenderStyle>(),
-      inherited_flags( o.inherited_flags ), noninherited_flags( o.noninherited_flags ),
+    : inherited_flags( o.inherited_flags ), noninherited_flags( o.noninherited_flags ),
       box( o.box ), visual( o.visual ), background( o.background ), surround( o.surround ),
       css3NonInheritedData( o.css3NonInheritedData ), css3InheritedData( o.css3InheritedData ),
       inherited( o.inherited ), pseudoStyle( 0 ), content( o.content )
 {
+    m_ref = 0;
 }
 
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
@@ -356,19 +394,6 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
 
 RenderStyle::~RenderStyle()
 {
-    RenderStyle *ps = pseudoStyle;
-    RenderStyle *prev = 0;
-
-    while (ps) {
-        prev = ps;
-        ps = ps->pseudoStyle;
-	// to prevent a double deletion.
-	// this works only because the styles below aren't really shared
-	// Dirk said we need another construct as soon as these are shared
-        prev->pseudoStyle = 0;
-        prev->deref();
-    }
-    delete content;
 }
 
 bool RenderStyle::operator==(const RenderStyle& o) const
@@ -446,23 +471,6 @@ void RenderStyle::addPseudoStyle(RenderStyle* pseudo)
     pseudo->pseudoStyle = pseudoStyle;
     pseudoStyle = pseudo;
 }
-
-void RenderStyle::removePseudoStyle(PseudoId pid)
-{
-    RenderStyle *ps = pseudoStyle;
-    RenderStyle *prev = this;
-
-    while (ps) {
-        if (ps->noninherited_flags._styleType==pid) {
-            prev->pseudoStyle = ps->pseudoStyle;
-            ps->deref();
-            return;
-        }
-        prev = ps;
-        ps = ps->pseudoStyle;
-    }
-}
-
 
 bool RenderStyle::inheritedNotEqual( RenderStyle *other ) const
 {

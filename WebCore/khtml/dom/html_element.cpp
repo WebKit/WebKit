@@ -116,20 +116,6 @@ void HTMLElement::setClassName( const DOMString &value )
     if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_CLASS, value);
 }
 
-void HTMLElement::removeCSSProperty( const DOMString &property )
-{
-    int id = getPropertyID(property.string().lower().ascii(), property.length());
-    if(id && impl)
-        static_cast<HTMLElementImpl*>(impl)->removeCSSProperty(id);
-}
-
-void HTMLElement::addCSSProperty( const DOMString &property, const DOMString &value )
-{
-    int id = getPropertyID(property.string().lower().ascii(), property.length());
-    if(id && impl)
-        static_cast<HTMLElementImpl*>(impl)->addCSSProperty(id, value);
-}
-
 DOMString HTMLElement::innerHTML() const
 {
     if ( !impl ) return DOMString();

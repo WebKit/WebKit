@@ -80,7 +80,7 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     void radioClicked( HTMLGenericFormElementImpl *caller );
 
@@ -142,7 +142,7 @@ public:
 
     virtual DOMString type() const = 0;
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void attach();
     virtual void reset() {}
 
@@ -212,7 +212,7 @@ public:
     virtual Id id() const;
     DOMString type() const;
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
 
@@ -308,7 +308,8 @@ public:
     virtual void click();
     virtual void accessKeyAction();
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -360,7 +361,7 @@ public:
     
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     /**
      * the form element this label is associated to.
@@ -434,7 +435,7 @@ public:
 
     virtual void childrenChanged();
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
@@ -485,7 +486,7 @@ public:
     // ### this is just a rough guess
     virtual bool isEnumeratable() const { return false; }
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
 protected:
     AtomicString m_challenge;
@@ -510,7 +511,7 @@ public:
     virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
     virtual NodeImpl *addChild( NodeImpl* newChild );
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     void recalcSelectOptions();
 
 };
@@ -535,7 +536,7 @@ public:
 
     long index() const;
     void setIndex( long );
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     DOMString value() const;
     void setValue(DOMStringImpl* value);
 
@@ -586,7 +587,7 @@ public:
 
     void select (  );
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
     virtual void reset();
@@ -618,7 +619,7 @@ public:
     ~HTMLIsIndexElementImpl();
 
     virtual Id id() const;
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
 protected:
     DOMString m_prompt;

@@ -51,7 +51,9 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *token);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
+    
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
@@ -81,7 +83,8 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -90,7 +93,6 @@ public:
     QString url;
     QString pluginPage;
     QString serviceType;
-    bool hidden;
 };
 
 // -------------------------------------------------------------------------
@@ -106,7 +108,8 @@ public:
 
     HTMLFormElementImpl *form() const;
 
-    virtual void parseAttribute(AttributeImpl *token);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -135,7 +138,7 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *token);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
     QString name() const { return m_name.string(); }
     QString value() const { return m_value.string(); }

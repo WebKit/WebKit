@@ -702,11 +702,11 @@ void RenderPartObject::updateWidget()
           embedOrObject = (HTMLElementImpl *)embed;
           DOMString attribute = embedOrObject->getAttribute(ATTR_WIDTH);
           if (!attribute.isEmpty()) {
-              o->addCSSLength(CSS_PROP_WIDTH, attribute);
+              o->setAttribute(ATTR_WIDTH, attribute);
           }
           attribute = embedOrObject->getAttribute(ATTR_HEIGHT);
           if (!attribute.isEmpty()) {
-              o->addCSSLength(CSS_PROP_HEIGHT, attribute);
+              o->setAttribute(ATTR_HEIGHT, attribute);
           }
           url = embed->url;
           serviceType = embed->serviceType;

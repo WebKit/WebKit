@@ -103,12 +103,9 @@ CENTER {
       
 HR  { 
         display: block; 
-        margin-top: 12px; 
-        margin-bottom: 12px; 
+        margin: 0.5em auto; 
         border-style: inset;
         border-width: 1px;
-        margin-left: auto;
-        margin-right: auto;
 }
 
 MAP { 

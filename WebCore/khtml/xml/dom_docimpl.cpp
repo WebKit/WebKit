@@ -314,7 +314,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
 
     m_cssTarget = 0;
     m_accessKeyDictValid = false;
-    
+
     resetLinkColor();
     resetVisitedLinkColor();
     resetActiveLinkColor();
@@ -452,7 +452,9 @@ ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOM
 
 Attr DocumentImpl::createAttribute( NodeImpl::Id id )
 {
-    return new AttrImpl(0, docPtr(), new AttributeImpl(id, DOMString("").implementation()));
+    // Assume this is an HTML attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
+    // documents if we're wrong.
+    return new AttrImpl(0, docPtr(), new HTMLAttributeImpl(id, DOMString("").implementation()));
 }
 
 EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
@@ -1002,7 +1004,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
     if ( change == Force ) {
         RenderStyle* oldStyle = m_render->style();
         if ( oldStyle ) oldStyle->ref();
-        RenderStyle* _style = new RenderStyle();
+        RenderStyle* _style = new (m_renderArena) RenderStyle();
         _style->setDisplay(BLOCK);
         _style->setVisuallyOrdered( visuallyOrdered );
         // ### make the font stuff _really_ work!!!!
@@ -1046,7 +1048,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
             change = ch;
 
         if (oldStyle)
-            oldStyle->deref();
+            oldStyle->deref(m_renderArena);
     }
 
     NodeImpl *n;

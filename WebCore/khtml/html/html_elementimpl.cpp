@@ -54,13 +54,84 @@
 using namespace DOM;
 using namespace khtml;
 
+CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl() {
+    if (m_entryType != ePersistent)
+        HTMLElementImpl::removeMappedAttributeDecl(m_entryType, m_attrName, m_attrValue);
+}
+
+QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* HTMLElementImpl::m_mappedAttributeDecls = 0;
+
+CSSMappedAttributeDeclarationImpl* HTMLElementImpl::getMappedAttributeDecl(MappedAttributeEntry entryType, AttributeImpl* attr)
+{
+    if (!m_mappedAttributeDecls)
+        return 0;
+    
+    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
+    if (attrNameDict) {
+        QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attr->id());
+        if (attrValueDict)
+            return attrValueDict->find(attr->value().implementation());
+    }
+    return 0;
+}
+
+void HTMLElementImpl::setMappedAttributeDecl(MappedAttributeEntry entryType, AttributeImpl* attr, CSSMappedAttributeDeclarationImpl* decl)
+{
+    if (!m_mappedAttributeDecls)
+        m_mappedAttributeDecls = new QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >;
+    
+    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = 0;
+    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
+    if (!attrNameDict) {
+        attrNameDict = new QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >;
+        attrNameDict->setAutoDelete(true);
+        m_mappedAttributeDecls->insert((void*)entryType, attrNameDict);
+    }
+    else
+        attrValueDict = attrNameDict->find((void*)attr->id());
+    if (!attrValueDict) {
+        attrValueDict = new QPtrDict<CSSMappedAttributeDeclarationImpl>;
+        if (entryType == ePersistent)
+            attrValueDict->setAutoDelete(true);
+        attrNameDict->insert((void*)attr->id(), attrValueDict);
+    }
+    attrValueDict->replace(attr->value().implementation(), decl);
+}
+
+void HTMLElementImpl::removeMappedAttributeDecl(MappedAttributeEntry entryType, NodeImpl::Id attrName, const AtomicString& attrValue)
+{
+    if (!m_mappedAttributeDecls)
+        return;
+    
+    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
+    if (!attrNameDict)
+        return;
+    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attrName);
+    if (!attrValueDict)
+        return;
+    attrValueDict->remove(attrValue.implementation());
+}
+
+HTMLAttributeImpl::~HTMLAttributeImpl()
+{
+    if (m_styleDecl)
+        m_styleDecl->deref();
+}
+
+AttributeImpl* HTMLAttributeImpl::clone() const
+{
+    return new HTMLAttributeImpl(m_id, _value, m_styleDecl);
+}
+
 HTMLNamedAttrMapImpl::HTMLNamedAttrMapImpl(ElementImpl *e)
-:NamedAttrMapImpl(e)
+:NamedAttrMapImpl(e), m_mappedAttributeCount(0)
 {}
 
 void HTMLNamedAttrMapImpl::clearAttributes()
 {
     m_classList.clear();
+    m_mappedAttributeCount = 0;
+    NamedAttrMapImpl::clearAttributes();
 }
 
 bool HTMLNamedAttrMapImpl::isHTMLAttributeMap() const
@@ -108,15 +179,19 @@ HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
     : ElementImpl(doc)
 {
     m_inlineStyleDecl = 0;
-    m_attributeStyleDecl = 0;    
 }
 
 HTMLElementImpl::~HTMLElementImpl()
 {
-    if (m_inlineStyleDecl)
+    if (m_inlineStyleDecl) {
+        m_inlineStyleDecl->setParent(0);
         m_inlineStyleDecl->deref();
-    if (m_attributeStyleDecl)
-        m_attributeStyleDecl->deref();
+    }
+}
+
+AttributeImpl* HTMLElementImpl::createAttribute(NodeImpl::Id id, DOMStringImpl* value)
+{
+    return new HTMLAttributeImpl(id, value);
 }
 
 bool HTMLElementImpl::isInline() const
@@ -166,35 +241,84 @@ void HTMLElementImpl::createInlineStyleDecl()
     m_inlineStyleDecl = new CSSStyleDeclarationImpl(0);
     m_inlineStyleDecl->ref();
     m_inlineStyleDecl->setParent(getDocument()->elementSheet());
-    m_inlineStyleDecl->parent()->ref();
     m_inlineStyleDecl->setNode(this);
     m_inlineStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
 }
 
-void HTMLElementImpl::createMappedAttributeDecl()
+void HTMLElementImpl::attributeChanged(AttributeImpl* attr, bool preserveDecls)
 {
-    m_attributeStyleDecl = new CSSStyleDeclarationImpl(0);
-    m_attributeStyleDecl->ref();
-    m_attributeStyleDecl->setParent(getDocument()->elementSheet());
-    m_attributeStyleDecl->parent()->ref();
-    m_attributeStyleDecl->setNode(this);
-    m_attributeStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
+    HTMLAttributeImpl* htmlAttr = static_cast<HTMLAttributeImpl*>(attr);
+    if (htmlAttr->decl() && !preserveDecls) {
+        htmlAttr->setDecl(0);
+        setChanged();
+        if (namedAttrMap)
+            static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declRemoved();
+    }
+
+    bool checkDecl = true;
+    MappedAttributeEntry entry;
+    bool needToParse = mapToEntry(attr, entry);
+    if (preserveDecls) {
+        if (htmlAttr->decl()) {
+            setChanged();
+            if (namedAttrMap)
+                static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
+            checkDecl = false;
+        }
+    }
+    else if (!attr->isNull() && entry != eNone) {
+        CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(entry, attr);
+        if (decl) {
+            htmlAttr->setDecl(decl);
+            setChanged();
+            if (namedAttrMap)
+                static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
+            checkDecl = false;
+        } else
+            needToParse = true;
+    }
+
+    if (needToParse)
+        parseHTMLAttribute(htmlAttr);
+    
+    if (checkDecl && htmlAttr->decl()) {
+        // Add the decl to the table in the appropriate spot.
+        setMappedAttributeDecl(entry, attr, htmlAttr->decl());
+        htmlAttr->decl()->setMappedState(entry, attr->id(), attr->value());
+        htmlAttr->decl()->setParent(0);
+        htmlAttr->decl()->setNode(0);
+        if (namedAttrMap)
+            static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
+    }
 }
 
-void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id())
+    {
+        case ATTR_ALIGN:
+        case ATTR_CONTENTEDITABLE:
+        case ATTR_DIR:
+            result = eUniversal;
+            return false;
+        default:
+            break;
+    }
+    
+    result = eNone;
+    return true;
+}
+    
+void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     DOMString indexstring;
-    switch( attr->id() )
+    switch (attr->id())
     {
     case ATTR_ALIGN:
-        if (!attr->isNull()) {
-            if ( strcasecmp(attr->value(), "middle" ) == 0 )
-                addCSSProperty( CSS_PROP_TEXT_ALIGN, "center" );
-            else
-                addCSSProperty(CSS_PROP_TEXT_ALIGN, attr->value());
-        }
+        if (strcasecmp(attr->value(), "middle" ) == 0)
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, "center");
         else
-            removeCSSProperty(CSS_PROP_TEXT_ALIGN);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
         break;
 // the core attributes...
     case ATTR_ID:
@@ -217,10 +341,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
         setChanged();
         break;
     case ATTR_CONTENTEDITABLE:
-        if (!attr->isNull())
-            setContentEditable(attr->value());
-        else
-            removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);
+        setContentEditable(attr);
         break;
     case ATTR_STYLE:
         // ### we need to remove old style info in case there was any!
@@ -240,8 +361,8 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_LANG:
         break;
     case ATTR_DIR:
-        addCSSProperty(CSS_PROP_DIRECTION, attr->value());
-        addCSSProperty(CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
+        addCSSProperty(attr, CSS_PROP_DIRECTION, attr->value());
+        addCSSProperty(attr, CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
         break;
 // standard events
     case ATTR_ONCLICK:
@@ -308,16 +429,6 @@ void HTMLElementImpl::createAttributeMap() const
     namedAttrMap->ref();
 }
 
-CSSStyleDeclarationImpl* HTMLElementImpl::inlineStyleDecl() const
-{ 
-    return m_inlineStyleDecl;
-}
-
-CSSStyleDeclarationImpl* HTMLElementImpl::attributeStyleDecl() const
-{
-    return m_attributeStyleDecl;
-}
-
 CSSStyleDeclarationImpl* HTMLElementImpl::getInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
@@ -325,66 +436,14 @@ CSSStyleDeclarationImpl* HTMLElementImpl::getInlineStyleDecl()
     return m_inlineStyleDecl;
 }
 
+CSSStyleDeclarationImpl* HTMLElementImpl::additionalAttributeStyleDecl()
+{
+    return 0;
+}
+
 const AtomicStringList* HTMLElementImpl::getClassList() const
 {
     return namedAttrMap ? static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->getClassList() : 0;
-}
-
-void HTMLElementImpl::addCSSProperty(int id, const DOMString &value)
-{
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
-    m_attributeStyleDecl->setProperty(id, value, false);
-    setChanged();
-}
-
-void HTMLElementImpl::addCSSProperty(int id, int value)
-{
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
-    m_attributeStyleDecl->setProperty(id, value, false);
-    setChanged();
-}
-
-void HTMLElementImpl::addCSSStringProperty(int id, const DOMString &value, CSSPrimitiveValue::UnitTypes type)
-{
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
-    m_attributeStyleDecl->setStringProperty(id, value, type, false);
-    setChanged();
-}
-
-void HTMLElementImpl::addCSSImageProperty(int id, const DOMString &URL)
-{
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
-    m_attributeStyleDecl->setImageProperty(id, URL, false);
-    setChanged();
-}
-
-void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
-{
-    // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
-    // length unit and make the appropriate parsed value.
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
-
-    // strip attribute garbage..
-    DOMStringImpl* v = value.implementation();
-    if ( v ) {
-        unsigned int l = 0;
-
-        while ( l < v->l && v->s[l].unicode() <= ' ') l++;
-
-        for ( ;l < v->l; l++ ) {
-            char cc = v->s[l].latin1();
-            if ( cc > '9' || ( cc < '0' && cc != '*' && cc != '%' && cc != '.') )
-                break;
-        }
-        if ( l != v->l ) {
-            m_attributeStyleDecl->setLengthProperty(id, DOMString( v->s, l ), false);
-            setChanged();
-            return;
-        }
-    }
-
-    m_attributeStyleDecl->setLengthProperty(id, value, false);
-    setChanged();
 }
 
 static inline bool isHexDigit( const QChar &c ) {
@@ -403,24 +462,75 @@ static inline int toHex( const QChar &c ) {
                      : -1 ) ) );
 }
 
-/* color parsing that tries to match as close as possible IE 6. */
-void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
+void HTMLElementImpl::addCSSProperty(HTMLAttributeImpl* attr, int id, const DOMString &value)
 {
-    if (!m_attributeStyleDecl) createMappedAttributeDecl();
+    if (!attr->decl()) createMappedDecl(attr);
+    attr->decl()->setProperty(id, value, false);
+}
 
+void HTMLElementImpl::addCSSProperty(HTMLAttributeImpl* attr, int id, int value)
+{
+    if (!attr->decl()) createMappedDecl(attr);
+    attr->decl()->setProperty(id, value, false);
+}
+
+void HTMLElementImpl::addCSSStringProperty(HTMLAttributeImpl* attr, int id, const DOMString &value, CSSPrimitiveValue::UnitTypes type)
+{
+    if (!attr->decl()) createMappedDecl(attr);
+    attr->decl()->setStringProperty(id, value, type, false);
+}
+
+void HTMLElementImpl::addCSSImageProperty(HTMLAttributeImpl* attr, int id, const DOMString &URL)
+{
+    if (!attr->decl()) createMappedDecl(attr);
+    attr->decl()->setImageProperty(id, URL, false);
+}
+
+void HTMLElementImpl::addCSSLength(HTMLAttributeImpl* attr, int id, const DOMString &value)
+{
+    // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
+    // length unit and make the appropriate parsed value.
+    if (!attr->decl()) createMappedDecl(attr);
+
+    // strip attribute garbage..
+    DOMStringImpl* v = value.implementation();
+    if ( v ) {
+        unsigned int l = 0;
+        
+        while ( l < v->l && v->s[l].unicode() <= ' ') l++;
+        
+        for ( ;l < v->l; l++ ) {
+            char cc = v->s[l].latin1();
+            if ( cc > '9' || ( cc < '0' && cc != '*' && cc != '%' && cc != '.') )
+                break;
+        }
+        if ( l != v->l ) {
+            attr->decl()->setLengthProperty(id, DOMString( v->s, l ), false);
+            return;
+        }
+    }
+    
+    attr->decl()->setLengthProperty(id, value, false);
+}
+
+/* color parsing that tries to match as close as possible IE 6. */
+void HTMLElementImpl::addHTMLColor(HTMLAttributeImpl* attr, int id, const DOMString &c)
+{
     // this is the only case no color gets applied in IE.
     if ( !c.length() )
         return;
 
-    if ( m_attributeStyleDecl->setProperty(id, c, false) )
+    if (!attr->decl()) createMappedDecl(attr);
+    
+    if (attr->decl()->setProperty(id, c, false) )
         return;
-
+    
     QString color = c.string();
     // not something that fits the specs.
-
+    
     // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
     // out of everyhting you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
-
+    
     // the length of the color value is rounded up to the next
     // multiple of 3. each part of the rgb triple then gets one third
     // of the length.
@@ -432,7 +542,7 @@ void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
     // The highest non zero digit in all triplets is remembered, and
     // used as a normalization point to normalize to values between 0
     // and 255.
-
+    
     if ( color.lower() != "transparent" ) {
         if ( color[0] == '#' )
             color.remove( 0,  1 );
@@ -464,7 +574,7 @@ void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
             }
             maxDigit = basicLength - maxDigit;
             // 	    qDebug("color is %x %x %x, maxDigit=%d",  colors[0], colors[1], colors[2], maxDigit );
-
+            
             // normalize to 00-ff. The highest filled digit counts, minimum is 2 digits
             maxDigit -= 2;
             colors[0] >>= 4*maxDigit;
@@ -472,25 +582,23 @@ void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
             colors[2] >>= 4*maxDigit;
             // 	    qDebug("normalized color is %x %x %x",  colors[0], colors[1], colors[2] );
             // 	assert( colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100 );
-
+            
             color.sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2] );
             // 	    qDebug( "trying to add fixed color string '%s'", color.latin1() );
-            if ( m_attributeStyleDecl->setProperty(id, DOMString(color), false) )
+            if ( attr->decl()->setProperty(id, DOMString(color), false) )
                 return;
         }
     }
-    m_attributeStyleDecl->setProperty(id, CSS_VAL_BLACK, false);
+    attr->decl()->setProperty(id, CSS_VAL_BLACK, false);
 }
 
-void HTMLElementImpl::removeCSSProperty(int id)
+void HTMLElementImpl::createMappedDecl(HTMLAttributeImpl* attr)
 {
-    if(!m_attributeStyleDecl)
-        return;
-    m_attributeStyleDecl->parent()->deref();
-    m_attributeStyleDecl->setParent(getDocument()->elementSheet());
-    m_attributeStyleDecl->parent()->ref();
-    m_attributeStyleDecl->removeProperty(id);
-    setChanged();
+    CSSMappedAttributeDeclarationImpl* decl = new CSSMappedAttributeDeclarationImpl(0);
+    attr->setDecl(decl);
+    decl->setParent(getDocument()->elementSheet());
+    decl->setNode(this);
+    decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 
 DOMString HTMLElementImpl::innerHTML() const
@@ -666,13 +774,14 @@ DOMString HTMLElementImpl::namespaceURI() const
         return XHTML_NAMESPACE;
 }
 
-void HTMLElementImpl::addHTMLAlignment( const DOMString& alignment )
+void HTMLElementImpl::addHTMLAlignment(HTMLAttributeImpl* attr)
 {
     //qDebug("alignment is %s", alignment.string().latin1() );
     // vertical alignment with respect to the current baseline of the text
     // right or left means floating images
     int propfloat = -1;
     int propvalign = -1;
+    const AtomicString& alignment = attr->value();
     if ( strcasecmp( alignment, "absmiddle" ) == 0 ) {
         propvalign = CSS_VAL_MIDDLE;
     } else if ( strcasecmp( alignment, "absbottom" ) == 0 ) {
@@ -694,11 +803,11 @@ void HTMLElementImpl::addHTMLAlignment( const DOMString& alignment )
     } else if ( strcasecmp ( alignment, "texttop") == 0 ) {
 	propvalign = CSS_VAL_TEXT_TOP;
     }
-
+    
     if ( propfloat != -1 )
-	addCSSProperty( CSS_PROP_FLOAT, propfloat );
+	addCSSProperty( attr, CSS_PROP_FLOAT, propfloat );
     if ( propvalign != -1 )
-	addCSSProperty( CSS_PROP_VERTICAL_ALIGN, propvalign );
+	addCSSProperty( attr, CSS_PROP_VERTICAL_ALIGN, propvalign );
 }
 
 bool HTMLElementImpl::isFocusable() const
@@ -725,16 +834,15 @@ DOMString HTMLElementImpl::contentEditable() const {
     return "inherit";
 }
 
-void HTMLElementImpl::setContentEditable(const DOMString &enabled) 
+void HTMLElementImpl::setContentEditable(HTMLAttributeImpl* attr) 
 {
+    const AtomicString& enabled = attr->value();
     if (strcasecmp(enabled, "true") == 0 || enabled.isEmpty())
-        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
+        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
     else if (strcasecmp(enabled, "false") == 0)
-        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
+        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
     else if (strcasecmp(enabled, "inherit") == 0)
-        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
-    else
-        removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);
+        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
 }
 
 void HTMLElementImpl::click()

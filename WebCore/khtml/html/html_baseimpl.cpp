@@ -49,8 +49,7 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc),
-    m_bgSet( false ), m_fgSet( false ), m_linkDecl(0)
+    : HTMLElementImpl(doc), m_linkDecl(0)
 {
 }
 
@@ -75,47 +74,59 @@ void HTMLBodyElementImpl::createLinkDecl()
     m_linkDecl->setStrictParsing(!getDocument()->inCompatMode());
 }
 
-void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLBodyElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
 {
     switch(attr->id())
     {
+        case ATTR_BACKGROUND:
+        case ATTR_BGCOLOR:
+        case ATTR_TEXT:
+        case ATTR_MARGINWIDTH:
+        case ATTR_LEFTMARGIN:
+        case ATTR_MARGINHEIGHT:
+        case ATTR_TOPMARGIN:
+        case ATTR_BGPROPERTIES:
+            result = eUniversal;
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
 
+void HTMLBodyElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+{
+    switch(attr->id())
+    {
     case ATTR_BACKGROUND:
     {
         QString url = khtml::parseURL( attr->value() ).string();
-        if (!url.isEmpty()) {
-            addCSSImageProperty(CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
-            m_bgSet = true;
-        }
-        else {
-            removeCSSProperty(CSS_PROP_BACKGROUND_IMAGE);
-            m_bgSet = false;
-        }
+        if (!url.isEmpty())
+            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
         break;
     }
     case ATTR_MARGINWIDTH:
-        addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value() );
+        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value() );
         /* nobreak; */
     case ATTR_LEFTMARGIN:
-        addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value() );
+        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value() );
         break;
     case ATTR_MARGINHEIGHT:
-        addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
         /* nobreak */
     case ATTR_TOPMARGIN:
-        addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         break;
     case ATTR_BGCOLOR:
-        addHTMLColor(CSS_PROP_BACKGROUND_COLOR, attr->value());
-        m_bgSet = !attr->isNull();
+        addHTMLColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
         break;
     case ATTR_TEXT:
-        addHTMLColor(CSS_PROP_COLOR, attr->value());
-        m_fgSet = !attr->isNull();
+        addHTMLColor(attr, CSS_PROP_COLOR, attr->value());
         break;
     case ATTR_BGPROPERTIES:
         if ( strcasecmp( attr->value(), "fixed" ) == 0)
-            addCSSProperty(CSS_PROP_BACKGROUND_ATTACHMENT, CSS_VAL_FIXED);
+            addCSSProperty(attr, CSS_PROP_BACKGROUND_ATTACHMENT, CSS_VAL_FIXED);
         break;
     case ATTR_VLINK:
     case ATTR_ALINK:
@@ -172,7 +183,7 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NOSAVE:
 	break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -183,23 +194,16 @@ void HTMLBodyElementImpl::insertedIntoDocument()
     // FIXME: perhaps all this stuff should be in attach() instead of here...
 
     KHTMLView* w = getDocument()->view();
-    if(w && w->marginWidth() != -1) {
+    if (w && w->marginWidth() != -1) {
         QString s;
         s.sprintf( "%d", w->marginWidth() );
-        addCSSLength(CSS_PROP_MARGIN_LEFT, s);
-        addCSSLength(CSS_PROP_MARGIN_RIGHT, s);
+        setAttribute(ATTR_MARGINWIDTH, s);
     }
-    if(w && w->marginHeight() != -1) {
+    if (w && w->marginHeight() != -1) {
         QString s;
         s.sprintf( "%d", w->marginHeight() );
-        addCSSLength(CSS_PROP_MARGIN_TOP, s);
-        addCSSLength(CSS_PROP_MARGIN_BOTTOM, s);
+        setAttribute(ATTR_MARGINHEIGHT, s);
     }
-
-    if ( m_bgSet && !m_fgSet )
-        addCSSProperty(CSS_PROP_COLOR, "#000000");
-
-    getDocument()->updateStyleSelector();
 }
 
 // -------------------------------------------------------------------------
@@ -317,7 +321,7 @@ void HTMLFrameElementImpl::openURL()
 }
 
 
-void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -370,7 +374,7 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
                                 getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -516,7 +520,7 @@ NodeImpl::Id HTMLFrameSetElementImpl::id() const
     return ID_FRAMESET;
 }
 
-void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLFrameSetElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -557,7 +561,7 @@ void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -672,21 +676,38 @@ NodeImpl::Id HTMLIFrameElementImpl::id() const
     return ID_IFRAME;
 }
 
-void HTMLIFrameElementImpl::parseAttribute(AttributeImpl *attr )
+bool HTMLIFrameElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+            result = eUniversal;
+            return false;
+        case ATTR_ALIGN:
+            result = eReplaced; // Share with <img> since the alignment behavior is the same.
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLIFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr )
 {
   switch (  attr->id() )
   {
     case ATTR_WIDTH:
-      addCSSLength( CSS_PROP_WIDTH, attr->value());
+      addCSSLength( attr, CSS_PROP_WIDTH, attr->value());
       break;
     case ATTR_HEIGHT:
-      addCSSLength( CSS_PROP_HEIGHT, attr->value() );
+      addCSSLength( attr, CSS_PROP_HEIGHT, attr->value() );
       break;
     case ATTR_ALIGN:
-      addHTMLAlignment( attr->value() );
+      addHTMLAlignment( attr );
       break;
     default:
-      HTMLFrameElementImpl::parseAttribute( attr );
+      HTMLFrameElementImpl::parseHTMLAttribute( attr );
   }
 }
 

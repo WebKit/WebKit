@@ -82,7 +82,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     {
         if (child->isAnonymous() && child->style()->styleType() == RenderStyle::NOPSEUDO && !child->isListMarker())
         {
-            RenderStyle* newStyle = new RenderStyle();
+            RenderStyle* newStyle = new (renderArena()) RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
             child->setStyle(newStyle);
@@ -2610,7 +2610,7 @@ void RenderBlock::updateFirstLetter()
             
             RenderTextFragment* letter = 
                 new (renderArena()) RenderTextFragment(remainingText->node(), oldText, 0, length);
-            RenderStyle* newStyle = new RenderStyle();
+            RenderStyle* newStyle = new (renderArena()) RenderStyle();
             newStyle->inheritFrom(pseudoStyle);
             letter->setStyle(newStyle);
             firstLetter->addChild(letter);

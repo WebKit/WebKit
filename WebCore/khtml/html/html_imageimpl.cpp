@@ -70,7 +70,29 @@ NodeImpl::Id HTMLImageElementImpl::id() const
     return ID_IMG;
 }
 
-void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLImageElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch(attr->id())
+    {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+        case ATTR_VSPACE:
+        case ATTR_HSPACE:
+        case ATTR_VALIGN:
+            result = eUniversal;
+            return false;
+        case ATTR_BORDER:
+        case ATTR_ALIGN:
+            result = eReplaced; // Shared with embeds and iframes
+            return false;
+        default:
+            break;
+    }
+
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -79,34 +101,34 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
         if (m_render) m_render->updateFromElement();
         break;
     case ATTR_WIDTH:
-        addCSSLength(CSS_PROP_WIDTH, attr->value());
+        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
         break;
     case ATTR_HEIGHT:
-        addCSSLength(CSS_PROP_HEIGHT, attr->value());
+        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
         break;
     case ATTR_BORDER:
         // border="noborder" -> border="0"
         if(attr->value().toInt()) {
-            addCSSLength(CSS_PROP_BORDER_WIDTH, attr->value());
-            addCSSProperty( CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID );
-            addCSSProperty( CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID );
-            addCSSProperty( CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID );
-            addCSSProperty( CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID );
+            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
+            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
+            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
         }
         break;
     case ATTR_VSPACE:
-        addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
         break;
     case ATTR_HSPACE:
-        addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
         break;
     case ATTR_ALIGN:
-	addHTMLAlignment( attr->value() );
+        addHTMLAlignment(attr);
 	break;
     case ATTR_VALIGN:
-	addCSSProperty(CSS_PROP_VERTICAL_ALIGN, attr->value());
+        addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
         break;
     case ATTR_USEMAP:
         if ( attr->value().domString()[0] == '#' )
@@ -158,7 +180,7 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
 	}
 	// fall through
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -330,7 +352,7 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
     return false;
 }
 
-void HTMLMapElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -350,7 +372,7 @@ void HTMLMapElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     }
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -376,7 +398,7 @@ NodeImpl::Id HTMLAreaElementImpl::id() const
     return ID_AREA;
 }
 
-void HTMLAreaElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -405,7 +427,7 @@ void HTMLAreaElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ACCESSKEY:
         break;
     default:
-        HTMLAnchorElementImpl::parseAttribute(attr);
+        HTMLAnchorElementImpl::parseHTMLAttribute(attr);
     }
 }
 

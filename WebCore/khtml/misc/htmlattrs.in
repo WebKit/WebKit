@@ -22,6 +22,7 @@ challenge
 charoff
 charset
 checked
+cellborder
 cite
 class
 classid
@@ -133,6 +134,7 @@ start
 style
 summary
 tabindex
+tableborder
 target
 text
 title

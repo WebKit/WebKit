@@ -42,7 +42,8 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 
     virtual int start() const { return 1; }
 };
@@ -79,7 +80,9 @@ public:
     virtual ~HTMLOListElementImpl() {}
 
     virtual Id id() const;
-    virtual void parseAttribute(AttributeImpl *);
+    
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 
     int start() const { return _start; }
 private:
@@ -97,7 +100,8 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
 

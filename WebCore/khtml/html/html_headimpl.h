@@ -52,7 +52,7 @@ public:
     DOMString target() const { return m_target; }
 
     virtual Id id() const;
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
@@ -78,7 +78,7 @@ public:
     StyleSheetImpl* sheet() const { return m_sheet; }
 
     // overload from HTMLElementImpl
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     void process();
 
@@ -120,7 +120,7 @@ public:
     ~HTMLMetaElementImpl();
 
     virtual Id id() const;
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void insertedIntoDocument();
 
     void process();
@@ -155,7 +155,7 @@ public:
     StyleSheetImpl *sheet() const { return m_sheet; }
 
     // overload from HTMLElementImpl
-    virtual void parseAttribute(AttributeImpl *attr);
+    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged();

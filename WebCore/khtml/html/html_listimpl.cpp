@@ -37,15 +37,28 @@ NodeImpl::Id HTMLUListElementImpl::id() const
     return ID_UL;
 }
 
-void HTMLUListElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLUListElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_TYPE:
+            result = eUnorderedList;
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLUListElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
     case ATTR_TYPE:
-        addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, attr->value());
+        addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -70,26 +83,39 @@ NodeImpl::Id HTMLOListElementImpl::id() const
     return ID_OL;
 }
 
-void HTMLOListElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLOListElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_TYPE:
+            result = eListItem; // Share with <li>
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLOListElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
     case ATTR_TYPE:
         if ( strcmp( attr->value(), "a" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
         else if ( strcmp( attr->value(), "A" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
         else if ( strcmp( attr->value(), "i" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
         else if ( strcmp( attr->value(), "I" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
         else if ( strcmp( attr->value(), "1" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
         break;
     case ATTR_START:
             _start = !attr->isNull() ? attr->value().toInt() : 1;
     default:
-        HTMLUListElementImpl::parseAttribute(attr);
+        HTMLUListElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -100,8 +126,20 @@ NodeImpl::Id HTMLLIElementImpl::id() const
     return ID_LI;
 }
 
+bool HTMLLIElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_TYPE:
+            result = eListItem; // Share with <ol> since all the values are the same
+            return false;
+        default:
+            break;
+    }
+    
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
 
-void HTMLLIElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLLIElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -119,20 +157,20 @@ void HTMLLIElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_TYPE:
         if ( strcmp( attr->value(), "a" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
         else if ( strcmp( attr->value(), "A" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
         else if ( strcmp( attr->value(), "i" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
         else if ( strcmp( attr->value(), "I" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
         else if ( strcmp( attr->value(), "1" ) == 0 )
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
         else
-            addCSSProperty(CSS_PROP_LIST_STYLE_TYPE, attr->value());
+            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 

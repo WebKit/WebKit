@@ -344,8 +344,6 @@ bool HTMLDocumentImpl::haveNamedImageOrForm(const QString &name)
     return namedImageAndFormCounts.find(name) != NULL;
 }
 
-
-
 const int PARSEMODE_HAVE_DOCTYPE	=	(1<<0);
 const int PARSEMODE_HAVE_PUBLIC_ID	=	(1<<1);
 const int PARSEMODE_HAVE_SYSTEM_ID	=	(1<<2);
@@ -566,6 +564,8 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
         hMode = Html3;
     }
   
+    m_styleSelector->strictParsing = !inCompatMode();
+
 //     kdDebug() << "DocumentImpl::determineParseMode: publicId =" << publicId << " systemId = " << systemId << endl;
 //     kdDebug() << "DocumentImpl::determineParseMode: htmlMode = " << hMode<< endl;
 //     if( pMode == Strict )

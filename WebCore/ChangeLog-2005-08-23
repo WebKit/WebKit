@@ -1,3 +1,233 @@
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
+	Improve attribute parsing of mapped attributes (that map to CSS properties) so that they can pull the
+	style declarations from a global cache.
+
+	Made RenderStyles be arena allocated as well.
+	
+        Reviewed by darin
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSImageValueImpl::CSSImageValueImpl):
+        (CSSImageValueImpl::image):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/html4.css:
+        * khtml/css/quirks.css:
+        * khtml/dom/dom_element.cpp:
+        (Element::style):
+        * khtml/dom/html_element.cpp:
+        * khtml/dom/html_element.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (HTMLBodyElementImpl::mapToEntry):
+        (HTMLBodyElementImpl::parseHTMLAttribute):
+        (HTMLBodyElementImpl::insertedIntoDocument):
+        (HTMLFrameElementImpl::parseHTMLAttribute):
+        (HTMLFrameSetElementImpl::parseHTMLAttribute):
+        (HTMLIFrameElementImpl::mapToEntry):
+        (HTMLIFrameElementImpl::parseHTMLAttribute):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::mapToEntry):
+        (HTMLDivElementImpl::parseHTMLAttribute):
+        (HTMLHRElementImpl::mapToEntry):
+        (HTMLHRElementImpl::parseHTMLAttribute):
+        (HTMLParagraphElementImpl::mapToEntry):
+        (HTMLParagraphElementImpl::parseHTMLAttribute):
+        (HTMLMarqueeElementImpl::mapToEntry):
+        (HTMLMarqueeElementImpl::parseHTMLAttribute):
+        (HTMLLayerElementImpl::HTMLLayerElementImpl):
+        (HTMLLayerElementImpl::id):
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::determineParseMode):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl):
+        (HTMLElementImpl::getMappedAttributeDecl):
+        (HTMLElementImpl::setMappedAttributeDecl):
+        (HTMLElementImpl::removeMappedAttributeDecl):
+        (HTMLAttributeImpl::~HTMLAttributeImpl):
+        (HTMLAttributeImpl::clone):
+        (m_mappedAttributeCount):
+        (HTMLNamedAttrMapImpl::clearAttributes):
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::~HTMLElementImpl):
+        (HTMLElementImpl::createAttribute):
+        (HTMLElementImpl::createInlineStyleDecl):
+        (HTMLElementImpl::attributeChanged):
+        (HTMLElementImpl::mapToEntry):
+        (HTMLElementImpl::parseHTMLAttribute):
+        (HTMLElementImpl::additionalAttributeStyleDecl):
+        (isHexDigit):
+        (toHex):
+        (HTMLElementImpl::addCSSProperty):
+        (HTMLElementImpl::addCSSStringProperty):
+        (HTMLElementImpl::addCSSImageProperty):
+        (HTMLElementImpl::addCSSLength):
+        (HTMLElementImpl::addHTMLColor):
+        (HTMLElementImpl::createMappedDecl):
+        (HTMLElementImpl::addHTMLAlignment):
+        (HTMLElementImpl::setContentEditable):
+        * khtml/html/html_elementimpl.h:
+        (DOM::):
+        (DOM::CSSMappedAttributeDeclarationImpl::CSSMappedAttributeDeclarationImpl):
+        (DOM::CSSMappedAttributeDeclarationImpl::setMappedState):
+        (DOM::HTMLAttributeImpl::HTMLAttributeImpl):
+        (DOM::HTMLAttributeImpl::decl):
+        (DOM::HTMLAttributeImpl::setDecl):
+        (DOM::HTMLNamedAttrMapImpl::hasMappedAttributes):
+        (DOM::HTMLNamedAttrMapImpl::declRemoved):
+        (DOM::HTMLNamedAttrMapImpl::declAdded):
+        (DOM::HTMLNamedAttrMapImpl::attributeItem):
+        (DOM::HTMLElementImpl::hasMappedAttributes):
+        (DOM::HTMLElementImpl::htmlAttributes):
+        (DOM::HTMLElementImpl::inlineStyleDecl):
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::parseHTMLAttribute):
+        (HTMLGenericFormElementImpl::parseHTMLAttribute):
+        (HTMLButtonElementImpl::parseHTMLAttribute):
+        (HTMLInputElementImpl::setType):
+        (HTMLInputElementImpl::mapToEntry):
+        (HTMLInputElementImpl::parseHTMLAttribute):
+        (HTMLInputElementImpl::attach):
+        (HTMLLabelElementImpl::parseHTMLAttribute):
+        (HTMLSelectElementImpl::parseHTMLAttribute):
+        (HTMLKeygenElementImpl::parseHTMLAttribute):
+        (HTMLOptGroupElementImpl::parseHTMLAttribute):
+        (HTMLOptionElementImpl::parseHTMLAttribute):
+        (HTMLTextAreaElementImpl::parseHTMLAttribute):
+        (HTMLIsIndexElementImpl::parseHTMLAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::parseHTMLAttribute):
+        (HTMLLinkElementImpl::parseHTMLAttribute):
+        (HTMLMetaElementImpl::parseHTMLAttribute):
+        (HTMLStyleElementImpl::parseHTMLAttribute):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::mapToEntry):
+        (HTMLImageElementImpl::parseHTMLAttribute):
+        (HTMLMapElementImpl::parseHTMLAttribute):
+        (HTMLAreaElementImpl::parseHTMLAttribute):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::parseHTMLAttribute):
+        (HTMLBRElementImpl::mapToEntry):
+        (HTMLBRElementImpl::parseHTMLAttribute):
+        (HTMLFontElementImpl::mapToEntry):
+        (HTMLFontElementImpl::parseHTMLAttribute):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.cpp:
+        (HTMLUListElementImpl::mapToEntry):
+        (HTMLUListElementImpl::parseHTMLAttribute):
+        (HTMLOListElementImpl::mapToEntry):
+        (HTMLOListElementImpl::parseHTMLAttribute):
+        (HTMLLIElementImpl::mapToEntry):
+        (HTMLLIElementImpl::parseHTMLAttribute):
+        * khtml/html/html_listimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::mapToEntry):
+        (HTMLAppletElementImpl::parseHTMLAttribute):
+        (HTMLEmbedElementImpl::HTMLEmbedElementImpl):
+        (HTMLEmbedElementImpl::mapToEntry):
+        (HTMLEmbedElementImpl::parseHTMLAttribute):
+        (HTMLEmbedElementImpl::attach):
+        (HTMLObjectElementImpl::mapToEntry):
+        (HTMLObjectElementImpl::parseHTMLAttribute):
+        (HTMLParamElementImpl::parseHTMLAttribute):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::~HTMLTableElementImpl):
+        (HTMLTableElementImpl::mapToEntry):
+        (HTMLTableElementImpl::parseHTMLAttribute):
+        (HTMLTableElementImpl::additionalAttributeStyleDecl):
+        (HTMLTableElementImpl::getSharedCellDecl):
+        (HTMLTableElementImpl::attach):
+        (HTMLTablePartElementImpl::mapToEntry):
+        (HTMLTablePartElementImpl::parseHTMLAttribute):
+        (HTMLTableCellElementImpl::mapToEntry):
+        (HTMLTableCellElementImpl::parseHTMLAttribute):
+        (HTMLTableCellElementImpl::additionalAttributeStyleDecl):
+        (HTMLTableCellElementImpl::attach):
+        (HTMLTableColElementImpl::mapToEntry):
+        (HTMLTableColElementImpl::parseHTMLAttribute):
+        (HTMLTableCaptionElementImpl::mapToEntry):
+        (HTMLTableCaptionElementImpl::parseHTMLAttribute):
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        (KHTMLParser::getElement):
+        * khtml/html/htmltokenizer.h:
+        (khtml::Token::addAttribute):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild):
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::addChildToFlow):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::~RenderObject):
+        (RenderObject::createAnonymousBlock):
+        (RenderObject::setStyle):
+        (RenderObject::remove):
+        * khtml/rendering/render_style.cpp:
+        (throw):
+        (RenderStyle::operator delete):
+        (RenderStyle::arenaDelete):
+        (RenderStyle::RenderStyle):
+        (RenderStyle::~RenderStyle):
+        (RenderStyle::addPseudoStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::ref):
+        (khtml::RenderStyle::deref):
+        (khtml::RenderStyle::hasOneRef):
+        (khtml::RenderStyle::refCount):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTableSection::addChild):
+        (RenderTableRow::addChild):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::createAttribute):
+        (DocumentImpl::recalcStyle):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttributeImpl::clone):
+        (AttrImpl::setValue):
+        (AttrImpl::cloneNode):
+        (ElementImpl::setAttribute):
+        (ElementImpl::createAttribute):
+        (ElementImpl::setAttributeMap):
+        (ElementImpl::recalcStyle):
+        (NamedAttrMapImpl::~NamedAttrMapImpl):
+        (NamedAttrMapImpl::operator=):
+        (NamedAttrMapImpl::addAttribute):
+        (NamedAttrMapImpl::removeAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::AttributeImpl::~AttributeImpl):
+        (DOM::ElementImpl::attributeChanged):
+        (DOM::NamedAttrMapImpl::length):
+        * khtml/xml/dom_nodeimpl.cpp:
+
 2004-02-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -1323,7 +1323,7 @@ void NodeImpl::createRendererIfNeeded()
             m_render->setStyle(style);
             parentRenderer->addChild(m_render, nextRenderer());
         }
-        style->deref();
+        style->deref(getDocument()->renderArena());
     }
 }
 

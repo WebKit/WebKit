@@ -165,7 +165,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
 		    beforeChild = 0;
   		//kdDebug( 6040 ) << this <<" creating anonymous table section beforeChild="<< beforeChild << endl;
 		o = new (renderArena()) RenderTableSection(document() /* anonymous */);
-		RenderStyle *newStyle = new RenderStyle();
+		RenderStyle *newStyle = new (renderArena()) RenderStyle();
 		newStyle->inheritFrom(style());
                 newStyle->setDisplay(TABLE_ROW_GROUP);
 		o->setStyle(newStyle);
@@ -924,7 +924,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 	    } else {
 		//kdDebug( 6040 ) << "creating anonymous table row" << endl;
 		row = new (renderArena()) RenderTableRow(document() /* anonymous table */);
-		RenderStyle *newStyle = new RenderStyle();
+		RenderStyle *newStyle = new (renderArena()) RenderStyle();
 		newStyle->inheritFrom(style());
 		newStyle->setDisplay( TABLE_ROW );
 		row->setStyle(newStyle);
@@ -1539,7 +1539,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
             cell = static_cast<RenderTableCell *>(last);
         else {
 	    cell = new (renderArena()) RenderTableCell(document() /* anonymous object */);
-	    RenderStyle *newStyle = new RenderStyle();
+	    RenderStyle *newStyle = new (renderArena()) RenderStyle();
 	    newStyle->inheritFrom(style());
 	    newStyle->setDisplay( TABLE_CELL );
 	    cell->setStyle(newStyle);

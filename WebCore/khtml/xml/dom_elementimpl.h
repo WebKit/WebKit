@@ -64,7 +64,8 @@ public:
     AttributeImpl(NodeImpl::Id id, const AtomicString& value)
         : m_id(id), _value(value), _impl(0)
         { };
-
+    virtual ~AttributeImpl() {};
+    
     const AtomicString& value() const { return _value; }
     const AtomicString& prefix() const { return _prefix; }
     NodeImpl::Id id() const { return m_id; }
@@ -73,6 +74,8 @@ public:
     bool isNull() const { return _value.isNull(); }
     bool isEmpty() const { return _value.isEmpty(); }
     
+    virtual AttributeImpl* clone() const;
+
 private:
     void setValue(const AtomicString& value) {
         _value = value;
@@ -163,7 +166,7 @@ public:
                                        const DOMString &localName) const;
     void setAttribute( NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode );
     void removeAttribute( NodeImpl::Id id, int &exceptioncode );
-
+    
     DOMString prefix() const { return m_prefix; }
     void setPrefix(const DOMString &_prefix, int &exceptioncode );
 
@@ -183,8 +186,8 @@ public:
         return namedAttrMap;
     }
 
-    //This is always called, whenever an attribute changed
-    virtual void parseAttribute(AttributeImpl *) {}
+    // This method is called whenever an attribute is added, changed or removed.
+    virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls = false) {}
 
     // not part of the DOM
     void setAttributeMap ( NamedAttrMapImpl* list );
@@ -201,13 +204,8 @@ public:
     virtual void mouseEventHandler( MouseEvent */*ev*/, bool /*inside*/ ) {};
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
-
-    virtual CSSStyleDeclarationImpl* inlineStyleDecl() const;
-    virtual CSSStyleDeclarationImpl* attributeStyleDecl() const;
-    virtual CSSStyleDeclarationImpl* getInlineStyleDecl();
-    
-    // used by table cells to share style decls created by the enclosing table.
-    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
+ 
+    virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
     
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
@@ -275,7 +273,7 @@ public:
     virtual Node setNamedItem ( NodeImpl* arg, int &exceptioncode );
 
     virtual AttrImpl *item ( unsigned long index ) const;
-    virtual unsigned long length(  ) const;
+    unsigned long length() const { return len; }
 
     // Other methods (not part of DOM)
     virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly);
@@ -297,7 +295,7 @@ public:
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& _id) { m_id = _id; }
     
-private:
+protected:
     // this method is internal, does no error checking at all
     void addAttribute(AttributeImpl* newAttribute);
     // this method is internal, does no error checking at all

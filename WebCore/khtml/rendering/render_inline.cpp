@@ -86,7 +86,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        RenderStyle *newStyle = new RenderStyle();
+        RenderStyle *newStyle = new (renderArena()) RenderStyle();
         newStyle->inheritFrom(style());
         newStyle->setDisplay(BLOCK);
 

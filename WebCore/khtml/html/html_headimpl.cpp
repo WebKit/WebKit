@@ -57,7 +57,7 @@ NodeImpl::Id HTMLBaseElementImpl::id() const
     return ID_BASE;
 }
 
-void HTMLBaseElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLBaseElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -70,7 +70,7 @@ void HTMLBaseElementImpl::parseAttribute(AttributeImpl *attr)
 	process();
 	break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -165,7 +165,7 @@ void HTMLLinkElementImpl::setDisabledState(bool _disabled)
     }
 }
 
-void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLLinkElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -189,7 +189,7 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
         setDisabledState(!attr->isNull());
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -313,7 +313,7 @@ NodeImpl::Id HTMLMetaElementImpl::id() const
     return ID_META;
 }
 
-void HTMLMetaElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLMetaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -328,7 +328,7 @@ void HTMLMetaElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NAME:
       break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -380,7 +380,7 @@ NodeImpl::Id HTMLStyleElementImpl::id() const
 }
 
 // other stuff...
-void HTMLStyleElementImpl::parseAttribute(AttributeImpl *attr)
+void HTMLStyleElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -391,7 +391,7 @@ void HTMLStyleElementImpl::parseAttribute(AttributeImpl *attr)
         m_media = attr->value().string().lower();
         break;
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 

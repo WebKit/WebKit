@@ -66,7 +66,16 @@ NodeImpl::Id HTMLDivElementImpl::id() const
     return ID_DIV;
 }
 
-void HTMLDivElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLDivElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    if (attr->id() == ATTR_ALIGN) {
+        result = eBlock;
+        return false;
+    }
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+        
+void HTMLDivElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -74,17 +83,17 @@ void HTMLDivElementImpl::parseAttribute(AttributeImpl *attr)
     {
         DOMString v = attr->value();
 	if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
-           addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
+           addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
         else if (strcasecmp(attr->value(), "left") == 0)
-            addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
         else if (strcasecmp(attr->value(), "right") == 0)
-            addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
         else
-            addCSSProperty(CSS_PROP_TEXT_ALIGN, v);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
         break;
     }
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -104,79 +113,81 @@ NodeImpl::Id HTMLHRElementImpl::id() const
     return ID_HR;
 }
 
-void HTMLHRElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLHRElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_ALIGN:
+        case ATTR_WIDTH:
+        case ATTR_COLOR:
+        case ATTR_SIZE:
+        case ATTR_NOSHADE:
+            result = eHR;
+            return false;
+        default:
+            break;
+    }
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLHRElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch( attr->id() )
     {
     case ATTR_ALIGN: {
         if (strcasecmp(attr->value(), "left") == 0) {
-            addCSSProperty(CSS_PROP_MARGIN_LEFT, "0");
-	    addCSSProperty(CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+            addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, "0");
+	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
 	}
         else if (strcasecmp(attr->value(), "right") == 0) {
-	    addCSSProperty(CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
-	    addCSSProperty(CSS_PROP_MARGIN_RIGHT, "0");
+	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, "0");
 	}
 	else {
-      	    addCSSProperty(CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
-            addCSSProperty(CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+      	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+            addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
 	}
         break;
     }
     case ATTR_WIDTH:
     {
-        if (attr->isNull()) break;
         // cheap hack to cause linebreaks
         // khtmltests/html/strange_hr.html
         bool ok;
         int v = attr->value().implementation()->toInt(&ok);
         if(ok && !v)
-            addCSSLength(CSS_PROP_WIDTH, "1");
+            addCSSLength(attr, CSS_PROP_WIDTH, "1");
         else
-            addCSSLength(CSS_PROP_WIDTH, attr->value());
+            addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+        break;
     }
-    break;
+    case ATTR_COLOR:
+        addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
+        addHTMLColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
+        addHTMLColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
+        break;
+    case ATTR_NOSHADE:
+        addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
+        addHTMLColor(attr, CSS_PROP_BORDER_COLOR, DOMString("grey"));
+        addHTMLColor(attr, CSS_PROP_BACKGROUND_COLOR, DOMString("grey"));
+        break;
+    case ATTR_SIZE: {
+        DOMStringImpl* si = attr->value().implementation();
+        int size = si->toInt();
+        if (size <= 1)
+            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString("0"));
+        else
+            addCSSLength(attr, CSS_PROP_HEIGHT, DOMString(QString::number(size-2)));
+        break;
+    }
     default:
-        HTMLElementImpl::parseAttribute(attr);
+        HTMLElementImpl::parseHTMLAttribute(attr);
     }
-}
-
-// ### make sure we undo what we did during detach
-void HTMLHRElementImpl::attach()
-{
-    if (attributes(true /* readonly */)) {
-        // there are some attributes, lets check
-        const AtomicString& color = getAttribute(ATTR_COLOR);
-        DOMStringImpl* si = getAttribute(ATTR_SIZE).implementation();
-        int _s =  si ? si->toInt() : -1;
-        if (!color.isNull()) {
-            addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(CSS_PROP_BORDER_TOP_WIDTH, DOMString("0"));
-            addCSSLength(CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString(si));
-            addHTMLColor(CSS_PROP_BORDER_COLOR, color);
-        }
-        else {
-            if (_s > 1 && getAttribute(ATTR_NOSHADE).isNull()) {
-                DOMString n("1");
-                addCSSProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, n);
-                addCSSProperty(CSS_PROP_BORDER_TOP_WIDTH, n);
-                addCSSProperty(CSS_PROP_BORDER_LEFT_WIDTH, n);
-                addCSSProperty(CSS_PROP_BORDER_RIGHT_WIDTH, n);
-                addCSSLength(CSS_PROP_HEIGHT, DOMString(QString::number(_s-2)));
-            }
-            else if (_s >= 0) {
-                addCSSProperty(CSS_PROP_BORDER_TOP_WIDTH, DOMString(QString::number(_s)));
-                addCSSProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString("0"));
-            }
-        }
-        if (_s == 0)
-            addCSSProperty(CSS_PROP_MARGIN_BOTTOM, DOMString("1"));
-    }
-
-    HTMLElementImpl::attach();
 }
 
 // -------------------------------------------------------------------------
@@ -198,7 +209,16 @@ NodeImpl::Id HTMLParagraphElementImpl::id() const
     return ID_P;
 }
 
-void HTMLParagraphElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLParagraphElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    if (attr->id() == ATTR_ALIGN) {
+        result = eBlock; // We can share with DIV here.
+        return false;
+    }
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+
+void HTMLParagraphElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -206,17 +226,17 @@ void HTMLParagraphElementImpl::parseAttribute(AttributeImpl *attr)
         {
             DOMString v = attr->value();
             if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
-                addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
+                addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
             else if (strcasecmp(attr->value(), "left") == 0)
-                addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
+                addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
             else if (strcasecmp(attr->value(), "right") == 0)
-                addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
+                addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
             else
-                addCSSProperty(CSS_PROP_TEXT_ALIGN, v);
+                addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
             break;
         }
         default:
-            HTMLElementImpl::parseAttribute(attr);
+            HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -254,87 +274,85 @@ NodeImpl::Id HTMLMarqueeElementImpl::id() const
     return ID_MARQUEE;
 }
 
-void HTMLMarqueeElementImpl::parseAttribute(AttributeImpl *attr)
+bool HTMLMarqueeElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+{
+    switch (attr->id()) {
+        case ATTR_WIDTH:
+        case ATTR_HEIGHT:
+        case ATTR_BGCOLOR:
+        case ATTR_VSPACE:
+        case ATTR_HSPACE:
+        case ATTR_SCROLLAMOUNT:
+        case ATTR_SCROLLDELAY:
+        case ATTR_LOOP:
+        case ATTR_BEHAVIOR:
+        case ATTR_DIRECTION:
+            result = eUniversal;
+            return false;
+        default:
+            break;
+    }
+    return HTMLElementImpl::mapToEntry(attr, result);
+}
+            
+            
+void HTMLMarqueeElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 {
     switch(attr->id())
     {
         case ATTR_WIDTH:
             if (!attr->value().isEmpty())
-                addCSSLength(CSS_PROP_WIDTH, attr->value());
-            else
-                removeCSSProperty(CSS_PROP_WIDTH);
+                addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
             break;
         case ATTR_HEIGHT:
             if (!attr->value().isEmpty())
-                addCSSLength(CSS_PROP_HEIGHT, attr->value());
-            else
-                removeCSSProperty(CSS_PROP_HEIGHT);
+                addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
             break;
         case ATTR_BGCOLOR:
             if (!attr->value().isEmpty())
-                addHTMLColor(CSS_PROP_BACKGROUND_COLOR, attr->value());
-            else
-                removeCSSProperty(CSS_PROP_BACKGROUND_COLOR);
+                addHTMLColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
             break;
         case ATTR_VSPACE:
             if (!attr->value().isEmpty()) {
-                addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
-                addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
-            }
-            else {
-                removeCSSProperty(CSS_PROP_MARGIN_TOP);
-                removeCSSProperty(CSS_PROP_MARGIN_BOTTOM);
+                addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
+                addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
             }
             break;
         case ATTR_HSPACE:
             if (!attr->value().isEmpty()) {
-                addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value());
-                addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value());
-            }
-            else {
-                removeCSSProperty(CSS_PROP_MARGIN_LEFT);
-                removeCSSProperty(CSS_PROP_MARGIN_RIGHT);
+                addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
+                addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
             }
             break;
         case ATTR_SCROLLAMOUNT:
             if (!attr->value().isEmpty())
-                addCSSLength(CSS_PROP__KHTML_MARQUEE_INCREMENT, attr->value());
-            else
-                removeCSSProperty(CSS_PROP__KHTML_MARQUEE_INCREMENT);
+                addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_INCREMENT, attr->value());
             break;
         case ATTR_SCROLLDELAY:
             if (!attr->value().isEmpty())
-                addCSSLength(CSS_PROP__KHTML_MARQUEE_SPEED, attr->value());
-            else
-                removeCSSProperty(CSS_PROP__KHTML_MARQUEE_SPEED);
+                addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_SPEED, attr->value());
             break;
         case ATTR_LOOP:
             if (!attr->value().isEmpty()) {
                 if (attr->value() == "-1" || strcasecmp(attr->value(), "infinite") == 0)
-                    addCSSProperty(CSS_PROP__KHTML_MARQUEE_REPETITION, CSS_VAL_INFINITE);
+                    addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, CSS_VAL_INFINITE);
                 else
-                    addCSSLength(CSS_PROP__KHTML_MARQUEE_REPETITION, attr->value());
+                    addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, attr->value());
             }
-            else
-                removeCSSProperty(CSS_PROP__KHTML_MARQUEE_REPETITION);
             break;
         case ATTR_BEHAVIOR:
             if (!attr->value().isEmpty())
-                addCSSProperty(CSS_PROP__KHTML_MARQUEE_STYLE, attr->value());
-            else
-                removeCSSProperty(CSS_PROP__KHTML_MARQUEE_STYLE);
+                addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_STYLE, attr->value());
             break;
         case ATTR_DIRECTION:
             if (!attr->value().isEmpty())
-                addCSSProperty(CSS_PROP__KHTML_MARQUEE_DIRECTION, attr->value());
-            else
-                removeCSSProperty(CSS_PROP__KHTML_MARQUEE_DIRECTION);
+                addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_DIRECTION, attr->value());
             break;
         case ATTR_TRUESPEED:
             m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
             break;
         default:
-            HTMLElementImpl::parseAttribute(attr);
+            HTMLElementImpl::parseHTMLAttribute(attr);
     }
 }
 
@@ -343,8 +361,6 @@ void HTMLMarqueeElementImpl::parseAttribute(AttributeImpl *attr)
 HTMLLayerElementImpl::HTMLLayerElementImpl(DocumentPtr *doc)
     : HTMLDivElementImpl( doc )
 {
-//    addCSSProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-//    fixed = false;
 }
 
 HTMLLayerElementImpl::~HTMLLayerElementImpl()
@@ -355,46 +371,3 @@ NodeImpl::Id HTMLLayerElementImpl::id() const
 {
     return ID_LAYER;
 }
-
-
-void HTMLLayerElementImpl::parseAttribute(AttributeImpl *attr)
-{
-    HTMLElementImpl::parseAttribute(attr);
-
-    // layers are evil
-/*    int cssprop;
-    bool page = false;
-    switch(attr->id()) {
-        case ATTR_PAGEX:
-            page = true;
-        case ATTR_LEFT:
-            cssprop = CSS_PROP_LEFT;
-            break;
-        case ATTR_PAGEY:
-            page = true;
-        case ATTR_TOP:
-            cssprop = CSS_PROP_TOP;
-            break;
-        case ATTR_WIDTH:
-            cssprop = CSS_PROP_WIDTH;
-            break;
-        case ATTR_HEIGHT:
-            cssprop = CSS_PROP_HEIGHT;
-            break;
-        case ATTR_Z_INDEX:
-            cssprop = CSS_PROP_Z_INDEX;
-            break;
-        case ATTR_VISIBILITY:
-            cssprop = CSS_PROP_VISIBILITY;
-            break;
-        default:
-            HTMLDivElementImpl::parseAttribute(attr);
-            return;
-    }
-    addCSSProperty(cssprop, attr->value());
-    if ( !fixed && page ) {
-        addCSSProperty(CSS_PROP_POSITION, "fixed");
-        fixed = true;
-    }*/
-}
-

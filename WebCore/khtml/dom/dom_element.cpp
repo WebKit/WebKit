@@ -24,6 +24,9 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 
+// FIXME: Remove when .style gets moved to html_element.cpp.
+#include "html/html_elementimpl.h"
+
 using namespace DOM;
 
 Attr::Attr() : Node()
@@ -291,9 +294,11 @@ bool Element::isHTMLElement() const
     return ((ElementImpl *)impl)->isHTMLElement();
 }
 
+// FIXME: This should move down to HTMLElement.
 CSSStyleDeclaration Element::style()
 {
-    if (impl) return ((ElementImpl *)impl)->getInlineStyleDecl();
+    if (isHTMLElement())
+        return ((HTMLElementImpl *)impl)->getInlineStyleDecl();
     return 0;
 }
 
