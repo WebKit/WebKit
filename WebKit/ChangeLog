@@ -1,3 +1,15 @@
+2003-06-07  Darin Adler  <darin@apple.com>
+
+        Rolled out Chris's fix for 3156169 because it was causing a lot of crashes
+        and problems with basic behavior. We can try again later.
+        
+        One of the problems was that Back wasn't working. Another was that you could
+        not follow the link at the top of the page at kbb.com. More testing seemed to
+        reveal still more problems.
+        
+        * WebView.subproj/WebFramePrivate.h: Rolled back to previous version.
+        * WebView.subproj/WebFramePrivate.m: Ditto.
+
 2003-06-06  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3283236.  Remove use of forward declarations in public header because
