@@ -1,5 +1,16 @@
 2004-10-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed <rdar://problem/3782117> CrashTracer: ..722 crashes at com.apple.WebCore: DOM::HTMLBodyElementImpl::insertedIntoDocument + 0x2c (AOL website)
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::insertedIntoDocument): Check for nil document case.
+        (HTMLFrameElementImpl::isURLAllowed): Ditto.
+        (HTMLFrameElementImpl::openURL): Ditto.
+
+2004-10-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3822218> REGRESSION (164-165): images don't update on rollover on directv.com page
