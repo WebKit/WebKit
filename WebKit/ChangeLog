@@ -1,3 +1,7 @@
+2004-09-27  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Added WebDashboardRegion.h as a private header.
+
 2004-09-24  Chris Blumenberg  <cblu@apple.com>
 
         Reviewed by rjw.
