@@ -1,5 +1,19 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - got rid of ERROR message when running layout tests by implementing text-transform in computed style
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::numberAsString): Added. Helper that returns "1" rather then "1.0" for integer values.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Fixed use of tabs instead of
+        spaces. Fixed switch statements so they don't use default so we get errors if we leave
+        a case out. Changed callers to use numberAsString instead of QString::number. Added implementation
+        of CSS_PROP_TEXT_TRANSFORM. Added code to prevent falling through to next property when no item
+        in a switch statement matches.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         - did work to prepare for uploading files incrementally when submitting forms
