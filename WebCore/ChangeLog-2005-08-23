@@ -1,3 +1,12 @@
+2004-07-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed <rdar://problem/3743138> opaque colors come out of getComputedStyle as "rgba", transparent ones as "rgb"
+
+        * khtml/css/css_valueimpl.cpp: (CSSPrimitiveValueImpl::cssText): Use "rgb" rather than
+        "rgba" when alpha is 0xFF, not when alpha is 0.
+
 2004-07-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

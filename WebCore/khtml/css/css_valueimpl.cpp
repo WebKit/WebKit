@@ -778,14 +778,14 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	case CSSPrimitiveValue::CSS_RGBCOLOR:
     {
         QColor color(m_value.rgbcolor);
-        if (qAlpha(m_value.rgbcolor))
+        if (qAlpha(m_value.rgbcolor) < 0xFF)
             text = "rgba(";
         else
             text = "rgb(";
         text += QString::number(color.red()) + ", ";
         text += QString::number(color.green()) + ", ";
         text += QString::number(color.blue());
-        if (qAlpha(m_value.rgbcolor))
+        if (qAlpha(m_value.rgbcolor) < 0xFF)
             text += ", " + QString::number((float)qAlpha(m_value.rgbcolor) / 0xFF);
 	    text += ")";
 	    break;
