@@ -2073,8 +2073,18 @@ static WebHTMLView *lastHitView = nil;
     return [[[self elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
 }
 
+- (void)_setMouseDownEvent:(NSEvent *)event
+{
+    ASSERT([event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
+    [event retain];
+    [_private->mouseDownEvent release];
+    _private->mouseDownEvent = event;
+}
+
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
+    [self _setMouseDownEvent:event];
+    
     // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
     // the purposes of this method we want to really query the deepest view, so we forward to it.
     forceRealHitTest = YES;
@@ -2092,6 +2102,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
 {
+    [self _setMouseDownEvent:event];
+
     // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
     // the purposes of this method we want to really query the deepest view, so we forward to it.
     forceRealHitTest = YES;
@@ -2107,7 +2119,10 @@ static WebHTMLView *lastHitView = nil;
 }
 
 - (void)mouseDown:(NSEvent *)event
-{    
+{   
+    // Record the mouse down position so we can determine drag hysteresis.
+    [self _setMouseDownEvent:event];
+
     // TEXTINPUT: if there is marked text and the current input
     // manager wants to handle mouse events, we need to make sure to
     // pass it to them. If not, then we need to notify the input
@@ -2124,10 +2139,6 @@ static WebHTMLView *lastHitView = nil;
     
     _private->ignoringMouseDraggedEvents = NO;
     
-    // Record the mouse down position so we can determine drag hysteresis.
-    [_private->mouseDownEvent release];
-    _private->mouseDownEvent = [event retain];
-
     // Don't do any mouseover while the mouse is down.
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
@@ -3986,10 +3997,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (unsigned int)_delegateDragSourceActionMask
 {
-    // Quick fix for <rdar://problem/3814810> REGRESSION (125-164): Exception adding nil to dictionary in dragging code:
-    if (_private->mouseDownEvent == nil) {
-        return WebDragSourceActionNone;
-    }
+    ASSERT(_private->mouseDownEvent != nil);
     WebView *webView = [self _webView];
     NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
