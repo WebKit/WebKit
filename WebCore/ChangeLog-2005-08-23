@@ -1,3 +1,51 @@
+2005-02-25  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Darin.
+ 
+	- back out this change, since it causes a 3.5% performance regression
+
+    2005-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4011405> REGRESSION (180-181): Unconfirmed text disappears when text focus moves
+
+        The key was to change things around so that we don't push text from the DOM to the widget
+        unless the DOM has actually been changed. This prevents the code path that wipes out inline input
+        during the blur process.
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl): Start m_valueMatchesRenderer as false.
+        (DOM::HTMLInputElementImpl::parseHTMLAttribute): Set m_valueMatchesRenderer to false when a
+        new value is set here.
+        (DOM::HTMLInputElementImpl::setValue): Set m_valueMatchesRenderer to false when a new value
+        is set here.
+        (DOM::HTMLInputElementImpl::setValueFromRenderer): Added. Sets m_value, sets m_valueMatchesRenderer
+        to true, and also sends out the input event. It's better to have this here than in the renderer code.
+        (DOM::HTMLTextAreaElementImpl::HTMLTextAreaElementImpl): Start m_valueIsValid as false (replaces
+        m_dirtyvalue) and m_valueMatchesRenderer as false.
+        (DOM::HTMLTextAreaElementImpl::updateValue): Added. Factored this out from the value function. Uses
+        the new booleans and keeps them up to date, specifically setting m_valueMatchesRenderer based on
+        where the value came from.
+        (DOM::HTMLTextAreaElementImpl::value): Updated to call updateValue to do most of the work.
+        (DOM::HTMLTextAreaElementImpl::setValue): Set both m_valueIsValid and m_valueMatchesRenderer.
+        (DOM::HTMLTextAreaElementImpl::setDefaultValue): Take parameter by reference.
+
+        * khtml/html/html_formimpl.h: Added setValueFromRenderer, valueMatchesRenderer, setValueMatchesRenderer,
+        and m_valueMatchesRenderer to input element. For textarea element, made some parameters pass DOMString
+        by reference, and added invalidateValue, updateValue, valueMatchesRenderer, and setValueMatchesRenderer.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement): Don't re-get the value from the DOM if valueMatchesRenderer
+        is true.
+        (RenderLineEdit::slotTextChanged): Call setValueFromRenderer instead of manipulating the DOM
+        directly.
+        (RenderTextArea::detach): Call updateValue instead of calling value for its side effect.
+        (RenderTextArea::handleFocusOut): Ditto.
+        (RenderTextArea::updateFromElement): Call updateValue and then not re-get the value from the
+        DOM if valueMatchesRenderer is true.
+        (RenderTextArea::slotTextChanged): Call invalidateValue instead of directly setting m_dirtyvalue to true.
+
 2005-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
