@@ -1,3 +1,14 @@
+2004-03-29  John Sullivan  <sullivan@apple.com>
+
+        Made menu shortcuts work again when editing HTML
+
+        Reviewed by Darin.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::defaultEventHandler):
+        Don't treat key events with command key down as
+        editing events.
+
 2004-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
