@@ -7,6 +7,8 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebGraphicsBridge.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebImageView.h>
 #import <WebKit/WebNSObjectExtras.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
@@ -181,8 +183,14 @@
 
 - (void)_startOrContinueAnimationIfNecessary
 {
-    if ([imageData shouldAnimate] && [MIMEType isEqual:@"image/gif"]) {
-        [imageData addAnimatingRenderer:self inView:[NSView focusView]];
+    NSView *targetView = [NSView focusView];
+    
+    // Only animate if we're drawing into a WebHTMLView or WebImageView.  This fixes problems
+    // like <rdar://problem/3966973>, which describes a third party application that renders thumbnails of
+    // the page into a alternate view.
+    if (([targetView isKindOfClass:[WebHTMLView class]] || [targetView isKindOfClass:[WebImageView class]]) 
+	    && [imageData shouldAnimate] && [MIMEType isEqual:@"image/gif"]) {
+        [imageData addAnimatingRenderer:self inView:targetView];
         [imageData animate];
     }
 }

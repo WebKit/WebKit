@@ -1,3 +1,16 @@
+2005-02-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3966973> Tiger 8A357: Binary Compatiblity: frequent Webstractor.app crashes [WebImageData _nextFrame]
+
+	Webstractor.app was playing tricks to create thumbnails of
+	pages.  This caused the 'focusView' to be incorrect during
+	animated GIF frame rendering.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer _startOrContinueAnimationIfNecessary]):
+
 2005-02-16  Vicki Murley  <vicki@apple.com>
 
         Reviewed by me, code change by Darin.
