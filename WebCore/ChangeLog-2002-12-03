@@ -1,5 +1,12 @@
 2002-10-03  Darin Adler  <darin@apple.com>
 
+	- fixed 3065730 -- Crash loading "My T-Mobile" page (in khtml::Decoder::decode)
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Fixed a mistake that would cause
+	the loop to run off the end of the buffer, introduced back on 2002-08-30.
+
+2002-10-03  Darin Adler  <darin@apple.com>
+
 	Add API to execute JavaScript.
 
         * kwq/WebCoreBridge.h: Add method.

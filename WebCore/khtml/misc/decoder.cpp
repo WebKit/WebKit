@@ -368,8 +368,8 @@ QString Decoder::decode(const char *data, int len)
 
 #ifdef APPLE_CHANGES
             const char *ptr = buffer.latin1();
-            int pLen = buffer.length();
-            while(pLen--)
+            const char *pEnd = ptr + buffer.length();
+            while(ptr != pEnd)
 #else
             const char *ptr = buffer.data();
             while(*ptr != '\0')
