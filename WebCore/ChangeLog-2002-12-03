@@ -1,3 +1,14 @@
+2002-03-26  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQKjobclasses.mm: (TransferJobPrivate::TransferJobPrivate):
+        Nil out the handle so we don't autorelease garbage.
+        
+	* src/kwq/KWQKloader.mm:
+        (-[URLLoadClient IFURLHandleResourceDidCancelLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidFinishLoading:data:]),
+        (-[URLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+        Delete the job instead of just autoreleasing the sender. Fixes a leak.
+
 2002-03-26  Richard Williamson  <rjw@apple.com>
 
         Fixed leak of decoder.  This caused us to leak the entire

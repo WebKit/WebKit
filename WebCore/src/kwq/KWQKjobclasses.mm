@@ -103,6 +103,8 @@ public:
 	}
 
         url = [[NSURL URLWithString:string] retain];
+
+        handle = nil;
     }
 
     ~TransferJobPrivate() {

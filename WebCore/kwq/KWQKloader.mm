@@ -1042,7 +1042,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
-    [sender autorelease];
+    delete job;
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
@@ -1068,7 +1068,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
-    [sender autorelease];
+    delete job;
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
@@ -1116,7 +1116,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [controller _receivedError: error forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 
-    [sender autorelease];
+    delete job;
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
