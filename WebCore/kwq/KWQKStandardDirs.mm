@@ -29,13 +29,11 @@
 QString locate(const char *type, const QString& filename,
         const KInstance* instance)
 {
-    _logNotYetImplemented();
-    return QString();
+    return "/symroots/appdata/"+filename;
 }
 
 QString locateLocal(const char *type, const QString &filename,
         const KInstance *instance)
 {
-    _logNotYetImplemented();
-    return QString();
+    return "/symroots/appdata/"+filename;
 }
