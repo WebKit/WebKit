@@ -277,40 +277,41 @@ static int hex2int(QChar hexchar)
 static bool decodeColorFromHexColorString(const QString &string, int *r, int *g, int *b)
 {
     int len = string.length();
+    int offset = 0;
+    
     if (len == 0)
         return false;
 
-    const QChar *p = string.unicode();
     if (string[0] == '#') {
         len -= 1;
-        p += 1;
+        offset += 1;
     }
     
     for (int i = 0; i < len; i++)
-        if (hex2int(p[i]) == -1)
+        if (hex2int(string[i+offset]) == -1)
             return false;
     
     switch (len) {
     case 12:
-        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-        *g = (hex2int(p[4]) << 4) + hex2int(p[5]);
-        *b = (hex2int(p[8]) << 4) + hex2int(p[9]);
+        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
+        *g = (hex2int(string[4+offset]) << 4) + hex2int(string[5+offset]);
+        *b = (hex2int(string[8+offset]) << 4) + hex2int(string[9+offset]);
         return true;
     case 9:
-        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-        *g = (hex2int(p[3]) << 4) + hex2int(p[4]);
-        *b = (hex2int(p[6]) << 4) + hex2int(p[7]);
+        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
+        *g = (hex2int(string[3+offset]) << 4) + hex2int(string[4+offset]);
+        *b = (hex2int(string[6+offset]) << 4) + hex2int(string[7+offset]);
         return true;
     case 6:
-        *r = (hex2int(p[0]) << 4) + hex2int(p[1]);
-        *g = (hex2int(p[2]) << 4) + hex2int(p[3]);
-        *b = (hex2int(p[4]) << 4) + hex2int(p[5]);
+        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
+        *g = (hex2int(string[2+offset]) << 4) + hex2int(string[3+offset]);
+        *b = (hex2int(string[4+offset]) << 4) + hex2int(string[5+offset]);
         return true;
     case 3:
         // Convert 0 to F to 0 to 255.
-        *r = hex2int(p[0]) * 0x11;
-        *g = hex2int(p[1]) * 0x11;
-        *b = hex2int(p[2]) * 0x11;
+        *r = hex2int(string[0+offset]) * 0x11;
+        *g = hex2int(string[1+offset]) * 0x11;
+        *b = hex2int(string[2+offset]) * 0x11;
         return true;
     }
         

@@ -1,3 +1,15 @@
+2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+
+        Don't create unnecessary unicode string.  Of the 
+        95695 unnecessary unicode allocations we do loading
+        the base test, this usage accounted for 7185.  Most
+        of the others come from DOMString to QConstString to
+        QString to unicode() conversion during parsing.  All
+        that unnecessary work needs to be removed.
+        
+        * kwq/KWQColor.mm:
+        (decodeColorFromHexColorString):
+
 2002-07-30  David Hyatt  <hyatt@apple.com>
 
 	Ok, this time i've got it.  I hope.  I think.  Fingers crossed.
