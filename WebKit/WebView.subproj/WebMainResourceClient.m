@@ -106,6 +106,24 @@
     }
 }
 
+- (BOOL)_isPostOrRedirectAfterPost:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+{
+    BOOL result = NO;
+    
+    if ([[newRequest HTTPMethod] isEqualToString:@"POST"]) {
+        result = YES;
+    }
+    else if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
+        int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
+        if (((status >= 301 && status <= 303) || status == 307)
+            && [[[dataSource initialRequest] HTTPMethod] isEqualToString:@"POST"]) {
+            result = YES;
+        }
+    }
+    
+    return result;
+}
+
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -133,16 +151,13 @@
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
     // just modified.
-    if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-        int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
-        if (((status >= 301 && status <= 303) || status == 307)
-            && [[[dataSource initialRequest] HTTPMethod] isEqualToString:@"POST"])
-        {
-            if (!mutableRequest) {
-                mutableRequest = [newRequest mutableCopy];
-            }
-            [mutableRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    // Also, POST requests always load from origin, but this does not affect subresources.
+    if ([newRequest cachePolicy] == NSURLRequestUseProtocolCachePolicy && 
+        [self _isPostOrRedirectAfterPost:newRequest redirectResponse:redirectResponse]) {
+        if (!mutableRequest) {
+            mutableRequest = [newRequest mutableCopy];
         }
+        [mutableRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     }
     if (mutableRequest) {
         newRequest = [mutableRequest autorelease];

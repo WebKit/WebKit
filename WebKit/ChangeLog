@@ -1,3 +1,25 @@
+2003-12-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3489280>: redirect via post blows cache, causing everything to get reloaded
+
+	Now POST requests reload the main document by default, but will not reload 
+	all subresources.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+	Take the cache policy for subresources from the original request, rather than
+	the data source's current request. 
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient _isPostOrRedirectAfterPost:redirectResponse:]): New helper.
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+	Call new helper to set the cache policy on the main resource load.
+
 === Safari-117 ===
 
 2003-12-11  Ken Kocienda  <kocienda@apple.com>

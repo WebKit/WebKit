@@ -56,7 +56,13 @@
 	[newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
     }
 
-    [newRequest setCachePolicy:[[source request] cachePolicy]];
+    // Use the original request's cache policy for two reasons:
+    // 1. For POST requests, we mutate the cache policy for the main resource,
+    //    but we do not want this to apply to subresources
+    // 2. Delegates that modify the cache policy using willSendRequest: should
+    //    not affect any other resources. Such changes need to be done
+    //    per request.
+    [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
     [newRequest setHTTPReferrer:referrer];
     
     WebView *_webView = [source _webView];

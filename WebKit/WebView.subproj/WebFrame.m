@@ -1822,7 +1822,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // as an action to be returned from the cache without submitting.
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
-    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
     [request setHTTPContentType:contentType];
