@@ -126,6 +126,7 @@
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
 				93F1D31A0558CC5C00821BC0,
+				BCF0B2FA05BF7694003F612A,
 				704FD2FE056972FA003DBED9,
 				848A320F057E688B001A2362,
 			);
@@ -787,6 +788,7 @@
 				93F1D31B0558CC5C00821BC0,
 				704FD2FF056972FA003DBED9,
 				848A3210057E688B001A2362,
+				BCF0B2FB05BF7694003F612A,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2125,6 +2127,20 @@
 		};
 		BCF0192703D3802200B2D04D = {
 			fileRef = BCF0192503D3802200B2D04D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCF0B2FA05BF7694003F612A = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libxml2.dylib;
+			path = /usr/lib/libxml2.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		BCF0B2FB05BF7694003F612A = {
+			fileRef = BCF0B2FA05BF7694003F612A;
 			isa = PBXBuildFile;
 			settings = {
 			};
