@@ -464,7 +464,7 @@
         }
 
         WebPluginError *error = [WebPluginError pluginErrorWithCode:errorCode
-                                                                URL:[NSURL _web_URLWithString:URL]
+                                                         contentURL:[NSURL _web_URLWithString:URL]
                                                       pluginPageURL:pluginPageURL
                                                          pluginName:[pluginPackage name]
                                                            MIMEType:MIMEType];
@@ -511,7 +511,7 @@
 
     if(!view){
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebErrorJavaUnavailable
-                                                                URL:nil
+                                                         contentURL:nil
                                                       pluginPageURL:nil
                                                          pluginName:[pluginPackage name]
                                                            MIMEType:MIMEType];

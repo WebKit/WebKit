@@ -183,7 +183,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 #endif
 
-    if (type != FOUR_CHAR_CODE('BRPL') && type != FOUR_CHAR_CODE('IEPL')) {
+    if (type != FOUR_CHAR_CODE('BRPL')) {
         [self release];
         return nil;
     }

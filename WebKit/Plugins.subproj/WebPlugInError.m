@@ -13,8 +13,9 @@
 @interface WebPluginErrorPrivate : NSObject
 {
 @public
-    NSString *MIMEType;
+    NSURL *contentURL;
     NSURL *pluginPageURL;
+    NSString *MIMEType;
     NSString *pluginName;
 }
 
@@ -24,9 +25,10 @@
 
 - (void)dealloc
 {
-    [MIMEType release];
+    [contentURL release];
     [pluginPageURL release];
     [pluginName release];
+    [MIMEType release];
     [super dealloc];
 }
 
@@ -35,13 +37,13 @@
 @implementation WebPluginError
 
 + (WebPluginError *)pluginErrorWithCode:(int)code
-                                    URL:(NSURL *)URL
+                             contentURL:(NSURL *)contentURL
                           pluginPageURL:(NSURL *)pluginPageURL
                              pluginName:(NSString *)pluginName
                                MIMEType:(NSString *)MIMEType;
 {
     WebPluginError *error = [[WebPluginError alloc] initWithErrorWithCode:code
-                                                                      URL:URL
+                                                               contentURL:contentURL
                                                             pluginPageURL:pluginPageURL
                                                                pluginName:pluginName
                                                                  MIMEType:MIMEType];
@@ -49,14 +51,15 @@
 }
 
 - initWithErrorWithCode:(int)code
-                    URL:(NSURL *)URL
+             contentURL:(NSURL *)contentURL
           pluginPageURL:(NSURL *)pluginPageURL
              pluginName:(NSString *)pluginName
                MIMEType:(NSString *)MIMEType;
 {
-    [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:[URL absoluteString]];
+    [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:[contentURL absoluteString]];
     
     _private = [[WebPluginErrorPrivate alloc] init];
+    _private->contentURL = [contentURL retain];
     _private->pluginPageURL = [pluginPageURL retain];
     _private->pluginName = [pluginName retain];
     _private->MIMEType = [MIMEType retain];
@@ -68,6 +71,11 @@
 {
     [_private release];
     [super dealloc];
+}
+
+- (NSURL *)contentURL;
+{
+    return _private->contentURL;
 }
 
 - (NSURL *)pluginPageURL

@@ -19,17 +19,18 @@
 }
 
 + (WebPluginError *)pluginErrorWithCode:(int)code
-                                    URL:(NSURL *)URL
+                             contentURL:(NSURL *)contentURL
                           pluginPageURL:(NSURL *)URL
                              pluginName:(NSString *)pluginName
                                MIMEType:(NSString *)MIMEType;
 
 - initWithErrorWithCode:(int)code
-                    URL:(NSURL *)URL
+             contentURL:(NSURL *)contentURL
           pluginPageURL:(NSURL *)pluginPageURL
              pluginName:(NSString *)pluginName
                MIMEType:(NSString *)MIMEType;
 
+- (NSURL *)contentURL;
 - (NSURL *)pluginPageURL;
 - (NSString *)pluginName;
 - (NSString *)MIMEType;

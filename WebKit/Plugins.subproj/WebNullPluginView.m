@@ -44,7 +44,7 @@ static NSImage *image = nil;
 
 - (void)viewDidMoveToWindow
 {
-    if(!didSendError && _window){
+    if(!didSendError && _window && error){
         didSendError = YES;
         WebView *view = (WebView *)[self _web_superviewOfClass:[WebView class]];
         WebController *controller = [view controller];

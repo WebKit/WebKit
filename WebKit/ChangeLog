@@ -1,3 +1,23 @@
+2002-11-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3090834 - Launch WMP (Window Media Player) when encountering WMP content
+
+	Added contentURL to WebPluginError. 
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage initWithPath:]):
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginError.h:
+        * Plugins.subproj/WebPluginError.m:
+        (-[WebPluginErrorPrivate dealloc]):
+        (-[WebPluginError dealloc]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+
 === Alexander-34 ===
 
 2002-11-26  Richard Williamson   <rjw@apple.com>
