@@ -1,3 +1,10 @@
+2003-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * kjs/scope_chain.cpp: Rolled out the fix to bug 3137084.
+        It caused a massive storage leak, and probably didn't even fix the bug.
+
 2003-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -64,12 +64,15 @@ void ScopeChain::pop()
 
 void ScopeChain::release()
 {
+    // This function is only called by deref(),
+    // Deref ensures these conditions are true.
+    assert(_node && _node->refCount == 0);
     ScopeChainNode *n = _node;
-    while (n && --n->refCount == 0) {
+    do {
         ScopeChainNode *next = n->next;
         delete n;
         n = next;
-    }
+    } while (n && --n->refCount == 0);
 }
 
 void ScopeChain::mark()
