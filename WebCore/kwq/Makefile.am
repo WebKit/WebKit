@@ -1,10 +1,5 @@
 NULL =
 
-SUBDIRS = \
-	kde \
-	qt \
-	$(NULL)
-
 noinst_LIBRARIES = libkwq.o
 libkwq_o_ldflags = -Wl,-r -nostdlib
 libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_o_ldflags) -o
@@ -38,6 +33,7 @@ libkwq_o_SOURCES = \
 	KWQFontInfo.mm \
 	KWQFontMetrics.mm \
 	KWQFrame.mm \
+	KWQGlobal.mm \
 	KWQGuardedPtr.mm \
 	KWQPoint.mm \
 	KWQPtrDictImpl.mm \
@@ -139,11 +135,6 @@ libkwq_o_SOURCES = \
 	WCPluginWidget.mm \
         WCJavaAppletWidget.mm \
 	npapi.mm \
-	$(NULL)
-
-libkwq_o_LIBADD = \
-	./qt/libqt_borrowed.o \
-	./kde/libkde_borrowed.o \
 	$(NULL)
 
 INCLUDES = \

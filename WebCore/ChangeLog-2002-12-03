@@ -1,3 +1,76 @@
+2002-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed all the borrowed Qt code.
+
+	* src/kwq/KWQGlobal.mm: Renamed from qt/_qglobal.cpp to avoid
+	confusion about the borrowedness status of this file.
+	* src/kwq/Makefile.am: Removed references to kde and qt
+	subdirectories.
+	* src/kwq/kde/.cvsignore: Removed.
+	* src/kwq/kde/Makefile.am: Removed.
+	* src/kwq/kde/_kurl.cpp: Removed.
+	* src/kwq/kde/_kurl.h: Removed.
+	* src/kwq/qt/Makefile.am: Removed.
+	* src/kwq/qt/_qarray.h: Removed.
+	* src/kwq/qt/_qbuffer.cpp: Removed.
+	* src/kwq/qt/_qbuffer.h: Removed.
+	* src/kwq/qt/_qcollection.cpp: Removed.
+	* src/kwq/qt/_qcollection.h: Removed.
+	* src/kwq/qt/_qcolor.h: Removed.
+	* src/kwq/qt/_qcstring.cpp: Removed.
+	* src/kwq/qt/_qcstring.h: Removed.
+	* src/kwq/qt/_qdatetime.cpp: Removed.
+	* src/kwq/qt/_qdatetime.h: Removed.
+	* src/kwq/qt/_qdict.h: Removed.
+	* src/kwq/qt/_qdir.cpp: Removed.
+	* src/kwq/qt/_qdir.h: Removed.
+	* src/kwq/qt/_qdir_unix.cpp: Removed.
+	* src/kwq/qt/_qfile.cpp: Removed.
+	* src/kwq/qt/_qfile.h: Removed.
+	* src/kwq/qt/_qfileinfo.cpp: Removed.
+	* src/kwq/qt/_qfileinfo.h: Removed.
+	* src/kwq/qt/_qfileinfo_unix.cpp: Removed.
+	* src/kwq/qt/_qgarray.cpp: Removed.
+	* src/kwq/qt/_qgarray.h: Removed.
+	* src/kwq/qt/_qgdict.cpp: Removed.
+	* src/kwq/qt/_qgdict.h: Removed.
+	* src/kwq/qt/_qglist.cpp: Removed.
+	* src/kwq/qt/_qglist.h: Removed.
+	* src/kwq/qt/_qglobal.cpp: Removed.
+	* src/kwq/qt/_qgvector.cpp: Removed.
+	* src/kwq/qt/_qgvector.h: Removed.
+	* src/kwq/qt/_qiodevice.cpp: Removed.
+	* src/kwq/qt/_qiodevice.h: Removed.
+	* src/kwq/qt/_qlist.h: Removed.
+	* src/kwq/qt/_qmap.cpp: Removed.
+	* src/kwq/qt/_qmap.h: Removed.
+	* src/kwq/qt/_qpoint.cpp: Removed.
+	* src/kwq/qt/_qpoint.h: Removed.
+	* src/kwq/qt/_qptrdict.h: Removed.
+	* src/kwq/qt/_qrect.cpp: Removed.
+	* src/kwq/qt/_qrect.h: Removed.
+	* src/kwq/qt/_qregexp.cpp: Removed.
+	* src/kwq/qt/_qregexp.h: Removed.
+	* src/kwq/qt/_qregion.cpp: Removed.
+	* src/kwq/qt/_qregion.h: Removed.
+	* src/kwq/qt/_qshared.h: Removed.
+	* src/kwq/qt/_qsize.cpp: Removed.
+	* src/kwq/qt/_qsize.h: Removed.
+	* src/kwq/qt/_qsortedlist.h: Removed.
+	* src/kwq/qt/_qstack.h: Removed.
+	* src/kwq/qt/_qstring.cpp: Removed.
+	* src/kwq/qt/_qstring.h: Removed.
+	* src/kwq/qt/_qstringlist.cpp: Removed.
+	* src/kwq/qt/_qstringlist.h: Removed.
+	* src/kwq/qt/_qstrlist.h: Removed.
+	* src/kwq/qt/_qtextcodec.h: Removed.
+	* src/kwq/qt/_qtextstream.h: Removed.
+	* src/kwq/qt/_qtl.h: Removed.
+	* src/kwq/qt/_qurl.cpp: Removed.
+	* src/kwq/qt/_qurl.h: Removed.
+	* src/kwq/qt/_qvaluelist.h: Removed.
+	* src/kwq/qt/_qvector.h: Removed.
+
 2002-03-26  Kenneth Kocienda  <kocienda@apple.com>
 
 	* src/Makefile.am:
