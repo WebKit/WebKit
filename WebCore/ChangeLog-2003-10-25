@@ -1,3 +1,18 @@
+2003-09-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3435532>: REGRESSION: tabbing to textareas causes infinite recursion
+
+	Add recursion guards to the becomeFirstResponder method, otherwise calling
+	eventFilter with a FocusIn event will cause the infinite recursion
+	described in the bug.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+
 2003-09-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -52,6 +52,7 @@
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
     QTextEdit *widget;
+    BOOL inBecomeFirstResponder;
 }
 - (void)setWidget:(QTextEdit *)widget;
 @end
@@ -551,8 +552,13 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 - (BOOL)becomeFirstResponder
 {
     BOOL become = [super becomeFirstResponder];
+    
+    if (inBecomeFirstResponder) 
+        return become;
 
     if (become) {
+        inBecomeFirstResponder = YES;
+
         // Select all the text if we are tabbing in, but otherwise preserve/remember
         // the selection from last time we had focus (to match WinIE).
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
@@ -564,8 +570,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
 	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+
+        inBecomeFirstResponder = NO;
     }
-       
+
     return become;
 }
 
