@@ -36,7 +36,7 @@ do { gsub("-", "_"); print "#define CSS_VAL_" toupper($0) " " i; i = i + 1 } whi
 print ""; \
 print "#define CSS_VAL_TOTAL " i \
 }' >> cssvalues.h
-gperf -L 'ANSI-C' -E -C -n -o -t -k '*' -NfindValue -Hhash_val -Wwordlist_value -D cssvalues.gperf > cssvalues.c
+gperf -L 'ANSI-C' -E -C -n -o -t -k '*' -NfindValue -Hhash_val -Wwordlist_value -D cssvalues.gperf > cssvalues.c || exit 1
 echo -e '#endif\n' >> cssvalues.h
 
 cat cssvalues.strip | awk '{ \
