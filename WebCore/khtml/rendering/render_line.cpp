@@ -538,7 +538,7 @@ void InlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
     RenderObject* curr = object();
     while (curr && !curr->element())
         curr = curr->container();
-    bool strictMode = (curr && curr->element()->getDocument()->inStrictMode());
+    bool strictMode = (curr && curr->document()->inStrictMode());
     
     computeLogicalBoxHeights(maxPositionTop, maxPositionBottom, maxAscent, maxDescent, strictMode);
 

@@ -1,3 +1,20 @@
+2005-01-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 3937608, versiontracker.com flashes and displays the right column below content.  Make sure to move
+	tables/overflows that dont fit within a block only in strict mode.
+
+	Fix for bug 3931049, characters dont show up when typing.  Make sure to dirty the right lines when this specific
+	case in editing is hit.
+	
+        Reviewed by darin (first one), kocienda (second one)
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::getClearDelta):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::verticallyAlignBoxes):
+
 2005-01-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
