@@ -256,10 +256,16 @@
 
 - (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler
 {
-    IFWebDataSource *dataSource;
+    IFWebDataSource *mainDataSource, *mainProvisionalDataSource, *dataSource;
     
-    dataSource = [_private->mainFrame provisionalDataSource];
-    if([dataSource _locationChangeHandler] == handler){
+    mainProvisionalDataSource = [_private->mainFrame provisionalDataSource];
+    mainDataSource = [_private->mainFrame dataSource];
+    
+    dataSource = [mainDataSource _recursiveDataSourceForLocationChangeHandler:handler];
+    if(!dataSource)
+        dataSource = [mainProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
+        
+    if(dataSource){
         [dataSource _setContentPolicy:policy];
         [dataSource _setDownloadPath:path];
     }

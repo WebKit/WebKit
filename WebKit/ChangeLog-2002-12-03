@@ -1,5 +1,16 @@
 2002-04-22  Chris Blumenberg  <cblu@apple.com>
 
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController haveContentPolicy:andPath:forLocationChangeHandler:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+
+	Fixed frames which I broke in the previous commit. We now set the content policy
+	on all child frames instead of just the main frame.	
+
+2002-04-22  Chris Blumenberg  <cblu@apple.com>
+
 	* MIME.subproj/IFMIMEHandler.h:
 	* MIME.subproj/IFMIMEHandler.m:
 	(+[IFMIMEHandler showableMIMETypes]):
