@@ -1,3 +1,7 @@
+2004-09-12  Darin Adler  <darin@apple.com>
+
+        * layout-tests/css1/text_properties/text-transform-expected.txt: Removed unused test result.
+
 2004-09-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
