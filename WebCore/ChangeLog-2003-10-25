@@ -1,5 +1,18 @@
 2003-10-24  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3133375, the minwidth computation for pres is wrong.  There were a couple of bugs here.
+	One is that pres only should have a breakable character if they contain a newline.  Otherwise they're
+	treated essentially like nowrap.  The other was that m_beginMinWidth and m_endMinWidth needed to be
+	set to the maxwidth of the first line and the maxwidth of the last line respectively for pres instead of
+	being only the first and last words.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+
+2003-10-24  David Hyatt  <hyatt@apple.com>
+
 	Two fixes to the computation of min/max width for text runs.
 	(1) Make sure that pre runs don't add in word-spacing to the last word on a line (e.g., when a newline explicitly
 	breaks a pre).
