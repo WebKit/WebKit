@@ -132,4 +132,9 @@ typedef enum {
 -(int)contentLength;
 @end
 
+@interface IFAnimatedImage : NSImage
+- (void)beginAnimationInView: (NSView *)inRect: (NSPoint)ir fromRect: (NSRect)fr;
+- (void)stopAnimation;
+@end
+
 #endif

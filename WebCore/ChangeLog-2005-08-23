@@ -1,3 +1,36 @@
+2002-05-29  Richard Williamson  <rjw@apple.com>
+
+    Changes to support animated image rendering.
+    Moved image rendering into webkit.
+    
+	* WebCore.exp:
+	* kwq/KWQPainter.mm:
+	(QPainter::drawPixmap):
+	(QPainter::drawTiledPixmap):
+	(QPainter::translate):
+	(QPainter::scale):
+	(QPainter::begin):
+	(QPainter::end):
+	* kwq/KWQPixmap.mm:
+	(QPixmap::QPixmap):
+	(QPixmap::~QPixmap):
+	(QPixmap::isNull):
+	(QPixmap::size):
+	(QPixmap::rect):
+	(QPixmap::width):
+	(QPixmap::height):
+	(QPixmap::resize):
+	(QPixmap::operator=):
+	* kwq/Makefile.am:
+	* kwq/WebCoreImageRenderer.h: Added.
+	* kwq/WebCoreImageRendererFactory.h: Added.
+	* kwq/WebCoreImageRendererFactory.m: Added.
+	(+[WebCoreImageRendererFactory sharedFactory]):
+	(-[WebCoreImageRendererFactory init]):
+	(-[WebCoreImageRendererFactory imageRendererWithBytes:length:]):
+	(-[WebCoreImageRendererFactory imageRendererWithSize:]):
+	* kwq/qt/qpixmap.h:
+
 2002-05-28  Richard Williamson  <rjw@apple.com>
 
     Moved cancellation check before creation on job instance,

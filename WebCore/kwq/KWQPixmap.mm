@@ -27,53 +27,44 @@
 #include <kwqdebug.h>
 #include <qbitmap.h>
 
+#import <WebCoreImageRenderer.h>
+#import <WebCoreImageRendererFactory.h>
+
 QPixmap::QPixmap()
 {
-    nsimage = nil;
+    imageRenderer = nil;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QSize &sz)
 {
-    nsimage = [[NSImage alloc] initWithSize: NSMakeSize((float)sz.width(), (float)sz.height())];
+    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize((float)sz.width(), (float)sz.height())] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
-    NSData *data = [[NSData alloc] initWithBytes: bytes.data() length: bytes.size()];
-    nsimage = [[NSImage alloc] initWithData: data];
-    NSArray *reps = [nsimage representations];
-    NSImageRep *rep = [reps objectAtIndex: 0];
-    // Force the image to use the pixel size and ignore the dpi.
-    [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
-    [data release];
-    if (nsimage == nil){
-        KWQDEBUG("unable to create image\n");
-    }
-    else {
-        KWQDEBUG("image created");
-        [nsimage setFlipped: YES];
-    }
+    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes: bytes.data() length: bytes.size()] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
-    nsimage = [[NSImage alloc] initWithSize: NSMakeSize(w, h)];
+    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize(w, h)] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QPixmap &copyFrom)
     : QPaintDevice()
 {
-    nsimage = [copyFrom.nsimage retain];
+    imageRenderer = [(id)copyFrom.imageRenderer retain];
     needCopyOnWrite = true;
 }
 
 QPixmap::~QPixmap()
 {
-    [nsimage release];
+    [(id)imageRenderer stopAnimation];
+    [(id)imageRenderer release];
 }
 
 void QPixmap::setMask(const QBitmap &)
@@ -88,29 +79,29 @@ const QBitmap *QPixmap::mask() const
 
 bool QPixmap::isNull() const
 {
-    return nsimage == nil;
+    return imageRenderer == nil;
 }
 
 QSize QPixmap::size() const
 {
-    NSSize sz = [nsimage size];
+    NSSize sz = [imageRenderer size];
     return QSize((int)sz.width, (int)sz.height);
 }
 
 QRect QPixmap::rect() const
 {
-    NSSize sz = [nsimage size];
+    NSSize sz = [imageRenderer size];
     return QRect(0, 0, (int)sz.width, (int)sz.height);
 }
 
 int QPixmap::width() const
 {
-    return (int)[nsimage size].width;
+    return (int)[imageRenderer size].width;
 }
 
 int QPixmap::height() const
 {
-    return (int)[nsimage size].height;
+    return (int)[imageRenderer size].height;
 }
 
 void QPixmap::resize(const QSize &sz)
@@ -121,11 +112,12 @@ void QPixmap::resize(const QSize &sz)
 void QPixmap::resize(int w, int h)
 {
     if (needCopyOnWrite) {
-        nsimage = [nsimage copy];
+        id <WebCoreImageRenderer>newImageRenderer = [(id)imageRenderer copy];
+        [(id)imageRenderer release];
+        imageRenderer = newImageRenderer;
         needCopyOnWrite = false;
     }
-    [nsimage setScalesWhenResized: YES];
-    [nsimage setSize: NSMakeSize((float)w, (float)h)];
+    [imageRenderer resize: NSMakeSize((float)w, (float)h)];
 }
 
 QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
@@ -147,9 +139,9 @@ QImage QPixmap::convertToImage() const
 
 QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
 {
-    [assignFrom.nsimage retain];
-    [nsimage release];
-    nsimage = assignFrom.nsimage;
+    [(id)assignFrom.imageRenderer retain];
+    [(id)imageRenderer release];
+    imageRenderer = assignFrom.imageRenderer;
     needCopyOnWrite = true;
     return *this;
 }

@@ -129,7 +129,8 @@ libkwq_o_SOURCES = \
 	KWQxml.mm \
 	kwqdebug.mm \
 	WCPluginWidget.mm \
-        WCJavaAppletWidget.mm \
+	WCJavaAppletWidget.mm \
+	WebCoreImageRendererFactory.m \
 	WebCoreTextRendererFactory.m \
 	WebCoreViewFactory.m \
 	$(NULL)

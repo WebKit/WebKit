@@ -36,9 +36,7 @@
 #include "qpainter.h"
 
 #ifdef __OBJC__
-@class NSImage;
-#else
-typedef void NSImage;
+@protocol WebCoreImageRenderer;
 #endif
 
 class QBitmap;
@@ -85,8 +83,16 @@ public:
 
     QPixmap &operator=(const QPixmap &);
 
+#ifdef __OBJC__
+    const id <WebCoreImageRenderer>getImageRenderer() const { return imageRenderer; }
+#endif
+
 private:
-    NSImage *nsimage;
+#ifdef __OBJC__
+    id <WebCoreImageRenderer>imageRenderer;
+#else
+    void *imageRenderer;
+#endif
     bool needCopyOnWrite;
 
 }; // class QPixmap ============================================================

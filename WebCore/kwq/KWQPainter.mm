@@ -34,7 +34,7 @@
 
 #import <WebCoreTextRendererFactory.h>
 #import <WebCoreTextRenderer.h>
-
+#import <WebCoreImageRenderer.h>
 
 struct QPState {				// painter state
     QFont	font;
@@ -405,21 +405,29 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
     drawPixmap (p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
 
-
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
 			int sx, int sy, int sw, int sh )
 {
     _lockFocus();
 
-    if (pixmap.nsimage != nil){
+    id <WebCoreImageRenderer>imageRenderer = pixmap.getImageRenderer();
+    
+    if (imageRenderer != nil){
         if (sw == -1)
-            sw = (int)[pixmap.nsimage size].width;
+            sw = (int)[imageRenderer size].width;
         if (sh == -1)
-            sh = (int)[pixmap.nsimage size].height;
-		[pixmap.nsimage drawInRect: NSMakeRect(x, y, sw, sh) 
-				fromRect: NSMakeRect(sx, sy, sw, sh)
+            sh = (int)[imageRenderer size].height;
+        NSRect ir = NSMakeRect(x, y, sw, sh);
+        NSRect fr = NSMakeRect(sx, sy, sw, sh);
+        
+		[imageRenderer drawInRect: ir 
+				fromRect: fr
 				operation: NSCompositeSourceOver	// Renders transparency correctly
 				fraction: 1.0];
+				
+		[imageRenderer beginAnimationInView: [NSView focusView]
+		                    inRect: ir
+		                    fromRect: fr];
     }
     
     _unlockFocus();
@@ -446,7 +454,7 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGSize phase = { (float)(((int)p.x) % sw), (float)(((int)p.y) % sh) };
     CGContextSetPatternPhase(cgContext, phase);
-    patternColor = [NSColor colorWithPatternImage: pixmap.nsimage];
+    patternColor = [NSColor colorWithPatternImage: (NSImage *)pixmap.getImageRenderer()];
     [patternColor set];
     [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
 
@@ -665,27 +673,27 @@ void QPainter::setRasterOp(RasterOp op)
 
 void QPainter::translate(double dx, double dy)
 {
-     _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 
 void QPainter::scale(double dx, double dy)
 {
-     _logNotYetImplemented();
+    _logNeverImplemented();
 }
 
 
 bool QPainter::begin(const QPaintDevice *bd)
 {
+    _logNeverImplemented();
     data->bufferDevice = bd;
-    const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
-    [pixmap->nsimage setFlipped: YES];
     return true;
 }
 
 
 bool QPainter::end()
 {
+    _logNeverImplemented();
     data->bufferDevice = 0L;
     return true;
 }
