@@ -26,13 +26,19 @@ $(filter %.cpp,$(CXXYACCOBJECTS)): %.cpp: %.y
 $(filter %.o,$(COBJECTS)): %.o: %.c
 	$(CC) $(CFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
+$(filter %.o,$(COBJECTS)): %.o: %.mm
+	$(CC) $(CFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+
 $(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
-.SUFFIXES: .cpp .h .c
+.SUFFIXES: .cpp .h .c .mm
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+
+.mm.o:
+	$(CC) $(CMMFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
 #----------------------------------------------------------------------
 # Standard subdir targets
