@@ -1,5 +1,20 @@
 2003-10-18  David Hyatt  <hyatt@apple.com>
 
+	Change the names of the border-spacing properties to border-horizontal-spacing and border-vertical-spacing.
+	
+        Reviewed by NOBODY (Straightforward).
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+
+2003-10-18  David Hyatt  <hyatt@apple.com>
+
 	Fix for diveintomark className parsing bug.  class="bigblue blue" would fail to match a rule with .blue.
 	The bug was in the selector matching code for class attributes.
 

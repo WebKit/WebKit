@@ -2172,13 +2172,13 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         style->setVerticalBorderSpacing(parentStyle->verticalBorderSpacing());
         break;
     }
-    case CSS_PROP__KHTML_HORIZONTAL_BORDER_SPACING: {
+    case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING: {
         if (!primitiveValue) break;
         short spacing =  primitiveValue->computeLength(style, paintDeviceMetrics);
         style->setHorizontalBorderSpacing(spacing);
         break;
     }
-    case CSS_PROP__KHTML_VERTICAL_BORDER_SPACING: {
+    case CSS_PROP__KHTML_BORDER_VERTICAL_SPACING: {
         if (!primitiveValue) break;
         short spacing =  primitiveValue->computeLength(style, paintDeviceMetrics);
         style->setVerticalBorderSpacing(spacing);

@@ -689,8 +689,8 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     case CSS_PROP_BORDER_SPACING: {
-        const int properties[2] = { CSS_PROP__KHTML_HORIZONTAL_BORDER_SPACING,
-                                    CSS_PROP__KHTML_VERTICAL_BORDER_SPACING };
+        const int properties[2] = { CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
+                                    CSS_PROP__KHTML_BORDER_VERTICAL_SPACING };
         int num = valueList->numValues;
         if (num == 1) {
             if (!parseValue(properties[0], important)) return false;
@@ -705,8 +705,8 @@ bool CSSParser::parseValue( int propId, bool important )
         }
         return false;
     }
-    case CSS_PROP__KHTML_HORIZONTAL_BORDER_SPACING:
-    case CSS_PROP__KHTML_VERTICAL_BORDER_SPACING:
+    case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING:
+    case CSS_PROP__KHTML_BORDER_VERTICAL_SPACING:
         valid_primitive = validUnit(value, FLength|FNonNeg, strict&(!nonCSSHint));
         break;
     case CSS_PROP_SCROLLBAR_FACE_COLOR:         // IE5.5
