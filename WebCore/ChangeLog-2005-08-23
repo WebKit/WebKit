@@ -1,3 +1,17 @@
+2003-09-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3399169>: 4 leaks of DOMString objects (Mail)
+
+	Remove circular reference between AttributeImpl and AttrImpl objects.
+	This was causing the leak.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttributeImpl::allocateImpl):
+
 2003-09-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3359408, DirWS should not be used when collapsing/stripping spaces,

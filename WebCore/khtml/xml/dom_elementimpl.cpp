@@ -48,7 +48,6 @@ using namespace khtml;
 
 void AttributeImpl::allocateImpl(ElementImpl* e) {
     _impl = new AttrImpl(e, e->docPtr(), this);
-    _impl->ref();
 }
 
 AttrImpl::AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a)
