@@ -393,6 +393,7 @@ typedef enum {
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;
 - (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
+- (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style;
 - (void)applyEditingStyleToBodyElement;
 - (void)removeEditingStyleFromBodyElement;
 - (void)applyEditingStyleToElement:(DOMElement *)element;

@@ -2,6 +2,15 @@
 
         Reviewed by Harrison.
 
+        - added support needed to fix <rdar://problem/3991225> Format->Style->Underline menu item does not get checked when selected text is underlined
+
+        * kwq/WebCoreBridge.h: Added selectionHasStyle: method.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge selectionHasStyle:]): Added. Calls selectionHasStyle on the part.
+
+2005-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
         - fixed <rdar://problem/3990484> cursor changes to I-beam when moving over text in widgets, even when selection off via CSS
 
         * khtml/khtmlview.cpp: (KHTMLView::viewportMouseMoveEvent): Changed code to check canSelect when deciding

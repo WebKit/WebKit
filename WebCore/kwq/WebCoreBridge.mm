@@ -1783,6 +1783,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->selectionStartHasStyle([style _styleDeclarationImpl]);
 }
 
+- (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style
+{
+    if (!_part)
+        return NSOffState;
+    switch (_part->selectionHasStyle([style _styleDeclarationImpl])) {
+        case KHTMLPart::falseTriState:
+            return NSOffState;
+        case KHTMLPart::trueTriState:
+            return NSOnState;
+        case KHTMLPart::mixedTriState:
+            return NSMixedState;
+    }
+    return NSOffState;
+}
+
 - (void)applyEditingStyleToBodyElement
 {
     if (!_part)
