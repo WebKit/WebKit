@@ -967,21 +967,24 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     _mouseDownView = view;
     _mouseDownWasInSubframe = false;
 
-    // Many AK widgets run their own event loops and consume events while the mouse is down.
-    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
-    // the khtml state with this mouseUp, which khtml never saw.
-    // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
-    // is a hole here if the widget consumes the mouseUp and subsequent events.
-    NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-    if (_currentEvent != currentEventAfterHandlingMouseDown) {
-        if ([currentEventAfterHandlingMouseDown type] == NSLeftMouseUp) {
-            mouseUp(currentEventAfterHandlingMouseDown);
-        }
-    }
-    
     return true;
 }
 
+bool KWQKHTMLPart::lastEventIsMouseUp()
+{
+    // Many AK widgets run their own event loops and consume events while the mouse is down.
+    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
+    // the khtml state with this mouseUp, which khtml never saw.  This method lets us detect
+    // that state.
+    NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
+    if (_currentEvent != currentEventAfterHandlingMouseDown) {
+        if ([currentEventAfterHandlingMouseDown type] == NSLeftMouseUp) {
+            return true;
+        }
+    }
+    return false;
+}
+    
 // Note that this does the same kind of check as [target isDescendantOf:superview].
 // There are two differences: This is a lot slower because it has to walk the whole
 // tree, and this works in cases where the target has already been deallocated.

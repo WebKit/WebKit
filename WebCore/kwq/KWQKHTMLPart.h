@@ -164,7 +164,8 @@ public:
     void doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent);
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
-    
+    bool lastEventIsMouseUp();
+
     void clearTimers();
     static void clearTimers(KHTMLView *);
     

@@ -1,3 +1,26 @@
+2003-02-18  Trey Matteson  <trey@apple.com>
+
+	3171982 - REGRESSION: onClick handlers run twice when button pressed (DSLReports.com forums)
+
+	My earlier changes added the codepath by which we let khtmlview fully process
+	a mouse up after a widget has done it's tracking, which leads to the second
+	onClick call.  Presumably that path does not exist in the native KDE case.
+	The change below reduces the impact of my hack, whereby instead of fully posting
+	a fake mouseup, we just note that the mouse has done up at the end of mousedown
+	handling, and clear the mousePressed state (state I also added).
+
+        Reviewed by Darin.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):  Look for a current mouseUp at the end of
+	dispatching the mouse down.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+	Don't post a phony mouse up from here.
+        (KWQKHTMLPart::lastEventIsMouseUp):
+	Utility routine to test for mouseUp.
+
 === Safari-62 ===
 
 2003-02-18  David Hyatt  <hyatt@apple.com>

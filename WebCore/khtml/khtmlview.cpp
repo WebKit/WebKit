@@ -472,7 +472,16 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     if (!swallowEvent) {
 	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 	QApplication::sendEvent( m_part, &event );
-
+#if APPLE_CHANGES
+        // Many AK widgets run their own event loops and consume events while the mouse is down.
+        // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
+        // the khtml state with this mouseUp, which khtml never saw.
+        // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
+        // is a hole here if the widget consumes the mouseUp and subsequent events.
+        if (KWQ(m_part)->lastEventIsMouseUp()) {
+            d->mousePressed = false;
+        }
+#endif        
 	emit m_part->nodeActivated(mev.innerNode);
     }
 }
