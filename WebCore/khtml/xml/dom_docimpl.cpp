@@ -580,8 +580,7 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
     QString qName = _qualifiedName.string();
     int colonPos = qName.find(':',0);
 
-    if ((_namespaceURI.isNull() && colonPos < 0) ||
-        _namespaceURI == XHTML_NAMESPACE) {
+    if (_namespaceURI == XHTML_NAMESPACE) {
         // User requested an element in the XHTML namespace - this means we create a HTML element
         // (elements not in this namespace are treated as normal XML elements)
         e = createHTMLElement(qName.mid(colonPos+1), exceptioncode);
