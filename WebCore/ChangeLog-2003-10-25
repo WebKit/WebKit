@@ -1,5 +1,23 @@
 2003-01-02  David Hyatt  <hyatt@apple.com>
 
+	Fix for the 3137790.   This patch passes the mouse event x and y as 
+	distinct arguments to constructZTree, so that the damageRect can 
+	really reflect your clip rect.  
+	This allows me to prune out layers that are clipped so
+	that if x,y aren't inside the clip rect, the layer doesn't get added to
+	the list.
+
+	This patch also makes the "clip" property apply to the element that specifies the clip instead of to the element's kids.  This is ambiguous in the spec, but it turns out other browsers do it this way, so there really is an interpretation that must be followed. :)
+        
+	Reviewed by darin
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::nodeAtPoint):
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_layer.h:
+
+2003-01-02  David Hyatt  <hyatt@apple.com>
+
 	Fix for bug #3137935.  When a float causes a line to get
 	moved down past the float, the line would incorrectly break
 	rather than expanding to use the newly-available width.
