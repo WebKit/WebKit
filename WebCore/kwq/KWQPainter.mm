@@ -509,7 +509,7 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
 }
 
-void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing, bool smallCaps)
+void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -532,6 +532,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     style.textColor = data->state.pen.color().getNSColor();
     style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
     style.rtl = d == RTL ? true : false;
+    style.visuallyOrdered = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
@@ -541,7 +542,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
 }
 
-void QPainter::drawHighlightForText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing, bool smallCaps)
+void QPainter::drawHighlightForText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -564,6 +565,7 @@ void QPainter::drawHighlightForText(int x, int y, const QChar *str, int len, int
     style.textColor = data->state.pen.color().getNSColor();
     style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
     style.rtl = d == RTL ? true : false;
+    style.visuallyOrdered = visuallyOrdered;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;

@@ -42,6 +42,7 @@ inline void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
     style->textColor = nil;
     style->backgroundColor = nil;
     style->rtl = false;
+    style->visuallyOrdered = false;
     style->letterSpacing = 0;
     style->wordSpacing = 0;
     style->smallCaps = false;

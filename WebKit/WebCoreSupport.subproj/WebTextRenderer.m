@@ -1424,6 +1424,23 @@ static const char *joiningNames[] = {
     return width;
 }
 
+// Be sure to free the run.characters allocated by this function.
+static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
+{
+    WebCoreTextRun swappedRun;
+    unsigned int i;
+    
+    UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*run->length);
+    for (i = 0; i < run->length; i++) {
+        swappedCharacters[i] = run->characters[run->length-i-1];
+    }
+    swappedRun.characters = swappedCharacters;
+    swappedRun.from = run->length - (run->to == -1 ? (int)run->length : run->to);
+    swappedRun.to = run->length - (run->from == -1 ? 0 : run->from);
+    swappedRun.length = run->length;
+
+    return swappedRun;
+}
 
 - (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
@@ -1432,13 +1449,21 @@ static const char *joiningNames[] = {
     // _trapezoidForRun:. These are all exception-safe.
 
     ATSUTextLayout layout;
-    int from = run->from;
-    int to = run->to;
+    int from, to;
     float selectedLeftX;
+    const WebCoreTextRun *aRun = run;
+    WebCoreTextRun swappedRun;
 
     if (style->backgroundColor == nil)
         return;
     
+    if (style->visuallyOrdered) {
+        swappedRun = reverseCharactersInRun(run);
+        aRun = &swappedRun;
+    }
+
+    from = aRun->from;
+    to = aRun->to;
     if (from == -1)
         from = 0;
     if (to == -1)
@@ -1449,9 +1474,9 @@ static const char *joiningNames[] = {
         return;
     }
 
-    layout = [self _createATSUTextLayoutForRun:run];
+    layout = [self _createATSUTextLayoutForRun:aRun];
 
-    WebCoreTextRun leadingRun = *run;
+    WebCoreTextRun leadingRun = *aRun;
     leadingRun.from = 0;
     leadingRun.to = run->from;
     
@@ -1474,9 +1499,9 @@ static const char *joiningNames[] = {
     
     float yPos = point.y - [self ascent];
     if (style->rtl){
-        WebCoreTextRun completeRun = *run;
+        WebCoreTextRun completeRun = *aRun;
         completeRun.from = 0;
-        completeRun.to = run->length;
+        completeRun.to = aRun->length;
         float completeRunWidth = [self floatWidthForRun:&completeRun style:style widths:0];
         [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - (selectedLeftX-point.x) - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
     }
@@ -1485,6 +1510,9 @@ static const char *joiningNames[] = {
     }
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+
+    if (style->visuallyOrdered)
+        free ((void *)swappedRun.characters);
 }
 
 
@@ -1496,19 +1524,27 @@ static const char *joiningNames[] = {
 
     ATSUTextLayout layout;
     OSStatus status;
-    int from = run->from;
-    int to = run->to;
+    int from, to;
+    const WebCoreTextRun *aRun = run;
+    WebCoreTextRun swappedRun;
     
+    if (style->visuallyOrdered) {
+        swappedRun = reverseCharactersInRun(run);
+        aRun = &swappedRun;
+    }
+
+    from = aRun->from;
+    to = aRun->to;
     if (from == -1)
         from = 0;
     if (to == -1)
         to = run->length;
-   
+
     int runLength = to - from;
     if (runLength <= 0)
         return;
 
-    layout = [self _createATSUTextLayoutForRun:run];
+    layout = [self _createATSUTextLayoutForRun:aRun];
 
     if (style->backgroundColor != nil)
         [self _ATSU_drawHighlightForRun:run style:style atPoint:point];
@@ -1516,7 +1552,7 @@ static const char *joiningNames[] = {
     [style->textColor set];
 
     status = ATSUDrawText(layout, 
-            from,
+            aRun->from,
             runLength,
             FloatToFixed(point.x),   // these values are
             FloatToFixed(point.y));  // also of type Fixed
@@ -1526,6 +1562,9 @@ static const char *joiningNames[] = {
     }
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+    
+    if (style->visuallyOrdered)
+        free ((void *)swappedRun.characters);
 }
 
 - (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
@@ -1539,16 +1578,26 @@ static const char *joiningNames[] = {
     UniCharArrayOffset secondaryOffset = 0;
     OSStatus status;
     Boolean isLeading;
+    const WebCoreTextRun *aRun = run;
+    WebCoreTextRun swappedRun;
+    
+    if (style->visuallyOrdered) {
+        swappedRun = reverseCharactersInRun(run);
+        aRun = &swappedRun;
+    }
 
-    layout = [self _createATSUTextLayoutForRun:run];
+    layout = [self _createATSUTextLayoutForRun:aRun];
 
-    status = ATSUPositionToOffset(layout, FloatToFixed(x), 1, &primaryOffset, &isLeading, &secondaryOffset);
+    status = ATSUPositionToOffset(layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
     if (status == noErr){
         offset = (unsigned)primaryOffset;
     }
     else {
         // Failed to find offset!  Return 0 offset.
     }
+    
+    if (style->visuallyOrdered)
+        free ((void *)swappedRun.characters);
 
     return offset;
 }

@@ -1,3 +1,16 @@
+2003-12-18  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3511415.  We have to un-visually order visually ordered text
+	before passing to ATSU.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (reverseCharactersInRun):
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:]):
+
 2003-12-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3503011 (really, this time).  Always use integer width for '-' and '?', as we do for spaces, to ensure that 'words' (as defined by out rounding hack) start on integer boundaries.

@@ -1,3 +1,25 @@
+2003-12-18  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3511415.  We have to un-visually order visually ordered text
+	before passing to ATSU.
+
+        Reviewed by John.
+
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText):
+        (Font::drawText):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintSelection):
+        (RenderText::paintObject):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        (QPainter::drawHighlightForText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (WebCoreInitializeEmptyTextStyle):
+
 2003-12-17  Richard Williamson   <rjw@apple.com>
 
         Reviewed by NOBODY (OOPS!).
