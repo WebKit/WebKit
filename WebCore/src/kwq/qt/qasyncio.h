@@ -26,4 +26,20 @@
 #ifndef QASYNCIO_H_
 #define QASYNCIO_H_
 
+class QAsynchIO {
+protected:
+    void ready();
+};
+
+class QDataSource : public QAsynchIO {
+public:
+    virtual void rewind();
+    void maybeReady();
+};
+
+class QDataSink : public QAsynchIO {
+public:
+    virtual void receive(const uchar*, int count)=0;
+};
+
 #endif

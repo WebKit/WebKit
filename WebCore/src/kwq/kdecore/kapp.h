@@ -26,11 +26,14 @@
 #ifndef KAPP_H_
 #define KAPP_H_
 
+#include <kglobal.h>
 #include <dcopclient.h>
+#include <qapplication.h>
+#include <qpalette.h>
 
 #define kapp KApplication::kApplication()
 
-class KApplication {
+class KApplication : public QApplication {
 public:
 	static KApplication* kApplication() { return KApp; }
 	virtual DCOPClient *dcopClient();

@@ -26,6 +26,24 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
-class QTextCodec;
+#include "qstring.h"
+#include "qcstring.h"
+
+class QTextDecoder {
+public:
+    virtual QString toUnicode(const char* chars, int len) = 0;
+};
+
+class QTextCodec {
+public:
+    static QTextCodec *codecForMib(int mib);
+    static QTextCodec *codecForName(const char* hint, int accuracy=0);
+
+    virtual int mibEnum() const = 0;
+    virtual QTextDecoder *makeDecoder() const;
+    virtual QString toUnicode(const char *chars, int len) const;
+    QString toUnicode(const QByteArray&, int len) const;
+    QString toUnicode(const char *chars) const;
+};
 
 #endif

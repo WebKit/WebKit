@@ -33,6 +33,7 @@ class QString;
 
 class QFontDatabase {
 public:
+     QFont font(const QString familyName, const QString &style, int pointSize, const QString charSetName = QString::null);
      bool isSmoothlyScalable(const QString &family, const QString &style = QString::null, const QString &charSet = QString::null) const;
      QValueList<int> smoothSizes(const QString &family, const QString &style, const QString &charSet = QString::null);
      QString styleString(const QFont &);

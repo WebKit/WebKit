@@ -26,4 +26,9 @@
 #ifndef QASYNCIMAGEIO_H_
 #define QASYNCIMAGEIO_H_
 
+class QImageDecoder {
+public:
+    static const char* formatName(const uchar* buffer, int length);
+};
+
 #endif

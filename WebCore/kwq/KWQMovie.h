@@ -26,4 +26,35 @@
 #ifndef QMOVIE_H_
 #define QMOVIE_H_
 
+#include "qobject.h"
+#include "qpixmap.h"
+#include "qimage.h"
+
+class QMovie {
+public:
+    enum Status { EndOfFrame, EndOfMovie };
+
+    QMovie();
+    QMovie(QDataSource*, int bufsize=1024);
+    
+    void unpause();
+    void pause();
+    void restart();
+    bool finished();
+    bool running();
+    int frameNumber() const;
+
+    const QRect& getValidRect() const;
+    const QPixmap& framePixmap() const;
+    const QImage& frameImage() const;
+
+    void connectResize(QObject* receiver, const char *member);
+    void connectUpdate(QObject* receiver, const char *member);
+    void connectStatus(QObject* receiver, const char *member);
+    
+    void disconnectResize(QObject* receiver, const char *member=0);
+    void disconnectUpdate(QObject* receiver, const char *member=0);
+    void disconnectStatus(QObject* receiver, const char *member=0);
+};
+
 #endif

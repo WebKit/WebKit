@@ -26,4 +26,16 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
+#include "job.h"
+#include "jobclasses.h"
+
+namespace KIO {
+
+class Scheduler {
+public:
+    static void scheduleJob(SimpleJob *job);
+};
+
+} // namespace KIO
+
 #endif

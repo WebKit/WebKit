@@ -26,4 +26,12 @@
 #ifndef QBITMAP_H_
 #define QBITMAP_H_
 
+#include "qpixmap.h"
+
+class QBitmap : public QPixmap {
+public:
+    QBitmap();
+    QBitmap(int,int);
+};
+
 #endif

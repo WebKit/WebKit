@@ -44,6 +44,7 @@ SUBDIRS='
 	src/kdelibs/khtml/dom
 	src/kdelibs/khtml/ecma
 	src/kdelibs/khtml/xml
+	src/kdelibs/khtml/misc
 '
 for subdir in $SUBDIRS; do
 	if (test -f "./$subdir/MakeSystemChanges.sh"); then
@@ -188,5 +189,6 @@ AC_OUTPUT(
 	src/kdelibs/khtml/dom/Makefile
 	src/kdelibs/khtml/ecma/Makefile
 	src/kdelibs/khtml/xml/Makefile
+	src/kdelibs/khtml/misc/Makefile
 )
 

@@ -26,4 +26,26 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
+class QString;
+
+namespace KIO {
+
+class Job : public QObject {
+public:
+    int error();
+    const QString & errorText();
+    virtual void kill(bool quietly = true);
+};
+
+class SimpleJob : public KIO::Job {
+};
+
+class TransferJob : public SimpleJob {
+public:
+    bool isErrorPage() const;
+    void addMetaData(const QString &key, const QString &value);
+};
+
+} // namespace KIO
+
 #endif

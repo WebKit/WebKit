@@ -51,6 +51,7 @@ public:
         void setPath(const QString& path);
         void setPort(unsigned short int);
 	bool isEmpty() const;
+	bool isMalformed() const;
         QString prettyURL(int _trailing = 0) const;
 };
 

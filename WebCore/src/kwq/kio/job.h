@@ -26,12 +26,18 @@
 #ifndef JOB_H_
 #define JOB_H_
 
+#include <kurl.h>
+#include "jobclasses.h"
+
+// for time_t
+#include <sys/types.h>
+
 // added to help in compilation of khtml/khtml_part.h:867
 namespace KIO {
 
-class Job {
-};
+SimpleJob *http_update_cache(const KURL& url, bool no_cache, time_t expireDate);
+TransferJob *get(const KURL& url, bool reload=false, bool showProgressInfo = true);
 
-}
+} // namespace KIO
 
 #endif

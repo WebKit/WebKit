@@ -24,6 +24,8 @@ OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmlecma.a
 
+PROGRAM = testecma
+
 CLEAN_FILES = $(OBJECTS) \
 	kjs_window.moc \
 	$(LIBRARY) \
@@ -56,6 +58,9 @@ all: $(OBJECTS) $(LIBRARY)
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
+
+$(PROGRAM): testecma.o
+	$(CC) -o $@ $< -L. -lkhtmlecma
 
 kjs_window.cpp: kjs_window.moc
 kjs_window.moc:

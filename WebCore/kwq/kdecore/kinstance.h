@@ -26,8 +26,11 @@
 #ifndef KINSTANCE_H_
 #define KINSTANCE_H_
 
+class KIconLoader;
+
 class KInstance {
 public:
+    KIconLoader *iconLoader() const;
 };
 
 #endif

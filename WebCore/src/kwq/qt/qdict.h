@@ -26,7 +26,27 @@
 #ifndef QDICT_H_
 #define QDICT_H_
 
-template <class T> class QDict {
+#include "qcollection.h"
+
+template <class T> class QDict : public QCollection {
+public:
+    QDict(int size=17, bool caseSensitive=TRUE);
+
+    void insert(const QString &, const T *);
+    bool remove(const QString &);
+    T *find(const QString &) const;
+    uint count() const;
+};
+
+template<class T> class QDictIterator {
+public:
+    QDictIterator(const QDict<T> &);
+
+    uint count() const;
+    T *current() const;
+    T *toFirst();
+
+    T *operator++();
 };
 
 #endif

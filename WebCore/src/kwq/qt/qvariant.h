@@ -30,6 +30,9 @@ typedef unsigned int uint;
 
 class QString;
 
+// this isn't used in this class, but it other classes expect the forward decl
+class QImage;
+
 class QVariant {
 public:
     enum Type {

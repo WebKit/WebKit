@@ -20,15 +20,27 @@ include $(TOPSRCDIR)/Makefile.vars
 
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
-OBJECTS = $(CXXOBJECTS) 
+TAGFILES = \
+	htmltags.c \
+	htmltags.h \
+	htmltags.gperf \
+	$(NULL)
 
-LIBRARY = libkhtmlecma.a
+ATTRSFILES = \
+	htmlattrs.c \
+	htmlattrs.h \
+	htmlattrs.gperf \
+	$(NULL)
 
-PROGRAM = testecma
+CFILES = $(TAGFILES) $(ATTRSFILES)
+
+OBJECTS = $(CFILES) $(CXXOBJECTS)
+
+LIBRARY = libkhtmlmisc.a
 
 CLEAN_FILES = $(OBJECTS) \
-	kjs_window.moc \
 	$(LIBRARY) \
+	$(CFILES) \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -37,34 +49,33 @@ CLEAN_FILES = $(OBJECTS) \
 CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
-	-I$(TOPSRCDIR)/src/kwq/kdeui \
-	-I$(TOPSRCDIR)/src/kwq/kparts \
-	-I../css \
+	-I$(TOPSRCDIR)/src/kwq/kio \
+	-I$(TOPSRCDIR)/src/kwq/dcop \
 	-I../dom \
 	-I../html \
-	-I../misc \
 	-I../xml \
-	-I../.. \
 	-I.. \
 	-I. \
 	$(NULL)
-
 
 #----------------------------------------------------------------------
 # Set targets for this directory
 
 all: $(OBJECTS) $(LIBRARY)
 
-$(LIBRARY): $(CXXOBJECTS)
+$(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
-$(PROGRAM): testecma.o
-	$(CC) -o $@ $< -L. -lkhtmlecma
+loader.cpp: loader.moc
+loader.moc:
+	touch loader.moc
 
-kjs_window.cpp: kjs_window.moc
-kjs_window.moc:
-	touch $@
+$(TAGFILES):
+	./maketags
+
+$(ATTRSFILES):
+	./makeattrs
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

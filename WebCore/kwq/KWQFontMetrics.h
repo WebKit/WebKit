@@ -28,9 +28,12 @@
 
 class QRect;
 class QChar;
+class QFont;
 
 class QFontMetrics {
 public:
+    QFontMetrics();
+    QFontMetrics(const QFont&);
     QRect boundingRect(QChar) const;
 };
 

@@ -26,7 +26,24 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
+#include "qpaintdevice.h"
+#include "qcolor.h"
+#include "qbrush.h"
+
+class QFont;
+class QFontMetrics;
+class QPixmap;
+
 class QPainter {
+public:
+    QPainter();
+    QPainter(const QPaintDevice *);
+    
+    void setFont(const QFont &);
+    QFontMetrics fontMetrics() const;
+
+    void fillRect(int x, int y, int w, int h, const QBrush &);
+    void drawTiledPixmap(int x, int y, int w, int h, const QPixmap &);
 };
 
 #endif

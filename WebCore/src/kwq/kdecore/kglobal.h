@@ -26,10 +26,13 @@
 #ifndef KGLOBAL_H_
 #define KGLOBAL_H_
 
-class KInstance;
+#include <qstring.h>
+#include <kinstance.h>
+
 class KCharsets;
 class KLocale;
 class KStandardDirs;
+class KConfig;
 
 #define kMin(a, b) ((a) < (b) ? (a) : (b))
 #define kMax(a, b) ((a) > (b) ? (a) : (b))
@@ -40,6 +43,9 @@ public:
     static KCharsets *charsets();
     static KLocale *locale();
     static KStandardDirs *dirs();
+    static KConfig *config();
+
+    static const QString &staticQString(const QString &);
 };
 
 #endif

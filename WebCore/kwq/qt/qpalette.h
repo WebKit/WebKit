@@ -26,16 +26,34 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
+class QColor;
+
 class QColorGroup {
 public:
-    enum ColorRole { Shadow, Light, Mid, Dark, Base, ButtonText, Button, Background };
+    enum ColorRole { Foreground, Shadow, Light, Mid, Dark, Base, ButtonText, Button, Background };
+
     void setColor(ColorRole role, const QColor &color);
+    const QColor &foreground() const;
+    const QColor &shadow() const;
+    const QColor &light() const;
+    const QColor &midlight() const;
+    const QColor &dark() const;
+    const QColor &base() const;
+    const QColor &buttonText() const;
+    const QColor &button() const;
+    const QColor &text() const;
+    const QColor &background() const;
 };
 
 class QPalette {
 public:
     enum ColorGroup { Active, Inactive };
+
     void setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color);
+
+    const QColorGroup &active() const;
+    const QColorGroup &inactive() const;
+    const QColorGroup &disabled() const;
 }; 
 
 #endif

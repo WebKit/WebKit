@@ -26,4 +26,11 @@
 #ifndef QTOOLTIP_H_
 #define QTOOLTIP_H_
 
+class QPalette;
+
+class QToolTip {
+public:
+    static QPalette palette();
+};
+
 #endif

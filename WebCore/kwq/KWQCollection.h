@@ -29,6 +29,7 @@
 class QCollection {
 public:
     typedef void *Item;
+    void setAutoDelete(bool);
 protected:
     virtual Item newItem(Item);
 };

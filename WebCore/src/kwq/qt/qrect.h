@@ -26,6 +26,8 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
+class QSize;
+
 class QRect {
 public:
     QRect();
@@ -35,6 +37,9 @@ public:
     int top() const;
     int width() const;
     int height() const;
+    bool isNull() const;
+
+    QSize size() const;
 };
 
 #endif

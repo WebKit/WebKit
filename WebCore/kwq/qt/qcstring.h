@@ -38,10 +38,28 @@ typedef QArray<char> QByteArray;
 class QCString : public QByteArray {
 public:
     QCString();
-    QCString(uint);
+    QCString(int);
+    QCString(const char *);
     QCString(const char *, uint);
+    QCString(const QCString&);
+
+    QCString mid(uint index, uint len=0xffffffff) const;
+    
+    int find(const char *str, int index=0, bool cs=TRUE) const;
+    bool isEmpty() const;
+    bool isNull() const;
+    uint length() const;
+    QCString lower() const;
+
+    operator const char *() const;
+    QCString &operator=(const QCString&);
+    QCString &operator=(const char *);
+    QCString &operator+=(const char *);
+    QCString &operator+=(const QCString&);
 };
 
+bool operator==(const char *, const QCString &);
+bool operator==(const QCString &, const char *);
 bool operator!=(const char *, const QCString &);
 bool operator!=(const QCString &, const char *);
 

@@ -27,16 +27,29 @@
 #define QPTRDICT_H_
 
 #include <kwq.h>
+#include "qcollection.h"
 
-template <class T> class QPtrDict {
+template <class T> class QPtrDict : public QCollection {
 public:
     QPtrDict(int size=13);
+
     uint count() const;
     T *at(uint);
+    T *take(void *);
     void append(const T *);
     void insert(void *, const T *);
     void remove(void *);
     T *operator[](void *) const; 
+};
+
+template<class T> class QPtrDictIterator {
+public:
+    QPtrDictIterator(const QPtrDict<T> &);
+
+    T *current() const;
+    void *currentKey() const;
+
+    T *operator++();
 };
 
 #endif

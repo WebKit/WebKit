@@ -26,21 +26,27 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
-// Forward declaration for khtml/html/html_imageimpl.h:58
-class QImage;
-
 class QString;
 
 class QColor {
 public:
+    QColor();
+    QColor(const char *);
+
     QString name() const;
+    void setNamedColor(const QString&);
     int red() const;
     int green() const;
     int blue() const;
     bool isValid() const;
+    void setRgb(int,int,int);
+    void setRgb(int);
 
-bool operator==(const QColor &x) const;
-bool operator!=(const QColor &x) const;
+    QColor light(int f = 150) const;
+
+    QColor &operator=(const QColor &);
+    bool operator==(const QColor &x) const;
+    bool operator!=(const QColor &x) const;
 
 };
 

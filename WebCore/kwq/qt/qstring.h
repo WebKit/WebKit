@@ -45,6 +45,7 @@ public:
     bool isNull() const;
     bool isDigit() const;
     bool isSpace() const;
+    bool isLetter() const;
     bool isLetterOrNumber() const;
     uchar cell() const;
     uchar row() const;
@@ -68,11 +69,15 @@ public:
 class QString {
 public:
     static QString fromLatin1(const char*, int len = -1);
+
     QString();
     QString(const QChar *, uint);
     QString(const char *);
+    QString(const QByteArray&);
+    QString(const QString&);
+
     int toInt() const;
-    int toInt(bool *) const;
+    int toInt(bool *, int base=10) const;
     uint toUInt(bool *ok = 0, int base = 10) const;
     QString &setNum(int, int base = 10 );
     bool isNull() const;
@@ -90,7 +95,6 @@ public:
     int find(const QRegExp &, int index = 0, bool b = 0) const;
     int findRev(char, int index = 0) const;
     int findRev(const char *, int index = 0) const;
-    QString left(uint) const;
     QString &remove(uint, uint);
     QString &replace(const QRegExp &, const QString &);
     QString &insert(uint, char);
@@ -99,6 +103,8 @@ public:
 
     QString arg(const QString&, int fieldwidth = 0) const;
 
+    QString left(uint) const;
+    QString right(uint) const;
     QString mid(int, int len = 0xffffffff) const;
     void fill(QChar, int len = -1);
 

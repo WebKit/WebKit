@@ -26,4 +26,11 @@
 #ifndef KIMAGEIO_H_
 #define KIMAGEIO_H_
 
+class KImageIO {
+public:
+    enum Mode { Reading, Writing };
+
+    static QStringList mimeTypes(Mode _mode = Writing);
+};
+
 #endif

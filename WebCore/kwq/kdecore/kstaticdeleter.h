@@ -26,4 +26,9 @@
 #ifndef KSTATICDELETER_H_
 #define KSTATICDELETER_H_
 
+template <class T> class KStaticDeleter {
+public:
+     T *setObject(T *obj, bool isArray = false);
+};
+
 #endif

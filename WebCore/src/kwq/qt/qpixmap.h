@@ -27,8 +27,26 @@
 #define QPIXMAP_H_
 
 #include "qpaintdevice.h"
+#include "qstring.h"
 
-class QPixmap {
+class QBitmap;
+
+class QPixmap : public QPaintDevice {
+public:
+    QPixmap();
+    QPixmap(const QSize&);
+    QPixmap(const QByteArray&);
+    QPixmap(int,int);
+
+    void setMask(const QBitmap &);
+    const QBitmap *mask() const;
+    
+    QSize size() const;
+    QRect rect() const;
+    int width() const;
+    int height() const;
+    bool isNull() const;
+    void resize(const QSize &);
 };
 
 #endif
