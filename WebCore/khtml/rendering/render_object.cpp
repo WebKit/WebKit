@@ -1084,13 +1084,28 @@ void RenderObject::arenaDelete(RenderArena *arena)
 
 FindSelectionResult RenderObject::checkSelectionPoint(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
 {
+    FindSelectionResult result = checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+    
+    if (isInline())
+        for (RenderObject *c = continuation(); result == SelectionPointAfter && c; c = c->continuation())
+            if (c->isInline()) {
+                int ncx, ncy;
+                c->absolutePosition(ncx, ncy);
+                result = c->checkSelectionPointIgnoringContinuations(_x, _y, ncx - c->xPos(), ncy - c->yPos(), node, offset);
+            }
+    
+    return result;
+}
+
+FindSelectionResult RenderObject::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
+{
     int lastOffset=0;
     int off = offset;
     DOM::NodeImpl* nod = node;
     DOM::NodeImpl* lastNode = 0;
     
     for (RenderObject *child = firstChild(); child; child=child->nextSibling()) {
-        khtml::FindSelectionResult pos = child->checkSelectionPoint(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
+        FindSelectionResult pos = child->checkSelectionPointIgnoringContinuations(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
         //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
         switch(pos) {
         case SelectionPointBeforeInLine:
@@ -1117,16 +1132,6 @@ FindSelectionResult RenderObject::checkSelectionPoint(int _x, int _y, int _tx, i
             lastNode = nod;
             lastOffset = off;
         }
-    }
-    
-    RenderObject* nextCont = continuation();
-    while (nextCont && !nextCont->isInline()) {
-        nextCont = nextCont->continuation();
-    }
-    if (nextCont){
-        int ncx, ncy;
-        nextCont->absolutePosition(ncx, ncy);
-        return nextCont->checkSelectionPoint(_x, _y, ncx-nextCont->xPos(), ncy-nextCont->yPos(), node, offset);
     }
     
     node = lastNode;

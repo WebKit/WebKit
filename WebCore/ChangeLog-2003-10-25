@@ -1,3 +1,32 @@
+2003-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed 3165295 -- Hang while triple clicking on page
+
+        Flaws in the continuation logic we added to checkSelectionPoint made it take
+        exponential time on pages with a lot of continuations.
+
+        * khtml/rendering/render_object.h: Make checkSelectionPoint non-virtual, and
+        added virtual checkSelectionPointIgnoringContinuations.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::checkSelectionPoint): Added. Does the inline continuation part of
+        the render object walking process, which we only want to do at the top level,
+        since otherwise we will see the same nodes multiple times. Also optimizes by only
+        looking at the inline continuations of inlines, not any continuations of a block.
+        (RenderObject::checkSelectionPointIgnoringContinuations): This is now the virtual
+        function that is overriden by RenderText. It is identical to the old version of
+        checkSelectionPoint, minus the continuation logic.
+
+        * khtml/rendering/render_text.h: Changed the name of checkSelectionPoint to
+        checkSelectionPointIgnoringContinuations.
+        * khtml/rendering/render_text.cpp: (RenderText::checkSelectionPointIgnoringContinuations):
+        Changed the name, and nothing else.
+
+        - fixed my build which was crashing on load
+
+        * WebCore.pbproj/project.pbxproj: Change seg1addr from 2200000 to 9000000.
+
 2003-02-05  Trey Matteson  <trey@apple.com>
 
 	3137647 - ad frames get their own history entries at channels.netscape.com	
@@ -5,7 +34,7 @@
 
 	The logic for deciding whether new entries are added to history is moved here
 	from WebKit.  The advantage is that we can take specific action in each of the
-	relevant cases instead of WK the half-informed guessing WK was doing.
+	relevant cases instead of the half-informed guessing WK was doing.
 
 	Here is what we now use for the lockHistory param to scheduleRedirect():
 
