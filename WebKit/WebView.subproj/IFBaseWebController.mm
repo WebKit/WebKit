@@ -38,7 +38,6 @@
 }
 @end
 
-
 @implementation IFBaseWebController
 
 - init
@@ -46,23 +45,19 @@
     return [self initWithView: nil provisionalDataSource: nil];
 }
 
-
 - initWithView: (IFWebView *)view provisionalDataSource: (IFWebDataSource *)dataSource
 {
-    IFBaseWebControllerPrivate *data;
     [super init];
     
-    data = [[IFBaseWebControllerPrivate alloc] init];
-    _controllerPrivate = data;
-    data->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
+    _private = [[IFBaseWebControllerPrivate alloc] init];
+    _private->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
 
     return self;   
 }
 
-
 - (void)dealloc
 {
-    [_controllerPrivate autorelease];
+    [_private release];
     [super dealloc];
 }
 
@@ -270,13 +265,9 @@
     return [self _frameNamed: name fromFrame: [self mainFrame]];
 }
 
-
-
 - (IFWebFrame *)mainFrame
 {
-    IFBaseWebControllerPrivate *data = (IFBaseWebControllerPrivate *)_controllerPrivate;
-    
-    return data->mainFrame;
+    return _private->mainFrame;
 }
 
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url

@@ -2,7 +2,7 @@
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _viewPrivate in 
+        in WebCore.  Instances of this class are referenced by _private in 
         NSWebPageView.
 */
 #import <WebKit/WebKitDebug.h>
@@ -33,8 +33,8 @@
 
 - (void)_resetWidget
 {
-    delete _viewPrivate->widget;
-    _viewPrivate->widget = 0;
+    delete _private->widget;
+    _private->widget = 0;
 }
 
 - (void)_stopPlugins 
@@ -57,18 +57,18 @@
 - (void)_setController: (id <IFWebController>)controller
 {
     [controller retain];
-    [_viewPrivate->controller release];
-    _viewPrivate->controller = controller;    
+    [_private->controller release];
+    _private->controller = controller;    
 }
 
 - (KHTMLView *)_widget
 {
-    return _viewPrivate->widget;    
+    return _private->widget;    
 }
 
 - (DOM::DocumentImpl *)_document
 {
-    KHTMLPart *part = _viewPrivate->widget->part();
+    KHTMLPart *part = _private->widget->part();
     if (part) {
         return part->xmlDocImpl();
     }
@@ -94,7 +94,7 @@
 
 - (khtml::RenderObject *)_renderRoot
 {
-    KHTMLPart *part = _viewPrivate->widget->part();
+    KHTMLPart *part = _private->widget->part();
     DOM::DocumentImpl *doc;
     if (part) {
         doc = part->xmlDocImpl();
@@ -106,14 +106,14 @@
 
 - (KHTMLView *)_provisionalWidget
 {
-    return _viewPrivate->provisionalWidget;    
+    return _private->provisionalWidget;    
 }
 
 - (void)_setFrameScrollView: (NSScrollView *)sv
 {
     [sv retain];
-    [_viewPrivate->frameScrollView release];
-    _viewPrivate->frameScrollView = sv;    
+    [_private->frameScrollView release];
+    _private->frameScrollView = sv;    
     //[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     //[sv setHasVerticalScroller: YES];
     //[sv setHasHorizontalScroller: YES];
@@ -123,7 +123,7 @@
 
 - (NSScrollView *)_frameScrollView
 {
-    return _viewPrivate->frameScrollView;    
+    return _private->frameScrollView;    
 }
 
 - (void)_setupScrollers

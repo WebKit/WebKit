@@ -51,11 +51,9 @@
 
 - initWithName: (NSString *)n view: v provisionalDataSource: (IFWebDataSource *)d controller: (id<IFWebController>)c
 {
-    IFWebFramePrivate *data;
-
     [super init];
 
-    _framePrivate = [[IFWebFramePrivate alloc] init];   
+    _private = [[IFWebFramePrivate alloc] init];   
 
     [self _setState: IFWEBFRAMESTATE_UNINITIALIZED];    
 
@@ -67,9 +65,7 @@
         return nil;
     }
     
-    data = (IFWebFramePrivate *)_framePrivate;
-    
-    [data setName: n];
+    [_private setName: n];
     
     if (v)
         [self setView: v];
@@ -92,62 +88,53 @@
 
 - (void)dealloc
 {
-    [_framePrivate release];
+    [_private release];
     [super dealloc];
 }
 
 - (NSString *)name
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data name];
+    return [_private name];
 }
 
 
-- (void)setView: v
+- (void)setView: (IFWebView *)v
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    [data setView: v];
+    [_private setView: v];
     [v _setController: [self controller]];
 }
 
-- view
+- (IFWebView *)view
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data view];
+    return [_private view];
 }
-
 
 - (id <IFWebController>)controller
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data controller];
+    return [_private controller];
 }
 
 
 - (void)setController: (id <IFWebController>)controller
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    [data setController: controller];
+    [_private setController: controller];
 }
 
 
 - (IFWebDataSource *)provisionalDataSource
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data provisionalDataSource];
+    return [_private provisionalDataSource];
 }
 
 
 - (IFWebDataSource *)dataSource
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data dataSource];
+    return [_private dataSource];
 }
 
 
 - (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     IFWebDataSource *oldDataSource;
     id <IFLocationChangeHandler>locationChangeHandler;
 
@@ -181,7 +168,7 @@
             
     [newDataSource _setController: [self controller]];
     
-    [data setProvisionalDataSource: newDataSource];
+    [_private setProvisionalDataSource: newDataSource];
     
     [[self view] provisionalDataSourceChanged: newDataSource];
 
@@ -201,56 +188,46 @@
 
 - (void)startLoading
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    
     if (self == [[self controller] mainFrame])
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] inputURL] absoluteString] cString]);
 
     // Force refresh is irrelevant, as this will always be the first load.
     // The controller will transition the provisional data source to the
     // committed data source.
-    [data->provisionalDataSource startLoading: NO];
+    [_private->provisionalDataSource startLoading: NO];
 }
 
 
 - (void)stopLoading
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    
-    [data->provisionalDataSource stopLoading];
-    [data->dataSource stopLoading];
+    [_private->provisionalDataSource stopLoading];
+    [_private->dataSource stopLoading];
 }
 
 
 - (void)reload: (BOOL)forceRefresh
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-
     [self _clearErrors];
 
-    [data->dataSource startLoading: forceRefresh];
+    [_private->dataSource startLoading: forceRefresh];
 }
 
 
 - (void)reset
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    [data setDataSource: nil];
-    [[data view] _resetWidget];
-    [data setView: nil];
+    [_private setDataSource: nil];
+    [[_private view] _resetWidget];
+    [_private setView: nil];
 }
 
 - (NSDictionary *)errors
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return data->errors;
+    return _private->errors;
 }
 
 - (IFError *)mainDocumentError
 {
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return data->mainDocumentError;
+    return _private->mainDocumentError;
 }
-
 
 @end

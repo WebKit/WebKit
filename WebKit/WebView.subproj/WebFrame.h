@@ -17,7 +17,7 @@
 @interface IFWebFrame : NSObject
 {
 @private
-    IFWebFramePrivate *_framePrivate;
+    IFWebFramePrivate *_private;
 }
 
 - initWithName: (NSString *)name view: view provisionalDataSource: (IFWebDataSource *)dataSource controller: (id <IFWebController>)controller;

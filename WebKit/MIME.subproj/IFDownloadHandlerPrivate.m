@@ -122,9 +122,9 @@
 
 - _initWithURLHandle:(IFURLHandle *)uHandle mimeHandler:(IFMIMEHandler *)mHandler
 {
-    ((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) = [[IFDownloadHandlerPrivate alloc] init];
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _setURLHandle:uHandle];
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _setMIMEHandler:mHandler];
+    _downloadHandlerPrivate = [[IFDownloadHandlerPrivate alloc] init];
+    [_downloadHandlerPrivate _setURLHandle:uHandle];
+    [_downloadHandlerPrivate _setMIMEHandler:mHandler];
     
     NSLog(@"Downloading: %@", [uHandle url]);
     
@@ -138,7 +138,7 @@
 
 - (void) _finishedDownload
 {
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _finishedDownload];
+    [_downloadHandlerPrivate _finishedDownload];
 }
 
 @end

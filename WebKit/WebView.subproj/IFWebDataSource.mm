@@ -52,7 +52,7 @@ static id IFWebDataSourceMake(void *url)
 
 - (void)_commonInitialization
 {
-    _dataSourcePrivate = [[IFWebDataSourcePrivate alloc] init];
+    _private = [[IFWebDataSourcePrivate alloc] init];
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
@@ -60,7 +60,7 @@ static id IFWebDataSourceMake(void *url)
 {
     [super init];
     [self _commonInitialization];
-    _dataSourcePrivate->inputURL = [inputURL retain];
+    _private->inputURL = [inputURL retain];
     return self;
 }
 
@@ -76,7 +76,7 @@ static id IFWebDataSourceMake(void *url)
 
 - (void)dealloc
 {
-    [_dataSourcePrivate release];
+    [_private release];
     [super dealloc];
 }
 
@@ -88,7 +88,7 @@ static id IFWebDataSourceMake(void *url)
 
 - (IFWebFrame *)frame
 {
-    return [_dataSourcePrivate->controller frameForDataSource: self];
+    return [_private->controller frameForDataSource: self];
 }
 
 // Returns the name of the frame containing this data source, or nil
@@ -102,7 +102,7 @@ static id IFWebDataSourceMake(void *url)
 // document, typically either a frameset or a normal HTML document.
 - (BOOL)isMainDocument
 {
-    if (_dataSourcePrivate->parent == nil)
+    if (_private->parent == nil)
         return YES;
     return NO;
 }
@@ -111,7 +111,7 @@ static id IFWebDataSourceMake(void *url)
 // returns the parent data source.
 - (IFWebDataSource *)parent 
 {
-    return _dataSourcePrivate->parent;
+    return _private->parent;
 }
 
 
@@ -119,25 +119,21 @@ static id IFWebDataSourceMake(void *url)
 // associated with a frame set or iframe.
 - (NSArray *)children
 {
-    return [_dataSourcePrivate->frames allValues];
+    return [_private->frames allValues];
 }
 
 - (void)addFrame: (IFWebFrame *)frame
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-
-    if (data->frames == nil)
-        data->frames = [[NSMutableDictionary alloc] init];
+    if (_private->frames == nil)
+        _private->frames = [[NSMutableDictionary alloc] init];
     [[frame dataSource] _setParent: self];   
-    [data->frames setObject: frame forKey: [frame name]];    
+    [_private->frames setObject: frame forKey: [frame name]];    
 }
 
  
 - (IFWebFrame *)frameNamed: (NSString *)frameName
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-
-    return (IFWebFrame *)[data->frames objectForKey: frameName];
+    return (IFWebFrame *)[_private->frames objectForKey: frameName];
 }
 
 
@@ -147,7 +143,7 @@ static id IFWebDataSourceMake(void *url)
 // frames then frameNames will return nil.
 - (NSArray *)frameNames
 {
-    return [_dataSourcePrivate->frames allKeys];
+    return [_private->frames allKeys];
 }
 
 
@@ -176,16 +172,16 @@ static id IFWebDataSourceMake(void *url)
     // All data sources used in a document share the same
     // controller.  A single document may have many datasource corresponding to
     // frame or iframes.
-    if (_dataSourcePrivate->parent != nil)
-        return [_dataSourcePrivate->parent controller];
-    return _dataSourcePrivate->controller;
+    if (_private->parent != nil)
+        return [_private->parent controller];
+    return _private->controller;
 }
 
 
 // May return nil if not initialized with a URL.
 - (NSURL *)inputURL
 {
-    return _dataSourcePrivate->inputURL;
+    return _private->inputURL;
 }
 
 
@@ -195,7 +191,7 @@ static id IFWebDataSourceMake(void *url)
 // a redirect is processed
 - (NSURL *)redirectedURL
 {
-    return _dataSourcePrivate->finalURL;
+    return _private->finalURL;
 }
 
 
@@ -203,7 +199,7 @@ static id IFWebDataSourceMake(void *url)
 // i.e. inputURL != redirectedURL.
 - (BOOL)wasRedirected
 {
-    return [_dataSourcePrivate->inputURL isEqual: [self redirectedURL]];
+    return [_private->inputURL isEqual: [self redirectedURL]];
 }
 
 
@@ -229,14 +225,13 @@ static id IFWebDataSourceMake(void *url)
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)data->primaryLoadComplete, [data->urlHandles count], [[[self inputURL] absoluteString] cString]);
-    if (data->primaryLoadComplete == NO)
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
+    if (_private->primaryLoadComplete == NO)
         return YES;
         
-    if ([data->urlHandles count])
+    if ([_private->urlHandles count])
         return YES;
     
     count = [[self children] count];
@@ -341,7 +336,7 @@ static id IFWebDataSourceMake(void *url)
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {
-    return _dataSourcePrivate->pageTitle;
+    return _private->pageTitle;
 }
 
 @end

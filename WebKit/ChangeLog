@@ -1,5 +1,24 @@
 2002-04-16  Darin Adler  <darin@apple.com>
 
+	A little simplifying of private pointers.
+
+	* MIME.subproj/IFDownloadHandler.m:
+	* MIME.subproj/IFDownloadHandlerPrivate.m:
+	* WebView.subproj/IFBaseWebController.mm:
+	* WebView.subproj/IFPreferences.mm:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm:
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+
+2002-04-16  Darin Adler  <darin@apple.com>
+
 	Change headers so they don't include so much.
 	Also change IF_LOAD_TYPE to IFLoadType.
 

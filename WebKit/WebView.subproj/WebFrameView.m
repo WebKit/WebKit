@@ -24,10 +24,10 @@
 {
     [super initWithFrame: frame];
 
-    _viewPrivate = [[IFWebViewPrivate alloc] init];
+    _private = [[IFWebViewPrivate alloc] init];
 
-    _viewPrivate->isFlipped = YES;
-    _viewPrivate->needsLayout = YES;
+    _private->isFlipped = YES;
+    _private->needsLayout = YES;
 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
         
@@ -39,7 +39,7 @@
 {
     [self _stopPlugins];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [_viewPrivate release];
+    [_private release];
     [super dealloc];
 }
 
@@ -47,7 +47,7 @@
 // Note that the controller is not retained.
 - (id <IFWebController>)controller
 {
-    return _viewPrivate->controller;
+    return _private->controller;
 }
 
 
@@ -76,21 +76,21 @@
     // the KHTMLPart.
     KHTMLPart *part = [dataSource _part];
 
-    _viewPrivate->provisionalWidget = new KHTMLView (part, 0);
-    part->setView (_viewPrivate->provisionalWidget);
+    _private->provisionalWidget = new KHTMLView (part, 0);
+    part->setView (_private->provisionalWidget);
 
     // Create a temporary provisional view.  It will be replaced with
     // the actual view once the datasource has been committed.
     provisionalView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
-    _viewPrivate->provisionalWidget->setView (provisionalView);
+    _private->provisionalWidget->setView (provisionalView);
     [provisionalView release];
 
-    _viewPrivate->provisionalWidget->resize (r.size.width,r.size.height);
+    _private->provisionalWidget->resize (r.size.width,r.size.height);
 }
 
 - (void)dataSourceChanged: (IFWebDataSource *)dataSource 
 {
-    IFWebViewPrivate *data = _viewPrivate;
+    IFWebViewPrivate *data = _private;
 
     // Setup the real view.
     if ([self _frameScrollView])
@@ -110,16 +110,16 @@
 
 - (void)reapplyStyles
 {
-    KHTMLView *widget = _viewPrivate->widget;
+    KHTMLView *widget = _private->widget;
 
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
-        if (_viewPrivate->needsToApplyStyles){
+        if (_private->needsToApplyStyles){
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
             widget->part()->xmlDocImpl()->updateStyleSelector();
-            _viewPrivate->needsToApplyStyles = NO;
+            _private->needsToApplyStyles = NO;
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
@@ -135,11 +135,11 @@
 // understood how IFWebView will be subclassed.
 - (void)layout
 {
-    KHTMLView *widget = _viewPrivate->widget;
+    KHTMLView *widget = _private->widget;
 
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
-        if (_viewPrivate->needsLayout){
+        if (_private->needsLayout){
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
@@ -148,7 +148,7 @@
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout();
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
-            _viewPrivate->needsLayout = NO;
+            _private->needsLayout = NO;
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
@@ -276,21 +276,21 @@
 - (void)setNeedsLayout: (bool)flag
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
-    _viewPrivate->needsLayout = flag;
+    _private->needsLayout = flag;
 }
 
 
 - (void)setNeedsToApplyStyles: (bool)flag
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
-    _viewPrivate->needsToApplyStyles = flag;
+    _private->needsToApplyStyles = flag;
 }
 
 
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
-    KHTMLView *widget = _viewPrivate->widget;
-    //IFWebViewPrivate *data = _viewPrivate;
+    KHTMLView *widget = _private->widget;
+    //IFWebViewPrivate *data = _private;
 
     //if (data->provisionalWidget != 0){
     //    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
@@ -321,10 +321,10 @@
     [self lockFocus];
 
     //double start = CFAbsoluteTimeGetCurrent();
-    ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x,
-                                         (int)rect.origin.y,
-                                         (int)rect.size.width,
-                                         (int)rect.size.height );
+    widget->drawContents( &p, (int)rect.origin.x,
+                              (int)rect.origin.y,
+                              (int)rect.size.width,
+                               (int)rect.size.height );
     //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
 
 #ifdef DEBUG_LAYOUT
@@ -355,13 +355,13 @@
 
 - (void)setIsFlipped: (bool)flag
 {
-    _viewPrivate->isFlipped = flag;
+    _private->isFlipped = flag;
 }
 
 
 - (BOOL)isFlipped 
 {
-    return _viewPrivate->isFlipped;
+    return _private->isFlipped;
 }
 
 
@@ -396,7 +396,7 @@
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    KHTMLView *widget = _viewPrivate->widget;
+    KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMouseReleaseEvent(kEvent);
     }
@@ -425,7 +425,7 @@
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    KHTMLView *widget = _viewPrivate->widget;
+    KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMousePressEvent(kEvent);
     }

@@ -13,27 +13,27 @@
 
 - (NSURL *) url
 {
-    return [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _url];
+    return [_downloadHandlerPrivate _url];
 }
 
 - (IFMIMEHandler *) mimeHandler
 {
-    return [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _mimeHandler];
+    return [_downloadHandlerPrivate _mimeHandler];
 }
 
 - (NSString *) suggestedFilename
 {
-    return [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _suggestedFilename];
+    return [_downloadHandlerPrivate _suggestedFilename];
 }
 
 - (void) cancelDownload
 {
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _cancelDownload];
+    [_downloadHandlerPrivate _cancelDownload];
 }
 
 - (void) storeAtPath:(NSString *)path
 {
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _storeAtPath:path];
+    [_downloadHandlerPrivate _storeAtPath:path];
 }
 
 - (void) dealloc
@@ -43,7 +43,7 @@
 
 - (void) openAfterDownload:(BOOL)open
 {
-    [((IFDownloadHandlerPrivate *)_downloadHandlerPrivate) _openAfterDownload:open];
+    [_downloadHandlerPrivate _openAfterDownload:open];
 }
 
 @end

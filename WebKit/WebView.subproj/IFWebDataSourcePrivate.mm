@@ -2,7 +2,7 @@
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _dataSourcePrivate in
+        in WebCore.  Instances of this class are referenced by _private in
         NSWebPageDataSource.
 */
 #import <WebKit/IFWebDataSourcePrivate.h>
@@ -66,42 +66,37 @@
 @implementation IFWebDataSource (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    WEBKIT_ASSERT (_private->part != nil);
 
-    WEBKIT_ASSERT (data->part != nil);
-
-    data->controller = controller;
-    data->part->setDataSource (self);
+    _private->controller = controller;
+    _private->part->setDataSource (self);
 }
 
 
 - (KHTMLPart *)_part
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part;
+    return _private->part;
 }
 
 - (void)_setParent: (IFWebDataSource *)p
 {
     // Non-retained.
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = p;
+    _private->parent = p;
 }
 
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    
-    data->primaryLoadComplete = flag;
+    _private->primaryLoadComplete = flag;
     if (flag == YES){
-        [data->mainURLHandleClient release];
-        data->mainURLHandleClient = 0; 
-        [data->mainHandle autorelease];
-        data->mainHandle = 0; 
+        [_private->mainURLHandleClient release];
+        _private->mainURLHandleClient = 0; 
+        [_private->mainHandle autorelease];
+        _private->mainHandle = 0; 
     }
 }
 
 - (void)_startLoading: (BOOL)forceRefresh
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     NSString *urlString = [[self inputURL] absoluteString];
     NSURL *theURL;
     KURL url = [[[self inputURL] absoluteString] cString];
@@ -123,16 +118,16 @@
     }
     theURL = [NSURL URLWithString:urlString];
 
-    data->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: [self _part]];
+    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: [self _part]];
     
-    data->mainHandle = [[IFURLHandle alloc] initWithURL:theURL];
-    [data->mainHandle addClient: data->mainURLHandleClient];
+    _private->mainHandle = [[IFURLHandle alloc] initWithURL:theURL];
+    [_private->mainHandle addClient: _private->mainURLHandleClient];
     
     // Mark the start loading time.
-    data->loadingStartedTime = CFAbsoluteTimeGetCurrent();
+    _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
     // Fire this guy up.
-    [data->mainHandle loadInBackground];
+    [_private->mainHandle loadInBackground];
 
     // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
     // We should move any code needed out of KWQ.
@@ -144,42 +139,36 @@
 
 - (void)_addURLHandle: (IFURLHandle *)handle
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    
-    if (data->urlHandles == nil)
-        data->urlHandles = [[NSMutableArray alloc] init];
-    [data->urlHandles addObject: handle];
+    if (_private->urlHandles == nil)
+        _private->urlHandles = [[NSMutableArray alloc] init];
+    [_private->urlHandles addObject: handle];
 }
 
 - (void)_removeURLHandle: (IFURLHandle *)handle
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-
-    [data->urlHandles removeObject: handle];
+    [_private->urlHandles removeObject: handle];
 }
 
 - (BOOL)_isStopping
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    return data->stopping;
+    return _private->stopping;
 }
 
 - (void)_stopLoading
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     IFURLHandle *handle;
 
-    data->stopping = YES;
+    _private->stopping = YES;
     
-    [data->mainHandle cancelLoadInBackground];
+    [_private->mainHandle cancelLoadInBackground];
     
     // Tell all handles to stop loading.
-    count = [data->urlHandles count];
+    count = [_private->urlHandles count];
     for (i = 0; i < count; i++) {
-        handle = [data->urlHandles objectAtIndex: i];
+        handle = [_private->urlHandles objectAtIndex: i];
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelling %s\n", [[[handle url] absoluteString] cString] );
-        [[data->urlHandles objectAtIndex: i] cancelLoadInBackground];
+        [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
     [self _part]->closeURL ();
@@ -208,58 +197,48 @@
 
 - (double)_loadingStartedTime
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    return data->loadingStartedTime;
+    return _private->loadingStartedTime;
 }
 
 - (void)_setTitle:(NSString *)title
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    
     NSMutableString *trimmed = [NSMutableString stringWithString:title];
     CFStringTrimWhitespace((CFMutableStringRef) trimmed);
     if ([trimmed length] == 0) {
         trimmed = nil;
-        if (data->pageTitle == nil)
+        if (_private->pageTitle == nil)
             return;
     } else {
-        if ([data->pageTitle isEqualToString:trimmed])
+        if ([_private->pageTitle isEqualToString:trimmed])
             return;
     }
     
-    [data->pageTitle autorelease];
-    data->pageTitle = [[NSString stringWithString:trimmed] retain];
+    [_private->pageTitle autorelease];
+    _private->pageTitle = [[NSString stringWithString:trimmed] retain];
     
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
     if ([[self frame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
-        [[self _locationChangeHandler] receivedPageTitle:data->pageTitle forDataSource:self];
+        [[self _locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
 - (void)_setFinalURL: (NSURL *)url
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-
-    [data->finalURL release];
-    data->finalURL = [url retain];
+    [url retain];
+    [_private->finalURL release];
+    _private->finalURL = url;
 }
 
 - (id <IFLocationChangeHandler>)_locationChangeHandler
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    
-    return data->locationChangeHandler;
+    return _private->locationChangeHandler;
 }
 
 - (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    
-    if (l != data->locationChangeHandler){
-        [data->locationChangeHandler release];
-        data->locationChangeHandler = [l retain];
-    }
+    [l retain];
+    [_private->locationChangeHandler release];
+    _private->locationChangeHandler = l;
 }
-
 
 @end

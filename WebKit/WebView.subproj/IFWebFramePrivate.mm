@@ -102,39 +102,39 @@ static const char * const stateNames[6] = {
 
 - (void)_setController: (id <IFWebController>)controller
 {
-    [_framePrivate setController: controller];
+    [_private setController: controller];
 }
 
 - (void)_setRenderFramePart: (khtml::RenderPart *)p
 {
-    [_framePrivate setRenderFramePart:p];
+    [_private setRenderFramePart:p];
 }
 
 - (khtml::RenderPart *)_renderFramePart
 {
-    return [_framePrivate renderFramePart];
+    return [_private renderFramePart];
 }
 
 - (void)_setDataSource: (IFWebDataSource *)ds
 {
-    [_framePrivate setDataSource: ds];
+    [_private setDataSource: ds];
     [ds _setController: [self controller]];
 }
 
 - (void)_scheduleLayout: (NSTimeInterval)inSeconds
 {
-    if (_framePrivate->scheduledLayoutPending == NO) {
+    if (_private->scheduledLayoutPending == NO) {
         [NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
-        _framePrivate->scheduledLayoutPending = YES;
+        _private->scheduledLayoutPending = YES;
     }
 }
 
 - (void)_timedLayout: (id)userInfo
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[_framePrivate->state]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[_private->state]);
     
-    _framePrivate->scheduledLayoutPending = NO;
-    if (_framePrivate->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
+    _private->scheduledLayoutPending = NO;
+    if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
         [[self view] setNeedsLayout: YES];
@@ -189,7 +189,7 @@ static const char * const stateNames[6] = {
         case IFWEBFRAMESTATE_UNINITIALIZED:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE from %s", stateNames[_framePrivate->state]] userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE from %s", stateNames[_private->state]] userInfo: nil] raise];
             return;
         }
     }
@@ -214,7 +214,7 @@ static const char * const stateNames[6] = {
             [view _removeSubviews];
             
             // Set the committed data source on the frame.
-            [self _setDataSource: _framePrivate->provisionalDataSource];
+            [self _setDataSource: _private->provisionalDataSource];
             
             // If we're a frame (not the main frame) hookup the kde internals.  This introduces a nasty dependency 
             // in kde on the view.
@@ -226,11 +226,11 @@ static const char * const stateNames[6] = {
         
             // dataSourceChanged: will reset the view and begin trying to
             // display the new new datasource.
-            [view dataSourceChanged: _framePrivate->provisionalDataSource];
+            [view dataSourceChanged: _private->provisionalDataSource];
         
             
             // Now that the provisional data source is committed, release it.
-            [_framePrivate setProvisionalDataSource: nil];
+            [_private setProvisionalDataSource: nil];
         
             [self _setState: IFWEBFRAMESTATE_COMMITTED_PAGE];
         
@@ -249,7 +249,7 @@ static const char * const stateNames[6] = {
         case IFWEBFRAMESTATE_COMPLETE:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED from %s", stateNames[_framePrivate->state]] userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED from %s", stateNames[_private->state]] userInfo: nil] raise];
             return;
         }
     }
@@ -257,27 +257,27 @@ static const char * const stateNames[6] = {
 
 - (IFWebFrameState)_state
 {
-    return _framePrivate->state;
+    return _private->state;
 }
 
 - (void)_setState: (IFWebFrameState)newState
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[_framePrivate->state], stateNames[newState]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[_private->state], stateNames[newState]);
     if ([self controller])
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[_framePrivate->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     if (newState == IFWEBFRAMESTATE_COMPLETE && self == [[self controller] mainFrame])
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] inputURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
 
-    _framePrivate->state = newState;
+    _private->state = newState;
 }
 
 - (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription
 {
-    if (_framePrivate->errors == 0)
-        _framePrivate->errors = [[NSMutableDictionary alloc] init];
+    if (_private->errors == 0)
+        _private->errors = [[NSMutableDictionary alloc] init];
         
-    [_framePrivate->errors setObject: error forKey: resourceDescription];
+    [_private->errors setObject: error forKey: resourceDescription];
 }
 
 - (void)_isLoadComplete
@@ -303,7 +303,7 @@ static const char * const stateNames[6] = {
                 if (![[self provisionalDataSource] isLoading]) {
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
                     // We now the provisional data source didn't cut the mustard, release it.
-                    [_framePrivate setProvisionalDataSource: nil];
+                    [_private setProvisionalDataSource: nil];
                     
                     [self _setState: IFWEBFRAMESTATE_COMPLETE];
                     [[[self provisionalDataSource] _locationChangeHandler] locationChangeDone: [self mainDocumentError]];
@@ -419,16 +419,16 @@ static const char * const stateNames[6] = {
 - (void)_setMainDocumentError: (IFError *)error
 {
     [error retain];
-    [_framePrivate->mainDocumentError release];
-    _framePrivate->mainDocumentError = error;
+    [_private->mainDocumentError release];
+    _private->mainDocumentError = error;
 }
 
 - (void)_clearErrors
 {
-    [_framePrivate->errors release];
-    _framePrivate->errors = nil;
-    [_framePrivate->mainDocumentError release];
-    _framePrivate->mainDocumentError = nil;
+    [_private->errors release];
+    _private->errors = nil;
+    [_private->mainDocumentError release];
+    _private->mainDocumentError = nil;
 }
 
 @end

@@ -26,7 +26,7 @@
 @interface IFWebDataSource : NSObject
 {
 @private
-    IFWebDataSourcePrivate *_dataSourcePrivate;
+    IFWebDataSourcePrivate *_private;
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
