@@ -1,3 +1,12 @@
+2003-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3506739: nil-deref in DocumentImpl::setSelection triple clicking (generated content)
+
+        * khtml/khtml_part.cpp: (KHTMLPart::khtmlMousePressEvent): Check for the case where
+        m_selectionEnd is 0. This doesn't fix the behavior completely, but it does prevent a crash.
+
 2003-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
