@@ -504,7 +504,7 @@ Range Selection::toRange() const
 
 void Selection::layoutCaret()
 {
-    if (state() != CARET || isEmpty()) {
+    if (state() != CARET || isEmpty() || !start().node()->inDocument()) {
         m_caretX = m_caretY = m_caretSize = 0;
         return;
     }

@@ -1,3 +1,18 @@
+2004-08-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3747945> Deleting replaced element can cause crash
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::layoutCaret): The crux of the problem is that
+        the caret drawing code tries to draw the caret at the image
+        offset after it has been removed from the document. So, make
+        sure the start node for the selection is in the document before
+        trying to lay out the caret using that node.
+
 2004-07-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
