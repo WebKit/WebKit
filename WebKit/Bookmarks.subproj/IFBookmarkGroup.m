@@ -51,15 +51,26 @@
     return _topBookmark;
 }
 
-- (void)_sendBookmarkGroupChangedNotification
+- (void)_sendChangeNotificationForBookmark:(IFBookmark *)bookmark
+                           childrenChanged:(BOOL)flag
 {
+    NSDictionary *userInfo;
+
+    WEBKIT_ASSERT (bookmark != nil);
+    
     if (_loading) {
         return;
     }
+
+    userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+        bookmark, IFModifiedBookmarkKey,
+        [NSNumber numberWithBool:flag], IFBookmarkChildrenChangedKey,
+        nil];
     
     [[NSNotificationCenter defaultCenter]
-        postNotificationName: IFBookmarkGroupChangedNotification
-                      object: self];
+        postNotificationName:IFBookmarkGroupChangedNotification
+                      object:self
+                    userInfo:userInfo];
 }
 
 - (void)_setTopBookmark:(IFBookmark *)newTopBookmark
@@ -86,24 +97,20 @@
     }
 
     if (hadChildren || hasChildrenNow) {
-        [self _sendBookmarkGroupChangedNotification];
+        [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
     }
 }
 
 - (void)_bookmarkDidChange:(IFBookmark *)bookmark
 {
-    // FIXME: send enough info that organizing window can know
-    // to only update this item
-    [self _sendBookmarkGroupChangedNotification];
+    [self _sendChangeNotificationForBookmark:bookmark childrenChanged:NO];
 }
 
 - (void)_bookmarkChildrenDidChange:(IFBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, ![bookmark isLeaf]);
     
-    // FIXME: send enough info that organizing window can know
-    // to only update this folder deep
-    [self _sendBookmarkGroupChangedNotification];
+    [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
 
 - (void)insertBookmark:(IFBookmark *)bookmark

@@ -78,6 +78,10 @@
 
 - (void)setTitle:(NSString *)title
 {
+    if ([title isEqualToString:[self title]]) {
+        return;
+    }
+    
     [_entry setTitle:title];
 
     [[self _group] _bookmarkDidChange:self];    

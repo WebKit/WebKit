@@ -1,3 +1,20 @@
+2002-05-06  John Sullivan  <sullivan@apple.com>
+
+	Some improvements to the bookmark changed notifications.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _sendChangeNotificationForBookmark:childrenChanged:]):
+	(-[IFBookmarkGroup _setTopBookmark:]):
+	(-[IFBookmarkGroup _bookmarkDidChange:]):
+	(-[IFBookmarkGroup _bookmarkChildrenDidChange:]):
+	Send bookmark that changed and whether its children changed as part of
+	change notifications, so clients can choose to do less unnecessary work.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf setTitle:]): Check for the no-change case
+	and bail out without sending notification when you find it.
+
 2002-05-06  Darin Adler  <darin@apple.com>
 
 	* WebKitPrefix.h: Added.
