@@ -29,5 +29,5 @@ int main() {
     cout << (p3 != p4) << endl;
     cout << p5 << endl;
 
-    return 1;
+    return 0;
 }
