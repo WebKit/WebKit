@@ -214,7 +214,7 @@
 	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource documentTextFromDOM]):
 	Remove an unneeded cast and an extra retain/autorelease.
 
-in 2002-04-16  Darin Adler  <darin@apple.com>
+2002-04-16  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebFrame.h:
 	* WebView.subproj/IFWebFrame.mm:
