@@ -1,5 +1,9 @@
 2002-05-07  Darin Adler  <darin@apple.com>
 
+	* kwq/KWQFontMetrics.mm: Fixed storage leak by initializing refCount.
+
+2002-05-07  Darin Adler  <darin@apple.com>
+
 	Move more plugin code into WebKit.
 
 	Stop using IF for anything in WebCore to help make it clear what's part of

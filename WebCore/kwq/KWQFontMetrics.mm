@@ -36,6 +36,7 @@ struct QFontMetricsPrivate
 {
     QFontMetricsPrivate(const QFont &font)
     {
+        refCount = 0;
         renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFamily:font.getNSFamily() traits:font.getNSTraits() size:font.getNSSize()] retain];
     }
     ~QFontMetricsPrivate()
@@ -51,6 +52,9 @@ struct QFontMetricsPrivate
     
 private:
     id <WebCoreTextRenderer> renderer;
+    
+    QFontMetricsPrivate(const QFontMetricsPrivate&);
+    QFontMetricsPrivate& operator=(const QFontMetricsPrivate&);
 };
 
 QFontMetrics::QFontMetrics()
