@@ -1307,13 +1307,6 @@ void KHTMLParser::startBody()
 
     inBody = true;
 
-    // This hack exists only to deal with unsetting the m_blockBidi
-    // bits in RenderFlows.  For more info, see render_object.h, and
-    // look at the closeEntireTree() method.
-    if (!document->document()->haveStylesheetsLoaded() && 
-	document->document()->renderer())
-        document->document()->renderer()->closeEntireTree();
-
     if( isindex ) {
         insertNode( isindex, true /* don't decend into this node */ );
         isindex = 0;

@@ -1,5 +1,12 @@
 2002-10-21  Darin Adler  <darin@apple.com>
 
+	Remove closeEntireTree now that deferred close takes care of that case.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::startBody):
+        * khtml/rendering/render_object.h:
+
+2002-10-21  Darin Adler  <darin@apple.com>
+
 	- fixed 3075041 -- text larger/smaller increment too large when font-size specified as %
 
         * khtml/css/cssstyleselector.cpp: Don't apply the zoom factor to a font size that

@@ -171,21 +171,6 @@ public:
 
     void setOverhangingContents(bool p=true);
     
-    // This hack function is only required to clear the m_blockBidi variable
-    // in RenderFlows.  Unless this variable is cleared, inline children are
-    // prevented from laying out.  In the asynchronous stylesheet case, we
-    // don't go through the parser when attaching, so close() doesn't get called.
-    // Therefore blocks end up unwilling to lay out inline children when the
-    // stylesheets finally do come in. -- dwh
-    void closeEntireTree() {
-      RenderObject *child = firstChild();
-      while (child) {
-          child->closeEntireTree();
-          child = child->nextSibling();
-      }
-      close();
-    }
-
     void setLayouted(bool b=true);
         
     // hack to block inline layouts during parsing
