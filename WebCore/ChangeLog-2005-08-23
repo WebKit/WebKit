@@ -3,6 +3,7 @@
         Reviewed by John.
 
 	<rdar://problem/3505795>: loading invalid XML document crashes trying to create h1 element
+	<rdar://problem/3504158>: XMLHttpRequest xhtml test totally fails
         
 	* khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::isValidName): include "0123456789" instead of
