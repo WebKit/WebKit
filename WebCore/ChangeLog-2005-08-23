@@ -1,5 +1,12 @@
 2004-09-15  Darin Adler  <darin@apple.com>
 
+        - fixed Panther build
+
+        * kwq/KWQAccObject.mm: (-[KWQAccObject accessibilityActionDescription:]): Fixed backwards
+        check in #if that was compiling the code on Panther only rather than Tiger only.
+
+2004-09-15  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed lockFocus exception I observed; perhaps not a real issue in the field due to exception blocking

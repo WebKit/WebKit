@@ -532,7 +532,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (NSString *)accessibilityActionDescription:(NSString *)action
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     // We don't need action descriptions on Panther and we don't have the call
     // to get at localized ones anyway. At some point we may want to conditionally
     // compile this entire file instead, but this is OK too.
