@@ -1,5 +1,13 @@
 2002-07-02  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed asseration failure caused by an iframe not having a correct mime type.
+	We now assume that local files without extensions are html files. 
+
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (+[IFWebController _MIMETypeForFile:]):
+
+2002-07-02  Chris Blumenberg  <cblu@apple.com>
+
         - Moved all policy methods to IFWebControllerPolicyHandler.h
         - Moved all file URL error checking to WebKit
         - Implemented file URL policy methods

@@ -209,6 +209,9 @@
 {
     NSString *extension = [path pathExtension];
     
+    if([extension isEqualToString:@""])
+        return @"text/html";
+        
     return [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
