@@ -228,12 +228,8 @@ static NSMutableArray *activeImageRenderers;
     // Check and see if a single draw of the image can convert the entire area we are supposed to tile.
     WEBKIT_ASSERT([[NSView focusView] isFlipped]);
     NSRect oneTileRect;
-    oneTileRect.origin.x = fmodf(rect.origin.x - point.x, size.width);
-    if (oneTileRect.origin.x > 0)
-        oneTileRect.origin.x -= size.width;
-    oneTileRect.origin.y = fmodf(rect.origin.y - point.y, size.height);
-    if (oneTileRect.origin.y > 0)
-        oneTileRect.origin.y -= size.height;
+    oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, size.width) - size.width, size.width);
+    oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, size.height) - size.height, size.height);
     oneTileRect.size = size;
     
     // If the single image draw covers the whole area, then just draw once.

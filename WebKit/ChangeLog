@@ -1,3 +1,9 @@
+2002-06-29  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer tileInRect:fromPoint:]): Fix calculation of oneTileRect.
+	I think this is finally correct now.
+
 2002-06-29  Maciej Stachowiak  <mjs@apple.com>
 
         WebKit part of fix for:
