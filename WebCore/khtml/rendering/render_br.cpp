@@ -116,3 +116,8 @@ void RenderBR::caretPos(int offset, bool override, int &_x, int &_y, int &_w, in
     _x += absx;
     _y += absy;
 }
+
+InlineBox *RenderBR::inlineBox(long offset)
+{
+    return firstTextBox();
+}

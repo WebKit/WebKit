@@ -26,6 +26,7 @@
 #include "rendering/render_object.h"
 #include "rendering/render_table.h"
 #include "rendering/render_text.h"
+#include "rendering/render_line.h"
 #include "rendering/render_list.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
@@ -2150,4 +2151,9 @@ long RenderObject::caretMaxOffset() const
 unsigned long RenderObject::caretMaxRenderedOffset() const
 {
     return 0;
+}
+
+InlineBox *RenderObject::inlineBox(long offset)
+{
+    return inlineBoxWrapper();
 }

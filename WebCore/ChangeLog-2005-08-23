@@ -2,6 +2,32 @@
 
         Reviewed by Darin
 
+        Changed inlineBoxForRenderer(RenderObject *, int) helper that was static 
+        in dom_position.cpp into a virtual method on RenderObjects. Function is
+        now called inlineBox(int). Functionality unchanged.
+
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::inlineBox)
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretMaxRenderedOffset)
+        (RenderObject::inlineBox)
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::inlineBox)
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::renderersOnDifferentLine):
+        (DOM::nextRenderedEditable)
+        (DOM::previousRenderedEditable)
+        (DOM::Position::previousLinePosition)
+        (DOM::Position::nextLinePosition)
+        (DOM::Position::rendersInDifferentPosition)
+
+2004-04-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         * khtml/editing/htmlediting_impl.cpp:
         (DeleteSelectionCommandImpl::doApply): Fix editing test
         regression with deleting whitespace at the end of the line.

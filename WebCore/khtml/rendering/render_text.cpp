@@ -1443,6 +1443,23 @@ unsigned long RenderText::caretMaxRenderedOffset() const
     return l;
 }
 
+InlineBox *RenderText::inlineBox(long offset)
+{
+    for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
+            return box;
+        }
+        else if (offset < box->m_start) {
+            // The offset we're looking for is before this node
+            // this means the offset must be in content that is
+            // not rendered.
+            return box->prevTextBox() ? box->prevTextBox() : firstTextBox();
+        }
+    }
+    
+    return 0;
+}
+
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
                                        int startOffset, int endOffset)
 :RenderText(_node, _str->substring(startOffset, endOffset)), 

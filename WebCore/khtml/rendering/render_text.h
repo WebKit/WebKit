@@ -218,6 +218,8 @@ public:
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
     
+    virtual InlineBox *inlineBox(long offset);
+    
 #if APPLE_CHANGES
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;

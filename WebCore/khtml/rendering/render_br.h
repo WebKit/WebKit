@@ -70,6 +70,8 @@ public:
     virtual DOM::Position positionForCoordinates(int _x, int _y);
     virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
 
+    virtual InlineBox *inlineBox(long offset);
+    
 private:
     int m_x;
     int m_y;
