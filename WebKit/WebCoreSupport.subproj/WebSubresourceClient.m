@@ -103,7 +103,7 @@
     [self receivedProgressWithHandle:handle complete: NO];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
+- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
@@ -147,7 +147,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDidFailLoadingWithResult:(WebError *)error
+- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)error
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 

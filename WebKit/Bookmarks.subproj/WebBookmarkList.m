@@ -117,10 +117,9 @@
 
     count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {
-        WebBookmark *childCopy;
-
-        childCopy = [[[_list objectAtIndex:index] copyWithZone:zone] autorelease];
+        WebBookmark *childCopy = [[_list objectAtIndex:index] copyWithZone:zone];
         [copy insertChild:childCopy atIndex:index];
+        [childCopy release];
     }
 
     return copy;

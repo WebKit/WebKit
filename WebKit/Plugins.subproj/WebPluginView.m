@@ -735,9 +735,11 @@
                 // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
                 // so we have to allow this as well. Needed for iTools.
             }
-            dataSource = [[[WebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
-            if([frame setProvisionalDataSource:dataSource])
+            dataSource = [[WebDataSource alloc] initWithURL:url attributes:attributes];
+            if ([frame setProvisionalDataSource:dataSource]) {
                 [frame startLoading];
+            }
+            [dataSource release];
         }
     }
     return NPERR_NO_ERROR;

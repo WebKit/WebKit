@@ -66,10 +66,10 @@
     [mainHandle release];
     [mainURLHandleClient release];
     [urlHandles release];
-    [pageTitle autorelease];
-    [downloadPath autorelease];
-    [encoding autorelease];
-    [contentType autorelease];
+    [pageTitle release];
+    [downloadPath release];
+    [encoding release];
+    [contentType release];
     [errors release];
     [mainDocumentError release];
     [locationChangeHandler release];
@@ -162,7 +162,7 @@
         [self _loadPageIconIfNecessary];
         [_private->mainURLHandleClient release];
         _private->mainURLHandleClient = 0; 
-        [_private->mainHandle autorelease];
+        [_private->mainHandle release];
         _private->mainHandle = 0;
         [self _updateLoading];
     }
@@ -283,7 +283,7 @@
             return;
     }
     
-    [_private->pageTitle autorelease];
+    [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
     
     // The title doesn't get communicated to the controller until
@@ -462,7 +462,9 @@
 
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
-	[self _setRepresentation:(id<WebDocumentRepresentation>)(repClass != nil ? [[repClass alloc] init] : nil)];
+        id newRep = repClass != nil ? [[repClass alloc] init] : nil;
+	[self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
+        [newRep release];
     }
 
     [[[self webFrame] webView] _makeDocumentViewForDataSource:self];

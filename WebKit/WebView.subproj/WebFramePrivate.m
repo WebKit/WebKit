@@ -37,33 +37,38 @@ static const char * const stateNames[6] = {
 
 - (void)dealloc
 {
+    [scheduledLayoutTimer invalidate];
+    [scheduledLayoutTimer release];
+    
     [webView _setController: nil];
     [dataSource _setController: nil];
     [dataSource _setLocationChangeHandler: nil];
     [provisionalDataSource _setController: nil];
     [provisionalDataSource _setLocationChangeHandler: nil];
 
-    [name autorelease];
-    [webView autorelease];
-    [dataSource autorelease];
-    [provisionalDataSource autorelease];
+    [name release];
+    [webView release];
+    [dataSource release];
+    [provisionalDataSource release];
     [frameBridge release];
     
     [super dealloc];
 }
 
 - (NSString *)name { return name; }
-- (void)setName: (NSString *)n 
+- (void)setName:(NSString *)n 
 {
-    [name autorelease];
-    name = [n retain];
+    NSString *newName = [n copy];
+    [name release];
+    name = newName;
 }
 
 - (WebView *)webView { return webView; }
 - (void)setWebView: (WebView *)v 
 { 
-    [webView autorelease];
-    webView = [v retain];
+    [v retain];
+    [webView release];
+    webView = v;
 }
 
 - (WebDataSource *)dataSource { return dataSource; }
@@ -71,7 +76,7 @@ static const char * const stateNames[6] = {
 {
     if (dataSource != d) {
         [dataSource _removeFromFrame];
-        [dataSource autorelease];
+        [dataSource release];
         dataSource = [d retain];
     }
 }
@@ -85,10 +90,9 @@ static const char * const stateNames[6] = {
 - (WebDataSource *)provisionalDataSource { return provisionalDataSource; }
 - (void)setProvisionalDataSource: (WebDataSource *)d
 { 
-    if (provisionalDataSource != d) {
-        [provisionalDataSource autorelease];
-        provisionalDataSource = [d retain];
-    }
+    [d retain];
+    [provisionalDataSource release];
+    provisionalDataSource = d;
 }
 
 @end
@@ -113,11 +117,11 @@ static const char * const stateNames[6] = {
     [ds _setController: [self controller]];
 }
 
-- (void)_scheduleLayout: (NSTimeInterval)inSeconds
+- (void)_scheduleLayout:(NSTimeInterval)inSeconds
 {
-    if (_private->scheduledLayoutPending == NO) {
-        [NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
-        _private->scheduledLayoutPending = YES;
+    // FIXME: Maybe this should have the code to move up the deadline if the new interval brings the time even closer.
+    if (_private->scheduledLayoutTimer == nil) {
+        _private->scheduledLayoutTimer = [[NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector:@selector(_timedLayout:) userInfo:nil repeats:FALSE] retain];
     }
 }
 
@@ -125,7 +129,9 @@ static const char * const stateNames[6] = {
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[_private->state]);
     
-    _private->scheduledLayoutPending = NO;
+    [_private->scheduledLayoutTimer release];
+    _private->scheduledLayoutTimer = nil;
+    
     if (_private->state == WebFrameStateLayoutAcceptable) {
         NSView <WebDocumentView> *documentView = [[self webView] documentView];
         

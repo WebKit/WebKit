@@ -42,7 +42,7 @@ typedef enum {
     WebDataSource *provisionalDataSource;
     WebController *controller;
     WebFrameState state;
-    BOOL scheduledLayoutPending;
+    NSTimer *scheduledLayoutTimer;
     WebFrameBridge *frameBridge;
 }
 

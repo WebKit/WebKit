@@ -14,6 +14,7 @@ int WebBridgeCount;
 int WebControllerCount;
 int WebDataSourceCount;
 int WebFrameCount;
+int WebHTMLRepresentationCount;
 int WebViewCount;
 
 @implementation WebKitStatistics
@@ -41,6 +42,11 @@ int WebViewCount;
 + (int)bridgeCount
 {
     return WebBridgeCount;
+}
+
++ (int)HTMLRepresentationCount
+{
+    return WebHTMLRepresentationCount;
 }
 
 @end

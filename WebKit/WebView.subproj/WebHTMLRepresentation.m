@@ -4,8 +4,10 @@
 */
 
 #import <WebKit/WebHTMLRepresentation.h>
+
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -26,11 +28,15 @@
     _private = [[WebHTMLRepresentationPrivate alloc] init];
     _private->bridge = [[WebBridge alloc] init];
     
+    ++WebHTMLRepresentationCount;
+    
     return self;
 }
 
 - (void)dealloc
 {
+    --WebHTMLRepresentationCount;
+    
     [_private->bridge release];
     [_private release];
 

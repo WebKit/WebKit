@@ -34,7 +34,9 @@
     }
     if ([view isKindOfClass:[WebView class]]) {
         WebView *webView = (WebView *)view;
-        [collectChildren addObject:[[[WebRenderNode alloc] initWithWebView:webView] autorelease]];
+        WebRenderNode *node = [[WebRenderNode alloc] initWithWebView:webView];
+        [collectChildren addObject:node];
+        [node release];
     }
     
     children = [collectChildren copy];

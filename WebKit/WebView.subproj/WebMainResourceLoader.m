@@ -157,7 +157,7 @@
     [self didStopLoading];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDataDidBecomeAvailable:(NSData *)incomingData
+- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)incomingData
 {
     WebController *controller = [dataSource controller];
     NSString *contentType = [handle contentType];
@@ -232,7 +232,7 @@
     isFirstChunk = NO;
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDidFailLoadingWithResult:(WebError *)result
+- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)result
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, result = %s\n", DEBUG_OBJECT([handle url]), DEBUG_OBJECT([result errorDescription]));
 

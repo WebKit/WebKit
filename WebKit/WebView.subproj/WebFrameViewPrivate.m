@@ -70,7 +70,9 @@
 -(void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
     Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[dataSource contentType]];
-    [self _setDocumentView: (id<WebDocumentLoading>)(viewClass ? [[[viewClass alloc] init] autorelease] : nil)];
+    id documentView = viewClass ? [[viewClass alloc] init] : nil;
+    [self _setDocumentView:(id<WebDocumentLoading>)documentView];
+    [documentView release];
 
     [[self documentView] provisionalDataSourceChanged:dataSource];
 }

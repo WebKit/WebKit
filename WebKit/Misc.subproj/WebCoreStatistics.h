@@ -13,8 +13,8 @@
 }
 
 + (NSArray *)statistics;
-+ (void)empty;
-+ (void)setDisabled:(BOOL)disabled;
++ (void)emptyCache;
++ (void)setCacheDisabled:(BOOL)disabled;
 
 + (int)javaScriptObjectsCount;
 + (int)javaScriptInterpretersCount;

@@ -230,7 +230,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     [[view webController] _didStartLoading:URL];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
+- (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
 {
     WebController *webController = [view webController];
     
@@ -277,7 +277,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     [webController _didStopLoading:URL];
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDidFailLoadingWithResult:(WebError *)result
+- (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)result
 {
     WebController *webController = [view webController];
     

@@ -50,10 +50,10 @@
     [self _clearControllerReferences: mainFrame];
 
     [mainFrame reset];
-    [mainFrame autorelease];
-    [windowContext autorelease];
-    [resourceProgressHandler autorelease];
-    [policyHandler autorelease];
+    [mainFrame release];
+    [windowContext release];
+    [resourceProgressHandler release];
+    [policyHandler release];
 
     [super dealloc];
 }

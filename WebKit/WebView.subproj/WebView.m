@@ -65,36 +65,42 @@
     WebView *childView;
     WebFrame *newFrame;
 
-    childView = [[[WebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
+    childView = [[WebView alloc] initWithFrame: NSMakeRect(0,0,0,0)];
 
-    newFrame = [[[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self] autorelease];
+    newFrame = [[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self];
 
     [parentDataSource addFrame: newFrame];
+    
+    [newFrame release];
 
     [childView _setController: self];
     [childDataSource _setController: self];
 
     [childView setAllowsScrolling: allowsScrolling];
+    
+    [childView release];
         
     return newFrame;
 }
 
 
-- (void)setWindowContext: (id<WebWindowContext>)context
+- (void)setWindowContext:(id <WebWindowContext>)context
 {
-    [_private->windowContext autorelease];
-    _private->windowContext = [context retain];
+    [context retain];
+    [_private->windowContext release];
+    _private->windowContext = context;
 }
 
-- (id<WebWindowContext>)windowContext
+- (id <WebWindowContext>)windowContext
 {
     return _private->windowContext;
 }
 
-- (void)setResourceProgressHandler: (id<WebResourceProgressHandler>)handler
+- (void)setResourceProgressHandler: (id <WebResourceProgressHandler>)handler
 {
-    [_private->resourceProgressHandler autorelease];
-    _private->resourceProgressHandler = [handler retain];
+    [handler retain];
+    [_private->resourceProgressHandler release];
+    _private->resourceProgressHandler = handler;
 }
 
 
@@ -106,8 +112,9 @@
 
 - (void)setDownloadProgressHandler: (id<WebResourceProgressHandler>)handler
 {
-    [_private->downloadProgressHandler autorelease];
-    _private->downloadProgressHandler = [handler retain];
+    [handler retain];
+    [_private->downloadProgressHandler release];
+    _private->downloadProgressHandler = handler;
 }
 
 
@@ -117,10 +124,11 @@
 }
 
 
-- (void)setPolicyHandler: (id<WebControllerPolicyHandler>)handler
+- (void)setPolicyHandler:(id <WebControllerPolicyHandler>)handler
 {
-    [_private->policyHandler autorelease];
-    _private->policyHandler = [handler retain];
+    [handler retain];
+    [_private->policyHandler release];
+    _private->policyHandler = handler;
 }
 
 - (id<WebControllerPolicyHandler>)policyHandler

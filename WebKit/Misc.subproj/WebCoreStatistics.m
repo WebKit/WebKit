@@ -18,12 +18,12 @@
     return [WebCoreCache statistics];
 }
 
-+ (void)empty
++ (void)emptyCache
 {
     [WebCoreCache empty];
 }
 
-+ (void)setDisabled:(BOOL)disabled
++ (void)setCacheDisabled:(BOOL)disabled
 {
     [WebCoreCache setDisabled:disabled];
 }

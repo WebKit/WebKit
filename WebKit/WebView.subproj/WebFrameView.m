@@ -77,7 +77,6 @@ enum {
     return self;
 }
 
-
 - (void)dealloc 
 {
     --WebViewCount;
@@ -193,11 +192,12 @@ enum {
         return;
     }
     
-    dataSource = [[[WebDataSource alloc] initWithURL:URL] autorelease];
+    dataSource = [[WebDataSource alloc] initWithURL:URL];
     frame = [[self controller] mainFrame];
     if ([frame setProvisionalDataSource:dataSource]) {
         [frame startLoading];
     }
+    [dataSource release];
 }
 
 + (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType

@@ -82,11 +82,13 @@
     WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil ||
                              [newTopBookmark bookmarkType] == WebBookmarkTypeList);
     
+    [newTopBookmark retain];
+    
     [_topBookmark _setGroup:nil];
-    [_topBookmark autorelease];
+    [_topBookmark release];
 
     if (newTopBookmark) {
-        _topBookmark = [newTopBookmark retain];
+        _topBookmark = newTopBookmark;
     } else {
         _topBookmark = [[WebBookmarkList alloc] initWithTitle:nil image:nil group:self];
     }
@@ -164,21 +166,21 @@
     WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == WebBookmarkTypeLeaf || (newURLString == nil));
     
     if (bookmarkType == WebBookmarkTypeLeaf) {
-        bookmark = [[[WebBookmarkLeaf alloc] initWithURLString:newURLString
+        bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
                                                         image:newImage
-                                                        group:self] autorelease];
+                                                        group:self];
     } else if (bookmarkType == WebBookmarkTypeSeparator) {
-        bookmark = [[[WebBookmarkSeparator alloc] initWithGroup:self] autorelease];
+        bookmark = [[WebBookmarkSeparator alloc] initWithGroup:self];
     } else {
         WEBKIT_ASSERT (bookmarkType == WebBookmarkTypeList);
-        bookmark = [[[WebBookmarkList alloc] initWithTitle:newTitle
+        bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
                                                     image:newImage
-                                                    group:self] autorelease];
+                                                    group:self];
     }
 
     [parent insertChild:bookmark atIndex:index];
-    return bookmark;
+    return [bookmark autorelease];
 }
 
 - (NSString *)file
@@ -211,8 +213,9 @@
     }
 
     _loading = YES;
-    newTopBookmark = [[[WebBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
+    newTopBookmark = [[WebBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self];
     [self _setTopBookmark:newTopBookmark];
+    [newTopBookmark release];
     _loading = NO;
 
     return YES;

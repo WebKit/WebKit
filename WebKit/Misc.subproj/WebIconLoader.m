@@ -107,18 +107,19 @@
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
 {
     NSImage *image = [[NSImage alloc] initWithData:data];
-    if(image){
-        [_private->delegate receivedPageIcon:[image autorelease]];
+    if (image) {
+        [_private->delegate receivedPageIcon:image];
+        [image release];
     }
 }
 
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+- (void)WebResourceHandle:(WebResourceHandle *)sender dataDidBecomeAvailable:(NSData *)data
 {
 
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender resourceDidFailLoadingWithResult:(WebError *)result
+- (void)WebResourceHandle:(WebResourceHandle *)sender didFailLoadingWithResult:(WebError *)result
 {
 
 }

@@ -62,7 +62,7 @@
         [dummyDataSource release];
         
     } else if ([self setProvisionalDataSource: d] == NO){
-        [self autorelease];
+        [self release];
         return nil;
     }
     
@@ -212,6 +212,10 @@
 	[htmlView _reset];
     }
     [_private setWebView: nil];
+    
+    [_private->scheduledLayoutTimer invalidate];
+    [_private->scheduledLayoutTimer release];
+    _private->scheduledLayoutTimer = nil;
 }
 
 + _frameNamed:(NSString *)name fromFrame: (WebFrame *)aFrame

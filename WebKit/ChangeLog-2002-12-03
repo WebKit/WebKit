@@ -1,3 +1,78 @@
+2002-07-19  Darin Adler  <darin@apple.com>
+
+	- fixed 3001951 -- Massive memory leak after running base or static PLT
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _makeRepresentation]):
+	Add a missing release.
+
+	Reduced our use of autorelease. This allows the page load test to detect leaks of the
+	world much more easily. We may later find we need to use the "retain autorelease" idiom
+	in a few more places, but I did a lot of testing and that did not show up.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _setTopBookmark:]): Use a plain release.
+        (-[WebBookmarkGroup _loadBookmarkGroupGuts]): Use a plain release.
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList copyWithZone:]): Use a plain release.
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]): Use a plain release.
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]): Use a plain release.
+        * WebView.subproj/WebController.m:
+        (-[WebController createFrameNamed:for:inParent:allowsScrolling:]): Use a plain release.
+        (-[WebController setWindowContext:]): Use a plain release.
+        (-[WebController setResourceProgressHandler:]): Use a plain release.
+        (-[WebController setDownloadProgressHandler:]): Use a plain release.
+        (-[WebController setPolicyHandler:]): Use a plain release.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Use plain release.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Use plain release.
+        (-[WebDataSource _setPrimaryLoadComplete:]): Use plain release.
+        (-[WebDataSource _setTitle:]): Use plain release.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]): Use plain release.
+        (-[WebFrame reset]): Invalidate and release the timer.
+        * WebView.subproj/WebFramePrivate.h: Keep a reference to the timer.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): Invalidate and release the timer. Use plain release.
+        (-[WebFramePrivate setName:]): Use plain release.
+        (-[WebFramePrivate setWebView:]): Use plain release.
+        (-[WebFramePrivate setDataSource:]): Use plain release.
+        (-[WebFramePrivate setProvisionalDataSource:]): Use plain release.
+        (-[WebFrame _scheduleLayout:]): Keep a reference to the timer.
+        (-[WebFrame _timedLayout:]): Release and nil the timer.
+        * WebView.subproj/WebRenderNode.m:
+        (-[WebRenderNode initWithName:rect:view:children:]): Use plain release.
+        * WebView.subproj/WebView.m:
+        (-[WebView concludeDragOperation:]): Use plain release.
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]): Use plain release.
+
+	Other changes to make the new page load test feature work.
+
+        * Misc.subproj/WebKitStatistics.h:
+        * Misc.subproj/WebKitStatistics.m:
+        (+[WebKitStatistics HTMLRepresentationCount]):
+	Added a stat for WebHTMLRepresentation objects.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation init]): Bump the count.
+        (-[WebHTMLRepresentation dealloc]): Decrement the count.
+
+	Renaming.
+
+        * Misc.subproj/WebCoreStatistics.h:
+        * Misc.subproj/WebKitStatisticsPrivate.h:
+        * Misc.subproj/WebCoreStatistics.m:
+        (+[WebCoreStatistics emptyCache]):
+        (+[WebCoreStatistics setCacheDisabled:]):
+	Renamed to include the word cache now that the class does not.
+
+        * Plugins.subproj/WebPluginStream.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        Updated for the WebFoundation renaming.
+
 2002-07-19  Chris Blumenberg  <cblu@apple.com>
 
         * WebView.subproj/WebDataSourcePrivate.m:
