@@ -403,7 +403,14 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
                     break;
                 }
 
-                return VisiblePosition(pos, DOWNSTREAM);
+                // Work around <rdar://problem/4040763>.  Need to
+                // doublecheck that pos is really on a different line,
+                // because it might not be a viable VisiblePosition
+                // (whereupon the next VP is returned, which could be
+                // back on c's line)
+                VisiblePosition c2 = VisiblePosition(pos, DOWNSTREAM);
+                if (visiblePositionsOnDifferentLines(c, c2))
+                    return c2;
             }
             n = n->previousEditable();
         }
