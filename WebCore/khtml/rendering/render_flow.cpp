@@ -638,7 +638,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             }
             
             child->setPos(child->xPos(), ypos);
-            if (ypos != yPosEstimate) {
+            if (ypos != yPosEstimate && (child->containsSpecial() || containsSpecial())) {
                 // Our guess was wrong. Make the child lay itself out again.
                 // XXXdwh some debugging code for this.
                 // printf("WE WERE WRONG for object %d (%d, %d)!\n", (int)child, yPosEstimate, ypos);

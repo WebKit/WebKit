@@ -1439,7 +1439,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                 lBreak.pos = pos - 1;
             } else {
                 lBreak.obj = last;
-                lBreak.pos = last->length();
+                lBreak.pos = last->isText() ? last->length() : 0;
             }
         } else if( lBreak.obj ) {
             if( last != o ) {

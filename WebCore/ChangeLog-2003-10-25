@@ -1,3 +1,17 @@
+2002-12-11  David Hyatt  <hyatt@apple.com>
+
+	Fix hang on monkeyvoodoo.net and on skramkoob.com.  The bugs
+	are 3105714 and 3045965.  Also fix margin collapsing churn
+	on thestar by not laying out a second time when collapsing
+	margins make you move unless you contain floats.
+	
+        Reviewed by: gramps
+
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+	* khtml/rendering/render_flow.cpp:
+	(RenderFlow::layoutBlockChildren);
+
 2002-12-11  Richard Williamson   <rjw@apple.com>
 
         Fixed 3124121, 3124716 (and other dupes).  Regressions related to b/f crash.
