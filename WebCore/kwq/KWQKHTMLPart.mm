@@ -1683,14 +1683,14 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
     IFWebFrame *aFrame;
     IFWebDataSource *dataSource;
     
-    fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
+    //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
     dataSource = getDataSource();
 
     aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
-        fprintf (stdout, "0x%08x requestFrame():  frame found part = 0x%08x\n", (unsigned int)this, (unsigned int)frame);    
-        fprintf (stdout, "0x%08x requestFrame():  frame found _widget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _widget]);    
-        fprintf (stdout, "0x%08x requestFrame():  frame found _provisionalWidget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _provisionalWidget]);    
+        //fprintf (stdout, "0x%08x requestFrame():  frame found part = 0x%08x\n", (unsigned int)this, (unsigned int)frame);    
+        //fprintf (stdout, "0x%08x requestFrame():  frame found _widget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _widget]);    
+        //fprintf (stdout, "0x%08x requestFrame():  frame found _provisionalWidget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _provisionalWidget]);    
         // ?
         if ([[aFrame view] _provisionalWidget])
             frame->setWidget ([[aFrame view] _provisionalWidget]);
@@ -1708,7 +1708,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         oldDataSource = getDataSource();
         controller = [oldDataSource controller];
 
-        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, oldDataSource = 0x%08x, [oldDataSource frame] = 0x%08x\n", (unsigned int)this, (unsigned int)frame, (unsigned int)oldDataSource, (unsigned int)[oldDataSource frame]);    
+        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, oldDataSource = 0x%08x, [oldDataSource frame] = 0x%08x\n", (unsigned int)this, (unsigned int)frame, (unsigned int)oldDataSource, (unsigned int)[oldDataSource frame]);    
 
         newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource];
         if (newFrame == nil){
