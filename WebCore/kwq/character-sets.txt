@@ -5,6 +5,7 @@ CHARACTER SETS
 (last updated 2001 August 23)
 (Apple Changes: added x-sjis alias for Shift JIS, 2002 July 10) 
 (Apple Changes: added MIBenum: 1004 for ISO-10646-J-1, 2002 July 26) 
+(Apple Changes: added euc-cn alias for GB2312, 2002 August 1) 
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1580,6 +1581,7 @@ Source: Chinese for People's Republic of China (PRC) mixed one byte,
         See GB 2312-80 
         PCL Symbol Set Id: 18C
 Alias: csGB2312
+Alias: euc-cn
 
 Name: Big5  (preferred MIME name)
 MIBenum: 2026

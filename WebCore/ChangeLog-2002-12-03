@@ -1,3 +1,11 @@
+2002-08-01  Darin Adler  <darin@apple.com>
+
+        - fixed 2841277 -- support for charset=gb2312
+
+        * kwq/character-sets.txt: Added "euc-cn" to the list of aliases for
+	"gb2312", since that's the name used by CFStringEncoding for that
+	character set.
+
 2002-08-01  Maciej Stachowiak  <mjs@apple.com>
 
 	Remove KWQKHTMLPartImpl's setBaseURL method and m_baseURL field,
