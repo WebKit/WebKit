@@ -546,8 +546,7 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
         if (index < 0) {
             index += len;
         }
-        //if (internalBuffer == 0){
-        if (1){
+        if (internalBuffer == 0){
 #ifdef DEBUG_FIND_COUNTER
             findExpensiveCount++;
             if (findCount % 500 == 0)
@@ -594,7 +593,7 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
                         while (*compareTo && *_chs){
                             c1 = (UniChar)(*compareTo++);
                             c2 = (UniChar)(*_chs);
-                            if (caseSensitive){
+                            if (!caseSensitive){
                                 if (c2 >= 'a' && c2 <= 'z')
                                     otherCase_c2 = c2 - caseDelta;
                                 else if (c2 >= 'A' && c2 <= 'Z')

@@ -1,5 +1,11 @@
 2002-03-14  Richard Williamson  <rjw@apple.com>
 
+        Fixed optimized find() implementation.  I had the sense of caseSensitive inverted.
+        
+	* src/kwq/KWQString.mm: (QString::find):
+
+2002-03-14  Richard Williamson  <rjw@apple.com>
+
         Attempted implementation of space optimizations.  Disabled for now.
         
 	* src/kwq/KWQFontMetrics.mm: (+[KWQLayoutInfo _dumpLayoutCache:]),
