@@ -532,21 +532,19 @@ static const char * const stateNames[6] = {
                     return YES;
                 }
             }else if(fileURLPolicy == IFFileURLPolicyOpenExternally){
-                if(isDirectory){
-                    if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
+                if(![workspace openFile:path]){
+                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForFile 
+                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                    [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
+                }
+                return NO;
+            }else if(fileURLPolicy == IFFileURLPolicyReveal){
+                if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
                         error = [[IFError alloc] initWithErrorCode:IFErrorCodeFinderCouldntOpenDirectory 
                                     inDomain:IFErrorCodeDomainWebKit failingURL: url];
                         [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                     }
-                    return NO;
-                }else{
-                    if(![workspace openFile:path]){
-                        error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForFile 
-                                    inDomain:IFErrorCodeDomainWebKit failingURL: url];
-                        [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
-                    }
-                    return NO;
-                }
+                return NO;
             }else{
                 [NSException raise:NSInvalidArgumentException format:
                     @"fileURLPolicyForMIMEType:dataSource:isDirectory: returned an invalid IFFileURLPolicy"];

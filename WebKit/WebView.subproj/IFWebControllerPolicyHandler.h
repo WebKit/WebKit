@@ -22,6 +22,7 @@ typedef enum {
 typedef enum {
     IFFileURLPolicyUseContentPolicy,
     IFFileURLPolicyOpenExternally,
+    IFFileURLPolicyReveal,
     IFFileURLPolicyIgnore
 } IFFileURLPolicy;
 
