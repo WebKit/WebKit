@@ -1000,8 +1000,16 @@ RenderObject *RenderObject::container() const
 {
     EPosition pos = m_style->position();
     RenderObject *o = 0;
-    if( pos == FIXED )
-	o = root();
+    if( pos == FIXED ) {
+        // container() can be called on an object that is not in the
+        // tree yet.  We don't call root() since it will assert if it
+        // can't get back to the root.  Instead we just walk as high up
+        // as we can.  If we're in the tree, we'll get the root.  If we
+        // aren't we'll get the root of our little subtree (most likely
+        // we'll just return 0).
+        o = parent();
+        while ( o && o->parent() ) o = o->parent();
+    }
     else if ( pos == ABSOLUTE )
 	o = containingBlock();
     else
