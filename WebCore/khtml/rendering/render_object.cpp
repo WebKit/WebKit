@@ -1111,13 +1111,10 @@ void RenderObject::invalidateLayout()
 void RenderObject::removeFromObjectLists()
 {
     if (isFloating()) {
-        RenderBlock* outermostBlock = 0;
-        for (RenderObject* p = parent(); p; p = p->parent()) {
-            if (p->isRenderBlock())
-                outermostBlock = static_cast<RenderBlock*>(p);
-            if (!p->isRenderBlock() || !p->containsFloat(this) || p->isFloatingOrPositioned())
-                break;
-	}
+        RenderBlock* outermostBlock = containingBlock();
+        for (RenderBlock* p = outermostBlock;
+             p && !p->isRoot() && p->containsFloat(this) && !p->isFloatingOrPositioned();
+             outermostBlock = p, p = p->containingBlock());
         if (outermostBlock)
             outermostBlock->markAllDescendantsWithFloatsForLayout(this);
     }

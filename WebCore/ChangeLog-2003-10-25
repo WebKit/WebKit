@@ -1,5 +1,16 @@
 2003-04-08  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3166374.  Making the nudie blog work.  My loop for
+	removing floating objects when they got deleted wasn't catching
+	all the cases.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::removeFromObjectLists):
+
+2003-04-08  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3220979.  Regression caused by changes to the CSS
 	parser's error handling.  Fix is to narrow my original patch
 	to handle a specific subtype of error for properties.
