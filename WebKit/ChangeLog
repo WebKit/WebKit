@@ -1,5 +1,13 @@
 2004-09-27  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3594754> change null event interval from 20 ms to 10 ms to match speed on Windows
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+
+2004-09-27  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed previous reviewer line.
 
         * ChangeLog:
