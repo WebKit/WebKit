@@ -1,5 +1,7 @@
 2002-06-21  Darin Adler  <darin@apple.com>
 
+        - fixed 2964718 -- crash in KWQCheckCacheObjectStatus
+
 	* kwq/KWQKloader.mm: (KWQCheckCacheObjectStatus):
 	Handle case of nil object. Add comments. Remove questionable use
 	of floating point abs() to convert always positive int to uint.
