@@ -37,10 +37,13 @@
 //=========================================================================
 
 #import "DOMCore.h"
-#import "DOMViews.h"
-#import "DOMEvents.h"
-#import "DOMStylesheets.h"
-#import "DOMCSS.h"
-#import "DOMTraversal.h"
-#import "DOMRange.h"
-#import "DOMHTML.h"
+
+@class DOMDocumentView;
+
+@interface DOMAbstractView : DOMObject
+- (DOMDocumentView *)document;
+@end
+
+@interface DOMDocumentView : DOMObject
+- (DOMAbstractView *)defaultView;
+@end

@@ -22,7 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import "DOM-CSS.h"
+
+#import "DOMCSS.h"
 
 #include <objc/objc-class.h>
 
@@ -63,32 +64,32 @@ using DOM::StyleSheetListImpl;
 + (DOMStyleSheet *)_DOMStyleSheetWithImpl:(StyleSheetImpl *)impl;
 @end
 
-@interface CSSMediaList (WebCoreInternal)
-+ (CSSMediaList *)_mediaListWithImpl:(MediaListImpl *)impl;
+@interface DOMMediaList (WebCoreInternal)
++ (DOMMediaList *)_mediaListWithImpl:(MediaListImpl *)impl;
 @end
 
-@interface CSSRuleList (WebCoreInternal)
-+ (CSSRuleList *)_ruleListWithImpl:(CSSRuleListImpl *)impl;
+@interface DOMCSSRuleList (WebCoreInternal)
++ (DOMCSSRuleList *)_ruleListWithImpl:(CSSRuleListImpl *)impl;
 @end
 
-@interface CSSRule (WebCoreInternal)
-+ (CSSRule *)_ruleWithImpl:(CSSRuleImpl *)impl;
+@interface DOMCSSRule (WebCoreInternal)
++ (DOMCSSRule *)_ruleWithImpl:(CSSRuleImpl *)impl;
 @end
 
-@interface CSSValue (WebCoreInternal)
-+ (CSSValue *)_valueWithImpl:(CSSValueImpl *)impl;
+@interface DOMCSSValue (WebCoreInternal)
++ (DOMCSSValue *)_valueWithImpl:(CSSValueImpl *)impl;
 @end
 
-@interface CSSRGBColor (WebCoreInternal)
-+ (CSSRGBColor *)_RGBColorWithRGB:(QRgb)value;
+@interface DOMRGBColor (WebCoreInternal)
++ (DOMRGBColor *)_RGBColorWithRGB:(QRgb)value;
 @end
 
-@interface CSSRect (WebCoreInternal)
-+ (CSSRect *)_rectWithImpl:(RectImpl *)impl;
+@interface DOMRect (WebCoreInternal)
++ (DOMRect *)_rectWithImpl:(RectImpl *)impl;
 @end
 
-@interface CSSCounter (WebCoreInternal)
-+ (CSSCounter *)_counterWithImpl:(CounterImpl *)impl;
+@interface DOMCounter (WebCoreInternal)
++ (DOMCounter *)_counterWithImpl:(CounterImpl *)impl;
 @end
 
 static inline int getPropertyID(NSString *string)
@@ -150,7 +151,7 @@ static inline int getPropertyID(NSString *string)
     return [self _DOMStyleSheetImpl]->title();
 }
 
-- (CSSMediaList *)media
+- (DOMMediaList *)media
 {
     return nil;
 }
@@ -240,23 +241,23 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSStyleSheet
+// DOMCSSStyleSheet
 
-@implementation CSSStyleSheet
+@implementation DOMCSSStyleSheet
 
 - (CSSStyleSheetImpl *)_CSSStyleSheetImpl
 {
     return reinterpret_cast<CSSStyleSheetImpl *>(_internal);
 }
 
-- (CSSRule *)ownerRule
+- (DOMCSSRule *)ownerRule
 {
-    return [CSSRule _ruleWithImpl:[self _CSSStyleSheetImpl]->ownerRule()];
+    return [DOMCSSRule _ruleWithImpl:[self _CSSStyleSheetImpl]->ownerRule()];
 }
 
-- (CSSRuleList *)cssRules
+- (DOMCSSRuleList *)cssRules
 {
-    return [CSSRuleList _ruleListWithImpl:[self _CSSStyleSheetImpl]->cssRules().handle()];
+    return [DOMCSSRuleList _ruleListWithImpl:[self _CSSStyleSheetImpl]->cssRules().handle()];
 }
 
 - (unsigned long)insertRule:(NSString *)rule :(unsigned long)index
@@ -276,7 +277,7 @@ static inline int getPropertyID(NSString *string)
 
 @end
 
-@implementation CSSStyleSheet (WebCoreInternal)
+@implementation DOMCSSStyleSheet (WebCoreInternal)
 
 - (id)_initWithCSSStyleSheetImpl:(CSSStyleSheetImpl *)impl
 {
@@ -287,7 +288,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSStyleSheet *)_CSSStyleSheetWithImpl:(CSSStyleSheetImpl *)impl
++ (DOMCSSStyleSheet *)_CSSStyleSheetWithImpl:(CSSStyleSheetImpl *)impl
 {
     if (!impl)
         return nil;
@@ -303,9 +304,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSMediaList
+// DOMMediaList
 
-@implementation CSSMediaList
+@implementation DOMMediaList
 
 - (void)dealloc
 {
@@ -352,7 +353,7 @@ static inline int getPropertyID(NSString *string)
 
 @end
 
-@implementation CSSMediaList (WebCoreInternal)
+@implementation DOMMediaList (WebCoreInternal)
 
 - (id)_initWithMediaListImpl:(MediaListImpl *)impl
 {
@@ -363,7 +364,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSMediaList *)_mediaListWithImpl:(MediaListImpl *)impl
++ (DOMMediaList *)_mediaListWithImpl:(MediaListImpl *)impl
 {
     if (!impl)
         return nil;
@@ -379,9 +380,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSRuleList
+// DOMCSSRuleList
 
-@implementation CSSRuleList
+@implementation DOMCSSRuleList
 
 - (void)dealloc
 {
@@ -401,14 +402,14 @@ static inline int getPropertyID(NSString *string)
     return [self _ruleListImpl]->length();
 }
 
-- (CSSRule *)item:(unsigned long)index
+- (DOMCSSRule *)item:(unsigned long)index
 {
-    return [CSSRule _ruleWithImpl:[self _ruleListImpl]->item(index)];
+    return [DOMCSSRule _ruleWithImpl:[self _ruleListImpl]->item(index)];
 }
 
 @end
 
-@implementation CSSRuleList (WebCoreInternal)
+@implementation DOMCSSRuleList (WebCoreInternal)
 
 - (id)_initWithRuleListImpl:(CSSRuleListImpl *)impl
 {
@@ -419,7 +420,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSRuleList *)_ruleListWithImpl:(CSSRuleListImpl *)impl
++ (DOMCSSRuleList *)_ruleListWithImpl:(CSSRuleListImpl *)impl
 {
     if (!impl)
         return nil;
@@ -435,9 +436,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSRule
+// DOMCSSRule
 
-@implementation CSSRule
+@implementation DOMCSSRule
 
 - (void)dealloc
 {
@@ -462,24 +463,24 @@ static inline int getPropertyID(NSString *string)
     return [self _ruleImpl]->cssText();
 }
 
-- (void)setCSSText:(NSString *)cssText
+- (void)setCssText:(NSString *)cssText
 {
     [self _ruleImpl]->setCssText(cssText);
 }
 
-- (CSSStyleSheet *)parentStyleSheet
+- (DOMCSSStyleSheet *)parentStyleSheet
 {
-    return [CSSStyleSheet _CSSStyleSheetWithImpl:[self _ruleImpl]->parentStyleSheet()];
+    return [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _ruleImpl]->parentStyleSheet()];
 }
 
-- (CSSRule *)parentRule
+- (DOMCSSRule *)parentRule
 {
-    return [CSSRule _ruleWithImpl:[self _ruleImpl]->parentRule()];
+    return [DOMCSSRule _ruleWithImpl:[self _ruleImpl]->parentRule()];
 }
 
 @end
 
-@implementation CSSRule (WebCoreInternal)
+@implementation DOMCSSRule (WebCoreInternal)
 
 - (id)_initWithRuleImpl:(CSSRuleImpl *)impl
 {
@@ -490,7 +491,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSRule *)_ruleWithImpl:(CSSRuleImpl *)impl
++ (DOMCSSRule *)_ruleWithImpl:(CSSRuleImpl *)impl
 {
     if (!impl)
         return nil;
@@ -502,26 +503,26 @@ static inline int getPropertyID(NSString *string)
 
     Class wrapperClass = nil;
     switch (impl->type()) {
-        case CSS_UNKNOWN_RULE:
-            wrapperClass = [CSSRule class];
+        case DOM_UNKNOWN_RULE:
+            wrapperClass = [DOMCSSRule class];
             break;
-        case CSS_STYLE_RULE:
-            wrapperClass = [CSSStyleRule class];
+        case DOM_STYLE_RULE:
+            wrapperClass = [DOMCSSStyleRule class];
             break;
-        case CSS_CHARSET_RULE:
-            wrapperClass = [CSSCharsetRule class];
+        case DOM_CHARSET_RULE:
+            wrapperClass = [DOMCSSCharsetRule class];
             break;
-        case CSS_IMPORT_RULE:
-            wrapperClass = [CSSImportRule class];
+        case DOM_IMPORT_RULE:
+            wrapperClass = [DOMCSSImportRule class];
             break;
-        case CSS_MEDIA_RULE:
-            wrapperClass = [CSSMediaRule class];
+        case DOM_MEDIA_RULE:
+            wrapperClass = [DOMCSSMediaRule class];
             break;
-        case CSS_FONT_FACE_RULE:
-            wrapperClass = [CSSFontFaceRule class];
+        case DOM_FONT_FACE_RULE:
+            wrapperClass = [DOMCSSFontFaceRule class];
             break;
-        case CSS_PAGE_RULE:
-            wrapperClass = [CSSPageRule class];
+        case DOM_PAGE_RULE:
+            wrapperClass = [DOMCSSPageRule class];
             break;
     }
     return [[[wrapperClass alloc] _initWithRuleImpl:impl] autorelease];
@@ -530,9 +531,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSStyleRule
+// DOMCSSStyleRule
 
-@implementation CSSStyleRule
+@implementation DOMCSSStyleRule
 
 - (CSSStyleRuleImpl *)_styleRuleImpl
 {
@@ -549,31 +550,31 @@ static inline int getPropertyID(NSString *string)
     [self _styleRuleImpl]->setSelectorText(selectorText);
 }
 
-- (CSSStyleDeclaration *)style
+- (DOMCSSStyleDeclaration *)style
 {
-    return [CSSStyleDeclaration _styleDeclarationWithImpl:[self _styleRuleImpl]->style()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _styleRuleImpl]->style()];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSMediaRule
+// DOMCSSMediaRule
 
-@implementation CSSMediaRule
+@implementation DOMCSSMediaRule
 
 - (CSSMediaRuleImpl *)_mediaRuleImpl
 {
     return reinterpret_cast<CSSMediaRuleImpl *>(_internal);
 }
 
-- (CSSMediaList *)media
+- (DOMMediaList *)media
 {
-    return [CSSMediaList _mediaListWithImpl:[self _mediaRuleImpl]->media()];
+    return [DOMMediaList _mediaListWithImpl:[self _mediaRuleImpl]->media()];
 }
 
-- (CSSRuleList *)cssRules
+- (DOMCSSRuleList *)cssRules
 {
-    return [CSSRuleList _ruleListWithImpl:[self _mediaRuleImpl]->cssRules()];
+    return [DOMCSSRuleList _ruleListWithImpl:[self _mediaRuleImpl]->cssRules()];
 }
 
 - (unsigned long)insertRule:(NSString *)rule :(unsigned long)index
@@ -589,26 +590,26 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSFontFaceRule
+// DOMCSSFontFaceRule
 
-@implementation CSSFontFaceRule
+@implementation DOMCSSFontFaceRule
 
 - (CSSFontFaceRuleImpl *)_fontFaceRuleImpl
 {
     return reinterpret_cast<CSSFontFaceRuleImpl *>(_internal);
 }
 
-- (CSSStyleDeclaration *)style
+- (DOMCSSStyleDeclaration *)style
 {
-    return [CSSStyleDeclaration _styleDeclarationWithImpl:[self _fontFaceRuleImpl]->style()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _fontFaceRuleImpl]->style()];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSPageRule
+// DOMCSSPageRule
 
-@implementation CSSPageRule
+@implementation DOMCSSPageRule
 
 - (CSSPageRuleImpl *)_pageRuleImpl
 {
@@ -625,26 +626,26 @@ static inline int getPropertyID(NSString *string)
     [self _pageRuleImpl]->setSelectorText(selectorText);
 }
 
-- (CSSStyleDeclaration *)style
+- (DOMCSSStyleDeclaration *)style
 {
-    return [CSSStyleDeclaration _styleDeclarationWithImpl:[self _pageRuleImpl]->style()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _pageRuleImpl]->style()];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSImportRule
+// DOMCSSImportRule
 
-@implementation CSSImportRule
+@implementation DOMCSSImportRule
 
 - (CSSImportRuleImpl *)_importRuleImpl
 {
     return reinterpret_cast<CSSImportRuleImpl *>(_internal);
 }
 
-- (CSSMediaList *)media
+- (DOMMediaList *)media
 {
-    return [CSSMediaList _mediaListWithImpl:[self _importRuleImpl]->media()];
+    return [DOMMediaList _mediaListWithImpl:[self _importRuleImpl]->media()];
 }
 
 - (NSString *)href
@@ -652,17 +653,17 @@ static inline int getPropertyID(NSString *string)
     return [self _importRuleImpl]->href();
 }
 
-- (CSSStyleSheet *)styleSheet
+- (DOMCSSStyleSheet *)styleSheet
 {
-    return [CSSStyleSheet _CSSStyleSheetWithImpl:[self _importRuleImpl]->styleSheet()];
+    return [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _importRuleImpl]->styleSheet()];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSCharsetRule
+// DOMCSSCharsetRule
 
-@implementation CSSCharsetRule
+@implementation DOMCSSCharsetRule
 
 - (CSSCharsetRuleImpl *)_importRuleImpl
 {
@@ -677,9 +678,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSStyleDeclaration
+// DOMCSSStyleDeclaration
 
-@implementation CSSStyleDeclaration
+@implementation DOMCSSStyleDeclaration
 
 - (void)dealloc
 {
@@ -699,7 +700,7 @@ static inline int getPropertyID(NSString *string)
     return [self _styleDeclarationImpl]->cssText();
 }
 
-- (void)setCSSText:(NSString *)cssText
+- (void)setCssText:(NSString *)cssText
 {
     [self _styleDeclarationImpl]->setCssText(cssText);
 }
@@ -712,12 +713,12 @@ static inline int getPropertyID(NSString *string)
     return [self _styleDeclarationImpl]->getPropertyValue(propid);
 }
 
-- (CSSValue *)getPropertyCSSValue:(NSString *)propertyName
+- (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName
 {
     int propid = getPropertyID(propertyName);
     if (!propid) 
         return nil;
-    return [CSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propid)];
+    return [DOMCSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propid)];
 }
 
 - (NSString *)removeProperty:(NSString *)propertyName
@@ -757,14 +758,14 @@ static inline int getPropertyID(NSString *string)
     return [self _styleDeclarationImpl]->item(index);
 }
 
-- (CSSRule *)parentRule
+- (DOMCSSRule *)parentRule
 {
-    return [CSSRule _ruleWithImpl:[self _styleDeclarationImpl]->parentRule()];
+    return [DOMCSSRule _ruleWithImpl:[self _styleDeclarationImpl]->parentRule()];
 }
 
 @end
 
-@implementation CSSStyleDeclaration (WebCoreInternal)
+@implementation DOMCSSStyleDeclaration (WebCoreInternal)
 
 - (id)_initWithStyleDeclarationImpl:(CSSStyleDeclarationImpl *)impl
 {
@@ -775,7 +776,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSStyleDeclaration *)_styleDeclarationWithImpl:(CSSStyleDeclarationImpl *)impl
++ (DOMCSSStyleDeclaration *)_styleDeclarationWithImpl:(CSSStyleDeclarationImpl *)impl
 {
     if (!impl)
         return nil;
@@ -791,9 +792,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSValue
+// DOMCSSValue
 
-@implementation CSSValue
+@implementation DOMCSSValue
 
 - (void)dealloc
 {
@@ -813,7 +814,7 @@ static inline int getPropertyID(NSString *string)
     return [self _valueImpl]->cssText();
 }
 
-- (void)setCSSText:(NSString *)cssText
+- (void)setCssText:(NSString *)cssText
 {
     ERROR("unimplemented");
 }
@@ -825,7 +826,7 @@ static inline int getPropertyID(NSString *string)
 
 @end
 
-@implementation CSSValue (WebCoreInternal)
+@implementation DOMCSSValue (WebCoreInternal)
 
 - (id)_initWithValueImpl:(CSSValueImpl *)impl
 {
@@ -836,7 +837,7 @@ static inline int getPropertyID(NSString *string)
     return self;
 }
 
-+ (CSSValue *)_valueWithImpl:(CSSValueImpl *)impl
++ (DOMCSSValue *)_valueWithImpl:(CSSValueImpl *)impl
 {
     if (!impl)
         return nil;
@@ -848,17 +849,17 @@ static inline int getPropertyID(NSString *string)
     
     Class wrapperClass = nil;
     switch (impl->cssValueType()) {
-        case CSS_INHERIT:
-            wrapperClass = [CSSValue class];
+        case DOM_CSS_INHERIT:
+            wrapperClass = [DOMCSSValue class];
             break;
-        case CSS_PRIMITIVE_VALUE:
-            wrapperClass = [CSSPrimitiveValue class];
+        case DOM_CSS_PRIMITIVE_VALUE:
+            wrapperClass = [DOMCSSPrimitiveValue class];
             break;
-        case CSS_VALUE_LIST:
-            wrapperClass = [CSSValueList class];
+        case DOM_CSS_VALUE_LIST:
+            wrapperClass = [DOMCSSValueList class];
             break;
-        case CSS_CUSTOM:
-            wrapperClass = [CSSValue class];
+        case DOM_CSS_CUSTOM:
+            wrapperClass = [DOMCSSValue class];
             break;
     }
     return [[[wrapperClass alloc] _initWithValueImpl:impl] autorelease];
@@ -867,9 +868,9 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSPrimitiveValue
+// DOMCSSPrimitiveValue
 
-@implementation CSSPrimitiveValue
+@implementation DOMCSSPrimitiveValue
 
 - (CSSPrimitiveValueImpl *)_primitiveValueImpl
 {
@@ -906,27 +907,27 @@ static inline int getPropertyID(NSString *string)
     return DOMString([self _primitiveValueImpl]->getStringValue());
 }
 
-- (CSSCounter *)getCounterValue
+- (DOMCounter *)getCounterValue
 {
-    return [CSSCounter _counterWithImpl:[self _primitiveValueImpl]->getCounterValue()];
+    return [DOMCounter _counterWithImpl:[self _primitiveValueImpl]->getCounterValue()];
 }
 
-- (CSSRect *)getRectValue
+- (DOMRect *)getRectValue
 {
-    return [CSSRect _rectWithImpl:[self _primitiveValueImpl]->getRectValue()];
+    return [DOMRect _rectWithImpl:[self _primitiveValueImpl]->getRectValue()];
 }
 
-- (CSSRGBColor *)getRGBColorValue
+- (DOMRGBColor *)getRGBColorValue
 {
-    return [CSSRGBColor _RGBColorWithRGB:[self _primitiveValueImpl]->getRGBColorValue()];
+    return [DOMRGBColor _RGBColorWithRGB:[self _primitiveValueImpl]->getRGBColorValue()];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSValueList
+// DOMCSSValueList
 
-@implementation CSSValueList
+@implementation DOMCSSValueList
 
 - (CSSValueListImpl *)_valueListImpl
 {
@@ -938,17 +939,15 @@ static inline int getPropertyID(NSString *string)
     return [self _valueListImpl]->length();
 }
 
-- (CSSValue *)item:(unsigned long)index
+- (DOMCSSValue *)item:(unsigned long)index
 {
-    return [CSSValue _valueWithImpl:[self _valueListImpl]->item(index)];
+    return [DOMCSSValue _valueWithImpl:[self _valueListImpl]->item(index)];
 }
 
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSRGBColor
-
-// Wrapping CSSRGBColor objects
+// DOMRGBColor
 
 static CFMutableDictionaryRef wrapperCache = NULL;
 
@@ -976,7 +975,7 @@ void removeWrapperForRGB(QRgb value)
     CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void *>(value));
 }
 
-@implementation CSSRGBColor
+@implementation DOMRGBColor
 
 - (void)dealloc
 {
@@ -984,25 +983,25 @@ void removeWrapperForRGB(QRgb value)
     [super dealloc];
 }
 
-- (CSSPrimitiveValue *)red
+- (DOMCSSPrimitiveValue *)red
 {
     QRgb rgb = reinterpret_cast<QRgb>(_internal);
     int value = (rgb >> 16) & 0xFF;
-    return [CSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
-- (CSSPrimitiveValue *)green
+- (DOMCSSPrimitiveValue *)green
 {
     QRgb rgb = reinterpret_cast<QRgb>(_internal);
     int value = (rgb >> 8) & 0xFF;
-    return [CSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
-- (CSSPrimitiveValue *)blue
+- (DOMCSSPrimitiveValue *)blue
 {
     QRgb rgb = reinterpret_cast<QRgb>(_internal);
     int value = rgb & 0xFF;
-    return [CSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -1012,7 +1011,7 @@ void removeWrapperForRGB(QRgb value)
 
 @end
 
-@implementation CSSRGBColor (WebCoreInternal)
+@implementation DOMRGBColor (WebCoreInternal)
 
 - (id)_initWithRGB:(QRgb)value
 {
@@ -1022,7 +1021,7 @@ void removeWrapperForRGB(QRgb value)
     return self;
 }
 
-+ (CSSRGBColor *)_RGBColorWithRGB:(QRgb)value
++ (DOMRGBColor *)_RGBColorWithRGB:(QRgb)value
 {
     id cachedInstance;
     cachedInstance = getWrapperForRGB(value);
@@ -1035,9 +1034,9 @@ void removeWrapperForRGB(QRgb value)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSRect
+// DOMRect
 
-@implementation CSSRect
+@implementation DOMRect
 
 - (void)dealloc
 {
@@ -1052,24 +1051,24 @@ void removeWrapperForRGB(QRgb value)
     return reinterpret_cast<RectImpl *>(_internal);
 }
 
-- (CSSPrimitiveValue *)top
+- (DOMCSSPrimitiveValue *)top
 {
-    return [CSSPrimitiveValue _valueWithImpl:[self _rectImpl]->top()];
+    return [DOMCSSPrimitiveValue _valueWithImpl:[self _rectImpl]->top()];
 }
 
-- (CSSPrimitiveValue *)right
+- (DOMCSSPrimitiveValue *)right
 {
-    return [CSSPrimitiveValue _valueWithImpl:[self _rectImpl]->right()];
+    return [DOMCSSPrimitiveValue _valueWithImpl:[self _rectImpl]->right()];
 }
 
-- (CSSPrimitiveValue *)bottom
+- (DOMCSSPrimitiveValue *)bottom
 {
-    return [CSSPrimitiveValue _valueWithImpl:[self _rectImpl]->bottom()];
+    return [DOMCSSPrimitiveValue _valueWithImpl:[self _rectImpl]->bottom()];
 }
 
-- (CSSPrimitiveValue *)left
+- (DOMCSSPrimitiveValue *)left
 {
-    return [CSSPrimitiveValue _valueWithImpl:[self _rectImpl]->left()];
+    return [DOMCSSPrimitiveValue _valueWithImpl:[self _rectImpl]->left()];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -1079,7 +1078,7 @@ void removeWrapperForRGB(QRgb value)
 
 @end
 
-@implementation CSSRect (WebCoreInternal)
+@implementation DOMRect (WebCoreInternal)
 
 - (id)_initWithRectImpl:(RectImpl *)impl
 {
@@ -1090,7 +1089,7 @@ void removeWrapperForRGB(QRgb value)
     return self;
 }
 
-+ (CSSRect *)_rectWithImpl:(RectImpl *)impl
++ (DOMRect *)_rectWithImpl:(RectImpl *)impl
 {
     if (!impl)
         return nil;
@@ -1106,9 +1105,9 @@ void removeWrapperForRGB(QRgb value)
 @end
 
 //------------------------------------------------------------------------------------------
-// CSSCounter
+// DOMCounter
 
-@implementation CSSCounter
+@implementation DOMCounter
 
 - (void)dealloc
 {
@@ -1145,7 +1144,7 @@ void removeWrapperForRGB(QRgb value)
 
 @end
 
-@implementation CSSCounter (WebCoreInternal)
+@implementation DOMCounter (WebCoreInternal)
 
 - (id)_initWithCounterImpl:(CounterImpl *)impl
 {
@@ -1156,7 +1155,7 @@ void removeWrapperForRGB(QRgb value)
     return self;
 }
 
-+ (CSSCounter *)_counterWithImpl:(CounterImpl *)impl
++ (DOMCounter *)_counterWithImpl:(CounterImpl *)impl
 {
     if (!impl)
         return nil;
@@ -1172,4 +1171,3 @@ void removeWrapperForRGB(QRgb value)
 @end
 
 //------------------------------------------------------------------------------------------
-

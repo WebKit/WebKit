@@ -7,10 +7,16 @@ use File::Basename;
 my $ProgramName = 'copy-webcore-files-to-webkit';
 
 my %Files = (
-    'kwq/DOM.h' =>           # WebCore path
-    'DOM.subproj/DOM.h',     # WebKit path
-    'kwq/DOM-compat.h' =>           # WebCore path
-    'DOM.subproj/DOM-compat.h',     # WebKit path
+    'kwq/DOM.h' => 'DOM.subproj/DOM.h',
+    'kwq/DOMCore.h' => 'DOM.subproj/DOMCore.h',
+    'kwq/DOMViews.h' => 'DOM.subproj/DOMViews.h',
+    'kwq/DOMEvents.h' => 'DOM.subproj/DOMEvents.h',
+    'kwq/DOMStylesheets.h' => 'DOM.subproj/DOMStylesheets.h',
+    'kwq/DOMCSS.h' => 'DOM.subproj/DOMCSS.h',
+    'kwq/DOMTraversal.h' => 'DOM.subproj/DOMTraversal.h',
+    'kwq/DOMRange.h' => 'DOM.subproj/DOMRange.h',
+    'kwq/DOMHTML.h' => 'DOM.subproj/DOMHTML.h',
+    'kwq/DOM-compat.h' => 'DOM.subproj/DOM-compat.h',
 );
 
 my $WebCorePath = '';

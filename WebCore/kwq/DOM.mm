@@ -45,7 +45,6 @@
 #import <xml/dom2_rangeimpl.h>
 #import <xml/dom2_viewsimpl.h>
 
-#import "DOM-CSS.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
 
@@ -668,7 +667,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
 }
 
-- (CSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
+- (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
 {
     ASSERT(title);
     ASSERT(media);
@@ -676,7 +675,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     int exceptionCode = 0;
     DOMString titleString(title);
     DOMString mediaString(media);
-    CSSStyleSheet *result = [CSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(titleString.implementation(), mediaString.implementation(), exceptionCode)];
+    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(titleString.implementation(), mediaString.implementation(), exceptionCode)];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -885,14 +884,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange()];
 }
 
-- (CSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
     ElementImpl *elementImpl = [elt _elementImpl];
     DOMString pseudoEltString(pseudoElt);
-    return [CSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.implementation())];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.implementation())];
 }
 
-- (CSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
 {
     // FIXME: This is unimplemented by khtml, 
     // so for now, we just return the computed style
@@ -1236,11 +1235,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return element.hasAttributeNS(namespaceURI, localName);
 }
 
-- (CSSStyleDeclaration *)style
+- (DOMCSSStyleDeclaration *)style
 {
     ElementImpl *impl = [self _elementImpl];
     if (impl->isHTMLElement())
-        return [CSSStyleDeclaration _styleDeclarationWithImpl:static_cast<HTMLElementImpl *>(impl)->getInlineStyleDecl()];
+        return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:static_cast<HTMLElementImpl *>(impl)->getInlineStyleDecl()];
     return nil;
 }
 

@@ -37,10 +37,64 @@
 //=========================================================================
 
 #import "DOMCore.h"
-#import "DOMViews.h"
-#import "DOMEvents.h"
-#import "DOMStylesheets.h"
-#import "DOMCSS.h"
-#import "DOMTraversal.h"
-#import "DOMRange.h"
-#import "DOMHTML.h"
+
+@class DOMNodeFilter;
+
+@interface DOMNodeIterator : DOMObject
+- (DOMNode *)root;
+- (unsigned long)whatToShow;
+- (DOMNodeFilter *)filter;
+- (BOOL)expandEntityReferences;
+- (DOMNode *)nextNode;
+- (DOMNode *)previousNode;
+- (void)detach;
+@end
+
+enum {
+    // Constants returned by acceptNode
+    DOM_FILTER_ACCEPT                  = 1,
+    DOM_FILTER_REJECT                  = 2,
+    DOM_FILTER_SKIP                    = 3,
+};
+
+enum {
+    // Constants for whatToShow
+    DOM_SHOW_ALL                       = 0xFFFFFFFF,
+    DOM_SHOW_ELEMENT                   = 0x00000001,
+    DOM_SHOW_ATTRIBUTE                 = 0x00000002,
+    DOM_SHOW_TEXT                      = 0x00000004,
+    DOM_SHOW_CDATA_SECTION             = 0x00000008,
+    DOM_SHOW_ENTITY_REFERENCE          = 0x00000010,
+    DOM_SHOW_ENTITY                    = 0x00000020,
+    DOM_SHOW_PROCESSING_INSTRUCTION    = 0x00000040,
+    DOM_SHOW_COMMENT                   = 0x00000080,
+    DOM_SHOW_DOCUMENT                  = 0x00000100,
+    DOM_SHOW_DOCUMENT_TYPE             = 0x00000200,
+    DOM_SHOW_DOCUMENT_FRAGMENT         = 0x00000400,
+    DOM_SHOW_NOTATION                  = 0x00000800,
+};
+
+@interface DOMNodeFilter : DOMObject
+- (short)acceptNode:(DOMNode *)n;
+@end
+
+@interface DOMTreeWalker : DOMObject
+- (DOMNode *)root;
+- (unsigned long)whatToShow;
+- (DOMNodeFilter *)filter;
+- (BOOL)expandEntityReferences;
+- (DOMNode *)currentNode;
+- (void)setCurrentNode:(DOMNode *)currentNode;
+- (DOMNode *)parentNode;
+- (DOMNode *)firstChild;
+- (DOMNode *)lastChild;
+- (DOMNode *)previousSibling;
+- (DOMNode *)nextSibling;
+- (DOMNode *)previousNode;
+- (DOMNode *)nextNode;
+@end
+
+@interface DOMDocument (DOMDocumentTraversal)
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion;
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion;
+@end

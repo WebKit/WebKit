@@ -52,12 +52,12 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (BOOL)webView:(WebView *)webView shouldApplyStyle:(CSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
+- (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
     return YES;
 }
 
-- (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(CSSStyleDeclaration *)currentStyle toStyle:(CSSStyleDeclaration *)proposedStyle
+- (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
 {
     return YES;
 }

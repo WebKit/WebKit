@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOM.h"
-
 //=========================================================================
 //=========================================================================
 //=========================================================================
@@ -38,13 +36,49 @@
 //=========================================================================
 //=========================================================================
 
-@interface HTMLCollection : DOMObject
+#import "DOMCore.h"
+
+@class DOMHTMLElement;
+@class DOMHTMLTableCaptionElement;
+@class DOMHTMLTableSectionElement;
+
+@interface DOMHTMLCollection : DOMObject
 - (unsigned long)length;
 - (DOMNode *)item:(unsigned long)index;
 - (DOMNode *)namedItem:(NSString *)name;
 @end
 
-@interface HTMLElement : DOMElement
+@interface DOMHTMLOptionsCollection : DOMObject
+- (unsigned long)length;
+- (void)setLength:(unsigned long)length;
+- (DOMNode *)item:(unsigned long)index;
+- (DOMNode *)namedItem:(NSString *)name;
+@end
+
+@interface DOMHTMLDocument : DOMDocument
+- (NSString *)title;
+- (void)setTitle:(NSString *)title;
+- (NSString *)referrer;
+- (NSString *)domain;
+- (NSString *)URL;
+- (DOMHTMLElement *)body;
+- (void)setBody:(DOMHTMLElement *)body;
+- (DOMHTMLCollection *)images;
+- (DOMHTMLCollection *)applets;
+- (DOMHTMLCollection *)links;
+- (DOMHTMLCollection *)forms;
+- (DOMHTMLCollection *)anchors;
+- (NSString *)cookie;
+- (void)setCookie:(NSString *)cookie;
+- (void)open;
+- (void)close;
+- (void)write:(NSString *)text;
+- (void)writeln:(NSString *)text;
+- (DOMElement *)getElementById:(NSString *)elementId;
+- (DOMNodeList *)getElementsByName:(NSString *)elementName;
+@end
+
+@interface DOMHTMLElement : DOMElement
 - (NSString *)idName;
 - (void)setIdName:(NSString *)idName;
 - (NSString *)title;
@@ -57,40 +91,17 @@
 - (void)setClassName:(NSString *)className;
 @end
 
-@interface HTMLDocument : DOMDocument
-- (NSString *)title;
-- (void)setTitle:(NSString *)title;
-- (NSString *)referrer;
-- (NSString *)domain;
-- (NSString *)URL;
-- (HTMLElement *)body;
-- (void)setBody:(HTMLElement *)body;
-- (HTMLCollection *)images;
-- (HTMLCollection *)applets;
-- (HTMLCollection *)links;
-- (HTMLCollection *)forms;
-- (HTMLCollection *)anchors;
-- (NSString *)cookie;
-- (void)setCookie:(NSString *)cookie;
-- (void)open;
-- (void)close;
-- (void)write:(NSString *)text;
-- (void)writeln:(NSString *)text;
-- (DOMElement *)getElementById:(NSString *)elementId;
-- (DOMNodeList *)getElementsByName:(NSString *)elementName;
-@end
-
-@interface HTMLHtmlElement : HTMLElement
+@interface DOMHTMLHtmlElement : DOMHTMLElement
 - (NSString *)version;
 - (void)setVersion:(NSString *)version;
 @end
 
-@interface HTMLHeadElement : HTMLElement
+@interface DOMHTMLHeadElement : DOMHTMLElement
 - (NSString *)profile;
 - (void)setProfile:(NSString *)profile;
 @end
 
-@interface HTMLLinkElement : HTMLElement
+@interface DOMHTMLLinkElement : DOMHTMLElement
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)charset;
@@ -111,12 +122,12 @@
 - (void)setType:(NSString *)type;
 @end
 
-@interface HTMLTitleElement : HTMLElement
+@interface DOMHTMLTitleElement : DOMHTMLElement
 - (NSString *)text;
 - (void)setText:(NSString *)text;
 @end
 
-@interface HTMLMetaElement : HTMLElement
+@interface DOMHTMLMetaElement : DOMHTMLElement
 - (NSString *)content;
 - (void)setContent:(NSString *)content;
 - (NSString *)httpEquiv;
@@ -127,14 +138,20 @@
 - (void)setScheme:(NSString *)scheme;
 @end
 
-@interface HTMLBaseElement : HTMLElement
+@interface DOMHTMLBaseElement : DOMHTMLElement
 - (NSString *)href;
 - (void)setHref:(NSString *)href;
 - (NSString *)target;
 - (void)setTarget:(NSString *)target;
 @end
 
-@interface HTMLStyleElement : HTMLElement
+@interface DOMHTMLIsIndexElement : DOMHTMLElement
+- (NSString *)form;
+- (NSString *)prompt;
+- (void)setPrompt:(NSString *)prompt;
+@end
+
+@interface DOMHTMLStyleElement : DOMHTMLElement
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)media;
@@ -143,7 +160,7 @@
 - (void)setType:(NSString *)type;
 @end
 
-@interface HTMLBodyElement : HTMLElement
+@interface DOMHTMLBodyElement : DOMHTMLElement
 - (NSString *)aLink;
 - (void)setALink:(NSString *)aLink;
 - (NSString *)background;
@@ -158,8 +175,8 @@
 - (void)setVLink:(NSString *)vLink;
 @end
 
-@interface HTMLFormElement : HTMLElement
-- (HTMLCollection *)elements;
+@interface DOMHTMLFormElement : DOMHTMLElement
+- (DOMHTMLCollection *)elements;
 - (long)length;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
@@ -177,62 +194,60 @@
 - (void)reset;
 @end
 
-@interface HTMLIsIndexElement : HTMLElement
-- (NSString *)form;
-- (NSString *)prompt;
-- (void)setPrompt:(NSString *)prompt;
-@end
-
-@interface HTMLSelectElement : HTMLElement
+@interface DOMHTMLSelectElement : DOMHTMLElement
 - (NSString *)type;
 - (long)selectedIndex;
 - (void)setSelectedIndex:(long)selectedIndex;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
 - (long)length;
-- (HTMLFormElement *)form;
-- (HTMLCollection *)options;
+- (DOMHTMLFormElement *)form;
+- (DOMHTMLOptionsCollection *)options;
 - (BOOL)disabled;
+- (void)setDisabled:(BOOL)disabled;
 - (BOOL)multiple;
+- (void)setMultiple:(BOOL)multiple;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (long)size;
+- (void)setSize:(long)size;
 - (long)tabIndex;
-- (void)add:(HTMLElement *)element :(HTMLElement *)before;
+- (void)setTabIndex:(long)tabIndex;
+- (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
 - (void)remove:(long)index;
 - (void)blur;
 - (void)focus;
 @end
 
-@interface HTMLOptGroupElement : HTMLElement
+@interface DOMHTMLOptGroupElement : DOMHTMLElement
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)label;
 - (void)setLabel:(NSString *)label;
 @end
 
-@interface HTMLOptionElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLOptionElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 - (BOOL)defaultSelected;
 - (void)setDefaultSelected:(BOOL)defaultSelected;
 - (NSString *)text;
 - (long)index;
-- (void)setIndex:(long)index;
 - (BOOL)disabled;
 - (void)setDisabled:(BOOL)disabled;
 - (NSString *)label;
 - (void)setLabel:(NSString *)label;
 - (BOOL)selected;
+- (void)setSelected:(BOOL)selected;
 - (NSString *)value;
 - (void)setValue:(NSString *)value;
 @end
 
-@interface HTMLInputElement : HTMLElement
+@interface DOMHTMLInputElement : DOMHTMLElement
 - (NSString *)defaultValue;
 - (void)setDefaultValue:(NSString *)defaultValue;
 - (BOOL)defaultChecked;
 - (void)setDefaultChecked:(BOOL)defaultChecked;
-- (HTMLFormElement *)form;
+- (DOMHTMLFormElement *)form;
 - (NSString *)accept;
 - (void)setAccept:(NSString *)accept;
 - (NSString *)accessKey;
@@ -258,6 +273,7 @@
 - (long)tabIndex;
 - (void)setTabIndex:(long)tabIndex;
 - (NSString *)type;
+- (void)setType:(NSString *)type;
 - (NSString *)useMap;
 - (void)setUseMap:(NSString *)useMap;
 - (NSString *)value;
@@ -268,10 +284,10 @@
 - (void)click;
 @end
 
-@interface HTMLTextAreaElement : HTMLElement
+@interface DOMHTMLTextAreaElement : DOMHTMLElement
 - (NSString *)defaultValue;
 - (void)setDefaultValue:(NSString *)defaultValue;
-- (HTMLFormElement *)form;
+- (DOMHTMLFormElement *)form;
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (long)cols;
@@ -294,8 +310,8 @@
 - (void)select;
 @end
 
-@interface HTMLButtonElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLButtonElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (BOOL)disabled;
@@ -309,34 +325,34 @@
 - (void)setValue:(NSString *)value;
 @end
 
-@interface HTMLLabelElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLLabelElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (NSString *)htmlFor;
 - (void)setHtmlFor:(NSString *)htmlFor;
 @end
 
-@interface HTMLFieldSetElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLFieldSetElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 @end
 
-@interface HTMLLegendElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLLegendElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 @end
 
-@interface HTMLUListElement : HTMLElement
+@interface DOMHTMLUListElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
 - (NSString *)type;
 - (void)setType:(NSString *)type;
 @end
 
-@interface HTMLOListElement : HTMLElement
+@interface DOMHTMLOListElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
 - (long)start;
@@ -345,64 +361,59 @@
 - (void)setType:(NSString *)type;
 @end
 
-@interface HTMLDListElement : HTMLElement
+@interface DOMHTMLDListElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
 @end
 
-@interface HTMLDirectoryElement : HTMLElement
+@interface DOMHTMLDirectoryElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
 @end
 
-@interface HTMLMenuElement : HTMLElement
+@interface DOMHTMLMenuElement : DOMHTMLElement
 - (BOOL)compact;
 - (void)setCompact:(BOOL)compact;
 @end
 
-@interface HTMLLIElement : HTMLElement
+@interface DOMHTMLLIElement : DOMHTMLElement
 - (NSString *)type;
 - (void)setType:(NSString *)type;
 - (long)value;
 - (void)setValue:(long)value;
 @end
 
-@interface HTMLBlockquoteElement : HTMLElement
+@interface DOMHTMLDivElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+@end
+
+@interface DOMHTMLParagraphElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+@end
+
+@interface DOMHTMLHeadingElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+@end
+
+@interface DOMHTMLQuoteElement : DOMHTMLElement
 - (NSString *)cite;
 - (void)setCite:(NSString *)cite;
 @end
 
-@interface HTMLDivElement : HTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface HTMLParagraphElement : HTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface HTMLHeadingElement : HTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface HTMLQuoteElement : HTMLElement
-- (NSString *)cite;
-- (void)setCite:(NSString *)cite;
-@end
-
-@interface HTMLPreElement : HTMLElement
+@interface DOMHTMLPreElement : DOMHTMLElement
 - (long)width;
 - (void)setWidth:(long)width;
 @end
 
-@interface HTMLBRElement : HTMLElement
+@interface DOMHTMLBRElement : DOMHTMLElement
 - (NSString *)clear;
 - (void)setClear:(NSString *)clear;
 @end
 
-@interface HTMLBaseFontElement : HTMLElement
+@interface DOMHTMLBaseFontElement : DOMHTMLElement
 - (NSString *)color;
 - (void)setColor:(NSString *)color;
 - (NSString *)face;
@@ -411,7 +422,7 @@
 - (void)setSize:(NSString *)size;
 @end
 
-@interface HTMLFontElement : HTMLElement
+@interface DOMHTMLFontElement : DOMHTMLElement
 - (NSString *)color;
 - (void)setColor:(NSString *)color;
 - (NSString *)face;
@@ -420,7 +431,7 @@
 - (void)setSize:(NSString *)size;
 @end
 
-@interface HTMLHRElement : HTMLElement
+@interface DOMHTMLHRElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (BOOL)noShade;
@@ -431,14 +442,14 @@
 - (void)setWidth:(NSString *)width;
 @end
 
-@interface HTMLModElement : HTMLElement
+@interface DOMHTMLModElement : DOMHTMLElement
 - (NSString *)cite;
 - (void)setCite:(NSString *)cite;
 - (NSString *)dateTime;
 - (void)setDateTime:(NSString *)dateTime;
 @end
 
-@interface HTMLAnchorElement : HTMLElement
+@interface DOMHTMLAnchorElement : DOMHTMLElement
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (NSString *)charset;
@@ -467,9 +478,11 @@
 - (void)focus;
 @end
 
-@interface HTMLImageElement : HTMLElement
+@interface DOMHTMLImageElement : DOMHTMLElement
+// xxx
 - (NSString *)lowSrc;
 - (void)setLowSrc:(NSString *)lowSrc;
+
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)align;
@@ -496,8 +509,8 @@
 - (void)setWidth:(NSString *)width;
 @end
 
-@interface HTMLObjectElement : HTMLElement
-- (HTMLFormElement *)form;
+@interface DOMHTMLObjectElement : DOMHTMLElement
+- (DOMHTMLFormElement *)form;
 - (NSString *)code;
 - (void)setCode:(NSString *)code;
 - (NSString *)align;
@@ -516,8 +529,8 @@
 - (void)setDeclare:(BOOL)declare;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
-- (NSString *)hspace;
-- (void)setHspace:(NSString *)hspace;
+- (long)hspace;
+- (void)setHspace:(long)hspace;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)standby;
@@ -528,13 +541,14 @@
 - (void)setType:(NSString *)type;
 - (NSString *)useMap;
 - (void)setUseMap:(NSString *)useMap;
-- (NSString *)vspace;
-- (void)setVspace:(NSString *)vspace;
+- (long)vspace;
+- (void)setVspace:(long)vspace;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
+- (DOMDocument *)contentDocument;
 @end
 
-@interface HTMLParamElement : HTMLElement
+@interface DOMHTMLParamElement : DOMHTMLElement
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)type;
@@ -545,7 +559,7 @@
 - (void)setValueType:(NSString *)valueType;
 @end
 
-@interface HTMLAppletElement : HTMLElement
+@interface DOMHTMLAppletElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)alt;
@@ -560,25 +574,25 @@
 - (void)setCodeType:(NSString *)codeType;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
-- (NSString *)hspace;
-- (void)setHspace:(NSString *)hspace;
+- (long)hspace;
+- (void)setHspace:(long)hspace;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)object;
 - (void)setObject:(NSString *)object;
-- (NSString *)vspace;
-- (void)setVspace:(NSString *)vspace;
+- (long)vspace;
+- (void)setVspace:(long)vspace;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
 @end
 
-@interface HTMLMapElement : HTMLElement
-- (HTMLCollection *)areas;
+@interface DOMHTMLMapElement : DOMHTMLElement
+- (DOMHTMLCollection *)areas;
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 @end
 
-@interface HTMLAreaElement : HTMLElement
+@interface DOMHTMLAreaElement : DOMHTMLElement
 - (NSString *)accessKey;
 - (void)setAccessKey:(NSString *)accessKey;
 - (NSString *)alt;
@@ -597,7 +611,7 @@
 - (void)setTarget:(NSString *)target;
 @end
 
-@interface HTMLScriptElement : HTMLElement
+@interface DOMHTMLScriptElement : DOMHTMLElement
 - (NSString *)text;
 - (void)setText:(NSString *)text;
 - (NSString *)htmlFor;
@@ -614,31 +628,15 @@
 - (void)setType:(NSString *)type;
 @end
 
-@interface HTMLTableCaptionElement : HTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-@end
-
-@interface HTMLTableSectionElement : HTMLElement
-- (NSString *)align;
-- (void)setAlign:(NSString *)align;
-- (NSString *)ch;
-- (void)setCh:(NSString *)ch;
-- (NSString *)chOff;
-- (void)setChOff:(NSString *)chOff;
-- (NSString *)vAlign;
-- (void)setVAlign:(NSString *)vAlign;
-- (HTMLCollection *)rows;
-- (HTMLElement *)insertRow:(long)index;
-- (void)deleteRow:(long)index;
-@end
-
-@interface HTMLTableElement : HTMLElement
-- (HTMLTableCaptionElement *)caption;
-- (HTMLTableSectionElement *)tHead;
-- (HTMLTableSectionElement *)tFoot;
-- (HTMLCollection *)rows;
-- (HTMLCollection *)tBodies;
+@interface DOMHTMLTableElement : DOMHTMLElement
+- (DOMHTMLTableCaptionElement *)caption;
+- (void)setCaption:(DOMHTMLTableCaptionElement *)caption;
+- (DOMHTMLTableSectionElement *)tHead;
+- (void)setTHead:(DOMHTMLTableSectionElement *)tHead;
+- (DOMHTMLTableSectionElement *)tFoot;
+- (void)setTFoot:(DOMHTMLTableSectionElement *)tFoot;
+- (DOMHTMLCollection *)rows;
+- (DOMHTMLCollection *)tBodies;
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)bgColor;
@@ -657,17 +655,22 @@
 - (void)setSummary:(NSString *)summary;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
-- (HTMLElement *)createTHead;
+- (DOMHTMLElement *)createTHead;
 - (void)deleteTHead;
-- (HTMLElement *)createTFoot;
+- (DOMHTMLElement *)createTFoot;
 - (void)deleteTFoot;
-- (HTMLElement *)createCaption;
+- (DOMHTMLElement *)createCaption;
 - (void)deleteCaption;
-- (HTMLElement *)insertRow:(long)index;
+- (DOMHTMLElement *)insertRow:(long)index;
 - (void)deleteRow:(long)index;
 @end
 
-@interface HTMLTableColElement : HTMLElement
+@interface DOMHTMLTableCaptionElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+@end
+
+@interface DOMHTMLTableColElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)ch;
@@ -682,13 +685,24 @@
 - (void)setWidth:(NSString *)width;
 @end
 
-@interface HTMLTableRowElement : HTMLElement
+@interface DOMHTMLTableSectionElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+- (NSString *)ch;
+- (void)setCh:(NSString *)ch;
+- (NSString *)chOff;
+- (void)setChOff:(NSString *)chOff;
+- (NSString *)vAlign;
+- (void)setVAlign:(NSString *)vAlign;
+- (DOMHTMLCollection *)rows;
+- (DOMHTMLElement *)insertRow:(long)index;
+- (void)deleteRow:(long)index;
+@end
+
+@interface DOMHTMLTableRowElement : DOMHTMLElement
 - (long)rowIndex;
-- (void)setRowIndex:(long)rowIndex;
 - (long)sectionRowIndex;
-- (void)setSectionRowIndex:(long)sectionRowIndex;
-- (HTMLCollection *)cells;
-- (void)setCells:(HTMLCollection *)cells; // Is cells really read/write?
+- (DOMHTMLCollection *)cells;
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)bgColor;
@@ -699,13 +713,12 @@
 - (void)setChOff:(NSString *)chOff;
 - (NSString *)vAlign;
 - (void)setVAlign:(NSString *)vAlign;
-- (HTMLElement *)insertCell:(long)index;
+- (DOMHTMLElement *)insertCell:(long)index;
 - (void)deleteCell:(long)index;
 @end
 
-@interface HTMLTableCellElement : HTMLElement
+@interface DOMHTMLTableCellElement : DOMHTMLElement
 - (long)cellIndex;
-- (void)setCellIndex:(long)cellIndex;
 - (NSString *)abbr;
 - (void)setAbbr:(NSString *)abbr;
 - (NSString *)align;
@@ -736,14 +749,14 @@
 - (void)setWidth:(NSString *)width;
 @end
 
-@interface HTMLFrameSetElement : HTMLElement
+@interface DOMHTMLFrameSetElement : DOMHTMLElement
 - (NSString *)cols;
 - (void)setCols:(NSString *)cols;
 - (NSString *)rows;
 - (void)setRows:(NSString *)rows;
 @end
 
-@interface HTMLFrameElement : HTMLElement
+@interface DOMHTMLFrameElement : DOMHTMLElement
 - (NSString *)frameBorder;
 - (void)setFrameBorder:(NSString *)frameBorder;
 - (NSString *)longDesc;
@@ -760,9 +773,10 @@
 - (void)setScrolling:(NSString *)scrolling;
 - (NSString *)src;
 - (void)setSrc:(NSString *)src;
+- (DOMDocument *)contentDocument;
 @end
 
-@interface HTMLIFrameElement : HTMLElement
+@interface DOMHTMLIFrameElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
 - (NSString *)frameBorder;
@@ -783,4 +797,10 @@
 - (void)setSrc:(NSString *)src;
 - (NSString *)width;
 - (void)setWidth:(NSString *)width;
+- (DOMDocument *)contentDocument;
+@end
+
+// FIXME: Should this move to another file?
+@interface DOMNode (DOMHTMLExtensions)
+- (NSString *)HTMLString; // FIXME: Should this be renamed innerHTML or outerHTML?
 @end

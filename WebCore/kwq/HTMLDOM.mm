@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "HTMLDOM.h"
+#import "DOMHTML.h"
 
 #import <dom/html_element.h>
 #import <html/html_baseimpl.h>
@@ -53,16 +53,16 @@ using DOM::HTMLTitleElementImpl;
 using DOM::NameNodeListImpl;
 using DOM::NodeImpl;
 
-@interface HTMLCollection (HTMLCollectionInternal)
-+ (HTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl;
+@interface DOMHTMLCollection (HTMLCollectionInternal)
++ (DOMHTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl;
 @end;
 
-@interface HTMLElement (HTMLElementInternal)
-+ (HTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl;
+@interface DOMHTMLElement (HTMLElementInternal)
++ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl;
 - (HTMLElementImpl *)_HTMLElementImpl;
 @end;
 
-@implementation HTMLCollection
+@implementation DOMHTMLCollection
 
 - (id)_initWithCollectionImpl:(HTMLCollectionImpl *)impl
 {
@@ -75,7 +75,7 @@ using DOM::NodeImpl;
     return self;
 }
 
-+ (HTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl
++ (DOMHTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl
 {
     if (!impl)
         return nil;
@@ -110,7 +110,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLElement
+@implementation DOMHTMLElement
 
 - (id)_initWithElementImpl:(HTMLElementImpl *)impl
 {
@@ -123,7 +123,7 @@ using DOM::NodeImpl;
     return self;
 }
 
-+ (HTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
++ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
 {
     if (!impl)
         return nil;
@@ -193,7 +193,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLDocument
+@implementation DOMHTMLDocument
 
 - (HTMLDocumentImpl *)_HTMLDocumentImpl
 {
@@ -225,42 +225,42 @@ using DOM::NodeImpl;
     return [self _HTMLDocumentImpl]->URL().getNSString();
 }
 
-- (HTMLElement *)body
+- (DOMHTMLElement *)body
 {
-    return [HTMLElement _elementWithImpl:[self _HTMLDocumentImpl]->body()];
+    return [DOMHTMLElement _elementWithImpl:[self _HTMLDocumentImpl]->body()];
 }
 
-- (HTMLCollection *)images
+- (DOMHTMLCollection *)images
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_IMAGES);
-    return [HTMLCollection _collectionWithImpl:collection];
+    return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (HTMLCollection *)applets
+- (DOMHTMLCollection *)applets
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_APPLETS);
-    return [HTMLCollection _collectionWithImpl:collection];
+    return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (HTMLCollection *)links
+- (DOMHTMLCollection *)links
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_LINKS);
-    return [HTMLCollection _collectionWithImpl:collection];
+    return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (HTMLCollection *)forms
+- (DOMHTMLCollection *)forms
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_FORMS);
-    return [HTMLCollection _collectionWithImpl:collection];
+    return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (HTMLCollection *)anchors
+- (DOMHTMLCollection *)anchors
 {
     HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_ANCHORS);
-    return [HTMLCollection _collectionWithImpl:collection];
+    return [DOMHTMLCollection _collectionWithImpl:collection];
 }
 
-- (void)setBody:(HTMLElement *)body
+- (void)setBody:(DOMHTMLElement *)body
 {
     int exceptionCode = 0;
     [self _HTMLDocumentImpl]->setBody([body _HTMLElementImpl], exceptionCode);
@@ -310,7 +310,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLHtmlElement
+@implementation DOMHTMLHtmlElement
 
 - (HTMLHtmlElementImpl *)_HTMLHtmlElementImpl
 {
@@ -329,7 +329,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLHeadElement
+@implementation DOMHTMLHeadElement
 
 - (HTMLHeadElementImpl *)_headElementImpl
 {
@@ -348,7 +348,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLLinkElement
+@implementation DOMHTMLLinkElement
 
 - (HTMLLinkElementImpl *)_linkElementImpl
 {
@@ -448,7 +448,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTitleElement
+@implementation DOMHTMLTitleElement
 
 - (HTMLTitleElementImpl *)_titleElementImpl
 {
@@ -467,7 +467,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLMetaElement
+@implementation DOMHTMLMetaElement
 
 - (HTMLMetaElementImpl *)_metaElementImpl
 {
@@ -516,7 +516,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLBaseElement
+@implementation DOMHTMLBaseElement
 
 - (HTMLBaseElementImpl *)_baseElementImpl
 {
@@ -545,7 +545,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLStyleElement
+@implementation DOMHTMLStyleElement
 
 - (HTMLStyleElementImpl *)_styleElementImpl
 {
@@ -584,7 +584,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLBodyElement
+@implementation DOMHTMLBodyElement
 
 - (HTMLBodyElementImpl *)_bodyElementImpl
 {
@@ -653,9 +653,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLFormElement
+@implementation DOMHTMLFormElement
 
-- (HTMLCollection *)elements
+- (DOMHTMLCollection *)elements
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -745,7 +745,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLIsIndexElement
+@implementation DOMHTMLIsIndexElement
 
 - (NSString *)form
 {
@@ -766,7 +766,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLSelectElement
+@implementation DOMHTMLSelectElement
 
 - (NSString *)type
 {
@@ -802,13 +802,13 @@ using DOM::NodeImpl;
     return 0;
 }
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLCollection *)options
+- (DOMHTMLOptionsCollection *)options
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -820,10 +820,20 @@ using DOM::NodeImpl;
     return NO;
 }
 
+- (void)setDisabled:(BOOL)disabled
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
 - (BOOL)multiple
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return NO;
+}
+
+- (void)setMultiple:(BOOL)multiple
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
 - (NSString *)name
@@ -843,13 +853,23 @@ using DOM::NodeImpl;
     return 0;
 }
 
+- (void)setSize:(long)size
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
 - (long)tabIndex
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return 0;
 }
 
-- (void)add:(HTMLElement *)element :(HTMLElement *)before
+- (void)setTabIndex:(long)tabIndex
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+- (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -871,7 +891,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLOptGroupElement
+@implementation DOMHTMLOptGroupElement
 
 - (BOOL)disabled
 {
@@ -897,9 +917,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLOptionElement
+@implementation DOMHTMLOptionElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -961,6 +981,11 @@ using DOM::NodeImpl;
     return NO;
 }
 
+- (void)setSelected:(BOOL)selected
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
 - (NSString *)value
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
@@ -974,7 +999,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLInputElement
+@implementation DOMHTMLInputElement
 
 - (NSString *)defaultValue
 {
@@ -998,7 +1023,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1142,6 +1167,11 @@ using DOM::NodeImpl;
     return nil;
 }
 
+- (void)setType:(NSString *)type
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
 - (NSString *)useMap
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
@@ -1186,7 +1216,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTextAreaElement
+@implementation DOMHTMLTextAreaElement
 
 - (NSString *)defaultValue
 {
@@ -1199,7 +1229,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1288,6 +1318,11 @@ using DOM::NodeImpl;
     return nil;
 }
 
+- (void)setType:(NSString *)type
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
 - (NSString *)value
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
@@ -1316,9 +1351,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLButtonElement
+@implementation DOMHTMLButtonElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1387,9 +1422,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLLabelElement
+@implementation DOMHTMLLabelElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1419,9 +1454,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLFieldSetElement
+@implementation DOMHTMLFieldSetElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1429,9 +1464,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLLegendElement
+@implementation DOMHTMLLegendElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -1461,7 +1496,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLUListElement
+@implementation DOMHTMLUListElement
 
 - (BOOL)compact
 {
@@ -1487,7 +1522,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLOListElement
+@implementation DOMHTMLOListElement
 
 - (BOOL)compact
 {
@@ -1524,7 +1559,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLDListElement
+@implementation DOMHTMLDListElement
 
 - (BOOL)compact
 {
@@ -1539,7 +1574,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLDirectoryElement
+@implementation DOMHTMLDirectoryElement
 
 - (BOOL)compact
 {
@@ -1554,7 +1589,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLMenuElement
+@implementation DOMHTMLMenuElement
 
 - (BOOL)compact
 {
@@ -1569,7 +1604,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLLIElement
+@implementation DOMHTMLLIElement
 
 - (NSString *)type
 {
@@ -1595,7 +1630,52 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLBlockquoteElement
+@implementation DOMHTMLDivElement
+
+- (NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
+}
+
+- (void)setAlign:(NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+@end
+
+@implementation DOMHTMLParagraphElement
+
+- (NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
+}
+
+- (void)setAlign:(NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+@end
+
+@implementation DOMHTMLHeadingElement
+
+- (NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
+}
+
+- (void)setAlign:(NSString *)align
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+@end
+
+@implementation DOMHTMLQuoteElement
 
 - (NSString *)cite
 {
@@ -1610,67 +1690,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLDivElement
-
-- (NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
-}
-
-- (void)setAlign:(NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
-@end
-
-@implementation HTMLParagraphElement
-
-- (NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
-}
-
-- (void)setAlign:(NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
-@end
-
-@implementation HTMLHeadingElement
-
-- (NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
-}
-
-- (void)setAlign:(NSString *)align
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
-@end
-
-@implementation HTMLQuoteElement
-
-- (NSString *)cite
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
-}
-
-- (void)setCite:(NSString *)cite
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
-@end
-
-@implementation HTMLPreElement
+@implementation DOMHTMLPreElement
 
 - (long)width
 {
@@ -1685,7 +1705,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLBRElement
+@implementation DOMHTMLBRElement
 
 - (NSString *)clear
 {
@@ -1700,7 +1720,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLBaseFontElement
+@implementation DOMHTMLBaseFontElement
 
 - (NSString *)color
 {
@@ -1737,7 +1757,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLFontElement
+@implementation DOMHTMLFontElement
 
 - (NSString *)color
 {
@@ -1774,7 +1794,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLHRElement
+@implementation DOMHTMLHRElement
 
 - (NSString *)align
 {
@@ -1822,7 +1842,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLModElement
+@implementation DOMHTMLModElement
 
 - (NSString *)cite
 {
@@ -1848,7 +1868,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLAnchorElement
+@implementation DOMHTMLAnchorElement
 
 - (NSString *)accessKey
 {
@@ -1994,7 +2014,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLImageElement
+@implementation DOMHTMLImageElement
 
 - (NSString *)lowSrc
 {
@@ -2141,9 +2161,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLObjectElement
+@implementation DOMHTMLObjectElement
 
-- (HTMLFormElement *)form
+- (DOMHTMLFormElement *)form
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2248,13 +2268,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (NSString *)hspace
+- (long)hspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (void)setHspace:(NSString *)hspace
+- (void)setHspace:(long)hspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -2314,13 +2334,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (NSString *)vspace
+- (long)vspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return 0;
 }
 
-- (void)setVspace:(NSString *)vspace
+- (void)setVspace:(long)vspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -2336,9 +2356,15 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
+- (DOMDocument *)contentDocument
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
+}
+
 @end
 
-@implementation HTMLParamElement
+@implementation DOMHTMLParamElement
 
 - (NSString *)name
 {
@@ -2386,7 +2412,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLAppletElement
+@implementation DOMHTMLAppletElement
 
 - (NSString *)align
 {
@@ -2465,13 +2491,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (NSString *)hspace
+- (long)hspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (void)setHspace:(NSString *)hspace
+- (void)setHspace:(long)hspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -2498,13 +2524,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (NSString *)vspace
+- (long)vspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (void)setVspace:(NSString *)vspace
+- (void)setVspace:(long)vspace
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -2522,9 +2548,9 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLMapElement
+@implementation DOMHTMLMapElement
 
-- (HTMLCollection *)areas
+- (DOMHTMLCollection *)areas
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2543,7 +2569,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLAreaElement
+@implementation DOMHTMLAreaElement
 
 - (NSString *)accessKey
 {
@@ -2635,7 +2661,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLScriptElement
+@implementation DOMHTMLScriptElement
 
 - (NSString *)text
 {
@@ -2716,7 +2742,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableCaptionElement
+@implementation DOMHTMLTableCaptionElement
 
 - (NSString *)align
 {
@@ -2731,7 +2757,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableSectionElement
+@implementation DOMHTMLTableSectionElement
 
 - (NSString *)align
 {
@@ -2777,13 +2803,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLCollection *)rows
+- (DOMHTMLCollection *)rows
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLElement *)insertRow:(long)index
+- (DOMHTMLElement *)insertRow:(long)index
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2796,33 +2822,48 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableElement
+@implementation DOMHTMLTableElement
 
-- (HTMLTableCaptionElement *)caption
+- (DOMHTMLTableCaptionElement *)caption
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLTableSectionElement *)tHead
+- (void)setCaption:(DOMHTMLTableCaptionElement *)caption
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+- (DOMHTMLTableSectionElement *)tHead
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLTableSectionElement *)tFoot
+- (void)setTHead:(DOMHTMLTableSectionElement *)tHead
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+- (DOMHTMLTableSectionElement *)tFoot
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLCollection *)rows
+- (void)setTFoot:(DOMHTMLTableSectionElement *)tFoot
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+- (DOMHTMLCollection *)rows
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (HTMLCollection *)tBodies
+- (DOMHTMLCollection *)tBodies
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2927,7 +2968,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLElement *)createTHead
+- (DOMHTMLElement *)createTHead
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2938,7 +2979,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLElement *)createTFoot
+- (DOMHTMLElement *)createTFoot
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2949,7 +2990,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLElement *)createCaption
+- (DOMHTMLElement *)createCaption
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -2960,7 +3001,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLElement *)insertRow:(long)index
+- (DOMHTMLElement *)insertRow:(long)index
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");    return nil;
 }
@@ -2972,7 +3013,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableColElement
+@implementation DOMHTMLTableColElement
 
 - (NSString *)align
 {
@@ -3042,7 +3083,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableRowElement
+@implementation DOMHTMLTableRowElement
 
 - (long)rowIndex
 {
@@ -3066,13 +3107,13 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLCollection *)cells
+- (DOMHTMLCollection *)cells
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
 }
 
-- (void)setCells:(HTMLCollection *)cells // Is cells really read/write?
+- (void)setCells:(DOMHTMLCollection *)cells // Is cells really read/write?
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
@@ -3132,7 +3173,7 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
-- (HTMLElement *)insertCell:(long)index
+- (DOMHTMLElement *)insertCell:(long)index
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
@@ -3145,7 +3186,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLTableCellElement
+@implementation DOMHTMLTableCellElement
 
 - (long)cellIndex
 {
@@ -3314,7 +3355,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLFrameSetElement
+@implementation DOMHTMLFrameSetElement
 
 - (NSString *)cols
 {
@@ -3340,7 +3381,7 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation HTMLFrameElement
+@implementation DOMHTMLFrameElement
 
 - (NSString *)frameBorder
 {
@@ -3430,9 +3471,15 @@ using DOM::NodeImpl;
     ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
+- (DOMDocument *)contentDocument
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
+}
+
 @end
 
-@implementation HTMLIFrameElement
+@implementation DOMHTMLIFrameElement
 
 - (NSString *)align
 {
@@ -3542,6 +3589,12 @@ using DOM::NodeImpl;
 - (void)setWidth:(NSString *)width
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
+}
+
+- (DOMDocument *)contentDocument
+{
+    ASSERT_WITH_MESSAGE(0, "not implemented");
+    return nil;
 }
 
 @end

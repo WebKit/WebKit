@@ -37,10 +37,54 @@
 //=========================================================================
 
 #import "DOMCore.h"
-#import "DOMViews.h"
-#import "DOMEvents.h"
-#import "DOMStylesheets.h"
-#import "DOMCSS.h"
-#import "DOMTraversal.h"
-#import "DOMRange.h"
-#import "DOMHTML.h"
+
+extern NSString * const DOMRangeException;
+
+enum {
+    //
+    // DOM range exception codes
+    //
+    DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
+    DOM_INVALID_NODE_TYPE_ERR         = 2,
+};
+
+enum {
+    //
+    // DOM Range comparison codes
+    //
+    DOM_START_TO_START                = 0,
+    DOM_START_TO_END                  = 1,
+    DOM_END_TO_END                    = 2,
+    DOM_END_TO_START                  = 3,
+};
+
+@interface DOMRange : DOMObject
+- (DOMNode *)startContainer;
+- (long)startOffset;
+- (DOMNode *)endContainer;
+- (long)endOffset;
+- (BOOL)collapsed;
+- (DOMNode *)commonAncestorContainer;
+- (void)setStart:(DOMNode *)refNode :(long)offset;
+- (void)setEnd:(DOMNode *)refNode :(long)offset;
+- (void)setStartBefore:(DOMNode *)refNode;
+- (void)setStartAfter:(DOMNode *)refNode;
+- (void)setEndBefore:(DOMNode *)refNode;
+- (void)setEndAfter:(DOMNode *)refNode;
+- (void)collapse:(BOOL)toStart;
+- (void)selectNode:(DOMNode *)refNode;
+- (void)selectNodeContents:(DOMNode *)refNode;
+- (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
+- (void)deleteContents;
+- (DOMDocumentFragment *)extractContents;
+- (DOMDocumentFragment *)cloneContents;
+- (void)insertNode:(DOMNode *)newNode;
+- (void)surroundContents:(DOMNode *)newParent;
+- (DOMRange *)cloneRange;
+- (NSString *)toString;
+- (void)detach;
+@end
+
+@protocol DOMDocumentRange
+- (DOMRange *)createRange;
+@end

@@ -337,6 +337,14 @@
 				BE91866105EE618F0081354D,
 				515B878F05F5348600EABBF9,
 				BE95BEE805FD0805006E1513,
+				9321290606068E3100B62302,
+				9321290706068E3100B62302,
+				9321290806068E3100B62302,
+				9321290906068E3100B62302,
+				9321290A06068E3100B62302,
+				9321290B06068E3100B62302,
+				9321290C06068E3100B62302,
+				9321290D06068E3100B62302,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2445,6 +2453,150 @@
 			settings = {
 			};
 		};
+		932128FE06068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMCore.h;
+			path = DOM.subproj/DOMCore.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		932128FF06068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMCSS.h;
+			path = DOM.subproj/DOMCSS.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290006068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMEvents.h;
+			path = DOM.subproj/DOMEvents.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290106068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMHTML.h;
+			path = DOM.subproj/DOMHTML.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290206068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMRange.h;
+			path = DOM.subproj/DOMRange.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290306068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMStylesheets.h;
+			path = DOM.subproj/DOMStylesheets.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290406068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMTraversal.h;
+			path = DOM.subproj/DOMTraversal.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290506068E3100B62302 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMViews.h;
+			path = DOM.subproj/DOMViews.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9321290606068E3100B62302 = {
+			fileRef = 932128FE06068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290706068E3100B62302 = {
+			fileRef = 932128FF06068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290806068E3100B62302 = {
+			fileRef = 9321290006068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290906068E3100B62302 = {
+			fileRef = 9321290106068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290A06068E3100B62302 = {
+			fileRef = 9321290206068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290B06068E3100B62302 = {
+			fileRef = 9321290306068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290C06068E3100B62302 = {
+			fileRef = 9321290406068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9321290D06068E3100B62302 = {
+			fileRef = 9321290506068E3100B62302;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		932399D7034CF7F6008635CE = {
 			children = (
 				932399D8034CF7F6008635CE,
@@ -3575,6 +3727,14 @@
 		F57D194A034E732C01A80180 = {
 			children = (
 				BE91865E05EE618F0081354D,
+				932128FE06068E3100B62302,
+				932128FF06068E3100B62302,
+				9321290006068E3100B62302,
+				9321290106068E3100B62302,
+				9321290206068E3100B62302,
+				9321290306068E3100B62302,
+				9321290406068E3100B62302,
+				9321290506068E3100B62302,
 				BE91865F05EE618F0081354D,
 				F57D194B034E734901A80180,
 				F57D194D034E734901A80180,

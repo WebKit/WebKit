@@ -24,7 +24,6 @@
  */
 
 #import "DOM.h"
-#import "DOM-CSS.h"
 
 namespace DOM {
     class CSSStyleDeclarationImpl;
@@ -64,16 +63,16 @@ namespace DOM {
 - (id)_init;
 @end
 
-@interface CSSStyleDeclaration (WebCoreInternal)
-+ (CSSStyleDeclaration *)_styleDeclarationWithImpl:(DOM::CSSStyleDeclarationImpl *)impl;
+@interface DOMCSSStyleDeclaration (WebCoreInternal)
++ (DOMCSSStyleDeclaration *)_styleDeclarationWithImpl:(DOM::CSSStyleDeclarationImpl *)impl;
 @end
 
 @interface DOMStyleSheetList (WebCoreInternal)
 + (DOMStyleSheetList *)_styleSheetListWithImpl:(DOM::StyleSheetListImpl *)impl;
 @end
 
-@interface CSSStyleSheet (WebCoreInternal)
-+ (CSSStyleSheet *)_CSSStyleSheetWithImpl:(DOM::CSSStyleSheetImpl *)impl;
+@interface DOMCSSStyleSheet (WebCoreInternal)
++ (DOMCSSStyleSheet *)_CSSStyleSheetWithImpl:(DOM::CSSStyleSheetImpl *)impl;
 @end
 
 // Helper functions for DOM wrappers and gluing to Objective-C

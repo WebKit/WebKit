@@ -1,3 +1,28 @@
+2004-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - update for new DOM namespacing and header organization
+
+        * DOM.subproj/DOM.h: Changed to include the other DOM headers.
+        * DOM.subproj/DOMCSS.h: Added.
+        * DOM.subproj/DOMCore.h: Added.
+        * DOM.subproj/DOMEvents.h: Added.
+        * DOM.subproj/DOMHTML.h: Added.
+        * DOM.subproj/DOMRange.h: Added.
+        * DOM.subproj/DOMStylesheets.h: Added.
+        * DOM.subproj/DOMTraversal.h: Added.
+        * DOM.subproj/DOMViews.h: Added.        
+        * WebKit.pbproj/project.pbxproj: Added new files.
+
+        * WebView.subproj/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[WebDefaultEditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        Change class names from CSS to DOMCSS.
+        * WebView.subproj/WebViewPrivate.h: Ditto.
+
+        * copy-webcore-files-to-webkit: Add new files.
+
 2004-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

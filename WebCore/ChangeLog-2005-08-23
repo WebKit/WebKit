@@ -1,3 +1,26 @@
+2004-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - update for new DOM namespacing and header organization
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/DOM-CSS.h: Removed.
+        * kwq/DOM-CSS.mm: Update for name changes.
+        * kwq/DOM.h: Changed to include the other DOM headers.
+        * kwq/DOM.mm: Update for name changes.
+        * kwq/DOMCSS.h: Added.
+        * kwq/DOMCore.h: Added.
+        * kwq/DOMEvents.h: Added.
+        * kwq/DOMHTML.h: Added.
+        * kwq/DOMInternal.h: Update for name changes.
+        * kwq/DOMRange.h: Added.
+        * kwq/DOMStylesheets.h: Added.
+        * kwq/DOMTraversal.h: Added.
+        * kwq/DOMViews.h: Added.
+        * kwq/HTMLDOM.h: Removed.
+        * kwq/HTMLDOM.mm: Update for name changes; add some missing setters.
+
 2004-03-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
