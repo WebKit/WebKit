@@ -40,8 +40,11 @@ public:
     int width() const;
     int height() const;
     bool isNull() const;
+    bool isValid() const;
 
     QSize size() const;
+    void setWidth(int);
+    void setHeight(int);
     QRect intersect(const QRect &) const;
 };
 
