@@ -1,5 +1,11 @@
 2004-09-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * layout-tests/editing/selection/unrendered-004-expected.txt: Updated expected results.
+
+2004-09-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Fix for this bug:
