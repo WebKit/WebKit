@@ -2,6 +2,8 @@
 
 	Fix for excite.com.  There are many bugs being fixed that all
 	contributed to the wideness of the table.
+
+	The bug # is 3200534
 	
         Reviewed by darin
 
