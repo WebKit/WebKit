@@ -62,9 +62,9 @@ int main(int argc, char **argv)
     // create interpreter
     Interpreter interp(global);
     // add debug() function
-    global.put(interp.globalExec(),"debug", Object(new TestFunctionImp()));
+    global.put(interp.globalExec(), Identifier("debug"), Object(new TestFunctionImp()));
     // add "print" for compatibility with the mozilla js shell
-    global.put(interp.globalExec(),"print", Object(new TestFunctionImp()));
+    global.put(interp.globalExec(), Identifier("print"), Object(new TestFunctionImp()));
 
     const int BufferSize = 200000;
     char code[BufferSize];
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
         char *msg = exVal.toString(exec).ascii();
         int lineno = -1;
         if (exVal.type() == ObjectType) {
-          Value lineVal = Object::dynamicCast(exVal).get(exec,"line");
+          Value lineVal = Object::dynamicCast(exVal).get(exec,Identifier("line"));
           if (lineVal.type() == NumberType)
             lineno = int(lineVal.toNumber(exec));
         }

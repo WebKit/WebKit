@@ -55,7 +55,7 @@ NumberPrototypeImp::NumberPrototypeImp(ExecState *exec,
   // The constructor will be added later, after NumberObjectImp has been constructed
 
   put(exec,toStringPropertyName,       Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToString,       1)), DontEnum);
-  put(exec,"toLocaleString", Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToLocaleString, 0)), DontEnum);
+  put(exec,toLocaleStringPropertyName, Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ToLocaleString, 0)), DontEnum);
   put(exec,valueOfPropertyName,        Object(new NumberProtoFuncImp(exec,funcProto,NumberProtoFuncImp::ValueOf,        0)), DontEnum);
 }
 

@@ -25,13 +25,73 @@ namespace KJS {
 
 Identifier Identifier::null;
 
+extern const Identifier argumentsPropertyName("arguments");
+extern const Identifier calleePropertyName("callee");
+extern const Identifier constructorPropertyName("constructor");
+extern const Identifier lengthPropertyName("length");
+extern const Identifier messagePropertyName("message");
+extern const Identifier namePropertyName("name");
+extern const Identifier prototypePropertyName("prototype");
+extern const Identifier specialPrototypePropertyName("__proto__");
+extern const Identifier toLocaleStringPropertyName("toLocaleString");
+extern const Identifier toStringPropertyName("toString");
+extern const Identifier valueOfPropertyName("valueOf");
+
 bool operator==(const Identifier &a, const char *b)
 {
     return a._ustring == b;
 }
 
-void Identifier::aboutToDestroyUStringRep(UString::Rep *)
+UString::Rep *Identifier::add(const char *c)
 {
+  if (!c)
+    return &UString::Rep::null;
+  int length = strlen(c);
+  if (length == 0)
+    return &UString::Rep::empty;
+
+  // Here's where we compute a hash and find it or put it in the hash table.
+  UChar *d = new UChar[length];
+  for (int i = 0; i < length; i++)
+    d[i] = c[i];
+
+  UString::Rep *r = new UString::Rep;
+  r->dat = d;
+  r->len = length;
+  r->capacity = length;
+  r->rc = 0;
+  r->_hash = 0;
+  return r;
+}
+
+UString::Rep *Identifier::add(const UChar *s, int length)
+{
+  // Here's where we compute a hash and find it or put it in the hash table.
+
+  UChar *d = new UChar[length];
+  for (int i = 0; i < length; i++)
+    d[i] = s[i];
+
+  UString::Rep *r = new UString::Rep;
+  r->dat = d;
+  r->len = length;
+  r->capacity = length;
+  r->rc = 0;
+  r->_hash = 0;
+  return r;
+}
+
+UString::Rep *Identifier::add(const UString &s)
+{
+  // Here's where we compute a hash and find it or put it in the hash table.
+  // Don't forget to check for the case of a string that's already in the table by looking at capacity.
+  
+  return s.rep;
+}
+
+void Identifier::remove(UString::Rep *)
+{
+  // Here's where we find the string already in the hash table, and remove it.
 }
 
 } // namespace KJS

@@ -164,32 +164,46 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   r->capacity = l;
   r->rc = 1;
   r->_hash = 0;
-
   return r;
 }
 
 void UString::Rep::destroy()
 {
   if (capacity == capacityForIdentifier)
-    Identifier::aboutToDestroyUStringRep(this);
+    Identifier::remove(this);
   delete [] dat;
   delete this;
 }
 
-void UString::Rep::computeHash() const
+unsigned UString::Rep::computeHash(const UChar *s, int length)
 {
-    int length = len;
     int prefixLength = length < 8 ? length : 8;
     int suffixPosition = length < 16 ? 8 : length - 8;
 
     unsigned h = length;
     for (int i = 0; i < prefixLength; i++)
-        h = 127 * h + dat[i].unicode();
+        h = 127 * h + s[i].unicode();
     for (int i = suffixPosition; i < length; i++)
-        h = 127 * h + dat[i].unicode();
+        h = 127 * h + s[i].unicode();
     if (h == 0)
         h = 0x80000000;
-    _hash = h;
+    return h;
+}
+
+unsigned UString::Rep::computeHash(const char *s)
+{
+    int length = strlen(s);
+    int prefixLength = length < 8 ? length : 8;
+    int suffixPosition = length < 16 ? 8 : length - 8;
+
+    unsigned h = length;
+    for (int i = 0; i < prefixLength; i++)
+        h = 127 * h + (unsigned char)s[i];
+    for (int i = suffixPosition; i < length; i++)
+        h = 127 * h + (unsigned char)s[i];
+    if (h == 0)
+        h = 0x80000000;
+    return h;
 }
 
 UString::UString()
@@ -246,11 +260,6 @@ UString::UString(UChar *c, int length, bool copy)
   } else
     d = c;
   rep = Rep::create(d, length);
-}
-
-UString::UString(const UString &b)
-{
-  attach(b.rep);
 }
 
 UString::UString(const UString &a, const UString &b)

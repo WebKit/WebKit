@@ -533,7 +533,7 @@ StringObjectImp::StringObjectImp(ExecState *exec,
   // ECMA 15.5.3.1 String.prototype
   put(exec,prototypePropertyName, Object(stringProto), DontEnum|DontDelete|ReadOnly);
 
-  static UString fromCharCode("fromCharCode");
+  static Identifier fromCharCode("fromCharCode");
   put(exec,fromCharCode, Object(new StringObjectFuncImp(exec,funcProto)), DontEnum);
 
   // no. of arguments for constructor

@@ -504,7 +504,7 @@ int Lexer::lex()
         break;
       }
       /* TODO: close leak on parse error. same holds true for String */
-      kjsyylval.ustr = new UString(buffer16, pos16);
+      kjsyylval.ident = new KJS::Identifier(buffer16, pos16);
       token = IDENT;
       break;
     }

@@ -41,8 +41,8 @@ ErrorPrototypeImp::ErrorPrototypeImp(ExecState *exec,
   setInternalValue(Undefined());
   // The constructor will be added later in ErrorObjectImp's constructor
 
-  put(exec, "name",     String("Error"), DontEnum);
-  put(exec, "message",  String("Unknown error"), DontEnum);
+  put(exec, namePropertyName,     String("Error"), DontEnum);
+  put(exec, messagePropertyName,  String("Unknown error"), DontEnum);
   put(exec, toStringPropertyName, Object(new ErrorProtoFuncImp(exec,funcProto)), DontEnum);
 }
 
@@ -65,12 +65,12 @@ Value ErrorProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*ar
   // toString()
   UString s = "Error";
 
-  Value v = thisObj.get(exec,"name");
+  Value v = thisObj.get(exec, namePropertyName);
   if (v.type() != UndefinedType) {
     s = v.toString(exec);
   }
 
-  v = thisObj.get(exec,"message");
+  v = thisObj.get(exec, messagePropertyName);
   if (v.type() != UndefinedType) {
     s += ": "+v.toString(exec);
   }
@@ -87,7 +87,7 @@ ErrorObjectImp::ErrorObjectImp(ExecState *exec, FunctionPrototypeImp *funcProto,
   Value protect(this);
   // ECMA 15.11.3.1 Error.prototype
   put(exec, prototypePropertyName, Object(errorProto), DontEnum|DontDelete|ReadOnly);
-  //put(exec, "name", String(n));
+  //put(exec, namePropertyName, String(n));
 }
 
 bool ErrorObjectImp::implementsConstruct() const
@@ -102,7 +102,7 @@ Object ErrorObjectImp::construct(ExecState *exec, const List &args)
   Object obj(new ObjectImp(proto));
 
   if (!args.isEmpty() && args[0].type() != UndefinedType) {
-    obj.put(exec,"message", String(args[0].toString(exec)));
+    obj.put(exec, messagePropertyName, String(args[0].toString(exec)));
   }
 
   return obj;
@@ -128,8 +128,8 @@ NativeErrorPrototypeImp::NativeErrorPrototypeImp(ExecState *exec, ErrorPrototype
 {
   Value protect(this);
   errType = et;
-  put(exec,"name",String(name));
-  put(exec,"message",String(message));
+  put(exec, namePropertyName, String(name));
+  put(exec, messagePropertyName, String(message));
 }
 
 // ------------------------------ NativeErrorImp -------------------------------
@@ -156,7 +156,7 @@ Object NativeErrorImp::construct(ExecState *exec, const List &args)
 {
   Object obj(new ObjectImp(Object(proto)));
   if (args[0].type() != UndefinedType)
-    obj.put(exec, "message", String(args[0].toString(exec)));
+    obj.put(exec, messagePropertyName, String(args[0].toString(exec)));
   return obj;
 }
 

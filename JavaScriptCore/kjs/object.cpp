@@ -40,13 +40,6 @@
 
 namespace KJS {
 
-extern const Identifier argumentsPropertyName("arguments");
-extern const Identifier lengthPropertyName("length");
-extern const Identifier prototypePropertyName("prototype");
-extern const Identifier specialPrototypePropertyName("__proto__");
-extern const Identifier toStringPropertyName("toString");
-extern const Identifier valueOfPropertyName("valueOf");
-
 // ------------------------------ Object ---------------------------------------
 
 Object Object::dynamicCast(const Value &v)

@@ -30,8 +30,9 @@ namespace KJS {
         friend class PropertyMap;
     public:
         Identifier() { }
-        Identifier(const char *s) : _ustring(s) { }
-        Identifier(const UString &s) : _ustring(s) { }
+        Identifier(const char *s) : _ustring(add(s)) { }
+        Identifier(const UChar *s, int length) : _ustring(add(s, length)) { }
+        explicit Identifier(const UString &s) : _ustring(add(s)) { }
         
         const UString &ustring() const { return _ustring; }
         DOM::DOMString string() const;
@@ -42,7 +43,7 @@ namespace KJS {
         
         const char *ascii() const { return _ustring.ascii(); }
         
-        static Identifier from(unsigned y) { return UString::from(y); }
+        static Identifier from(unsigned y) { return Identifier(UString::from(y)); }
         
         bool isNull() const { return _ustring.isNull(); }
         bool isEmpty() const { return _ustring.isEmpty(); }
@@ -57,9 +58,13 @@ namespace KJS {
 
         friend bool operator==(const Identifier &, const char *);
     
-        static void aboutToDestroyUStringRep(UString::Rep *);
+        static void remove(UString::Rep *);
 
     private:
+        static UString::Rep *add(const char *);
+        static UString::Rep *add(const UChar *, int length);
+        static UString::Rep *add(const UString &);
+        
         UString _ustring;
     };
     
@@ -72,6 +77,18 @@ namespace KJS {
     {
         return a._ustring != b._ustring;
     }
+
+    extern const Identifier argumentsPropertyName;
+    extern const Identifier calleePropertyName;
+    extern const Identifier constructorPropertyName;
+    extern const Identifier lengthPropertyName;
+    extern const Identifier messagePropertyName;
+    extern const Identifier namePropertyName;
+    extern const Identifier prototypePropertyName;
+    extern const Identifier specialPrototypePropertyName;
+    extern const Identifier toLocaleStringPropertyName;
+    extern const Identifier toStringPropertyName;
+    extern const Identifier valueOfPropertyName;
 
 }
 

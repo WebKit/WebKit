@@ -446,7 +446,7 @@ Value PropertyValueNode::evaluate(ExecState *exec)
   Value v = assign->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  obj.put(exec,n.toString(exec), v);
+  obj.put(exec, Identifier(n.toString(exec)), v);
 
   return obj;
 }
@@ -504,7 +504,7 @@ Reference AccessorNode1::evaluateReference(ExecState *exec)
   if (v2.toUInt32(i))
     return Reference(o, i);
   String s = v2.toString(exec);
-  return Reference(o, s.value());
+  return Reference(o, Identifier(s.value()));
 }
 
 
@@ -1217,7 +1217,7 @@ Value RelationalNode::evaluate(ExecState *exec)
           return throwError(exec,  TypeError,
                              "Shift expression not an object into IN expression." );
       Object o2(static_cast<ObjectImp*>(v2.imp()));
-      b = o2.hasProperty(exec,v1.toString(exec));
+      b = o2.hasProperty(exec, Identifier(v1.toString(exec)));
   } else {
     if (v2.type() != ObjectType)
         return throwError(exec,  TypeError,

@@ -216,8 +216,9 @@ namespace KJS {
       UChar *data() const { return dat; }
       int size() const { return len; }
       
-      int hash() const { if (_hash == 0) computeHash(); return _hash; }
-      void computeHash() const;
+      int hash() const { if (_hash == 0) _hash = computeHash(dat, len); return _hash; }
+      static unsigned computeHash(const UChar *, int length);
+      static unsigned computeHash(const char *);
 
       void ref() { ++rc; }
       void deref() { if (--rc == 0) destroy(); }
@@ -262,7 +263,7 @@ namespace KJS {
     /**
      * Copy constructor. Makes a shallow copy only.
      */
-    UString(const UString &);
+    UString(const UString &s) { attach(s.rep); }
     /**
      * Convenience declaration only ! You'll be on your own to write the
      * implementation for a construction from QString.

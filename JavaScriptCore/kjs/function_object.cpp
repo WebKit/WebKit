@@ -258,11 +258,11 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
 	  while (i < len && *c == ' ')
 	      c++, i++;
 	  if (i == len) {
-	      fimp->addParameter(param);
+	      fimp->addParameter(Identifier(param));
 	      params++;
 	      break;
 	  } else if (*c == ',') {
-	      fimp->addParameter(param);
+	      fimp->addParameter(Identifier(param));
 	      params++;
 	      c++, i++;
 	      continue;
@@ -280,7 +280,7 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
 
   Object objCons = exec->interpreter()->builtinObject();
   Object prototype = objCons.construct(exec,List::empty());
-  prototype.put(exec, "constructor",
+  prototype.put(exec, constructorPropertyName,
 		Object(fimp), DontEnum|DontDelete|ReadOnly);
   fimp->put(exec,prototypePropertyName,prototype,DontEnum|DontDelete|ReadOnly);
   fimp->put(exec,argumentsPropertyName,Null(),DontEnum|DontDelete|ReadOnly);

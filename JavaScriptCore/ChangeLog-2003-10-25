@@ -1,5 +1,25 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- a few more globals for often-used property names
+	- conversion to Identifier from UString must now be explicit
+
+        * kjs/error_object.cpp:
+        * kjs/function.cpp:
+        * kjs/function_object.cpp:
+        * kjs/identifier.cpp:
+        * kjs/identifier.h:
+        * kjs/lexer.cpp:
+        * kjs/nodes.cpp:
+        * kjs/number_object.cpp:
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/string_object.cpp:
+        * kjs/testkjs.cpp:
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- another step towards atomic identifiers; storing hash in the string rep. gives about
 	a 1.5% speedup in the JavaScript iBench
 

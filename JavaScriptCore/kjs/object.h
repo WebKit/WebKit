@@ -703,13 +703,6 @@ namespace KJS {
   inline void Object::setInternalValue(const Value &v)
     { imp()->setInternalValue(v); }
 
-  extern const Identifier argumentsPropertyName;
-  extern const Identifier lengthPropertyName;
-  extern const Identifier prototypePropertyName;
-  extern const Identifier specialPrototypePropertyName;
-  extern const Identifier toStringPropertyName;
-  extern const Identifier valueOfPropertyName;
-
 }; // namespace
 
 #endif // _KJS_OBJECT_H_
