@@ -191,7 +191,7 @@ RenderObject *HTMLImageElementImpl::createRenderer(RenderArena *arena, RenderSty
 
 void HTMLImageElementImpl::attach()
 {
-    createRendererIfNeeded();
+    HTMLElementImpl::attach();
     if (m_render) {
         m_render->updateFromElement();
     }
@@ -201,8 +201,6 @@ void HTMLImageElementImpl::attach()
         document->addNamedImageOrForm(oldIdAttr);
         document->addNamedImageOrForm(oldNameAttr);
     }
-
-    NodeBaseImpl::attach();
 }
 
 void HTMLImageElementImpl::detach()
@@ -213,7 +211,7 @@ void HTMLImageElementImpl::detach()
 	document->removeNamedImageOrForm(oldNameAttr);
     }
 
-    NodeBaseImpl::detach();
+    HTMLElementImpl::detach();
 }
 
 long HTMLImageElementImpl::width() const

@@ -761,7 +761,7 @@ void HTMLGenericFormElementImpl::attach()
 	    m_form->registerFormElement(this);
     }
 
-    NodeBaseImpl::attach();
+    HTMLElementImpl::attach();
 
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close
@@ -1047,26 +1047,6 @@ void HTMLButtonElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLButtonElementImpl::attach()
-{
-    // FIXME: This code is repeated here because this method does not call
-    // HTMLGenericFormElementImpl::attach(). But it's not clear why the call
-    // to updateFromElement() is a problem for the HTMLButtonElementImpl case.
-    // If we determine that it's not, then we should remove this and call
-    // HTMLGenericFormElementImpl::attach() instead of HTMLElementImpl::attach().
-    if (!m_form) {
-	m_form = getForm();
-	if (m_form)
-	    m_form->registerFormElement(this);
-    }
-
-    // skip the generic handler
-    HTMLElementImpl::attach();
-    // doesn't work yet in the renderer ### fixme
-//     if (renderer())
-//         renderer()->setReplaced(true);
-}
-
 void HTMLButtonElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (m_type != BUTTON && (evt->id() == EventImpl::DOMACTIVATE_EVENT)) {
@@ -1135,12 +1115,6 @@ NodeImpl::Id HTMLFieldSetElementImpl::id() const
 DOMString HTMLFieldSetElementImpl::type() const
 {
     return "fieldset";
-}
-
-void HTMLFieldSetElementImpl::attach()
-{
-    createRendererIfNeeded();
-    HTMLGenericFormElementImpl::attach();
 }
 
 RenderObject* HTMLFieldSetElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -1442,7 +1416,6 @@ void HTMLInputElementImpl::attach()
         break;
     }
 
-    createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 
 #if APPLE_CHANGES
@@ -1838,12 +1811,6 @@ NodeImpl::Id HTMLLegendElementImpl::id() const
     return ID_LEGEND;
 }
 
-void HTMLLegendElementImpl::attach()
-{
-    createRendererIfNeeded();
-    HTMLGenericFormElementImpl::attach();
-}
-
 RenderObject* HTMLLegendElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderLegend(this);
@@ -2123,12 +2090,6 @@ void HTMLSelectElementImpl::parseAttribute(AttributeImpl *attr)
 RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderSelect(this);
-}
-
-void HTMLSelectElementImpl::attach()
-{
-    createRendererIfNeeded();
-    HTMLGenericFormElementImpl::attach();
 }
 
 bool HTMLSelectElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoded_values, bool)
@@ -2639,12 +2600,6 @@ void HTMLTextAreaElementImpl::parseAttribute(AttributeImpl *attr)
 RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderTextArea(this);
-}
-
-void HTMLTextAreaElementImpl::attach()
-{
-    createRendererIfNeeded();
-    HTMLGenericFormElementImpl::attach();
 }
 
 bool HTMLTextAreaElementImpl::encoding(const QTextCodec* codec, encodingList& encoding, bool)

@@ -1,3 +1,49 @@
+2003-11-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3478173 -- REGRESSION (112-113): getElementById is failing for many types of elements
+
+        The problem was that ElementImpl::attach was being skipped for many objects with classes
+        derived from ElementImpl. By changing them all to call up to their base classes instead of
+        skipping levels, the bug went away. This was possible (and easy to do) because of the
+        rendererIsNeeded() change I made a while back.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::attach): Call base class's attach() instead of creating renderer explicitly
+        and then calling NodeBaseImpl::attach(). This was a remnant of the old way of changing the logic
+        about when to create the renderer, not needed now that we have rendererIsNeeded().
+        (HTMLFrameSetElementImpl::attach): Ditto.
+        (HTMLIFrameElementImpl::attach): Ditto.
+
+        * khtml/html/html_formimpl.h: Removed many unused attach() overrides.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::attach): Ditto.
+        (HTMLButtonElementImpl::attach): Removed, because now the base class's attach does the right thing.
+        (HTMLFieldSetElementImpl::attach): Ditto.
+        (HTMLInputElementImpl::attach): Removed explicit createRendererIfNeeded call, not needed now that
+        HTMLGenericFormElementImpl calls through to its base class.
+        (HTMLLegendElementImpl::attach): Removed, because now the base class's attach does the right thing.
+        (HTMLSelectElementImpl::attach): Ditto.
+        (HTMLTextAreaElementImpl::attach): Ditto.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::attach): Call base class's attach() instead of creating renderer explicitly
+        and then calling NodeBaseImpl::attach().
+        (HTMLImageElementImpl::detach): Call base class's detach() instead of NodeBaseImpl::detach(). No
+        need to skip the ElementImpl::detach() function, and important not to for the new "id" optimization.
+
+        * khtml/html/html_inlineimpl.h: Removed HTMLBRElementImpl::attach override.
+        * khtml/html/html_inlineimpl.cpp: (HTMLBRElementImpl::attach): Call base class's attach() instead
+        of creating renderer explicitly and then calling NodeBaseImpl::attach().
+
+        * khtml/html/html_objectimpl.h: Removed HTMLAppletElementImpl::attach override.
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::attach): Removed, because the base class's attach does the right thing.
+        (HTMLEmbedElementImpl::attach): Call base class's attach() instead of creating renderer explicitly
+        and then calling NodeBaseImpl::attach().
+        (HTMLObjectElementImpl::attach): Ditto.
+
 2003-11-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3478317, letter/word-spacing don't inherit properly through italic/bold elements.

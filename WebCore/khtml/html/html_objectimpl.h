@@ -47,7 +47,6 @@ public:
     virtual Id id() const;
 
     virtual void parseAttribute(AttributeImpl *token);
-    virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 

@@ -212,7 +212,6 @@ public:
     virtual Id id() const;
     DOMString type() const;
 
-    virtual void attach();
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
@@ -239,7 +238,6 @@ public:
     virtual ~HTMLFieldSetElementImpl();
 
     virtual Id id() const;
-    virtual void attach();
     
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
@@ -372,7 +370,6 @@ public:
     virtual ~HTMLLegendElementImpl();
 
     virtual Id id() const;
-    virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     virtual DOMString type() const;
@@ -428,7 +425,6 @@ public:
 
     virtual void parseAttribute(AttributeImpl *attr);
 
-    virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
 
@@ -573,7 +569,6 @@ public:
     void select (  );
 
     virtual void parseAttribute(AttributeImpl *attr);
-    virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
     virtual void reset();

@@ -246,12 +246,6 @@ RenderObject *HTMLBRElementImpl::createRenderer(RenderArena *arena, RenderStyle 
      return new (arena) RenderBR(this);
 }
 
-void HTMLBRElementImpl::attach()
-{
-    createRendererIfNeeded();
-    NodeImpl::attach();
-}
-
 // -------------------------------------------------------------------------
 
 HTMLFontElementImpl::HTMLFontElementImpl(DocumentPtr *doc)
