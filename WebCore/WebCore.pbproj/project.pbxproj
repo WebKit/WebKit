@@ -88,6 +88,7 @@
 			children = (
 				F523D16302DE42AE018635CA,
 				F58785E802DE377601EA4122,
+				93F12C7603CCFD570000011C,
 				F58785E902DE378A01EA4122,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
@@ -468,6 +469,18 @@
 				BC7294FE03804B5600A80166,
 				9394E0A603AA5BBE008635CE,
 				9394E0AB03AA60FB008635CE,
+				93F12CA403CCFD570000011C,
+				93F12CA503CCFD570000011C,
+				93F12CA603CCFD570000011C,
+				93F12CA703CCFD570000011C,
+				93F12CA803CCFD570000011C,
+				93F12CA903CCFD570000011C,
+				93F12CAA03CCFD570000011C,
+				93F12CAB03CCFD570000011C,
+				93F12CAF03CCFD570000011C,
+				93F12CB103CCFD570000011C,
+				93F12CB303CCFD570000011C,
+				93F12CC803CD0AE60000011C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -704,6 +717,9 @@
 				BC7294FD03804B5600A80166,
 				9394E0A703AA5BBE008635CE,
 				9394E0AC03AA60FB008635CE,
+				93F12CAD03CCFD570000011C,
+				93F12CAE03CCFD570000011C,
+				93F12CB003CCFD570000011C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1051,6 +1067,238 @@
 			isa = PBXFileReference;
 			path = KWQColorData.gperf;
 			refType = 4;
+		};
+		93F12C7603CCFD570000011C = {
+			children = (
+				93F12CC703CD0AE60000011C,
+				93F12C7C03CCFD570000011C,
+				93F12C7D03CCFD570000011C,
+				93F12C7E03CCFD570000011C,
+				93F12C7F03CCFD570000011C,
+				93F12C8003CCFD570000011C,
+				93F12C8103CCFD570000011C,
+				93F12C8203CCFD570000011C,
+				93F12C8303CCFD570000011C,
+				93F12C8503CCFD570000011C,
+				93F12C8703CCFD570000011C,
+				93F12C8603CCFD570000011C,
+				93F12C8903CCFD570000011C,
+				93F12C8803CCFD570000011C,
+				93F12C8B03CCFD570000011C,
+				93F12C8A03CCFD570000011C,
+				93F12C8C03CCFD570000011C,
+			);
+			isa = PBXGroup;
+			path = expat;
+			refType = 4;
+		};
+		93F12C7C03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ascii.h;
+			path = lib/ascii.h;
+			refType = 4;
+		};
+		93F12C7D03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = asciitab.h;
+			path = lib/asciitab.h;
+			refType = 4;
+		};
+		93F12C7E03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = expat.h;
+			path = lib/expat.h;
+			refType = 4;
+		};
+		93F12C7F03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = iasciitab.h;
+			path = lib/iasciitab.h;
+			refType = 4;
+		};
+		93F12C8003CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = internal.h;
+			path = lib/internal.h;
+			refType = 4;
+		};
+		93F12C8103CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = latin1tab.h;
+			path = lib/latin1tab.h;
+			refType = 4;
+		};
+		93F12C8203CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = nametab.h;
+			path = lib/nametab.h;
+			refType = 4;
+		};
+		93F12C8303CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = utf8tab.h;
+			path = lib/utf8tab.h;
+			refType = 4;
+		};
+		93F12C8503CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmlparse.c;
+			path = lib/xmlparse.c;
+			refType = 4;
+		};
+		93F12C8603CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmlrole.c;
+			path = lib/xmlrole.c;
+			refType = 4;
+		};
+		93F12C8703CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmlrole.h;
+			path = lib/xmlrole.h;
+			refType = 4;
+		};
+		93F12C8803CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmltok.c;
+			path = lib/xmltok.c;
+			refType = 4;
+		};
+		93F12C8903CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmltok.h;
+			path = lib/xmltok.h;
+			refType = 4;
+		};
+		93F12C8A03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmltok_impl.c;
+			path = lib/xmltok_impl.c;
+			refType = 4;
+		};
+		93F12C8B03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmltok_impl.h;
+			path = lib/xmltok_impl.h;
+			refType = 4;
+		};
+		93F12C8C03CCFD570000011C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = xmltok_ns.c;
+			path = lib/xmltok_ns.c;
+			refType = 4;
+		};
+		93F12CA403CCFD570000011C = {
+			fileRef = 93F12C7C03CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CA503CCFD570000011C = {
+			fileRef = 93F12C7D03CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CA603CCFD570000011C = {
+			fileRef = 93F12C7E03CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CA703CCFD570000011C = {
+			fileRef = 93F12C7F03CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CA803CCFD570000011C = {
+			fileRef = 93F12C8003CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CA903CCFD570000011C = {
+			fileRef = 93F12C8103CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CAA03CCFD570000011C = {
+			fileRef = 93F12C8203CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CAB03CCFD570000011C = {
+			fileRef = 93F12C8303CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CAD03CCFD570000011C = {
+			fileRef = 93F12C8503CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CAE03CCFD570000011C = {
+			fileRef = 93F12C8603CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CAF03CCFD570000011C = {
+			fileRef = 93F12C8703CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CB003CCFD570000011C = {
+			fileRef = 93F12C8803CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CB103CCFD570000011C = {
+			fileRef = 93F12C8903CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CB303CCFD570000011C = {
+			fileRef = 93F12C8B03CCFD570000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93F12CC703CD0AE60000011C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = expat_config.h;
+			refType = 4;
+		};
+		93F12CC803CD0AE60000011C = {
+			fileRef = 93F12CC703CD0AE60000011C;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 //930
 //931

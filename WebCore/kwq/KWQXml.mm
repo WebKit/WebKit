@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002, 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,9 @@
 
 #import "KWQXml.h"
 
-#import "KWQAssertions.h"
+#include "expat.h"
 
+#import "KWQAssertions.h"
 #import "KWQString.h"
 
 QString QXmlAttributes::value(const QString &) const
@@ -71,8 +72,10 @@ void QXmlSimpleReader::setContentHandler(QXmlContentHandler *handler)
 
 bool QXmlSimpleReader::parse(const QXmlInputSource &input)
 {
-    ERROR("not yet implemented");
-    return FALSE;
+    XML_Parser parser = XML_ParserCreate(""); // FIXME: need encoding
+    XML_Status parseError = XML_Parse(parser, "", 0, FALSE); // string, length, isFinal
+    XML_ParserFree(parser);
+    return parseError != XML_STATUS_ERROR;
 }
 
 void QXmlSimpleReader::setLexicalHandler(QXmlLexicalHandler *handler)

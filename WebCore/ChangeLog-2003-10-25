@@ -1,5 +1,38 @@
 2003-01-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- first step towards integrating expat for XML support: make it compile and link
+
+        * kwq/KWQXml.mm: (QXmlSimpleReader::parse): Put in a placeholder that calls expat.
+	Mainly just used to make sure we link.
+
+        * WebCore.pbproj/project.pbxproj: Added expat files.
+
+        * expat/COPYING: Added.
+        * expat/Changes: Added.
+        * expat/MANIFEST: Added.
+        * expat/README: Added.
+        * expat/expat_config.h: Added.
+        * expat/lib/ascii.h: Added.
+        * expat/lib/asciitab.h: Added.
+        * expat/lib/expat.h: Added.
+        * expat/lib/iasciitab.h: Added.
+        * expat/lib/internal.h: Added.
+        * expat/lib/latin1tab.h: Added.
+        * expat/lib/nametab.h: Added.
+        * expat/lib/utf8tab.h: Added.
+        * expat/lib/xmlparse.c: Added.
+        * expat/lib/xmlrole.c: Added.
+        * expat/lib/xmlrole.h: Added.
+        * expat/lib/xmltok.c: Added.
+        * expat/lib/xmltok.h: Added.
+        * expat/lib/xmltok_impl.c: Added.
+        * expat/lib/xmltok_impl.h: Added.
+        * expat/lib/xmltok_ns.c: Added.
+
+2003-01-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
 	- minor cleanup of plug-in-related classes in ECMA directory
