@@ -290,6 +290,7 @@
 				848DFF870365FE6A00CA2ACA,
 				848DFF880365FE6A00CA2ACA,
 				848DFF890365FE6A00CA2ACA,
+				51F6866E0366057300CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,6 +392,7 @@
 				9345D4ED0365C5B2008635CE,
 				9345DDB10365FB27008635CE,
 				9345DDB50365FFD0008635CE,
+				51F6866F0366057300CA2D3A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1275,6 +1277,32 @@
 			settings = {
 			};
 		};
+		51F6866C0366057300CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebBaseResourceHandleDelegate.h;
+			path = WebView.subproj/WebBaseResourceHandleDelegate.h;
+			refType = 2;
+		};
+		51F6866D0366057300CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebBaseResourceHandleDelegate.m;
+			path = WebView.subproj/WebBaseResourceHandleDelegate.m;
+			refType = 2;
+		};
+		51F6866E0366057300CA2D3A = {
+			fileRef = 51F6866C0366057300CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F6866F0366057300CA2D3A = {
+			fileRef = 51F6866D0366057300CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //510
 //511
 //512
@@ -1793,6 +1821,8 @@
 				933D659903413FF2008635CE,
 				933D659A03413FF2008635CE,
 				513D422E034CF55A00CA2ACD,
+				51F6866C0366057300CA2D3A,
+				51F6866D0366057300CA2D3A,
 			);
 			isa = PBXGroup;
 			name = WebView;

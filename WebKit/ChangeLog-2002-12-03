@@ -1,3 +1,16 @@
+2002-10-22  Richard Williamson  <rjw@apple.com>
+
+        Added stubs from common WebResourceHandleDelegate base
+        class.
+        
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Added.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: Added.
+        * WebView.subproj/WebMainResourceClient.h:
+
 2002-10-22  Darin Adler  <darin@apple.com>
 
 	Make the panel position itself above the main window.

@@ -5,11 +5,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/npapi.h>
 
 @class WebResourceResponse;
 
-@interface WebBaseNetscapePluginStream : NSObject
+@interface WebBaseNetscapePluginStream : WebBaseResourceHandleDelegate
 {
     NSURL *URL;
     NPP instance;

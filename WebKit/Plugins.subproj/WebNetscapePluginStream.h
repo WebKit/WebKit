@@ -11,9 +11,9 @@
 @class WebNetscapePluginEmbeddedView;
 @class WebResourceHandle;
 @class WebResourceRequest;
-@protocol WebResourceHandleDelegate;
 
-@interface WebNetscapePluginStream : WebBaseNetscapePluginStream <WebResourceHandleDelegate>
+
+@interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {
     WebNetscapePluginEmbeddedView *view;
     

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
 
 @class WebDownloadHandler;
@@ -19,7 +20,7 @@
 @protocol WebResourceHandleDelegate;
 @protocol WebResourceLoadDelegate;
 
-@interface WebMainResourceClient : NSObject <WebResourceHandleDelegate>
+@interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {
     NSURL *currentURL;
     WebDataSource *dataSource;
