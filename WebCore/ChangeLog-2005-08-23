@@ -1,3 +1,12 @@
+2004-09-03  David Hyatt  <hyatt@apple.com>
+
+	Simple tweak to background-attachment.  Don't apply the slow repaint flag until after the whole style has been
+	resolved, since while cascading someone may set the attachment to fixed but later override with scroll.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::applyProperty):
+
 2004-09-03  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3781001>: redirection of URL via resource load delegate does not correctly set base URL for subsequent loads

@@ -917,6 +917,11 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         style->setTextDecorationsInEffect(style->textDecoration());
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
+        
+    // Only use slow repaints if we actually have a background image and if our overflow is set to
+    // auto.  (Fixed backgrounds 
+    if (!style->backgroundAttachment() && style->backgroundImage() && view)
+        view->useSlowRepaints();
 }
 
 static bool subject;
@@ -1710,16 +1715,10 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_BACKGROUND_ATTACHMENT:
         HANDLE_INHERIT_AND_INITIAL(backgroundAttachment, BackgroundAttachment)
         if(!primitiveValue) break;
-        switch(primitiveValue->getIdent())
-        {
+        switch (primitiveValue->getIdent()) {
         case CSS_VAL_FIXED:
-            {
-                style->setBackgroundAttachment(false);
-		// only use slow repaints if we actually have a background pixmap
-                if( style->backgroundImage() && view )
-                    view->useSlowRepaints();
-                break;
-            }
+            style->setBackgroundAttachment(false);
+            break;
         case CSS_VAL_SCROLL:
             style->setBackgroundAttachment(true);
             break;
