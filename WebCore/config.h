@@ -3,8 +3,6 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-/* This turns off the licensing code */
-
 /* Define if using alloca.c.  */
 /* #undef C_ALLOCA */
 
