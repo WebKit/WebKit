@@ -1,3 +1,18 @@
+2004-04-07  Chris Blumenberg  <cblu@apple.com>
+
+	WebCore side for supporting WebDOMOperations.	
+
+        Reviewed by rjw.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/DOM.mm:
+        * kwq/DOMExtensions.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (+[WebCoreBridge bridgeForDOMDocument:]): new
+        (-[WebCoreBridge imageForImageElement:]): new
+
 2004-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

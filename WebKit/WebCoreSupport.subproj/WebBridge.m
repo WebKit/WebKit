@@ -112,6 +112,11 @@
     [super dealloc];
 }
 
+- (WebFrame *)webFrame
+{
+    return _frame;
+}
+
 - (NSArray *)childFrames
 {
     ASSERT(_frame != nil);

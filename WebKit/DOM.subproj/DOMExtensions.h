@@ -25,10 +25,6 @@
 
 #import "DOMHTML.h"
 
-@interface DOMNode (DOMHTMLExtensions)
-- (NSString *)HTMLString; // FIXME: Should this be renamed innerHTML or outerHTML? Is this the same as innerHTML?
-@end
-
 @interface DOMElement (DOMHTMLExtensions)
 - (NSString *)innerHTML;
 - (void)setInnerHTML:(NSString *)innerHTML;

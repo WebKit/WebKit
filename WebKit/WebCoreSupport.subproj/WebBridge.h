@@ -28,4 +28,6 @@
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)resultListener;
 - (BOOL)inNextKeyViewOutsideWebFrameViews;
 
+- (WebFrame *)webFrame;
+
 @end

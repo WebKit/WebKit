@@ -14,14 +14,6 @@
 - (NSImage *)image;
 @end
 
-@protocol WebDocumentMarkup <NSObject>
-
+@protocol WebDocumentDOM <NSObject>
 - (DOMDocument *)DOMDocument;
-
-- (NSString *)markupStringFromNode:(DOMNode *)node;
-- (NSString *)markupStringFromRange:(DOMRange *)range;
-
-- (WebArchive *)webArchiveFromNode:(DOMNode *)node;
-- (WebArchive *)webArchiveFromRange:(DOMRange *)range;
-
 @end

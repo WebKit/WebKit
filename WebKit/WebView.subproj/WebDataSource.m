@@ -101,11 +101,6 @@
     }
 }
 
-- (NSDictionary *)_subresourcesDictionary
-{
-    return _private->subresources;
-}
-
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL]) {
@@ -126,6 +121,33 @@
     }
     
     return nil;
+}
+
+- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings
+{ 
+    NSURLResponse *response = [self response];
+    WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
+                                                              URL:[response URL] 
+                                                         MIMEType:[response MIMEType]
+                                                 textEncodingName:@"UTF-8"];
+    
+    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
+    NSMutableArray *subresources = [[NSMutableArray alloc] init];
+    NSString *URLString;
+    while ((URLString = [enumerator nextObject]) != nil) {
+        WebResource *subresource = [_private->subresources objectForKey:URLString];
+        if (subresource) {
+            [subresources addObject:subresource];
+        } else {
+            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
+        }
+    }
+    
+    WebArchive *webArchive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources] autorelease];
+    [mainResource release];
+    [subresources release];
+    
+    return webArchive;
 }
 
 - (WebView *)_webView

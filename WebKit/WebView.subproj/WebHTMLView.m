@@ -10,6 +10,7 @@
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebDOMOperations.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
@@ -19,7 +20,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSPasteboardExtras.h>
-#import "WebNSPrintOperationExtras.h"
+#import <WebKit/WebNSPrintOperationExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebResourcePrivate.h>
@@ -525,12 +526,11 @@ static WebHTMLView *lastHitView = nil;
     return [NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
-- (WebArchive *)_selectedWebArchive:(NSString **)markupString
+- (WebArchive *)_selectedArchive:(NSString **)markupString
 {
     NSArray *subresourceURLStrings;
-    WebHTMLRepresentation *rep = [[self _dataSource] representation];
     *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] subresourceURLStrings:&subresourceURLStrings];
-    return [rep _webArchiveWithMarkupString:*markupString subresourceURLStrings:subresourceURLStrings];
+    return [[self _dataSource] _archiveWithMarkupString:*markupString subresourceURLStrings:subresourceURLStrings];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -539,9 +539,9 @@ static WebHTMLView *lastHitView = nil;
 
     // Put HTML on the pasteboard.
     NSString *markupString;
-    WebArchive *webArchive = [self _selectedWebArchive:&markupString];
+    WebArchive *archive = [self _selectedArchive:&markupString];
     [pasteboard setString:markupString forType:NSHTMLPboardType];
-    [pasteboard setData:[webArchive dataRepresentation] forType:WebArchivePboardType];
+    [pasteboard setData:[archive dataRepresentation] forType:WebArchivePboardType];
     
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
@@ -584,13 +584,13 @@ static WebHTMLView *lastHitView = nil;
     NSString *markupString = nil;
 
     if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *webArchive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
-        WebResource *mainResource = [webArchive mainResource];
+        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        WebResource *mainResource = [archive mainResource];
         if (mainResource) {
             markupString = [[[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding] autorelease];
-            [[self _dataSource] addSubresources:[webArchive subresources]];
+            [[self _dataSource] addSubresources:[archive subresources]];
         }
-        [webArchive release];
+        [archive release];
     }
     
     if (!markupString && [types containsObject:NSHTMLPboardType]) {
@@ -719,7 +719,7 @@ static WebHTMLView *lastHitView = nil;
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
-                  HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] HTMLString]
+                  HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] markupString]
                        event:_private->mouseDownEvent];
         
     } else if (linkURL) {

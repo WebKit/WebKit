@@ -338,15 +338,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMNode (DOMExtensions)
-
-- (NSString *)HTMLString
-{
-    return [self _nodeImpl]->recursive_toHTML(true).getNSString();
-}
-
-@end
-
 @implementation DOMNode (WebCoreInternal)
 
 - (id)_initWithNodeImpl:(NodeImpl *)impl

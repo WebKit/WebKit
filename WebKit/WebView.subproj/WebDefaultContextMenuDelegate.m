@@ -10,6 +10,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebDOMOperations.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -218,7 +219,7 @@
                                                   URL:linkURL ? linkURL : imageURL
                                                 title:[element objectForKey:WebElementImageAltStringKey] 
                                           fileWrapper:wrapper
-                                           HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] HTMLString]];
+                                           HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] markupString]];
 }
 
 - (void)openFrameInNewWindow:(id)sender

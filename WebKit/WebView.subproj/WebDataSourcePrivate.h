@@ -11,6 +11,7 @@
 @class NSError;
 @class NSURLRequest;
 @class NSURLResponse;
+@class WebArchive;
 @class WebBaseResourceHandleDelegate;
 @class WebBridge;
 @class WebHistoryItem;
@@ -122,8 +123,8 @@
 - (void)addSubresources:(NSArray *)subresources;
 
 // Other private methods
-- (NSDictionary *)_subresourcesDictionary;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
+- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings;
 
 - (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;

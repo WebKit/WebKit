@@ -254,7 +254,12 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-- (void)loadWebArchive:(WebArchive *)webArchive
++ (WebFrame *)frameForDOMDocument:(DOMDocument *)document
+{
+    return [(WebBridge *)[WebBridge bridgeForDOMDocument:document] webFrame];
+}
+
+- (void)loadArchive:(WebArchive *)webArchive
 {
     WebResource *mainResource = [webArchive mainResource];
     if (mainResource) {

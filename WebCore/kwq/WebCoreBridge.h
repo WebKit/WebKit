@@ -52,8 +52,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 #endif
 
 @class DOMDocument;
-@class DOMNode;
 @class DOMElement;
+@class DOMHTMLImageElement;
+@class DOMNode;
 @class DOMRange;
 @class WebCoreSettings;
 
@@ -121,6 +122,8 @@ typedef enum {
     BOOL _drawSelectionOnly;
     BOOL _shouldCreateRenderers;
 }
+
++ (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
 - (void)initializeSettings:(WebCoreSettings *)settings;
 
@@ -245,6 +248,8 @@ typedef enum {
 - (NSRect)selectionRect;
 - (NSRect)visibleSelectionRect;
 - (NSImage *)selectionImage;
+
+- (NSImage *)imageForImageElement:(DOMHTMLImageElement *)element;
 
 - (DOMNode *)selectionStart;
 - (int)selectionStartOffset;

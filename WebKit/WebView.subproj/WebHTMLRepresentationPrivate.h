@@ -10,5 +10,4 @@
 @interface WebHTMLRepresentation (WebPrivate)
 - (WebBridge *)_bridge;
 - (void)printDOMTree;
-- (WebArchive *)_webArchiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings;
 @end

@@ -1,3 +1,40 @@
+2004-04-07  Chris Blumenberg  <cblu@apple.com>
+
+	Created WebDOMOperations which are WebKit-specific categories on DOM objects.
+
+        Reviewed by rjw.
+
+        * DOM.subproj/DOMExtensions.h:
+        * DOM.subproj/WebDOMOperations.h: Added.
+        * DOM.subproj/WebDOMOperations.m: Added.
+        (-[DOMNode _bridge]): new
+        (-[DOMNode archive]): new
+        (-[DOMNode markupString]): new
+        (-[DOMRange _bridge]): new
+        (-[DOMRange archive]): new
+        (-[DOMRange markupString]): new
+        (-[DOMHTMLImageElement image]):
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge webFrame]): new
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _archiveWithMarkupString:subresourceURLStrings:]): moved from WebHTMLRepresentation
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call markupString on the node
+        * WebView.subproj/WebDocumentPrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (+[WebFrame frameForDOMDocument:]): new
+        (-[WebFrame loadArchive:]): renamed
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedArchive:]): renamed
+        (-[WebHTMLView _handleMouseDragged:]): called renamed methods
+
 2004-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

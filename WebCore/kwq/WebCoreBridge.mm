@@ -60,6 +60,7 @@
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
 #import "KWQFrame.h"
+#import "KWQKHTMLPart.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
@@ -146,6 +147,11 @@ static RootObject *rootForView(void *v)
 
 static bool initializedObjectCacheSize = FALSE;
 static bool initializedKJS = FALSE;
+
++ (WebCoreBridge *)bridgeForDOMDocument:(DOMDocument *)document
+{
+    return ((KWQKHTMLPart *)[document _documentImpl]->part())->bridge();
+}
 
 - init
 {
@@ -1148,6 +1154,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [selectionImage setFlipped:NO];
 
     return selectionImage;
+}
+
+- (NSImage *)imageForImageElement:(DOMHTMLImageElement *)element
+{
+    RenderImage *r = static_cast<RenderImage *>([element _nodeImpl]->renderer());
+    if (r && r->isImage() && !r->isDisplayingError()) {
+        return r->pixmap().image();
+    }
+    return nil;
 }
 
 - (void)setName:(NSString *)name
