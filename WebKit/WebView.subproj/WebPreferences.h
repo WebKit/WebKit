@@ -289,4 +289,31 @@ extern NSString *WebPreferencesChangedNotification;
 */
 - (BOOL)shouldPrintBackgrounds;
 
+/*!
+    @method setPrivateBrowsingEnabled:
+    @param flag 
+    @abstract If private browsing is enabled, WebKit will not store information
+    about sites the user visits.
+ */
+- (void)setPrivateBrowsingEnabled:(BOOL)flag;
+
+/*!
+    @method privateBrowsingEnabled
+ */
+- (BOOL)privateBrowsingEnabled;
+
+/*!
+    @method setTabsToLinks:
+    @param flag 
+    @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
+    The option key temporarily reverses this preference.
+*/
+- (void)setTabsToLinks:(BOOL)flag;
+
+/*!
+    @method tabsToLinks
+*/
+- (BOOL)tabsToLinks;
+
+
 @end

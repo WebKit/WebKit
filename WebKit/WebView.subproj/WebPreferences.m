@@ -546,25 +546,6 @@ NS_ENDHANDLER
     return _private->autosaves;
 }
 
-@end
-
-@implementation WebPreferences (WebPrivate)
-
-- (int)_pageCacheSize
-{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
-}
-
-- (int)_objectCacheSize
-{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitObjectCacheSizePreferenceKey];
-}
-
-- (NSTimeInterval)_backForwardCacheExpirationInterval
-{
-    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
-}
-
 - (void)setTabsToLinks:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitTabToLinksPreferenceKey];
@@ -583,6 +564,25 @@ NS_ENDHANDLER
 - (BOOL)privateBrowsingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+}
+
+@end
+
+@implementation WebPreferences (WebPrivate)
+
+- (int)_pageCacheSize
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
+}
+
+- (int)_objectCacheSize
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitObjectCacheSizePreferenceKey];
+}
+
+- (NSTimeInterval)_backForwardCacheExpirationInterval
+{
+    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;

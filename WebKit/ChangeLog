@@ -1,3 +1,25 @@
+2004-04-28  John Sullivan  <sullivan@apple.com>
+
+        - fixed these bugs:
+        <rdar://problem/3636570>: "API: [WebPreferences tabsToLinks] should be public API"        
+        <rdar://problem/3610597>: "API: could turn "stealth browsing" preference into API"
+
+        Reviewed by Darin.
+        
+        I just moved the declarations and implementations from one place to another.
+        (No clients in WebKit needed their #imports updated.) This confused cvs diff quite a bit.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences setTabsToLinks:]):
+        (-[WebPreferences tabsToLinks]):
+        (-[WebPreferences setPrivateBrowsingEnabled:]):
+        (-[WebPreferences privateBrowsingEnabled]):
+        (-[WebPreferences _pageCacheSize]):
+        (-[WebPreferences _objectCacheSize]):
+        (-[WebPreferences _backForwardCacheExpirationInterval]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2004-04-27  David Hyatt  <hyatt@apple.com>
 
 	Cut the time spent on an operation inside widthForNextCharacter from 17% of the function time down to less than 
