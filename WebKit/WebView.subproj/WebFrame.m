@@ -112,6 +112,8 @@
 
 - (void)stopLoading
 {
+    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+
     if (_private->state != WebFrameStateComplete) {
         [_private->provisionalDataSource stopLoading];
         [_private->dataSource stopLoading];

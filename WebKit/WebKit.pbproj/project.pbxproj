@@ -301,6 +301,7 @@
 				83413E8E0375BCD3004719BE,
 				83413E8F0375BCD3004719BE,
 				9316400E0379832D008635CE,
+				658CF8C103851FB5008C2A4B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1476,6 +1477,18 @@
 			settings = {
 			};
 		};
+		658CF8C003851FB5008C2A4B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebControllerPolicyDelegatePrivate.h;
+			refType = 4;
+		};
+		658CF8C103851FB5008C2A4B = {
+			fileRef = 658CF8C003851FB5008C2A4B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //650
 //651
 //652
@@ -2120,6 +2133,7 @@
 				6523FAD0032DA06B005EFCFF,
 				5152FAD7033FC44A00CA2ACD,
 				5152FAD8033FC44A00CA2ACD,
+				658CF8C003851FB5008C2A4B,
 				5152FADD033FC50400CA2ACD,
 				5152FADE033FC50400CA2ACD,
 				5152FADF033FC50400CA2ACD,

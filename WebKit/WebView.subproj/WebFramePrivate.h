@@ -64,6 +64,11 @@ typedef enum {
                                         // (only known when navigating to a pre-existing BF item)
     WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
     BOOL instantRedirectComing;
+
+    WebPolicyDecisionListener *listener;
+    WebResourceRequest *policyRequest;
+    id policyTarget;
+    SEL policySelector;
 }
 
 - (void)setName:(NSString *)name;
@@ -109,8 +114,9 @@ typedef enum {
 
 - (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector;
 
+- (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
+
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event;
-- (BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource;
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;

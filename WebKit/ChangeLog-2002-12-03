@@ -1,5 +1,32 @@
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
 
+	Make navigation policy asynchronous for real.
+	
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        (-[WebPolicyDecisionListenerPrivate initWithTarget:action:]):
+        (-[WebPolicyDecisionListenerPrivate dealloc]):
+        (-[WebPolicyDecisionListener usePolicy:]):
+        (-[WebPolicyDecisionListener _initWithTarget:action:]):
+        (-[WebPolicyDecisionListener dealloc]):
+        (-[WebPolicyDecisionListener _invalidate]):
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h: Added.
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:andCall:withSelector:]):
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _loadDataSource:withLoadType:]):
+
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
 	Wrap content policy invocation to look asynchronous.
 	
         * WebView.subproj/WebBaseResourceHandleDelegate.h:

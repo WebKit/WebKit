@@ -67,6 +67,8 @@ typedef enum {
     WebPolicyDecisionListenerPrivate *_private;
 }
 
+-(void)usePolicy:(WebPolicyAction) policy;
+
 @end
 
 
@@ -82,16 +84,17 @@ typedef enum {
 @protocol WebControllerPolicyDelegate <NSObject>
 
 /*!
-     @method navigationPolicyForAction:andRequest:inFrame:
+     @method decideNavigationPolicyForAction:andRequest:inFrame:
      @discussion Called right after the user clicks on a link.
      @param actionInformation Dictionary that describes the action that triggered this navigation.
      @param andRequest The request for the proposed navigation
      @param frame The frame in which the navigation is taking place
-     @result The WebPolicyAction for WebKit to implement
+     @param listener The object to call when the decision is made
 */
-- (WebPolicyAction)navigationPolicyForAction:(NSDictionary *)actionInformation
-                                  andRequest:(WebResourceRequest *)request
-                                     inFrame:(WebFrame *)frame;
+- (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation
+                                        andRequest:(WebResourceRequest *)request
+                                           inFrame:(WebFrame *)frame
+                                  decisionListener:(WebPolicyDecisionListener *)listener;
 
 
 /*!

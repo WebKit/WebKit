@@ -10,6 +10,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -74,6 +75,10 @@ static const char * const stateNames[] = {
     [provisionalItem release];
     [previousItem release];
     
+    ASSERT(listener == nil);
+    ASSERT(policyRequest == nil);
+    ASSERT(policyTarget == nil);
+
     [super dealloc];
 }
 
@@ -915,13 +920,29 @@ static const char * const stateNames[] = {
 			 forKey:WebActionNavigationTypeKey];
 }
 
-- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector
+- (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
 {
-    BOOL shouldContinue = [self _continueAfterNavigationPolicyForRequest:request dataSource:dataSource];
-    [target performSelector:selector withObject:(id)(unsigned)shouldContinue withObject:request];
+    [_private->listener _invalidate];
+    [_private->listener release];
+    _private->listener = nil;
+
+    WebResourceRequest *request = _private->policyRequest;
+    id target = _private->policyTarget;
+    SEL selector = _private->policySelector;
+
+    _private->policyRequest = nil;
+    _private->policyTarget = nil;
+    _private->policySelector = nil;
+
+    if (call) {
+	[target performSelector:selector withObject:(id)NO withObject:request];
+    }
+
+    [_private->policyRequest release];
+    [_private->policyTarget release];
 }
 
--(BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource
+- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector
 {
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
@@ -931,14 +952,31 @@ static const char * const stateNames[] = {
 
     // Don't ask more than once for the same request
     if ([request isEqual:[dataSource _lastCheckedRequest]]) {
-	return YES;
+	[target performSelector:selector withObject:(id)YES withObject:request];
     }
 
     [dataSource _setLastCheckedRequest:request];
 
-    WebPolicyAction policy = [[[self controller] policyDelegate] navigationPolicyForAction:action
-								 andRequest:request
-								 inFrame:self];
+    _private->policyRequest = [request retain];
+    _private->policyTarget = [target retain];
+    _private->policySelector = selector;
+    _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
+
+    [[[self controller] policyDelegate] decideNavigationPolicyForAction:action
+					                     andRequest:request
+					                        inFrame:self
+					               decisionListener:_private->listener];
+}
+
+-(void)_continueAfterNavigationPolicy:(WebPolicyAction)policy
+{
+    WebResourceRequest *request = [[_private->policyRequest retain] autorelease];
+    id target = [[_private->policyTarget retain] autorelease];
+    SEL selector = _private->policySelector;
+
+    [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
+
+    BOOL shouldContinue = NO;
 
     switch (policy) {
     case WebPolicyIgnore:
@@ -946,11 +984,11 @@ static const char * const stateNames[] = {
     case WebPolicyOpenURL:
 	if ([[request URL] isFileURL]) {
 	    if(![[NSWorkspace sharedWorkspace] openFile:[[request URL] path]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:policy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
+		[self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
 	    }
 	} else {
 	    if(![[NSWorkspace sharedWorkspace] openURL:[request URL]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:policy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
+		[self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
 	    }
 	}
 	break;
@@ -974,18 +1012,17 @@ static const char * const stateNames[] = {
     case WebPolicyUse:
 	if (![WebResourceHandle canInitWithRequest:request]) {
 	    [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotShowURL forURL:[request URL]];
+	} else {
+	    shouldContinue = YES;
 	}
-	return YES;
-
+	break;
     default:
 	[NSException raise:NSInvalidArgumentException
 		     format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
     }
 
-    return NO;
+    [target performSelector:selector withObject:(id)(unsigned)shouldContinue withObject:request];
 }
-
-
 
 -(void)_continueFragmentScrollAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
 {
@@ -1043,6 +1080,9 @@ static const char * const stateNames[] = {
 
         WebDataSource *dataSrc = [self dataSource];
 	[dataSrc _setTriggeringAction:action];
+
+	[self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+
 	[self _checkNavigationPolicyForRequest:request dataSource:dataSrc andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
@@ -1298,9 +1338,7 @@ static const char * const stateNames[] = {
     // KDE drop we should fix this dependency.
     ASSERT([self webView] != nil);
 
-    if ([self _state] != WebFrameStateComplete) {
-        [self stopLoading];
-    }
+    [self stopLoading];
 
     [self _setLoadType:loadType];
 

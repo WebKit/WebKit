@@ -55,14 +55,15 @@
     return nil;
 }
 
-- (WebPolicyAction)navigationPolicyForAction:(NSDictionary *)actionInformation 
-				  andRequest:(WebResourceRequest *)request
-				     inFrame:(WebFrame *)frame
+- (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
+			     andRequest:(WebResourceRequest *)request
+				inFrame:(WebFrame *)frame
+		       decisionListener:(WebPolicyDecisionListener *)listener
 {
-    if([WebResourceHandle canInitWithRequest:request]){
-        return WebPolicyUse;
+    if ([WebResourceHandle canInitWithRequest:request]) {
+	[listener usePolicy:WebPolicyUse];
     }else{
-        return WebPolicyOpenURL;
+        [listener usePolicy:WebPolicyOpenURL];
     }
 }
 
