@@ -595,14 +595,6 @@ void FuncExprNode::streamTo(SourceStream &s) const
     << ")" << body;
 }
 
-void SourceElementNode::streamTo(SourceStream &s) const
-{
-  if (statement)
-    s << statement;
-  else
-    s << function;
-}
-
 void SourceElementsNode::streamTo(SourceStream &s) const
 {
   s << elements << element;

@@ -123,6 +123,7 @@ namespace KJS {
     bool abortStatement(ExecState *exec);
     virtual Completion execute(ExecState *exec) = 0;
     void pushLabel(const Identifier &id) { ls.push(id); }
+    virtual void processFuncDecl(ExecState *exec);
   protected:
     LabelStack ls;
   private:
@@ -655,13 +656,14 @@ namespace KJS {
 
   class BlockNode : public StatementNode {
   public:
-    BlockNode(SourceElementsNode *s) : source(s) {}
+    BlockNode(SourceElementsNode *s) : source(s) { reverseList(); }
     virtual void ref();
     virtual bool deref();
     virtual Completion execute(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   protected:
+    void reverseList();
     SourceElementsNode *source;
   };
 
@@ -973,26 +975,11 @@ namespace KJS {
     FunctionBodyNode *body;
   };
 
-  class SourceElementNode : public StatementNode {
-  public:
-    SourceElementNode(StatementNode *s) : statement(s), function(0L) { }
-    SourceElementNode(FuncDeclNode *f) : statement(0L), function(f) { }
-    virtual void ref();
-    virtual bool deref();
-    Completion execute(ExecState *exec);
-    void processFuncDecl(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
-  private:
-    StatementNode *statement;
-    FuncDeclNode *function;
-  };
-
   // A linked list of source element nodes
   class SourceElementsNode : public StatementNode {
   public:
-    SourceElementsNode(SourceElementNode *s1) { element = s1; elements = 0L; }
-    SourceElementsNode(SourceElementsNode *s1, SourceElementNode *s2)
+    SourceElementsNode(StatementNode *s1) { element = s1; elements = 0L; }
+    SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
       { elements = s1; element = s2; }
     virtual void ref();
     virtual bool deref();
@@ -1001,7 +988,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
-    SourceElementNode *element; // 'this' element
+    friend class BlockNode;
+    StatementNode *element; // 'this' element
     SourceElementsNode *elements; // pointer to next
   };
 

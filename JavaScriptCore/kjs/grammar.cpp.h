@@ -10,7 +10,6 @@ typedef union {
   FuncDeclNode        *func;
   ProgramNode         *prog;
   AssignExprNode      *init;
-  SourceElementNode   *src;
   SourceElementsNode  *srcs;
   StatListNode        *slist;
   ArgumentsNode       *args;

@@ -1,3 +1,27 @@
+2002-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Maciej.
+
+	- follow-on to my fix for 3134693 that fixes one more case of recursion and simplifies further
+
+        * kjs/grammar.y: Remove SourceElementNode and just use a StatementNode instead.
+	Reverse SourceElements rule so the recursive rule comes first as in the original
+	KJS code (avoids actual parser recursion).
+
+        * kjs/grammar.cpp: Regenerated.
+        * kjs/grammar.cpp.h: Regenerated.
+        * kjs/grammar.h: Regenerated.
+
+        * kjs/nodes.h: Make processFuncDecl a virtual function in StatementNode so that we can
+	use a StatementNode instead of a SourceElementNode. Add a call to reverseList in BlockNode
+	to correct the order of the linked list in SourceElementsNode, to replace the technique
+	where we reversed it in the parser. Remove SourceElementNode class, and make the element in
+	SourceElementsNode be a StatementNode instead.
+        * kjs/nodes.cpp: Remove SourceElementNode code.
+        (StatementNode::processFuncDecl): Added empty function.
+        (BlockNode::reverseList): Added. Used to make the SourceElements list ordered correctly.
+        * kjs/nodes2string.cpp: Remove SourceElementNode code.
+
 === Alexander-46 ===
 
 2002-12-28  Darin Adler  <darin@apple.com>

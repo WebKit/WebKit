@@ -160,6 +160,10 @@ bool StatementNode::abortStatement(ExecState *exec)
     return false;
 }
 
+void StatementNode::processFuncDecl(ExecState *exec)
+{
+}
+
 // ------------------------------ NullNode -------------------------------------
 
 Value NullNode::evaluate(ExecState */*exec*/)
@@ -1710,6 +1714,18 @@ void VarStatementNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ BlockNode ------------------------------------
 
+void BlockNode::reverseList()
+{
+  SourceElementsNode *head = 0;
+  SourceElementsNode *next;
+  for (SourceElementsNode *n = source; n; n = next) {
+    next = n->elements;
+    n->elements = head;
+    head = n;
+  }
+  source = head;
+}
+
 void BlockNode::ref()
 {
   Node::ref();
@@ -2782,48 +2798,6 @@ Value FuncExprNode::evaluate(ExecState *exec)
     fimp->addParameter(p->ident());
 
   return ret;
-}
-
-// ------------------------------ SourceElementNode ----------------------------
-
-void SourceElementNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( function )
-    function->ref();
-}
-
-bool SourceElementNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( function && function->deref() )
-    delete function;
-  return Node::deref();
-}
-
-// ECMA 14
-Completion SourceElementNode::execute(ExecState *exec)
-{
-  if (statement)
-    return statement->execute(exec);
-
-  return Completion(Normal);
-}
-
-// ECMA 14
-void SourceElementNode::processFuncDecl(ExecState *exec)
-{
-  if (function)
-    function->processFuncDecl(exec);
-}
-
-void SourceElementNode::processVarDecls(ExecState *exec)
-{
-  if (statement)
-    statement->processVarDecls(exec);
 }
 
 // ------------------------------ SourceElementsNode ---------------------------
