@@ -2,6 +2,18 @@
 
         Reviewed by Chris
 
+        Fix for this bug:
+        
+        <rdar://problem/3924888> REGRESSION (Mail): Hitting return key at end of line does not insert visible newline
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Tweaked code I added just before to fix 3924486, so that
+        it checks the downstream node for the starting position.
+
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
         Added new createBreakElement() function that makes creating a <br> element a one-liner.
         Converted all the code that used to call the DocumentImpl, and dealt with the exceptionCode,
         over to this new helper.

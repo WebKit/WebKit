@@ -2270,10 +2270,10 @@ void InsertParagraphSeparatorCommand::doApply()
     // Check if pos.node() is a <br>. If it is, and the document is in quirks mode, 
     // then this <br> will collapse away when we add a block after it. Add an extra <br>.
     if (!document()->inStrictMode()) {
-        if (pos.node()->id() == ID_BR) {
+        Position downstreamPos = pos.downstream(StayInBlock);
+        if (downstreamPos.node()->id() == ID_BR) {
             NodeImpl *extraBreak = createBreakElement(document());
-            insertNodeAfter(extraBreak, pos.node());
-            pos = Position(extraBreak, 0);
+            insertNodeAfter(extraBreak, downstreamPos.node());
         }
         else {
             Position upstreamPos = pos.upstream(StayInBlock);
