@@ -1,3 +1,11 @@
+2004-05-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by mjs.
+ 
+	<rdar://problem/3642427>: framework marketing number should be 2.0 for DoubleBarrel release
+
+        * WebCore.pbproj/project.pbxproj: change CFBundleShortVersionString to 2.0
+
 2004-05-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Darin, coded by Maciej.
