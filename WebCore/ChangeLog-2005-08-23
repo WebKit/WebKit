@@ -1,3 +1,20 @@
+2004-11-04  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+		<rdar://problem/3857753> REGRESSION (Mail): Delete incorrectly causes text to take on new style
+		
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Fixed to move entire source subtree (up
+        to, but not including, the enclosingBlockFlowElement) rather than just the source element.
+        Fixed to insert after the destination subtree, rather than the destination element.  Handles
+        edge case of deleting back to the top of the tree, where there is nothing left to insert after.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::enclosingNonBlockFlowElement): New method to support moveNodesAfterNode changes.
+        * khtml/xml/dom_nodeimpl.h: Declare NodeImpl::enclosingNonBlockFlowElement
+        * layout-tests/editing/deleting/delete-3857753-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3857753-fix.html: Added.
+
 2004-11-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

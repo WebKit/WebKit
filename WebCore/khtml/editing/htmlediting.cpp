@@ -1645,18 +1645,23 @@ void DeleteSelectionCommand::moveNodesAfterNode()
     // can be removed.
     removeBlockPlaceholderIfNeeded(startBlock);
 
-    NodeImpl *node = startNode == startBlock ? startBlock->firstChild() : startNode;
+    // Move the subtree containing node
+    NodeImpl *node = startNode->enclosingNonBlockFlowElement();
+
+    // Insert after the subtree containing destNode
+    NodeImpl *refNode = dstNode->enclosingNonBlockFlowElement();
+
+    // Nothing to do if start is already at the beginning of dstBlock
+    NodeImpl *dstBlock = refNode->enclosingBlockFlowElement();
+    if (startBlock == dstBlock->firstChild())
+        return;
 
     // Do the move.
-    NodeImpl *refNode = dstNode;
     while (node && node->isAncestor(startBlock)) {
         NodeImpl *moveNode = node;
         node = node->nextSibling();
         removeNode(moveNode);
-        if (refNode->isBlockFlow())
-            appendNode(moveNode, refNode);
-        else
-            insertNodeAfter(moveNode, refNode);
+        insertNodeAfter(moveNode, refNode);
         refNode = moveNode;
     }
 

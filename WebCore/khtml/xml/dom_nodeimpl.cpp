@@ -54,6 +54,14 @@
 #include "xbl/xbl_binding_manager.h"
 #endif
 
+#if APPLE_CHANGES
+#include "KWQAssertions.h"
+#include "KWQLogging.h"
+#else
+#define ASSERT(assertion) assert(assertion)
+#define LOG(channel, formatAndArgs...) ((void)0)
+#endif
+
 using namespace DOM;
 using namespace khtml;
 
@@ -1354,6 +1362,21 @@ ElementImpl *NodeImpl::enclosingBlockFlowElement() const
         if (n->isBlockFlow() || n->id() == ID_BODY)
             return static_cast<ElementImpl *>(n);
     }
+    return 0;
+}
+
+ElementImpl *NodeImpl::enclosingNonBlockFlowElement() const
+{
+    NodeImpl *n = const_cast<NodeImpl *>(this);
+    NodeImpl *p;
+
+    while (1) {
+        p = n->parentNode();
+        if (!p || p->isBlockFlow() || p->id() == ID_BODY)
+            return static_cast<ElementImpl *>(n);
+        n = p;
+    }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 

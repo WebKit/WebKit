@@ -169,6 +169,7 @@ public:
 
     bool isEditableBlock() const;
     ElementImpl *enclosingBlockFlowElement() const;
+    ElementImpl *enclosingNonBlockFlowElement() const;
     ElementImpl *rootEditableElement() const;
     
     bool inSameRootEditableElement(NodeImpl *);
