@@ -279,7 +279,9 @@ static NSMutableSet *activeImageRenderers;
         NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
 
         NS_DURING
-            loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
+            // Get rep again to avoid bogus compiler warning.
+            NSBitmapImageRep *aRep = [[self representations] objectAtIndex:0];
+            loadStatus = [aRep incrementalLoadFromData:data complete:isComplete];
         NS_HANDLER
             loadStatus = NSImageRepLoadStatusInvalidData; // Arbitrary choice; any error will do.
         NS_ENDHANDLER

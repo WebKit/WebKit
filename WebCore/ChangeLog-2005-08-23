@@ -1,5 +1,12 @@
 2004-06-01  Richard Williamson   <rjw@apple.com>
 
+        Fixed deployment build warning.
+
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+
+2004-06-01  Richard Williamson   <rjw@apple.com>
+
 		Added support for composite attribute to <CANVAS>
 		Added support for drawImage and drawImageFromRect to <CANVAS>, i.e.:
 
