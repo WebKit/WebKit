@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,18 @@ QPoint::QPoint(int xIn, int yIn) : xCoord(xIn), yCoord(yIn)
 {
 }
 
+QPoint::QPoint(const NSPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
+{
+}
+
 int QPoint::manhattanLength() const
 {
     return abs(xCoord) + abs(yCoord);
+}
+
+QPoint::operator NSPoint() const
+{
+    return NSMakePoint(xCoord, yCoord);
 }
 
 QPoint operator+(const QPoint &a, const QPoint &b)

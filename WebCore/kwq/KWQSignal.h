@@ -37,6 +37,8 @@ public:
     void disconnect(const KWQSlot &);
     
     void call() const; // should be "emit"; can't be due to define in qobject.h
+    void call(int) const;
+    void call(const QString &) const;
 
 private:
     // forbid copying and assignment

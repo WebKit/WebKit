@@ -315,21 +315,18 @@ void RenderTable::addColumns( int num )
 
     int newCols = totalCols + num;
     // resize the col structs to the number of columns
-    // The memsets that used to be here are unnecessary, since entries
-    // are nulled out when a vector is grown (according to the Qt docs)
-    // -dwh
     columnPos.resize(newCols+1);
     memset( columnPos.data() + totalCols + 1, 0, num*sizeof(int));
     colMaxWidth.resize(newCols);
-    memset( colMaxWidth.data() + totalCols, 0, num*sizeof(int));
+    memset( colMaxWidth.data() + totalCols , 0, num*sizeof(int));
     colMinWidth.resize(newCols);
-    memset( colMinWidth.data() + totalCols, 0, num*sizeof(int));
+    memset( colMinWidth.data() + totalCols , 0, num*sizeof(int));
     colValue.resize(newCols);
-    memset( colValue.data() + totalCols, 0, num*sizeof(int));
+    memset( colValue.data() + totalCols , 0, num*sizeof(int));
     colType.resize(newCols);
-    memset( colType.data() + totalCols, 0, num*sizeof(LengthType));
+    memset( colType.data() + totalCols , 0, num*sizeof(LengthType));
     actColWidth.resize(newCols);
-    memset( actColWidth.data() + totalCols, 0, num*sizeof(LengthType));
+    memset( actColWidth.data() + totalCols , 0, num*sizeof(LengthType));
 
     for ( unsigned int r = 0; r < allocRows; r++ )
     {
@@ -459,12 +456,17 @@ void RenderTable::addColInfo(RenderTableCell *cell, bool allowRecalc)
     int _minSize = cell->minWidth();
     int _maxSize = cell->maxWidth();
 
+#if 0
+    // We do need to implement "collapse borders", but just doing this
+    // fudge on the calculation of the column widths is not enough to do so.
+    // This alone simply makes borders draw incorrectly.
     if (collapseBorders)
     {
         int bw = cell->borderLeft() + cell->borderRight();
         _minSize -= bw;
         _maxSize -= bw;
     }
+#endif
 
     Length _width = cell->style()->width();
     addColInfo(_startCol, _colSpan, _minSize, _maxSize, _width ,cell, allowRecalc);
@@ -1707,7 +1709,7 @@ void RenderTable::calcMinMaxWidth()
     KHTMLAssert( !minMaxKnown() );
 
     if ( needsCellsRecalc )
-        recalcCells();
+       recalcCells();
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(Table " << this << ")::calcMinMaxWidth()" <<  endl;
 #endif
@@ -1717,8 +1719,8 @@ void RenderTable::calcMinMaxWidth()
      * Max width for percent cols are still not accurate, but as they don't
      * influence the total max width of the table we don't care.
      */
-    calcColMinMax();
- 
+     calcColMinMax();
+
     setMinMaxKnown();
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "END: (Table " << this << ")::calcMinMaxWidth() min = " << m_minWidth << " max = " << m_maxWidth <<  endl;
@@ -2116,7 +2118,7 @@ void RenderTableCell::calcMinMaxWidth()
     // nowrap is enabled on any cell in the column.  - dwh
     if(nWrap)
         m_minWidth = m_maxWidth;
-    
+
     if (m_minWidth!=oldMin || m_maxWidth!=oldMax) {
         m_table->addColInfo(this);
     }

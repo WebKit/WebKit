@@ -337,9 +337,7 @@ bool KHTMLPart::restoreURL( const KURL &url )
 
   KHTMLPageCache::self()->fetchData( d->m_cacheId, this, SLOT(slotRestoreData(const QByteArray &)));
 
-#ifndef APPLE_CHANGES
   emit started( 0L );
-#endif
 
   return true;
 }
@@ -484,9 +482,9 @@ bool KHTMLPart::openURL( const KURL &url )
 
   connect( d->m_job, SIGNAL( percent( KIO::Job*, unsigned long ) ),
            this, SLOT( slotJobPercent( KIO::Job*, unsigned long ) ) );
+#endif // APPLE_CHANGES
 
   emit started( 0L );
-#endif // APPLE_CHANGES
 
   return true;
 }
@@ -1456,10 +1454,6 @@ void KHTMLPart::end()
 
 #ifdef APPLE_CHANGES
     KURL::clearCaches();
-
-    // FIXME: Would be better if we could just count on the signal instead of doing this.
-    if (d->m_doc)
-        slotFinishedParsing();
 #endif
 }
 
@@ -3157,8 +3151,6 @@ void KHTMLPart::popupMenu( const QString &linkUrl )
 #endif
 }
 
-#ifndef APPLE_CHANGES
-
 void KHTMLPart::slotParentCompleted()
 {
   if ( !d->m_redirectURL.isEmpty() && !d->m_redirectionTimer.isActive() )
@@ -3190,8 +3182,6 @@ void KHTMLPart::slotChildStarted( KIO::Job *job )
   }
 }
 
-#endif
-
 void KHTMLPart::slotChildCompleted()
 {
   slotChildCompleted( false );
@@ -3199,14 +3189,12 @@ void KHTMLPart::slotChildCompleted()
 
 void KHTMLPart::slotChildCompleted( bool complete )
 {
-#ifndef APPLE_CHANGES
   khtml::ChildFrame *child = frame( sender() );
 
   assert( child );
 
   child->m_bCompleted = true;
   child->m_args = KParts::URLArgs();
-#endif
   if ( parentPart() == 0 )
     d->m_bPendingChildRedirection = (d->m_bPendingChildRedirection || complete);
 
@@ -4394,7 +4382,7 @@ void KHTMLPart::slotSelectAll()
     static_cast<KHTMLPart *>(part)->selectAll();
 }
 
-#endif
+#endif // APPLE_CHANGES
 
 void KHTMLPart::startAutoScroll()
 {

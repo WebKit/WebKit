@@ -29,6 +29,9 @@
 #import <qguardedptr.h>
 #import <kwqdebug.h>
 #import <KWQSignal.h>
+#import <KWQSlot.h>
+
+const QObject *QObject::m_sender;
 
 KWQSignal *QObject::findSignal(const char *signalName) const
 {
@@ -43,8 +46,9 @@ KWQSignal *QObject::findSignal(const char *signalName) const
 void QObject::connect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
 {
     // FIXME: Assert that sender is not NULL rather than doing the if statement.
-    if (!sender)
+    if (!sender) {
         return;
+    }
     
     // FIXME: Do away with this after we change clients to use the KWQSignal scheme.
     sender->target = const_cast<QObject *>(receiver);
@@ -69,6 +73,17 @@ void QObject::disconnect(const QObject *sender, const char *signalName, const QO
         return;
     }
     signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
+}
+
+KWQObjectSenderScope::KWQObjectSenderScope(const QObject *o)
+    : m_savedSender(QObject::m_sender)
+{
+    QObject::m_sender = o;
+}
+
+KWQObjectSenderScope::~KWQObjectSenderScope()
+{
+    QObject::m_sender = m_savedSender;
 }
 
 void QObject::emitAction(QObject::Actions action)

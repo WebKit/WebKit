@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,15 @@ public:
 
     void setChecked(bool);
     bool isChecked();
+
+    QSize sizeHint() const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
+
+    void stateChanged() { m_stateChanged.call(isChecked() ? 2 : 0); }
+
+private:
+    KWQSignal m_stateChanged;
 };
 
 #endif

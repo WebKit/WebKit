@@ -29,19 +29,3 @@ QPushButton::QPushButton(const QString &text, QWidget *parent) : QButton(parent)
 {
     setText(text);
 }
-
-static QFontMetrics buttonFontMetrics()
-{
-    NSFont *nsfont = [NSFont systemFontOfSize:13];
-    QFont font;
-    font.setFamily(QString::fromNSString([nsfont familyName]));
-    font.setPixelSize(13);
-    return font;
-}
-
-QFontMetrics QPushButton::fontMetrics() const
-{
-    // Buttons use the system font at 13 point, not the font from the widget.
-    static QFontMetrics metrics = buttonFontMetrics();
-    return metrics;
-}

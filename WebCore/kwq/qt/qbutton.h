@@ -28,6 +28,7 @@
 
 #include <qwidget.h>
 #include <qstring.h>
+#include <KWQSignal.h>
     
 class QButton : public QWidget {
 public:
@@ -37,6 +38,13 @@ public:
     QString text() const;
     
     QSize sizeHint() const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
+    
+    void clicked() { m_clicked.call(); }
+
+private:
+    KWQSignal m_clicked;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,43 +27,38 @@
 
 #import <KWQView.h>
 
-#import <kwqdebug.h>
-
-QCheckBox::QCheckBox(QWidget *w) : QButton (w)
+QCheckBox::QCheckBox(QWidget *w)
+    : QButton(w)
+    , m_stateChanged(this, SIGNAL(stateChanged(int)))
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
+    KWQNSButton *button = (KWQNSButton *)getView();
     [button setButtonType: NSSwitchButton];
-    [button setAction: @selector(stateChanged:)];
-    setView (button);
-    
-    // Use the small control size.
-    [[button cell] setControlSize: NSSmallControlSize];
+    [button setAction:@selector(stateChanged:)];
 }
 
+QSize QCheckBox::sizeHint() const 
+{
+    return QSize(22, 22);
+}
+
+QRect QCheckBox::frameGeometry() const
+{
+    return QWidget::frameGeometry();
+}
+
+void QCheckBox::setFrameGeometry(const QRect &r)
+{
+    QWidget::setFrameGeometry(r);
+}
 
 void QCheckBox::setChecked(bool isChecked)
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
-    if (isChecked)
-        [button setState: NSOnState];
-    else
-        [button setState: NSOffState];
+    KWQNSButton *button = (KWQNSButton *)getView();
+    [button setState:isChecked ? NSOnState : NSOffState];
 }
-
 
 bool QCheckBox::isChecked()
 {
-    KWQNSButton *button;
-    int state;
-    
-    button = (KWQNSButton *)getView();
-    state = [button state];
-    if (state == NSOffState)
-        return 0;
-    return 1;
+    KWQNSButton *button = (KWQNSButton *)getView();
+    return [button state] == NSOnState;
 }
-

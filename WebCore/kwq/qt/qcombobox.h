@@ -50,8 +50,11 @@ public:
     int currentItem() const;
 
     int indexOfCurrentItem();
-    virtual void setCurrentItem(int);
+    void setCurrentItem(int);
+    
     QSize sizeHint() const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
 
     NSMutableArray *items;
 

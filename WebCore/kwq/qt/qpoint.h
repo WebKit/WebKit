@@ -34,11 +34,13 @@
 
 #include "qarray.h"
 
+typedef struct _NSPoint NSPoint;
+
 class QPoint {
 public:
-
     QPoint();
     QPoint(int, int);
+    explicit QPoint(const NSPoint &); // don't do this implicitly since it's lossy
 
     int x() const { return xCoord; }
     int y() const { return yCoord; }
@@ -47,25 +49,24 @@ public:
     
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
+    
+    operator NSPoint() const;
 
 private:
-
     int xCoord;
     int yCoord;
-
 };
 
 class QPointArray : public QMemArray<QPoint> {
 public:
-
-    QPointArray() {}
-    QPointArray(int size) : QMemArray<QPoint>(size) {}
+    QPointArray() { }
+    QPointArray(int size) : QMemArray<QPoint>(size) { }
 
     QPointArray(int, const int *);
 
     void setPoint(uint, int, int);
 #if 0
-    // FIXME: Workaround for Radar 2921061
+    // FIXME: Workaround for Radar 2921061.
     bool setPoints(int, int, int, ...);
 #else
     bool setPoints(int, int, int, int, int, int, int, int, int);

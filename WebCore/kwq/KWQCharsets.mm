@@ -65,11 +65,6 @@ static void buildDictionaries (void)
       CFDictionarySetValue(encodingToMIB, (void *) table[i].encoding, (void *) table[i].mib);
     }
   }
-  
-  // Add special bogus entry to make UTF-16 mean UTF-8.
-  // We do this because Internet Explorere does, and because web pages say UTF-16 and mean UTF-8.
-  // See bug 2969378 and http://zingermans.com/ for a concrete example.
-  CFDictionarySetValue(nameToEncoding, CFSTR("utf-16"), (void *) kCFStringEncodingUTF8);
 }
 
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName)

@@ -53,7 +53,7 @@ QWidget::QWidget(QWidget *parent, const char *name, int f)
     static QStyle defaultStyle;
     
     data = new QWidgetPrivate;
-    data->view = [[KWQView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    data->view = [[KWQView alloc] initWithWidget:this];
     data->style = &defaultStyle;
 }
 
@@ -71,7 +71,7 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    internalSetGeometry(pos().x(), pos().y(), w, h);
+    setFrameGeometry(QRect(pos().x(), pos().y(), w, h));
 }
 
 void QWidget::setActiveWindow() 
@@ -125,8 +125,7 @@ QPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
-    //KWQDEBUG ("%p %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
-    internalSetGeometry(x, y, width(), height());
+    setFrameGeometry(QRect(x, y, width(), height()));
 }
 
 void QWidget::move(const QPoint &p) 
@@ -137,7 +136,6 @@ void QWidget::move(const QPoint &p)
 QRect QWidget::frameGeometry() const
 {
     NSView *view = getView();
-    
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
     }
@@ -289,7 +287,7 @@ bool QWidget::hasMouseTracking() const
     return true;
 }
 
-void QWidget::internalSetGeometry(int x, int y, int w, int h)
+void QWidget::setFrameGeometry(const QRect &rect)
 {
     NSView *view = getView();
     
@@ -304,14 +302,14 @@ void QWidget::internalSetGeometry(int x, int y, int w, int h)
         KWQ_ASSERT(view);
     }
     
-    [view setFrame:NSMakeRect(x, y, w, h)];
+    [view setFrame:rect];
 }
 
 QPoint QWidget::mapFromGlobal(const QPoint &p) const
 {
     NSPoint bp;
-    bp = [[data->view window] convertScreenToBase:[data->view convertPoint:NSMakePoint(p.x(), p.y()) toView:nil]];
-    return QPoint((int)bp.x, (int)bp.y);
+    bp = [[data->view window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
+    return QPoint(bp);
 }
 
 NSView *QWidget::getView() const
@@ -342,24 +340,20 @@ void QWidget::endEditing()
     }
 }
 
-
 void QWidget::lockDrawingFocus()
 {
     [getView() lockFocus];
 }
-
 
 void QWidget::unlockDrawingFocus()
 {
     [getView() unlockFocus];
 }
 
-
 void QWidget::flushDrawing()
 {
     [[getView() window] flushWindow];
 }
-
 
 void QWidget::enableFlushDrawing()
 {
@@ -372,7 +366,6 @@ void QWidget::disableFlushDrawing()
     [[getView() window] disableFlushWindow];
 }
 
-
 void QWidget::setDrawingAlpha(float alpha)
 {
     CGContextRef cgContext;
@@ -384,5 +377,3 @@ void QWidget::displayRect(int x, int y, int w, int h)
 {
     [getView() displayRect: NSMakeRect (x,y,w,h)];
 }
-
-

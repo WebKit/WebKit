@@ -62,10 +62,11 @@ public:
         WheelFocus = 0x7
     };
 
-    QWidget(QWidget *parent = 0, const char *name = 0, int f = 0);
+    QWidget(QWidget *parent = 0, const char *name = 0, int flags = 0);
     virtual ~QWidget();
 
     virtual QSize sizeHint() const;
+    
     virtual void setEnabled(bool);
     
     void setActiveWindow();
@@ -86,6 +87,7 @@ public:
     void move(const QPoint &);
 
     virtual QRect frameGeometry() const;
+    virtual void setFrameGeometry(const QRect &);
 
     virtual QWidget *topLevelWidget() const;
 
@@ -144,9 +146,6 @@ public:
     void setDrawingAlpha(float alpha);
     
     virtual void endEditing();
-
-protected:
-    virtual void internalSetGeometry( int x, int y, int w, int h );
 
 private:
     QWidgetPrivate *data;

@@ -52,11 +52,6 @@
 
 const float LargeNumberForText = 1.0e7;
 
-- initWithFrame:(NSRect)r
-{
-    return [self initWithFrame:r widget:0];
-}
-
 - (void)_createTextView
 {
     NSDictionary *attr;
@@ -89,19 +84,25 @@ const float LargeNumberForText = 1.0e7;
     [self setDocumentView:textView];
 }
 
-- initWithFrame:(NSRect)r widget:(QWidget *)w 
+- initWithFrame:(NSRect)frame
 {
-    [super initWithFrame:r];
-
+    [super initWithFrame:frame];
+    
     [self setHasVerticalScroller:YES];
     [self setHasHorizontalScroller:NO];
     [self setBorderType:NSLineBorder];
+    
+    [self _createTextView];
+    
+    widget = 0;
+    
+    return self;
+}
 
-    //if (r.size.width > 0 && r.size.height > 0)
-        [self _createTextView];
-    
+- initWithWidget:(QWidget *)w 
+{
+    [super init];
     widget = w;
-    
     return self;
 }
 

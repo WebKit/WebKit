@@ -108,8 +108,8 @@ QPoint KWQWindowWidget::mapFromGlobal(const QPoint &p) const
     return QPoint((int)windowPoint.x, (int)([d->window frame].size.height - windowPoint.y));
 }
 
-void KWQWindowWidget::internalSetGeometry(int x, int y, int w, int h)
+void KWQWindowWidget::setFrameGeometry(const QRect &r)
 {
     // FIXME: should try to avoid saving changes
-    [d->window setFrame:NSMakeRect(x, NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - y - h, w, h) display:NO];
+    [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - r.y() - r.height(), r.width(), r.height()) display:NO];
 }

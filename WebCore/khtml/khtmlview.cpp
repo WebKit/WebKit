@@ -241,13 +241,17 @@ KHTMLView::~KHTMLView()
             doc->detach();
 
 #ifdef APPLE_CHANGES
-        killTimer(d->timerId);
-        killTimer(d->repaintTimerId);
-        d->timerId = 0;
-        d->repaintTimerId = 0;
         m_part->deref();
 #endif
     }
+
+#ifdef APPLE_CHANGES
+    killTimer(d->timerId);
+    killTimer(d->repaintTimerId);
+    d->timerId = 0;
+    d->repaintTimerId = 0;
+#endif
+
     delete d; d = 0;
 }
 

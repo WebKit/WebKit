@@ -26,6 +26,12 @@
 #import <Foundation/Foundation.h>
 
 @protocol WebCoreDrawingObserver <NSObject>
+- (void)filledRect:(NSRect)r;
+- (void)strokedRect:(NSRect)r;
+- (void)filledOval:(NSRect)r;
+- (void)strokedOval:(NSRect)r;
+- (void)strokedArcWithCenter:(NSPoint)p radius:(float)radius startAngle:(float)startAngle endAngle:(float)endAngle;
+- (void)drewLineFrom:(NSPoint)p1 to:(NSPoint)p2 width:(float)width;
 @end
 
 @interface WebCoreTestController : NSObject

@@ -27,38 +27,13 @@
 
 #import <kwqdebug.h>
 
-// FIXME: Find some header to put these inline functions in, because they are widely useful.
-
-inline NSPoint NSMakePoint(const QPoint &qp)
-{
-    NSPoint p;
-    p.x = qp.x();
-    p.y = qp.y();
-    return p;
-}
-
-inline NSRect NSMakeRect(const QRect &qr)
-{
-    NSRect r;
-    r.origin.x = qr.x();
-    r.origin.y = qr.y();
-    r.size.width = qr.width();
-    r.size.height = qr.height();
-    return r;
-}
-
-inline QRect MakeQRect(const NSRect &r)
-{
-    return QRect((int)r.origin.x, (int)r.origin.y, (int)r.size.width, (int)r.size.height);
-}
-
 QRegion::QRegion()
     : paths([[NSArray alloc] init])
 {
 }
 
 QRegion::QRegion(const QRect &rect)
-    : paths([[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:NSMakeRect(rect)]] retain])
+    : paths([[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:rect]] retain])
 {
 }
 
@@ -74,9 +49,9 @@ QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 QRegion::QRegion(const QPointArray &arr)
 {
     NSBezierPath *path = [[NSBezierPath alloc] init];
-    [path moveToPoint:NSMakePoint(arr[0])];
+    [path moveToPoint:arr[0]];
     for (uint i = 1; i < arr.count(); ++i) {
-        [path lineToPoint:NSMakePoint(arr[i])];
+        [path lineToPoint:arr[i]];
     }
     paths = [[NSArray arrayWithObject:path] retain];
     [path release];
@@ -119,7 +94,7 @@ bool QRegion::contains(const QPoint &point) const
     NSEnumerator *e = [paths objectEnumerator];
     NSBezierPath *path;
     while ((path = [e nextObject])) {
-        if (![path containsPoint:NSMakePoint(point.x(), point.y())]) {
+        if (![path containsPoint:point]) {
             return false;
         }
     }
@@ -167,7 +142,7 @@ QRect QRegion::boundingRect() const
     while ((path = [e nextObject])) {
         bounds = NSIntersectionRect(bounds, [path bounds]);
     }
-    return MakeQRect(bounds);
+    return QRect(bounds);
 }
 
 void QRegion::setClip() const

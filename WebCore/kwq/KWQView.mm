@@ -24,15 +24,21 @@
  */
 
 #import "KWQView.h"
-#import <qwidget.h>
+#import <qcheckbox.h>
 
 @implementation KWQView
 
-- initWithFrame:(NSRect)r widget:(QWidget *)w 
+- initWithFrame:(NSRect)frame
 {
-    [super initWithFrame:r];
-    widget = w;
+    [super initWithFrame:frame];
     isFlipped = YES;
+    return self;
+}
+
+- initWithWidget:(QWidget *)w 
+{
+    [super init];
+    widget = w;
     return self;
 }
 
@@ -48,73 +54,73 @@
 
 @end
 
-@interface  NSButtonCell (Whacky)
-- (NSRect)_insetRect:(NSRect)theRect;
-- (NSSize)_titleSizeWithSize:(NSSize)maxSize;
-@end
-
-@interface KWQNSButtonCell : NSButtonCell
-@end
-
-@implementation KWQNSButtonCell
-
-// cellSizeForBounds is a sizeToFit !
-- (NSSize)cellSizeForBounds:(NSRect)theRect
-{
-// XXX Find a way to get these from the system? -dwh
-#define	kPushButtonBorderSize			 4
-#define kThemePushButtonTextOffset		 4
-#define kPushButtonInset			 1
-
-    // XXX This is going to get way more complex before I'm done here. :(
-    // -dwh
-    NSSize theSize = [super cellSizeForBounds:theRect];
-    theSize.height -= (kPushButtonBorderSize)*2.0;
-    return theSize;
-}
-
-@end
-
 @implementation KWQNSButton
 
-+ (void)initialize {
-    if (self == [KWQNSButton class]) {
-        [self setCellClass:[KWQNSButtonCell class]];
-    }
-}
-
-- initWithFrame:(NSRect)r widget:(QWidget *)w 
+- initWithFrame:(NSRect)frame 
 {
-    [super initWithFrame:r];
-    [self setBordered:YES];
-    [self setBezelStyle:NSRoundedBezelStyle];
-    widget = w;
-    
+    [super initWithFrame:frame];
+
     [self setTarget:self];
     [self setAction:@selector(action:)];
+
+    [self setTitle:@""];
+    [self setBezelStyle:NSRoundedBezelStyle];
+    [[self cell] setControlSize:NSSmallControlSize];
+    [self setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
+    return self;
+}
+
+- initWithWidget:(QWidget *)w 
+{
+    [super init];
+    widget = w;
     return self;
 }
 
 - (void)action:(id)sender
 {
-    widget->emitAction(QObject::ACTION_BUTTON_CLICKED);
+    QButton *button = dynamic_cast<QButton *>(widget);
+    if (button) {
+        button->clicked();
+    }
 }
 
 - (void)stateChanged:(id)sender
 {
-    widget->emitAction(QObject::ACTION_CHECKBOX_CLICKED);
+    // Note that it's important to give the stateChanged signal before
+    // the clicked signal so that the corresponding JavaScript messages
+    // go in the right order. A test for this at the time of this writing
+    // was the languages radio buttons and check boxes at google.com prefs.
+    
+    QCheckBox *checkBox = dynamic_cast<QCheckBox *>(widget);
+    if (checkBox) {
+        checkBox->stateChanged();
+    }
+    [self action:sender];
 }
 
 @end
 
 @implementation KWQNSComboBox
 
-- initWithFrame:(NSRect)r widget:(QWidget *)w 
+- initWithFrame:(NSRect)frame
 {
-    [super initWithFrame:r];
-    widget = w;
+    [super initWithFrame:frame];
+
     [self setTarget:self];
     [self setAction:@selector(action:)];
+
+    [[self cell] setControlSize:NSSmallControlSize];
+    [self setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
+    return self;
+}
+
+- initWithWidget:(QWidget *)w 
+{
+    [super init];
+    widget = w;
     return self;
 }
 
@@ -127,9 +133,9 @@
 
 @implementation KWQNSScrollView
 
-- initWithFrame:(NSRect)r widget:(QWidget *)w 
+- initWithWidget:(QWidget *)w 
 {
-    [super initWithFrame:r];
+    [super init];
     widget = w;
     return self;
 }

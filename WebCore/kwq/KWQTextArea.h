@@ -33,7 +33,7 @@ class QWidget;
     QWidget *widget;
     BOOL wrap;
 }
-- initWithFrame:(NSRect)r widget:(QWidget *)w; 
+- initWithWidget:(QWidget *)w; 
 
 // The following methods corresponds to methods required by KDE.
 - (void)setWordWrap:(BOOL)wrap;

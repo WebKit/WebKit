@@ -33,6 +33,10 @@ QSize::QSize(int width, int height) : w(width), h(height)
 {
 }
 
+QSize::QSize(const NSSize &s) : w((int)s.width), h((int)s.height)
+{
+}
+
 bool QSize::isValid() const
 {
     return w >= 0 && h >= 0;
@@ -41,6 +45,11 @@ bool QSize::isValid() const
 QSize QSize::expandedTo(const QSize &o) const
 {
     return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
+}
+
+QSize::operator NSSize() const
+{
+    return NSMakeSize(w, h);
 }
 
 QSize operator+(const QSize &a, const QSize &b)

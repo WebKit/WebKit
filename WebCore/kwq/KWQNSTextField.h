@@ -22,44 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import <Cocoa/Cocoa.h>
 
 class QWidget;
 
-@interface KWQNSTextFieldFormatter : NSFormatter
-{
-    int maxLength;
-    bool isPassword;
-}
+@class KWQTextFieldFormatter;
 
-- (void)setPasswordMode: (bool)flag;
-- (bool)passwordMode;
-- (void)setMaximumLength: (int)len;
-- (int)maximumLength;
-- (NSString *)stringForObjectValue:(id)anObject;
-- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error;
-- (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error;
-- (NSAttributedString *)attributedStringForObjectValue:(id)anObject withDefaultAttributes:(NSDictionary *)attributes;
-
-@end
+#define FOCUS_BORDER_SIZE 3
 
 @interface KWQNSTextField : NSTextField
 {
 @private
-    NSSecureTextField *secureField;
+    NSTextField *secureField;
     QWidget *widget;
-    KWQNSTextFieldFormatter *formatter;
-    bool edited;
+    KWQTextFieldFormatter *formatter;
+    BOOL edited;
 }
 
-- initWithFrame: (NSRect)r widget: (QWidget *)w;
-- (KWQNSTextFieldFormatter *)formatter;
-- (void)setPasswordMode: (bool)flag;
-- (bool)passwordMode;
-- (void)setMaximumLength: (int)len;
+- initWithWidget:(QWidget *)widget;
+
+- (void)setPasswordMode:(BOOL)flag;
+- (BOOL)passwordMode;
+- (void)setMaximumLength:(int)len;
 - (int)maximumLength;
-- (bool)edited;
-- (void)setEdited:(bool)ed;
+- (BOOL)edited;
+- (void)setEdited:(BOOL)edited;
 
 @end
-

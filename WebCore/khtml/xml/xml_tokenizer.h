@@ -28,6 +28,10 @@
 #include <qobject.h>
 #include "misc/loader_client.h"
 
+#if APPLE_CHANGES
+#include <KWQSignal.h>
+#endif
+
 class KHTMLView;
 
 namespace khtml {
@@ -116,6 +120,13 @@ public:
 
 signals:
     void finishedParsing();
+
+#if APPLE_CHANGES
+public:
+    Tokenizer();
+private:
+    KWQSignal m_finishedParsing;
+#endif
 };
 
 class XMLTokenizer : public Tokenizer, public khtml::CachedObjectClient

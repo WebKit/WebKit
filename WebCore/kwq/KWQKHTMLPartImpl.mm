@@ -49,6 +49,8 @@ using khtml::RenderPart;
 using khtml::RenderText;
 using khtml::RenderWidget;
 
+using KIO::Job;
+
 using KParts::URLArgs;
 
 void KHTMLPart::onURL(const QString &)
@@ -70,21 +72,35 @@ static void redirectionTimerMonitor(void *context)
     impl->redirectionTimerStartedOrStopped();
 }
 
+void KHTMLPart::started(Job *j)
+{
+    KWQObjectSenderScope senderScope(this);
+    
+    if (parentPart()) {
+	parentPart()->slotChildStarted(j);
+    }
+}
+
 void KHTMLPart::completed()
 {
-    if (parentPart()) {
-	KWQ_ASSERT(parentPart()->frame(this));
-	parentPart()->frame(this)->m_bCompleted = true;
-	parentPart()->slotChildCompleted();
-    }
+    completed(false);
 }
 
 void KHTMLPart::completed(bool arg)
 {
+    KWQObjectSenderScope senderScope(this);
+    
     if (parentPart()) {
-	KWQ_ASSERT(parentPart()->frame(this));
-	parentPart()->frame(this)->m_bCompleted = true;
 	parentPart()->slotChildCompleted(arg);
+    }
+    
+    QValueList<ChildFrame>::ConstIterator it = d->m_frames.begin();
+    QValueList<ChildFrame>::ConstIterator end = d->m_frames.end();
+    for (; it != end; ++it ) {
+        KHTMLPart *part = dynamic_cast<KHTMLPart *>((*it).m_part.pointer());
+        if (part) {
+            part->slotParentCompleted();
+        }
     }
 }
 
@@ -515,4 +531,3 @@ RenderObject *KWQKHTMLPartImpl::getRenderer()
     DocumentImpl *doc = part->xmlDocImpl();
     return doc ? doc->renderer() : 0;
 }
-

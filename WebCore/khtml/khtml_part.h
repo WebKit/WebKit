@@ -743,6 +743,7 @@ signals:
 #ifdef APPLE_CHANGES
   void completed();
   void completed(bool);
+  void started(KIO::Job *);
 #endif
 
 protected:

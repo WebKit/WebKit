@@ -42,6 +42,10 @@ QRect::QRect(QPoint p, QSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height
 {
 }
 
+QRect::QRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
+{
+}
+
 bool QRect::isNull() const
 {
     return w == 0 && h == 0;
@@ -54,7 +58,7 @@ bool QRect::isValid() const
 
 bool QRect::isEmpty() const
 {
-    return w > 1 && h > 1;
+    return w <= 0 || h <= 0;
 }
 
 int QRect::right() const
@@ -124,6 +128,11 @@ QRect QRect::intersect(const QRect &r) const
     }
 
     return QRect(nx, ny, nw, nh);
+}
+
+QRect::operator NSRect() const
+{
+    return NSMakeRect(xp, yp, w, h);
 }
 
 bool operator==(const QRect &a, const QRect &b)

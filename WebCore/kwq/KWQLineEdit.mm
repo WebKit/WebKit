@@ -30,8 +30,10 @@
 #import <WebCoreTextRendererFactory.h>
 
 QLineEdit::QLineEdit(QWidget *parent)
+    : m_returnPressed(this, SIGNAL(returnPressed()))
+    , m_textChanged(this, SIGNAL(textChanged(const QString &)))
 {
-    NSView *view = [[KWQNSTextField alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    NSView *view = [[KWQNSTextField alloc] initWithWidget:this];
     setView(view);
     [view release];
 }
@@ -57,10 +59,10 @@ void QLineEdit::setFont(const QFont &font)
 {
     QWidget::setFont(font);
     KWQNSTextField *textField = (KWQNSTextField *)getView();
-    [textField setFont: [[WebCoreTextRendererFactory sharedFactory] 
-            fontWithFamily: font.getNSFamily()
-            traits: font.getNSTraits() 
-            size: font.getNSSize()]];
+    [textField setFont:[[WebCoreTextRendererFactory sharedFactory] 
+        fontWithFamily:font.getNSFamily()
+                traits:font.getNSTraits() 
+                  size:font.getNSSize()]];
 }
 
 void QLineEdit::setText(const QString &s)
@@ -121,4 +123,36 @@ void QLineEdit::setEdited(bool flag)
 {
     KWQNSTextField *textField = (KWQNSTextField *)getView();
     return [textField setEdited:flag];
+}
+
+QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
+{
+    NSMutableString *nominalWidthString = [NSMutableString stringWithCapacity:numCharacters];
+    for (int i = 0; i < numCharacters; ++i) {
+        [nominalWidthString appendString:@"x"];
+    }
+        
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    NSString *value = [textField stringValue];
+    [textField setStringValue:nominalWidthString];
+    NSSize size = [[textField cell] cellSize];
+    [textField setStringValue:value];
+    
+    size.width -= FOCUS_BORDER_SIZE * 2;
+    size.height -= FOCUS_BORDER_SIZE * 2;
+    
+    return QSize(size);
+}
+
+QRect QLineEdit::frameGeometry() const
+{
+    QRect r = QWidget::frameGeometry();
+    return QRect(r.x() + FOCUS_BORDER_SIZE, r.y() + FOCUS_BORDER_SIZE,
+        r.width() - FOCUS_BORDER_SIZE * 2, r.height() - FOCUS_BORDER_SIZE * 2);
+}
+
+void QLineEdit::setFrameGeometry(const QRect &r)
+{
+    QWidget::setFrameGeometry(QRect(r.x() - FOCUS_BORDER_SIZE, r.y() - FOCUS_BORDER_SIZE,
+        r.width() + FOCUS_BORDER_SIZE * 2, r.height() + FOCUS_BORDER_SIZE * 2));
 }

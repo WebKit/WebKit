@@ -40,6 +40,8 @@ public:
     void clear() { m_object = 0; }
     
     void call() const;
+    void call(int) const;
+    void call(const QString &) const;
     
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 

@@ -181,17 +181,6 @@ void RenderFormElement::layout()
         setLayouted();
 }
 
-#ifdef APPLE_CHANGES
-void RenderFormElement::performAction(Actions action)
-{
-    if (m_widget)
-        m_widget->endEditing();
-        
-    if (action == ACTION_BUTTON_CLICKED)
-        slotClicked();
-}
-#endif /* APPLE_CHANGES */
-
 void RenderFormElement::slotClicked()
 {
     ref();
@@ -239,9 +228,14 @@ void RenderCheckBox::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
+#ifdef APPLE_CHANGES
+    // Let the widget tell us how big it wants to be.
+    QSize s(widget()->sizeHint());
+#else
     QCheckBox *cb = static_cast<QCheckBox *>( m_widget );
     QSize s( cb->style().pixelMetric( QStyle::PM_IndicatorWidth ),
              cb->style().pixelMetric( QStyle::PM_IndicatorHeight ) );
+#endif
     setIntrinsicWidth( s.width() );
     setIntrinsicHeight( s.height() );
 
@@ -254,16 +248,6 @@ void RenderCheckBox::updateFromElement()
 
     RenderButton::updateFromElement();
 }
-
-#ifdef APPLE_CHANGES
-void RenderCheckBox::performAction(Actions action)
-{
-    QCheckBox* cb = static_cast<QCheckBox*>( m_widget );
-
-    if (action == ACTION_CHECKBOX_CLICKED)
-        slotStateChanged(cb->isChecked() ? 2 : 0);
-}
-#endif /* APPLE_CHANGES */
 
 // From the Qt documentation:
 // state is 2 if the button is on, 1 if it is in the "no change" state or 0 if the button is off. 
@@ -311,9 +295,14 @@ void RenderRadioButton::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
+#ifdef APPLE_CHANGES
+    // Let the widget tell us how big it wants to be.
+    QSize s(widget()->sizeHint());
+#else
     QRadioButton *rb = static_cast<QRadioButton *>( m_widget );
     QSize s( rb->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth ),
              rb->style().pixelMetric( QStyle::PM_ExclusiveIndicatorHeight ) );
+#endif
     setIntrinsicWidth( s.width() );
     setIntrinsicHeight( s.height() );
 
@@ -331,12 +320,6 @@ RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
     p->setAutoMask(true);
     p->setMouseTracking(true);
     connect(p, SIGNAL(clicked()), this, SLOT(slotClicked()));
-#ifdef APPLE_CHANGES
-    // Need to store a reference to this object and then invoke slotClicked on it.
-    //p->setAction(&RenderFormElement::slotClicked);
-    //p->setRenderObject(this);
-    //p->setTarget(this);
-#endif
 }
 
 QString RenderSubmitButton::rawText()
@@ -356,9 +339,12 @@ void RenderSubmitButton::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
-#ifndef APPLE_CHANGES
-    // Don't use the CSS font metrics.  Don't rely on the button sizing quirks that they
-    // have to use because of scalable button fonts. -dwh
+#ifdef APPLE_CHANGES
+    // Let the widget tell us how big it wants to be.
+    QSize s(widget()->sizeHint());
+    setIntrinsicWidth(s.width());
+    setIntrinsicHeight(s.height());
+#else
     QString raw = rawText();
     QPushButton* pb = static_cast<QPushButton*>(m_widget);
     pb->setText(raw);
@@ -375,12 +361,6 @@ void RenderSubmitButton::calcMinMaxWidth()
     
     setIntrinsicWidth( s.width() - margin / 2 );
     setIntrinsicHeight( s.height() - margin / 2);
-#else
-    // Instead treat a button as fully replaced.  Let it use its own system UI font
-    // and tell us exactly how big it wants to be.
-    QSize s(m_widget->sizeHint());
-    setIntrinsicWidth( s.width() );
-    setIntrinsicHeight( s.height() );
 #endif
 
     RenderButton::calcMinMaxWidth();
@@ -405,7 +385,9 @@ QString RenderSubmitButton::defaultLabel() {
 short RenderSubmitButton::baselinePosition( bool f ) const
 {
 #ifdef APPLE_CHANGES
-    return RenderWidget::baselinePosition( f ) - 7;
+    // We  put the bottoms of buttons on the baseline,
+    // This looks better than trying to line up the button text's baseline.
+    return height() + marginTop();
 #else
     return RenderFormElement::baselinePosition( f );
 #endif
@@ -514,11 +496,12 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
 }
 
 #ifdef APPLE_CHANGES
-// We override the baseline position to get the textfield border and padding (before  we hit
-// the font descent) taken into account.
 short RenderLineEdit::baselinePosition( bool f ) const
 {
-    return RenderWidget::baselinePosition( f ) - 4;
+    // We arbitrarily put the bottoms of line edits 2 pixels below the baseline.
+    // This looks better than trying to line up the baseline of the text inside
+    // and also matches WinIE.
+    return height() + marginTop() - 2;
 }
 #endif
 
@@ -551,6 +534,11 @@ void RenderLineEdit::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
+#ifdef APPLE_CHANGES
+    // Let the widget tell us how big it wants to be.
+    int size = element()->size();
+    QSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 17));
+#else
     const QFontMetrics &fm = style()->fontMetrics();
     QSize s;
 
@@ -561,6 +549,7 @@ void RenderLineEdit::calcMinMaxWidth()
     s = QSize(w + 2 + 2*widget()->frameWidth(),
               QMAX(h, 14) + 2 + 2*widget()->frameWidth())
         .expandedTo(QApplication::globalStrut());
+#endif
 
     setIntrinsicWidth( s.width() );
     setIntrinsicHeight( s.height() );
@@ -590,18 +579,6 @@ void RenderLineEdit::updateFromElement()
 
     RenderFormElement::updateFromElement();
 }
-
-#ifdef APPLE_CHANGES
-void RenderLineEdit::performAction(Actions action)
-{
-    KLineEdit *edit = static_cast<KLineEdit*>(m_widget);
-
-    if (action == ACTION_TEXT_FIELD_END_EDITING)
-        slotTextChanged(edit->text());
-    else if (action == ACTION_TEXT_FIELD)
-        slotReturnPressed();
-}
-#endif /* APPLE_CHANGES */
 
 void RenderLineEdit::slotTextChanged(const QString &string)
 {
@@ -911,7 +888,13 @@ void RenderSelect::updateFromElement()
 // Override to deal with our widget.
 short RenderSelect::baselinePosition( bool f ) const
 {
-    return RenderWidget::baselinePosition( f ) - 7;
+    if (!m_useListBox) {
+        // We put the bottoms of menus on the baseline,
+        // This looks better than trying to line up the button text's baseline.
+        return height() + marginTop();
+    } else {
+        return RenderWidget::baselinePosition( f ) - 7;
+    }
 }
 #endif
 

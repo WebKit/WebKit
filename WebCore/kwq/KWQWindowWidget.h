@@ -45,13 +45,11 @@ class KWQWindowWidget : public QWidget
 
     virtual QSize sizeHint() const;
     virtual QRect frameGeometry() const;
+    virtual void setFrameGeometry(const QRect &);
 
     virtual QWidget *topLevelWidget() const;
     virtual QPoint mapToGlobal(const QPoint &) const;
     virtual QPoint mapFromGlobal(const QPoint &) const;
-
- protected:
-    virtual void internalSetGeometry( int x, int y, int w, int h );
 
  private:
     KWQWindowWidget();

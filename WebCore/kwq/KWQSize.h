@@ -32,10 +32,13 @@
 #include <iosfwd>
 #endif
 
+typedef struct _NSSize NSSize;
+
 class QSize {
 public:
     QSize();
     QSize(int,int);
+    explicit QSize(const NSSize &);
 
     bool isValid() const;
     int width() const { return w; }
@@ -43,6 +46,8 @@ public:
     void setWidth(int width) { w = width; }
     void setHeight(int height) { h = height; }
     QSize expandedTo(const QSize &) const;
+    
+    operator NSSize() const;
 
     friend QSize operator+(const QSize &, const QSize &);
     friend bool operator==(const QSize &, const QSize &);

@@ -28,6 +28,16 @@
 #import <xml_tokenizer.h>
 
 void KHTMLView::cleared() { }
+
 void khtml::Loader::requestDone(khtml::DocLoader *, khtml::CachedObject *) { }
 void khtml::Loader::requestFailed(khtml::DocLoader *, khtml::CachedObject *) { }
-void Tokenizer::finishedParsing() { }
+
+Tokenizer::Tokenizer()
+    : m_finishedParsing(this, SIGNAL(finishedParsing()))
+{
+}
+
+void Tokenizer::finishedParsing()
+{
+    m_finishedParsing.call();
+}

@@ -67,6 +67,23 @@ void KWQSignal::disconnect(const KWQSlot &slot)
 void KWQSignal::call() const
 {
     if (!m_object->m_signalsBlocked) {
+        KWQObjectSenderScope senderScope(m_object);
         m_slot.call();
+    }
+}
+
+void KWQSignal::call(int i) const
+{
+    if (!m_object->m_signalsBlocked) {
+        KWQObjectSenderScope senderScope(m_object);
+        m_slot.call(i);
+    }
+}
+
+void KWQSignal::call(const QString &s) const
+{
+    if (!m_object->m_signalsBlocked) {
+        KWQObjectSenderScope senderScope(m_object);
+        m_slot.call(s);
     }
 }

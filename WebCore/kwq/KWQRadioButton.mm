@@ -31,11 +31,21 @@ QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 {
     KWQNSButton *button = (KWQNSButton *)getView();
     [button setButtonType: NSRadioButton];
-    
-    // Use the small control size.
-    [[button cell] setControlSize: NSSmallControlSize];
-    
-    [button sizeToFit];
+}
+
+QSize QRadioButton::sizeHint() const 
+{
+    return QSize(22, 22);
+}
+
+QRect QRadioButton::frameGeometry() const
+{
+    return QWidget::frameGeometry();
+}
+
+void QRadioButton::setFrameGeometry(const QRect &r)
+{
+    QWidget::setFrameGeometry(r);
 }
 
 void QRadioButton::setChecked(bool isChecked)

@@ -30,7 +30,7 @@
 QTextEdit::QTextEdit(QWidget *parent)
     : m_textChanged(this, SIGNAL(textChanged()))
 {
-    KWQTextArea *textView = [[KWQTextArea alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    KWQTextArea *textView = [[KWQTextArea alloc] initWithWidget:this];
     setView(textView);
     [textView release];
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,205 +22,272 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <qwidget.h>
 
 #import <KWQNSTextField.h>
 
+#import <qlineedit.h>
+
+// KWQTextFieldCell is larger than a normal text field cell, so it includes
+// the focus border as well as the rest of the text field.
+
+@interface KWQTextFieldCell : NSTextFieldCell
+{
+}
+@end
+
+// KWQTextFieldFormatter enforces a maximum length.
+
+@interface KWQTextFieldFormatter : NSFormatter
+{
+    int maxLength;
+}
+
+- (void)setMaximumLength:(int)len;
+- (int)maximumLength;
+
+@end
+
+// KWQSecureTextField is a workaround for bug 3024443.
+
+@interface KWQSecureTextField : NSSecureTextField
+{
+    BOOL inSetFrameSize;
+}
+@end
 
 @implementation KWQNSTextField
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
++ (void)initialize
 {
-    [super initWithFrame: r];
-    formatter = [[KWQNSTextFieldFormatter alloc] init];
-    [self setFormatter: formatter];
-    widget = w;
+    if (self == [KWQNSTextField class]) {
+        [self setCellClass:[KWQTextFieldCell class]];
+    }
+}
 
-    [self setTarget: self];
-    [self setAction: @selector(action:)];
+- initWithFrame:(NSRect)frame
+{
+    [super initWithFrame:frame];
+    
+    formatter = [[KWQTextFieldFormatter alloc] init];
+    [self setFormatter:formatter];
 
-    [self setDelegate: self];
+    [self setTarget:self];
+    [self setAction:@selector(action:)];
 
-    [[self cell] setScrollable: YES];
+    [self setDelegate:self];
+
+    [[self cell] setScrollable:YES];
     
     return self;
 }
 
-- (void)action: sender
+- initWithWidget:(QWidget *)w 
 {
-    if (widget)
-        widget->emitAction(QObject::ACTION_TEXT_FIELD);
+    [super init];
+    widget = w;
+    return self;
+}
+
+- (void)action:sender
+{
+    QLineEdit *edit = dynamic_cast<QLineEdit *>(widget);
+    if (edit) {
+        edit->returnPressed();
+    }
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
-    if (widget)
-        widget->emitAction(QObject::ACTION_TEXT_FIELD_END_EDITING);
+    QLineEdit *edit = dynamic_cast<QLineEdit *>(widget);
+    if (edit) {
+        edit->textChanged();
+    }
 }
 
 - (void)dealloc
 {
+    [secureField release];
     [formatter release];
     [super dealloc];
 }
 
-
-- (KWQNSTextFieldFormatter *)formatter
+- (KWQTextFieldFormatter *)formatter
 {
     return formatter;
 }
 
-
-- (void)setPasswordMode: (bool)flag
+- (void)updateSecureFieldFrame
 {
-    if (flag != [formatter passwordMode]){
-        if (flag == NO){
-            [self setStringValue: @""];
-            [secureField removeFromSuperview];
-        } else {
-            if (secureField == nil){
-                secureField = [[NSSecureTextField alloc] initWithFrame: [self bounds]];
-                [secureField setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-                [secureField setFormatter: formatter];
-            } else {
-                [secureField setBounds: [self bounds]];
-            }
-            [secureField setStringValue: @""];
-            [secureField setDelegate:self];
-            [self addSubview: secureField];
-        }
-        [formatter setPasswordMode: flag];
-    }
+    [secureField setFrame:NSInsetRect([self bounds], FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE)];
 }
 
+- (void)setFrameSize:(NSSize)size
+{
+    [super setFrameSize:size];
+    [self updateSecureFieldFrame];
+}
+
+- (void)setPasswordMode:(BOOL)flag
+{
+    if (!flag == ![secureField superview]) {
+        return;
+    }
+    
+    [self setStringValue:@""];
+    if (!flag) {
+        [secureField removeFromSuperview];
+    } else {
+        if (secureField == nil) {
+            secureField = [[KWQSecureTextField alloc] init];
+            [secureField setDelegate:self];
+            [secureField setFormatter:formatter];
+            [secureField setFont:[self font]];
+            [self updateSecureFieldFrame];
+        }
+        [self addSubview:secureField];
+    }
+    [self setStringValue:@""];
+}
 
 - (void)setEditable:(BOOL)flag
 {
-    if (secureField != nil)
-        [secureField setEditable: flag];
-    [super setEditable: flag];
+    [secureField setEditable:flag];
+    [super setEditable:flag];
 }
-
 
 - (void)selectText:(id)sender
 {
-    if ([self passwordMode])
-        [secureField selectText: sender];
+    if ([self passwordMode]) {
+        [secureField selectText:sender];
+        return;
+    }
+    [super selectText:sender];
 }
-
 
 - (BOOL)isEditable
 {
     return [super isEditable];
 }
 
-
-- (bool)passwordMode
+- (BOOL)passwordMode
 {
-    return [formatter passwordMode];
+    return [secureField superview] != nil;
 }
 
-
-- (void)setMaximumLength: (int)len
+- (void)setMaximumLength:(int)len
 {
-    NSString *oldValue, *truncatedValue;
-    
-    oldValue = [self stringValue];
+    NSString *oldValue = [self stringValue];
     if ((int)[oldValue length] > len){
-        truncatedValue = [oldValue substringToIndex: len];
-        [self setStringValue: truncatedValue];
-        [secureField setStringValue: truncatedValue];
+        [self setStringValue:[oldValue substringToIndex:len]];
     }
-    [formatter setMaximumLength: len];
+    [formatter setMaximumLength:len];
 }
-
 
 - (int)maximumLength
 {
     return [formatter maximumLength];
 }
 
-
-- (bool)edited
+- (BOOL)edited
 {
     return edited;
 }
 
-- (void)setEdited:(bool)ed
+- (void)setEdited:(BOOL)ed
 {
     edited = ed;
 }
 
--(void)textDidChange:(NSNotification *)aNotification
+- (void)textDidChange:(NSNotification *)aNotification
 {
     edited = true;
 }
 
--(NSString *)stringValue
+- (NSString *)stringValue
 {
-    NSString *result;
-    
-    if ([self passwordMode]) {
-        result = [secureField stringValue];
+    if ([secureField superview]) {
+        return [secureField stringValue];
     }
-    else {
-        result = [super stringValue];
-    }
+    return [super stringValue];
+}
 
-    return result;
+- (void)setStringValue:(NSString *)string
+{
+    [secureField setStringValue:string];
+    [super setStringValue:string];
+}
+
+- (void)setFont:(NSFont *)font
+{
+    [secureField setFont:font];
+    [super setFont:font];
 }
 
 @end
 
+// This cell is used so that our frame includes the place where the focus rectangle is drawn.
+// If that makes the widget too big for layout, we'll account for that at the QWidget level.
 
-@implementation KWQNSTextFieldFormatter
+@implementation KWQTextFieldCell
 
-- init {
-    maxLength = 2147483647;
-    isPassword = NO;
-    return [super init];
-}
-
-- (void)setPasswordMode: (bool)flag
+- (NSSize)cellSizeForBounds:(NSRect)bounds
 {
-    isPassword = flag;
+    NSSize size = [super cellSizeForBounds:bounds];
+    size.width += FOCUS_BORDER_SIZE * 2;
+    size.height += FOCUS_BORDER_SIZE * 2;
+    return size;
 }
 
-
-- (bool)passwordMode
+- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view
 {
-    return isPassword;
+    [super drawWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view];
 }
 
+- (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
+{
+    [super editWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view editor:editor delegate:delegate event:event];
+}
 
-- (void)setMaximumLength: (int)len
+- (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
+{
+    [super selectWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view editor:editor delegate:delegate start:start length:length];
+}
+
+@end
+
+@implementation KWQTextFieldFormatter
+
+- init
+{
+    [super init];
+    maxLength = INT_MAX;
+    return self;
+}
+
+- (void)setMaximumLength:(int)len
 {
     maxLength = len;
 }
-
 
 - (int)maximumLength
 {
     return maxLength;
 }
 
-
-- (NSString *)stringForObjectValue:(id)anObject
+- (NSString *)stringForObjectValue:(id)object
 {
-    return (NSString *)anObject;
+    return (NSString *)object;
 }
 
-
-- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error
+- (BOOL)getObjectValue:(id *)object forString:(NSString *)string errorDescription:(NSString **)error
 {
-    *obj = string;
+    *object = string;
     return YES;
 }
 
-
 - (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error
 {
-    if ((int)[partialString length] > maxLength){
+    if ((int)[partialString length] > maxLength) {
         *newString = nil;
         return NO;
     }
@@ -228,13 +295,28 @@
     return YES;
 }
 
-
 - (NSAttributedString *)attributedStringForObjectValue:(id)anObject withDefaultAttributes:(NSDictionary *)attributes
 {
     return nil;
 }
 
-
-
 @end
 
+@implementation KWQSecureTextField
+
+- (void)selectText:(id)sender
+{
+    if (sender == self && inSetFrameSize) {
+        return;
+    }
+    [super selectText:sender];
+}
+
+- (void)setFrameSize:(NSSize)size
+{
+    inSetFrameSize = YES;
+    [super setFrameSize:size];
+    inSetFrameSize = NO;
+}
+
+@end

@@ -87,9 +87,6 @@ public:
 
     DOM::HTMLGenericFormElementImpl *element() const
     { return static_cast<DOM::HTMLGenericFormElementImpl*>(RenderObject::element()); }
-#ifdef APPLE_CHANGES
-    void performAction(QObject::Actions action);
-#endif /* APPLE_CHANGES */
 
 public slots:
     virtual void slotClicked();
@@ -141,9 +138,8 @@ public:
 
     QCheckBox *widget() const { return static_cast<QCheckBox*>(m_widget); }
 #ifdef APPLE_CHANGES
-    void performAction(QObject::Actions action);
     short baselinePosition( bool f ) const;
-#endif /* APPLE_CHANGES */
+#endif
 
 public slots:
     virtual void slotStateChanged(int state);
@@ -246,9 +242,8 @@ public:
 
     void select();
 #ifdef APPLE_CHANGES
-    void performAction(QObject::Actions action);
     short baselinePosition( bool f ) const;
-#endif /* APPLE_CHANGES */
+#endif
 
     KLineEdit *widget() const { return static_cast<KLineEdit*>(m_widget); }
     DOM::HTMLInputElementImpl* element() const
@@ -381,7 +376,7 @@ public:
     void updateSelection();
 #ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif /* APPLE_CHANGES */
+#endif
 
     DOM::HTMLSelectElementImpl *element() const
     { return static_cast<DOM::HTMLSelectElementImpl*>(RenderObject::element()); }

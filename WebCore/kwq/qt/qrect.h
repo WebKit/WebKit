@@ -29,11 +29,14 @@
 #include <qsize.h>
 #include <qpoint.h>
 
+typedef struct _NSRect NSRect;
+
 class QRect {
 public:
     QRect();
     QRect(QPoint p, QSize s);
     QRect(int, int, int, int);
+    explicit QRect(const NSRect &); // don't do this implicitly since it's lossy
 
     bool isNull() const;
     bool isValid() const;
@@ -57,6 +60,8 @@ public:
     QRect unite(const QRect &) const;
     
     inline QRect operator&(const QRect &r) const { return intersect(r); }
+
+    operator NSRect() const;
 
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QRect &);

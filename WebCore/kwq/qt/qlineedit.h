@@ -29,6 +29,7 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qstring.h>
+#include <KWQSignal.h>
 
 class QLineEdit : public QWidget {
 public:
@@ -52,6 +53,17 @@ public:
     void setEdited(bool);
     
     void setFont(const QFont &font);
+    
+    QSize sizeForCharacterWidth(int numCharacters) const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
+    
+    void returnPressed() { m_returnPressed.call(); }
+    void textChanged() { m_textChanged.call(text()); }
+
+private:
+    KWQSignal m_returnPressed;
+    KWQSignal m_textChanged;
 };
 
 #endif

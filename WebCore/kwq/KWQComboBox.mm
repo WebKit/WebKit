@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,68 +22,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import <qcombobox.h>
 
 #import <KWQView.h>
 
 #import <kwqdebug.h>
 
+// We empirically determined that combo boxes have these extra pixels on all
+// sides. It would be better to get this info from AppKit somehow.
+#define TOP_MARGIN 1
+#define BOTTOM_MARGIN 3
+#define LEFT_MARGIN 3
+#define RIGHT_MARGIN 3
 
 QComboBox::QComboBox(QWidget *parent, const char *name)
 {
-    init(FALSE);
+    init(false);
 }
-
 
 QComboBox::QComboBox(bool rw, QWidget *parent, const char *name)
 {
     init(rw);
 }
 
-
 void QComboBox::init(bool isEditable)
 {
-    KWQNSComboBox *comboBox;
-    
-    comboBox = [[KWQNSComboBox alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
-    //if (isEditable == FALSE)
-    //    [comboBox setEditable: NO];
+    KWQNSComboBox *comboBox = [[KWQNSComboBox alloc] initWithWidget:this];
     setView(comboBox);
     [comboBox release];
     
     items = [[NSMutableArray alloc] init];
-
-    // Use the small system font.
-    [comboBox setFont: [NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 }
-
 
 QComboBox::~QComboBox()
 {
     [items release];
 }
 
-
 int QComboBox::count() const
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    
     return [comboBox numberOfItems];
 }
 
-
 QListBox *QComboBox::listBox() const
 {
-    _logNotYetImplemented();
-    return 0L;
+    return 0;
 }
-
 
 void QComboBox::popup()
 {
-    _logNotYetImplemented();
 }
-
 
 bool QComboBox::eventFilter(QObject *object, QEvent *event)
 {
@@ -91,12 +81,10 @@ bool QComboBox::eventFilter(QObject *object, QEvent *event)
     return FALSE;
 }
 
-
 void QComboBox::insertItem(const QString &text, int index)
 {
     NSString *string;
     int numItems = [items count];
-    
     string = [text.getNSString() copy];
     if (index < 0 || index == numItems) {
         [items addObject:string];
@@ -110,22 +98,31 @@ void QComboBox::insertItem(const QString &text, int index)
     [string release];
 }
 
-
 QSize QComboBox::sizeHint() const 
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    
-    [comboBox sizeToFit];
-    
-    NSRect vFrame = [comboBox frame];
-    return QSize((int)vFrame.size.width,(int)vFrame.size.height);
+    return QSize((int)[[comboBox cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
+        (int)[[comboBox cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
 }
 
+QRect QComboBox::frameGeometry() const
+{
+    QRect r = QWidget::frameGeometry();
+    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
+        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
+        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
+}
+
+void QComboBox::setFrameGeometry(const QRect &r)
+{
+    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
+        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
+        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
+}
 
 void QComboBox::clear()
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    
     [comboBox removeAllItems];
 }
 
@@ -140,16 +137,13 @@ void QComboBox::setCurrentItem(int index)
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
     int num = [comboBox numberOfItems];
     if (num != 0 && index < num)
-        [comboBox selectItemAtIndex: index];
+        [comboBox selectItemAtIndex:index];
     else
-        KWQDEBUG ("Error, index = %d, numberOfItems = %d", index, num);
+        KWQDEBUG("Error, index = %d, numberOfItems = %d", index, num);
 }
 
 int QComboBox::currentItem() const
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-
     return [comboBox indexOfSelectedItem];
 }
-
-

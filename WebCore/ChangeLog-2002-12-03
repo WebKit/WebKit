@@ -1,3 +1,200 @@
+2002-08-15  Darin Adler  <darin@apple.com>
+
+	- fixed 3017376 -- button height is too tall
+
+	Reworked how widget sizing and positioning is done for a few of the most important
+	widget types.
+
+        * khtml/rendering/render_form.h: Remove more of the performAction hackery.
+        * khtml/rendering/render_form.cpp:
+        (RenderCheckBox::calcMinMaxWidth): Get size from widget.
+        (RenderRadioButton::calcMinMaxWidth): Get size from widget.
+        (RenderSubmitButton::RenderSubmitButton): Remove old unneeded APPLE_CHANGES.
+        (RenderSubmitButton::baselinePosition): Put the bottom of the button on the
+	baseline without any magic numbers.
+        (RenderLineEdit::baselinePosition): Put the bottom of the text field two pixels
+	below the baseline without any other magic numbers.
+        (RenderLineEdit::calcMinMaxWidth): Get size from widget.
+        (RenderSelect::baselinePosition): Put the bottom of the menu on the
+	baseline without any magic numbers. List box case is untouched for now.
+
+        * kwq/qt/qbutton.h:
+        * kwq/KWQButton.mm:
+        (QButton::QButton): Move most of the setup into KWQNSButton.
+        (QButton::sizeHint): Use cellSize, account for margins.
+        (QButton::frameGeometry): Adjust for margins.
+        (QButton::setFrameGeometry): Adjust for margins.
+        * kwq/qt/qcheckbox.h:
+        * kwq/KWQCheckBox.mm:
+        (QCheckBox::QCheckBox): QButton takes care of most of the setup now.
+        (QCheckBox::sizeHint): Added.
+        (QCheckBox::frameGeometry): Adjust for margins.
+        (QCheckBox::setFrameGeometry): Adjust for margins.
+        * kwq/qt/qcombobox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::init): KWQNSComboBox takes care of most of the setup now.
+        (QComboBox::sizeHint): Adjust for margins.
+        (QComboBox::frameGeometry): Adjust for margins.
+        (QComboBox::setFrameGeometry): Adjust for margins.
+        * kwq/qt/qlineedit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth): Added.
+        (QLineEdit::frameGeometry): Adjust for margins.
+        (QLineEdit::setFrameGeometry): Adjust for margins.
+        * kwq/qt/qradiobutton.h:
+        * kwq/KWQRadioButton.mm:
+        (QRadioButton::QRadioButton): QButton takes care of most of the setup now.
+        (QRadioButton::sizeHint): Added.
+        (QRadioButton::frameGeometry): Adjust for margins.
+        (QRadioButton::setFrameGeometry): Adjust for margins.
+
+        * kwq/qt/qwidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::setFrameGeometry): New name for internalSetGeometry, now public.
+
+	- fixed 3010695 -- Slashdot.org starts with password field focused, but shouldn't
+
+	Added KWQSecureTextField to work around the bug.
+
+        * kwq/KWQNSTextField.h: Made formatter and other details private.
+        * kwq/KWQNSTextField.mm:
+        (+[KWQNSTextField initialize]): Set up custom cell class that works around focus border.
+        (-[KWQNSTextField initWithFrame:]): Put the work in here, since this is NSView's designated
+	initializer.
+        (-[KWQNSTextField initWithWidget:]): Now just calls [init] which calls [initWithFrame],
+	and then sets the widget.
+        (-[KWQNSTextField action:]): Use the returnPressed signal instead of ACTION_TEXT_FIELD.
+        (-[KWQNSTextField controlTextDidEndEditing:]): Use textChanged signal instead of
+	ACTION_TEXT_FIELD_END_EDITING.
+        (-[KWQNSTextField dealloc]): Release the secureField (was a leak).
+        (-[KWQNSTextField updateSecureFieldFrame]): Added. Used to keep secure field in the right
+	place.
+        (-[KWQNSTextField setFrameSize:]): Added. Calls updateSecureFieldFrame.
+        (-[KWQNSTextField setPasswordMode:]): Change all the details, but this does the same
+	thing it used to.
+        (-[KWQNSTextField selectText:]): Only call selectText on one of the two field, since it
+	causes the field to grab focus and we don't want to do that twice.
+        (-[KWQNSTextField setStringValue:]): Set the string value in both fields any time someone
+	gives us a new value.
+        (-[KWQNSTextField setFont:]): Set the font in both fields any time someone gives us a new
+	font.
+        (-[KWQTextFieldCell cellSizeForBounds:]): Add space for focus border.
+        (-[KWQTextFieldCell drawWithFrame:inView:]): Inset by focus border.
+        (-[KWQTextFieldCell editWithFrame:inView:editor:delegate:event:]): Inset by focus border.
+        (-[KWQTextFieldCell selectWithFrame:inView:editor:delegate:start:length:]): Inset by focus border.
+        (-[KWQSecureTextField selectText:]): Override to do nothing while in setFrameSize to work around
+	bug in AppKit.
+        (-[KWQSecureTextField setFrameSize:]): Set flag to trigger selectText check.
+
+	- fixed 3025166 -- check boxes and radio buttons on google.com's preferences pages
+	are not "linked"
+
+	We were not emitting onClicked for check boxes.
+
+        * kwq/KWQView.h: No need to pass frames any more. Default is empty.
+        * kwq/KWQView.mm:
+        (-[KWQView initWithFrame:]): Do most of the work in here.
+        (-[KWQView initWithWidget:]): Just call [init] and set up widget.
+        (-[KWQNSButton initWithFrame:]): Do most of the work in here. Remove the special
+	cell class, and always use a small control with the small system font.
+        (-[KWQNSButton initWithWidget:]): Just call [init] and set up widget.
+        (-[KWQNSButton action:]): Call the clicked() signal instead of ACTION_BUTTON_CLICKED.
+        (-[KWQNSButton stateChanged:]): Call the stateChanged() signal instead of
+	ACTION_CHECKBOX_CLICKED.
+        (-[KWQNSComboBox initWithFrame:]): Do most of the work in here.
+        (-[KWQNSComboBox initWithWidget:]): Just call [init] and set up widget.
+        (-[KWQNSScrollView initWithWidget:]): Just call [init] and set up widget.
+
+	- fixed 3025211 -- find person in Apple directory never displays person information
+
+	When I enabled the code to wait and not redirect until loads are complete, that
+	broke this case, because we didn't have enough hooked up to notice loads completing.
+	I hooked everything up and its working now.
+
+        * khtml/khtml_part.h: Add started().
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::restoreURL): Un-ifdef emission of started().
+        (KHTMLPart::openURL): Un-ifdef emission of started().
+        (KHTMLPart::end): Don't do an explicit call to slotFinishedParsing().
+	We actually hook up a signal for this now.
+        (KHTMLPart::slotChildCompleted): Un-ifdef the rest of the code here.
+
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::DocumentImpl):
+        * khtml/xml/xml_tokenizer.h:
+	Do the necessary setup so we can use KWQSignal for finishedParsing.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KHTMLPart::started): Added. Calls slotChildStarted on parent.
+        (KHTMLPart::completed): Added slotParentCompleted calls.
+
+        * kwq/qt/qobject.h: Add sender() and KWQObjectSenderScope.
+        * kwq/KWQObject.mm:
+        (KWQObjectSenderScope::KWQObjectSenderScope): Added. Sets sender() and saves the old value.
+        (KWQObjectSenderScope::~KWQObjectSenderScope): Added. Resets sender().
+
+        * kwq/KWQSignal.h:
+        * kwq/KWQSlot.h:
+        * kwq/KWQSignal.mm: (KWQSignal::call): Added overloads for calling signals with int and
+	QString parameters. Also set up sender() using KWQObjectSenderScope.
+
+        * kwq/KWQSlot.mm: (KWQSlot::KWQSlot), (KWQSlot::call): Add support for one signal
+	(calls through to whatever is connected to that signal's slot) and six new slots.
+
+        * kwq/KWQsignals.mm:
+        (Tokenizer::Tokenizer): Construct the finishedParsing signal.
+        (Tokenizer::finishedParsing): Emit the finishedParsing signal.
+
+	- fixed 3025170 -- right sides of borders placed incorrectly around table cells
+
+	There was some silly code that I just removed.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addColInfo): Turn off the half-assed collapse borders stuff here.
+
+	- other changes
+
+        * force-clean-timestamp: Big changes; full rebuild needed.
+
+        * khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): Make the code to kill
+	the timers be unconditional, just in case.
+
+        * kwq/KWQCharsets.mm: (buildDictionaries): Remove UTF-16 special case since it's now
+	in the character sets table.
+
+        * kwq/qt/qpoint.h:
+        * kwq/KWQPoint.mm:
+        (QPoint::QPoint): Converts from NSPoint.
+        (QPoint::operator NSPoint): Converts to NSPoint.
+        * kwq/qt/qrect.h:
+        * kwq/KWQRect.mm:
+        (QRect::QRect): Converts from NSRect.
+        (QRect::isEmpty): Fix backwards logic.
+        (QRect::operator NSRect): Converts to NSRect.
+        * kwq/qt/qsize.h:
+        * kwq/KWQSize.mm:
+        (QSize::QSize): Converts from NSSize.
+        (QSize::operator NSSize): Converts to NSSize.
+
+        * kwq/qt/qpushbutton.h:
+        * kwq/KWQPushButton.mm: Removed unused methods.
+
+        * kwq/KWQRegion.mm: Use new QPoint/NSPoint/QRect/NSRect functions.
+
+        * kwq/KWQScrollView.mm: (QScrollView::addChild): Update comment.
+
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea initWithFrame:]): Do most of the work in here.
+        (-[KWQTextArea initWithWidget:]): Just call [init] and set up widget.
+
+        * kwq/KWQTextEdit.mm: (QTextEdit::QTextEdit): Don't pass an empty frame any more.
+
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm: Update for name change.
+
+        * kwq/WebCoreTestController.h: Placeholder for the feature I should be working on.
+
 === Alexander-19 ===
 
 === Alexander-18 ===
