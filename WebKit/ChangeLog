@@ -1,3 +1,8 @@
+2002-01-31  John Sullivan  <sullivan@apple.com>
+
+	* WebKit.pbproj: Removed -O0, so it will now get all the same
+	warnings as pbxbuild gets.
+
 2002-01-31  Kenneth Kocienda  <kocienda@apple.com>
 
         Removed dependency on WC versions of these files

@@ -10,7 +10,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
