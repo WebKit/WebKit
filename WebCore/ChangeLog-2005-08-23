@@ -2,6 +2,31 @@
 
         Reviewed by John.
 
+        - improved computed style code and implemented text-decoration and text-shadow (needed for, e.g., underline)
+
+        * khtml/css/css_computedstyle.cpp:
+        Added CSS_PROP_TEXT_DECORATION to the InheritableProperties array for now even though it's
+        not inheritable. This makes underline work in some cases for typing style. We may decide to
+        take it back out again after further consideration.
+        (DOM::valueForLength): Use IDs in primitive values rather than strings.
+        (DOM::valueForBorderStyle): Ditto, also renamed this.
+        (DOM::valueForTextAlign): More of the same.
+        (DOM::valueForShadow): Added this function.
+        (DOM::CSSComputedStyleDeclarationImpl::getPositionOffsetValue): More IDs in primitive values.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Changed all the cases to use
+        IDs instead of strings in primitive values. Also put the style in a local variable for
+        better code size and smaller source code too. Added implementation for CSS_PROP_TEXT_DECORATION
+        and CSS_PROP_TEXT_SHADOW.
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSValueListImpl::cssText): Put commas between list elements.
+        (CSSPrimitiveValueImpl::cssText): Fixed some messed up indenting and removed an unneeded
+        default case that would just prevent a warning if we ever have an unhandled enum value.
+
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - did some clean-up on form data code
 
         * khtml/misc/formdata.h: Added more public functions as suggested by Chris when he reviewed

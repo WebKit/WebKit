@@ -486,6 +486,9 @@ DOM::DOMString CSSValueListImpl::cssText() const
     DOMString result = "";
 
     for (QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator) {
+	if (result.length() != 0) {
+	    result += ", ";
+	}
 	result += iterator.current()->cssText();
     }
     
@@ -784,30 +787,27 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    break;
         case CSSPrimitiveValue::CSS_RECT: {
 	    RectImpl* rectVal = getRectValue();
-        text = "rect(";
-        text += rectVal->top()->cssText() + " ";
-        text += rectVal->right()->cssText() + " ";
-        text += rectVal->bottom()->cssText() + " ";
-        text += rectVal->left()->cssText() + ")";
+            text = "rect(";
+            text += rectVal->top()->cssText() + " ";
+            text += rectVal->right()->cssText() + " ";
+            text += rectVal->bottom()->cssText() + " ";
+            text += rectVal->left()->cssText() + ")";
 	    break;
         }
-	case CSSPrimitiveValue::CSS_RGBCOLOR:
-    {
-        QColor color(m_value.rgbcolor);
-        if (qAlpha(m_value.rgbcolor) < 0xFF)
-            text = "rgba(";
-        else
-            text = "rgb(";
-        text += QString::number(color.red()) + ", ";
-        text += QString::number(color.green()) + ", ";
-        text += QString::number(color.blue());
-        if (qAlpha(m_value.rgbcolor) < 0xFF)
-            text += ", " + QString::number((float)qAlpha(m_value.rgbcolor) / 0xFF);
-	    text += ")";
-	    break;
-	}
-    default:
-	    break;
+	case CSSPrimitiveValue::CSS_RGBCOLOR: {
+            QColor color(m_value.rgbcolor);
+            if (qAlpha(m_value.rgbcolor) < 0xFF)
+                text = "rgba(";
+            else
+                text = "rgb(";
+            text += QString::number(color.red()) + ", ";
+            text += QString::number(color.green()) + ", ";
+            text += QString::number(color.blue());
+            if (qAlpha(m_value.rgbcolor) < 0xFF)
+                text += ", " + QString::number((float)qAlpha(m_value.rgbcolor) / 0xFF);
+            text += ")";
+            break;
+        }
     }
     return text;
 }
