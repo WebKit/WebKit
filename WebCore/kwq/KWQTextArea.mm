@@ -719,9 +719,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled)
         return;
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    if (![bridge interceptKeyEvent:event toView:self]) {
-	[super keyUp:event];
-    }
+    [bridge interceptKeyEvent:event toView:self];
+    // Don't call super because NSTextView will simply pass the
+    // event along the responder chain. This is arguably a bug in
+    // NSTextView; see Radar 3507083.
 }
 
 - (void)setEnabled:(BOOL)flag

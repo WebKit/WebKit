@@ -505,9 +505,14 @@
 	return YES;
     }
 
-    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
+    NSEventType type = [event type];
+    if (type == NSKeyDown || type == NSKeyUp) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-        return ![bridge interceptKeyEvent:event toView:view];
+        BOOL intercepted = [bridge interceptKeyEvent:event toView:view];
+        // Always return NO for key up events because we don't want them
+        // passed along the responder chain. This is arguably a bug in
+        // NSTextView; see Radar 3507083.
+        return type != NSKeyUp && !intercepted;
     }
     return YES;
 }
