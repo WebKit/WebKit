@@ -185,6 +185,10 @@ static NSMutableArray *activeImageRenderers;
         size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
         [self setCacheMode: NSImageCacheDefault];
         [imageRep setSize:size];
+        
+        // Ignore any absolute size in the image and always use pixel dimensions.
+        [self setSize:size];
+        
         isNull = NO;
         return YES;
     default:
