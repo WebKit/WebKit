@@ -1,5 +1,16 @@
 2003-10-28  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3465591>: Security: Netscape plug-ins can execute JavaScript in other frames
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): renamed, no need to pass the target frame since the target is either the plug-in itself or the frame that contains the plug-in
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): call renamed evaluateJavaScriptPluginRequest
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): if this is a JS request that is targeted at a frame, return NPERR_INVALID_PARAM if the frame is not the frame that contains the plugin
+
+2003-10-28  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3437959>: javascript: URLs don't work from Java (and other Cocoa plugins, if any)
 
         Reviewed by mjs.

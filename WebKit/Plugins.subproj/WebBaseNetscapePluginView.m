@@ -1199,7 +1199,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return [NSMutableURLRequest requestWithURL:URL];
 }
 
-- (void)evaluateJavaScriptPluginRequest:(WebPluginRequest *)JSPluginRequest targetFrame:(WebFrame *)targetFrame
+- (void)evaluateJavaScriptPluginRequest:(WebPluginRequest *)JSPluginRequest
 {
     // FIXME: Is this isStarted check needed here? evaluateJavaScriptPluginRequest should not be called
     // if we are stopped since this method is called after a delay and we call 
@@ -1212,8 +1212,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
     ASSERT(JSString);
     
-    WebFrame *evaluatingFrame = targetFrame ? targetFrame : [self webFrame];
-    NSString *result = [[evaluatingFrame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+    NSString *result = [[[self webFrame] _bridge] stringByEvaluatingJavaScriptFromString:JSString];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
     if (!isStarted) {
@@ -1222,7 +1221,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     void *notifyData = [JSPluginRequest notifyData];
     
-    if (targetFrame) {
+    if ([JSPluginRequest frameName] != nil) {
         // FIXME: If the result is a string, we probably want to put that string into the frame, just
         // like we do in KHTMLPartBrowserExtension::openURLRequest.
         if (notifyData) {
@@ -1282,7 +1281,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
 
     if (JSString) {
-        [self evaluateJavaScriptPluginRequest:pluginRequest targetFrame:frame];
+        ASSERT(frame == nil || [self webFrame] == frame);
+        [self evaluateJavaScriptPluginRequest:pluginRequest];
     } else {
         [frame loadRequest:request];
         if (notifyData) {
@@ -1315,9 +1315,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (JSString != nil && cTarget == NULL && mode == NP_FULL) {
         // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
         // because this can cause the user to be redirected to a blank page (3424039).
-        return NPERR_INVALID_URL;
+        return NPERR_INVALID_PARAM;
     }
-    
+        
     if (cTarget || JSString) {
         // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
         // want to potentially kill the plug-in inside of its URL request.
@@ -1325,7 +1325,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if (cTarget) {
             // Find the frame given the target string.
             target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-        }        
+        }
+        
+        WebFrame *frame = [self webFrame];
+        if (JSString != nil && target != nil && [frame findFrameNamed:target] != frame) {
+            // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
+            return NPERR_INVALID_PARAM;
+        }
+        
         [request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] _web_originalDataAsString]];
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
