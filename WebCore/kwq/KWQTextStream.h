@@ -26,6 +26,7 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
+#include "KWQIODevice.h"
 #include "KWQString.h"
 
 class QTextStream;
@@ -36,41 +37,41 @@ QTextStream &endl(QTextStream& stream);
 
 class QTextStream {
 public:
-    QTextStream();
-    QTextStream(QByteArray, int);
-    QTextStream(QString *, int);
-    virtual ~QTextStream();       
+    QTextStream(const QByteArray &);
+    QTextStream(QString *, int mode = IO_WriteOnly);
 
-     QTextStream &operator<<(char);
-     QTextStream &operator<<(const char *);
-     QTextStream &operator<<(const QCString &);
-     QTextStream &operator<<(const QString &);
-     QTextStream &operator<<(const QTextStreamManipulator &);
-     QTextStream &operator<<(const void *);
+    QTextStream &operator<<(char);
+    QTextStream &operator<<(const char *);
+    QTextStream &operator<<(const QCString &);
+    QTextStream &operator<<(const QString &);
+    QTextStream &operator<<(const QTextStreamManipulator &);
+    QTextStream &operator<<(void *);
 
 private:
     QTextStream(const QTextStream &);
     QTextStream &operator=(const QTextStream &);
 
-};
-
-class QTextIStream : public QTextStream {
-public:
-
-    QTextIStream(QString *);
-
-    QString readLine();
-
+    bool _hasByteArray;
+    QByteArray _byteArray;
+    QString *_string;
 };
 
 class QTextOStream : public QTextStream {
 public:
-
-    QTextOStream(QString *);
-    QTextOStream(QByteArray);
-
-    QString readLine();
-
+    QTextOStream(QString *s) : QTextStream(s) { }
+    QTextOStream(const QByteArray &ba) : QTextStream(ba) { }
 };
 
+class QTextIStream {
+public:
+    QTextIStream(QString *s) : _string(s), _position(0) { }
+    QString readLine();
+
+private:
+    QTextIStream(const QTextIStream &);
+    QTextIStream &operator=(const QTextIStream &);
+
+    QString *_string;
+    int _position;
+};
 #endif

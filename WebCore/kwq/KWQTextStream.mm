@@ -27,82 +27,83 @@
 
 #import "KWQTextStream.h"
 
-QTextStream::QTextStream()
+QTextStream::QTextStream(const QByteArray &ba)
+    : _hasByteArray(true), _byteArray(ba), _string(0)
 {
 }
 
-QTextStream::QTextStream(QByteArray, int)
+QTextStream::QTextStream(QString *s, int mode)
+    : _hasByteArray(false), _string(s)
 {
-    ERROR("not yet implemented");
+    ASSERT(mode == IO_WriteOnly);
 }
 
-QTextStream::QTextStream(QString *, int)
+QTextStream &QTextStream::operator<<(char c)
 {
-    ERROR("not yet implemented");
-}
-
-QTextStream::~QTextStream()
-{
-}
-
-QTextStream &QTextStream::operator<<(char)
-{
+    if (_hasByteArray) {
+        uint oldSize = _byteArray.size();
+        _byteArray.resize(oldSize + 1);
+        _byteArray[oldSize] = c;
+    }
+    if (_string) {
+        _string->append(QChar(c));
+    }
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(const char *)
+QTextStream &QTextStream::operator<<(const char *s)
 {
+    if (_hasByteArray) {
+        uint length = strlen(s);
+        uint oldSize = _byteArray.size();
+        _byteArray.resize(oldSize + length);
+        memcpy(_byteArray.data() + oldSize, s, length);
+    }
+    if (_string) {
+        _string->append(s);
+    }
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(const QCString &)
+QTextStream &QTextStream::operator<<(const QCString &qcs)
 {
+    const char *s = qcs;
+    return *this << s;
+}
+
+QTextStream &QTextStream::operator<<(const QString &s)
+{
+    if (_hasByteArray) {
+        uint length = s.length();
+        uint oldSize = _byteArray.size();
+        _byteArray.resize(oldSize + length);
+        memcpy(_byteArray.data() + oldSize, s.latin1(), length);
+    }
+    if (_string) {
+        _string->append(s);
+    }
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(const QString &)
+QTextStream &QTextStream::operator<<(void *p)
 {
-    return *this;
+    char buffer[10];
+    sprintf(buffer, "%p", p);
+    return *this << buffer;
 }
 
-QTextIStream::QTextIStream(QString *)
+QTextStream &QTextStream::operator<<(const QTextStreamManipulator &m) 
 {
-    ERROR("not yet implemented");
+    return m(*this);
+}
+
+QTextStream &endl(QTextStream& stream)
+{
+    return stream << '\n';
 }
 
 QString QTextIStream::readLine()
 {
     ERROR("not yet implemented");
     return QString();
-}
-
-QTextOStream::QTextOStream(QString *)
-{
-    ERROR("not yet implemented");
-}
-
-QTextOStream::QTextOStream(QByteArray)
-{
-    ERROR("not yet implemented");
-}
-
-QString QTextOStream::readLine()
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-QTextStream &QTextStream::operator<<(QTextStream &(*const &)(QTextStream &)) 
-{
-    return *this;
-}
-
-QTextStream &QTextStream::operator<<(void const *)
-{
-    return *this;
-}
-
-QTextStream &endl(QTextStream& stream)
-{
-    return stream;
 }

@@ -175,9 +175,7 @@ public:
     int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
 
     float computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-#ifdef APPLE_CHANGES
-    float computePointFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics);
-#endif
+
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

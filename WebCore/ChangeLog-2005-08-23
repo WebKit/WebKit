@@ -1,3 +1,22 @@
+2003-01-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 96/72 dpi snafu; no need to do something different for AppKit,
+          because it always uses pixel sizes, not font size
+
+        * khtml/css/css_valueimpl.cpp:
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.cpp:
+        * kwq/KWQPaintDeviceMetrics.mm:
+	Rolled out change from 2002-12-05
+
+	- a cut at implementing heretofore unimplemented QTextStream classes
+
+        * kwq/KWQTextStream.h:
+        * kwq/KWQTextStream.mm:
+	First cut implementation.
+
 === Safari-49 ===
 
 2003-01-05  Maciej Stachowiak  <mjs@apple.com>
