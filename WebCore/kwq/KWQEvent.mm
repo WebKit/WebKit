@@ -334,17 +334,18 @@ static QString identifierForKeyText(const QString &text)
     }
 }
 
-QKeyEvent::QKeyEvent(Type t, int key, int ascii, int buttonState, const QString &text, bool autoRepeat, ushort count)
+QKeyEvent::QKeyEvent(Type t, int key, int ascii, int buttonState, const QString &text, const QString &unmodifiedText, bool autoRepeat, ushort count)
     : QEvent(t),
       _key(key),
       _ascii(ascii),
       _state((ButtonState)buttonState),
       _text(text),
+      _unmodifiedText(unmodifiedText),
       _autoRepeat(autoRepeat),
       _count(count),
       _isAccepted(false)
 {
-    _identifier = identifierForKeyText(text);
+    _identifier = identifierForKeyText(unmodifiedText);
 }
 
 int QKeyEvent::key() const
@@ -375,6 +376,11 @@ bool QKeyEvent::isAutoRepeat() const
 QString QKeyEvent::text(void) const
 {
     return _text;
+}
+
+QString QKeyEvent::unmodifiedText(void) const
+{
+    return _unmodifiedText;
 }
 
 int QKeyEvent::ascii(void) const

@@ -99,7 +99,7 @@ private:
 
 class QKeyEvent : public QEvent {
 public:
-    QKeyEvent(Type type, int key, int ascii, int buttonState, const QString &textVal = QString::null, bool autoRepeat = FALSE, ushort countVal = 1);
+    QKeyEvent(Type type, int key, int ascii, int buttonState, const QString &text = QString::null, const QString &unmodifiedText = QString::null, bool autoRepeat = FALSE, ushort countVal = 1);
 
     int key() const;
     ButtonState state() const;
@@ -109,6 +109,7 @@ public:
     bool isAccepted() const;
     int count()  const;
     QString text() const;
+    QString unmodifiedText() const;
     int ascii() const;
     QString identifier() const;
  private:
@@ -116,6 +117,7 @@ public:
     int _ascii;
     ButtonState _state;
     QString _text;
+    QString _unmodifiedText;
     QString _identifier;
     bool _autoRepeat;
     int _count;

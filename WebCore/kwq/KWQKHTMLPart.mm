@@ -1470,6 +1470,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 		     ascii,
 		     stateForCurrentEvent(),
 		     QString::fromNSString([event characters]),
+                     QString::fromNSString([event charactersIgnoringModifiers]),
 		     [event isARepeat]);
     bool result = !node->dispatchKeyEvent(&qEvent);
 
@@ -1480,7 +1481,8 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 			 [event keyCode],
 			 ascii,
 			 stateForCurrentEvent(),
-			 QString::fromNSString([event characters]),
+                         QString::fromNSString([event characters]),
+                         QString::fromNSString([event charactersIgnoringModifiers]),
 			 true);
         if (!node->dispatchKeyEvent(&qEvent)) {
 	    result = true;
