@@ -380,6 +380,8 @@ typedef enum {
 
 - (NSMutableDictionary *)dashboardRegions;
 
+- (void)clear;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

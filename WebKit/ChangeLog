@@ -1,3 +1,15 @@
+2004-12-02  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3841332> REGRESSION (125.9-167u): repro crash in -[KWQPageState invalidate] involving .Mac images
+
+	Ensure that the document is cleared when leaving a non-HTML page.  This ensures that
+	the b/f cache won't incorrectly trash the previous state when restoring.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setState:]):
+
 2004-12-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

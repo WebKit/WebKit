@@ -289,7 +289,7 @@ static bool initializedKJS = FALSE;
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
         _part->openURLFromPageCache(state);
-        [state invalidate];
+	[state invalidate];
         return;
     }
         
@@ -440,6 +440,11 @@ static bool initializedKJS = FALSE;
 - (BOOL)canCachePage
 {
     return _part->canCachePage();
+}
+
+- (void)clear
+{
+    _part->clear();
 }
 
 - (void)end

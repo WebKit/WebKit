@@ -940,23 +940,28 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && loadType != WebFrameLoadTypeReloadAllowingStaleData
             && loadType != WebFrameLoadTypeSame
             && ![[self dataSource] isLoading]
-            && ![[self dataSource] _isStopping]
-            && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
+            && ![[self dataSource] _isStopping])
         {
-            if (![item pageCache]){
+	    if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
+		if (![item pageCache]){
 
-                // Add the items to this page's cache.
-                if ([self _createPageCacheForItem:item]) {
-                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+		    // Add the items to this page's cache.
+		    if ([self _createPageCacheForItem:item]) {
+			LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 
-                    // See if any page caches need to be purged after the addition of this
-                    // new page cache.
-                    [self _purgePageCache];
-                }
-                else {
-                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
-                }
-            }
+			// See if any page caches need to be purged after the addition of this
+			// new page cache.
+			[self _purgePageCache];
+		    }
+		    else {
+			LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+		    }
+		}
+	    }
+	    else {
+		// Put the document into a null state, so it can be restored correctly.
+		[_private->bridge clear];
+	    }
         }
         else {
             LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
