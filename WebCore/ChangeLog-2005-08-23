@@ -1,3 +1,14 @@
+2004-07-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki.
+        
+        - fixed <rdar://problem/3721544> crash increasing font size; 
+        entrezeroetun.com (works in IE and Firefox)
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        Check for nil originalString() before dereffing
+
 2004-07-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3721453, CSS3 initial property caused crashes because the macros were not written correctly.
