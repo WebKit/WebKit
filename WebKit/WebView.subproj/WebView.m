@@ -649,11 +649,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             }
         }
         frame = incrementFrame(frame, forward, wrapFlag);
-    } while (frame != startFrame);
+    } while (frame != nil && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
-    if (startHasSelection && startSearchView) {
+    if (wrapFlag && startHasSelection && startSearchView) {
         BOOL success = [startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES];
         if (success) {
             [[self window] makeFirstResponder:startSearchView];

@@ -1,3 +1,13 @@
+2003-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3401709 - [WebView searchFor:] with wrap:NO hangs if the search fails
+	
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]): Fix for
+	wrap:NO case as suggested by Darin.
+
 === Safari-96 ===
 
 2003-08-29  Richard Williamson   <rjw@apple.com>
