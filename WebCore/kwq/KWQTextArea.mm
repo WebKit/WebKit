@@ -63,10 +63,19 @@
 {
     QTextEdit *widget;
     BOOL disabled;
+    BOOL editableIfEnabled;
 }
+
 - (void)setWidget:(QTextEdit *)widget;
+
 - (void)setEnabled:(BOOL)flag;
 - (BOOL)isEnabled;
+
+- (void)setEditableIfEnabled:(BOOL)flag;
+- (BOOL)isEditableIfEnabled;
+
+- (void)updateTextColor;
+
 @end
 
 @implementation KWQTextArea
@@ -206,9 +215,8 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setText:(NSString *)s
 {
-    //NSLog(@"extraLineFragmentTextContainer before setString: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
     [textView setString:s];
-    //NSLog(@"extraLineFragmentTextContainer after setString: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
+    [textView updateTextColor];
 }
 
 - (NSString *)text
@@ -265,12 +273,12 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setEditable:(BOOL)flag
 {
-    [textView setEditable:flag];
+    [textView setEditableIfEnabled:flag];
 }
 
 - (BOOL)isEditable
 {
-    return [textView isEditable];
+    return [textView isEditableIfEnabled];
 }
 
 - (void)setEnabled:(BOOL)flag
@@ -395,12 +403,10 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (void)setFont:(NSFont *)font
 {
-    //NSLog(@"extraLineFragmentTextContainer before setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
     [font retain];
     [_font release];
     _font = font;
     [textView setFont:font];
-    //NSLog(@"extraLineFragmentTextContainer after setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
 }
 
 - (BOOL)becomeFirstResponder
@@ -582,6 +588,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [super setContinuousSpellCheckingEnabled:
         [[self class] _isContinuousSpellCheckingEnabledForNewTextAreas]];
 
+    editableIfEnabled = YES;
+
     return self;
 }
 
@@ -716,8 +724,15 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (void)setEnabled:(BOOL)flag
 {
+    if (disabled == !flag) {
+        return;
+    }
+
     disabled = !flag;
-    [self setEditable:flag];
+    if (editableIfEnabled) {
+        [self setEditable:!disabled];
+    }
+    [self updateTextColor];
 }
 
 - (BOOL)isEnabled
@@ -725,12 +740,24 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     return !disabled;
 }
 
-- (void)drawRect:(NSRect)rect
+- (void)setEditableIfEnabled:(BOOL)flag
 {
-    // do a hack to make the text view look like it's disabled
+    editableIfEnabled = flag;
+    if (!disabled) {
+        [self setEditable:editableIfEnabled];
+    }
+}
+
+- (BOOL)isEditableIfEnabled
+{
+    return editableIfEnabled;
+}
+
+- (void)updateTextColor
+{
+    // Make the text look disabled by changing its color.
     NSColor *color = disabled ? [NSColor disabledControlTextColor] : [NSColor controlTextColor];
     [[self textStorage] setForegroundColor:color];
-    [super drawRect:rect];
 }
 
 @end

@@ -2,6 +2,30 @@
 
         Reviewed by Dave.
 
+        - fixed 3472875 -- REGRESSION (109-110): insertion point does not blink in a nonempty textarea
+        - fixed 3484002 -- disabling, then enabling a read-only <textarea> will make it editable
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea setText:]): Call updateTextColor after setting the text.
+        (-[KWQTextArea setEditable:]): Don't set the NSTextView editable property directly,
+        because we don't want to make a disabled text view editable right away, but we need
+        to later if it's enabled.
+        (-[KWQTextArea isEditable]): Don't get the NSTextView editable property directly,
+        because it can be appropriate to return YES even if the text view happens to be disabled.
+        (-[KWQTextAreaTextView initWithFrame:textContainer:]): Initialize editableIfEnabled to YES.
+        (-[KWQTextAreaTextView setEnabled:]): Don't set the editable state to true if
+        editableIfEnabled is NO. The old code would make a read-only field editable if you
+        changed it to be enabled. Also update the color of the text here.
+        (-[KWQTextAreaTextView setEditableIfEnabled:]): Store the editableIfEnabled state in a
+        field, and then alter the state of the editable flag to match if we're currently enabled.
+        (-[KWQTextAreaTextView isEditableIfEnabled]): Return the editableIfEnabled state.
+        (-[KWQTextAreaTextView updateTextColor]): Update the color of the text. This was done in
+        drawRect: before, which was the cause of the lack of insertion point.
+
+2003-11-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - fixed 3474330 -- tooltips do not work for <area> elements
 
         * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): When looking for a title, start
