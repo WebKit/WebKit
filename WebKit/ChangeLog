@@ -1,3 +1,10 @@
+2002-10-02  Ken Kocienda  <kocienda@apple.com>
+
+	Added import of WebHTTPResourceRequest.h to get access to methods
+	which have moved to the HTTP-sepcific request category.
+
+        * WebView.subproj/WebDataSourcePrivate.m
+
 2002-10-01  John Sullivan  <sullivan@apple.com>
 
         * WebKit.exp: added .objc_class_name_WebTextRendererFactory
