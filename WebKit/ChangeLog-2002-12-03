@@ -1,3 +1,9 @@
+2002-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        * WebView.subproj/IFGrabBag.h: Removed.
+        * WebView.subproj/IFWebController.h: Move IFContextMenuHandler
+	here.
+
 2002-07-10  Darin Adler  <darin@apple.com>
 
 	Did some tweaks that weren't really necessary. But at least one is a significant

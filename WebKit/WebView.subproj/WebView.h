@@ -98,6 +98,20 @@
 
 @end
 
+
+#ifdef READY_FOR_PRIME_TIME
+/*
+   ============================================================================= 
+*/
+@protocol IFContextMenuHandler
+// Returns the array of menu items for this node that will be displayed in the context menu.
+// Typically this would be implemented by returning the results of IFWebView defaultContextMenuItemsForNode:
+// after making any desired changes or additions.
+- (NSArray *)contextMenuItemsForNode: (IFDOMNode *);
+@end
+#endif
+
+
 /*
    ============================================================================= 
 
