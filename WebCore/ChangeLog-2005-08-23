@@ -1,5 +1,17 @@
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3179084.  Fix is to just dump our code so that the new
+	addHTMLColor code kicks in.  This code is very close to WinIE
+	on more-colortests.html.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * kwq/KWQColor.mm:
+        (QColor::setNamedColor):
+
+2003-03-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3178361, <th> don't draw borders.   Boneheaded mistake
 	on my part.  Just forgot to include it along with <td> in the
 	CSS hack for sharing cell rules.

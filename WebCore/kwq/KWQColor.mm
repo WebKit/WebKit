@@ -74,83 +74,6 @@ QString QColor::name() const
     return name;
 }
 
-// This tolerates bad hex digits, because that's what other web browsers do too.
-static int hex2int(QChar hexchar)
-{
-    int v;
-    
-    if (hexchar.isDigit())
-	v = hexchar.digitValue();
-    else if (hexchar >= 'a' && hexchar <= 'f')
-	v = hexchar.cell() - 'a' + 10;
-    else
-	v = 0;
-    
-    return v;
-}
-
-static bool decodeColorFromHexColorString(const QString &string, int *r, int *g, int *b)
-{
-    int len = string.length();
-    int offset = 0;
-    
-    while (len) {
-        QChar c = string[offset];
-        if (!(c == '#' || c == '"' || c == '\'')) {
-            break;
-        }
-        len -= 1;
-        offset += 1;
-    }
-    
-    while (len) {
-        QChar c = string[offset + len - 1];
-        if (!(c == '"' || c == '\'')) {
-            break;
-        }
-        len -= 1;
-    }
-    
-    if (len == 0)
-        return false;
-
-    switch (len) {
-    case 12:
-        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
-        *g = (hex2int(string[4+offset]) << 4) + hex2int(string[5+offset]);
-        *b = (hex2int(string[8+offset]) << 4) + hex2int(string[9+offset]);
-        return true;
-    case 11:
-    case 10:
-    case 9:
-        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
-        *g = (hex2int(string[3+offset]) << 4) + hex2int(string[4+offset]);
-        *b = (hex2int(string[6+offset]) << 4) + hex2int(string[7+offset]);
-        return true;
-    case 8:
-    case 7:
-    case 6:
-        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
-        *g = (hex2int(string[2+offset]) << 4) + hex2int(string[3+offset]);
-        *b = (hex2int(string[4+offset]) << 4) + hex2int(string[5+offset]);
-        return true;
-    case 5:
-        *r = (hex2int(string[0+offset]) << 4) + hex2int(string[1+offset]);
-        *g = (hex2int(string[2+offset]) << 4) + hex2int(string[3+offset]);
-        *b = hex2int(string[4+offset]) * 0x11;
-        return true;
-    case 4:
-    case 3:
-        // Convert 0 to F to 0 to 255.
-        *r = hex2int(string[0+offset]) * 0x11;
-        *g = hex2int(string[1+offset]) * 0x11;
-        *b = hex2int(string[2+offset]) * 0x11;
-        return true;
-    }
-        
-    return false;
-}
-
 void QColor::setNamedColor(const QString &name)
 {
     // FIXME: The combination of this code with the code that
@@ -167,17 +90,11 @@ void QColor::setNamedColor(const QString &name)
         return;
     } 
     
-    int r, g, b;
     QString lowerName = name.lower();
     const Color *foundColor = findColor(name.latin1(), name.length());
     if (foundColor) {
         int RGBValue = foundColor->RGBValue;
         setRgb((RGBValue >> 16) & 0xFF, (RGBValue >> 8) & 0xFF, RGBValue & 0xFF);
-        return;
-    }
-
-    if (decodeColorFromHexColorString(lowerName, &r, &g, &b)) {
-        setRgb(r, g, b);
         return;
     }
 
