@@ -1,3 +1,10 @@
+2002-06-13  Richard Williamson  <rjw@apple.com>
+
+    
+	* kwq/KWQWidget.mm: (QWidget::setCursor):  restored code
+	* kwq/external.h:   removed definitions no longer needed
+	* khtml/rendering/render_form.cpp: (RenderLineEdit::calcMinMaxWidth): tweaked size
+
 2002-06-12  Kenneth Kocienda  <kocienda@apple.com>
 
 	* kwq/kwqdebug.h: Made assertion failure console message bolder and easier to see.

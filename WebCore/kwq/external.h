@@ -64,7 +64,6 @@ namespace khtml {
 
 @interface IFWebDataSource : NSObject
 - initWithURL: (NSURL *)url;
-- (void)setFrame: (IFWebFrame *)fName;
 - (IFWebFrame *)webFrame;
 - (IFWebController *)controller;
 - frameNamed: (NSString *)f;
@@ -84,6 +83,10 @@ namespace khtml {
 
 @interface IFHTMLRepresentation : NSObject
 - (KHTMLPart *)part;
+@end
+
+@interface IFDynamicScrollBarsView
+- (void)setCursor:(NSCursor *)cur;
 @end
 
 @interface IFWebView: NSObject

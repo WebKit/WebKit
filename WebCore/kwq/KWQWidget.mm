@@ -25,28 +25,16 @@
 
 #include <qwidget.h>
 
+#include <external.h>
+
 #include <kwqdebug.h>
 
 #import <KWQView.h>
 
 /*
     A QWidget rougly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
-    from a QWidget.  In Cocoa a NSWindow does not inherit from NSView.  We will
+    from a QWidget.  In Cocoa a NSWindow does not inherit from NSView.  We
     emulate QWidgets using NSViews.
-    
-    The only QWidget emulated should be KHTMLView.  It's inheritance graph is
-        KHTMLView
-            QScrollView
-                QFrame
-                    QWidget
-    
-    We may not need to emulate any of the QScrollView behaviour as we MAY
-    get scrolling behaviour for free simply be implementing all rendering 
-    in an NSView and using NSScrollView.
-    
-    It appears that the only dependence of the window in khtml and kjs is
-    the javascript functions that manipulate a window.  We may want to
-    rework work that code rather than add NSWindow glue code.
 */
 
 
@@ -281,12 +269,10 @@ void QWidget::setCursor(const QCursor &cur)
 {
     data->cursor = cur;
     
-#if 0
     id view = data->view;
     if ([view respondsToSelector:@selector(setCursor:)]) { 
-	[view setCursor:data->cursor.handle()];
+        [view setCursor:data->cursor.handle()];
     }
-#endif
 }
 
 QCursor QWidget::cursor()

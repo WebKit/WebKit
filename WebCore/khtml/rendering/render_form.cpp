@@ -542,7 +542,7 @@ void RenderLineEdit::calcMinMaxWidth()
         s = QSize( w + 8, h ).expandedTo( QApplication::globalStrut() );
     } else
 #ifdef APPLE_CHANGES
-	s = QSize( w + 6, h + 6 ).expandedTo( QApplication::globalStrut() );
+	s = QSize( w + 6, h + 4 );
 #else
 	s = QSize( w + 4, h + 4 ).expandedTo( QApplication::globalStrut() );
 #endif
