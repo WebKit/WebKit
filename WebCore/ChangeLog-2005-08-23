@@ -1,3 +1,12 @@
+2002-10-17  Darin Adler  <darin@apple.com>
+
+	- fixed 3075992 -- Hang in khtml::RenderFlow::lowestPosition() trying to
+	render http://avoyagetoarcturus.blogspot.com/
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::lowestPosition): Don't recurse on the same child twice.
+        (RenderFlow::rightmostPosition): Ditto.
+
 2002-10-17  David Hyatt  <hyatt@apple.com>
 
 	Fix bayarea.com.  My implementation of offsetParent was
