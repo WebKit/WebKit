@@ -1,6 +1,6 @@
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -76,6 +76,7 @@ struct PropertyMapHashTable
     int sizeMask;
     int size;
     int keyCount;
+    int sentinelCount;
     int lastIndexUsed;
     PropertyMapHashTableEntry entries[1];
 };
@@ -140,6 +141,7 @@ void PropertyMap::clear()
         }
     }
     _table->keyCount = 0;
+    _table->sentinelCount = 0;
 }
 
 ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
@@ -276,6 +278,8 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     unsigned h = rep->hash();
     int i = h & _table->sizeMask;
     int k = 0;
+    bool foundDeletedElement = false;
+    int deletedElementIndex;
 #if DUMP_STATISTICS
     ++numProbes;
     numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
@@ -287,10 +291,10 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
             // Attributes are intentionally not updated.
             return;
         }
-        // If we find the deleted-element sentinel, insert on top of it.
-        if (key == &UString::Rep::null) {
-            key->deref();
-            break;
+        // If we find the deleted-element sentinel, remember it for use later.
+        if (key == &UString::Rep::null && !foundDeletedElement) {
+            foundDeletedElement = true;
+            deletedElementIndex = i;
         }
         if (k == 0)
             k = 1 | (h % _table->sizeMask);
@@ -299,7 +303,14 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
         ++numRehashes;
 #endif
     }
-    
+
+    // Use either the deleted element or the 0 at the end of the chain.
+    if (foundDeletedElement) {
+        i = deletedElementIndex;
+        _table->entries[i].key->deref();
+        --_table->sentinelCount;
+    }
+
     // Create a new hash table entry.
     rep->ref();
     _table->entries[i].key = rep;
@@ -340,13 +351,26 @@ void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes, int
 
 void PropertyMap::expand()
 {
+    Table *oldTable = _table;
+    int oldTableSize = oldTable ? oldTable->size : 0;    
+    rehash(oldTableSize ? oldTableSize * 2 : 16);
+}
+
+void PropertyMap::rehash()
+{
+    assert(_table);
+    assert(_table->size);
+    rehash(_table->size);
+}
+
+void PropertyMap::rehash(int newTableSize)
+{
     checkConsistency();
     
     Table *oldTable = _table;
     int oldTableSize = oldTable ? oldTable->size : 0;
     int oldTableKeyCount = oldTable ? oldTable->keyCount : 0;
     
-    int newTableSize = oldTableSize ? oldTableSize * 2 : 16;
     _table = (Table *)calloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry) );
     _table->size = newTableSize;
     _table->sizeMask = newTableSize - 1;
@@ -357,8 +381,8 @@ void PropertyMap::expand()
     if (key) {
         insert(key, _singleEntry.value, _singleEntry.attributes, 0);
         _singleEntry.key = 0;
-	// update the count, because single entries don't count towards
-	// the table key count
+        // update the count, because single entries don't count towards
+        // the table key count
 	++_table->keyCount;
 	assert(_table->keyCount == 1);
     }
@@ -441,7 +465,11 @@ void PropertyMap::remove(const Identifier &name)
     _table->entries[i].attributes = DontEnum;
     assert(_table->keyCount >= 1);
     --_table->keyCount;
+    ++_table->sentinelCount;
     
+    if (_table->sentinelCount * 4 >= _table->size)
+        rehash();
+
     checkConsistency();
 }
 
@@ -641,10 +669,15 @@ void PropertyMap::checkConsistency()
         return;
 
     int count = 0;
+    int sentinelCount = 0;
     for (int j = 0; j != _table->size; ++j) {
         UString::Rep *rep = _table->entries[j].key;
-        if (!rep || rep == &UString::Rep::null)
+        if (!rep)
             continue;
+        if (rep == &UString::Rep::null) {
+            ++sentinelCount;
+            continue;
+        }
         unsigned h = rep->hash();
         int i = h & _table->sizeMask;
 	int k = 0;
@@ -656,9 +689,10 @@ void PropertyMap::checkConsistency()
 	    i = (i + k) & _table->sizeMask;
         }
         assert(i == j);
-        count++;
+        ++count;
     }
     assert(count == _table->keyCount);
+    assert(sentinelCount == _table->sentinelCount);
     assert(_table->size >= 16);
     assert(_table->sizeMask);
     assert(_table->size == _table->sizeMask + 1);

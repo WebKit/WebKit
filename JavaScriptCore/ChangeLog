@@ -1,3 +1,20 @@
+2004-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed <rdar://problem/3746676> SAP WebDynpro app hangs inside JavaScript property map hash table code (deleted sentinel problem)
+
+        * kjs/property_map.h: Added some private functions.
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::clear): Set sentinelCount to 0.
+        (KJS::PropertyMap::put): Complete search for the element before choosing to use the deleted-element sentinel.
+        Also keep sentinel count up to date when we destroy a sentinel by overwriting with a new added element.
+        (KJS::PropertyMap::expand): Added. Calls rehash with a size 2x the old size, or 16.
+        (KJS::PropertyMap::rehash): Added. Refactored the rehash code into a separate function.
+        (KJS::PropertyMap::remove): Add one to sentinelCount, and rehash if 1/4 or more of the elements are
+        deleted-element sentinels.
+        (KJS::PropertyMap::checkConsistency): Check the sentinelCount.
+
 2004-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         Code change by Eric Albert, reviewd by me.
