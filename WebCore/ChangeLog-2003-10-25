@@ -1,3 +1,12 @@
+2003-10-13  Richard Williamson (Home0  <rjw@apple.com>
+
+	Updated layout tests actuals to reflect implementation of small-caps style.
+
+        * layout-tests/css1/font_properties/font-expected.txt:
+        * layout-tests/css1/font_properties/font_variant-expected.txt:
+        * layout-tests/css1/pseudo/firstline-expected.txt:
+        * layout-tests/css1/pseudo/multiple_pseudo_elements-expected.txt:
+
 2003-10-13  Richard Williamson <rjw@apple.com>
 
 	Added support for small-caps.

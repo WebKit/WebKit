@@ -28,18 +28,18 @@ layer at (0,0) size 800x652
           text run at (107,50) width 670: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than"
           text run at (0,67) width 60: "one line."
       RenderBlock {P} at (0,288) size 784x68 [bgcolor=#000000]
-        RenderText {TEXT} at (0,0) size 780x51
-          text run at (0,0) width 624: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-          text run at (624,0) width 156: "Thus, if the first line is"
-          text run at (0,17) width 778: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
-          text run at (0,34) width 252: "(although the problem might be that "
+        RenderText {TEXT} at (0,0) size 778x51
+          text run at (0,0) width 536: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+          text run at (536,0) width 242: "Thus, if the first line is not in small-caps"
+          text run at (0,17) width 750: "style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test (although the"
+          text run at (0,34) width 157: "problem might be that "
         RenderInline {CODE} at (0,0) size 80x16
-          RenderText {TEXT} at (252,35) size 80x16
-            text run at (252,35) width 80: "small-caps"
-        RenderText {TEXT} at (332,34) size 781x34
-          text run at (332,34) width 246: " is not supported by your browser). "
-          text run at (578,34) width 203: "This is extra text included for"
-          text run at (0,51) width 546: "the purposes of making the paragraph long enough to have more than one line."
+          RenderText {TEXT} at (157,35) size 80x16
+            text run at (157,35) width 80: "small-caps"
+        RenderText {TEXT} at (237,34) size 779x34
+          text run at (237,34) width 246: " is not supported by your browser). "
+          text run at (483,34) width 296: "This is extra text included for the purposes"
+          text run at (0,51) width 453: "of making the paragraph long enough to have more than one line."
       RenderTable {TABLE} at (0,370) size 784x266 [bgcolor=#000000]
         RenderTableSection {TBODY} at (1,1) size 0x264
           RenderTableRow {TR} at (0,0) size 0x0
@@ -68,15 +68,15 @@ layer at (0,0) size 800x652
                   text run at (135,50) width 595: "Remember that in order to ensure a complete test, the paragraph must be displayed on"
                   text run at (0,67) width 135: "more than one line."
               RenderBlock {P} at (4,167) size 762x68
-                RenderText {TEXT} at (0,0) size 735x51
-                  text run at (0,0) width 624: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-                  text run at (624,0) width 111: "Thus, if the first"
-                  text run at (0,17) width 721: "line is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has"
-                  text run at (0,34) width 354: "failed this test (although the problem might be that "
+                RenderText {TEXT} at (0,0) size 734x51
+                  text run at (0,0) width 536: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+                  text run at (536,0) width 177: "Thus, if the first line is not in"
+                  text run at (0,17) width 734: "small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
+                  text run at (0,34) width 252: "(although the problem might be that "
                 RenderInline {CODE} at (0,0) size 80x16
-                  RenderText {TEXT} at (354,35) size 80x16
-                    text run at (354,35) width 80: "small-caps"
-                RenderText {TEXT} at (434,34) size 725x34
-                  text run at (434,34) width 246: " is not supported by your browser). "
-                  text run at (680,34) width 45: "This is"
-                  text run at (0,51) width 704: "extra text included for the purposes of making the paragraph long enough to have more than one line."
+                  RenderText {TEXT} at (252,35) size 80x16
+                    text run at (252,35) width 80: "small-caps"
+                RenderText {TEXT} at (332,34) size 757x34
+                  text run at (332,34) width 246: " is not supported by your browser). "
+                  text run at (578,34) width 179: "This is extra text included"
+                  text run at (0,51) width 570: "for the purposes of making the paragraph long enough to have more than one line."
