@@ -1,3 +1,21 @@
+2005-02-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4020108> Pasting text into message makes Mail crash reproducibly
+
+        Note that, even with this fix, development build will crash until this bug is fixed:
+        <rdar://problem/4024996> Applying block styles can cause assertion failure in inline style removal
+        
+        This will not crash deployment builds, so I am going to land.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::applyBlockStyle): Applying block styles can make the loop to reach beyondEnd
+        fail since the structure of the document can change. Cache the next node first before operating on it,
+        as we do elsewhere.
+
 2005-02-25  Vicki Murley <vicki@apple.com>
 
 	- recommit this change, since rolling it out did NOT fix the performance regression!
