@@ -16,7 +16,7 @@
 #define        WebKitFantasyFontPreferenceKey                @"WebKitFantasyFont"
 #define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
 #define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
-#define	       WebKitFixedFontSizePreferenceKey		 @"WebKitFixedFontSize"
+#define	       WebKitDefaultFixedFontSizePreferenceKey		 @"WebKitDefaultFixedFontSize"
 #define	       WebKitDefaultTextEncodingPreferenceKey	 @"WebKitDefaultTextEncoding"
 #define	       WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
 #define	       WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
@@ -71,7 +71,7 @@ static WebPreferences *_standardPreferences = nil;
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
         @"6",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
-        @"14", 				WebKitFixedFontSizePreferenceKey,
+        @"14", 				WebKitDefaultFixedFontSizePreferenceKey,
 	defaultTextEncoding, 		WebKitDefaultTextEncodingPreferenceKey,
         @"1.85",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
@@ -163,14 +163,14 @@ static WebPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFontSizePreferenceKey];
 }
 
-- (int)fixedFontSize
+- (int)defaultFixedFontSize
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitFixedFontSizePreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitDefaultFixedFontSizePreferenceKey];
 }
 
-- (void)setFixedFontSize:(int)size
+- (void)setDefaultFixedFontSize:(int)size
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitFixedFontSizePreferenceKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFixedFontSizePreferenceKey];
 }
 
 - (int)minimumFontSize

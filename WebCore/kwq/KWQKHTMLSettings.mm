@@ -82,7 +82,7 @@ int KHTMLSettings::mediumFontSize() const
 
 int KHTMLSettings::mediumFixedFontSize() const
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitFixedFontSize"];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDefaultFixedFontSize"];
 }
 
 bool KHTMLSettings::changeCursor() const

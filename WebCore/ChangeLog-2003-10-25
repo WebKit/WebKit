@@ -1,3 +1,24 @@
+2002-08-08  Darin Adler  <darin@apple.com>
+
+	- fixed 3019353 -- Japanese (Autodetect) encoding not properly supported
+
+        * kwq/make-charset-table.pl: Add a "japanese-autodetect" entry to the table
+	explicitly, with a hardcoded encoding value. This should be good enough.
+
+        * kwq/KWQKHTMLSettings.mm: (KHTMLSettings::mediumFixedFontSize):
+        * kwq/WebCoreEncodings.h:
+        * kwq/WebCoreSettings.h:
+        * kwq/WebCoreSettings.m:
+        Change "fixed font size" to "default fixed font size".
+
+	Placeholders for the "drawing observer" method that I'll be using
+	to implement the "dump page as diffable text" feature.
+
+        * kwq/WebCoreTestController.h: Added.
+        * kwq/WebCoreTestController.m: Added.
+        * WebCore.exp: Mention new class.
+        * WebCore.pbproj/project.pbxproj: Mention new files.
+
 2002-08-08  Maciej Stachowiak  <mjs@apple.com>
 
 	Added an SPI that can be used to get at the WebCore

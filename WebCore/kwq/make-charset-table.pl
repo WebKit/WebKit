@@ -25,6 +25,15 @@ sub emit_suffix
     print TABLE ",\n    {NULL,\n     -1,\n     $invalid_encoding}\n};\n";
 }
 
+sub emit_line
+{
+    my ($name, $mibNum, $encodingNum) = @_;
+    print TABLE ",\n" if ($already_wrote_one);
+    print TABLE '    {"' . $name . '",' . "\n";
+    print TABLE "     " . $mib_enum . ",\n";
+    print TABLE "     " . $encodingNum . "}";
+    $already_wrote_one = 1;
+}
 
 sub emit_output 
 {
@@ -42,11 +51,7 @@ sub emit_output
 
     unless ($MAC_SUPPORTED_ONLY && $mac_string_encoding eq $invalid_encoding) {
 	foreach my $name ($canonical_name, @aliases) {
-	    print TABLE ",\n" if ($already_wrote_one);
-            print TABLE '    {"' . ${name} . '",' . "\n";
-            print TABLE "     " . ${mib_enum} . ",\n";
-            print TABLE "     " . ${mac_string_encoding} . "}";
-            $already_wrote_one = 1;
+	    emit_line($name, $mib_enum, $mac_string_encoding);
         }
     }
 }
@@ -86,11 +91,7 @@ sub process_iana_charsets {
 sub emit_unused_mac_encodings {
     foreach my $name (keys %name_to_mac_encoding) {
 	if (! $used_mac_encodings{$name}) {
-	    print TABLE ",\n" if ($already_wrote_one);
-	    print TABLE '    {"' . ${name} . '",' . "\n";
-	    print TABLE "     " . -1 . ",\n";
-            print TABLE "     " . $name_to_mac_encoding{$name} . "}";
-            $already_wrote_one = 1;
+	    emit_line($name, -1, $name_to_mac_encoding{$name});
 	}
     }
 }
@@ -105,6 +106,7 @@ emit_prefix;
 process_mac_encodings;
 process_iana_charsets;
 emit_unused_mac_encodings;
+emit_line("japanese-autodetect", -1, "0xAFE"); # hard-code japanese autodetect
 emit_suffix;
 
 close TABLE;

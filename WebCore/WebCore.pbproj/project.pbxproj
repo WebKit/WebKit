@@ -491,6 +491,7 @@
 				F5117BCD02F9FFEF018635CE,
 				F5117BCF02F9FFEF018635CE,
 				F56234E103026D7301629B47,
+				F593F87D0302BE00018635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -720,6 +721,7 @@
 				F5117BCE02F9FFEF018635CE,
 				F5117BD002F9FFEF018635CE,
 				F56234E203026D7301629B47,
+				F593F87E0302BE00018635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5399,6 +5401,8 @@
 				F587855002DE375901EA4122,
 				F565AE8502ECA583018635CA,
 				F565AE8602ECA583018635CA,
+				F593F87B0302BE00018635CE,
+				F593F87C0302BE00018635CE,
 				F587855102DE375901EA4122,
 				F587855202DE375901EA4122,
 				F587855302DE375901EA4122,
@@ -7433,6 +7437,31 @@
 			name = WebCore.exp;
 			path = ../WebCore.exp;
 			refType = 4;
+		};
+		F593F87B0302BE00018635CE = {
+			isa = PBXFileReference;
+			path = WebCoreTestController.h;
+			refType = 4;
+		};
+		F593F87C0302BE00018635CE = {
+			isa = PBXFileReference;
+			path = WebCoreTestController.m;
+			refType = 4;
+		};
+		F593F87D0302BE00018635CE = {
+			fileRef = F593F87B0302BE00018635CE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F593F87E0302BE00018635CE = {
+			fileRef = F593F87C0302BE00018635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F5A1B04902DE8ABA018635CA = {
 			isa = PBXFileReference;

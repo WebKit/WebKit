@@ -4,5 +4,6 @@
 .objc_class_name_WebCoreEncodings
 .objc_class_name_WebCoreImageRendererFactory
 .objc_class_name_WebCoreJavaScript
+.objc_class_name_WebCoreTestController
 .objc_class_name_WebCoreTextRendererFactory
 .objc_class_name_WebCoreViewFactory

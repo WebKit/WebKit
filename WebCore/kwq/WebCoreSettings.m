@@ -140,14 +140,14 @@
     return defaultFontSize;
 }
 
-- (void)setFixedFontSize:(float)size
+- (void)setDefaultFixedFontSize:(float)size
 {
-  fixedFontSize = size;
+    defaultFixedFontSize = size;
 }
 
-- (float)fixedFontSize
+- (float)defaultFixedFontSize
 {
-  return fixedFontSize;
+    return defaultFixedFontSize;
 }
 
 - (void)setJavaEnabled:(BOOL)enabled

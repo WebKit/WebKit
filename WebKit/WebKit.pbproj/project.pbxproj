@@ -267,6 +267,7 @@
 				354F260002EF441D0ACA2ACA,
 				3519E9EF02F0DF570ACA2ACA,
 				F5E7B24703025CE801A80180,
+				F501251D0302EA04018635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -352,6 +353,7 @@
 				F505C20C02FB4F18018635CE,
 				F5F732D302FF4D4F01A80180,
 				F5E7B24803025CE801A80180,
+				F501251E0302EA04018635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1219,6 +1221,31 @@
 //F52
 //F53
 //F54
+		F501251B0302EA04018635CE = {
+			isa = PBXFileReference;
+			path = WebTestController.h;
+			refType = 4;
+		};
+		F501251C0302EA04018635CE = {
+			isa = PBXFileReference;
+			path = WebTestController.m;
+			refType = 4;
+		};
+		F501251D0302EA04018635CE = {
+			fileRef = F501251B0302EA04018635CE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F501251E0302EA04018635CE = {
+			fileRef = F501251C0302EA04018635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F505C20B02FB4F18018635CE = {
 			isa = PBXFileReference;
 			path = WebLocationChangeHandler.m;
@@ -1503,10 +1530,11 @@
 				F53444CF02E87CBA018635CA,
 				F5F81C3902B67C26018635CA,
 				F5F81C3A02B67C26018635CA,
+				F501251B0302EA04018635CE,
+				F501251C0302EA04018635CE,
 			);
 			isa = PBXGroup;
-			name = Debugging;
-			path = "";
+			path = Misc.subproj;
 			refType = 4;
 		};
 		F531DDFF02F0C36F018635CA = {
@@ -1523,14 +1551,12 @@
 		};
 		F53444CE02E87CBA018635CA = {
 			isa = PBXFileReference;
-			name = WebKitStatistics.h;
-			path = Misc.subproj/WebKitStatistics.h;
+			path = WebKitStatistics.h;
 			refType = 4;
 		};
 		F53444CF02E87CBA018635CA = {
 			isa = PBXFileReference;
-			name = WebKitStatistics.m;
-			path = Misc.subproj/WebKitStatistics.m;
+			path = WebKitStatistics.m;
 			refType = 4;
 		};
 		F53444D002E87CBA018635CA = {
@@ -1550,8 +1576,7 @@
 		};
 		F53444D202E87D4B018635CA = {
 			isa = PBXFileReference;
-			name = WebKitStatisticsPrivate.h;
-			path = Misc.subproj/WebKitStatisticsPrivate.h;
+			path = WebKitStatisticsPrivate.h;
 			refType = 4;
 		};
 		F53444D302E87D4B018635CA = {
@@ -1763,8 +1788,7 @@
 		};
 		F59EAE3E0253C7EE018635CA = {
 			isa = PBXFileReference;
-			name = WebCoreStatistics.h;
-			path = Misc.subproj/WebCoreStatistics.h;
+			path = WebCoreStatistics.h;
 			refType = 4;
 		};
 		F59EAE400253C7EE018635CA = {
@@ -1778,8 +1802,7 @@
 		};
 		F59EAE410253C8DE018635CA = {
 			isa = PBXFileReference;
-			name = WebCoreStatistics.m;
-			path = Misc.subproj/WebCoreStatistics.m;
+			path = WebCoreStatistics.m;
 			refType = 4;
 		};
 		F59EAE420253C8DE018635CA = {
@@ -2293,13 +2316,13 @@
 		F5F81C3502B67C0F018635CA = {
 			isa = PBXFileReference;
 			name = WebDOMNode.h;
-			path = WebView.subproj/WebDOMNode.h;
+			path = ../WebView.subproj/WebDOMNode.h;
 			refType = 4;
 		};
 		F5F81C3602B67C0F018635CA = {
 			isa = PBXFileReference;
 			name = WebDOMNode.m;
-			path = WebView.subproj/WebDOMNode.m;
+			path = ../WebView.subproj/WebDOMNode.m;
 			refType = 4;
 		};
 		F5F81C3702B67C0F018635CA = {
@@ -2320,13 +2343,13 @@
 		F5F81C3902B67C26018635CA = {
 			isa = PBXFileReference;
 			name = WebRenderNode.h;
-			path = WebView.subproj/WebRenderNode.h;
+			path = ../WebView.subproj/WebRenderNode.h;
 			refType = 4;
 		};
 		F5F81C3A02B67C26018635CA = {
 			isa = PBXFileReference;
 			name = WebRenderNode.m;
-			path = WebView.subproj/WebRenderNode.m;
+			path = ../WebView.subproj/WebRenderNode.m;
 			refType = 4;
 		};
 		F5F81C3B02B67C26018635CA = {

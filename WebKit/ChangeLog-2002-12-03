@@ -1,3 +1,17 @@
+2002-08-08  Darin Adler  <darin@apple.com>
+
+	Placeholders for the "drawing observer" method that I'll be using
+	to implement the "dump page as diffable text" feature.
+
+        * Misc.subproj/WebTestController.h: Added.
+        * Misc.subproj/WebTestController.m: Added.
+        * WebKit.pbproj/project.pbxproj: Mention new files.
+	* WebKit.exp: Mention new class.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        Changed "fixed font size" to "default fixed font size".
+
 2002-08-08  Chris Blumenberg  <cblu@apple.com>
 
         * Plugins.subproj/WebPluginStream.m:
