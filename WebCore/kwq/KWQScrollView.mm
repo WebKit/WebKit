@@ -453,15 +453,30 @@ void QScrollView::setContentsPosRecursive(int x, int y)
 
 void QScrollView::ensureVisible(int x, int y)
 {
+    // Note that the definition of ensureVisible in trolltech documentation says:
+    // "Scrolls the content so that the point (x, y) is visible with at least 
+    // 50-pixel margins (if possible, otherwise centered).", which is
+    // not what we're doing here.
     KWQ_BLOCK_EXCEPTIONS;
     [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, 0, 0)];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::ensureVisible(int x, int y, int w, int h)
+void QScrollView::ensureVisible(int x, int y, int xmargin, int ymargin)
+{
+    // Note that the definition of ensureVisible in trolltech documentation says:
+    // "Scrolls the content so that the point (x, y) is visible with at least the 
+    // xmargin and ymargin margins (if possible, otherwise centered).", which is
+    // not what we're doing here.
+    KWQ_BLOCK_EXCEPTIONS;
+    [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, xmargin, ymargin)];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void QScrollView::ensureRectVisibleCentered(const QRect &rect)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [getDocumentView() scrollRectToVisible:NSMakeRect(x, y, w, h)];
+    [getDocumentView() _KWQ_scrollRectToVisible:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

@@ -1,3 +1,24 @@
+2003-12-12  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3508760>: tabbing to out-of-sight link behaves 
+        differently than tabbing to out-of-sight form control
+
+        Reviewed by Dave.
+
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::ensureVisible):
+        added comments and changed parameter names to reveal differences between
+        what we've implemented and what QScrollView was intended to do.
+        (QScrollView::ensureRectVisibleCentered):
+        New method that calls _KWQ_scrollRectToVisible, which is the method
+        we use when scrolling to reveal form controls.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame):
+        call ensureRectVisibleCentered so tabbing to a link will use the
+        same scroll-to-reveal code as tabbing to a form control
+        
 2003-12-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

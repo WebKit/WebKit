@@ -957,10 +957,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
         else {
             doc->setFocusNode(node);
             if (view()) {
-                QRect rect = node->getRect();
-                int offset = 50; // same offset we use for jumping to anchors in a document
-                view()->ensureVisible(rect.right() + offset, rect.bottom() + offset);
-                view()->ensureVisible(rect.left() - offset, rect.top() - offset);
+                view()->ensureRectVisibleCentered(node->getRect());
             }
             [_bridge makeFirstResponder:[_bridge documentView]];
             return [_bridge documentView];

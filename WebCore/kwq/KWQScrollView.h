@@ -91,6 +91,7 @@ public:
 
     void ensureVisible(int,int);
     void ensureVisible(int,int,int,int);
+    void ensureRectVisibleCentered(const QRect &r);
         
     NSView *getDocumentView() const;
 };
