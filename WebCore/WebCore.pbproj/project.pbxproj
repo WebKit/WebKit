@@ -117,7 +117,7 @@
 				F8216299029F4FB501000131,
 				704FD2FE056972FA003DBED9,
 				93F1D31A0558CC5C00821BC0,
-				BC8CAEC705BF251000E11F1B,
+				840633070731A77200DB1FD1,
 				848A320F057E688B001A2362,
 			);
 			isa = PBXGroup;
@@ -133,7 +133,7 @@
 				0867D6A0FE84028FC02AAC07,
 			);
 			buildSettings = {
-				COMMON_LDFLAGS = "\"`if [ -f /usr/lib/libxslt.1.dylib ]; then echo \\\"-lxslt.1\\\"; else echo \\\"-lxml2\\\"; fi`\"";
+				COMMON_LDFLAGS = "\"`if [ -f /usr/lib/libxml2.2.6.11.dylib ]; then echo \\\"-lxml2.2.6.11\\\"; else echo \\\"-lxml2\\\"; fi`\"";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -842,7 +842,7 @@
 				93F1D31B0558CC5C00821BC0,
 				704FD2FF056972FA003DBED9,
 				848A3210057E688B001A2362,
-				BC8CAEC805BF251000E11F1B,
+				840633080731A77200DB1FD1,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1355,6 +1355,20 @@
 //842
 //843
 //844
+		840633070731A77200DB1FD1 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libxslt.dylib;
+			path = /usr/lib/libxslt.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		840633080731A77200DB1FD1 = {
+			fileRef = 840633070731A77200DB1FD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		842F72DC06405FDF00CC271B = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2814,20 +2828,6 @@
 		};
 		BC86FB90061F5C23006BB822 = {
 			fileRef = BC86FB8E061F5C23006BB822;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BC8CAEC705BF251000E11F1B = {
-			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libxml2.dylib;
-			path = /usr/lib/libxml2.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		BC8CAEC805BF251000E11F1B = {
-			fileRef = BC8CAEC705BF251000E11F1B;
 			isa = PBXBuildFile;
 			settings = {
 			};

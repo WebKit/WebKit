@@ -1,3 +1,12 @@
+2004-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Enabled XSLT on Panther. See intrigue mail for compiling instructions.
+
+        Reviewed by darin.
+
+        * WebCore.pbproj/project.pbxproj: link against xslt unconditionally, link against specific version of libxml on Panther
+        * WebCorePrefix.h: always use XSLT
+
 2004-10-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

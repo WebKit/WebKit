@@ -69,9 +69,7 @@
 #define OMIT_TIGER_FEATURES 1
 #endif
 
-#ifndef OMIT_TIGER_FEATURES
-#define KHTML_XSLT
-#endif
+#define KHTML_XSLT 1
 
 #ifdef __OBJC__
 
