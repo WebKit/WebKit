@@ -33,6 +33,7 @@ class QTextEdit;
 {
     KWQTextAreaTextView *textView;
     QTextEdit *widget;
+    NSFont *_font;
     BOOL wrap;
     BOOL inNextValidKeyView;
     BOOL inDrawingMachinery;

@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        - fixed 3465504 -- REGRESSION (100-111): text areas with Chinese text in them are wider than ones without
+
+        * kwq/KWQTextArea.h: Add _font field.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea dealloc]): Release _font.
+        (-[KWQTextArea setFont:]): Store font in _font as well as setting it in the text view.
+        (-[KWQTextArea sizeWithColumns:rows:]): Use _font rather than asking the text view for the font.
+
+2003-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3464702 -- node.item(x) is not implemented (dynamic menus not filled out at techcu.com)
 
         * khtml/ecma/kjs_dom.cpp: (DOMNodeProtoFunc::tryCall): Add implementation of item function.

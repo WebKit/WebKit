@@ -146,6 +146,7 @@ const float LargeNumberForText = 1.0e7;
 - (void)dealloc
 {
     [textView release];
+    [_font release];
     
     [super dealloc];
 }
@@ -395,6 +396,9 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (void)setFont:(NSFont *)font
 {
     //NSLog(@"extraLineFragmentTextContainer before setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
+    [font retain];
+    [_font release];
+    _font = font;
     [textView setFont:font];
     //NSLog(@"extraLineFragmentTextContainer after setFont: is %@", [[textView layoutManager] extraLineFragmentTextContainer]);
 }
@@ -532,8 +536,12 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (NSSize)sizeWithColumns:(int)numColumns rows:(int)numRows
 {
-    NSFont *font = [textView font];
-    NSSize textSize = NSMakeSize(ceil(numColumns * [font widthOfString:@"0"]), numRows * [font defaultLineHeightForFont]);
+    // Must use font from _font field rather than from the text view's font method,
+    // because the text view will return a substituted font if the first character in
+    // the text view requires font substitution, and we don't want the size to depend on
+    // the text in the text view.
+    
+    NSSize textSize = NSMakeSize(ceil(numColumns * [_font widthOfString:@"0"]), numRows * [_font defaultLineHeightForFont]);
     NSSize textContainerSize = NSMakeSize(textSize.width + [[textView textContainer] lineFragmentPadding] * 2, textSize.height);
     NSSize textContainerInset = [textView textContainerInset];
     NSSize textViewSize = NSMakeSize(textContainerSize.width + textContainerInset.width, textContainerSize.height + textContainerInset.height); 
