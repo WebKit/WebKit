@@ -1065,6 +1065,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self dataSource] _setPrimaryLoadComplete: YES];
         [self _checkLoadCompleteForThisFrame];
     }
+
+    [[self dataSource] _stopRecordingResponses];
 }
 
 - (void)_checkLoadCompleteForThisFrame

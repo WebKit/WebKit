@@ -1,3 +1,27 @@
+2005-03-18  Richard Williamson   <rjw@apple.com>
+	
+	Fixed <rdar://problem/4057004> Data from XMLHTTPRequest is never dealloced
+
+	WebDataSource keeps an array of all the NSURLResponses associated
+	with the load for a page.  This is used to playback delegate messages
+	when loading from the page cache.  However, after the document
+	has completed it's initial load, we continue to keep track of responses. 
+	So, this has the consequence of keeping all the responses for a page
+	around for the life of the page.  NSURLResponses are now very
+	heavy.  They indirectly reference the resource data (via the
+	download assessment dictionary).  This fix will keep
+	references to responses around for those resources loaded during initial
+	page load, but not after that point.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _addResponse:]):
+        (-[WebDataSource _stopRecordingResponses]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]):
+
 2005-03-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -986,9 +986,16 @@
 
 - (void)_addResponse: (NSURLResponse *)r
 {
-    if (!_private->responses)
-        _private->responses = [[NSMutableArray alloc] init];
-    [_private->responses addObject: r];
+    if (!_private->stopRecordingResponses) {
+        if (!_private->responses)
+            _private->responses = [[NSMutableArray alloc] init];
+        [_private->responses addObject: r];
+    }
+}
+
+- (void)_stopRecordingResponses
+{
+    _private->stopRecordingResponses = YES;
 }
 
 - (NSArray *)_responses
