@@ -1,3 +1,13 @@
+2005-03-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3584942> AX: Safari Accessibility parent-child mismatch
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView webCoreBridge]):
+        New to conform to WebCoreBridgeHolder protocol.
+
 2005-03-18  Richard Williamson   <rjw@apple.com>
 	
 	Fixed <rdar://problem/4057004> Data from XMLHTTPRequest is never dealloced

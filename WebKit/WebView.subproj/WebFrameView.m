@@ -33,6 +33,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebAssertions.h>
 
+#import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
@@ -46,10 +47,11 @@ enum {
     SpaceKey = 0x0020
 };
 
-@interface WebFrameView (WebFrameViewFileInternal)
+@interface WebFrameView (WebFrameViewFileInternal) <WebCoreBridgeHolder>
 - (float)_verticalKeyboardScrollDistance;
 - (void)_tile;
 - (BOOL)_shouldDrawBorder;
+- (WebCoreBridge *) webCoreBridge;
 @end
 
 @interface WebFrameViewPrivate : NSObject
@@ -127,6 +129,11 @@ enum {
         scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
     }
     [_private->frameScrollView setFrame:scrollViewFrame];
+}
+
+- (WebCoreBridge *) webCoreBridge
+{
+    return [self _bridge];
 }
 
 @end
@@ -336,7 +343,6 @@ static NSMutableDictionary *viewTypes;
 {
     return [[self _webView] _frameForView: self]; 
 }
-
 
 - (void)setAllowsScrolling: (BOOL)flag
 {
