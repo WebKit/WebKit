@@ -32,6 +32,11 @@ extern NSString *WebHistoryLoadedNotification;
     WebHistoryPrivate *_historyPrivate;
 }
 
+/*!
+    @method sharedHistory
+    @abstract Returns a shared WebHistory instance initialized with the default history file.
+    @result A WebHistory object.
+*/
 + (WebHistory *)sharedHistory;
 
 /*!
@@ -42,26 +47,33 @@ extern NSString *WebHistoryLoadedNotification;
 + (WebHistory *)createSharedHistoryWithFile: (NSString*)file;
 
 /*!
+    @method initWithFile:
+    @abstract The designated initializer for WebHistory.
+    @result Returns an initialized WebHistory.
+*/
+- initWithFile: (NSString *)file;
+
+/*!
     @method addEntry:
-    @param entry
+    @param entry The history item to add to the WebHistory.
 */
 - (void)addEntry: (WebHistoryItem *)entry;
 
 /*!
     @method addEntries:
-    @param newEntries
+    @param newEntries An array of WebHistoryItems to add to the WebHistory.
 */
 - (void)addEntries:(NSArray *)newEntries;
 
 /*!
     @method removeEntry:
-    @param entry
+    @param entry The WebHistoryItem to remove from the WebHistory.
 */
 - (void)removeEntry: (WebHistoryItem *)entry;
 
 /*!
     @method removeEntries:
-    @param entries
+    @param entries An array of WebHistoryItems to remove from the WebHistory.
 */
 - (void)removeEntries: (NSArray *)entries;
 
@@ -72,9 +84,9 @@ extern NSString *WebHistoryLoadedNotification;
 
 /*!
     @method orderedLastVisitedDays
-    @discussion Get an array of NSCalendarDate, each one representing a unique day that contains one
+    @discussion Get an array of NSCalendarDates, each one representing a unique day that contains one
     or more history entries, ordered from most recent to oldest.
-    @result Returns an array of WebHistoryItems
+    @result Returns an array of NSCalendarDates for which history items exist in the WebHistory.
 */
 - (NSArray *)orderedLastVisitedDays;
 
@@ -82,22 +94,24 @@ extern NSString *WebHistoryLoadedNotification;
     @method orderedEntriesLastVisitedOnDay:
     @discussion Get an array of WebHistoryItem that were last visited on the day represented by the
     specified NSCalendarDate, ordered from most recent to oldest.
-    @param calendarDate
-    @result Returns an array of WebHistoryItems
+    @param calendarDate A date identifying the unique day of interest.
+    @result Returns an array of WebHistoryItems last visited on the indicated day.
 */
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
 
 /*!
     @method containsURL:
-    @param URL
-    @discussion testing contents for visited-link mechanism
+    @abstract Return whether a URL is in the WebHistory.
+    @param URL The URL for which to search the WebHistory.
+    @discussion This method is useful for implementing a visited-link mechanism.
+    @result YES if WebHistory contains a history item for the given URL, otherwise NO.
 */
 - (BOOL)containsURL: (NSURL *)URL;
 
 /*!
     @method entryForURL:
-    @discussion Get an item for a specific URL
-    @param URL
+    @abstract Get an item for a specific URL
+    @param URL The URL of the history item to search for
     @result Returns an item matching the URL
 */
 - (WebHistoryItem *)entryForURL:(NSURL *)URL;
@@ -110,9 +124,16 @@ extern NSString *WebHistoryLoadedNotification;
 - (NSString *)file;
 
 /*!
+    @method loadHistory
+    @discussion Load history from file. This happens automatically at init time, and need not normally be called.
+    @result Returns YES if successful, NO otherwise.
+*/
+- (BOOL)loadHistory;
+
+/*!
     @method saveHistory
     @discussion Save history to file. It is the client's responsibility to call this at appropriate times.
-    @result Returns YES if successful, not otherwise.
+    @result Returns YES if successful, NO otherwise.
 */
 - (BOOL)saveHistory;
 

@@ -194,7 +194,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (BOOL)pluginsEnabled;
 
 /*!
-    @method setJavaScriptCanOpenWindowsAutomatically:
+    @method setPluginsEnabled:
     @param flag
 */
 - (void)setPluginsEnabled:(BOOL)flag;
@@ -228,8 +228,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (void)setWillLoadImagesAutomatically: (BOOL)flag;
 
 /*!
-    @method willLoadImagesAutomatically:
-    @param flag
+    @method willLoadImagesAutomatically
 */
 - (BOOL)willLoadImagesAutomatically;
 

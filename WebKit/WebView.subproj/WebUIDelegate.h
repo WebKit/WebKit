@@ -32,7 +32,7 @@
     @method showWindow
     @abstract Show the window that contains the top level view of the controller,
     ordering it frontmost.
-    @discussion This will only be called just after createWindowWithURL:referrer:
+    @discussion This will only be called just after createWindowWithRequest:
     is used to create a new window.
 */
 - (void)showWindow;
@@ -41,7 +41,7 @@
     @method showWindowBehindFrontmost
     @abstract Show the window that contains the top level view of the controller,
     ordering it behind the main window.
-    @discussion This will only be called just after createWindowWithURL:referrer:
+    @discussion This will only be called just after createWindowWithRequest:
     is used to create a new window.
 */
 - (void)showWindowBehindFrontmost;
@@ -64,7 +64,7 @@
     @method mouseDidMoveOverElement:modifierFlags:
     @abstract Update the window's feedback for mousing over links to reflect a new item the mouse is over
     or new modifier flags.
-    @param elementInformation Dictionary that describes the clicked element the mouse is over, or nil.
+    @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
 - (void)mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
@@ -72,7 +72,7 @@
 /*!
     @method areToolbarsVisible
     @abstract Determine whether the window's toolbars are currently visible
-    @discussion This method should return true if the window has any
+    @discussion This method should return YES if the window has any
     toolbars that are currently on, besides the status bar. If the app
     has more than one toolbar per window, for example a regular
     command toolbar and a favorites bar, it should return YES from

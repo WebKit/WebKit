@@ -34,7 +34,7 @@ extern NSString *WebElementImageKey;		// NSImage of the image element
 extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of the image element
 extern NSString *WebElementImageURLKey;		// NSURL of the image element
 extern NSString *WebElementIsSelectedTextKey; 	// NSNumber of BOOL indicating whether the element is selected text or not 
-extern NSString *WebElementLinkURLKey;		// NSURL if the element is within an anchor
+extern NSString *WebElementLinkURLKey;		// NSURL of the link if the element is within an anchor
 extern NSString *WebElementLinkTargetFrameKey;	// NSString of the target of the anchor
 extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
 extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
@@ -103,10 +103,8 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @method initWithView:controllerSetName:
     @abstract The designated initializer for WebController.
     @discussion Initialize a WebController with the supplied parameters.  This method
-    will create a main WebFrame with the view and datasource.  The frame will be
-    named "_top".
+    will create a main WebFrame with the view.  The frame will be named "_top".
     @param view The main view to be associated with the controller.  May be nil.
-    @param dataSource  The main datasource to be associated with the controller.  May be nil.
     @param name The name of the controller set to which this controller will be added.  May be nil.
     @result Returns an initialized WebController.
 */
@@ -121,14 +119,15 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method windowOperationsDelegate
-    @result Return the controller's WebWindowOperationsDelegate.
+    @abstract Return the controller's WebWindowOperationsDelegate.
+    @result The controller's WebWindowOperationsDelegate.
 */
 - (id<WebWindowOperationsDelegate>)windowOperationsDelegate;
 
 /*!
     @method setResourceLoadDelegate:
-    @abstract Set the controller's WebResourceLoadDelegate.
-    @param delegate The WebResourceLoadDelegate to set as the delegate.
+    @abstract Set the controller's WebResourceLoadDelegate load delegate.
+    @param delegate The WebResourceLoadDelegate to set as the load delegate.
 */
 - (void)setResourceLoadDelegate: (id<WebResourceLoadDelegate>)delegate;
 
@@ -147,20 +146,22 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method downloadDelegate
-    @result Return the controller's WebResourceLoadDelegate download delegate.
+    @abstract Return the controller's WebResourceLoadDelegate download delegate.
+    @result The controller's WebResourceLoadDelegate download delegate.
 */    
 - (id<WebResourceLoadDelegate>)downloadDelegate;
 
 /*!
     @method setContextMenuDelegate:
-    @abstract Set the controller's WebContextMenuDelegate download delegate.
-    @param delegate The WebContextMenuDelegate to set as the download delegate.
+    @abstract Set the controller's WebContextMenuDelegate.
+    @param delegate The WebContextMenuDelegate to set as the delegate.
 */    
 - (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate;
 
 /*!
     @method contextMenuDelegate
-    @result Return the controller's WebContextMenuDelegate.
+    @abstract Return the controller's WebContextMenuDelegate.
+    @result The controller's WebContextMenuDelegate.
 */    
 - (id<WebContextMenuDelegate>)contextMenuDelegate;
 
@@ -173,7 +174,8 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method locationChangeDelegate
-    @result Return the controller's WebLocationChangeDelegate.
+    @abstract Return the controller's WebLocationChangeDelegate delegate.
+    @result The controller's WebLocationChangeDelegate delegate.
 */    
 - (id <WebLocationChangeDelegate>)locationChangeDelegate;
 
@@ -186,7 +188,8 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method policyDelegate
-    @result Return the controller's WebControllerPolicyDelegate.
+    @abstract Return the controller's WebControllerPolicyDelegate.
+    @result The controller's WebControllerPolicyDelegate.
 */    
 - (id<WebControllerPolicyDelegate>)policyDelegate;
 
@@ -227,34 +230,35 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 /*!
     @method setUseBackForwardList:
     @abstract Enable or disable the use of a backforward list for this controller.
-    @param flag turns use of the back forward list on or off
+    @param flag Turns use of the back forward list on or off
 */    
 - (void)setUsesBackForwardList: (BOOL)flag;
 
 /*!
     @method useBackForwardList
-    @result Returns YES if a backforward list is being used by this controller, NO otherwise.
+    @result Returns whether a backforward list is being used by this controller.
+    @result YES if a backforward list is being used by this controller, NO otherwise.
 */    
 - (BOOL)usesBackForwardList;
 
 /*!
     @method goBack
     @abstract Go back to the previous URL in the backforward list.
-    @result Returns YES if able to go back in the backforward list, NO otherwise.
+    @result YES if able to go back in the backforward list, NO otherwise.
 */    
 - (BOOL)goBack;
 
 /*!
     @method goForward
     @abstract Go forward to the next URL in the backforward list.
-    @result Returns YES if able to go forward in the backforward list, NO otherwise.
+    @result YES if able to go forward in the backforward list, NO otherwise.
 */    
 - (BOOL)goForward;
 
 /*!
     @method goBackOrForwardToItem:
     @abstract Go back or forward to an item in the backforward list.
-    @result Returns YES if able to go to the item, NO otherwise.
+    @result YES if able to go to the item, NO otherwise.
 */    
 - (BOOL)goBackOrForwardToItem:(WebHistoryItem *)item;
 
@@ -267,7 +271,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method textSizeMultiplier
-    @result Returns the text size multipler.
+    @result The text size multipler.
 */    
 - (float)textSizeMultiplier;
 
@@ -276,22 +280,22 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Set the application name. 
     @discussion This name will be used in user-agent strings
     that are chosen for best results in rendering web pages.
-    @param applicationName the application name
+    @param applicationName The application name
 */
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName;
 
 /*!
     @method applicationNameForUserAgent
-    @result Returns the name of the application as used in the user-agent string.
+    @result The name of the application as used in the user-agent string.
 */
 - (NSString *)applicationNameForUserAgent;
 
 /*!
-    @method setUserAgent:
+    @method setCustomUserAgent:
     @abstract Set the user agent. 
     @discussion Setting this means that the controller should use this user-agent string
     instead of constructing a user-agent string for each URL.
-    @param userAgentString the user agent description
+    @param userAgentString The user agent description
 */
 - (void)setCustomUserAgent:(NSString *)userAgentString;
 
@@ -300,7 +304,6 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Reset the user agent. 
     @discussion Causes the controller to construct the user-agent string for each URL
     for best results rendering web pages.
-    @param userAgentString the user agent description
 */
 - (void)resetUserAgent;
 
@@ -308,13 +311,13 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @method hasCustomUserAgent
     @abstract Determine whether or not a custom user-agent string is in use.
     @discussion It's an error to call customUserAgent if hasCustomUserAgent is NO.
-    @result Returns YES if a custom encoding has been set, NO otherwise.
+    @result YES if a custom user agent has been set, NO otherwise.
 */
 - (BOOL)hasCustomUserAgent;
 
 /*!
     @method customUserAgent
-    @result customUserAgent Returns the custom user-agent string. Should only be called
+    @result The custom user-agent string. Should only be called
     if hasCustomUserAgent returns YES.
 */
 - (NSString *)customUserAgent;
@@ -323,14 +326,14 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @method userAgentForURL:
     @abstract Get the appropriate user-agent string for a particular URL.
     @param URL The URL.
-    @result Returns the user-agent string for the supplied URL.
+    @result The user-agent string for the supplied URL.
 */
 - (NSString *)userAgentForURL:(NSURL *)URL;
 
 /*!
     @method supportsTextEncoding
     @abstract Find out if the current web page supports text encodings.
-    @result Returns YES if the document view of the current web page can
+    @result YES if the document view of the current web page can
     support different text encodings.
 */
 - (BOOL)supportsTextEncoding;
@@ -342,7 +345,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     what's specified in a web page's header or HTTP response.
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
-    @param encoding
+    @param encoding The text encoding to use to display a page.
 */
 - (void)setCustomTextEncodingName:(NSString *)encoding;
 
@@ -356,20 +359,20 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @method hasCustomTextEncoding
     @abstract Determine whether or not a custom text encoding is in use.
     @discussion It's an error to call customTextEncoding if hasCustomTextEncoding is NO.
-    @result Returns YES if a custom encoding has been set, NO otherwise.
+    @result YES if a custom encoding has been set, NO otherwise.
 */
 - (BOOL)hasCustomTextEncoding;
 
 /*!
     @method customTextEncoding
-    @result Returns the custom text encoding.
+    @result The custom text encoding.
 */
 - (NSString *)customTextEncodingName;
 
 /*!
     @method stringByEvaluatingJavaScriptFromString:
     @param script The text of the JavaScript.
-    @result Returns the result of the script, converted to a string, or nil for failure.
+    @result The result of the script, converted to a string, or nil for failure.
 */
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
 

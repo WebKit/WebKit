@@ -22,6 +22,10 @@ extern NSString *WebErrorDomainWebKit;
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
     @constant WebKitErrorLocationChangeInterruptedByPolicyChange
+    @constant WebKitErrorResourceLoadInterruptedByPolicyChange
+    @constant WebKitErrorCannotFindPlugin
+    @constant WebKitErrorCannotLoadPlugin
+    @constant WebKitErrorJavaUnavailable
     @constant WebKitErrorDownloadDecodingFailedMidStream
     @constant WebKitErrorDownloadDecodingFailedToComplete
 */

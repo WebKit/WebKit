@@ -37,7 +37,7 @@
 
 /*!
     @method usesStandardAuthenticationPanel
-    @abstract Determine whether the standard authentication panelwill  be used or not used.
+    @abstract Determine whether the standard authentication panel will be used or not used.
     @result YES if the standard authentication panel should be used, NO otherwise
 */
 -(BOOL)usesStandardAuthenticationPanel;
@@ -49,7 +49,7 @@
     @param window The window associated with the load.
     @discussion This is only needed for resources that are not being
     loaded via WebKit. WebKit takes care of this bookkeeping
-    automatically, for resources that it loads.
+    automatically for resources that it loads.
 */
 -(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
 
@@ -60,7 +60,7 @@
     @param window The window associated with the load.
     @discussion This is only needed for resources that are not being
     loaded via WebKit. WebKit takes care of this bookkeeping
-    automatically, for resources that it loads.
+    automatically for resources that it loads.
 */
 -(void)didStopLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
 
@@ -68,6 +68,7 @@
     @method frontmostWindowLoadingURL:
     @abstract Get the frontmost window loading a URL
     @param URL The URL in question
+    @result The frontmost window loading the given URL
     @discussion This may be useful for clients that want to implement their
     own custom panels for special purposes.
 */

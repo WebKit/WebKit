@@ -12,7 +12,6 @@
 
 @class WebPluginErrorPrivate;
 
-
 /*!
     @class WebPluginError
     @discussion WebPluginError is a subclass of WebError that is specific to plug-in related errors.
@@ -25,27 +24,22 @@
 
 /*!
     @method contentURL
-    @abstract The URL specified by the SRC attribute of the EMBED or PARAM tag.
+    @result The URL of the data that caused the error
 */
 - (NSString *)contentURL;
-
 /*!
     @method pluginPageURL
-    @abstract The URL specified by the PLUGINSPAGE attribute of the EMBED or PARAM tag.
-    @discussion This is the URL for the page that has information about the plug-in. May be nil.
+    @result Description forthcoming
 */
 - (NSString *)pluginPageURL;
-
 /*!
     @method pluginName
-    @abstract The name of the plug-in that had the error. May be nil.
+    @result The name of plugin that experienced the error
 */
 - (NSString *)pluginName;
-
 /*!
     @method MIMEType
-    @abstract The MIME type specified by the TYPE attribute of the EMBED or PARAM tag.
-    @discussion The MIME type of the content. May be nil.
+    @result The MIME type of the data that caused the error
 */
 - (NSString *)MIMEType;
 

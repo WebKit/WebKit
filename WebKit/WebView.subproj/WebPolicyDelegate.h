@@ -44,6 +44,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 
 /*!
     @enum WebPolicyAction
+    @abstract Potential actions to take when loading a URL
     @constant WebPolicyNone Unitialized state.
     @constant WebPolicyUse Have WebKit use the resource.
     @constant WebPolicyRevealInFinder Reveal the file in the Finder.
@@ -52,6 +53,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @constant WebPolicyOpenNewWindow Open the resource in another window.
     @constant WebPolicyOpenNewWindowBehind Open the resource in another window behind this window.
     @constant WebPolicyIgnore Do nothing with the resource.
+    @constant WebPolicyShow Description forthcoming.
 */
 typedef enum {
     WebPolicyNone,
@@ -85,29 +87,29 @@ typedef enum {
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 
-    navigationPolicyForAction:andRequest:inFrame:<BR>
+    decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:<BR>
     contentPolicyForMIMEType:andRequest:inFrame:<BR>
 */
 @protocol WebControllerPolicyDelegate <NSObject>
 
 /*!
-     @method decideNavigationPolicyForAction:andRequest:inFrame:
+     @method decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:
      @discussion Called right after the user clicks on a link.
      @param actionInformation Dictionary that describes the action that triggered this navigation.
-     @param andRequest The request for the proposed navigation
+     @param request The request for the proposed navigation
      @param frame The frame in which the navigation is taking place
      @param listener The object to call when the decision is made
 */
 - (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation
-                                        andRequest:(WebResourceRequest *)request
-                                           inFrame:(WebFrame *)frame
-                                  decisionListener:(WebPolicyDecisionListener *)listener;
+                             andRequest:(WebResourceRequest *)request
+                                inFrame:(WebFrame *)frame
+                       decisionListener:(WebPolicyDecisionListener *)listener;
 
 
 /*!
-    @method contentPolicyForResponse:andRequest:inFrame:withContentPolicy:
+    @method contentPolicyForMIMEType:andRequest:inFrame:
     @discussion Returns the policy for content which has been partially loaded. Sent after locationChangeStarted. 
-    @param type MIME type for the file.
+    @param type MIME type for the resource.
     @param request A WebResourceRequest for the partially loaded content.
     @param frame The frame which is loading the URL.
 */
@@ -118,9 +120,10 @@ typedef enum {
 
 /*!
     @method saveFilenameForResponse:andRequest:
-    @discussion Returns the filename to use to for a load that's being saved.
+    @discussion Returns the filename to use for a load that's being saved.
     @param response The response for the partially loaded content.
     @param request A WebResourceRequest for the partially loaded content.
+    @result The filename to use to save a loaded resource.
 */
 - (NSString *)savePathForResponse:(WebResourceResponse *)response
                        andRequest:(WebResourceRequest *)request;
@@ -131,7 +134,8 @@ typedef enum {
     @discussion Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
     @param policy The policy that could not be implemented.
     @param error The error that caused the policy to not be implemented.
-    @param frame The frame in the which the policy could not be implemented.
+    @param URL The URL of the resource for which a particular action was requested but failed.
+    @param frame The frame in which the policy could not be implemented.
 */
 - (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 

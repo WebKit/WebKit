@@ -96,8 +96,8 @@
 
 
 /*!
-    @protocol WebDocumentTextEncoding
-    @discussion Optional protocol for supporting text encoding.
+    @protocol WebDocumentText
+    @discussion Optional protocol for supporting text operations.
 */
 @protocol WebDocumentText <NSObject>
 
@@ -176,7 +176,7 @@
 - (void)receivedError: (WebError *)error withDataSource: (WebDataSource *)dataSource;
 
 /*!
-    @method finishLoadingWithDataSource:
+    @method finishedLoadingWithDataSource:
     @abstract Called when the data source has finished loading.
     @param dataSource The datasource that has finished loading.
 */
@@ -194,4 +194,5 @@
     this is the original HTML source.
 */
 - (NSString *)documentSource;
+
 @end

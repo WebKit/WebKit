@@ -22,7 +22,7 @@
     @discussion A WebDataSource represents the data associated with a web page.
     A datasource has a WebDocumentRepresentation which holds an appropriate
     representation of the data.  WebDataSources manage a hierarchy of WebFrames.
-    WebDataSources are typically related to a view by there containg WebFrame.
+    WebDataSources are typically related to a view by their containing WebFrame.
 */
 @interface WebDataSource : NSObject
 {
@@ -49,7 +49,7 @@
 /*!
     @method data
     @discussion The data associated with a datasource will not be valid until
-    a datasource has completed loaded.  
+    a datasource has completely loaded.  
     @result Returns the raw data associated with this datasource.  Returns nil
     if the datasource hasn't loaded.
 */
@@ -87,9 +87,7 @@
 
 /*!
     @method request
-    @result Returns the request that is used for this datasource.  This
-    request may have changed from the original request because of canonicalization
-    of the URL, addition of headers, and/or redirects.
+    @result Returns the request that was used to create this datasource.
 */
 -(WebResourceRequest *)request;
 
@@ -102,7 +100,7 @@
 /*!
     @method URL
     @discussion The value of URL will change if a redirect occurs.
-    To monitor change in the URL, override the <WebLocationChangeHandler> 
+    To monitor change in the URL, override the <WebLocationChangeDelegate> 
     serverRedirectedForDataSource: method.
     @result Returns the current URL associated with the datasource.
 */
@@ -144,7 +142,7 @@
 
 /*!
     @method frameName
-    @result frameName The name of frame that contains this datasource.
+    @result The name of frame that contains this datasource.
 */
 - (NSString *)frameName;
 
@@ -170,7 +168,16 @@
 - (NSString *)stringWithData:(NSData *)data;
 
 
+/*!
+    @method isDownloading
+    @result Description forthcoming.
+*/
 - (BOOL)isDownloading;
+
+/*!
+    @method downloadPath
+    @result Description forthcoming.
+*/
 - (NSString *)downloadPath;
 
 
@@ -182,8 +189,8 @@
     a subtype, i.e. "video/" will match the document class with
     all video types.  More specific matching takes precedence
     over general matching.
-    @param repClass
-    @param MIMEType
+    @param repClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
+    @param MIMEType The MIME type to represent with an object of the given class.
 */
 + (void) registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType;
 

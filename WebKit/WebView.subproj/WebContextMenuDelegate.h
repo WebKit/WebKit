@@ -33,8 +33,10 @@ enum {
 
 /*!
     @method contextMenuItemsForElement:defaultMenuItems:
-    @discussion Returns the array of NSMenuItems that will be displayed in the context menu 
-    for the dictionary representation of the clicked element.
+    @abstract Returns the menu items to display in an element's contextual menu.
+    @param element A dictionary representation of the clicked element.
+    @param defaultMenuItems An array of default NSMenuItems to include in all contextual menus.
+    @result An array of NSMenuItems to include in the contextual menu.
 */
 - (NSArray *)contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 

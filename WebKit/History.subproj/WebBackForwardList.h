@@ -24,45 +24,48 @@
 
 /*!
     @method setUsesPageCache:
-    @param flag set to true if pages should be cached
-    @abstract Pages in the back/forward list may be cached.  Pages in this cache
-    will load much more quickly, however they may not always be up-to-date.  The
+    @param flag Set to YES if pages should be cached
+    @discussion Pages in the back/forward list may be cached.  Pages in this cache
+    will load much more quickly; however, they may not always be up-to-date.  The
     page cache may not apply to all pages.
 */
 + (void)setUsesPageCache: (BOOL)flag;
 
 /*!
     @method usesPageCache
-    @result Returns YES if the page cache is enabled.
+    @abstract Returns whether page cacheing is enabled. 
+    @result YES if the page cache is enabled, otherwise NO. 
 */
 + (BOOL)usesPageCache;
 
 /*!
     @method setPageCacheSize:
+    @abstract Sets the size of the page cache.
     @param size The number of pages to allow in the page cache.
 */
 + (void)setPageCacheSize: (unsigned)size;
 
 /*!
     @method pageCacheSize
-    @result Returns the number of pages that may be cached.
+    @abstract Returns the number of pages that may be cached.
+    @result The number of pages that may be cached.
 */
 + (unsigned)pageCacheSize;
 
 /*!
     @method clearPageCache
-    @discussion Clears all items in the page cache. 
+    @abstract Clears all items in the page cache. 
 */
 - (void)clearPageCache;
 
 /*!
     @method addEntry:
     @abstract Adds an entry to the list.
-    @discussion Add an entry to the back-forward list, immediately after the current entry.
+    @param entry The entry to add.
+    @discussion The added entry is inserted immediately after the current entry.
     If the current position in the list is not at the end of the list, elements in the
     forward list will be dropped at this point.  In addition, entries may be dropped to keep
     the size of the list within the maximum size.
-    @param entry The entry to add.
 */    
 - (void)addEntry:(WebHistoryItem *)entry;
 
@@ -81,69 +84,81 @@
 /*!
     @method goToEntry:
     @abstract Move the current pointer to the given entry.
+    @param entry The history item to move the pointer to
 */
 - (void)goToEntry:(WebHistoryItem *)entry;
 
 /*!
     @method backEntry
-    @result Returns the entry right before the current entry, or nil if there isn't one.
+    @abstract Returns the entry right before the current entry.
+    @result The entry right before the current entry, or nil if there isn't one.
 */
 - (WebHistoryItem *)backEntry;
 
 /*!
     @method currentEntry
-    @result Returns the current entry.
+    @abstract Returns the current entry.
+    @result The current entry.
 */
 - (WebHistoryItem *)currentEntry;
 
 /*!
     @method forwardEntry
-    @result Returns the entry right after the current entry, or nil if there isn't one.
+    @abstract Returns the entry right after the current entry.
+    @result The entry right after the current entry, or nil if there isn't one.
 */
 - (WebHistoryItem *)forwardEntry;
 
 /*!
     @method containsEntry:
-    @result Returns whether the receiver contains the given entry.
+    @abstract Returns whether the receiver contains the given entry.
+    @param entry The history item to search for.
+    @result YES if the list contains the given entry, otherwise NO.
 */
 - (BOOL)containsEntry:(WebHistoryItem *)entry;
 
 /*!
     @method backListWithSizeLimit:
+    @abstract Returns a portion of the list before the current entry.
     @param limit A cap on the size of the array returned.
-    @result Returns a portion of the list before current entry, or nil if there are none.  The entries are in the order that they were originally visited.
+    @result An array of items before the current entry, or nil if there are none.  The entries are in the order that they were originally visited.
 */
 - (NSArray *)backListWithSizeLimit:(int)limit;
 
 /*!
     @method forwardListWithSizeLimit:
+    @abstract Returns a portion of the list after the current entry.
     @param limit A cap on the size of the array returned.
-    @result Returns a portion of the list after current entry, or nil if there are none.  The entries are in the order that they were originally visited.
+    @result An array of items after the current entry, or nil if there are none.  The entries are in the order that they were originally visited.
 */
 - (NSArray *)forwardListWithSizeLimit:(int)limit;
 
 /*!
     @method maximumSize
-    @result Returns this list's maximum size.
+    @abstract Returns the list's maximum size.
+    @result The list's maximum size.
 */
 - (int)maximumSize;
 
 /*!
     @method maximumSize
-    @abstract Sets this list's maximum size.
+    @abstract Sets the list's maximum size.
+    @param size The new maximum size for the list.
 */
 - (void)setMaximumSize:(int)size;
 
 /*!
     @method backListCount
-    @result Returns the back list's current count.
+    @abstract Returns the back list's current count.
+    @result The number of items in the list.
 */
 - (int)backListCount;
 
 /*!
     @method entryAtIndex:
-    @param index Index of the back/forward list item; 0 is current item, -1 is back item, 1 is forward item, etc.
-    @result Returns an entry the given distance from the current entry, or the furthest in that direction if there is none.
+    @abstract Returns an entry the given distance from the current entry.
+    @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
+    @result The entry the given distance from the current entry. If index exceeds the limits of the list, the entry furthest in that direction is returned.
 */
 - (WebHistoryItem *)entryAtIndex:(int)index;
 

@@ -1,3 +1,27 @@
+2003-02-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+	Rolled in documentation changes from Peter Kelly, our tech writer.
+
+        * History.subproj/WebBackForwardList.h
+        * History.subproj/WebHistory.h
+        * Misc.subproj/WebKitErrors.h
+        * Misc.subproj/WebResourceResponseExtras.h
+        * Panels.subproj/WebStandardPanels.h
+        * Plugins.subproj/WebPluginError.h
+        * WebView.subproj/WebContextMenuDelegate.h
+        * WebView.subproj/WebController.h
+        * WebView.subproj/WebControllerPolicyDelegate.h
+        * WebView.subproj/WebDataSource.h
+        * WebView.subproj/WebDefaultPolicyDelegate.h
+        * WebView.subproj/WebDocument.h
+        * WebView.subproj/WebFrame.h
+        * WebView.subproj/WebPreferences.h
+        * WebView.subproj/WebResourceLoadDelegate.h
+        * WebView.subproj/WebView.h
+        * WebView.subproj/WebWindowOperationsDelegate.h
+
 2003-02-13  Trey Matteson  <trey@apple.com>
 
 	2943514 hide the cursor when using the arrow keys to scroll	
