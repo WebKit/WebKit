@@ -1,3 +1,11 @@
+2003-01-22  David Hyatt  <hyatt@apple.com>
+
+	Fix first-line regression caused by my removal of a local variable.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-01-22  Richard Williamson   <rjw@apple.com>
 
         Fix the fix to 3119777 to scan for break over entire string

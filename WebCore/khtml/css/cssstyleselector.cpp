@@ -438,9 +438,11 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
                         pseudoStyle->inheritFrom( style );
                 }
 
-		CSSStyleSelector::style = pseudoStyle;
+                RenderStyle* oldStyle = style;
+		style = pseudoStyle;
                 if ( pseudoStyle )
                     applyRule( pseudoProps[i]->prop );
+                style = oldStyle;
             }
 
 	    if ( fontDirty ) {
