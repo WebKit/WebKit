@@ -2,6 +2,8 @@
 
 	Fix for regressions on layout-tests caused by new table code.
 	Make sure cell's padding is used and not just the table's cellpadding.
+
+	Also make sure cell padding can be changed dynamically.
 	
         Reviewed by darin.
 

@@ -457,7 +457,11 @@ void HTMLTableElementImpl::parseAttribute(AttributeImpl *attr)
         if (!attr->value().isEmpty())
             padding = kMax( 0, attr->value().toInt() );
         else
-            padding = 0;
+            padding = 1;
+        if (m_render && m_render->isTable()) {
+            static_cast<RenderTable *>(m_render)->setCellPadding(padding);
+            m_render->setLayouted(false);
+        }
         break;
     case ATTR_COLS:
     {

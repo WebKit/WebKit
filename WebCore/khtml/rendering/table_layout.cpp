@@ -399,8 +399,7 @@ void AutoTableLayout::recalcColumn( int effCol )
 		    case Fixed:
 			// ignore width=0
 			if ( w.value > 0 && (int)l.width.type != Percent ) {
-                            // ### we should use box'es paddings here I guess.
-                            int wval = w.value + table->cellPadding() * 2;
+                            int wval = w.value + (cell->paddingLeft()+cell->paddingRight());
 			    if ( l.width.type == Fixed ) {
                                 // Nav/IE weirdness
 				if ((wval > l.width.value) ||
