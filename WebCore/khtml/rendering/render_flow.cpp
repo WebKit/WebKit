@@ -510,7 +510,9 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         } else if ( child->isReplaced() ) {
             if ( !child->layouted() )
                 child->layout();
-        } else if ( child->isFloating() ) {
+        }
+        
+        if ( child->isFloating() ) {
             insertSpecialObject( child );
             
             // The float should be positioned taking into account the bottom margin
