@@ -28,6 +28,7 @@
 #import "KWQKJavaAppletContext.h"
 #import "KWQKURL.h"
 #import "KWQKHTMLPart.h"
+#import "KWQView.h"
 #import "WebCoreBridge.h"
 
 KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *c, QWidget *)
@@ -60,8 +61,12 @@ void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments
 
 void KJavaAppletWidget::showApplet()
 {
-    setView([KWQ(_context->part())->bridge()
-        viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
-                        attributes:_parameters
-                           baseURL:_baseURL.getNSString()]);
+    // If the view is a KWQView, we haven't replaced it with the Java view yet.
+    // Only set the Java view once.
+    if ([getView() isKindOfClass:[KWQView class]]) {
+        setView([KWQ(_context->part())->bridge()
+            viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
+                            attributes:_parameters
+                            baseURL:_baseURL.getNSString()]);
+    }
 }

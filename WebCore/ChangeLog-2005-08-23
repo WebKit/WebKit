@@ -1,3 +1,15 @@
+2002-12-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3131267 - REGRESSION: Java 1.4.1 Applets Restarted When Window is Resized
+	Fixed: 3131244 - REGRESSION: Java 1.4.1 Multiple Copies of Applet Started When Window is Resized
+
+	Dave recently patched khtml with a fix for media content inside of table cells. The patch causes the java widget to get the layout call more than once. Calling layout more than once is perfectly allowed, but the java widget wasn't prepared for that and would create a new java view for each layout. We now only create a java view when the java view hasn't already been created.
+
+        Reviewed by darin.
+
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet): If the view of the widget is still a KWQView, we haven't replaced it with the Java view. This stops multiple view from being created.
+
 === Alexander-40 ===
 
 2002-12-18  Trey Matteson  <trey@apple.com>
