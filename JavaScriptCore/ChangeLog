@@ -1,6 +1,6 @@
 2003-10-30  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Ken.
 
 	- fixed 3427069 - browsing mp3.com causes leaks (KJS)
 	
