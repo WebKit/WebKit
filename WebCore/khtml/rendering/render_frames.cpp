@@ -699,10 +699,14 @@ void RenderPartObject::updateWidget()
 
       // Check for a child EMBED tag.
       HTMLEmbedElementImpl *embed = 0;
-      for (NodeImpl *child = o->firstChild(); child; child = child->nextSibling()) {
+      for (NodeImpl *child = o->firstChild(); child; ) {
           if (child->id() == ID_EMBED) {
               embed = static_cast<HTMLEmbedElementImpl *>( child );
               break;
+          } else if (child->id() == ID_OBJECT) {
+              child = child->nextSibling();         // Don't descend into nested OBJECT tags
+          } else {
+              child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
           }
       }
       
@@ -760,6 +764,16 @@ void RenderPartObject::updateWidget()
               }
           }
           child = child->nextSibling();
+      }
+      
+      // When OBJECT is used for an applet via Sun's Java plugin, the CODEBASE attribute in the tag
+      // points to the Java plugin itself (an ActiveX component) while the actual applet CODEBASE is
+      // in a PARAM tag. See <http://java.sun.com/products/plugin/1.2/docs/tags.html>. This means
+      // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
+      // else our Java plugin will misinterpret it. [4004531]
+      if (!embed && serviceType.lower() == "application/x-java-applet") {
+          bool dummyValue = true;
+          uniqueParamNames.insert("codebase", &dummyValue); // pretend we found it in a PARAM already
       }
       
       // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.

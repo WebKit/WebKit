@@ -1,3 +1,13 @@
+2005-03-01  Jens Alfke  <jens@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4004531> Simple Sun Signed Applet throws exceptions; doesn't run
+	Two fixes for the way we extract the parameter-y goodness from <object> tags.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+
 === Safari-401 ===
 
 2005-03-01  Chris Blumenberg  <cblu@apple.com>
