@@ -79,6 +79,13 @@
 }
 
 
+- (IFWebDataSource *)provisionalDataSource
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data provisionalDataSource];
+}
+
+
 
 - (IFWebDataSource *)dataSource
 {

@@ -28,6 +28,8 @@
 - view;
 - (void)setDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)dataSource;
+- (void)setProvisionalDataSource: (IFWebDataSource *)d;
+- (IFWebDataSource *)provisionalDataSource;
 - (void)setRenderFramePart: (void *)p;
 - (void *)renderFramePart;
 

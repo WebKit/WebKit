@@ -1,5 +1,12 @@
 2002-02-22  Richard Williamson  <rjw@apple.com>
 
+        Implemented missing getter for provisionalDataSource.
+        
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame provisionalDataSource]):
+	* WebView.subproj/IFWebFramePrivate.h:
+
+2002-02-22  Richard Williamson  <rjw@apple.com>
+
         Normalized code paths for setMainDataSource on controller and setDataSource on frame.
         
 	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
