@@ -1,3 +1,18 @@
+2003-08-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3381295 -- regular expression matches for text with UTF-16 surrogates will give incorrect results
+
+        * kwq/KWQRegExp.mm: (QRegExp::match): Removed local copy of convertCharacterOffsetsToUTF8ByteOffsets
+        and its reverse. Instead use convertUTF16OffsetsToUTF8Offsets and its reverse, now available from
+        <JavaScriptCore/ustring.h>.
+
+        - added test for the URI encoding and decoding functions in JavaScriptCore
+
+        * layout-tests/fast/js/global/encode-URI-test-expected.txt: Added.
+        * layout-tests/fast/js/global/encode-URI-test.html: Added.
+
 2003-08-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3380418>: Ignore specified string encoding when constructing file, mailto and help URLs

@@ -28,106 +28,10 @@
 
 #import <sys/types.h>
 #import <JavaScriptCore/pcre.h>
+#import <JavaScriptCore/ustring.h>
 
-
-// Functions to convert between byte offets and character offsets were
-// lifted from JavaScriptCore/regexp.cpp. It would be nice to share this code.
-struct StringOffset {
-    int offset;
-    int locationInOffsetsArray;
-};
-
-static int compareStringOffsets(const void *a, const void *b)
-{
-    const StringOffset *oa = static_cast<const StringOffset *>(a);
-    const StringOffset *ob = static_cast<const StringOffset *>(b);
-    
-    if (oa->offset < ob->offset) {
-        return -1;
-    }
-    if (oa->offset > ob->offset) {
-        return +1;
-    }
-    return 0;
-}
-
-const int sortedOffsetsFixedBufferSize = 128;
-
-static StringOffset *createSortedOffsetsArray(const int offsets[], int numOffsets,
-                                              StringOffset sortedOffsetsFixedBuffer[sortedOffsetsFixedBufferSize])
-{
-    // Allocate the sorted offsets.
-    StringOffset *sortedOffsets;
-    if (numOffsets <= sortedOffsetsFixedBufferSize) {
-        sortedOffsets = sortedOffsetsFixedBuffer;
-    } else {
-        sortedOffsets = new StringOffset [numOffsets];
-    }
-    
-    // Copy offsets.
-    for (int i = 0; i != numOffsets; ++i) {
-        sortedOffsets[i].offset = offsets[i];
-        sortedOffsets[i].locationInOffsetsArray = i;
-    }
-    
-    // Sort them.
-    qsort(sortedOffsets, numOffsets, sizeof(StringOffset), compareStringOffsets);
-    
-    return sortedOffsets;
-}
-
-static void convertCharacterOffsetsToUTF8ByteOffsets(const char *s, int *offsets, int numOffsets)
-{
-    // Allocate buffer.
-    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
-    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
-    
-    // Walk through sorted offsets and string, adjusting all the offests.
-    // Offsets that are off the ends of the string map to the edges of the string.
-    int characterOffset = 0;
-    const char *p = s;
-    for (int oi = 0; oi != numOffsets; ++oi) {
-        const int nextOffset = sortedOffsets[oi].offset;
-        while (*p && characterOffset < nextOffset) {
-            // Skip to the next character.
-            ++characterOffset;
-            do ++p; while ((*p & 0xC0) == 0x80); // if 1 of the 2 high bits is set, it's not the start of a character
-        }
-        offsets[sortedOffsets[oi].locationInOffsetsArray] = p - s;
-    }
-    
-    // Free buffer.
-    if (sortedOffsets != fixedBuffer) {
-        delete [] sortedOffsets;
-    }
-}
-
-static void convertUTF8ByteOffsetsToCharacterOffsets(const char *s, int *offsets, int numOffsets)
-{
-    // Allocate buffer.
-    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
-    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
-    
-    // Walk through sorted offsets and string, adjusting all the offests.
-    // Offsets that are off the end of the string map to the edges of the string.
-    int characterOffset = 0;
-    const char *p = s;
-    for (int oi = 0; oi != numOffsets; ++oi) {
-        const int nextOffset = sortedOffsets[oi].offset;
-        while (*p && (p - s) < nextOffset) {
-            // Skip to the next character.
-            ++characterOffset;
-            do ++p; while ((*p & 0xC0) == 0x80); // if 1 of the 2 high bits is set, it's not the start of a character
-        }
-        offsets[sortedOffsets[oi].locationInOffsetsArray] = characterOffset;
-    }
-    
-    // Free buffer.
-    if (sortedOffsets != fixedBuffer) {
-        delete [] sortedOffsets;
-    }
-}
-
+using KJS::convertUTF16OffsetsToUTF8Offsets;
+using KJS::convertUTF8OffsetsToUTF16Offsets;
 
 class QRegExp::KWQRegExpPrivate
 {
@@ -268,7 +172,7 @@ int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
         
     // first 2 offsets are start and end offsets; 3rd entry is used internally by pcre
     int offsets[3];
-    convertCharacterOffsetsToUTF8ByteOffsets(cstring, &startFrom, 1);
+    convertUTF16OffsetsToUTF8Offsets(cstring, &startFrom, 1);
     int result = pcre_exec(d->regex, NULL, cstring, strlen(cstring), startFrom, 
                            startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
     
@@ -283,7 +187,7 @@ int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
     
     ASSERT(result < 2);
     // 1 means 1 match; 0 means more than one match, first one is recorded in offsets
-    convertUTF8ByteOffsetsToCharacterOffsets(cstring, offsets, 2);
+    convertUTF8OffsetsToUTF16Offsets(cstring, offsets, 2);
     d->lastMatchPos = offsets[0];
     d->lastMatchLength = offsets[1] - offsets[0];
     if (matchLength != NULL) {
