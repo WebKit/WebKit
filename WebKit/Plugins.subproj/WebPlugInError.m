@@ -3,7 +3,7 @@
 //  WebKit
 //
 //  Created by Chris Blumenberg on Fri Nov 01 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
 #import <WebKit/WebKitErrors.h>

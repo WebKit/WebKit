@@ -1,5 +1,11 @@
 2002-11-03  Darin Adler  <darin@apple.com>
 
+        * Plugins.subproj/WebPluginError.h:
+        * Plugins.subproj/WebPluginError.m:
+	Not __MyCompanyName__, but rather Apple Computer.
+
+2002-11-03  Darin Adler  <darin@apple.com>
+
         * Plugins.subproj/WebPlugin.h: Fix comment.
 
         * Plugins.subproj/WebPluginError.m: (-[WebPluginErrorPrivate dealloc]):
