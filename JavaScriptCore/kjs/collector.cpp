@@ -26,167 +26,145 @@
 #include <cxxabi.h>
 #endif
 
-#include "collector.h"
-#include "internal.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#ifdef KJS_DEBUG_MEM
-#include <typeinfo>
-#endif
-
-namespace KJS {
-
-  class CollectorBlock {
-  public:
-    CollectorBlock(int s);
-    ~CollectorBlock();
-    int size;
-    int filled;
-    void** mem;
-    CollectorBlock *prev, *next;
-  };
-
-}; // namespace
+#include <collector.h>
+#include <value.h>
+#include <internal.h>
 
 using namespace KJS;
 
+// tunable parameters
+static const int CELL_SIZE = 64;
+static const int BLOCK_SIZE = (4 * 4096);
+static const int SPARE_EMPTY_BLOCKS = 1;
+static const int MIN_ARRAY_SIZE = 14;
+static const int GROWTH_FACTOR = 2;
+static const int LOW_WATER_FACTOR = 4;
 
-CollectorBlock::CollectorBlock(int s)
-  : size(s),
-    filled(0),
-    prev(0L),
-    next(0L)
-{
-  mem = new void*[size];
-  memset(mem, 0, size * sizeof(void*));
-}
+// derived constants
+static const int WORD_SIZE = sizeof(uint32_t);
+static const int BITS_PER_WORD = WORD_SIZE * 8;
+static const int CELLS_PER_BLOCK = ((BLOCK_SIZE * 8 - 32) / (CELL_SIZE * 8 + 1));
+static const int BITMAP_SIZE = (CELLS_PER_BLOCK / BITS_PER_WORD) + (CELLS_PER_BLOCK % BITS_PER_WORD != 0 ? 1 : 0);
 
-CollectorBlock::~CollectorBlock()
-{
-  delete [] mem;
-  mem = 0L;
-}
 
-CollectorBlock* Collector::root = 0L;
-CollectorBlock* Collector::currentBlock = 0L;
-unsigned long Collector::filled = 0;
-unsigned long Collector::softLimit = KJS_MEM_INCREMENT;
+struct CollectorCell {
+  char memory[CELL_SIZE];
+};
 
-unsigned long Collector::timesFilled = 0;
-unsigned long Collector::increaseLimitAt = 1;
+static const int ALLOCATIONS_PER_COLLECTION = 1000;
 
-bool Collector::memLimitReached = false;
+struct CollectorBlock {
+  CollectorBlock() : usedCells(0) { memset(bitmap, 0, BITMAP_SIZE * WORD_SIZE); }
+  
+  uint32_t bitmap[BITMAP_SIZE];
+  int32_t usedCells;
+  CollectorCell cells[CELLS_PER_BLOCK];
+};
 
-#ifdef KJS_DEBUG_MEM
-bool Collector::collecting = false;
-#endif
+struct CollectorHeap {
+  CollectorBlock **blocks;
+  int numBlocks;
+  int usedBlocks;
+  
+  CollectorCell **oversizeCells;
+  int numOversizeCells;
+  int usedOversizeCells;
 
-#if APPLE_CHANGES
-static int numAllocationsSinceLastCollect = 0;
-#endif
+  int numLiveObjects;
+  int numAllocationsSinceLastCollect;
+};
+
+static CollectorHeap heap = {NULL, 0, 0, NULL, 0, 0, 0, 0};
 
 void* Collector::allocate(size_t s)
 {
   if (s == 0)
     return 0L;
-
-#if APPLE_CHANGES
-  if (++numAllocationsSinceLastCollect >= KJS_MEM_INCREMENT)
+  
+  // collect if needed
+  if (++heap.numAllocationsSinceLastCollect >= ALLOCATIONS_PER_COLLECTION)
     collect();
-#else
-  // Try and deal with memory requirements in a scalable way. Simple scripts
-  // should only require small amounts of memory, but for complex scripts we don't
-  // want to end up running the garbage collector hundreds of times a second.
-  if (filled >= softLimit) {
-    timesFilled++;
-    collect();
+  
+  heap.numLiveObjects++;
 
-    if (filled >= softLimit && softLimit < KJS_MEM_LIMIT) {
-      // Even after collection we are still using more than the limit, so increase
-      // the limit
-      softLimit *= 2;
+  if (heap.numLiveObjects >= KJS_MEM_LIMIT) {
+    // fprintf(stderr,"Out of memory");
+  }
+
+
+  if (s > (unsigned)CELL_SIZE) {
+    // oversize allocator
+    if (heap.usedOversizeCells == heap.numOversizeCells) {
+      heap.numOversizeCells = MAX(MIN_ARRAY_SIZE, heap.numOversizeCells * GROWTH_FACTOR);
+      heap.oversizeCells = (CollectorCell **)realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
     }
-    else if (timesFilled == increaseLimitAt && increaseLimitAt < 128) {
-      // The allowed memory limit keeps getting reached (lots of objects created
-      // and deleted). Increase it a bit so GC gets run less often.
-      timesFilled = 0;
-      softLimit *= 2;
-      increaseLimitAt *= 2;
+    
+    void *newCell = malloc(s);
+    heap.oversizeCells[heap.usedOversizeCells] = (CollectorCell *)newCell;
+    heap.usedOversizeCells++;
+    
+    return (void *)newCell;
+  }
+  
+  // slab allocator
+  
+  CollectorBlock *targetBlock = NULL;
+  
+  // try to find free space in an existing block
+  for (int i = 0; i < heap.usedBlocks; i++) {
+    if (heap.blocks[i]->usedCells < CELLS_PER_BLOCK) {
+      targetBlock = heap.blocks[i];
+      break;
     }
   }
-#endif
-
-  void *m = malloc(s);
-#ifdef KJS_DEBUG_MEM
-  //fprintf( stderr, "allocate: size=%d valueimp=%p\n",s,m);
-#endif
-
-  // VI_CREATED and VI_GCALLOWED being unset ensure that value
-  // is protected from GC before any constructors are run
-  static_cast<ValueImp*>(m)->_flags = 0;
-
-  if (!root) {
-    root = new CollectorBlock(BlockSize);
-    currentBlock = root;
+  
+  if (targetBlock == NULL) {
+    // didn't find one, need to allocate a new block
+    
+    if (heap.usedBlocks == heap.numBlocks) {
+      heap.numBlocks = MAX(MIN_ARRAY_SIZE, heap.numBlocks * GROWTH_FACTOR);
+      heap.blocks = (CollectorBlock **)realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+    }
+    
+    targetBlock = new CollectorBlock();
+    heap.blocks[heap.usedBlocks] = targetBlock;
+    heap.usedBlocks++;
   }
-
-  CollectorBlock *block = currentBlock;
-  if (!block)
-    block = root;
-
-  // search for a block with space left
-  while (block->next && block->filled == block->size)
-    block = block->next;
-
-  if (block->filled >= block->size) {
-#ifdef KJS_DEBUG_MEM
-    //fprintf( stderr, "allocating new block of size %d\n", block->size);
-#endif
-    CollectorBlock *tmp = new CollectorBlock(BlockSize);
-    block->next = tmp;
-    tmp->prev = block;
-    block = tmp;
+  
+  // find a free spot in the block
+  for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+    uint32_t word = targetBlock->bitmap[wordInBitmap];
+    for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+      if ((word & (1 << bitInWord)) == 0) {
+	int cellPos = BITS_PER_WORD * wordInBitmap + bitInWord;
+	if (cellPos < CELLS_PER_BLOCK) {
+	  targetBlock->bitmap[wordInBitmap] |= (1 << bitInWord);
+	  targetBlock->usedCells++;
+	  return (void *)(targetBlock->cells + cellPos);
+	}
+      }
+    }
   }
-  currentBlock = block;
-  // look for a free spot in the block
-  void **r = block->mem;
-  while (*r)
-    r++;
-  *r = m;
-  filled++;
-  block->filled++;
+  // unreachable, if the free count wasn't 0 there has to be a free
+  // cell in the block
+  assert(false);
 
-  if (softLimit >= KJS_MEM_LIMIT) {
-    memLimitReached = true;
-    fprintf(stderr,"Out of memory");
-  }
-
-  return m;
+  return false;
 }
 
-/**
- * Mark-sweep garbage collection.
- */
 bool Collector::collect()
 {
-#ifdef KJS_DEBUG_MEM
-  fprintf(stderr,"Collector::collect()\n");
-#endif
   bool deleted = false;
   // MARK: first unmark everything
-  CollectorBlock *block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    assert(r);
-    for (int i = 0; i < block->size; i++, r++)
-      if (*r) {
-        (*r)->_flags &= ~ValueImp::VI_MARKED;
-      }
-    block = block->next;
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
+      ((ValueImp *)(heap.blocks[block]->cells + cell))->_flags &= ~ValueImp::VI_MARKED;
+    }
   }
-
+  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
+    ((ValueImp *)heap.oversizeCells[cell])->_flags &= ~ValueImp::VI_MARKED;
+  }
+  
   // mark all referenced objects recursively
   // starting out from the set of root objects
   if (InterpreterImp::s_hook) {
@@ -197,105 +175,126 @@ bool Collector::collect()
       scr = scr->next;
     } while (scr != InterpreterImp::s_hook);
   }
-
+  
   // mark any other objects that we wouldn't delete anyway
-  block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    assert(r);
-    for (int i = 0; i < block->size; i++, r++)
-    {
-      ValueImp *imp = (*r);
-      // Check for created=true, marked=false and (gcallowed=false or refcount>0)
-      if (imp &&
-          (imp->_flags & (ValueImp::VI_CREATED|ValueImp::VI_MARKED)) == ValueImp::VI_CREATED &&
-          ( (imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount ) ) {
-        //fprintf( stderr, "Collector marking imp=%p\n",(void*)imp);
-        imp->mark();
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
+      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	
+	if ((word & (1 << bitInWord)) &&
+	    (imp->_flags & (ValueImp::VI_CREATED|ValueImp::VI_MARKED)) == ValueImp::VI_CREATED &&
+	    ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
+	  imp->mark();
+	}
       }
     }
-    block = block->next;
   }
-
+  
+  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
+    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+    if ((imp->_flags & (ValueImp::VI_CREATED|ValueImp::VI_MARKED)) == ValueImp::VI_CREATED &&
+	((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
+      imp->mark();
+    }
+  }
+  
   // SWEEP: delete everything with a zero refcount (garbage)
-  // 1st step: destruct all objects
-  block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-      int del = 0;
-    for (int i = 0; i < block->size; i++, r++) {
-      ValueImp *imp = (*r);
-      // Can delete if refcount==0, created==true, gcAllowed==true, and marked==false
-      // Make sure to update the test if you add more bits to _flags.
-      if (imp &&
-          !imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
-        // emulate destructing part of 'operator delete()'
-        //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
-        imp->~ValueImp();
-      }
-      if (imp && (imp->_flags & ValueImp::VI_DESTRUCTED) != 0) {
-	free(imp);
-        *r = 0L;
-        del++;
+  
+  int emptyBlocks = 0;
+
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
+      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	
+	if ((word & (1 << bitInWord)) &&
+	    !imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
+	  // emulate destructing part of 'operator delete()'
+	  //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
+	  imp->~ValueImp();
+	  heap.blocks[block]->bitmap[wordInBitmap] &= ~(1 << bitInWord);
+	  heap.blocks[block]->usedCells--;
+	  heap.numLiveObjects--;
+	  deleted = true;
+	}
       }
     }
-    filled -= del;
-    block->filled -= del;
-    if (del)
-      deleted = true;
-    CollectorBlock *next = block->next;
-    if (block->filled == 0) {
-      if (block->prev)
-        block->prev->next = next;
-      if (block == root)
-        root = next;
-      if (next)
-        next->prev = block->prev;
-      if (block == currentBlock) // we don't want a dangling pointer
-        currentBlock = 0L;
-      assert(block != root);
-      delete block;
+
+    if (heap.blocks[block]->usedCells == 0) {
+      emptyBlocks++;
+      if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
+	delete heap.blocks[block];
+
+	// swap with the last block so we compact as we go
+	heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
+	heap.usedBlocks--;
+	block--; // Don't move forward a step in this case
+
+	if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
+	  heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
+	  heap.blocks = (CollectorBlock **)realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+	}
+      } 
     }
-    block = next;
   }
 
-#if APPLE_CHANGES
-  numAllocationsSinceLastCollect = 0;
-#endif
 
-#if 0
-  // This is useful to track down memory leaks
-  static int s_count = 0;
-  fprintf(stderr, "Collector done (was run %d)\n",s_count);
-  if (s_count++ % 50 == 2)
-    finalCheck();
-#endif
+  
+  int cell = 0;
+  while (cell < heap.usedOversizeCells) {
+    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+    
+    if (!imp->refcount && 
+	imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
+      
+      imp->~ValueImp();
+      free((void *)imp);
+
+      // swap with the last oversize cell so we compact as we go
+      heap.oversizeCells[cell] = heap.oversizeCells[heap.usedOversizeCells - 1];
+
+      heap.usedOversizeCells--;
+      deleted = true;
+      heap.numLiveObjects--;
+
+      if (heap.numOversizeCells > MIN_ARRAY_SIZE && heap.usedOversizeCells < heap.numOversizeCells / LOW_WATER_FACTOR) {
+	heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
+	heap.oversizeCells = (CollectorCell **)realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
+      }
+
+    } else {
+      cell++;
+    }
+  }
+  
+  // possibly free some completely empty collector blocks ?
+  // compact array of collector blocks
+  
+  heap.numAllocationsSinceLastCollect = 0;
+  
   return deleted;
+}
+
+int Collector::size() 
+{
+  return heap.numLiveObjects; 
+}
+
+bool Collector::outOfMemory() 
+{
+  return heap.numLiveObjects >= KJS_MEM_LIMIT;
 }
 
 #ifdef KJS_DEBUG_MEM
 void Collector::finalCheck()
 {
-  CollectorBlock *block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    for (int i = 0; i < block->size; i++, r++) {
-      if (*r ) {
-        fprintf( stderr, "Collector::finalCheck() still having ValueImp %p (%s)  [marked:%d gcAllowed:%d created:%d refcount:%d]\n",
-                 (void*)(*r), typeid( **r ).name(),
-                 (bool)((*r)->_flags & ValueImp::VI_MARKED),
-                 (bool)((*r)->_flags & ValueImp::VI_GCALLOWED),
-                 (bool)((*r)->_flags & ValueImp::VI_CREATED),
-                 (*r)->refcount);
-      }
-    }
-    block = block->next;
-  }
 }
 #endif
 
 #if APPLE_CHANGES
-
 int Collector::numInterpreters()
 {
   int count = 0;
@@ -312,38 +311,54 @@ int Collector::numInterpreters()
 int Collector::numGCNotAllowedObjects()
 {
   int count = 0;
-  CollectorBlock *block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    assert(r);
-    for (int i = 0; i < block->size; i++, r++)
-    {
-      ValueImp *imp = *r;
-      if (imp && (imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
-        ++count;
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
+      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	
+	if ((word & (1 << bitInWord)) &&
+	    (imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
+	  ++count;
+	}
       }
     }
-    block = block->next;
   }
+  
+  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
+    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+      if ((imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
+        ++count;
+      }
+  }
+
   return count;
 }
 
 int Collector::numReferencedObjects()
 {
   int count = 0;
-  CollectorBlock *block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    assert(r);
-    for (int i = 0; i < block->size; i++, r++)
-    {
-      ValueImp *imp = *r;
-      if (imp && imp->refcount) {
-        ++count;
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
+      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	
+	if ((word & (1 << bitInWord)) &&
+	    imp->refcount == 0) {
+	  ++count;
+	}
       }
     }
-    block = block->next;
   }
+  
+  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
+    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+      if (imp->refcount == 0) {
+        ++count;
+      }
+  }
+
   return count;
 }
 
@@ -351,27 +366,40 @@ CFSetRef Collector::liveObjectClasses()
 {
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
 
-  CollectorBlock *block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    assert(r);
-    for (int i = 0; i < block->size; i++, r++)
-   {
-      ValueImp *imp = *r;
-      if (imp != NULL) {
-	const char *mangled_name = typeid(*imp).name();
-	int status;
-	char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
-
-        CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
-	free(demangled_name);
-	CFSetAddValue(classes, className);
-	CFRelease(className);
+  for (int block = 0; block < heap.usedBlocks; block++) {
+    for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
+      uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
+      for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	
+	if (word & (1 << bitInWord)) {
+	  const char *mangled_name = typeid(*imp).name();
+	  int status;
+	  char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
+	  
+	  CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+	  free(demangled_name);
+	  CFSetAddValue(classes, className);
+	  CFRelease(className);
+	}
       }
     }
-    block = block->next;
   }
+  
+  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
+    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+
+    const char *mangled_name = typeid(*imp).name();
+    int status;
+    char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
+    
+    CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+    free(demangled_name);
+    CFSetAddValue(classes, className);
+    CFRelease(className);
+  }
+
   return classes;
 }
 
-#endif // APPLE_CHANGES
+#endif

@@ -23,40 +23,15 @@
 #ifndef _KJSCOLLECTOR_H_
 #define _KJSCOLLECTOR_H_
 
-// KJS_MEM_LIMIT and KJS_MEM_INCREMENT can be tweaked to adjust how the
-// garbage collector allocates memory. KJS_MEM_LIMIT is the largest # of objects
-// the collector will allow to be present in memory. Once this limit is reached,
-// a running script will get an "out of memory" exception.
-//
-// KJS_MEM_INCREMENT specifies the amount by which the "soft limit" on memory is
-// increased when the memory gets filled up. The soft limit is the amount after
-// which the GC will run and delete unused objects.
-//
-// If you are debugging seemingly random crashes where an object has been deleted,
-// try setting KJS_MEM_INCREMENT to something small, e.g. 300, to force garbage
-// collection to happen more often, and disable the softLimit increase &
-// out-of-memory testing code in Collector::allocate()
-
-#define KJS_MEM_LIMIT 500000
-#define KJS_MEM_INCREMENT 1000
-
-#include <stdlib.h>
-
-// for DEBUG_*
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-
 #if APPLE_CHANGES
 #if !defined(__OBJC__) && !defined(_COLLECTOR)
 typedef void *CFSetRef;
 #endif
 #endif
 
-namespace KJS {
+#define KJS_MEM_LIMIT 500000
 
-  class CollectorBlock;
+namespace KJS {
 
   /**
    * @short Garbage collector.
@@ -81,36 +56,25 @@ namespace KJS {
      * on each object and freeing the used memory.
      */
     static bool collect();
-    static int size() { return filled; }
-    static bool outOfMemory() { return memLimitReached; }
+    static int size();
+    static bool outOfMemory();
 
 #ifdef KJS_DEBUG_MEM
     /**
      * Check that nothing is left when the last interpreter gets deleted
      */
     static void finalCheck();
-    /**
-     * @internal
-     */
-    static bool collecting;
 #endif
+
 #if APPLE_CHANGES
     static int numInterpreters();
     static int numGCNotAllowedObjects();
     static int numReferencedObjects();
     static CFSetRef liveObjectClasses();
 #endif
-  private:
-    static CollectorBlock* root;
-    static CollectorBlock* currentBlock;
-    static unsigned long filled;
-    static unsigned long softLimit;
-    static unsigned long timesFilled;
-    static unsigned long increaseLimitAt;
-    static bool memLimitReached;
-    enum { BlockSize = 100 };
   };
 
 };
 
-#endif
+
+#endif /* _KJSCOLLECTOR_H_ */

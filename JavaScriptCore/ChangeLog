@@ -1,3 +1,24 @@
+2002-11-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Rewrote garbage collector to make blocks of actual memory instead
+	of blocks of pointers. 7% improvement on JavaScript
+	iBench. There's still lots of room to tune the new GC, this is
+	just my first cut.
+	
+        * kjs/collector.cpp:
+        (Collector::allocate):
+        (Collector::collect):
+        (Collector::size):
+        (Collector::outOfMemory):
+        (Collector::finalCheck):
+        (Collector::numGCNotAllowedObjects):
+        (Collector::numReferencedObjects):
+        (Collector::liveObjectClasses):
+        * kjs/collector.h:
+        * kjs/function.cpp:
+        (ActivationImp::ActivationImp):
+        * kjs/function.h:
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
 	- on the road to killing ActivationImp
