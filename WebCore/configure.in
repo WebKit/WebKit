@@ -202,6 +202,15 @@ fi
 AC_DEFINE_UNQUOTED(_KWQ_IOSTREAM_, 1)
 )
 
+AC_ARG_ENABLE(qt-no-textstream,
+[  --enable-qt-textstream  enables Qt textstreams (default off)],
+if ( test "$enableval" = "no" ); then
+    AC_DEFINE_UNQUOTED(QT_NO_TEXTSTREAM, 1)
+fi
+,
+AC_DEFINE_UNQUOTED(QT_NO_TEXTSTREAM, 1)
+)
+
 AC_ARG_ENABLE(qt-no-datastream,
 [  --enable-qt-datastream  enables Qt datastreams (default off)],
 if ( test "$enableval" = "no" ); then

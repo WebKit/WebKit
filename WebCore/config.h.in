@@ -16,6 +16,10 @@
 #undef _KWQ_IOSTREAM_
 
 /* Define for compiling bootstrap/borrowed Qt environment */
+/* This turns off support for Qt textstreams */
+#undef QT_NO_TEXTSTREAM
+
+/* Define for compiling bootstrap/borrowed Qt environment */
 /* This turns off support for Qt datastreams */
 #undef QT_NO_DATASTREAM
 
