@@ -178,7 +178,6 @@ using khtml::RenderPart;
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     RenderObject *renderer = part->impl->getRenderer();
-    KHTMLView *view = part->impl->getView();
 
 #ifdef DEBUG_DRAWING
     [[NSColor redColor] set];
