@@ -1,3 +1,25 @@
+2004-11-17  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3882212> REGRESSION: Images clipped instead of scaled
+        Fixed <rdar://problem/3884088> Crash terminating image load
+
+        Also added code to turn off color correction for images created
+        via CGImageSources.  This code is currently disabled because CG  
+        can't change the color space of images loaded progressively.
+        Further, according to Dave Hayward, CG will no longer attempt
+        to color correct images that don't have embedded profiles as of
+        Tiger 8A306.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _commonTermination]):
+        (-[WebImageData dealloc]):
+        (-[WebImageData _invalidateImageProperties]):
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageData propertiesAtIndex:]):
+
 2004-11-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3882034> REGRESSION: Context menu incorrect for PDF content

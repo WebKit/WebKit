@@ -12,6 +12,7 @@
 
 #import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
+#import <CoreGraphics/CGColorSpacePrivate.h>
 
 #ifdef USE_CGIMAGEREF
 
@@ -21,6 +22,7 @@ static CFDictionaryRef imageSourceOptions;
 @interface WebImageData (WebInternal)
 - (void)_commonTermination;
 - (void)_invalidateImages;
+- (void)_invalidateImageProperties;
 - (int)_repetitionCount;
 - (float)_frameDuration;
 - (void)_stopAnimation;
@@ -36,27 +38,20 @@ static CFDictionaryRef imageSourceOptions;
     
     [self _invalidateImages];
     
+    [self _invalidateImageProperties];
+    
     if (imageSource)
         CFRelease (imageSource); 
         
     if (animatingRenderers)
         CFRelease (animatingRenderers);
+
+    free (frameDurations);
 }
 
 - (void)dealloc
 {
-    size_t i, num;
-    
-    num = [self numberOfImages];
-    for (i = 0; i < imagePropertiesSize; i++) {
-        CFRelease (imageProperties[i]);
-    }
-    free (imageProperties);
-    
-    free (frameDurations);
-
     [self _commonTermination];
-    
     [super dealloc];
 }
 
@@ -103,6 +98,45 @@ static CFDictionaryRef imageSourceOptions;
     }
 }
 
+- (void)_invalidateImageProperties
+{
+    size_t i;
+    for (i = 0; i < imagePropertiesSize; i++) {
+	if (imageProperties[i])
+	    CFRelease (imageProperties[i]);
+    }
+    free (imageProperties);
+    imageProperties = 0;
+    imagePropertiesSize = 0;
+}
+
+- (CGImageRef)_noColorCorrectionImage:(CGImageRef)image withProperties:(CFDictionaryRef)props;
+{
+#if NO_COLOR_CORRECTION
+    CGColorSpaceRef uncorrectedColorSpace = 0;
+    CGImageRef noColorCorrectionImage = 0;
+
+    if (!CFDictionaryGetValue (props, kCGImagePropertyProfileName)) {
+	CFStringRef colorModel = CFDictionaryGetValue (props, kCGImagePropertyColorModel);
+	
+	if (colorModel) {
+	    if (CFStringCompare (colorModel, (CFStringRef)@"RGB", 0) == kCFCompareEqualTo)
+		uncorrectedColorSpace = CGColorSpaceCreateDisplayRGB();
+	    else if (CFStringCompare (colorModel, (CFStringRef)@"Gray", 0) == kCFCompareEqualTo)
+		uncorrectedColorSpace = CGColorSpaceCreateDisplayGray();
+	}
+	
+	if (uncorrectedColorSpace) {
+	    noColorCorrectionImage = CGImageCreateCopyWithColorSpace (image, uncorrectedColorSpace);
+	    CFRelease (uncorrectedColorSpace);
+	}
+    }
+    return noColorCorrectionImage;
+#else
+    return 0;
+#endif
+}
+	    
 - (CGImageRef)imageAtIndex:(size_t)index
 {
     size_t num = [self numberOfImages];
@@ -146,6 +180,18 @@ static CFDictionaryRef imageSourceOptions;
             if (images[index] == 0)
                 ERROR ("unable to create image at index %d, containerStatus %d, image status %d", (int)index, containerStatus, imageStatus);
         }
+	
+#if NO_COLOR_CORRECTION
+	if (imageStatus >= kCGImageStatusIncomplete) {
+	    CGImageRef noColorCorrectionImage = [self _noColorCorrectionImage:images[index]
+						withProperties:[self propertiesAtIndex:index]];
+	    if (noColorCorrectionImage) {
+		CFRelease (images[index]);
+		images[index] = noColorCorrectionImage;
+	    }
+	}
+#endif
+	
         return images[index];
     }
     return 0;
@@ -161,7 +207,7 @@ static CFDictionaryRef imageSourceOptions;
     CFDataRef data = CFDataCreate (NULL, bytes, length);
     CGImageSourceUpdateData (imageSource, data, isComplete);
     CFRelease (data);
-    
+
     // Always returns YES because we can't rely on status.  See 3827851
     //CGImageSourceStatus status = CGImageSourceGetStatus(imageSource);
     //
@@ -170,7 +216,7 @@ static CFDictionaryRef imageSourceOptions;
 }
 
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
-{
+{    
     CGImageRef image = [self imageAtIndex:index];
     
     if (!image)
@@ -178,14 +224,16 @@ static CFDictionaryRef imageSourceOptions;
 
     CGContextSaveGState (aContext);
 
-    float w = CGImageGetWidth(image);
+    //float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
 
     // Is the amount of available bands less than what we need to draw?  If so,
     // clip.
+    BOOL clipping = NO;
     if (h < fr.size.height) {
 	fr.size.height = h;
 	ir.size.height = h;
+	clipping = YES;
     }
     
     // Flip the coords.
@@ -199,7 +247,10 @@ static CFDictionaryRef imageSourceOptions;
     
     // If we're drawing a sub portion of the image then create
     // a image for the sub portion and draw that.
-    if (fr.size.width != w || fr.size.height != h) {
+    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
+    if (fr.origin.x != 0 || fr.origin.y != 0 || 
+	fr.size.width != ir.size.width || fr.size.height != fr.size.height ||
+	clipping) {
         image = CGImageCreateWithImageInRect (image, fr);
         if (image) {
             CGContextDrawImage (aContext, ir, image);
@@ -332,13 +383,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     // Number of images changed!
     if (imagePropertiesSize && num > imagePropertiesSize) {
         // Clear cache.
-        size_t i;
-        for (i = 0; i < imagePropertiesSize; i++) {
-            CFRelease (imageProperties[i]);
-        }
-        free (imageProperties);
-        imageProperties = 0;
-        imagePropertiesSize = 0;
+	[self _invalidateImageProperties];
     }
     
     if (imageProperties == 0 && num) {
