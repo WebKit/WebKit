@@ -196,13 +196,27 @@ private:
 
 // --------------------------------
 
-static int matchFunc(const char* URI)
+static int globalDescriptor = 0;
+
+static int matchFunc(const char* uri)
 {
     return 1; // Match everything.
 }
 
-static void* openFunc(const char * URI) {
-    return NULL; // Don't ever allow the open.
+static void* openFunc(const char * uri) {
+    return &globalDescriptor;
+}
+
+static int readFunc(void* context, char* buffer, int len)
+{
+    // Always just do 0-byte reads
+    return 0;
+}
+
+static int writeFunc(void* context, const char* buffer, int len)
+{
+    // Always just do 0-byte writes
+    return 0;
 }
 
 static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *userData, const char* uri = NULL)
@@ -210,8 +224,8 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
     static bool didInit = false;
     if (!didInit) {
         xmlInitParser();
-        xmlRegisterInputCallbacks(matchFunc, openFunc, NULL, NULL);
-        xmlRegisterOutputCallbacks(matchFunc, openFunc, NULL, NULL);
+        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, NULL);
+        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, NULL);
         didInit = true;
     }
 
@@ -695,7 +709,18 @@ bool XMLTokenizer::isWaitingForScripts()
 #ifdef KHTML_XSLT
 void XMLTokenizer::setTransformSource(DocumentImpl* doc)
 {
-    doc->setTransformSource(m_xmlCode);
+    // Time to spin up a new parse and save the xmlDocPtr.
+    // Parse in a single chunk into an xmlDocPtr
+    // FIXME: Hook up error handlers so that a failure to parse the main document results in
+    // good error messages.
+    const QChar BOM(0xFEFF);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char *>(m_xmlCode.unicode()),
+                                        m_xmlCode.length() * sizeof(QChar),
+                                        doc->URL().ascii(),
+                                        BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
+                                        XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
+    doc->setTransformSource(sourceDoc);
 }
 #endif
 

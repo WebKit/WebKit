@@ -448,6 +448,18 @@ bool ProcessingInstructionImpl::checkStyleSheet()
                 if (m_localHref)
                     m_localHref->ref();
 #ifdef KHTML_XSLT
+                // We need to make a synthetic XSLStyleSheetImpl that is embedded.  It needs to be able
+                // to kick off import/include loads that can hang off some parent sheet.
+                if (m_isXSL) {
+                    if (m_sheet)
+                        m_sheet->deref();
+                    XSLStyleSheetImpl* localSheet = new XSLStyleSheetImpl(this, m_localHref, true);
+                    localSheet->setDocument((xmlDocPtr)getDocument()->transformSource());
+                    localSheet->ref();
+                    localSheet->loadChildSheets();
+                    m_sheet = localSheet;
+                    m_loading = false;
+                }                    
                 return !m_isXSL;
 #endif
             }

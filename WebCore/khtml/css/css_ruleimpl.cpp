@@ -195,7 +195,7 @@ void CSSImportRuleImpl::init()
       // loaded (even if our subresources haven't), so if we have stylesheet after
       // checking the cache, then we've clearly loaded. -dwh
       if (!m_styleSheet)
-      m_loading = true;
+          m_loading = true;
     }
 }
 

@@ -1,3 +1,58 @@
+2004-08-19  David Hyatt  <hyatt@apple.com>
+
+	Make XSLT imports/includes work.  This code has to be turned off until the newer version of libxslt is
+	available.
+	
+        Reviewed by kocienda
+
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSImportRuleImpl::init):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::applyXSLTransform):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::setTransformSource):
+        (DOM::DocumentImpl::transformSource):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::matchFunc):
+        (khtml::openFunc):
+        (khtml::readFunc):
+        (khtml::writeFunc):
+        (khtml::createQStringParser):
+        (khtml::XMLTokenizer::setTransformSource):
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLStyleSheetImpl::XSLStyleSheetImpl):
+        (DOM::XSLStyleSheetImpl::~XSLStyleSheetImpl):
+        (DOM::XSLStyleSheetImpl::isLoading):
+        (DOM::XSLStyleSheetImpl::clearDocuments):
+        (DOM::XSLStyleSheetImpl::parseString):
+        (DOM::XSLStyleSheetImpl::loadChildSheets):
+        (DOM::XSLStyleSheetImpl::loadChildSheet):
+        (DOM::XSLImportRuleImpl::parentStyleSheet):
+        (DOM::XSLStyleSheetImpl::compileStyleSheet):
+        (DOM::XSLStyleSheetImpl::locateStylesheetSubResource):
+        (DOM::XSLImportRuleImpl::XSLImportRuleImpl):
+        (DOM::XSLImportRuleImpl::~XSLImportRuleImpl):
+        (DOM::XSLImportRuleImpl::setStyleSheet):
+        (DOM::XSLImportRuleImpl::isLoading):
+        (DOM::XSLImportRuleImpl::loadSheet):
+        * khtml/xsl/xsl_stylesheetimpl.h:
+        (DOM::XSLStyleSheetImpl::setOwnerDocument):
+        (DOM::XSLStyleSheetImpl::setDocument):
+        (DOM::XSLStyleSheetImpl::markAsProcessed):
+        (DOM::XSLStyleSheetImpl::processed):
+        (DOM::XSLImportRuleImpl::href):
+        (DOM::XSLImportRuleImpl::styleSheet):
+        (DOM::XSLImportRuleImpl::isImportRule):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::m_sourceDocument):
+        (DOM::stylesheetLoadFunc):
+        (DOM::XSLTProcessorImpl::transformDocument):
+        * khtml/xsl/xslt_processorimpl.h:
+
 === Safari-158 ===
 
 2004-08-18  Trey Matteson  <trey@apple.com>

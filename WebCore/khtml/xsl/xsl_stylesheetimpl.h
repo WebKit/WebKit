@@ -25,6 +25,7 @@
 #ifdef KHTML_XSLT
 
 #include "css/css_stylesheetimpl.h"
+#include "misc/loader.h"
 
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -33,30 +34,74 @@
 
 namespace DOM {
 
+class XSLImportRuleImpl;
+    
 class XSLStyleSheetImpl : public StyleSheetImpl
 {
 public:
-    XSLStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString());
-    XSLStyleSheetImpl(XSLStyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
+    XSLStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString(), bool embedded = false);
+    XSLStyleSheetImpl(XSLImportRuleImpl* parentImport, DOM::DOMString href = DOMString());
     ~XSLStyleSheetImpl();
     
     virtual bool isXSLStyleSheet() const { return true; }
+
     virtual DOM::DOMString type() const { return "text/xml"; }
 
     virtual bool parseString(const DOMString &string, bool strict = true);
     
     virtual bool isLoading();
     virtual void checkLoaded();
-    
+
+    void loadChildSheets();
+    void loadChildSheet(const QString& href);
+
+    xsltStylesheetPtr compileStyleSheet();
+
     khtml::DocLoader *docLoader();
+
     DocumentImpl* ownerDocument() { return m_ownerDocument; }
+    void setOwnerDocument(DocumentImpl* doc) { m_ownerDocument = doc; }
 
     xmlDocPtr document() { return m_stylesheetDoc; }
-    void clearDocument() { m_stylesheetDoc = 0; }
+    void setDocument(xmlDocPtr doc) { m_stylesheetDoc = doc; }
+
+    void clearDocuments();
+
+    xmlDocPtr locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri);
+    
+    void markAsProcessed() { m_processed = true; }
+    bool processed() const { return m_processed; }
 
 protected:
     DocumentImpl* m_ownerDocument;
     xmlDocPtr m_stylesheetDoc;
+    bool m_embedded;
+    bool m_processed;
+};
+
+class XSLImportRuleImpl : public khtml::CachedObjectClient, public StyleBaseImpl
+{
+public:
+    XSLImportRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &href);
+    virtual ~XSLImportRuleImpl();
+    
+    DOM::DOMString href() const { return m_strHref; }
+    XSLStyleSheetImpl* styleSheet() const { return m_styleSheet; }
+    
+    virtual bool isImportRule() { return true; }
+    XSLStyleSheetImpl* parentStyleSheet() const;
+    
+    // from CachedObjectClient
+    virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
+    
+    bool isLoading();
+    void loadSheet();
+    
+protected:
+    DOMString m_strHref;
+    XSLStyleSheetImpl* m_styleSheet;
+    khtml::CachedXSLStyleSheet* m_cachedSheet;
+    bool m_loading;
 };
 
 }

@@ -29,6 +29,7 @@
 #include "khtml_part.h"
 
 #include <libxslt/xsltutils.h>
+#include <libxslt/documents.h>
 #include <libxslt/imports.h>
 
 using namespace khtml;
@@ -36,14 +37,13 @@ using namespace DOM;
 
 namespace DOM {
     
-XSLTProcessorImpl::XSLTProcessorImpl(XSLStyleSheetImpl* sheet, DocumentImpl* source, bool embedded)
+XSLTProcessorImpl::XSLTProcessorImpl(XSLStyleSheetImpl* sheet, DocumentImpl* source)
 :m_stylesheet(sheet), m_sourceDocument(source)
 {
     if (m_stylesheet)
         m_stylesheet->ref();
     if (m_sourceDocument)
         m_sourceDocument->ref();
-    m_embedded = embedded;
 }
 
 XSLTProcessorImpl::~XSLTProcessorImpl()
@@ -54,36 +54,51 @@ XSLTProcessorImpl::~XSLTProcessorImpl()
         m_sourceDocument->deref();
 }
 
+#ifdef NOT_YET_READY
+static XSLStyleSheetImpl* globalSheet = 0;
+static xmlDocPtr stylesheetLoadFunc(const xmlChar* uri,
+                                    xmlDictPtr dict,
+                                    int options,
+                                    void* ctxt,
+                                    xsltLoadType type)
+{
+    if (type != XSLT_LOAD_STYLESHEET)
+        return NULL; // FIXME: Add support for XSLT_LOAD_DOCUMENT for the document() function.
+    
+    if (!globalSheet)
+        return NULL;
+    return globalSheet->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
+}
+#endif
+
 DocumentImpl* XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
 {
     // FIXME: Right now we assume |doc| is unparsed, but if it has been parsed we will need to serialize it
     // and then feed that resulting source to libxslt.
     m_resultOutput = "";
 
-    xsltStylesheetPtr sheet = NULL;
-    if (!m_embedded) {
-        if (!m_stylesheet || !m_stylesheet->document()) return 0;
-        sheet = xsltParseStylesheetDoc(m_stylesheet->document());
-        if (!sheet) return 0;
-        m_stylesheet->clearDocument();
-    }
+    if (!m_stylesheet || !m_stylesheet->document()) return 0;
+        
+#ifdef NOT_YET_READY
+    globalSheet = m_stylesheet;
+    xsltSetLoaderFunc(stylesheetLoadFunc);
+#endif
 
-    // Parse in a single chunk into an xmlDocPtr
-    const QChar BOM(0xFEFF);
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
-    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char *>(doc->transformSource().unicode()),
-                  doc->transformSource().length() * sizeof(QChar),
-                  doc->URL().ascii(),
-                  BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
-                  XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
-    if (m_embedded)
-        // Attempt to obtain the stylesheet from within our parsed source document.
-        sheet = xsltLoadStylesheetPI(sourceDoc);
+    xsltStylesheetPtr sheet = m_stylesheet->compileStyleSheet();
 
+#ifdef NOT_YET_READY
+    globalSheet = 0;
+    xsltSetLoaderFunc(0);
+#endif
+
+    if (!sheet) return 0;
+    m_stylesheet->clearDocuments();
+  
+    // Get the parsed source document.
+    xmlDocPtr sourceDoc = (xmlDocPtr)doc->transformSource();
     xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, NULL);
     DocumentImpl* result = documentFromXMLDocPtr(resultDoc, sheet);
     xsltFreeStylesheet(sheet);
-    xmlFreeDoc(sourceDoc);
     return result;
 }
 
