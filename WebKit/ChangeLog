@@ -1,3 +1,16 @@
+2004-06-02  Richard Williamson   <rjw@apple.com>
+
+		conformsToProtocol:@protocol(WebPlugin) becomes
+		respondsToSelector:@selector(webPlugInInitialize) because
+		protocol was changed to an informal protocol.
+		
+        Reviewed by Kevin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:URL:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]):
+
 2004-06-01  Trey Matteson  <trey@apple.com>
 
 	First cut at source side of DHTML dragging.  Most of the work is in WebCore.
