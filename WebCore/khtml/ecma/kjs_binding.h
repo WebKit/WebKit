@@ -90,19 +90,19 @@ namespace KJS {
     ScriptInterpreter( const Object &global, KHTMLPart* part );
     virtual ~ScriptInterpreter();
 
-    DOMObject* getDOMObject( void* objectHandle ) const {
-      return m_domObjects[objectHandle];
+    static DOMObject* getDOMObject( void* objectHandle ) {
+      return domObjects()[objectHandle];
     }
-    void putDOMObject( void* objectHandle, DOMObject* obj ) {
-      m_domObjects.insert( objectHandle, obj );
+    static void putDOMObject( void* objectHandle, DOMObject* obj ) {
+      domObjects().insert( objectHandle, obj );
     }
-    bool deleteDOMObject( void* objectHandle ) {
-      return m_domObjects.remove( objectHandle );
+    static bool deleteDOMObject( void* objectHandle ) {
+      return domObjects().remove( objectHandle );
     }
 
-    DOMObject* getDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle ) const;
-    void putDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle, DOMObject *obj );
-    bool deleteDOMObjectsForDocument( DOM::DocumentImpl* documentHandle );
+    static DOMObject* getDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle );
+    static void putDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle, DOMObject *obj );
+    static bool deleteDOMObjectsForDocument( DOM::DocumentImpl* documentHandle );
 
     /**
      * Static method. Makes all interpreters forget about the object
@@ -134,8 +134,9 @@ namespace KJS {
     
   private:
     KHTMLPart* m_part;
-    QPtrDict<DOMObject> m_domObjects;
-    QPtrDict<QPtrDict<DOMObject> > m_domObjectsPerDocument;
+
+    static QPtrDict<DOMObject> &domObjects();
+    static QPtrDict<QPtrDict<DOMObject> > &domObjectsPerDocument();
 
     DOM::Event *m_evt;
     bool m_inlineCode;

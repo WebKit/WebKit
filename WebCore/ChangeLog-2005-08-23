@@ -1,3 +1,25 @@
+2004-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3685309>: (properties not shared for JS wrappers of same DOM object, accessed from different frames)
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::domObjects):
+        (ScriptInterpreter::domObjectsPerDocument):
+        (ScriptInterpreter::ScriptInterpreter):
+        (ScriptInterpreter::forgetDOMObject):
+        (ScriptInterpreter::getDOMObjectForDocument):
+        (ScriptInterpreter::putDOMObjectForDocument):
+        (ScriptInterpreter::deleteDOMObjectsForDocument):
+        (ScriptInterpreter::mark):
+        (ScriptInterpreter::forgetDOMObjectsForDocument):
+        (ScriptInterpreter::updateDOMObjectDocument):
+        * khtml/ecma/kjs_binding.h:
+        (KJS::ScriptInterpreter::getDOMObject):
+        (KJS::ScriptInterpreter::putDOMObject):
+        (KJS::ScriptInterpreter::deleteDOMObject):
+
 2004-06-15  Darin Adler  <darin@apple.com>
 
         - rolled out Ken's fix for <rdar://problem/3672377> assertion failure in AppendNodeCommandImpl::doApply due to non-0 exception code trying to insert a DIV markup string
