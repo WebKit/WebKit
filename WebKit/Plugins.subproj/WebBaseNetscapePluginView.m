@@ -22,6 +22,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebHTTPRequest.h>
+#import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -61,6 +62,12 @@ typedef struct {
 - (void *)notifyData;
 
 @end
+
+@interface NSData (PluginExtras)
+- (BOOL)startsWithBlankLine;
+- (unsigned)locationAfterFirstBlankLine;
+@end
+
 
 @implementation WebBaseNetscapePluginView
 
@@ -1117,24 +1124,26 @@ typedef struct {
     return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
 }
 
--(NPError)postURLNotify:(const char *)URLCString
-                 target:(const char *)cTarget
-                    len:(UInt32)len
-                    buf:(const char *)buf
-                   file:(NPBool)file
-             notifyData:(void *)notifyData
+- (NPError)_postURLNotify:(const char *)URLCString
+                   target:(const char *)target
+                      len:(UInt32)len
+                      buf:(const char *)buf
+                     file:(NPBool)file
+               notifyData:(void *)notifyData
+             allowHeaders:(BOOL)allowHeaders
 {
-    LOG(Plugins, "NPN_PostURLNotify: %s", URLCString);
-
-    if (!len || !buf) {
+    if (!URLCString || !len || !buf) {
         return NPERR_INVALID_PARAM;
     }
     
     NSData *postData = nil;
 
     if (file) {
-        // If we're posting a file, buf is either a file URL or a path string of the file.
+        // If we're posting a file, buf is either a file URL or a path to the file.
         NSString *bufString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, buf, kCFStringEncodingWindowsLatin1);
+        if (!bufString) {
+            return NPERR_INVALID_PARAM;
+        }
         NSURL *fileURL = [NSURL _web_URLWithString:bufString];
         NSString *path;
         if ([fileURL isFileURL]) {
@@ -1142,7 +1151,7 @@ typedef struct {
         } else {
             path = bufString;
         }
-        postData = [NSData dataWithContentsOfFile:path];
+        postData = [NSData dataWithContentsOfFile:[path _web_fixedCarbonPOSIXPath]];
         [bufString release];
         if (!postData) {
             return NPERR_FILE_NOT_FOUND;
@@ -1151,15 +1160,47 @@ typedef struct {
         postData = [NSData dataWithBytes:buf length:len];
     }
 
-    if (!postData) {
+    if ([postData length] == 0) {
         return NPERR_INVALID_PARAM;
     }
 
     WebRequest *request = [self requestWithURLCString:URLCString];
     [request setRequestMethod:@"POST"];
-    [request setRequestData:postData];
     
-    return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
+    if (allowHeaders) {
+        if ([postData startsWithBlankLine]) {
+            postData = [postData subdataWithRange:NSMakeRange(1, [postData length] - 1)];
+        } else {
+            unsigned location = [postData locationAfterFirstBlankLine];
+            if (location != NSNotFound) {
+                // If the blank line is somewhere in the middle of postData, everything before is the header.
+                NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
+                NSDictionary *header = [headerData _web_parseRFC822HeaderFields];
+                if ([header count] > 0) {
+                    [request setHeader:header];
+                }
+                // Everything after the blank line is the actual content of the POST.
+                postData = [postData subdataWithRange:NSMakeRange(location, [postData length] - location)];
+            }
+        }
+        if ([postData length] == 0) {
+            return NPERR_INVALID_PARAM;
+        }
+    }
+
+    [request setRequestData:postData];
+    return [self loadRequest:request inTarget:target withNotifyData:notifyData];
+}
+
+- (NPError)postURLNotify:(const char *)URLCString
+                  target:(const char *)target
+                     len:(UInt32)len
+                     buf:(const char *)buf
+                    file:(NPBool)file
+              notifyData:(void *)notifyData
+{
+    LOG(Plugins, "NPN_PostURLNotify: %s", URLCString);
+    return [self _postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:notifyData allowHeaders:YES];
 }
 
 -(NPError)postURL:(const char *)URLCString
@@ -1169,7 +1210,7 @@ typedef struct {
              file:(NPBool)file
 {
     LOG(Plugins, "NPN_PostURL: %s", URLCString);        
-    return [self postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:NULL];
+    return [self _postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:NULL allowHeaders:NO];
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
@@ -1271,3 +1312,32 @@ typedef struct {
 }
 
 @end
+
+@implementation NSData (PluginExtras)
+
+- (BOOL)startsWithBlankLine
+{
+    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
+}
+
+- (unsigned)locationAfterFirstBlankLine
+{
+    const char *bytes = (const char *)[self bytes];
+    unsigned length = [self length];
+
+    unsigned i;
+    for (i = 0; i < length - 2; i++) {
+        if (bytes[i] == '\n' && (i == 0 || bytes[i+1] == '\n')){
+            i++;
+            while (i < length - 2 && bytes[i] == '\n') {
+                i++;
+            }
+            return i;
+        }
+    }
+    
+    return NSNotFound;
+}
+
+@end
+

@@ -1,3 +1,17 @@
+2003-03-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3199105 - Accept carbon-style file URLs from plug-in POST requests
+	Fixed: 3148767 - POST (aka Flash Remoting) doesn't work from Flash
+
+        Reviewed by kocienda.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]): parse headers, handle carbon POSIX paths
+        (-[WebBaseNetscapePluginView postURLNotify:target:len:buf:file:notifyData:]): call _postURLNotify
+        (-[WebBaseNetscapePluginView postURL:target:len:buf:file:]): call _postURLNotify
+        (-[NSData startsWithBlankLine]): new
+        (-[NSData locationAfterFirstBlankLine]): new
+
 2003-03-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
