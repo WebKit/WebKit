@@ -189,8 +189,10 @@
 {
     // Don't report error before we've called NPP_NewStream
     if(!isFirstChunk){
-        NPError npErr;
-        npErr = NPP_DestroyStream(instance, &npStream, error);
+#ifndef NDEBUG
+        NPError npErr =
+#endif
+        NPP_DestroyStream(instance, &npStream, error);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d", npErr);
     }
 }

@@ -57,12 +57,16 @@
     [self _clearControllerReferences: mainFrame];
 
     [mainFrame reset];
+    
     [mainFrame release];
     [windowContext release];
     [resourceProgressHandler release];
-    [policyHandler release];
-    [backForwardList release];
+    [downloadProgressHandler release];
+    [contextMenuHandler release];
     [defaultContextMenuHandler release];
+    [policyHandler release];
+    [locationChangeHandler release];
+    [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
     [userAgentLock release];

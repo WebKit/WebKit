@@ -417,7 +417,8 @@
 #define DragStartXHysteresis  		2.0
 #define DragStartYHysteresis  		1.0
 
-#define DRAG_LABEL_BORDER	2.0
+#define DRAG_LABEL_BORDER_X		4.0
+#define DRAG_LABEL_BORDER_Y		2.0
 
 - (void)mouseDragged:(NSEvent *)event
 {
@@ -464,44 +465,47 @@
                 NSDictionary *urlAttributes = [NSDictionary dictionaryWithObject:urlFont forKey: NSFontAttributeName];
                 NSSize labelSize = [label sizeWithAttributes: labelAttributes];
                 NSSize imageSize, urlStringSize;
-                imageSize.width += labelSize.width + DRAG_LABEL_BORDER*2;
-                imageSize.height += labelSize.height + DRAG_LABEL_BORDER*2;
+                imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
+                imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y *2;
                 if (drawURLString){
                     urlStringSize = [urlString sizeWithAttributes: urlAttributes];
                     imageSize.height += urlStringSize.height;
                     // Clip the url string to 2.5 times the width of the label.
                     if (urlStringSize.width > 2.5 * labelSize.width){
-                        imageSize.width = (labelSize.width*2.5)+DRAG_LABEL_BORDER*2;
+                        imageSize.width = (labelSize.width * 2.5) + DRAG_LABEL_BORDER_X * 2;
                         clipURLString = YES;
                     }
                     else
-                        imageSize.width = MAX(labelSize.width+DRAG_LABEL_BORDER*2,urlStringSize.width+DRAG_LABEL_BORDER*2);
+                        imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
                 }
                 NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
                 [dragImage lockFocus];
                 [[NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 1.0 alpha: 0.75] set];
                 [NSBezierPath fillRect:NSMakeRect(0, 0, imageSize.width, imageSize.height)];
                 if (drawURLString){
-                    urlString = [WebStringTruncator rightTruncateString: urlString toWidth: imageSize.width-2.0 withFont: urlFont];
-                    [urlString drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER,DRAG_LABEL_BORDER) withAttributes: urlAttributes];
+                    if (clipURLString) {
+                        urlString = [WebStringTruncator rightTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
+                    }
+                    [urlString drawAtPoint: NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y) withAttributes: urlAttributes];
                 }
-                [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER,DRAG_LABEL_BORDER+urlStringSize.height) withAttributes: labelAttributes];
+                [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + urlStringSize.height) withAttributes: labelAttributes];
                 [dragImage unlockFocus];
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
                 [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, WebURLsWithTitlesPboardType, nil] owner:nil];
-                [WebURLsWithTitles writeURLs:[NSArray arrayWithObjects: linkURL, nil] andTitles:[NSArray arrayWithObjects: label, nil] toPasteboard:pasteboard];
+                [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:linkURL] andTitles:[NSArray arrayWithObject:label] toPasteboard:pasteboard];
 
-                NSSize offset;
-                offset.width = 0;
-                offset.height = 0;
+                NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
+                NSSize centerOffset = NSMakeSize(imageSize.width / 2, -imageSize.height / 2);
+                NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
+
                 [self dragImage:dragImage
-                            at:[self convertPoint:[event locationInWindow] fromView:nil]
-                        offset:offset
-                        event:event
-                    pasteboard:pasteboard
-                        source:self
-                    slideBack:NO];
+                             at:imagePoint
+                         offset:centerOffset
+                          event:event
+                     pasteboard:pasteboard
+                         source:self
+                      slideBack:NO];
             }
             else
                 _private->draggedURL = nil;

@@ -22,17 +22,20 @@
 - (void)dealloc
 {
     [path release];
+    [URL release];
+    [super dealloc];
 }
 
 @end
 
 @implementation WebPolicy
+
 - initWithPolicyAction: (WebPolicyAction)action URL:(NSURL *)URL andPath:(NSString *)path;
 {
     [super init];
     _private = [[WebPolicyPrivate alloc] init];
     _private->policyAction = action;
-    _private->path = [path retain];
+    _private->path = [path copy];
     _private->URL = [URL retain];
     return self;
 }
@@ -59,8 +62,9 @@
 
 - (void)_setPath:(NSString *)path
 {
+    NSString *copy = [path copy];
     [_private->path release];
-    _private->path = [path retain];
+    _private->path = copy;
 }
 
 
@@ -106,6 +110,5 @@
 {
     return [[[WebPolicy alloc] initWithPolicyAction:action URL:URL andPath:thePath] autorelease];
 }
-
 
 @end

@@ -48,9 +48,9 @@
     }
     
     _URL = [URL retain];
-    _target = [target retain];
-    _parent = [parent retain];
-    _title = [title retain];
+    _target = [target copy];
+    _parent = [parent copy];
+    _title = [title copy];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
 
     [self _retainIconInDatabase:YES];
@@ -69,6 +69,7 @@
     [_displayTitle release];
     [_icon release];
     [_lastVisitedDate release];
+    [anchor release];
     [_documentState release];
     
     [super dealloc];
@@ -125,7 +126,7 @@
 
 -(void)setURL:(NSURL *)URL
 {
-    if (URL != _URL) {
+    if (!(URL == _URL || [URL isEqual:_URL])) {
         [self _retainIconInDatabase:NO];
         [_URL release];
         _URL = [URL retain];
@@ -136,49 +137,44 @@
 
 -(void)setTitle:(NSString *)title
 {
-    if (title != _title) {
-        [_title release];
-        _title = [title retain];
-    }
+    NSString *copy = [title copy];
+    [_title release];
+    _title = copy;
 }
 
 -(void)setTarget:(NSString *)target
 {
-    if (target != _target) {
-        [_target release];
-        _target = [target retain];
-    }
+    NSString *copy = [target copy];
+    [_target release];
+    _target = copy;
 }
 
 -(void)setParent:(NSString *)parent
 {
-    if (parent != _parent) {
-        [_parent release];
-        _parent = [parent retain];
-    }
+    NSString *copy = [parent copy];
+    [_parent release];
+    _parent = copy;
 }
 
 -(void)setDisplayTitle:(NSString *)displayTitle
 {
-    if (displayTitle != _displayTitle) {
-        [_displayTitle release];
-        _displayTitle = [displayTitle retain];
-    }
+    NSString *copy = [displayTitle copy];
+    [_displayTitle release];
+    _displayTitle = copy;
 }
 
 -(void)setLastVisitedDate:(NSCalendarDate *)date
 {
-    if (date != _lastVisitedDate) {
-        [_lastVisitedDate release];
-        _lastVisitedDate = [date retain];
-    }
+    [date retain];
+    [_lastVisitedDate release];
+    _lastVisitedDate = date;
 }
 
-- (void)setDocumentState: (NSArray *)state;
+- (void)setDocumentState:(NSArray *)state;
 {
-    [state retain];
+    NSArray *copy = [state copy];
     [_documentState release];
-    _documentState = state;
+    _documentState = copy;
 }
 
 - (NSArray *)documentState
@@ -208,9 +204,9 @@
 
 - (void)setAnchor: (NSString *)a
 {
-    [a retain];
+    NSString *copy = [a copy];
     [anchor release];
-    anchor = a;
+    anchor = copy;
 }
 
 

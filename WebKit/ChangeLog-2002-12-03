@@ -1,3 +1,29 @@
+2002-09-06  Darin Adler  <darin@apple.com>
+
+	Fix some minor anomalies and leaks.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURL:target:parent:title:]): Use copy, not retain.
+        (-[WebHistoryItem dealloc]): Release the anchor, fix leak.
+        (-[WebHistoryItem setURL:]): Check for URLs that are equal, not just ==.
+        (-[WebHistoryItem setTitle:]): Copy, not retain.
+        (-[WebHistoryItem setTarget:]): Copy, not retain.
+        (-[WebHistoryItem setParent:]): Copy, not retain.
+        (-[WebHistoryItem setDisplayTitle:]): Copy, not retain.
+        (-[WebHistoryItem setAnchor:]): Copy, not retain.
+        * WebView.subproj/WebControllerPolicyHandler.m:
+        (-[WebPolicyPrivate dealloc]): Release the URL, call super, fix leaks.
+        (-[WebPolicy _setPath:]): Use copy, not retain.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Release downloadProgressHandler,
+	contextMenuHandler, locationChangeHandler, fix leaks.
+
+	Some fun with Richard's new code.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): Center image around mouse instead of
+	putting it up and to the right. Add more X space than Y space.
+
 2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
         
         * WebView.subproj/WebHTMLView.m:
