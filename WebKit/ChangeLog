@@ -1,3 +1,27 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - improved default behaviors in window operations delegate
+
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        (-[WebDefaultWindowOperationsDelegate webViewShowWindowBehindFrontmost:]): Removed unused method.
+        (-[WebDefaultWindowOperationsDelegate webViewCloseWindow:]): Added default implementation, calls close on window.
+        (-[WebDefaultWindowOperationsDelegate webViewFocusWindow:]): Added default implementation, makeKeyAndOrderFront.
+        (-[WebDefaultWindowOperationsDelegate webViewUnfocusWindow:]): Added default implementation, uses _cycleWindowsReversed as needed.
+        (-[WebDefaultWindowOperationsDelegate webViewFirstResponderInWindow:]): Added default implementation, calls firstResponder.
+        (-[WebDefaultWindowOperationsDelegate webView:makeFirstResponderInWindow:]): Added default implementation, calls makeFirstResponder.
+        (-[WebDefaultWindowOperationsDelegate webViewIsResizable:]): Added default implementation, calls showsResizeIndicator.
+        (-[WebDefaultWindowOperationsDelegate webView:setResizable:]): Added default implementation, calls setShowsResizeIndicator.
+        (-[WebDefaultWindowOperationsDelegate webView:setFrame:]): Use display:YES, not display:NO.
+        (-[WebDefaultWindowOperationsDelegate webViewFrame:]): Return NSZeroRect if window is nil instead of random garbage.
+        (-[WebDefaultWindowOperationsDelegate webView:setContentRect:]): Use display:YES, not display:NO.
+        (-[WebDefaultWindowOperationsDelegate webViewContentRect:]): Return NSZeroRect if window is nil instead of random garbage.
+        (-[WebDefaultWindowOperationsDelegate webView: runJavaScriptAlertPanelWithMessage:]): Added a FIXME because we should have a default implementation here.
+        (-[WebDefaultWindowOperationsDelegate webView:runJavaScriptConfirmPanelWithMessage:]): Ditto.
+        (-[WebDefaultWindowOperationsDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:]): Put a default implementation here.
+        (-[WebDefaultWindowOperationsDelegate webView:runOpenPanelForFileButtonWithResultListener:]): Added a FIXME because we should have a default implementation here.
+
 2003-03-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3178058 - Plug-ins are stopped/reloaded when switching tabs

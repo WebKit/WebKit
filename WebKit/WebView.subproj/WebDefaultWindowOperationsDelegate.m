@@ -7,9 +7,13 @@
 #import <WebFoundation/NSURLRequest.h>
 
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
+@interface NSApplication (DeclarationStolenFromAppKit)
+- (void)_cycleWindowsReversed:(BOOL)reversed;
+@end
 
 @implementation WebDefaultWindowOperationsDelegate
 
@@ -29,116 +33,136 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 }
 
 
-- (WebView *)webView: (WebView *)wv createWindowWithRequest:(NSURLRequest *)request;
+- (WebView *)webView: (WebView *)wv createWindowWithRequest:(NSURLRequest *)request
 {
     return nil;
 }
 
-- (void)webViewShowWindow: (WebView *)wv;
+- (void)webViewShowWindow: (WebView *)wv
 {
 }
 
-- (void)webViewShowWindowBehindFrontmost: (WebView *)wv;
+- (void)webViewCloseWindow: (WebView *)wv
 {
+    [[wv window] close];
 }
 
-- (void)webViewCloseWindow: (WebView *)wv;
+- (void)webViewFocusWindow: (WebView *)wv
 {
+    [[wv window] makeKeyAndOrderFront:wv];
 }
 
-- (void)webViewFocusWindow: (WebView *)wv;
+- (void)webViewUnfocusWindow: (WebView *)wv
 {
-}
-
-- (void)webViewUnfocusWindow: (WebView *)wv;
-{
+    if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
+	[NSApp _cycleWindowsReversed:FALSE];
+    }
 }
 
 - (NSResponder *)webViewFirstResponderInWindow: (WebView *)wv;
 {
+    return [[wv window] firstResponder];
+}
+
+- (void)webView: (WebView *)wv makeFirstResponderInWindow:(NSResponder *)responder
+{
+    [[wv window] makeFirstResponder:responder];
+}
+
+- (void)webView: (WebView *)wv setStatusText:(NSString *)text
+{
+}
+
+- (NSString *)webViewStatusText: (WebView *)wv
+{
     return nil;
 }
 
-- (void)webView: (WebView *)wv makeFirstResponderInWindow:(NSResponder *)responder;
+- (void)webView: (WebView *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags
 {
 }
 
-- (void)webView: (WebView *)wv setStatusText:(NSString *)text;
-{
-}
-
-- (NSString *)webViewStatusText: (WebView *)wv;
-{
-    return nil;
-}
-
-- (void)webView: (WebView *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
-{
-}
-
-- (BOOL)webViewAreToolbarsVisible: (WebView *)wv;
+- (BOOL)webViewAreToolbarsVisible: (WebView *)wv
 {
     return NO;
 }
 
-- (void)webView: (WebView *)wv setToolbarsVisible:(BOOL)visible;
+- (void)webView: (WebView *)wv setToolbarsVisible:(BOOL)visible
 {
 }
 
-- (BOOL)webViewIsStatusBarVisible: (WebView *)wv;
+- (BOOL)webViewIsStatusBarVisible: (WebView *)wv
 {
     return NO;
 }
 
-- (void)webView: (WebView *)wv setStatusBarVisible:(BOOL)visible;
+- (void)webView: (WebView *)wv setStatusBarVisible:(BOOL)visible
 {
 }
 
-- (BOOL)webViewIsResizable: (WebView *)wv;
+- (BOOL)webViewIsResizable: (WebView *)wv
 {
-    return NO;
+    return [[wv window] showsResizeIndicator];
 }
 
 - (void)webView: (WebView *)wv setResizable:(BOOL)resizable;
 {
+    // FIXME: This doesn't actually change the resizability of the window,
+    // only visibility of the indicator.
+    [[wv window] setShowsResizeIndicator:resizable];
 }
 
-- (void)webView: (WebView *)wv setFrame:(NSRect)frame;
+- (void)webView: (WebView *)wv setFrame:(NSRect)frame
 {
-    [[wv window] setFrame:frame display:NO];
+    [[wv window] setFrame:frame display:YES];
 }
 
-- (NSRect)webViewFrame: (WebView *)wv;
+- (NSRect)webViewFrame: (WebView *)wv
 {
-    return [[wv window] frame];
+    NSWindow *window = [wv window];
+    return window == nil ? NSZeroRect : [window frame];
 }
 
 - (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect
 {
-    [[webView window] setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]] display:NO];
+    [[webView window] setFrame:[NSWindow frameRectForContentRect:contentRect styleMask:[[webView window] styleMask]] display:YES];
 }
 
 - (NSRect)webViewContentRect:(WebView *)webView
 {
-    return [NSWindow contentRectForFrameRect:[[webView window] frame] styleMask:[[webView window] styleMask]];
+    NSWindow *window = [webView window];
+    return window == nil ? NSZeroRect : [NSWindow contentRectForFrameRect:[window frame] styleMask:[window styleMask]];
 }
 
-- (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
+    // FIXME: We want a default here, but that would add localized strings.
 }
 
 - (BOOL)webView: (WebView *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
+    // FIXME: We want a default here, but that would add localized strings.
     return NO;
 }
 
 - (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
 {
-    return nil;
+    WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
+    [panel showWindow:nil];
+    NSString *result;
+    if ([NSApp runModalForWindow:[panel window]]) {
+        result = [panel text];
+    } else {
+	result = nil;
+    }
+    [[panel window] close];
+    [panel release];
+    return result;
 }
 
 - (void)webView: (WebView *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
+    // FIXME: We want a default here, but that would add localized strings.
 }
 
 @end
