@@ -23,46 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQ_ARRAY_IMPL_H
-#define KWQ_ARRAY_IMPL_H
+#import "KWQFormData.h"
 
-#include "KWQRefPtr.h"
-#include "KWQDef.h"
-#include <stddef.h>
+#import "KWQAssertions.h"
+#import "formdata.h"
 
-class KWQArrayImpl
+using khtml::FormData;
+using khtml::FormDataElement;
+
+NSArray *arrayFromFormData(const FormData &d)
 {
- public:
-    KWQArrayImpl(size_t itemSize, size_t numItems = 0);
-    ~KWQArrayImpl();
-    
-    KWQArrayImpl(const KWQArrayImpl &);
-    KWQArrayImpl &operator=(const KWQArrayImpl &);
-    
-    void *at(size_t pos) const { return &d->data[pos * d->itemSize]; }
-
-    void *data() const;
-    uint size() const;
-    bool resize(size_t size);
-    void duplicate(const void *data, size_t size);
-    bool fill(const void *item, int size = -1);
-    void detach();
-    
-    bool operator==(const KWQArrayImpl &) const;
-
- private:
-    class KWQArrayPrivate
-    {
-    public:	
-	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
-	~KWQArrayPrivate();
-	size_t numItems;
-	size_t itemSize;
-	char *data;
-	int refCount;
-    };
-
-    KWQRefPtr<KWQArrayPrivate> d;
-};
-
-#endif
+    NSMutableArray *a = [NSMutableArray arrayWithCapacity:d.m_elements.count()];
+    for (QValueListConstIterator<FormDataElement> it = d.m_elements.begin(); it != d.m_elements.end(); ++it) {
+        const FormDataElement &e = *it;
+        if (e.m_type == FormDataElement::data) {
+            [a addObject:[NSData dataWithBytes:e.m_data.data() length:e.m_data.size()]];
+        } else {
+            ASSERT(e.m_type == FormDataElement::encodedFile);
+            [a addObject:e.m_filename.getNSString()];
+        }
+    }
+    return a;
+}

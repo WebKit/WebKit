@@ -101,13 +101,19 @@
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
 				       withURL:(NSURL *)URL
 				 customHeaders:(NSDictionary *)customHeaders
-				      postData:(NSData *)data
+				      postData:(NSArray *)postData
 				      referrer:(NSString *)referrer
 				 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+
     [newRequest setHTTPMethod:@"POST"];
-    [newRequest setHTTPBody:data];
+
+    // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
+    if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
+        [newRequest setHTTPBody:(NSData *)[postData objectAtIndex:0]];
+    }
+
     WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 

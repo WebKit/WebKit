@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +109,10 @@ public:
     Iterator remove(Iterator iter) { return impl.removeIterator(iter.impl); }
     Iterator fromLast() { return impl.fromLast(); }
 
-    const T& first() const { return ((QValueListNode<T> *)impl.firstNode())->value; }
-    const T& last() const { return ((QValueListNode<T> *)impl.lastNode())->value; }
+    T& first() { return static_cast<QValueListNode<T> *>(impl.firstNode())->value; }
+    const T& first() const { return static_cast<QValueListNode<T> *>(impl.firstNode())->value; }
+    T& last() { return static_cast<QValueListNode<T> *>(impl.lastNode())->value; }
+    const T& last() const { return static_cast<QValueListNode<T> *>(impl.lastNode())->value; }
 
     Iterator begin() { return impl.begin(); }
     Iterator end() { return impl.end(); }

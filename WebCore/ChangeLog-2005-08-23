@@ -1,5 +1,74 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+        - did work to prepare for uploading files incrementally when submitting forms
+
+        * khtml/misc/formdata.h: Added. Class for holding form data inside WebCore.
+        * khtml/misc/formdata.cpp: Added.
+
+        * khtml/html/html_formimpl.h: Added the FormDataList type, changed the formData function parameters
+        and made it private, renamed the encoding method to appendFormData and changed the parameters around.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::FormDataList): Added. Class that replaces the old use of QValueList<QCString> for form data.
+        Later we'll change it to accomodate filenames too.
+        (DOM::HTMLFormElementImpl::formData): Changed code to use FormDataList intsead of the old encodingList.
+        Also changed to return the "OK" result as the function result and put the form data into something
+        passed as an "out" parameter; the old way was the other way around.
+        (DOM::HTMLFormElementImpl::submit): Change to use FormData rather than a QByteArray when getting the
+        form data to submit.
+        (DOM::HTMLButtonElementImpl::appendFormData): Rename from encoding, and use the new appendData function
+        instead of the old way of doing += to put data on the list.
+        (DOM::HTMLInputElementImpl::appendFormData): Ditto.
+        (DOM::HTMLSelectElementImpl::appendFormData): Ditto.
+        (DOM::HTMLKeygenElementImpl::appendFormData): Ditto.
+        (DOM::HTMLTextAreaElementImpl::appendFormData): Ditto.
+        (DOM::FormDataList::FormDataList): Added.
+        (DOM::FormDataList::appendString): Added.
+        (DOM::FormDataList::begin): Added.
+        (DOM::FormDataList::end): Added.
+
+        * khtml/khtml_part.h: Changed the type of the submitForm parameter to FormData instead of QByteArray.
+        * khtml/khtmlpart_p.h: Changed the type of the submitFormData data member to FormData instead of QByteArray.
+        * khtml/khtml_part.cpp: (KHTMLPart::submitForm): Called the new flattenToString function in all the
+        code that handles mailto forms. Called the new flatten function in the non-Apple code path.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::submitForm): Pass NSArray for form data instead of NSData.
+
+        * kwq/KWQKJob.h: Use FormData instead of QByteArray. A couple other small cleanups.
+        * kwq/KWQKJobClasses.h: Ditto.
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate): Ditto.
+        (KIO::TransferJob::TransferJob): Ditto.
+        (KIO::TransferJob::postData): Ditto.
+        * kwq/KWQKPartsBrowserExtension.h: Ditto.
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Ditto.
+        (KWQServeSynchronousRequest): Ditto.
+
+        * kwq/KWQFormData.h: Added. A function to convert KHTML form data into an NSArray for communication
+        with the WebKit side.
+        * kwq/KWQFormData.mm: Added.
+
+        * kwq/WebCoreBridge.h: Pass NSArray instead of NSData for form data.
+
+        * kwq/KWQArrayImpl.h: Added a detach member function. The old version would do unnecessary work when
+        detach was called on an array that had exactly one reference.
+        * kwq/KWQArrayImpl.mm: (KWQArrayImpl::detach): Added.
+        * kwq/KWQMemArray.h: (QMemArray::detach): Call through to KWQArrayImpl.
+
+        * kwq/KWQValueList.h:
+        (QValueList::first): Added overload for non-const.
+        (QValueList::last): Ditto.
+
+        * ForwardingHeaders/misc/formdata.h: Added.
+        * WebCore.pbproj/project.pbxproj: Added formdata.h, formdata.cpp, KWQFormData.h, and KWQFormData.cpp.
+
+        * WebCore-tests.exp: Updated for changes to QValueList, and re-sorted.
+        * WebCore-combined.exp: Regenerated.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - improved multiple submit logic in preparation for making command-click on a form

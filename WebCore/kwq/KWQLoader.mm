@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,11 @@
 #import "KWQLoader.h"
 
 #import "KWQExceptions.h"
+#import "KWQFormData.h"
+#import "KWQFoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "khtml_part.h"
 #import "loader.h"
@@ -125,8 +126,8 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
     }
 
     if (job->method() == "POST") {
-	NSData *postData = [NSData dataWithBytesNoCopy:job->postData().data() length:job->postData().size() freeWhenDone:NO];
-	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict postData:postData];
+	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict
+            postData:arrayFromFormData(job->postData())];
     } else {
 	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict];
     }
@@ -178,11 +179,9 @@ QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tran
 	headerDict = [[NSDictionary alloc] _webcore_initWithHeaderString:headerString.getNSString()];
     }
 
-    NSData *postData = nil;
-    
-
+    NSArray *postData = nil;
     if (job->method() == "POST") {
-	postData = [NSData dataWithBytesNoCopy:job->postData().data() length:job->postData().size() freeWhenDone:NO];
+	postData = arrayFromFormData(job->postData());
     }
 
     NSURL *finalNSURL = nil;

@@ -1,3 +1,31 @@
+2004-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - did work to prepare for uploading files incrementally when submitting forms
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setFormInfoFromRequest:]): Use NSArray instead of NSData for form data.
+        (-[WebHistoryItem formData]): Ditto.
+        * History.subproj/WebHistoryItemPrivate.h: Ditto.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:customHeaders:postData:]): Ditto.
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]): Ditto.
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): Ditto.
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Ditto.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:customHeaders:postData:referrer:forDataSource:]): Ditto.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]): Ditto.
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): Ditto.
+        * WebView.subproj/WebFramePrivate.h: Ditto.
+
+        * WebView.subproj/WebFormDataStream.h: Added.
+        * WebView.subproj/WebFormDataStream.m:
+        (-[WebFormDataStream initWithFormDataArray:]): Placeholder; not done yet.
+        (-[WebFormDataStream formDataArray]): Ditto.
+        * WebKit.pbproj/project.pbxproj: Added WebFormDataStream files.
+
 2004-08-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

@@ -31,13 +31,14 @@
 #import "KWQDummyView.h"
 #import "KWQEditCommand.h"
 #import "KWQExceptions.h"
+#import "KWQFormData.h"
+#import "KWQFoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
 #import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
-#import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreViewFactory.h"
@@ -674,7 +675,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         [_bridge postWithURL:url.getNSURL()
 	            referrer:[_bridge referrer] 
                       target:args.frameName.getNSString()
-                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
+                        data:arrayFromFormData(args.postData)
                  contentType:args.contentType().mid(14).getNSString()
              triggeringEvent:_currentEvent
                         form:_formAboutToBeSubmitted

@@ -28,7 +28,7 @@
 - (NSPoint)scrollPoint;
 - (NSArray *)documentState;
 - (BOOL)isTargetItem;
-- (NSData *)formData;
+- (NSArray *)formData;
 - (NSString *)formContentType;
 - (NSString *)formReferrer;
 - (NSString *)RSSFeedReferrer;

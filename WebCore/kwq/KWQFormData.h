@@ -23,46 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQ_ARRAY_IMPL_H
-#define KWQ_ARRAY_IMPL_H
+#import <Foundation/Foundation.h>
 
-#include "KWQRefPtr.h"
-#include "KWQDef.h"
-#include <stddef.h>
+namespace khtml {
+    class FormData;
+}
 
-class KWQArrayImpl
-{
- public:
-    KWQArrayImpl(size_t itemSize, size_t numItems = 0);
-    ~KWQArrayImpl();
-    
-    KWQArrayImpl(const KWQArrayImpl &);
-    KWQArrayImpl &operator=(const KWQArrayImpl &);
-    
-    void *at(size_t pos) const { return &d->data[pos * d->itemSize]; }
-
-    void *data() const;
-    uint size() const;
-    bool resize(size_t size);
-    void duplicate(const void *data, size_t size);
-    bool fill(const void *item, int size = -1);
-    void detach();
-    
-    bool operator==(const KWQArrayImpl &) const;
-
- private:
-    class KWQArrayPrivate
-    {
-    public:	
-	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
-	~KWQArrayPrivate();
-	size_t numItems;
-	size_t itemSize;
-	char *data;
-	int refCount;
-    };
-
-    KWQRefPtr<KWQArrayPrivate> d;
-};
-
-#endif
+NSArray *arrayFromFormData(const khtml::FormData &);

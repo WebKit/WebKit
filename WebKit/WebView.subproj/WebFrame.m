@@ -283,7 +283,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return request;
 }
 
-
 - (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
 {
     NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
@@ -1243,7 +1242,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSURL *itemURL = [item URL];
     NSURL *itemOriginalURL = [NSURL _web_URLWithDataAsString:[item originalURLString]];
     NSURL *currentURL = [[[self dataSource] request] URL];
-    NSData *formData = [item formData];
+    NSArray *formData = [item formData];
 
     // Are we navigating to an anchor within the page?
     // Note if we have child frames we do a real reload, since the child frames might not
@@ -1318,9 +1317,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             NSDictionary *action;
             if (formData) {
                 [request setHTTPMethod:@"POST"];
-                [request setHTTPBody:formData];
-                [request setHTTPContentType:[item formContentType]];
                 [request setHTTPReferrer:[item formReferrer]];
+
+                // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
+                if ([formData count] == 1 && [[formData objectAtIndex:0] isKindOfClass:[NSData class]]) {
+                    [request setHTTPBody:(NSData *)[formData objectAtIndex:0]];
+                    [request setHTTPContentType:[item formContentType]];
+                }
 
                 // Slight hack to test if the WF cache contains the page we're going to.  We want
                 // to know this before talking to the policy delegate, since it affects whether we
@@ -1917,17 +1920,24 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
+
+    // FIXME: Where's the code that implements what the comment above says?
+
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
-    [request setHTTPMethod:@"POST"];
-    [request setHTTPBody:data];
-    [request setHTTPContentType:contentType];
+    [self _addExtraFieldsToRequest:request alwaysFromRequest:YES];
     [request setHTTPReferrer:referrer];
+    [request setHTTPMethod:@"POST"];
+
+    // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
+    if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
+        [request setHTTPBody:(NSData *)[postData objectAtIndex:0]];
+        [request setHTTPContentType:contentType];
+    }
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;

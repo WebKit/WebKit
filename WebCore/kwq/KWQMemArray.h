@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ public:
     uint count() const { return impl.size(); }
     bool resize(uint size) { return impl.resize(size); }
     QMemArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
-    void detach() { duplicate(data(), size()); }
+    void detach() { impl.detach(); }
     bool fill(const T &item, int size=-1) { return impl.fill(&item, size); }
     QMemArray<T>& assign(const QMemArray<T> &a) { return *this = a; }
 

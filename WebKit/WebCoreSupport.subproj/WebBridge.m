@@ -420,7 +420,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                         forDataSource:[self dataSource]];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSData *)data
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -431,7 +431,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
  				        customHeaders:customHeaders
-				             postData:data
+				             postData:postData
                                              referrer:[self referrer]
                                         forDataSource:[self dataSource]];
 }
@@ -474,13 +474,17 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [request release];
 }
 
-- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSData *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
+- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
     if (postData) {
         [newRequest setHTTPMethod:@"POST"];
-        [newRequest setHTTPBody:postData];
+        
+        // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
+        if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
+            [newRequest setHTTPBody:(NSData *)[postData objectAtIndex:0]];
+        }
     }
 
     NSEnumerator *e = [requestHeaders keyEnumerator];
@@ -651,7 +655,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 }
 
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
@@ -662,7 +666,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return;
     }
 
-    [_frame _postWithURL:URL referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
+    [_frame _postWithURL:URL referrer:referrer target:target data:postData contentType:contentType triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];

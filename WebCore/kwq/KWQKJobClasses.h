@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "KWQMap.h"
 #include "KWQObject.h"
 #include "KWQString.h"
-
 #include "KWQKURL.h"
 
 #ifdef __OBJC__
@@ -37,6 +36,10 @@
 #else
 class KWQResourceLoader;
 #endif
+
+namespace khtml {
+    class FormData;
+}
 
 namespace KIO {
 
@@ -51,8 +54,8 @@ public:
 
 class TransferJob : public Job {
 public:
-    TransferJob(const KURL &, bool reload = false, bool showProgressInfo = true);
-    TransferJob(const KURL &, const QByteArray &postData, bool showProgressInfo = true);
+    TransferJob(const KURL &, bool reload);
+    TransferJob(const KURL &, const khtml::FormData &postData);
     ~TransferJob();
 
     int error() const;
@@ -73,8 +76,9 @@ public:
     void emitResult();
     void emitReceivedResponse(void *);
 
-    QByteArray postData() const;
+    khtml::FormData postData() const;
     QString method() const;
+
 private:
     void assembleResponseHeaders() const;
     void retrieveCharset() const;

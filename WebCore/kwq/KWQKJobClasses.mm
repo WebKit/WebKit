@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,10 @@
 #import "KWQString.h"
 #import "KWQFoundationExtras.h"
 
+#import "formdata.h"
+
+using khtml::FormData;
+
 namespace KIO {
 
     // The allocations and releases in TransferJobPrivate are
@@ -54,7 +58,7 @@ public:
     {
     }
 
-    TransferJobPrivate(const KURL& kurl, const QByteArray &_postData)
+    TransferJobPrivate(const KURL& kurl, const FormData &_postData)
         : status(0)
         , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
 	, URL(kurl)
@@ -79,7 +83,7 @@ public:
     KURL URL;
     KWQResourceLoader *loader;
     QString method;
-    QByteArray postData;
+    FormData postData;
 
     void *response;
     bool assembledResponseHeaders;
@@ -87,7 +91,7 @@ public:
     QString responseHeaders;
 };
 
-TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
+TransferJob::TransferJob(const KURL &url, bool reload)
     : d(new TransferJobPrivate(url)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
@@ -96,7 +100,7 @@ TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
 {
 }
 
-TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showProgressInfo)
+TransferJob::TransferJob(const KURL &url, const FormData &postData)
     : d(new TransferJobPrivate(url, postData)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
@@ -202,7 +206,7 @@ KURL TransferJob::url() const
     return d->URL;
 }
 
-QByteArray TransferJob::postData() const
+FormData TransferJob::postData() const
 {
     return d->postData;
 }

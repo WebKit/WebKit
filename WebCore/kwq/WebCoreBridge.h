@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
-#import <AppKit/NSDragging.h>       // for NSDragOperation typedef
-
-#import <WebCore/WebCoreKeyboardAccess.h>
+#import <Cocoa/Cocoa.h>
 
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
+#import <WebCore/WebCoreKeyboardAccess.h>
 
 #ifdef __cplusplus
 
@@ -349,6 +347,9 @@ typedef enum {
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
 
+// In NSArray objects for post data, NSData objects represent literal data, and NSString objects represent encoded files.
+// The encoding is the standard form encoding for uploading files.
+
 @protocol WebCoreBridge
 
 - (NSArray *)childFrames; // WebCoreBridge objects
@@ -360,7 +361,7 @@ typedef enum {
 - (NSView *)documentView;
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;
@@ -403,10 +404,10 @@ typedef enum {
 - (void)addMessageToConsole:(NSDictionary *)message;
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSData *)data;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)data;
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(id)response size:(unsigned)bytes;
 
-- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSData *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
+- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
 
 - (BOOL)isReloading;
 - (time_t)expiresTimeForResponse:(NSURLResponse *)response;

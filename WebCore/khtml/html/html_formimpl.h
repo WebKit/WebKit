@@ -28,9 +28,7 @@
 #include "html/html_elementimpl.h"
 #include "dom/html_element.h"
 
-#include <qvaluelist.h>
 #include <qptrlist.h>
-#include <qcstring.h>
 #include <qmemarray.h>
 
 class KHTMLView;
@@ -38,6 +36,7 @@ class QTextCodec;
 
 namespace khtml
 {
+    class FormData;
     class RenderFormElement;
     class RenderTextArea;
     class RenderSelect;
@@ -47,17 +46,16 @@ namespace khtml
 #if APPLE_CHANGES
     class RenderSlider;
 #endif
-
-    typedef QValueList<QCString> encodingList;
 }
 
 namespace DOM {
 
-class HTMLFormElement;
 class DOMString;
+class FormDataList;
+class HTMLFormElement;
 class HTMLGenericFormElementImpl;
-class HTMLOptionElementImpl;
 class HTMLImageLoader;
+class HTMLOptionElementImpl;
 class HTMLOptionsCollectionImpl;
 
 // -------------------------------------------------------------------------
@@ -74,8 +72,6 @@ public:
     virtual void detach();
 
     long length() const;
-
-    QByteArray formData(bool& ok);
 
     DOMString enctype() const { return m_enctype; }
     void setEnctype( const DOMString & );
@@ -127,7 +123,10 @@ public:
     bool m_doingsubmit : 1;
     bool m_inreset : 1;
     bool m_malformed : 1;
+
  private:
+    bool formData(khtml::FormData &) const;
+
     QString oldIdAttr;
     QString oldNameAttr;
 };
@@ -179,7 +178,7 @@ public:
      * for submitting
      * return true for a successful control (see HTML4-17.13.2)
      */
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool) { return false; }
+    virtual bool appendFormData(FormDataList&, bool) { return false; }
 
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool isEditable();
@@ -221,7 +220,7 @@ public:
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
+    virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;
@@ -326,7 +325,7 @@ public:
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
+    virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;
@@ -464,7 +463,7 @@ public:
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
+    virtual bool appendFormData(FormDataList&, bool);
 
     // get the actual listbox index of the optionIndexth option
     int optionToListIndex(int optionIndex) const;
@@ -514,7 +513,7 @@ public:
     virtual bool isEnumeratable() const { return false; }
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
+    virtual bool appendFormData(FormDataList&, bool);
 protected:
     AtomicString m_challenge;
     AtomicString m_keyType;
@@ -617,7 +616,7 @@ public:
     virtual void childrenChanged();
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
-    virtual bool encoding(const QTextCodec*, khtml::encodingList&, bool);
+    virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
     DOMString value();
     void setValue(DOMString _value);

@@ -34,6 +34,7 @@
 #include "html_imageimpl.h"
 #include "khtml_settings.h"
 #include "misc/htmlhashes.h"
+#include "misc/formdata.h"
 
 #include "css/cssstyleselector.h"
 #include "css/cssproperties.h"
@@ -61,8 +62,35 @@
 
 #include <assert.h>
 
-using namespace DOM;
 using namespace khtml;
+
+namespace DOM {
+
+class FormDataList {
+public:
+    FormDataList(QTextCodec *);
+
+    void appendData(const DOMString &key, const DOMString &value)
+        { appendString(key.string()); appendString(value.string()); }
+    void appendData(const DOMString &key, const QString &value)
+        { appendString(key.string()); appendString(value); }
+    void appendData(const DOMString &key, const QCString &value)
+        { appendString(key.string()); appendString(value); }
+    void appendData(const DOMString &key, int value)
+        { appendString(key.string()); appendString(QString::number(value)); }
+    void appendFile(const DOMString &key, const DOMString &filename);
+
+    // Temporary API.
+    QValueListConstIterator<QCString> begin() const;
+    QValueListConstIterator<QCString> end() const;
+
+private:
+    void appendString(const QCString &s);
+    void appendString(const QString &s);
+
+    QTextCodec *m_codec;
+    QValueList<QCString> m_strings;
+};
 
 HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
@@ -263,13 +291,6 @@ static QCString fixLineBreaks(const QCString &s)
     return result;
 }
 
-inline static QCString fixUpfromUnicode(const QTextCodec* codec, const QString& s)
-{
-    QCString str = fixLineBreaks(codec->fromUnicode(s));
-    str.truncate(str.length());
-    return str;
-}
-
 #if !APPLE_CHANGES
 
 void HTMLFormElementImpl::i18nData()
@@ -291,13 +312,12 @@ void HTMLFormElementImpl::i18nData()
 
 #endif
 
-QByteArray HTMLFormElementImpl::formData(bool& ok)
+bool HTMLFormElementImpl::formData(FormData &form_data) const
 {
 #ifdef FORMS_DEBUG
     kdDebug( 6030 ) << "form: formData()" << endl;
 #endif
 
-    QByteArray form_data(0);
     QCString enc_string = ""; // used for non-multipart data
 
     // find out the QTextcodec to use
@@ -327,13 +347,12 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
 
     for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
         HTMLGenericFormElementImpl* current = it.current();
-        khtml::encodingList lst;
+        FormDataList lst(codec);
 
-        if (!current->disabled() && current->encoding(codec, lst, m_multipart))
+        if (!current->disabled() && current->appendFormData(lst, m_multipart))
         {
             //kdDebug(6030) << "adding name " << current->name().string() << endl;
-            khtml::encodingList::Iterator it;
-            for( it = lst.begin(); it != lst.end(); ++it )
+            for(QValueListConstIterator<QCString> it = lst.begin(); it != lst.end(); ++it )
             {
                 if (!m_multipart)
                 {
@@ -407,12 +426,9 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
                     ++it;
 
                     // append body
-                    unsigned int old_size = form_data.size();
-                    form_data.resize( old_size + hstr.length() + (*it).size() + 1);
-                    memcpy(form_data.data() + old_size, hstr.data(), hstr.length());
-                    memcpy(form_data.data() + old_size + hstr.length(), (*it), (*it).size());
-                    form_data[form_data.size()-2] = '\r';
-                    form_data[form_data.size()-1] = '\n';
+                    form_data.appendData(hstr.data(), hstr.length());
+                    form_data.appendData(*it, (*it).size() - 1);
+                    form_data.appendData("\r\n", 2);
                 }
             }
         }
@@ -428,8 +444,7 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
 
 
         if (result == KMessageBox::Cancel) {
-            ok = false;
-            return QByteArray();
+            return false;
         }
     }
 #endif
@@ -437,12 +452,8 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
     if (m_multipart)
         enc_string = ("--" + m_boundary.string() + "--\r\n").ascii();
 
-    int old_size = form_data.size();
-    form_data.resize( form_data.size() + enc_string.length() );
-    memcpy(form_data.data() + old_size, enc_string.data(), enc_string.length() );
-
-    ok = true;
-    return form_data;
+    form_data.appendData(enc_string.data(), enc_string.length());
+    return true;
 }
 
 void HTMLFormElementImpl::setEnctype( const DOMString& type )
@@ -553,9 +564,8 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
     }
 
-    bool ok;
-    QByteArray form_data = formData(ok);
-    if (ok) {
+    FormData form_data;
+    if (formData(form_data)) {
         if(m_post) {
             part->submitForm( "post", m_url.string(), form_data,
                                       m_target.string(),
@@ -1096,15 +1106,11 @@ void HTMLButtonElementImpl::setActivatedSubmit(bool flag)
     m_activeSubmit = flag;
 }
 
-bool HTMLButtonElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoding, bool /*multipart*/)
+bool HTMLButtonElementImpl::appendFormData(FormDataList& encoding, bool /*multipart*/)
 {
     if (m_type != SUBMIT || name().isEmpty() || !m_activeSubmit)
         return false;
-
-    encoding += fixUpfromUnicode(codec, name().string());
-    QString enc_str = m_currValue.isNull() ? QString("") : m_currValue;
-    encoding += fixUpfromUnicode(codec, enc_str);
-
+    encoding.appendData(name(), m_currValue);
     return true;
 }
 
@@ -1656,15 +1662,10 @@ void HTMLInputElementImpl::setActivatedSubmit(bool flag)
     m_activeSubmit = flag;
 }
 
-bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoding, bool multipart)
+bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart)
 {
-    QString nme = name().string();
-
-    // image generates its own name's
-    if (nme.isEmpty() && m_type != IMAGE) return false;
-
-    // IMAGE needs special handling later
-    if(m_type != IMAGE) encoding += fixUpfromUnicode(codec, nme);
+    // image generates its own names
+    if (name().isEmpty() && m_type != IMAGE) return false;
 
     switch (m_type) {
         case HIDDEN:
@@ -1675,20 +1676,13 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
 #endif
         case PASSWORD:
             // always successful
-            encoding += fixUpfromUnicode(codec, value().string());
+            encoding.appendData(name(), value());
             return true;
+
         case CHECKBOX:
-
-            if( checked() ) {
-                encoding += fixUpfromUnicode(codec, value().string());
-                return true;
-            }
-            break;
-
         case RADIO:
-
-            if( checked() ) {
-                encoding += fixUpfromUnicode(codec, value().string());
+            if (checked()) {
+                encoding.appendData(name(), value());
                 return true;
             }
             break;
@@ -1699,32 +1693,22 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
             return false;
 
         case IMAGE:
-
-            if(m_activeSubmit)
+            if (m_activeSubmit)
             {
-                QString astr(nme.isEmpty() ? QString::fromLatin1("x") : nme + ".x");
-
-                encoding += fixUpfromUnicode(codec, astr);
-                astr.setNum(clickX());
-                encoding += fixUpfromUnicode(codec, astr);
-                astr = nme.isEmpty() ? QString::fromLatin1("y") : nme + ".y";
-                encoding += fixUpfromUnicode(codec, astr);
-                astr.setNum(clickY());
-                encoding += fixUpfromUnicode(codec, astr);
-
+                encoding.appendData(name().isEmpty() ? QString::fromLatin1("x") : (name().string() + ".x"), clickX());
+                encoding.appendData(name().isEmpty() ? QString::fromLatin1("y") : (name().string() + ".y"), clickY());
                 return true;
             }
             break;
 
         case SUBMIT:
-
             if (m_activeSubmit)
             {
                 QString enc_str = value().string();
                 if (enc_str.isEmpty())
                     enc_str = static_cast<RenderSubmitButton*>(m_render)->defaultLabel();
                 if (!enc_str.isEmpty()) {
-                    encoding += fixUpfromUnicode(codec, enc_str);
+                    encoding.appendData(name(), enc_str);
                     return true;
                 }
             }
@@ -1737,13 +1721,10 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
             if(!multipart || !renderer() || renderer()->style()->visibility() != khtml::VISIBLE)
                 return false;
 
-            QString local;
-            QCString dummy("");
-
             // if no filename at all is entered, return successful, however empty
             // null would be more logical but netscape posts an empty file. argh.
-            if(value().isEmpty()) {
-                encoding += dummy;
+            if (value().isEmpty()) {
+                encoding.appendData(name(), QString(""));
                 return true;
             }
 
@@ -1761,11 +1742,11 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
             }
 
             KFileItem fileitem(filestat, fileurl, true, false);
-            if(fileitem.isDir()) {
-                encoding += dummy;
+            if (fileitem.isDir()) {
                 return false;
             }
 
+            QString local;
             if ( KIO::NetAccess::download(fileurl, local) )
             {
                 QFile file(local);
@@ -1777,7 +1758,7 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
                         filearray[readbytes] = '\0';
                     file.close();
 
-                    encoding += filearray;
+                    encoding.appendData(name(), filearray);
                     KIO::NetAccess::removeTempFile( local );
 
                     return true;
@@ -1795,7 +1776,7 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
             break;
         }
         case ISINDEX:
-            encoding += fixUpfromUnicode(codec, value().string());
+            encoding.appendData(name(), value());
             return true;
     }
     return false;
@@ -2311,10 +2292,9 @@ RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderSt
     return new (arena) RenderSelect(this);
 }
 
-bool HTMLSelectElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoded_values, bool)
+bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
 {
     bool successful = false;
-    QCString enc_name = fixUpfromUnicode(codec, name().string());
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
 
     uint i;
@@ -2322,8 +2302,7 @@ bool HTMLSelectElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
         if (items[i]->id() == ID_OPTION) {
             HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[i]);
             if (option->selected()) {
-                encoded_values += enc_name;
-                encoded_values += fixUpfromUnicode(codec, option->value().string());
+                encoded_values.appendData(name(), option->value());
                 successful = true;
             }
         }
@@ -2335,11 +2314,10 @@ bool HTMLSelectElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     if (!successful && !m_multiple && m_size <= 1 && items.size() &&
         (items[0]->id() == ID_OPTION) ) {
         HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[0]);
-        encoded_values += enc_name;
         if (option->value().isNull())
-            encoded_values += fixUpfromUnicode(codec, option->text().string().stripWhiteSpace());
+            encoded_values.appendData(name(), option->text().string().stripWhiteSpace());
         else
-            encoded_values += fixUpfromUnicode(codec, option->value().string());
+            encoded_values.appendData(name(), option->value());
         successful = true;
     }
 
@@ -2537,25 +2515,22 @@ void HTMLKeygenElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
     }
 }
 
-bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingList& encoded_values, bool)
+bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
 {
-    bool successful = false;
-    QCString enc_name = fixUpfromUnicode(codec, name().string());
-
 #if APPLE_CHANGES
     // Only RSA is supported at this time.
     if (!m_keyType.isNull() && strcasecmp(m_keyType, "rsa")) {
         return false;
     }
-    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string(), getDocument()->part()->baseURL());
-    if (!value.isNull()) {
-        encoded_values += enc_name;
-        encoded_values += value.utf8();
-        successful = true;
+    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString(selectedIndex(), m_challenge.string(), getDocument()->part()->baseURL());
+    if (value.isNull()) {
+        return false;
     }
+    encoded_values.appendData(name(), value.utf8());
+    return true;
 #else
-    encoded_values += enc_name;
-    
+    bool successful = false;
+
     // pop up the fancy certificate creation dialog here
     KSSLKeyGen *kg = new KSSLKeyGen(static_cast<RenderWidget *>(m_render)->widget(), "Key Generator", true);
 
@@ -2564,10 +2539,10 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
 
     delete kg;
 
-    encoded_values += "deadbeef";
-#endif
+    encoded_values.appendData(name(), "deadbeef");
     
     return successful;
+#endif
 }
 
 // -------------------------------------------------------------------------
@@ -2885,13 +2860,10 @@ RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, Render
     return new (arena) RenderTextArea(this);
 }
 
-bool HTMLTextAreaElementImpl::encoding(const QTextCodec* codec, encodingList& encoding, bool)
+bool HTMLTextAreaElementImpl::appendFormData(FormDataList& encoding, bool)
 {
     if (name().isEmpty()) return false;
-
-    encoding += fixUpfromUnicode(codec, name().string());
-    encoding += fixUpfromUnicode(codec, value().string());
-
+    encoding.appendData(name(), value());
     return true;
 }
 
@@ -3032,3 +3004,34 @@ NodeImpl *HTMLOptionsCollectionImpl::namedItem(const DOMString &name) const
     // Not yet implemented.
     return 0;
 }
+
+// -------------------------------------------------------------------------
+
+FormDataList::FormDataList(QTextCodec *c)
+    : m_codec(c)
+{
+}
+
+void FormDataList::appendString(const QCString &s)
+{
+    m_strings.append(s);
+}
+
+void FormDataList::appendString(const QString &s)
+{
+    QCString cstr = fixLineBreaks(m_codec->fromUnicode(s));
+    cstr.truncate(cstr.length());
+    m_strings.append(cstr);
+}
+
+QValueListConstIterator<QCString> FormDataList::begin() const
+{
+    return m_strings.begin();
+}
+
+QValueListConstIterator<QCString> FormDataList::end() const
+{
+    return m_strings.end();
+}
+
+} // namespace

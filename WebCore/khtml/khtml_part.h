@@ -75,6 +75,7 @@ namespace khtml
   class DocLoader;
   class DrawContentsEvent;
   class EditCommand;
+  class FormData;
   class HTMLTokenizer;
   class MouseDoubleClickEvent;
   class MouseEvent;
@@ -1204,7 +1205,7 @@ private:
   /**
    * @internal
    */
-  void submitForm( const char *action, const QString &url, const QByteArray &formData,
+  void submitForm( const char *action, const QString &url, const khtml::FormData &formData,
                    const QString &target, const QString& contentType = QString::null,
                    const QString& boundary = QString::null );
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #ifndef JOB_H_
 #define JOB_H_
 
-#include "KWQKURL.h"
 #include "KWQKJobClasses.h"
 
 // for time_t
@@ -36,11 +35,11 @@ namespace KIO {
 
 void http_update_cache(const KURL &, bool, time_t);
 
-inline TransferJob *get(const KURL &url, bool reload = false, bool showProgressInfo = true)
-    { return new TransferJob(url, reload, showProgressInfo); }
+inline TransferJob *get(const KURL &url, bool reload, bool)
+    { return new TransferJob(url, reload); }
 
-inline TransferJob *http_post(const KURL& url, const QByteArray &postData, bool showProgressInfo = true)
-    { return new TransferJob(url, postData, showProgressInfo); }
+inline TransferJob *http_post(const KURL& url, const khtml::FormData &postData, bool)
+    { return new TransferJob(url, postData); }
 
 } // namespace KIO
 
