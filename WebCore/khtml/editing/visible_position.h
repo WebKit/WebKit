@@ -121,6 +121,8 @@ VisiblePosition endVisiblePosition(const DOM::RangeImpl *);
 bool visiblePositionsOnDifferentLines(const VisiblePosition &, const VisiblePosition &);
 bool visiblePositionsInDifferentBlocks(const VisiblePosition &, const VisiblePosition &);
 bool isFirstVisiblePositionOnLine(const VisiblePosition &);
+bool isFirstVisiblePositionInBlock(const VisiblePosition &);
+bool isFirstVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
 bool isLastVisiblePositionOnLine(const VisiblePosition &);
 bool isLastVisiblePositionInBlock(const VisiblePosition &);
 bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);

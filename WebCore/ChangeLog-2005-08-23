@@ -2,6 +2,21 @@
 
         Reviewed by Harrison
 
+        Added some new helpers to the VisiblePosition class. I will begin to use these when I check in
+        my improved paste code.
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::blockRelationship)
+        (khtml::visiblePositionsInDifferentBlocks)
+        (khtml::isFirstVisiblePositionInBlock)
+        (khtml::isFirstVisiblePositionInNode)
+        (khtml::isLastVisiblePositionInBlock)
+        * khtml/editing/visible_position.h
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         * khtml/xml/dom_position.cpp:
         (DOM::Position::downstream): Fix a bug in downstream that prevented a call with DoNotStayInBlock
         specified from obeying that directive. The old code would stop at an outer block boundary in
