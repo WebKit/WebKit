@@ -210,6 +210,8 @@ public:
     virtual bool parseString( const DOMString &string, bool = false);
     virtual DOM::DOMString cssText() const;
 
+    virtual bool isQuirkValue() { return false; }
+    
 protected:
     int m_type;
     union {
@@ -220,6 +222,21 @@ protected:
 	RectImpl *rect;
 	RGBColor *rgbcolor;
     } m_value;
+};
+
+// This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
+// The basic idea is that a stylesheet can use the value _qem (for quirky em) instead of em
+// in a stylesheet.  When the quirky value is used, if you're in quirks mode, the margin will
+// collapse away inside a table cell.
+class CSSQuirkPrimitiveValueImpl : public CSSPrimitiveValueImpl
+{
+public:
+    CSSQuirkPrimitiveValueImpl(float num, CSSPrimitiveValue::UnitTypes type)
+      :CSSPrimitiveValueImpl(num, type) {}
+    
+    virtual ~CSSQuirkPrimitiveValueImpl() {}
+    
+    virtual bool isQuirkValue() { return true; }
 };
 
 class CounterImpl : public khtml::Shared<CounterImpl> {

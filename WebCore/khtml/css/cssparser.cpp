@@ -1806,7 +1806,14 @@ bool StyleBaseImpl::parseValue( const QChar *curP, const QChar *endP, int propId
 	  if (cssval && cssval->id == CSS_VAL_AUTO) {
             parsedValue = new CSSPrimitiveValueImpl(cssval->id);
 	  } else {
-            parsedValue = parseUnit(curP, endP, LENGTH | PERCENT );
+            // Deal with a quirk case.  We allow a special quirk unit, _qem, to 
+            // denote a margin that is allowed to collapse away in quirks mode
+            // when at the top/bottom of a reflow root like a body, td, or th.
+            // This is a WinIE quirk. -dwh
+            if (propId == CSS_PROP_MARGIN_TOP || propId == CSS_PROP_MARGIN_BOTTOM)
+                parsedValue = parseUnit(curP, endP, LENGTH | PERCENT | COLLAPSIBLE);
+            else
+                parsedValue = parseUnit(curP, endP, LENGTH | PERCENT);
 	  }
 	  break;
 	}
@@ -2573,11 +2580,38 @@ StyleBaseImpl::parseUnit(const QChar * curP, const QChar *endP, int allowedUnits
     CSSPrimitiveValue::UnitTypes type = CSSPrimitiveValue::CSS_UNKNOWN;
     StyleBaseImpl::Units unit = StyleBaseImpl::UNKNOWN;
 
+    bool collapsible = false;
+    
     switch(split->latin1())
     {
     case '%':
         type = CSSPrimitiveValue::CSS_PERCENTAGE;
         unit =StyleBaseImpl:: PERCENT;
+        break;
+    case '_':
+        if (!(allowedUnits & COLLAPSIBLE))
+            break;
+        split++;
+        if (split > endP) break;
+        switch (split->latin1()) {
+        case 'q':
+            split++;
+            if (split > endP) break;
+            switch (split->latin1()) {
+            case 'e':
+                split++;
+                if(split > endP) break;
+                switch(split->latin1())
+                {
+                    case 'm':
+                        type = CSSPrimitiveValue::CSS_EMS;
+                        unit = StyleBaseImpl::LENGTH;
+                        collapsible = true;
+                        break;
+                }
+            }
+            break;
+        }
         break;
     case 'e':
         split++;
@@ -2677,6 +2711,8 @@ StyleBaseImpl::parseUnit(const QChar * curP, const QChar *endP, int allowedUnits
 #ifdef CSS_DEBUG
         kdDebug( 6080 ) << "found allowed number " << value << ", unit " << type << endl;
 #endif
+        if (collapsible)
+            return new CSSQuirkPrimitiveValueImpl(value, type);
         return new CSSPrimitiveValueImpl(value, type);
     }
 

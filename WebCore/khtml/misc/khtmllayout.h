@@ -45,8 +45,8 @@ namespace khtml
     struct Length
     {
 	Length() { *((Q_UINT32 *)this) = 0; }
-        Length(LengthType t) { type = t; value = 0; }
-        Length(int v, LengthType t) : value(v), type(t) {}
+        Length(LengthType t) { type = t; value = 0; quirk = false; }
+        Length(int v, LengthType t, bool q=false) : value(v), type(t), quirk(q) {}
         Length(const Length &o)
 	    { *((Q_UINT32 *)this) = *((Q_UINT32 *)&o); }
 
@@ -97,8 +97,9 @@ namespace khtml
         bool isFixed() const { return (type == Fixed); }
         bool isStatic() const { return (type == Static); }
 
-        int value : 29;
+        int value : 28;
         LengthType type : 3;
+        bool quirk : 1;
     };
 
 };

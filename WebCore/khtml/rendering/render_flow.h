@@ -133,6 +133,8 @@ public:
     BidiIterator findNextLineBreak(BidiIterator &start);
 
     virtual bool isSelfCollapsingBlock() const { return m_height == 0; }
+    virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
+    virtual bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
     
     virtual short maxTopMargin(bool positive) const {
         if (positive)
@@ -199,6 +201,8 @@ private:
     short m_maxTopNegMargin;
     short m_maxBottomPosMargin;
     short m_maxBottomNegMargin;
+    bool m_topMarginQuirk;
+    bool m_bottomMarginQuirk;
 };
 
     

@@ -761,7 +761,11 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         // elements for the moment
 	const QString& value = sel->value.string();
 //	kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
-	if(value == "first-child") {
+	if (value == "empty") {
+        if (!e->firstChild())
+            return true;
+	}
+	else if(value == "first-child") {
 	    // first-child matches the first child that is an element!
 	    DOM::NodeImpl *n = e->parentNode()->firstChild();
 	    while( n && !n->isElementNode() )
@@ -2122,7 +2126,9 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         } else if(primitiveValue && !apply) {
             int type = primitiveValue->primitiveType();
             if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-                l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed);
+                // Handle our quirky margin units if we have them.
+                l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed, 
+                           primitiveValue->isQuirkValue());
             else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
             else

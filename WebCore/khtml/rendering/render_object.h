@@ -346,7 +346,7 @@ public:
     virtual int offsetTop() const;
     virtual RenderObject* offsetParent() const;
     
-    // The following four functions are used to implement collapsing margins.
+    // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
     // formula for computing a collapsed margin is |maxPosMargin|-|maxNegmargin|.
     // For a non-collapsing, e.g., a leaf element, this formula will simply return
@@ -357,6 +357,8 @@ public:
         { return maxTopMargin(true)-maxTopMargin(false); }
     virtual short collapsedMarginBottom() const 
         { return maxBottomMargin(true)-maxBottomMargin(false); }
+    virtual bool isTopMarginQuirk() const { return false; }
+    virtual bool isBottomMarginQuirk() const { return false; }
     virtual short maxTopMargin(bool positive) const {
         if (positive)
             if (marginTop() > 0)

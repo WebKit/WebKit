@@ -1,3 +1,39 @@
+2002-10-22  David Hyatt  <hyatt@apple.com>
+
+	Ok, this patch does a lot of stuff.  It contains a complete
+	rewrite of the WinIE quirk for handling collapsing margins
+	at the tops and bottoms of table cells.  We match WinIE's
+	behavior for all HTML4 block-level elements.
+
+	This patch also applies a bottom margin to <form> elements,
+	which is what was causing the missing space on livepage.apple.com
+	underneath the textfield on the right.  WinIE and Gecko both
+	put a bottom margin on all forms.
+
+	This patch also updates the collapsing margin code to detect
+	inlines that have been morphed into blocks by KHTML (this is 
+	so wrong, don't even get me started, you can't treat an inline
+	as a block, this code is lame, etc. etc.) and to properly ignore
+	their margins completely.  Fixing the code to not morph inlines
+	is another architectural problem that will have to be dealt
+	with (sigh).
+	
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseValue):
+        (StyleBaseImpl::parseUnit):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/html4.css:
+        * khtml/misc/khtmllayout.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::RenderFlow):
+        (RenderFlow::layout):
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::addChild):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.h:
+
 2002-10-21  Darin Adler  <darin@apple.com>
 
         * kwq/KWQInputDialog.mm: (QInputDialog::getText): Call the view factory to do the

@@ -54,6 +54,7 @@ RenderFlow::RenderFlow(DOM::NodeImpl* node)
     specialObjects = 0;
     
     m_maxTopPosMargin = m_maxTopNegMargin = m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
+    m_topMarginQuirk = m_bottomMarginQuirk = false;
 }
 
 void RenderFlow::setStyle(RenderStyle *_style)
@@ -241,6 +242,9 @@ void RenderFlow::layout()
             m_maxBottomPosMargin = m_marginBottom;
         else
             m_maxBottomNegMargin = -m_marginBottom;
+            
+        m_topMarginQuirk = style()->marginTop().quirk;
+        m_bottomMarginQuirk = style()->marginBottom().quirk;
     }
     
     // A quirk that has become an unfortunate standard.  Positioned elements, floating elements
@@ -363,11 +367,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // self-collapsing blocks.
     bool topMarginContributor = true;
     
-    // The last non-collapsed child we encountered.      
-    // We will avoid throwing away the bottom margins if the last non-collapsed child encountered is
-    // an H1-H6 element. -dwh
-    RenderObject* lastNonCollapsedChild = 0;
-    
     // These flags track the previous maximal positive and negative margins.
     int prevPosMargin = maxTopMargin(true);
     int prevNegMargin = maxTopMargin(false);
@@ -378,6 +377,11 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     
     int oldPosMargin = prevPosMargin;
     int oldNegMargin = prevNegMargin;
+    
+    bool topChildQuirk = false;
+    bool bottomChildQuirk = false;
+    
+    bool strictMode = (element()->getDocument()->parseMode() == DocumentImpl::Strict);
     
     //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
@@ -446,15 +450,36 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             int posTop = child->maxTopMargin(true);
             int negTop = child->maxTopMargin(false);
             
+            // XXX A hack we have to put in to deal with the fact
+            // that KHTML incorrectly morphs inlines with blocks
+            // inside them into blocks themselves.
+            if (child->style()->display() == INLINE)
+                posTop = negTop = 0;
+                
+            // See if the top margin is quirky. We only care if this child has
+            // margins that will collapse with us.
+            bool topQuirk = (posTop-negTop) != 0 ? child->isTopMarginQuirk() : false;
+            
             if (canCollapseWithChildren && topMarginContributor && !clearOccurred) {
                 // This child is collapsing with the top of the
                 // block.  If it has larger margin values, then we need to update
                 // our own maximal values.
                 if (posTop > m_maxTopPosMargin)
                     m_maxTopPosMargin = posTop;
+                
                 if (negTop > m_maxTopNegMargin)
                     m_maxTopNegMargin = negTop;
+                 
+                // The minute any of the margins involved isn't a quirk, don't
+                // collapse it away, even if the margin is smaller (www.webreference.com
+                // has an example of this, a <dt> with 0.8em author-specified inside
+                // a <dl> inside a <td>.
+                if (!topQuirk)
+                    m_topMarginQuirk = false;
             }
+            
+            if (isTableCell() && topMarginContributor)
+                topChildQuirk = topQuirk;
             
             int ypos = m_height;
             if (child->isSelfCollapsingBlock()) {
@@ -473,11 +498,10 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     ypos = m_height + prevPosMargin - prevNegMargin;
             }
             else {
-                lastNonCollapsedChild = child;
                 if (!topMarginContributor || 
-                     (!canCollapseWithChildren && 
-                      (element()->getDocument()->parseMode() == DocumentImpl::Strict ||
-                        !isTableCell()))) {
+                    (!canCollapseWithChildren 
+                       && (strictMode || !isTableCell() || !topChildQuirk)
+                    )) {
                     // We're collapsing with a previous sibling's margins and not
                     // with the top of the block.
                     int absPos = prevPosMargin > posTop ? prevPosMargin : posTop;
@@ -488,6 +512,15 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 }
                 prevPosMargin = child->maxBottomMargin(true);
                 prevNegMargin = child->maxBottomMargin(false);
+                
+                // XXX A hack we have to put in to deal with the fact
+                // that KHTML incorrectly morphs inlines with blocks
+                // inside them into blocks themselves.
+                if (child->style()->display() == INLINE)
+                    prevPosMargin = prevNegMargin = 0;
+                
+                bottomChildQuirk = 
+                  (prevPosMargin-prevNegMargin) != 0 ? child->isBottomMarginQuirk() : false;
             }
             child->setPos(child->xPos(), ypos);
         }
@@ -570,23 +603,11 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     if (canCollapseWithChildren && !autoHeight)
         canCollapseWithChildren = false;
     
-    // XXX This is a gross hack. Basically if the last child is marginless, we will (in quirks
-    // mode) allow the collapsed bottom margin to be added to the table cell.  This is a sleazy
-    // way of keeping <td><p>Foo</p></td> from showing a bottom margin but still allowing
-    // <td><font><h3>Foo</h3></font></td> to show a bottom margin.  
-    // A better fix (since we only cared about H1-H6 in the first place would be to recur
-    // into the last non-collapsed children until you don't find one any more, and if that
-    // innermost child was an H1-H6, use it. -dwh
-    int marginBottom = -1;
-    if (lastNonCollapsedChild)
-        marginBottom = lastNonCollapsedChild->marginBottom();
-    
     // If we can't collapse with children then go ahead and add in the bottom margins.
-    if (!canCollapseWithChildren && !topMarginContributor &&
-        (element()->getDocument()->parseMode() == DocumentImpl::Strict ||
-         !isTableCell() || (lastNonCollapsedChild && lastNonCollapsedChild->element() &&
-           lastNonCollapsedChild->element()->id() >= ID_H1 && 
-           lastNonCollapsedChild->element()->id() <= ID_H6) || (marginBottom == 0)))
+    if (!topMarginContributor && 
+        (!canCollapseWithChildren 
+            && (strictMode || !isTableCell() || !bottomChildQuirk)
+        ))
         m_height += prevPosMargin - prevNegMargin;
         
     m_height += toAdd;
@@ -601,8 +622,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         // with our children.
         if (prevPosMargin > m_maxBottomPosMargin)
             m_maxBottomPosMargin = prevPosMargin;
+        
         if (prevNegMargin > m_maxBottomNegMargin)
             m_maxBottomNegMargin = prevNegMargin;
+           
+        if (!bottomChildQuirk)
+            m_bottomMarginQuirk = false;
     }
     
     setLayouted();
@@ -1620,16 +1645,19 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 
     if(!newChild->isInline()) // block child
     {
+        // XXX This is all just completely wrong and is going to have to be
+        // rewritten. -dwh
+        
         // If we are inline ourselves and have become block, we have to make sure our parent
         // makes the necessary adjustments so that all of its other children are moved into
         // anonymous block boxes where necessary
         if (style()->display() == INLINE)
         {
             setInline(false); // inline can't contain blocks
-	    RenderObject *p = parent();
+            RenderObject *p = parent();
             if (p && p->isFlow() && p->childrenInline() ) {
                 static_cast<RenderFlow*>(p)->makeChildrenNonInline();
-		madeBoxesNonInline = true;
+                madeBoxesNonInline = true;
             }
         }
     }

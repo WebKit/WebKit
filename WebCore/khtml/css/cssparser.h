@@ -187,7 +187,8 @@ public:
 	    ANGLE     = 0x0010,
 	    TIME      = 0x0020,
 	    FREQUENCY = 0x0040,
-	    NONNEGATIVE = 0x0080
+	    NONNEGATIVE = 0x0080,
+        COLLAPSIBLE = 0x010
 	};
 
 	/* called by parseValue, parses numbers+units */

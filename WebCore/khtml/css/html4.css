@@ -60,7 +60,7 @@ script {
 
 p {
 	display: block;
-	margin: 1.0em 0px;
+	margin: 1.0_qem 0px;
 }
 
 div {
@@ -83,8 +83,8 @@ address {
       
 blockquote {
 	display: block;
-	margin: 1em 40px;
-        -konq-flow-mode: -konq-around-floats
+	margin: 1_qem 40px 1em 40px;
+    -konq-flow-mode: -konq-around-floats
 }
 
 Q        {
@@ -153,41 +153,41 @@ embed {
 H1 { 
 	display: block;
 	font-size: 1.7em; 
-	margin: .67em auto;
+	margin: .67__qem auto .67em auto;
 	font-weight: bolder;
 }
       
 H2 { 
 	display: block;
 	font-size: 1.4em; 
-	margin: .83em auto;
+	margin: .83_qem auto .87em auto;
 	font-weight: bolder;
 }
       
 H3 { 
 	display: block;
 	font-size: 1.17em; 
-	margin: 1em auto;
+	margin: 1_qem auto 1em auto;
 	font-weight: bolder;
 }
       
 H4 {
 	display: block;
-	margin: 1.0em auto;
+	margin: 1.0_qem auto 1.0em auto;
 	font-weight: bolder;
 }
 
 H5 { 
 	display: block;
 	font-size: .83em; 
-	margin: 1.67em auto;
+	margin: 1.67_qem auto 1.67em auto;
 	font-weight: bolder;
 }
 
 H6 { 
 	display: block;
 	font-size: .67em; 
-	margin: 2.33em auto;
+	margin: 2.33_qem auto 2.33em auto;
 	font-weight: bolder;
 }
 
@@ -290,7 +290,7 @@ TD[align="left"] > HR { margin-left: 0px; margin-right: auto; }
 UL, MENU, DIR {
         display: block;
         list-style-type: disc;
-        margin: 1em 0;
+        margin: 1_qem 0 1em 0;
         padding-left: 40px;
         -konq-flow-mode: -konq-around-floats
 }
@@ -298,7 +298,7 @@ UL, MENU, DIR {
 OL {
         display: block;
         list-style-type: decimal;
-        margin: 1em 0;
+        margin: 1_qem 0 1em 0;
         padding-left: 40px;
         -konq-flow-mode: -konq-around-floats
 }
@@ -328,8 +328,8 @@ DD {
 
 DL {
 	display: block;
-	margin: 1em 0;
-        -konq-flow-mode: -konq-around-floats
+	margin: 1_qem 0 1em 0;
+    -konq-flow-mode: -konq-around-floats
 } 
 
 DT {
@@ -371,6 +371,7 @@ LI > DIV {
 
 FORM {
 	display: block;
+    margin: 0 0 1em 0;
 }
 
 FIELDSET {
@@ -556,14 +557,16 @@ marquee {
         display: none;
 }
 
-
-/* Give floated images margins of 3px */
-img[align="left"] {
-	margin-right: 3px;
-}
-
-img[align="right"] {
-	margin-left: 3px;
+@konq-quirks
+{
+    /* Give floated images margins of 3px */
+    img[align="left"] {
+        margin-right: 3px;
+    }
+    
+    img[align="right"] {
+        margin-left: 3px;
+    }
 }
 
 /* noscript is handled internally, as it depends on the html settings */
