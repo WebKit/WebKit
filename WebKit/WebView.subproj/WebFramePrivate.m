@@ -1707,8 +1707,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
         [[_private provisionalItem] hasPageCache]){
-        LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
-        [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
+        NSDictionary *pageCache = [[_private provisionalItem] pageCache];
+        if ([pageCache objectForKey:@"WebCorePageState"]){
+            LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+            [_private->provisionalDataSource _startLoading: pageCache];
+        }
     }
     else 
         [_private->provisionalDataSource startLoading];
