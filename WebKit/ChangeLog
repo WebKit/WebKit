@@ -1,5 +1,14 @@
 2004-07-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3720728> REGRESSION (125.8-146): Crash moving mouse over plugin at manray-photo.com
+	
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView pluginScriptableObject]): don't call NPP_GetValue unless the plug-in implements it
+
+2004-07-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3706296> VIP: ifilm.com crashing reproducibly with Safari
 
         Reviewed by kocienda.
