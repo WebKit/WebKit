@@ -1,0 +1,86 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CXXOBJECTS = $(filter-out css_extensionsimpl.o,$(ALLOBJECTS))
+
+VALUEFILES = \
+	cssvalues.c \
+	cssvalues.h \
+	cssvalues.gperf \
+	$(NULL)
+
+PROPFILES = \
+	cssproperties.c \
+	cssproperties.h \
+	cssproperties.gperf \
+	$(NULL)
+
+CFILES = $(VALUEFILES) $(PROPFILES)
+
+OBJECTS = $(CFILES) $(CXXOBJECTS)
+
+LIBRARY = libkhtmlcss.a
+
+CLEAN_FILES = $(OBJECTS) \
+	$(LIBRARY) \
+	$(CFILES) \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
+	-I$(TOPSRCDIR)/src/kwq/qt \
+	-I$(TOPSRCDIR)/src/kwq/dcop \
+	-I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/src/kwq/kio \
+	-I$(TOPSRCDIR)/src/kwq/kparts \
+	-I../dom \
+	-I../html \
+	-I../misc \
+	-I../xml \
+	-I.. \
+	-I. \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(LIBRARY)
+
+$(LIBRARY): $(OBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+$(VALUEFILES):
+	sh ./makevalues
+
+$(PROPFILES):
+	sh ./makeprop
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================

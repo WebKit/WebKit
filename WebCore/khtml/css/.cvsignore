@@ -1,9 +1,8 @@
 Makefile
+Makefile.am
 Makefile.in
-*.strip
-cssproperties.c
-cssproperties.h
-cssproperties.gperf
-cssvalues.c
-cssvalues.h
-cssvalues.gperf
+*.kde
+*.dep
+*.moc
+*.gperf
+*.c
