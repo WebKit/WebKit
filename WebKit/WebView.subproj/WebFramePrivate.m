@@ -1497,17 +1497,31 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request release];
 }
 
-- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
     [[[self controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
-    // If we don't have a dataSource, we have no "original" load on which to base a redirect,
-    // so we better just treat the redirect as a normal load.
-    if (seconds <= 1.0 && [self dataSource]) {
-        _private->quickRedirectComing = YES;
+
+    if (![self dataSource]) {
+        // If we don't have a dataSource, we have no "original" load on which to base a redirect,
+        // so we better just treat the redirect as a normal load.
+        _private->quickRedirectComing = NO;
+    } else if (lockHistory) {
+        // meta-refresh, or another case WC thinks doens't need a b/f item
+        _private->quickRedirectComing = (seconds <= 1.0);
+    } else {
+        // a redirection stemming from a JS call
+        if ([[[self controller] mainFrame] _state] == WebFrameStateCompleting) {
+            // Happened as part of closing a doc, so it's part of an onload
+            // I think delay will always be zero, but it's fine to go with the <1 policy
+            _private->quickRedirectComing = (seconds <= 1.0);
+        } else {
+            // Some other JS action, perhaps handling a user event.  Treat like a normal nav.
+            _private->quickRedirectComing = NO;
+        }
     }
 }
 

@@ -128,7 +128,7 @@ typedef enum {
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event;
 
-- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory;
 - (void)_clientRedirectCancelled;
 
 - (void)_textSizeMultiplierChanged;

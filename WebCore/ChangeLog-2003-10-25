@@ -1,3 +1,16 @@
+2002-12-18  Trey Matteson  <trey@apple.com>
+
+	3098388 - Pressing the back button goes back two levels at allmusic.com
+
+	In support of the fix for this bug, WebCore passes khtml's lockHistory setting
+	up through the bridge.
+
+        Reviewed by Darin
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped):  Pass it along.
+        * kwq/WebCoreBridge.h:
+
 2002-12-18  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by John.

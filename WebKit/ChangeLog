@@ -1,3 +1,21 @@
+2002-12-18  Trey Matteson  <trey@apple.com>
+
+	3098388 - Pressing the back button goes back two levels at allmusic.com
+
+	I rewrote the logic we use to decide whether a given redirect should be
+	treated as part of the previous navigation.  We make use of WebCore's
+	lockHistory setting, the delay time and the frame state.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectToURL:delay:fireDate:lockHistory:]):
+	Pass lockHistory up to the frame.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:]):
+	New logic.  No quick summary, best to read the code.
+
 2002-12-18  Chris Blumenberg  <cblu@apple.com>
 
 	Reject the RealPlayer plug-in because we know it doesn't work.

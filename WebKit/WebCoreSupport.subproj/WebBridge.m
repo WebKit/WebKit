@@ -231,9 +231,9 @@
     return [[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin;
 }
 
-- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory
 {
-    [frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date];
+    [frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date lockHistory:lockHistory];
 }
 
 - (void)reportClientRedirectCancelled

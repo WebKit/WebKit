@@ -221,7 +221,7 @@ enum FrameBorderStyle {
 - (void)objectLoadedFromCacheWithURL:(NSString *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;
 
-- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
+- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory;
 - (void)reportClientRedirectCancelled;
 
 - (void)unfocusWindow;
