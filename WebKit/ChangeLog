@@ -1,3 +1,14 @@
+2003-04-29  Richard Williamson   <rjw@apple.com>
+
+        API changes from final review meeting.
+        Added textEncodingName method to WebDataSource.
+        
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource textEncodingName]):
+
 2003-04-29  Chris Blumenberg  <cblu@apple.com>
 
         Updated to use the new NSURLDownload API.

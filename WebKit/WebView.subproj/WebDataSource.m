@@ -85,6 +85,16 @@
     return _private->response;
 }
 
+- (NSString *)textEncodingName
+{
+    NSString *textEncodingName = [self _overrideEncoding];
+
+    if(!textEncodingName){
+        textEncodingName = [[self response] textEncodingName];
+    }
+    return textEncodingName;
+}
+
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {

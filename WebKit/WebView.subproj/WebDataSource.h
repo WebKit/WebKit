@@ -82,6 +82,13 @@
 - (NSURLResponse *)response;
 
 /*!
+    @method textEncodingName
+    @result Returns either the override encoding, as set on the WebView for this 
+    dataSource or the encoding from the response.
+*/
+- (NSString *)textEncodingName;
+
+/*!
     @method isLoading
     @discussion Returns YES if there are any pending loads.
 */
