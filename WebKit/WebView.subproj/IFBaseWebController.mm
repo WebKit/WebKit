@@ -10,6 +10,8 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFException.h>
 
+#import <WebKit/WebKitDebug.h>
+
 #include <WCLoadProgress.h>
 
 
@@ -92,17 +94,19 @@ static id IFLoadProgressMake()
 
 - init
 {
-    [super init];
-    _controllerPrivate = [[IFBaseWebControllerPrivate alloc] init];
-    return self;
+    return [self initWithView: nil provisionalDataSource: nil];
 }
 
 
-- initWithView: (IFWebView *)view dataSource: (IFWebDataSource *)dataSource
+- initWithView: (IFWebView *)view provisionalDataSource: (IFWebDataSource *)dataSource
 {
+    IFBaseWebControllerPrivate *data;
     [super init];
-    _controllerPrivate = [[IFBaseWebControllerPrivate alloc] init];
-    [self setMainView: view andMainDataSource: dataSource];
+    
+    data = [[IFBaseWebControllerPrivate alloc] init];
+    _controllerPrivate = data;
+    data->mainFrame = [[IFWebFrame alloc] initWithName: @"top" view: view provisionalDataSource: dataSource controller: self];
+
     return self;   
 }
 
@@ -126,29 +130,6 @@ static id IFLoadProgressMake()
 }
 
 
-
-// This is the designated method to change the main view and/or main data source.
-// The main view and data source are held in the main frame.
-- (BOOL)setMainView: (IFWebView *)view andMainDataSource: (IFWebDataSource *)dataSource
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-        
-    if (dataSource != nil && dataSource != [data->mainFrame dataSource]){
-        if (![self locationWillChangeTo: [dataSource inputURL] forFrame: data->mainFrame])
-            return NO;
-    }
-    
-    // Do we need to delete and recreate the main frame?  Or can we reuse it?
-    [data->mainFrame reset];
-    [data->mainFrame autorelease];
-    
-    data->mainFrame = [[IFWebFrame alloc] initWithName: @"top" view: view dataSource: dataSource controller: self];
-    
-    return YES;
-}
-
-
-
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource
 {
     IFWebView *childView;
@@ -157,7 +138,7 @@ static id IFLoadProgressMake()
 
     childView = [[[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
 
-    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource controller: self] autorelease];
+    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView provisionalDataSource: childDataSource controller: self] autorelease];
 
     [parentDataSource addFrame: newFrame];
 
@@ -168,39 +149,6 @@ static id IFLoadProgressMake()
     [childView _setFrameScrollView: scrollView];
         
     return newFrame;
-}
-
-
-- (void)setMainView: (IFWebView *)m;
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    [self setMainView: m andMainDataSource: [data->mainFrame dataSource]];
-}
-
-- (IFWebFrame *)mainFrame
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return data->mainFrame;
-}
-
-
-- (IFWebView *)mainView
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return [data->mainFrame view];
-}
-
-
-- (BOOL)setMainDataSource: (IFWebDataSource *)dataSource;
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return [self setMainView: [data->mainFrame view] andMainDataSource: dataSource];
-}
-
-- (IFWebDataSource *)mainDataSource
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return [data->mainFrame dataSource];
 }
 
 
@@ -236,15 +184,30 @@ static id IFLoadProgressMake()
 // ---------------------------------------------------------------------
 - (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
+    IFWebFrame *frame = [dataSource frame];
+    
+    WEBKIT_ASSERT (dataSource != nil);
+
+    WEBKIT_ASSERT (frame != nil);
+
+    // Check to see if this is the first load for a data source, if so
+    // we need to transition the data source from provisional to committed.
+    if (progress->bytesSoFar == progress->totalToLoad && [frame provisionalDataSource] == dataSource){
+        WEBKITDEBUGLEVEL1 (0x2000, "resource = %s\n", [resourceDescription cString]);
+        [frame _transitionProvisionalToCommitted];
+    }
+    
     // Check if the load is complete for this data source.
     if (progress->bytesSoFar == progress->totalToLoad)
         [self _checkLoadCompleteForDataSource: dataSource];
 }
 
 
-
 - (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
+    WEBKIT_ASSERT (dataSource != nil);
+
+    // FIXME What should we do if the error is for a provisional data source?
     [self _checkLoadCompleteForDataSource: dataSource];
 }
 
@@ -258,15 +221,15 @@ static id IFLoadProgressMake()
 }
 
 
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame initiatedByUserEvent: (BOOL)flag;
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
 {
-    // Do nothing.
+    // Do nothing.  Subclasses typically override this method.
 }
 
 
 - (void)locationChangeCommittedForFrame: (IFWebFrame *)frame
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationChangeInProgressForDataSource:forDataSource: is not implemented"];
+    // Do nothing.  Subclasses typically override this method.
 }
 
 
@@ -296,6 +259,9 @@ static id IFLoadProgressMake()
     if ([frame dataSource] == dataSource)
         return frame;
         
+    if ([frame provisionalDataSource] == dataSource)
+        return frame;
+        
     frames = [[frame dataSource] children];
     count = [frames count];
     for (i = 0; i < count; i++){
@@ -304,6 +270,16 @@ static id IFLoadProgressMake()
         if (result)
             return result;
     }
+
+    frames = [[frame provisionalDataSource] children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        frame = [frames objectAtIndex: i];
+        result = [self _frameForDataSource: dataSource fromFrame: frame];
+        if (result)
+            return result;
+    }
+    
     return nil;       
 }
 
@@ -315,6 +291,13 @@ static id IFLoadProgressMake()
     return [self _frameForDataSource: dataSource fromFrame: frame];
 }
 
+
+- (IFWebFrame *)mainFrame
+{
+    IFBaseWebControllerPrivate *data = (IFBaseWebControllerPrivate *)_controllerPrivate;
+    
+    return data->mainFrame;
+}
 
 
 @end

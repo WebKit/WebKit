@@ -99,6 +99,9 @@
 - (void)dataSourceChanged: (IFWebDataSource *)dataSource;
 
 
+- (void)provisionalDataSourceChanged: (IFWebDataSource *)dataSource;
+
+
 - (void)setNeedsLayout: (bool)flag;
 
 

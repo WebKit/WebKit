@@ -7,6 +7,8 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 
+#import <WebKit/WebKitDebug.h>
+
 @implementation IFWebFramePrivate
 
 - (void)dealloc
@@ -87,6 +89,27 @@
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     [data setDataSource: ds];
     [ds _setController: [self controller]];
+}
+
+
+- (void)_transitionProvisionalToCommitted
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    WEBKIT_ASSERT ([self controller] != nil);
+
+    // Set the committed data source on the frame.
+    [self _setDataSource: data->provisionalDataSource];
+    
+    // dataSourceChanged: will reset the view and begin trying to
+    // display the new new datasource.
+    [[self view] dataSourceChanged: data->provisionalDataSource];
+
+    
+    // Now that the provisional data source is committed, release it.
+    [data setProvisionalDataSource: nil];
+
+    [[self controller] locationChangeCommittedForFrame: self];
 }
 
 

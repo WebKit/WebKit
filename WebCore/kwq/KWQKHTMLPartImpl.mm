@@ -58,74 +58,18 @@
 #import <KWQView.h>
 
 #include <WCLoadProgress.h>
+#include <WCWebDataSource.h>
 
-@class IFWebDataSource;
-@class IFWebView;
-@class IFWebFrame;
-@class IFError;
-
-@protocol IFWebController
-- (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource;
-- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
-- (BOOL)_changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame parent: (IFWebDataSource *)parent;
-- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
-- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
-@end
-
-@protocol IFLocationChangeHandler
-- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
-@end
-
-@interface IFWebDataSource : NSObject
-- initWithURL: (NSURL *)url;
-- (void)setFrame: (IFWebFrame *)fName;
-- (IFWebFrame *)frame;
-- (id <IFWebController>)controller;
-- (void)startLoading: (BOOL)forceRefresh;
-- (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)byUserEvent;
-- frameNamed: (NSString *)f;
-- (void)_setParent: (IFWebDataSource *)p;
-- (IFWebDataSource *)parent;
-@end
-
-// This should not be allowed here.  data source should not reference view
-// API.
-@interface IFWebView: NSObject
-- (QWidget *)_widget;
-@end
-
-@interface IFWebFrame: NSObject
-- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d;
-- view;
-- (IFWebDataSource *)dataSource;
-- (void)_setRenderFramePart: (void *)p;
-- (void *)_renderFramePart;
-@end
-
-typedef enum {
-    IF_LOAD_TYPE_CSS    = 1,
-    IF_LOAD_TYPE_IMAGE  = 2,
-    IF_LOAD_TYPE_SCRIPT = 3,
-    IF_LOAD_TYPE_HTML   = 4
-} IF_LOAD_TYPE;
+#include <external.h>
 
 
-@interface IFLoadProgress : NSObject
+WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
+
+void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
 {
-    int bytesSoFar;	// 0 if this is the start of load
-    int totalToLoad;	// -1 if this is not known.
-                        // bytesSoFar == totalLoaded when complete
-    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
+    WCIFWebDataSourceMake = func;
 }
-- init;
-@end
 
-@protocol  IFLoadHandler
-- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
-
-- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
-
-@end
 
 static bool cache_init = false;
 
@@ -172,7 +116,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     
-    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
+    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
@@ -181,7 +125,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
 
-    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
+    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
     [sender autorelease];
 }
 
@@ -191,7 +135,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
 
-    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
+    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
     m_part->closeURL();
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
@@ -208,7 +152,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
 
-    KWQDEBUGLEVEL3 (0x2000, "userData = 0x%08x, data = 0x%08x, length %d\n", userData, data, [data length]);
+    KWQDEBUGLEVEL3 (0x2000, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     if (!m_data) {
         m_data = [data retain];
     }
@@ -226,7 +170,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     
     userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
 
-    KWQDEBUGLEVEL2 (0x2000, "result = %d, userData = 0x%08x\n", result, userData);
+    KWQDEBUGLEVEL2 (0x2000, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
     [sender autorelease];
 }
 
@@ -1392,35 +1336,20 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        IFWebDataSource *dataSource;
-        id <IFWebController>controller;
+        IFWebDataSource *oldDataSource, *newDataSource;
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
         NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
         NSURL *url = [NSURL URLWithString: urlString];
         IFWebFrame *frame;
         
-        dataSource = getDataSource();
-        frame = [dataSource frame];
-        controller = [dataSource controller];
+        oldDataSource = getDataSource();
+        frame = [oldDataSource frame];
         
-        if ([controller _changeLocationTo: url forFrame: frame parent: [[frame dataSource] parent]]){
-            [[frame dataSource] _startLoading: YES initiatedByUserEvent: YES];
-        }
-
-/*
-        id nsview = ((IFWebView *)((QWidget *)view())->getView());
+        newDataSource = WCIFWebDataSourceMake(url);
+        [newDataSource _setParent: [oldDataSource parent]];
         
-        //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
-        if ([nsview isKindOfClass: NSClassFromString(@"NSScrollView")])
-            nsview = [nsview documentView];
-        [nsview _resetView];
-        openURL (clickedURL);
-        // [kocienda]: shield your eyes!
-        // this hack is to get link clicks to show up in the history list of the test app
-        // this should be removed and replaced by something better
-        NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-click" object:urlString];
-*/
+        [frame setProvisionalDataSource: newDataSource];
+        [frame startLoading];
     }
     
 #ifndef _KWQ_
@@ -1718,19 +1647,19 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   else
     emit d->m_extension->openURLRequest( u, args );
 #endif
-
+    IFWebDataSource *oldDataSource, *newDataSource;
     NSString *urlString = [NSString stringWithCString:u.url().latin1()];
     NSURL *qurl = [NSURL URLWithString: urlString];
     IFWebFrame *frame;
-    id <IFWebController>controller;
     
-    dataSource = getDataSource();
-    frame = [dataSource frame];
-    controller = [dataSource controller];
+    oldDataSource = getDataSource();
+    frame = [oldDataSource frame];
     
-    if ([controller _changeLocationTo: qurl forFrame: frame parent: [[frame dataSource] parent]]){
-        [[frame dataSource] _startLoading: YES initiatedByUserEvent: YES];
-    }
+    newDataSource = WCIFWebDataSourceMake(qurl);
+    [newDataSource _setParent: [oldDataSource parent]];
+    
+    [frame setProvisionalDataSource: newDataSource];
+    [frame startLoading];
 
 }
 
@@ -1746,32 +1675,43 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
     IFWebFrame *aFrame;
     IFWebDataSource *dataSource;
     
-    //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
+    fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
     dataSource = getDataSource();
 
     aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
-        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x frame found\n", (unsigned int)this, (unsigned int)frame);    
+        fprintf (stdout, "0x%08x requestFrame():  frame found part = 0x%08x\n", (unsigned int)this, (unsigned int)frame);    
+        fprintf (stdout, "0x%08x requestFrame():  frame found _widget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _widget]);    
+        fprintf (stdout, "0x%08x requestFrame():  frame found _provisionalWidget = 0x%08x\n", (unsigned int)this, (unsigned int)[[aFrame view] _provisionalWidget]);    
         // ?
-        frame->setWidget ([[aFrame view] _widget]);
+        if ([[aFrame view] _provisionalWidget])
+            frame->setWidget ([[aFrame view] _provisionalWidget]);
+        else
+            frame->setWidget ([[aFrame view] _widget]);
     }
     else {        
-        IFWebDataSource *dataSource;
+        IFWebDataSource *oldDataSource, *newDataSource;
         NSURL *childURL;
         IFWebFrame *newFrame;
         id <IFWebController> controller;
 
-        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
+        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
         
-        dataSource = getDataSource();
-        controller = [dataSource controller];
-        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: dataSource];
-        [newFrame _setRenderFramePart: frame];
-    
-        if ([controller _changeLocationTo: childURL forFrame: newFrame parent: dataSource]){            
-            [[newFrame dataSource] startLoading: YES];
+        oldDataSource = getDataSource();
+        controller = [oldDataSource controller];
+        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource];
+        if (newFrame == nil){
+            // Controller return NO to location change, now what?
+            return false;
         }
+        [newFrame _setRenderFramePart: frame];
+        
+        newDataSource = WCIFWebDataSourceMake(childURL);
+        [newDataSource _setParent: oldDataSource];
+        [newFrame setProvisionalDataSource: newDataSource];
+    
+        [newFrame startLoading];
     }
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    

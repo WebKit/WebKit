@@ -51,32 +51,40 @@
 
 // This method is typically called by the view's controller when
 // the data source is changed.
-- (void)dataSourceChanged: (IFWebDataSource *)dataSource 
+- (void)provisionalDataSourceChanged: (IFWebDataSource *)dataSource 
 {
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
     NSRect r = [self frame];
     
+    // Nasty!  Setup the cross references between the KHTMLView and
+    // the KHTMLPart.
+    KHTMLPart *part = [dataSource _part];
+
+    data->provisionalWidget = new KHTMLView (part, 0);
+    part->setView (data->provisionalWidget);
+
+    // Check to see if we're a frame.
+    if ([self _frameScrollView])
+        data->provisionalWidget->setView ([self _frameScrollView]);
+    else
+        data->provisionalWidget->setView (self);
+    
+    data->provisionalWidget->resize (r.size.width,r.size.height);
+}
+
+- (void)dataSourceChanged: (IFWebDataSource *)dataSource 
+{
+    IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
+
     // Only delete the widget if we're the top level widget.  In other
     // cases the widget is associated with a RenderFrame which will
     // delete it's widget.
     if ([dataSource isMainDocument] && data->widget)
         delete data->widget;
 
-    // Nasty!  Setup the cross references between the KHTMLView and
-    // the KHTMLPart.
-    KHTMLPart *part = [dataSource _part];
-
-    data->widget = new KHTMLView (part, 0);
-    part->setView (data->widget);
-
-    // Check to see if we're a frame.
-    if ([self _frameScrollView])
-        data->widget->setView ([self _frameScrollView]);
-    else
-        data->widget->setView (self);
+    data->widget = data->provisionalWidget;
+    data->provisionalWidget = 0;
     
-    data->widget->resize (r.size.width,r.size.height);
-
     // Remove any remnants, i.e. form widgets, from the
     // previous page.
     [self _resetView];
@@ -87,7 +95,7 @@
 
 
 
-// This method should not be public until we have a more completely
+// This method should not be public until we have more completely
 // understood how IFWebView will be subclassed.
 - (void)layout
 {

@@ -81,6 +81,13 @@
     return ((IFWebViewPrivate *)_viewPrivate)->widget;    
 }
 
+
+- (KHTMLView *)_provisionalWidget
+{
+    return ((IFWebViewPrivate *)_viewPrivate)->provisionalWidget;    
+}
+
+
 - (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv
 {
     ((IFWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    

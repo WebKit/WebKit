@@ -8,33 +8,43 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFBaseWebControllerPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
+
+#include <KWQKHTMLPart.h>
+#include <rendering/render_frames.h>
 
 @implementation IFWebFrame
 
 - init
 {
-    return [self initWithName: nil view: nil dataSource: nil controller: nil];
+    return [self initWithName: nil view: nil provisionalDataSource: nil controller: nil];
 }
 
-- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d controller: (id<IFWebController>)c
+- initWithName: (NSString *)n view: v provisionalDataSource: (IFWebDataSource *)d controller: (id<IFWebController>)c
 {
     IFWebFramePrivate *data;
 
     [super init];
     
     _framePrivate = [[IFWebFramePrivate alloc] init];   
+
+    [self setController: c];
+
+    // Allow controller to override?
+    if (d && [self setProvisionalDataSource: d] == NO){
+        [self autorelease];
+        return nil;
+    }
     
     data = (IFWebFramePrivate *)_framePrivate;
     
     [data setName: n];
     
-    [self setController: c];
-    [self setView: v];
-    [self setDataSource:  d];
+    if (v)
+        [self setView: v];
     
     return self; 
 }
@@ -72,6 +82,7 @@
     return [data controller];
 }
 
+
 - (void)setController: (id <IFWebController>)controller
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
@@ -86,27 +97,84 @@
 }
 
 
-
 - (IFWebDataSource *)dataSource
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     return [data dataSource];
 }
 
-- (void)setDataSource: (IFWebDataSource *)ds
+
+- (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    if ([data dataSource] == ds)
-        return;
+    IFWebDataSource *oldDataSource;
 
     WEBKIT_ASSERT ([self controller] != nil);
-        
-    // FIXME!  _changeFrame:dataSource: is implemented in IFBaseWebController, not a IFWebController
-    // method!
-    if (ds != nil){
-        [[self controller] _changeFrame: self dataSource: ds];
+
+    // Unfortunately the view must be non-nil, this is ultimately due
+    // to KDE parser requiring a KHTMLView.  Once we settle on a final
+    // KDE drop we should fix this dependency.
+    WEBKIT_ASSERT ([self view] != nil);
+
+    if (newDataSource != nil){
+        if (![[self controller] locationWillChangeTo: [newDataSource inputURL] forFrame: self])
+            return NO;
     }
+
+    oldDataSource = [self dataSource];
+    
+    // Is this the top frame?  If so set the data source's parent to nil.
+    if (self == [[self controller] mainFrame])
+        [newDataSource _setParent: nil];
+        
+    // Otherwise set the new data source's parent to the old data source's parent.
+    else if (oldDataSource && oldDataSource != newDataSource)
+        [newDataSource _setParent: [oldDataSource parent]];
+            
+    [newDataSource _setController: [self controller]];
+    
+    [data setProvisionalDataSource: newDataSource];
+    
+    [[self view] provisionalDataSourceChanged: newDataSource];
+
+    // This introduces a nasty dependency on the view.
+    khtml::RenderPart *renderPartFrame = [self _renderFramePart];
+    id view = [self view];
+    if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
+        renderPartFrame->setWidget ([view _provisionalWidget]);
+
+    
+    return YES;
 }
+
+
+- (void)startLoading
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    // Force refresh is irrelevant, as this will always be the first load.
+    // The controller will transition the provisional data source to the
+    // committed data source.
+    [data->provisionalDataSource startLoading: NO];
+}
+
+
+- (void)stopLoading
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    
+    [data->provisionalDataSource stopLoading];
+    [data->dataSource stopLoading];
+}
+
+
+- (void)reload: (BOOL)forceRefresh
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    [data->dataSource startLoading: forceRefresh];
+}
+
 
 - (void)reset
 {

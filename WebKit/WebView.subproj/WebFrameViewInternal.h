@@ -19,6 +19,7 @@ class KHTMLView;
 {
     id <IFWebController>controller;
     KHTMLView *widget;
+    KHTMLView *provisionalWidget;
     IFDynamicScrollBarsView *frameScrollView;
     bool isFlipped;
     bool needsLayout;
@@ -31,6 +32,7 @@ class KHTMLView;
 - (void)_resetView;
 - (void)_resetWidget;
 - (KHTMLView *)_widget;
+- (KHTMLView *)_provisionalWidget;
 - (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv;
 - (IFDynamicScrollBarsView *)_frameScrollView;
 @end

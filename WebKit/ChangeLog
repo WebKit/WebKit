@@ -1,3 +1,40 @@
+2002-03-04  Richard Williamson  <rjw@apple.com>
+
+        Changes to support 'provisional' data sources.
+        API changes to IFBaseWebController, removed redundant methods.
+ 
+        * Misc.subproj/WebKitDebug.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	getURLNotify:target:notifyData:]):
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController init]),
+	(-[IFBaseWebController initWithView:provisionalDataSource:]),
+	(-[IFBaseWebController createFrameNamed:for:inParent:]), (-[IFBaseWebController
+	receivedProgress:forResource:fromDataSource:]), (-[IFBaseWebController
+	receivedError:forResource:partialProgress:fromDataSource:]),
+	(-[IFBaseWebController locationChangeCommittedForFrame:]), (-[IFBaseWebController
+	_frameForDataSource:fromFrame:]), (-[IFBaseWebController mainFrame]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (IFWebDataSourceMake), (+[IFWebDataSource
+	load]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_startLoading:initiatedByUserEvent:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame init]), (-[IFWebFrame
+	initWithName:view:provisionalDataSource:controller:]), (-[IFWebFrame
+	setProvisionalDataSource:]), (-[IFWebFrame startLoading]), (-[IFWebFrame
+	stopLoading]), (-[IFWebFrame reload:]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _setDataSource:]),
+	(-[IFWebFrame _transitionProvisionalToCommitted]):
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm: (-[IFWebView provisionalDataSourceChanged:]),
+	(-[IFWebView dataSourceChanged:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _provisionalWidget]):
+
 2002-03-04  John Sullivan  <sullivan@apple.com>
 
 	Changed default fonts.

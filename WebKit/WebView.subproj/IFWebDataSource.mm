@@ -9,7 +9,19 @@
 
 #include <xml/dom_docimpl.h>
 
+#include <WCWebDataSource.h>
+
 @implementation IFWebDataSource
+
+static id IFWebDataSourceMake(void *url) 
+{
+    return [[[IFWebDataSource alloc] initWithURL: (NSURL *)url] autorelease];
+}
+
++(void) load
+{
+    WCSetIFWebDataSourceMakeFunc(IFWebDataSourceMake);
+}
 
 + (void)initialize {
 

@@ -528,8 +528,8 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         dataSource = [[[IFWebDataSource alloc] initWithURL:newURL] autorelease];
         webView = [self findSuperview:@"IFWebView"];
         webController = [webView controller];
-        [webController setMainDataSource:dataSource];
-        [dataSource startLoading: YES];
+        [[webController mainFrame] setProvisionalDataSource:dataSource];
+        [[webController mainFrame] startLoading];
     }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
         printf("Error: No API to open new browser window\n");
     }

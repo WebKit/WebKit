@@ -1,3 +1,18 @@
+2002-03-04  Richard Williamson  <rjw@apple.com>
+ 
+        Changes to support 'provisional' data sources.
+        API changes to IFBaseWebController, removed redundant methods.
+ 
+	* src/kwq/KWQKHTMLPart.mm: (WCSetIFWebDataSourceMakeFunc), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidBeginLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidCancelLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]),
+	(KHTMLPart::khtmlMouseReleaseEvent), (KHTMLPart::submitForm),
+	(KHTMLPart::requestFrame):
+	* src/kwq/external.h:
+
 2002-02-28  Richard Williamson  <rjw@apple.com>
 
         Finished up progress notification for main document.  

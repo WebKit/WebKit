@@ -70,7 +70,7 @@
     
     [self _part]->openURL (url);
     
-    [[self controller] locationChangeStartedForFrame: [self frame] initiatedByUserEvent: byUserEvent];
+    [[self controller] locationChangeStartedForFrame: [self frame]];
 }
 
 
