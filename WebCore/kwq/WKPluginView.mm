@@ -66,9 +66,9 @@
     window.clipRect.bottom = 450;
     window.clipRect.right = 640;
     window.type = NPWindowTypeDrawable;
-    SetPort(nPort.port);
+    /*SetPort(nPort.port);
     LineTo((int)rect.size.width, (int)rect.size.height);
-    MoveTo(0,0);
+    MoveTo(0,0);*/
     npErr = NPP_SetWindow(instance, &window);
     KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port);
     
