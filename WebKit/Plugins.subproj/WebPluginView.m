@@ -6,7 +6,7 @@
 #import "IFPluginView.h"
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
-
+#include <WCURLHandle.h>
 
 @implementation IFPluginViewNullEventSender
 
@@ -28,7 +28,7 @@
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
     acceptedEvent = NPP_HandleEvent(instance, &event);
     //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, event.when);
-    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
 }
 
 -(void) stop
@@ -103,7 +103,9 @@
     transferred = FALSE;
     stopped = FALSE;
     filesToErase = [NSMutableArray arrayWithCapacity:2];
+    activeURLHandles = [NSMutableArray arrayWithCapacity:1];
     [filesToErase retain];
+    [activeURLHandles retain];
     //trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
     eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
     [eventSender sendNullEvents];
@@ -162,6 +164,7 @@
     NPStream *stream;
     NPError npErr;    
     uint16 transferMode;
+    IFURLHandle *urlHandle;
     
     stream = malloc(sizeof(NPStream));
     cURL   = malloc([streamURL length]+1);
@@ -184,7 +187,9 @@
     
     if(transferMode == NP_NORMAL){
         KWQDebug("Stream type: NP_NORMAL\n");
-        [WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData) loadInBackground];
+        urlHandle = (IFURLHandle *)WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData);
+        [activeURLHandles addObject:urlHandle];
+        [urlHandle loadInBackground];
     }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
         if(transferMode == NP_ASFILEONLY) KWQDebug("Stream type: NP_ASFILEONLY\n");
         if(transferMode == NP_ASFILE) KWQDebug("Stream type: NP_ASFILE\n");
@@ -192,7 +197,9 @@
         [streamData->filename retain];
         streamData->data = [NSMutableData dataWithCapacity:0];
         [streamData->data retain];
-        [WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData) loadInBackground];
+        urlHandle = (IFURLHandle *)WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData);
+        [activeURLHandles addObject:urlHandle];
+        [urlHandle loadInBackground];
     }else if(transferMode == NP_SEEK){
         KWQDebug("Stream type: NP_SEEK not yet supported\n");
     }
@@ -255,6 +262,7 @@
     }
     [self setNeedsDisplay:YES];
     free(streamData);
+    [activeURLHandles removeObject:sender];
 }
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
@@ -528,8 +536,12 @@
 - (void)stop
 {
     NPError npErr;
+    unsigned i;
     
     if (!stopped){
+        for(i=0; i<[activeURLHandles count]; i++){
+            [[activeURLHandles objectAtIndex:i] cancelLoadInBackground];
+        }
         [eventSender stop];
         [eventSender release];
         npErr = NPP_Destroy(instance, NULL);
@@ -554,6 +566,7 @@
         [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
     }
     [filesToErase release];
+    [activeURLHandles release];
     [mime release];
     [URL release];
     [plugin release];
