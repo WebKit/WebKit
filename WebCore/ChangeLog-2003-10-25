@@ -1,3 +1,27 @@
+2002-09-11  David Hyatt  <hyatt@apple.com>
+
+	Fix clipping to work with layers.  This fixes the marquee
+	(once again) on livepage.apple.com.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getClipRect):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild):
+        (RenderContainer::removeChildNode):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::setStyle):
+        (RenderFlow::printObject):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::enclosingPositionedAncestor):
+        (RenderLayer::convertToLayerCoords):
+        (RenderLayer::paint):
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::print):
+
 2002-09-11  Darin Adler  <darin@apple.com>
 
         * kwq/KWQAssertions.h: Updated copy of the assertions macros (made by script).

@@ -64,20 +64,7 @@ void RenderReplaced::print( QPainter *p, int _x, int _y, int _w, int _h,
 
     if(hasSpecialObjects()) printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    // overflow: hidden
-    bool clipped = false;
-    if (style()->overflow()==OHIDDEN) {
-        calcClip(p, _tx, _ty);
-	clipped = true;
-    }
-
     printObject(p, _x, _y, _w, _h, _tx, _ty);
-
-    // overflow: hidden
-    // restore clip region
-    if ( clipped ) {
-	p->restore();
-    }
 }
 
 void RenderReplaced::calcMinMaxWidth()

@@ -70,13 +70,10 @@ void RenderFlow::setStyle(RenderStyle *_style)
 
     RenderBox::setStyle(_style);
 
-    if(isPositioned()) {
+    if(isPositioned())
         setInline(false);
-        if (!m_layer)
-            m_layer = new RenderLayer(this);
-    }
-
-    if (isRelPositioned() && !m_layer)
+    
+    if ((isPositioned() || isRelPositioned() || style()->overflow()==OHIDDEN) && !m_layer)
         m_layer = new RenderLayer(this);
     
     if(isFloating() || !style()->display() == INLINE)
@@ -152,13 +149,6 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
     if(hasSpecialObjects() && !isInline() && style()->visibility() == VISIBLE )
         printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    bool clipped = false;
-    // overflow: hidden
-    if (style()->overflow()==OHIDDEN || (isPositioned() && style()->hasClip())) {
-        calcClip(p, _tx, _ty);
-        clipped = true;
-    }
-
     // 2. print contents
     RenderObject *child = firstChild();
     while(child != 0)
@@ -171,12 +161,6 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
     // 3. print floats and other non-flow objects
     if(specialObjects)
         printSpecialObjects( p,  _x, _y, _w, _h, _tx , _ty);
-
-    // overflow: hidden
-    // restore clip region
-    if ( clipped ) {
-        p->restore();
-    }
 
     if(!isInline() && !childrenInline() && style()->outlineWidth())
         printOutline(p, _tx, _ty, width(), height(), style());

@@ -311,7 +311,7 @@ void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
 }
 
 
-void RenderBox::calcClip(QPainter* p, int tx, int ty)
+QRect RenderBox::getClipRect(int tx, int ty)
 {
     int bl=borderLeft(),bt=borderTop(),bb=borderBottom(),br=borderRight();
     int clipx = tx+bl;
@@ -344,19 +344,7 @@ void RenderBox::calcClip(QPainter* p, int tx, int ty)
     //kdDebug( 6040 ) << "setting clip("<<clipx<<","<<clipy<<","<<clipw<<","<<cliph<<")"<<endl;
 
     QRect cr(clipx,clipy,clipw,cliph);
-    cr = p->xForm(cr);
-#if APPLE_CHANGES
-    p->save();
-    p->addClip(cr);
-#else
-    QRegion creg(cr);
-    QRegion old = p->clipRegion();
-    if (!old.isNull())
-        creg = old.intersect(creg);
-
-    p->save();
-    p->setClipRegion(creg);
-#endif
+    return cr;
 }
 
 void RenderBox::close()

@@ -126,7 +126,7 @@ protected:
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
 
-    void calcClip(QPainter* p, int tx, int ty);
+    virtual QRect getClipRect(int tx, int ty);
 
     // the actual height of the contents + borders + padding
     int m_height;
