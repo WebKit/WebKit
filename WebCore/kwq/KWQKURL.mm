@@ -363,9 +363,9 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
             }
         }
 
-        QCString decoded = codec
-            ? codec->fromUnicode(s)
-            : QTextCodec(kCFStringEncodingUTF8).fromUnicode(s);
+        static QTextCodec UTF8Codec(kCFStringEncodingUTF8);
+
+        QCString decoded = (codec ? codec : &UTF8Codec)->fromUnicode(s)
         strBuffer = strdup(decoded);
         str = strBuffer;
     }
@@ -893,6 +893,8 @@ QString KURL::prettyURL() const
 
 QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
 {
+    static QTextCodec UTF8Codec(kCFStringEncodingUTF8);
+
     QString result("");
 
     char staticBuffer[2048];
@@ -936,7 +938,7 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
         }
 
         // Decode the bytes into Unicode characters.
-        QString decoded = codec->toUnicode(buffer, p - buffer);
+        QString decoded = (codec ? codec : &UTF8Codec)->toUnicode(buffer, p - buffer);
         if (decoded.isEmpty()) {
             continue;
         }
