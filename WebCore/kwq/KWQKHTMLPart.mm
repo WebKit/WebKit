@@ -99,7 +99,7 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
 
 KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
-    mutableInstances().remove();
+    mutableInstances().remove(this);
 }
 
 WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)

@@ -1,3 +1,12 @@
+2002-10-15  Darin Adler  <darin@apple.com>
+
+	- fixed 3054791 -- crash in WebCoreSettings _updateAllViews changing font
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::~KWQKHTMLPartImpl):
+	Pass in the "this" pointer so that the right instance is removed from the
+	instances list. Before, we would always remove the first instance from the
+	list, leaving the list broken.
+
 2002-10-15  Ken Kocienda  <kocienda@apple.com>
 
 	Fixed an "unused variable" build breaker. Note that I just 
