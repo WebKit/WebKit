@@ -2222,6 +2222,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
 
     bool hasNewLine = true;
     bool addedSpace = true;
+    bool needSpace = false;
     bool hasParagraphBreak = true;
     const ElementImpl *linkStartNode = 0;
     unsigned linkStartLocation = 0;
@@ -2257,9 +2258,16 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
                     if (renderer->style()->whiteSpace() == PRE) {
+                        if (needSpace && !addedSpace) {
+                            if (text.isEmpty() && linkStartLocation == [result length]) {
+                                ++linkStartLocation;
+                            }
+                            text += ' ';
+                        }
                         int runStart = (start == -1) ? 0 : start;
                         int runEnd = (end == -1) ? str.length() : end;
                         text += str.mid(runStart, runEnd-runStart);
+                        needSpace = false;
                         addedSpace = str[runEnd-1].direction() == QChar::DirWS;
                     }
                     else {
@@ -2277,23 +2285,24 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                                 int runStart = (start == -1) ? runs[i]->m_start : start;
                                 int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
                                 runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                                bool spaceBetweenRuns = false;
                                 if (runStart >= runs[i]->m_start &&
                                     runStart < runs[i]->m_start + runs[i]->m_len) {
+                                    if (needSpace && !addedSpace) {
+                                        if (text.isEmpty() && linkStartLocation == [result length]) {
+                                            ++linkStartLocation;
+                                        }
+                                        text += ' ';
+                                    }
                                     QString runText = str.mid(runStart, runEnd - runStart);
                                     runText.replace('\n', ' ');
                                     text += runText;
-                                    start = -1;
-                                    spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
+                                    int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length();
+                                    needSpace = nextRunStart > runEnd;
                                     addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                                    start = -1;
                                 }
                                 if (end != -1 && runEnd >= end)
                                     break;
-
-                                if (spaceBetweenRuns && !addedSpace) {
-                                    text += " ";
-                                    addedSpace = true;
-                                }
                             }
                         }
                     }

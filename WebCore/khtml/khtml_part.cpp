@@ -2274,6 +2274,7 @@ QString KHTMLPart::text(const DOM::Range &r) const
 
   bool hasNewLine = true;
   bool addedSpace = true;
+  bool needSpace = false;
   QString text;
   DOM::Node startNode = r.startContainer();
   DOM::Node endNode = r.endContainer();
@@ -2305,43 +2306,41 @@ QString KHTMLPart::text(const DOM::Range &r) const
           RenderObject* renderer = n.handle()->renderer();
           if (renderer && renderer->isText()) {
               if (renderer->style()->whiteSpace() == khtml::PRE) {
+                  if (needSpace && !addedSpace)
+                      text += ' ';
                   int runStart = (start == -1) ? 0 : start;
                   int runEnd = (end == -1) ? str.length() : end;
                   text += str.mid(runStart, runEnd-runStart);
+                  needSpace = false;
                   addedSpace = str[runEnd-1].direction() == QChar::DirWS;
               }
               else {
                   RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
                   InlineTextBoxArray runs = textObj->inlineTextBoxes();
-                  if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
+                  if (runs.count() == 0 && str.length() > 0) {
                       // We have no runs, but we do have a length.  This means we must be
                       // whitespace that collapsed away at the end of a line.
-                      text += " ";
-                      addedSpace = true;
+                      needSpace = true;
                   }
                   else {
-                      addedSpace = false;
                       for (unsigned i = 0; i < runs.count(); i++) {
                           int runStart = (start == -1) ? runs[i]->m_start : start;
                           int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
                           runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
-                          bool spaceBetweenRuns = false;
                           if (runStart >= runs[i]->m_start &&
                               runStart < runs[i]->m_start + runs[i]->m_len) {
+                              if (needSpace && !addedSpace)
+                                  text += ' ';
                               QString runText = str.mid(runStart, runEnd - runStart);
                               runText.replace('\n', ' ');
                               text += runText;
-                              start = -1;
-                              spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
+                              int nextRunStart = (i+1 < runs.count()) ? runs[i+1]->m_start : str.length();
+                              needSpace = nextRunStart > runEnd;
                               addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                              start = -1;
                           }
                           if (end != -1 && runEnd >= end)
                               break;
-
-                          if (spaceBetweenRuns && !addedSpace) {
-                              text += " ";
-                              addedSpace = true;
-                          }
                       }
                   }
               }

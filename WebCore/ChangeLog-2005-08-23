@@ -2,6 +2,20 @@
 
         Reviewed by John.
 
+        - fixed 3467919: REGRESSION (91-92): space missing when copying text with link at start or end of line
+
+        * khtml/khtml_part.cpp: (KHTMLPart::text):
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString):
+        Changed both "turn HTML into text" code paths to generate spaces in a different way.
+        First, corrected the logic so it notices spaces left out at the end of a RenderText object.
+        Second, don't emit the space until we are emitting more text, to prevent emitting trailing
+        spaces. To get this completely right for the attributed string case, I had to add code to
+        adjust the offset used to mark links.
+
+2003-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3477453: nowrap in a fixed-width TD is ignored on screen but not when printed (Williams-Sonoma)
 
         * khtml/rendering/render_table.cpp: (RenderTableCell::setStyle):
