@@ -37,6 +37,7 @@
 
 namespace DOM {
     class AtomicString;
+    class CSSProperty;
     class CSSStyleDeclarationImpl;
     class DocumentImpl;
     class DOMString;
@@ -171,12 +172,21 @@ private:
 class ApplyStyleCommandImpl : public CompositeEditCommandImpl
 {
 public:
-	ApplyStyleCommandImpl(DOM::DocumentImpl *, ApplyStyleCommand::EStyle);
+	ApplyStyleCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style);
 	virtual ~ApplyStyleCommandImpl();
 	
     virtual int commandID() const;
 
 	virtual void doApply();
+
+    DOM::CSSStyleDeclarationImpl *style() const { return m_style; }
+
+    struct StyleChange {
+        StyleChange() : applyBold(false), applyItalic(false) {}
+        DOM::DOMString cssStyle;
+        bool applyBold:1;
+        bool applyItalic:1;
+    };
 
 private:
     // style-removal helpers
@@ -190,15 +200,10 @@ private:
     void removeNodePreservingChildren(DOM::NodeImpl *, EUndoable undoable);
 
     // shared helpers
-    bool mustExlicitlyApplyStyle(const DOM::Position &) const;
-    DOM::NodeImpl *createExplicitApplyStyleNode() const;
-    bool removingStyle() const { return m_removingStyle; }
-    bool currentlyHasStyle() const;
-    bool currentlyHasStyle(const DOM::Position &) const;
-    int cssProperty() const;
+    bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *) const;
+    StyleChange computeStyleChange(const DOM::Position &, DOM::CSSStyleDeclarationImpl *);
      
     // apply-in-place helpers
-    bool matchesTargetStyle(bool hasStyle) const;
     DOM::Position positionInsertionPoint(DOM::Position);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
@@ -208,6 +213,7 @@ private:
     // apply using fragment helpers
     DOM::DocumentFragmentImpl *cloneSelection() const;
     void removeStyle(DOM::DocumentFragmentImpl *);
+    void surroundContentsWithElement(DOM::DocumentFragmentImpl *, DOM::ElementImpl *);
     void applyStyleIfNeeded(DOM::DocumentFragmentImpl *, const DOM::Position &);
     void insertFragment(DOM::DocumentFragmentImpl *, const DOM::Position &);
 
@@ -215,8 +221,7 @@ private:
     void applyInPlace(const DOM::Position &s, const DOM::Position &e);
     void applyUsingFragment();
     
-    ApplyStyleCommand::EStyle m_styleConstant;
-    bool m_removingStyle;
+    DOM::CSSStyleDeclarationImpl *m_style;
 };
 
 //------------------------------------------------------------------------------------------

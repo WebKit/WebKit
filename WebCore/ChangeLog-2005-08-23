@@ -1,3 +1,51 @@
+2004-06-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for these bugs:
+        
+        <rdar://problem/3655028>: "Text styles have hard-coded values making bold the only supported text style"
+        <rdar://problem/3656969>: "HTML Editing: Font panel doesn't work"
+
+        * khtml/css/css_valueimpl.cpp:
+        (FontFamilyValueImpl::cssText): Added implementation for this subclass. Returns parsedFontName.  
+        * khtml/css/css_valueimpl.h: Declare cssText() on FontFamilyValueImpl.
+        (DOM::CSSProperty::value):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::ApplyStyleCommand): Changed signature to take a CSSStyleDeclarationImpl.
+        (khtml::ApplyStyleCommand::style): Added accessor.
+        * khtml/editing/htmlediting.h: Changed constructor signature to take a CSSStyleDeclarationImpl.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::styleSpanClassString): Added helper to return attribute used to tag spans we add to apply styles.
+        (khtml::ApplyStyleCommandImpl::ApplyStyleCommandImpl): Ref style passed in.
+        (khtml::ApplyStyleCommandImpl::~ApplyStyleCommandImpl): Deref style passed in.
+        (khtml::ApplyStyleCommandImpl::doApply): m_removingStyle is obsolete. Removed.
+        (khtml::ApplyStyleCommandImpl::isHTMLStyleNode): Now checks all properties in the object's declaration.
+        (khtml::ApplyStyleCommandImpl::removeCSSStyle): Again, now is multi-property-savvy. Will now remove an empty span
+        if we added it.
+        (khtml::ApplyStyleCommandImpl::currentlyHasStyle): Replaced, bold-only code with code that can handle all styles.
+        (khtml::ApplyStyleCommandImpl::computeStyleChange): Helper which helps to determine whether we want to apply
+        HTML-style markup for bold and italic, and gathers up all style changes that need to be done.
+        (khtml::ApplyStyleCommandImpl::positionInsertionPoint): Added comment explaining possible optimization that might be
+        done in the future.
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Significant reworking; now handles applying multiple styles.
+        (khtml::ApplyStyleCommandImpl::cloneSelection): Assert fragment has at least one child. Don't want to work
+        on empty fragments.
+        (khtml::ApplyStyleCommandImpl::surroundContentsWithElement): New helper.
+        (khtml::RemoveCSSPropertyCommandImpl::~RemoveCSSPropertyCommandImpl): Juggle asserts and lifecycle methods to be
+        more like other commands.
+        (khtml::RemoveCSSPropertyCommandImpl::doApply): Ditto.
+        (khtml::RemoveNodeAttributeCommandImpl::~RemoveNodeAttributeCommandImpl): Ditto.
+        (khtml::RemoveNodeAttributeCommandImpl::doApply):Ditto.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::ApplyStyleCommandImpl::style): Added.
+        (khtml::ApplyStyleCommandImpl::StyleChange::StyleChange): Added.
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration setProperty:::]): Fix problem where passing an empty NSString to a function expecting a boolean
+        made all properties important priority.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyStyle:]): Remove provisional code and comment. Now pass along style, following the intended design.
+
 2004-06-01  Chris Blumenberg  <cblu@apple.com>
 
         Reviewed by kocienda.
@@ -9,11 +57,10 @@
 2004-05-28  John Louch  <ouch@apple.com>
 
         Reviewed by gramps.
-	
-	- removed setShadowWithColor and change setShadow to work with optional attributes
-		it follows the same rules as setFill/StrokeColor
-	- Fixed bug in setFillColor and setStrokeColor for CMYK colors (missing break in case).
-	
+
+        - removed setShadowWithColor and change setShadow to work with optional attributes
+          it follows the same rules as setFill/StrokeColor
+        - Fixed bug in setFillColor and setStrokeColor for CMYK colors (missing break in case).
 
         * khtml/ecma/kjs_html.cpp:
         (KJS::Context2DFunction::tryCall):

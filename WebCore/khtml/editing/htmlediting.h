@@ -201,11 +201,10 @@ private:
 class ApplyStyleCommand : public CompositeEditCommand
 {
 public:
-    
-    enum EStyle { NONE, BOLD };
-
-	ApplyStyleCommand(DOM::DocumentImpl *, EStyle);
+	ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *);
 	virtual ~ApplyStyleCommand();
+
+    DOM::CSSStyleDeclarationImpl *style() const;
 
 private:
     inline ApplyStyleCommandImpl *impl() const;

@@ -35,6 +35,7 @@
 #include "htmltags.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
+#include "qptrlist.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
@@ -58,6 +59,7 @@ using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
 using DOM::CSSProperty;
 using DOM::CSSStyleDeclarationImpl;
+using DOM::CSSValueImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
@@ -67,6 +69,7 @@ using DOM::EditIterator;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
+using DOM::NamedAttrMapImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
@@ -206,6 +209,12 @@ static DOMString &nonBreakingSpaceString()
 {
     static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
     return nonBreakingSpaceString;
+}
+
+static DOMString &styleSpanClassString()
+{
+    static DOMString styleSpanClassString = "khtml-style-span";
+    return styleSpanClassString;
 }
 
 static void debugPosition(const char *prefix, const Position &pos)
@@ -574,13 +583,17 @@ void AppendNodeCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommandImpl
 
-ApplyStyleCommandImpl::ApplyStyleCommandImpl(DocumentImpl *document, ApplyStyleCommand::EStyle style)
-    : CompositeEditCommandImpl(document), m_styleConstant(style)
+ApplyStyleCommandImpl::ApplyStyleCommandImpl(DocumentImpl *document, CSSStyleDeclarationImpl *style)
+    : CompositeEditCommandImpl(document), m_style(style)
 {   
+    ASSERT(m_style);
+    m_style->ref();
 }
 
 ApplyStyleCommandImpl::~ApplyStyleCommandImpl()
 {
+    ASSERT(m_style);
+    m_style->deref();
 }
 
 int ApplyStyleCommandImpl::commandID() const
@@ -593,8 +606,6 @@ void ApplyStyleCommandImpl::doApply()
     if (endingSelection().state() != Selection::RANGE)
         return;
 
-    m_removingStyle = currentlyHasStyle();
-    
     // Right now, we only apply in place if the start and end are in the same
     // node. This could be improved in the future to handle more cases that
     // are only a bit more complex than this case.
@@ -611,13 +622,21 @@ void ApplyStyleCommandImpl::doApply()
 
 bool ApplyStyleCommandImpl::isHTMLStyleNode(HTMLElementImpl *elem)
 {
-    switch (m_styleConstant) {
-        case ApplyStyleCommand::BOLD:
-            return elem->id() == ID_B;
-        default:
-        case ApplyStyleCommand::NONE:
-            return false;
+    for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        switch (property->id()) {
+            case CSS_PROP_FONT_WEIGHT:
+                if (elem->id() == ID_B)
+                    return true;
+                break;
+            case CSS_PROP_FONT_STYLE:
+                if (elem->id() == ID_I)
+                    return true;
+                break;
+        }
     }
+
+    return false;
 }
 
 void ApplyStyleCommandImpl::removeHTMLStyleNode(HTMLElementImpl *elem, EUndoable undoable)
@@ -635,11 +654,14 @@ void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undo
     ASSERT(elem);
 
     CSSStyleDeclarationImpl *decl = elem->inlineStyleDecl();
-    int property = cssProperty(); 
-    if (!decl || !decl->getPropertyCSSValue(property))
+    if (!decl)
         return;
-        
-    removeCSSProperty(decl, property, undoable);
+
+    for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        if (decl->getPropertyCSSValue(property->id()))
+            removeCSSProperty(decl, property->id(), undoable);
+    }
 
     // EDIT FIXME: These four lines of code should not be necessary.
     // The DOM should update without having to do this extra work.
@@ -647,6 +669,15 @@ void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undo
         setNodeAttribute(elem, ATTR_STYLE, decl->cssText(), undoable);
     else
         removeNodeAttribute(elem, ATTR_STYLE, undoable);
+
+    if (elem->id() == ID_SPAN) {
+        // Check to see if the span is one we added to apply style.
+        // If it is, and there are no more attributes on the span other than our
+        // class marker, remove the span.
+        NamedAttrMapImpl *map = elem->attributes();
+        if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
+            removeNodePreservingChildren(elem, undoable);
+    }
 }
 
 void ApplyStyleCommandImpl::removeCSSProperty(CSSStyleDeclarationImpl *decl, int property, EUndoable undoable)
@@ -707,87 +738,51 @@ void ApplyStyleCommandImpl::removeNodePreservingChildren(NodeImpl *parent, EUndo
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommandImpl: shared helpers
 
-bool ApplyStyleCommandImpl::mustExlicitlyApplyStyle(const Position &pos) const
-{
-    bool hasStyle = currentlyHasStyle(pos);
-    return (removingStyle() && hasStyle) || (!removingStyle() && !hasStyle);
-} 
-
-NodeImpl *ApplyStyleCommandImpl::createExplicitApplyStyleNode() const
-{
-    int exceptionCode = 0;
-    
-    switch (m_styleConstant) {
-        case ApplyStyleCommand::BOLD:
-            if (removingStyle()) {
-                ElementImpl *elem = document()->createHTMLElement("SPAN", exceptionCode);
-                ASSERT(exceptionCode == 0);
-                elem->setAttribute(ATTR_STYLE, "font-weight: normal");
-                return elem;
-            }
-            else {
-                ElementImpl *elem = document()->createHTMLElement("B", exceptionCode);
-                ASSERT(exceptionCode == 0);
-                return elem;
-            }
-        default:
-        case ApplyStyleCommand::NONE:
-            ASSERT_NOT_REACHED();
-    }
-    
-    return 0;
-}
-
-bool ApplyStyleCommandImpl::currentlyHasStyle() const
-{
-    return currentlyHasStyle(endingSelection().start().equivalentDownstreamPosition());
-}
-
-bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos) const
+bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos, const CSSProperty *property) const
 {
     ASSERT(pos.notEmpty());
-    
-    NodeImpl *node = pos.node();
-    while (node && !node->isElementNode())
-         node = node->parentNode();
-    ASSERT(node);
-
-    CSSStyleDeclarationImpl *decl = document()->defaultView()->getComputedStyle(static_cast<ElementImpl *>(node), 0);
+    CSSStyleDeclarationImpl *decl = document()->defaultView()->getComputedStyle(pos.element(), 0);
     ASSERT(decl);
-    
-    switch (m_styleConstant) {
-        case ApplyStyleCommand::BOLD: {
-            CSSPrimitiveValueImpl *value = static_cast<CSSPrimitiveValueImpl *>(decl->getPropertyCSSValue(CSS_PROP_FONT_WEIGHT));
-            return !strcasecmp(value->getStringValue(), "bold");
-        }
-        case ApplyStyleCommand::NONE:
-            ASSERT(0);
-            break;
-    }
-    
-    return false;
+    CSSValueImpl *value = decl->getPropertyCSSValue(property->id());
+    return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
 }
 
-int ApplyStyleCommandImpl::cssProperty() const
+ApplyStyleCommandImpl::StyleChange ApplyStyleCommandImpl::computeStyleChange(const Position &insertionPoint, CSSStyleDeclarationImpl *style)
 {
-    switch (m_styleConstant) {
-        case ApplyStyleCommand::BOLD:
-            return CSS_PROP_FONT_WEIGHT;
-        default:
-        case ApplyStyleCommand::NONE:
-            ASSERT_NOT_REACHED();
+    ASSERT(insertionPoint.notEmpty());
+    ASSERT(style);
+
+    StyleChange styleChange;
+
+    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        if (!currentlyHasStyle(insertionPoint, property)) {
+            switch (property->id()) {
+                case CSS_PROP_FONT_WEIGHT:
+                    if (strcasecmp(property->value()->cssText(), "bold") == 0)
+                        styleChange.applyBold = true;
+                    else
+                        styleChange.cssStyle += property->cssText();
+                    break;
+                case CSS_PROP_FONT_STYLE: {
+                        DOMString cssText(property->value()->cssText());
+                        if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
+                            styleChange.applyItalic = true;
+                        else
+                            styleChange.cssStyle += property->cssText();
+                    }
+                    break;
+                default:
+                    styleChange.cssStyle += property->cssText();
+                    break;
+            }
+        }
     }
-    
-    return 0;
+    return styleChange;
 }
 
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommandImpl: apply-in-place helpers
-
-bool ApplyStyleCommandImpl::matchesTargetStyle(bool hasStyle) const
-{
-    return (removingStyle() && !hasStyle) || (!removingStyle() && hasStyle);
-}
 
 Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
 {
@@ -797,7 +792,13 @@ Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
         pos = Position(split.node(), 0);
     }
 
-    if (matchesTargetStyle(currentlyHasStyle(pos)))
+#if 0
+    // EDIT FIXME: If modified to work with the internals of applying style,
+    // this code can work to optimize cases where a style change is taking place on
+    // a boundary between nodes where one of the nodes has the desired style. In other
+    // words, it is possible for content to be merged into existing nodes rather than adding
+    // additional markup.
+    if (currentlyHasStyle(pos))
         return pos;
         
     // try next node
@@ -805,7 +806,7 @@ Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
         NodeImpl *nextNode = pos.node()->traverseNextNode();
         if (nextNode) {
             Position next = Position(nextNode, 0);
-            if (matchesTargetStyle(currentlyHasStyle(next)))
+            if (currentlyHasStyle(next))
                 return next;
         }
     }
@@ -815,10 +816,11 @@ Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
         NodeImpl *prevNode = pos.node()->traversePreviousNode();
         if (prevNode) {
             Position prev = Position(prevNode, prevNode->maxOffset());
-            if (matchesTargetStyle(currentlyHasStyle(prev)))
+            if (currentlyHasStyle(prev))
                 return prev;
         }
     }
+#endif
     
     return pos;
 }
@@ -854,13 +856,35 @@ bool ApplyStyleCommandImpl::splitTextAtEndIfNeeded(const Position &start, const 
 void ApplyStyleCommandImpl::applyStyleIfNeeded(const Position &insertionPoint)
 {
     ASSERT(insertionPoint.notEmpty());
-    if (mustExlicitlyApplyStyle(insertionPoint)) {
-        NodeImpl *styleNode = createExplicitApplyStyleNode();
-        ASSERT(styleNode);
-        NodeImpl *contentNode = insertionPoint.node();
-        insertNodeBefore(styleNode, contentNode);
+
+    StyleChange styleChange = computeStyleChange(insertionPoint, style());
+    NodeImpl *contentNode = insertionPoint.node();
+    int exceptionCode = 0;
+
+    if (styleChange.cssStyle.length() > 0) {
+        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+        insertNodeBefore(styleElement, contentNode);
         removeNode(contentNode);
-        appendNode(styleNode, contentNode);
+        appendNode(styleElement, contentNode);
+    }
+
+    if (styleChange.applyBold) {
+        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        insertNodeBefore(boldElement, contentNode);
+        removeNode(contentNode);
+        appendNode(boldElement, contentNode);
+    }
+
+    if (styleChange.applyItalic) {
+        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        insertNodeBefore(italicElement, contentNode);
+        removeNode(contentNode);
+        appendNode(italicElement, contentNode);
     }
 }
 
@@ -903,6 +927,7 @@ DocumentFragmentImpl *ApplyStyleCommandImpl::cloneSelection() const
 
     DocumentFragmentImpl *fragment = range->cloneContents(exceptionCode);
     ASSERT(exceptionCode == 0);
+    ASSERT(fragment->firstChild());
 
     range->detach(exceptionCode);
     ASSERT(exceptionCode == 0);
@@ -930,28 +955,52 @@ void ApplyStyleCommandImpl::removeStyle(DocumentFragmentImpl *fragment)
     }
 }
 
-void ApplyStyleCommandImpl::applyStyleIfNeeded(DocumentFragmentImpl *fragment, const Position &insertionPoint)
+void ApplyStyleCommandImpl::surroundContentsWithElement(DocumentFragmentImpl *fragment, ElementImpl *element) 
 {
     ASSERT(fragment);
+    ASSERT(element);
+
+    int exceptionCode = 0;
+    NodeImpl *node = fragment->firstChild();
+    while (node) {
+        NodeImpl *next = node->nextSibling();
+        node->ref();
+        fragment->removeChild(node, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        element->appendChild(node, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        node->deref();
+        node = next;
+    }
+    fragment->appendChild(element, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void ApplyStyleCommandImpl::applyStyleIfNeeded(DocumentFragmentImpl *fragment, const Position &insertionPoint)
+{
     ASSERT(insertionPoint.notEmpty());
 
-    if (mustExlicitlyApplyStyle(insertionPoint)) {
-        NodeImpl *styleNode = createExplicitApplyStyleNode();
-        ASSERT(styleNode);
-        int exceptionCode = 0;
-        NodeImpl *node = fragment->firstChild();
-        while (node) {
-            NodeImpl *next = node->nextSibling();
-            node->ref();
-            fragment->removeChild(node, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            styleNode->appendChild(node, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            node->deref();
-            node = next;
-        }
-        fragment->appendChild(styleNode, exceptionCode);
+    StyleChange styleChange = computeStyleChange(insertionPoint, style());
+    int exceptionCode = 0;
+
+    if (styleChange.cssStyle.length() > 0) {
+        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
         ASSERT(exceptionCode == 0);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+        surroundContentsWithElement(fragment, styleElement);
+    }
+
+    if (styleChange.applyBold) {
+        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        surroundContentsWithElement(fragment, boldElement);
+    }
+
+    if (styleChange.applyItalic) {
+        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        surroundContentsWithElement(fragment, italicElement);
     }
 }
 
@@ -2065,8 +2114,8 @@ RemoveCSSPropertyCommandImpl::RemoveCSSPropertyCommandImpl(DocumentImpl *documen
 
 RemoveCSSPropertyCommandImpl::~RemoveCSSPropertyCommandImpl()
 {
-    if (m_decl)
-        m_decl->deref();
+    ASSERT(m_decl);
+    m_decl->deref();
 }
 
 int RemoveCSSPropertyCommandImpl::commandID() const
@@ -2079,6 +2128,8 @@ void RemoveCSSPropertyCommandImpl::doApply()
     ASSERT(m_decl);
 
     m_oldValue = m_decl->getPropertyValue(m_property);
+    ASSERT(!m_oldValue.isNull());
+
     m_important = m_decl->getPropertyPriority(m_property);
     m_decl->removeProperty(m_property);
 }
@@ -2103,8 +2154,8 @@ RemoveNodeAttributeCommandImpl::RemoveNodeAttributeCommandImpl(DocumentImpl *doc
 
 RemoveNodeAttributeCommandImpl::~RemoveNodeAttributeCommandImpl()
 {
-    if (m_element)
-        m_element->deref();
+    ASSERT(m_element);
+    m_element->deref();
 }
 
 int RemoveNodeAttributeCommandImpl::commandID() const
@@ -2116,8 +2167,10 @@ void RemoveNodeAttributeCommandImpl::doApply()
 {
     ASSERT(m_element);
 
-    int exceptionCode = 0;
     m_oldValue = m_element->getAttribute(m_attribute);
+    ASSERT(!m_oldValue.isNull());
+
+    int exceptionCode = 0;
     m_element->removeAttribute(m_attribute, exceptionCode);
     ASSERT(exceptionCode == 0);
 }

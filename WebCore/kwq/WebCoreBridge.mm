@@ -1550,10 +1550,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !style)
         return;
     
-    // FIXME: Temporarily hard-coded to BOLD until more styles are implemented.
-    //                 ...or...
-    // Any style you want, as long as it's BOLD. :)
-    ApplyStyleCommand cmd(_part->xmlDocImpl(), ApplyStyleCommand::BOLD);
+    ApplyStyleCommand cmd(_part->xmlDocImpl(), [style _styleDeclarationImpl]);
     cmd.apply();
 }
 

@@ -757,7 +757,8 @@ static inline int getPropertyID(NSString *string)
     int propid = getPropertyID(propertyName);
     if (!propid) 
         return;
-    [self _styleDeclarationImpl]->setProperty(propid, value, priority);
+    bool important = strcasecmp(DOMString(priority), "important") == 0;
+    [self _styleDeclarationImpl]->setProperty(propid, value, important);
 }
 
 - (unsigned long)length

@@ -239,7 +239,7 @@ NodeImpl *AppendNodeCommand::appendChild() const
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand
 
-ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, EStyle style)
+ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, CSSStyleDeclarationImpl *style)
     : CompositeEditCommand(new ApplyStyleCommandImpl(document, style))
 {
 }
@@ -251,6 +251,12 @@ ApplyStyleCommand::~ApplyStyleCommand()
 ApplyStyleCommandImpl *ApplyStyleCommand::impl() const
 {
     return static_cast<ApplyStyleCommandImpl *>(get());
+}
+
+CSSStyleDeclarationImpl *ApplyStyleCommand::style() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->style();
 }
 
 //------------------------------------------------------------------------------------------
