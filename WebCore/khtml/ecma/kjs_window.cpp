@@ -34,6 +34,7 @@
 #include <qstyle.h>
 
 #if APPLE_CHANGES
+#include <KWQLogging.h>
 #define _COLLECTOR
 #endif
 #include <kjs/collector.h>
@@ -1025,7 +1026,16 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     {
       // window.open disabled unless from a key/mouse event
       if (static_cast<ScriptInterpreter *>(exec->interpreter())->isWindowOpenAllowed())
+#ifndef APPLE_CHANGES
         policy = 0;
+#else
+      {
+        policy = 0;
+	LOG(PopupBlocking, "Allowed JavaScript window open of %s", args[0].toString(exec).qstring().ascii());
+      } else {
+	LOG(PopupBlocking, "Blocked JavaScript window open of %s", args[0].toString(exec).qstring().ascii());
+      }
+#endif
     }
     if ( policy != 0 ) {
       return Undefined();

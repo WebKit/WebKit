@@ -1,3 +1,15 @@
+2002-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Forgot to check this in earlier:
+
+	- fixed 3077084 - debugging output when suppressing or allowing
+	pop-ups
+	
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+        * kwq/KWQLogging.h:
+        * kwq/KWQLogging.m:
+
 2002-10-22  David Hyatt  <hyatt@apple.com>
 
 	Get XML files closer.  An XML doc is at least made.  No
