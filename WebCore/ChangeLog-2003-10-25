@@ -1,3 +1,15 @@
+2003-08-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3095893>: Image Capture: "Build web page" doesn't work with Japanese folder name.
+
+        * kwq/KWQKURL.mm:
+        (KURL::getNSURL): Try UTF-8 first and fallback to ISO Latin-1 when creating an NSURL.
+	This will handle the two-byte character in file name case mentioned in the bug.
+
 2003-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

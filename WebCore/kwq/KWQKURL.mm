@@ -1297,7 +1297,14 @@ NSURL *KURL::getNSURL() const
     const UInt8 *bytes = (const UInt8 *)(urlString.latin1());
     NSURL *result = nil;
     if (urlString.length() > 0) {
-        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE);
+        // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
+        // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
+        // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
+        // onto using ISO Latin 1 in those cases.
+        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingUTF8, NULL, TRUE);
+        if (!result) {
+            result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE);
+        }
         [result autorelease];
     }
     else {
