@@ -1,5 +1,10 @@
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
+        * kjs/reference_list.h: Must include headers with "", not
+	<>. D'oh!
+
+2002-08-16  Maciej Stachowiak  <mjs@apple.com>
+
         * JavaScriptCore.pbproj/project.pbxproj: Install reference.h and
 	reference_list.h so WebCore compiles (duh).
 

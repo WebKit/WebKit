@@ -23,8 +23,8 @@
 #ifndef _KJS_REFERENCE_LIST_H_
 #define _KJS_REFERENCE_LIST_H_
 
-#include <types.h>
-#include <reference.h>
+#include "types.h"
+#include "reference.h"
 
 namespace KJS {
 
