@@ -1,3 +1,20 @@
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Added new createBreakElement() function that makes creating a <br> element a one-liner.
+        Converted all the code that used to call the DocumentImpl, and dealt with the exceptionCode,
+        over to this new helper.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Now uses new helper function.
+        (khtml::InsertLineBreakCommand::doApply): Ditto.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ditto.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Ditto.
+        (khtml::ReplaceSelectionCommand::doApply): Ditto.
+        (khtml::createBreakElement): New helper.
+        * khtml/editing/htmlediting.h: Ditto.
+
 2004-12-16  David Hyatt  <hyatt@apple.com>
 
 	Fix a bug where vertical-align values that depended on their parent's value went crazy if the parent was

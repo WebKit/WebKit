@@ -782,6 +782,7 @@ private:
 
 DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
+DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
 
 //------------------------------------------------------------------------------------------
 
