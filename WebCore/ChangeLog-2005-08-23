@@ -1,5 +1,14 @@
 2004-09-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed lockFocus exception I observed; perhaps not a real issue in the field due to exception blocking
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::imageFromRect): Put most of the function inside a
+        big if statement to avoid the exception we get from lockFocus otherwise.
+
+2004-09-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3786467> REGRESSION (Mail): Reproducible crash replying to an HTML message when your preference is for plain text composing.

@@ -3242,30 +3242,32 @@ NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
     
     KWQ_BLOCK_EXCEPTIONS;
     
-    [resultImage setFlipped:YES];
-    [resultImage lockFocus];
-    
-    [NSGraphicsContext saveGraphicsState];
-    NSPoint translation = { -(NSMinX(rect) - NSMinX(bounds)), -(NSMinY(rect) - NSMinY(bounds)) };
-    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort], translation.x, translation.y);
-    
-    // We change the coord system at the CG level, out from under the AK focus machinery, because it doesn't
-    // work to change the coord system of a focused view.  However, WebImageRenderer uses the difference
-    // between the focused view's coord system and the window's coord system to adjust the pattern phase, and
-    // that calc ignores our translation.  So we must tell it about this extra phase offset.
+    if (rect.size.width != 0 && rect.size.height != 0) {
+        [resultImage setFlipped:YES];
+        [resultImage lockFocus];
 
-    // Window is not flipped, we are, so y coord must be inverted when describing phase, which is a
-    // window level notion.
-    translation.y = -translation.y;
-    [[WebCoreGraphicsBridge sharedBridge] setAdditionalPatternPhase:translation];
+        [NSGraphicsContext saveGraphicsState];
+        NSPoint translation = { -(NSMinX(rect) - NSMinX(bounds)), -(NSMinY(rect) - NSMinY(bounds)) };
+        CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort], translation.x, translation.y);
 
-    [view drawRect:rect];
+        // We change the coord system at the CG level, out from under the AK focus machinery, because it doesn't
+        // work to change the coord system of a focused view.  However, WebImageRenderer uses the difference
+        // between the focused view's coord system and the window's coord system to adjust the pattern phase, and
+        // that calc ignores our translation.  So we must tell it about this extra phase offset.
 
-    [[WebCoreGraphicsBridge sharedBridge] setAdditionalPatternPhase:NSZeroPoint];
-    [NSGraphicsContext restoreGraphicsState];
-    
-    [resultImage unlockFocus];
-    [resultImage setFlipped:NO];
+        // Window is not flipped, we are, so y coord must be inverted when describing phase, which is a
+        // window level notion.
+        translation.y = -translation.y;
+        [[WebCoreGraphicsBridge sharedBridge] setAdditionalPatternPhase:translation];
+
+        [view drawRect:rect];
+
+        [[WebCoreGraphicsBridge sharedBridge] setAdditionalPatternPhase:NSZeroPoint];
+        [NSGraphicsContext restoreGraphicsState];
+
+        [resultImage unlockFocus];
+        [resultImage setFlipped:NO];
+    }
     
     KWQ_UNBLOCK_EXCEPTIONS;
     
