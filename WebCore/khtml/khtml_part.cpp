@@ -4329,7 +4329,12 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         //        if (d->m_selectionEnd.handle() && d->m_selectionEnd.handle()->renderer())
         //          kdDebug( 6000 ) << "setting end of selection to " << d->m_selectionEnd.handle()->renderer() << "/"
         //                          << d->m_endOffset << endl;
-        
+
+#ifdef APPLE_CHANGES
+        // Don't modify the selection if we're not on a node.
+        if (node == 0)
+            return;
+#endif        
         // we have to get to know if end is before start or not...
         DOM::Node n = d->m_selectionStart;
         d->m_startBeforeEnd = false;
@@ -4346,7 +4351,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
             }
             n = next;
         }
-#ifdef APPLE_CHANGES        
+#ifdef APPLE_CHANGES
         if ( d->m_selectionInitiatedWithDoubleClick){
             if (d->m_startBeforeEnd) {
                 if (node == d->m_initialSelectionStart.handle() && node == d->m_initialSelectionEnd.handle()){
