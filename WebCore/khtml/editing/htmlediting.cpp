@@ -1142,7 +1142,9 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
 {
     if (pos.isNull())
         return;
-        
+    
+    document()->updateLayout();
+    
     VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
     VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
     VisiblePosition visibleParagraphEnd(endOfParagraph(visiblePos, IncludeLineBreak));

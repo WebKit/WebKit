@@ -1,3 +1,16 @@
+2005-03-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4029632> Tiger 8A398:- Mail crashes in DOM::NodeImpl::isBlockFlow() after pasting text with alignment style and BR element from Safari
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): VisiblePosition constructor
+        was failing to yield a position for a node just pasted into the document since a layout was needed
+        for the calculation to come out right. Layout added. Crash gone.
+
 === Safari-402 ===
 
 2005-03-03  Chris Blumenberg  <cblu@apple.com>
