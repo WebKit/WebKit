@@ -62,7 +62,7 @@
 			sourceTree = "<group>";
 		};
 		034768E0FF38A50411DB9C8B = {
-			expectedFileType = wrapper.framework;
+			explicitFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = WebCore.framework;
@@ -830,9 +830,9 @@
 			sourceTree = "<group>";
 		};
 		089C1667FE841158C02AAC07 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 10;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
@@ -874,17 +874,17 @@
 //353
 //354
 		354F248902EE28590ACA2ACA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDOMNode.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		354F248A02EE28590ACA2ACA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = KWQDOMNode.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -912,9 +912,9 @@
 //513
 //514
 		517FA6B20370BD6100CA2D3A = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreUnicode.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -929,9 +929,9 @@
 			};
 		};
 		517FA6B60370C7ED00CA2D3A = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = WebCoreUnicode.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -965,33 +965,33 @@
 			sourceTree = "<group>";
 		};
 		55998A5A052B59CC0017A6C1 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQAccObject.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		55998A5B052B59CC0017A6C1 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQAccObject.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		55998A5C052B59CC0017A6C1 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQAccObjectCache.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		55998A5D052B59CC0017A6C1 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQAccObjectCache.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1031,25 +1031,25 @@
 //653
 //654
 		654E7EE00569FD4600358BD2 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = xmlhttprequest.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		654E7EE10569FD4600358BD2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xmlhttprequest.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		654E7EE20569FD4600358BD2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xmlhttprequest.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1073,9 +1073,9 @@
 			};
 		};
 		65732B68054EF483007B42F8 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKPartsPart.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1087,25 +1087,25 @@
 			};
 		};
 		65912B0D0586921000123A69 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = xmlserializer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		65912B0E0586921000123A69 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xmlserializer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		65912B0F0586921000123A69 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xmlserializer.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1129,9 +1129,9 @@
 			};
 		};
 		65A640F00533BB1F0085E777 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQExceptions.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1145,9 +1145,9 @@
 			};
 		};
 		65F80697054D9F86008BF776 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQExceptions.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1169,8 +1169,8 @@
 //703
 //704
 		704FD2FE056972FA003DBED9 = {
-			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = JavaVM.framework;
 			path = /System/Library/Frameworks/JavaVM.framework;
 			refType = 0;
@@ -1193,8 +1193,8 @@
 //843
 //844
 		848A320F057E688B001A2362 = {
-			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Security.framework;
 			path = /System/Library/Frameworks/Security.framework;
 			refType = 0;
@@ -1207,17 +1207,17 @@
 			};
 		};
 		84B2B1F7056BEF3A00D2B771 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreKeyGenerator.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84B2B1F8056BEF3A00D2B771 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreKeyGenerator.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1238,9 +1238,9 @@
 			};
 		};
 		84B2B24F056BF15F00D2B771 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKSSLKeyGen.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1272,88 +1272,88 @@
 			sourceTree = "<group>";
 		};
 		84C0FA24052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = eastResizeCursor.tiff;
 			path = Resources/eastResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA25052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = helpCursor.tiff;
 			path = Resources/helpCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA26052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = moveCursor.tiff;
 			path = Resources/moveCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA27052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = northEastResizeCursor.tiff;
 			path = Resources/northEastResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA28052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = northResizeCursor.tiff;
 			path = Resources/northResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA29052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = northWestResizeCursor.tiff;
 			path = Resources/northWestResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA2A052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = southEastResizeCursor.tiff;
 			path = Resources/southEastResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA2B052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = southResizeCursor.tiff;
 			path = Resources/southResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA2C052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = southWestResizeCursor.tiff;
 			path = Resources/southWestResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA2D052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = waitCursor.tiff;
 			path = Resources/waitCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		84C0FA2E052B966D000440A1 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = westResizeCursor.tiff;
 			path = Resources/westResizeCursor.tiff;
 			refType = 4;
@@ -1436,17 +1436,17 @@
 //933
 //934
 		931BFCCE03D4AEDA008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQXmlSimpleReader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		931BFCCF03D4AEDA008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQXmlSimpleReader.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1464,17 +1464,17 @@
 			};
 		};
 		931BFCD203D4AEE5008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQXmlAttributes.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		931BFCD303D4AEE5008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQXmlAttributes.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1492,17 +1492,17 @@
 			};
 		};
 		931BFCD603D4AEFD008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQXmlDefaultHandler.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		931BFCD703D4AEFD008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQXmlDefaultHandler.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1520,17 +1520,17 @@
 			};
 		};
 		931C8A160380288B008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDummyView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		931C8A170380288B008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = KWQDummyView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1548,17 +1548,17 @@
 			};
 		};
 		9325AAB7041D0E9A00A9CAC5 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreScrollView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9325AAB8041D0E9A00A9CAC5 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreScrollView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1579,17 +1579,17 @@
 			};
 		};
 		93386B90037045B3008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQResourceLoader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93386B91037045B3008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQResourceLoader.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1607,25 +1607,25 @@
 			};
 		};
 		934E43780414294A008635CE = {
-			expectedFileType = sourcecode.yacc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.yacc;
 			path = parser.y;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9377FB55032C235C008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQAssertions.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9377FB56032C235C008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = KWQAssertions.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1643,17 +1643,17 @@
 			};
 		};
 		93861DDF032C2E52008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQLogging.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93861DE0032C2E52008635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = KWQLogging.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1671,17 +1671,17 @@
 			};
 		};
 		9394E0A403AA5BBE008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPageState.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9394E0A503AA5BBE008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPageState.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1699,17 +1699,17 @@
 			};
 		};
 		9394E0A903AA60FB008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFontFamily.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		9394E0AA03AA60FB008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFontFamily.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1727,17 +1727,17 @@
 			};
 		};
 		93955A4103D72932008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRenderTreeDebug.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93955A4203D72932008635CE = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = KWQRenderTreeDebug.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1755,17 +1755,17 @@
 			};
 		};
 		93CCF7D4033BD43C008635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFileButton.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93CCF7D5033BD43C008635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFileButton.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1783,9 +1783,9 @@
 			};
 		};
 		93ECDB7E03ABE65B008635CE = {
-			expectedFileType = text;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = KWQColorData.gperf;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1816,144 +1816,144 @@
 			sourceTree = "<group>";
 		};
 		93F12C7C03CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = ascii.h;
 			path = lib/ascii.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C7D03CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = asciitab.h;
 			path = lib/asciitab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C7E03CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = expat.h;
 			path = lib/expat.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C7F03CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = iasciitab.h;
 			path = lib/iasciitab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8003CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = internal.h;
 			path = lib/internal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8103CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = latin1tab.h;
 			path = lib/latin1tab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8203CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = nametab.h;
 			path = lib/nametab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8303CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = utf8tab.h;
 			path = lib/utf8tab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8503CCFD570000011C = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xmlparse.c;
 			path = lib/xmlparse.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8603CCFD570000011C = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xmlrole.c;
 			path = lib/xmlrole.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8703CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = xmlrole.h;
 			path = lib/xmlrole.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8803CCFD570000011C = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xmltok.c;
 			path = lib/xmltok.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8903CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = xmltok.h;
 			path = lib/xmltok.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8A03CCFD570000011C = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xmltok_impl.c;
 			path = lib/xmltok_impl.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8B03CCFD570000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = xmltok_impl.h;
 			path = lib/xmltok_impl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		93F12C8C03CCFD570000011C = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xmltok_ns.c;
 			path = lib/xmltok_ns.c;
 			refType = 4;
@@ -2044,9 +2044,9 @@
 			};
 		};
 		93F12CC703CD0AE60000011C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = expat_config.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2058,8 +2058,8 @@
 			};
 		};
 		93F1D31A0558CC5C00821BC0 = {
-			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
 			name = libicucore.A.dylib;
 			path = /usr/lib/libicucore.A.dylib;
 			refType = 0;
@@ -2082,17 +2082,17 @@
 //BC3
 //BC4
 		BC32C2EC048BF95C00A8000B = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_flexbox.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC32C2ED048BF95C00A8000B = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_flexbox.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2110,17 +2110,17 @@
 			};
 		};
 		BC7294F703804B3C00A80166 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = arena.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7294F803804B3C00A80166 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = arena.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2138,17 +2138,17 @@
 			};
 		};
 		BC7294FB03804B5600A80166 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_arena.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7294FC03804B5600A80166 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_arena.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2166,17 +2166,17 @@
 			};
 		};
 		BC7B2AF80450824100A8000F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQScrollBar.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7B2AF90450824100A8000F = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQScrollBar.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2194,33 +2194,33 @@
 			};
 		};
 		BC7C964E03E9EE7000A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_block.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7C964F03E9EE7000A80004 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_block.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7C965003E9EE7000A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_inline.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC7C965103E9EE7000A80004 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_inline.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2250,17 +2250,17 @@
 			};
 		};
 		BC80A6930468B78100DBCC9C = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_canvas.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC80A6940468B78100DBCC9C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_canvas.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2278,25 +2278,25 @@
 			};
 		};
 		BC8F61850405949900A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_base.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC8F61860405949900A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = parser.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC8F61870405949900A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = tokenizer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2314,17 +2314,17 @@
 			};
 		};
 		BC8F618B040594BA00A80004 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_base.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BC8F618C040594BA00A80004 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = parser.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2342,9 +2342,9 @@
 			};
 		};
 		BC8F62990405F45600A80004 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = quirks.css;
 			path = khtml/css/quirks.css;
 			refType = 4;
@@ -2357,17 +2357,17 @@
 			};
 		};
 		BCC60E5603F5055A00A80004 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_line.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BCC60E5703F5055A00A80004 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_line.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2385,17 +2385,17 @@
 			};
 		};
 		BCF0192403D3802200B2D04D = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = table_layout.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BCF0192503D3802200B2D04D = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = table_layout.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2423,17 +2423,17 @@
 //BE3
 //BE4
 		BE26F15305517DE000BFA0C3 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreGraphicsBridge.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		BE26F15405517DE000BFA0C3 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreGraphicsBridge.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2454,9 +2454,9 @@
 			};
 		};
 		BE983D95052A2E0A00892D85 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreKeyboardAccess.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2481,36 +2481,36 @@
 //F53
 //F54
 		F5117BC902F9FFEF018635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = KWQSignal.h;
 			path = kwq/KWQSignal.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5117BCA02F9FFEF018635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			name = KWQSignal.mm;
 			path = kwq/KWQSignal.mm;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5117BCB02F9FFEF018635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = KWQSlot.h;
 			path = kwq/KWQSlot.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5117BCC02F9FFEF018635CE = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			name = KWQSlot.mm;
 			path = kwq/KWQSlot.mm;
 			refType = 2;
@@ -2601,57 +2601,57 @@
 			sourceTree = "<group>";
 		};
 		F523D15102DE42AD018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = khtml_events.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15202DE42AD018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtml_events.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15302DE42AD018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = khtml_part.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15402DE42AD018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtml_part.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15602DE42AD018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtmlpart_p.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15702DE42AD018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = khtmlview.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D15802DE42AD018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtmlview.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2721,113 +2721,113 @@
 			sourceTree = "<group>";
 		};
 		F523D16402DE42E6018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_ruleimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16502DE42E6018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_ruleimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16602DE42E6018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_stylesheetimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16702DE42E6018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_stylesheetimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16802DE42E7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_valueimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16902DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_valueimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16A02DE42E7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = csshelper.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16B02DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = csshelper.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16C02DE42E7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = cssparser.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16D02DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cssparser.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D16F02DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cssproperties.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D17002DE42E7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = cssstyleselector.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D17102DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cssstyleselector.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D17302DE42E7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cssvalues.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2945,441 +2945,441 @@
 			sourceTree = "<group>";
 		};
 		F523D18502DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_rule.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18602DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_rule.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18702DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_stylesheet.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18802DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_stylesheet.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18902DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = css_value.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18A02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = css_value.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18B02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_core.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18C02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_doc.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18D02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_doc.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18E02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_element.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D18F02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_element.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19002DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_exception.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19102DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_html.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19202DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_misc.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19302DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_misc.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19402DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_node.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19502DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_node.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19602DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_string.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19702DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_string.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19802DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_text.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19902DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_text.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19A02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_xml.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19B02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_xml.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19C02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_events.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19D02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_events.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19E02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_range.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D19F02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_range.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A002DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_traversal.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A102DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_traversal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A202DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_views.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A302DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_views.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A402DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_base.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A502DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_base.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A602DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_block.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A702DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_block.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A802DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_document.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1A902DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_document.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AA02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_element.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AB02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_element.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AC02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_form.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AD02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_form.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AE02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_head.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1AF02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_head.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B002DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_image.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B102DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_image.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B202DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_inline.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B302DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_inline.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B402DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_list.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B502DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_list.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B602DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_misc.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B702DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_misc.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B802DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_object.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1B902DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_object.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1BA02DE4322018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_table.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1BB02DE4322018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_table.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3778,249 +3778,249 @@
 			sourceTree = "<group>";
 		};
 		F523D1F402DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_binding.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1F502DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_binding.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1F602DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_css.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1F702DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_css.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1F802DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_css.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1F902DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_dom.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FA02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_dom.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FB02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_dom.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FC02DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_events.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FD02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_events.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FE02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_events.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D1FF02DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_html.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20002DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_html.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20102DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_html.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20202DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_navigator.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20302DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_navigator.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20402DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_navigator.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20502DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_proxy.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20602DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_proxy.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20702DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_range.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20802DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_range.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20902DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_range.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20A02DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_traversal.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20B02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_traversal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20C02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_traversal.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20D02DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_views.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20E02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_views.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D20F02DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_views.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D21002DE4369018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = kjs_window.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D21102DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_window.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D21202DE4369018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = kjs_window.lut.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4257,241 +4257,241 @@
 			sourceTree = "<group>";
 		};
 		F523D23502DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dtd.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23602DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dtd.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23702DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_baseimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23802DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_baseimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23902DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_blockimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23A02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_blockimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23B02DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_documentimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23C02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_documentimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23E02DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_elementimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D23F02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_elementimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24002DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_formimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24102DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_formimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24202DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_headimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24302DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_headimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24402DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_imageimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24502DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_imageimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24602DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_inlineimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24702DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_inlineimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24802DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_listimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24902DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_listimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24A02DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_miscimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24B02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_miscimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24C02DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_objectimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24D02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_objectimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24E02DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = html_tableimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D24F02DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = html_tableimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D25002DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = htmlparser.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D25102DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = htmlparser.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D25202DE4396018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = htmltokenizer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D25302DE4396018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = htmltokenizer.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4715,121 +4715,121 @@
 			sourceTree = "<group>";
 		};
 		F523D27802DE43D7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = decoder.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27902DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = decoder.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27A02DE43D7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = helper.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27B02DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = helper.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27D02DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = htmlattrs.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27E02DE43D7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = htmlhashes.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D27F02DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = htmlhashes.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28102DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = htmltags.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28202DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtmldata.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28302DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = khtmllayout.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28402DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = loader_client.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28502DE43D7018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = loader.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28602DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = loader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28802DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = shared.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D28902DE43D7018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = stringit.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4950,273 +4950,273 @@
 			sourceTree = "<group>";
 		};
 		F523D29D02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = bidi.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D29E02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = bidi.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D29F02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = break_lines.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A002DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = break_lines.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A102DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = font.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A202DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = font.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A302DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_applet.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A402DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_applet.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A702DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_box.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A802DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_box.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2A902DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_br.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AA02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_br.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AB02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_container.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AC02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_container.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AD02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_flow.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AE02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_flow.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2AF02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_form.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B002DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_form.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B202DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_frames.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B302DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_frames.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B702DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_image.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B802DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_image.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2B902DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_list.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2BA02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_list.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2BB02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_object.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2BC02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_object.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2BD02DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_replaced.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2BE02DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_replaced.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C202DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_style.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C302DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_style.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C402DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_table.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C502DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_table.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C602DE4438018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_text.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2C702DE4438018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_text.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -5486,177 +5486,177 @@
 			sourceTree = "<group>";
 		};
 		F523D2F402DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_docimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2F502DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_docimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2F702DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_elementimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2F802DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_elementimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2F902DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_nodeimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FA02DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_nodeimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FB02DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_stringimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FC02DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_stringimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FD02DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_textimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FE02DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_textimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D2FF02DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom_xmlimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30002DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom_xmlimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30102DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_eventsimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30202DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_eventsimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30302DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_rangeimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30402DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_rangeimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30502DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_traversalimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30602DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_traversalimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30702DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dom2_viewsimpl.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30802DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dom2_viewsimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30902DE4476018635CA = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = xml_tokenizer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F523D30A02DE4476018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xml_tokenizer.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -5824,9 +5824,9 @@
 			sourceTree = "<group>";
 		};
 		F54A61D302E3523B01A80180 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = KWQKHTMLPart.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -5838,34 +5838,34 @@
 			};
 		};
 		F550D70902E13281018635CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = KWQCharsetData.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F550D70A02E13281018635CA = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPushButton.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F550D70B02E13281018635CA = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = "mac-encodings.txt";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F550D70C02E13281018635CA = {
-			expectedFileType = text.script.perl;
 			fallbackIsa = PBXFileReference;
 			fileEncoding = 30;
 			isa = PBXExecutableFileReference;
+			lastKnownFileType = text.script.perl;
 			path = "make-charset-table.pl";
 			refType = 4;
 			sourceTree = "<group>";
@@ -5877,18 +5877,18 @@
 			};
 		};
 		F5517DC2031AB56301A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebCoreHistory.h;
 			path = kwq/WebCoreHistory.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5517DC3031AB56301A80180 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = WebCoreHistory.m;
 			path = kwq/WebCoreHistory.m;
 			refType = 2;
@@ -5910,17 +5910,17 @@
 			};
 		};
 		F56234DF03026D7301629B47 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreEncodings.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F56234E003026D7301629B47 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreEncodings.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -5956,9 +5956,9 @@
 			sourceTree = "<group>";
 		};
 		F565A2730352509B01A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreDOM.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -5973,9 +5973,9 @@
 			};
 		};
 		F565A2770352643A01A80180 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			name = WebCoreDOMDocument.mm;
 			path = kwq/WebCoreDOMDocument.mm;
 			refType = 2;
@@ -5988,9 +5988,9 @@
 			};
 		};
 		F565A27A0352675C01A80180 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreDOMNode.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -6002,9 +6002,9 @@
 			};
 		};
 		F565A27C035284E301A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreDOMPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -6016,17 +6016,17 @@
 			};
 		};
 		F565AE8502ECA583018635CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreSettings.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F565AE8602ECA583018635CA = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreSettings.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -6047,9 +6047,9 @@
 			};
 		};
 		F57B0EE002EBC78B018635CA = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQStyle.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -6061,17 +6061,17 @@
 			};
 		};
 		F583D50103140623018635CE = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQNSViewExtras.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F583D50203140623018635CE = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = KWQNSViewExtras.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -6089,977 +6089,977 @@
 			};
 		};
 		F58784C402DE375801EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQApplication.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784C502DE375801EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQArrayImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784C602DE375801EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQArrayImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784C702DE375801EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKPartsBrowserInterface.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784C802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQBuffer.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784C902DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQButton.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784CA02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQChar.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784CC02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCharsets.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784CD02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCharsets.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784CE02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCheckBox.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784CF02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCollection.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQColor.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQColorGroup.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQComboBox.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D302DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCompletion.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCompletion.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D502DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCString.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQCursor.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784D702DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQDateTime.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784DA02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDef.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784DB02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDictImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784DC02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQDictImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784DE02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQEvent.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784DF02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFile.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFont.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFontInfo.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFontMetrics.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E302DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFrame.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQFrame.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E502DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQGlobal.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784E602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQGuardedPtr.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784EB02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKCharsets.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784ED02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKConfigBase.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784EE02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKCookieJar.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784EF02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKCookieJar.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKCursor.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F302DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKFileItem.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKGlobal.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F502DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKGlobalSettings.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKHistoryProvider.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F702DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKHTMLFactory.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKHTMLPart.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784F902DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKHTMLPartBrowserExtension.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784FA02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLPart.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784FC02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKHTMLView.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784FD02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKIconLoader.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58784FF02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKJavaAppletWidget.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKJob.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKJobClasses.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850302DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQLoader.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKLocale.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKMimeType.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850702DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKIONetAccess.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKPartsEvent.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850B02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKSimpleConfig.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850C02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKStandardDirs.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850D02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKStringHandler.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850E02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKURL.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587850F02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKWin.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQKWinModule.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQLabel.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQLineEdit.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851302DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQListBox.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQListBox.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851502DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQListImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQListImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851702DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQLoader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851802DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQMapImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851902DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQMapImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851A02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQMovie.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851B02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTextField.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851C02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTextField.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851D02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQObject.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851E02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPaintDeviceMetrics.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587851F02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPainter.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPalette.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPen.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPixmap.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852302DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPoint.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPointArray.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852502DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrDictImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQPtrDictImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQRadioButton.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852902DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQRect.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852A02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRefPtr.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852B02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQRegExp.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852C02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQRegion.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852E02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQScrollView.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587852F02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQSignalStubs.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853002DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQSize.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQString.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQStringList.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853502DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTextArea.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853602DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTextArea.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853702DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTextCodec.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTextEdit.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853902DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTextStream.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853A02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQTimer.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853B02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQValueListImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853C02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQValueListImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853D02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQVariant.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853E02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQVectorImpl.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587853F02DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQVectorImpl.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854002DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854102DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQView.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854202DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQWidget.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854302DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQWindowWidget.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854402DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = KWQWindowWidget.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854702DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreBridge.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854802DE375901EA4122 = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreBridge.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854902DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreCookieAdapter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854A02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreCookieAdapter.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854C02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreFrameView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854D02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreImageRenderer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854E02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreImageRendererFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587854F02DE375901EA4122 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreImageRendererFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855002DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreResourceLoader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855102DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreTextRenderer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855202DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreTextRendererFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855302DE375901EA4122 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreTextRendererFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855402DE375901EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreViewFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587855502DE375901EA4122 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = WebCoreViewFactory.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -7886,9 +7886,9 @@
 			sourceTree = "<group>";
 		};
 		F58785EA02DE37CB01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDCOPClient.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -7910,145 +7910,145 @@
 			sourceTree = "<group>";
 		};
 		F58785F002DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKApplication.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F102DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKCharsets.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F302DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKConfigBase.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F402DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKDebug.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F502DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKGlobal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F602DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKGlobalSettings.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F702DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKIconLoader.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F802DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKInstance.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785F902DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKLibrary.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785FA02DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKLocale.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785FC02DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKSimpleConfig.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785FD02DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKStandardDirs.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785FE02DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKStaticDeleter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58785FF02DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKStandardDirs.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587860002DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKStringHandler.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587860202DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKURL.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587860402DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKWin.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587860502DE382001EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKWinModule.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8196,49 +8196,49 @@
 			sourceTree = "<group>";
 		};
 		F587861D02DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKKAction.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587861E02DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKComboBox.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587861F02DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKCompletionBox.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587862002DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKCursor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587862102DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKLineEdit.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587862202DE398401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKListBox.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8296,41 +8296,41 @@
 			sourceTree = "<group>";
 		};
 		F587863302DE3A1401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLPartBrowserExtension.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587863402DE3A1401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587863502DE3A1401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLFind.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587863702DE3A1401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLPageCache.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587863A02DE3A1401EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKHTMLSettings.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8384,17 +8384,17 @@
 			sourceTree = "<group>";
 		};
 		F587864402DE3A7701EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKJavaAppletContext.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864502DE3A7701EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKJavaAppletWidget.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8412,57 +8412,57 @@
 			};
 		};
 		F587864902DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKIOGlobal.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864A02DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKJob.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864B02DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKJobClasses.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864C02DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKFileItem.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864D02DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKImageIO.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587864E02DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKMimeType.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587865202DE3A9A01EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKIONetAccess.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8534,9 +8534,9 @@
 			sourceTree = "<group>";
 		};
 		F587866202DE3B1101EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKSSLKeyGen.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8548,57 +8548,57 @@
 			};
 		};
 		F587866702DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsBrowserExtension.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866802DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsBrowserInterface.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866902DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsEvent.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866A02DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsFactory.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866B02DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsHistoryProvider.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866C02DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsPart.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587866D02DE3B3201EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQKPartsPartManager.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -8667,538 +8667,538 @@
 			sourceTree = "<group>";
 		};
 		F587867602DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			lineEnding = 0;
 			path = KWQApplication.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867702DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQMemArray.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867902DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQAsyncIO.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867B02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQBrush.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867C02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQBuffer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867D02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQButton.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587867E02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCheckBox.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868002DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCollection.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868102DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQColor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868202DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQComboBox.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868302DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCString.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868402DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQCursor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868502DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDateTime.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868602DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQDict.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868802DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQEvent.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868902DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFile.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868A02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFont.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868C02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFontInfo.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868D02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFontMetrics.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587868E02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQFrame.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869002DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQGuardedPtr.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869202DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQImage.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869602DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQIODevice.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869702DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQLabel.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869802DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQLineEdit.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869902DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869A02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQMap.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869B02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQMemArray.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869D02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQMovie.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869E02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQNamespace.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F587869F02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQObject.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A102DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPaintDevice.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A202DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPaintDeviceMetrics.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A302DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPainter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A402DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPalette.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A502DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPen.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A602DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPixmap.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A702DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPointArray.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786A802DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPointArray.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AA02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPrinter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AB02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrDict.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AC02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AD02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrQueue.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AE02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrStack.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786AF02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrVector.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B002DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPushButton.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B102DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRadioButton.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B202DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRect.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B302DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRegExp.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B402DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQRegion.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B502DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQScrollView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B602DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQSize.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B702DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQSortedList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B802DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrStack.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786B902DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQString.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BA02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQStringList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BB02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQStyle.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BC02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQStyleSheet.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BD02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTextCodec.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BE02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTextEdit.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786BF02DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTextStream.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C002DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQTimer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C102DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQToolTip.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C202DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQValueList.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C302DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQVariant.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C402DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQPtrVector.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58786C502DE3B8601EA4122 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = KWQWidget.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -9756,26 +9756,26 @@
 			name = OptimizedWithSymbols;
 		};
 		F58EF58D02DFDFB7018635CA = {
-			expectedFileType = sourcecode.exports;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.exports;
 			name = "WebCore-tests.exp";
 			path = "../WebCore-tests.exp";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58EF58E02DFDFB7018635CA = {
-			expectedFileType = sourcecode.exports;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.exports;
 			name = WebCore.exp;
 			path = ../WebCore.exp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5A1B04902DE8ABA018635CA = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			name = linkCursor.tiff;
 			path = Resources/linkCursor.tiff;
 			refType = 4;
@@ -9788,9 +9788,9 @@
 			};
 		};
 		F5A1B05302DE8B46018635CA = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = html4.css;
 			path = khtml/css/html4.css;
 			refType = 4;
@@ -9803,17 +9803,17 @@
 			};
 		};
 		F5B2A4FC02E2220F018635CB = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreCache.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5B2A4FD02E2220F018635CB = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreCache.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -9834,17 +9834,17 @@
 			};
 		};
 		F5B2A52B02E22573018635CB = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = WebCoreJavaScript.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5B2A52C02E22573018635CB = {
-			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
 			path = WebCoreJavaScript.mm;
 			refType = 4;
 			sourceTree = "<group>";
@@ -9865,35 +9865,35 @@
 			};
 		};
 		F5BFAAC10309CDF6018635CE = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = "character-sets.txt";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5C2869302846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = ApplicationServices.framework;
 			path = /System/Library/Frameworks/ApplicationServices.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F5C2869402846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Carbon.framework;
 			path = /System/Library/Frameworks/Carbon.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F5C2869502846DCD018635CA = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
@@ -9918,27 +9918,27 @@
 			};
 		};
 		F5EDAAF3035345D901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMDocument.h;
 			path = kwq/WebDOMDocument.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5EDAAF4035345D901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMElement.h;
 			path = kwq/WebDOMElement.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5EDAAF6035345D901A80180 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = WebDOMNode.h;
 			path = kwq/WebDOMNode.h;
 			refType = 2;
@@ -9973,17 +9973,17 @@
 //F63
 //F64
 		F690CFEA031C47F401CA2AC4 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = render_layer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F690CFEB031C47F401CA2AC4 = {
-			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = render_layer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
@@ -10011,9 +10011,9 @@
 //F83
 //F84
 		F8216299029F4FB501000131 = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			path = JavaScriptCore.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;

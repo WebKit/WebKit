@@ -1736,8 +1736,6 @@ short RenderTableCell::baselinePosition( bool ) const
 void RenderTableCell::setStyle( RenderStyle *style )
 {
     style->setDisplay(TABLE_CELL);
-    RenderBlock::setStyle( style );
-    setShouldPaintBackgroundOrBorder(true);
 
     if (style->whiteSpace() == KHTML_NOWRAP) {
         // Figure out if we are really nowrapping or if we should just
@@ -1748,6 +1746,9 @@ void RenderTableCell::setStyle( RenderStyle *style )
         else
             style->setWhiteSpace(NOWRAP);
     }
+
+    RenderBlock::setStyle( style );
+    setShouldPaintBackgroundOrBorder(true);
 }
 
 // The following rules apply for resolving conflicts and figuring out which border

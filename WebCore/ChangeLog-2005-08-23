@@ -1,5 +1,18 @@
 2003-12-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed 3477453: nowrap in a fixed-width TD is ignored on screen but not when printed (Williams-Sonoma)
+
+        * khtml/rendering/render_table.cpp: (RenderTableCell::setStyle):
+        Compute the proper whitespace mode before calling the base class setStyle,
+        since the base class setStyle may create styles that inherit from our style,
+        and we want them to inherit the computed whitespace mode.
+
+        * WebCore.pbproj/project.pbxproj: Let Xcode be 1.1, as it was meant to be.
+
+2003-12-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed a storage leak
