@@ -506,6 +506,33 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 return false;
             return true;
         }
+        case ID_CAPTION: {
+            switch (current->id()) {
+                case ID_THEAD:
+                case ID_TBODY:
+                case ID_TFOOT:
+                case ID_TR:
+                case ID_TH:
+                case ID_TD: {
+                    NodeImpl* tsection = current;
+                    if (current->id() == ID_TR)
+                        tsection = current->parent();
+                    else if (current->id() == ID_TD || current->id() == ID_TH)
+                        tsection = current->parent()->parent();
+                    NodeImpl* table = tsection->parent();
+                    int exceptioncode = 0;
+                    table->insertBefore(n, tsection, exceptioncode);
+                    pushBlock(id, tagPriority[id]);
+                    setCurrent(n);
+                    inStrayTableContent++;
+                    blockStack->strayTableContent = true;
+                    return true;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
         default:
             break;
         }
@@ -581,18 +608,13 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TFOOT:
         case ID_TBODY:
         case ID_TR:
-	case ID_TD:
             switch(id)
             {
             case ID_TABLE:
                 popBlock(ID_TABLE); // end the table
                 handled = true;      // ...and start a new one
                 break;
-	    case ID_CAPTION:
-		popBlock(current->id());
-		handled = true;
-		break;
-            case ID_TEXT:
+	    case ID_TEXT:
             {
                 TextImpl *t = static_cast<TextImpl *>(n);
                 if (t->containsOnlyWhitespace())

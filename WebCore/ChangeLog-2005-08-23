@@ -1,3 +1,18 @@
+2004-08-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3752542, stack overflow that crashes Safari at www.dr.dk.  This bug is a regression caused by a fix that
+	attempted to repair <caption> behavior to make it behave like Panther.  This fix was incorrect, and in addition
+	even our <caption> behavior on Panther was incorrect.
+
+	The patch that fixes this bug also makes <caption> handling work when <caption>s are contained inside a <td>, a <tr>,
+	a <th>, or various table section tags (<tbody>, <tfoot>, <thead>).  The <caption> is pulled out and inserted just before
+	the relevant ancestor table section.  This behavior matches other browsers.
+	
+        Reviewed by mjs
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+
 2004-08-04  David Hyatt  <hyatt@apple.com>
 
 	The top-level XSL sheet is now loaded and shows up in the activity window.  It is not yet parsed.
