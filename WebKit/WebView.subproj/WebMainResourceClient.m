@@ -89,7 +89,9 @@
 
 -(void)stopLoadingForPolicyChange
 {
+    [self retain];
     [self cancelWithError:[self interruptForPolicyChangeError]];
+    [self release];
 }
 
 -(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
@@ -188,18 +190,28 @@
 	ASSERT_NOT_REACHED();
     }
 
+    [self retain];
+
     [super connection:connection didReceiveResponse:r];
 
-    if ([[request URL] _web_shouldLoadAsEmptyDocument]) {
-	[self connectionDidFinishLoading:connection];
+    if (![dataSource _isStopping]){
+        if ([[request URL] _web_shouldLoadAsEmptyDocument]) {
+            [self connectionDidFinishLoading:connection];
+        }
     }
+    
+    [self release];
 }
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)policy
 {
     NSURLResponse *r = [policyResponse retain];
+    BOOL isStopping = [dataSource _isStopping];
+
     [self cancelContentPolicy];
-    [self continueAfterContentPolicy:policy response:r];
+    if (!isStopping){
+        [self continueAfterContentPolicy:policy response:r];
+    }
     [r release];
 }
 
@@ -229,7 +241,6 @@
     [dataSource _setResponse:r];
     _contentLength = [r expectedContentLength];
 
-    // Figure out the content policy.
     [self checkContentPolicyForResponse:r];
 }
 
@@ -267,10 +278,10 @@
 
     [dataSource _finishedLoading];
     [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
-                                       fromDataSource:dataSource
-                                             complete:YES];
+                                    fromDataSource:dataSource
+                                            complete:YES];
     [super connectionDidFinishLoading:con];
-    
+
     [self release];
 }
 

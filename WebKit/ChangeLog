@@ -1,3 +1,24 @@
+2003-05-06  Richard Williamson   <rjw@apple.com>
+
+        Fixed problem for HelpViewer.  HV calls stopLoading in 
+        a webView:resource:didReceiveResponse.  This causes
+        the premature release of the connection delegate.
+        
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connectionDidFinishLoading:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _releaseResources]):
+        (-[WebBaseResourceHandleDelegate dealloc]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient stopLoadingForPolicyChange]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:]):
+        (-[WebMainResourceClient connection:didReceiveResponse:]):
+        (-[WebMainResourceClient connectionDidFinishLoading:]):
+
 2003-05-06  Darin Adler  <darin@apple.com>
 
         - removed obsolete file that's still around for some reason

@@ -117,10 +117,10 @@
     [dataSource _removeSubresourceClient:self];
     
     [[dataSource _webView] _finishedLoadingResourceFromDataSource:dataSource];
-    
-    [self release];
-    
+
     [super connectionDidFinishLoading:con];
+
+    [self release];    
 }
 
 - (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)error
