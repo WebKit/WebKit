@@ -2296,7 +2296,7 @@ static WebHTMLView *lastHitView = nil;
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                 if ([self _isMoveDrag]) {
-                    BOOL smartMove = [[self _bridge] selectionGranularity] == WebSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard]
+                    BOOL smartMove = [[self _bridge] selectionGranularity] == WebSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
                     [bridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                 } else {
                     [bridge setSelectionToDragCaret];
