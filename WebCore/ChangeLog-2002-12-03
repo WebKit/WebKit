@@ -1,3 +1,123 @@
+2002-08-19  Richard Williamson (Local)  <rjw@apple.com>
+
+        QString rewrite.  Much faster now.
+        QString has an inline rep, QStringData, which
+        has an inline character buffer.  reps are
+        referenced indirectly via a handle.  inline
+        reps are detached when necessary.  Typical
+        stack based usage requires no allocations
+        for small string.  Attempts are made to avoid
+        costly conversions between ascii and unicode.
+        Extensive diagnostics can be enable by
+        defining QSTRING_DEBUG_ALLOCATIONS and calling
+        _printQStringAllocationStatistics().
+        
+        There appear to be a few small lingering leaks
+        that I need to track down.
+        
+        * WebCore-tests.exp:
+        
+        Added symbols for qstring-test.cpp.
+        
+        * khtml/css/cssstyleselector.cpp:
+        
+        Removed old string optimization hack.
+        
+        * kwq/KWQString.mm:
+        
+        Rewrite.
+        (_isOnStack):
+        (countInstance):
+        (allocatedBuffers):
+        (ALLOC_CHAR):
+        (REALLOC_CHAR):
+        (DELETE_CHAR):
+        (ALLOC_QCHAR):
+        (REALLOC_QCHAR):
+        (DELETE_QCHAR):
+        (_printQStringAllocationStatistics):
+        (ucstrcmp):
+        (ucstrncmp):
+        (ucstrnicmp):
+        (ok_in_base):
+        (QStringData::QStringData):
+        (QStringData::initialize):
+        (QStringData::operator new):
+        (QStringData::operator delete):
+        (QString::makeSharedNullHandle):
+        (QString::makeSharedNull):
+        (QStringData::~QStringData):
+        (QStringData::ascii):
+        (QStringData::increaseAsciiSize):
+        (QStringData::unicode):
+        (QStringData::increaseUnicodeSize):
+        (QStringData::makeAscii):
+        (QStringData::makeUnicode):
+        (QString::setBufferFromCFString):
+        (QString::fromStringWithEncoding):
+        (QString::fromCFMutableString):
+        (QString::fromCFString):
+        (QString::fromNSString):
+        (QString::getCFMutableString):
+        (QString::getNSString):
+        (QString::~QString):
+        (QString::QString):
+        (QString::operator=):
+        (QString::at):
+        (QString::unicode):
+        (QString::compare):
+        (QString::startsWith):
+        (QString::endsWith):
+        (QString::latin1):
+        (QString::isNull):
+        (QString::find):
+        (QString::findRev):
+        (QString::contains):
+        (QString::toShort):
+        (QString::toUShort):
+        (QString::toInt):
+        (QString::toUInt):
+        (QString::toLong):
+        (QString::toULong):
+        (QString::toDouble):
+        (QString::findArg):
+        (QString::arg):
+        (QString::left):
+        (QString::right):
+        (QString::mid):
+        (QString::copy):
+        (QString::lower):
+        (QString::stripWhiteSpace):
+        (QString::simplifyWhiteSpace):
+        (QString::deref):
+        (QString::setUnicode):
+        (QString::setLatin1):
+        (QString::sprintf):
+        (QString::append):
+        (QString::insert):
+        (QString::detachInternal):
+        (QString::detach):
+        (QString::remove):
+        (QString::replace):
+        (QString::forceUnicode):
+        (QString::setLength):
+        (QString::truncate):
+        (QString::fill):
+        (QString::operator+=):
+        (QString::convertToQCString):
+        (operator==):
+        (QConstString::QConstString):
+        (QConstString::~QConstString):
+        (_initializeHandleNodeBlock):
+        (_allocatePageNode):
+        (_initializeHandleNodes):
+        (_allocateNode):
+        (allocateHandle):
+        (freeHandle):
+        
+        * kwq/qt/qstring.h:
+        Rewrite
+        
 2002-08-19  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Added new mechanism to clean only the objects that

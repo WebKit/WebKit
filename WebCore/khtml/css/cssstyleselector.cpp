@@ -78,13 +78,6 @@ enum PseudoState { PseudoUnknown, PseudoNone, PseudoLink, PseudoVisited};
 static PseudoState pseudoState;
 
 
-#ifdef APPLE_CHANGES
-#define OPTIMIZE_STRING_USAGE
-#ifdef OPTIMIZE_STRING_USAGE
-static CFMutableStringRef reuseableString = 0;
-#endif
-#endif
-
 CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, StyleSheetListImpl *styleSheets,
                                     const KURL &url, bool _strictParsing )
 {
@@ -642,11 +635,7 @@ static void checkPseudoState( DOM::ElementImpl *e )
 	pseudoState = PseudoNone;
 	return;
     }
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-    QString u = QString::gstring_toQString(&reuseableString, (UniChar *)(attr.unicode()), attr.length());
-#else
     QString u = attr.string();
-#endif
     if ( !u.contains("://") ) {
 	if ( u[0] == '/' )
 	    u = encodedurl->host + u;
@@ -754,13 +743,9 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     }
     if(sel->match == CSSSelector::Pseudo)
     {
-#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-	const QString value = QString::gstring_toQString(&reuseableString, (UniChar *)(sel->value.unicode()), sel->value.length());
-#else
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
 	const QString& value = sel->value.string();
-#endif
 //	kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
 	if(value == "first-child") {
 	    // first-child matches the first child that is an element!

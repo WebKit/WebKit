@@ -299,3 +299,5 @@ __ZplPKcRK7QString
 __ZplRK5QSizeS1_
 __ZplRK6QPointS1_
 __ZplcRK7QString
+__ZNK7QString7compareERKS_
+__ZNK7QString10startsWithERKS_

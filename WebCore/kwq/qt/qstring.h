@@ -264,6 +264,64 @@ inline bool operator<(char ch, QChar qc)
     return (uchar) ch < qc.c;
 }
 
+// Keep this struct to <= 46 bytes, that's what the system will allocate.
+// Will be rounded up even multiple of for, so we're stuck at 44.
+
+#define QS_INTERNAL_BUFFER_SIZE 20
+#define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
+#define QS_INTERNAL_BUFFER_UCHARS QS_INTERNAL_BUFFER_SIZE/2
+
+struct QStringData {
+    // Uses shared null data.
+    QStringData();
+    void initialize();
+    
+    // No copy.
+    QStringData(QChar *u, uint l, uint m);
+    void initialize(QChar *u, uint l, uint m);
+    
+    // Copy bytes;
+    QStringData(const QChar *u, uint l);
+    void initialize(const QChar *u, uint l);
+
+    // Copy bytes;
+    QStringData(const char *u, uint l);
+    void initialize(const char *u, uint l);
+
+    ~QStringData();
+
+#ifdef QSTRING_DEBUG_ALLOCATIONS
+    void* operator new(size_t s);
+    void operator delete(void*p);
+#endif
+
+
+    inline void ref() { refCount++; }
+    inline void deref() { if (--refCount == 0 && _isHeapAllocated) delete this; }
+        
+    char *ascii();
+    char *makeAscii();
+    void increaseAsciiSize(uint size);
+
+    QChar *unicode();
+    QChar *makeUnicode();    
+    void increaseUnicodeSize(uint size);
+        
+    uint refCount;
+    uint _length;
+    mutable QChar *_unicode;
+    mutable char *_ascii;
+    uint _maxUnicode:29;
+    uint _isUnicodeInternal:1;
+    uint _isUnicodeValid:1;
+    uint _isHeapAllocated:1;	// Fragile, but the only way we can be sure the instance was
+                                // created with 'new'.
+    uint _maxAscii:30;
+    uint _isAsciiInternal:1;
+    uint _isAsciiValid:1;
+    char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
+};
+
 class QString {
 public:
     static const QString null;
@@ -318,11 +376,13 @@ public:
     int find(const QRegExp &, int index=0) const;
 
     int findRev(char, int index=-1) const;
+    int findRev(const QString& str, int index, bool cs=true ) const;
     int findRev(const char *, int index=-1) const;
 
     int contains(char) const;
     int contains(const char *, bool cs=true) const;
     int contains(const QString &, bool cs=true) const;
+    int contains( QChar c, bool cs=true ) const;
 
     bool endsWith(const QString &) const;
 
@@ -346,6 +406,8 @@ public:
     static QString number(ulong);
     static QString number(double);
 
+    bool findArg(int& pos, int& len) const;
+    
     QString arg(const QString &, int width=0) const;
     QString arg(short, int width=0) const;
     QString arg(ushort, int width=0) const;
@@ -366,7 +428,7 @@ public:
     QString simplifyWhiteSpace() const;
 
     QString &setUnicode(const QChar *, uint);
-    QString &setLatin1(const char *);
+    QString &setLatin1(const char *, int len=-1);
 
     QString &setNum(short);
     QString &setNum(ushort);
@@ -384,6 +446,8 @@ public:
     QString &insert(uint, QChar);
     QString &insert(uint, char);
     QString &remove(uint, uint);
+    QString &replace( uint index, uint len, const QString &s );
+    //QString &replace( uint index, uint len, const QChar* s, uint slen );
     QString &replace(const QRegExp &, const QString &);
 
     void truncate(uint);
@@ -403,17 +467,31 @@ public:
     QString &operator+=(QChar);
     QString &operator+=(char);
 
+    void setBufferFromCFString(CFStringRef cfs);
+    
 private:
+    // Used by QConstString.
+    QString(QStringData *constData, bool /*dummy*/);
+    void detach();
+    void detachInternal();
+    void deref();
+    void forceUnicode();
+    void setLength( uint pos );
+
+    struct QStringData *data() const;
+    
     enum CacheType { CacheInvalid, CacheUnicode, CacheLatin1 };
 
-    void flushCache() const;
     QCString convertToQCString(CFStringEncoding) const;
-    ulong convertToNumber(bool *ok, int base, bool *neg) const;
-    QString leftRight(uint width, bool left) const;
     int compareToLatin1(const char *chs) const;
 
-    CFMutableStringRef s;
-    mutable void *cache;
+    struct QStringData **dataHandle;
+    struct QStringData internalData;
+    
+    static QStringData* shared_null;
+    static QStringData* makeSharedNull();
+    static QStringData**shared_null_handle;
+    static QStringData**makeSharedNullHandle();
 
     friend bool operator==(const QString &, const QString &);
     friend bool operator==(const QString &, const char *);
@@ -441,9 +519,7 @@ private:
 
     friend class QConstString;
     friend class QGDict;
-
-    void _copyIfNeededInternalString();
-
+    friend struct QStringData;
 };
 
 QString operator+(const QString &, const QString &);
@@ -454,29 +530,16 @@ QString operator+(const char *, const QString &);
 QString operator+(QChar, const QString &);
 QString operator+(char, const QString &);
 
+inline struct QStringData *QString::data() const { return *dataHandle; }
+
 inline uint QString::length() const
 {
-    return CFStringGetLength(s);
+    return data()->_length;
 }
 
 inline bool QString::isEmpty() const
 {
     return length() == 0;
-}
-
-inline int QString::compare(const QString &qs) const
-{
-    return CFStringCompare(s, qs.s, 0);
-}
-
-inline bool QString::startsWith(const QString &qs) const
-{
-    return CFStringHasPrefix(s, qs.s);
-}
-
-inline bool QString::endsWith(const QString &qs) const
-{
-    return CFStringHasSuffix(s, qs.s);
 }
 
 inline QString QString::fromLatin1(const char *chs)
@@ -502,16 +565,6 @@ inline bool QString::operator!() const
 inline const QChar QString::operator[](int index) const
 {
     return at(index);
-}
-
-inline CFMutableStringRef QString::getCFMutableString() const
-{
-    return s;
-}
-
-inline NSString *QString::getNSString() const
-{
-    return (NSString *)s;
 }
 
 inline bool operator==(const char *chs, const QString &qs)
@@ -597,6 +650,7 @@ inline bool operator>=(const char *chs, const QString &qs)
 class QConstString : private QString {
 public:
     QConstString(const QChar *, uint);
+    ~QConstString();
     const QString &string() const { return *this; }
 };
 
