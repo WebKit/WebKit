@@ -1,3 +1,15 @@
+2002-08-08  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2957197 - Need API for getting/setting default text encoding
+	
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate init]): Set default encoding if no other is set.
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]): Added support for default text encoding pref.
+        (-[WebPreferences defaultTextEncoding]): Likewise.
+        (-[WebPreferences setDefaultTextEncoding:]): Likewise.
+
 2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
 
         Changes to coalesce all drawing calls of the same text

@@ -38,6 +38,9 @@
 - (int)minimumFontSize;
 - (void)setMinimumFontSize:(int)size;
 
+- (CFStringEncoding)defaultTextEncoding;
+- (void)setDefaultTextEncoding:(CFStringEncoding)encoding;
+
 - (BOOL)userStyleSheetEnabled;
 - (void)setUserStyleSheetEnabled:(BOOL)flag;
 

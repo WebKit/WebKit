@@ -1,3 +1,16 @@
+2002-08-08  Maciej Stachowiak  <mjs@apple.com>
+
+	Added an SPI that can be used to get at the WebCore
+	charset-name/encoding table; this is useful for a couple of things
+	in WebKit.
+
+        * kwq/WebCoreEncodings.h: Added.
+        * kwq/WebCoreEncodings.mm: Added.
+        (+[WebCoreEncodings charsetNameForEncoding:]):
+        (+[WebCoreEncodings encodingForCharsetName:]):
+        * WebCore.exp: Export the new class.
+        * WebCore.pbproj/project.pbxproj: Add new files.
+
 2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
 
         Changes to coalesce all drawing calls of the same text

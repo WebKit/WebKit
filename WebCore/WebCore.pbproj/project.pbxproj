@@ -490,6 +490,7 @@
 				354F248B02EE28590ACA2ACA,
 				F5117BCD02F9FFEF018635CE,
 				F5117BCF02F9FFEF018635CE,
+				F56234E103026D7301629B47,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -718,6 +719,7 @@
 				354F248C02EE28590ACA2ACA,
 				F5117BCE02F9FFEF018635CE,
 				F5117BD002F9FFEF018635CE,
+				F56234E203026D7301629B47,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3689,6 +3691,31 @@
 			settings = {
 			};
 		};
+		F56234DF03026D7301629B47 = {
+			isa = PBXFileReference;
+			path = WebCoreEncodings.h;
+			refType = 4;
+		};
+		F56234E003026D7301629B47 = {
+			isa = PBXFileReference;
+			path = WebCoreEncodings.mm;
+			refType = 4;
+		};
+		F56234E103026D7301629B47 = {
+			fileRef = F56234DF03026D7301629B47;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F56234E203026D7301629B47 = {
+			fileRef = F56234E003026D7301629B47;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F565AE8502ECA583018635CA = {
 			isa = PBXFileReference;
 			path = WebCoreSettings.h;
@@ -5361,6 +5388,8 @@
 				F5B2A4FD02E2220F018635CB,
 				F587854902DE375901EA4122,
 				F587854A02DE375901EA4122,
+				F56234DF03026D7301629B47,
+				F56234E003026D7301629B47,
 				F587854C02DE375901EA4122,
 				F587854D02DE375901EA4122,
 				F587854E02DE375901EA4122,

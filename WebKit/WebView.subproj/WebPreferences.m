@@ -17,6 +17,7 @@
 #define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
 #define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
 #define	       WebKitFixedFontSizePreferenceKey		 @"WebKitFixedFontSize"
+#define	       WebKitDefaultTextEncodingPreferenceKey	 @"WebKitDefaultTextEncoding"
 #define	       WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
 #define	       WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
 #define        WebKitJavaEnabledPreferenceKey                @"WebKitJavaEnabled"
@@ -58,6 +59,7 @@ static WebPreferences *_standardPreferences = nil;
     NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *allowAnimatedImages = [NSNumber numberWithBool:TRUE];
     NSNumber *allowAnimatedImageLooping = [NSNumber numberWithBool:TRUE];
+    NSNumber *defaultTextEncoding = [NSNumber numberWithInt:(int)kCFStringEncodingWindowsLatin1];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0",                         WebKitLogLevelPreferenceKey,
@@ -70,6 +72,7 @@ static WebPreferences *_standardPreferences = nil;
         @"6",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
         @"14", 				WebKitFixedFontSizePreferenceKey,
+	defaultTextEncoding, 		WebKitDefaultTextEncodingPreferenceKey,
         @"1.85",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.85",                        WebKitResourceTimedLayoutDelayPreferenceKey,
@@ -180,6 +183,15 @@ static WebPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitMinimumFontSizePreferenceKey];
 }
 
+- (CFStringEncoding)defaultTextEncoding
+{
+    return (CFStringEncoding)[[NSUserDefaults standardUserDefaults] integerForKey:WebKitDefaultTextEncodingPreferenceKey];
+}
+
+- (void)setDefaultTextEncoding:(CFStringEncoding)encoding
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:(int)encoding forKey:WebKitDefaultTextEncodingPreferenceKey];
+}
 
 - (BOOL)userStyleSheetEnabled
 {

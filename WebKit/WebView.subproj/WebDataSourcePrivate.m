@@ -13,6 +13,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebLocationChangeHandler.h>
@@ -30,6 +31,8 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 
+#import <WebCore/WebCoreEncodings.h>
+
 @implementation WebDataSourcePrivate 
 
 - init
@@ -44,6 +47,7 @@
     
     contentPolicy = WebContentPolicyNone;
     
+    encoding = [[WebCoreEncodings charsetNameForEncoding:[[WebPreferences standardPreferences] defaultTextEncoding]] retain];
     overrideEncoding = kCFStringEncodingInvalidId;
 
     return self;
