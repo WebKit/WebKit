@@ -1,3 +1,22 @@
+2003-04-24  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3151501 -- Toggling "Check Spelling As You Type" in a
+	textarea should affect future textareas
+
+        Reviewed by Darin
+
+        * kwq/KWQTextArea.mm:
+        (+[KWQTextAreaTextView _setContinuousSpellCheckingEnabledForNewTextAreas:]):
+	new method, sets a static variable and an NSUserDefault
+        (+[KWQTextAreaTextView _isContinuousSpellCheckingEnabledForNewTextAreas]):
+	new method, checks a static variable, reading it from an NSUserDefault the
+	first time
+        (-[KWQTextAreaTextView initWithFrame:textContainer:]):
+	override designated initializer to set continuous spell checking if appropriate
+        (-[KWQTextAreaTextView setContinuousSpellCheckingEnabled:]):
+	call _setContinuousSpellCheckingEnabledForNewTextAreas in addition to
+	setting the value for this object
+
 2003-04-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

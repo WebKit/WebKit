@@ -421,6 +421,42 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 @implementation KWQTextAreaTextView
 
+static BOOL _spellCheckingInitiallyEnabled = NO;
+static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
+
++ (void)_setContinuousSpellCheckingEnabledForNewTextAreas:(BOOL)flag
+{
+    _spellCheckingInitiallyEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebContinuousSpellCheckingEnabled];
+}
+
++ (BOOL)_isContinuousSpellCheckingEnabledForNewTextAreas
+{
+    static BOOL _checkedUserDefault = NO;
+    if (!_checkedUserDefault) {
+        _spellCheckingInitiallyEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
+        _checkedUserDefault = YES;
+    }
+
+    return _spellCheckingInitiallyEnabled;
+}
+
+- (id)initWithFrame:(NSRect)frame textContainer:(NSTextContainer *)aTextContainer
+{
+    self = [super initWithFrame:frame textContainer:aTextContainer];
+    [super setContinuousSpellCheckingEnabled:
+        [[self class] _isContinuousSpellCheckingEnabledForNewTextAreas]];
+
+    return self;
+}
+
+- (void)setContinuousSpellCheckingEnabled:(BOOL)flag
+{
+    [[self class] _setContinuousSpellCheckingEnabledForNewTextAreas:flag];
+    [super setContinuousSpellCheckingEnabled:flag];
+}
+
+
 - (void)setWidget:(QTextEdit *)w
 {
     widget = w;
