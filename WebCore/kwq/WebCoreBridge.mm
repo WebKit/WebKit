@@ -1202,9 +1202,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset
 {
-    int x, y, w, h;
-    [node _nodeImpl]->renderer()->caretPos(offset, true, x, y, w, h);
-    return NSMakeRect(x, y, w, h);
+    return [node _nodeImpl]->renderer()->caretRect(offset, true);
 }
 
 - (NSImage *)selectionImage

@@ -1590,11 +1590,11 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-void RenderObject::caretPos(int /*offset*/, bool /*override*/, int &_x, int &_y, int &width, int &height)
+QRect RenderObject::caretRect(int /*offset*/, bool /*override*/)
 {
-    _x = _y = height = -1;
-    width = 1;	// the caret has a default width of one pixel. If you want
-    		// to check for validity, only test the x-coordinate for >= 0.
+    // the caret has a default width of one pixel. If you want
+    // to check for validity, only test the x-coordinate for >= 0.
+    return QRect(-1, -1, 1, -1);
 }
 
 int RenderObject::paddingTop() const

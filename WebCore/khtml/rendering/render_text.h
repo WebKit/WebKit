@@ -212,7 +212,7 @@ public:
 
     virtual SelectionState selectionState() const {return m_selectionState;}
     virtual void setSelectionState(SelectionState s) {m_selectionState = s; }
-    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
+    virtual QRect caretRect(int offset, bool override);
     void posOfChar(int ch, int &x, int &y);
 
     virtual short marginLeft() const { return style()->marginLeft().minWidth(0); }

@@ -69,7 +69,7 @@ public:
     virtual unsigned long caretMaxRenderedOffset() const;
     
     virtual DOM::Position positionForCoordinates(int _x, int _y);
-    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
+    virtual QRect caretRect(int offset, bool override);
 
     virtual InlineBox *inlineBox(long offset);
     

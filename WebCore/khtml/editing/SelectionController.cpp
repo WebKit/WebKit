@@ -394,8 +394,7 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
         return x;
         
     if (recalc || part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
-        int y, w, h;
-        pos.node()->renderer()->caretPos(pos.offset(), true, x, y, w, h);
+        x = pos.node()->renderer()->caretRect(pos.offset(), true).x();
         part->setXPosForVerticalArrowNavigation(x);
     }
     else {
@@ -509,8 +508,10 @@ void Selection::layoutCaret()
     
     // EDIT FIXME: Enhance call to pass along selection 
     // upstream/downstream affinity to get the right position.
-    int w;
-    start().node()->renderer()->caretPos(start().offset(), true, m_caretX, m_caretY, w, m_caretSize);
+    QRect caretRect = start().node()->renderer()->caretRect(start().offset(), true);
+    m_caretX = caretRect.x();
+    m_caretY = caretRect.y();
+    m_caretSize = caretRect.height();
 
     m_needsCaretLayout = false;
 }

@@ -708,12 +708,8 @@ public:
      * @param offset zero-based offset determining position within the render object.
      * @param override @p true if input overrides existing characters,
      * @p false if it inserts them. The width of the caret depends on this one.
-     * @param _x returns the left coordinate
-     * @param _y returns the top coordinate
-     * @param width returns the caret's width
-     * @param height returns the caret's height
      */
-    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
+    virtual QRect caretRect(int offset, bool override);
 
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }

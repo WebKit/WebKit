@@ -1480,53 +1480,61 @@ void RenderBox::calcAbsoluteVertical()
 
 }
 
-void RenderBox::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
+QRect RenderBox::caretRect(int offset, bool override)
 {
-    _x = -1;
-    
+    // FIXME: Is it OK to check only first child instead of picking
+    // right child based on offset? Is it OK to pass the same offset
+    // along to the child instead of offset 0 or whatever?
+
     // propagate it downwards to its children, someone will feel responsible
     RenderObject *child = firstChild();
-    if (child) 
-        child->caretPos(offset, override, _x, _y, width, height);
+    if (child) {
+        QRect result = child->caretRect(offset, override);
+        // FIXME: in-band signalling!
+        if (result.x() != -1)
+            return result;
+    }
     
+    int _x, _y, width, height;
+
     // if not, use the extents of this box 
     // offset 0 means left, offset 1 means right
-    if (_x == -1) {
-        _x = xPos() + (offset == 0 ? 0 : m_width);
-        InlineBox *box = inlineBoxWrapper();
-        if (box) {
-            height = box->root()->bottomOverflow() - box->root()->topOverflow();
-            _y = box->root()->topOverflow();
-        }
-        else {
-            _y = yPos();
-            height = m_height;
-        }
-        width = override && offset == 0 ? m_width : 1;
-        // If height of box is smaller than font height, use the latter one,
-        // otherwise the caret might become invisible.
-        // 
-        // Also, if the box is not a replaced element, always use the font height.
-        // This prevents the "big caret" bug described in:
-        // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
-        //
-        // FIXME: ignoring :first-line, missing good reason to take care of
-        int fontHeight = style()->fontMetrics().height();
-        if (fontHeight > height || !isReplaced())
-            height = fontHeight;
-        
-        int absx, absy;
-        RenderObject *cb = containingBlock();
-        if (cb && cb != this && cb->absolutePosition(absx,absy)) {
-            _x += absx;
-            _y += absy;
-        } 
-        else {
-            // we don't know our absolute position, and there is no point returning
-            // just a relative one
-            _x = _y = -1;
-        }
+    _x = xPos() + (offset == 0 ? 0 : m_width);
+    InlineBox *box = inlineBoxWrapper();
+    if (box) {
+        height = box->root()->bottomOverflow() - box->root()->topOverflow();
+        _y = box->root()->topOverflow();
     }
+    else {
+        _y = yPos();
+        height = m_height;
+    }
+    width = override && offset == 0 ? m_width : 1;
+    // If height of box is smaller than font height, use the latter one,
+    // otherwise the caret might become invisible.
+    // 
+    // Also, if the box is not a replaced element, always use the font height.
+    // This prevents the "big caret" bug described in:
+    // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
+    //
+    // FIXME: ignoring :first-line, missing good reason to take care of
+    int fontHeight = style()->fontMetrics().height();
+    if (fontHeight > height || !isReplaced())
+        height = fontHeight;
+    
+    int absx, absy;
+    RenderObject *cb = containingBlock();
+    if (cb && cb != this && cb->absolutePosition(absx,absy)) {
+        _x += absx;
+        _y += absy;
+    } 
+    else {
+        // we don't know our absolute position, and there is no point returning
+        // just a relative one
+        _x = _y = -1;
+    }
+
+    return QRect(_x, _y, width, height);
 }
 
 int RenderBox::lowestPosition(bool includeOverflowInterior, bool includeSelf) const

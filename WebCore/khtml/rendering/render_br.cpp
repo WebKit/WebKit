@@ -112,18 +112,17 @@ Position RenderBR::positionForCoordinates(int _x, int _y)
     return Position(element(), 0);
 }
 
-void RenderBR::caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h)
+QRect RenderBR::caretRect(int offset, bool override)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
-    _h = lineHeight(false);
-    _x = xPos();
-    _y = yPos();
 
     int absx, absy;
     absolutePosition(absx,absy);
-    _x += absx;
-    _y += absy;
+
+    // FIXME: an older version of this code wasn't setting width at
+    // all, using the default of 1...
+    return QRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));
 }
 
 InlineBox *RenderBR::inlineBox(long offset)

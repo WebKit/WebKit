@@ -483,17 +483,18 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     return left;
 }
 
-void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
+QRect RenderFlow::caretRect(int offset, bool override)
 {
     if (firstChild() || style()->display() == INLINE) {
         // Do the normal calculation
-        RenderContainer::caretPos(offset, override, _x, _y, width, height);
-        return;
+        return RenderContainer::caretRect(offset, override);
     }
 
     // This is a special case:
     // The element is not an inline element, and it's empty. So we have to
     // calculate a fake position to indicate where objects are to be inserted.
+    
+    int _x, _y, width, height;
     
     // EDIT FIXME: this does neither take into regard :first-line nor :first-letter
     // However, as soon as some content is entered, the line boxes will be
@@ -530,4 +531,6 @@ void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &widt
     absolutePosition(absx, absy, false);
     _x += absx + paddingLeft() + borderLeft();
     _y += absy + paddingTop() + borderTop();
+
+    return QRect(_x, _y, width, height);
 }

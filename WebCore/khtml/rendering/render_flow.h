@@ -81,7 +81,7 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     
-    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
+    virtual QRect caretRect(int offset, bool override);
 
 protected:
     // An inline can be split with blocks occurring in between the inline content.

@@ -650,11 +650,10 @@ Position RenderText::positionForCoordinates(int _x, int _y)
     return Position(element(), 0);
 }
 
-void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
+QRect RenderText::caretRect(int offset, bool override)
 {
     if (!firstTextBox() || stringLength() == 0) {
-        _x = _y = height = -1;
-        return;
+        return QRect(-1, -1, 1, -1);
     }
 
     // Find the text box for the given offset
@@ -665,9 +664,10 @@ void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &widt
     }
     
     if (!box) {
-        _x = _y = height = -1;
-        return;
+        return QRect(-1, -1, 1, -1);
     }
+
+    int _x, _y, width, height;
 
     height = box->root()->bottomOverflow() - box->root()->topOverflow();
     _y = box->root()->topOverflow();
@@ -687,6 +687,8 @@ void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &widt
     absolutePosition(absx,absy);
     _x += absx;
     _y += absy;
+
+    return QRect(_x, _y, width, height);
 }
 
 void RenderText::posOfChar(int chr, int &x, int &y)

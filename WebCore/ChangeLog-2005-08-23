@@ -1,5 +1,33 @@
 2004-09-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- renamed caretPos to caretRect and made it return a QRect instead
+	of taking four out parameters by reference.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::caretRect):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::caretRect):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretRect):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::xPosForVerticalArrowNavigation):
+        (DOM::Selection::layoutCaret):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge caretRectAtNode:offset:]):
+
+2004-09-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Kevin.
 
 	<rdar://problem/3759209> REGRESSION (Mail): assertion failure when all of marked text deleted at start of document
