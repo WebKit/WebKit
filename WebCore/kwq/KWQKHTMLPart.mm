@@ -524,7 +524,9 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
     d->m_doc->setParsing(true);
 
+#ifdef _KWQ_TIMING        
     d->totalWriteTime = 0;
+#endif
 }
 
 void KHTMLPart::write( const char *str, int len )

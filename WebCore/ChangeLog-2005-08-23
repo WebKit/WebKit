@@ -1,5 +1,22 @@
 2002-04-03  Darin Adler  <darin@apple.com>
 
+	Fix problems that show up only when xNDEBUG is set.
+
+	* src/kwq/KWQApplication.mm: (QApplication::sendEvent):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]):
+	* src/kwq/KWQView.mm: (-[KWQHTMLView layout]), (-[KWQHTMLView drawRect:]):
+	Remove or ifdef otherwise-unused variables.
+
+	* src/kwq/KWQFontMetrics.mm: (_rectForString):
+	* src/kwq/KWQPainter.mm: (QPainter::setRasterOp), (QPainter::translate),
+	(QPainter::scale):
+	Add missing semicolons.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::begin):
+	Fix an ifdef.
+
+2002-04-03  Darin Adler  <darin@apple.com>
+
 	* src/Makefile.am: Use nmedit and strip to remove the symbols
 	we don't want to export.
 

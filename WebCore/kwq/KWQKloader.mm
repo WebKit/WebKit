@@ -1025,8 +1025,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
-    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, job->url().url().latin1());
+    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
+                    static_cast<KIO::TransferJob *>(userData)->url().url().latin1());
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender

@@ -173,7 +173,9 @@
     if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
         ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
         if (needsLayout){
+#ifndef xNDEBUG
             double start = CFAbsoluteTimeGetCurrent();
+#endif
             ((KHTMLView *)widget)->layout();
             KWQDEBUGLEVEL1 (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             needsLayout = NO;
@@ -198,7 +200,9 @@
         
         [self lockFocus];
 
+#ifndef xNDEBUG
         double start = CFAbsoluteTimeGetCurrent();
+#endif
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
                     (int)rect.origin.y, 
                     (int)rect.size.width, 

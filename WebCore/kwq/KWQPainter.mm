@@ -687,19 +687,19 @@ void QPainter::setRasterOp(RasterOp op)
     else
         data->compositingOperation = NSCompositeCopy;
 #else
-     _logNotYetImplemented()
+     _logNotYetImplemented();
 #endif
 }
 
 void QPainter::translate(double dx, double dy)
 {
-     _logNotYetImplemented()
+     _logNotYetImplemented();
 }
 
 
 void QPainter::scale(double dx, double dy)
 {
-     _logNotYetImplemented()
+     _logNotYetImplemented();
 }
 
 

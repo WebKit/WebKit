@@ -91,10 +91,7 @@ void QApplication::restoreOverrideCursor()
 
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-    QEvent::Type type = e->type();
-    
-    KWQDEBUG1 ("received %d\n", type);
-
+    KWQDEBUG1 ("received %d\n", e->type());
     return FALSE;
 }
 

@@ -577,7 +577,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
     // If we can't use the cached map, then calculate a map for this string.   Expensive.
     if (needCharToGlyphLookup){
         
-        KWQDEBUGLEVEL3 (KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] cString], [font pointSize])
+        KWQDEBUGLEVEL3(KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] lossyCString], [font pointSize]);
         
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
         (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, &self->_glyphVector);
