@@ -184,7 +184,7 @@ static void				RelinquishFocus( HIWebView* view, bool inAutodisplay );
 static WindowRef		GetWindowRef( HIWebView* inView );
 static void				SyncFrame( HIWebView* inView );
 
-static OSStatus			WindowCloseHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData );
+static OSStatus			WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData );
 
 static void				StartUpdateObserver( HIWebView* view );
 static void				StopUpdateObserver( HIWebView* view );
@@ -215,11 +215,11 @@ HIWebViewCreate( HIViewRef* outControl )
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewGetNSView
+// HIWebViewGetWebView
 //----------------------------------------------------------------------------------
 //
 WebView*
-HIWebViewGetNSView( HIViewRef inView )
+HIWebViewGetWebView( HIViewRef inView )
 {
 	HIWebView* 	view = (HIWebView*)HIObjectDynamicCast( (HIObjectRef)inView, kHIWebViewClassID );
 	WebView*			result = NULL;
@@ -667,12 +667,18 @@ OwningWindowChanged(
     	OSStatus err = GetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &view->fKitWindow);
 		if ( err != noErr )
 		{
-			const EventTypeSpec kWindowEvents[] = { { kEventClassWindow, kEventWindowClosed } };
+			const EventTypeSpec kWindowEvents[] = {
+                { kEventClassWindow, kEventWindowClosed },
+                { kEventClassMouse, kEventMouseMoved },
+                { kEventClassMouse, kEventMouseUp },
+                { kEventClassMouse, kEventMouseDragged },
+                { kEventClassMouse, kEventMouseWheelMoved }
+            };
 
 			view->fKitWindow = [[CarbonWindowAdapter alloc] initWithCarbonWindowRef: newWindow takingOwnership: NO disableOrdering:NO carbon:YES];
     		SetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), &view->fKitWindow);
 		
-			InstallWindowEventHandler( newWindow, WindowCloseHandler, GetEventTypeCount( kWindowEvents ), kWindowEvents, newWindow, NULL );
+			InstallWindowEventHandler( newWindow, WindowHandler, GetEventTypeCount( kWindowEvents ), kWindowEvents, newWindow, NULL );
 		}
 		
 		[[view->fKitWindow contentView] addSubview:view->fWebView];
@@ -684,25 +690,98 @@ OwningWindowChanged(
 	}
 }
 
-//----------------------------------------------------------------------------------
-// WindowCloseHandler
-//----------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//	WindowHandler
+//-------------------------------------------------------------------------------------
+//	Redirect mouse events to the views beneath them. This is required for WebKit to work
+// 	properly. We install it once per window. We also tap into window close to release
+//	the NSWindow that shadows our Carbon window.
 //
 static OSStatus
-WindowCloseHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
+WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData )
 {
 	WindowRef	window = (WindowRef)inUserData;
-	OSStatus	err;
-	NSWindow*	kitWindow;
+	OSStatus	result = eventNotHandledErr;
 
-	err = GetWindowProperty( window, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &kitWindow);
-	if ( err == noErr )
-	{
-		[kitWindow _removeWindowRef];
-		[kitWindow close];
-	}
+    switch( GetEventClass( inEvent ) )
+    {
+        case kEventClassWindow:
+            {
+                NSWindow*	kitWindow;
+                OSStatus	err;
+                
+                err = GetWindowProperty( window, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &kitWindow);
+                if ( err == noErr )
+                {
+                    [kitWindow _removeWindowRef];
+                    [kitWindow close];
+                }
 	
-	return noErr;
+                result = noErr;
+            }
+            break;
+        
+        case kEventClassMouse:
+            switch( GetEventKind( inEvent ) )
+            {
+                case kEventMouseMoved:
+                    {
+                        WindowRef		temp;
+                        Point			where;
+                        WindowPartCode	part;
+                        HIViewRef		view;
+                    
+                        GetEventParameter( inEvent, kEventParamMouseLocation, typeQDPoint, NULL,
+                                sizeof( Point ), NULL, &where );
+                                
+                        part = FindWindow( where, &temp );
+                        if ( temp == window )
+                        {
+                            Rect		bounds;
+                            ControlKind	kind;
+
+                            GetWindowBounds( window, kWindowStructureRgn, &bounds );
+                            where.h -= bounds.left;
+                            where.v -= bounds.top;
+                            SetEventParameter( inEvent, kEventParamWindowRef, typeWindowRef, sizeof( WindowRef ), &window );
+                            SetEventParameter( inEvent, kEventParamWindowMouseLocation, typeQDPoint, sizeof( Point ), &where );
+                            
+                            HIViewGetViewForMouseEvent( HIViewGetRoot( window ), inEvent, &view );
+                        
+                            GetControlKind( view, &kind );
+                            
+                            if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+                            {
+                                result = SendEventToEventTargetWithOptions( inEvent, HIObjectGetEventTarget( (HIObjectRef)view ),
+                                        kEventTargetDontPropagate );
+                            }
+                        }
+                    }
+                    break;
+                
+                case kEventMouseUp:
+                case kEventMouseDragged:
+                case kEventMouseWheelMoved:
+                    {
+                        HIViewRef	view;
+                        ControlKind	kind;
+                        
+                        HIViewGetViewForMouseEvent( HIViewGetRoot( window ), inEvent, &view );
+        
+                        GetControlKind( view, &kind );
+                        
+                        if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
+                        {
+                            result = SendEventToEventTargetWithOptions( inEvent, HIObjectGetEventTarget( (HIObjectRef)view ),
+                                        kEventTargetDontPropagate );
+                        }
+                    }
+                    break;
+            }
+            break;
+    }
+
+	return result;
 }
 
 
@@ -1370,49 +1449,6 @@ HIWebViewEventHandler(
 						result = noErr;
 					}
 					break;
-/*					
-				case kEventControlDragEnter:
-				case kEventControlDragLeave:
-				case kEventControlDragWithin:
-					{
-						DragRef		drag;
-						bool		likesDrag;
-						
-						inEvent.GetParameter( kEventParamDragRef, &drag );
-
-						switch ( inEvent.GetKind() )
-						{
-							case kEventControlDragEnter:
-								likesDrag = DragEnter( drag );
-								
-								// Why only if likesDrag?  What if it doesn't?  No parameter?
-								if ( likesDrag )
-									result = inEvent.SetParameter( kEventParamControlLikesDrag, likesDrag );
-								break;
-							
-							case kEventControlDragLeave:
-								DragLeave( drag );
-								result = noErr;
-								break;
-							
-							case kEventControlDragWithin:
-								DragWithin( drag );
-								result = noErr;
-								break;
-						}
-					}
-					break;
-				
-				case kEventControlDragReceive:
-					{
-						DragRef		drag;
-						
-						inEvent.GetParameter( kEventParamDragRef, &drag );
-
-						result = DragReceive( drag );
-					}
-					break;
-*/
 
 				case kEventControlClick:
 					result = Click( view, inEvent );
@@ -1463,6 +1499,7 @@ HIWebViewEventHandler(
 MissingParameter:
 	return result;
 }
+
 
 static void
 StartUpdateObserver( HIWebView* view )

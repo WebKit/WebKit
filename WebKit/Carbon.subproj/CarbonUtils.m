@@ -16,7 +16,7 @@ static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage
 static NSAutoreleasePool*	sPool;
 
 void
-InitWebKitForCarbon()
+WebInitForCarbon()
 {
     static bool			sAppKitLoaded;
 
@@ -43,7 +43,7 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
 }
 
 CGImageRef
-ConvertNSImageToCGImageRef(
+WebConvertNSImageToCGImageRef(
 	NSImage*         inImage )
 {
 	NSArray*				reps = [inImage representations];

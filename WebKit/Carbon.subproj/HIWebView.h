@@ -44,7 +44,7 @@ HIWebViewCreate(HIViewRef * outControl);
 
 
 /*
- *  HIWebViewGetNSView()
+ *  HIWebViewGetWebView()
  *  
  *  Summary:
  *    Returns the WebKit WebView for a given HIWebView.
@@ -63,7 +63,7 @@ HIWebViewCreate(HIViewRef * outControl);
  *    Non-Carbon CFM:   not available
  */
 extern WebView*
-HIWebViewGetNSView( HIViewRef inView );
+HIWebViewGetWebView( HIViewRef inView );
 
 #ifdef __cplusplus
 }

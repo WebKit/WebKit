@@ -1,3 +1,22 @@
+2003-05-21  Ed Voas <voas@apple.com> 
+
+	- fixed 3262868: Update Carbon WebKit API prefixes
+	- fixed 3264980: Carbon support in WebKit needs to route mouse events properly
+	
+        Reviewed by Richard.
+
+        * Carbon.subproj/CarbonUtils.h:
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+        (WebConvertNSImageToCGImageRef):
+        * Carbon.subproj/HIWebView.h:
+        * Carbon.subproj/HIWebView.m:
+        (HIWebViewGetWebView):
+        (OwningWindowChanged):
+        (WindowHandler):
+        (HIWebViewEventHandler):
+        * WebKit.exp:
+
 2003-05-21  Vicki Murley  <vicki@apple.com>
 
         Reviewed by john 

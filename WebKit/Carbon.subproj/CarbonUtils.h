@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-extern void 		InitWebKitForCarbon( void );
-extern CGImageRef 	ConvertNSImageToCGImageRef( NSImage* inImage );
+extern void 		WebInitForCarbon( void );
+extern CGImageRef 	WebConvertNSImageToCGImageRef( NSImage* inImage );
 
 #ifdef __cplusplus
 }
