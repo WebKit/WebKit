@@ -27,12 +27,9 @@
 
 QRect KWinModule::workArea() const
 {
-    // No need to block exceptions because these simple NSScreen calls can't throw.
-
-    NSRect visibleRect = [[NSScreen mainScreen] visibleFrame];
-    NSRect rect = [[NSScreen mainScreen] frame];
-    return QRect((int)visibleRect.origin.x,
-                 (int)(rect.size.height - visibleRect.size.height - visibleRect.origin.y),
-                 (int)visibleRect.size.width,
-                 (int)visibleRect.size.height);
+    // Returns the visibleFrame of the main screen, which is the screen that the key window is on.
+    // No need to block exceptions because these simple NSScreen calls never throw.
+    NSRect rect = [[NSScreen mainScreen] visibleFrame];
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return QRect(rect);
 }

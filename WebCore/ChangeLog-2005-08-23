@@ -1,3 +1,16 @@
+2003-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3506204: homepage.mac slide show window is wrong size on 2nd monitor
+
+        * kwq/KWQApplication.mm: (QDesktopWidget::screenGeometry): Add code to flip the Y coordinate.
+        This has no effect on the main screen, but a big effect on others. I used the same code to
+        flip Y screen coordinates that is used KWQWindowWidget.mm and KWQKHTMLPartBrowserExtension.mm.
+        * kwq/KWQKWinModule.mm: (KWinModule::workArea): Replaced the incorrect code to flip the Y
+        coordinate here with correct code. The code flipped based on the frame of the main screen,
+        but it needs to flip based on the frame of screen 0.
+
 2003-12-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3505208>: keys added to keychain from KEYGEN need better UI names

@@ -45,17 +45,24 @@ int QDesktopWidget::height()
     return (int)[[NSScreen mainScreen] frame].size.height;
 }
 
-// FIXME: Do we need to handle multiple screens?
+// FIXME: Some day we may want to handle the case where the widget is in a window that's on
+// a different screen from the key window at the time the script is run. If so, keep in mind
+// that the result of screenGeometry is intersected with the result of KWinModule::workArea.
 
 int QDesktopWidget::screenNumber(QWidget *)
 {
+    // Always returns 0, which is fine since this is only passed to screenGeometry,
+    // which ignores the screen number parameter.
     return 0;
 }
 
 QRect QDesktopWidget::screenGeometry(int screenNumber)
 {
+    // Ignores the screen number, and always returns the geometry of the main screen,
+    // which is the screen that the key window is on.
     NSRect rect = [[NSScreen mainScreen] frame];
-    return QRect((int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return QRect(rect);
 }
 
 QSize QApplication::globalStrut()
