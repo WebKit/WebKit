@@ -202,8 +202,10 @@ static int compareByStringForQSort(const void *a, const void *b)
 
 void ArrayInstanceImp::sort(ExecState *exec)
 {
+    int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd();
+    
     execForCompareByStringForQSort = exec;
-    qsort(storage, length, sizeof(ValueImp *), compareByStringForQSort);
+    qsort(storage, lengthNotIncludingUndefined, sizeof(ValueImp *), compareByStringForQSort);
     execForCompareByStringForQSort = 0;
 }
 
@@ -235,10 +237,30 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 
 void ArrayInstanceImp::sort(ExecState *exec, Object &compareFunction)
 {
+    int lengthNotIncludingUndefined = pushUndefinedObjectsToEnd();
+    
     CompareWithCompareFunctionArguments args(exec, compareFunction.imp());
     compareWithCompareFunctionArguments = &args;
-    qsort(storage, length, sizeof(ValueImp *), compareWithCompareFunctionForQSort);
+    qsort(storage, lengthNotIncludingUndefined, sizeof(ValueImp *), compareWithCompareFunctionForQSort);
     compareWithCompareFunctionArguments = 0;
+}
+
+unsigned ArrayInstanceImp::pushUndefinedObjectsToEnd()
+{
+    ValueImp *undefined = UndefinedImp::staticUndefined;
+
+    unsigned o = 0;
+    for (unsigned i = 0; i != length; ++i) {
+        ValueImp *v = storage[i];
+        if (v && v != undefined) {
+            if (o != i)
+                storage[o] = v;
+            o++;
+        }
+    }
+    if (o != length)
+        memset(storage + o, 0, sizeof(ValueImp *) * (length - o));
+    return o;
 }
 
 // ------------------------------ ArrayPrototypeImp ----------------------------

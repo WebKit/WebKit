@@ -317,59 +317,5 @@ void Interpreter::finalCheck()
 }
 #endif
 
-// ------------------------------ ExecState --------------------------------------
-
-namespace KJS {
-  class ExecStateImp
-  {
-  public:
-    ExecStateImp(Interpreter *interp, ContextImp *con)
-      : interpreter(interp), context(con) {};
-    Interpreter *interpreter;
-    ContextImp *context;
-    Value exception;
-  };
-};
-
-ExecState::~ExecState()
-{
-  delete rep;
-}
-
-Interpreter *ExecState::interpreter() const
-{
-  return rep->interpreter;
-}
-
-const Context ExecState::context() const
-{
-  return rep->context;
-}
-
-void ExecState::setException(const Value &e)
-{
-  rep->exception = e;
-}
-
-void ExecState::clearException()
-{
-  rep->exception = Value();
-}
-
-Value ExecState::exception() const
-{
-  return rep->exception;
-}
-
-bool ExecState::hadException() const
-{
-  return !rep->exception.isNull();
-}
-
-ExecState::ExecState(Interpreter *interp, ContextImp *con)
-{
-  rep = new ExecStateImp(interp,con);
-}
-
 void Interpreter::virtual_hook( int, void* )
 { /*BASE::virtual_hook( id, data );*/ }

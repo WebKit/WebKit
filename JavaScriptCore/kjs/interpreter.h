@@ -368,30 +368,31 @@ namespace KJS {
     friend class FunctionImp;
     friend class GlobalFuncImp;
   public:
-    virtual ~ExecState();
-
     /**
      * Returns the interpreter associated with this execution state
      *
      * @return The interpreter executing the script
      */
-    Interpreter *interpreter() const;
+    Interpreter *interpreter() const { return _interpreter; }
 
     /**
      * Returns the execution context associated with this execution state
      *
      * @return The current execution state context
      */
-    const Context context() const;
+    const Context context() const { return _context; }
 
-    void setException(const Value &e);
-    void clearException();
-    Value exception() const;
-    bool hadException() const;
+    void setException(const Value &e) { _exception = e; }
+    void clearException() { _exception = Value(); }
+    Value exception() const { return _exception; }
+    bool hadException() const { return !_exception.isNull(); }
 
   private:
-    ExecState(Interpreter *interp, ContextImp *con);
-    ExecStateImp *rep;
+    ExecState(Interpreter *interp, ContextImp *con)
+        : _interpreter(interp), _context(con) { }
+    Interpreter *_interpreter;
+    ContextImp *_context;
+    Value _exception;
   };
 
 }; // namespace

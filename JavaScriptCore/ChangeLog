@@ -1,5 +1,22 @@
 2002-11-18  Darin Adler  <darin@apple.com>
 
+	- simplified the ExecState class, which was showing up in profiles
+        
+        Sped up JavaScript iBench by 6%.
+
+        * kjs/interpreter.h: Removed the level of indirection, and made it all inline.
+        * kjs/interpreter.cpp: Removed ExecState implementation from here altogether.
+
+	- fixed an oversight in my sort speedup
+
+        * kjs/array_object.h: Add pushUndefinedObjectsToEnd.
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::sort): Call pushUndefinedObjectsToEnd.
+        (ArrayInstanceImp::pushUndefinedObjectsToEnd): Added.
+	Pushes all undefined to the end of the array.
+
+2002-11-18  Darin Adler  <darin@apple.com>
+
 	- fix worst speed problems on the sort page of the iBench JavaScript test
 
 	Sped up JavaScript iBench by 70%, the sort page by 88%.

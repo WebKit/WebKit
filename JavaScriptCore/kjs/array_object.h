@@ -55,6 +55,8 @@ namespace KJS {
   private:
     void setLength(unsigned newLength);
     
+    unsigned pushUndefinedObjectsToEnd();
+    
     unsigned length;
     unsigned capacity;
     ValueImp **storage;
