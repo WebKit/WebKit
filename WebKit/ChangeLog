@@ -1,5 +1,14 @@
 2003-11-05  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3201364>: Safari crashes when hosting carbon plug-in using drag and drop
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView draggingUpdated:]): return NSDragOperationNone if we're over a plug-in view so the plug-in can handle the drag
+
+2003-11-05  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3474360>: should attempt to resolve symbolic links when choosing "Save Link As..."
 
         Reviewed by kocienda.

@@ -7,6 +7,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -1620,6 +1621,15 @@ NS_ENDHANDLER
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
+    return [self _web_dragOperationForDraggingInfo:sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    NSPoint point = [[self superview] convertPoint:[sender draggingLocation] toView:nil];
+    if ([[self hitTest:point] isKindOfClass:[WebBaseNetscapePluginView class]]) {
+        return NSDragOperationNone;
+    }
     return [self _web_dragOperationForDraggingInfo:sender];
 }
 
