@@ -1,3 +1,16 @@
+2003-01-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin, Dave and Trey, and given the seal of approval by Don.
+
+	Use new safer file removal call that does not handle directories.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+	(-[WebDownloadHandler cleanUpAfterFailure]): Use
+	_web_removeFileOnlyAtPath:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]): Use _web_removeFileOnlyAtPath:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): Use _web_removeFileOnlyAtPath:
+
 2003-01-14  Darin Adler  <darin@apple.com>
 
 	Reviewed by Dave.

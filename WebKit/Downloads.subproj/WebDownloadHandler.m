@@ -144,7 +144,7 @@
         BOOL isDirectory;
         BOOL fileExists = [fileMgr fileExistsAtPath:path isDirectory:&isDirectory];
         if (fileExists && !isDirectory) {
-            [fileMgr removeFileAtPath:path handler:nil];
+            [fileMgr _web_removeFileOnlyAtPath:path];
             [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
         } else if (!fileExists) {
             ERROR("Download file disappeared in the middle of download");

@@ -215,7 +215,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
                 break;
             }
             NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
-            [defaultManager removeFileAtPath:filePath handler:nil];
+            [defaultManager _web_removeFileOnlyAtPath:filePath];
             WebLRUFileListRemoveOldestFileFromList(lru);
         }
         [mutex unlock];
@@ -501,7 +501,7 @@ static void databaseInit()
 
     UniqueFilePathForKey(key, uniqueKey);
     filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
-    [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
+    [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:filePath];
     WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     [filePath release];
 }
