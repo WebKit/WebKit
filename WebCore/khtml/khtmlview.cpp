@@ -104,6 +104,7 @@ public:
     {
         repaintRects = 0;
         underMouse = 0;
+        clickNode = 0;
         reset();
 #if !APPLE_CHANGES
         tp=0;
@@ -136,6 +137,8 @@ public:
         
         if (underMouse)
 	    underMouse->deref();
+        if (clickNode)
+	    clickNode->deref();
 #ifndef QT_NO_TOOLTIP
 	delete tooltip;
 #endif
@@ -148,7 +151,6 @@ public:
 	underMouse = 0;
         linkPressed = false;
         useSlowRepaints = false;
-        originalNode = 0;
         dragTarget = 0;
 	borderTouched = false;
 #if !APPLE_CHANGES
@@ -164,11 +166,16 @@ public:
         ignoreWheelEvents = false;
 	borderX = 30;
 	borderY = 30;
+#if !APPLE_CHANGES
 	clickX = -1;
 	clickY = -1;
+#endif
         prevMouseX = -1;
         prevMouseY = -1;
 	clickCount = 0;
+        if (clickNode)
+	    clickNode->deref();
+        clickNode = 0;
 	isDoubleClick = false;
 	scrollingSelf = false;
 	layoutTimerId = 0;
@@ -191,9 +198,6 @@ public:
 #endif
     NodeImpl *underMouse;
 
-    // the node that was selected when enter was pressed
-    NodeImpl *originalNode;
-
     bool borderTouched:1;
     bool borderStart:1;
     bool scrollBarMoved:1;
@@ -211,9 +215,11 @@ public:
     int borderX, borderY;
 #if !APPLE_CHANGES
     KSimpleConfig *formCompletions;
-#endif
 
-    int clickX, clickY, clickCount;
+    int clickX, clickY;
+#endif
+    int clickCount;
+    NodeImpl *clickNode;
     bool isDoubleClick;
 
     int prevMouseX, prevMouseY;
@@ -763,12 +769,17 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 	d->clickY = ym;
     }
 #else
-    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+    if (KWQ(m_part)->passSubframeEventToSubframe(mev)) {
+        invalidateClick();
         return;
+    }
 
-    d->clickX = xm;
-    d->clickY = ym;
     d->clickCount = _mouse->clickCount();
+    if (d->clickNode)
+        d->clickNode->deref();
+    d->clickNode = mev.innerNode.handle();
+    if (d->clickNode)
+        d->clickNode->ref();
 #endif    
 
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.handle(),true,
@@ -816,8 +827,9 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     d->clickCount = _mouse->clickCount();
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
-    
-    dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.handle(),true,
+
+    if (mev.innerNode.handle() == d->clickNode)
+        dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.handle(),true,
 			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
 
     // Qt delivers a release event AND a double click event.
@@ -828,7 +840,6 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 	khtml::MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 	QApplication::sendEvent( m_part, &event2 );
     }
-
 #else
     // We do the same thing as viewportMousePressEvent() here, since the DOM does not treat
     // single and double-click events as separate (only the detail, i.e. number of clicks differs)
@@ -846,6 +857,8 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 	//emit doubleClick( url.string(), _mouse->button() );
     }
 #endif    
+
+    invalidateClick();
 }
 
 static bool isSubmitImage(DOM::NodeImpl *node)
@@ -1014,6 +1027,10 @@ void KHTMLView::resetCursor()
 void KHTMLView::invalidateClick()
 {
     d->clickCount = 0;
+    if (d->clickNode) {
+        d->clickNode->deref();
+        d->clickNode = 0;
+    }
 }
 
 void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
@@ -1037,7 +1054,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
 
-    if (d->clickCount > 0
+    if (d->clickCount > 0 && mev.innerNode.handle() == d->clickNode
 #if !APPLE_CHANGES
             && QPoint(d->clickX-xm,d->clickY-ym).manhattanLength() <= QApplication::startDragDistance()
 #endif
@@ -1049,6 +1066,8 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
 	QApplication::sendEvent( m_part, &event );
     }
+
+    invalidateClick();
 }
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )
@@ -1128,7 +1147,6 @@ void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 		NodeImpl *n = m_part->xmlDocImpl()->focusNode();
 		if (n)
 		    n->setActive();
-		d->originalNode = n;
 	    }
             break;
         case Key_Home:

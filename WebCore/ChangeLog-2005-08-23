@@ -1,3 +1,25 @@
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3825429> onclick handler called when mouse down on another element (affects Dashboard Movies widget, test case enclosed)
+
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate): Initialize the click node to 0.
+        (KHTMLViewPrivate::~KHTMLViewPrivate): Deref the click node.
+        (KHTMLViewPrivate::reset): Clear the click node.
+        (KHTMLView::viewportMousePressEvent): Call invalidateClick when we pass the event to a subframe to
+        reduce the chance that we'll hold on to an old click node for a long time. Set the click node to
+        the node we we are clicking on.
+        (KHTMLView::viewportMouseDoubleClickEvent): Only send a click even if the node is the same one from
+        the original click. Call invalidateClick when done to reduce the chance that we'll hold on to an
+        old click node for a long time.
+        (KHTMLView::invalidateClick): Clear the click node.
+        (KHTMLView::viewportMouseReleaseEvent): Only send a click even if the node is the same one from
+        the original click. Call invalidateClick when done to reduce the chance that we'll hold on to an
+        old click node for a long time.
+        (KHTMLView::keyPressEvent): Remove code that sets the originalNode field, which is never used.
+
 2004-10-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
