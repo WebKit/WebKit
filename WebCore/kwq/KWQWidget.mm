@@ -90,9 +90,9 @@ void QWidget::setMouseTracking(bool)
 {
 }
 
-int QWidget::winId() const
+long QWidget::winId() const
 {
-    return (int)this;
+    return (long)this;
 }
 
 int QWidget::x() const 
@@ -169,9 +169,12 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
 {
     // This is only used by JavaScript to implement the getting
     // the screenX and screen Y coordinates.
-    NSPoint sp;
-    sp = [[data->view window] convertBaseToScreen: [data->view convertPoint: NSMakePoint(p.x(), p.y()) toView: nil]];
-    return QPoint((int)sp.x, (int)sp.y);
+
+    if (topLevelWidget() != nil) {
+	return topLevelWidget()->mapToGlobal(p);
+    } else {
+	return p;
+    }
 }
 
 void QWidget::setFocus()

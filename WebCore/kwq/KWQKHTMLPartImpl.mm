@@ -628,6 +628,7 @@ void KWQKHTMLPartImpl::setBaseURL(const KURL &url)
 void KWQKHTMLPartImpl::setView(KHTMLView *view)
 {
     d->m_view = view;
+    part->setWidget(view);
 }
 
 void KWQKHTMLPartImpl::setTitle(const DOMString &title)

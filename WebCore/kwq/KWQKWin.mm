@@ -24,11 +24,13 @@
  */
 
 #import <kwin.h>
-
 #import <kwqdebug.h>
+#import <qwidget.h>
 
-KWin::Info KWin::info(int win)
+KWin::Info KWin::info(long win)
 {
-    _logNotYetImplemented();
-    return KWin::Info();
+    KWin::Info winInfo;
+    winInfo.geometry = ((QWidget *)win)->frameGeometry();
+
+    return winInfo;
 }

@@ -1,3 +1,28 @@
+2002-07-03  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fixes for:
+
+	Radar 2950616 - JavaScript window.screenX and window.screenY always return -1
+	Radar 2950614 - JavaScript window.screenLeft and window.screenTop
+	properties are unimplemented
+	Radar 2950609 - JavaScript window.outerHeight and
+	window.outerWidth properties always return 0
+
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.cpp:
+	(Window::get): Make ScreenLeft and ScreenTop synonyms for ScreenX
+	and ScreenY respectively.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::setView): Set the real part's view too.
+        * kwq/kdecore/kwin.h: Remove unneeded fields.
+        * kwq/KWQKWin.mm:
+        (KWin::info): Implemented.
+        * kwq/qt/qwidget.h: 
+        * kwq/KWQWidget.mm: 
+	(QWidget::winId): Return long instead of int, to make sure there
+	is room for a pointer even on 64-bit architectures.
+        (QWidget::mapToGlobal): Use the top level widget to map.
+
 2002-07-03  Richard Williamson  <rjw@apple.com>
 
         * kwq/KWQScrollView.mm:

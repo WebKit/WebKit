@@ -1,5 +1,20 @@
 2002-07-03  Maciej Stachowiak  <mjs@apple.com>
 
+        WebKit part of fixes for:
+
+	Radar 2950616 - JavaScript window.screenX and window.screenY always return -1
+	Radar 2950614 - JavaScript window.screenLeft and window.screenTop
+	properties are unimplemented
+	Radar 2950609 - JavaScript window.outerHeight and
+	window.outerWidth properties always return 0
+	
+	* WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView provisionalDataSourceChanged:]): Pass the real
+	document view to the newly created bridge, since it will be ready
+	by now and is needed by JavaScript.
+
+2002-07-03  Maciej Stachowiak  <mjs@apple.com>
+
         * Plugins.subproj/IFPluginView.mm:
         (-[IFPluginView status:]): Fix build problem. Why doesn't
 	compiling catch these more reliably?

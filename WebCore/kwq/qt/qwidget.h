@@ -71,7 +71,7 @@ public:
     virtual void setAutoMask(bool);
     virtual void setMouseTracking(bool);
 
-    int winId() const;
+    long winId() const;
     int x() const;
     int y() const;
     int width() const;

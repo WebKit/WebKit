@@ -26,19 +26,15 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
-#include <qobject.h>
 #include <qrect.h>
-#include <qstring.h>
 
 class KWin {
 public:
     struct Info {
         QRect geometry;
-        QString name;
-        QString visibleName;
     };
 
-    static Info info(int win);
+    static Info info(long win);
 };
 
 #endif

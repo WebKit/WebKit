@@ -120,18 +120,14 @@
 {
     IFWebCoreBridge *bridge = [dataSource _bridge];
 
-    // Create a temporary provisional view.  It will be replaced with
-    // the actual view once the datasource has been committed.
-    IFHTMLView *provisionalView = [[IFHTMLView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    IFHTMLView *provisionalView = [[[dataSource webFrame] webView] documentView];
     
     NSRect r = [self frame];
     
     _private->provisionalWidget = [bridge createKHTMLViewWithNSView:provisionalView
-        width:(int)r.size.width height:(int)r.size.height
+	width:(int)r.size.width height:(int)r.size.height
         marginWidth:[[[dataSource webFrame] webView] _marginWidth]
         marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
-    
-    [provisionalView release];
 }
 
 - (void)provisionalDataSourceCommitted: (IFWebDataSource *)dataSource 
@@ -535,5 +531,6 @@
     if (widget)
         widget->keyReleaseEvent(&kEvent);
 }
+
 
 @end
