@@ -1,3 +1,33 @@
+2003-12-09  Richard Williamson   <rjw@apple.com>
+
+	LiveConnect stubs that correspond to the native methods
+	on JSObject.  These will be called from the new Java plugin
+	when an instance of JSObject is instantiated and messaged.
+	When these are implemented the Java will be able to originate
+	calls into JavaScript.
+
+	Also a temporary work-around added to Makefile.am to solve
+	a link problem.  The 1.4.2 JavaVM accidentally links against
+	libobjc.  This call a failure linking testkjs.  Mike Hay is
+	working with someone to fix the problem (3505587).
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+        * bindings/jni_jsobject.cpp: Added.
+        (KJS_JSCreateNativeJSObject):
+        (KJS_JSObject_JSFinalize):
+        (KJS_JSObject_JSObjectCall):
+        (KJS_JSObject_JSObjectEval):
+        (KJS_JSObject_JSObjectGetMember):
+        (KJS_JSObject_JSObjectSetMember):
+        (KJS_JSObject_JSObjectRemoveMember):
+        (KJS_JSObject_JSObjectGetSlot):
+        (KJS_JSObject_JSObjectSetSlot):
+        (KJS_JSObject_JSObjectToString):
+        * bindings/jni_jsobject.h: Added.
+
 2003-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

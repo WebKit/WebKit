@@ -242,6 +242,7 @@
 				517D534A056BFB5D003851BD,
 				51A58A90057D3A6A00A3E942,
 				7073BE3F0581291E005EE2C9,
+				513589F00586989000813311,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,6 +303,7 @@
 				517D5349056BFB5D003851BD,
 				51A58A8F057D3A6A00A3E942,
 				7073BE3E0581291E005EE2C9,
+				513589EF0586989000813311,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +486,36 @@
 			settings = {
 			};
 		};
+		513589ED0586989000813311 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_jsobject.cpp;
+			path = bindings/jni_jsobject.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		513589EE0586989000813311 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_jsobject.h;
+			path = bindings/jni_jsobject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		513589EF0586989000813311 = {
+			fileRef = 513589ED0586989000813311;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		513589F00586989000813311 = {
+			fileRef = 513589EE0586989000813311;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		517D52DC056BF2F5003851BD = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -582,6 +614,8 @@
 				517D52DD056BF2F6003851BD,
 				517D5347056BFB5D003851BD,
 				517D5348056BFB5D003851BD,
+				513589ED0586989000813311,
+				513589EE0586989000813311,
 				511B0877056468BB0080E486,
 				511B0876056468BB0080E486,
 				51856D8F0562EE95008B9D83,
