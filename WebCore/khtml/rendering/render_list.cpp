@@ -148,7 +148,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
     }
 
 #ifdef APPLE_CHANGES
-    newStyle->deref();
+    //newStyle->deref();
 #endif
 }
 
