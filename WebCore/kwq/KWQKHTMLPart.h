@@ -309,6 +309,8 @@ public:
     void setSelectionFromNone();
     void setDisplaysWithFocusAttributes(bool flag);
     bool displaysWithFocusAttributes() const;
+
+    void setWindowHasFocus(bool flag);
     
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
@@ -473,6 +475,8 @@ private:
     DOM::Range m_markedTextRange;
     bool m_markedTextUsesUnderlines;
     QValueList<MarkedTextUnderline> m_markedTextUnderlines;
+
+    bool m_windowHasFocus;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }

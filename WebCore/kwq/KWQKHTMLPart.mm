@@ -229,6 +229,8 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _dragSrc(0)
     , _dragClipboard(0)
     , _elementToDraw(0)
+    , m_markedTextUsesUnderlines(false)
+    , m_windowHasFocus(false)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -3693,7 +3695,7 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
     if (d->m_isFocused == flag)
         return;
     d->m_isFocused = flag;
-        
+
     // This method does the job of updating the view based on whether the view is "active".
     // This involves three kinds of drawing updates:
 
@@ -3704,7 +3706,7 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
     // 2. Caret blinking (blinks | does not blink)
     if (flag)
         setSelectionFromNone();
-    setCaretVisible(d->m_isFocused);
+    setCaretVisible(flag);
     
     // 3. The drawing of a focus ring around links in web pages.
     DocumentImpl *doc = xmlDocImpl();
@@ -3713,22 +3715,27 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
         if (node && node->renderer())
             node->renderer()->repaint();
     }
-    
-    if (doc && doc->body()) {
-        if (flag) {
-            // Send onfocus event.
-            doc->body()->dispatchWindowEvent(EventImpl::FOCUS_EVENT, false, false);
-        }
-        else {
-            // Send onblur event.
-            doc->body()->dispatchWindowEvent(EventImpl::BLUR_EVENT, false, false);
-        }
-    }
 }
 
 bool KWQKHTMLPart::displaysWithFocusAttributes() const
 {
     return d->m_isFocused;
+}
+
+void KWQKHTMLPart::setWindowHasFocus(bool flag)
+{
+    if (m_windowHasFocus == flag)
+        return;
+    m_windowHasFocus = flag;
+
+    DocumentImpl *doc = xmlDocImpl();
+    if (doc) {
+        NodeImpl *body = doc->body();
+        if (body) {
+            int eventID = flag ? EventImpl::FOCUS_EVENT : EventImpl::BLUR_EVENT;
+            body->dispatchWindowEvent(eventID, false, false);
+        }
+    }
 }
 
 QChar KWQKHTMLPart::backslashAsCurrencySymbol() const

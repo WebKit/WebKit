@@ -1,3 +1,17 @@
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4025088> window onblur and onfocus don't fire when text field has focus
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateFocusState]): Renamed from updateFocusDisplay. Added call to setWindowHasFocus: method.
+        (-[WebHTMLView viewDidMoveToWindow]): Call method by new name.
+        (-[WebHTMLView windowDidBecomeKey:]): Ditto.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+        (-[WebHTMLView becomeFirstResponder]): Ditto.
+        (-[WebHTMLView resignFirstResponder]): Ditto.
+
 === Safari-400 ===
 
 2005-02-25  Richard Williamson   <rjw@apple.com>

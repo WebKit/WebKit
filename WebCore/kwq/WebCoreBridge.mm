@@ -1373,6 +1373,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->setDisplaysWithFocusAttributes(flag);
 }
 
+- (void)setWindowHasFocus:(BOOL)flag
+{
+    _part->setWindowHasFocus(flag);
+}
+
 - (void)setShouldCreateRenderers:(BOOL)f
 {
     _shouldCreateRenderers = f;

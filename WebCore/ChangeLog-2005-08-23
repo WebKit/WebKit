@@ -2,6 +2,20 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4025088> window onblur and onfocus don't fire when text field has focus
+
+        * kwq/KWQKHTMLPart.h: Added setWindowHasFocus function and m_windowHasFocus data member.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes): Took out the code that sends the focus and blur events.
+        (KWQKHTMLPart::setWindowHasFocus): Put that code here instead.
+
+        * kwq/WebCoreBridge.h: Added setWindowHasFocus: method to the bridge.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge setWindowHasFocus:]): Added. Calls method on the part.
+
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - re-fixed <rdar://problem/3665430> horizontal scroll bar of text area does not show, even when text is wide in "no wrap" mode
 
         * kwq/KWQTextArea.mm: (-[KWQTextArea _updateTextViewWidth]): Don't change the text view width

@@ -1998,7 +1998,7 @@ static WebHTMLView *lastHitView = nil;
         name:NSMouseMovedNotification object:nil];
 }
 
-- (void)updateFocusDisplay
+- (void)updateFocusState
 {
     // This method does the job of updating the view based on the view's firstResponder-ness and
     // the window key-ness of the window containing this view. This involves three kinds of 
@@ -2009,9 +2009,17 @@ static WebHTMLView *lastHitView = nil;
     // 1. The background color used to draw behind selected content (active | inactive color)
     // 2. Caret blinking (blinks | does not blink)
     // 3. The drawing of a focus ring around links in web pages.
+    //
+    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
+    // so we can send focus and blur events.
 
-    BOOL flag = !_private->resigningFirstResponder && [[self window] isKeyWindow] && [self _web_firstResponderCausesFocusDisplay];
-    [[self _bridge] setDisplaysWithFocusAttributes:flag];
+    WebBridge *bridge = [self _bridge];
+    BOOL windowIsKey = [[self window] isKeyWindow];
+
+    BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
+    [bridge setDisplaysWithFocusAttributes:flag];
+
+    [bridge setWindowHasFocus:windowIsKey];
 }
 
 - (void)addSuperviewObservers
@@ -2115,14 +2123,15 @@ static WebHTMLView *lastHitView = nil;
             [self addWindowObservers];
             [self addSuperviewObservers];
             [self addMouseMovedObserver];
+
             // Schedule this update, rather than making the call right now.
             // The reason is that placing the caret in the just-installed view requires
             // the HTML/XML document to be available on the WebCore side, but it is not
             // at the time this code is running. However, it will be there on the next
             // crank of the run loop. Doing this helps to make a blinking caret appear 
             // in a new, empty window "automatic".
-            [self performSelector:@selector(updateFocusDisplay) withObject:nil afterDelay:0];
-    
+            [self performSelector:@selector(updateFocusState) withObject:nil afterDelay:0];
+
             [[self _pluginController] startAllPlugins];
     
             _private->lastScrollPosition = NSZeroPoint;
@@ -2473,7 +2482,7 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
-    [self updateFocusDisplay];
+    [self updateFocusState];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
@@ -2481,7 +2490,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [_private->compController endRevertingChange:NO moveLeft:NO];
     [self removeMouseMovedObserver];
-    [self updateFocusDisplay];
+    [self updateFocusState];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -2885,7 +2894,7 @@ static WebHTMLView *lastHitView = nil;
     if (view) {
         [[self window] makeFirstResponder:view];
     }
-    [self updateFocusDisplay];
+    [self updateFocusState];
     _private->startNewKillRingSequence = YES;
     return YES;
 }
@@ -2906,7 +2915,7 @@ static WebHTMLView *lastHitView = nil;
                 [self deselectAll];
             }
         }
-        [self updateFocusDisplay];
+        [self updateFocusState];
         _private->resigningFirstResponder = NO;
     }
     return resign;
