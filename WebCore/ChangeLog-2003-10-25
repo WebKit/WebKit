@@ -1,3 +1,8 @@
+2002-08-27  Darin Adler  <darin@apple.com>
+
+        * force-clean-timestamp: Dave's changes require a full build. I found out the
+	hard way, by debugging for a while.
+
 2002-08-27  Richard Williamson <rjw@apple.com>
 
         * kwq/WebCoreBridge.h:
