@@ -172,7 +172,16 @@ void RenderFormElement::slotClicked()
     RenderArena *arena = ref();
     QMouseEvent e2( QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
 
+    element()->dispatchMouseEvent(&e2, EventImpl::CLICK_EVENT, m_clickCount);
+
+    // We also send the KHTML_CLICK or KHTML_DBLCLICK event for
+    // CLICK. This is not part of the DOM specs, but is used for
+    // compatibility with the traditional onclick="" and ondblclick=""
+    // attributes, as there is no way to tell the difference between
+    // single & double clicks using DOM (only the click count is
+    // stored, which is not necessarily the same)
     element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
+
     m_isDoubleClick = false;
     deref(arena);
 }
