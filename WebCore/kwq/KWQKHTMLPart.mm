@@ -1232,7 +1232,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
     if (!next) {
         KWQKHTMLPart *parent = KWQ(parentPart());
         if (parent) {
-            next = parent->nextKeyView(parent->childFrame(this)->m_frame->element(), direction);
+            next = parent->nextKeyViewInFrameHierarchy(parent->childFrame(this)->m_frame->element(), direction);
         }
     }
     
@@ -2915,7 +2915,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
-                    if (renderer->style()->whiteSpace() == PRE) {
+                    if (style->whiteSpace() == PRE) {
                         if (needSpace && !addedSpace) {
                             if (text.isEmpty() && linkStartLocation == [result length]) {
                                 ++linkStartLocation;
@@ -3037,7 +3037,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                                 RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
 
                                 maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
-                                switch(listRenderer->style()->listStyleType()) {
+                                switch(style->listStyleType()) {
                                     case khtml::DISC:
                                         listText += ((QChar)BULLET_CHAR);
                                         break;
@@ -3104,15 +3104,23 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     case ID_H3:
                     case ID_H4:
                     case ID_H5:
-                    case ID_H6:
+                    case ID_H6: {
                         if (!hasNewLine)
                             text += '\n';
-                        if (!hasParagraphBreak) {
-                            text += '\n';
-                            hasParagraphBreak = true;
+                        
+                        // In certain cases, emit a paragraph break.
+                        int bottomMargin = renderer->collapsedMarginBottom();
+                        int fontSize = style->htmlFont().getFontDef().computedPixelSize();
+                        if (bottomMargin * 2 >= fontSize) {
+                            if (!hasParagraphBreak) {
+                                text += '\n';
+                                hasParagraphBreak = true;
+                            }
                         }
+                        
                         hasNewLine = true;
                         break;
+                    }
                         
                     case ID_IMG:
                         if (pendingStyledSpace != nil) {

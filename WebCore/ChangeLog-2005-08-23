@@ -1,3 +1,15 @@
+2005-02-01  John Sullivan  <sullivan@apple.com>
+
+        Written by Darin, reviewed and tested by me
+        
+        - fixed <rdar://problem/3969684> Panther-only: extra blank lines between 
+        pasted content from Blot
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+        don't emit paragraph breaks if the margins are tiny; matches what
+        we do for plain-text conversion
+
 === Safari-182 ===
 
 2005-02-01  Ken Kocienda  <kocienda@apple.com>
