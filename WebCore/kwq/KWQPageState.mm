@@ -106,11 +106,14 @@ using KJS::SavedBuiltins;
 {
     // Should only ever invalidate once.
     ASSERT(document);
+    ASSERT(document->view());
     ASSERT(!document->inPageCache());
 
-    document->view()->deref();
-    document->deref();
-
+    if (document && document->view()) {
+        document->view()->deref();
+        document->deref();
+    }
+    
     [self clear];
 }
 

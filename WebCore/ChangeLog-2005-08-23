@@ -1,5 +1,17 @@
 2005-02-28  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/4026985> CrashTracer: ...14 crashes at com.apple.WebCore: -[KWQPageState invalidate] + 32
+
+	Added more nil checking and ASSERTS.
+	Without a reproducible case this is hard to definitively resolve.
+
+        Reviewed by John Sullivan.
+
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState invalidate]):
+
+2005-02-28  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/4027702> 3.5% performance regression btwn Safari-188 and Safari-400
 
 	I inadvertently checked in some debugging code that disabled
