@@ -3,3 +3,4 @@ qt/qpoint-test
 qt/qsize-test
 qt/qrect-test
 qt/qmap-test
+qt/qchar-test
