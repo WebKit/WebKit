@@ -1464,12 +1464,18 @@
 			fileRef = 848DFF840365FE6A00CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		65490EC503666E0C000CED4B = {
 			fileRef = 848DFF850365FE6A00CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		65490EC603666E0C000CED4B = {
@@ -1547,7 +1553,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1556,7 +1562,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1565,7 +1571,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1950,6 +1956,9 @@
 			fileRef = 8467275C0367158500CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		8467275F0367158500CA2ACA = {

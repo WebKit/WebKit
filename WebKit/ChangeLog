@@ -1,3 +1,13 @@
+2003-02-28  Richard Williamson   <rjw@apple.com>
+
+        Make WebDOM* classes private instead of public.  This change
+        was made before but the project file must have been accidentally
+        overwritten.  Make the WebPlugin* classes private.
+        
+        Reviewed by me.
+
+        * WebKit.pbproj/project.pbxproj:
+
 7003-02-28  Trey Matteson  <trey@apple.com>
 
 	Various support for autofill/autocomplete.
@@ -72,7 +82,6 @@
 	_postWithURL:referrer:data:contentType:triggeringEvent:formValues:]):
 	Use passed-in referrer.
 
->>>>>>> 1.1520
 2003-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
