@@ -203,6 +203,7 @@
 				35F3577501986B740ACA1520,
 				35F357800198AAB80ACA1520,
 				F515C2B90238249C01C1A525,
+				F5B67131023EDF8901C1A525,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -255,6 +256,7 @@
 				35F3577E0198AAB80ACA1520,
 				089C1666FE841158C02AAC07,
 				35F3577401986B740ACA1520,
+				F5B67130023EDF8901C1A525,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1043,6 +1045,18 @@
 		};
 		F520FB1C0221DEFD01C1A525 = {
 			fileRef = F520FB1A0221DEFD01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B67130023EDF8901C1A525 = {
+			isa = PBXFileReference;
+			name = url_icon.tiff;
+			path = Resources/url_icon.tiff;
+			refType = 4;
+		};
+		F5B67131023EDF8901C1A525 = {
+			fileRef = F5B67130023EDF8901C1A525;
 			isa = PBXBuildFile;
 			settings = {
 			};

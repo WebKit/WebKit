@@ -105,4 +105,11 @@ static IFWebHistory *sharedWebHistory = nil;
     return [_historyPrivate containsURL: url];
 }
 
+#pragma mark SAVING TO DISK
+
+- (void)saveHistory
+{
+    [_historyPrivate saveHistory];
+}
+
 @end

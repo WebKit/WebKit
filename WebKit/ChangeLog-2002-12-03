@@ -1,3 +1,36 @@
+2002-03-12  John Sullivan  <sullivan@apple.com>
+
+	Added support for persistent history. Following in the grand footsteps of
+	Ken, it currently stores data in /tmp/alexander.history
+
+	* Resources/url_icon.tiff: default IFURIEntry image, moved here from WebBrowser.
+	* WebKit.pbproj/project.pbxproj: Updated to add image file.
+
+	* History.subproj/IFURIEntry.m: 
+	(-[IFURIEntry image]):
+	If there's no explicit image, return the default one.
+
+	(-[IFURIEntry dictionaryRepresentation]): return a representation suitable
+	for saving to an xml file.
+	(-[IFURIEntry initFromDictionaryRepresentation:]): init given the representation
+	returned from dictionaryRepresentation.
+
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistory.m: (-[IFWebHistory saveHistory]):
+	Added saveHistory call.
+
+	* History.subproj/IFWebHistoryPrivate.h: added saveHistory call.
+
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(-[IFWebHistoryPrivate arrayRepresentation]): return a representation suitable for
+	saving to an xml file.
+	(-[IFWebHistoryPrivate historyFilePath]): return location of history on disk.
+	(-[IFWebHistoryPrivate loadHistory]): read history from disk.
+	(-[IFWebHistoryPrivate saveHistory]): write history to disk.
+
+	(-[IFWebHistoryPrivate init]): call loadHistory
+	(-[IFWebHistoryPrivate removeEntryForURLString:]): changed NSLog to WEBKITDEBUG
+
 2002-03-11  Richard Williamson  <rjw@apple.com>
 
         Fixed call back ordering problems when an error occurs.

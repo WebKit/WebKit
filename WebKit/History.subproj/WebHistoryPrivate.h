@@ -27,5 +27,6 @@
 - (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
 - (BOOL)containsURL: (NSURL *)url;
 
+- (void)saveHistory;
 
 @end

@@ -46,4 +46,7 @@
 // testing contents for visited-link mechanism
 - (BOOL)containsURL: (NSURL *)url;
 
+// saving contents to disk
+- (void)saveHistory;
+
 @end

@@ -11,6 +11,10 @@
 #import <WebFoundation/IFNSCalendarDateExtensions.h>
 #import <WebKit/WebKitDebug.h>
 
+@interface IFWebHistoryPrivate (Private)
+- (void)loadHistory;
+@end
+
 @implementation IFWebHistoryPrivate
 
 #pragma mark OBJECT FRAMEWORK
@@ -21,6 +25,9 @@
         _urlDictionary = [[NSMutableDictionary alloc] init];
         _datesWithEntries = [[NSMutableArray alloc] init];
         _entriesByDate = [[NSMutableArray alloc] init];
+
+        // read history from disk
+        [self loadHistory];
     }
     
     return self;
@@ -104,8 +111,8 @@
             [_datesWithEntries removeObjectAtIndex: dateIndex];
         }
     } else {
-        NSLog(@"'%@' was in url dictionary but its date %@ was not in date index",
-              [entry url], [entry lastVisitedDate]);
+        WEBKITDEBUG2("'%s' was in url dictionary but its date %s was not in date index",
+              DEBUG_OBJECT([entry url]), DEBUG_OBJECT([entry lastVisitedDate]));
     }
 
     return YES;
@@ -226,6 +233,64 @@
 - (BOOL)containsURL: (NSURL *)url
 {
     return [_urlDictionary objectForKey: [url absoluteString]] != nil;
+}
+
+#pragma mark ARCHIVING/UNARCHIVING
+
+- (NSArray *)arrayRepresentation
+{
+    int dateCount, dateIndex;
+    NSMutableArray *arrayRep;
+
+    arrayRep = [NSMutableArray array];
+
+    dateCount = [_entriesByDate count];
+    for (dateIndex = 0; dateIndex < dateCount; ++dateIndex) {
+        int entryCount, entryIndex;
+        NSArray *entries;
+
+        entries = [_entriesByDate objectAtIndex:dateIndex];
+        entryCount = [entries count];
+        for (entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
+            [arrayRep addObject: [[entries objectAtIndex:entryIndex] dictionaryRepresentation]];
+        }
+    }
+
+    return arrayRep;
+}
+
+- (NSString *)historyFilePath
+{
+    // FIXME: put this somewhere sensible
+    return @"/tmp/alexander.history";
+}
+
+- (void)loadHistory
+{
+    NSString *path = [self historyFilePath];
+    NSArray *array = [NSArray arrayWithContentsOfFile: path];
+
+    if (array == nil) {
+        WEBKITDEBUG1("attempt to read history from %s failed", DEBUG_OBJECT(path));
+    } else {
+        int index, count;
+
+        count = [array count];
+        for (index = 0; index < count; ++index) {
+            IFURIEntry *entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: [array objectAtIndex: index]];
+            [self addEntry: entry];
+        }
+    }
+}
+
+- (void)saveHistory
+{
+    NSString *path = [self historyFilePath];
+    NSArray *array = [self arrayRepresentation];
+    
+    if (![array writeToFile:path atomically:NO]) {
+        WEBKITDEBUG2("attempt to save %s to %s failed", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+    }
 }
 
 @end

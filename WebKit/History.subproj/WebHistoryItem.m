@@ -69,7 +69,10 @@
 
 -(NSImage *)image
 {
-    return _image;
+    if (_image != nil) {
+        return _image;
+    }
+    return [NSImage imageNamed:@"url_icon"];
 }
 
 -(NSString *)comment
@@ -161,6 +164,53 @@
 -(NSString *)description
 {
     return [NSString stringWithFormat:@"IFURIEntry %@", _url];
+}
+
+
+- (NSDictionary *)dictionaryRepresentation
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity: 6];
+
+    // FIXME: doesn't save/restore images yet
+    [dict setObject: [_url absoluteString] forKey: @"url"];
+    if (_title != nil) {
+        [dict setObject: _title forKey: @"title"];
+    }
+    if (_comment != nil) {
+        [dict setObject: _comment forKey: @"comment"];
+    }
+    if (_creationDate != nil) {
+        [dict setObject: [NSString stringWithFormat:@"%lf", [_creationDate timeIntervalSinceReferenceDate]]
+                 forKey: @"creationDate"];
+    }
+    if (_modificationDate != nil) {
+        [dict setObject: [NSString stringWithFormat:@"%lf", [_modificationDate timeIntervalSinceReferenceDate]]
+                 forKey: @"modificationDate"];
+    }
+    if (_lastVisitedDate != nil) {
+        [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
+                 forKey: @"lastVisitedDate"];
+    }
+
+    return dict;
+}
+
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict
+{
+    // FIXME: doesn't save/restore images yet
+    if ((self = [super init]) != nil) {
+        _url = [[NSURL URLWithString: [dict objectForKey: @"url"]] retain];
+        _title = [[dict objectForKey: @"title"] retain];
+        _comment = [[dict objectForKey: @"comment"] retain];
+        _creationDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
+            [[dict objectForKey: @"creationDate"] doubleValue]] retain];
+        _modificationDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
+            [[dict objectForKey: @"modificationDate"] doubleValue]] retain];
+        _lastVisitedDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
+            [[dict objectForKey: @"lastVisitedDate"] doubleValue]] retain];
+    }
+
+    return self;
 }
     
 @end
