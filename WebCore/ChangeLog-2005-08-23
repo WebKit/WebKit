@@ -1,5 +1,14 @@
 2003-05-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Chris.
+
+	- fixed 3169067 - PEOPLESOFT: left frame missing; frame RenderRoot height and width are both zero
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor):
+
+2003-05-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3273544 - REGRESSION: Page disappears at http://www.urban-advantage.com/

@@ -1984,6 +1984,16 @@ bool KHTMLPart::gotoAnchor( const QString &name )
       return false;
   }
 
+  // We need to update the layout before scrolling, otherwise we could
+  // really mess things up if an anchor scroll comes at a bad moment.
+  if ( d->m_doc ) {
+    d->m_doc->updateRendering();
+    // Only do a layout if changes have occurred that make it necessary.      
+    if ( d->m_view && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout() ) {
+      d->m_view->layout();
+    }
+  }
+  
   int x = 0, y = 0;
   HTMLElementImpl *a = static_cast<HTMLElementImpl *>(n);
   a->getUpperLeftCorner(x, y);
