@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+#include <qmap.h>
+
+#include "kjs_window.h"
+
 class KURL;
 
 namespace DOM {
@@ -46,6 +50,7 @@ namespace KJS {
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
     khtml::RenderObject *docRenderer; 
+    QMap<int, KJS::ScheduledAction*> *pausedActions;
 }
 
 - initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp;
@@ -55,7 +60,8 @@ namespace KJS {
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;
 - (khtml::RenderObject *)renderer;
-
+- (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa;
+- (QMap<int, KJS::ScheduledAction*> *)pausedActions;
 - (void)invalidate;
 
 @end

@@ -884,6 +884,16 @@ bool Window::hasTimeouts()
 {
     return winq->hasTimeouts();
 }
+
+QMap<int, ScheduledAction*> *Window::pauseTimeouts(const void *key)
+{
+    return winq->pauseTimeouts(key);
+}
+
+void Window::resumeTimeouts(QMap<int, ScheduledAction*> *sa, const void *key)
+{
+    return winq->resumeTimeouts(sa, key);
+}
 #endif
 
 void Window::scheduleClose()
@@ -1537,6 +1547,31 @@ int WindowQObject::installTimeout(const Value &func, List args, int t, bool sing
   return id;
 }
 
+QMap<int, ScheduledAction*> *WindowQObject::pauseTimeouts(const void *key)
+{
+    QMapIterator<int,ScheduledAction*> it;
+
+    QMap<int, KJS::ScheduledAction*>*pausedActions = new QMap<int, KJS::ScheduledAction*>;
+    for (it = scheduledActions.begin(); it != scheduledActions.end(); ++it) {
+        int timerId = it.key();
+        pauseTimer (timerId, key);
+        pausedActions->insert(timerId, it.data());
+    }
+    scheduledActions.clear();
+    return pausedActions;
+}
+
+void WindowQObject::resumeTimeouts(QMap<int, ScheduledAction*> *sa, const void *key)
+{
+    QMapIterator<int,ScheduledAction*> it;
+    for (it = sa->begin(); it != sa->end(); ++it) {
+        int timerId = it.key();
+        scheduledActions.insert(timerId, it.data());
+    }
+    sa->clear();
+    resumeTimers (key, this);
+}
+
 void WindowQObject::clearTimeout(int timerId, bool delAction)
 {
   //kdDebug(6070) << "WindowQObject::clearTimeout " << this << " timerId=" << timerId << " delAction=" << delAction << endl;
@@ -1565,6 +1600,7 @@ void WindowQObject::timerEvent(QTimerEvent *e)
       clearTimeout(e->timerId(),false);
       scheduledActions.remove(it);
     }
+        
     if (!parent->part().isNull())
       action->execute(parent);
 

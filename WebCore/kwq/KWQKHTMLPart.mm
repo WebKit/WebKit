@@ -40,6 +40,7 @@
 #import "KWQDummyView.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
+#import "KWQPageState.h"
 
 #import "xml/dom2_eventsimpl.h"
 
@@ -469,25 +470,38 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
     return partForNode(node)->nextKeyView(node, direction);
 }
 
+QMap<int, KJS::ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
+{
+    if (d->m_doc && d->m_jscript) {
+        KJS::Window *w = KJS::Window::retrieveWindow(this);
+        if (w && w->hasTimeouts()) {
+            return w->pauseTimeouts(key);
+        }
+    }
+    return 0;
+}
+
+
+void KWQKHTMLPart::resumeActions(QMap<int, KJS::ScheduledAction*> *actions, const void *key)
+{
+    if (d->m_doc && d->m_jscript) {
+        KJS::Window *w = KJS::Window::retrieveWindow(this);
+        w->resumeTimeouts(actions, key);
+    }
+}
+
 bool KWQKHTMLPart::canCachePage()
 {
     // Only save page state if:
     // 1.  We're not a frame or frameset.
     // 2.  The page has no unload handler.
     // 3.  The page has no password fields.
-    // 4.  The page has no javascript timers.
     if (d->m_doc &&
         (d->m_frames.count() ||
         parentPart() ||
         d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
         d->m_doc->hasPasswordField())) {
         return false;
-    }
-    if (d->m_doc && d->m_jscript) {
-        Window *w = Window::retrieveWindow(this);
-        if (w && w->hasTimeouts()) {
-            return false;
-        }
     }
     return true;
 }
@@ -524,8 +538,15 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
         window->location()->restoreProperties(*locationProperties);
 }
 
-void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, RenderObject *renderer, KURL *url, SavedProperties *windowProperties, SavedProperties *locationProperties)
+void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
 {
+    DocumentImpl *doc = [state document];
+    RenderObject *renderer = [state renderer];
+    KURL *url = [state URL];
+    SavedProperties *windowProperties = [state windowProperties];
+    SavedProperties *locationProperties = [state locationProperties];
+    QMap<int, KJS::ScheduledAction*> *actions = [state pausedActions];
+    
     d->m_redirectionTimer.stop();
 
     // We still have to close the previous part page.
@@ -585,6 +606,9 @@ void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, RenderObject *rendere
         
     restoreWindowProperties (windowProperties);
     restoreLocationProperties (locationProperties);
+
+    if (actions)
+        resumeActions (actions, state);
     
     checkCompleted();
 }

@@ -30,6 +30,8 @@
 
 #include "dom_nodeimpl.h"
 
+#include <CoreFoundation/CoreFoundation.h>
+
 class KHTMLPartPrivate;
 
 namespace khtml {
@@ -38,6 +40,7 @@ namespace khtml {
 
 namespace KJS {
     class SavedProperties;
+    class ScheduledAction;
 }
 
 #ifdef __OBJC__
@@ -46,12 +49,14 @@ namespace KJS {
 @class NSResponder;
 @class NSView;
 @class WebCoreBridge;
+@class KWQPageState;
 #else
 class NSAttributedString;
 class NSEvent;
 class NSResponder;
 class NSView;
 class WebCoreBridge;
+class KWQPageState;
 #endif
 
 enum KWQSelectionDirection {
@@ -95,13 +100,15 @@ public:
 
     void unfocusWindow();
 
+    QMap<int, KJS::ScheduledAction*> *pauseActions(const void *key);
+    void resumeActions(QMap<int, KJS::ScheduledAction*> *actions, const void *key);
+    
     bool canCachePage();
     void saveWindowProperties(KJS::SavedProperties *windowProperties);
     void saveLocationProperties(KJS::SavedProperties *locationProperties);
     void restoreWindowProperties(KJS::SavedProperties *windowProperties);
     void restoreLocationProperties(KJS::SavedProperties *locationProperties);
-    void openURLFromPageCache(DOM::DocumentImpl *, RenderObject *, KURL *,
-        KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties);
+    void openURLFromPageCache(KWQPageState *state);
 
     void saveDocumentState();
     void restoreDocumentState();

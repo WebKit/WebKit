@@ -29,6 +29,7 @@
 
 #import "dom_docimpl.h"
 #import "khtmlview.h"
+#import "kjs_window.h"
 
 #import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
@@ -49,7 +50,32 @@ using KJS::SavedProperties;
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
+    
     return self;
+}
+
+- (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa
+{
+    pausedActions = pa;
+}
+
+- (QMap<int, KJS::ScheduledAction*> *)pausedActions
+{
+    return pausedActions;
+}
+
+- (void)_cleanupPausedActions
+{
+    if (pausedActions){
+        QMapIterator<int,KJS::ScheduledAction*> it;
+        for (it = pausedActions->begin(); it != pausedActions->end(); ++it) {
+            KJS::ScheduledAction *action = *it;
+            delete action;
+        }
+        delete pausedActions;
+        pausedActions = 0;
+    }
+    QObject::clearPausedTimers(self);
 }
 
 // Called when the KWQPageState is restored.  It should relinquish ownership
@@ -65,6 +91,8 @@ using KJS::SavedProperties;
 
     delete URL;
     URL = 0;
+    
+    [self _cleanupPausedActions];
     
     delete windowProperties;
     windowProperties = 0;
@@ -97,6 +125,8 @@ using KJS::SavedProperties;
     delete URL;
     delete windowProperties;
     delete locationProperties;
+    
+    [self _cleanupPausedActions];
 
     [super dealloc];
 }

@@ -31,11 +31,13 @@
 const QObject *QObject::_sender;
 
 static CFMutableDictionaryRef timerDictionaries;
+static CFMutableDictionaryRef allPausedTimers;
 
 @interface KWQObjectTimerTarget : NSObject
 {
     QObject *target;
     int timerId;
+    NSTimeInterval remainingTime;
 }
 
 - initWithQObject:(QObject *)object timerId:(int)timerId;
@@ -131,10 +133,94 @@ bool QObject::event(QEvent *)
     return false;
 }
 
+void QObject::pauseTimer (int _timerId, const void *key)
+{
+    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
+    NSNumber *timerId = [NSNumber numberWithInt:_timerId];
+    NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
+    KWQObjectTimerTarget *target = (KWQObjectTimerTarget *)[timer userInfo];
+    
+    if (target && [timer isValid]){
+        NSDate *fireDate = [timer fireDate];
+        NSTimeInterval remainingTime = [fireDate timeIntervalSinceDate: [NSDate date]];
+    
+        if (remainingTime < 0)
+            remainingTime = DBL_EPSILON;
+        
+        if (allPausedTimers == NULL) {
+            // The global targets dictionary itself leaks, but the contents are removed
+            // when each timer fires or is killed.
+            allPausedTimers = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+        }
+
+        NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
+        if (pausedTimers == nil) {
+            pausedTimers = [[NSMutableArray alloc] init];
+            CFDictionarySetValue(allPausedTimers, key, pausedTimers);
+            [pausedTimers release];
+        }
+        
+        target->remainingTime = remainingTime;
+        [pausedTimers addObject:target];
+                
+        [timer invalidate];
+        [timers removeObjectForKey:timerId];
+    }
+}
+
+void QObject::_addTimer(NSTimer *timer, int _timerId)
+{
+    NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
+    if (timers == nil) {
+        timers = [[NSMutableDictionary alloc] init];
+        CFDictionarySetValue(timerDictionaries, this, timers);
+        [timers release];
+    }
+    [timers setObject:timer forKey:[NSNumber numberWithInt:_timerId]];
+}
+
+static int nextTimerID = 1;
+
+void QObject::clearPausedTimers (const void *key)
+{
+    if (allPausedTimers)
+        CFDictionaryRemoveValue(allPausedTimers, key);
+}
+
+void QObject::resumeTimers (const void *key, QObject *_target)
+{
+    if (allPausedTimers == NULL) {
+        return;
+    }
+    
+    int maxId = MAX(0, nextTimerID);
+        
+    NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
+    if (pausedTimers == nil)
+        return;
+
+    int count = [pausedTimers count];
+    while (count--){
+        KWQObjectTimerTarget *target = [pausedTimers objectAtIndex: count];
+        target->target = _target;
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:target->remainingTime
+            target:target
+            selector:@selector(timerFired)
+            userInfo:target
+            repeats:YES];
+        [pausedTimers removeLastObject];
+
+        maxId = MAX (maxId, target->timerId);
+                
+        _addTimer (timer, target->timerId);
+    }
+    nextTimerID = maxId+1;
+    
+    CFDictionaryRemoveValue(allPausedTimers, key);
+}
+
 int QObject::startTimer(int milliseconds)
 {
-    static int nextTimerID = 1;
-
     if (timerDictionaries == NULL) {
         // The global timers dictionary itself leaks, but the contents are removed
         // when each timer fires or is killed.
@@ -156,7 +242,7 @@ int QObject::startTimer(int milliseconds)
          repeats:YES];
     [target release];
     
-    [timers setObject:timer forKey:[NSNumber numberWithInt:nextTimerID]];
+    _addTimer (timer, nextTimerID);
     
     return nextTimerID++;    
 }

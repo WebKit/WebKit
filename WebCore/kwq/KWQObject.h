@@ -67,6 +67,12 @@ class QVariant;
 class KWQGuardedPtrBase;
 class KWQSignal;
 
+#ifdef __OBJC__
+@class NSTimer;
+#else
+class NSTimer;
+#endif
+
 class QObject : public Qt {
 public:
     QObject(QObject *parent = 0, const char *name = 0);
@@ -82,6 +88,10 @@ public:
     int startTimer(int);
     void killTimer(int);
     void killTimers();
+    void pauseTimer(int _timerId, const void *key);
+    void resumeTimers(const void *key, QObject *target);
+    static void clearPausedTimers (const void *key);
+    
     virtual void timerEvent(QTimerEvent *);
 
     void installEventFilter(const QObject *o) { _eventFilterObject = o; }
@@ -97,6 +107,8 @@ public:
     static const QObject *sender() { return _sender; }
 
 private:
+    void _addTimer(NSTimer *timer, int _timerId);
+
     // no copying or assignment
     QObject(const QObject &);
     QObject &operator=(const QObject &);

@@ -1,3 +1,44 @@
+2003-01-21  Richard Williamson   <rjw@apple.com>
+
+        Added support to pause and resume javascript timers.  This allows pages 
+        that have javascript timers to be added to the page cache.
+        
+        Fixes 3126138.
+        
+        Reviewed by trey and maciej.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::pauseTimeouts):
+        (Window::resumeTimeouts):
+        (WindowQObject::pauseTimeouts):
+        (WindowQObject::resumeTimeouts):
+        (WindowQObject::timerEvent):
+        * khtml/ecma/kjs_window.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::pauseActions):
+        (KWQKHTMLPart::resumeActions):
+        (KWQKHTMLPart::canCachePage):
+        (KWQKHTMLPart::openURLFromPageCache):
+        * kwq/KWQObject.h:
+        * kwq/KWQObject.mm:
+        (QObject::pauseTimer):
+        (QObject::_addTimer):
+        (QObject::clearPausedTimers):
+        (QObject::resumeTimers):
+        (QObject::startTimer):
+        * kwq/KWQPageState.h:
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:]):
+        (-[KWQPageState setPausedActions:int::]):
+        (-[KWQPageState int::]):
+        (-[KWQPageState _cleanupPausedActions]):
+        (-[KWQPageState invalidate]):
+        (-[KWQPageState dealloc]):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+        (-[WebCoreBridge saveDocumentToPageCache]):
+
 2003-01-21  Darin Adler  <darin@apple.com>
 
         * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::createRenderer):

@@ -143,7 +143,7 @@ static bool initializedObjectCacheSize = FALSE;
 {
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
-        _part->openURLFromPageCache([state document], [state renderer], [state URL], [state windowProperties], [state locationProperties]);
+        _part->openURLFromPageCache(state);
         [state invalidate];
         return;
     }
@@ -239,6 +239,9 @@ static bool initializedObjectCacheSize = FALSE;
                                                                   URL:_part->m_url
                                                      windowProperties:windowProperties
                                                    locationProperties:locationProperties] autorelease];
+
+
+    [pageState setPausedActions: _part->pauseActions((const void *)pageState)];
 
     return [self saveDocumentToPageCache:pageState];
 }
