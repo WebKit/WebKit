@@ -27,9 +27,11 @@ static NSNumber *IFURLFilePosixPermissions;
 -(id)initWithPath:(NSString *)thePath
 {
     if ((self = [super initWithPath:thePath])) {
+    
         return self;
     }
     
+    [self release];
     return nil;
 }
 
@@ -103,9 +105,10 @@ static NSNumber *IFURLFilePosixPermissions;
         NULL
     ];
 
-    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-    
     defaultManager = [NSFileManager defaultManager];
+
+    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+
     result = [defaultManager createFileAtPath:filePath contents:data attributes:attributes];
     if (!result) {
         result = [defaultManager createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
@@ -119,10 +122,10 @@ static NSNumber *IFURLFilePosixPermissions;
     NSString *filePath;
 
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
 }
 
-// FIXME: [kocienda] Radar 2861446 (Implement removeAllObjects on concrete IFDatabase classes)
 -(void)removeAllObjects
 {
     [self close];
@@ -145,6 +148,7 @@ static NSNumber *IFURLFilePosixPermissions;
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     
     data = [[NSFileManager defaultManager] contentsAtPath:filePath];
+
     if (data) {
         unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
         fileKey = [unarchiver decodeObject];
@@ -173,6 +177,7 @@ static NSNumber *IFURLFilePosixPermissions;
 -(BOOL)open
 {
     NSFileManager *manager;
+    NSDictionary *attributes;
     BOOL isDir;
     
     if (!isOpen) {
@@ -183,20 +188,19 @@ static NSNumber *IFURLFilePosixPermissions;
             }
         }
         else {
-            isOpen = [manager createDirectoryAtPath:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
+            attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSDate date], @"NSFileModificationDate",
                 NSUserName(), @"NSFileOwnerAccountName",
                 IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
                 NULL
-            ]];
+            ];
             
+            // be optimistic that full subpath leading to directory exists
+            isOpen = [manager createDirectoryAtPath:path attributes:attributes];
             if (!isOpen) {
-                isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSDate date], @"NSFileModificationDate",
-                    NSUserName(), @"NSFileOwnerAccountName",
-                    IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
-                    NULL
-                ]];
+                // perhaps the optimism did not pay off ...
+                // try again, this time creating full subpath leading to directory
+                isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
             }
         }
     }
