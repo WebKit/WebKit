@@ -1,3 +1,26 @@
+2004-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed <rdar://problem/3752509> Pop up windows not showing up within SAP's BW Module (changing location.href on new window created by window.open)
+	
+	(actually the previous fix for this bug was mostly correct, but
+	this additional change is needed to avoid the regression in
+	<rdar://problem/3751025> REGRESSION: website rejects Safari 125.9
+	as "need to upgrade to IE 6", but didn't reject 125.8
+
+	So if merging for a software update, make sure to include both
+	this and the previous fix.
+	
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::write): When there is an immediate reidrect pending,
+	make sure to stop tokenizing, because we need to make sure no further
+	script tags are processed beyond the one that triggered the redirect.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isImmediateRedirectPending): New method to allow
+	checking if a redirect is pending.
+	* khtml/khtml_part.h:
+
 2004-08-15  David Hyatt  <hyatt@apple.com>
 
 	Fix the blank textarea problem by ensuring that any change to a <textarea>'s DOM children causes the form control

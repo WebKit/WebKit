@@ -1957,6 +1957,11 @@ void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLo
     }
 }
 
+bool KHTMLPart::isImmediateRedirectPending()
+{
+  return d->m_scheduledRedirection != noRedirectionScheduled && d->m_delayRedirect == 0;
+}
+
 void KHTMLPart::scheduleHistoryNavigation( int steps )
 {
     d->m_scheduledRedirection = historyNavigationScheduled;
