@@ -1,3 +1,12 @@
+2004-12-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        <rdar://problem/3911011> REGRESSION (Mail): Spaces at end of line causing word wrap lost when copied/pasted
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::renderedText): Fixed the code so that spaces at the end of lines are not skipped.
+
 2004-12-07  Richard Williamson   <rjw@apple.com>
 
 	Support threaded image decoding on machines w/ > 2 CPUs.

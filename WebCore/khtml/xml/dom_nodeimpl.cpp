@@ -344,6 +344,28 @@ QString NodeImpl::renderedText(const RangeImpl *range) const
             unsigned s = kMax(start, startOffset);
             unsigned e = kMin(end, endOffset);
             result.append(str.mid(s, e-s));
+
+            // now add in collapsed-away spaces if at the end of the line
+            InlineTextBox *nextBox = box->nextTextBox();
+            if (nextBox && box->root() != nextBox->root()) {
+                static QChar nbsp('0xa0');
+                static QChar space(' ');
+                // count the number of characters between the end of the
+                // current box and the start of the next box.
+                int collapsedStart = e;
+                int collapsedPastEnd = kMin((unsigned)nextBox->m_start, endOffset + 1);
+                bool addNextNonNBSP = true;
+                for (int i = collapsedStart; i < collapsedPastEnd; i++) {
+                    if (str[i] == nbsp) {
+                        result.append(str[i]);
+                        addNextNonNBSP = true;
+                    }
+                    else if (addNextNonNBSP) {
+                        result.append(str[i]);
+                        addNextNonNBSP = false;
+                    }
+                }
+            }
         }
     }
     
