@@ -1,5 +1,11 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- fixed memory trasher
+
+        * kjs/ustring.cpp: (UString::from): Fix "end of buffer" computation.
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- a first step towards atomic identifiers in JavaScript
 
 	Most places that work with identifiers now use Identifier

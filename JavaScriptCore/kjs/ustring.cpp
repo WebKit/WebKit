@@ -250,7 +250,8 @@ UString UString::from(int i)
 UString UString::from(unsigned int u)
 {
   UChar buf[20];
-  UChar *p = buf + sizeof(buf);
+  UChar *end = buf + 20;
+  UChar *p = end;
   
   if (u == 0) {
     *--p = '0';
@@ -261,13 +262,14 @@ UString UString::from(unsigned int u)
     }
   }
   
-  return UString(p, buf + sizeof(buf) - p);
+  return UString(p, end - p);
 }
 
 UString UString::from(long l)
 {
   UChar buf[20];
-  UChar *p = buf + sizeof(buf);
+  UChar *end = buf + 20;
+  UChar *p = end;
   
   if (l == 0) {
     *--p = '0';
@@ -290,7 +292,7 @@ UString UString::from(long l)
     }
   }
   
-  return UString(p, buf + sizeof(buf) - p);
+  return UString(p, end - p);
 }
 
 UString UString::from(double d)
