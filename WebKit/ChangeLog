@@ -1,3 +1,14 @@
+2003-01-28  Trey Matteson  <trey@apple.com>
+
+	Removing ERROR() that isn't an error, left over from the Safari-48 download firedrill.
+
+        Reviewed by Chris.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler cleanUpAfterFailure]):  Don't ERROR if we are asked to cleanup
+	a file and there is nothing to cleanup.  This can happen in the rare case of the
+	download being canceled before the first byte arrives, and we deal properly, no ERROR.
+
 2003-01-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3150856 - crash with full-size plugins in frame or iframe

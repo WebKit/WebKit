@@ -133,9 +133,11 @@
 
 - (void)cleanUpAfterFailure
 {
+    // VERY IMPORTANT TEST.  Only cleanup if we have opened a file, since the downloadPath
+    // might be an existing file that we haven't discovered that we conflict with.  This can
+    // happen if we're cleaning up after we received the first response, but before the first
+    // data was processed.
     if (fileRefPtr) {
-        // Only cleanup if we have opened a file, since the downloadPath might be an existing
-        // file that we haven't discovered that we conflict with
         NSString *path = [dataSource downloadPath];
 
         [self closeFile];
@@ -152,8 +154,6 @@
             // Note we currently don't support downloading directories, so we know this is wrong
             ERROR("Download file is a directory - will not be removed");
         }
-    } else {
-        ERROR("Was about to remove a non-download file");
     }
 }
 
