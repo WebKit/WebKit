@@ -1,3 +1,10 @@
+2005-01-14  Darin Adler  <darin@apple.com>
+
+        * khtml/css/cssproperties.c: Regenerated with gperf 3.0.1.
+        * khtml/css/cssvalues.c: Regenerated with gperf 3.0.1.
+        * khtml/misc/htmlattrs.c: Regenerated with gperf 3.0.1.
+        * khtml/misc/htmltags.c: Regenerated with gperf 3.0.1.
+
 2005-01-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3886415> arrow keys don't work when the user hits Back to return to RSS page
