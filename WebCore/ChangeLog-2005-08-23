@@ -1,3 +1,13 @@
+2003-11-18  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3488244, marquee-increments with percentage values not handled correctly.  Also added a tweak to ensure
+	that 1% of a small value ends up being at least an increment of 1.  Also added an optimization to not even
+	bother kicking off the marquee timer if the increment's initial value is 0 (matches WinIE).
+
+        * khtml/rendering/render_layer.cpp:
+        (Marquee::start):
+        (Marquee::timerEvent):
+
 2003-11-18  Richard Williamson   <rjw@apple.com>
 
 	More live connect stuff.  We're getting close.
