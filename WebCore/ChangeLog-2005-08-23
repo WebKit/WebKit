@@ -1,6 +1,6 @@
 2005-02-07  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Kevin.
 
         - fixed <rdar://problem/3890352> REGRESSION (125-170, Panther-only): pasted textarea contents disappear (exception in NSText)
 
