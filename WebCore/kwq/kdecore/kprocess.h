@@ -51,8 +51,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KProcess();
-    
-    ~KProcess();
+    virtual ~KProcess();
     
     // member functions --------------------------------------------------------
 
@@ -73,6 +72,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     KProcess(const KProcess &);
     KProcess &operator=(const KProcess &);
 

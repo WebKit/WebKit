@@ -43,7 +43,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KInstance(const QCString &);
-    
     virtual ~KInstance();
 
     // member functions --------------------------------------------------------
@@ -56,9 +55,15 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+    // no copying
+    // note that this is "standard" (no pendantic stuff needed)
     KInstance(const KInstance &);
+    
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KInstance &operator=(const KInstance &);
+#endif
 
 }; // class KInstance ==========================================================
 

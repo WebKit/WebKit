@@ -54,12 +54,12 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
 // add no-op constructor
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     KWin() {}
 #endif
 
 // add no-op destructor
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     ~KWin() {}
 #endif
 
@@ -73,13 +73,13 @@ private:
 
 // add copy constructor
 // this private declaration prevents copying
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     KWin(const KWin &);
 #endif
 
 // add assignment operator 
 // this private declaration prevents assignment
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     KWin &operator=(const KWin &);
 #endif
 

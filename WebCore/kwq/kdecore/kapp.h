@@ -52,8 +52,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KApplication();
-    
-    ~KApplication();
+    virtual ~KApplication();
 
     // member functions --------------------------------------------------------
 
@@ -70,6 +69,7 @@ protected:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     KApplication(const KApplication &);
     KApplication &operator=(const KApplication &);
 

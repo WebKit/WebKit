@@ -58,11 +58,17 @@ public:
     static const QString &staticQString(const QString &);
 
     // constructors, copy constructors, and destructors ------------------------
-    
+
+// add no-op constructor
+#ifdef _KWQ_PEDANTIC_
     KGlobal();
-    
+#endif
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
     ~KGlobal();
-    
+#endif
+        
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -70,9 +76,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KGlobal(const KGlobal &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KGlobal &operator=(const KGlobal &);
+#endif
 
 }; // class KGlobal ============================================================
 

@@ -42,7 +42,7 @@ public:
     KStaticDeleter() {}
     
 // add no-op destructor
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     ~KStaticDeleter() {}
 #endif
 
@@ -56,9 +56,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KStaticDeleter(const KStaticDeleter &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KStaticDeleter &operator=(const KStaticDeleter &);
+#endif
 
 }; // class KStaticDeleter =====================================================
 

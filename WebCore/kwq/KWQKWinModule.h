@@ -60,13 +60,13 @@ private:
 
 // add copy constructor 
 // this private declaration prevents copying
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     KWinModule(const KWinModule &);
 #endif
 
 // add assignment operator 
 // this private declaration prevents assignment
-#ifdef KWQ_PEDANTIC
+#ifdef _KWQ_PEDANTIC_
     KWinModule &operator=(const KWinModule &);
 #endif
 
