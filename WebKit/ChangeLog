@@ -1,5 +1,15 @@
 2004-08-26  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed build failure on Panther.
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): ifdef'd out call to AppKit SPI
+        (-[WebHTMLView _attributeStringFromDOMRange:]): ditto
+
+2004-08-26  Chris Blumenberg  <cblu@apple.com>
+
 	Tweak to last check-in.
 
         * WebView.subproj/WebHTMLView.m:

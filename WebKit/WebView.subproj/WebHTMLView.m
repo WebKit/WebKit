@@ -83,6 +83,10 @@
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#define BUILT_ON_TIGER_OR_LATER
+#endif
+
 static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
@@ -139,7 +143,7 @@ static BOOL forceRealHitTest = NO;
 + (WebElementOrTextFilter *)filter;
 @end
 
-@interface NSAttributedString(AppKitOnlyOnTiger)
+@interface NSAttributedString(AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
@@ -292,33 +296,33 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         return fragment;
     }
     
-    if ([NSAttributedString instancesRespondToSelector:@selector(_documentFromRange:document:documentAttributes:subresources:)]) {
-        NSAttributedString *string = nil;
-        if ([types containsObject:NSRTFDPboardType]) {
-            string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
-        }
-        if (string == nil && [types containsObject:NSRTFPboardType]) {
-            string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
-        }
-        if (string != nil) {
-            NSArray *elements = [[NSArray alloc] initWithObjects:@"style", nil];
-            NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:elements, NSExcludedElementsDocumentAttribute, nil];
-            [elements release];
-            NSArray *subresources;
-            DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
-                                                              document:[[self _bridge] DOMDocument] 
-                                                    documentAttributes:documentAttributes
-                                                          subresources:&subresources];
-            [documentAttributes release];
-            [string release];
-            if (fragment) {
-                if ([subresources count] != 0) {
-                    [[self _dataSource] _addSubresources:subresources];
-                }
-                return fragment;
+#ifdef BUILT_ON_TIGER_OR_LATER
+    NSAttributedString *string = nil;
+    if ([types containsObject:NSRTFDPboardType]) {
+        string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
+    }
+    if (string == nil && [types containsObject:NSRTFPboardType]) {
+        string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
+    }
+    if (string != nil) {
+        NSArray *elements = [[NSArray alloc] initWithObjects:@"style", nil];
+        NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:elements, NSExcludedElementsDocumentAttribute, nil];
+        [elements release];
+        NSArray *subresources;
+        DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
+                                                          document:[[self _bridge] DOMDocument] 
+                                                documentAttributes:documentAttributes
+                                                      subresources:&subresources];
+        [documentAttributes release];
+        [string release];
+        if (fragment) {
+            if ([subresources count] != 0) {
+                [[self _dataSource] _addSubresources:subresources];
             }
+            return fragment;
         }
     }
+#endif
     
     if (allowPlainText && [types containsObject:NSStringPboardType]) {
         return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
@@ -1659,9 +1663,9 @@ static WebHTMLView *lastHitView = nil;
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
 {
     NSAttributedString *attributedString = nil;
-    if ([NSAttributedString instancesRespondToSelector:@selector(_initWithDOMRange:)]) {
-        attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
-    }
+#ifdef BUILT_ON_TIGER_OR_LATER
+    attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
+#endif
     return attributedString;
 }
 
