@@ -1,3 +1,13 @@
+2004-04-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3613974>: remove "to Clipboard" from context menus because it is redundant
+
+        Reviewed by john.
+
+        * English.lproj/Localizable.strings:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave

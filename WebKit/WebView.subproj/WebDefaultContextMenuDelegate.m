@@ -45,7 +45,7 @@
             action = @selector(downloadLinkToDisk:);
             break;
         case WebMenuItemTagCopyLinkToClipboard:
-            title = UI_STRING("Copy Link to Clipboard", "Copy Link to Clipboard context menu item");
+            title = UI_STRING("Copy Link", "Copy Link context menu item");
             action = @selector(copyLinkToClipboard:);
             break;
         case WebMenuItemTagOpenImageInNewWindow:
@@ -57,7 +57,7 @@
             action = @selector(downloadImageToDisk:);
             break;
         case WebMenuItemTagCopyImageToClipboard:
-            title = UI_STRING("Copy Image to Clipboard", "Copy Image to Clipboard context menu item");
+            title = UI_STRING("Copy Image", "Copy Image context menu item");
             action = @selector(copyImageToClipboard:);
             break;
         case WebMenuItemTagOpenFrameInNewWindow:
@@ -69,23 +69,23 @@
             action = @selector(copy:);
             [menuItem setTarget:nil];
             break;
-		case WebMenuItemTagGoBack:
-			title = UI_STRING("Back", "Back context menu item");
+        case WebMenuItemTagGoBack:
+            title = UI_STRING("Back", "Back context menu item");
             action = @selector(goBack:);
             [menuItem setTarget:nil];
             break;
-		case WebMenuItemTagGoForward:
-			title = UI_STRING("Forward", "Forward context menu item");
+        case WebMenuItemTagGoForward:
+            title = UI_STRING("Forward", "Forward context menu item");
             action = @selector(goForward:);
             [menuItem setTarget:nil];
             break;
-		case WebMenuItemTagStop:
-			title = UI_STRING("Stop", "Stop context menu item");
+        case WebMenuItemTagStop:
+            title = UI_STRING("Stop", "Stop context menu item");
             action = @selector(stopLoading:);
             [menuItem setTarget:nil];
             break;
-		case WebMenuItemTagReload:
-			title = UI_STRING("Reload", "Reload context menu item");
+        case WebMenuItemTagReload:
+            title = UI_STRING("Reload", "Reload context menu item");
             action = @selector(reload:);
             [menuItem setTarget:nil];
             break;
