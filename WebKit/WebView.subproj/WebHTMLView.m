@@ -104,6 +104,7 @@
     [self _reset];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [_private release];
+    _private = nil;
     [super dealloc];
 }
 
@@ -162,8 +163,7 @@
 - (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
 {
     [[dataSource _bridge]
-        createKHTMLViewWithNSView:[[[dataSource webFrame] webView] documentView]
-	width:(int)[self frame].size.width height:(int)[self frame].size.height
+        createKHTMLViewWithNSView:self
         marginWidth:[[[dataSource webFrame] webView] _marginWidth]
         marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
 }
@@ -553,6 +553,32 @@
 - (BOOL)usingDefaultTextEncoding
 {
     return [[[self _frame] dataSource] _overrideEncoding] == kCFStringEncodingInvalidId;
+}
+
+- (NSView *)nextKeyView
+{
+    return (_private && _private->inNextValidKeyView) ? [[self _bridge] nextKeyView] : [super nextKeyView];
+}
+
+- (NSView *)previousKeyView
+{
+    return (_private && _private->inNextValidKeyView) ? [[self _bridge] previousKeyView] : [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    _private->inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    _private->inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    _private->inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    _private->inNextValidKeyView = NO;
+    return view;
 }
 
 @end

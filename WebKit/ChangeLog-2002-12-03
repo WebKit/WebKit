@@ -1,3 +1,25 @@
+2002-08-19  Darin Adler  <darin@apple.com>
+
+	- fixed 2863025 -- Need to implement TABing between widgets in forms
+
+	Implemented tabbing into a web view's fields. I now consider the task of
+	tabbing between widgets done. But there are many loose ends, each with its
+	own bug report.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dealloc]): Set _private to nil so we can properly handle calls
+	that come from NSView dealloc.
+        (-[WebHTMLView provisionalDataSourceChanged:]): No need to pass width and height
+	to createKHTMLViewWithNSView any more. Also, just pass self rather than making
+	the roung trip to the WebFrame and the WebView back here.
+        (-[WebHTMLView nextKeyView]): Added. Calls the bridge version when we are called
+	from nextValidKeyView, the normal version the rest of the time.
+        (-[WebHTMLView previousKeyView]): Added. Calls the bridge version when we are called
+	from nextValidKeyView, the normal version the rest of the time.
+        (-[WebHTMLView nextValidKeyView]): Set inNextValidKeyView and call super.
+        (-[WebHTMLView previousValidKeyView]): Set inNextValidKeyView and call super.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add inNextValidKeyView flag.
+
 2002-08-18  Darin Adler  <darin@apple.com>
 
 	Update WebResourceClient instances for new API, including adding

@@ -21,6 +21,7 @@
     BOOL canDragFrom;
     BOOL liveAllowsScrolling;
     BOOL inWindow;
+    BOOL inNextValidKeyView;
     NSURL *draggedURL;
 }
 @end

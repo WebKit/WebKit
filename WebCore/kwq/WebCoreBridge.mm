@@ -44,6 +44,9 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <KWQCharsets.h>
 
+using DOM::DocumentImpl;
+using DOM::NodeImpl;
+
 using khtml::parseURL;
 using khtml::RenderImage;
 using khtml::RenderObject;
@@ -124,15 +127,10 @@ using khtml::RenderPart;
     part->end();
 }
 
-- (void)createKHTMLViewWithNSView:(NSView *)view
-    width:(int)width height:(int)height
-    marginWidth:(int)mw marginHeight:(int)mh
+- (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
 {
-    // If we own the view, delete the old one - otherwise the render
-    // widget should take care of deleting the view
-    if (bridgeOwnsKHTMLView) {
-	delete part->impl->view();
-    }
+    // If we own the view, delete the old one - otherwise the render part will take care of deleting the view.
+    [self removeFromFrame];
 
     KHTMLView *kview = new KHTMLView(part, 0);
     part->impl->setView(kview);
@@ -142,7 +140,6 @@ using khtml::RenderPart;
         kview->setMarginWidth(mw);
     if (mh >= 0)
         kview->setMarginHeight(mh);
-    kview->resize(width, height);
     
     bridgeOwnsKHTMLView = YES;
 }
@@ -216,10 +213,10 @@ using khtml::RenderPart;
     [self drawRect:rect withPainter:&p];
 }
 
-- (NSObject *)copyDOMNode:(DOM::NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier
+- (NSObject *)copyDOMNode:(NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier
 {
     NSMutableArray *children = [[NSMutableArray alloc] init];
-    for (DOM::NodeImpl *child = node->firstChild(); child; child = child->nextSibling()) {
+    for (NodeImpl *child = node->firstChild(); child; child = child->nextSibling()) {
         [children addObject:[self copyDOMNode:child copier:copier]];
     }
     NSObject *copiedNode = [copier nodeWithName:node->nodeName().string().getNSString()
@@ -232,7 +229,7 @@ using khtml::RenderPart;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
 {
-    DOM::DocumentImpl *doc = part->impl->document();
+    DocumentImpl *doc = part->impl->document();
     if (!doc) {
         return nil;
     }
@@ -449,6 +446,18 @@ using khtml::RenderPart;
 - (CFStringEncoding)textEncoding
 {
     return KWQCFStringEncodingFromIANACharsetName(part->encoding().getCFMutableString());
+}
+
+- (NSView *)nextKeyView
+{
+    NodeImpl *nullNode = 0;
+    return part->impl->nextKeyView(nullNode, KWQSelectingNext);
+}
+
+- (NSView *)previousKeyView
+{
+    NodeImpl *nullNode = 0;
+    return part->impl->nextKeyView(nullNode, KWQSelectingPrevious);
 }
 
 @end

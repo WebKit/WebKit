@@ -92,9 +92,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)scrollToAnchor:(NSString *)anchor;
 
-- (void)createKHTMLViewWithNSView:(NSView *)view
-    width:(int)width height:(int)height
-    marginWidth:(int)mw marginHeight:(int)mh;
+- (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
 - (NSString *)selectedText;
 - (void)selectAll;
@@ -110,6 +108,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)mouseUp:(NSEvent *)event;
 - (void)mouseMoved:(NSEvent *)event;
 - (void)mouseDragged:(NSEvent *)event;
+
+- (NSView *)nextKeyView;
+- (NSView *)previousKeyView;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
