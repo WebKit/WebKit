@@ -393,7 +393,19 @@ static const char * const stateNames[] = {
     
     _private->state = newState;
     
+    if (_private->state == WebFrameStateProvisional) {
+        // FIXME: This is OK as long as no one resizes the window,
+        // but in the case where someone does, it means garbage outside
+        // the occupied part of the scroll view.
+        [[[self webView] frameScrollView] setDrawsBackground:NO];
+    }
+    
     if (_private->state == WebFrameStateComplete) {
+        NSScrollView *sv = [[self webView] frameScrollView];
+        [sv setDrawsBackground:YES];
+        // FIXME: This overrides the setCopiesOnScroll setting done by
+        // WebCore based on whether the page's contents are dynamic or not.
+        [[sv contentView] setCopiesOnScroll:YES];
         [_private->scheduledLayoutTimer fire];
    	ASSERT(_private->scheduledLayoutTimer == nil);
     }

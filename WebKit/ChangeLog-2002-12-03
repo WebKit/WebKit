@@ -1,5 +1,18 @@
 2002-10-21  Darin Adler  <darin@apple.com>
 
+	- fixed 3080512 -- REGRESSION: moving from old page to new one, we get blank white
+	before the new one is ready
+
+	Roll out a bunch of my changes, because they weren't complete. Added FIXMEs for the
+	problems I was unsuccessfully trying to fix.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _setState:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithFrame:]), (-[WebView isOpaque]), (-[WebView drawRect:]):
+	Roll back.
+
+2002-10-21  Darin Adler  <darin@apple.com>
+
 	- fixed 3080246 -- REGRESSION: Animated GIFs sometimes disappear after drag or scroll
 
 	Once more, with feeling.

@@ -83,9 +83,12 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
     _private = [[WebViewPrivate alloc] init];
 
     WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
-    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     _private->frameScrollView = scrollView;
-    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setContentView: [[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setDrawsBackground: NO];
+    [scrollView setHasVerticalScroller: NO];
+    [scrollView setHasHorizontalScroller: NO];
+    [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
     
     [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
@@ -188,6 +191,20 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
         [[self window] makeFirstResponder:[self documentView]];
     }
     return YES;
+}
+
+- (BOOL)isOpaque
+{
+    return YES;
+}
+
+- (void)drawRect:(NSRect)rect
+{
+    if ([self documentView] == nil) {
+        // Need to paint ourselves if there's no documentView to do it instead.
+        [[NSColor whiteColor] set];
+        NSRectFill(rect);
+    }
 }
 
 - (NSWindow *)window
