@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,9 @@ class QDesktopWidget;
 
 class QApplication : public QObject {
 public:
-    static QPalette palette(const QWidget *p=0);
+    static QPalette palette(const QWidget *p = 0);
     static QDesktopWidget *desktop() { return 0; }
-    static int startDragDistance() { return 2; }
-    static QSize globalStrut();
-    static void	setOverrideCursor(const QCursor &);
+    static void setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();
     static bool sendEvent(QObject *o, QEvent *e) { return o->event(e); }
     static void sendPostedEvents(QObject *receiver, int event_type) { }

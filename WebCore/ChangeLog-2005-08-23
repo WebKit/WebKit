@@ -1,10 +1,29 @@
+2004-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3642252>: "starting to drag a link and then releasing needs to activate the link if you are still over it"
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent): Put hysteresis check inside !APPLE_CHANGES because
+        the Web Kit does our hysteresis checks.
+        (KHTMLView::viewportMouseReleaseEvent): Ditto.
+
+        * kwq/KWQApplication.h: Removed startDragDistance and globalStrut; unused.
+        * kwq/KWQApplication.mm: Removed the implementations.
+        * kwq/KWQPointArray.h: Removed manhattanLength; unused.
+        * kwq/KWQPoint.mm:  Removed the implementation.
+
+        * WebCore-tests.exp: Removed manhattanLength.
+        * WebCore-combined.exp: Regenerated.
+
 2004-05-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
 
-		Nifty hack to work around problem where BR's inserted at the end of a block do not 
-		render. Since only the *last* BR has this quirk, insert two when at the end of a block.
-		Once done, you can't caret past the last one, so you never insert two again.
+        Nifty hack to work around problem where BR's inserted at the end of a block do not 
+        render. Since only the *last* BR has this quirk, insert two when at the end of a block.
+        Once done, you can't caret past the last one, so you never insert two again.
 
         * khtml/editing/htmlediting_impl.cpp:
         (InputNewlineCommandImpl::doApply)
@@ -56,7 +75,7 @@
 	Make sure that XML processing instructions set themselves as the parent node of the stylesheets they load,
 	so that they will get stylesheetLoaded() notifications when @imported stylesheets are contained inside the
 	sheet.
-	
+
         Reviewed by cblu
 
         * khtml/xml/dom_xmlimpl.cpp:
