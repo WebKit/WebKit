@@ -43,8 +43,10 @@
     double loadingStartedTime;
     
     BOOL primaryLoadComplete;
-    
+
     BOOL stopping;
+
+    BOOL isClientRedirect;
 
     NSString *pageTitle;
     
@@ -63,7 +65,9 @@
 
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
-    
+
+    BOOL defersCallbacks;
+
     NSURL *iconURL;
     WebIconLoader *iconLoader;
 
@@ -73,8 +77,6 @@
     WebHistoryItem *previousBackForwardItem;
     // BF items that reference what we loaded - we must keep their titles up to date
     NSMutableArray *ourBackForwardItems;
-    
-    BOOL defersCallbacks;
 }
 
 @end
@@ -115,6 +117,8 @@
 - (void)_addBackForwardItem:(WebHistoryItem *)item;
 - (void)_addBackForwardItems:(NSArray *)items;
 - (NSArray *)_backForwardItems;
+- (void)_setIsClientRedirect:(BOOL)flag;
+- (BOOL)_isClientRedirect;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.

@@ -50,6 +50,7 @@ static const char * const stateNames[] = {
     }
     
     state = WebFrameStateComplete;
+    loadType = WebFrameLoadTypeStandard;
     
     return self;
 }
@@ -344,22 +345,21 @@ static const char * const stateNames[] = {
                     entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
                     if (ptitle)
                         [entry setTitle: ptitle];
-                
-                    // Add item to back/forward list.
-                    parentFrame = [self parent]; 
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[ds request] URL]
-                                                                   target:[self name]
-                                                                   parent:[parentFrame name]
-                                                                    title:ptitle];
-                    [[[self controller] backForwardList] addEntry: backForwardItem];
-                    [ds _addBackForwardItem:backForwardItem];
-                    [backForwardItem release];
-                    // Scroll to top.
-                    break;
 
-                case WebFrameLoadTypeClientRedirect:
-                    // update the URL in the BF list
-                    [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
+                    if (![ds _isClientRedirect]) {
+                        // Add item to back/forward list.
+                        parentFrame = [self parent];
+                        backForwardItem = [[WebHistoryItem alloc] initWithURL:[[ds request] URL]
+                                                                       target:[self name]
+                                                                       parent:[parentFrame name]
+                                                                        title:ptitle];
+                        [[[self controller] backForwardList] addEntry: backForwardItem];
+                        [ds _addBackForwardItem:backForwardItem];
+                        [backForwardItem release];
+                    } else {
+                        // update the URL in the BF list that we made before the redirect
+                        [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
+                    }
                     break;
                     
                 case WebFrameLoadTypeInternal:
@@ -528,7 +528,6 @@ static const char * const stateNames[] = {
                         break;
         
                     case WebFrameLoadTypeStandard:
-                    case WebFrameLoadTypeClientRedirect:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:
                         // Do nothing.
@@ -749,8 +748,6 @@ static const char * const stateNames[] = {
                 case WebFrameLoadTypeReloadAllowingStaleData:
                     // no-op: leave as protocol default
                     break;
-                case WebFrameLoadTypeClientRedirect:
-                    // should never start out going to an item in redirect mode
                 default:
                     ASSERT_NOT_REACHED();
             }
@@ -769,6 +766,75 @@ static const char * const stateNames[] = {
         [self startLoading];
         [newDataSource release];
     }
+}
+
+- (void)_loadRequest:(WebResourceRequest *)request
+{
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    if ([self setProvisionalDataSource:newDataSource]) {
+        [self startLoading];
+    }
+    [newDataSource release];
+}
+
+// main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect
+{
+    // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
+    // this will screw up in some cases involving framesets.
+    if (loadType != WebFrameLoadTypeReload && [[URL _web_URLByRemovingFragment] isEqual:[[_private->bridge URL] _web_URLByRemovingFragment]]) {
+        [_private->bridge openURL:URL];
+
+        WebDataSource *dataSource = [self dataSource];
+        WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parent] name] title:[dataSource pageTitle]];
+        [backForwardItem setAnchor:[URL fragment]];
+        [[[self controller] backForwardList] addEntry:backForwardItem];
+        [backForwardItem release];
+
+        [dataSource _setURL:URL];
+        [dataSource _addBackForwardItem:backForwardItem];
+        [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
+    } else {
+        WebFrameLoadType previousLoadType = [self _loadType];
+        WebDataSource *oldDataSource = [[self dataSource] retain];
+        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+        [request setReferrer:[_private->bridge referrer]];
+        if (loadType == WebFrameLoadTypeReload) {
+            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        }
+        [self _loadRequest:request];
+        // NB: must be done after loadRequest:, which sets the provDataSource, which
+        //     inits the load type to Standard
+        [self _setLoadType:loadType];
+        if (clientRedirect) {
+            // Inherit the loadType from the operation that spawned the redirect
+            [self _setLoadType:previousLoadType];
+
+            // need to transfer BF items from the dataSource that we're replacing
+            WebDataSource *newDataSource = [self provisionalDataSource];
+            [newDataSource _setIsClientRedirect:YES];
+            [newDataSource _setProvisionalBackForwardItem:[oldDataSource _provisionalBackForwardItem]];
+            [newDataSource _setPreviousBackForwardItem:[oldDataSource _previousBackForwardItem]];
+            [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
+        }
+        [request release];
+        [oldDataSource release];
+    }
+}
+
+- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
+{
+    // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
+    // This prevents a potential bug which may cause a page with a form that uses itself
+    // as an action to be returned from the cache without submitting.
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+    [request setMethod:@"POST"];
+    [request setData:data];
+    [request setContentType:contentType];
+    [request setReferrer:[_private->bridge referrer]];
+    [self _loadRequest:request];
+    [request release];
 }
 
 - (void)_restoreScrollPosition

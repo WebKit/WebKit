@@ -314,6 +314,16 @@
     return [[_private->overrideEncoding copy] autorelease];
 }
 
+- (void)_setIsClientRedirect:(BOOL)flag
+{
+    _private->isClientRedirect = flag;
+}
+
+- (BOOL)_isClientRedirect
+{
+    return _private->isClientRedirect;
+}
+
 - (WebHistoryItem *)_provisionalBackForwardItem
 {
     return _private->provisionalBackForwardItem;

@@ -278,79 +278,15 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadRequest:(WebResourceRequest *)request
-{
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    if ([frame setProvisionalDataSource:newDataSource]) {
-        [frame startLoading];
-    }
-    [newDataSource release];
-}
-
 - (void)loadURL:(NSURL *)URL reload:(BOOL)reload
 {
-    // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
-    // this will screw up in some cases involving framesets.
-    if (!reload && [[URL _web_URLByRemovingFragment] isEqual:[[self URL] _web_URLByRemovingFragment]]) {
-        [self openURL:URL];
-
-        WebDataSource *dataSource = [frame dataSource];
-        WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL
-            target:[frame name] parent:[[frame parent] name] title:[dataSource pageTitle]];
-        [backForwardItem setAnchor:[URL fragment]];
-        [[[frame controller] backForwardList] addEntry:backForwardItem];
-        [backForwardItem release];
-
-        [dataSource _setURL:URL];
-        [dataSource _addBackForwardItem:backForwardItem];
-        [[[frame controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
-    } else {
-        WebFrameLoadType previousLoadType = [frame _loadType];
-        WebDataSource *oldDataSource = [[frame dataSource] retain];
-        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-        [request setReferrer:[self referrer]];
-        if (reload) {
-            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-        }
-        [self loadRequest:request];
-        if (_doingClientRedirect) {
-            // client side redirects shouldn't make a new BF item like user navigations
-            // NB: must be done after loadRequest:, which sets the provDataSource, which
-            //     inits the load type to Standard
-            if (previousLoadType == WebFrameLoadTypeInternal) {
-                // Re-set back to Internal load type, so redirect doesn't end up in BF list
-                [frame _setLoadType:WebFrameLoadTypeInternal];
-            } else {
-                // Set load type, so redirect will update current item in BF list
-                [frame _setLoadType:WebFrameLoadTypeClientRedirect];
-            }
-
-            // need to transfer BF items from the dataSource that we're replacing
-            WebDataSource *newDataSource = [frame provisionalDataSource];
-            [newDataSource _setProvisionalBackForwardItem:[oldDataSource _provisionalBackForwardItem]];
-            [newDataSource _setPreviousBackForwardItem:[oldDataSource _previousBackForwardItem]];
-            [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
-        }
-        [request release];
-        [oldDataSource release];
-    }
+    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect];
     _doingClientRedirect = NO;
 }
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
 {
-    // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
-    // This prevents a potential bug which may cause a page
-    // with a form that uses itself as an action to be returned 
-    // from the cache without submitting.
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-    [request setMethod:@"POST"];
-    [request setData:data];
-    [request setContentType:contentType];
-    [request setReferrer:[self referrer]];
-    [self loadRequest:request];
-    [request release];
+    [frame _postWithURL:URL data:data contentType:contentType];
 }
 
 - (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
@@ -364,17 +300,11 @@
     }
     
     [[newFrame _bridge] setRenderPart:childRenderPart];
-    
+
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
-    
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setReferrer:[self referrer]];
-    [[newFrame _bridge] loadRequest:request];
-    [request release];
-    
-    // Set the load type so this load doesn't end up in the back/forward list.
-    [newFrame _setLoadType:WebFrameLoadTypeInternal];
+
+    [newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO];
 
     return [newFrame _bridge];
 }

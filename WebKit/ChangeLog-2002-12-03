@@ -1,3 +1,39 @@
+2002-11-01  Trey Matteson  <trey@apple.com>
+
+	Moved involved code for loading URLs from WebBridge up to WebFrame, with a little
+	consolidation along the way.  I need to get all this stuff in one place in prep
+	for doing back-forward properly with frames.  There should be no change in
+	functionality as a result of these changes.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:reload:]):
+        (-[WebBridge postWithURL:data:contentType:]):
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Much of the guts of these is moved to WebFramePrivate.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setIsClientRedirect:]):
+        (-[WebDataSource _isClientRedirect]):
+	Keep state of whether we're processing a redirect in DataSource.  I had previously
+	to do this with a loadType, but that failed because cliRedir is orthogonal.
+        * WebView.subproj/WebFramePrivate.h:
+	WebFrameLoadTypeClientRedirect is gone.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate init]):
+	Initialize loadType explicitly.
+        (-[WebFrame _transitionToCommitted]):
+	Test [dataSource _isClientRedirect] instead of looking at loadType.
+        (-[WebFrame _isLoadComplete]):
+	Nuke WebFrameLoadTypeClientRedirect
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+	Nuke WebFrameLoadTypeClientRedirect.
+        (-[WebFrame _loadRequest:]):
+	Helper method moved from WebBridge.
+        (-[WebFrame _loadURL:loadType:clientRedirect:]):
+	Core impl moved up from WebBridge.
+        (-[WebFrame _postWithURL:data:contentType:]):
+	Core impl moved up from WebBridge.
+
 2002-11-01  Darin Adler  <darin@apple.com>
 
 	- implemented loop counts
