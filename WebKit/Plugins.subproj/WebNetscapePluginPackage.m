@@ -258,9 +258,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     // Check if the executable is Mach-O or CFM.
     if (bundle) {
-        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL([bundle _cfBundle]);
-        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[executableURL path]];
-        [executableURL release];
+        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[bundle executablePath]];
         NSData *data = [executableFile readDataOfLength:8];
         [executableFile closeFile];
         // Check the length of the data before calling memcmp. We think this fixes 3782543.

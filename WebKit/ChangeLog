@@ -1,5 +1,14 @@
 2004-10-18  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3840916> GC: -[WebNetscapePluginPackage initWithPath:] leaks an NSURL
+
+        Reviewed by kevin.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage initWithPath:]): use executablePath on NSBundle instead of CFBundleCopyExecutableURL
+
+2004-10-18  Chris Blumenberg  <cblu@apple.com>
+
         * DOM.subproj/DOMPrivate.h: change to copied header that was never committed
 
 2004-10-18  John Sullivan  <sullivan@apple.com>
