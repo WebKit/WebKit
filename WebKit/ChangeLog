@@ -1,3 +1,16 @@
+2005-01-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3446838> REGRESSION (Mail): text decorations don't print 
+        (e.g. <strike>, underline)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForCharacters:yOffset:withWidth:withColor:]):
+        This bottleneck routine for drawing a line was setting the linewidth to 0 when
+        the graphics context was not drawing to the screen. Thus, no lines. Now links
+        are underlined when printing from Safari (as well as Mail).
+
 2005-01-11  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3949145.  CG has a much faster API for drawing lines.

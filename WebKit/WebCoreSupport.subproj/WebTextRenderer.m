@@ -542,7 +542,6 @@ static BOOL alwaysUseATSU = NO;
 
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext;
-    float lineWidth;
 
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
@@ -551,18 +550,16 @@ static BOOL alwaysUseATSU = NO;
     
     BOOL flag = [graphicsContext shouldAntialias];
 
-    [graphicsContext setShouldAntialias: NO];
-
+    // We don't want antialiased lines on screen, but we do when printing (else they are too thick)
+    if ([graphicsContext isDrawingToScreen]) {
+        [graphicsContext setShouldAntialias:NO];
+    }
+    
     [color set];
 
     cgContext = (CGContextRef)[graphicsContext graphicsPort];
-    lineWidth = 0.0;
-    if ([graphicsContext isDrawingToScreen] && lineWidth == 0.0) {
-        CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
-        lineWidth = size.width;
-    }
-    
-    CGContextSetLineWidth(cgContext, lineWidth);
+    CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
+    CGContextSetLineWidth(cgContext, size.width);
 
 #if BUILDING_ON_PANTHER            
     CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
