@@ -1,3 +1,12 @@
+2002-05-08  Darin Adler  <darin@apple.com>
+
+	* kjs/collector.h:
+	* kjs/collector.cpp:
+	(Collector::numInterpreters):
+	(Collector::numGCNotAllowedObjects):
+	(Collector::numReferencedObjects):
+	Add three new functions so we can see a bit more about leaking JavaScriptCore.
+
 2002-05-06  Darin Adler  <darin@apple.com>
 
 	* JavaScriptCorePrefix.h: Added.

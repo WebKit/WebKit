@@ -275,3 +275,56 @@ void Collector::finalCheck()
   }
 }
 #endif
+
+#ifdef APPLE_CHANGES
+int Collector::numInterpreters()
+{
+  int count = 0;
+  if (InterpreterImp::s_hook) {
+    InterpreterImp *scr = InterpreterImp::s_hook;
+    do {
+      ++count;
+      scr = scr->next;
+    } while (scr != InterpreterImp::s_hook);
+  }
+  return count;
+}
+
+int Collector::numGCNotAllowedObjects()
+{
+  int count = 0;
+  CollectorBlock *block = root;
+  while (block) {
+    ValueImp **r = (ValueImp**)block->mem;
+    assert(r);
+    for (int i = 0; i < block->size; i++, r++)
+    {
+      ValueImp *imp = *r;
+      if (imp && (imp->_flags & ValueImp::VI_GCALLOWED) == 0) {
+        ++count;
+      }
+    }
+    block = block->next;
+  }
+  return count;
+}
+
+int Collector::numReferencedObjects()
+{
+  int count = 0;
+  CollectorBlock *block = root;
+  while (block) {
+    ValueImp **r = (ValueImp**)block->mem;
+    assert(r);
+    for (int i = 0; i < block->size; i++, r++)
+    {
+      ValueImp *imp = *r;
+      if (imp && imp->refcount) {
+        ++count;
+      }
+    }
+    block = block->next;
+  }
+  return count;
+}
+#endif
