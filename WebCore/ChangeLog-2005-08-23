@@ -1,5 +1,22 @@
 2004-12-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3928305> selecting an entire line and typing over causes new inserted text at top of document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent): New function to detect case
+        formerly undetected and unhandled. This is the crux of the bug fix.
+        (khtml::DeleteSelectionCommand::doApply): Call insertPlaceholderForAncestorBlockContent() during
+        execution of command.
+        * khtml/editing/htmlediting.h: Declare new function.
+        * layout-tests/editing/deleting/delete-3928305-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3928305-fix.html: Added.
+
+2004-12-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * khtml/editing/htmlediting.cpp:

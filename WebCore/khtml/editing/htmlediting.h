@@ -322,6 +322,7 @@ private:
 
     void initializePositionData();
     void saveTypingStyleState();
+    void insertPlaceholderForAncestorBlockContent();
     bool handleSpecialCaseAllContentDelete();
     bool handleSpecialCaseBRDelete();
     void handleGeneralDelete();

@@ -1550,6 +1550,34 @@ void DeleteSelectionCommand::initializePositionData()
     debugNode(    "m_startNode          ", m_startNode);    
 }
 
+void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
+{
+    // This code makes sure a line does not disappear when deleting in this case:
+    // <p>foo</p>bar<p>baz</p>
+    // Select "bar" and hit delete. If nothing is done, the line containing bar will disappear.
+    // It needs to be held open by inserting a placeholder.
+    // Also see:
+    // <rdar://problem/3928305> selecting an entire line and typing over causes new inserted text at top of document
+    //
+    // The checks below detect the case where the selection contains content in an ancestor block 
+    // surrounded by child blocks.
+    //
+    NodeImpl *upstreamBlock = m_upstreamStart.node()->enclosingBlockFlowElement();
+    NodeImpl *beforeUpstreamBlock = m_upstreamStart.upstream().node()->enclosingBlockFlowElement();
+    
+    if (upstreamBlock != beforeUpstreamBlock && beforeUpstreamBlock->isAncestor(upstreamBlock)) {
+        NodeImpl *downstreamBlock = m_downstreamEnd.node()->enclosingBlockFlowElement();
+        NodeImpl *afterDownstreamBlock = m_downstreamEnd.downstream().node()->enclosingBlockFlowElement();
+        
+        if (afterDownstreamBlock != downstreamBlock && afterDownstreamBlock != upstreamBlock) {
+            NodeImpl *block = createDefaultParagraphElement(document());
+            insertNodeBefore(block, m_upstreamStart.node());
+            insertBlockPlaceholderIfNeeded(block);
+            m_endingPosition = Position(block, 0);
+        }
+    }
+}
+
 void DeleteSelectionCommand::saveTypingStyleState()
 {
     // Figure out the typing style in effect before the delete is done.
@@ -1927,6 +1955,7 @@ void DeleteSelectionCommand::doApply()
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
 
     saveTypingStyleState();
+    insertPlaceholderForAncestorBlockContent();
     
     if (!handleSpecialCaseAllContentDelete())
         if (!handleSpecialCaseBRDelete())
