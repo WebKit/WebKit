@@ -2371,7 +2371,7 @@ static WebHTMLView *lastHitView = nil;
     NSFont *b = [fm convertFont:[fm fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:10 size:12]];
     
     NSString *fa = [a familyName];
-    NSString *fb = [a familyName];
+    NSString *fb = [b familyName];
     if ([fa isEqualToString:fb]) {
         [style setFontFamily:fa];
     }

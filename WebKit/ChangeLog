@@ -1,6 +1,14 @@
+2004-06-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _fontManagerOperationAsStyle]): Fixed typo in family-name code that caused
+        family names to match when they should not.
+
 2004-06-01  Chris Blumenberg  <cblu@apple.com>
 
-	Made paste and drop ask the delegate before making any replacements.
+        Made paste and drop ask the delegate before making any replacements.
 
         Reviewed by kocienda.
 
