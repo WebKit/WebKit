@@ -232,14 +232,11 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
     // of the old generated content.
     if (!newContentWanted ||
         (oldContentPresent && !child->style()->contentDataEquivalent(pseudo))) {
-        // Nuke the children. 
-        while (child && child->style()->styleType() == type) {
-            // The children need to be removed.
+        // Nuke the child. 
+        if (child && child->style()->styleType() == type) {
+            oldContentPresent = false;
             removeChild(child);
-            child = (type == RenderStyle::BEFORE) ? child->nextSibling() : child->previousSibling();
         }
-
-        oldContentPresent = child && (child->style()->styleType() == type);
     }
 
     // If we have no pseudo-style or if the pseudo's display type is NONE, then we
@@ -267,53 +264,66 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
         pseudo->setDisplay(INLINE);
     
     if (oldContentPresent) {
-        while (child && child->style()->styleType() == type) {
+        if (child && child->style()->styleType() == type) {
             // We have generated content present still.  We want to walk this content and update our
             // style information with the new pseudo style.
             child->setStyle(pseudo);
 
             // Note that if we ever support additional types of generated content (which should be way off
             // in the future), this code will need to be patched.
-            if (child->firstChild()) // Generated text content has a first child whose style also needs to be set.
-                child->firstChild()->setStyle(pseudo);
-
-            // Advance to the next child.
-            child = (type == RenderStyle::BEFORE) ? child->nextSibling() : child->previousSibling();
+            for (RenderObject* genChild = child->firstChild(); genChild; genChild = genChild->nextSibling()) {
+                if (genChild->isText())
+                    // Generated text content is a child whose style also needs to be set to the pseudo
+                    // style.
+                    genChild->setStyle(pseudo);
+                else {
+                    // Images get an empty style that inherits from the pseudo.
+                    RenderStyle* style = new RenderStyle();
+                    style->inheritFrom(pseudo);
+                    genChild->setStyle(style);
+                }
+            }
         }
         return; // We've updated the generated content. That's all we needed to do.
     }
     
     RenderObject* insertBefore = (type == RenderStyle::BEFORE) ? child : 0;
-        
+
+    // Generated content consists of a single container that houses multiple children (specified
+    // by the content property).  This pseudo container gets the pseudo style set on it.
+    RenderObject* pseudoContainer = 0;
+    
     // Now walk our list of generated content and create render objects for every type
     // we encounter.
     for (ContentData* contentData = pseudo->contentData();
          contentData; contentData = contentData->_nextContent) {
+        if (!pseudoContainer)
+            pseudoContainer = RenderFlow::createFlow(0, pseudo, renderArena()); /* anonymous box */
+        
         if (contentData->contentType() == CONTENT_TEXT)
         {
-            RenderObject* po = RenderFlow::createFlow(0, pseudo, renderArena()); /* anonymous box */
-            
             RenderText* t = new (renderArena()) RenderText(0 /*anonymous object */, contentData->contentText());
             t->setStyle(pseudo);
-            po->addChild(t);
-
-            // Add this after we've installed our text, so that addChild will be able to find the text
-            // inside the inline for e.g., first-letter styling.
-            addChild(po, insertBefore);
-            
-//            kdDebug() << DOM::DOMString(contentData->contentText()).string() << endl;
-
+            pseudoContainer->addChild(t);
             t->close();
-            po->close();
         }
         else if (contentData->contentType() == CONTENT_OBJECT)
         {
-            RenderImage* po = new (renderArena()) RenderImage(0);
-            po->setStyle(pseudo);
-            po->setContentObject(contentData->contentObject());
-            addChild(po, insertBefore);
-            po->close();
+            RenderImage* img = new (renderArena()) RenderImage(0);
+            RenderStyle* style = new RenderStyle();
+            style->inheritFrom(pseudo);
+            img->setStyle(style);
+            img->setContentObject(contentData->contentObject());
+            pseudoContainer->addChild(img);
+            img->close();
         }
+    }
+
+    if (pseudoContainer) {
+        // Add the pseudo after we've installed all our content, so that addChild will be able to find the text
+        // inside the inline for e.g., first-letter styling.
+        addChild(pseudoContainer, insertBefore);
+        pseudoContainer->close();
     }
 }
 

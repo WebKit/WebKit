@@ -1,3 +1,22 @@
+2003-08-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3385211, <td>s should ignore the float property in quirks mode.  This
+        patch cleans up the adjustments of <td>s and <table>s and moves the code into
+        the style selector (instead of cluttering up the rendering code).
+
+	Fix for 3385476, generated content not built correctly.  All generated content
+	should be placed inside a containing object that actually gets the pseudo-style.
+	
+        Reviewed by rjw
+
+        * ChangeLog:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+
 2003-08-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
