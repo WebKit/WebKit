@@ -1,3 +1,12 @@
+2003-04-18  David Hyatt  <hyatt@apple.com>
+
+	Make sure display:table is not accidentally mutated to
+	display:block.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-04-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

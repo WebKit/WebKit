@@ -473,7 +473,8 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
     // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
     // position or float an inline, compact, or run-in.
-    if (style->display() != NONE && (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE)) {
+    if (style->display() != NONE && style->display() != BLOCK && style->display() != TABLE &&
+        (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE)) {
         if (style->display() == INLINE_TABLE)
             style->setDisplay(TABLE);
         else if (style->display() == LIST_ITEM) {
@@ -484,7 +485,6 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
         }
         else
             style->setDisplay(BLOCK);
-        
     }
 
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
