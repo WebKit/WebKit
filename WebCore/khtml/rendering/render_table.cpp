@@ -1407,7 +1407,8 @@ void RenderTableCell::calcMinMaxWidth()
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            m_minWidth = style()->width().value;
+            if (m_minWidth < style()->width().value)
+                m_minWidth = style()->width().value;
     }
 }
 
