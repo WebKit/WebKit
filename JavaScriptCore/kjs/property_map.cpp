@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2002 Darin Adler (darin@apple.com)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public

@@ -1,5 +1,10 @@
 2002-11-18  Darin Adler  <darin@apple.com>
 
+        * kjs/property_map.cpp: Oops, copyright goes to Apple, not me.
+        * kjs/property_map.h: Ditto.
+
+2002-11-18  Darin Adler  <darin@apple.com>
+
 	- property and string improvements giving a 7% or so improvement in JavaScript iBench
 
         * kjs/property_map.h: Rewrite to use a hash table.
