@@ -1287,22 +1287,30 @@ RenderBlock* RootInlineBox::block() const
 InlineBox* RootInlineBox::closestLeafChildForXPos(int _x, int _tx)
 {
     InlineBox *firstLeaf = firstLeafChildAfterBox();
-    if (_x <= _tx + firstLeaf->m_x)
+    InlineBox *lastLeaf = lastLeafChildBeforeBox();
+    if (firstLeaf == lastLeaf)
+        return firstLeaf;
+    
+    // Avoid returning a list marker when possible.
+    if (_x <= _tx + firstLeaf->m_x && !firstLeaf->object()->isListMarker())
         // The x coordinate is less or equal to left edge of the firstLeaf.
         // Return it.
         return firstLeaf;
-
-    InlineBox *lastLeaf = lastLeafChildBeforeBox();
-    if (_x >= _tx + lastLeaf->m_x + lastLeaf->m_width)
+    
+    if (_x >= _tx + lastLeaf->m_x + lastLeaf->m_width && !lastLeaf->object()->isListMarker())
         // The x coordinate is greater or equal to right edge of the lastLeaf.
         // Return it.
         return lastLeaf;
 
-    for (InlineBox *box = firstLeaf; box && box != lastLeaf; box = box->nextLeafChild()) {
-        if (_x >= _tx + box->m_x)
-            // The x coordinate is greater or equal to left edge of the box's start.
-            // Return it.
-            return box;
+    for (InlineBox *leaf = firstLeaf; leaf && leaf != lastLeaf; leaf = leaf->nextLeafChild()) {
+        if (!leaf->object()->isListMarker()) {
+            int leafX = _tx + leaf->m_x;
+            assert(_x >= leafX);
+            if (_x < leafX + leaf->m_width)
+                // The x coordinate is greater or equal to left edge of the box's start.
+                // Return it.
+                return leaf;
+        }
     }
 
     return lastLeaf;
