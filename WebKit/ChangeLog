@@ -1,5 +1,12 @@
 2002-09-03  John Sullivan  <sullivan@apple.com>
 
+        * Resources/url_icon.tiff: New image (still a placeholder)
+	from HI. For the moment the default page icon is the legendary
+	@-sign-on-a-spring. I've been promised a replacement by
+	tomorrow sometime.
+
+2002-09-03  John Sullivan  <sullivan@apple.com>
+
 	- removed small folder image used for bookmark lists; it is now
 	up to clients to display an icon for bookmark lists.
 
