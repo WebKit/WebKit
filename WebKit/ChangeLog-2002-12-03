@@ -1,5 +1,52 @@
 2002-10-09  Darin Adler  <darin@apple.com>
 
+	WebKit support for creating windows and then showing them later
+	after setting them up.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:referrer:frameName:]): Replaced the old
+	openNewWindowWithURL with this. It calls the new window operations delegate
+	method.
+        (-[WebBridge showWindow]): Added. Calls the window operations delegate showWindow method.
+        (-[WebBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Call _createFrameNamed instead of createFrameNamed.
+
+        * WebView.subproj/WebWindowOperationsDelegate.h: Replaced the openNewWindowWithURL
+	method with a new method named createWindowWithURL. Added showWindow and showWindowBehindFrontmost.
+
+        * WebView.subproj/WebControllerPrivate.h: Renamed createFrameNamed to _createFrameNamed
+	and removed the data source parameter. Added _openNewWindowWithURL:referrer:behind:
+	for the convenience of those who used to call the window operations delegate directly
+	to open the window.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _createFrameNamed:inParent:allowsScrolling:]): Renamed, and removed
+	the data source parameter.
+        (-[WebController _openNewWindowWithURL:referrer:behind:]): Added.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:referrer:]):
+        * WebView.subproj/WebFrame.m: (-[WebFrame frameNamed:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]):
+	Use a private WebController method instead of calling the delegate directly,
+	because it now takes two method calls to create and display a new window.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPreferences.m:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m:
+	Tweaked comments.
+
+2002-10-09  Darin Adler  <darin@apple.com>
+
         * WebCoreSupport.subproj/WebImageRenderer.m:
         (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
 	Fix positioning of progressively loading images that are flipped.

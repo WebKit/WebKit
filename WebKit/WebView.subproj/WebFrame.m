@@ -9,7 +9,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistoryItem.h>
@@ -241,9 +241,7 @@
     }
     
     if ([name isEqualToString:@"_blank"]) {
-        WebController *newController = [[[self controller] windowOperationsDelegate] openNewWindowWithURL:nil referrer:nil behind:NO];
-	[[[[newController windowOperationsDelegate] window] windowController] showWindow:nil];
-        return [newController mainFrame];
+        return [[[self controller] _openNewWindowWithURL:nil referrer:nil behind:NO] mainFrame];
     }
     
     // Now search the name space associated with this frame's controller.

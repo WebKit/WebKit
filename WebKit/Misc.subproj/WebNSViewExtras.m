@@ -1,5 +1,5 @@
 /*
-        WebNSViewExtras.mm
+        WebNSViewExtras.m
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 

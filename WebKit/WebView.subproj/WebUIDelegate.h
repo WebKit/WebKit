@@ -17,15 +17,35 @@
     windows and control aspects of existing windows.
 */
 @protocol WebWindowOperationsDelegate <NSObject>
+
 /*!
-    @method openNewWindowWithURL:referrer:
-    @abstract Open a new window and load the specified URL.
-    @param URL The URL to load.
+    @method createWindowWithURL:referrer:
+    @abstract Create a new window and begin to load the specified URL.
+    @discussion The newly created window is hidden, and the window operations delegate on the
+    new controllers will get a showWindow or showWindowBehindFrontmost call.
+    @param URL The URL to load, may be nil.
     @param referrer The referrer to use when loading the URL.
-    @param behind YES to open the window behind this one, NO to open it in front.
     @result The WebController for the WebView in the new window.
 */
-- (WebController *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind;
+- (WebController *)createWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer;
+
+/*!
+    @method showWindow
+    @abstract Show the window that contains the top level view of the controller,
+    ordering it frontmost.
+    @discussion This will only be called just after createWindowWithURL:referrer:
+    is used to create a new window.
+*/
+- (void)showWindow;
+
+/*!
+    @method showWindowBehindFrontmost
+    @abstract Show the window that contains the top level view of the controller,
+    ordering it behind the main window.
+    @discussion This will only be called just after createWindowWithURL:referrer:
+    is used to create a new window.
+*/
+- (void)showWindowBehindFrontmost;
 
 /*!
     @method setStatusText:
@@ -106,5 +126,3 @@
 - (NSWindow *)window;
 
 @end
-
-

@@ -1,5 +1,5 @@
 /*        
-        WebPreferences.mm
+        WebPreferences.m
         Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 

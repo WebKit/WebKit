@@ -1,5 +1,26 @@
 2002-10-09  Darin Adler  <darin@apple.com>
 
+	- fixed 3069264 -- REGRESSION: windows created for links with
+	target=blank start out hidden (window menu only)
+
+        * kwq/WebCoreBridge.h: Removed openNewWindowWithURL:referrer:frameName: and
+	added createWindowWithURL:referrer:frameName: and showWindow.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Call createWindowWithURL,
+	and then showWindow after the window is set up. Also change the code that
+	flips coordinates to always use the height of the first screen instead of
+	using the height of the screen the window is on, which sounds right, but
+	is wrong.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::bridgeForFrameName): Call createWindowWithURL and then
+	showWindow in the case where we create a window.
+        (KWQKHTMLPartImpl::urlSelected): Remove unused command-click code. The real
+	command-click code is in the browser now.
+
+2002-10-09  Darin Adler  <darin@apple.com>
+
 	- fixed 3069749 -- crash in QString during third run of cvs-base
 
         * kwq/KWQString.mm:

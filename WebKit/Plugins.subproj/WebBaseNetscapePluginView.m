@@ -787,7 +787,7 @@
         frame = [[self webFrame] frameNamed:target];
         if(!frame){
             // FIXME: Why is it OK to just discard all the attributes in this case?
-            [[[self controller] windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil behind:NO];
+            [[self controller] _openNewWindowWithURL:URL referrer:nil behind:NO];
             // FIXME: Need to send NPP_URLNotify at the right time.
             // FIXME: Need to name new frame
             if(notifyData){

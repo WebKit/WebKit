@@ -118,7 +118,8 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
 	    frame = [_bridge frameNamed:frameName.getNSString()];
 	}
         if (frame == nil) {
-	    frame = [_bridge openNewWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
+	    frame = [_bridge createWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
+            [frame showWindow];
         }
     }
     
@@ -165,12 +166,6 @@ void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
         // FIXME: Do we need to report an error to someone?
-        return;
-    }
-    
-    // Open new window on command-click
-    if (state & MetaButton) {
-        [_bridge openNewWindowWithURL:cocoaURL referrer:referrer(args) frameName:nil];
         return;
     }
     

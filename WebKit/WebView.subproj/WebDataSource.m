@@ -1,5 +1,5 @@
 /*	
-        WebDataSource.mm
+        WebDataSource.m
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 

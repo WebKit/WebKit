@@ -1,5 +1,5 @@
 /*	
-    WebSubresourceClient.mm
+    WebSubresourceClient.m
     Copyright (c) 2002, Apple Computer, Inc. All rights reserved.
 */
 

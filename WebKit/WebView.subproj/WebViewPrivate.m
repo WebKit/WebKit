@@ -1,5 +1,5 @@
 /*	
-    WebControllerPrivate.mm
+    WebControllerPrivate.m
 	Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
@@ -78,25 +78,20 @@
 
 @implementation WebController (WebPrivate)
 
-- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebFrame *)parent allowsScrolling: (BOOL)allowsScrolling
+- (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
 {
-    WebView *childView;
-    WebFrame *newFrame;
+    WebView *childView = [[WebView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
 
-    childView = [[WebView alloc] initWithFrame: NSMakeRect(0,0,0,0)];
+    [childView _setController:self];
+    [childView setAllowsScrolling:allowsScrolling];
+    
+    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webView:childView provisionalDataSource:nil controller:self];
 
-    newFrame = [[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self];
+    [childView release];
 
-    [parent _addChild: newFrame];
+    [parent _addChild:newFrame];
     
     [newFrame release];
-
-    [childView _setController: self];
-    [childDataSource _setController: self];
-
-    [childView setAllowsScrolling: allowsScrolling];
-    
-    [childView release];
         
     return newFrame;
 }
@@ -253,6 +248,17 @@
     } else {
 	return [[self mainFrame] frameNamed:name];
     }
+}
+
+- (WebController *)_openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind
+{
+    WebController *newWindowController = [[self windowOperationsDelegate] createWindowWithURL:URL referrer:referrer];
+    if (behind) {
+        [[newWindowController windowOperationsDelegate] showWindowBehindFrontmost];
+    } else {
+        [[newWindowController windowOperationsDelegate] showWindow];
+    }
+    return newWindowController;
 }
 
 @end

@@ -172,10 +172,10 @@ BOOL _modifierTrackingEnabled = FALSE;
         case WebClickPolicyShow:
             return YES;
         case WebClickPolicyOpenNewWindow:
-            [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil behind:NO];
+            [controller _openNewWindowWithURL:URL referrer:nil behind:NO];
             break;
         case WebClickPolicyOpenNewWindowBehind:
-            [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil behind:YES];
+            [controller _openNewWindowWithURL:URL referrer:nil behind:YES];
             break;
         case WebClickPolicySave:
         case WebClickPolicySaveAndOpenExternally:

@@ -1,5 +1,5 @@
 /*	
-    WebMainResourceClient.mm
+    WebMainResourceClient.m
     Copyright (c) 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 

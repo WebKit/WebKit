@@ -77,7 +77,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
 
     NSURL *cocoaURL = url.isEmpty() ? nil : url.getNSURL();
-    bridge = [m_part->impl->bridge() openNewWindowWithURL:cocoaURL
+    bridge = [m_part->impl->bridge() createWindowWithURL:cocoaURL
          referrer:KWQKHTMLPartImpl::referrer(urlArgs)
          frameName:frameName];
     
@@ -98,8 +98,6 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
     
     if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
-	
-	NSRect screenFrame = [[[bridge window] screen] frame];
 	NSRect frame = [[bridge window] frame];
 	
 	if (winArgs.xSet) {
@@ -107,10 +105,11 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	}
 	
 	if (winArgs.ySet) {
-	    if (winArgs.heightSet) {
-		frame.origin.y = screenFrame.size.height - winArgs.y + frame.size.height - winArgs.height;
+	    float heightForFlip = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
+            if (winArgs.heightSet) {
+		frame.origin.y = heightForFlip - winArgs.y + frame.size.height - winArgs.height;
 	    } else {
-		frame.origin.y = screenFrame.size.height - winArgs.y;
+		frame.origin.y = heightForFlip - winArgs.y;
 	    }
 	}
 	
@@ -124,6 +123,8 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	
 	[bridge setWindowFrame:frame];
     }
+    
+    [bridge showWindow];
     
     *partResult = [bridge part];
 }

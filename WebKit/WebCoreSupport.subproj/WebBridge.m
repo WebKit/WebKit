@@ -1,5 +1,5 @@
 /*	
-    WebBridge.mm
+    WebBridge.m
     Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
@@ -67,13 +67,18 @@
     return [[frame frameNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name
+- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name
 {
     ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer behind:NO];
+    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithURL:URL referrer:referrer];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
+}
+
+- (void)showWindow
+{
+    [[[frame controller] windowOperationsDelegate] showWindow];
 }
 
 - (BOOL)areToolbarsVisible
@@ -290,7 +295,7 @@
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     ASSERT(frame != nil);
-    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:frame allowsScrolling:allowsScrolling];
+    WebFrame *newFrame = [[frame controller] _createFrameNamed:frameName inParent:frame allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
         return nil;
     }
@@ -302,8 +307,7 @@
     
     [[newFrame _bridge] loadURL:URL referrer:referrer];
     
-    // Set the load type so this load doesn't end up in the back
-    // forward list.
+    // Set the load type so this load doesn't end up in the back/forward list.
     [newFrame _setLoadType:WebFrameLoadTypeInternal];
 
     return [newFrame _bridge];

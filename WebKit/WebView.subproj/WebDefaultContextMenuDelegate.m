@@ -100,7 +100,7 @@
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
-    [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer behind:NO];
+    [controller _openNewWindowWithURL:URL referrer:referrer behind:NO];
 }
 
 - (void)downloadURL:(NSURL *)URL
