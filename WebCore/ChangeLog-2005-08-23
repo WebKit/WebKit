@@ -1,3 +1,13 @@
+2004-05-10  David Hyatt  <hyatt@apple.com>
+
+	Make sure that when finished parsing if all the right conditions are met, we just go ahead and updateRendering and
+	layout.
+	
+        Reviewed by rjw
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::scheduleRelayout):
+
 2004-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
