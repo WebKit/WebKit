@@ -1,3 +1,18 @@
+2004-10-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bugs:
+        
+        <rdar://problem/3848343> REGRESSION (Mail, 166-168u): Typed text after space at end of line before block quote does not appear
+        <rdar://problem/3848224> REGRESSION (Mail): space typed at end of line vanishes after typing next character
+    
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak): When the khtmlLineBreak is in AFTER_WHITE_SPACE mode, as
+        it is when we are editing, add in the space of the current character when calculating the width
+        of committed plus uncommitted characters. If this value exceeds the width of the line, move up
+        the line break object and call skipWhitespace to move past the end of the whitespace.
+
 === Safari-168 ===
 
 2004-10-22  Ken Kocienda  <kocienda@apple.com>

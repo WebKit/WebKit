@@ -2059,9 +2059,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     }
         
                     if (o->style()->whiteSpace() == NORMAL) {
-                        if (w + tmpW > width) {
-                            if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE)
+                        int charWidth = o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE ? t->width(pos, 1, f) : 0;
+                        if (w + tmpW + charWidth > width) {
+                            if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE) {
+                                lBreak.obj = o;
+                                lBreak.pos = pos;
                                 skipWhitespace(lBreak, bidi);
+                            }
                             goto end; // Didn't fit. Jump to the end.
                         }
                         else if (pos > 1 && str[pos-1].unicode() == SOFT_HYPHEN)
