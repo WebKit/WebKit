@@ -471,6 +471,7 @@ static void URLFileReaderInit(void)
     WebSetThreadPriority(WebMinThreadPriority);
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSPort *placeholderPort;
 
     BEGIN_EXCEPTION_HANDLER
 
@@ -479,7 +480,10 @@ static void URLFileReaderInit(void)
     while (YES) {
         BEGIN_EXCEPTION_HANDLER
         // we specifically use an NSRunLoop here to get autorelease pool support
-        [[NSRunLoop currentRunLoop] run];
+        placeholderPort = [NSPort port];
+        [syncRunLoop addPort:placeholderPort forMode:NSDefaultRunLoopMode];
+        [syncRunLoop run];
+        [syncRunLoop removePort:placeholderPort forMode:NSDefaultRunLoopMode];
         END_EXCEPTION_HANDLER
     }
 
