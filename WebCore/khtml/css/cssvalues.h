@@ -272,7 +272,12 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_CLIP 261
 #define CSS_VAL_ELLIPSIS 262
 #define CSS_VAL_DISCARD 263
+#define CSS_VAL_DOT_DASH 264
+#define CSS_VAL_DOT_DOT_DASH 265
+#define CSS_VAL_WAVE 266
+#define CSS_VAL_CONTINUOUS 267
+#define CSS_VAL_SKIP_WHITE_SPACE 268
 
-#define CSS_VAL_TOTAL 264
+#define CSS_VAL_TOTAL 269
 #endif
 

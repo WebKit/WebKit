@@ -400,3 +400,16 @@ ellipsis
 # collapse
 # separate
 discard
+
+#
+# CSS_PROP_TEXT_*_COLOR
+#
+dot-dash
+dot-dot-dash
+wave
+
+#
+# CSS_PROP_TEXT_*_MODE
+#
+continuous
+skip-white-space

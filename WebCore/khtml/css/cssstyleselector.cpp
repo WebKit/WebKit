@@ -918,8 +918,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
         
-    // Only use slow repaints if we actually have a background image and if our overflow is set to
-    // auto.  (Fixed backgrounds 
+    // Only use slow repaints if we actually have a background image.
+    // FIXME: We only need to invalidate the fixed regions when scrolling.  It's total overkill to
+    // prevent the entire view from blitting on a scroll.
     if (!style->backgroundAttachment() && style->backgroundImage() && view)
         view->useSlowRepaints();
 }

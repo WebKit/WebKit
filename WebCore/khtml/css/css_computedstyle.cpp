@@ -632,9 +632,6 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
             return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
         return new CSSPrimitiveValueImpl(string, CSSPrimitiveValue::CSS_STRING);
     }
-    case CSS_PROP_TEXT_DECORATION_COLOR:
-        // FIXME: unimplemented
-        break;
     case CSS_PROP_TEXT_INDENT:
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:

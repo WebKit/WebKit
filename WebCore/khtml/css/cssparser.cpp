@@ -773,7 +773,9 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_BORDER_BOTTOM_COLOR:  // <color> | transparent | inherit
     case CSS_PROP_BORDER_LEFT_COLOR:    // <color> | transparent | inherit
     case CSS_PROP_COLOR:                // <color> | inherit
-    case CSS_PROP_TEXT_DECORATION_COLOR:
+    case CSS_PROP_TEXT_LINE_THROUGH_COLOR: // CSS3 text decoration colors
+    case CSS_PROP_TEXT_UNDERLINE_COLOR:
+    case CSS_PROP_TEXT_OVERLINE_COLOR:
         if (id == CSS_VAL__KHTML_TEXT)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
@@ -1158,6 +1160,30 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE || id == CSS_VAL_DISCARD)
             valid_primitive = true;
         break;
+    case CSS_PROP_TEXT_LINE_THROUGH_MODE:
+    case CSS_PROP_TEXT_OVERLINE_MODE:
+    case CSS_PROP_TEXT_UNDERLINE_MODE:
+        if (id == CSS_VAL_CONTINUOUS || id == CSS_VAL_SKIP_WHITE_SPACE)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_TEXT_LINE_THROUGH_STYLE:
+    case CSS_PROP_TEXT_OVERLINE_STYLE:
+    case CSS_PROP_TEXT_UNDERLINE_STYLE:
+        if (id == CSS_VAL_NONE || id == CSS_VAL_SOLID || id == CSS_VAL_DOUBLE ||
+            id == CSS_VAL_DASHED || id == CSS_VAL_DOT_DASH || id == CSS_VAL_DOT_DOT_DASH ||
+            id == CSS_VAL_WAVE)
+            valid_primitive = true;
+        break;
+    case CSS_PROP_TEXT_LINE_THROUGH_WIDTH:
+    case CSS_PROP_TEXT_OVERLINE_WIDTH:
+    case CSS_PROP_TEXT_UNDERLINE_WIDTH:
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_NORMAL || id == CSS_VAL_THIN ||
+            id == CSS_VAL_MEDIUM || id == CSS_VAL_THICK)
+            valid_primitive = true;
+        else
+	    valid_primitive = !id && validUnit(value, FNumber|FLength|FPercent, strict);
+        break;
+    
     // End of CSS3 properties
 
 #if APPLE_CHANGES

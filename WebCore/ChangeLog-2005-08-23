@@ -1,3 +1,26 @@
+2004-09-07  David Hyatt  <hyatt@apple.com>
+
+	Initial text-decoration CSS3 work for editing.  Just gets the properties and values parsed.
+	
+        Reviewed by darin
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+
 2004-09-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Ken.
