@@ -1,3 +1,13 @@
+2004-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3798453> DIG failure: getting variable with same name as DOM element attribute gets attribute value instead
+
+        * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): When adding current target and
+        other event handler scope, put it below the existing scope chain. This ensures that things
+        found in the function's scope will come before the event handler, as in other browsers.
+
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
