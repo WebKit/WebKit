@@ -105,6 +105,51 @@ private:
     QChar m_singleCharacterBuffer;
 };
 
+// Iterates through the DOM range, returning all the text, and 0-length boundaries
+// at points where replaced elements break up the text flow.  The text comes back in
+// chunks so as to optimize for performance of the iteration.
+class SimplifiedBackwardsTextIterator
+{
+public:
+    SimplifiedBackwardsTextIterator();
+    explicit SimplifiedBackwardsTextIterator(const DOM::Range &);
+    
+    bool atEnd() const { return !m_positionNode; }
+    void advance();
+    
+    long length() const { return m_textLength; }
+    const QChar *characters() const { return m_textCharacters; }
+    
+    DOM::Range range() const;
+        
+private:
+    void exitNode();
+    bool handleTextNode();
+    bool handleReplacedElement();
+    bool handleNonTextNode();
+    void emitCharacter(QChar, DOM::NodeImpl *Node, long startOffset, long endOffset);
+    
+    // Current position, not necessarily of the text being returned, but position
+    // as we walk through the DOM tree.
+    DOM::NodeImpl *m_node;
+    long m_offset;
+    bool m_handledNode;
+    bool m_handledChildren;
+    
+    // End of the range.
+    DOM::NodeImpl *m_startNode;
+    long m_startOffset;
+    
+    // The current text and its position, in the form to be returned from the iterator.
+    DOM::NodeImpl *m_positionNode;
+    long m_positionStartOffset;
+    long m_positionEndOffset;
+    const QChar *m_textCharacters;
+    long m_textLength;
+    
+    // Used for whitespace characters that aren't in the DOM, so we can point at them.
+    QChar m_singleCharacterBuffer;
+};
 
 // Builds on the text iterator, adding a character position so we can walk one
 // character at a time, or faster, as needed. Useful for searching.

@@ -1,5 +1,46 @@
 2004-08-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        Fix for this bug:
+        <rdar://problem/3675812> Moving a word at a time does not use the correct conception of "word"
+        
+        I have implemented versions of previousWordPosition and nextWordPosition that are now
+        different than previousWordBoundary and nextWordBoundary. The behavior of the new
+        functions attempts to match what Cocoa does as closely as it can. Let the bug filing begin! 
+
+        * WebCore.pbproj/project.pbxproj: Added KWQTextUtilities.mm
+        * khtml/misc/helper.cpp:
+        (khtml::nextWordFromIndex): Glue to call through to KWQFindNextWordFromIndex.
+        * khtml/misc/helper.h: Declare the function above.
+        * khtml/misc/khtml_text_operations.cpp: Added SimplifiedBackwardsTextIterator class.
+        (khtml::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): New
+        (khtml::SimplifiedBackwardsTextIterator::advance): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::handleTextNode): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::handleReplacedElement): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::handleNonTextNode): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::exitNode): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::emitCharacter): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::range): Ditto.
+        * khtml/misc/khtml_text_operations.h:
+        (khtml::SimplifiedBackwardsTextIterator::atEnd): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::length): Ditto.
+        (khtml::SimplifiedBackwardsTextIterator::characters): Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordBoundary): Updated to gather appropriate text and call through to
+        AppKit to perform the same calculations NSText uses.
+        (DOM::Position::nextWordBoundary): Ditto.
+        (DOM::Position::previousWordPosition): Unrelated change to fix case where the function could get "stuck".
+        (DOM::Position::nextWordPosition): Ditto
+        (DOM::Position::equivalentDeepPosition): Changed to look backwards if the position's offset is equal
+        to the number of child nodes it has. This handles more cases correctly, like when the position is
+        gives as one beyond the end of a document element's last child.
+        * kwq/KWQTextUtilities.h: Declared KWQFindNextWordFromIndex.
+        * kwq/KWQTextUtilities.mm: Added.
+        (KWQFindNextWordFromIndex): New function.
+
+2004-08-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:

@@ -40,6 +40,7 @@ namespace khtml
     void setPrintPainter( QPainter *printer );
 
     void findWordBoundary(QChar *chars, int len, int position, int *start, int *end);
+    int nextWordFromIndex(QChar *chars, int len, int position, bool forward);
 };
 
 #endif

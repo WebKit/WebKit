@@ -27,6 +27,7 @@
 
 #include "helper.h"
 #include "htmltags.h"
+#include "khtml_text_operations.h"
 #include "qstring.h"
 #include "rendering/render_block.h"
 #include "rendering/render_line.h"
@@ -45,6 +46,7 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
+using khtml::CharacterIterator;
 using khtml::InlineBox;
 using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
@@ -52,6 +54,8 @@ using khtml::RenderBlock;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::RootInlineBox;
+using khtml::SimplifiedBackwardsTextIterator;
+using khtml::TextIterator;
 
 namespace DOM {
 
@@ -299,12 +303,16 @@ Position Position::previousWordBoundary() const
             int start, end;
             khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
             pos = Position(pos.node(), start);
+            if (pos != *this)
+                return pos;
+            else
+                pos = pos.previousCharacterPosition();
         }
         else {
             pos = Position(pos.node(), pos.node()->caretMinOffset());
+            if (pos != *this)
+                return pos;
         }
-        if (pos != *this)
-            return pos;
         tries++;
     }
     
@@ -326,12 +334,16 @@ Position Position::nextWordBoundary() const
             int start, end;
             khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
             pos = Position(pos.node(), end);
+            if (pos != *this)
+                return pos;
+            else
+                pos = pos.nextCharacterPosition();
         }
         else {
             pos = Position(pos.node(), pos.node()->caretMaxOffset());
+            if (pos != *this)
+                return pos;
         }
-        if (pos != *this)
-            return pos;
         tries++;
     }
     
@@ -340,14 +352,113 @@ Position Position::nextWordBoundary() const
 
 Position Position::previousWordPosition() const
 {
-    // FIXME - need an implementation that skips to starts of words, not each boundary
-    return previousWordBoundary();
+    if (isEmpty())
+        return Position();
+
+    Range searchRange(node()->getDocument());
+    searchRange.setStartBefore(node()->getDocument()->documentElement());
+    Position end(equivalentRangeCompliantPosition());
+    searchRange.setEnd(end.node(), end.offset());
+    SimplifiedBackwardsTextIterator it(searchRange);
+    QString string;
+    unsigned next = 0;
+    while (!it.atEnd() && it.length() > 0) {
+        // Keep asking the iterator for chunks until the nextWordFromIndex() function
+        // returns a non-zero value.
+        string.prepend(QString(it.characters(), it.length()));
+        next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
+        if (next != 0)
+            break;
+        it.advance();
+    }
+    
+    Position pos(*this);
+    if (it.atEnd() && next == 0) {
+        Range range(it.range());
+        pos = Position(range.startContainer().handle(), range.startOffset());
+    }
+    else if (!it.atEnd() && it.length() == 0) {
+        // Got a zero-length chunk.
+        // This means we have hit a replaced element.
+        // Make a check to see if the position should be before or after the replaced element
+        // by performing an additional check with a modified string which uses an "X" 
+        // character to stand in for the replaced element.
+        string.prepend("X ");
+        unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
+        Range range(it.range());
+        if (pastImage == 0)
+            pos = Position(range.startContainer().handle(), range.startOffset());
+        else
+            pos = Position(range.endContainer().handle(), range.endOffset());
+    }
+    else if (next != 0) {
+        // The simpler iterator used in this function, as compared to the one used in 
+        // nextWordPosition(), gives us results we can use directly without having to 
+        // iterate again to translate the next value into a DOM position. 
+        NodeImpl *node = it.range().startContainer().handle();
+        if (node->isTextNode()) {
+            // The next variable contains a usable index into a text node
+            pos = Position(node, next);
+        }
+        else {
+            // If we are not in a text node, we ended on a node boundary, so the
+            // range start offset should be used.
+            pos = Position(node, it.range().startOffset());
+        }
+    }
+    pos = pos.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
+    return pos;
 }
 
 Position Position::nextWordPosition() const
 {
-    // FIXME - need an implementation that skips to ends of words, not each boundary
-    return nextWordBoundary();
+    if (isEmpty())
+        return Position();
+
+    Range searchRange(node()->getDocument());
+    Position start(equivalentRangeCompliantPosition());
+    searchRange.setStart(start.node(), start.offset());
+    searchRange.setEndAfter(node()->getDocument()->documentElement());
+    TextIterator it(searchRange);
+    QString string;
+    unsigned next = 0;
+    while (!it.atEnd() && it.length() > 0) {
+        // Keep asking the iterator for chunks until the nextWordFromIndex() function
+        // returns a value not equal to the length of the string passed to it.
+        string += QString(it.characters(), it.length());
+        next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
+        if (next != string.length())
+            break;
+        it.advance();
+    }
+    
+    Position pos(*this);
+    if (it.atEnd() && next == string.length()) {
+        Range range(it.range());
+        pos = Position(range.startContainer().handle(), range.startOffset());
+    }
+    else if (!it.atEnd() && it.length() == 0) {
+        // Got a zero-length chunk.
+        // This means we have hit a replaced element.
+        // Make a check to see if the position should be before or after the replaced element
+        // by performing an additional check with a modified string which uses an "X" 
+        // character to stand in for the replaced element.
+        string += " X";
+        unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
+        Range range(it.range());
+        if (next != pastImage)
+            pos = Position(range.endContainer().handle(), range.endOffset());
+        else
+            pos = Position(range.startContainer().handle(), range.startOffset());
+    }
+    else if (next != 0) {
+        // Use the character iterator to translate the next value into a DOM position.
+        CharacterIterator charIt(searchRange);
+        charIt.advance(next - 1);
+        pos = Position(charIt.range().endContainer().handle(), charIt.range().endOffset());
+    }
+    pos = pos.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
+    return pos;
 }
 
 Position Position::previousLinePosition(int x) const
@@ -602,16 +713,26 @@ Position Position::equivalentDeepPosition() const
         return *this;
 
     NodeImpl *child = 0;
-    if (offset() >= (int)node()->childNodeCount())
+    Position pos(*this);
+    if (offset() >= (int)node()->childNodeCount()) {
         child = node()->lastChild();
-    else
+        pos = Position(child, child->caretMaxOffset());
+        ASSERT(child);
+        while (!child->isAtomicNode() && pos.node()->hasChildNodes()) {
+            child = pos.node()->lastChild();
+            ASSERT(child);
+            pos = Position(child, child->caretMaxOffset());
+        }
+    }
+    else {
         child = node()->childNode(offset());
-    ASSERT(child);
-    Position pos(child, 0);
-    while (!child->isAtomicNode() && pos.node()->hasChildNodes()) {
-        child = pos.node()->firstChild();
         ASSERT(child);
         pos = Position(child, 0);
+        while (!child->isAtomicNode() && pos.node()->hasChildNodes()) {
+            child = pos.node()->firstChild();
+            ASSERT(child);
+            pos = Position(child, 0);
+        }
     }
     return pos;
 }

@@ -811,6 +811,7 @@
 				BE02F485066E1C550013A9F6,
 				BE02D4E9066F908A0076809F,
 				BC9D580606C185A4001E893C,
+				BE1A407206CA8A33005B28CF,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2886,6 +2887,20 @@
 			settings = {
 			};
 		};
+		BE1A407106CA8A33005B28CF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = KWQTextUtilities.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE1A407206CA8A33005B28CF = {
+			fileRef = BE1A407106CA8A33005B28CF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE26F15305517DE000BFA0C3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3335,6 +3350,7 @@
 				F587852F02DE375901EA4122,
 				BE8BD8F206359F6000D3F20B,
 				BE8BD8F306359F6000D3F20B,
+				BE1A407106CA8A33005B28CF,
 				F587853502DE375901EA4122,
 				F587853602DE375901EA4122,
 				F587851B02DE375901EA4122,

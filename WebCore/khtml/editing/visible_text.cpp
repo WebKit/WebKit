@@ -451,6 +451,210 @@ Range TextIterator::range() const
     }
 }
 
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
+{
+}
+
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range &r)
+{
+    if (r.isNull()) {
+        m_positionNode = 0;
+        return;
+    }
+
+    NodeImpl *startNode = r.startContainer().handle();
+    NodeImpl *endNode = r.endContainer().handle();
+    long startOffset = r.startOffset();
+    long endOffset = r.endOffset();
+
+    if (!offsetInCharacters(startNode->nodeType())) {
+        if (startOffset >= 0 && startOffset < static_cast<long>(startNode->childNodeCount())) {
+            startNode = startNode->childNode(startOffset);
+            startOffset = 0;
+        }
+    }
+    if (!offsetInCharacters(endNode->nodeType())) {
+        if (endOffset > 0 && endOffset <= static_cast<long>(endNode->childNodeCount())) {
+            endNode = endNode->childNode(endOffset - 1);
+            endOffset = endNode->hasChildNodes() ? endNode->childNodeCount() : endNode->maxOffset();
+        }
+    }
+
+    m_node = endNode;
+    m_offset = endOffset;
+    m_handledNode = false;
+    m_handledChildren = false;
+
+    m_startNode = startNode;
+    m_startOffset = startOffset;
+
+#ifndef NDEBUG
+    // Need this just because of the assert.
+    m_positionNode = endNode;
+#endif
+
+    advance();
+}
+
+void SimplifiedBackwardsTextIterator::advance()
+{
+    assert(m_positionNode);
+
+    m_positionNode = 0;
+    m_textLength = 0;
+
+    while (m_node) {
+        if (!m_handledNode) {
+            RenderObject *renderer = m_node->renderer();
+            if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
+                // FIXME: What about CDATA_SECTION_NODE?
+                if (renderer->style()->visibility() == VISIBLE && m_offset > 0) {
+                    m_handledNode = handleTextNode();
+                }
+            } else if (renderer && (renderer->isImage() || renderer->isWidget())) {
+                if (renderer->style()->visibility() == VISIBLE && m_offset > 0) {
+                    m_handledNode = handleReplacedElement();
+                }
+            } else {
+                m_handledNode = handleNonTextNode();
+            }
+            if (m_positionNode) {
+                return;
+            }
+        }
+
+        if (m_node == m_startNode)
+            return;
+
+        NodeImpl *next = 0;
+        if (!m_handledChildren) {
+            next = m_node->lastChild();
+            while (next && next->lastChild())
+                next = next->lastChild();
+            m_handledChildren = true;
+        }
+        if (!next && m_node != m_startNode) {
+            next = m_node->previousSibling();
+            if (next) {
+                exitNode();
+                while (next->lastChild())
+                    next = next->lastChild();
+            }
+            else if (m_node->parentNode()) {
+                next = m_node->parentNode();
+                exitNode();
+            }
+        }
+        
+        m_node = next;
+        if (m_node)
+            m_offset = m_node->caretMaxOffset();
+        else
+            m_offset = 0;
+        m_handledNode = false;
+        
+        if (m_positionNode) {
+            return;
+        }
+    }
+}
+
+bool SimplifiedBackwardsTextIterator::handleTextNode()
+{
+    RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
+    DOMString str = m_node->nodeValue();
+
+    if (!renderer->firstTextBox() && str.length() > 0) {
+        return true;
+    }
+
+    m_positionEndOffset = m_offset;
+
+    m_offset = (m_node == m_startNode) ? m_startOffset : 0;
+    m_positionNode = m_node;
+    m_positionStartOffset = m_offset;
+    m_textLength = m_positionEndOffset - m_positionStartOffset;
+    m_textCharacters = str.unicode() + m_positionStartOffset;
+
+    return true;
+}
+
+bool SimplifiedBackwardsTextIterator::handleReplacedElement()
+{
+    long offset = m_node->nodeIndex();
+
+    m_positionNode = m_node->parentNode();
+    m_positionStartOffset = offset;
+    m_positionEndOffset = offset + 1;
+
+    m_textCharacters = 0;
+    m_textLength = 0;
+
+    return true;
+}
+
+bool SimplifiedBackwardsTextIterator::handleNonTextNode()
+{
+    switch (m_node->id()) {
+        case ID_BR:
+        case ID_TD:
+        case ID_TH:
+        case ID_BLOCKQUOTE:
+        case ID_DD:
+        case ID_DIV:
+        case ID_DL:
+        case ID_DT:
+        case ID_H1:
+        case ID_H2:
+        case ID_H3:
+        case ID_H4:
+        case ID_H5:
+        case ID_H6:
+        case ID_HR:
+        case ID_LI:
+        case ID_OL:
+        case ID_P:
+        case ID_PRE:
+        case ID_TR:
+        case ID_UL:
+            // Emit a space to "break up" content. Any word break
+            // character will do.
+            emitCharacter(' ', m_node, 0, 0);
+            break;
+    }
+
+    return true;
+}
+
+void SimplifiedBackwardsTextIterator::exitNode()
+{
+    // Left this function in so that the name and usage patters remain similar to 
+    // TextIterator. However, the needs of this iterator are much simpler, and
+    // the handleNonTextNode() function does just what we want (i.e. insert a
+    // space for certain node types to "break up" text so that it does not seem
+    // like content is next to other text when it really isn't). 
+    handleNonTextNode();
+}
+
+void SimplifiedBackwardsTextIterator::emitCharacter(QChar c, NodeImpl *node, long startOffset, long endOffset)
+{
+    m_singleCharacterBuffer = c;
+    m_positionNode = node;
+    m_positionStartOffset = startOffset;
+    m_positionEndOffset = endOffset;
+    m_textCharacters = &m_singleCharacterBuffer;
+    m_textLength = 1;
+}
+
+Range SimplifiedBackwardsTextIterator::range() const
+{
+    if (m_positionNode) {
+        return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    } else {
+        return Range(m_startNode, m_startOffset, m_startNode, m_startOffset);
+    }
+}
+
 CharacterIterator::CharacterIterator()
     : m_offset(0), m_runOffset(0), m_atBreak(true)
 {
