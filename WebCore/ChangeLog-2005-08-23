@@ -1,3 +1,23 @@
+2003-05-22  David Hyatt  <hyatt@apple.com>
+
+	Make sure the overflow clip rect clips out the scrollbars
+	so that child layers aren't able to draw on top of the
+	scrollbars.
+
+	Also fix scrollbars so that they are painted before the
+	overflow clip rect is applied (just as backgrounds and borders
+	are).
+
+	These two fixes make the divtest example from Yahoo (sent by Mark
+	Malone) work.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getOverflowClipRect):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):
+
 2003-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
