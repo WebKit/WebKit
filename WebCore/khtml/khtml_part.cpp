@@ -2366,9 +2366,10 @@ void KHTMLPart::setDragCaret(const DOM::Selection &dragCaret)
 void KHTMLPart::clearSelection()
 {
     clearCaretRectIfNeeded();
-    setFocusNodeIfNeeded();
-    d->m_selection = Selection();
-    notifySelectionChanged();
+    bool hadSelection = hasSelection();
+    d->m_selection.clear();
+    if (hadSelection)
+        notifySelectionChanged();
 }
 
 void KHTMLPart::invalidateSelection()
@@ -2389,14 +2390,12 @@ void KHTMLPart::setCaretVisible(bool flag)
     selectionLayoutChanged();
 }
 
+#if !APPLE_CHANGES
 void KHTMLPart::slotClearSelection()
 {
-    clearCaretRectIfNeeded();
-    bool hadSelection = hasSelection();
-    d->m_selection.clear();
-    if (hadSelection)
-        notifySelectionChanged();
+    clearSelection();
 }
+#endif
 
 void KHTMLPart::clearCaretRectIfNeeded()
 {

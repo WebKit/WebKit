@@ -1,3 +1,30 @@
+2004-09-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebCore.pbproj/project.pbxproj: New files added.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::clearSelection): No longer calls setFocusIfNeeded.
+        (KHTMLPart::slotClearSelection): Merged old implementation from this function to
+        clearSelection. Now just calls clearSelection. Also put in !APPLE_CHANGES since
+        we do not call it.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode): Add some code to determine when setting the focus should
+        clear the selection.
+        * kwq/KWQWidget.mm:
+        (QWidget::hasFocus): Call _webcore_effectiveFirstResponder to get view to check for focus.
+        (QWidget::setFocus): Ditto.
+        * kwq/WebCoreBridge.mm: 
+        (-[WebCoreBridge deselectText]): Called slotClearSelection and should have been. Now calls
+        clearSelection.
+        * kwq/WebCoreView.h: Added.
+        * kwq/WebCoreView.m: Added.
+        (-[NSView _webcore_effectiveFirstResponder]): New method to yield the correct responder
+        to check for firstResponder-ness before calling makeFirstResonder. This helps to prevent 
+        unwanted firstResponder switching.
+        (-[NSClipView _webcore_effectiveFirstResponder]): Ditto.
+        (-[NSScrollView _webcore_effectiveFirstResponder]): Ditto.
+
 2004-09-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

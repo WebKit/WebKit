@@ -35,6 +35,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebAssertions.h>
 
+#import <WebCore/WebCoreView.h>
+
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
@@ -743,6 +745,12 @@ static NSMutableDictionary *viewTypes;
         // if we did something useful, get the cursor out of the way
         [NSCursor setHiddenUntilMouseMoves:YES];
     }
+}
+
+- (NSView *)_webcore_effectiveFirstResponder
+{
+    NSView *view = [self documentView];
+    return view ? [view _webcore_effectiveFirstResponder] : [super _webcore_effectiveFirstResponder];
 }
 
 @end

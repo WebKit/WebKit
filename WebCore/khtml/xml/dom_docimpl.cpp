@@ -2419,6 +2419,14 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         }
     }
 
+    // Clear the selection when changing the focus node to null or to a node that is not 
+    // contained by the current selection.
+    if (part()) {
+        NodeImpl *startContainer = part()->selection().start().node();
+        if (!newFocusNode || (startContainer && startContainer != newFocusNode && !startContainer->isAncestor(newFocusNode)))
+            part()->clearSelection();
+    }
+
     if (newFocusNode) {
 #if APPLE_CHANGES            
         if (newFocusNode->isContentEditable() && !acceptsEditingFocus(newFocusNode)) {

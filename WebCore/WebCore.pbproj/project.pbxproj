@@ -534,6 +534,7 @@
 				93ABCE6006E1A42E0085925B,
 				93B641F406E28C5C0055F610,
 				BEF3442706F1123C000A65D3,
+				BE855F800701E83500239769,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -821,6 +822,7 @@
 				93ABCE5F06E1A42E0085925B,
 				93B641F306E28C5C0055F610,
 				BEF3442606F1123C000A65D3,
+				BE8560520701F91100239769,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3038,6 +3040,37 @@
 		};
 		BE26F15605517DE000BFA0C3 = {
 			fileRef = BE26F15405517DE000BFA0C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE855F7F0701E83500239769 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebCoreView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE855F800701E83500239769 = {
+			fileRef = BE855F7F0701E83500239769;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BE8560510701F91100239769 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebCoreView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE8560520701F91100239769 = {
+			fileRef = BE8560510701F91100239769;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -8665,6 +8698,8 @@
 				F587855302DE375901EA4122,
 				517FA6B20370BD6100CA2D3A,
 				517FA6B60370C7ED00CA2D3A,
+				BE855F7F0701E83500239769,
+				BE8560510701F91100239769,
 				F587855402DE375901EA4122,
 				F587855502DE375901EA4122,
 				F58EF58E02DFDFB7018635CA,

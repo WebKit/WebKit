@@ -1,3 +1,14 @@
+2004-09-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _webcore_effectiveFirstResponder]): New function to yield the correct responder
+        to check for firstResponder-ness before calling makeFirstResonder. This helps to prevent 
+        unwanted firstResponder switching.
+        * WebView.subproj/WebView.m:
+        (-[WebView _webcore_effectiveFirstResponder]): Ditto.
+
 2004-09-21  Chris Blumenberg  <cblu@apple.com
 
 	Fixed:

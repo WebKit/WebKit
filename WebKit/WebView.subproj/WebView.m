@@ -54,6 +54,7 @@
 
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>
+#import <WebCore/WebCoreView.h>
 
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
@@ -1866,6 +1867,12 @@ NS_ENDHANDLER
     } 
     
     return NO;
+}
+
+- (NSView *)_webcore_effectiveFirstResponder
+{
+    WebFrameView *frameView = [[self mainFrame] frameView];
+    return frameView ? [frameView _webcore_effectiveFirstResponder] : [super _webcore_effectiveFirstResponder];
 }
 
 - (void)setNextKeyView:(NSView *)aView

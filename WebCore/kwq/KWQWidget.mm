@@ -32,6 +32,7 @@
 #import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "WebCoreFrameView.h"
+#import "WebCoreView.h"
 #import "khtmlview.h"
 #import "render_canvas.h"
 #import "render_replaced.h"
@@ -189,7 +190,7 @@ int QWidget::baselinePosition(int height) const
 
 bool QWidget::hasFocus() const
 {
-    NSView *view = getView();
+    NSView *view = [getView() _webcore_effectiveFirstResponder];
 
     KWQ_BLOCK_EXCEPTIONS;
     NSView *firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
@@ -223,7 +224,7 @@ void QWidget::setFocus()
         return;
     }
     
-    NSView *view = getView();
+    NSView *view = [getView() _webcore_effectiveFirstResponder];
 
     KWQ_BLOCK_EXCEPTIONS;
     if ([view acceptsFirstResponder]) {

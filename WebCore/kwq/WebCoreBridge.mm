@@ -566,7 +566,7 @@ static bool initializedKJS = FALSE;
 
 - (void)deselectText
 {
-    _part->slotClearSelection();
+    _part->clearSelection();
 }
 
 - (BOOL)isFrameSet
