@@ -372,22 +372,21 @@ short RangeImpl::compareBoundaryPoints( NodeImpl *containerA, long offsetA, Node
     if (!childB)
         childB = cmnRoot;
 
+    if (childA == childB)
+        return 0; // A is equal to B
+
     NodeImpl *n = cmnRoot->firstChild();
-    int i = 0;
-    int childAOffset = -1;
-    int childBOffset = -1;
-    while (n && (childAOffset < 0 || childBOffset < 0)) {
+    while (n) {
         if (n == childA)
-            childAOffset = i;
+            return -1; // A is before B
         if (n == childB)
-            childBOffset = i;
+            return 1; // A is after B
         n = n->nextSibling();
-        i++;
     }
 
-    if( childAOffset == childBOffset )  return 0;    // A is equal to B
-    if( childAOffset < childBOffset )   return -1;    // A is before B
-    else  return 1;                        // A is after B
+    // Should never reach this point.
+    assert(0);
+    return 0;
 }
 
 short RangeImpl::compareBoundaryPoints( const Position &a, const Position &b )

@@ -1410,12 +1410,11 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
     
     NodeImpl *lastStyledNode = 0;
     for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
-        // Only work on fully selected nodes.
-        if (!nodeFullySelected(node, start, end))
-            continue;
-
         HTMLElementImpl *elem = 0;
         if (node->isHTMLElement()) {
+            // Only work on fully selected nodes.
+            if (!nodeFullySelected(node, start, end))
+                continue;
             elem = static_cast<HTMLElementImpl *>(node);
         }
         else if (node->isTextNode() && node->parentNode() != lastStyledNode) {
@@ -1865,6 +1864,7 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
 bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start, const Position &end) const
 {
     ASSERT(node);
+    ASSERT(node->isElementNode());
 
     Position pos = Position(node, node->childNodeCount()).upstream();
     return RangeImpl::compareBoundaryPoints(node, 0, start.node(), start.offset()) >= 0 &&
@@ -1874,6 +1874,7 @@ bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start,
 bool ApplyStyleCommand::nodeFullyUnselected(NodeImpl *node, const Position &start, const Position &end) const
 {
     ASSERT(node);
+    ASSERT(node->isElementNode());
 
     Position pos = Position(node, node->childNodeCount()).upstream();
     bool isFullyBeforeStart = RangeImpl::compareBoundaryPoints(pos, start) < 0;

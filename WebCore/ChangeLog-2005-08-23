@@ -1,3 +1,31 @@
+2005-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3987619> in some cases, text doesn't resize with Format->Style->Bigger/Smaller
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange): Only call nodeFullySelected for non-text nodes.
+        Text nodes are already split so they're either in the range and full selected or out of the range.
+        And nodeFullySelected doesn't work for text nodes.
+        (khtml::ApplyStyleCommand::nodeFullySelected): Add an assertion, since this function only works for elements,
+        not text nodes.
+        (khtml::ApplyStyleCommand::nodeFullyUnselected): Ditto.
+
+        - make big improvement in <rdar://problem/3953636> Mail hung for ~10sec changing font of 84328 characters: khtml::ApplyStyleCommand::nodeFullySelected
+
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::compareBoundaryPoints): Improve algorithm based on suggestion
+        from Nate Begeman.
+
+        - fixed <rdar://problem/4020305> REGRESSION (185-186): loading image in new window using document.write fails
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::open): If there is no parent document, don't blow away the base URL.
+
+        - fixed <rdar://problem/4021701> REGRESSION (188-188+): form not submitted after pressing <return> at http://hrweb.apple.com
+        
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::dispatchMouseEvent): Send activate event in the case where the event
+        sent is a KHTML_CLICK_EVENT, not CLICK_EVENT.
+
 2005-02-23  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs  

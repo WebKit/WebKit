@@ -737,6 +737,8 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
     // as there is no way to tell the difference between single & double clicks using DOM (only the click count is
     // stored, which is not necessarily the same)
     if (evtId == EventImpl::CLICK_EVENT) {
+        evtId = EventImpl::KHTML_CLICK_EVENT;
+
         me = new MouseEventImpl(EventImpl::KHTML_CLICK_EVENT,
                                 true,cancelable,getDocument()->defaultView(),
                                 detail,screenX,screenY,clientX,clientY,
@@ -768,13 +770,13 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
                 swallowEvent = true;
             me->deref();
         }
-
-        // Also send a DOMActivate event, which causes things like form submissions to occur.
-        if (!defaultPrevented && !disabled())
-            dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, detail);
     }
 #endif
-    
+
+    // Also send a DOMActivate event, which causes things like form submissions to occur.
+    if (evtId == EventImpl::KHTML_CLICK_EVENT && !defaultPrevented && !disabled())
+        dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, detail);
+
     return swallowEvent;
 }
 

@@ -1341,7 +1341,9 @@ void DocumentImpl::open(  )
     // happen when implicitOpen() is called unless we reorganize KHTMLPart code.
     setURL(QString());
     DocumentImpl *parent = parentDocument();
-    setBaseURL(parent ? parent->baseURL() : QString());
+    if (parent) {
+        setBaseURL(parent->baseURL());
+    }
 }
 
 void DocumentImpl::implicitOpen()
