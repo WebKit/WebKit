@@ -114,7 +114,7 @@
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
 {
     NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
-    NSURLRequest *request = [[[NSURLRequest alloc] initWithURL: fakeURL] autorelease];
+    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL: fakeURL] autorelease];
     [request _webDataRequestSetData:data];
     [request _webDataRequestSetEncoding:encodingName];
     [request _webDataRequestSetBaseURL:URL];

@@ -48,7 +48,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @implementation NSURLRequest (WebDataRequest)
 
-+ (NSURL *)_webDataRequestURLForData: (NSData *)data
++ (NSURL *)_webDataRequestURLForData:(NSData *)data
 {
     static BOOL registered;
     
@@ -61,7 +61,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     
     // The URL we generate is meaningless.  The only interesting properties of the URL
     // are it's scheme and that they be unique for the lifespan of the application.
-    NSURL *fakeURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@://%p", WebDataProtocolScheme, counter++, 0]];
+    NSURL *fakeURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%p", WebDataProtocolScheme, counter++, 0]];
     return fakeURL;
 }
 
@@ -69,6 +69,50 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 {
     return [NSURLProtocol propertyForKey:WebDataRequestPropertyKey inRequest:self];
 }
+
+- (NSData *)_webDataRequestData
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->data : nil;
+}
+
+- (NSString *)_webDataRequestEncoding
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->encoding : nil;
+}
+
+- (NSString *)_webDataRequestMIMEType
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->MIMEType : nil;
+}
+
+- (NSURL *)_webDataRequestBaseURL
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->baseURL : nil;
+}
+
+- (NSMutableURLRequest *)_webDataRequestExternalRequest
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    NSMutableURLRequest *newRequest = nil;
+    
+    if (parameters){
+        newRequest = [[self mutableCopyWithZone:[self zone]] autorelease];
+        NSURL *baseURL = [self _webDataRequestBaseURL];
+        if (baseURL)
+            [newRequest setURL:baseURL]; 
+        else
+            [newRequest setURL:[NSURL URLWithString:@"about:blank"]];
+    } 
+    return newRequest;
+}
+
+@end
+
+@implementation NSMutableURLRequest (WebDataRequest)
 
 - (WebDataRequestParameters *)_webDataRequestParametersForWriting
 {
@@ -80,23 +124,11 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     return result;
 }
 
-- (NSData *)_webDataRequestData
-{
-    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
-    return parameters ? parameters->data : nil;
-}
-
-- (void)_webDataRequestSetData: (NSData *)data
+- (void)_webDataRequestSetData:(NSData *)data
 {
     WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->data release];
     parameters->data = [data retain];
-}
-
-- (NSString *)_webDataRequestEncoding
-{
-    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
-    return parameters ? parameters->encoding: nil;
 }
 
 - (void)_webDataRequestSetEncoding:(NSString *)encoding
@@ -106,23 +138,11 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     parameters->encoding = [encoding retain];
 }
 
-- (NSString *)_webDataRequestMIMEType
-{
-    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
-    return parameters ? parameters->MIMEType: nil;
-}
-
 - (void)_webDataRequestSetMIMEType:(NSString *)type
 {
     WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
     [parameters->MIMEType release];
     parameters->MIMEType = [type retain];
-}
-
-- (NSURL *)_webDataRequestBaseURL
-{
-    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
-    return parameters ? parameters->baseURL : nil;
 }
 
 - (void)_webDataRequestSetBaseURL:(NSURL *)baseURL
@@ -132,24 +152,9 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     parameters->baseURL = [baseURL retain];
 }
 
-- (NSMutableURLRequest *)_webDataRequestExternalRequest
-{
-    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
-    NSMutableURLRequest *newRequest = nil;
-    
-    if (parameters){
-        newRequest = [[self mutableCopyWithZone: [self zone]] autorelease];
-        NSURL *baseURL = [self _webDataRequestBaseURL];
-        if (baseURL)
-            [newRequest setURL: baseURL]; 
-        else
-            [newRequest setURL: [NSURL URLWithString: @"about:blank"]];
-    } 
-    return newRequest;
-}
-
-
 @end
+
+
 
 // Implement the required methods for the concrete subclass of WebProtocolHandler
 // that will handle our custom protocol.

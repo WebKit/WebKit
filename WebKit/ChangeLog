@@ -1,3 +1,21 @@
+2003-05-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	Fix build by separating mutating data protocol methods into
+	category on NSMutableURLRequest. Also, formatting fixes.
+
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (+[NSURLRequest _webDataRequestURLForData:]):
+        (-[NSURLRequest _webDataRequestData]):
+        (-[NSURLRequest _webDataRequestEncoding]):
+        (-[NSURLRequest _webDataRequestMIMEType]):
+        (-[NSURLRequest _webDataRequestBaseURL]):
+        (-[NSURLRequest _webDataRequestExternalRequest]):
+        (-[NSMutableURLRequest _webDataRequestSetData:]):
+        * WebView.subproj/WebFrame.m:
+
 2003-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -19,13 +19,17 @@
 
 @interface NSURLRequest (WebDataRequest)
 + (NSURL *)_webDataRequestURLForData:(NSData *)data;
-- (NSData *)_webDataRequestData;
-- (void)_webDataRequestSetData:(NSData *)data;
-- (NSString *)_webDataRequestEncoding;
-- (void)_webDataRequestSetEncoding:(NSString *)encoding;
-- (NSString *)_webDataRequestMIMEType;
-- (void)_webDataRequestSetMIMEType:(NSString *)MIMEType;
 - (NSURL *)_webDataRequestBaseURL;
-- (void)_webDataRequestSetBaseURL:(NSURL *)baseURL;
+- (NSData *)_webDataRequestData;
+- (NSString *)_webDataRequestEncoding;
+- (NSString *)_webDataRequestMIMEType;
 - (NSMutableURLRequest *)_webDataRequestExternalRequest;
 @end
+
+@interface NSMutableURLRequest (WebDataRequest)
+- (void)_webDataRequestSetData:(NSData *)data;
+- (void)_webDataRequestSetEncoding:(NSString *)encoding;
+- (void)_webDataRequestSetMIMEType:(NSString *)MIMEType;
+- (void)_webDataRequestSetBaseURL:(NSURL *)baseURL;
+@end
+
