@@ -182,8 +182,7 @@
     
     [[_private->controller locationChangeDelegate] locationChangeStartedForDataSource:self];
 
-    // Fire this guy up.
-    if (!_private->mainHandle) {
+    if (!_private->mainClient) {
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
 
 	if ([self webFrame] == [[self controller] mainFrame]) {
@@ -193,10 +192,11 @@
 	}
 
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request delegate:_private->mainClient];
-        
-        ASSERT(_private->mainHandle);
     }
-    [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
+    
+    if (_private->mainHandle) {
+        [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
+    }
 }
 
 - (void)_addSubresourceClient:(WebSubresourceClient *)client

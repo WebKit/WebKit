@@ -1,5 +1,14 @@
 2002-09-30  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource initWithRequest:]):
+	Remove the ill-advised "don't even create a WebDataSource if WebResourceHandle
+	can't handle this request" code.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _startLoading]):
+	Rearrange checks so we won't get confused if we can't create a handle.
+
+2002-09-30  Darin Adler  <darin@apple.com>
+
         * English.lproj/StringsNotToBeLocalized.txt: Added.
 
 2002-09-30  Darin Adler  <darin@apple.com>
