@@ -44,4 +44,3 @@
 #import "DOMTraversal.h"
 #import "DOMRange.h"
 #import "DOMHTML.h"
-#import "DOMExtensions.h"

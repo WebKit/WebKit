@@ -1,5 +1,14 @@
 2004-04-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3548274>: API: DOM API for WebKit clients
+
+        Reviewed by kocienda.
+
+        * DOM.subproj/DOM.h: copied from WebCore
+        * WebKit.pbproj/project.pbxproj: made our DOM headers public!
+
+2004-04-08  Chris Blumenberg  <cblu@apple.com>
+
 	Moved WebArchive to its own file.
 
         Reviewed by kocienda.
