@@ -1437,7 +1437,17 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     DOMDocument *document = [self DOMDocument];
     DOMDocumentFragment *fragment = [document createDocumentFragment];
-    [fragment appendChild:[document createTextNode:text]];
+    NSMutableString *string = [text mutableCopy];
+    [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
+    [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
+    NSArray *array = [string componentsSeparatedByString:@"\n"];
+    int count = [array count];
+    int i;
+    for (i = 0; i < count; i++) {
+        if (i != 0)
+            [fragment appendChild:[document createElement:@"BR"]];
+        [fragment appendChild:[document createTextNode:[array objectAtIndex:i]]];
+    }
     return fragment;
 }
 

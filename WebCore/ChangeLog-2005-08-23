@@ -1,5 +1,17 @@
 2004-07-20  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3695240> pasting plain text with newlines in it turns them into spaces
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithText:]): Refine this function to be smart about converting
+        line endings into BR elements.
+
+2004-07-20  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fix for this bug:
