@@ -25,6 +25,8 @@
 //#define DEBUG_LAYOUT
 
 #include "rendering/render_frames.h"
+
+#include "css/cssproperties.h"
 #include "rendering/render_canvas.h"
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
@@ -677,73 +679,65 @@ void RenderPartObject::updateWidget()
 
   setNeedsLayoutAndMinMaxRecalc();
 
-  // ### this should be constant true - move iframe to somewhere else
-  if (element()->id() == ID_OBJECT || element()->id() == ID_EMBED) {
-
-      for (NodeImpl* child = element()->firstChild(); child; child=child->nextSibling()) {
-          if ( child->id() == ID_PARAM ) {
-              HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
-
-              QString aStr = p->name();
-              aStr += QString::fromLatin1("=\"");
-              aStr += p->value();
-              aStr += QString::fromLatin1("\"");
-              params.append(aStr);
-          }
-      }
-      params.append( QString::fromLatin1("__KHTML__PLUGINEMBED=\"YES\"") );
-      params.append( QString::fromLatin1("__KHTML__PLUGINBASEURL=\"%1\"").arg( part->url().url() ) );
-  }
-
-  if(element()->id() == ID_OBJECT) {
+  if (element()->id() == ID_OBJECT) {
 
       HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
 
-      // Add attributes within the OBJECT tag to params for attributes that params doesn't already contains.
-      NamedAttrMapImpl* attributes = o->attributes();
-      for (unsigned long index = 0; index < attributes->length(); ++index) {
-          AttributeImpl* attribute = attributes->attributeItem(index);
-          QString attributeName = o->getDocument()->attrName(attribute->id()).string();
-          unsigned long n;
-          for (n = 0; n < params.count(); ++n) {
-              if (params[n].lower().startsWith(attributeName.lower() + "=\"")) {
-                  break;
-              }
-          }
-          if (n == params.count()) {
-              params.append(attributeName + "=\"" + attribute->value().string() + "\"");
-          }
-      }
-
-      // check for embed child object
+      // Check for a child EMBED tag.
       HTMLEmbedElementImpl *embed = 0;
-      for (NodeImpl *child = o->firstChild(); child; child = child->nextSibling())
-          if ( child->id() == ID_EMBED ) {
+      for (NodeImpl *child = o->firstChild(); child; child = child->nextSibling()) {
+          if (child->id() == ID_EMBED) {
               embed = static_cast<HTMLEmbedElementImpl *>( child );
               break;
           }
-
-      params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
-      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
-
-      if ( !embed ) {
-          url = o->url;
-          serviceType = o->serviceType;
-      } else {
-          url = embed->url;
-          serviceType = embed->serviceType;
       }
       
-      if(serviceType.isEmpty()) {
-          if(!o->classId.isEmpty()) {
-              // We have a clsid, means this is activex (Niko)
-              serviceType = "application/x-activex-handler";
-#ifndef APPLE_CHANGES
-              url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
-#endif
+      // Use the attributes from the EMBED tag instead of the OBJECT tag including WIDTH and HEIGHT.
+      HTMLElementImpl *embedOrObject;
+      if (embed) {
+          embedOrObject = (HTMLElementImpl *)embed;
+          DOMString attribute = embedOrObject->getAttribute(ATTR_WIDTH);
+          if (!attribute.isEmpty()) {
+              o->addCSSLength(CSS_PROP_WIDTH, attribute);
           }
-
-          if(o->classId.contains(QString::fromLatin1("D27CDB6E-AE6D-11cf-96B8-444553540000"))) {
+          attribute = embedOrObject->getAttribute(ATTR_HEIGHT);
+          if (!attribute.isEmpty()) {
+              o->addCSSLength(CSS_PROP_HEIGHT, attribute);
+          }
+          url = embed->url;
+          serviceType = embed->serviceType;
+      } else {
+          embedOrObject = (HTMLElementImpl *)o;
+      }
+      
+      // If there was no URL or type defined in EMBED, try the OBJECT tag.
+      if (url.isEmpty()) {
+          url = o->url;
+      }
+      if (serviceType.isEmpty()) {
+          serviceType = o->serviceType;
+      }
+      
+      // Then try the PARAM tags for the URL and type attributes.
+      NodeImpl *child = o->firstChild();
+      while (child && (url.isEmpty() || serviceType.isEmpty())) {
+          if (child->id() == ID_PARAM) {
+              HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
+              QString name = p->name().lower();
+              if (url.isEmpty() && (name == "src" || name == "movie"|| name == "code")) {
+                  url = p->value();
+              }
+              if (serviceType.isEmpty() && name == "type") {
+                  serviceType = p->value();
+              }
+              
+          }
+          child = child->nextSibling();
+      }
+      
+      // Lastly try to map a specific CLASSID to a type.
+      if (serviceType.isEmpty() && !o->classId.isEmpty()) {
+          if (o->classId.contains("D27CDB6E-AE6D-11cf-96B8-444553540000")) {
               // It is ActiveX, but the nsplugin system handling
               // should also work, that's why we don't override the
               // serviceType with application/x-activex-handler
@@ -751,72 +745,41 @@ void RenderPartObject::updateWidget()
               // the user's preference: launch with activex viewer or
               // with nspluginviewer (Niko)
               serviceType = "application/x-shockwave-flash";
-          }
-          else if(o->classId.contains(QString::fromLatin1("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")))
+          } else if(o->classId.contains("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")) {
               serviceType = "audio/x-pn-realaudio-plugin";
-          else if(o->classId.contains(QString::fromLatin1("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")))
+          } else if(o->classId.contains("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")) {
               serviceType = "video/quicktime";
-          else if(o->classId.contains(QString::fromLatin1("166B1BCA-3F9C-11CF-8075-444553540000")))
+          } else if(o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
               serviceType = "application/x-director";
-          
+          } else {
+              // We have a clsid, means this is activex (Niko)
+              serviceType = "application/x-activex-handler";
+          }
           // TODO: add more plugins here
       }
-
-      if ( !embed ) {
-          if((url.isEmpty() || url.isNull())) {
-              // look for a SRC attribute in the params
-              NodeImpl *child = o->firstChild();
-              while ( child ) {
-                  if ( child->id() == ID_PARAM ) {
-                      HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
-
-                      if ( p->name().lower()==QString::fromLatin1("src") ||
-                           p->name().lower()==QString::fromLatin1("movie") ||
-                           p->name().lower()==QString::fromLatin1("code") )
-                      {
-                          url = p->value();
-                          break;
-                      }
-                  }
-                  child = child->nextSibling();
-              }
-          }
-
-
-          if ( url.isEmpty() && serviceType.isEmpty() ) {
+      
+      // If no URL and type, abort.
+      if (url.isEmpty() && serviceType.isEmpty()) {
 #ifdef DEBUG_LAYOUT
-              kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;
+          kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;
 #endif
-              return;
-          }
-          part->requestObject( this, url, serviceType, params );
+          return;
       }
-      else {
-          // render embed object
-          if ( url.isEmpty() && serviceType.isEmpty() ) {
-#ifdef DEBUG_LAYOUT
-              kdDebug() << "RenderPartObject::close - empty url and serverType" << endl;
-#endif
-              return;
+      
+      // Turn the attributes of either the EMBED tag or OBJECT tag into an array.
+      NamedAttrMapImpl* attributes = embedOrObject->attributes();
+      if (attributes) {
+          for (unsigned long i = 0; i < attributes->length(); ++i) {
+              AttributeImpl* it = attributes->attributeItem(i);
+              params.append(o->getDocument()->attrName(it->id()).string() + "=\"" + it->value().string() + "\"");
           }
-
-          // The EMBED attributes must override the PARAM attributes. This mimics IE's behavior.
-          NamedAttrMapImpl* attributes = embed->attributes();
-          for (unsigned long index = 0; index < attributes->length(); ++index) {
-              AttributeImpl* attribute = attributes->attributeItem(index);
-              QString attributeName = embed->getDocument()->attrName(attribute->id()).string();
-              for (unsigned long n = 0; n < params.count(); ++n) {
-                  if (params[n].lower().startsWith(attributeName.lower() + "=\"")) {
-                      params.remove(params[n]);
-                  }
-              }
-              params.append(attributeName + "=\"" + attribute->value().string() + "\"");
-          }
-
-          part->requestObject( this, url, serviceType, params );
       }
-  }
-  else if ( element()->id() == ID_EMBED ) {
+      
+      params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
+      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
+      
+      part->requestObject( this, url, serviceType, params );
+  } else if ( element()->id() == ID_EMBED ) {
 
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());
       url = o->url;

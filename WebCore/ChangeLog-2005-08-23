@@ -1,3 +1,12 @@
+2003-08-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3379336>: flash on front page of http://www.westportmotorsports.com is broken
+
+        Reviewed by darin.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): Ignore the PARAM tags and only use attributes inside the OBJECT tag when the EMBED tag is omitted.
+
 2003-08-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
