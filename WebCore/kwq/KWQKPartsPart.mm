@@ -31,8 +31,9 @@ void Part::customEvent(QCustomEvent *)
 {
 }
 
-void Part::setName(const QString &name)
+void ReadOnlyPart::setName(const QString &name)
 {
     _name = name; 
 }
-    
+
+};

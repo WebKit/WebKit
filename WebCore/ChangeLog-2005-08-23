@@ -1,5 +1,12 @@
 2003-10-28  Maciej Stachowiak  <mjs@apple.com>
 
+        Fixed broken build.
+
+        * kwq/KWQKPartsPart.mm:
+        (KParts::ReadOnlyPart::setName): It's a ReadOnlyPart method, not a Part method.
+
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John.
 
 	- fixed 3427046 - href and src attributes don't always give resolved URL
