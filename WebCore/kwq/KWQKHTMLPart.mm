@@ -80,6 +80,7 @@
 - (id <IFWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
 - frameNamed: (NSString *)f;
+- (void)_setParent: (IFWebDataSource *)p;
 @end
 
 // This should not be allowed here.  data source should not reference view
@@ -91,6 +92,9 @@
 @interface IFWebFrame: NSObject
 - initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d;
 - view;
+- (IFWebDataSource *)dataSource;
+- (void)_setRenderFramePart: (void *)p;
+- (void *)_renderFramePart;
 @end
 
 
@@ -1297,8 +1301,18 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         dataSource = getDataSource();
         frame = [dataSource frame];
         controller = [dataSource controller];
+        
+        // FIXME:  Factor this into a function.
         if ([controller locationWillChangeTo: url forFrame: frame]){
             [controller changeLocationTo: url forFrame: frame];
+
+            // This introduces a nasty dependency on the view.
+            khtml::RenderPart *renderPartFrame = [frame _renderFramePart];
+            if (renderPartFrame)
+                renderPartFrame->setWidget ([[frame view] _widget]);
+
+            [[frame dataSource] startLoading: YES];
+
             [controller locationChangeStartedForFrame: frame];
         }
 
@@ -1568,6 +1582,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         dataSource = getDataSource();
         controller = [dataSource controller];
         newFrame = [controller createFrameNamed: nsframeName for: nil inParent: dataSource];
+        [newFrame _setRenderFramePart: frame];
     
 
         if ([controller locationWillChangeTo: childURL forFrame: newFrame]){
@@ -1576,6 +1591,10 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
             // This introduces a nasty dependency on the view.
             frame->setWidget ([[newFrame view] _widget]);
 
+            [[newFrame dataSource] _setParent: dataSource];
+            
+            [[newFrame dataSource] startLoading: YES];
+            
             [controller locationChangeStartedForFrame: newFrame];
         }
     }
