@@ -1,3 +1,12 @@
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3174769 -- Safari doesn't ignore byte order mark at start of UTF-8 HTML document
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Added handling of the UTF-8 BOM
+        to the code that already handled the UTF-16 BOM.
+
 2003-05-06  David Hyatt  <hyatt@apple.com>
 
 	The purpose of this patch is to unify XML and HTML documents' root

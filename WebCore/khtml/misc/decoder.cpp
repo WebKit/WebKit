@@ -366,22 +366,46 @@ static void skipComment(const char *&ptr, const char *pEnd)
 
 QString Decoder::decode(const char *data, int len)
 {
-    // Check for BOM mark at the beginning, which is a sure sign of some kind of 16-bit Unicode.
-    if (beginning && buffer.length() + len >= 2) {
+    // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
+    int bufferLength = buffer.length();
+    const int UTF8BOMLength = 3;
+    const int maximumBOMLength = 3;
+    if (beginning && bufferLength + len >= maximumBOMLength) {
         if (m_type != UserChosenEncoding) {
+            // Extract the first three bytes.
+            // Handle the case where some of bytes are already in the buffer.
+            // The last byte is always guaranteed to not be in the buffer.
             const uchar *udata = (const uchar *)data;
-            uchar c1;
-            if (buffer.length() != 0) {
-                assert(buffer.length() == 1);
-                c1 = buffer[0];
-            } else {
-                c1 = *udata++;
-            }
-            uchar c2 = *udata;
+            uchar c1 = bufferLength >= 1 ? (uchar)buffer[0] : *udata++;
+            uchar c2 = bufferLength >= 2 ? (uchar)buffer[1] : *udata++;
+            assert(bufferLength < 3);
+            uchar c3 = *udata;
+
+            // Check for the BOM.
+            const char *autoDetectedEncoding;
             if ((c1 == 0xFE && c2 == 0xFF) || (c1 == 0xFF && c2 == 0xFE)) {
-                enc = "ISO-10646-UCS-2";
+                autoDetectedEncoding = "ISO-10646-UCS-2";
+
+                // Leave the BOM in place, because the decoder knows how to
+                // discard it, and it uses it to figure out byte ordering.
+            } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
+                autoDetectedEncoding = "UTF-8";
+
+                // Consume the three-byte UTF-8 BOM, so that the decoder does not have to.
+                buffer.truncate(0);
+                int bytesInData = UTF8BOMLength - bufferLength;
+                len -= bytesInData;
+                data += bytesInData;
+            } else {
+                autoDetectedEncoding = 0;
+            }
+
+            // If we found a BOM, use the encoding it implies.
+            if (autoDetectedEncoding != 0) {
                 m_type = AutoDetectedEncoding;
-                m_codec = QTextCodec::codecForName(enc);
+                m_codec = QTextCodec::codecForName(autoDetectedEncoding);
+                assert(m_codec);
+                enc = m_codec->name();
                 delete m_decoder;
                 m_decoder = m_codec->makeDecoder();
             }
@@ -533,7 +557,7 @@ QString Decoder::decode(const char *data, int len)
  found:
 #if APPLE_CHANGES
     // Do the auto-detect if our default encoding is one of the Japanese ones.
-    if (m_type != UserChosenEncoding && m_codec && m_codec->isJapanese())
+    if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_codec && m_codec->isJapanese())
 #else
     if (m_type == DefaultEncoding && KGlobal::locale()->languageList()[0] == "ja")
 #endif
@@ -560,7 +584,7 @@ QString Decoder::decode(const char *data, int len)
 	kdDebug( 6005 ) << "Decoder: auto detect encoding is "
             << (autoDetectedEncoding ? autoDetectedEncoding : "NULL") << endl;
 #endif
-	if (autoDetectedEncoding != NULL) {
+	if (autoDetectedEncoding != 0) {
 	    setEncoding(autoDetectedEncoding, AutoDetectedEncoding);
 	}
     }
