@@ -17,10 +17,11 @@
 {
     NSCursor *cursor;
     BOOL disallowsScrolling;
+    BOOL suppressLayout;
 }
 
 - (void)setAllowsScrolling:(BOOL)flag;
 - (BOOL)allowsScrolling;
 - (void)updateScrollers;
-
+- (void)setSuppressLayout: (BOOL)flag;
 @end

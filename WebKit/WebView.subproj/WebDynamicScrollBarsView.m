@@ -13,6 +13,11 @@
 
 @implementation WebDynamicScrollBarsView
 
+- (void)setSuppressLayout: (BOOL)flag;
+{
+    suppressLayout = flag;
+}
+
 - (void)updateScrollers
 {
     // We need to do the work below twice in the case where a scroll bar disappears,
@@ -27,6 +32,9 @@
     BOOL oldHasVertical = hasVerticalScroller;
     BOOL oldHasHorizontal = hasHorizontalScroller;
     
+    if (suppressLayout)
+        return; 
+        
     for (pass = 0; pass < 2; pass++) {
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;

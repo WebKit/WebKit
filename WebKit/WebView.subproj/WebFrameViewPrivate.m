@@ -66,7 +66,11 @@
 
 - (void)_setDocumentView:(id)view
 {
-    [[self frameScrollView] setDocumentView: view];    
+    WebDynamicScrollBarsView *sv = [self frameScrollView];
+    
+    [sv setSuppressLayout: YES];
+    [sv setDocumentView: view];    
+    [sv setSuppressLayout: NO];
 }
 
 -(id <WebDocumentView>)_makeDocumentViewForDataSource:(WebDataSource *)dataSource

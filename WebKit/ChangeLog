@@ -1,3 +1,20 @@
+2003-01-03  Richard Williamson   <rjw@apple.com>
+
+        Fix to 3131226.  Don't force a layout when the document view is set 
+        on the page's scrollview.  A layout would occur indirectly as a result
+        of reflectScrolledClipView: being called when the document view
+        was set.  The khtmlpart/khtmlview/WebHTMLView would be out of sync
+        at this point and a layout would have unintended and incorrect
+        side effects.
+        
+        Reviewed by Darin (and tested by John).
+
+        * WebView.subproj/WebDynamicScrollBarsView.h:
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _setDocumentView:]):
+
 === Alexander-48 ===
 
 2003-01-02  Richard Williamson   <rjw@apple.com>
