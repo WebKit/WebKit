@@ -434,8 +434,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return Undefined();
       }
     case InnerHeight:
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->visibleHeight());
     case InnerWidth:
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->visibleWidth());
     case Length:
       return Number(m_part->frames().count());
@@ -470,8 +474,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
                     inf.geometry.height() : inf.geometry.width());
     }
     case PageXOffset:
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->contentsX());
     case PageYOffset:
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->contentsY());
     case Parent:
       return Value(retrieve(m_part->parentPart() ? m_part->parentPart() : (KHTMLPart*)m_part));
@@ -479,18 +487,26 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       return Undefined(); // ###
     case ScreenLeft:
     case ScreenX: {
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
+      if (!m_part->view())
+        return Undefined();
+      QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
     }
     case ScreenTop:
     case ScreenY: {
-	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
+      if (!m_part->view())
+        return Undefined();
+      QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
     }
     case ScrollX: {
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->contentsX());
     }
     case ScrollY: {
+      if (!m_part->view())
+        return Undefined();
       return Number(m_part->view()->contentsY());
     }
     case Scrollbars:

@@ -1,3 +1,32 @@
+2002-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3127898 -- Crash going to altavista.com after visiting sony.com
+
+        * khtml/ecma/kjs_window.cpp: (Window::get): Change lots of properties to return "undefined"
+	rather than crashing when the view is NULL. I'm not sure that undefined is the perfect thing
+	to return in this case, but it's better than crashing the program. We can refine later as needed.
+
+	- fixed 3127157 -- REGRESSION: applet does not become first responder when clicked-on
+	- fixed 3127934 -- Crash in KWQKHTMLPart::widgetWillReleaseView scrolling around
+
+        * kwq/KWQKHTMLPart.h: Get rid of widgetWillReleaseView(). Add mouseDownViewIfStillGood().
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Call makeFirstResponder: in the same way that
+	the NSWindow does before delivering a mouseDown: message. This oversight caused the applet problem.
+        (findViewInSubviews): Added.
+        (KWQKHTMLPart::mouseDownViewIfStillGood): Added. Gets _mouseDownView, but then checks that it's
+	still a subview before returning it. A little inefficient, but the only way to do it given that
+	there's no general way to find out that an NSView is being removed from your view hierarchy or deallocated.
+	This fixes the crash in widgetWillReleaseView.
+        (KWQKHTMLPart::khtmlMouseMoveEvent): Use mouseDownViewIfStillGood() instead of _mouseDownView directly.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Ditto.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Ditto.
+        * kwq/KWQWidget.mm:
+        (QWidget::~QWidget): Remove call to widgetWillReleaseView().
+        (QWidget::setView): Ditto.
+
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
 	operator== on CSSSelectors needed to be updated to compare

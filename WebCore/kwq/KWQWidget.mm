@@ -72,7 +72,6 @@ QWidget::QWidget(NSView *view)
 
 QWidget::~QWidget() 
 {
-    KWQKHTMLPart::widgetWillReleaseView(data->view);
     [data->view release];
     delete data;
 }
@@ -349,7 +348,6 @@ void QWidget::setView(NSView *view)
         return;
     }
     
-    KWQKHTMLPart::widgetWillReleaseView(getOuterView());
     [data->view release];
     data->view = [view retain];
 }

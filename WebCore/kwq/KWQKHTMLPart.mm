@@ -764,7 +764,13 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
         return false;
     }
-    
+
+    // Normally [NSWindow sendEvent:] handles this.
+    // But in our case, the event was sent to the view representing the entire web page.
+    if ([view acceptsFirstResponder]) {
+        [[view window] makeFirstResponder:view];
+    }
+
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
@@ -777,40 +783,67 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     return true;
 }
 
+// Note that this does the same kind of check as [target isDescendantOf:superview].
+// There are two differences: This is a lot slower because it has to walk the whole
+// tree, and this works in cases where the target has already been deallocated.
+static bool findViewInSubviews(NSView *superview, NSView *target)
+{
+    NSEnumerator *e = [[superview subviews] objectEnumerator];
+    NSView *subview;
+    while ((subview = [e nextObject])) {
+        if (subview == target || findViewInSubviews(subview, target))
+            return true;
+    }
+    return false;
+}
+
+NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
+{
+    // Since we have no way of tracking the lifetime of _mouseDownView, we have to assume that
+    // it could be deallocated already. We search for it in our subview tree; if we don't find
+    // it, we set it to nil.
+    NSView *mouseDownView = _mouseDownView;
+    if (!mouseDownView) {
+        return nil;
+    }
+    KHTMLView *topKHTMLView = d->m_view;
+    NSView *topView = topKHTMLView ? topKHTMLView->getView() : nil;
+    if (!topView || !findViewInSubviews(topView, mouseDownView)) {
+        _mouseDownView = nil;
+        return nil;
+    }
+    return mouseDownView;
+}
+
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 {
-    if (!_mouseDownView || [_currentEvent type] != NSLeftMouseDragged) {
+    NSView *view;
+    if ([_currentEvent type] != NSLeftMouseDragged) {
+        view = nil;
+    } else {
+    	view = mouseDownViewIfStillGood();
+    }
+    if (!view) {
         KHTMLPart::khtmlMouseMoveEvent(event);
         return;
     }
     
     _sendingEventToSubview = true;
-    [_mouseDownView mouseDragged:_currentEvent];
+    [view mouseDragged:_currentEvent];
     _sendingEventToSubview = false;
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
 {
-    if (!_mouseDownView) {
+    NSView *view = mouseDownViewIfStillGood();
+    if (!view) {
         KHTMLPart::khtmlMouseReleaseEvent(event);
         return;
     }
     
     _sendingEventToSubview = true;
-    [_mouseDownView mouseUp:_currentEvent];
+    [view mouseUp:_currentEvent];
     _sendingEventToSubview = false;
-}
-
-void KWQKHTMLPart::widgetWillReleaseView(NSView *view)
-{
-    if (view == nil) {
-        return;
-    }
-    for (QPtrListIterator<KWQKHTMLPart> it(instances()); it.current(); ++it) {
-        if ([it.current()->_mouseDownView isDescendantOf:view]) {
-            it.current()->_mouseDownView = nil;
-        }
-    }
 }
 
 void KWQKHTMLPart::clearTimers(KHTMLView *view)
@@ -844,24 +877,34 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
             _mouseDownWasInSubframe = true;
             return true;
         }
-        case NSLeftMouseUp:
-            if (!(_mouseDownView && _mouseDownWasInSubframe)) {
+        case NSLeftMouseUp: {
+            if (!_mouseDownWasInSubframe) {
+                return false;
+            }
+            NSView *view = mouseDownViewIfStillGood();
+            if (!view) {
                 return false;
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-            [_mouseDownView mouseUp:_currentEvent];
+            [view mouseUp:_currentEvent];
             _sendingEventToSubview = false;
             return true;
-        case NSLeftMouseDragged:
-            if (!(_mouseDownView && _mouseDownWasInSubframe)) {
+        }
+        case NSLeftMouseDragged: {
+            if (!_mouseDownWasInSubframe) {
+                return false;
+            }
+            NSView *view = mouseDownViewIfStillGood();
+            if (!view) {
                 return false;
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-            [_mouseDownView mouseDragged:_currentEvent];
+            [view mouseDragged:_currentEvent];
             _sendingEventToSubview = false;
             return true;
+        }
         default:
             return false;
     }

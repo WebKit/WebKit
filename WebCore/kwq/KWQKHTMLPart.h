@@ -147,8 +147,6 @@ public:
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
     
-    static void widgetWillReleaseView(NSView *);
-    
     void clearTimers();
     static void clearTimers(KHTMLView *);
     
@@ -171,6 +169,8 @@ private:
     bool passWidgetMouseDownEventToWidget(khtml::RenderWidget *);
 
     void setPolicyBaseURL(const DOM::DOMString &);
+    
+    NSView *mouseDownViewIfStillGood();
 
     WebCoreBridge *bridgeForFrameName(const QString &frameName);
 
