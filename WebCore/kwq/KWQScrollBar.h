@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQSCROLLVIEW_H_
-#define KWQSCROLLVIEW_H_
+#ifndef KWQSCROLLBAR_H_
+#define KWQSCROLLBAR_H_
 
 #include <qwidget.h>
 #include <qpalette.h>

@@ -1,54 +1,6 @@
-NULL =
-
-noinst_LIBRARIES = libkhtmlhtml.o
-LDFLAGS = -Wl,-r -nostdlib
-libkhtmlhtml_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
-
-libkhtmlhtml_o_SOURCES = \
-	dtd.cpp \
-	dtd.h \
-	html_baseimpl.cpp \
-	html_baseimpl.h \
-	html_blockimpl.cpp \
-	html_blockimpl.h \
-	html_documentimpl.cpp \
-	html_documentimpl.h \
-	html_elementimpl.cpp \
-	html_elementimpl.h \
-	html_formimpl.cpp \
-	html_formimpl.h \
-	html_headimpl.cpp \
-	html_headimpl.h \
-	html_imageimpl.cpp \
-	html_imageimpl.h \
-	html_inlineimpl.cpp \
-	html_inlineimpl.h \
-	html_listimpl.cpp \
-	html_listimpl.h \
-	html_miscimpl.cpp \
-	html_miscimpl.h \
-	html_objectimpl.cpp \
-	html_objectimpl.h \
-	html_tableimpl.cpp \
-	html_tableimpl.h \
-	htmlparser.cpp \
-	htmlparser.h \
-	htmltokenizer.cpp \
-	htmltokenizer.h \
-	$(NULL)
-
-INCLUDES = \
-	-I$(top_srcdir)/WebCore \
-	$(KWQ_INCLUDES) \
-	$(KDELIBS_INCLUDES) \
-	-I. \
-	$(NULL)
-
-noinst_HEADERS = kentities.c
-
 kentities.c: kentities.gperf
 	$(GPERF) -a -L "ANSI-C" -C -G -c -o -t -k '*' -NfindEntity -D -s 2 $< > $@
 
+noinst_HEADERS = kentities.c
 BUILT_SOURCES = $(noinst_HEADERS)
-
 CLEANFILES = $(BUILT_SOURCES)

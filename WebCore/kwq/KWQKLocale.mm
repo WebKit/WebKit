@@ -28,8 +28,8 @@
 
 QString i18n(const char* text)
 {
-    NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
-    NSString *locString = [wkBundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    NSString *locString = [bundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
     return NSSTRING_TO_QSTRING(locString);
 }
 

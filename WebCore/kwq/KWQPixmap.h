@@ -64,7 +64,7 @@ public:
     void resize(int, int);
 
     QPixmap xForm(const QWMatrix &) const;
-    QImage convertToImage() const;
+    QImage convertToImage() const { return QImage(); }
     
     bool mask() const;
 

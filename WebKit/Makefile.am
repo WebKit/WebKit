@@ -4,7 +4,7 @@ clean-am:
 	pbxbuild clean
 
 previous-clean-timestamp: force-clean-timestamp
-	pbxbuild clean && touch $@
+	make clean && touch $@
 
 FRAMEWORK_NAME = WebKit
 include $(top_srcdir)/embed.am

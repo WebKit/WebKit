@@ -25,7 +25,6 @@
 
 #import <qpixmap.h>
 #import <kwqdebug.h>
-#import <qbitmap.h>
 
 #import <WebCoreImageRenderer.h>
 #import <WebCoreImageRendererFactory.h>
@@ -38,24 +37,23 @@ QPixmap::QPixmap()
 
 QPixmap::QPixmap(const QSize &sz)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize((float)sz.width(), (float)sz.height())] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(sz.width(), sz.height())] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes: bytes.data() length: bytes.size()] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize(w, h)] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)] retain];
     needCopyOnWrite = false;
 }
 
-QPixmap::QPixmap(const QPixmap &copyFrom)
-    : QPaintDevice(copyFrom)
+QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 {
     imageRenderer = [copyFrom.imageRenderer retain];
     copyFrom.needCopyOnWrite = true;
@@ -73,7 +71,7 @@ bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
     if (imageRenderer == nil) {
         imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
     }
-    return [imageRenderer incrementalLoadWithBytes: bytes.data() length: bytes.size() complete: isComplete];
+    return [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete];
 }
 
 bool QPixmap::mask() const
@@ -121,24 +119,18 @@ void QPixmap::resize(int w, int h)
         imageRenderer = newImageRenderer;
         needCopyOnWrite = false;
     }
-    [imageRenderer resize: NSMakeSize((float)w, (float)h)];
+    [imageRenderer resize:NSMakeSize(w, h)];
 }
 
 QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 {
     // This function is only called when an image needs to be scaled.  
     // We can depend on render_image.cpp to call resize AFTER
-    // creating a copy of the image to be scaled.   So, this
-    // implementation simply returns a copy of the image.  Note,
+    // creating a copy of the image to be scaled. So, this
+    // implementation simply returns a copy of the image. Note,
     // this implementation depends on the implementation of
     // RenderImage::printObject.   
     return *this;
-}
-
-QImage QPixmap::convertToImage() const
-{
-    _logNotYetImplemented();
-    return QImage();
 }
 
 QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
@@ -151,9 +143,7 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     return *this;
 }
 
-
 void QPixmap::stopAnimations()
 {
     [imageRenderer stopAnimation];
 }
- 

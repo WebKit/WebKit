@@ -4,6 +4,3 @@ KWQCharsetData.c
 mac-encodings.txt
 make-mac-encodings
 .deps
-.libs
-*.lo
-*.la

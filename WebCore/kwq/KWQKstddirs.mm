@@ -27,20 +27,11 @@
 
 QString locate(const char *type, const QString& filename, const KInstance* instance)
 {
-    NSString *file = [filename.getNSString() lastPathComponent];
-    
-    if ([file isEqualToString:@"html4.css"]) {
-        // FIXME: This logic needs to be in WebKit, not here.
-        NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
-        return NSSTRING_TO_QSTRING([wkBundle pathForResource:@"html4" ofType:@"css"]);
-    } else {
-        // FIXME: This does no good.
-        return "/symroots/appdata/" + filename;
-    }
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    return QString::fromNSString([bundle pathForResource:@"html4" ofType:@"css"]);
 }
 
 QString locateLocal(const char *type, const QString &filename, const KInstance *instance)
 {
-    // FIXME: This does no good.
-    return "/symroots/appdata/"+filename;
+    return QString();
 }

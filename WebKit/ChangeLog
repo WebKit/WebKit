@@ -1,3 +1,15 @@
+2002-07-12  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Don't include the html4.css file
+	from WebCore any more. WebCore handles this on its own now. Also,
+	don't include the document templates; we don't use them any more.
+
+        * Resources/image_document_template.html: Removed.
+        * Resources/plugin_document_template.html: Removed.
+        * Resources/text_document_template.html: Removed.
+
+        * Makefile.am: Small tweak to the force-clean-timestamp logic.
+
 2002-07-11  Chris Blumenberg  <cblu@apple.com>
 
 Fix for:

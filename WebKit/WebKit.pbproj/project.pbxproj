@@ -123,7 +123,6 @@
 				0867D69EFE84028FC02AAC07,
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
-				0867D6A2FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
 			);
 			buildSettings = {
@@ -134,6 +133,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
@@ -267,13 +267,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				089C1668FE841158C02AAC07,
-				35F3577501986B740ACA1520,
 				35F357800198AAB80ACA1520,
 				F5B67131023EDF8901C1A525,
-				25B2A7C5025D0A880ECA149E,
 				F5883BDF025E5C6A01000102,
-				F5E638640265FC0D01000102,
-				F5E638650265FC0D01000102,
 				F599A818028C6D0D0124FDD6,
 				F8CA15C0029A39FC01000122,
 			);
@@ -351,31 +347,19 @@
 				F5C287BB02846DCD018635CA,
 				F5C287BC02846DCD018635CA,
 				F5C287BD02846DCD018635CA,
-				F82162D7029F4FB501000131,
 				F82162D8029F4FB501000131,
 				F82162D9029F4FB501000131,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0867D6A2FE84028FC02AAC07 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		089C1665FE841158C02AAC07 = {
 			children = (
 				35F3577E0198AAB80ACA1520,
 				089C1666FE841158C02AAC07,
-				35F3577401986B740ACA1520,
 				F599A817028C6D0D0124FDD6,
 				F5B67130023EDF8901C1A525,
 				F5883BDE025E5C6A01000102,
-				25B2A7C4025D0A880ECA149E,
-				F5E638620265FC0D01000102,
-				F5E638630265FC0D01000102,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -511,18 +495,6 @@
 			name = History;
 			path = History.subproj;
 			refType = 4;
-		};
-		25B2A7C4025D0A880ECA149E = {
-			isa = PBXFileReference;
-			name = image_document_template.html;
-			path = Resources/image_document_template.html;
-			refType = 4;
-		};
-		25B2A7C5025D0A880ECA149E = {
-			fileRef = 25B2A7C4025D0A880ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		25C29825016E29620ECA149E = {
 			isa = PBXFileReference;
@@ -725,18 +697,6 @@
 		};
 		35081DAF02B6D4F50ACA2ACA = {
 			fileRef = 35081DAE02B6D4F50ACA2ACA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		35F3577401986B740ACA1520 = {
-			isa = PBXFileReference;
-			name = html4.css;
-			path = ../WebCore/khtml/css/html4.css;
-			refType = 2;
-		};
-		35F3577501986B740ACA1520 = {
-			fileRef = 35F3577401986B740ACA1520;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2053,30 +2013,6 @@
 			settings = {
 			};
 		};
-		F5E638620265FC0D01000102 = {
-			isa = PBXFileReference;
-			name = plugin_document_template.html;
-			path = Resources/plugin_document_template.html;
-			refType = 4;
-		};
-		F5E638630265FC0D01000102 = {
-			isa = PBXFileReference;
-			name = text_document_template.html;
-			path = Resources/text_document_template.html;
-			refType = 4;
-		};
-		F5E638640265FC0D01000102 = {
-			fileRef = F5E638620265FC0D01000102;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5E638650265FC0D01000102 = {
-			fileRef = F5E638630265FC0D01000102;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5EBC45202134BB601CA1520 = {
 			children = (
 				F5EBC45502134BC301CA1520,
@@ -2328,12 +2264,6 @@
 			isa = PBXFrameworkReference;
 			path = WebFoundation.framework;
 			refType = 3;
-		};
-		F82162D7029F4FB501000131 = {
-			fileRef = F8216299029F4FB501000131;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F82162D8029F4FB501000131 = {
 			fileRef = F821629A029F4FB501000131;

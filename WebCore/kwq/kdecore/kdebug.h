@@ -35,25 +35,25 @@ typedef kdbgstream & (*KDBGFUNC)(kdbgstream &);
 
 class kdbgstream {
 public:
-    kdbgstream(unsigned int area, unsigned int level, bool print=true);
+    kdbgstream(unsigned int area = 0, unsigned int level = 0, bool print = true) { }
     
-    kdbgstream &operator<<(int);
-    kdbgstream &operator<<(const char *);
-    kdbgstream &operator<<(const void *);
-    kdbgstream &operator<<(const QString &);
-    kdbgstream &operator<<(const QCString &);
-    kdbgstream &operator<<(KDBGFUNC);
+    kdbgstream &operator<<(int) { return *this; }
+    kdbgstream &operator<<(const char *) { return *this; }
+    kdbgstream &operator<<(const void *) { return *this; }
+    kdbgstream &operator<<(const QString &) { return *this; }
+    kdbgstream &operator<<(const QCString &) { return *this; }
+    kdbgstream &operator<<(KDBGFUNC) { return *this; }
 };
 
-inline kdbgstream &endl(kdbgstream &s) { s << "\n"; return s; }
+inline kdbgstream &endl(kdbgstream &s) { return s; }
 
-kdbgstream kdDebug(int area = 0);
-kdbgstream kdWarning(int area = 0);
-kdbgstream kdWarning(bool cond, int area = 0);
-kdbgstream kdError(int area = 0);
-kdbgstream kdError(bool cond, int area = 0);
-kdbgstream kdFatal(int area = 0);
-kdbgstream kdFatal(bool cond, int area = 0);
-QString kdBacktrace();
+inline kdbgstream kdDebug(int area = 0) { return kdbgstream(); }
+inline kdbgstream kdWarning(int area = 0) { return kdbgstream(); }
+inline kdbgstream kdWarning(bool cond, int area = 0) { return kdbgstream(); }
+inline kdbgstream kdError(int area = 0) { return kdbgstream(); }
+inline kdbgstream kdError(bool cond, int area = 0) { return kdbgstream(); }
+inline kdbgstream kdFatal(int area = 0) { return kdbgstream(); }
+inline kdbgstream kdFatal(bool cond, int area = 0) { return kdbgstream(); }
+inline QString kdBacktrace() { return QString(); }
 
 #endif

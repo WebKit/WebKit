@@ -1,3 +1,65 @@
+2002-07-12  Darin Adler  <darin@apple.com>
+
+	Build WebCore with Project Builder instead of make.
+	Also wean WebCore from peeking inside the WebKit bundle.
+
+        * WebCore.pbproj/.cvsignore: Added.
+        * WebCore.pbproj/project.pbxproj: Added.
+
+        * Makefile.am: Removed rules about building the framework,
+	and just use pbxbuild instead.
+
+        * dummy.mm: Removed.
+
+        * khtml/Makefile.am: Removed everything but SUBDIRS.
+        * khtml/css/Makefile.am: Removed everything but the rules for
+	generated sources.
+        * khtml/dom/Makefile.am: Removed.
+        * khtml/ecma/Makefile.am: Removed everything but the rules for
+	generated sources.
+        * khtml/html/Makefile.am: Removed everything but the rules for
+	generated sources.
+        * khtml/misc/Makefile.am: Removed everything but the rules for
+	generated sources.
+        * khtml/rendering/Makefile.am: Removed.
+        * khtml/xml/Makefile.am: Removed.
+        * kwq/Makefile.am: Removed everything but the rules for
+	generated sources.
+
+        * kwq/KWQKLocale.mm: (i18n): Look in WebCore bundle, not WebKit bundle.
+        * kwq/KWQKstddirs.mm:
+        (locate): Look in WebCore bundle, not WebKit bundle. Also, always assume
+	we are looking for html4.css.
+        (locateLocal): Don't waste code making a bad path, just return empty string.
+
+        * kwq/qt/qpixmap.h:
+        * kwq/KWQPixmap.mm: Changed convertToImage() to an inline since we
+	never need to implement it.
+
+        * kwq/KWQKDebug.mm: Removed.
+        * kwq/KWQKImageIO.mm: Removed.
+        * kwq/kdecore/kcmdlineargs.h: Emptied out the file.
+        * kwq/kdecore/kdebug.h: Made the do-nothing code here all be
+	inlines for smaller code size.
+
+        * kwq/KWQScrollBar.h: Fixed header guard.
+
+        * .cvsignore:
+        * kwq/.cvsignore:
+        * khtml/dom/.cvsignore: Removed.
+        * khtml/rendering/.cvsignore: Removed.
+        * khtml/xml/.cvsignore: Removed.
+        * kwq/kdecore/.cvsignore: Removed.
+        * kwq/qt/.cvsignore: Removed.
+	Don't ignore things we don't generate any more.
+
+        * kwq/kjs/collector.h: Added.
+        * kwq/kjs/internal.h: Added.
+        * kwq/kjs/interpreter.h: Added.
+        * kwq/kjs/lookup.h: Added.
+        * kwq/kjs/object.h: Added.
+	Used so that khtml can see the headers from JavaScriptCore.
+
 2002-07-11  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed Radar 2953254 - JavaScript window.scroll() and
