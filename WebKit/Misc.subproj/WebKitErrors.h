@@ -13,7 +13,7 @@ extern NSString * const WebKitErrorPlugInPageURLStringKey;
 
 /*!
     @enum
-    @description Policy errors
+    @abstract Policy errors
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
     @constant WebKitErrorFrameLoadInterruptedByPolicyChange
@@ -26,7 +26,7 @@ enum {
 
 /*!
     @enum
-    @description Plug-in and java errors
+    @abstract Plug-in and java errors
     @constant WebKitErrorCannotFindPlugin
     @constant WebKitErrorCannotLoadPlugin
     @constant WebKitErrorJavaUnavailable

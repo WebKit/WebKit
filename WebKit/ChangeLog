@@ -1,3 +1,10 @@
+2003-04-27  Chris Blumenberg  <cblu@apple.com>
+
+	Improved headerdoc comments.	
+
+        * Misc.subproj/WebKitErrors.h:
+        * WebView.subproj/WebFrameLoadDelegate.h:
+
 2003-04-25  Don Melton  <gramps@apple.com>
 
 	Backed out Richard's (hopefully) accidental checkin of our experiments
