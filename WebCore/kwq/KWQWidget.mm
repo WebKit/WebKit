@@ -83,7 +83,7 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    internalSetGeometry( data->rect.x(), data->rect.y(), w, h, FALSE );
+    internalSetGeometry( data->rect.x(), data->rect.y(), w, h, TRUE );
 }
 
 void QWidget::setActiveWindow() 
@@ -226,9 +226,9 @@ void QWidget::setFocusPolicy(FocusPolicy fp)
 }
 
 
-void QWidget::setFocusProxy( QWidget * )
+void QWidget::setFocusProxy( QWidget *w)
 {
-    _logNeverImplemented();
+    data->focusPolicy = w->focusPolicy();
 }
 
 
@@ -271,7 +271,7 @@ void QWidget::setStyle(QStyle *style)
 
 QFont QWidget::font() const
 {
-    _logNotYetImplemented();
+    return *data->font;
 }
 
 
@@ -361,7 +361,7 @@ void QWidget::setCRect( const QRect &r )
     data->rect = r;
 }
 
-void QWidget::internalSetGeometry( int x, int y, int w, int h, bool isMove )
+void QWidget::internalSetGeometry( int x, int y, int w, int h, bool updateView )
 {
     if ( w < 1 )				// invalid size
 	w = 1;
@@ -379,11 +379,10 @@ void QWidget::internalSetGeometry( int x, int y, int w, int h, bool isMove )
 
     setCRect( r );
 
-    bool isResize = size() != oldSize;
-
-    // FIXME!  First approximation.  May need to translate coordinates.
-    [data->view setFrame: NSMakeRect (data->rect.x(), data->rect.y(), data->rect.width(), data->rect.height())];
+    if (updateView != FALSE)
+        [data->view setFrame: NSMakeRect (data->rect.x(), data->rect.y(), data->rect.width(), data->rect.height())];
 }
+
 
 void QWidget::showEvent(QShowEvent *)
 {
@@ -460,14 +459,35 @@ void QWidget::paint (void *)
 }
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-NSView *QWidget::getView()
+NSView *QWidget::getView() const
 {
     return data->view;
 }
+
+
+void QWidget::setView(NSView *view)
+{
+    if (data->view)
+        [data->view release];
+    data->view = [view retain];
+        
+    NSRect frame = [data->view frame];
+    internalSetGeometry (frame.origin.x, frame.origin.y, frame.size.width, frame.size.height, FALSE);
+}
 #else
-void *QWidget::getView()
+void *QWidget::getView() const
 {
     return data->view;
+}
+
+void QWidget::setView(void *view)
+{
+    if (data->view)
+        [data->view release];
+    data->view = [view retain];
+        
+    NSRect frame = [data->view frame];
+    internalSetGeometry (frame.x, frame.y, frame.width, frame.height, FALSE);
 }
 #endif
 

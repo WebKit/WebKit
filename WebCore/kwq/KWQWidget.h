@@ -48,8 +48,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "KWQView.h"
-
 #undef Fixed
 #undef Rect
 #undef Boolean
@@ -156,9 +154,11 @@ public:
     virtual void paint (void *);
     
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    KWQView 	*getView();
+    NSView 	*getView() const;
+    void 	setView(NSView *aView);
 #else
-    void 	*getView();
+    void 	*getView() const;
+    void 	setView(void *aView);
 #endif
 
 #endif _KWQ_
@@ -175,7 +175,7 @@ private:
     QWidget &operator=(const QWidget &);
 
     void setCRect( const QRect &r );
-    void internalSetGeometry( int x, int y, int w, int h, bool isMove );
+    void internalSetGeometry( int x, int y, int w, int h, bool updateView );
 
     void _initialize();
 
@@ -188,7 +188,7 @@ private:
         QCursor	*cursor;
         QPalette pal;
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        KWQView	*view;
+        NSView	*view;
 #else
         void 	*view;
 #endif

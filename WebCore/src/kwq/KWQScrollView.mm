@@ -117,15 +117,24 @@ void QScrollView::setHScrollBarMode(ScrollBarMode)
 }
 
 
-void QScrollView::addChild(QWidget* child, int x=0, int y=0)
+void QScrollView::addChild(QWidget* child, int x, int y)
 {
-    _logNotYetImplemented();
+    NSView *thisView, *subView;
+    
+    child->move (x, y);
+    
+    thisView = getView();
+    subView = child->getView();
+    [thisView addSubview: subView];
 }
 
 
 void QScrollView::removeChild(QWidget* child)
 {
-    _logNeverImplemented();
+    NSView *subView;
+
+    subView = child->getView();
+    [subView removeFromSuperview];
 }
 
 

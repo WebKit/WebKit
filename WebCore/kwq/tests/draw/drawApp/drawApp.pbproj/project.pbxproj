@@ -148,7 +148,7 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
-				9C00349001601F7F0ECA16EA,
+				9C05E99F017653320ECA16EA,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -159,9 +159,9 @@
 			children = (
 				29B97318FDCFA39411CA2CEA,
 				089C165CFE840E0CC02AAC07,
-				9C00349401627E910ECA16EA,
-				9C00349501627E910ECA16EA,
-				9C00349601627E910ECA16EA,
+				9C05E999017653110ECA16EA,
+				9C05E99A017653110ECA16EA,
+				9C05E99B017653110ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -270,9 +270,9 @@
 			files = (
 				080E96DCFE201CFB7F000001,
 				089C165EFE840E0CC02AAC07,
-				9C00349701627E910ECA16EA,
-				9C00349801627E910ECA16EA,
-				9C00349901627E910ECA16EA,
+				9C05E99C017653110ECA16EA,
+				9C05E99D017653110ECA16EA,
+				9C05E99E017653110ECA16EA,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -280,7 +280,7 @@
 		29B9732BFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
 			files = (
-				9C00349101601F7F0ECA16EA,
+				9C05E9A0017653320ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -332,50 +332,50 @@
 //9C2
 //9C3
 //9C4
-		9C00349001601F7F0ECA16EA = {
-			isa = PBXFileReference;
-			name = draw.mm;
-			path = /Network/Servers/abel/homes/gimli/rjw/src/Labyrinth/WebPageView/src/kwq/tests/draw/draw.mm;
-			refType = 0;
-		};
-		9C00349101601F7F0ECA16EA = {
-			fileRef = 9C00349001601F7F0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C00349401627E910ECA16EA = {
+		9C05E999017653110ECA16EA = {
 			isa = PBXFileReference;
 			name = powermac.jpg;
-			path = /Network/Servers/abel/homes/gimli/rjw/src/Labyrinth/WebPageView/src/kwq/tests/draw/powermac.jpg;
-			refType = 0;
+			path = ../powermac.jpg;
+			refType = 2;
 		};
-		9C00349501627E910ECA16EA = {
+		9C05E99A017653110ECA16EA = {
 			isa = PBXFileReference;
 			name = qt.png;
-			path = /Network/Servers/abel/homes/gimli/rjw/src/Labyrinth/WebPageView/src/kwq/tests/draw/qt.png;
-			refType = 0;
+			path = ../qt.png;
+			refType = 2;
 		};
-		9C00349601627E910ECA16EA = {
+		9C05E99B017653110ECA16EA = {
 			isa = PBXFileReference;
 			name = yahoo.gif;
-			path = /Network/Servers/abel/homes/gimli/rjw/src/Labyrinth/WebPageView/src/kwq/tests/draw/yahoo.gif;
+			path = ../yahoo.gif;
+			refType = 2;
+		};
+		9C05E99C017653110ECA16EA = {
+			fileRef = 9C05E999017653110ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C05E99D017653110ECA16EA = {
+			fileRef = 9C05E99A017653110ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C05E99E017653110ECA16EA = {
+			fileRef = 9C05E99B017653110ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C05E99F017653320ECA16EA = {
+			isa = PBXFileReference;
+			name = draw.mm;
+			path = /Volumes/General/users/rjw/src/Labyrinth/WebCore/src/kwq/tests/draw/draw.mm;
 			refType = 0;
 		};
-		9C00349701627E910ECA16EA = {
-			fileRef = 9C00349401627E910ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C00349801627E910ECA16EA = {
-			fileRef = 9C00349501627E910ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C00349901627E910ECA16EA = {
-			fileRef = 9C00349601627E910ECA16EA;
+		9C05E9A0017653320ECA16EA = {
+			fileRef = 9C05E99F017653320ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};

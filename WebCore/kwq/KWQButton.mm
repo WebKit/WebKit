@@ -25,28 +25,29 @@
 
 #include <qbutton.h>
 
+#include <KWQView.h>
 #include <kwqdebug.h>
 
 QButton::QButton(QWidget *parent)
 {
-    _logNotYetImplemented();
+    setView ([[[KWQNSButton alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
 }
 
 
 QButton::~QButton()
 {
-    _logNotYetImplemented();
 }
 
 
-void QButton::setText(const QString &)
+void QButton::setText(const QString &s)
 {
-    _logNotYetImplemented();
+    [(KWQNSButton *)getView() setTitle: QSTRING_TO_NSSTRING (s)];
 }
 
 
 QString QButton::text() const
 {
-    _logNotYetImplemented();
+    KWQNSButton *button = (KWQNSButton *)getView();
+    return NSSTRING_TO_QSTRING([button title]);
 }
 
