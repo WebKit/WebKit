@@ -34,7 +34,7 @@ NSSize WebIconMediumSize = {32, 32};
 - (void)_updateFileDatabase;
 - (NSMutableArray *)_iconsForIconURL:(NSURL *)iconURL;
 - (NSImage *)_iconForFileURL:(NSURL *)fileURL withSize:(NSSize)size;
-- (NSMutableArray *)_builtItIconsForHost:(NSString *)host;
+- (NSMutableArray *)_builtInIconsForHost:(NSString *)host;
 - (void)_retainIconForIconURL:(NSURL *)iconURL;
 - (void)_releaseIconForIconURL:(NSURL *)iconURL;
 - (void)_retainFutureIconForSiteURL:(NSURL *)siteURL;
@@ -74,7 +74,8 @@ NSSize WebIconMediumSize = {32, 32};
     _private->iconURLToIcons = [[NSMutableDictionary dictionary] retain];
     _private->iconURLToRetainCount = [[NSMutableDictionary dictionary] retain];
     _private->futureSiteURLToRetainCount = [[NSMutableDictionary dictionary] retain];
-    _private->hostToBuiltItIcons = [[NSMutableDictionary dictionary] retain];
+    _private->hostToBuiltInIcons = [[NSMutableDictionary dictionary] retain];
+    _private->hostToBuiltInIconPath = [[NSMutableDictionary dictionary] retain];
 
     _private->iconsToEraseWithURLs = [[NSMutableSet set] retain];
     _private->iconsToSaveWithURLs = [[NSMutableSet set] retain];
@@ -103,7 +104,7 @@ NSSize WebIconMediumSize = {32, 32};
         return [self _iconForFileURL:siteURL withSize:size];
     }
 
-    NSMutableArray *icons = [self _builtItIconsForHost:[siteURL host]];
+    NSMutableArray *icons = [self _builtInIconsForHost:[siteURL host]];
     
     if(!icons){
         NSURL *iconURL = [_private->siteURLToIconURL objectForKey:siteURL];
@@ -327,7 +328,7 @@ NSSize WebIconMediumSize = {32, 32};
 {
     if([siteURL isFileURL]){
         return YES;
-    }else if([self _builtItIconsForHost:[siteURL host]]){
+    }else if([_private->hostToBuiltInIconPath objectForKey:[siteURL host]]){
         return YES;
     }else if([_private->siteURLToIconURL objectForKey:siteURL]){
         return YES;
@@ -395,13 +396,14 @@ NSSize WebIconMediumSize = {32, 32};
     }
 }
 
-- (NSMutableArray *)_builtItIconsForHost:(NSString *)host
+- (NSMutableArray *)_builtInIconsForHost:(NSString *)host
 {
     NSArray *hostParts = [host componentsSeparatedByString:@"."];
     NSMutableString *truncatedHost = [NSMutableString string];
+    NSString *hostPart, *path;
     NSMutableArray *icons;
     BOOL firstPart = YES;
-    NSString *hostPart;
+    NSImage *icon;
     
     NSEnumerator *enumerator = [hostParts reverseObjectEnumerator];
     while ((hostPart = [enumerator nextObject]) != nil) {
@@ -410,9 +412,20 @@ NSSize WebIconMediumSize = {32, 32};
             firstPart = NO;
         }else{
             [truncatedHost insertString:[NSString stringWithFormat:@"%@.", hostPart] atIndex:0];
-            icons = [_private->hostToBuiltItIcons objectForKey:truncatedHost];
-            if(icons){
-                return icons;
+            path = [_private->hostToBuiltInIconPath objectForKey:truncatedHost];
+            if(path){
+                icons = [_private->hostToBuiltInIcons objectForKey:truncatedHost];
+                if(!icons){
+                    icon = [[NSImage alloc] initWithContentsOfFile:path];
+                    if(icon){
+                        icons = [NSMutableArray arrayWithObject:icon];
+                        [_private->hostToBuiltInIcons setObject:icons forKey:host];
+                        [icon release];
+                    }
+                }
+                if(icons){
+                    return icons;
+                }
             }
         }
     }
@@ -470,16 +483,16 @@ NSSize WebIconMediumSize = {32, 32};
     [self _updateFileDatabase];
 }
 
-- (void)_setBuiltInIcon:(NSImage *)icon forHost:(NSString *)host
+- (void)_setBuiltInIconAtPath:(NSString *)path forHost:(NSString *)host
 {
-    if(!icon || !host){
+    if(!path || !host){
         return;
     }
+
+    [_private->hostToBuiltInIconPath setObject:path forKey:host];
     
     NSMutableSet *siteURLs = [_private->hostToSiteURLs objectForKey:host];
     NSURL *siteURL;
-    
-    [_private->hostToBuiltItIcons setObject:[NSMutableArray arrayWithObject:icon] forKey:host];
 
     if(siteURLs){
         NSEnumerator *enumerator = [siteURLs objectEnumerator];

@@ -22,7 +22,8 @@
     NSMutableDictionary *siteURLToIconURL;    
     NSMutableDictionary *futureSiteURLToRetainCount;
     NSMutableDictionary *hostToSiteURLs;
-    NSMutableDictionary *hostToBuiltItIcons;
+    NSMutableDictionary *hostToBuiltInIcons;
+    NSMutableDictionary *hostToBuiltInIconPath;
     
     NSMutableSet *iconsOnDiskWithURLs;
     NSMutableSet *iconsToEraseWithURLs;
@@ -50,7 +51,7 @@
 // Called by WebDataSource to bind a web site URL to a icon URL and icon image.
 - (void)_setIconURL:(NSURL *)iconURL forSiteURL:(NSURL *)siteURL;
 
-- (void)_setBuiltInIcon:(NSImage *)icon forHost:(NSString *)host;
+- (void)_setBuiltInIconAtPath:(NSString *)path forHost:(NSString *)host;
 
 - (BOOL)_hasIconForSiteURL:(NSURL *)siteURL;
 
