@@ -1155,7 +1155,9 @@ void RenderBox::calcAbsoluteHorizontal()
         //1. solve left & width.
         if (l==AUTO && w==AUTO && r!=AUTO)
         {
-            w = QMIN(m_maxWidth-pab, cw - ( r + ml + mr + pab));
+            // From section 10.3.7 of the CSS2.1 specification.
+            // "The shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width)."
+            w = QMIN(QMAX(m_minWidth-pab, cw - ( r + ml + mr + pab)), m_maxWidth-pab);
             l = cw - ( r + w + ml + mr + pab);
         }
         else
@@ -1180,7 +1182,9 @@ void RenderBox::calcAbsoluteHorizontal()
         //3. solve width & right.
         if (l!=AUTO && w==AUTO && r==AUTO)
         {
-            w = QMIN(m_maxWidth-pab, cw - ( l + ml + mr + pab));
+            // From section 10.3.7 of the CSS2.1 specification.
+            // "The shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width)."
+            w = QMIN(QMAX(m_minWidth-pab, cw - ( l + ml + mr + pab)), m_maxWidth-pab);
             r = cw - ( l + w + ml + mr + pab);
         }
         else

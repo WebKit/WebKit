@@ -1,5 +1,16 @@
 2003-10-08  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3436723, the shrink-to-fit algorithm for positioned elements did not match
+	the algorithm specified in section 10.3.7 of the CSS2.1 specification.  The min-width
+	of the element was not being taken into account like it should have been.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontal):
+
+2003-10-08  David Hyatt  <hyatt@apple.com>
+
 	Implement min/max width and min/max height support for replaced elements.
 	
         Reviewed by ken
