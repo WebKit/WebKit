@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge nextKeyViewOutsideWebFrameViews]): Get next key view from WebView, only using
+        the top level WebFrameView if the WebView doesn't have one set (for compatibility in case
+        some of our current WebKit clients are using this).
+        (-[WebBridge previousKeyViewOutsideWebFrameViews]): Ditto.
+
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3211730 -- REGRESSION: Flash spawns blank page then loads new page inside banner itself
 
         * Plugins.subproj/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView loadPluginRequest:]):

@@ -499,12 +499,24 @@
 
 - (NSView *)nextKeyViewOutsideWebFrameViews
 {
-    return [[[[frame webView] mainFrame] frameView] nextKeyView];
+    WebView *webView = [frame webView];
+    NSView *nextKeyView = [webView nextKeyView];
+    if (nextKeyView) {
+        return nextKeyView;
+    }
+    // Old way, here so we don't break early WebKit adopters, but could be removed later.
+    return [[[webView mainFrame] frameView] nextKeyView];
 }
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    return [[[[frame webView] mainFrame] frameView] previousKeyView];
+    WebView *webView = [frame webView];
+    NSView *previousKeyView = [webView previousKeyView];
+    if (previousKeyView) {
+        return previousKeyView;
+    }
+    // Old way, here so we don't break early WebKit adopters, but could be removed later.
+    return [[[webView mainFrame] frameView] previousKeyView];
 }
 
 - (BOOL)defersLoading
