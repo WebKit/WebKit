@@ -2213,7 +2213,8 @@ void NodeBaseImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptionco
 
 NodeListImpl::NodeListImpl(NodeImpl *_rootNode)
     : rootNode(_rootNode),
-      isCacheValid(false)
+      isLengthCacheValid(false),
+      isItemCacheValid(false)
 {
     rootNode->ref();
     rootNode->registerNodeList(this);
@@ -2230,7 +2231,7 @@ unsigned long NodeListImpl::recursiveLength( NodeImpl *start ) const
     if (!start)
 	start = rootNode;
 
-    if (isCacheValid && start == rootNode) {
+    if (isLengthCacheValid && start == rootNode) {
         return cachedLength;
     }
 
@@ -2246,26 +2247,51 @@ unsigned long NodeListImpl::recursiveLength( NodeImpl *start ) const
 
     if (start == rootNode) {
         cachedLength = len;
-        isCacheValid = true;
+        isLengthCacheValid = true;
     }
 
     return len;
 }
 
-NodeImpl *NodeListImpl::recursiveItem ( unsigned long &offset, NodeImpl *start ) const
+NodeImpl *NodeListImpl::recursiveItem ( unsigned long offset, NodeImpl *start) const
 {
-    if (!start)
-	start = rootNode;
+    int remainingOffset = offset;
+    if (!start) {
+        start = rootNode->firstChild();
+        if (isItemCacheValid) {
+            if (offset == lastItemOffset) {
+                return lastItem;
+            } else if (offset > lastItemOffset) {
+                start = lastItem;
+                remainingOffset -= lastItemOffset;
+            }
+        }
+    }
 
-    for(NodeImpl *n = start->firstChild(); n != 0; n = n->nextSibling()) {
+    NodeImpl *end = rootNode->nextSibling();
+    NodeImpl *n = start;
+
+    while (n != 0 && n != end) {
         if ( n->nodeType() == Node::ELEMENT_NODE ) {
-            if (nodeMatches(n))
-                if (!offset--)
+            if (nodeMatches(n)) {
+                if (!remainingOffset) {
+                    lastItem = n;
+                    lastItemOffset = offset;
+                    isItemCacheValid = 1;
                     return n;
+                }
+                remainingOffset--;
+            }
+        }
 
-            NodeImpl *depthSearch= recursiveItem(offset, n);
-            if (depthSearch)
-                return depthSearch;
+        if (n->firstChild()) {
+            n = n->firstChild();
+        } else if (n->nextSibling()) {
+            n = n->nextSibling();
+        } else if (n->parentNode()) {
+            n = n->parentNode()->nextSibling();
+        } else {
+            n = 0;
         }
     }
 
@@ -2274,10 +2300,16 @@ NodeImpl *NodeListImpl::recursiveItem ( unsigned long &offset, NodeImpl *start )
 
 NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
 {
-    if (rootNode->isDocumentNode()) {
-        DOM::NodeImpl *node = static_cast<DocumentImpl *>(rootNode)->getElementById(elementId);
-        if (nodeMatches(node))
-            return node;
+    if (rootNode->isDocumentNode() || rootNode->inDocument()) {
+        NodeImpl *node = rootNode->getDocument()->getElementById(elementId);
+
+        if (node == NULL || !nodeMatches(node))
+            return 0;
+
+        for (NodeImpl *p = node->parentNode(); p; p = p->parentNode()) {
+            if (p == rootNode)
+                return node;
+        }
 
         return 0;
     }
@@ -2285,7 +2317,7 @@ NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
     unsigned long l = length();
 
     for ( unsigned long i = 0; i < l; i++ ) {
-        DOM::NodeImpl *node = item(i);
+        NodeImpl *node = item(i);
         
         if ( static_cast<ElementImpl *>(node)->getIDAttribute() == elementId ) {
             return node;
@@ -2298,7 +2330,8 @@ NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
 
 void NodeListImpl::rootNodeSubtreeModified()
 {
-    isCacheValid = false;     
+    isLengthCacheValid = false;     
+    isItemCacheValid = false;     
 }
 
 

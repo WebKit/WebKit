@@ -1,3 +1,22 @@
+2004-11-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/3807080> Safari so slow it seems like a hang accessing a page on an IBM website
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeListImpl::NodeListImpl): Initialize isItemCacheValid, renamed isCacheValid to
+	isLengthCacheValid.
+        (NodeListImpl::recursiveLength): Adjusted for rename.
+        (NodeListImpl::recursiveItem): Cache the last item accessed and its offset.
+	If the same offset is looked up again, just return it, otherwise, if looking up
+	a later offset, start at the last item and proceed from there.
+        (NodeListImpl::itemById): Apply the special document optimization to all
+	nodes that are either a document or in a document - just walk up to make
+	sure the node found by ID has the root node as an ancestor.
+        (NodeListImpl::rootNodeSubtreeModified): Adjust both cache bits.
+        * khtml/xml/dom_nodeimpl.h: Prototype new stuff.
+
 2004-11-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

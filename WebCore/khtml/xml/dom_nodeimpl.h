@@ -571,12 +571,15 @@ public:
 protected:
     // helper functions for searching all ElementImpls in a tree
     unsigned long recursiveLength(NodeImpl *start = 0) const;
-    NodeImpl *recursiveItem ( unsigned long &offset, NodeImpl *start = 0 ) const;
+    NodeImpl *recursiveItem ( unsigned long offset, NodeImpl *start = 0 ) const;
     virtual bool nodeMatches( NodeImpl *testNode ) const = 0;
 
     NodeImpl *rootNode;
     mutable int cachedLength;
-    mutable bool isCacheValid;
+    mutable NodeImpl *lastItem;
+    mutable unsigned long lastItemOffset;
+    mutable bool isLengthCacheValid : 1;
+    mutable bool isItemCacheValid : 1;
 };
 
 class ChildNodeListImpl : public NodeListImpl
