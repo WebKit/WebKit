@@ -1,5 +1,13 @@
 2005-03-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+        - fixed <rdar://problem/4038478> Crash in renderer viewing RSS feed at feed://wvs.topleftpixel.com/index.rdf
+
+        * khtml/xml/dom_docimpl.cpp: (widgetForNode): Check for nil before going from node to renderer.
+
+2005-03-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard.
 
         - fixed <rdar://problem/4037700> Every character typed causes stat call for /usr/share/icu/icudt32b_char.brk
