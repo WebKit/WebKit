@@ -152,7 +152,7 @@ NPIdentifier NPN_GetIntIdentifier(int32_t intid)
     return (NPIdentifier)identifier;
 }
 
-NPBool NPN_IdentifierIsString(NPIdentifier identifier)
+bool NPN_IdentifierIsString(NPIdentifier identifier)
 {
     PrivateIdentifier *i = (PrivateIdentifier *)identifier;
     return i->isString;
@@ -169,47 +169,47 @@ NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier)
 
 NPBool NPN_VariantIsVoid (const NPVariant *variant)
 {
-    return variant->type == NPVariantVoidType;
+    return variant->type == NPVariantType_Void;
 }
 
 NPBool NPN_VariantIsNull (const NPVariant *variant)
 {
-    return variant->type == NPVariantNullType;
+    return variant->type == NPVariantType_Null;
 }
 
 NPBool NPN_VariantIsUndefined (const NPVariant *variant)
 {
-    return variant->type == NPVariantUndefinedType;
+    return variant->type == NPVariantType_Void;
 }
 
 NPBool NPN_VariantIsBool (const NPVariant *variant)
 {
-    return variant->type == NPVariantBoolType;
+    return variant->type == NPVariantType_Bool;
 }
 
 NPBool NPN_VariantIsInt32 (const NPVariant *variant)
 {
-    return variant->type == NPVariantInt32Type;
+    return variant->type == NPVariantType_Int32;
 }
 
 NPBool NPN_VariantIsDouble (const NPVariant *variant)
 {
-    return variant->type == NPVariantDoubleType;
+    return variant->type == NPVariantType_Double;
 }
 
 NPBool NPN_VariantIsString (const NPVariant *variant)
 {
-    return variant->type == NPVariantStringType;
+    return variant->type == NPVariantType_String;
 }
 
 NPBool NPN_VariantIsObject (const NPVariant *variant)
 {
-    return variant->type == NPVariantObjectType;
+    return variant->type == NPVariantType_Object;
 }
 
 NPBool NPN_VariantToBool (const NPVariant *variant, NPBool *result)
 {
-    if (variant->type != NPVariantBoolType)
+    if (variant->type != NPVariantType_Bool)
         return false;
         
     *result = variant->value.boolValue;
@@ -219,7 +219,7 @@ NPBool NPN_VariantToBool (const NPVariant *variant, NPBool *result)
 
 NPString NPN_VariantToString (const NPVariant *variant)
 {
-    if (variant->type != NPVariantStringType) {
+    if (variant->type != NPVariantType_String) {
         NPString emptyString = { 0, 0 };
         return emptyString;
     }
@@ -229,9 +229,9 @@ NPString NPN_VariantToString (const NPVariant *variant)
 
 NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result)
 {
-    if (variant->type == NPVariantInt32Type)
+    if (variant->type == NPVariantType_Int32)
         *result = variant->value.intValue;
-    else if (variant->type == NPVariantDoubleType)
+    else if (variant->type == NPVariantType_Double)
         *result = (int32_t)variant->value.doubleValue;
     else
         return false;
@@ -241,9 +241,9 @@ NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result)
 
 NPBool NPN_VariantToDouble (const NPVariant *variant, double *result)
 {
-    if (variant->type == NPVariantInt32Type)
+    if (variant->type == NPVariantType_Int32)
         *result = (double)variant->value.intValue;
-    else if (variant->type == NPVariantDoubleType)
+    else if (variant->type == NPVariantType_Double)
         *result = variant->value.doubleValue;
     else
         return false;
@@ -253,7 +253,7 @@ NPBool NPN_VariantToDouble (const NPVariant *variant, double *result)
 
 NPBool NPN_VariantToObject (const NPVariant *variant, NPObject **result)
 {
-    if (variant->type != NPVariantObjectType)
+    if (variant->type != NPVariantType_Object)
         return false;
             
     *result = variant->value.objectValue;
@@ -263,46 +263,46 @@ NPBool NPN_VariantToObject (const NPVariant *variant, NPObject **result)
 
 void NPN_InitializeVariantAsVoid (NPVariant *variant)
 {
-    variant->type = NPVariantVoidType;
+    variant->type = NPVariantType_Void;
 }
 
 void NPN_InitializeVariantAsNull (NPVariant *variant)
 {
-    variant->type = NPVariantNullType;
+    variant->type = NPVariantType_Null;
 }
 
 void NPN_InitializeVariantAsUndefined (NPVariant *variant)
 {
-    variant->type = NPVariantUndefinedType;
+    variant->type = NPVariantType_Void;
 }
 
 void NPN_InitializeVariantWithBool (NPVariant *variant, NPBool value)
 {
-    variant->type = NPVariantBoolType;
+    variant->type = NPVariantType_Bool;
     variant->value.boolValue = value;
 }
 
 void NPN_InitializeVariantWithInt32 (NPVariant *variant, int32_t value)
 {
-    variant->type = NPVariantInt32Type;
+    variant->type = NPVariantType_Int32;
     variant->value.intValue = value;
 }
 
 void NPN_InitializeVariantWithDouble (NPVariant *variant, double value)
 {
-    variant->type = NPVariantDoubleType;
+    variant->type = NPVariantType_Double;
     variant->value.doubleValue = value;
 }
 
 void NPN_InitializeVariantWithString (NPVariant *variant, const NPString *value)
 {
-    variant->type = NPVariantStringType;
+    variant->type = NPVariantType_String;
     variant->value.stringValue = *value;
 }
 
 void NPN_InitializeVariantWithStringCopy (NPVariant *variant, const NPString *value)
 {
-    variant->type = NPVariantStringType;
+    variant->type = NPVariantType_String;
     variant->value.stringValue.UTF8Length = value->UTF8Length;
     variant->value.stringValue.UTF8Characters = (NPUTF8 *)malloc(sizeof(NPUTF8) * value->UTF8Length);
     memcpy ((void *)variant->value.stringValue.UTF8Characters, value->UTF8Characters, sizeof(NPUTF8) * value->UTF8Length);
@@ -310,42 +310,38 @@ void NPN_InitializeVariantWithStringCopy (NPVariant *variant, const NPString *va
 
 void NPN_InitializeVariantWithObject (NPVariant *variant, NPObject *value)
 {
-    variant->type = NPVariantObjectType;
+    variant->type = NPVariantType_Object;
     variant->value.objectValue = NPN_RetainObject (value);
 }
 
 void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *source)
 {
     switch (source->type){
-        case NPVariantVoidType: {
+        case NPVariantType_Void: {
             NPN_InitializeVariantAsVoid (destination);
             break;
         }
-        case NPVariantNullType: {
+        case NPVariantType_Null: {
             NPN_InitializeVariantAsNull (destination);
             break;
         }
-        case NPVariantUndefinedType: {
-            NPN_InitializeVariantAsUndefined (destination);
-            break;
-        }
-        case NPVariantBoolType: {
+        case NPVariantType_Bool: {
             NPN_InitializeVariantWithBool (destination, source->value.boolValue);
             break;
         }
-        case NPVariantInt32Type: {
+        case NPVariantType_Int32: {
             NPN_InitializeVariantWithInt32 (destination, source->value.intValue);
             break;
         }
-        case NPVariantDoubleType: {
+        case NPVariantType_Double: {
             NPN_InitializeVariantWithDouble (destination, source->value.doubleValue);
             break;
         }
-        case NPVariantStringType: {
+        case NPVariantType_String: {
             NPN_InitializeVariantWithStringCopy (destination, &source->value.stringValue);
             break;
         }
-        case NPVariantObjectType: {
+        case NPVariantType_Object: {
             NPN_InitializeVariantWithObject (destination, source->value.objectValue);
             break;
         }
@@ -360,21 +356,21 @@ void NPN_ReleaseVariantValue (NPVariant *variant)
 {
     assert (variant);
     
-    if (variant->type == NPVariantObjectType) {
+    if (variant->type == NPVariantType_Object) {
         NPN_ReleaseObject (variant->value.objectValue);
         variant->value.objectValue = 0;
     }
-    else if (variant->type == NPVariantStringType) {
+    else if (variant->type == NPVariantType_String) {
         free ((void *)variant->value.stringValue.UTF8Characters);
         variant->value.stringValue.UTF8Characters = 0;
         variant->value.stringValue.UTF8Length = 0;
     }
     
-    variant->type = NPVariantUndefinedType;
+    variant->type = NPVariantType_Void;
 }
 
 
-NPObject *NPN_CreateObject (NPClass *aClass)
+NPObject *NPN_CreateObject (NPP npp, NPClass *aClass)
 {
     assert (aClass);
 
@@ -382,7 +378,7 @@ NPObject *NPN_CreateObject (NPClass *aClass)
         NPObject *obj;
         
         if (aClass->allocate != NULL)
-            obj = aClass->allocate ();
+            obj = aClass->allocate (npp);
         else
             obj = (NPObject *)malloc (sizeof(NPObject));
             

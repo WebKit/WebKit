@@ -35,17 +35,17 @@ typedef void (*NPN_ReleaseVariantValueProcPtr) (NPVariant *variant);
 typedef NPIdentifier (*NPN_GetStringIdentifierProcPtr) (const NPUTF8 *name);
 typedef void (*NPN_GetStringIdentifiersProcPtr) (const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
 typedef NPIdentifier (*NPN_GetIntIdentifierProcPtr) (int32_t intid);
-typedef NPBool (*NPN_IdentifierIsStringProcPtr) (NPIdentifier identifier);
+typedef bool (*NPN_IdentifierIsStringProcPtr) (NPIdentifier identifier);
 typedef NPUTF8 *(*NPN_UTF8FromIdentifierProcPtr) (NPIdentifier identifier);
 
-typedef NPObject* (*NPN_CreateObjectProcPtr) (NPClass *aClass);
+typedef NPObject* (*NPN_CreateObjectProcPtr) (NPP, NPClass *aClass);
 typedef NPObject* (*NPN_RetainObjectProcPtr) (NPObject *obj);
 typedef void (*NPN_ReleaseObjectProcPtr) (NPObject *obj);
-typedef NPBool (*NPN_CallProcPtr) (NPObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result);
-typedef NPBool (*NPN_EvaluateProcPtr) (NPObject *obj, NPString *script, NPVariant *result);
-typedef NPBool (*NPN_GetPropertyProcPtr) (NPObject *obj, NPIdentifier  propertyName, NPVariant *result);
-typedef NPBool (*NPN_SetPropertyProcPtr) (NPObject *obj, NPIdentifier  propertyName, const NPVariant *value);
-typedef NPBool (*NPN_RemovePropertyProcPtr) (NPObject *obj, NPIdentifier propertyName);
+typedef bool (*NPN_CallProcPtr) (NPP npp, NPObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result);
+typedef bool (*NPN_EvaluateProcPtr) (NPP npp, NPObject *obj, NPString *script, NPVariant *result);
+typedef bool (*NPN_GetPropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier  propertyName, NPVariant *result);
+typedef bool (*NPN_SetPropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier  propertyName, const NPVariant *value);
+typedef bool (*NPN_RemovePropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier propertyName);
 typedef void (*NPN_SetExceptionProcPtr) (NPObject *obj, NPString *message);
 
 typedef NPError	(*NPP_NewProcPtr)(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);

@@ -1,3 +1,17 @@
+2004-08-12  Richard Williamson   <rjw@apple.com>
+
+        Bring npruntime.h and friends closer to compliance with
+        latest spec.
+
+        Reviewed by Maciej.
+
+        * Plugins.subproj/npapi.h:
+        * Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+        (_NPString::):
+        (_NPString::_NPVariant::):
+        * copy-webcore-files-to-webkit:
+
 2004-08-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3761097> should be able to option-drag selection so HTML can be copied within a page

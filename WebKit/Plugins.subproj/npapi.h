@@ -45,6 +45,7 @@
 #endif
 
 #ifdef XP_MACOSX
+    #include <Carbon/Carbon.h>
     #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -98,10 +99,10 @@ typedef long int32;
 #define NULL (0L)
 #endif
 
-#ifndef _NP_RUNTIME_H_
+//#ifndef _NP_RUNTIME_H_
 // Ack!  Temporary hack to get build working.
 typedef unsigned char NPBool;
-#endif
+//#endif
 typedef int16            NPError;
 typedef int16            NPReason;
 typedef char*            NPMIMEType;

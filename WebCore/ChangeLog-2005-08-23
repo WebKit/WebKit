@@ -1,3 +1,13 @@
+2004-08-12  Richard Williamson   <rjw@apple.com>
+
+	Bring npruntime.h and friends closer to compliance with
+	latest spec.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::windowScriptNPObject):
+
 2004-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

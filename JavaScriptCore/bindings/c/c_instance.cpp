@@ -27,6 +27,8 @@
 #include <c_runtime.h>
 #include <c_utility.h>
 
+#include <npruntime_priv.h>
+
 #ifdef NDEBUG
 #define C_LOG(formatAndArgs...) ((void)0)
 #else
@@ -122,7 +124,7 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
         NPN_ReleaseVariantValue (&cArgs[i]);
     }
 
-    if (resultVariant.type != NPVariantVoidType) {
+    if (!NPVARIANT_IS_VOID(resultVariant)) {
         resultValue = convertNPVariantToValue (exec, &resultVariant);
         
         if (cArgs != localBuffer)

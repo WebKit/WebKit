@@ -261,6 +261,8 @@
 				650B68DB0639033F009D42DE,
 				51863F70065420E800E9E8DD,
 				700DA118065984CE00747C0B,
+				51CA3B5006CC2166005600E3,
+				51DFF2CA06CC36F6006F1ECC,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -944,9 +946,11 @@
 				700DA117065984CE00747C0B,
 				51863F6F065420E800E9E8DD,
 				51863FC406542D3100E9E8DD,
+				51CA3B4F06CC2166005600E3,
 				5199B265061BB1300070C006,
 				5199B1BD061B65BC0070C006,
 				5199B1BE061B65BC0070C006,
+				51DFF2C906CC36F6006F1ECC,
 				5182A53A06012C3000CBD2F2,
 				5182A53B06012C3000CBD2F2,
 				5182A45605FFCF4B00CBD2F2,
@@ -1175,6 +1179,39 @@
 		};
 		51C4974205C0A5D4006FBFF5 = {
 			fileRef = 51C4974105C0A5D4006FBFF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51CA3B4F06CC2166005600E3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = npapi.h;
+			path = bindings/npapi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51CA3B5006CC2166005600E3 = {
+			fileRef = 51CA3B4F06CC2166005600E3;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		51DFF2C906CC36F6006F1ECC = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = npruntime_priv.h;
+			path = bindings/npruntime_priv.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51DFF2CA06CC36F6006F1ECC = {
+			fileRef = 51DFF2C906CC36F6006F1ECC;
 			isa = PBXBuildFile;
 			settings = {
 			};

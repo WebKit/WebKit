@@ -23,6 +23,7 @@ my %WebCoreFiles = (
 
 my %JavaScriptCoreFiles = (
     'bindings/npruntime.h' => 'Plugins.subproj/npruntime.h',
+    'bindings/npapi.h' => 'Plugins.subproj/npapi.h',
     'bindings/npsap.h' => 'Plugins.subproj/npsap.h',
     'bindings/objc/WebScriptObject.h' => 'Plugins.subproj/WebScriptObject.h',
 );

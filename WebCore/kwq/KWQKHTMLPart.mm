@@ -1297,7 +1297,7 @@ NPObject *KWQKHTMLPart::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
         KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
-        _windowScriptNPObject = _NPN_CreateScriptObject (win, bindingRootObject());
+        _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject());
     }
 
     return _windowScriptNPObject;

@@ -1,3 +1,56 @@
+2004-08-12  Richard Williamson   <rjw@apple.com>
+
+	Bring npruntime.h and friends closer to compliance with
+	latest spec.
+
+        Reviewed by Maciej.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        (jsAllocate):
+        (_NPN_CreateScriptObject):
+        (NPN_Call):
+        (NPN_Evaluate):
+        (NPN_GetProperty):
+        (NPN_SetProperty):
+        (NPN_RemoveProperty):
+        * bindings/NP_jsobject.h:
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        * bindings/c/c_utility.cpp:
+        (convertNPVariantToValue):
+        * bindings/npruntime.cpp:
+        (NPN_IdentifierIsString):
+        (NPN_VariantIsVoid):
+        (NPN_VariantIsNull):
+        (NPN_VariantIsUndefined):
+        (NPN_VariantIsBool):
+        (NPN_VariantIsInt32):
+        (NPN_VariantIsDouble):
+        (NPN_VariantIsString):
+        (NPN_VariantIsObject):
+        (NPN_VariantToBool):
+        (NPN_VariantToString):
+        (NPN_VariantToInt32):
+        (NPN_VariantToDouble):
+        (NPN_VariantToObject):
+        (NPN_InitializeVariantAsVoid):
+        (NPN_InitializeVariantAsNull):
+        (NPN_InitializeVariantAsUndefined):
+        (NPN_InitializeVariantWithBool):
+        (NPN_InitializeVariantWithInt32):
+        (NPN_InitializeVariantWithDouble):
+        (NPN_InitializeVariantWithString):
+        (NPN_InitializeVariantWithStringCopy):
+        (NPN_InitializeVariantWithObject):
+        (NPN_InitializeVariantWithVariant):
+        (NPN_ReleaseVariantValue):
+        (NPN_CreateObject):
+        * bindings/npruntime.h:
+        (_NPString::):
+        (_NPString::_NPVariant::):
+        * bindings/npruntime_priv.h: Added.
+
 2004-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

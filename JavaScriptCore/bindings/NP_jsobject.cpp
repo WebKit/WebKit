@@ -26,7 +26,7 @@
 
 #include <JavaScriptCore/npruntime.h>
 #include <JavaScriptCore/c_utility.h>
-
+#include <JavaScriptCore/npruntime_priv.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -46,7 +46,7 @@ static KJS::List listFromVariantArgs(KJS::ExecState *exec, const NPVariant *args
     return aList;
 }
 
-static NPObject *jsAllocate()
+static NPObject *jsAllocate(NPP npp)
 {
     return (NPObject *)malloc(sizeof(JavaScriptObject));
 }
@@ -66,6 +66,7 @@ static NPClass _javascriptClass = {
     0,
     0,
     0,
+    0
 };
 
 static NPClass *javascriptClass = &_javascriptClass;
@@ -83,9 +84,9 @@ Identifier identiferFromNPIdentifier(const NPUTF8 *name)
     return identifier;
 }
 
-NPObject *_NPN_CreateScriptObject (KJS::ObjectImp *imp, KJS::Bindings::RootObject *root)
+NPObject *_NPN_CreateScriptObject (NPP npp, KJS::ObjectImp *imp, KJS::Bindings::RootObject *root)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)NPN_CreateObject(NPScriptObjectClass);
+    JavaScriptObject *obj = (JavaScriptObject *)NPN_CreateObject(npp, NPScriptObjectClass);
 
     obj->imp = imp;
     obj->root = root;    
@@ -95,7 +96,7 @@ NPObject *_NPN_CreateScriptObject (KJS::ObjectImp *imp, KJS::Bindings::RootObjec
     return (NPObject *)obj;
 }
 
-NPBool NPN_Call (NPObject *o, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result)
+bool NPN_Call (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -141,7 +142,7 @@ NPBool NPN_Call (NPObject *o, NPIdentifier methodName, const NPVariant *args, un
     return true;
 }
 
-NPBool NPN_Evaluate (NPObject *o, NPString *s, NPVariant *variant)
+bool NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -165,7 +166,7 @@ NPBool NPN_Evaluate (NPObject *o, NPString *s, NPVariant *variant)
     return false;
 }
 
-NPBool NPN_GetProperty (NPObject *o, NPIdentifier propertyName, NPVariant *variant)
+bool NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -220,7 +221,7 @@ NPBool NPN_GetProperty (NPObject *o, NPIdentifier propertyName, NPVariant *varia
     return false;
 }
 
-NPBool NPN_SetProperty (NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
+bool NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -245,7 +246,7 @@ NPBool NPN_SetProperty (NPObject *o, NPIdentifier propertyName, const NPVariant 
     return false;
 }
 
-NPBool NPN_RemoveProperty (NPObject *o, NPIdentifier propertyName)
+bool NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
