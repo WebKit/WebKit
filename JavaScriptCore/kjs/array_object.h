@@ -59,7 +59,6 @@ namespace KJS {
     virtual Object construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
-
   };
 
 }; // namespace

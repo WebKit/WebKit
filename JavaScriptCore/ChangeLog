@@ -1,6 +1,6 @@
 2002-12-11  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Don.
 
 	- Add kjsprint global function in Development build for ease of	debugging.
 	- Print uncaught JavaScript exceptions to the console in Development.

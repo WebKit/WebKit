@@ -196,6 +196,18 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, unsigned index)
   return ObjectImp::deleteProperty(exec, Identifier::from(index));
 }
 
+ReferenceList ArrayInstanceImp::propList(ExecState *exec, bool recursive)
+{
+  ReferenceList properties = ObjectImp::propList(exec,recursive);
+  for (unsigned i = 0; i < storageLength; ++i) {
+    if (storage[i]) {
+      properties.append(Reference(this, Identifier::from(i);
+    }
+  }
+  return properties;
+}
+
+
 void ArrayInstanceImp::resizeStorage(unsigned newLength)
 {
     if (newLength < storageLength) {
