@@ -1,5 +1,19 @@
 2004-02-11  David Hyatt  <hyatt@apple.com>
 
+	Add some more polish to ensure the ypos estimate is right.  Correct the clearing of images so that
+	their top margins do not get added in when they clear the float because of having a large width.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+        * layout-tests/fast/block/margin-collapse/101-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/101.html: Added.
+        * layout-tests/fast/block/margin-collapse/102-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/102.html: Added.
+
+2004-02-11  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3556702, margin collapsing gets disabled when images spill out of the containing block.
 	
         Reviewed by kocienda

@@ -743,26 +743,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
         }
         
-        // Note this occurs after the test for positioning and floating above, since
-        // we want to ensure that we don't artificially increase our height because of
-        // a positioned or floating child.
-        if (child->avoidsFloats() && style()->width().isFixed() && child->minWidth() > lineWidth(m_height)) {
-            m_height = kMax(m_height, floatBottom());
-            shouldCollapseChild = false;
-            clearOccurred = true;
-        }
-
-        // take care in case we inherited floats
-        if (child && floatBottom() > m_height)
-            child->setChildNeedsLayout(true);
-        
         child->calcVerticalMargins();
 
-        //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
-
-        int oldChildX = child->xPos();
-        int oldChildY = child->yPos();
-        
         // Try to guess our correct y position.  In most cases this guess will
         // be correct.  Only if we're wrong (when we compute the real y position)
         // will we have to relayout.
@@ -778,7 +760,30 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         }
         else if (!canCollapseTopWithChildren || !topMarginContributor)
             yPosEstimate += child->marginTop();
+        
+        // Note this occurs after the test for positioning and floating above, since
+        // we want to ensure that we don't artificially increase our height because of
+        // a positioned or floating child.
+        int fb = floatBottom();
+        if (child->avoidsFloats() && style()->width().isFixed() && child->minWidth() > lineWidth(m_height)) {
+            if (fb > m_height) {
+                m_height = yPosEstimate = fb;
+                shouldCollapseChild = false;
+                clearOccurred = true;
+                prevFlow = 0;
+                prevBlock = 0;
+            }
+        }
 
+        // take care in case we inherited floats
+        if (fb > m_height)
+            child->setChildNeedsLayout(true);
+
+        //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
+
+        int oldChildX = child->xPos();
+        int oldChildY = child->yPos();
+        
         // Go ahead and position the child as though it didn't collapse with the top.
         child->setPos(child->xPos(), yPosEstimate);
         child->layoutIfNeeded();
