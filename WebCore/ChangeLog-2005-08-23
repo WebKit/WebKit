@@ -1,3 +1,10 @@
+2002-11-19  David Hyatt  <hyatt@apple.com>
+
+	I screwed up the line breaking for inline replaced elements.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::calcInlineMinMaxWidth):
+
 2002-11-19  Darin Adler  <darin@apple.com>
 
 	- another atomic identifier scrub pass; make the conversion to Identifier explicit

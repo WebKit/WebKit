@@ -1438,7 +1438,7 @@ void RenderFlow::calcInlineMinMaxWidth()
                 childMin += child->minWidth();
                 childMax += child->maxWidth();
                 
-                if (nowrap && !oldnowrap) {
+                if (!nowrap || !oldnowrap) {
                     if(m_minWidth < inlineMin) m_minWidth = inlineMin;
                     inlineMin = 0;
                 }
