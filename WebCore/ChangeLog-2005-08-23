@@ -1,5 +1,15 @@
 2004-01-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3537371>: REGRESSION (100-125): optgroup labels are no longer indented as they were before
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
+        Move code that adds spaces after code that strips whitespace. Also simplify
+        the code a bit by using DOMString::string().
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3539286>: text with a transparent background color pastes as black on black

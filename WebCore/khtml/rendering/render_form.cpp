@@ -1107,10 +1107,7 @@ void RenderSelect::updateFromElement()
 
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->id() == ID_OPTGROUP) {
-                DOMString text = listItems[listIndex]->getAttribute(ATTR_LABEL);
-                if (text.isNull())
-                    text = "";
-                QString label = QString(text.implementation()->s, text.implementation()->l);
+                QString label = listItems[listIndex]->getAttribute(ATTR_LABEL).string();
                 label.replace('\\', backslashAsCurrencySymbol());
 
                 // In WinIE, an optgroup can't start or end with whitespace (other than the indent
@@ -1131,17 +1128,15 @@ void RenderSelect::updateFromElement()
                     static_cast<KComboBox*>(m_widget)->insertItem(label, listIndex);
             }
             else if (listItems[listIndex]->id() == ID_OPTION) {
-                DOMString text = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text();
-                if (text.isNull())
-                    text = "";
-                if (listItems[listIndex]->parentNode()->id() == ID_OPTGROUP)
-                    text = DOMString("    ")+text;
-                QString itemText = QString(text.implementation()->s, text.implementation()->l);
+                QString itemText = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text().string();
                 itemText.replace('\\', backslashAsCurrencySymbol());
 
                 // In WinIE, an option can't start or end with whitespace.  We match this behavior.
                 itemText = itemText.stripWhiteSpace();
                 
+                if (listItems[listIndex]->parentNode()->id() == ID_OPTGROUP)
+                    itemText.prepend("    ");
+
                 if(m_useListBox)
                     static_cast<KListBox*>(m_widget)->insertItem(itemText, listIndex);
                 else
