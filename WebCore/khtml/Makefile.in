@@ -18,6 +18,7 @@ include $(TOPSRCDIR)/Makefile.vars
 SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
 CXXOBJECTS = \
+    khtml_events.o \
     khtmlview.o \
     $(NULL)
 
