@@ -1,3 +1,17 @@
+2004-08-31  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3761411 and 3782201.  This patch makes two changes to percentage heights.  First it makes sure that
+	replaced elements always flex inside a cell (unlike blocks and tables, which do so only sometimes under bizarre
+	conditions that are still being guessed at by me).  The second fix is a recognition that empty tables do not
+	actually honor their heights, and so it is a mistake to try to flex them.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTable::hasSections):
+
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -1249,26 +1249,32 @@ int RenderTableSection::layoutRows( int toAdd )
             rHeight = rowPos[r+1] - rowPos[rindx] - vspacing;
             
             // Force percent height children to lay themselves out again.
-            // This will cause, e.g., textareas to grow to
-            // fill the area.
+            // This will cause these children to grow to fill the cell.
+            // FIXME: There is still more work to do here to fully match WinIE (should
+            // it become necessary to do so).  In quirks mode, WinIE behaves like we
+            // do, but it will clip the cells that spill out of the table section.  In
+            // strict mode, Mozilla and WinIE both regrow the table to accommodate the
+            // new height of the cell (thus letting the percentages cause growth one
+            // time only).  We may also not be handling row-spanning cells correctly.
+            //
+            // Note also the oddity where replaced elements always flex, and yet blocks/tables do
+            // not necessarily flex.  WinIE is crazy and inconsistent, and we can't hope to
+            // match the behavior perfectly, but we'll continue to refine it as we discover new
+            // bugs. :)
             bool cellChildrenFlex = false;
-            if (cell->style()->height().isFixed() || 
-                (!table()->style()->height().isVariable() && rHeight != cell->height())) {
-                // FIXME: There is still more work to do here to fully match WinIE (should
-                // it become necessary to do so).  In quirks mode, WinIE behaves like we
-                // do, but it will clip the cells that spill out of the table section.  In
-                // strict mode, Mozilla and WinIE both regrow the table to accommodate the
-                // new height of the cell (thus letting the percentages cause growth one
-                // time only).  We may also not be handling row-spanning cells correctly.
-                RenderObject* o = cell->firstChild();
-                while (o) {
-                    if (!o->isText() && o->style()->height().isPercent()) {
+            bool flexAllChildren = cell->style()->height().isFixed() || 
+                (!table()->style()->height().isVariable() && rHeight != cell->height());
+            RenderObject* o = cell->firstChild();
+            while (o) {
+                if (!o->isText() && o->style()->height().isPercent() && (o->isReplaced() || flexAllChildren)) {
+                    // Tables with no sections do not flex.
+                    if (!o->isTable() || static_cast<RenderTable*>(o)->hasSections()) {
                         o->setNeedsLayout(true, false);
                         cell->setChildNeedsLayout(true, false);
                         cellChildrenFlex = true;
                     }
-                    o = o->nextSibling();
                 }
+                o = o->nextSibling();
             }
             if (cellChildrenFlex) {
                 cell->setOverrideSize(kMax(0, 
