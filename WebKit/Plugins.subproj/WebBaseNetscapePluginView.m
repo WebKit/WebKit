@@ -31,8 +31,8 @@
 // This is not yet in QuickdrawPriv.h, although it's supposed to be.
 void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int drawingType);
 
-// FIXME: Why 0.1? Why not 0? Why not an even larger number?
-#define NullEventIntervalActive 	0.1
+// Send null events as often as possible when active so plug-ins like Flash get high frame rates.
+#define NullEventIntervalActive 	0.0
 #define NullEventIntervalNotActive	0.25
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
