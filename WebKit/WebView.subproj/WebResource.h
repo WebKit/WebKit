@@ -13,8 +13,8 @@
 
 /*!
     @class WebResource
-    @discussion A WebResource represents a fully downloaded resource. It includes the data of the resource
-    as well as the metadata associated with the resource.
+    @discussion A WebResource represents a fully downloaded URL. 
+    It includes the data of the resource as well as the metadata associated with the resource.
 */
 @interface WebResource : NSObject 
 {

@@ -122,6 +122,7 @@
 /*!
     @method subresources
     @abstract Returns all the subresources associated with the data source.
+    @description The returned array only contains subresources that have fully downloaded.
 */
 - (NSArray *)subresources;
 
@@ -129,6 +130,7 @@
     method subresourceForURL:
     @abstract Returns a subresource for a given URL.
     @param URL The URL of the subresource.
+    @description Non-nil is returned if the data source has fully downloaded a subresource with the given URL.
 */
 - (WebResource *)subresourceForURL:(NSURL *)URL;
 
@@ -136,16 +138,18 @@
     @method addSubresource:
     @abstract Adds a subresource to the data source.
     @param subresource The subresource to be added.
-    @description addSubresource: adds a subresource to the data source's list of subresources. 
-    From then on, if something causes the data source to load the URL of the subresource, the data source 
-    will load the data from the subresource instead of from the network. NOTE: If the data source already has
-    a subresource with the same URL, addSubresource: will replace it.
+    @description addSubresource: adds a subresource to the data source's list of subresources.
+    Later, if something causes the data source to load the URL of the subresource, the data source
+    will load the data from the subresource instead of from the network. For example, if one wants to add
+    an image that is already downloaded to a web page, addSubresource: can be called so that the data source
+    uses the downloaded image rather than accessing the network. NOTE: If the data source already has a
+    subresource with the same URL, addSubresource: will replace it.
 */
 - (void)addSubresource:(WebResource *)subresource;
 
-- (void)addSubresources:(NSArray *)subresources;
 
 // Other private methods
+- (void)addSubresources:(NSArray *)subresources;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 
 - (WebArchive *)_archive;
