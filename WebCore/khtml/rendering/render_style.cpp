@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -106,29 +106,148 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o )
 {
 }
 
+BackgroundLayer::BackgroundLayer()
+:m_image(RenderStyle::initialBackgroundImage()),
+ m_bgAttachment(RenderStyle::initialBackgroundAttachment()),
+ m_bgRepeat(RenderStyle::initialBackgroundRepeat()),
+ m_next(0)
+{
+    m_imageSet = m_attachmentSet = m_repeatSet = m_xPosSet = m_yPosSet = false;     
+}
 
+BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
+{
+    m_next = o.m_next ? new BackgroundLayer(*o.m_next) : 0;
+    m_image = o.m_image;
+    m_xPosition = o.m_xPosition;
+    m_yPosition = o.m_yPosition;
+    m_bgAttachment = o.m_bgAttachment;
+    m_bgRepeat = o.m_bgRepeat;
+    m_imageSet = o.m_imageSet;
+    m_attachmentSet = o.m_attachmentSet;
+    m_repeatSet = o.m_repeatSet;
+    m_xPosSet = o.m_xPosSet;
+    m_yPosSet = o.m_yPosSet;
+}
+
+BackgroundLayer::~BackgroundLayer()
+{
+    delete m_next;
+}
+
+BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
+    if (m_next != o.m_next) {
+        delete m_next;
+        m_next = o.m_next ? new BackgroundLayer(*o.m_next) : 0;
+    }
+    
+    m_image = o.m_image;
+    m_xPosition = o.m_xPosition;
+    m_yPosition = o.m_yPosition;
+    m_bgAttachment = o.m_bgAttachment;
+    m_bgRepeat = o.m_bgRepeat;
+    
+    m_imageSet = o.m_imageSet;
+    m_attachmentSet = o.m_attachmentSet;
+    m_repeatSet = o.m_repeatSet;
+    m_xPosSet = o.m_xPosSet;
+    m_yPosSet = o.m_yPosSet;
+    
+    return *this;
+}
+
+bool BackgroundLayer::operator==(const BackgroundLayer& o) const {
+    return m_image == o.m_image && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
+           m_bgAttachment == o.m_bgAttachment && m_bgRepeat == o.m_bgRepeat && 
+           m_imageSet == o.m_imageSet && m_attachmentSet == o.m_attachmentSet && m_repeatSet == o.m_repeatSet &&
+           m_xPosSet == o.m_xPosSet && m_yPosSet == o.m_yPosSet &&
+           ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
+}
+
+void BackgroundLayer::fillUnsetProperties()
+{
+    BackgroundLayer* curr;
+    for (curr = this; curr && curr->isBackgroundImageSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_image = pattern->m_image;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+    
+    for (curr = this; curr && curr->isBackgroundXPositionSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_xPosition = pattern->m_xPosition;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+    
+    for (curr = this; curr && curr->isBackgroundYPositionSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_yPosition = pattern->m_yPosition;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+    
+    for (curr = this; curr && curr->isBackgroundAttachmentSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_bgAttachment = pattern->m_bgAttachment;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+    
+    for (curr = this; curr && curr->isBackgroundRepeatSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_bgRepeat = pattern->m_bgRepeat;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+}
+
+void BackgroundLayer::cullEmptyLayers()
+{
+    BackgroundLayer *next;
+    for (BackgroundLayer *p = this; p; p = next) {
+        next = p->m_next;
+        if (!next->isBackgroundImageSet() &&
+            !next->isBackgroundXPositionSet() && !next->isBackgroundYPositionSet() &&
+            !next->isBackgroundAttachmentSet() && !next->isBackgroundRepeatSet()) {
+            delete next;
+            p->m_next = 0;
+            break;
+        }
+    }
+}
 
 StyleBackgroundData::StyleBackgroundData()
-    : image( RenderStyle::initialBackgroundImage() )
-{
-}
+{}
 
-StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o )
-    : Shared<StyleBackgroundData>(),
-      color( o.color ), image( o.image ),
-      x_position( o.x_position ), y_position( o.y_position ),
-      outline( o.outline )
-{
-}
+StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o)
+    : Shared<StyleBackgroundData>(), m_background(o.m_background), m_outline(o.m_outline)
+{}
 
 bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 {
-    return
-	color == o.color &&
-	image == o.image &&
-	x_position == o.x_position &&
-	y_position == o.y_position &&
-	outline == o.outline;
+    return m_background == o.m_background && m_color == o.m_color && m_outline == o.m_outline;
 }
 
 StyleMarqueeData::StyleMarqueeData()
@@ -677,15 +796,11 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
     // Repaint:
 // 	EVisibility _visibility : 2;
 //     EOverflow _overflow : 4 ;
-//     EBackgroundRepeat _bg_repeat : 2;
-//     bool _bg_attachment : 1;
 // 	int _text_decoration : 4;
 //     DataRef<StyleBackgroundData> background;
     if (inherited->color != other->inherited->color ||
         !(inherited_flags._visibility == other->inherited_flags._visibility) ||
         !(noninherited_flags._overflow == other->noninherited_flags._overflow) ||
-        !(noninherited_flags._bg_repeat == other->noninherited_flags._bg_repeat) ||
-        !(noninherited_flags._bg_attachment == other->noninherited_flags._bg_attachment) ||
         !(inherited_flags._text_decorations == other->inherited_flags._text_decorations) ||
         !(inherited_flags._should_correct_text_color == other->inherited_flags._should_correct_text_color) ||
         !(surround->border == other->surround->border) ||
@@ -725,6 +840,17 @@ void RenderStyle::setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole
 }
 
 #endif
+
+void RenderStyle::adjustBackgroundLayers()
+{
+    if (backgroundLayers()->next()) {
+        // First we cull out layers that have no properties set.
+        accessBackgroundLayers()->cullEmptyLayers();
+        
+        // Next we repeat patterns into layers that don't have some properties set.
+        accessBackgroundLayers()->fillUnsetProperties();
+    }
+}
 
 void RenderStyle::setClip( Length top, Length right, Length bottom, Length left )
 {

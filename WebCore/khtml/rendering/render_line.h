@@ -232,6 +232,10 @@ public:
     virtual void clearTruncation();
     
     virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine);
+    void paintBackgrounds(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+                          int my, int mh, int _tx, int _ty, int w, int h, int xoff);
+    void paintBackground(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+                         int my, int mh, int _tx, int _ty, int w, int h, int xoff);
     virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
     
     int marginBorderPaddingLeft();

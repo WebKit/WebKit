@@ -92,6 +92,68 @@ else if (isInitial) \
     return;\
 }
 
+#define HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
+if (isInherit) { \
+    BackgroundLayer* currChild = style->accessBackgroundLayers(); \
+    BackgroundLayer* prevChild = 0; \
+    const BackgroundLayer* currParent = parentStyle->backgroundLayers(); \
+    while (currParent && currParent->is##Prop##Set()) { \
+        if (!currChild) { \
+            /* Need to make a new layer.*/ \
+            currChild = new BackgroundLayer(); \
+            prevChild->setNext(currChild); \
+        } \
+        currChild->set##Prop(currParent->prop()); \
+        prevChild = currChild; \
+        currChild = prevChild->next(); \
+        currParent = currParent->next(); \
+    } \
+    \
+    while (currChild) { \
+        /* Reset any remaining layers to not have the property set. */ \
+        currChild->clear##Prop(); \
+        currChild = currChild->next(); \
+    } \
+    return; \
+} \
+if (isInitial) { \
+    BackgroundLayer* currChild = style->accessBackgroundLayers(); \
+    currChild->set##Prop(RenderStyle::initial##Prop()); \
+    for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
+        currChild->clear##Prop(); \
+    return; \
+}
+
+#define HANDLE_BACKGROUND_VALUE(prop, Prop, value) { \
+HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
+if (!value->isPrimitiveValue() && !value->isValueList()) \
+    return; \
+BackgroundLayer* currChild = style->accessBackgroundLayers(); \
+BackgroundLayer* prevChild = 0; \
+if (value->isPrimitiveValue()) { \
+    map##Prop(currChild, value); \
+    currChild = currChild->next(); \
+} \
+else { \
+    /* Walk each value and put it into a layer, creating new layers as needed. */ \
+    CSSValueListImpl* valueList = static_cast<CSSValueListImpl*>(value); \
+    for (unsigned int i = 0; i < valueList->length(); i++) { \
+        if (!currChild) { \
+            /* Need to make a new layer to hold this value */ \
+            currChild = new BackgroundLayer(); \
+            prevChild->setNext(currChild); \
+        } \
+        map##Prop(currChild, valueList->item(i)); \
+        prevChild = currChild; \
+        currChild = currChild->next(); \
+    } \
+} \
+while (currChild) { \
+    /* Reset all remaining layers to not have the property set. */ \
+    currChild->clear##Prop(); \
+    currChild = currChild->next(); \
+} }
+
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) \
 {\
@@ -913,11 +975,14 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         style->setTextDecorationsInEffect(style->textDecoration());
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
-        
+    
+    // Cull out any useless layers and also repeat patterns into additional layers.
+    style->adjustBackgroundLayers();
+
     // Only use slow repaints if we actually have a background image.
     // FIXME: We only need to invalidate the fixed regions when scrolling.  It's total overkill to
     // prevent the entire view from blitting on a scroll.
-    if (!style->backgroundAttachment() && style->backgroundImage() && view)
+    if (style->hasFixedBackgroundImage() && view)
         view->useSlowRepaints();
 }
 
@@ -1720,40 +1785,11 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     {
 // ident only properties
     case CSS_PROP_BACKGROUND_ATTACHMENT:
-        HANDLE_INHERIT_AND_INITIAL(backgroundAttachment, BackgroundAttachment)
-        if(!primitiveValue) break;
-        switch (primitiveValue->getIdent()) {
-        case CSS_VAL_FIXED:
-            style->setBackgroundAttachment(false);
-            break;
-        case CSS_VAL_SCROLL:
-            style->setBackgroundAttachment(true);
-            break;
-        default:
-            return;
-        }
+        HANDLE_BACKGROUND_VALUE(backgroundAttachment, BackgroundAttachment, value)
+        break;
     case CSS_PROP_BACKGROUND_REPEAT:
-    {
-        HANDLE_INHERIT_AND_INITIAL(backgroundRepeat, BackgroundRepeat)
-        if(!primitiveValue) return;
-	switch(primitiveValue->getIdent())
-	{
-	case CSS_VAL_REPEAT:
-	    style->setBackgroundRepeat( REPEAT );
-	    break;
-	case CSS_VAL_REPEAT_X:
-	    style->setBackgroundRepeat( REPEAT_X );
-	    break;
-	case CSS_VAL_REPEAT_Y:
-	    style->setBackgroundRepeat( REPEAT_Y );
-	    break;
-	case CSS_VAL_NO_REPEAT:
-	    style->setBackgroundRepeat( NO_REPEAT );
-	    break;
-	default:
-	    return;
-	}
-    }
+        HANDLE_BACKGROUND_VALUE(backgroundRepeat, BackgroundRepeat, value)
+        break;
     case CSS_PROP_BORDER_COLLAPSE:
         HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
         if(!primitiveValue) break;
@@ -2225,41 +2261,15 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         break;
 
     case CSS_PROP_BACKGROUND_POSITION:
-        if (isInherit) {
-            style->setBackgroundXPosition(parentStyle->backgroundXPosition());
-            style->setBackgroundYPosition(parentStyle->backgroundYPosition());
-        }
-        else if (isInitial) {
-            style->setBackgroundXPosition(RenderStyle::initialBackgroundXPosition());
-            style->setBackgroundYPosition(RenderStyle::initialBackgroundYPosition());
-        }
+        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(backgroundXPosition, BackgroundXPosition);
+        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(backgroundYPosition, BackgroundYPosition);
         break;
     case CSS_PROP_BACKGROUND_POSITION_X: {
-        HANDLE_INHERIT_AND_INITIAL(backgroundXPosition, BackgroundXPosition)
-        if(!primitiveValue) break;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-        l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed);
-        else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-        else
-        return;
-        style->setBackgroundXPosition(l);
+        HANDLE_BACKGROUND_VALUE(backgroundXPosition, BackgroundXPosition, value)
         break;
     }
     case CSS_PROP_BACKGROUND_POSITION_Y: {
-        HANDLE_INHERIT_AND_INITIAL(backgroundYPosition, BackgroundYPosition)
-        if(!primitiveValue) break;
-        Length l;
-        int type = primitiveValue->primitiveType();
-        if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-        l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed);
-        else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-        else
-        return;
-        style->setBackgroundYPosition(l);
+        HANDLE_BACKGROUND_VALUE(backgroundYPosition, BackgroundYPosition, value)
         break;
     }
     case CSS_PROP_BORDER_SPACING: {
@@ -2392,14 +2402,8 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     break;
 // uri || inherit
     case CSS_PROP_BACKGROUND_IMAGE:
-    {
-        HANDLE_INHERIT_AND_INITIAL(backgroundImage, BackgroundImage)
-	if (!primitiveValue) return;
-	style->setBackgroundImage(static_cast<CSSImageValueImpl *>(primitiveValue)
-                                  ->image(element->getDocument()->docLoader()));
-        //kdDebug( 6080 ) << "setting image in style to " << image->image() << endl;
+        HANDLE_BACKGROUND_VALUE(backgroundImage, BackgroundImage, value)
         break;
-    }
     case CSS_PROP_LIST_STYLE_IMAGE:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
@@ -3187,21 +3191,16 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
 
 // shorthand properties
     case CSS_PROP_BACKGROUND:
-        if (isInherit) {
-            style->setBackgroundColor(parentStyle->backgroundColor());
-            style->setBackgroundImage(parentStyle->backgroundImage());
-            style->setBackgroundRepeat(parentStyle->backgroundRepeat());
-            style->setBackgroundAttachment(parentStyle->backgroundAttachment());
-            style->setBackgroundXPosition(parentStyle->backgroundXPosition());
-            style->setBackgroundYPosition(parentStyle->backgroundYPosition());
+        if (isInitial) {
+            style->clearBackgroundLayers();
+            return;
         }
-        else if (isInitial) {
-            style->setBackgroundColor(QColor());
-            style->setBackgroundImage(RenderStyle::initialBackgroundImage());
-            style->setBackgroundRepeat(RenderStyle::initialBackgroundRepeat());
-            style->setBackgroundAttachment(RenderStyle::initialBackgroundAttachment());
-            style->setBackgroundXPosition(RenderStyle::initialBackgroundXPosition());
-            style->setBackgroundYPosition(RenderStyle::initialBackgroundYPosition());
+        else if (isInherit) {
+            if (parentStyle)
+                style->inheritBackgroundLayers(*parentStyle->backgroundLayers());
+            else
+                style->clearBackgroundLayers();
+            return;
         }
         break;
     case CSS_PROP_BORDER:
@@ -3824,6 +3823,106 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     default:
         return;
     }
+}
+
+void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, DOM::CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundAttachment(RenderStyle::initialBackgroundAttachment());
+        return;
+    }
+
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    switch (primitiveValue->getIdent()) {
+        case CSS_VAL_FIXED:
+            layer->setBackgroundAttachment(false);
+            break;
+        case CSS_VAL_SCROLL:
+            layer->setBackgroundAttachment(true);
+            break;
+        default:
+            return;
+    }
+}
+
+void CSSStyleSelector::mapBackgroundImage(BackgroundLayer* layer, DOM::CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundImage(RenderStyle::initialBackgroundImage());
+        return;
+    }
+    
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    layer->setBackgroundImage(static_cast<CSSImageValueImpl *>(primitiveValue)->image(element->getDocument()->docLoader()));
+}
+
+void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, DOM::CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundRepeat(RenderStyle::initialBackgroundRepeat());
+        return;
+    }
+    
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    switch(primitiveValue->getIdent()) {
+	case CSS_VAL_REPEAT:
+	    layer->setBackgroundRepeat(REPEAT);
+	    break;
+	case CSS_VAL_REPEAT_X:
+	    layer->setBackgroundRepeat(REPEAT_X);
+	    break;
+	case CSS_VAL_REPEAT_Y:
+	    layer->setBackgroundRepeat(REPEAT_Y);
+	    break;
+	case CSS_VAL_NO_REPEAT:
+	    layer->setBackgroundRepeat(NO_REPEAT);
+	    break;
+	default:
+	    return;
+    }
+}
+
+void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundXPosition(RenderStyle::initialBackgroundXPosition());
+        return;
+    }
+    
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    Length l;
+    int type = primitiveValue->primitiveType();
+    if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+        l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed);
+    else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else
+        return;
+    layer->setBackgroundXPosition(l);
+}
+
+void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundYPosition(RenderStyle::initialBackgroundYPosition());
+        return;
+    }
+    
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    Length l;
+    int type = primitiveValue->primitiveType();
+    if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+        l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed);
+    else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else
+        return;
+    layer->setBackgroundYPosition(l);
 }
 
 #if APPLE_CHANGES

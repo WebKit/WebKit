@@ -1,5 +1,122 @@
 2004-11-04  David Hyatt  <hyatt@apple.com>
 
+	Implement CSS3 support for multiple backgrounds.  Also fix a bug with background propagation so that it only
+	happens (from the <body> to the root) for HTML documents.  Fixed background-position to handle a mixture of
+	keyword and length values.
+
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::addBackgroundValue):
+        (CSSParser::parseBackgroundShorthand):
+        (CSSParser::parseBackgroundColor):
+        (CSSParser::parseBackgroundImage):
+        (CSSParser::parseBackgroundPositionXY):
+        (CSSParser::parseBackgroundPosition):
+        (CSSParser::parseBackgroundProperty):
+        (CSSParser::parseColorFromValue):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::mapBackgroundAttachment):
+        (khtml::CSSStyleSelector::mapBackgroundImage):
+        (khtml::CSSStyleSelector::mapBackgroundRepeat):
+        (khtml::CSSStyleSelector::mapBackgroundXPosition):
+        (khtml::CSSStyleSelector::mapBackgroundYPosition):
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBoxDecorations):
+        (RenderBox::paintBackgrounds):
+        (RenderBox::paintBackground):
+        (RenderBox::paintBackgroundExtended):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::paintBoxDecorations):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::paintBackgrounds):
+        (khtml::InlineFlowBox::paintBackground):
+        (khtml::InlineFlowBox::paintBackgroundAndBorder):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        (RenderObject::updateBackgroundImages):
+        (RenderObject::getVerticalPosition):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::paintBackgroundExtended):
+        * khtml/rendering/render_style.cpp:
+        (m_next):
+        (BackgroundLayer::BackgroundLayer):
+        (BackgroundLayer::~BackgroundLayer):
+        (BackgroundLayer::operator=):
+        (BackgroundLayer::operator==):
+        (BackgroundLayer::fillUnsetProperties):
+        (BackgroundLayer::cullEmptyLayers):
+        (StyleBackgroundData::StyleBackgroundData):
+        (StyleBackgroundData::operator==):
+        (RenderStyle::diff):
+        (RenderStyle::adjustBackgroundLayers):
+        * khtml/rendering/render_style.h:
+        (khtml::OutlineValue::operator==):
+        (khtml::OutlineValue::operator!=):
+        (khtml::BackgroundLayer::backgroundImage):
+        (khtml::BackgroundLayer::backgroundXPosition):
+        (khtml::BackgroundLayer::backgroundYPosition):
+        (khtml::BackgroundLayer::backgroundAttachment):
+        (khtml::BackgroundLayer::backgroundRepeat):
+        (khtml::BackgroundLayer::next):
+        (khtml::BackgroundLayer::isBackgroundImageSet):
+        (khtml::BackgroundLayer::isBackgroundXPositionSet):
+        (khtml::BackgroundLayer::isBackgroundYPositionSet):
+        (khtml::BackgroundLayer::isBackgroundAttachmentSet):
+        (khtml::BackgroundLayer::isBackgroundRepeatSet):
+        (khtml::BackgroundLayer::setBackgroundImage):
+        (khtml::BackgroundLayer::setBackgroundXPosition):
+        (khtml::BackgroundLayer::setBackgroundYPosition):
+        (khtml::BackgroundLayer::setBackgroundAttachment):
+        (khtml::BackgroundLayer::setBackgroundRepeat):
+        (khtml::BackgroundLayer::clearBackgroundImage):
+        (khtml::BackgroundLayer::clearBackgroundXPosition):
+        (khtml::BackgroundLayer::clearBackgroundYPosition):
+        (khtml::BackgroundLayer::clearBackgroundAttachment):
+        (khtml::BackgroundLayer::clearBackgroundRepeat):
+        (khtml::BackgroundLayer::setNext):
+        (khtml::BackgroundLayer::operator!=):
+        (khtml::BackgroundLayer::containsImage):
+        (khtml::BackgroundLayer::hasImage):
+        (khtml::BackgroundLayer::hasFixedImage):
+        (khtml::RenderStyle::setBitDefaults):
+        (khtml::RenderStyle::hasBackground):
+        (khtml::RenderStyle::hasFixedBackgroundImage):
+        (khtml::RenderStyle::outlineWidth):
+        (khtml::RenderStyle::outlineStyle):
+        (khtml::RenderStyle::outlineStyleIsAuto):
+        (khtml::RenderStyle::outlineColor):
+        (khtml::RenderStyle::backgroundColor):
+        (khtml::RenderStyle::backgroundImage):
+        (khtml::RenderStyle::backgroundRepeat):
+        (khtml::RenderStyle::backgroundAttachment):
+        (khtml::RenderStyle::backgroundXPosition):
+        (khtml::RenderStyle::backgroundYPosition):
+        (khtml::RenderStyle::accessBackgroundLayers):
+        (khtml::RenderStyle::backgroundLayers):
+        (khtml::RenderStyle::outlineOffset):
+        (khtml::RenderStyle::resetOutline):
+        (khtml::RenderStyle::setBackgroundColor):
+        (khtml::RenderStyle::setOutlineWidth):
+        (khtml::RenderStyle::setOutlineStyle):
+        (khtml::RenderStyle::setOutlineColor):
+        (khtml::RenderStyle::clearBackgroundLayers):
+        (khtml::RenderStyle::inheritBackgroundLayers):
+        (khtml::RenderStyle::setOutlineOffset):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::paintBoxDecorations):
+        (RenderTableCell::paintBoxDecorations):
+
+2004-11-04  David Hyatt  <hyatt@apple.com>
+
 	Make sure the text decoder returns empty strings rather than null strings when the utf8 char ptr is non-null.
 	Ensures that <a href=""> works with libxml (which returns data in utf-8 buffers).
 

@@ -354,6 +354,8 @@ public:
 
     void scheduleRelayout();
     
+    void updateBackgroundImages(RenderStyle* oldStyle);
+
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox=false);
     
@@ -393,7 +395,7 @@ public:
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty) {};
 
-    virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
+    virtual void paintBackgroundExtended(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,
                                          int bleft, int bright) {};
 

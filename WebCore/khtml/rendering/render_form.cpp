@@ -779,7 +779,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     int end = kMin(i.r.y() + i.r.height(),  _ty + h);
     int mh = end - my;
 
-    paintBackground(i.p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
+    paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);
 
     if (style()->hasBorder())
         paintBorderMinusLegend(i.p, _tx, _ty, w, h, style(), legend->xPos(), legend->width());

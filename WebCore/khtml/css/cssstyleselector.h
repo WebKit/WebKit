@@ -179,7 +179,13 @@ public:
  
     private:
         void init();
-
+        
+        void mapBackgroundAttachment(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundImage(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundRepeat(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundXPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundYPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        
     protected:
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),

@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1585,27 +1585,16 @@ void RenderObject::setStyle(RenderStyle *style)
     RenderStyle *oldStyle = m_style;
     m_style = style;
 
-    CachedImage* ob = 0;
-    CachedImage* nb = 0;
-
-    if (m_style) {
-        m_style->ref();
-        nb = m_style->backgroundImage();
-    }
-    if (oldStyle) {
-        ob = oldStyle->backgroundImage();
-        oldStyle->deref(renderArena());
-    }
-
-    if (ob != nb) {
-        if (ob) ob->deref(this);
-        if (nb) nb->ref(this);
-    }
-
-    setShouldPaintBackgroundOrBorder((m_style->backgroundColor().isValid() &&
-                                      qAlpha(m_style->backgroundColor().rgb()) > 0) || 
-                                     m_style->hasBorder() || nb );
+    updateBackgroundImages(oldStyle);
     
+    if (m_style)
+        m_style->ref();
+    
+    if (oldStyle)
+        oldStyle->deref(renderArena());
+
+    setShouldPaintBackgroundOrBorder(m_style->hasBorder() || m_style->hasBackground());
+
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();
     
@@ -1628,6 +1617,21 @@ void RenderObject::setStyleInternal(RenderStyle* st)
     m_style = st;
     if (m_style)
         m_style->ref();
+}
+
+void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
+{
+    // FIXME: This will be slow when a large number of images is used.  Fix by using a dict.
+    const BackgroundLayer* oldLayers = oldStyle ? oldStyle->backgroundLayers() : 0;
+    const BackgroundLayer* newLayers = m_style ? m_style->backgroundLayers() : 0;
+    for (const BackgroundLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
+        if (currOld->backgroundImage() && (!newLayers || !newLayers->containsImage(currOld->backgroundImage())))
+            currOld->backgroundImage()->deref(this);
+    }
+    for (const BackgroundLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
+        if (currNew->backgroundImage() && (!oldLayers || !oldLayers->containsImage(currNew->backgroundImage())))
+            currNew->backgroundImage()->ref(this);
+    }
 }
 
 QRect RenderObject::viewRect() const
@@ -1983,28 +1987,17 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
         const QFont &f = parent()->font( firstLine );
         int fontsize = f.pixelSize();
     
-        if ( va == SUB )
+        if (va == SUB)
             vpos += fontsize/5 + 1;
-        else if ( va == SUPER )
+        else if (va == SUPER)
             vpos -= fontsize/3 + 1;
-        else if ( va == TEXT_TOP ) {
-//                 qDebug( "got TEXT_TOP vertical pos hint" );
-//                 qDebug( "parent:" );
-//                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", fontheight, fontsize, parent()->baselinePosition( firstLine ) );
-//                 qDebug( "this:" );
-//                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", lineHeight( firstLine ), style()->font().pixelSize(), baselinePosition( firstLine ) );
-            vpos += ( baselinePosition( firstLine ) -
-                      parent()->baselinePosition( firstLine, !checkParent ) );
-        } else if ( va == MIDDLE ) {
-#if APPLE_CHANGES
+        else if (va == TEXT_TOP)
+            vpos += baselinePosition( firstLine ) - QFontMetrics(f).ascent();
+        else if (va == MIDDLE)
             vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
-#else
-            QRect b = QFontMetrics(f).boundingRect('x');
-            vpos += -b.height()/2 - lineHeight( firstLine )/2 + baselinePosition( firstLine );
-#endif
-        } else if ( va == TEXT_BOTTOM ) {
+        else if (va == TEXT_BOTTOM) {
             vpos += QFontMetrics(f).descent();
-            if ( !isReplaced() )
+            if (!isReplaced())
                 vpos -= fontMetrics(firstLine).descent();
         } else if ( va == BASELINE_MIDDLE )
             vpos += - lineHeight( firstLine )/2 + baselinePosition( firstLine );

@@ -438,7 +438,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     else
         mh = kMin(i.r.height(), h);
     
-    paintBackground(i.p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
+    paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);
     
     if (style()->hasBorder() && !collapseBorders())
         paintBorder(i.p, _tx, _ty, w, h, style());
@@ -2225,22 +2225,24 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 	}
     }
 
+    // FIXME: This code is just plain wrong.  Rows and columns should paint their backgrounds
+    // independent from the cell.
     // ### get offsets right in case the bgimage is inherited.
-    CachedImage *bg = style()->backgroundImage();
-    if ( !bg && parent() )
-        bg = parent()->style()->backgroundImage();
-    if ( !bg && parent() && parent()->parent() )
-        bg = parent()->parent()->style()->backgroundImage();
-    if ( !bg ) {
+    const BackgroundLayer* bgLayer = style()->backgroundLayers();
+    if (!bgLayer->hasImage() && parent())
+        bgLayer = parent()->style()->backgroundLayers();
+    if (!bgLayer->hasImage() && parent() && parent()->parent())
+        bgLayer = parent()->parent()->style()->backgroundLayers();
+    if (!bgLayer->hasImage()) {
 	// see if we have a col or colgroup for this
-	RenderTableCol *col = table()->colElement( _col );
-	if ( col ) {
-	    bg = col->style()->backgroundImage();
-	    if ( !bg ) {
+	RenderTableCol* col = table()->colElement(_col);
+	if (col) {
+	    bgLayer = col->style()->backgroundLayers();
+	    if (!bgLayer->hasImage()) {
 		// try column group
 		RenderStyle *style = col->parent()->style();
-		if ( style->display() == TABLE_COLUMN_GROUP )
-		    bg = style->backgroundImage();
+		if (style->display() == TABLE_COLUMN_GROUP)
+		    bgLayer = style->backgroundLayers();
 	    }
 	}
     }
@@ -2249,8 +2251,8 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     int end = kMin(i.r.y() + i.r.height(), _ty + h);
     int mh = end - my;
 
-    if ( bg || c.isValid() )
-	paintBackground(i.p, c, bg, my, mh, _tx, _ty, w, h);
+    if (bgLayer->hasImage() || c.isValid())
+	paintBackground(i.p, c, bgLayer, my, mh, _tx, _ty, w, h);
 
     if (style()->hasBorder() && !tableElt->collapseBorders())
         paintBorder(i.p, _tx, _ty, w, h, style());
