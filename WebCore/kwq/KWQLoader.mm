@@ -188,6 +188,7 @@ QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tran
     NSDictionary *responseHeaderDict = nil;
     int statusCode = 0;
     NSData *resultData = [bridge syncLoadResourceWithURL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
+    [headerDict release];
     
     job->kill();
 
