@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkhtmlhtml.a
+noinst_LIBRARIES = libkhtmlhtml.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmljava_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlhtml_a_SOURCES = \
+libkhtmlhtml_o_SOURCES = \
 	dtd.cpp \
 	dtd.h \
 	html_baseimpl.cpp \

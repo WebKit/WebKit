@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkjs.a
+noinst_LIBRARIES = libkjs.o
+LDFLAGS = -Wl,-r -nostdlib
+libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkjs_a_SOURCES = \
+libkjs_o_SOURCES = \
 	array_object.cpp \
 	array_object.h \
 	bool_object.cpp \
@@ -62,7 +64,7 @@ noinst_PROGRAMS = testkjs
 
 testkjs_SOURCES = testkjs.cpp
 
-testkjs_LDADD = $(srcdir)/libkjs.a
+testkjs_LDADD = $(srcdir)/libkjs.o
 
 CLEANFILES = $(BUILT_SOURCES) \
 	$(NULL)

@@ -5,9 +5,11 @@ SUBDIRS = \
 	qt \
 	$(NULL)
 
-noinst_LIBRARIES = libkwq.a
+noinst_LIBRARIES = libkwq.o
+LDFLAGS = -Wl,-r -nostdlib
+libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkwq_a_SOURCES = \
+libkwq_o_SOURCES = \
 	KWQApplication.mm \
 	KWQBitmap.mm \
 	KWQBrush.mm \
@@ -123,6 +125,11 @@ libkwq_a_SOURCES = \
 	WKPluginDatabase.mm \
 	KWQPlugin.mm \
 	npapi.mm \
+	$(NULL)
+
+libkwq_o_LIBADD = \
+	./qt/libqt_borrowed.o \
+	./kde/libkde_borrowed.o \
 	$(NULL)
 
 INCLUDES = \

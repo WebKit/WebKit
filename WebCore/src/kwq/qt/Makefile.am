@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libqt_borrowed.a
+noinst_LIBRARIES = libqt_borrowed.o
+LDFLAGS = -Wl,-r -nostdlib
+libqt_borrowed_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libqt_borrowed_a_SOURCES = \
+libqt_borrowed_o_SOURCES = \
 	_qbuffer.cpp \
 	_qcollection.cpp \
 	_qcstring.cpp \

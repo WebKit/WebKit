@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkhtmlecma.a
+noinst_LIBRARIES = libkhtmlecma.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmljava_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlecma_a_SOURCES = \
+libkhtmlecma_o_SOURCES = \
 	kjs_binding.cpp \
 	kjs_binding.h \
 	kjs_css.cpp \

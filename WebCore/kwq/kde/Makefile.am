@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkde_borrowed.a
+noinst_LIBRARIES = libkde_borrowed.o
+AM_LDFLAGS = -Wl,-r -nostdlib
+libkde_borrowed_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkde_borrowed_a_SOURCES = \
+libkde_borrowed_o_SOURCES = \
 	_kurl.cpp \
 	_kurl.h \
 	$(NULL)

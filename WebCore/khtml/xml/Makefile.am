@@ -1,8 +1,10 @@
 NULL=
 
-noinst_LIBRARIES = libkhtmlxml.a
+noinst_LIBRARIES = libkhtmlxml.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmlxml_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlxml_a_SOURCES = \
+libkhtmlxml_o_SOURCES = \
         dom2_eventsimpl.cpp \
         dom2_eventsimpl.h \
         dom2_rangeimpl.cpp \

@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkhtmlrendering.a
+noinst_LIBRARIES = libkhtmlrendering.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmlxml_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlrendering_a_SOURCES = \
+libkhtmlrendering_o_SOURCES = \
 	bidi.cpp \
 	bidi.h \
 	break_lines.cpp \

@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkhtmlcss.a
+noinst_LIBRARIES = libkhtmlcss.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmlcss_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlcss_a_SOURCES = \
+libkhtmlcss_o_SOURCES = \
 	css_ruleimpl.cpp \
 	css_ruleimpl.h \
 	css_stylesheetimpl.cpp \

@@ -1,8 +1,10 @@
 NULL =
 
-noinst_LIBRARIES = libkhtmlmisc.a
+noinst_LIBRARIES = libkhtmlmisc.o
+LDFLAGS = -Wl,-r -nostdlib
+libkhtmlmisc_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-libkhtmlmisc_a_SOURCES = \
+libkhtmlmisc_o_SOURCES = \
 	decoder.cpp \
 	decoder.h \
 	font.cpp \

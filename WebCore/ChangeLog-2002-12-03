@@ -1,5 +1,26 @@
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>
 
+	More build system speedups; instead of building static libraries
+	in each directory, build relocatble object files, using the magic
+	of incremental linking.
+
+	* src/Makefile.am:
+	* src/kdelibs/khtml/Makefile.am:
+	* src/kdelibs/khtml/css/Makefile.am:
+	* src/kdelibs/khtml/dom/Makefile.am:
+	* src/kdelibs/khtml/ecma/Makefile.am:
+	* src/kdelibs/khtml/html/Makefile.am:
+	* src/kdelibs/khtml/java/Makefile.am:
+	* src/kdelibs/khtml/misc/Makefile.am:
+	* src/kdelibs/khtml/rendering/Makefile.am:
+	* src/kdelibs/khtml/xml/Makefile.am:
+	* src/kdelibs/kjs/Makefile.am:
+	* src/kwq/Makefile.am:
+	* src/kwq/kde/Makefile.am:
+	* src/kwq/qt/Makefile.am:
+
+2002-01-17  Maciej Stachowiak  <mjs@apple.com>
+
 	Build speedups: Don't use libtool, and don't link static libraries
 	into each other.
 	
