@@ -12,7 +12,7 @@
 
 - (id)init
 {
-    return [self initWithBytesSoFar:-1 totalToLoad:-1];
+    return [self initWithBytesSoFar:0 totalToLoad:-1];
 }
 
 - (id)initWithBytesSoFar:(int)bytes totalToLoad:(int)total
@@ -30,6 +30,9 @@
 - (id)initWithResourceHandle:(WebResourceHandle *)handle
 {
     WebResourceResponse *theResponse = [handle response];
+    if (theResponse == nil) {
+        return [self init];
+    }
     int b = [theResponse contentLengthReceived];
     int t = [theResponse statusCode] == WebResourceHandleStatusLoadComplete ? b : [theResponse contentLength];
     return [self initWithBytesSoFar:b totalToLoad:t];
