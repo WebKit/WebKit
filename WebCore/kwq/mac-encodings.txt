@@ -3,7 +3,7 @@
 # repeated here; mentioning any one character set from a group in there pulls in all the aliases in
 # that group.
 
-MacRoman: macintosh
+MacRoman: macintosh, x-mac-roman
 WindowsLatin1: windows-1252, x-ansi
 ISOLatin1: iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep

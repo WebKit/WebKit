@@ -1,3 +1,10 @@
+2002-08-28  Darin Adler  <darin@apple.com>
+
+	- fixed 3030212 -- Problems rendering pages that specify "x-mac-roman" character
+	set (like our Danish help pages)
+
+        * kwq/mac-encodings.txt: Added x-mac-roman as an alias for macintosh.
+
 2002-08-27  Darin Adler  <darin@apple.com>
 
         * force-clean-timestamp: Dave's changes require a full build. I found out the
