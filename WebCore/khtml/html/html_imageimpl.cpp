@@ -138,7 +138,7 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NAME:
 	{
 	    QString newNameAttr = attr->value().string();
-	    if (m_render && getDocument()->isHTMLDocument()) {
+	    if (attached() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldNameAttr);
 		document->addNamedImageOrForm(newNameAttr);
@@ -149,7 +149,7 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ID:
 	{
 	    QString newIdAttr = attr->value().string();
-	    if (m_render && getDocument()->isHTMLDocument()) {
+	    if (attached() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldIdAttr);
 		document->addNamedImageOrForm(newIdAttr);
@@ -192,14 +192,14 @@ RenderObject *HTMLImageElementImpl::createRenderer(RenderArena *arena, RenderSty
 void HTMLImageElementImpl::attach()
 {
     createRendererIfNeeded();
-
     if (m_render) {
         m_render->updateFromElement();
-        if (getDocument()->isHTMLDocument()) {
-            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-            document->addNamedImageOrForm(oldIdAttr);
-            document->addNamedImageOrForm(oldNameAttr);
-        }
+    }
+
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addNamedImageOrForm(oldIdAttr);
+        document->addNamedImageOrForm(oldNameAttr);
     }
 
     NodeBaseImpl::attach();

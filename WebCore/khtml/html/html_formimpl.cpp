@@ -106,7 +106,7 @@ void HTMLFormElementImpl::attach()
 {
     HTMLElementImpl::attach();
 
-    if (m_render && getDocument()->isHTMLDocument()) {
+    if (getDocument()->isHTMLDocument()) {
 	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 	document->addNamedImageOrForm(oldNameAttr);
 	document->addNamedImageOrForm(oldIdAttr);
@@ -565,7 +565,7 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NAME:
 	{
 	    QString newNameAttr = attr->value().string();
-	    if (m_render && getDocument()->isHTMLDocument()) {
+	    if (attached() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldNameAttr);
 		document->addNamedImageOrForm(newNameAttr);
@@ -576,7 +576,7 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ID:
 	{
 	    QString newIdAttr = attr->value().string();
-	    if (m_render && getDocument()->isHTMLDocument()) {
+	    if (attached() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldIdAttr);
 		document->addNamedImageOrForm(newIdAttr);

@@ -1,3 +1,23 @@
+2003-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Maciej.
+
+        - fixed remaining bit of 3142646 -- JavaScript Error reported at www.hotmail.com after first time
+
+        The problem was that forms that were attached, but had no render object yet, were
+        not in the form names dictionary. This causes trouble for JavaScript that runs before
+        style sheets load, since the FOUC code makes us not create render objects at that stage.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::attach): Don't check m_render before adding to dictionary.
+        (HTMLFormElementImpl::parseAttribute): Use attached(), not m_render, to tell whether
+        to track the name of the form in the dictionary.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseAttribute): Use attached(), not m_render, to tell whether
+        to track the name of the image in the dictionary.
+        (HTMLImageElementImpl::attach): Don't check m_render before adding to dictionary.
+
 2003-01-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
