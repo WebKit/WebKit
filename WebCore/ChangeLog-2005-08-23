@@ -1,3 +1,11 @@
+2005-01-13  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/3946836> Safari about box lists 2004 instead of 2005
+
+        * WebCore.pbproj/project.pbxproj: bump "2004" to "2005"
+
 2005-01-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken Kocienda.

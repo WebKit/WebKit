@@ -186,7 +186,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>178+, Copyright 2004 Apple Computer, Inc.</string>
+	<string>178+, Copyright 2005 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>

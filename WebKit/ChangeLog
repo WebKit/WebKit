@@ -1,3 +1,11 @@
+2005-01-13  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/3946836> Safari about box lists 2004 instead of 2005
+
+        * WebKit.pbproj/project.pbxproj: bump "2004" to "2005"
+
 2005-01-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3951911> REGRESSION: Animated GIF images with loop counts no longer update

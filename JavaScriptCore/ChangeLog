@@ -1,3 +1,11 @@
+2005-01-13  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Adele.
+
+	- fix <rdar://problem/3946836> Safari about box lists 2004 instead of 2005
+ 
+        * JavaScriptCore.pbproj/project.pbxproj: bump "2004" to "2005"
+
 2005-01-12  Richard Williamson   <rjw@apple.com>
 
 	Avoid additional work on dealloc by adding early out to
