@@ -679,6 +679,8 @@ const ClassInfo DOMDocument::info = { "Document", &DOMNode::info, &DOMDocumentTa
   implementation  DOMDocument::Implementation                  DontDelete|ReadOnly
   documentElement DOMDocument::DocumentElement                 DontDelete|ReadOnly
   styleSheets     DOMDocument::StyleSheets                     DontDelete|ReadOnly
+  preferredStylesheetSet  DOMDocument::PreferredStylesheetSet  DontDelete|ReadOnly
+  selectedStylesheetSet  DOMDocument::SelectedStylesheetSet    DontDelete
   readyState      DOMDocument::ReadyState                      DontDelete|ReadOnly
 @end
 */
@@ -712,6 +714,10 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
   case StyleSheets:
     //kdDebug() << "DOMDocument::StyleSheets, returning " << doc.styleSheets().length() << " stylesheets" << endl;
     return getDOMStyleSheetList(exec, doc.styleSheets(), doc);
+  case PreferredStylesheetSet:
+    return getString(doc.preferredStylesheetSet());
+  case SelectedStylesheetSet:
+    return getString(doc.selectedStylesheetSet());
   case ReadyState:
     {
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
@@ -731,6 +737,26 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
   default:
     kdWarning() << "DOMDocument::getValueProperty unhandled token " << token << endl;
     return Value();
+  }
+}
+
+void DOMDocument::tryPut(ExecState *exec, const UString& propertyName, const Value& value, int attr)
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMDocument::tryPut " << propertyName.qstring() << endl;
+#endif
+  DOMObjectLookupPut<DOMDocument,DOMObject>(exec, propertyName, value, attr,
+					    &DOMDocumentTable, this );
+}
+
+void DOMDocument::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+{
+  DOM::Document doc = static_cast<DOM::Document>(node);
+  switch (token) {
+    case SelectedStylesheetSet: {
+      doc.setSelectedStylesheetSet(value.toString(exec).string());
+      break;
+    }
   }
 }
 

@@ -398,6 +398,29 @@ StyleSheetList Document::styleSheets() const
     return ((DocumentImpl *)impl)->styleSheets();
 }
 
+DOMString Document::preferredStylesheetSet()
+{
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    return ((DocumentImpl*)impl)->preferredStylesheetSet();
+}
+
+DOMString Document::selectedStylesheetSet()
+{
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    return ((DocumentImpl*)impl)->selectedStylesheetSet();
+}
+
+void Document::setSelectedStylesheetSet(const DOMString& aString)
+{
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    return ((DocumentImpl*)impl)->setSelectedStylesheetSet(aString);
+}
 
 KHTMLView *Document::view() const
 {

@@ -304,6 +304,14 @@ public:
 
     StyleSheetListImpl* styleSheets();
 
+    /* Newly proposed CSS3 mechanism for selecting alternate
+       stylesheets using the DOM. May be subject to change as
+       spec matures. - dwh
+    */
+    DOMString preferredStylesheetSet();
+    DOMString selectedStylesheetSet();
+    void setSelectedStylesheetSet(const DOMString& aString);
+
     QStringList availableStyleSheets() const;
     NodeImpl *focusNode() const { return m_focusNode; }
     void setFocusNode(NodeImpl *newFocusNode);
@@ -442,6 +450,8 @@ protected:
     LocalStyleRefs m_localStyleRefs; // references to inlined style elements
     QPtrList<RegisteredEventListener> m_windowEventListeners;
     QPtrList<NodeImpl> m_maintainsState;
+
+    DOMString m_preferredStylesheetSet;
 
     bool m_loadingSheet;
     bool visuallyOrdered;

@@ -479,6 +479,10 @@ public:
 
     StyleSheetList styleSheets();
 
+    DOMString preferredStylesheetSet();
+    DOMString selectedStylesheetSet();
+    void setSelectedStylesheetSet(const DOMString& aString);
+
     bool isNull() const;
 
 protected:

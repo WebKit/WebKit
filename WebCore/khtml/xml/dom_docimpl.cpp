@@ -1397,6 +1397,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
         v->part()->d->m_sheetUsed = content.string();
+        m_preferredStylesheetSet = content;
         updateStyleSelector();
     }
     else if(strcasecmp(equiv, "refresh") == 0 && v->part()->metaRefreshEnabled())
@@ -1744,6 +1745,27 @@ StyleSheetListImpl* DocumentImpl::styleSheets()
     return m_styleSheets;
 }
 
+DOMString 
+DocumentImpl::preferredStylesheetSet()
+{
+  return m_preferredStylesheetSet;
+}
+
+DOMString 
+DocumentImpl::selectedStylesheetSet()
+{
+  return view()->part()->d->m_sheetUsed;
+}
+
+void 
+DocumentImpl::setSelectedStylesheetSet(const DOMString& aString)
+{
+  view()->part()->d->m_sheetUsed = aString.string();
+  updateStyleSelector();
+  if (renderer())
+    renderer()->repaint();
+}
+
 // This method is called whenever a top-level stylesheet has finished loading.
 void DocumentImpl::stylesheetLoaded()
 {
@@ -1838,33 +1860,30 @@ void DocumentImpl::recalcStyleSelector()
                 // <STYLE> element
                 sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
 
-
 	    // Check to see if this sheet belongs to a styleset
 	    // (thus making it PREFERRED or ALTERNATE rather than
 	    // PERSISTENT).
             if ( !title.isEmpty() ) {
 	        // Yes, we have a title.
-	        if ( sheetUsed.isEmpty() ) {
+	      if ( sheetUsed.isEmpty() ) {
 		  // No preferred set has been established.  If
 		  // we are NOT an alternate sheet, then establish
 		  // us as the preferred set.  Otherwise, just ignore
 		  // this sheet.
 		  QString rel = e->getAttribute( ATTR_REL ).string();
-		  if (!rel.contains("alternate")) {
+		  if (n->id() == ID_STYLE || !rel.contains("alternate")) {
                       sheetUsed = view()->part()->d->m_sheetUsed = title;
-                      if ( !m_availableSheets.contains( title ) )
-                          m_availableSheets.append( title );
-		  }
-		}
+                      m_preferredStylesheetSet = sheetUsed;
+                  }
+              }
+                      
+              if ( !m_availableSheets.contains( title ) )
+                  m_availableSheets.append( title );
+		      
+              if (title != sheetUsed)
+                  sheet = 0;
             }
-            if ( n->id() == ID_LINK ) {
-                if (title.isEmpty() || title == sheetUsed)
-                    sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
-            }
-            else
-                // <STYLE> element
-	        sheet = static_cast<HTMLStyleElementImpl*>(n)->sheet();
-	}
+        }
 	else if (n->id() == ID_BODY) {
             // <BODY> element (doesn't contain styles as such but vlink="..." and friends
             // are treated as style declarations)

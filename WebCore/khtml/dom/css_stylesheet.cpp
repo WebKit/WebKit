@@ -446,6 +446,21 @@ StyleSheetList DocumentStyle::styleSheets()
     return doc->styleSheets();
 }
 
+DOMString DocumentStyle::preferredStylesheetSet()
+{
+    return doc->preferredStylesheetSet();
+}
+
+void DocumentStyle::setSelectedStylesheetSet(const DOMString& aStr)
+{
+    return doc->setSelectedStylesheetSet(aStr);
+}
+
+DOMString DocumentStyle::selectedStylesheetSet()
+{
+    return doc->selectedStylesheetSet();
+}
+
 bool DocumentStyle::isNull() const
 {
     return (doc == 0);

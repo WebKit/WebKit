@@ -1,3 +1,39 @@
+2002-07-22  David Hyatt  <hyatt@apple.com>
+
+	This checkin adds support for querying the selected style set,
+	for querying the preferred style set, and for changing the
+	selected style set dynamically.  With this checkin, a Web page
+	in Alexander now has the capability to present its own alternate
+	stylesheet UI in the page and to toggle between sets using script.
+	
+        * khtml/dom/css_stylesheet.cpp:
+        (DocumentStyle::preferredStylesheetSet):
+        (DocumentStyle::setSelectedStylesheetSet):
+        (DocumentStyle::selectedStylesheetSet):
+        * khtml/dom/css_stylesheet.h:
+	Added new methods to the DocumentStyle interface as per Hixie's
+	proposed spec.
+	
+        * khtml/dom/dom_doc.cpp:
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocument::getValueProperty):
+        (DOMDocument::tryPut):
+        (DOMDocument::putValue):
+        * khtml/ecma/kjs_dom.h:
+	Implement the JS binding glue for the new properties.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv):
+        (DocumentImpl::preferredStylesheetSet):
+        (DocumentImpl::selectedStylesheetSet):
+        (DocumentImpl::setSelectedStylesheetSet):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_docimpl.h:
+	The implementation of the new properties.  Also fixed a bug
+	caused by the 3.02 merge in the stylesheet filtering code in
+	recalcStyleSelector.
+	
 2002-07-22  Maciej Stachowiak  <mjs@apple.com>
 
         Merged WebCoreBridge and WebCoreFrameBridge.
