@@ -302,6 +302,13 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     return nil;
 }
 
+- (void)_setName:(NSString *)name
+{
+    // It's wrong to name a frame "_blank".
+    if (![name isEqualToString:@"_blank"]) {
+	[_private setName:name];
+    }
+}
 
 - (WebFrame *)_descendantFrameNamed:(NSString *)name
 {

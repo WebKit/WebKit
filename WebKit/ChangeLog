@@ -1,5 +1,11 @@
 2003-03-04  Maciej Stachowiak  <mjs@apple.com>
 
+	Reinstate missing part of last checking.
+	
+        * WebView.subproj/WebFramePrivate.m:
+
+2003-03-04  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Trey.
 
 	Added the ability to set the top-level frame name via the
