@@ -1,3 +1,13 @@
+2004-04-23  Chris Blumenberg  <cblu@apple.com>
+
+	Reviewed by John
+
+	Added header doc comments to proposed API's.
+
+        * WebView.subproj/WebArchive.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebResource.h:
+
 === Safari-138 ===
 
 2004-04-23  Ken Kocienda  <kocienda@apple.com>
