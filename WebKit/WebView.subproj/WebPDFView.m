@@ -10,6 +10,7 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPDFView.h>
 
 #import <Quartz/Quartz.h>
@@ -202,15 +203,46 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     }
 }
 
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 {
-    BOOL lastFindWasSuccessful = NO;
-    
-    // FIXME:  Insert find code here when ready.
-    
-    return lastFindWasSuccessful;
+    int options = 0;
+    if (!forward) {
+        options |= NSBackwardsSearch;
+    }
+    if (!caseFlag) {
+        options |= NSCaseInsensitiveSearch;
+    }
+    PDFDocument *document = [PDFSubview document];
+    PDFSelection *selection = [document findString:string fromSelection:[PDFSubview currentSelection] withOptions:options];
+    if (selection == nil && wrapFlag) {
+        selection = [document findString:string fromSelection:nil withOptions:options];
+    }
+    if (selection != nil) {
+        [PDFSubview setCurrentSelection:selection];
+        [PDFSubview scrollSelectionToVisible:nil];
+        return YES;
+    }
+    return NO;
 }
 
+- (void)takeFindStringFromSelection:(id)sender
+{
+    [NSPasteboard _web_setFindPasteboardString:[[PDFSubview currentSelection] string] withOwner:self];
+}
+
+- (void)jumpToSelection:(id)sender
+{
+    [PDFSubview scrollSelectionToVisible:nil];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
+{
+    SEL action = [item action];    
+    if (action == @selector(takeFindStringFromSelection:) || action == @selector(jumpToSelection:)) {
+        return [PDFSubview currentSelection] != nil;
+    }
+    return YES;
+}
 
 @end
 

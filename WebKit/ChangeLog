@@ -1,3 +1,15 @@
+2004-12-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3766915> PDF content needs search to work
+
+        Reviewed by kevin, john.
+
+        * WebView.subproj/WebPDFView.m:
+	(-[WebPDFView searchFor:direction:caseSensitive:wrap:]): implemented
+        (-[WebPDFView takeFindStringFromSelection:]): new
+        (-[WebPDFView jumpToSelection:]): new
+        (-[WebPDFView validateUserInterfaceItem:]): new
+
 2004-12-17  Richard Williamson   <rjw@apple.com>
 
 	Make image decoding as lazy as possible for non threaded case; in some cases
