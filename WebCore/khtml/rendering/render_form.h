@@ -83,10 +83,9 @@ public:
     DOM::HTMLGenericFormElementImpl *element() { return m_element; }
 
     virtual bool eventFilter(QObject*, QEvent*);
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif
+#endif /* APPLE_CHANGES */
 
 public slots:
     virtual void slotClicked();
@@ -133,10 +132,9 @@ public:
     virtual const char *renderName() const { return "RenderCheckBox"; }
     virtual void calcMinMaxWidth();
     virtual void layout( );
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif
+#endif /* APPLE_CHANGES */
     
 public slots:
     virtual void slotStateChanged(int state);
@@ -225,10 +223,9 @@ public:
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
     void select();
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif
+#endif /* APPLE_CHANGES */
 
 public slots:
     void slotReturnPressed();
@@ -341,11 +338,9 @@ public:
     void setSelectionChanged(bool _selectionChanged) { m_selectionChanged = _selectionChanged; }
 
     void updateSelection();
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif
-
+#endif /* APPLE_CHANGES */
 
 protected:
     KListBox *createListBox();
@@ -395,10 +390,9 @@ public:
 
     QString text(); // ### remove
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
-#endif
-
+#endif /* APPLE_CHANGES */
     void select();
 
 protected slots:

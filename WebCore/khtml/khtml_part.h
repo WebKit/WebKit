@@ -21,10 +21,9 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef ORIGINAL_KHTMLPART_HEADER
+#ifdef APPLE_CHANGES
 #include "../../kwq/KWQKHTMLPart.h"
-#else 
-
+#else /* APPLE_CHANGES not defined */
 #ifndef __khtml_part_h__
 #define __khtml_part_h__
 
@@ -1049,5 +1048,4 @@ private:
 
 
 #endif
-
-#endif
+#endif /* APPLE_CHANGES not defined */

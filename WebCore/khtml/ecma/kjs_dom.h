@@ -31,6 +31,9 @@
 #include "kjs_binding.h"
 #include "kjs_css.h"
 
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#define id id_
+#endif /* APPLE_CHANGES, __OBJC__ */
 namespace KJS {
 
   class DOMNode : public DOMObject {
@@ -58,14 +61,14 @@ namespace KJS {
   class DOMNodeFunc : public DOMFunction {
     friend class DOMNode;
   public:
-    DOMNodeFunc(DOM::Node n, int i) : node(n), _id(i) { }
+    DOMNodeFunc(DOM::Node n, int i) : node(n), id(i) { }
     Completion tryExecute(const List &);
     enum { InsertBefore, ReplaceChild, RemoveChild, AppendChild,
 	   HasChildNodes, CloneNode, AddEventListener, RemoveEventListener,
 	   DispatchEvent };
   private:
     DOM::Node node;
-    int _id;
+    int id;
   };
 
   class DOMNodeList : public DOMObject {
@@ -84,12 +87,12 @@ namespace KJS {
   class DOMNodeListFunc : public DOMFunction {
     friend class DOMNodeList;
   public:
-    DOMNodeListFunc(DOM::NodeList l, int i) : list(l), _id(i) { }
+    DOMNodeListFunc(DOM::NodeList l, int i) : list(l), id(i) { }
     Completion tryExecute(const List &);
     enum { Item };
   private:
     DOM::NodeList list;
-    int _id;
+    int id;
   };
 
   class DOMDocument : public DOMNode {
@@ -112,7 +115,7 @@ namespace KJS {
 	   CreateRange, CreateNodeIterator, CreateTreeWalker, CreateEvent, GetOverrideStyle };
   private:
     DOM::Document doc;
-    int _id;
+    int id;
   };
 
   class DOMAttr : public DOMNode {
@@ -144,7 +147,7 @@ namespace KJS {
            Normalize };
   private:
     DOM::Element element;
-    int _id;
+    int id;
   };
 
   class DOMDOMImplementation : public DOMObject {
@@ -167,7 +170,7 @@ namespace KJS {
     enum { HasFeature, CreateDocumentType, CreateDocument, CreateCSSStyleSheet };
   private:
     DOM::DOMImplementation implementation;
-    int _id;
+    int id;
   };
 
   class DOMDocumentType : public DOMNode {
@@ -200,7 +203,7 @@ namespace KJS {
            GetNamedItemNS, SetNamedItemNS, RemoveNamedItemNS };
   private:
     DOM::NamedNodeMap map;
-    int _id;
+    int id;
   };
 
   class DOMProcessingInstruction : public DOMNode {
@@ -258,5 +261,8 @@ namespace KJS {
   KJSO getDOMExceptionPrototype();
 
 }; // namespace
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#undef id
+#endif /* APPLE_CHANGES, __OBJC__ */
 
 #endif

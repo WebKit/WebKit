@@ -188,13 +188,13 @@ void HTMLEmbedElementImpl::parseAttribute(AttrImpl *attr)
   QString val = QConstString( stringImpl->s, stringImpl->l ).string();
 
   // export parameter
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     // Need to make a deep copy here or "+" operator will attempt to modify
     // QConstString attribute name
   QString attrStr = attr->name().string().copy() + "=\"" + val + "\"";
-#else
+#else /* APPLE_CHANGES not defined */
   QString attrStr = attr->name().string() + "=\"" + val + "\"";
-#endif
+#endif /* APPLE_CHANGES not defined */
   param.append( attrStr );
   int pos;
   switch ( attr->attrId )
@@ -207,11 +207,11 @@ void HTMLEmbedElementImpl::parseAttribute(AttrImpl *attr)
         break;
      case ATTR_CODE:
      case ATTR_SRC:
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
          url = khtml::parseURL(attr->val()).string().copy();
-#else
+#else /* APPLE_CHANGES not defined */
          url = khtml::parseURL(attr->val()).string();
-#endif
+#endif /* APPLE_CHANGES not defined */
          break;
      case ATTR_WIDTH:
         addCSSLength( CSS_PROP_WIDTH, attr->value() );

@@ -107,30 +107,30 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     int width = m_width;
 
     if( begin )
- 	    width -= p->paddingLeft() + p->borderLeft();
+ 	width -= p->paddingLeft() + p->borderLeft();
 
     if ( end )
         width -= p->paddingRight() + p->borderRight();
 
-
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     //int underlineOffset = pt->fontMetrics().baselineOffset() + 2;
-#else
+#else /* APPLE_CHANGES not defined */
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;
-#endif
+#endif /* APPLE_CHANGES not defined */
 
-    if(deco & UNDERLINE){
+    if(deco & UNDERLINE)
+#ifdef APPLE_CHANGES
+    {
         //fprintf (stderr, "UNDERLINE (%d, %d) to (%d, %d)\n", _tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
-#ifdef _KWQ_
         QConstString s(m_text, m_len);
         pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
-#else
-        pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
-#endif
         //pt->drawLine(_tx, _ty, _tx + width, _ty );
         //pt->drawLine(_tx, _ty + pt->fontMetrics().height(), _tx + width, _ty + pt->fontMetrics().height() );
     }
+#else /* APPLE_CHANGES not defined */
+        pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
+#endif /* APPLE_CHANGES not defined */
     if(deco & OVERLINE)
         pt->drawLine(_tx, _ty, _tx + width, _ty );
     if(deco & LINE_THROUGH)
@@ -265,7 +265,11 @@ int TextSlaveArray::findFirstMatching(Item d) const
 	if ( (*this)[mid] == 0 )			// null item greater
 	    res = -1;
 	else
+#ifdef APPLE_CHANGES
 	    res = ((TextSlaveArray*)this)->compareItems( d, (*this)[mid] );
+#else /* APPLE_CHANGES not defined */
+	    res = ((QGVector*)this)->compareItems( d, (*this)[mid] );
+#endif /* APPLE_CHANGES not defined */
 	if ( res < 0 )
 	    n2 = mid - 1;
 	else if ( res > 0 )
@@ -278,7 +282,11 @@ int TextSlaveArray::findFirstMatching(Item d) const
     /* if ( !found )
 	return -1; */
     // search to first one equal or bigger
+#ifdef APPLE_CHANGES
     while ( found && (mid > 0) && !((TextSlaveArray*)this)->compareItems(d, (*this)[mid-1]) )
+#else /* APPLE_CHANGES not defined */
+    while ( found && (mid > 0) && !((QGVector*)this)->compareItems(d, (*this)[mid-1]) )
+#endif /* APPLE_CHANGES not defined */
 	mid--;
     return mid;
 }
@@ -638,8 +646,10 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 void RenderText::print( QPainter *p, int x, int y, int w, int h,
                       int tx, int ty)
 {
-    //if ( !isVisible() )
-    //    return;
+#ifndef APPLE_CHANGES
+    if ( !isVisible() )
+        return;
+#endif /* APPLE_CHANGES not defined */
 
     int s = m_lines.count() - 1;
     if ( s < 0 ) return;

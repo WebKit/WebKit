@@ -84,7 +84,7 @@ void Decoder::setEncoding(const char *_encoding, bool force)
     if( !b ) // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
 	m_codec = old;
     else
-        haveEncoding = force;
+	haveEncoding = force;
     delete m_decoder;
     m_decoder = m_codec->makeDecoder();
 #ifdef DECODE_DEBUG
@@ -230,12 +230,12 @@ QString Decoder::decode(const char *data, int len)
             }
             return QString::null;
         }
-    } 
-#ifdef _KWQ_
+    }
+#ifdef APPLE_CHANGES
     else {
         buffer += QCString(data, len+1);
-    }
-#endif
+    } 
+#endif /* APPLE_CHANGES */
 
  found:
     // if we still haven't found an encoding latin1 will be used...

@@ -26,7 +26,9 @@
 
 #include <kprocess.h>
 #include <qcstring.h>
+#ifdef APPLE_CHANGES
 #include <qlist.h>
+#endif /* APPLE_CHANGES */
 
 /**
  * @short A class for invoking a Java VM

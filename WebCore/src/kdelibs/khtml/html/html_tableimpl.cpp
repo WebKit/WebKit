@@ -313,18 +313,15 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
     {
         if (!attr->value().isEmpty()) {
             HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
-                        
-#ifdef _KWQ_            
+#ifdef APPLE_CHANGES
             // our c++ implementation likes this better
             DOMString d(khtml::parseURL(attr->value()));
             QString url = d.string();
-#else            
+#else /* APPLE_CHANGES not defined */
             QString url = khtml::parseURL( attr->value() ).string();
-#endif
-            
+#endif /* APPLE_CHANGES not defined */
             if ( doc->view() )
                 url = doc->view()->part()->completeURL( url ).url();
-                
             addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
         }
         else
@@ -437,17 +434,15 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
     {
         if (attr->val()) {
             HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
-
-#ifdef _KWQ_            
+#ifdef APPLE_CHANGES
             // our c++ implementation likes this better
             DOMString d(khtml::parseURL(attr->value()));
             QString url = d.string();
-#else            
+#else /* APPLE_CHANGES not defined */
             QString url = khtml::parseURL( attr->value() ).string();
-#endif
+#endif /* APPLE_CHANGES not defined */
             if ( doc->view() )
                 url = doc->view()->part()->completeURL( url ).url();
-                
             addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
         }
         else

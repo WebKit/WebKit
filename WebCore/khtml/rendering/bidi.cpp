@@ -851,11 +851,11 @@ void RenderFlow::layoutInlineChildren()
             if(!m_pre) {
                 // remove leading spaces
 #ifndef QT_NO_UNICODETABLES
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
                 while(!start.atEnd() && start.current() == ' ' )
-#else
+#else /* APPLE_CHANGES not defined */
                 while(!start.atEnd() && start.direction() == QChar::DirWS )
-#endif
+#endif /* APPLE_CHANGES not defined */
 #else
                 while(!start.atEnd() && start.current() == ' ' )
 #endif

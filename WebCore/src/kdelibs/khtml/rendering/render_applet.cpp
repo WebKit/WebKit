@@ -35,10 +35,9 @@
 #include <java/kjavaappletwidget.h>
 #include <misc/htmltags.h>
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
 #include <WCJavaAppletWidget.h>
-#endif
-
+#endif /* APPLE_CHANGES */
 using namespace khtml;
 using namespace DOM;
 
@@ -49,10 +48,10 @@ RenderApplet::RenderApplet(QScrollView *view,
     // init RenderObject attributes
     setInline(true);
     m_applet = applet;
-    
-#ifdef _KWQ_
+
+#ifdef APPLE_CHANGES
     setQWidget( new WCJavaAppletWidget(args));
-#else
+#else /* APPLE_CHANGES not defined */
     KJavaAppletContext *context = 0;
     KHTMLView *_view = static_cast<KHTMLView*>(view);
     if ( _view ) {
@@ -65,7 +64,7 @@ RenderApplet::RenderApplet(QScrollView *view,
         setQWidget( new KJavaAppletWidget(context, view->viewport()) );
         processArguments(args);
     }
-#endif
+#endif /* APPLE_CHANGES not defined */
 }
 
 RenderApplet::~RenderApplet()
@@ -102,11 +101,11 @@ void RenderApplet::layout()
 
     calcWidth();
     calcHeight();
-    
-#ifdef _KWQ_
+
+#ifdef APPLE_CHANGES
     m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
         m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
-#else
+#else /* APPLE_CHANGES not defined */
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
     if ( tmp ) {
         NodeImpl *child = m_applet->firstChild();
@@ -125,7 +124,8 @@ void RenderApplet::layout()
                          m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
         tmp->showApplet();
     }
-#endif
+#endif /* APPLE_CHANGES not defined */
+
     setLayouted();
 }
 

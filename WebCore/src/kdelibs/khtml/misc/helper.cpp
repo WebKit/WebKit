@@ -153,16 +153,21 @@ using namespace khtml;
 
 static HTMLColors *htmlColors = 0L;
 
+#ifdef APPLE_CHANGES
 // FIXME: do we really need static delete support here?
-//static KStaticDeleter<HTMLColors> hcsd;
+#else /* APPLE_CHANGES not defined */
+static KStaticDeleter<HTMLColors> hcsd;
+#endif /* APPLE_CHANGES not defined */
 
 void khtml::setNamedColor(QColor &color, const QString &_name)
 {
-    if( !htmlColors ) {
+    if( !htmlColors )
+#ifdef APPLE_CHANGES
         // FIXME: do we really need static delete support here?
-        // htmlColors = hcsd.setObject( new HTMLColors );
         htmlColors = new HTMLColors();
-    }
+#else /* APPLE_CHANGES not defined */
+        htmlColors = hcsd.setObject( new HTMLColors );
+#endif /* APPLE_CHANGES not defined */
 
     int pos;
     QString name = _name;
@@ -180,16 +185,38 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     // also recognize "color=ffffff"
     if (len == 6)
     {
+#ifdef APPLE_CHANGES
         // recognize #12345 (append a '0')
         if(name[0] == '#') {
             name += '0';
         }
         else if ((!name[0].isLetter() && !name[0].isDigit())) {
-            color = QColor();
-            return;
-	    }
-        
+	    color = QColor();
+	    return;
+	}
         color.setNamedColor(name);
+#else /* APPLE_CHANGES not defined */
+        bool ok;
+        int val = name.toInt(&ok, 16);
+        if(ok)
+        {
+            color.setRgb((0xff << 24) | val);
+            return;
+        }
+        // recognize #12345 (duplicate the last character)
+        if(name[0] == '#') {
+            bool ok;
+            int val = name.right(5).toInt(&ok, 16);
+            if(ok) {
+                color.setRgb((0xff << 24) | (val * 16 + ( val&0xf )));
+                return;
+            }
+        }
+        if ( !name[0].isLetter() ) {
+	    color = QColor();
+	    return;
+	}
+#endif /* APPLE_CHANGES not defined */
     }
 
     // #fffffff as found on msdn.microsoft.com
@@ -227,13 +254,11 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     else
     {
         QColor tc = htmlColors->map[name];
-        
-        if (!tc.isValid()) {
+        if ( !tc.isValid() )
             tc = htmlColors->map[name.lower()];
-        }
-        if (tc.isValid()) {
+
+        if (tc.isValid())
             color = tc;
-        }
         else {
             color.setNamedColor(name);
             if ( !color.isValid() )  color.setNamedColor( name.lower() );

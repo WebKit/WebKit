@@ -180,7 +180,7 @@ QByteArray HTMLFormElementImpl::formData()
     QCString enc_string = ""; // used for non-multipart data
 
     // find out the QTextcodec to use
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     QString origStr = m_acceptcharset.string();
     QChar space(' ');
     QChar strChars[origStr.length()];
@@ -191,15 +191,11 @@ QByteArray HTMLFormElementImpl::formData()
         else
             strChars[i] = origStr[i];
     QString str(strChars, origStr.length());
-#else
+#else /* APPLE_CHANGES not defined */
     QString str = m_acceptcharset.string();
     QChar space(' ');
-
-    for(unsigned int i=0; i < str.length(); i++)
-        if(str[i].latin1() == ',')
-            str[i] = space;
-#endif
-
+    for(unsigned int i=0; i < str.length(); i++) if(str[i].latin1() == ',') str[i] = space;
+#endif /* APPLE_CHANGES not defined */
     QStringList charsets = QStringList::split(' ', str);
     QTextCodec* codec = 0;
     for ( QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it )
@@ -225,17 +221,17 @@ QByteArray HTMLFormElementImpl::formData()
     if(!codec)
         codec = QTextCodec::codecForLocale();
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     QString encCharset = codec->name();
     QChar encChars[encCharset.length()];
     for(unsigned int i=0; i < encCharset.length(); i++)
         encChars[i] = encCharset[i].latin1() == ' ' ? QChar('-') : encCharset[i].lower();
     QString m_encCharset(encChars,  encCharset.length());
-#else
+#else /* APPLE_CHANGES not defined */
     m_encCharset = codec->name();
     for(unsigned int i=0; i < m_encCharset.length(); i++)
         m_encCharset[i] = m_encCharset[i].latin1() == ' ' ? QChar('-') : m_encCharset[i].lower();
-#endif
+#endif /* APPLE_CHANGES not defined */
 
     for(HTMLGenericFormElementImpl *current = formElements.first(); current; current = formElements.next())
     {
@@ -1509,18 +1505,14 @@ void HTMLSelectElementImpl::setValue(DOMStringImpl* /*value*/)
 
 QString HTMLSelectElementImpl::state( )
 {
+#ifndef APPLE_CHANGES
+    QString state;
+#endif /* APPLE_CHANGES not defined */
     QArray<HTMLGenericFormElementImpl*> items = listItems();
 
     int l = items.count();
 
-#ifndef _KWQ_
-    QString state;
-
-    state.fill('.', l);
-    for(int i = 0; i < l; i++)
-        if(items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
-            state[i] = 'X';
-#else
+#ifdef APPLE_CHANGES
     QChar stateChars[l];
     
     for(int i = 0; i < l; i++)
@@ -1529,7 +1521,12 @@ QString HTMLSelectElementImpl::state( )
         else
             stateChars[i] = '.';
     QString state(stateChars, l);
-#endif
+#else /* APPLE_CHANGES not defined */
+    state.fill('.', l);
+    for(int i = 0; i < l; i++)
+        if(items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
+            state[i] = 'X';
+#endif /* APPLE_CHANGES not defined */
 
     return state;
 }
@@ -1541,13 +1538,13 @@ void HTMLSelectElementImpl::restoreState(const QString &_state)
     QString state = _state;
     if(!state.isEmpty() && !state.contains('X') && !m_multiple) {
         ASSERT("should not happen in restoreState!");
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
         // Invalid access to string's internal buffer.  Should never get here
         // anyway.
         //state[0] = 'X';
-#else
+#else /* APPLE_CHANGES not defined */
         state[0] = 'X';
-#endif
+#endif /* APPLE_CHANGES not defined */
     }
 
     QArray<HTMLGenericFormElementImpl*> items = listItems();

@@ -28,6 +28,9 @@
 #include <dom/css_rule.h>
 #include "kjs_binding.h"
 
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#define id id_
+#endif /* APPLE_CHANGES, __OBJC__ */
 namespace KJS {
 
   class DOMCSSStyleDeclaration : public DOMObject {
@@ -46,13 +49,13 @@ namespace KJS {
   class DOMCSSStyleDeclarationFunc : public DOMFunction {
     friend class DOMNode;
   public:
-    DOMCSSStyleDeclarationFunc(DOM::CSSStyleDeclaration s, int i) : styleDecl(s), _id(i) { }
+    DOMCSSStyleDeclarationFunc(DOM::CSSStyleDeclaration s, int i) : styleDecl(s), id(i) { }
     Completion tryExecute(const List &);
     enum { GetPropertyValue, GetPropertyCSSValue, RemoveProperty, GetPropertyPriority,
            SetProperty, Item };
   private:
     DOM::CSSStyleDeclaration styleDecl;
-    int _id;
+    int id;
   };
 
   KJSO getDOMCSSStyleDeclaration(DOM::CSSStyleDeclaration n);
@@ -90,12 +93,12 @@ namespace KJS {
   class DOMStyleSheetListFunc : public DOMFunction {
     friend class DOMStyleSheetList;
   public:
-    DOMStyleSheetListFunc(DOM::StyleSheetList ssl, int i) : styleSheetList(ssl), _id(i) { }
+    DOMStyleSheetListFunc(DOM::StyleSheetList ssl, int i) : styleSheetList(ssl), id(i) { }
     Completion tryExecute(const List &);
     enum { Item };
   private:
     DOM::StyleSheetList styleSheetList;
-    int _id;
+    int id;
   };
 
   class DOMMediaList : public DOMObject {
@@ -116,12 +119,12 @@ namespace KJS {
   class DOMMediaListFunc : public DOMFunction {
     friend class DOMMediaList;
   public:
-    DOMMediaListFunc(DOM::MediaList ml, int i) : mediaList(ml), _id(i) { }
+    DOMMediaListFunc(DOM::MediaList ml, int i) : mediaList(ml), id(i) { }
     Completion tryExecute(const List &);
     enum { Item, DeleteMedium, AppendMedium };
   private:
     DOM::MediaList mediaList;
-    int _id;
+    int id;
   };
 
   class DOMCSSStyleSheet : public DOMStyleSheet {
@@ -137,12 +140,12 @@ namespace KJS {
   class DOMCSSStyleSheetFunc : public DOMFunction {
     friend class DOMNode;
   public:
-    DOMCSSStyleSheetFunc(DOM::CSSStyleSheet ss, int i) : styleSheet(ss), _id(i) { }
+    DOMCSSStyleSheetFunc(DOM::CSSStyleSheet ss, int i) : styleSheet(ss), id(i) { }
     Completion tryExecute(const List &);
     enum { InsertRule, DeleteRule };
   private:
     DOM::CSSStyleSheet styleSheet;
-    int _id;
+    int id;
   };
 
   class DOMCSSRuleList : public DOMObject {
@@ -159,12 +162,12 @@ namespace KJS {
 
   class DOMCSSRuleListFunc : public DOMFunction {
   public:
-    DOMCSSRuleListFunc(DOM::CSSRuleList rl, int i) : cssRuleList(rl), _id(i) { }
+    DOMCSSRuleListFunc(DOM::CSSRuleList rl, int i) : cssRuleList(rl), id(i) { }
     Completion tryExecute(const List &);
     enum { Item };
   private:
     DOM::CSSRuleList cssRuleList;
-    int _id;
+    int id;
   };
 
   KJSO getDOMCSSRuleList(DOM::CSSRuleList rl);
@@ -184,12 +187,12 @@ namespace KJS {
 
   class DOMCSSRuleFunc : public DOMFunction {
   public:
-    DOMCSSRuleFunc(DOM::CSSRule r, int i) : cssRule(r), _id(i) { }
+    DOMCSSRuleFunc(DOM::CSSRule r, int i) : cssRule(r), id(i) { }
     Completion tryExecute(const List &);
     enum { Item, InsertRule, DeleteRule };
   private:
     DOM::CSSRule cssRule;
-    int _id;
+    int id;
   };
 
   KJSO getDOMCSSRule(DOM::CSSRule r);
@@ -249,13 +252,13 @@ namespace KJS {
   class DOMCSSPrimitiveValueFunc : public DOMFunction {
     friend class DOMNode;
   public:
-    DOMCSSPrimitiveValueFunc(DOM::CSSPrimitiveValue v, int i) : val(v), _id(i) { }
+    DOMCSSPrimitiveValueFunc(DOM::CSSPrimitiveValue v, int i) : val(v), id(i) { }
     Completion tryExecute(const List &);
     enum { SetFloatValue, GetFloatValue, SetStringValue, GetStringValue,
            GetCounterValue, GetRectValue, GetRGBColorValue };
   private:
     DOM::CSSPrimitiveValue val;
-    int _id;
+    int id;
   };
 
   // Prototype object CSSPrimitiveValue
@@ -281,12 +284,12 @@ namespace KJS {
 
   class DOMCSSValueListFunc : public DOMFunction {
   public:
-    DOMCSSValueListFunc(DOM::CSSValueList vl, int i) : valueList(vl), _id(i) { }
+    DOMCSSValueListFunc(DOM::CSSValueList vl, int i) : valueList(vl), id(i) { }
     Completion tryExecute(const List &);
     enum { Item };
   private:
     DOM::CSSValueList valueList;
-    int _id;
+    int id;
   };
 
   class DOMRGBColor : public DOMObject {
@@ -332,5 +335,8 @@ namespace KJS {
   KJSO getDOMCounter(DOM::Counter c);
 
 }; // namespace
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#undef id
+#endif /* APPLE_CHANGES, __OBJC__ */
 
 #endif

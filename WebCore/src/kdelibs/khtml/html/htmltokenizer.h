@@ -54,6 +54,9 @@ class HTMLTokenizer;
 #include "misc/htmltags.h"
 #include "xml/dom_stringimpl.h"
 
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#define id id_
+#endif /* APPLE_CHANGES, __OBJC__ */
 class KHTMLParser;
 class KHTMLView;
 
@@ -76,7 +79,7 @@ namespace khtml {
     {
     public:
         Token() {
-            _id = 0;
+            id = 0;
             complexText = false;
             attrs = 0;
             text = 0;
@@ -100,7 +103,7 @@ namespace khtml {
                 attrs->deref();
                 attrs = 0;
             }
-            _id = 0;
+            id = 0;
             complexText = false;
             if(text) {
                 text->deref();
@@ -108,7 +111,7 @@ namespace khtml {
             }
         }
         DOM::NamedAttrMapImpl* attrs;
-        ushort _id;
+        ushort id;
         DOMStringImpl* text;
         bool complexText;
     };
@@ -133,8 +136,12 @@ public:
     virtual void setOnHold(bool /*_onHold*/) {}
 
 signals:
+#ifdef APPLE_CHANGES
     // temporary implementation here to get test to link
     void finishedParsing() {};
+#else /* APPLE_CHANGES not defined */
+    void finishedParsing();
+#endif /* APPLE_CHANGES not defined */
 
 };
 
@@ -357,6 +364,9 @@ protected:
 
     KHTMLView *view;
 };
+#if defined(APPLE_CHANGES) && defined(__OBJC__)
+#undef id
+#endif /* APPLE_CHANGES, __OBJC__ */
 
 #endif // HTMLTOKENIZER
 

@@ -66,8 +66,10 @@ namespace khtml
 {
     class CachedObject;
     class Request;
+#ifdef APPLE_CHANGES
     class LoaderPrivate;
     class DocLoader;
+#endif /* APPLE_CHANGES */
 
     /**
      * @internal
@@ -96,9 +98,15 @@ namespace khtml
 	    Uncacheable   // to big to be cached,
 	};  	          // will be destroyed as soon as possible
 
+#ifdef APPLE_CHANGES
 	CachedObject(const DocLoader *loader, const DOM::DOMString &url, Type type, bool _reload, int _expireDate)
+#else /* APPLE_CHANGES not defined */
+	CachedObject(const DOM::DOMString &url, Type type, bool _reload, int _expireDate)
+#endif /* APPLE_CHANGES not defined */
 	{
+#ifdef APPLE_CHANGES
 	    m_loader = loader;
+#endif /* APPLE_CHANGES */
 	    m_url = url;
 	    m_type = type;
 	    m_status = Pending;
@@ -107,12 +115,12 @@ namespace khtml
 	    m_reload = _reload;
 	    m_request = 0;
 	    m_expireDate = _expireDate;
-        m_deleted = false;
+            m_deleted = false;
 	}
 	virtual ~CachedObject() {
-        if(m_deleted) abort();
+            if(m_deleted) abort();
             m_deleted = true;
-    }
+        }
 
 	virtual void data( QBuffer &buffer, bool eof) = 0;
 	virtual void error( int err, const char *text ) = 0;
@@ -137,47 +145,47 @@ namespace khtml
 	 */
 	void finish();
 
-    /*
-     * Called by the cache if the object has been removed from the cache dict
-     * while still being referenced. This means the object should kill itself
-     * if its reference counter drops down to zero.
-     */
-    void setFree( bool b ) { m_free = b; }
-    
-    bool reload() const { return m_reload; }
-    
-    void setRequest(Request *_request);
-    
-    bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
+        /*
+         * Called by the cache if the object has been removed from the cache dict
+         * while still being referenced. This means the object should kill itself
+         * if its reference counter drops down to zero.
+         */
+        void setFree( bool b ) { m_free = b; }
+
+        bool reload() const { return m_reload; }
+
+        void setRequest(Request *_request);
+
+        bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
 
 	void setExpireDate(int _expireDate);
 
-    /*
-     * List of acceptable mimetypes seperated by ",". A mimetype may contain a wildcard.
-     */
-    // e.g. "text/*"
-    QString accept() const { return m_accept; }
-    void setAccept(const QString &_accept) { m_accept = _accept; }
-
-
+        /*
+         * List of acceptable mimetypes seperated by ",". A mimetype may contain a wildcard.
+         */
+        // e.g. "text/*"
+        QString accept() const { return m_accept; }
+        void setAccept(const QString &_accept) { m_accept = _accept; }
+#ifdef APPLE_CHANGES
     const DocLoader *loader() { return m_loader; }
-    
-    protected:
+#endif /* APPLE_CHANGES */
 
-    const DocLoader *m_loader;
-    
-    QList<CachedObjectClient> m_clients;
+    protected:
+#ifdef APPLE_CHANGES
+        const DocLoader *m_loader;
+#endif /* APPLE_CHANGES */
+        QList<CachedObjectClient> m_clients;
         
 	DOM::DOMString m_url;
-    QString m_accept;
-    Request *m_request;
+        QString m_accept;
+        Request *m_request;
 	Type m_type;
 	Status m_status;
 	int m_size;
 	int m_expireDate;
-    bool m_free;
-    bool m_reload;
-    bool m_deleted;
+        bool m_free;
+        bool m_reload;
+        bool m_deleted;
     };
 
 
@@ -187,7 +195,11 @@ namespace khtml
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
+#ifdef APPLE_CHANGES
 	CachedCSSStyleSheet(const DocLoader *loader, const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate, const QString& charset);
+#else /* APPLE_CHANGES not defined */
+	CachedCSSStyleSheet(const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate, const QString& charset);
+#endif /* APPLE_CHANGES not defined */
 	virtual ~CachedCSSStyleSheet();
 
 	const DOM::DOMString &sheet() const { return m_sheet; }
@@ -212,7 +224,11 @@ namespace khtml
     class CachedScript : public CachedObject
     {
     public:
+#ifdef APPLE_CHANGES
 	CachedScript(const DocLoader *loader, const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate, const QString& charset);
+#else /* APPLE_CHANGES not defined */
+	CachedScript(const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate, const QString& charset);
+#endif /* APPLE_CHANGES not defined */
 	virtual ~CachedScript();
 
 	const DOM::DOMString &script() const { return m_script; }
@@ -240,7 +256,11 @@ namespace khtml
     {
 	Q_OBJECT
     public:
+#ifdef APPLE_CHANGES
 	CachedImage(const DocLoader *loader, const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate);
+#else /* APPLE_CHANGES not defined */
+	CachedImage(const DOM::DOMString &url, const DOM::DOMString &baseURL, bool reload, int _expireDate);
+#endif /* APPLE_CHANGES not defined */
 	virtual ~CachedImage();
 
 	const QPixmap &pixmap() const;
@@ -322,7 +342,9 @@ namespace khtml
         void setReloading( bool );
         void setShowAnimations( bool );
         void removeCachedObject( CachedObject*) const;
+#ifdef APPLE_CHANGES
         const KHTMLPart *part() { return m_part; }
+#endif /* APPLE_CHANGES */
 
     private:
         friend class Cache;
@@ -349,9 +371,9 @@ namespace khtml
 	QBuffer m_buffer;
 	CachedObject *object;
 	DOM::DOMString m_baseURL;
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     void *client;
-#endif
+#endif /* APPLE_CHANGES */
     };
 
     /**
@@ -379,15 +401,15 @@ namespace khtml
 	void requestDone( const DOM::DOMString &baseURL, khtml::CachedObject *obj );
 	void requestFailed( const DOM::DOMString &baseURL, khtml::CachedObject *obj );
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     public:
 	void slotFinished( KIO::Job * );
 	void slotData( KIO::Job *, const char *data, int size );
-#else
+#else /* APPLE_CHANGES not defined */
     protected slots:
 	void slotFinished( KIO::Job * );
 	void slotData( KIO::Job *, const QByteArray & );
-#endif
+#endif /* APPLE_CHANGES not defined */
 
     private:
 	void servePendingRequests();
@@ -397,13 +419,13 @@ namespace khtml
 #ifdef HAVE_LIBJPEG
         KJPEGFormatType m_jpegloader;
 #endif
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     LoaderPrivate *d;
-#else
+#else /* __APPLE__, __OBJC__, __cplusplus not defined */
     void *d;    
-#endif // __APPLE__, __OBJC__, __cplusplus
-#endif // _KWQ_
+#endif /* __APPLE__, __OBJC__, __cplusplus not defined */
+#endif /* APPLE_CHANGES */
     };
 
         /**

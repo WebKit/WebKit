@@ -180,14 +180,13 @@ NodeImpl *NodeImpl::addChild(NodeImpl *)
   return 0;
 }
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
 khtml::RenderObject *NodeImpl::renderer() const
 {
     return m_render;
 }
-#endif
 
-
+#endif /* APPLE_CHANGES */
 QString NodeImpl::toHTML() const
 {
     NodeImpl* fc = firstChild();

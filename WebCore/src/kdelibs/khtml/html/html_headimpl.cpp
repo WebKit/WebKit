@@ -148,9 +148,14 @@ void HTMLLinkElementImpl::attach()
 
 void HTMLLinkElementImpl::detach()
 {
+#ifdef APPLE_CHANGES
     // RJW:  Why is this done here?
     //if ( sheet() )
     //    getDocument()->createSelector();
+#else /* APPLE_CHANGES not defined */
+    if ( sheet() )
+        getDocument()->createSelector();
+#endif /* APPLE_CHANGES not defined */
 
     HTMLElementImpl::detach();
 }
@@ -432,9 +437,12 @@ void HTMLStyleElementImpl::attach()
 
 void HTMLStyleElementImpl::detach()
 {
+#ifdef APPLE_CHANGES
     // RJW:  Why is this done?
-    //if (m_sheet)
-    //    getDocument()->createSelector();
+    //if (m_sheet) getDocument()->createSelector();
+#else /* APPLE_CHANGES not defined */
+    if (m_sheet) getDocument()->createSelector();
+#endif /* APPLE_CHANGES not defined */
     HTMLElementImpl::detach();
 }
 
@@ -467,8 +475,14 @@ void HTMLTitleElementImpl::setTitle()
     s.compose();
     s = KStringHandler::csqueeze( s.visual(), 128 );
 
+#ifdef APPLE_CHANGES
     // FIXME: need to uncomment this eventually
     //HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(ownerDocument());
     //if ( !d->view()->part()->parentPart() )
     //    emit d->view()->part()->setWindowCaption( s.visual() );
+#else /* APPLE_CHANGES not defined */
+    HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(ownerDocument());
+    if ( !d->view()->part()->parentPart() )
+        emit d->view()->part()->setWindowCaption( s.visual() );
+#endif /* APPLE_CHANGES not defined */
 }

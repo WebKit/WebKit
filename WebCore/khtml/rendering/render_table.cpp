@@ -729,8 +729,11 @@ void RenderTable::calcFinalColMax(int c, ColInfo* col)
         oldmin+=colMinWidth[o];
     }
 
+#ifdef APPLE_CHANGES
     // [kocienda] smin in unused
-    //int smin = col->min;
+#else /* APPLE_CHANGES not defined */
+    int smin = col->min;
+#endif /* APPLE_CHANGES not defined */
     int smax = col->max;
 
     if (col->type == Percent)
@@ -1358,8 +1361,12 @@ void RenderTable::layoutRows(int yoff)
                 continue;
             if ( c < totalCols - 1 && cell == cells[r][c+1] )
                 continue;
+#ifdef APPLE_CHANGES
             // [kocienda] fixed signed/unsigned comparison
             if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
+#else /* APPLE_CHANGES not defined */
+            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
+#endif /* APPLE_CHANGES not defined */
                 continue;
 
     	    cell->calcVerticalMargins();
@@ -1380,8 +1387,11 @@ void RenderTable::layoutRows(int yoff)
     else if (h.isPercent())
     {
         Length ch = containingBlock()->style()->height();
+#ifdef APPLE_CHANGES
         // [kocienda] containing is unused
-        //RenderObject *containing = containingBlock();
+#else /* APPLE_CHANGES not defined */
+        RenderObject *containing = containingBlock();
+#endif /* APPLE_CHANGES not defined */
         if (ch.isFixed())
             th = h.width(ch.value);
         else 
@@ -1428,8 +1438,12 @@ void RenderTable::layoutRows(int yoff)
                 continue;
             if ( c < totalCols - 1 && cell == cells[r][c+1] )
                 continue;
+#ifdef APPLE_CHANGES
             // [kocienda] fixed signed/unsigned comparison
             if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
+#else /* APPLE_CHANGES not defined */
+            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
+#endif /* APPLE_CHANGES not defined */
                 continue;
 
             if ( ( indx = c-cell->colSpan()+1 ) < 0 )

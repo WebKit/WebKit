@@ -26,7 +26,9 @@
 #include <dom/dom_doc.h>
 #include <kurl.h>
 #include <qguardedptr.h>
+#ifdef APPLE_CHANGES
 #include <qvariant.h>
+#endif /* APPLE_CHANGES */
 
 namespace KJS {
 

@@ -1,3 +1,94 @@
+2002-03-06  Don Melton  <gramps@apple.com>
+
+	Cleaned up all our changes to kdelibs, removed bitrot, and replaced use
+	of _KWQ_ with new APPLE_CHANGES define.
+
+	* src/kdelibs/khtml/css/csshelper.cpp: (khtml::computeLengthFloat),
+	(khtml::setFontSize):
+	* src/kdelibs/khtml/css/cssstyleselector.cpp:
+	(CSSStyleSelector::CSSStyleSelector), (khtml::applyRule):
+	* src/kdelibs/khtml/dom/dom_misc.cpp:
+	* src/kdelibs/khtml/dom/dom_misc.h:
+	* src/kdelibs/khtml/dom/html_document.cpp: (HTMLDocument::cookie),
+	(HTMLDocument::setCookie):
+	* src/kdelibs/khtml/dom/html_element.cpp:
+	* src/kdelibs/khtml/ecma/kjs_binding.h:
+	* src/kdelibs/khtml/ecma/kjs_css.cpp: (DOMCSSStyleDeclarationFunc::tryExecute),
+	(DOMStyleSheetListFunc::tryExecute), (DOMMediaListFunc::tryExecute),
+	(DOMCSSStyleSheetFunc::tryExecute), (DOMCSSRuleListFunc::tryExecute),
+	(DOMCSSRuleFunc::tryExecute), (DOMCSSPrimitiveValueFunc::tryExecute),
+	(DOMCSSValueListFunc::tryExecute):
+	* src/kdelibs/khtml/ecma/kjs_css.h:
+	* src/kdelibs/khtml/ecma/kjs_dom.cpp: (DOMNodeFunc::tryExecute),
+	(DOMNodeListFunc::tryExecute), (DOMDocFunction::DOMDocFunction),
+	(DOMDocFunction::tryExecute), (DOMElementFunction::DOMElementFunction),
+	(DOMElementFunction::tryExecute),
+	(DOMDOMImplementationFunction::DOMDOMImplementationFunction),
+	(DOMDOMImplementationFunction::tryExecute),
+	(DOMNamedNodeMapFunction::DOMNamedNodeMapFunction),
+	(DOMNamedNodeMapFunction::tryExecute):
+	* src/kdelibs/khtml/ecma/kjs_dom.h:
+	* src/kdelibs/khtml/ecma/kjs_window.cpp: (Window::isSafeScript):
+	* src/kdelibs/khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::formData),
+	(HTMLSelectElementImpl::state), (HTMLSelectElementImpl::restoreState):
+	* src/kdelibs/khtml/html/html_headimpl.cpp: (HTMLLinkElementImpl::detach),
+	(HTMLStyleElementImpl::detach), (HTMLTitleElementImpl::setTitle):
+	* src/kdelibs/khtml/html/html_objectimpl.cpp:
+	(HTMLEmbedElementImpl::parseAttribute):
+	* src/kdelibs/khtml/html/html_tableimpl.cpp:
+	(HTMLTableElementImpl::parseAttribute),
+	(HTMLTablePartElementImpl::parseAttribute):
+	* src/kdelibs/khtml/html/htmlparser.cpp: (KHTMLParser::parseToken),
+	(KHTMLParser::insertNode), (KHTMLParser::getElement),
+	(KHTMLParser::processCloseTag), (KHTMLParser::popBlock),
+	(KHTMLParser::popOneBlock):
+	* src/kdelibs/khtml/html/htmltokenizer.cpp: (HTMLTokenizer::parseSpecial),
+	(HTMLTokenizer::scriptHandler), (HTMLTokenizer::parseComment),
+	(HTMLTokenizer::parseTag), (HTMLTokenizer::processToken):
+	* src/kdelibs/khtml/html/htmltokenizer.h:
+	* src/kdelibs/khtml/java/kjavaprocess.h:
+	* src/kdelibs/khtml/khtml_part.h:
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::~KHTMLView), (KHTMLView::init),
+	(printRenderTree), (KHTMLView::drawContents), (KHTMLView::layout),
+	(KHTMLView::viewportMousePressEvent), (KHTMLView::viewportMouseDoubleClickEvent),
+	(KHTMLView::viewportMouseMoveEvent), (KHTMLView::viewportMouseReleaseEvent),
+	(KHTMLView::addFormCompletionItem):
+	* src/kdelibs/khtml/khtmlview.h:
+	* src/kdelibs/khtml/misc/decoder.cpp: (Decoder::setEncoding), (Decoder::decode):
+	* src/kdelibs/khtml/misc/helper.cpp: (khtml::setNamedColor):
+	* src/kdelibs/khtml/misc/loader.h:
+	* src/kdelibs/khtml/rendering/bidi.cpp: (RenderFlow::layoutInlineChildren):
+	* src/kdelibs/khtml/rendering/render_applet.cpp: (RenderApplet::RenderApplet):
+	* src/kdelibs/khtml/rendering/render_body.cpp: (RenderBody::layout):
+	* src/kdelibs/khtml/rendering/render_box.cpp: (RenderBox::printBackground):
+	* src/kdelibs/khtml/rendering/render_flow.cpp: (RenderFlow::print):
+	* src/kdelibs/khtml/rendering/render_form.cpp:
+	(RenderFormElement::baselinePosition), (RenderFormElement::slotClicked),
+	(RenderCheckBox::RenderCheckBox), (RenderCheckBox::performAction),
+	(RenderRadioButton::RenderRadioButton), (RenderRadioButton::slotClicked),
+	(RenderSubmitButton::RenderSubmitButton), (RenderSubmitButton::baselinePosition),
+	(RenderLineEdit::RenderLineEdit), (RenderLineEdit::calcMinMaxWidth),
+	(RenderLineEdit::performAction), (RenderFileButton::RenderFileButton),
+	(RenderSelect::RenderSelect), (RenderSelect::layout),
+	(RenderSelect::createListBox), (RenderSelect::createComboBox),
+	(RenderTextArea::RenderTextArea), (RenderTextArea::calcMinMaxWidth),
+	(RenderTextArea::layout):
+	* src/kdelibs/khtml/rendering/render_form.h:
+	* src/kdelibs/khtml/rendering/render_frames.cpp:
+	(RenderPartObject::updateWidget):
+	* src/kdelibs/khtml/rendering/render_hr.cpp: (RenderHR::print):
+	* src/kdelibs/khtml/rendering/render_image.cpp: (RenderImage::printObject):
+	* src/kdelibs/khtml/rendering/render_list.cpp: (RenderListMarker::printObject):
+	* src/kdelibs/khtml/rendering/render_style.h:
+	* src/kdelibs/khtml/rendering/render_table.cpp: (RenderTable::calcFinalColMax),
+	(RenderTable::layoutRows):
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration),
+	(TextSlaveArray::findFirstMatching), (RenderText::print):
+	* src/kdelibs/khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyle):
+	* src/kdelibs/khtml/xml/dom_nodeimpl.cpp: (NodeImpl::renderer):
+	* src/kdelibs/khtml/xml/dom_nodeimpl.h:
+	* src/kdelibs/khtml/xml/dom_stringimpl.cpp: (DOMStringImpl::toLengthList):
+
 2002-03-06  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/KWQKURL.mm: (KURL::KURL): If resolving a relative URL

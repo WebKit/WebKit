@@ -193,11 +193,11 @@ public:
     virtual khtml::RenderStyle *style() const { return 0; }
 
     virtual void setRenderer(khtml::RenderObject *object) { m_render = object; }
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     khtml::RenderObject *renderer() const;
-#else
+#else /* APPLE_CHANGES not defined */
     virtual khtml::RenderObject *renderer() const { return m_render; }
-#endif
+#endif /* APPLE_CHANGES not defined */
 
 
     virtual DOM::CSSStyleDeclarationImpl *styleRules() { return 0; }

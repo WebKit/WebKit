@@ -213,6 +213,9 @@ Length DOMStringImpl::toLength() const
 
 QList<Length> *DOMStringImpl::toLengthList() const
 {
+#ifndef APPLE_CHANGES
+    QString str(s, l);
+#endif /* APPLE_CHANGES not defined */
     int pos = 0;
     int pos2;
 
@@ -220,7 +223,7 @@ QList<Length> *DOMStringImpl::toLengthList() const
     // to fix lists like "1,2px 3 ,4"
     // make sure not to break percentage or relative widths
     // ### what about "auto" ?
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     QChar spacified[l];
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
@@ -233,16 +236,14 @@ QList<Length> *DOMStringImpl::toLengthList() const
         }
     }
     QString str(spacified, l);
-#else
-    QString str(s, l);
+#else /* APPLE_CHANGES not defined */
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
         char cc = str[i].latin1();
-        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') ){
+        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') )
             str[i] = space;
-        }
     }
-#endif
+#endif /* APPLE_CHANGES not defined */
     str = str.simplifyWhiteSpace();
 
     QList<Length> *list = new QList<Length>;

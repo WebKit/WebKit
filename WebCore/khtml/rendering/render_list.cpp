@@ -246,13 +246,13 @@ void RenderListMarker::printObject(QPainter *p, int, int,
     p->setFont(style()->font());
     p->setPen(style()->color());
     QFontMetrics fm = p->fontMetrics();
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     // Why does khtml draw such large dots, squares, circle, etc for list items?
     // These seem much bigger than competing browsers.  I've reduced the size.
     int offset = fm.ascent()/3;
-#else
+#else /* APPLE_CHANGES not defined */
     int offset = fm.ascent()*2/3;
-#endif
+#endif /* APPLE_CHANGES not defined */
 
 #ifdef BOX_DEBUG
     p->setPen( QColor("red") );

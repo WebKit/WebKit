@@ -53,8 +53,9 @@ namespace khtml {
     void applyRule(RenderStyle *style, DOM::CSSProperty *prop, DOM::ElementImpl *e);
 };
 
+#ifdef APPLE_CHANGES
 #include "khtml_part.h"
-
+#endif /* APPLE_CHANGES */
 class KHTMLPart;
 class KHTMLViewPrivate;
 
@@ -172,12 +173,20 @@ public:
 
     static const QList<KHTMLView> *viewList() { return lstViews; }
 
-    virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
+signals:
+    void cleared();
 
+protected:
+    void clear();
+
+#ifdef APPLE_CHANGES
+public:
+#endif /* APPLE_CHANGES */
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void showEvent ( QShowEvent * );
     virtual void hideEvent ( QHideEvent *);
     virtual bool focusNextPrevChild( bool next );
+    virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
 
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusOutEvent( QFocusEvent * );
@@ -207,13 +216,6 @@ public:
      * Scroll the view
      */
     void doAutoScroll();
-
-signals:
-    void cleared();
-
-    void clear();
-
-protected:
 
 protected slots:
     void slotPaletteChanged();

@@ -69,9 +69,12 @@ void RenderHR::print(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _
         prev = prev->previousSibling();
     if(prev && static_cast<RenderFlow *>(prev)->floatBottom() > prev->height() )
         xp += static_cast<RenderFlow *>(prev)->leftOffset( prev->height() );
-    
+
+#ifdef APPLE_CHANGES
     // [kocienda] yp is unused because of #if 0 block
-    //int yp = _ty ;
+#else /* APPLE_CHANGES not defined */
+    int yp = _ty ;
+#endif /* APPLE_CHANGES not defined */
 
 
 

@@ -804,11 +804,12 @@ void RenderPartObject::updateWidget()
      }
 
      KHTMLPart *part = static_cast<KHTMLView *>(m_view)->part();
-     #ifdef _KWQ_
-     #else
+
+#ifndef APPLE_CHANGES
      o->param.append( QString::fromLatin1("__KHTML__PLUGINEMBED=\"YES\"") );
      o->param.append( QString::fromLatin1("__KHTML__PLUGINBASEURL=\"%1\"").arg( part->url().url() ) );
-     #endif
+#endif /* APPLE_CHANGES not defined */
+
      part->requestObject( this, url, serviceType, o->param );
 
   } else {

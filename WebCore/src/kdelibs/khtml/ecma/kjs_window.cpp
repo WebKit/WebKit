@@ -798,7 +798,6 @@ bool Window::isSafeScript() const
   KHTMLPart *act = (KHTMLPart*)KJS::Global::current().extra();
   if (!act)
       kdDebug(6070) << "Window::isSafeScript: KJS::Global::current().extra() is 0L!" << endl;
-  
   return act && originCheck(m_part->url(), act->url());
 }
 

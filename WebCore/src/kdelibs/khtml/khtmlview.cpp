@@ -71,12 +71,20 @@ public:
     {
         underMouse = 0;
         reset();
+#ifndef APPLE_CHANGES
+        tp=0;
+        paintBuffer=0;
+#endif /* APPLE_CHANGES not defined */
         formCompletions=0;
         prevScrollbarVisible = true;
     }
     ~KHTMLViewPrivate()
     {
         delete formCompletions;
+#ifndef APPLE_CHANGES
+        delete tp; tp = 0;
+        delete paintBuffer; paintBuffer =0;
+#endif /* APPLE_CHANGES not defined */
         if (underMouse)
 	    underMouse->deref();
     }
@@ -106,8 +114,12 @@ public:
 	isDoubleClick = false;
     }
 
+#ifdef APPLE_CHANGES
     // The paintBuffer ivar is obsolete, 
     // and should probably be removed at some point
+#else /* APPLE_CHANGES not defined */
+    QPainter *tp;
+#endif /* APPLE_CHANGES not defined */
     QPixmap  *paintBuffer;
     NodeImpl *underMouse;
 
@@ -143,10 +155,9 @@ public:
         m_viewprivate = vp;
     };
 
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     virtual ~KHTMLToolTip() {}
-#endif
-
+#endif /* APPLE_CHANGES */
 protected:
     virtual void maybeTip(const QPoint &);
 
@@ -200,6 +211,16 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
 
 KHTMLView::~KHTMLView()
 {
+#ifndef APPLE_CHANGES
+    if (m_part)
+    {
+        //WABA: Is this Ok? Do I need to deref it as well?
+        //Does this need to be done somewhere else?
+        DOM::DocumentImpl *doc = m_part->xmlDocImpl();
+        if (doc)
+            doc->detach();
+    }
+#endif /* APPLE_CHANGES not defined */
     lstViews->removeRef( this );
     if(lstViews->isEmpty())
     {
@@ -216,6 +237,11 @@ void KHTMLView::init()
         lstViews = new QList<KHTMLView>;
     lstViews->setAutoDelete( FALSE );
     lstViews->append( this );
+
+#ifndef APPLE_CHANGES
+    if(!d->paintBuffer) d->paintBuffer = new QPixmap(PAINT_BUFFER_HEIGHT, PAINT_BUFFER_HEIGHT);
+   if(!d->tp) d->tp = new QPainter();
+#endif /* APPLE_CHANGES not defined */
 
     setFocusPolicy(QWidget::StrongFocus);
     viewport()->setFocusPolicy( QWidget::WheelFocus );
@@ -277,12 +303,11 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
 
-#ifdef KWQ_RENDER_TREE_DEBUG
+#ifdef APPLE_RENDER_TREE_DEBUG
 static void printLevel(int level){
     while (level--)
         printf ("    ");
 }
-
 
 static void printRenderTree(RenderObject *node, int level)
 {
@@ -294,9 +319,8 @@ static void printRenderTree(RenderObject *node, int level)
         child = child->nextSibling();
     }
 }
-#endif
 
-
+#endif /* APPLE_RENDER_TREE_DEBUG */
 void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 {
     if(!m_part->xmlDocImpl()) {
@@ -304,6 +328,7 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         return;
     }
 
+#ifdef APPLE_CHANGES
     // FIXME!
     RenderObject *ro;
     DOM::DocumentImpl *doc;
@@ -312,19 +337,45 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
     if (doc){
         ro = doc->renderer();
         if (ro){
-#ifdef KWQ_RENDER_TREE_DEBUG
+#ifdef APPLE_RENDER_TREE_DEBUG
                 printRenderTree (ro, 0);
-#endif
+#endif /* APPLE_RENDER_TREE_DEBUG */
             ro->print(p, ex, ey, ew, eh, 0, 0);
         }
     }
+#else /* APPLE_CHANGES not defined */
+    //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
+
+    if ( d->paintBuffer->width() < visibleWidth() )
+        d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
+
+    int py=0;
+    while (py < eh) {
+        int ph = eh-py < PAINT_BUFFER_HEIGHT ? eh-py : PAINT_BUFFER_HEIGHT;
+        d->tp->begin(d->paintBuffer);
+        d->tp->translate(-ex, -ey-py);
+        d->tp->fillRect(ex, ey+py, ew, ph, palette().normal().brush(QColorGroup::Base));
+        m_part->xmlDocImpl()->renderer()->print(d->tp, ex, ey+py, ew, ph, 0, 0);
+#ifdef BOX_DEBUG
+	if (m_part->xmlDocImpl()->focusNode())
+	{
+	    d->tp->setBrush(Qt::NoBrush);
+	    d->tp->drawRect(m_part->xmlDocImpl()->focusNode()->getRect());
+	}
+#endif
+        d->tp->end();
+
+        p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
+        py += PAINT_BUFFER_HEIGHT;
+    }
+#endif /* APPLE_CHANGES not defined */
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     m_part->event (&event);
-#else
+#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif
+#endif /* APPLE_CHANGES not defined */
 }
 
 void KHTMLView::layout(bool)
@@ -335,28 +386,32 @@ void KHTMLView::layout(bool)
 
         khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
 
+#ifdef APPLE_CHANGES
         if (root != 0){
-            if (document->isHTMLDocument()) {
-                NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-                if(body && body->renderer() && body->id() == ID_FRAMESET) {
-                    QScrollView::setVScrollBarMode(AlwaysOff);
-                    QScrollView::setHScrollBarMode(AlwaysOff);
-                    _width = visibleWidth();
-                    body->renderer()->setLayouted(false);
-                    body->renderer()->layout();
-                    root->layout();
-                    return;
-                }
+#endif /* APPLE_CHANGES */
+        if (document->isHTMLDocument()) {
+            NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
+            if(body && body->renderer() && body->id() == ID_FRAMESET) {
+                QScrollView::setVScrollBarMode(AlwaysOff);
+                QScrollView::setHScrollBarMode(AlwaysOff);
+                _width = visibleWidth();
+                body->renderer()->setLayouted(false);
+                body->renderer()->layout();
+                root->layout();
+                return;
             }
-        
-            _height = visibleHeight();
-            _width = visibleWidth();
-        
-            //QTime qt;
-            //qt.start();
+        }
+#ifdef APPLE_CHANGES
+        }
+#endif /* APPLE_CHANGES */
+
+        _height = visibleHeight();
+        _width = visibleWidth();
+
+        //QTime qt;
+        //qt.start();
             root->layout();
             //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
-        }
     } else {
         _width = visibleWidth();
     }
@@ -406,11 +461,11 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     m_part->event (&event);
-#else
+#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif
+#endif /* APPLE_CHANGES not defined */
 
     emit m_part->nodeActivated(mev.innerNode);
 }
@@ -448,12 +503,11 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     m_part->event (&event);
-#else
+#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif
-
+#endif /* APPLE_CHANGES not defined */
 
     // ###
     //if ( url.length() )
@@ -543,12 +597,11 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 
     khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     m_part->event (&event);
-#else
+#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif
-
+#endif /* APPLE_CHANGES not defined */
 }
 
 void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
@@ -576,12 +629,11 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.innerNode );
     event.setNodePos( mev.nodeAbsX, mev.nodeAbsY );
-#ifdef _KWQ_
+#ifdef APPLE_CHANGES
     m_part->event (&event);
-#else
+#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif
-
+#endif /* APPLE_CHANGES not defined */
 }
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )
@@ -1093,8 +1145,12 @@ void KHTMLView::addFormCompletionItem(const QString &name, const QString &value)
     // dashes or spaces as those are likely credit card numbers or
     // something similar
     bool cc_number(true);
+#ifdef APPLE_CHANGES
     // [kocienda] fixed signed/unsigned int comparison
     for (unsigned int i = 0; i < value.length(); ++i)
+#else /* APPLE_CHANGES not defined */
+    for (int i = 0; i < value.length(); ++i)
+#endif /* APPLE_CHANGES not defined */
     {
       QChar c(value[i]);
       if (!c.isNumber() && c != '-' && !c.isSpace())
