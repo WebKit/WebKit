@@ -1,3 +1,17 @@
+2005-03-07  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4040749> REGRESSION (125-178): opacity style not working, breaks fading images on okcupid.com
+
+	When layers are dynamically created/removed as a result of changing opacity they weren't being correctly
+	sized and positioned.  This happens whenever opacity goes from < 1 to 1.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+
 2005-03-07  Christy Warren  <set EMAIL_ADDRESS environment variable>
 
         Reviewed by Darin

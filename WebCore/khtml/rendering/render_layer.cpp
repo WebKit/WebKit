@@ -250,7 +250,7 @@ void RenderLayer::updateLayerPosition()
                 y += sy;
         }
     }
-    else
+    else if (parent())
         parent()->subtractScrollOffset(x, y);
     
     setPos(x,y);
