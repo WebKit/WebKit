@@ -294,7 +294,8 @@ void Collector::finalCheck()
 }
 #endif
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
+
 int Collector::numInterpreters()
 {
   int count = 0;
@@ -373,4 +374,4 @@ CFSetRef Collector::liveObjectClasses()
   return classes;
 }
 
-#endif
+#endif // APPLE_CHANGES

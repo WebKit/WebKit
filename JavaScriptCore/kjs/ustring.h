@@ -23,7 +23,7 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #include <sys/types.h>
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED

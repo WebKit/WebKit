@@ -48,7 +48,7 @@
 #include "types.h"
 #include "interpreter.h"
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #if !defined(__OBJC__) && !defined(_COLLECTOR)
 typedef void *CFSetRef;
 #endif
@@ -94,7 +94,7 @@ namespace KJS {
      */
     static bool collecting;
 #endif
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static int numInterpreters();
     static int numGCNotAllowedObjects();
     static int numReferencedObjects();

@@ -1,3 +1,15 @@
+2002-10-26  Darin Adler  <darin@apple.com>
+
+	- changed to use #if APPLE_CHANGES and #if !APPLE_CHANGES consistently
+
+	We no longer do #ifdef APPLE_CHANGES or #ifndef APPLE_CHANGES.
+
+        * kjs/collector.cpp:
+        * kjs/collector.h:
+        * kjs/grammar.cpp:
+        * kjs/internal.cpp:
+        * kjs/ustring.h:
+
 2002-10-25  Darin Adler  <darin@apple.com>
 
 	- fixed 3038011 -- drop-down menu hierarchy broken at yahoo new acct page

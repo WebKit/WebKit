@@ -68,7 +68,7 @@ namespace KJS {
   const double Inf = *(const double*) Inf_Bytes;
 };
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
 
@@ -685,7 +685,7 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
 {
   // add this interpreter to the global chain
   // as a root set for garbage collection
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   lockInterpreter();
   m_interpreter = interp;
 #endif
@@ -699,11 +699,11 @@ InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
     s_hook = next = prev = this;
     globalInit();
   }
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   unlockInterpreter();
 #endif
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   m_interpreter = interp;
 #endif
   global = glob;
@@ -846,7 +846,7 @@ void InterpreterImp::clear()
 {
   //fprintf(stderr,"InterpreterImp::clear\n");
   // remove from global chain (see init())
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   lockInterpreter();
 #endif
   next->prev = prev;
@@ -858,7 +858,7 @@ void InterpreterImp::clear()
     s_hook = 0L;
     globalClear();
   }
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   unlockInterpreter();
 #endif
 }
@@ -897,12 +897,12 @@ bool InterpreterImp::checkSyntax(const UString &code)
 
 Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
   lockInterpreter();
 #endif
   // prevent against infinite recursion
   if (recursion >= 20) {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     Completion result = Completion(Throw,Error::create(globExec,GeneralError,"Recursion too deep"));
     unlockInterpreter();
     return result;
@@ -921,9 +921,9 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
   if (dbg) {
     bool cont = dbg->sourceParsed(globExec,sid,code,errLine);
     if (!cont)
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
       {
-	pthread_mutex_unlock(&interpreterLock);
+	unlockInterpreter();
 	return Completion(Break);
       }
 #else
@@ -935,7 +935,7 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
   if (!progNode) {
     Object err = Error::create(globExec,SyntaxError,errMsg.ascii(),errLine);
     err.put(globExec,"sid",Number(sid));
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     unlockInterpreter();
 #endif
     return Completion(Throw,err);
@@ -980,8 +980,8 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
     delete progNode;
   recursion--;
 
-#ifdef APPLE_CHANGES
-    unlockInterpreter();
+#if APPLE_CHANGES
+  unlockInterpreter();
 #endif
   return res;
 }
