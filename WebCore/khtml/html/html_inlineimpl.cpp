@@ -60,6 +60,26 @@ bool HTMLAnchorElementImpl::isFocusable() const
         m_render->style() && m_render->style()->visibility() == VISIBLE;
 }
 
+bool HTMLAnchorElementImpl::isMouseFocusable() const
+{
+    if (!isFocusable())
+        return false;
+    
+#ifdef APPLE_CHANGES
+    return false; // FIXME: This behavior is being debated currently. We might want to make links be mouse focusable.
+#else
+    return true;
+#endif
+}
+
+bool HTMLAnchorElementImpl::isKeyboardFocusable() const
+{
+    if (!isFocusable())
+        return false;
+    
+    return getDocument()->view()->part()->tabsToLinks();
+}
+
 NodeImpl::Id HTMLAnchorElementImpl::id() const
 {
     return ID_A;

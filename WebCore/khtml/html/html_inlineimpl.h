@@ -37,7 +37,8 @@ public:
     ~HTMLAnchorElementImpl();
 
 #if APPLE_CHANGES
-    virtual bool isMouseFocusable() const { return false; } // FIXME: Could perhaps obey a pref for this some day.
+    virtual bool isMouseFocusable() const;
+    virtual bool isKeyboardFocusable() const;
 #endif
     virtual bool isFocusable() const;
     virtual Id id() const;

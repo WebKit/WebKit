@@ -242,6 +242,8 @@ public:
 
     virtual Id id() const;
     
+    virtual bool isFocusable() const;
+    
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     virtual DOMString type() const;
@@ -354,6 +356,8 @@ public:
     HTMLLabelElementImpl(DocumentPtr *doc);
     virtual ~HTMLLabelElementImpl();
 
+    virtual bool isFocusable() const;
+    
     virtual Id id() const;
 
     virtual void parseAttribute(AttributeImpl *attr);
@@ -374,6 +378,8 @@ public:
     HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLLegendElementImpl();
 
+    virtual bool isFocusable() const;
+    
     virtual Id id() const;
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
@@ -498,6 +504,8 @@ public:
     virtual Id id() const;
     DOMString type() const;
 
+    virtual bool isFocusable() const;
+    
     virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
     virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
@@ -519,6 +527,8 @@ class HTMLOptionElementImpl : public HTMLGenericFormElementImpl
 public:
     HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
+    virtual bool isFocusable() const;
+    
     virtual Id id() const;
     DOMString type() const;
 

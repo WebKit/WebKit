@@ -950,7 +950,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
                 }
             }
         }
-        else if (tabsToLinks()) {
+        else {
             doc->setFocusNode(node);
             if (view()) {
                 QRect rect = node->getRect();
@@ -1080,12 +1080,17 @@ bool KWQKHTMLPart::handleKeyboardOptionTabInView(NSView *view)
     return NO;
 }
 
-bool KWQKHTMLPart::tabsToLinks()
+bool KWQKHTMLPart::tabsToLinks() const
 {
     if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessTabsToLinks)
         return !KWQKHTMLPart::currentEventIsKeyboardOptionTab();
     else
         return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+}
+
+bool KWQKHTMLPart::tabsToAllControls() const
+{
+    return ([_bridge keyboardUIMode] & WebCoreKeyboardAccessFull);
 }
 
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)

@@ -857,7 +857,7 @@ bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
             ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::TabFocus) ||
              (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
         }
-        return true;
+        return getDocument()->view()->part()->tabsToAllControls();
     }
     return false;
 }
@@ -870,7 +870,13 @@ bool HTMLGenericFormElementImpl::isMouseFocusable() const
             ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::ClickFocus) ||
              (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
         }
+#if APPLE_CHANGES
+        // For <input type=image> and <button>, we will assume no mouse focusability.  This is
+        // consistent with OS X behavior for buttons.
+        return false;
+#else
         return true;
+#endif
     }
     return false;
 }
@@ -1124,6 +1130,11 @@ HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormEleme
 
 HTMLFieldSetElementImpl::~HTMLFieldSetElementImpl()
 {
+}
+
+bool HTMLFieldSetElementImpl::isFocusable() const
+{
+    return false;
 }
 
 NodeImpl::Id HTMLFieldSetElementImpl::id() const
@@ -1842,6 +1853,11 @@ HTMLLabelElementImpl::~HTMLLabelElementImpl()
 {
 }
 
+bool HTMLLabelElementImpl::isFocusable() const
+{
+    return false;
+}
+
 NodeImpl::Id HTMLLabelElementImpl::id() const
 {
     return ID_LABEL;
@@ -1881,6 +1897,11 @@ HTMLLegendElementImpl::HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementIm
 
 HTMLLegendElementImpl::~HTMLLegendElementImpl()
 {
+}
+
+bool HTMLLegendElementImpl::isFocusable() const
+{
+    return false;
 }
 
 NodeImpl::Id HTMLLegendElementImpl::id() const
@@ -2411,6 +2432,11 @@ HTMLOptGroupElementImpl::~HTMLOptGroupElementImpl()
 {
 }
 
+bool HTMLOptGroupElementImpl::isFocusable() const
+{
+    return false;
+}
+
 NodeImpl::Id HTMLOptGroupElementImpl::id() const
 {
     return ID_OPTGROUP;
@@ -2481,6 +2507,11 @@ HTMLOptionElementImpl::HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementIm
     : HTMLGenericFormElementImpl(doc, f)
 {
     m_selected = false;
+}
+
+bool HTMLOptionElementImpl::isFocusable() const
+{
+    return false;
 }
 
 NodeImpl::Id HTMLOptionElementImpl::id() const

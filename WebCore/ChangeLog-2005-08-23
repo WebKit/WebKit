@@ -1,3 +1,40 @@
+2003-11-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3485779, <input type=image> and <button> should not be mouse focusable.
+
+	Fix for 3485795, <input type=image> and <button> are being treated like links when they should not be.
+
+	Fix for 3485817, <input type=image> and <button> should obey full keyboard access mode.
+
+	Fix for 3485802, fieldset/legend/option/optgroup/label should not be focusable at all.
+	
+        Reviewed by kocienda
+
+        * ChangeLog:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::isKeyboardFocusable):
+        (HTMLGenericFormElementImpl::isMouseFocusable):
+        (HTMLFieldSetElementImpl::isFocusable):
+        (HTMLLabelElementImpl::isFocusable):
+        (HTMLLegendElementImpl::isFocusable):
+        (HTMLOptGroupElementImpl::isFocusable):
+        (HTMLOptionElementImpl::HTMLOptionElementImpl):
+        (HTMLOptionElementImpl::isFocusable):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isMouseFocusable):
+        (HTMLAnchorElementImpl::isKeyboardFocusable):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::tabsToLinks):
+        (KHTMLPart::tabsToAllControls):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame):
+        (KWQKHTMLPart::tabsToLinks):
+        (KWQKHTMLPart::tabsToAllControls):
+
 2003-11-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
