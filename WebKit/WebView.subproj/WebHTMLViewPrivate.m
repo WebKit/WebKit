@@ -5,36 +5,22 @@
 
 #import <WebKit/WebHTMLViewPrivate.h>
 
-#import <AppKit/NSGraphicsContextPrivate.h> // for PSbuttondown
 #import <AppKit/NSResponder_Private.h>
 
 #import <WebKit/WebAssertions.h>
-
-#import <WebCore/WebCoreFirstResponderChanges.h>
-
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebPluginController.h>
-#import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
-#import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-
-// Imported for direct call to class_poseAs.  Should be removed
-// if we ever drop posing hacks.
-#import <objc/objc-class.h>
-#import <objc/objc-runtime.h>
 
 // These are a little larger than typical because dragging links is a fairly
 // advanced feature that can confuse non-power-users
@@ -53,41 +39,19 @@
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
-#import <CoreGraphics/CGStyle.h>
-#import <CoreGraphics/CGSTypes.h>
-#import <CoreGraphics/CGContextGState.h>
-
-
 static BOOL forceRealHitTest = NO;
 
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
-- (void)_drawRect:(NSRect)rect clip:(BOOL)clip;
 @end
 
-@interface NSView (WebNSViewDisplayExtras)
+@interface NSView (WebHTMLViewPrivate)
 - (void)_web_propagateDirtyRectToAncestor;
-- (void)_web_dumpDirtyRects;
 @end
 
-@interface WebNSTextView : NSTextView
-{
-}
-@end
-
-@interface WebNSView : NSView
-{
-}
-@end
-
-@interface WebNSWindow : NSWindow
-{
-}
-@end
-
-@interface NSMutableDictionary (WebHTMLViewExtras)
+@interface NSMutableDictionary (WebHTMLViewPrivate)
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key;
 @end
 
@@ -108,34 +72,6 @@ static BOOL forceRealHitTest = NO;
 
 
 @implementation WebHTMLView (WebPrivate)
-
-// Danger Will Robinson. We have to poseAsClass: as early as possible
-// so that any NSViews and NSWindows will be created with the
-// appropriate poser.
-+ (void)load
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    // Avoid indirect invocation of any class initializers by using function
-    // calls instead of methods here. This is a work-around to prevent
-    // the +initializers being called before the REQUIRED AppKit initialization
-    // that's done in +[NSApplication load].
-
-    // If AppKit is 705 or newer, this is handled over on the WebCore side,
-    // using the new NSTextView SPI.
-    if (NSAppKitVersionNumber < 705) {
-        class_poseAs(objc_getClass("WebNSTextView"), objc_getClass("NSTextView"));
-        class_poseAs(objc_getClass("WebNSWindow"), objc_getClass("NSWindow"));
-    }
-
-    // If AppKit is 711 or newer, this is handled using _setDrawsOwnDescendants.
-    if (NSAppKitVersionNumber < 711) {
-        class_poseAs(objc_getClass("WebNSView"), objc_getClass("NSView"));
-    }
-
-    [pool release];
-}
-
 
 - (void)_adjustFrames
 {
@@ -624,142 +560,7 @@ static WebHTMLView *lastHitView = nil;
 
 @end
 
-@implementation WebNSTextView
-
-static BOOL inNSTextViewDrawRect;
-
-// This code is here to make insertion point drawing work in a way that respects the
-// HTML view layering. If we can find a way to make it work without poseAsClass, we
-// should do that.
-
-- (BOOL)_web_inHTMLView
-{
-    NSView *view = self;
-    for (;;) {
-        NSView *superview = [view superview];
-        if (!superview) {
-            return NO;
-        }
-        view = superview;
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            return YES;
-        }
-    }
-}
-
-- (BOOL)isOpaque
-{
-    if (![self _web_inHTMLView]) {
-        return [super isOpaque];
-    }
-
-    // Text views in the HTML view all say they are not opaque.
-    // This prevents the insertion point rect cache from being used,
-    // and all the side effects are good since we want the view to act
-    // opaque anyway. This could go in NSView instead of NSTextView,
-    // but we need to pose as NSTextView anyway for the other override.
-    // If we did this in NSView, we wouldn't need to call _web_propagateDirtyRectToAncestor.
-    return NO;
-}
-
-- (void)drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)turnedOn
-{
-    if (![self _web_inHTMLView]) {
-        [super drawInsertionPointInRect:rect color:color turnedOn:turnedOn];
-        return;
-    }
-    
-    // Use the display mechanism to do all insertion point drawing in the web view.
-    if (inNSTextViewDrawRect) {
-        [super drawInsertionPointInRect:rect color:color turnedOn:turnedOn];
-        return;
-    }
-    [super drawInsertionPointInRect:rect color:color turnedOn:NO];
-    if (turnedOn) {
-        rect.size.width = 1;
-        
-        // Call the setNeedsDisplayInRect function in NSView.
-        // If we call the one in NSTextView through the normal Objective-C dispatch
-        // we will reenter the caret blinking code and end up with a nasty crash
-        // (see Radar 3250608).
-        SEL selector = @selector(setNeedsDisplayInRect:);
-        typedef void (*IMPWithNSRect)(id, SEL, NSRect);
-        IMPWithNSRect implementation = (IMPWithNSRect)[NSView instanceMethodForSelector:selector];
-        implementation(self, selector, rect);
-    }
-}
-
-- (void)_drawRect:(NSRect)rect clip:(BOOL)clip
-{
-    ASSERT(!inNSTextViewDrawRect);
-    inNSTextViewDrawRect = YES;
-    [super _drawRect:rect clip:clip];
-    inNSTextViewDrawRect = NO;
-}
-
--(void)mouseDown:(NSEvent *)event
-{
-    NSView *possibleContainingField = [self delegate];
-
-    [super mouseDown:event];
-    if ([possibleContainingField respondsToSelector:@selector(fieldEditorDidMouseDown:)]) {
-	[possibleContainingField fieldEditorDidMouseDown:event];
-    }
-}
-
-@end
-
-@implementation WebNSView
-
-- (NSView *)opaqueAncestor
-{
-    if (![self isOpaque]) {
-        return [super opaqueAncestor];
-    }
-    NSView *opaqueAncestor = self;
-    NSView *superview = self;
-    while ((superview = [superview superview])) {
-        if ([superview isKindOfClass:[WebHTMLView class]]) {
-            opaqueAncestor = superview;
-        }
-    }
-    return opaqueAncestor;
-}
-
-@end
-
-@implementation WebNSWindow
-
-- (void)sendEvent:(NSEvent *)event
-{
-    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
-	NSResponder *responder = [self firstResponder];
-
-	NSView *view;
-	while (responder != nil && ![responder isKindOfClass:[WebNSView class]]) {
-	    responder = [responder nextResponder];
-	}
-
-	view = (NSView *)responder;
-
-	NSView *ancestorHTMLView = view;
-	while (ancestorHTMLView != nil && ![ancestorHTMLView isKindOfClass:[WebHTMLView class]]) {
-	    ancestorHTMLView = [ancestorHTMLView superview];
-	}
-	    
-	if (ancestorHTMLView != nil) {
-	    if ([(WebHTMLView *)ancestorHTMLView _interceptKeyEvent:event toView:view]) {
-
-	    }
-	}
-    }
-
-    [super sendEvent:event];
-}
-
-@end
-
-@implementation NSMutableDictionary (WebHTMLViewExtras)
+@implementation NSMutableDictionary (WebHTMLViewPrivate)
 
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key
 {

@@ -1,3 +1,16 @@
+2003-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3347114 -- remove vestiges of posing, including init routine, from WebKit
+
+        * kwq/KWQTextArea.mm: (-[KWQTextAreaTextView keyDown:]): Remove check for old
+        versions of AppKit that let the WebKit posing handle key down events.
+        * kwq/KWQTextField.mm: Removed fieldEditorDidMouseDown: methods.
+
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreFirstResponderChanges.h.
+        * kwq/WebCoreFirstResponderChanges.h: Removed.
+
 2003-08-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed development build problem.  WebCore.exp needed a newline at EOF.

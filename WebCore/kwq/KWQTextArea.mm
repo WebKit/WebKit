@@ -597,17 +597,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (void)keyDown:(NSEvent *)event
 {
-    // FIXME: We only want this code when we are not posing in WebKit,
-    // so we do the same version number check here that we had there.
-    // Once we remove the posing from WebKit entirely, we can remove
-    // this version check as well.
-    if (NSAppKitVersionNumber >= 705) {
-        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-        [bridge interceptKeyEvent:event toView:self];
-        // FIXME: In theory, if the bridge intercepted the event we should return not call super.
-        // But the code in the Web Kit that this replaces did not do that, so lets not do it until
-        // we can do more testing to see if it works well.
-    }
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge interceptKeyEvent:event toView:self];
+    // FIXME: In theory, if the bridge intercepted the event we should return not call super.
+    // But the code in the Web Kit that this replaces did not do that, so lets not do it until
+    // we can do more testing to see if it works well.
     [super keyDown:event];
 }
 

@@ -1,3 +1,13 @@
+2003-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3347114 -- remove vestiges of posing, including init routine, from WebKit
+
+        * WebView.subproj/WebHTMLViewPrivate.m: Removed WebNSTextView, WebNSView, and WebNSWindow,
+        removed the code to have them pose as NSTextView, NSView, and NSWindow, and removed excess
+        imports that are no longer needed.
+
 2003-08-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3365378.  Edge case text run > 1024 hit by JS generated string.  We weren't correctly checking size of string length.  Used /2 instead of *2.

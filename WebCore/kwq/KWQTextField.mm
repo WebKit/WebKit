@@ -31,7 +31,6 @@
 #import "KWQNSViewExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
-#import "WebCoreFirstResponderChanges.h"
 
 @interface KWQTextField (KWQInternal)
 - (void)setHasFocus:(BOOL)hasFocus;
@@ -412,16 +411,6 @@
     return widget;
 }
 
-// FIXME: We can remove this once we require AppKit-705 or newer.
-- (void)fieldEditorDidMouseDown:(NSEvent *)event
-{
-    if (!widget) {
-	return;
-    }
-    widget->sendConsumedMouseUp();
-    widget->clicked();
-}
-
 - (void)setAlignment:(NSTextAlignment)alignment
 {
     [secureField setAlignment:alignment];
@@ -732,13 +721,6 @@
 {
     ASSERT([[self delegate] isKindOfClass:[KWQTextField class]]);
     return [(KWQTextField *)[self delegate] widget];
-}
-
-// FIXME: We can remove this once we require AppKit-705 or newer.
-- (void)fieldEditorDidMouseDown:(NSEvent *)event
-{
-    ASSERT([[self delegate] isKindOfClass:[KWQTextField class]]);
-    [[self delegate] fieldEditorDidMouseDown:event];
 }
 
 - (void)textDidEndEditing:(NSNotification *)notification
