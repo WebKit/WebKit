@@ -93,6 +93,9 @@ QListBox::QListBox()
 
     head = 0L;
 
+    // FIXME:  Need to configure browser's scroll view to use a scroller that
+    // has no up/down buttons.  Typically the browser is very small and won't
+    // have enough space to draw the up/down buttons and the scroll knob.
     [browser setTitled: NO];
     [browser setDelegate: delegate];
     [browser setTarget: delegate];

@@ -991,6 +991,9 @@ void RenderSelect::layout( )
 #ifdef _KWQ_
         width += w->scrollBarWidth();
         height = size*height;
+        // NSBrowser has problems drawing scrollbar correctly when it's size is too small.
+        if (height < 60)
+            height = 60;
 #else
         width += 2*w->frameWidth() + w->verticalScrollBar()->sizeHint().width();
         height = size*height + 2*w->frameWidth();

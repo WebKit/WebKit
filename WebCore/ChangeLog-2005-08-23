@@ -1,3 +1,13 @@
+2002-02-16  Richard Williamson  <rjw@apple.com>
+
+        Fixed problem with default text not showing up in text area.
+        Fixed problem with scroll widgets not showing up in select list.
+        
+	* src/kdelibs/khtml/rendering/render_form.cpp: (RenderSelect::layout):
+	* src/kwq/KWQListBox.mm: (QListBox::QListBox):
+	* src/kwq/KWQTextArea.mm: (-[KWQTextArea _createTextView]), (-[KWQTextArea
+	initWithFrame:widget:]), (-[KWQTextArea setFrame:]):
+
 2002-02-15  Richard Williamson  <rjw@apple.com>
     
     Lots of changes to support forms.

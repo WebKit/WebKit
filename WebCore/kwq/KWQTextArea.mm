@@ -69,8 +69,8 @@ const float LargeNumberForText = 1.0e7;
     if (frame.size.width > 0 && frame.size.height > 0)
         textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType: [self borderType]];
     else {
-        textFrame.size.width = 0;
-        textFrame.size.height = 0;
+        textFrame.size.width = LargeNumberForText;
+        textFrame.size.height = LargeNumberForText;
     }
         
     textView = [[NSTextView alloc] initWithFrame: textFrame];
@@ -97,7 +97,7 @@ const float LargeNumberForText = 1.0e7;
     [self setHasHorizontalScroller: NO];
     [self setBorderType: NSLineBorder];
 
-    if (r.size.width > 0 && r.size.height > 0)
+    //if (r.size.width > 0 && r.size.height > 0)
         [self _createTextView];
     
     widget = w;
@@ -239,10 +239,21 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setFrame:(NSRect)frameRect
 {    
+    NSRect textFrame;
+    NSSize contentSize;
+    
     [super setFrame:frameRect];
 
-    if (frameRect.size.width > 0 && frameRect.size.height > 0 && textView == nil)
-        [self _createTextView];
+    if ([self wordWrap]){
+        contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size hasHorizontalScroller:[self hasHorizontalScroller] hasVerticalScroller:[self hasVerticalScroller] borderType:[self borderType]];
+        textFrame = [textView frame];
+        textFrame.size.width = contentSize.width;
+        contentSize.height = LargeNumberForText;
+        [textView setFrame: textFrame];
+        [[textView textContainer] setContainerSize: contentSize];
+    }
+    //if (frameRect.size.width > 0 && frameRect.size.height > 0 && textView == nil)
+    //    [self _createTextView];
 }
 
 
