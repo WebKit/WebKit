@@ -1322,7 +1322,7 @@ QString QString::leftRight(uint width, bool left) const
             if (len > width) {
                 CFStringRef tmp = CFStringCreateWithSubstring(
                         kCFAllocatorDefault, s, left ? CFRangeMake(0, width)
-                        : CFRangeMake(len - width, len));
+                        : CFRangeMake(len - width, width));
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);
