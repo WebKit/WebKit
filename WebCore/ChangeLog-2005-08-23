@@ -1,5 +1,30 @@
 2004-12-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        New layout tests.
+
+        * layout-tests/editing/inserting/insert-div-001-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-001.html: Added.
+        * layout-tests/editing/inserting/insert-div-002-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-002.html: Added.
+        * layout-tests/editing/inserting/insert-div-003-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-003.html: Added.
+        * layout-tests/editing/inserting/insert-div-004-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-004.html: Added.
+        * layout-tests/editing/inserting/insert-div-005-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-005.html: Added.
+        * layout-tests/editing/inserting/insert-div-006-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-006.html: Added.
+        * layout-tests/editing/inserting/insert-div-007-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-007.html: Added.
+        * layout-tests/editing/inserting/insert-div-008-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-008.html: Added.
+        * layout-tests/editing/inserting/insert-div-009-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-009.html: Added.
+
+2004-12-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Harrison
 
         Fix for this bug:
