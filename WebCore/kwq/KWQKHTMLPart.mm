@@ -62,7 +62,6 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p)
     , d(part->d)
     , m_redirectionTimer(0)
-    , m_decodingStarted(false)
 {
 }
 
@@ -251,32 +250,29 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIXME:  This is very expensive.  We should be using the data object
-    // that represents the document, and only constructing the complete
-    // string when requested.
+    // FIXME: We are putting all the source into this QString for a few bad reasons.
+    // Once those reasons go away, we need to delete this.
     m_documentSource += QString(str, len);
 
-    QString decoded;
-    
-    decoded = d->m_decoder->decode( str, len );
-
-    if(decoded.isEmpty()){
+    QString decoded = d->m_decoder->decode(str, len);
+    if (decoded.isEmpty()) {
         // Check flag to tell whether the load has completed.
         // If we get here, it means that no text encoding was available.
         // Try to process what we have with the default encoding.
         if (d->m_bComplete) {
+            // FIXME: We should get the decoder to give up its raw input since it buffers it
+            // rather than keeping our own copy.
             decoded = m_documentSource;
-        }
-        else {
+        } else {
             fprintf (stderr, "WARNING:  DECODER unable to decode string, length = %d, total length = %d\n", len, m_documentSource.length());
             return;
         }
     }
     
-    if (m_decodingStarted == false)
-	d->m_doc->determineParseMode( decoded );
-   
-    m_decodingStarted = true;
+    if (!m_decodingStarted) {
+	d->m_doc->determineParseMode(decoded);
+        m_decodingStarted = true;
+    }
     
 #if FIGURE_OUT_WHAT_APPLY_CHANGES_DOES
     d->m_doc->applyChanges();
@@ -560,6 +556,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
     return parts;
 }
 
+// FIXME: We should remove this; it's only used by the doomed "View Reconstructed Source" command.
 QString KWQKHTMLPartImpl::documentSource() const
 {
     return m_documentSource;

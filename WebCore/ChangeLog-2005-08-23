@@ -1,3 +1,23 @@
+2002-07-31  Darin Adler  <darin@apple.com>
+
+        * kwq/qt/qptrvector.h:
+        * kwq/qt/qvector.h:
+        * kwq/KWQVectorImpl.h:
+        * kwq/KWQVectorImpl.mm:
+	* force-clean-timestamp:
+	New implementation of QVector that does not use CFArray. Should fix some data()
+	anomalies. Shares wierdnesses with the original Qt class.
+
+        * WebCore-tests.exp: Remove old QVector entry points and add new ones.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::write): Did a tiny optimization
+	by initializing the QString rather than first assigning and then initializing.
+	Also reworded some comments and rearranged code to make it clearer that
+	m_decodingStarted is now used only to decide when to call determineParseMode.
+
+        * khtml/css/cssparser.cpp: Removed the APPLE_CHANGES around a change that's
+	fine for non-Apple use as well.
+
 2002-07-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixes of various bugs that prevented Alexander from running the

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,216 +25,122 @@
 
 #import <KWQVectorImpl.h>
 
-#ifndef USING_BORROWED_QVECTOR
-
-#import <CoreFoundation/CFArray.h>
-
-#import <new>
-#import <stdlib.h>
-
-#import <Foundation/NSData.h>
-
-class KWQVectorImpl::KWQVectorPrivate
-{
-public:
-    KWQVectorPrivate(int size, void (*deleteFunc)(void *));
-    KWQVectorPrivate(KWQVectorPrivate &vp);
-    ~KWQVectorPrivate();
-    
-    CFMutableArrayRef cfarray;
-    uint size;
-    uint count;
-    uint max;
-    void (*deleteItem)(void *);
-};
-
-KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate(int sz, void (*deleteFunc)(void *)) :
-    cfarray(CFArrayCreateMutable(NULL, 0, NULL)),
-    size(sz),
-    count(0),
-    max(0),
-    deleteItem(deleteFunc)
-{
-    if (cfarray == NULL) {
-	throw std::bad_alloc();
-    }
-}
-
-KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate(KWQVectorPrivate &vp) :
-    cfarray(CFArrayCreateMutableCopy(NULL, 0, vp.cfarray)),
-    size(vp.size),
-    count(vp.count),
-    max(vp.max),
-    deleteItem(vp.deleteItem)
-{
-    if (cfarray == NULL) {
-	throw std::bad_alloc();
-    }
-}
-
-KWQVectorImpl::KWQVectorPrivate::~KWQVectorPrivate()
-{
-    CFRelease(cfarray);
-}
-
-
-KWQVectorImpl::KWQVectorImpl(void (*deleteFunc)(void *)) :
-    d(new KWQVectorImpl::KWQVectorPrivate(0, deleteFunc))
+KWQVectorImpl::KWQVectorImpl(void (*f)(void *))
+    : m_data(0), m_size(0), m_count(0), m_deleteItemFunction(f)
 {
 }
 
-KWQVectorImpl::KWQVectorImpl(uint size, void (*deleteFunc)(void *)) :
-    d(new KWQVectorImpl::KWQVectorPrivate(size, deleteFunc))
+KWQVectorImpl::KWQVectorImpl(uint size, void (*f)(void *))
+    : m_data((void **)malloc(size * sizeof(void *)))
+    , m_size(size), m_count(0), m_deleteItemFunction(f)
 {
+    memset(m_data, 0, size * sizeof(void *));
 }
 
-KWQVectorImpl::KWQVectorImpl(const KWQVectorImpl &vi) : 
-    d(new KWQVectorImpl::KWQVectorPrivate(*vi.d))
+KWQVectorImpl::KWQVectorImpl(const KWQVectorImpl &vi)
+    : m_data(vi.m_data ? (void **)malloc(vi.m_size * sizeof(void *)) : 0)
+    , m_size(vi.m_size), m_count(vi.m_count)
+    , m_deleteItemFunction(vi.m_deleteItemFunction)
 {
+    memcpy(m_data, vi.m_data, vi.m_size * sizeof(void *));
 }
 
 KWQVectorImpl::~KWQVectorImpl()
 {
-    delete d;
+    free(m_data);
 }
 
 void KWQVectorImpl::clear(bool delItems)
 {
     if (delItems) {
-	while (d->max > 0) {
-	    d->max--;
-	    void *item = (void *)CFArrayGetValueAtIndex(d->cfarray, d->max);
-	    if (item != NULL) {
-		d->deleteItem(item);
+	for (uint i = 0; i < m_size; ++i) {
+            void *item = m_data[i];
+	    if (item) {
+		m_deleteItemFunction(item);
 	    }
 	}
     }
 
-    CFArrayRemoveAllValues(d->cfarray);
-    d->count = 0;
-    d->max = 0;
-}
-
-bool KWQVectorImpl::isEmpty() const
-{
-    return d->count == 0;
-}
-
-uint KWQVectorImpl::count() const
-{
-    return d->count;
-}
-
-uint KWQVectorImpl::size() const
-{
-    return d->size;
+    free(m_data);
+    m_data = 0;
+    m_size = 0;
+    m_count = 0;
 }
 
 bool KWQVectorImpl::remove(uint n, bool delItems)
 {
-    if (n < d->max) {
-	void *item = (void *)CFArrayGetValueAtIndex(d->cfarray, n);
-	
-	if (item != NULL) {
-	    if (delItems) {
-		d->deleteItem(item);
-	    }
-	    
-	    CFArraySetValueAtIndex(d->cfarray, n, NULL);
-	    
-	    d->count--;
-	}
-	return true;
-    } else {
-	return false;
+    if (n >= m_size) {
+        return false;
     }
+    
+    void *item = m_data[n];
+    if (item) {
+        if (delItems) {
+            m_deleteItemFunction(item);
+        }
+        --m_count;
+    }
+    m_data[n] = 0;
+    return true;
 }
 
 bool KWQVectorImpl::resize(uint size, bool delItems)
 {
-    d->size = size;
+    uint oldSize = m_size;
+    m_size = size;
+    
+    for (uint i = size; i < oldSize; ++i) {
+        void *item = m_data[i];
+        if (item) {
+            if (delItems) {
+                m_deleteItemFunction(item);
+            }
+            --m_count;
+        }
+    }
 
-    while (d->max > size) {
-	d->max--;
-	void *item = (void *)CFArrayGetValueAtIndex(d->cfarray, d->max);
+    m_size = size;
+    m_data = (void **)realloc(m_data, size * sizeof(void *));
 
-	if (item != NULL) {
-	    if (delItems) {
-		d->deleteItem(item);
-	    }
-	    d->count--;
-	}
-	CFArrayRemoveValueAtIndex(d->cfarray, d->max);
+    if (size > oldSize) {
+        memset(&m_data[oldSize], 0, (size - oldSize) * sizeof(void *));
     }
 
     return true;
 }
 
-bool KWQVectorImpl::insert(uint n, const void *item, bool delItems)
+bool KWQVectorImpl::insert(uint n, void *item, bool delItems)
 {
-    if (n >= d->size) {
+    if (n >= m_size) {
 	return false;
     }
 
-    if (n < d->max) {
-	void *item = (void *)CFArrayGetValueAtIndex(d->cfarray, n);
-	if (item != NULL) {
-	    if (delItems) {
-		d->deleteItem((void *)CFArrayGetValueAtIndex(d->cfarray, n));
-	    }
-	} else {
-	    d->count++;
-	}
-    }  else {
-	while (n > d->max) {
-	    CFArraySetValueAtIndex(d->cfarray, d->max, NULL);
-	    d->max++;
-	}
-	d->max++;
-	d->count++;
+    void *oldItem = m_data[n];
+    if (oldItem) {
+        if (delItems) {
+            m_deleteItemFunction(oldItem);
+        }
+        --m_count;
     }
-
-    CFArraySetValueAtIndex(d->cfarray, n, item);
-
+    
+    m_data[n] = item;
+    if (item) {
+        ++m_count;
+    }
+    
     return true;
 }
 
-void *KWQVectorImpl::at(int n) const
+KWQVectorImpl &KWQVectorImpl::assign(KWQVectorImpl &vi, bool delItems)
 {
-    if ((unsigned)n >= d->max) {
-	return NULL;
-    }
+    clear(delItems);
+    
+    m_data = vi.m_data ? (void **)malloc(vi.m_size * sizeof(void *)) : 0;
+    m_size = vi.m_size;
+    m_count = vi.m_count;
+    m_deleteItemFunction = vi.m_deleteItemFunction;
 
-    return (void *)CFArrayGetValueAtIndex(d->cfarray, n);
-}
-
-void **KWQVectorImpl::data()
-{
-    int length = CFArrayGetCount(d->cfarray);
-
-    // Use an autoreleased NSMutableData object. This is pure evil.
-    void ** values = (void **) [[[[NSMutableData alloc] initWithLength:length] autorelease] mutableBytes];
-
-    CFArrayGetValues(d->cfarray, CFRangeMake(0, length), (const void **)values);
-    return values;
-}
-
-KWQVectorImpl &KWQVectorImpl::assign (KWQVectorImpl &vi, bool delItems)
-{
-    KWQVectorImpl tmp(vi);
-
-    swap(tmp);
-
+    memcpy(m_data, vi.m_data, vi.m_size * sizeof(void *));
+    
     return *this;
 }
-
-void KWQVectorImpl::KWQVectorImpl::swap(KWQVectorImpl &di)
-{
-    KWQVectorImpl::KWQVectorPrivate *tmp = d;
-    d = di.d;
-    di.d = tmp;
-}
-
-
-#endif
-

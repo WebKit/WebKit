@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,13 +54,13 @@ public:
     uint size() const { return impl.size(); }
     bool remove(uint n) { return impl.remove(n, del_item); }
     bool resize(uint size) { return impl.resize(size, del_item); }
-    bool insert(uint n, const T *item) {return impl.insert(n, item, del_item); }
+    bool insert(uint n, T *item) {return impl.insert(n, item, del_item); }
     T *at(int n) const {return (T *)impl.at(n); }
     T **data() {return (T **)impl.data(); }
 
     virtual int compareItems(void *a, void *b) { return a != b; }
 
-    T *operator[](int n) const {return (T *)impl.at(n); }
+    T *operator[](uint n) const {return (T *)impl.at(n); }
     QPtrVector &operator=(const QPtrVector &v) 
     { impl.assign(v.impl,del_item); QPtrCollection::operator=(v); return *this; }
 

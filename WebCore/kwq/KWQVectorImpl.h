@@ -30,7 +30,7 @@
 
 class KWQVectorImpl
 {
- public:
+  public:
     KWQVectorImpl(void (*deleteFunc)(void *));
     KWQVectorImpl(uint size, void (*deleteFunc)(void *));
     ~KWQVectorImpl();
@@ -39,22 +39,22 @@ class KWQVectorImpl
     KWQVectorImpl &assign(KWQVectorImpl &vi, bool delItems);
 
     void clear(bool delItems);
-    bool isEmpty() const;
-    uint count() const;
-    uint size() const;
+    bool isEmpty() const { return m_count == 0; }
+    uint count() const { return m_count; }
+    uint size() const { return m_size; }
     bool remove(uint n, bool delItems); 
     bool resize(uint size, bool delItems);
-    bool insert(uint n, const void *item, bool delItems);
-    void *at(int n) const;
-    void **data();
+    bool insert(uint n, void *item, bool delItems);
+    void *at(uint n) const { return m_data[n]; }
+    void **data() { return m_data; }
 
- private:
+  private:
     KWQVectorImpl &operator=(const KWQVectorImpl&);
-    
-    void swap(KWQVectorImpl &di);
 
-    class KWQVectorPrivate;
-    KWQVectorPrivate *d;
+    void **m_data;
+    uint m_size;
+    uint m_count;
+    void (* m_deleteItemFunction)(void *);
 };
 
 #endif
