@@ -1,3 +1,14 @@
+2004-07-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for the table layout test that failed because of a change in how innerText worked.  We need to do
+	updateLayout now when using innerText, since the method has been changed to use line boxes in the render tree
+	that might otherwise be out of date.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::innerText):
+
 2004-07-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

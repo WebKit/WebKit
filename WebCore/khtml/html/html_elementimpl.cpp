@@ -703,6 +703,9 @@ DOMString HTMLElementImpl::outerHTML() const
 
 DOMString HTMLElementImpl::innerText() const
 {
+    // We need to update layout, since innerText uses line boxes in the render tree.
+    getDocument()->updateLayout();
+    
     Node startContainer(const_cast<HTMLElementImpl *>(this));
     long startOffset = 0;
     Node endContainer(const_cast<HTMLElementImpl *>(this));
