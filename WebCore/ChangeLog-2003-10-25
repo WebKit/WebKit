@@ -1,3 +1,15 @@
+2003-04-21  Chris Blumenberg  <cblu@apple.com>
+
+	Use renamed plug-in view methods.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart):
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet):
+        * kwq/WebCoreBridge.h:
+
 2003-04-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

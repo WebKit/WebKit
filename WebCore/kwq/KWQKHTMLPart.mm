@@ -591,9 +591,9 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         }
         
         KWQPluginPart *newPart = new KWQPluginPart;
-        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.url().getNSString()
+        newPart->setWidget(new QWidget([_bridge viewForPluginWithURLString:url.url().getNSString()
                                                           attributes:attributesArray
-                                                             baseURL:d->m_doc->baseURL().getNSString()
+                                                             baseURLString:d->m_doc->baseURL().getNSString()
                                                             MIMEType:child.m_args.serviceType.getNSString()]));
         return newPart;
     } else {
