@@ -185,7 +185,7 @@ void List::prepend(const Value& val)
 
 void List::prepend(ValueImp *val)
 {
-  ListNode *n = new ListNode(val, hook->prev, hook);
+  ListNode *n = new ListNode(val, hook, hook->next);
   if (!m_needsMarking) {
     val->ref();
   }

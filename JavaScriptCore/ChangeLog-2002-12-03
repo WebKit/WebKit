@@ -1,5 +1,11 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- fixed 3105026 -- REGRESSION: DHTML menus are broken all over the place
+
+        * kjs/types.cpp: (List::prepend): Fix backwards links in new node.
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- a fix that gives another 1.5% on the iBench JavaScript test
 
         * kjs/ustring.cpp: (UString::from): Stop using sprintf to format integers.
