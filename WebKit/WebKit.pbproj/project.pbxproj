@@ -297,6 +297,7 @@
 				8467275E0367158500CA2ACA,
 				832E26A2036F95CA005E2B4F,
 				832E26A5036F9614005E2B4F,
+				517FA6AC03709FCE00CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,6 +403,8 @@
 				9311022B03667CF1008635CE,
 				8467275F0367158500CA2ACA,
 				832E26A6036F9614005E2B4F,
+				517FA6AD03709FCE00CA2D3A,
+				517FA6AE03709FCE00CA2D3A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -492,6 +495,9 @@
 				F59668C802AD2923018635CA,
 				F59668C902AD2923018635CA,
 				9367C636034E9F00008635C5,
+				517FA6A903709FCE00CA2D3A,
+				517FA6AA03709FCE00CA2D3A,
+				517FA6AB03709FCE00CA2D3A,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1242,6 +1248,42 @@
 		};
 		5152FAE8033FC52200CA2ACD = {
 			fileRef = 5152FAE6033FC52200CA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517FA6A903709FCE00CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebUnicode.h;
+			refType = 4;
+		};
+		517FA6AA03709FCE00CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebUnicode.m;
+			refType = 4;
+		};
+		517FA6AB03709FCE00CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebUnicodeTables.m;
+			refType = 4;
+		};
+		517FA6AC03709FCE00CA2D3A = {
+			fileRef = 517FA6A903709FCE00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517FA6AD03709FCE00CA2D3A = {
+			fileRef = 517FA6AA03709FCE00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		517FA6AE03709FCE00CA2D3A = {
+			fileRef = 517FA6AB03709FCE00CA2D3A;
 			isa = PBXBuildFile;
 			settings = {
 			};

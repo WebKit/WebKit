@@ -111,6 +111,10 @@ QChar::Direction QChar::direction() const
      if (c == ' ')
          return DirWS;
 
+    // Early out for latin1.
+    if (c < 0x7f)
+        return dir;
+        
     CFUniCharGetBidiCategory (&c, 1, &type);
     switch (type){
         case kCFUniCharBiDiPropertyON:

@@ -43,6 +43,7 @@ class NSString;
 
 class QChar {
 public:
+
     enum Direction {
         // NOTE: alphabetical order
         //DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,

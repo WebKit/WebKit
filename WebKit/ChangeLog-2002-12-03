@@ -1,3 +1,29 @@
+2002-10-30  Richard Williamson  <rjw@apple.com>
+
+        More work on bidi and contextual forms.
+        Table lookup code for unicode characters attributes.
+
+        * Misc.subproj/WebUnicode.h: Added.
+        * Misc.subproj/WebUnicode.m: Added.
+        (_unicodeDigitValue):
+        (_unicodeCategory):
+        (_unicodeDirection):
+        (_unicodeJoining):
+        (_unicodeDecompositionTag):
+        (_unicodeMirrored):
+        (_unicodeMirroredChar):
+        (_unicodeCombiningClass):
+        (_unicodeLower):
+        (_unicodeUpper):
+        (WebKitInitializeUnicode):
+        * Misc.subproj/WebUnicodeTables.m: Added.
+        * WebKit.pbproj/project.pbxproj:
+
+        Additional logging parameter.
+        
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+
 2002-10-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Pass WebResourceRequest rather than just NSURL to URL policy

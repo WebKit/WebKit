@@ -471,6 +471,7 @@
 				F5EDAAF8035345D901A80180,
 				F5EDAAFA035345D901A80180,
 				93386B92037045B3008635CE,
+				517FA6B30370BD6100CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,6 +702,7 @@
 				F565A2780352643A01A80180,
 				F565A27B0352675C01A80180,
 				93386B93037045B3008635CE,
+				517FA6B70370C7ED00CA2D3A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -810,6 +812,43 @@
 //352
 //353
 //354
+//510
+//511
+//512
+//513
+//514
+		517FA6B20370BD6100CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreUnicode.h;
+			refType = 4;
+		};
+		517FA6B30370BD6100CA2D3A = {
+			fileRef = 517FA6B20370BD6100CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		517FA6B60370C7ED00CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreUnicode.cpp;
+			refType = 4;
+		};
+		517FA6B70370C7ED00CA2D3A = {
+			fileRef = 517FA6B60370C7ED00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//510
+//511
+//512
+//513
+//514
 //930
 //931
 //932
@@ -5770,6 +5809,8 @@
 				F587855502DE375901EA4122,
 				F58EF58E02DFDFB7018635CA,
 				F58EF58D02DFDFB7018635CA,
+				517FA6B20370BD6100CA2D3A,
+				517FA6B60370C7ED00CA2D3A,
 			);
 			isa = PBXGroup;
 			name = "WebCore SPI";

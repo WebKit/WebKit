@@ -1,3 +1,19 @@
+2002-10-30  Richard Williamson  <rjw@apple.com>
+
+        More work on bidi and contextual forms.
+        Table lookup code is up in WebKit. Function
+        pointers are used to isolate WebCore from private
+        implementation in WebKit.  Needs to be fast, so
+        the usual ObjC abstraction won't work.
+        
+        * WebCore.exp:
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQChar.mm:
+        (QChar::direction):
+        * kwq/KWQString.h:
+        * kwq/WebCoreUnicode.cpp: Added.
+        * kwq/WebCoreUnicode.h: Added.
+
 2002-10-30  Darin Adler  <darin@apple.com>
 
 	- fixed crash when you open an empty window and just hit tab, tab, tab

@@ -16,6 +16,7 @@ extern WebLogChannel WebKitLogTiming;
 extern WebLogChannel WebKitLogLoading;
 
 extern WebLogChannel WebKitLogFontCache;
+extern WebLogChannel WebKitLogFontSubstitution;
 extern WebLogChannel WebKitLogDownload;
 extern WebLogChannel WebKitLogDocumentLoad;
 extern WebLogChannel WebKitLogPlugins;
