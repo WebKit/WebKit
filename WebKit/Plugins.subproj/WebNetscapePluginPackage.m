@@ -7,6 +7,7 @@
 
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSObjectExtras.h>
 
 #import <JavaScriptCore/npruntime_impl.h>
 
@@ -52,8 +53,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     CFStringEncoding stringEncoding;
 
     CFBundleGetLocalizationInfoForLocalization(NULL, &languageCode, &regionCode, &scriptCode, &stringEncoding);
-    NSString *localizationName = (NSString *)CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding);
-    return [localizationName autorelease];
+    return WebCFAutorelease(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
 }
 
 - (SInt16)openResourceFile

@@ -161,15 +161,15 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     }
     
     NSString *directoryName = [[path stringByDeletingPathExtension] lastPathComponent];
-    NSString *locale = WebNSRetainCFRelease(CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName));
-    if (locale == nil) {
+    CFStringRef locale = CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName);
+    if (locale == NULL) {
         return NSMacOSRomanStringEncoding;
     }
             
     LangCode lang;
     RegionCode region;
-    error = LocaleStringToLangAndRegionCodes([locale UTF8String], &lang, &region);
-    [locale release];
+    error = LocaleStringToLangAndRegionCodes([(NSString *)locale UTF8String], &lang, &region);
+    CFRelease(locale);
     if (error != noErr) {
         return NSMacOSRomanStringEncoding;
     }

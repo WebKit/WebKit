@@ -5,13 +5,18 @@
 
 #import <Foundation/Foundation.h>
 
-static inline id WebNSRetainCFRelease(CFTypeRef obj)
+// Use WebCFAutorelease to return an object made by a CoreFoundation
+// "create" or "copy" function as an autoreleased and garbage collected
+// object. CF objects need to be "made collectable" for autorelease to work
+// properly under GC.
+
+static inline id WebCFAutorelease(CFTypeRef obj)
 {
-#if BUILDING_ON_PANTHER
-    return (id)obj;
-#else
-    return (id)CFMakeCollectable(obj);
+#if !BUILDING_ON_PANTHER
+    if (obj) CFMakeCollectable(obj);
 #endif
+    [(id)obj autorelease];
+    return (id)obj;
 }
 
 #if BUILDING_ON_PANTHER

@@ -1,3 +1,22 @@
+2004-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - some garbage collection fixes
+
+        * Misc.subproj/WebNSObjectExtras.h: (WebCFAutorelease): Replaced the old WebNSRetainCFRelease with this
+        much-easier-to-understand function cribbed from what David Harrison did in WebCore.
+
+        * Misc.subproj/WebKitNSStringExtras.m: (+[NSString _web_encodingForResource:]): Use CFRelease here to
+        get rid of an unnecessary use of WebNSRetainCFRelease.
+        * Misc.subproj/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:relativeToURL:]): Use WebCFAutorelease instead of WebNSRetainCFRelease and autorelease.
+        (-[NSURL _web_URLWithLowercasedScheme]): Ditto.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Use WebCFAutorelease here; the old code would not
+        work correctly under GC.
+        * Plugins.subproj/WebNetscapePluginPackage.m: (+[WebNetscapePluginPackage preferredLocalizationName]):
+        Use WebCFAutorelease here; the old code would not work correctly under GC.
+
 2004-12-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3766915> PDF content needs search to work
