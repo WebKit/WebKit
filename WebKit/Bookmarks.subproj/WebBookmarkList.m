@@ -63,6 +63,7 @@
             [self insertChild:child atIndex:indexWritten++];
         }
     }
+    [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
 
     return self;
 }
@@ -94,7 +95,11 @@
 
         [dict setObject:childrenAsDictionaries forKey:ChildrenKey];
     }
-    
+
+    if ([self identifier] != nil) {
+        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
+    }
+
     return dict;
 }
 
@@ -112,6 +117,7 @@
     
     copy = [[WebBookmarkList alloc] initWithTitle:[self title]
                                             group:[self group]];
+    [copy setIdentifier:[self identifier]];
 
     count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {

@@ -1,3 +1,38 @@
+2002-10-17  John Sullivan  <sullivan@apple.com>
+
+	- added support for bookmark identifiers, to be used for marking
+	bookmark proxies uniquely (independent of localized title). This
+	is not the old unique-identifier scheme; now identifiers are optional,
+	and initially nil, but the client can use them for its own purposes.
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark dealloc]): release identifier
+        (-[WebBookmark identifier]): return identifier
+        (-[WebBookmark setIdentifier:]): set identifier
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+	restore identifier
+        (-[WebBookmarkLeaf dictionaryRepresentation]):
+	save identifier
+        (-[WebBookmarkLeaf copyWithZone:]):
+	copy identifier
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initFromDictionaryRepresentation:withGroup:]):
+	restore identifier
+        (-[WebBookmarkList dictionaryRepresentation]):
+	save identifier
+        (-[WebBookmarkList copyWithZone:]):
+	copy identifier
+        * Bookmarks.subproj/WebBookmarkPrivate.h:
+        * Bookmarks.subproj/WebBookmarkProxy.m:
+        (-[WebBookmarkProxy initFromDictionaryRepresentation:withGroup:]):
+	restore identifier
+        (-[WebBookmarkProxy dictionaryRepresentation]):
+	save identifier
+        (-[WebBookmarkProxy copyWithZone:]):
+	copy identifier
+
 === Alexander-28 ===
 
 2002-10-17  Darin Adler  <darin@apple.com>

@@ -14,6 +14,8 @@
 #define WebBookmarkTypeListValue	@"WebBookmarkTypeList"
 #define WebBookmarkTypeProxyValue	@"WebBookmarkTypeProxy"
 
+#define WebBookmarkIdentifierKey	@"WebBookmarkIdentifier"
+
 @interface WebBookmark(WebPrivate)
 
 - (void)_setParent:(WebBookmark *)parent;

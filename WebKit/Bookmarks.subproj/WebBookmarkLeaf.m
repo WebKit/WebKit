@@ -60,6 +60,7 @@
     _entry = [[WebHistoryItem alloc] initFromDictionaryRepresentation:
         [dict objectForKey:URIDictionaryKey]];
     _URLString = [[dict objectForKey:URLStringKey] copy];
+    [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
 
     return self;
 }
@@ -75,6 +76,9 @@
     if (_URLString != nil) {
         [dict setObject:_URLString forKey:URLStringKey];
     }
+    if ([self identifier] != nil) {
+        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
+    }
     
     return dict;
 }
@@ -88,9 +92,11 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
-                                                            title:[self title]
-                                                            group:[self group]];
+    id copy = [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
+                                                                title:[self title]
+                                                                group:[self group]];
+    [copy setIdentifier:[self identifier]];
+    return copy;
 }
 
 - (NSString *)title

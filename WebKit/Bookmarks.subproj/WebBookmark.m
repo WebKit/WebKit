@@ -23,7 +23,8 @@
 - (void)dealloc
 {
     ASSERT(_group == nil);
-
+    [_identifier release];
+    
     [super dealloc];
 }
 
@@ -64,6 +65,21 @@
 - (void)setURLString:(NSString *)URLString
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
+}
+
+- (NSString *)identifier
+{
+    return [[_identifier copy] autorelease];
+}
+
+- (void)setIdentifier:(NSString *)identifier
+{
+    if (identifier == _identifier) {
+        return;
+    }
+
+    [_identifier release];
+    _identifier = [identifier copy];
 }
 
 - (NSArray *)children
@@ -151,15 +167,15 @@
     }
     
     if (class) {
-        return [[[class alloc] initFromDictionaryRepresentation:dict
-                                                      withGroup:group] autorelease];
+        return  [[[class alloc] initFromDictionaryRepresentation:dict
+                                                       withGroup:group] autorelease];
     }
 
     return nil;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
-{
+{    
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }

@@ -19,6 +19,7 @@ typedef enum {
 @interface WebBookmark : NSObject <NSCopying> {
     WebBookmark *_parent;
     WebBookmarkGroup *_group;
+    NSString *_identifier;
 }
 
 + (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
@@ -42,6 +43,13 @@ typedef enum {
 // Sets the string intended to represent URL for leaf bookmarks. URLString need not be
 // a valid URL string. Does nothing if bookmarkType is not WebBookmarkTypeLeaf.
 - (void)setURLString:(NSString *)URLString;
+
+// String for client use; it is nil unless specified with setIdentifier
+- (NSString *)identifier;
+
+// Sets a string that can be retrieved later with -identifier. Not used internally
+// in any way; clients can use it as they see fit.
+- (void)setIdentifier:(NSString *)identifier;
 
 // Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
 - (NSArray *)children;

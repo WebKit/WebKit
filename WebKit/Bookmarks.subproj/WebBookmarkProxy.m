@@ -36,7 +36,9 @@
         return nil;
     }
 
-    return [self initWithTitle:[dict objectForKey:TitleKey] group:group];
+    WebBookmark *result = [self initWithTitle:[dict objectForKey:TitleKey] group:group];
+    [result setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
+    return result;
 }
 
 - (NSDictionary *)dictionaryRepresentation
@@ -45,6 +47,9 @@
     [dict setObject:WebBookmarkTypeProxyValue forKey:WebBookmarkTypeKey];
     if (_title != nil) {
         [dict setObject:_title forKey:TitleKey];
+    }
+    if ([self identifier] != nil) {
+        [dict setObject:[self identifier] forKey:WebBookmarkIdentifierKey];
     }
 
     return dict;
@@ -57,7 +62,9 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[WebBookmarkProxy alloc] initWithTitle:_title group:[self group]];
+    id copy = [[WebBookmarkProxy alloc] initWithTitle:_title group:[self group]];
+    [copy setIdentifier:[self identifier]];
+    return copy;
 }
 
 - (NSString *)title
