@@ -2538,28 +2538,57 @@ bool operator==(const QString &s1, const char *chs)
     return chs[len] == '\0';
 }
 
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
 uint QString::hash() const
 {
     uint len = length();
-    uint h = len;
+
+    uint h = PHI;
+    h += len;
+    h += (h << 10); 
+    h ^= (h << 6); 
+
     if (len) {
         uint prefixLength = len < 8 ? len : 8;
         uint suffixPosition = len < 16 ? 8 : len - 8;
     
         if (dataHandle[0]->_isAsciiValid) {
             const char *s = ascii();
-            for (uint i = 0; i < prefixLength; i++)
-                h = 127 * h + (unsigned char)s[i];
-            for (uint i = suffixPosition; i < len; i++)
-                h = 127 * h + (unsigned char)s[i];
+            for (uint i = 0; i < prefixLength; i++) {
+		h += (unsigned char)s[i];
+		h += (h << 10); 
+		h ^= (h << 6); 
+	    }
+            for (uint i = suffixPosition; i < len; i++) {
+		h += (unsigned char)s[i];
+		h += (h << 10); 
+		h ^= (h << 6); 
+	    }
         } else {
             const QChar *s = unicode();
-            for (uint i = 0; i < prefixLength; i++)
-                h = 127 * h + s[i].unicode();
-            for (uint i = suffixPosition; i < len; i++)
-                h = 127 * h + s[i].unicode();
+            for (uint i = 0; i < prefixLength; i++) {
+		h += s[i].unicode();
+		h += (h << 10); 
+		h ^= (h << 6); 
+	    }
+            for (uint i = suffixPosition; i < len; i++) {
+		h += s[i].unicode();
+		h += (h << 10); 
+		h ^= (h << 6); 
+	    }
         }
     }
+
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+ 
     if (h == 0)
         h = 0x80000000;
     return h;

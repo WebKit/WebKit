@@ -1,3 +1,12 @@
+2003-03-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- upgrade to new hash function in one spot that I missed:
+
+        * kwq/KWQString.mm:
+        (QString::hash): Use spiffy new hash algorithm.
+
 2003-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
