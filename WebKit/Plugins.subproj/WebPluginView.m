@@ -166,6 +166,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         transferred = TRUE;
         webView = [self findSuperview:@"IFWebView"];
         webController = [webView controller];
+        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     }
     [self sendUpdateEvent];
 }
@@ -461,22 +462,17 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     EventRecord event;
     bool acceptedEvent;
     
-    KWQDebug("NPP_HandleEvent(mouseEntered)\n");
-    if([theEvent trackingNumber] != trackingTag)
-        return;
     event.what = adjustCursorEvent;
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
-    KWQDebug("NPP_HandleEvent(mouseEntered): %dn", acceptedEvent);
+    KWQDebug("NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
     EventRecord event;
     bool acceptedEvent;
-    
-    if([theEvent trackingNumber] != trackingTag)
-        return;    
+     
     event.what = adjustCursorEvent;
     event.when = (uint32)([theEvent timestamp] * 60);
     acceptedEvent = NPP_HandleEvent(instance, &event);
