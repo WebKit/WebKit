@@ -117,7 +117,8 @@ public:
 	KHTML_MOVE_EVENT,
 	KHTML_ORIGCLICK_MOUSEUP_EVENT,
 	// XMLHttpRequest events
-	KHTML_READYSTATECHANGE_EVENT
+	KHTML_READYSTATECHANGE_EVENT,
+        numEventIds
     };
 
     EventImpl();
@@ -150,7 +151,7 @@ public:
     bool propagationStopped() const { return m_propagationStopped; }
     bool defaultPrevented() const { return m_defaultPrevented; }
 
-    static EventId typeToId(DOMString type);
+    static EventId typeToId(const DOMString &type);
     static DOMString idToType(EventId id);
 
     void setDefaultHandled() { m_defaultHandled = true; }

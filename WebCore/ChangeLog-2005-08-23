@@ -1,3 +1,14 @@
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3833841> adding an event listener for keypress events does not work
+
+        * khtml/xml/dom2_eventsimpl.h: Added numEventIds and made typeToId take a const DOMString &.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId): Changed to use table. Added "keypress", otherwise, the same as before.
+        (EventImpl::idToType): Changed to use table.
+
 2004-10-10  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3664375> repro crash in -[KWQAccObject accessibilityAttributeNames]
