@@ -9,7 +9,7 @@
 #define __HIWEBCARBONUTILS__
 
 #ifdef __OBJC__
-#import <CoreGraphics/CGImage.h>
+#import <ApplicationServices/ApplicationServices.h>
 @class NSImage;
 #endif
 

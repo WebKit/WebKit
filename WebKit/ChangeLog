@@ -1,9 +1,18 @@
+2004-06-16  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/3696081> REGRESSION: <WebKit/CarbonUtils.h> doesn't build any more
+
+        Reviewed by Trey.
+
+        * Carbon.subproj/CarbonUtils.h: Fixed include. Need to include <ApplicationServices/ApplicationServices.h>
+        to get CGImageRef; can't include an individual header.
+
 2004-06-15  Richard Williamson   <rjw@apple.com>
 
-		Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
+        Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
 
-		Flip the policy for exposing Objective-C methods and properties.
-		
+        Flip the policy for exposing Objective-C methods and properties.
+
         Reviewed by Trey.
 
         * Plugins.subproj/WebPluginPackage.m:
