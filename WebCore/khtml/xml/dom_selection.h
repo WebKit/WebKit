@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,10 +45,10 @@ class Range;
 class Selection
 {
 public:
-	enum EState { NONE, CARET, RANGE };
-	enum EAlter { MOVE, EXTEND };
-	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
-	enum ETextGranularity { CHARACTER, WORD, LINE };
+    enum EState { NONE, CARET, RANGE };
+    enum EAlter { MOVE, EXTEND };
+    enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
+    enum ETextGranularity { CHARACTER, WORD, LINE };
 
     // These match the AppKit values for these concepts.
     // From NSTextView.h:
@@ -57,13 +57,13 @@ public:
     enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
     Selection();
+    Selection(const Range &);
     Selection(const Position &);
     Selection(const Position &, const Position &);
     Selection(const Selection &);
-    ~Selection() {}
 
-	EState state() const { return m_state; }
-	EAffinity affinity() const { return m_affinity; }
+    EState state() const { return m_state; }
+    EAffinity affinity() const { return m_affinity; }
     void setAffinity(EAffinity);
 
     void moveTo(const Range &);
@@ -100,6 +100,8 @@ public:
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
     Selection &operator=(const Selection &o);
+    Selection &operator=(const Range &r) { moveTo(r); return *this; }
+    Selection &operator=(const Position &r) { moveTo(r); return *this; }
     
     friend bool operator==(const Selection &a, const Selection &b);
     friend bool operator!=(const Selection &a, const Selection &b);
@@ -107,7 +109,7 @@ public:
     friend class KHTMLPart;
 
 private:
-	enum EPositionType { START, END, BASE, EXTENT };
+    enum EPositionType { START, END, BASE, EXTENT };
 
     void init();
     void validate(ETextGranularity granularity=CHARACTER);
@@ -130,16 +132,16 @@ private:
     Position m_start;             // start position for the selection
     Position m_end;               // end position for the selection
 
-	EState m_state;               // the state of the selection
-	EAffinity m_affinity;         // the upstream/downstream affinity of the selection
+    EState m_state;               // the state of the selection
+    EAffinity m_affinity;         // the upstream/downstream affinity of the selection
 
-	int m_caretX;                 // caret coordinates and size
-	int m_caretY;
-	int m_caretSize;
+    int m_caretX;                 // caret coordinates and size
+    int m_caretY;
+    int m_caretSize;
 
-	bool m_baseIsStart : 1;       // true if base node is before the extent node
-	bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
-	bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
+    bool m_baseIsStart : 1;       // true if base node is before the extent node
+    bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
+    bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
 };
 

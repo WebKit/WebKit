@@ -7,7 +7,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,6 +53,8 @@
 #include "xml/xml_tokenizer.h"
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
+#include "misc/khtml_text_operations.h"
+
 using namespace DOM;
 
 #include "khtmlview.h"
@@ -95,7 +97,7 @@ using namespace DOM;
 
 #include "khtmlpart_p.h"
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #include <CoreServices/CoreServices.h>
 #endif
 
@@ -104,6 +106,7 @@ using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::InlineTextBox;
 using khtml::PasteMarkupCommand;
+using khtml::plainText;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::Tokenizer;
@@ -274,7 +277,9 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   connect( khtml::Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
+#if !APPLE_CHANGES
   findTextBegin(); //reset find variables
+#endif
 
   connect( &d->m_redirectionTimer, SIGNAL( timeout() ),
            this, SLOT( slotRedirect() ) );
@@ -977,10 +982,10 @@ void KHTMLPart::clear()
         (*it).m_run->abort();
     }
   }
-#endif
 
 
   findTextBegin(); // resets d->m_findNode and d->m_findPos
+#endif
 
   d->m_mousePressNode = DOM::Node();
 
@@ -1058,9 +1063,11 @@ void KHTMLPart::clear()
   connect( kapp->clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
 #endif
 
+#if !APPLE_CHANGES
   d->m_totalObjectCount = 0;
   d->m_loadedObjects = 0;
   d->m_jobPercent = 0;
+#endif
 
   if ( !d->m_haveEncoding )
     d->m_encoding = QString::null;
@@ -2165,6 +2172,8 @@ bool KHTMLPart::inEditMode() const
     return editMode() == FlagEnabled;
 }
 
+#if !APPLE_CHANGES
+
 void KHTMLPart::findTextBegin(NodeImpl *startNode, int startPos)
 {
     d->m_findPos = startPos;
@@ -2203,7 +2212,6 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
             QConstString s(t->s, t->l);
 
             int matchLen = 0;
-#if !APPLE_CHANGES
             if ( isRegExp ) {
               QRegExp matcher( str );
               matcher.setCaseSensitive( caseSensitive );
@@ -2215,31 +2223,13 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
               d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
               matchLen = str.length();
             }
-#else
-            if (forward) {
-                d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
-            } else {
-                if (d->m_findPos == -1) {
-                    // search from end of node
-                    d->m_findPos = s.string().findRev(str, -1, caseSensitive);
-                } else if (d->m_findPos != 0) {
-                    d->m_findPos = s.string().findRev(str, d->m_findPos-1, caseSensitive);
-                } else {
-                    // already at start of this node, on to the next node
-                    d->m_findPos = -1;
-                }
-            }
-            matchLen = str.length();
-#endif
 
             if(d->m_findPos != -1)
             {
-#if !APPLE_CHANGES
                 int x = 0, y = 0;
                 static_cast<khtml::RenderText *>(d->m_findNode->renderer())
                   ->posOfChar(d->m_findPos, x, y);
                 d->m_view->setContentsPos(x-50, y-50);
-#endif
                 Position p1(d->m_findNode, d->m_findPos);
                 Position p2(d->m_findNode, d->m_findPos + matchLen);
                 setSelection(Selection(p1, p2));
@@ -2282,188 +2272,11 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
     }
 }
 
+#endif // APPLE_CHANGES
+
 QString KHTMLPart::text(const DOM::Range &r) const
 {
-  // FIXME: This whole function should use the render tree and not the DOM tree, since elements could
-  // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
-  // text objects walk their renderers' InlineTextBox objects, so that we at least get the whitespace 
-  // stripped out properly and obey CSS visibility for text runs.
-
-  if (r.isNull())
-    return QString();
-
-  bool hasNewLine = true;
-  bool addedSpace = true;
-  bool needSpace = false;
-  QString text;
-  DOM::Node startNode = r.startContainer();
-  DOM::Node endNode = r.endContainer();
-  int startOffset = r.startOffset();
-  int endOffset = r.endOffset();
-  if (!startNode.isNull() && startNode.nodeType() == Node::ELEMENT_NODE) {
-      if (startOffset >= 0 && startOffset < (int)startNode.childNodes().length()) {
-          startNode = startNode.childNodes().item(r.startOffset());
-          startOffset = -1;
-      }
-  }
-  if (!endNode.isNull() && endNode.nodeType() == Node::ELEMENT_NODE) {
-      if (endOffset > 0 && endOffset <= (int)endNode.childNodes().length()) {
-          endNode = endNode.childNodes().item(endOffset - 1);
-          endOffset = -1;
-      }
-  }
-
-  DOM::Node n = startNode;
-  while(!n.isNull()) {
-      if(n.nodeType() == DOM::Node::TEXT_NODE) {
-          if (hasNewLine) {
-              addedSpace = true;
-              needSpace = false;
-              hasNewLine = false;
-          }
-          QString str = n.nodeValue().string();
-          int start = (n == startNode) ? startOffset : -1;
-          int end = (n == endNode) ? endOffset : -1;
-          RenderObject* renderer = n.handle()->renderer();
-          if (renderer && renderer->isText()) {
-              if (renderer->style()->whiteSpace() == khtml::PRE) {
-                  if (needSpace && !addedSpace)
-                      text += ' ';
-                  int runStart = (start == -1) ? 0 : start;
-                  int runEnd = (end == -1) ? str.length() : end;
-                  text += str.mid(runStart, runEnd-runStart);
-                  needSpace = false;
-                  addedSpace = str[runEnd-1].direction() == QChar::DirWS;
-              }
-              else {
-                  RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
-                  if (!textObj->firstTextBox() && str.length() > 0) {
-                      // We have no runs, but we do have a length.  This means we must be
-                      // whitespace that collapsed away at the end of a line.
-                      needSpace = true;
-                  }
-                  else {
-                      for (InlineTextBox* box = textObj->firstTextBox(); box; box = box->nextTextBox()) {
-                          int runStart = (start == -1) ? box->m_start : start;
-                          int runEnd = (end == -1) ? box->m_start + box->m_len : end;
-                          runEnd = QMIN(runEnd, box->m_start + box->m_len);
-                          if (runStart >= box->m_start &&
-                              runStart < box->m_start + box->m_len) {
-                              if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0)
-                                  needSpace = true; // collapsed space at the start
-                              if (needSpace && !addedSpace)
-                                  text += ' ';
-                              QString runText = str.mid(runStart, runEnd - runStart);
-                              runText.replace('\n', ' ');
-                              text += runText;
-                              int nextRunStart = box->nextTextBox() ? box->nextTextBox()->m_start : str.length(); // collapsed space between runs or at the end
-                              needSpace = nextRunStart > runEnd; // collapsed space between runs or at the end
-                              addedSpace = str[runEnd-1].direction() == QChar::DirWS;
-                              start = -1;
-                          }
-                          if (end != -1 && runEnd >= end)
-                              break;
-                      }
-                  }
-              }
-          }
-      }
-      else {
-        // This is our simple HTML -> ASCII transformation:
-        unsigned short id = n.elementId();
-        switch(id) {
-          case ID_BR:
-            text += "\n";
-            hasNewLine = true;
-            break;
-
-          case ID_TD:
-          case ID_TH:
-          case ID_HR:
-          case ID_OL:
-          case ID_UL:
-          case ID_LI:
-          case ID_DD:
-          case ID_DL:
-          case ID_DT:
-          case ID_PRE:
-          case ID_BLOCKQUOTE:
-          case ID_DIV:
-            if (!hasNewLine)
-               text += "\n";
-            hasNewLine = true;
-            break;
-          case ID_P:
-          case ID_TR:
-          case ID_H1:
-          case ID_H2:
-          case ID_H3:
-          case ID_H4:
-          case ID_H5:
-          case ID_H6:
-            if (!hasNewLine)
-               text += "\n";
-            text += "\n";
-            hasNewLine = true;
-            break;
-        }
-      }
-      if(n == endNode) break;
-      DOM::Node next = n.firstChild();
-      if(next.isNull()) next = n.nextSibling();
-      while( next.isNull() && !n.parentNode().isNull() ) {
-        n = n.parentNode();
-        if(n == endNode) break;
-        next = n.nextSibling();
-        unsigned short id = n.elementId();
-        switch(id) {
-          case ID_TD:
-          case ID_TH:
-          case ID_HR:
-          case ID_OL:
-          case ID_UL:
-          case ID_LI:
-          case ID_DD:
-          case ID_DL:
-          case ID_DT:
-          case ID_PRE:
-          case ID_BLOCKQUOTE:
-          case ID_DIV:
-            if (!hasNewLine)
-               text += "\n";
-            hasNewLine = true;
-            break;
-          case ID_P:
-          case ID_TR:
-          case ID_H1:
-          case ID_H2:
-          case ID_H3:
-          case ID_H4:
-          case ID_H5:
-          case ID_H6:
-            if (!hasNewLine)
-               text += "\n";
-            // An extra newline is needed at the start, not the end, of these types of tags,
-            // so don't add another here.
-            hasNewLine = true;
-            break;
-        }
-      }
-
-      n = next;
-    }
-    int start = 0;
-    int end = text.length();
-
-    // Strip leading LFs
-    while ((start < end) && (text[start] == '\n'))
-       start++;
-
-    // Strip excessive trailing LFs
-    while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
-       end--;
-       
-    return text.mid(start, end-start);
+    return plainText(r);
 }
 
 QString KHTMLPart::selectedText() const
@@ -2557,7 +2370,7 @@ void KHTMLPart::setFocusNodeIfNeeded(const Selection &s)
         return;
 
     NodeImpl *n = s.start().node();
-    NodeImpl *target = n->isContentEditable() ? n : 0;
+    NodeImpl *target = (n && n->isContentEditable()) ? n : 0;
     if (!target) {
         while (n && n != s.end().node()) {
             if (n->isContentEditable()) {

@@ -1,3 +1,45 @@
+2004-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken
+
+        - fixed <rdar://problem/3091531>: "should format copied tables with tabs between cells, spreadsheet-style, for pasting to Excel"
+        - fixed <rdar://problem/3110002>: "Find doesn't match across formatting boundaries"
+        - fixed <rdar://problem/3640340>: "REGRESSION (136-137): nil-deref in KHTMLPart::setFocusNodeIfNeeded inside triple click code after repeatedly click/drag selecting text"
+        - fixed <rdar://problem/3640422>: "too many blank lines between paragraphs in copied text"
+
+        * khtml/dom/dom2_range.h: Added == and != operators to DOMRange.
+        * khtml/dom/dom2_range.cpp: (DOM::operator==): Added.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Don't call findTextBegin any more; it's now not used at all
+        in WebCore.
+        (KHTMLPart::clear): Don't call findTextBegin any more. Also don't set up the
+        load statistics variables.
+        (KHTMLPart::findTextNext): Roll out APPLE_CHANGES; this function is no longer
+        used in WebCore any more and instead the entire thing is compiled out.
+        (KHTMLPart::text): Reimplement this by calling one of the new text operations. All the interesting
+        parts were moved into the TextIterator class.
+        (KHTMLPart::setFocusNodeIfNeeded): Add a check for nil; this is the fix for 364030.
+
+        * khtml/khtmlpart_p.h: (KHTMLPartPrivate::KHTMLPartPrivate): Put m_findPos,
+        m_findNode, m_overURL, m_overURLTarget, m_scrollTimer, m_loadedObjects,
+        m_totalObjectCount, and m_jobPercent inside !APPLE_CHANGES.
+
+        * khtml/xml/dom_selection.h: Replaced uses of 4-character tabs with spaces.
+        (DOM::Selection::Selection): Added a constructor that takes a DOM range.
+        (DOM::Selection::operator=): Overloaded operator= for DOM range and position.
+        This is slightly more efficient than letting a second Selection object be constructed.
+        * khtml/xml/dom_selection.cpp: Replaced uses of 4-character tabs with spaces.
+        (DOM::Selection::Selection): Added a constructor that takes a DOM range.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::findString): Reimplement find so it uses
+        the new text operations function for finding.
+
+        * khtml/misc/khtml_text_operations.h:
+        * khtml/misc/khtml_text_operations.cpp:
+        * WebCore.pbproj/project.pbxproj:
+        Added new text iterator classes that do the heavy lifting.
+
 2004-05-03  David Hyatt  <hyatt@apple.com>
 
 	Make sure that XML processing instructions set themselves as the parent node of the stylesheets they load,

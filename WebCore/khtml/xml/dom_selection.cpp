@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,14 +77,24 @@ Selection::Selection()
 Selection::Selection(const Position &pos)
 {
     init();
-	assignBaseAndExtent(pos, pos);
+    assignBaseAndExtent(pos, pos);
+    validate();
+}
+
+Selection::Selection(const Range &r)
+{
+    const Position start(r.startContainer().handle(), r.startOffset());
+    const Position end(r.endContainer().handle(), r.endOffset());
+
+    init();
+    assignBaseAndExtent(start, end);
     validate();
 }
 
 Selection::Selection(const Position &base, const Position &extent)
 {
     init();
-	assignBaseAndExtent(base, extent);
+    assignBaseAndExtent(base, extent);
     validate();
 }
 
@@ -92,8 +102,8 @@ Selection::Selection(const Selection &o)
 {
     init();
     
-	assignBaseAndExtent(o.base(), o.extent());
-	assignStartAndEnd(o.start(), o.end());
+    assignBaseAndExtent(o.base(), o.extent());
+    assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
     m_affinity = o.m_affinity;
@@ -129,8 +139,8 @@ void Selection::init()
 
 Selection &Selection::operator=(const Selection &o)
 {
-	assignBaseAndExtent(o.base(), o.extent());
-	assignStartAndEnd(o.start(), o.end());
+    assignBaseAndExtent(o.base(), o.extent());
+    assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
     m_affinity = o.m_affinity;
@@ -166,22 +176,22 @@ void Selection::moveTo(const Range &r)
 {
     Position start(r.startContainer().handle(), r.startOffset());
     Position end(r.endContainer().handle(), r.endOffset());
-	moveTo(start, end);
+    moveTo(start, end);
 }
 
 void Selection::moveTo(const Selection &o)
 {
-	moveTo(o.start(), o.end());
+    moveTo(o.start(), o.end());
 }
 
 void Selection::moveTo(const Position &pos)
 {
-	moveTo(pos, pos);
+    moveTo(pos, pos);
 }
 
 void Selection::moveTo(const Position &base, const Position &extent)
 {
-	assignBaseAndExtent(base, extent);
+    assignBaseAndExtent(base, extent);
     validate();
 }
 
@@ -337,8 +347,8 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
 
 void Selection::clear()
 {
-	assignBaseAndExtent(emptyPosition(), emptyPosition());
-	validate();
+    assignBaseAndExtent(emptyPosition(), emptyPosition());
+    validate();
 }
 
 void Selection::setBase(const Position &pos)
@@ -486,13 +496,13 @@ void Selection::validate(ETextGranularity granularity)
     }
 
     // make sure we do not have a dangling start or end
-	if (base().isEmpty() && extent().isEmpty()) {
+    if (base().isEmpty() && extent().isEmpty()) {
         assignStartAndEnd(emptyPosition(), emptyPosition());
         m_baseIsStart = true;
     }
-	else if (base().isEmpty() || extent().isEmpty()) {
+    else if (base().isEmpty() || extent().isEmpty()) {
         m_baseIsStart = true;
-	}
+    }
     else {
         // adjust m_baseIsStart as needed
         if (base().node() == extent().node()) {
@@ -572,13 +582,13 @@ void Selection::validate(ETextGranularity granularity)
     }
 #endif  // APPLE_CHANGES
 
-	// adjust the state
-	if (start().isEmpty() && end().isEmpty())
-		m_state = NONE;
-	else if (start() == end())
-		m_state = CARET;
-	else
-		m_state = RANGE;
+    // adjust the state
+    if (start().isEmpty() && end().isEmpty())
+        m_state = NONE;
+    else if (start() == end())
+        m_state = CARET;
+    else
+        m_state = RANGE;
 
     m_needsCaretLayout = true;
     
@@ -618,13 +628,13 @@ bool Selection::moveToRenderedContent()
 
 bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
 {
-	if (!n1 || !n2) 
-		return true;
- 
- 	if (n1 == n2)
- 		return true;
- 
- 	bool result = false;
+    if (!n1 || !n2) 
+        return true;
+
+    if (n1 == n2)
+        return true;
+
+    bool result = false;
     int n1Depth = 0;
     int n2Depth = 0;
 
@@ -666,7 +676,7 @@ bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2)
         }
         n = n->nextSibling();
     }
-	return result;
+    return result;
 }
 
 #if APPLE_CHANGES

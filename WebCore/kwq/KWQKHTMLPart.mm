@@ -25,6 +25,7 @@
 
 #import "KWQKHTMLPart.h"
 
+#import "DOMInternal.h"
 #import "KWQDOMNode.h"
 #import "KWQDummyView.h"
 #import "KWQEditCommand.h"
@@ -33,20 +34,23 @@
 #import "KWQLogging.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
+#import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
-#import "DOMInternal.h"
 #import "csshelper.h"
+#import "dom2_eventsimpl.h"
+#import "dom2_rangeimpl.h"
+#import "dom_selection.h"
 #import "html_documentimpl.h"
 #import "html_misc.h"
+#import "htmlattrs.h"
 #import "htmltokenizer.h"
+#import "khtml_text_operations.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_binding.h"
 #import "kjs_window.h"
-#import "misc/htmlattrs.h"
-#import "qscrollbar.h"
 #import "render_canvas.h"
 #import "render_frames.h"
 #import "render_image.h"
@@ -54,9 +58,6 @@
 #import "render_style.h"
 #import "render_table.h"
 #import "render_text.h"
-#import "xml/dom_selection.h"
-#import "xml/dom2_eventsimpl.h"
-#import "xml/dom2_rangeimpl.h"
 #import <JavaScriptCore/identifier.h>
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime.h>
@@ -77,12 +78,15 @@ using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
 
 using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
+using khtml::findPlainText;
+using khtml::InlineTextBox;
 using khtml::MouseDoubleClickEvent;
 using khtml::MouseMoveEvent;
 using khtml::MousePressEvent;
@@ -99,7 +103,6 @@ using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
-using khtml::InlineTextBox;
 using khtml::VISIBLE;
 
 using KIO::Job;
@@ -531,44 +534,40 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
 bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
 {
     QString target = QString::fromNSString(string);
-    bool result;
-    // start on the correct edge of the selection, search to end
-    NodeImpl *selStart = selectionStart();
-    int selStartOffset = selectionStartOffset();
-    NodeImpl *selEnd = selectionEnd();
-    int selEndOffset = selectionEndOffset();
-    if (selStart) {
-        if (forward) {
-            // point to last char of selection, find will start right afterwards
-            findTextBegin(selEnd, selEndOffset-1);
-        } else {
-            // point to first char of selection, find will start right before
-            findTextBegin(selStart, selStartOffset);
-        }
-    } else {
-        findTextBegin();
+    if (target.isEmpty()) {
+        return false;
     }
-    result = findTextNext(target, forward, caseFlag, FALSE);
-    if (!result && wrapFlag) {
-        // start back at the other end, search the rest
-        findTextBegin();
-        result = findTextNext(target, forward, caseFlag, FALSE);
-        // if we got back to the same place we started, that doesn't count as success
-        if (result
-            && selStart == selectionStart()
-            && selStartOffset == selectionStartOffset())
-        {
-            result = false;
+
+    // Start on the correct edge of the selection, search to edge of document.
+    Range searchRange(xmlDocImpl());
+    searchRange.selectNodeContents(xmlDocImpl());
+    if (selectionStart()) {
+        if (forward) {
+            searchRange.setStart(selectionEnd(), selectionEndOffset());
+        } else {
+            searchRange.setEnd(selectionStart(), selectionStartOffset());
         }
     }
 
-    // khtml took care of moving the selection, but we need to move first responder too,
-    // so the selection is primary.  We also need to make the selection visible, since we
-    // cut the implementation of this in khtml_part.
-    if (result) {
-        jumpToSelection();
+    // Do the search once, then do it a second time to handle wrapped search.
+    // Searches some or all of document twice in the failure case, but that's probably OK.
+    Range resultRange = findPlainText(searchRange, target, forward, caseFlag);
+    if (resultRange.collapsed() && wrapFlag) {
+        searchRange.selectNodeContents(xmlDocImpl());
+        resultRange = findPlainText(searchRange, target, forward, caseFlag);
+        // If we got back to the same place we started, that doesn't count as success.
+        if (resultRange == selection().toRange()) {
+            return false;
+        }
     }
-    return result;
+
+    if (resultRange.collapsed()) {
+        return false;
+    }
+
+    setSelection(resultRange);
+    jumpToSelection();
+    return true;
 }
 
 void KWQKHTMLPart::clearRecordedFormValues()
@@ -832,6 +831,8 @@ void KWQKHTMLPart::jumpToSelection()
            d->m_view->setContentsPos(x - 50, y - 50);
         }
 /*
+        Something like this would fix <rdar://problem/3154293>: "Find Next should not scroll page if the next target is already visible"
+
         I think this would be a better way to do this, to avoid needless horizontal scrolling,
         but it is not feasible until selectionRect() returns a tighter rect around the
         selected text.  Right now it works at element granularity.
