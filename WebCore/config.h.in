@@ -10,7 +10,9 @@
 
 /* Define for using more complete Qt/KDE interfaces */
 /* This may also include "borrowed implementations */
+#ifndef _KWQ_COMPLETE_
 #undef _KWQ_COMPLETE_
+#endif
 
 /* Define for using KWQ-implementation of iostreams in KWQ classes */
 #undef _KWQ_IOSTREAM_
