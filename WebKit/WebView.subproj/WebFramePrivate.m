@@ -588,7 +588,7 @@ static const char * const stateNames[] = {
         [[[self webView] frameScrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
-        if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem]){
+        if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem] && ![[self dataSource] isLoading]){
             if (![[_private currentItem] pageCache]){
                 printf ("Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
                 [[_private currentItem] setHasPageCache: YES];

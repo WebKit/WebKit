@@ -1,3 +1,12 @@
+2002-11-26  Richard Williamson   <rjw@apple.com>
+
+        Remove debugging code.  Could be cause of performance regresssion.
+        * kjs/nodes.cpp:
+        (FunctionCallNode::evaluate):
+
+        Restire attributes correctly.
+        * kjs/property_map.cpp:
+
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
         Use delete[] (not delete) operator to delete array.
