@@ -1,3 +1,15 @@
+2003-01-08  Trey Matteson  <trey@apple.com>
+
+	3136213 - Page loads stopped by backtracking don't finish when moving forward
+
+	We need to remove the entry from the KHTML image cache when a load
+	has an error, so it will be reloaded next time we try.	
+
+        Reviewed by Darin,
+
+        * khtml/misc/loader.cpp:
+        (Loader::slotFinished):  Remove cache entry on job error.
+
 2003-01-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
