@@ -584,9 +584,9 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
 
 void CompositeEditCommandImpl::deleteUnrenderedText(const Position &pos)
 {
-    Position ending = pos.upstream();
     Position upstream = pos.upstream(StayInBlock);
     Position downstream = pos.downstream(StayInBlock);
+    Position block = Position(pos.node()->enclosingBlockFlowElement(), 0);
     
     NodeImpl *node = upstream.node();
     while (node != downstream.node()) {
@@ -611,7 +611,15 @@ void CompositeEditCommandImpl::deleteUnrenderedText(const Position &pos)
                 deleteText(text, 0, text->caretMinOffset());
         }
     }
-    setEndingSelection(ending);
+    
+    if (pos.node()->inDocument())
+        setEndingSelection(pos);
+    else if (upstream.node()->inDocument())
+        setEndingSelection(upstream);
+    else if (downstream.node()->inDocument())
+        setEndingSelection(downstream);
+    else
+        setEndingSelection(block);
 }
 
 

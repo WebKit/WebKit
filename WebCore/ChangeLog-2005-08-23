@@ -1,3 +1,20 @@
+2004-08-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3778059> Odd behaviour when editing between blockquote elements
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::deleteUnrenderedText): This function should not move
+        the selection out of the current block, ever. This is exactly what the bug reported.
+        What was I thinking? Now, the code looks at the passed-in position and then the equivalent
+        upstream and downstream positions to see if the selection can be placed there after the
+        delete, and settles on the block containing the passed-in position as a fallback.
+        * layout-tests/editing/inserting/insert-3778059-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3778059-fix.html: Added.
+
 2004-08-26  Richard Williamson   <rjw@apple.com>
 
         Boiler plate for canvas gradients and patterns.
