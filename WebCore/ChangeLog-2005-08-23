@@ -1,3 +1,25 @@
+2005-03-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+        
+        Fix for this bug:
+        
+        <rdar://problem/4059578> Entire list deleted, and caret disappears, when delete key hit at end of list
+
+        The problem is that a new case in the delete code did not consider when the
+        downstream end node of the selection might be an ancestor of the upstream start
+        node. That is the case in this bug. The downstream end is the body element, and
+        this line of code would delete all the children of the downstream end:
+            removeChildrenInRangePreservingPosition(m_downstreamEnd.node(), 0, 
+                m_downstreamEnd.offset(), m_upstreamStart);
+
+        The fix is to check for this "is ancestor" case, and do some tree logic to find
+        the right offset of the downstream end node for the call to
+        removeChildrenInRangePreservingPosition().
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): Fixed as described.
+
 2005-03-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

@@ -2898,8 +2898,16 @@ void DeleteSelectionCommand::handleGeneralDelete()
                         m_trailingWhitespaceValid = false;
                     }
                 } else {
-                    removeChildrenInRangePreservingPosition(m_downstreamEnd.node(), 0, m_downstreamEnd.offset(), m_upstreamStart);
-                    m_downstreamEnd = Position(m_downstreamEnd.node(), 0);
+                    int offset = 0;
+                    if (m_upstreamStart.node()->isAncestor(m_downstreamEnd.node())) {
+                        NodeImpl *n = m_upstreamStart.node();
+                        while (n && n->parentNode() != m_downstreamEnd.node())
+                            n = n->parentNode();
+                        if (n)
+                            offset = n->nodeIndex() + 1;
+                    }
+                    removeChildrenInRangePreservingPosition(m_downstreamEnd.node(), offset, m_downstreamEnd.offset(), m_upstreamStart);
+                    m_downstreamEnd = Position(m_downstreamEnd.node(), offset);
                 }
             }
         }
