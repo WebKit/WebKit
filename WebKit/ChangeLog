@@ -1,3 +1,14 @@
+2003-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3194756 -- REGRESSION: Geneva bold yields Geneva plain, used to yield Helvetica bold (apple.com)
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        Remove the first call to NSFontManager before we do our searching algorithm.
+        We always need to do the searching, because NSFontManager uses a different set of rules.
+
 2003-03-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3200647 - File I/O related download errors just says "error"

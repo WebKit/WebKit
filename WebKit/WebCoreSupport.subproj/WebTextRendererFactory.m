@@ -313,19 +313,11 @@ static int getLCDScaleParameters(void)
 
 - (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
 {
-    NSFont *font;
-    NSEnumerator *e;
-    NSString *availableFamily;
-    
-    font = [[NSFontManager sharedFontManager] fontWithFamily:family traits:traits weight:5 size:size];
-    if (font != nil) {
-        return font;
-    }
-    
     // FIXME:  For now do a simple case insensitive search for a matching font.
     // The font manager requires exact name matches.  This will at least address the problem
     // of matching arial to Arial, etc.
-    e = [[[NSFontManager sharedFontManager] availableFontFamilies] objectEnumerator];
+    NSEnumerator *e = [[[NSFontManager sharedFontManager] availableFontFamilies] objectEnumerator];
+    NSString *availableFamily;
     while ((availableFamily = [e nextObject])) {
         if ([family caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
             NSArray *fonts = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:availableFamily];
@@ -347,7 +339,7 @@ static int getLCDScaleParameters(void)
                 // traits could also indicate weight changes.  In fact, the weight parameter
                 // and the trait mask together make a conflicted API.
                 if (fontWeight == 5 && (fontMask & traits) == traits){
-                    font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
+                    NSFont *font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
                     if (font != nil) {
                         return font;
                     }
@@ -355,7 +347,7 @@ static int getLCDScaleParameters(void)
                 
                 // Get a font with the correct traits but a weight we're told actually exists.
                 if ((fontMask & traits) == traits){
-                    font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:fontWeight size:size];
+                    NSFont *font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:fontWeight size:size];
                     if (font != nil) {
                         return font;
                     }
