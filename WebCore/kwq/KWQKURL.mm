@@ -941,7 +941,6 @@ void KURL::parse(const char *url, const QString *originalString)
 
     char *p = buffer;
     const char *strPtr = url;
-    bool isHTTPorHTTPS, isFILE;
 
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
@@ -951,16 +950,21 @@ void KURL::parse(const char *url, const QString *originalString)
     schemeEndPos = p - buffer;
 
     // Check if we're http or https.
-    isHTTPorHTTPS = strncasecmp ("http", url, schemeEnd) == 0 ||
+    bool isHTTPorHTTPS = strncasecmp ("http", url, schemeEnd) == 0 ||
         strncasecmp ("https", url, schemeEnd) == 0;
     
-    isFILE = (strncasecmp("file", url, schemeEnd) == 0);
+    bool isFILENeedsHostPart = strncasecmp("file", url, schemeEnd) == 0 && pathStart != pathEnd
+        && !(pathStart + 2 == pathEnd && strncmp("//", url + pathStart, 2) == 0);
+    
+    bool hostIsLocalHost = portEnd - userStart == 9 && strncmp(url + userStart, "localhost", 9) == 0;
+    
+    bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
     
     // add ";"
     *p++ = ':';
 
-    // we have at least one authority part - add "//"
-    if ((userStart != userEnd || passwordStart != passwordEnd || hostStart != hostEnd || portStart != portEnd) && !(portEnd - userStart == 9 && strncmp(url + userStart, "localhost", 9) == 0)) {
+    // if we have at least one authority part or a file URL - add "//"
+    if (isFILENeedsHostPart || ((haveNonHostAuthorityPart || hostStart != hostEnd) && !hostIsLocalHost)) {
 	*p++ = '/';
 	*p++ = '/';
 
@@ -991,11 +995,13 @@ void KURL::parse(const char *url, const QString *originalString)
 	}
 	
 	// copy in the host
-	strPtr = url + hostStart;
-	const char *hostEndPtr = url + hostEnd;
-	while (strPtr < hostEndPtr) {
-	    *p++ = *strPtr++;
-	}
+	if (!isFILENeedsHostPart || !hostIsLocalHost || haveNonHostAuthorityPart) {
+            strPtr = url + hostStart;
+            const char *hostEndPtr = url + hostEnd;
+            while (strPtr < hostEndPtr) {
+                *p++ = *strPtr++;
+            }
+        }
 	hostEndPos = p - buffer;
 	
 	// copy in the port
@@ -1010,12 +1016,6 @@ void KURL::parse(const char *url, const QString *originalString)
 	portEndPos = p - buffer;
     } else {
 	userStartPos = userEndPos = passwordEndPos = hostEndPos = portEndPos = p - buffer;
-    }
-
-    // For canonicalization, ensure we have a 'file://' before the path.
-    if (isFILE && (p - buffer) == 5 && (pathEnd - pathStart) >= 2 && strcmp(&url[pathStart], "//") != 0){
-        *p++ = '/';
-        *p++ = '/';
     }
 
     // For canonicalization, ensure we have a '/' for no path.
