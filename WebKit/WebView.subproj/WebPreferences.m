@@ -15,6 +15,9 @@
 
 #import <WebCore/WebCoreSettings.h>
 
+#import <Carbon/Carbon.h>                           // For TEC
+#import <CoreFoundation/CFStringDefaultEncoding.h>  // For __CFStringGetUserDefaultEncoding
+
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
 #define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))
@@ -180,7 +183,7 @@ NS_ENDHANDLER
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
         @"1",                           WebKitMinimumFontSizePreferenceKey,
-	@"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
+    @"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
@@ -611,6 +614,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (CFStringEncoding)_systemCFStringEncoding
 {
+#if OMIT_TIGER_FEATURES
     CFStringEncoding encoding = CFStringGetSystemEncoding();
 
     // Map from system encodings to the appropriate default web encoding.
@@ -633,6 +637,20 @@ static NSMutableDictionary *webPreferencesInstances = nil;
     // We must not use any encoding that has no IANA character set name.
     if (CFStringConvertEncodingToIANACharSetName(encoding) == NULL)
         return kCFStringEncodingISOLatin1;
+#else
+    UInt32 script = 0;
+    UInt32 region = 0;
+    TextEncoding encoding;
+    OSErr err;
+    ItemCount dontcare;
+
+    // We can't use the Script Manager as it will not return things that use
+    // a script that is not supported on Mac OS X.
+    __CFStringGetUserDefaultEncoding(&script, &region);
+    err = TECGetWebTextEncodings(region, &encoding, 1, &dontcare);
+    if (err != noErr)
+        encoding = kCFStringEncodingISOLatin1;
+#endif
 
     return encoding;
 }
