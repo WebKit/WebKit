@@ -3599,7 +3599,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
-        [bridge insertLineBreak];
+        [bridge insertParagraphSeparator];
     }
 }
 

@@ -1,3 +1,15 @@
+2004-12-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+        
+        Fix for this bug:
+        
+        <rdar://problem/3906930> Hitting return key in editable content inserts br elements instead of blocks
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView insertNewline:]): One-line change to call insert-block rather than insert-br method 
+        on bridge.
+
 2004-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
