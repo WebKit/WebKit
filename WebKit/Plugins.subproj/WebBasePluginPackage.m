@@ -32,7 +32,7 @@
 
 - (BOOL)load
 {
-    return YES;
+    return NO;
 }
 
 - (void)unload
@@ -43,13 +43,11 @@
 {
     [name release];
     [path release];
-    [filename release];
     [pluginDescription release];
 
     [MIMEToDescription release];
     [MIMEToExtensions release];
     [extensionToMIME release];
-    
     [super dealloc];
 }
 
@@ -63,7 +61,7 @@
 }
 
 - (NSString *)filename{
-    return filename;
+    return [path lastPathComponent];
 }
 
 - (NSString *)pluginDescription
@@ -106,12 +104,6 @@
 {
     [path release];
     path = [thePath retain];
-}
-
-- (void)setFilename:(NSString *)theFilename
-{
-    [filename release];
-    filename = [theFilename retain];
 }
 
 - (void)setPluginDescription:(NSString *)description

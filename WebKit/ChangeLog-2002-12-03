@@ -1,3 +1,35 @@
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+	
+	- Use "MIMEType" instead of "serviceType".
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage dealloc]):
+        (-[WebBasePluginPackage filename]):
+        (-[WebBasePluginPackage setPath:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:MIMEType:attributes:]):
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage getMIMEInformation]): changed name.
+        (-[WebNetscapePluginPackage initWithPath:]):
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView initWithFrame:MIMEType:attributes:]):
+        (-[WebNullPluginView dealloc]):
+        (-[WebNullPluginView viewDidMoveToWindow]): send missing plug-ins notification here
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage getMIMEInformation]): new, gets MIME info from plist
+        (-[WebPluginPackage initWithPath:]):
+        (-[WebPluginPackage dealloc]):
+        (-[WebPluginPackage viewFactory]):
+        (-[WebPluginPackage load]):
+        (-[WebPluginPackage unload]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+
 2002-10-24  Richard Williamson   <rjw@apple.com>
 
         Flag error instead of ASSERTing as a result of fix to 3083013.

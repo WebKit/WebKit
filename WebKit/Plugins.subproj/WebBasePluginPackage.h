@@ -14,7 +14,6 @@
 {
     NSString *name;
     NSString *path;
-    NSString *filename;
     NSString *pluginDescription;
 
     NSDictionary *MIMEToDescription;
@@ -42,7 +41,6 @@
 
 - (void)setName:(NSString *)theName;
 - (void)setPath:(NSString *)thePath;
-- (void)setFilename:(NSString *)theFilename;
 - (void)setPluginDescription:(NSString *)description;
 - (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;
 - (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;

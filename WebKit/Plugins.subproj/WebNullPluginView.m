@@ -16,26 +16,23 @@ static NSImage *image = nil;
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame mimeType:(NSString *)mime attributes:(NSDictionary *)attributes
-{
-    NSBundle *bundle;
-    NSString *imagePath, *pluginPageString;
-    
+- initWithFrame:(NSRect)frame MIMEType:(NSString *)mime attributes:(NSDictionary *)attributes
+{    
     self = [super initWithFrame:frame];
     if (self) {
         // Set the view's image to the null plugin icon
         if (!image) {
-            bundle = [NSBundle bundleForClass:[WebNullPluginView class]];
-            imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
+            NSBundle *bundle = [NSBundle bundleForClass:[WebNullPluginView class]];
+            NSString *imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
             image = [[NSImage alloc] initWithContentsOfFile:imagePath];
         }
         [self setImage:image];
         
-        mimeType = [mime retain];
+        MIMEType = [mime retain];
         
-        pluginPageString = [attributes objectForKey:@"pluginspage"];
+        NSString *pluginPageString = [attributes objectForKey:@"pluginspage"];
         if(pluginPageString){
-            pluginPage = [[NSURL _web_URLWithString:pluginPageString] retain];
+            pluginPageURL = [[NSURL _web_URLWithString:pluginPageString] retain];
         }
     }
     return self;
@@ -43,21 +40,18 @@ static NSImage *image = nil;
 
 - (void)dealloc
 {
-    [pluginPage release];
-    [mimeType release];
+    [pluginPageURL release];
+    [MIMEType release];
     [super dealloc];
 }
 
-- (void)drawRect:(NSRect)rect {
-    WebView *webView;
-    WebController *webController;
-
-    [super drawRect:rect];
+- (void)viewDidMoveToWindow
+{
     if(!didSendError){
         didSendError = YES;
-        webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
-        webController = [webView controller];
-        [[webController policyDelegate] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
+        WebView *view = (WebView *)[self _web_superviewOfClass:[WebView class]];
+        WebController *controller = [view controller];
+        [[controller policyDelegate] pluginNotFoundForMIMEType:MIMEType pluginPageURL:pluginPageURL];
     }
 }
 

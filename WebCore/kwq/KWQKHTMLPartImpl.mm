@@ -198,7 +198,7 @@ ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &
         newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:childURL
                                                           attributes:attributesArray
                                                              baseURL:KURL(d->m_doc->baseURL()).getNSURL()
-                                                         serviceType:child.m_args.serviceType.getNSString()]));
+                                                            MIMEType:child.m_args.serviceType.getNSString()]));
         return newPart;
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());

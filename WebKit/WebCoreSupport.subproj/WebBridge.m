@@ -443,11 +443,9 @@
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
                       attributes:(NSArray *)attributesArray
                          baseURL:(NSURL *)baseURL
-                     serviceType:(NSString *)serviceType
+                        MIMEType:(NSString *)MIMEType
 {
-    NSString *mimeType, *extension;
     NSRange r1, r2, r3;
-    WebBasePluginPackage *pluginPackage;
     uint i;
 
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
@@ -462,13 +460,14 @@
         }
     }
 
-    if ([serviceType length]) {
-        mimeType = serviceType;
-        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:mimeType];
+    WebBasePluginPackage *pluginPackage;
+    
+    if ([MIMEType length]) {
+        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
     } else {
-        extension = [[URL path] pathExtension];
+        NSString *extension = [[URL path] pathExtension];
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
-        mimeType = [pluginPackage MIMETypeForExtension:extension];
+        MIMEType = [pluginPackage MIMETypeForExtension:extension];
     }
 
     if (pluginPackage) {
@@ -482,7 +481,7 @@
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:URL
                                                                  baseURL:baseURL
-                                                                    mime:mimeType
+                                                                MIMEType:MIMEType
                                                                attributes:attributes] autorelease];
         }else{
             [NSException raise:NSInternalInconsistencyException
@@ -491,7 +490,7 @@
         }
     }else{
         return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0)
-                                                mimeType:mimeType
+                                                MIMEType:MIMEType
                                               attributes:attributes] autorelease];
     }
 }
@@ -516,8 +515,8 @@
                                                               plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                  URL:nil
                                                              baseURL:baseURL
-                                                                mime:@"application/x-java-applet"
-                                                           attributes:attributes] autorelease];
+                                                            MIMEType:@"application/x-java-applet"
+                                                          attributes:attributes] autorelease];
     }else{
         [NSException raise:NSInternalInconsistencyException
                     format:@"Plugin package class not recognized"];

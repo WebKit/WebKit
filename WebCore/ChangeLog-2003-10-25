@@ -1,3 +1,11 @@
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+
+	Use "MIMEType" instead of "serviceType".
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::createPart):
+        * kwq/WebCoreBridge.h:
+
 2002-10-24  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKLocale.mm: (i18n): Make it obvious when non-localized

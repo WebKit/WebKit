@@ -54,7 +54,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return [NSString stringWithCString:cString];
 }
 
-- (BOOL)getPluginInfo
+- (BOOL)getMIMEInformation
 {
     SInt16 resRef = [self openResourceFile];
     if(resRef == -1){
@@ -105,6 +105,8 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
     [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
+
+    NSString *filename = [self filename];
     
     description = [self stringForStringListID:126 andIndex:1];
     if(!description){
@@ -159,7 +161,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSString *thePath = [self pathByResolvingSymlinksAndAliasesInPath:pluginPath];
     
     [self setPath:thePath];
-    [self setFilename:[thePath lastPathComponent]];
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *fileInfo = [fileManager fileAttributesAtPath:thePath traverseLink:YES];
@@ -199,7 +200,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
-        if(![self getPluginInfo]){
+        if(![self getMIMEInformation]){
             return nil;
         }
     }else{

@@ -20,14 +20,14 @@
              plugin:(WebNetscapePluginPackage *)thePlugin
                 URL:(NSURL *)theURL
             baseURL:(NSURL *)theBaseURL
-               mime:(NSString *)mimeType
-          attributes:(NSDictionary *)attributes
+           MIMEType:(NSString *)MIME
+         attributes:(NSDictionary *)attributes
 {
     [super initWithFrame:frame];
 
     URL = [theURL retain];
     
-    [self setMIMEType:mimeType];
+    [self setMIMEType:MIME];
     [self setBaseURL:theBaseURL];
     [self setAttributes:attributes];
     [self setMode:NP_EMBED];

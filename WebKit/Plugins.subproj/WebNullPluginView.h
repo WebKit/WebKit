@@ -6,13 +6,13 @@
 #import <AppKit/AppKit.h>
 
 
-@interface WebNullPluginView : NSImageView {
-
+@interface WebNullPluginView : NSImageView
+{
     BOOL didSendError;
-    NSString *mimeType;
-    NSURL *pluginPage;
+    NSString *MIMEType;
+    NSURL *pluginPageURL;
 }
 
-- initWithFrame:(NSRect)frame mimeType:(NSString *)mime attributes:(NSDictionary *)attributes;
+- initWithFrame:(NSRect)frame MIMEType:(NSString *)mime attributes:(NSDictionary *)attributes;
 
 @end
