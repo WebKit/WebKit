@@ -63,8 +63,6 @@ using DOM::ElementImpl;
 using DOM::EventImpl;
 using DOM::Node;
 
-using khtml::TextRunArray;
-
 using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
@@ -72,20 +70,25 @@ using khtml::MouseDoubleClickEvent;
 using khtml::MouseMoveEvent;
 using khtml::MousePressEvent;
 using khtml::MouseReleaseEvent;
+using khtml::parseURL;
+using khtml::PRE;
+using khtml::RenderCanvas;
+using khtml::RenderImage;
+using khtml::RenderLayer;
+using khtml::RenderListItem;
 using khtml::RenderObject;
 using khtml::RenderPart;
-using khtml::RenderCanvas;
 using khtml::RenderStyle;
+using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
-using khtml::RenderTableCell;
-using khtml::RenderLayer;
+using khtml::TextRunArray;
 using khtml::VISIBLE;
 
 using KIO::Job;
 
-using KJS::SavedProperties;
 using KJS::SavedBuiltins;
+using KJS::SavedProperties;
 using KJS::ScheduledAction;
 using KJS::Window;
 
@@ -668,13 +671,13 @@ void KWQKHTMLPart::setView(KHTMLView *view)
 	d->m_doc->detach();
     }
 
+    if (view) {
+	view->ref();
+    }
     if (d->m_view) {
 	d->m_view->deref();
     }
     d->m_view = view;
-    if (d->m_view) {
-	d->m_view->ref();
-    }
     setWidget(view);
     
     // Only one form submission is allowed per view of a part.
@@ -789,7 +792,7 @@ void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
 
 void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
 {
-    RenderCanvas *root = static_cast<khtml::RenderCanvas *>(xmlDocImpl()->renderer());
+    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // Use a printer device, with painting disabled for the pagination phase
         QPainter painter(true);
@@ -1227,7 +1230,7 @@ void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
 {
     // Dumping externalRepresentation(_part->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    RenderCanvas *root = static_cast<khtml::RenderCanvas *>(xmlDocImpl()->renderer());
+    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
         root->setWidth((int)ceil(pageWidth));
@@ -1240,8 +1243,12 @@ void KWQKHTMLPart::sendResizeEvent()
 {
     KHTMLView *v = d->m_view;
     if (v) {
+        // Sending an event can result in the destruction of the view and part.
+        // We ref so that happens after we return from the KHTMLView function.
+        v->ref();
 	QResizeEvent e;
-	d->m_view->resizeEvent(&e);
+	v->resizeEvent(&e);
+        v->deref();
     }
 }
 
@@ -1679,7 +1686,8 @@ int KWQKHTMLPart::stateForCurrentEvent()
 
 void KWQKHTMLPart::mouseDown(NSEvent *event)
 {
-    if (!d->m_view || _sendingEventToSubview) {
+    KHTMLView *v = d->m_view;
+    if (!v || _sendingEventToSubview) {
         return;
     }
 
@@ -1695,11 +1703,16 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     // the bridge. It's unclear which is better.
     _firstResponderAtMouseDownTime = [[_bridge firstResponder] retain];
 
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
-        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
-    d->m_view->viewportMousePressEvent(&kEvent);
+
+    // Sending an event can result in the destruction of the view and part.
+    // We ref so that happens after we return from the KHTMLView function.
+    v->ref();
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
+        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+    v->viewportMousePressEvent(&kEvent);
+    v->deref();
     
     [_firstResponderAtMouseDownTime release];
     _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
@@ -1711,15 +1724,20 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
 
 void KWQKHTMLPart::mouseDragged(NSEvent *event)
 {
-    if (!d->m_view || _sendingEventToSubview) {
+    KHTMLView *v = d->m_view;
+    if (!v || _sendingEventToSubview) {
         return;
     }
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
 
+    // Sending an event can result in the destruction of the view and part.
+    // We ref so that happens after we return from the KHTMLView function.
+    v->ref();
     QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), Qt::LeftButton, Qt::LeftButton);
-    d->m_view->viewportMouseMoveEvent(&kEvent);
+    v->viewportMouseMoveEvent(&kEvent);
+    v->deref();
     
     ASSERT(_currentEvent == event);
     [event release];
@@ -1728,28 +1746,35 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
 
 void KWQKHTMLPart::mouseUp(NSEvent *event)
 {
-    if (!d->m_view || _sendingEventToSubview) {
+    KHTMLView *v = d->m_view;
+    if (!v || _sendingEventToSubview) {
         return;
     }
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
 
+    // Sending an event can result in the destruction of the view and part.
+    // We ref so that happens after we return from the KHTMLView function.
+    v->ref();
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
     // in khtml's DOM click event handling we do not send a release here
     // for a double click. Instead we send that event from KHTMLView's
-    // viewportMouseDoubleClickEvent.
+    // viewportMouseDoubleClickEvent. Note also that the third click of
+    // a triple click is treated as a single click, but the fourth is then
+    // treated as another double click. Hence the "% 2" below.
     int clickCount = [event clickCount];
     if (clickCount > 0 && clickCount % 2 == 0) {
         QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint([event locationInWindow]),
             buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
-        d->m_view->viewportMouseDoubleClickEvent(&doubleClickEvent);
+        v->viewportMouseDoubleClickEvent(&doubleClickEvent);
     } else {
         QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint([event locationInWindow]),
             buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
-        d->m_view->viewportMouseReleaseEvent(&releaseEvent);
+        v->viewportMouseReleaseEvent(&releaseEvent);
     }
+    v->deref();
     
     ASSERT(_currentEvent == event);
     [event release];
@@ -1796,17 +1821,22 @@ void KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent)
 
 void KWQKHTMLPart::mouseMoved(NSEvent *event)
 {
+    KHTMLView *v = d->m_view;
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
-    // These happen because WK sometimes has to fake up moved events.
-    if (!d->m_view || d->m_bMousePressed) {
+    // These happen because WebKit sometimes has to fake up moved events.
+    if (!v || d->m_bMousePressed) {
         return;
     }
     
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
     
+    // Sending an event can result in the destruction of the view and part.
+    // We ref so that happens after we return from the KHTMLView function.
+    v->ref();
     QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), 0, stateForCurrentEvent());
-    d->m_view->viewportMouseMoveEvent(&kEvent);
+    v->viewportMouseMoveEvent(&kEvent);
+    v->deref();
     
     ASSERT(_currentEvent == event);
     [event release];
@@ -1818,9 +1848,9 @@ struct ListItemInfo {
     unsigned end;
 };
 
-static NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *e)
+static NSFileWrapper *fileWrapperForElement(ElementImpl *e)
 {
-    khtml::RenderImage *renderer = static_cast<khtml::RenderImage *>(e->renderer());
+    RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
     NSImage *image = renderer->pixmap().image();
     NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
 
@@ -1830,13 +1860,13 @@ static NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *e)
     return [wrapper autorelease];
 }
 
-static DOM::ElementImpl *listParent(DOM::ElementImpl *item)
+static ElementImpl *listParent(ElementImpl *item)
 {
     // Ick!  Avoid use of item->id() which confuses ObjC++.
     unsigned short _id = Node(item).elementId();
     
     while (_id != ID_UL && _id != ID_OL) {
-        item = static_cast<DOM::ElementImpl *>(item->parentNode());
+        item = static_cast<ElementImpl *>(item->parentNode());
         if (!item)
             break;
         _id = Node(item).elementId();
@@ -1844,7 +1874,7 @@ static DOM::ElementImpl *listParent(DOM::ElementImpl *item)
     return item;
 }
 
-static DOM::NodeImpl * inList(DOM::NodeImpl *e)
+static NodeImpl *inList(NodeImpl *e)
 {
     while (e){
         if (Node(e).elementId() == ID_LI)
@@ -1867,9 +1897,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     bool hasNewLine = true;
     bool addedSpace = true;
     bool hasParagraphBreak = true;
-    const DOM::ElementImpl *linkStartNode = 0;
+    const ElementImpl *linkStartNode = 0;
     unsigned linkStartLocation = 0;
-    QPtrList<DOM::ElementImpl> listItems;
+    QPtrList<ElementImpl> listItems;
     QValueList<ListItemInfo> listItemLocations;
     float maxMarkerWidth = 0;
     
@@ -1878,7 +1908,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     // If the first item is the entire text of a list item, use the list item node as the start of the 
     // selection, not the text node.  The user's intent was probably to select the list.
     if (n.nodeType() == Node::TEXT_NODE && startOffset == 0){
-        DOM::NodeImpl *startListNode = inList(_startNode);
+        NodeImpl *startListNode = inList(_startNode);
         if (startListNode){
             _startNode = startListNode;
             n = _startNode;
@@ -1900,7 +1930,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
-                    if (renderer->style()->whiteSpace() == khtml::PRE) {
+                    if (renderer->style()->whiteSpace() == PRE) {
                         int runStart = (start == -1) ? 0 : start;
                         int runEnd = (end == -1) ? str.length() : end;
                         text += str.mid(runStart, runEnd-runStart);
@@ -1980,7 +2010,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     case ID_LI:
                         {
                             QString listText;
-                            DOM::ElementImpl *itemParent = listParent(static_cast<DOM::ElementImpl *>(n.handle()));
+                            ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n.handle()));
                             
                             if (!hasNewLine)
                                 listText += '\n';
@@ -2003,7 +2033,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                                         maxMarkerWidth = [font pointSize];
                                 }
                                 else {
-                                    khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
+                                    RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
                                     QString marker = listRenderer->markerStringValue();
                                     listText += marker;
                                     // Use AppKit metrics.  Will be rendered by AppKit.
@@ -2069,7 +2099,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                         break;
                         
                     case ID_IMG:
-                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<DOM::ElementImpl *>(n.handle()));
+                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n.handle()));
                         NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                         NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
                         [result appendAttributedString: iString];
@@ -2102,7 +2132,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     // for the range of the link.  Note that we create the attributed string from the DOM, which
                     // will have corrected any illegally nested <a> elements.
                     if (linkStartNode && n.handle() == linkStartNode){
-                        DOMString href = khtml::parseURL(linkStartNode->getAttribute(ATTR_HREF));
+                        DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
                         KURL kURL = KWQ(linkStartNode->getDocument()->view()->part())->completeURL(href.string());
                         
                         NSURL *URL = kURL.getNSURL();
@@ -2174,7 +2204,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     // override their parent's paragraph style.
     {
         unsigned i, count = listItems.count();
-        DOM::ElementImpl *e;
+        ElementImpl *e;
         ListItemInfo info;
         int containingBlockX, containingBlockY;
         NodeImpl *containingBlock;

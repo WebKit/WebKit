@@ -1,3 +1,21 @@
+2003-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3375270 -- writing to frame parent from a button press crashes in viewportMousePressEvent
+        
+        The fix turned out to be to ref the view around handling events in the view, since processing
+        the event could cause the view and part to go away. Since the view refs the part, ref'ing just
+        the view seems to work perfectly.
+        
+        * kwq/KWQKHTMLPart.mm: Fixed namespace access to use "using" instead of explicit namespaces.
+        (KWQKHTMLPart::setView): Not-entirely-related cleanup. Use the "ref before deref" idiom here.
+        (KWQKHTMLPart::sendResizeEvent): Ref the KHTMLView while sending the resize event.
+        (KWQKHTMLPart::mouseDown): Ref the KHTMLView while sending the viewport mouse down event.
+        (KWQKHTMLPart::mouseDragged): Ref the KHTMLView while sending the viewport mouse dragged event.
+        (KWQKHTMLPart::mouseUp): Ref the KHTMLView while sending the viewport mouse up or double click event.
+        (KWQKHTMLPart::mouseMoved): Ref the KHTMLView while sending the viewport mouse moved event.
+
 2003-08-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3372896, spaces left at ends of lines.  Patch the selection code
