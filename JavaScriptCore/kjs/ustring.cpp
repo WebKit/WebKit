@@ -621,7 +621,7 @@ UString &UString::append(const UString &t)
     rep = newRep;
   } else {
     // this is shared with someone using more capacity, gotta make a whole new string
-    int newCapacity = expandedSize(sizeof(UChar) * length, 0);
+    int newCapacity = expandedSize(length, 0);
     UChar *d = static_cast<UChar *>(malloc(sizeof(UChar) * newCapacity));
     memcpy(d, data(), thisSize * sizeof(UChar));
     memcpy(const_cast<UChar *>(d + thisSize), t.data(), tSize * sizeof(UChar));
