@@ -504,7 +504,7 @@ Range Selection::toRange() const
 
 void Selection::layoutCaret()
 {
-    if (state() != CARET || isEmpty() || !start().inRenderedContent()) {
+    if (state() != CARET || isEmpty()) {
         m_caretX = m_caretY = m_caretSize = 0;
         return;
     }
@@ -584,12 +584,8 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
 
 void Selection::validate(ETextGranularity granularity)
 {
-    // Move the selection to rendered positions, if possible. This process
-    // might wind up setting the selection to "empty" (meaning no selection) if
-    // rendered positions cannot be found. Since selection is all about giving
-    // cues to users in displayed content, and this position is used to
-    // determine where user input (like typing) will be accepted, it makes no
-    // sense to put the selection in a place that is not rendered.
+    // Move the selection to rendered positions, if possible.
+    Position originalBase(base());
     bool baseAndExtentEqual = base() == extent();
     bool updatedLayout = false;
     if (base().notEmpty()) {
@@ -605,9 +601,22 @@ void Selection::validate(ETextGranularity granularity)
         assignExtent(extent().equivalentDeepPosition().closestRenderedPosition(affinity()));
     }
 
-    // make sure we do not have a dangling start or end
+    // Make sure we do not have a dangling start or end
     if (base().isEmpty() && extent().isEmpty()) {
-        assignStartAndEnd(emptyPosition(), emptyPosition());
+        // Move the position to the enclosingBlockFlowElement of the original base, if possible.
+        // This has the effect of flashing the caret somewhere when a rendered position for
+        // the base and extent cannot be found.
+        if (originalBase.notEmpty()) {
+            Position pos(originalBase.node()->enclosingBlockFlowElement(), 0);
+            assignBaseAndExtent(pos, pos);
+            assignStartAndEnd(pos, pos);
+        }
+        else {
+            // We have no position to work with. See if the BODY element of the page
+            // is contentEditable. If it is, put the caret there.
+            //NodeImpl *node = document()
+            assignStartAndEnd(emptyPosition(), emptyPosition());
+        }
         m_baseIsStart = true;
     }
     else if (base().isEmpty()) {

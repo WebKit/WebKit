@@ -2,6 +2,24 @@
 
         Reviewed by John
 
+        Fix for this bug:
+        
+        <rdar://problem/3745498> HTMLCompose: Can't edit new empty message (and typing eventually crashes)
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::layoutCaret): Don't bail when the start position of the selection is not in rendered
+        content. The validate() bottleneck function will do all it can to make sure that the start is
+        moved to rendered content if at all possible before this function runs. If no rendered position can
+        be found, like in the case of an empty body element, we still want to flash the caret there.
+        (DOM::Selection::validate): Look for rendered positions for the base and extent, but save off the
+        base before making this move, and set the selection to the enclosing block flow element of this
+        original base if no rendered positions can be found. This has the effect of flashing the caret 
+        someplace in an editable block, even if it does not contain any rendered content.
+
+2004-07-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Fix a large number of editing layout test regressions.
 
         * khtml/misc/khtml_text_operations.cpp:
