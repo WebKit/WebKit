@@ -1,3 +1,12 @@
+2003-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3467632 - Leak of plugin info visiting http://www.ebay.com
+	
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage dealloc]): Release lastModifiedDate.
+
 2003-10-29  Chris Blumenberg  <cblu@apple.com>
 
 	WebKit part of fix for:

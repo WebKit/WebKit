@@ -160,6 +160,8 @@
     [extensionToMIME release];
 
     [bundle release];
+
+    [lastModifiedDate release];
     
     [super dealloc];
 }
