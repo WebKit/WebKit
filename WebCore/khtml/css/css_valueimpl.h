@@ -295,7 +295,7 @@ public:
     FontFamilyValueImpl( const QString &string);
     const QString &fontName() const { return parsedFontName; }
     int genericFamilyType() const { return _genericFamilyType; }
-protected:
+
     QString parsedFontName;
 private:
     int _genericFamilyType;

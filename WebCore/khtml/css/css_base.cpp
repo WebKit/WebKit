@@ -165,6 +165,7 @@ void CSSSelector::extractPseudoType() const
         return;
     _pseudoType = PseudoOther;
     if (!value.isEmpty()) {
+        value = value.lower();
         switch (value[0]) {
             case 'a':
                 if (value == "active")

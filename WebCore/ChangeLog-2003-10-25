@@ -1,3 +1,17 @@
+2003-03-25  David Hyatt  <hyatt@apple.com>
+
+	Fix font-family parsing to match the spec (and other browsers).
+
+	This fixes bugs 3197584 and 3207760.
+
+	Also fix pseudos to be lower-cased.  Fixes 3208303.
+	
+        Reviewed by darin
+
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseFontFamily):
+
 2003-03-24  Trey Matteson  <trey@apple.com>
 
 	Pass -seg_addr_table_filename <FILENAME> to ld.  This makes our frameworks in
