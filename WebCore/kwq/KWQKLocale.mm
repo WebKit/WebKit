@@ -27,16 +27,9 @@
 #import <KWQLogging.h>
 #import <qstring.h>
 
-@interface KWQKLocaleBundleDummy : NSObject { }
-@end
-@implementation KWQKLocaleBundleDummy
-@end
-
 QString i18n(const char *text)
 {
-    NSBundle *bundle = [NSBundle bundleForClass:[KWQKLocaleBundleDummy class]];
-    NSString *locString = [bundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
-    return QString::fromNSString(locString);
+    return QString("not localized: ") + text;
 }
 
 QString KLocale::language() const

@@ -30,9 +30,9 @@ void KMessageBox::error(QWidget *, const QString &message,
     const QString &caption, bool notify)
 {
     if (caption.isNull())
-        NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
+        NSRunAlertPanel(nil, @"%@", nil, nil, nil, message.getNSString());
     else
-        NSRunAlertPanel(caption.getNSString(), message.getNSString(), nil, nil, nil);
+        NSRunAlertPanel(caption.getNSString(), @"%@", nil, nil, nil, message.getNSString());
 }
 
 int KMessageBox::warningYesNo(QWidget *, const QString &message, 
@@ -46,9 +46,9 @@ int KMessageBox::warningYesNo(QWidget *, const QString &message,
     int result;
     
     if (caption.isNull())
-        result = NSRunAlertPanel(nil, message.getNSString(), yes, no, nil);
+        result = NSRunAlertPanel(nil, @"%@", yes, no, nil, message.getNSString());
     else
-        result = NSRunAlertPanel(caption.getNSString(), message.getNSString(), yes, no, nil);
+        result = NSRunAlertPanel(caption.getNSString(), @"%@", yes, no, nil, message.getNSString());
 
     if (result == NSAlertDefaultReturn)
         return 1;
@@ -66,9 +66,9 @@ int KMessageBox::questionYesNo(QWidget *, const QString &message,
     int result;
     
     if (caption.isNull())
-        result = NSRunAlertPanel(nil, message.getNSString(), yes, no, nil);
+        result = NSRunAlertPanel(nil, @"%@", yes, no, nil, message.getNSString());
     else
-        result = NSRunAlertPanel(caption.getNSString(), message.getNSString(), yes, no, nil);
+        result = NSRunAlertPanel(caption.getNSString(), @"%@", yes, no, nil, message.getNSString());
 
     if (result == NSAlertDefaultReturn)
         return 1;
@@ -79,12 +79,12 @@ void KMessageBox::sorry(QWidget *, const QString &message,
     const QString &caption, bool notify)
 {
     if (caption.isNull())
-        NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
+        NSRunAlertPanel(nil, @"%@", nil, nil, nil, message.getNSString());
     else
-        NSRunAlertPanel(caption.getNSString(), message.getNSString(), nil, nil, nil);
+        NSRunAlertPanel(caption.getNSString(), @"%@", nil, nil, nil, message.getNSString());
 }
 
 void KMessageBox::information(QWidget *, const QString &message, const QString &, const char *)
 {
-    NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
+    NSRunAlertPanel(nil, @"%@", nil, nil, nil, message.getNSString());
 }

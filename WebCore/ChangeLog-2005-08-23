@@ -1,3 +1,17 @@
+2002-10-24  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKLocale.mm: (i18n): Make it obvious when non-localized
+	strings from WebCore show up in the UI, but putting the string
+	"not localized: " in front.
+
+        * kwq/KWQKMessageBox.mm:
+        (KMessageBox::error): Fix use of NSRunAlertPanel so that we won't
+	accidentally try to interpret % sequences in the messages we are displaying.
+        (KMessageBox::warningYesNo): Ditto.
+        (KMessageBox::questionYesNo): Ditto.
+        (KMessageBox::sorry): Ditto.
+        (KMessageBox::information): Ditto.
+
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
 	WebKit now gets called when render_frame subviews are added.
