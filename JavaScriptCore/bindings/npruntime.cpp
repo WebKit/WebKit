@@ -148,8 +148,8 @@ void NP_ReleaseObject (NP_Object *obj)
     obj->referenceCount--;
             
     if (obj->referenceCount == 0) {
-        if (obj->_class->free)
-            obj->_class->free (obj);
+        if (obj->_class->deallocate)
+            obj->_class->deallocate (obj);
         else
             free (obj);
     }
@@ -217,15 +217,15 @@ typedef struct
     double number;
 } NumberObject;
 
-NP_Object *numberCreate()
+static NP_Object *numberAllocate()
 {
     return (NP_Object *)malloc(sizeof(NumberObject));
 }
 
 static NP_Class _numberClass = { 
     1,
-    numberCreate, 
-    (NP_FreeInterface)free, 
+    numberAllocate, 
+    (NP_DeallocateInterface)free, 
     0,
     0,
     0,
@@ -279,46 +279,273 @@ double NP_DoubleFromNumber (NP_Number *obj)
 }
 
 
+// ---------------------------------- NP_String ----------------------------------
+
+typedef struct
+{
+    NP_Object object;
+    NP_UTF16 string;
+    int32_t length;
+} StringObject;
+
+static NP_Object *stringAllocate()
+{
+    return (NP_Object *)malloc(sizeof(StringObject));
+}
+
+void stringDeallocate (StringObject *string)
+{
+    free (string->string);
+    free (string);
+}
+
+static NP_Class _stringClass = { 
+    1,
+    stringAllocate, 
+    (NP_DeallocateInterface)stringDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+static NP_Class *stringClass = &_stringClass;
+
+#define LOCAL_CONVERSION_BUFFER_SIZE    4096
+
 NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String)
 {
-    return NULL;
+    StringObject *string = (StringObject *)NP_CreateObject (stringClass);
+
+    CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
+
+    string->length = CFStringGetLength (stringRef);
+    string->string = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
+
+    // Convert the string to UTF16.
+    CFRange range = { 0, string->length };
+    CFStringGetCharacters (stringRef, range, (UniChar *)string->string);
+    CFRelease (stringRef);
+
+    return (NP_String *)string;
 }
 
-NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String)
+
+NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String, int32_t len)
 {
-    return NULL;
-}
+    StringObject *string = (StringObject *)NP_CreateObject (stringClass);
 
+    string->length = len;
+    string->string = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
+    memcpy (string->string, utf16String, sizeof(int16_t)*string->length);
+    
+    return (NP_String *)string;
+}
 
 NP_UTF8 NP_UTF8FromString (NP_String *obj)
 {
-    return NULL;
+    assert (NP_IsKindOfClass (obj, stringClass));
+
+    StringObject *string = (StringObject *)obj;
+
+    // Allow for max conversion factor.
+    UInt8 *buffer;
+    UInt8 _localBuffer[LOCAL_CONVERSION_BUFFER_SIZE];
+    CFIndex maxBufferLength;
+    
+    if (string->length*sizeof(UInt8)*8 > LOCAL_CONVERSION_BUFFER_SIZE) {
+        maxBufferLength = string->length*sizeof(UInt8)*8;
+        buffer = (UInt8 *)malloc(maxBufferLength);
+    }
+    else {
+        maxBufferLength = LOCAL_CONVERSION_BUFFER_SIZE;
+        buffer = _localBuffer;
+    }
+    
+    // Convert the string to UTF8.
+    CFIndex usedBufferLength;
+    CFStringRef stringRef = CFStringCreateWithCharacters (NULL, (UniChar *)string->string, string->length);
+    CFRange range = { 0, string->length };
+    CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
+    
+    NP_UTF8 resultString = (NP_UTF8)malloc (usedBufferLength+1);
+    strncpy (resultString, (const char *)buffer, usedBufferLength);
+    resultString[usedBufferLength] = 0;
+    
+    CFRelease (stringRef);
+    if (buffer != _localBuffer)
+        free ((void *)buffer);
+        
+    return resultString;
 }
 
 NP_UTF16 NP_UTF16FromString (NP_String *obj)
 {
-    return NULL;
+    assert (NP_IsKindOfClass (obj, stringClass));
+
+    StringObject *string = (StringObject *)obj;
+    
+    NP_UTF16 resultString = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
+    memcpy (resultString, string->string, sizeof(int16_t)*string->length);
+
+    return resultString;
 }
+
+int32_t NP_StringLength (NP_String *obj)
+{
+    assert (NP_IsKindOfClass (obj, stringClass));
+
+    StringObject *string = (StringObject *)obj;
+    return string->length;
+}
+
+// ---------------------------------- NP_Boolean ----------------------------------
+
+typedef struct
+{
+    NP_Object object;
+    bool value;
+} BooleanObject;
+
+static NP_Object *booleanAllocate()
+{
+    return (NP_Object *)malloc(sizeof(BooleanObject));
+}
+
+static void booleanDeallocate (BooleanObject *string)
+{
+    // Do nothing, single true and false instances.
+}
+
+static NP_Class _booleanClass = { 
+    1,
+    booleanAllocate, 
+    (NP_DeallocateInterface)booleanDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+static BooleanObject *theTrueObject = 0;
+static BooleanObject *theFalseObject = 0;
+
+static NP_Class *booleanClass = &_booleanClass;
 
 NP_Boolean *NP_CreateBoolean (bool f)
 {
-    return NULL;
+    if (f) {
+        if (!theTrueObject) {
+            theTrueObject = (BooleanObject *)NP_CreateObject (booleanClass);
+            theTrueObject->value = f;
+        }
+        return (NP_Boolean *)theTrueObject;
+    }
+
+    // False
+    if (!theFalseObject) {
+        theFalseObject = (BooleanObject *)NP_CreateObject (booleanClass);
+        theFalseObject->value = f;
+    }
+    return (NP_Boolean *)theFalseObject;
 }
 
-bool NP_BoolFromBoolean (NP_Boolean *aBool)
+bool NP_BoolFromBoolean (NP_Boolean *obj)
 {
-    return true;
+    assert (NP_IsKindOfClass (obj, booleanClass));
+
+    BooleanObject *booleanObj = (BooleanObject *)obj;
+    return booleanObj->value;
 }
+
+// ---------------------------------- NP_Null ----------------------------------
+
+typedef struct
+{
+    NP_Object object;
+} NullObject;
+
+static NP_Object *nullAllocate()
+{
+    return (NP_Object *)malloc(sizeof(NullObject));
+}
+
+static void nullDeallocate (StringObject *string)
+{
+    // Do nothing, the null object is a singleton.
+}
+
+
+static NullObject *theNullObject = 0;
+
+static NP_Class _nullClass = { 
+    1,
+    nullAllocate, 
+    (NP_DeallocateInterface)nullDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+static NP_Class *nullClass = &_nullClass;
 
 NP_Null *NP_GetNull()
 {
-    return NULL;
+    if (!theNullObject)
+        theNullObject = (NullObject *)NP_CreateObject(nullClass);
+    return (NP_Null *)theNullObject;
 }
+
+
+// ---------------------------------- NP_Undefined ----------------------------------
+
+typedef struct
+{
+    NP_Object object;
+} UndefinedObject;
+
+static NP_Object *undefinedAllocate()
+{
+    return (NP_Object *)malloc(sizeof(UndefinedObject));
+}
+
+static void undefinedDeallocate (StringObject *string)
+{
+    // Do nothing, the null object is a singleton.
+}
+
+
+static NullObject *theUndefinedObject = 0;
+
+static NP_Class _undefinedClass = { 
+    1,
+    undefinedAllocate, 
+    (NP_DeallocateInterface)undefinedDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+static NP_Class *undefinedClass = &_undefinedClass;
 
 NP_Undefined *NP_GetUndefined()
 {
-    return NULL;
+    if (!theUndefinedObject)
+        theUndefinedObject = (NullObject *)NP_CreateObject(undefinedClass);
+    return (NP_Undefined *)theUndefinedObject;
 }
+
+// ---------------------------------- NP_Array ----------------------------------
 
 NP_Array *NP_CreateArray (const NP_Object **, unsigned count)
 {

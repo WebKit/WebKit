@@ -1,5 +1,34 @@
 2004-03-03  Richard Williamson   <rjw@apple.com>
 
+	More 'C' binding implementation.  Fleshed out all the
+	'primitive' data types.
+
+        Reviewed by Chris.
+
+        * bindings/NP_runtime.cpp:
+        (NP_ReleaseObject):
+        (numberAllocate):
+        (stringAllocate):
+        (stringDeallocate):
+        (NP_CreateStringWithUTF8):
+        (NP_CreateStringWithUTF16):
+        (NP_UTF8FromString):
+        (NP_UTF16FromString):
+        (NP_StringLength):
+        (booleanAllocate):
+        (booleanDeallocate):
+        (NP_CreateBoolean):
+        (NP_BoolFromBoolean):
+        (nullAllocate):
+        (nullDeallocate):
+        (NP_GetNull):
+        (undefinedAllocate):
+        (undefinedDeallocate):
+        (NP_GetUndefined):
+        * bindings/NP_runtime.h:
+
+2004-03-03  Richard Williamson   <rjw@apple.com>
+
 	More 'C' binding implementation.
 
         Reviewed by Chris.

@@ -97,7 +97,7 @@ NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier);
     NP_Object behavior is implemented using the following set of callback interfaces.
 */
 typedef NP_Object *(*NP_AllocateInterface)();
-typedef void (*NP_FreeInterface)(NP_Object *obj);
+typedef void (*NP_DeallocateInterface)(NP_Object *obj);
 typedef void (*NP_InvalidateInterface)();
 typedef bool (*NP_HasMethodInterface)(NP_Object *obj, NP_Identifier name);
 typedef NP_Object *(*NP_InvokeInterface)(NP_Object *obj, NP_Identifier name, NP_Object **args, unsigned argCount);
@@ -124,7 +124,7 @@ struct NP_Class
 {
     int32_t structVersion;
     NP_AllocateInterface allocate;
-    NP_FreeInterface free;
+    NP_DeallocateInterface deallocate;
     NP_InvalidateInterface invalidate;
     NP_HasMethodInterface hasMethod;
     NP_InvokeInterface invoke;
@@ -191,7 +191,7 @@ NP_Object *NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName
 void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object value);
 void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName);
 NP_UTF8 NP_ToString (NP_JavaScriptObject *obj);
-NP_Object *NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned int index);
+NP_Object *NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index);
 void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object value);
 
 /*
@@ -208,13 +208,11 @@ NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String);
 NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String, unsigned int len);
 
 /*
-    Memory returned from NP_UTF8FromString must be freed by the caller.
+    Memory returned from NP_UTF8FromString and NP_UTF16FromString must be freed by the caller.
 */
 NP_UTF8 NP_UTF8FromString (NP_String *obj);
-/*
-    Memory returned from NP_UTF16FromString must be freed by the caller.
-*/
 NP_UTF16 NP_UTF16FromString (NP_String *obj);
+int32_t NP_StringLength (NP_String *obj);
 
 NP_Boolean *NP_CreateBoolean (bool f);
 bool NP_BoolFromBoolean (NP_Boolean *aBool);
@@ -375,14 +373,14 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
         // objects.
     }
     
-    void myInterfaceFree (MyInterfaceObject *obj) 
+    void myInterfaceDeallocate (MyInterfaceObject *obj) 
     {
         free ((void *)obj);
     }
     
     static NP_Class _myInterface = { 
         (NP_AllocateInterface) myInterfaceAllocate, 
-        (NP_FreeInterface) myInterfaceFree, 
+        (NP_DeallocateInterface) myInterfaceDeallocate, 
         (NP_InvalidateInterface) myInterfaceInvalidate,
         (NP_HasMethodInterface) myInterfaceHasMethod,
         (NP_InvokeInterface) myInterfaceInvoke,
