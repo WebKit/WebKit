@@ -370,7 +370,7 @@ static int findCheapCount = 0;
 
 const int caseDelta = ('a' - 'A');
 
-static bool compareToLatinCharacter (UniChar c1, UniChar c2, bool caseSensitive)
+static inline bool compareToLatinCharacter (UniChar c1, UniChar c2, bool caseSensitive)
 {
     if (!caseSensitive){
         if (c2 >= 'a' && c2 <= 'z'){

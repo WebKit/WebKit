@@ -1,3 +1,10 @@
+2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+
+        Inline critical function.
+        
+        * kwq/KWQString.mm:
+        (compareToLatinCharacter):
+
 2002-07-30  Richard Williamson  <rjw@apple.com>
 
         Wow!  Avoid creation of unicode string when only a single character
