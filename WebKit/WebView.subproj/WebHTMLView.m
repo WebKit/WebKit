@@ -2458,6 +2458,10 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: this actually has no effect when called, probably due to 3654850. _entireDOMRange seems
     // to do the right thing because it works in startSpeaking:, and I know setBackgroundColor: does the
     // right thing because I tested it with [[self _bridge] selectedDOMRange].
+    // FIXME: This won't actually apply the style to the entire range here, because it ends up calling
+    // [bridge applyStyle:], which operates on the current selection. To make this work right, we'll
+    // need to save off the selection, temporarily set it to the entire range, make the change, then
+    // restore the old selection.
     [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:) inRange:[self _entireDOMRange]];
 }
 
@@ -2471,24 +2475,37 @@ static WebHTMLView *lastHitView = nil;
     [self _changeCSSColorUsingSelector:@selector(setColor:) inRange:[[self _bridge] selectedDOMRange]];
 }
 
+- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue
+{
+    // FIXME 3675191: This doesn't work yet. Maybe it's blocked by 3654850, or maybe something other than
+    // just applyStyle: needs to be called for block-level attributes like this.
+    WebBridge *bridge = [self _bridge];
+    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
+    [style setTextAlign:CSSAlignmentValue];
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
+        [[self _bridge] applyStyle:style];
+    }
+}
+
 - (void)alignCenter:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alignSelectionUsingCSSValue:@"center"];
 }
 
 - (void)alignJustified:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alignSelectionUsingCSSValue:@"justify"];
 }
 
 - (void)alignLeft:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alignSelectionUsingCSSValue:@"left"];
 }
 
 - (void)alignRight:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alignSelectionUsingCSSValue:@"right"];
 }
 
 - (void)indent:(id)sender

@@ -1,5 +1,36 @@
 2004-06-01  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Trey.
+        
+        Work on text-align API. Marked these bugs fixed:
+        <rdar://problem/3655380>: (Editing: -alignCenter: method unimplemented (WebKit editing API))
+        <rdar://problem/3655381>: (Editing: -alignJustified: method unimplemented (WebKit editing API))
+        <rdar://problem/3655383>: (Editing: -alignLeft: method unimplemented (WebKit editing API))
+        <rdar://problem/3655384>: (Editing: -alignRight: method unimplemented (WebKit editing API))        
+        
+        in favor of opening this bug:
+        <rdar://problem/3675191>: (Editing: -alignLeft: and friends mostly implemented but not 
+        yet working (WebKit editing API))        
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for these changes
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView changeDocumentBackgroundColor:]):
+        added a FIXME about why this is still not quite right
+        (-[WebHTMLView _alignSelectionUsingCSSValue:]):
+        new method, bottleneck for the various values
+        (-[WebHTMLView alignCenter:]):
+        call _alignSelectionUsingCSSValue:@"center"
+        (-[WebHTMLView alignJustified:]):
+        call _alignSelectionUsingCSSValue:@"justify"
+        (-[WebHTMLView alignLeft:]):
+        call _alignSelectionUsingCSSValue:@"left"
+        (-[WebHTMLView alignRight:]):
+        call _alignSelectionUsingCSSValue:@"right"
+
+2004-06-01  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Ken.
         
         - fixed <rdar://problem/3655378>: (Editing: -changeDocumentBackgroundColor: 
