@@ -1,0 +1,66 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
+OBJECTS = $(CXXOBJECTS)
+
+PROGRAM = test
+
+CLEAN_FILES = *.o \
+    $(PROGRAM) \
+    $(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = $(BASECXXFLAGS) \
+    -DQ_DELETING_VOID_UNDEFINED \
+    -DQT_NO_TEXTCODEC \
+    -DQT_NO_DATASTREAM \
+    -D_KWQ_COMPLETE_ \
+    -D_KWQ_IOSTREAM_ \
+    -I../../qt \
+    -I../.. \
+    -I. \
+    $(NULL)
+
+LDFLAGS = $(BASELDFLAGS) \
+    -L../../qt \
+    -l_qt \
+    $(NULL)
+
+DEPFLAGS = $(CXXFLAGS)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(PROGRAM)
+
+$(PROGRAM): $(OBJECTS)
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+depend:
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================
