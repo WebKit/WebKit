@@ -1,5 +1,13 @@
 2002-03-30  Richard Williamson  <rjw@apple.com>
 
+        Added log to note cases of NSURL (CFURL) being unable to
+        correctly initialize from URLs.  This log will likely indicate
+        bugs in CFURL.
+        
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame):
+
+2002-03-30  Richard Williamson  <rjw@apple.com>
+
         Twiddling with baselines.  kde 2.2 appears to not line up baselines correctly.
         Need to experiment with kde 3.
         

@@ -840,8 +840,15 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         NSURL *childURL;
         IFWebFrame *newFrame;
         id <IFWebController> controller;
-
+        NSString *urlString;
+        
+        urlString = QSTRING_TO_NSSTRING (completeURL( url ).url() );
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
+        
+        if (childURL == nil){
+            NSLog (@"ERROR (probably need to fix CFURL):  unable to create URL for %@\n", urlString);
+            return false;
+        }
         
         oldDataSource = getDataSource();
         controller = [oldDataSource controller];
