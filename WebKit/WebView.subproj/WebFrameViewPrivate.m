@@ -64,19 +64,25 @@
     return _private->marginHeight;
 }
 
-- (void)_setDocumentView:(id)view
+- (void)_setDocumentView:(NSView *)view
 {
     WebDynamicScrollBarsView *sv = [self frameScrollView];
     
     [sv setSuppressLayout: YES];
-    [sv setDocumentView: view];    
+    
+    // Always start out with arrow.  New docView can then change as needed, but doesn't have to
+    // clean up after the previous docView.  Also TextView will set cursor when added to view
+    // tree, so must do this before setDocumentView:.
+    [sv setDocumentCursor:[NSCursor arrowCursor]];
+
+    [sv setDocumentView: view];
     [sv setSuppressLayout: NO];
 }
 
--(id <WebDocumentView>)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
+-(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
     Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[[dataSource response] contentType]];
-    id <WebDocumentView> documentView = viewClass ? [[viewClass alloc] init] : nil;
+    NSView <WebDocumentView> *documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:documentView];
     [documentView release];
     
@@ -85,7 +91,7 @@
 
 - (void)_setController: (WebController *)controller
 {
-    // Not retained; the controller owns the view.
+    // Not retained; the controller owns the view, indirectly through the frame tree.
     _private->controller = controller;    
 }
 

@@ -1,3 +1,22 @@
+2003-01-29  Trey Matteson  <trey@apple.com>
+
+	3159750 - REGRESSION: cursor is I-beam when over a standalone image
+
+	We now reset the cursor to arrow before switching doc views.
+
+	Also, made various replacements of "id <WebDocumentView>" with "NSView < WebDocumentView> *"
+	to get better compile time checking.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _makeDocumentView]):  Use NSView*
+        (-[WebFrame _transitionToCommitted:]): Use NSView*
+        * WebView.subproj/WebViewPrivate.h: Use NSView*
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _setDocumentView:]): Use NSView*.  Reset cursor.
+        (-[WebView _makeDocumentViewForDataSource:]): Use NSView*
+
 2003-01-29  Chris Blumenberg  <cblu@apple.com>
 
 	3159529 - REGRESSION: URLs with no path are saved as "-.html"

@@ -486,7 +486,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)_makeDocumentView
 {
-    id <WebDocumentView> documentView = [_private->webView _makeDocumentViewForDataSource:_private->dataSource];
+    NSView <WebDocumentView> *documentView = [_private->webView _makeDocumentViewForDataSource:_private->dataSource];
     if (!documentView) {
         return;
     }
@@ -546,7 +546,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     
                     // Create a document view for this document, or used the cached view.
                     if (pageCache){
-                        id <WebDocumentView> cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
+                        NSView <WebDocumentView> *cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
                         ASSERT (cachedView != nil);
                         [[self webView] _setDocumentView: cachedView];
                     }
