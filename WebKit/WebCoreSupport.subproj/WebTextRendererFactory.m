@@ -242,7 +242,17 @@ static int getLCDScaleParameters(void)
 
 - (NSFont *)fallbackFontWithTraits:(NSFontTraitMask)traits size:(float)size 
 {
-    return [self cachedFontFromFamily:@"Helvetica" traits:traits size:size];
+    NSFont *font = [self cachedFontFromFamily:@"Helvetica" traits:traits size:size];
+    if (font == nil) {
+        // The Helvetica fallback will almost always work, since that's a basic
+        // font that we ship with all systems. But in the highly unusual case where
+        // the user removed Helvetica, we fall back on Lucida Grande because that's
+        // guaranteed to be there, according to Nathan Taylor. This is good enough
+        // to avoid a crash, at least. To reduce the possibility of failure even further,
+        // we don't even bother with traits.
+        font = [self cachedFontFromFamily:@"Lucida Grande" traits:0 size:size];
+    }
+    return font;
 }
 
 - (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size

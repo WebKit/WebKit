@@ -1,5 +1,16 @@
 2003-09-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3410939 -- disabling Geneva and Helvetica (by removing them, or by using Font Book) makes Safari crash
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m: (-[WebTextRendererFactory fallbackFontWithTraits:size:]):
+        Fall back on Lucida Grande (plain, not bothering with traits) if Helvetica is not present.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for this and other recent changes.
+
+2003-09-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed 3406660 -- screen fonts are not being used for substitute fonts (Japanese text, Roman font)
