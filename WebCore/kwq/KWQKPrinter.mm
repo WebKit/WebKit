@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <kprinter.h>
-
-//FIX ME:
-static QSize *tempQSize = NULL;
+#include <kwqdebug.h>
 
 KPrinter::KPrinter(QPrinter::PrinterMode)
 {
     _logNeverImplemented();
 }
 
-bool KPrinter::setup(QWidget *parent=0)
+bool KPrinter::setup(QWidget *parent)
 {
     _logNeverImplemented();
     return FALSE;
@@ -69,11 +66,7 @@ void KPrinter::setFullPage(bool)
 QSize KPrinter::margins() const
 {
     _logNeverImplemented();
-    if (tempQSize == NULL) {
-        tempQSize = new QSize(0,0);
-    }
-
-    return *tempQSize;
+    return QSize(0,0);
 }
 
 

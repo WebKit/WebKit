@@ -27,7 +27,7 @@
 #include <qdrawutil.h>
 
 void qDrawShadePanel(QPainter *p, int x, int y, int w, int h, const QColorGroup &g, bool
-        sunken = FALSE, int lineWidth, const QBrush *fill)
+        sunken, int lineWidth, const QBrush *fill)
 {
     if ( w == 0 || h == 0 ) {
         return;

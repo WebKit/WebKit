@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,12 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+#import <kmessagebox.h>
 #import <Cocoa/Cocoa.h>
 
-#include <kmessagebox.h>
-
 void KMessageBox::error(QWidget *, const QString &message, 
-    const QString &caption=QString::null, bool notify=true)
+    const QString &caption, bool notify)
 {
     if (caption.isNull())
         NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);
@@ -37,10 +37,10 @@ void KMessageBox::error(QWidget *, const QString &message,
 
 
 int KMessageBox::warningYesNo(QWidget *, const QString &message, 
-    const QString &caption=QString::null, 
-    const QString &buttonYes=QString::null, 
-    const QString &buttonNo=QString::null, 
-    bool notify=true)
+    const QString &caption, 
+    const QString &buttonYes, 
+    const QString &buttonNo, 
+    bool notify)
 {
     NSString *yes = buttonYes.isNull() ? nil : @"OK";
     NSString *no = buttonNo.isNull() ? nil : @"Cancel";
@@ -58,9 +58,9 @@ int KMessageBox::warningYesNo(QWidget *, const QString &message,
 
 
 int KMessageBox::questionYesNo(QWidget *, const QString &message, 
-    const QString &caption=QString::null, 
-    const QString &buttonYes=QString::null, 
-    const QString &buttonNo=QString::null, bool notify=true)
+    const QString &caption, 
+    const QString &buttonYes, 
+    const QString &buttonNo, bool notify)
 {
     NSString *yes = buttonYes.isNull() ? nil : @"OK";
     NSString *no = buttonNo.isNull() ? nil : @"Cancel";
@@ -78,7 +78,7 @@ int KMessageBox::questionYesNo(QWidget *, const QString &message,
 
 
 void KMessageBox::sorry(QWidget *, const QString &message, 
-    const QString &caption=QString::null, bool notify=true)
+    const QString &caption, bool notify)
 {
     if (caption.isNull())
         NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);

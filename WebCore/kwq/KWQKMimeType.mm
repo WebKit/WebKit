@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <kmimetype.h>
+#include <kwqdebug.h>
 
-//FIX ME:
-static QString *tempQString = NULL;
-static KMimeType::Ptr *tempPtr = NULL;
-
-KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t=0, bool=false, bool)
+KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t, bool, bool)
 {
     _logNotYetImplemented();
-    if (tempPtr == NULL) {
-        tempPtr = new KMimeType::Ptr();
-    }
-    return *tempPtr;
+    return KMimeType::Ptr();
 }
 
 
@@ -49,19 +42,13 @@ KMimeType::~KMimeType()
 QString KMimeType::name() const
 {
     _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString();
-    }
-    return *tempQString;
+    return QString();
 }
 
 QString KMimeType::comment() const
 {
     _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString();
-    }
-    return *tempQString;
+    return QString();
 }
 
 
@@ -75,9 +62,6 @@ KMimeType::Ptr KMimeType::mimeType(QString serviceType)
 QString KMimeType::defaultMimeType()
 {
     _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString();
-    }
-    return *tempQString;
+    return QString();
 }
 

@@ -37,7 +37,7 @@ QRegion::QRegion(const QRect &rect)
 {
 }
 
-QRegion::QRegion(int x, int y, int w, int h, RegionType t=Rectangle)
+QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 {
     NSRect rect;
     

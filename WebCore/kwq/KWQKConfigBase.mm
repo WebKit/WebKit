@@ -59,13 +59,12 @@ void KConfig::setGroup(const QString &pGroup)
 }
 
 void KConfig::writeEntry(const QString &pKey, const QStringList &rValue, 
-    char sep=',', bool bPersistent=true, bool bGlobal=false, 
-    bool bNLS=false)
+    char sep, bool bPersistent, bool bGlobal, bool bNLS)
 {
     _logNotYetImplemented();
 }
 
-QString KConfig::readEntry(const char *pKey, const QString& aDefault=QString::null) const
+QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
         id <WebCorePluginInfo> plugin;

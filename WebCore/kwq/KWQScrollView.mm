@@ -200,7 +200,7 @@ void QScrollView::updateContents(const QRect &rect)
 }
 
 
-void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
+void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
 {
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }

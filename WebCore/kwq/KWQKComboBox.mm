@@ -27,13 +27,13 @@
 
 #include <KWQView.h>
 
-KComboBox::KComboBox(QWidget *parent=0, const char *name=0)
+KComboBox::KComboBox(QWidget *parent, const char *name)
 {
     _logNotYetImplemented();
 }
 
 
-KComboBox::KComboBox(bool rw, QWidget *parent=0, const char *name=0)
+KComboBox::KComboBox(bool rw, QWidget *parent, const char *name)
 {
     _logNotYetImplemented();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -497,13 +497,13 @@ KURL::KURL() :
 {
 }
 
-KURL::KURL(const char *url, int encoding_hint=0) :
+KURL::KURL(const char *url, int encoding_hint) :
     d(NULL),
     urlString(normalizeURLString(url))
 {
 }
 
-KURL::KURL(const QString &url, int encoding_hint=0) :
+KURL::KURL(const QString &url, int encoding_hint) :
     d(NULL),
     urlString(normalizeURLString(url))
 {
@@ -624,7 +624,7 @@ void KURL::setRef(const QString &s)
     assemble();
 }
 
-void KURL::setQuery(const QString &query, int encoding_hint=0)
+void KURL::setQuery(const QString &query, int encoding_hint)
 {
     copyOnWrite();
     if (query.isEmpty() || query[0] == '?') {
@@ -643,7 +643,7 @@ void KURL::setPath(const QString &s)
     assemble();
 }
 
-QString KURL::prettyURL(int trailing=0) const
+QString KURL::prettyURL(int trailing) const
 {
     parse();
     if (d->urlRef == NULL) {

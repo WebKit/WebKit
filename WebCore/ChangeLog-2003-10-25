@@ -1,5 +1,29 @@
 2002-06-07  Darin Adler  <darin@apple.com>
 
+	* Makefile.am: I was running into failures in the embed rule, so I made it
+	always remove the framework before copying the new one in. This is better
+	for cases where a header was removed, too, so maybe we should do this in
+	the other directories.
+
+	* kwq/KWQDrawUtil.mm:
+	* kwq/KWQKComboBox.mm:
+	* kwq/KWQKConfigBase.mm:
+	* kwq/KWQKDebug.mm:
+	* kwq/KWQKMessageBox.mm:
+	* kwq/KWQKMimeType.mm:
+	* kwq/KWQKPrinter.mm:
+	* kwq/KWQKURL.mm:
+	* kwq/KWQMapImpl.mm:
+	* kwq/KWQObject.mm:
+	* kwq/KWQRegExp.mm:
+	* kwq/KWQRegion.mm:
+	* kwq/KWQScrollView.mm:
+	* kwq/KWQStringList.mm:
+	Remove repeated default values for parameters -- the new compiler
+	won't allow these and they are illegal C++.
+
+2002-06-07  Darin Adler  <darin@apple.com>
+
 	* kwq/KWQPtrDictImpl.h: Use CoreFoundation.h -- new compiler
 	is picky about the difference between struct and typedef.
 

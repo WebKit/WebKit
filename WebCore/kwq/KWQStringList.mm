@@ -37,8 +37,7 @@ static CFStringRef GetCFString(const QString &s)
     return cfs;
 }
 
-QStringList QStringList::split(const QString &separator, const QString &s, 
-                               bool allowEmptyEntries = FALSE )
+QStringList QStringList::split(const QString &separator, const QString &s, bool allowEmptyEntries)
 {
     CFArrayRef cfresult;
     QStringList result;
@@ -59,8 +58,7 @@ QStringList QStringList::split(const QString &separator, const QString &s,
     return result;
 }
  
-QStringList QStringList::split(const QChar &separator, const QString &s, 
-				      bool allowEmptyEntries = FALSE )
+QStringList QStringList::split(const QChar &separator, const QString &s, bool allowEmptyEntries)
 {
     return QStringList::split(QString(separator), s, allowEmptyEntries);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 
 #include <qregexp.h>
 
-#ifndef USING_BORROWED_QREGEXP
-
 #include <sys/types.h>
 #include <regex.h>
 
@@ -47,7 +45,7 @@ public:
     uint refCount;
 };
 
-QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(QString("")), refCount(0)
+QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(""), refCount(0)
 {
     compile(true, false);
 }
@@ -138,7 +136,7 @@ QString QRegExp::pattern() const
     return d->pattern;
 }
 
-int QRegExp::match(const QString &str, int startFrom = 0, int *matchLength = 0, bool treatStartAsStartOfInput = TRUE) const
+int QRegExp::match(const QString &str, int startFrom, int *matchLength, bool treatStartAsStartOfInput) const
 {
     const char *cstring = str.latin1() + startFrom;
 
@@ -160,6 +158,3 @@ int QRegExp::match(const QString &str, int startFrom = 0, int *matchLength = 0, 
 	return startFrom + match[0].rm_so;
     }
 }
-
-
-#endif

@@ -26,7 +26,7 @@
 #include <kdebug.h>
 
     
-kdbgstream::kdbgstream(unsigned int area, unsigned int level, bool print=true)
+kdbgstream::kdbgstream(unsigned int area, unsigned int level, bool print)
 {
 }
    
@@ -69,43 +69,43 @@ kdbgstream &kdbgstream::operator<<(KDBGFUNC)
 
 
 
-kdbgstream kdDebug(int area = 0)
+kdbgstream kdDebug(int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdWarning(int area = 0)
+kdbgstream kdWarning(int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdWarning(bool cond, int area = 0)
+kdbgstream kdWarning(bool cond, int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdError(int area = 0)
+kdbgstream kdError(int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdError(bool cond, int area = 0)
+kdbgstream kdError(bool cond, int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdFatal(int area = 0)
+kdbgstream kdFatal(int area)
 {
     return kdbgstream(0,0);
 }
 
 
-kdbgstream kdFatal(bool cond, int area = 0)
+kdbgstream kdFatal(bool cond, int area)
 {
     return kdbgstream(0,0);
 }

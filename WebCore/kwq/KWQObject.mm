@@ -68,7 +68,7 @@ void QObject::setTarget (QObject *t)
     target = t;
 }
 
-QObject::QObject(QObject *parent=0, const char *name=0)
+QObject::QObject(QObject *parent, const char *name)
 {
     guardedPtrDummyList.append(this);
 }
