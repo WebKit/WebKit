@@ -1,3 +1,23 @@
+2004-03-31  Richard Williamson   <rjw@apple.com>
+
+	Changed references to NP_runtime.h to npruntime.h
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.h:
+        * bindings/c/c_class.h:
+        * bindings/c/c_instance.h:
+        * bindings/c/c_runtime.h:
+        * bindings/c/c_utility.h:
+        * bindings/npruntime.cpp:
+
+2004-03-31  Richard Williamson   <rjw@apple.com>
+
+	Renamed NP_runtime.h to npruntime.h to match Netscape SDK.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.h:
+        * bindings/npruntime.cpp:
+
 === Safari-134 ===
 
 2004-03-23  Richard Williamson   <rjw@apple.com>

@@ -25,7 +25,7 @@
 #ifndef _BINDINGS_C_INSTANCE_H_
 #define _BINDINGS_C_INSTANCE_H_
 
-#include <NP_runtime.h>
+#include <npruntime.h>
 
 #include <runtime.h>
 

@@ -25,7 +25,7 @@
 #ifndef _C_UTILITY_H_
 #define _C_UTILITY_H_
 
-#include <NP_runtime.h>
+#include <npruntime.h>
 
 #include <runtime.h>
 #include <runtime_object.h>

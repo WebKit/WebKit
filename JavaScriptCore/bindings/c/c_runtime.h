@@ -27,7 +27,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <NP_runtime.h>
+#include <npruntime.h>
 
 #include <runtime.h>
 #include <ustring.h>
