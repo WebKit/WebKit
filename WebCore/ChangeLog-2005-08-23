@@ -1,5 +1,19 @@
 2004-11-10  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): Move position adjustments for
+        smart delete from the two functions below to here. There was an unnecessary double 
+        calculation of the leading and trailing whitespace positions. Also refined the trailing
+        case so it only acts when the leading position is null (which seems to match TextEdit in
+        my tests). Also removed some unnecessary copying of Position objects.
+        (khtml::DeleteSelectionCommand::startPositionForDelete): Move out smart delete adjustment
+        from here.
+        (khtml::DeleteSelectionCommand::endPositionForDelete): Ditto.
+
+2004-11-10  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Harrison
 
         (khtml::DeleteSelectionCommand::performGeneralDelete): Add some more comments to

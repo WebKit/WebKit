@@ -1405,13 +1405,34 @@ void DeleteSelectionCommand::initializePositionData()
     Position start = startPositionForDelete();
     Position end = endPositionForDelete();
 
-    m_upstreamStart = Position(start.upstream(StayInBlock));
-    m_downstreamStart = Position(start.downstream(StayInBlock));
-    m_upstreamEnd = Position(end.upstream(StayInBlock));
-    m_downstreamEnd = Position(end.downstream(StayInBlock));
+    m_upstreamStart = start.upstream(StayInBlock);
+    m_downstreamStart = start.downstream(StayInBlock);
+    m_upstreamEnd = end.upstream(StayInBlock);
+    m_downstreamEnd = end.downstream(StayInBlock);
 
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition();
+    bool hasLeadingWhitespaceBeforeAdjustment = m_leadingWhitespace.isNotNull();
+    if (m_smartDelete && hasLeadingWhitespaceBeforeAdjustment) {
+        Position pos = VisiblePosition(start).previous().deepEquivalent();
+        // Expand out one character upstream for smart delete and recalculate
+        // positions based on this change.
+        m_upstreamStart = pos.upstream(StayInBlock);
+        m_downstreamStart = pos.downstream(StayInBlock);
+        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition();
+    }
+
     m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition();
+    // Note: trailing whitespace is only considered for smart delete if there is no leading
+    // whitespace, as in the case where you double-click the first word of a paragraph.
+    if (m_smartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_trailingWhitespace.isNotNull()) {
+        // Expand out one character downstream for smart delete and recalculate
+        // positions based on this change.
+        Position pos = VisiblePosition(end).next().deepEquivalent();
+        m_upstreamEnd = pos.upstream(StayInBlock);
+        m_downstreamEnd = pos.downstream(StayInBlock);
+        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition();
+    }
+        
     m_trailingWhitespaceValid = true;
     
     debugPosition("m_upstreamStart      ", m_upstreamStart);
@@ -1439,8 +1460,6 @@ Position DeleteSelectionCommand::startPositionForDelete() const
     Position rootStart = Position(rootElement, 0);
     if (pos == VisiblePosition(rootStart).deepEquivalent())
         pos = rootStart;
-    else if (m_smartDelete && pos.leadingWhitespacePosition().isNotNull())
-        pos = VisiblePosition(pos).previous().deepEquivalent();
     return pos;
 }
 
@@ -1453,8 +1472,6 @@ Position DeleteSelectionCommand::endPositionForDelete() const
     Position rootEnd = Position(rootElement, rootElement ? rootElement->childNodeCount() : 0).equivalentDeepPosition();
     if (pos == VisiblePosition(rootEnd).deepEquivalent())
         pos = rootEnd;
-    else if (m_smartDelete && pos.trailingWhitespacePosition().isNotNull())
-        pos = VisiblePosition(pos).next().deepEquivalent();
     return pos;
 }
 
