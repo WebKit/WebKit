@@ -1,5 +1,22 @@
 2004-12-14  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3562458, rowspan and colspan converted to ints so that large values will work for them.  Remove
+	the ridiculous 1024 limit on the span values.
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableCellElementImpl::parseHTMLAttribute):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::collapsedBottomBorder):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTableCell::colSpan):
+        (khtml::RenderTableCell::setColSpan):
+        (khtml::RenderTableCell::rowSpan):
+        (khtml::RenderTableCell::setRowSpan):
+        (khtml::RenderTableCol::span):
+        (khtml::RenderTableCol::setSpan):
+
+2004-12-14  David Hyatt  <hyatt@apple.com>
+
 	Make sure <col> and <colgroup> can have spans updated dynamically as well.
 	
         Reviewed by rjw

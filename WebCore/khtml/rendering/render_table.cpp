@@ -1927,7 +1927,7 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
     
     // Now check row groups.
     RenderObject* currSection = parent()->parent();
-    if (row()+rowSpan() >= static_cast<RenderTableSection*>(currSection)->numRows()) {
+    if (row() + rowSpan() >= static_cast<RenderTableSection*>(currSection)->numRows()) {
         // (5) Our row group's bottom border.
         result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderBottom(), BROWGROUP));
         if (!result.exists()) return result;

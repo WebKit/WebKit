@@ -322,11 +322,11 @@ public:
     long cellIndex() const { return 0; }
     void setCellIndex( long ) { }
 
-    unsigned short colSpan() const { return cSpan; }
-    void setColSpan( unsigned short c ) { cSpan = c; }
+    int colSpan() const { return cSpan; }
+    void setColSpan(int c) { cSpan = c; }
 
-    unsigned short rowSpan() const { return rSpan; }
-    void setRowSpan( unsigned short r ) { rSpan = r; }
+    int rowSpan() const { return rSpan; }
+    void setRowSpan(int r) { rSpan = r; }
 
     int col() const { return _col; }
     void setCol(int col) { _col = col; }
@@ -386,8 +386,8 @@ protected:
     
     int _row;
     int _col;
-    ushort rSpan;
-    ushort cSpan;
+    int rSpan;
+    int cSpan;
     int _topExtra : 31;
     bool nWrap : 1;
     int _bottomExtra : 31;
@@ -406,8 +406,8 @@ public:
 
     virtual const char *renderName() const { return "RenderTableCol"; }
 
-    long span() const { return _span; }
-    void setSpan( long s ) { _span = s; }
+    int span() const { return _span; }
+    void setSpan(int s) { _span = s; }
 
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
 
@@ -424,7 +424,7 @@ public:
 #endif
 
 protected:
-    short _span;
+    int _span;
 };
 
 };
