@@ -1,3 +1,23 @@
+2004-04-28  Chris Blumenberg  <cblu@apple.com>
+
+	- Made WebArchive and WebResource conform to NSCoding and NSCopying.
+
+        Reviewed by rjw.
+
+        * DOM.subproj/WebDOMOperations.h: added header doc comment for WebArchive methods
+        * WebView.subproj/WebArchive.h:
+        * WebView.subproj/WebArchive.m:
+        (-[WebArchive initWithCoder:]): new
+        (-[WebArchive encodeWithCoder:]): new
+        (-[WebArchive copyWithZone:]): new
+        * WebView.subproj/WebResource.h:
+        * WebView.subproj/WebResource.m:
+        (-[WebResource init]): new
+        (-[WebResource initWithData:URL:MIMEType:textEncodingName:frameName:]): call [self init]
+        (-[WebResource initWithCoder:]): new
+        (-[WebResource encodeWithCoder:]): new
+        (-[WebResource copyWithZone:]): new
+
 2004-04-28  John Sullivan  <sullivan@apple.com>
 
         A little bit more progress in wiring up the font panel.

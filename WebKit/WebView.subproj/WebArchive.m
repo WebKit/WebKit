@@ -13,6 +13,8 @@ NSString *WebMainResourceKey =              @"WebMainResource";
 NSString *WebSubresourcesKey =              @"WebSubresources";
 NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 
+#define WebArchiveVersion 1
+
 @interface WebArchivePrivate : NSObject
 {
     @public
@@ -108,10 +110,36 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
     return [self _initWithPropertyList:propertyList];
 }
 
+- (id)initWithCoder:(NSCoder *)decoder
+{    
+    NS_DURING
+        [self init];
+        _private->mainResource = [[decoder decodeObjectForKey:WebMainResourceKey] retain];
+        _private->subresources = [[decoder decodeObjectForKey:WebSubresourcesKey] retain];
+        _private->subframeArchives = [[decoder decodeObjectForKey:WebSubframeArchivesKey] retain];
+    NS_HANDLER
+        [self release];
+        return nil;
+    NS_ENDHANDLER
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:_private->mainResource forKey:WebMainResourceKey];
+    [encoder encodeObject:_private->subresources forKey:WebSubresourcesKey];
+    [encoder encodeObject:_private->subframeArchives forKey:WebSubframeArchivesKey];    
+}
+
 - (void)dealloc
 {
     [_private release];
     [super dealloc];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (WebResource *)mainResource

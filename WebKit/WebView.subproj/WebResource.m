@@ -9,17 +9,13 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
-extern NSString *WebResourceDataKey;
-extern NSString *WebResourceMIMETypeKey;
-extern NSString *WebResourceURLKey;
-extern NSString *WebResourceTextEncodingNameKey;
-
 NSString *WebResourceDataKey =              @"WebResourceData";
 NSString *WebResourceFrameNameKey =         @"WebResourceFrameName";
 NSString *WebResourceMIMETypeKey =          @"WebResourceMIMEType";
 NSString *WebResourceURLKey =               @"WebResourceURL";
 NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
 
+#define WebResourceVersion 1
 
 @interface WebResourcePrivate : NSObject
 {
@@ -48,9 +44,16 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
 
 @implementation WebResource
 
+- (id)init
+{
+    [super init];
+    _private = [[WebResourcePrivate alloc] init];
+    return self;
+}
+
 - (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
 {
-    _private = [[WebResourcePrivate alloc] init];
+    [self init];    
     
     if (!data) {
         [self release];
@@ -76,10 +79,40 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)decoder
+{    
+    NS_DURING
+        [self init];
+        _private->data = [[decoder decodeObjectForKey:WebResourceDataKey] retain];
+        _private->URL = [[decoder decodeObjectForKey:WebResourceURLKey] retain];
+        _private->MIMEType = [[decoder decodeObjectForKey:WebResourceMIMETypeKey] retain];
+        _private->textEncodingName = [[decoder decodeObjectForKey:WebResourceTextEncodingNameKey] retain];
+        _private->frameName = [[decoder decodeObjectForKey:WebResourceFrameNameKey] retain];
+    NS_HANDLER
+        [self release];
+        return nil;
+    NS_ENDHANDLER
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:_private->data forKey:WebResourceDataKey];
+    [encoder encodeObject:_private->URL forKey:WebResourceURLKey];
+    [encoder encodeObject:_private->MIMEType forKey:WebResourceMIMETypeKey];
+    [encoder encodeObject:_private->textEncodingName forKey:WebResourceTextEncodingNameKey];
+    [encoder encodeObject:_private->frameName forKey:WebResourceFrameNameKey];    
+}
+
 - (void)dealloc
 {
     [_private release];
     [super dealloc];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
 }
 
 - (NSData *)data

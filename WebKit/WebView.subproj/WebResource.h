@@ -16,7 +16,7 @@
     @discussion A WebResource represents a fully downloaded URL. 
     It includes the data of the resource as well as the metadata associated with the resource.
 */
-@interface WebResource : NSObject 
+@interface WebResource : NSObject <NSCoding, NSCopying>
 {
 @private
     WebResourcePrivate *_private;

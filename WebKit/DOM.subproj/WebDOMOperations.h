@@ -12,6 +12,11 @@
 @class WebFrame;
 
 @interface DOMNode (WebDOMNodeOperations)
+
+/*!
+    @method webArchive
+    @result A WebArchive representing the node and the children of the node.
+*/
 - (WebArchive *)webArchive;
 - (NSString *)markupString;
 @end
@@ -22,6 +27,12 @@
 @end
 
 @interface DOMRange (WebDOMRangeOperations)
+
+/*!
+    @method webArchive
+    @result A WebArchive representing the range.
+*/
 - (WebArchive *)webArchive;
 - (NSString *)markupString;
+
 @end
