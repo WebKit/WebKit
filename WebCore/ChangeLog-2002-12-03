@@ -1,3 +1,8 @@
+2002-03-29  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQKloader.mm: (Cache::getStatistics), (Cache::flushAll):
+        Fix both of these to work when cache is not yet allocated.
+
 2002-03-29  Richard Williamson  <rjw@apple.com>
 
         Hooked up redirect.

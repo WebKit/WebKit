@@ -1755,8 +1755,9 @@ Cache::Statistics Cache::getStatistics()
 {
     Statistics stats;
 
-    init();
-    
+    if (!cache)
+        return stats;
+
     QDictIterator<CachedObject> i(*cache);
     for (i.toFirst(); i.current(); ++i) {
         CachedObject *o = i.current();
@@ -1792,6 +1793,9 @@ Cache::Statistics Cache::getStatistics()
 
 void Cache::flushAll()
 {
+    if (!cache)
+        return;
+
     for (;;) {
         QDictIterator<CachedObject> i(*cache);
         CachedObject *o = i.toFirst();
