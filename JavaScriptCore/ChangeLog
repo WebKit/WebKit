@@ -1,3 +1,13 @@
+2002-10-06  Darin Adler  <darin@apple.com>
+
+	I noticed some broken lists at mapblast.com and tracked it down to this.
+
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::put): Don't truncate the list; only extend the length if
+	it's not already long enough.
+        (ArrayProtoFuncImp::call): Fix some ifdef'd code so it compiles if you turn
+	the ifdefs on.
+
 2002-10-04  Darin Adler  <darin@apple.com>
 
         Fixed problems parsing numbers that are larger than a long with parseInt.

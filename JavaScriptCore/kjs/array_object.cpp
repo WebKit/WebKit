@@ -101,7 +101,8 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
   bool ok;
   unsigned index = propertyName.toULong(&ok);
   if (ok) {
-    setLength(index + 1);
+    if (length <= index)
+      setLength(index + 1);
     storage[index] = value.imp();
     return;
   }
@@ -111,7 +112,8 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
 
 void ArrayInstanceImp::put(ExecState *exec, unsigned index, const Value &value, int attr)
 {
-  setLength(index + 1);
+  if (length <= index)
+    setLength(index + 1);
   storage[index] = value.imp();
 }
 
@@ -411,7 +413,7 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
 #if 0
     printf("KJS Array::Sort length=%d\n", length);
     for ( unsigned int i = 0 ; i<length ; ++i )
-      printf("KJS Array::Sort: %d: %s\n", i, thisObj.get(i).toString().value().ascii() );
+      printf("KJS Array::Sort: %d: %s\n", i, thisObj.get(exec, i).toString(exec).ascii() );
 #endif
     Object sortFunction;
     bool useSortFunction = (args[0].type() != UndefinedType);
@@ -469,7 +471,7 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
 #if 0
     printf("KJS Array::Sort -- Resulting array:\n");
     for ( unsigned int i = 0 ; i<length ; ++i )
-      printf("KJS Array::Sort: %d: %s\n", i, thisObj.get(i).toString().value().ascii() );
+      printf("KJS Array::Sort: %d: %s\n", i, thisObj.get(exec, i).toString(exec).ascii() );
 #endif
     result = thisObj;
     break;
