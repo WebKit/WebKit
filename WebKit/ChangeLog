@@ -1,3 +1,41 @@
+2003-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3144882 -- pretend to be WinIE for abcnews.com
+
+        * WebView.subproj/WebControllerPrivate.h: Add an enum, UserAgentStringType, with values
+	Safari, MacIE, and WinIE. Also add NumUserAgentStringTypes and turn the userAgent and
+	userAgentWhenPretendingToBeMacIE strings into an array indexed by type.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController setApplicationNameForUserAgent:]): Use a loop to discard the user agent
+	strings, since we have an array now.
+        (-[WebController userAgentForURL:]): Change user agent algorithm to check two strings rather
+	than once against the spoof table, allowing two dots in the "domain name", which is needed
+	for "abcnews.go.com". Get a user agent string type from the table rather than just a boolean
+	"pretend to be MacIE". Store a string per type rather than one for normalcy and one for MacIE.
+	Add a case for WinIE to the user agent computations.
+
+	* English.lproj/StringsNotToBeLocalized.txt: Update for change above.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Use a loop to discard the user agent strings, since we have
+	an array now.
+        (-[WebController _defaultsDidChange]): Ditto.
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Add a UserAgentStringType field to the struct.
+	Add MacIE to each existing table entry, and add a new one that says WinIE for abcnews.go.com.
+
+        * Makefile.am: Pass "-F ,0" to gperf so that we don't get warnings compiling empty entries
+	in the hash table.
+
+        * WebView.subproj/WebUserAgentSpoofTable.c: Re-generated.
+        
+        - other changes
+        
+        * WebView.subproj/WebHTMLView.m: Removed some old, dead, #if 0'd code.
+
 2003-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

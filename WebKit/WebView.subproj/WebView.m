@@ -322,8 +322,11 @@ NSString *WebElementStringKey = 		@"WebElementString";
     NSString *name = [applicationName copy];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
-    [_private->userAgent release];
-    _private->userAgent = nil;
+    int i;
+    for (i = 0; i != NumUserAgentStringTypes; ++i) {
+        [_private->userAgent[i] release];
+        _private->userAgent[i] = nil;
+    }
 }
 
 - (NSString *)applicationNameForUserAgent
@@ -369,17 +372,20 @@ NSString *WebElementStringKey = 		@"WebElementString";
 
     // Look to see if we need to spoof.
     // First step is to get the host as a C-format string.
-    BOOL pretendToBeMacIE = NO;
+    UserAgentStringType type = Safari;
     NSString *host = [URL host];
     char hostBuffer[256];
     if (host && CFStringGetCString((CFStringRef)host, hostBuffer, sizeof(hostBuffer), kCFStringEncodingASCII)) {
-        // Next step is to find the last part of the name. The part with only one dot.
+        // Next step is to find the last part of the name.
+        // We get the part with only two dots, and the part with only one dot.
+        const char *thirdToLastPeriod = NULL;
         const char *nextToLastPeriod = NULL;
         const char *lastPeriod = NULL;
         char c;
         char *p = hostBuffer;
         while ((c = *p)) {
             if (c == '.') {
+                thirdToLastPeriod = nextToLastPeriod;
                 nextToLastPeriod = lastPeriod;
                 lastPeriod = p;
             } else {
@@ -389,13 +395,23 @@ NSString *WebElementStringKey = 		@"WebElementString";
         }
         // Now look up that last part in the gperf spoof table.
         if (lastPeriod) {
-            const char *domain = nextToLastPeriod ? nextToLastPeriod + 1 : hostBuffer;
-            pretendToBeMacIE = _web_findSpoofTableEntry(domain, p - domain) != NULL;
+            const char *lastPart;
+            const struct UserAgentSpoofTableEntry *entry = NULL;
+            if (nextToLastPeriod) {
+                lastPart = thirdToLastPeriod ? thirdToLastPeriod + 1 : hostBuffer;
+                entry = _web_findSpoofTableEntry(lastPart, p - lastPart);
+            }
+            if (!entry) {
+                lastPart = nextToLastPeriod ? nextToLastPeriod + 1 : hostBuffer;
+                entry = _web_findSpoofTableEntry(lastPart, p - lastPart);
+            }
+            if (entry) {
+                type = entry->type;
+            }
         }
     }
     
-    NSString **userAgentStorage = pretendToBeMacIE
-        ? &_private->userAgentWhenPretendingToBeMacIE : &_private->userAgent;
+    NSString **userAgentStorage = &_private->userAgent[type];
 
     NSString *userAgent = *userAgentStorage;
     if (userAgent) {
@@ -409,22 +425,34 @@ NSString *WebElementStringKey = 		@"WebElementString";
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
-    if (pretendToBeMacIE) {
-        if ([applicationName length]) {
-            userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@ %@",
-                language, sourceVersion, applicationName];
-        } else {
-            userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@",
-                language, sourceVersion];
-        }
-    } else {
-        if ([applicationName length]) {
-            userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@",
-                language, sourceVersion, applicationName];
-        } else {
-            userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)",
-                language, sourceVersion];
-        }
+    switch (type) {
+        case Safari:
+            if ([applicationName length]) {
+                userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@",
+                    language, sourceVersion, applicationName];
+            } else {
+                userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)",
+                    language, sourceVersion];
+            }
+            break;
+        case MacIE:
+            if ([applicationName length]) {
+                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@ %@",
+                    language, sourceVersion, applicationName];
+            } else {
+                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@",
+                    language, sourceVersion];
+            }
+            break;
+        case WinIE:
+            if ([applicationName length]) {
+                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT) AppleWebKit/%@ %@",
+                    language, sourceVersion, applicationName];
+            } else {
+                userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT) AppleWebKit/%@",
+                    language, sourceVersion];
+            }
+            break;
     }
     
     *userAgentStorage = [userAgent retain];

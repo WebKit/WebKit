@@ -1,31 +1,33 @@
-struct UserAgentSpoofTableEntry { const char *name; };
+struct UserAgentSpoofTableEntry { const char *name; UserAgentStringType type; };
 %%
-# At the moment, any entry in this table means "pretend to be Mac IE"
-# for all URLs within this domain, where domain is defined as URLs with
-# host strings of "xxx.com" or "<anything>.xxx.com".
+# Entries in this table apply to all hosts with strings of "xxx.com" or "<anything>.xxx.com".
+# Entries must have either one dot or two dots in them.
 #
 # pretend to be Mac IE because these sites forbid unknown browsers
-bang-olufsen.com
-hondacars.com
-hondaredriders.com
-jaguar.com
-porsche.com
+bang-olufsen.com, MacIE
+hondacars.com, MacIE
+hondaredriders.com, MacIE
+jaguar.com, MacIE
+porsche.com, MacIE
 #
 # pretend to be Mac IE because otherwise the site tries to use layers
-watch.com
+watch.com, MacIE
 #
 # pretend to be Mac IE to make the return key work to log in
-firstusa.com
+firstusa.com, MacIE
 #
 # pretend to be Mac IE to avoid bad-quality CSS the site gives us otherwise
-microsoft.com
-olympic.org
+microsoft.com, MacIE
+olympic.org, MacIE
 #
 # pretend to be Mac IE to get the cool animation on the battle.net/war3 page that Darin likes
-battle.net
+battle.net, MacIE
 #
 # pretend to be Mac IE to avoid gzipped HTML which we don't support yet
-freebsd.org
+freebsd.org, MacIE
 #
 # pretend to be Mac IE to work around bug and avoid "spewage" at the bottom of some pages
-oregonlive.com
+oregonlive.com, MacIE
+#
+# pretend to be Win IE to get the smaller font sizes the site gives for Windows
+abcnews.go.com, WinIE

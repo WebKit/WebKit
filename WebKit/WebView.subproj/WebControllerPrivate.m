@@ -64,8 +64,10 @@
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
-    [userAgent release];
-    [userAgentWhenPretendingToBeMacIE release];
+    int i;
+    for (i = 0; i != NumUserAgentStringTypes; ++i) {
+        [userAgent[i] release];
+    }
     
     [controllerSetName release];
     [topLevelFrameName release];
@@ -334,10 +336,11 @@
 
 - (void)_defaultsDidChange
 {
-    [_private->userAgent release];
-    _private->userAgent = nil;
-    [_private->userAgentWhenPretendingToBeMacIE release];
-    _private->userAgentWhenPretendingToBeMacIE = nil;
+    int i;
+    for (i = 0; i != NumUserAgentStringTypes; ++i) {
+        [_private->userAgent[i] release];
+        _private->userAgent[i] = nil;
+    }
 }
 
 @end

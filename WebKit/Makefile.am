@@ -7,7 +7,7 @@ clean-am:
 	rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebKit.framework
 
 WebView.subproj/WebUserAgentSpoofTable.c: WebView.subproj/WebUserAgentSpoofTable.gperf Makefile.am previous-clean-timestamp
-	gperf -CEot -L 'ANSI-C' -k '*' -N _web_findSpoofTableEntry $< > $@ 
+	gperf -CEot -L 'ANSI-C' -k '*' -N _web_findSpoofTableEntry -F ,0 $< > $@ 
 
 BUILT_SOURCES = WebView.subproj/WebUserAgentSpoofTable.c
 CLEANFILES = $(BUILT_SOURCES)
