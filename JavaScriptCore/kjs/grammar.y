@@ -332,12 +332,12 @@ BitwiseANDExpr:
 
 BitwiseXORExpr:
     BitwiseANDExpr
-  | BitwiseXORExpr '^' EqualityExpr { $$ = new BitOperNode($1, OpBitXOr, $3); }
+  | BitwiseXORExpr '^' BitwiseANDExpr { $$ = new BitOperNode($1, OpBitXOr, $3); }
 ;
 
 BitwiseORExpr:
     BitwiseXORExpr
-  | BitwiseORExpr '|' EqualityExpr  { $$ = new BitOperNode($1, OpBitOr, $3); }
+  | BitwiseORExpr '|' BitwiseXORExpr { $$ = new BitOperNode($1, OpBitOr, $3); }
 ;
 
 LogicalANDExpr:
