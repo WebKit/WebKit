@@ -1,5 +1,13 @@
 2002-11-20  Richard Williamson   <rjw@apple.com>
 
+        Fixed 3107007.  Letter-spacing is causing width to be miscalculated.
+        This also fixed some selection problems.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:]):
+
+2002-11-20  Richard Williamson   <rjw@apple.com>
+
         Fixed mono spaced fonts to always render with mono spacing! (3078065)
         
         * WebCoreSupport.subproj/WebTextRenderer.h:

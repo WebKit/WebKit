@@ -870,8 +870,9 @@ static const char *joiningNames[] = {
 #ifdef DEBUG_COMBINING        
         printf ("Character 0x%04x, joining attribute %d(%s), combining class %d, direction %d(%s)\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames[WebCoreUnicodeJoiningFunction(c)], WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), directionNames[WebCoreUnicodeDirectionFunction(c)]);
 #endif
-        
-        totalWidth += lastWidth;       
+
+        if (i >= (unsigned int)pos)
+            totalWidth += lastWidth;       
     }
 
     // Ceil the last glyph, but only if
