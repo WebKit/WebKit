@@ -727,8 +727,11 @@ bool CSSParser::parseValue( int propId, bool important )
         /* fall through */
     case CSS_PROP_COLOR:                // <color> | inherit
     case CSS_PROP_TEXT_DECORATION_COLOR:
-	if ( id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-	     (id >= CSS_VAL_GREY && id <= CSS_VAL__KONQ_TEXT && (nonCSSHint|!strict)) ) {
+        if (id == CSS_VAL__KONQ_TEXT)
+            valid_primitive = true; // Always allow this, even when strict parsing is on,
+                                    // since we use this in our UA sheets.
+	else if ( id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
+	     (id >= CSS_VAL_GREY && id < CSS_VAL__KONQ_TEXT && (nonCSSHint|!strict)) ) {
 	    valid_primitive = true;
 	} else {
 	    parsedValue = parseColor();
