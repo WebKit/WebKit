@@ -1,3 +1,7 @@
 Makefile
+Makefile.am
 Makefile.in
-testecma
+*.kde
+*.dep
+*.moc
+*.gperf
