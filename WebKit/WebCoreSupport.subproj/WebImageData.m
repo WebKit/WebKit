@@ -30,6 +30,7 @@ static CFDictionaryRef imageSourceOptions;
 @interface WebImageData (WebInternal)
 - (void)_commonTermination;
 - (void)_invalidateImages;
+- (void)_invalidateImageProperties;
 - (int)_repetitionCount;
 - (float)_frameDuration;
 - (void)_stopAnimation;
@@ -38,7 +39,7 @@ static CFDictionaryRef imageSourceOptions;
 -(void)_createPDFWithData:(NSData *)data;
 - (CGPDFDocumentRef)_PDFDocumentRef;
 - (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
-- (void)_createImages;
+- (void)_cacheImages:(size_t)optionalIndex allImages:(BOOL)allImages;
 @end
 
 
@@ -46,7 +47,11 @@ static CFDictionaryRef imageSourceOptions;
 
 + (void)initialize
 {
-    [WebImageRendererFactory setShouldUseThreadedDecoding:(WebNumberOfCPUs() >= 2 ? YES : NO)];
+    // Currently threaded decoding doesn't play well with the WebCore cache.  Until
+    // those issues are resolved threaded decoding is OFF by default, even on dual CPU
+    // machines.
+    //[WebImageRendererFactory setShouldUseThreadedDecoding:(WebNumberOfCPUs() >= 2 ? YES : NO)];
+    [WebImageRendererFactory setShouldUseThreadedDecoding:NO];
 }
 
 - init
@@ -76,6 +81,7 @@ static CFDictionaryRef imageSourceOptions;
     ASSERT (!frameTimer);
     
     [self _invalidateImages];
+    [self _invalidateImageProperties];
         
     if (imageSource)
         CFRelease (imageSource); 
@@ -133,15 +139,22 @@ static CFDictionaryRef imageSourceOptions;
         for (i = 0; i < imagesSize; i++) {
             if (images[i])
                 CFRelease (images[i]);
-
-            if (imageProperties[i])
-                CFRelease (imageProperties[i]);
         }
         free (images);
         images = 0;
-        free (imageProperties);
-        imageProperties = 0;
     }
+}
+
+- (void)_invalidateImageProperties
+{
+    size_t i;
+    for (i = 0; i < imagePropertiesSize; i++) {
+	if (imageProperties[i])
+	    CFRelease (imageProperties[i]);
+    }
+    free (imageProperties);
+    imageProperties = 0;
+    imagePropertiesSize = 0;
 }
 
 - (CFDictionaryRef)_imageSourceOptions
@@ -180,51 +193,73 @@ static CFDictionaryRef imageSourceOptions;
 	    
 - (CGImageRef)imageAtIndex:(size_t)index
 {
-    if (imageDataUpdated) {
-	imageDataUpdated = NO;
-	[self _createImages];
-    }
-
-    if (index >= imagesSize)
+    if (index >= [self numberOfImages])
         return 0;
 
+    if (!images || images[index] == 0){
+	[self _cacheImages:index allImages:NO];
+    }
+    
     return images[index];
 }
 
 - (CFDictionaryRef)propertiesAtIndex:(size_t)index
 {
-    if (imageDataUpdated) {
-	imageDataUpdated = NO;
-	[self _createImages];
+    size_t num = [self numberOfImages];
+    
+    // Number of images changed!
+    if (imagePropertiesSize && num > imagePropertiesSize) {
+        // Clear cache.
+	[self _invalidateImageProperties];
     }
-
-    if (index >= imagesSize)
-        return 0;
-
-    return imageProperties[index];
+    
+    if (imageProperties == 0 && num) {
+        imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
+        size_t i;
+        for (i = 0; i < num; i++) {
+            imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
+            if (imageProperties[i])
+                CFRetain (imageProperties[i]);
+        }
+        imagePropertiesSize = num;
+    }
+    
+    if (index < num) {
+        // If image properties are nil, try to get them again.  May have attempted to
+        // get them before enough data was available in the header.
+        if (imageProperties[index] == 0) {
+            imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, 0);
+            if (imageProperties[index])
+                CFRetain (imageProperties[index]);
+        }
+        
+        return imageProperties[index];
+    }
+        
+    return 0;
 }
 
-- (void)_createImages
+- (void)_cacheImages:(size_t)optionalIndex allImages:(BOOL)allImages
 {
     size_t i;
 
-    [self _invalidateImages];
-    
     imagesSize = [self numberOfImages];
-    for (i = 0; i < imagesSize; i++) {
+    size_t from, to;
+    
+    if (allImages) {
+	from = 0;
+	to = imagesSize;
+    }
+    else {
+	from = optionalIndex;
+	to = optionalIndex+1;
+    }
+    for (i = from; i < to; i++) {
         if (!images) {
             images = (CGImageRef *)calloc (imagesSize, sizeof(CGImageRef *));
         }
-            
-        images[i] = CGImageSourceCreateImageAtIndex (imageSource, i, [self _imageSourceOptions]);
 
-        if (!imageProperties) {
-            imageProperties = (CFDictionaryRef *)malloc (imagesSize * sizeof(CFDictionaryRef));
-        }
-        
-        imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
-        if (imageProperties[i])
-            CFRetain (imageProperties[i]);
+        images[i] = CGImageSourceCreateImageAtIndex (imageSource, i, [self _imageSourceOptions]);
     }
 }
 
@@ -241,7 +276,8 @@ static CFDictionaryRef imageSourceOptions;
     else {
         // The work of decoding is actually triggered by image creation.
         CGImageSourceUpdateData (imageSource, data, isComplete);
-        [self _createImages];
+	[self _invalidateImages];
+        [self _cacheImages:0 allImages:YES];
     }
         
     [decodeLock unlock];
@@ -289,8 +325,8 @@ static CFDictionaryRef imageSourceOptions;
             }
         }
         else {
+	    [self _invalidateImages];
             CGImageSourceUpdateData (imageSource, data, isComplete);
-	    imageDataUpdated = YES;
         }
     }
     

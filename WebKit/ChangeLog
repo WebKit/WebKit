@@ -1,5 +1,32 @@
 2004-12-20  Richard Williamson   <rjw@apple.com>
 
+	Fix image decoding to separately decode image meta data from actual image bits.  I
+	incorrectly consolidated decode of meta data and image bits resulting in a huge
+	performance regression.
+
+	Double size of WebCore cache on lower end machines.  On the PLT run on machines with
+	256MB of memory, too many images were being evicted, causing a re-decode on the PLT.
+	Upping the lower limit of the cache size ensure that no images are evicted (this
+	goes hand-in-hand with the change to the minimum object size from 32K to 40K).
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (+[WebImageData initialize]):
+        (-[WebImageData _commonTermination]):
+        (-[WebImageData _invalidateImages]):
+        (-[WebImageData _invalidateImageProperties]):
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData _cacheImages:allImages:]):
+        (-[WebImageData decodeData:isComplete:callback:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
+2004-12-20  Richard Williamson   <rjw@apple.com>
+
 	Fixed build problem caused by change to ImageIO API.
 
         Reviewed by Adele.
