@@ -2,6 +2,17 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3670280> scroll position on overflowed textareas resets when leaving the tab
+
+        * kwq/KWQTextArea.mm: (-[KWQTextAreaTextView becomeFirstResponder]):
+        Scroll to reveal the text area, don't scroll to reveal the text view itself.
+        Scrolling the text view ended up putting it at the top left, regardless of
+        where the insertion point is.
+
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3831546> More text is copied than is visually selected
 
         The bug here is that upstream was moving a position too far.
