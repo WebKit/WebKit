@@ -8,7 +8,7 @@
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebNetscapePluginRepresentation.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -148,8 +148,6 @@ static NSArray *pluginLocations(void)
     plugins = [pluginArray copy];
 
     // Register plug-in WebDocumentViews and WebDocumentRepresentations
-    
-    
     NSArray *viewTypes = [[WebView _viewTypes] allKeys];
     NSArray *mimes = [self MIMETypes];
     NSString *mime;
@@ -160,7 +158,7 @@ static NSArray *pluginLocations(void)
         // Don't override previously registered types.
         if(![viewTypes containsObject:mime]){
             [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:mime];
-            [WebDataSource registerRepresentationClass:[WebNetscapePluginStream class] forMIMEType:mime];
+            [WebDataSource registerRepresentationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
         }
     }
 

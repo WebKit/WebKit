@@ -67,7 +67,7 @@
 - (BOOL)sendEvent:(EventRecord *)event;
 - (BOOL)sendUpdateEvent;
 
-- (NPP)pluginInstance;
+- (NPP)pluginPointer;
 
 - (void)setUpWindowAndPort;
 

@@ -1,3 +1,50 @@
+2002-10-13  Chris Blumenberg  <cblu@apple.com>
+
+	- Eliminated the dual-role behavior of WebPluginStream. Renamed WebPluginStream to WebBaseNetscapePluginStream. 
+ WebNetscapePluginRepresentation, a subclass of WebNetscapePluginRepresentation, is the document representation for standalone plug-ins. WebNetscapePluginStream, also a subclass of WebNetscapePluginRepresentation, is the general plug-in stream loader for embedded plug-ins or plug-in requested streams.
+
+	23 plug-in source files with more likely to come!
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: Added.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m: Added.
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream setPluginPointer:]):
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+        (-[WebBaseNetscapePluginStream receivedError:]):
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView setWindow]):
+        (-[WebBaseNetscapePluginView pluginPointer]):
+        (-[WebBaseNetscapePluginView drawRect:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginRepresentation.h: Added.
+        * Plugins.subproj/WebNetscapePluginRepresentation.m: Added.
+        (-[WebNetscapePluginRepresentation setDataSource:]):
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]):
+        (-[WebNetscapePluginRepresentation finishedLoadingWithDataSource:]):
+        * Plugins.subproj/WebNetscapePluginStream.h: Added.
+        * Plugins.subproj/WebNetscapePluginStream.m: Added.
+        (-[WebNetscapePluginStream setCurrentURL:]):
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream stop]):
+        (-[WebNetscapePluginStream loadEnded]):
+        (-[WebNetscapePluginStream handle:willSendRequest:]):
+        (-[WebNetscapePluginStream handle:didReceiveResponse:]):
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebNetscapePluginDatabase init]):
+        * Plugins.subproj/WebPluginStream.h: Removed.
+        * Plugins.subproj/WebPluginStream.m: Removed.
+        * WebKit.pbproj/project.pbxproj:
+
 2002-10-11  Richard Williamson   <rjw@apple.com>
 
         More DOM/attributed string work.

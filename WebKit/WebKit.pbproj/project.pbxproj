@@ -283,6 +283,8 @@
 				F57D1955034E734901A80180,
 				F57D1959034E734901A80180,
 				EDD9133E03576ADA00C1A526,
+				83402EF8035A588900BE770A,
+				83402EFC035A58D100BE770A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,6 +380,8 @@
 				F57D195A034E734901A80180,
 				9367C637034E9F00008635C5,
 				EDD9134003576AFF00C1A526,
+				83402EF9035A588900BE770A,
+				83402EFD035A58D100BE770A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1304,6 +1308,54 @@
 //832
 //833
 //834
+		83402EF6035A588900BE770A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginRepresentation.h;
+			refType = 4;
+		};
+		83402EF7035A588900BE770A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginRepresentation.m;
+			refType = 4;
+		};
+		83402EF8035A588900BE770A = {
+			fileRef = 83402EF6035A588900BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83402EF9035A588900BE770A = {
+			fileRef = 83402EF7035A588900BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83402EFA035A58D100BE770A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginStream.h;
+			refType = 4;
+		};
+		83402EFB035A58D100BE770A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginStream.m;
+			refType = 4;
+		};
+		83402EFC035A58D100BE770A = {
+			fileRef = 83402EFA035A58D100BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83402EFD035A58D100BE770A = {
+			fileRef = 83402EFB035A58D100BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		8398847A03426FB000BC5F5E = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2457,13 +2509,13 @@
 		F5A672B90263866E01000102 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			path = WebPluginStream.h;
+			path = WebBaseNetscapePluginStream.h;
 			refType = 4;
 		};
 		F5A672BA0263866E01000102 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			path = WebPluginStream.m;
+			path = WebBaseNetscapePluginStream.m;
 			refType = 4;
 		};
 		F5A672BB0263866E01000102 = {
@@ -2784,6 +2836,10 @@
 		};
 		F5EBC45202134BB601CA1520 = {
 			children = (
+				F5F717220288493C018635CA,
+				F5F717230288493C018635CA,
+				F5A672B90263866E01000102,
+				F5A672BA0263866E01000102,
 				F5EBC45502134BC301CA1520,
 				931A72D203265920008635CE,
 				F5EBC45602134BC301CA1520,
@@ -2791,18 +2847,18 @@
 				84D4BFFC0348EF9D00CA2ACA,
 				84D4BFF70348EF7600CA2ACA,
 				84D4BFF80348EF7600CA2ACA,
+				83402EF6035A588900BE770A,
+				83402EF7035A588900BE770A,
+				83402EFA035A58D100BE770A,
+				83402EFB035A58D100BE770A,
 				F5883BE0025E5E9D01000102,
 				F5883BE1025E5E9D01000102,
 				F5A672B70263866E01000102,
 				F5A672B80263866E01000102,
-				F5A672B90263866E01000102,
-				F5A672BA0263866E01000102,
 				F5F7171E0288493C018635CA,
 				F5F7171F0288493C018635CA,
 				F5F717200288493C018635CA,
 				F5F717210288493C018635CA,
-				F5F717220288493C018635CA,
-				F5F717230288493C018635CA,
 			);
 			isa = PBXGroup;
 			name = Plugins;

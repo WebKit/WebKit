@@ -16,7 +16,7 @@
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebPluginNullEventSender.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebView.h>
@@ -403,8 +403,8 @@
 #if 0
     // Draw test    
     Rect portRect;
-    GetPortBounds(port, &portRect);
-    SetPort(port);
+    GetPortBounds(nPort.port, &portRect);
+    SetPort(nPort.port);
     MoveTo(0,0);
     LineTo(portRect.right, portRect.bottom);
 #endif
@@ -511,6 +511,11 @@
 - (WebController *)controller
 {
     return [[self webFrame] controller];
+}
+
+- (NPP)pluginPointer
+{
+    return instance;
 }
 
 - (WebNetscapePlugin *)plugin
@@ -623,7 +628,11 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    if (isStarted) {
+    if (!isStarted) {
+        return;
+    }
+    
+    if([NSGraphicsContext currentContextDrawingToScreen]){
         // AppKit tried to help us by doing a BeginUpdate.
         // But the invalid region at that level didn't include AppKit's notion of what was not valid.
         // We reset the port's visible region to counteract what BeginUpdate did.
@@ -640,6 +649,18 @@
 
         SetPortVisibleRegion(nPort.port, savedVisibleRegion);
         DisposeRgn(savedVisibleRegion);
+    }else{
+        // Printing
+
+        PixMapHandle srcMap, dstMap;
+        Rect rect;
+
+        dstMap = NewPixMap();
+        srcMap = GetPortPixMap(nPort.port);
+        SetRect(&rect, window.x, window.y, window.x + window.width, window.y + window.height);
+        CopyBits((BitMap *)srcMap, (BitMap *)dstMap, &rect, &rect, srcCopy, NULL);
+
+        NSLog(@"%d", QDError());
     }
 }
 
@@ -725,12 +746,6 @@
     //FIXME: Need to send other NPReasons
 }
 
-- (NPP)pluginInstance
-{
-    return instance;
-}
-
-
 @end
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
@@ -754,28 +769,25 @@
 
 - (NPError)loadRequest:(WebResourceRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData
 {
-    WebNetscapePluginStream *stream;
-    WebDataSource *dataSource;
-    WebFrame *frame;
-    NSURL *URL;
-    
-    URL = [request URL];
+    NSURL *URL = [request URL];
 
     if(!URL){
         return NPERR_INVALID_URL;
     }
     
     if(!target){
-        stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData];
+        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request
+                                                                             pluginPointer:instance
+                                                                                notifyData:notifyData];
         if(stream){
             [streams addObject:stream];
-            [stream startLoad];
+            [stream start];
             [stream release];
         }else{
             return NPERR_INVALID_URL;
         }
     }else{
-        frame = [[self webFrame] frameNamed:target];
+        WebFrame *frame = [[self webFrame] frameNamed:target];
         if(!frame){
             // FIXME: Why is it OK to just discard all the attributes in this case?
             [[self controller] _openNewWindowWithURL:URL referrer:nil behind:NO];
@@ -797,7 +809,7 @@
                 // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
                 // so we have to allow this as well. Needed for iTools.
             }
-            dataSource = [[WebDataSource alloc] initWithRequest:request];
+            WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
             if ([frame setProvisionalDataSource:dataSource]) {
                 [frame startLoading];
             }
