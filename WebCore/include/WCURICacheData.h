@@ -9,6 +9,8 @@
 @protocol WCURICacheData
 
 -(id <WCURICacheJobID>)jobID;
+-(id)status;
+-(id)error;
 -(NSURL *)url;
 -(unsigned char *)cacheData;
 -(int)cacheDataSize;
