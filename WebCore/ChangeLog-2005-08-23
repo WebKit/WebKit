@@ -1,3 +1,92 @@
+2005-02-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4004305> REGRESSION (Mail): Command-right-arrow on wrapped text goes to end of previous line
+
+        Fixed nextLinePosition to calculate affinity rather than take it as a parameter.  Propagated the parameter change out to related methods.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        (khtml::InsertLineBreakCommand::doApply):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertTextCommand::input):
+        (khtml::ReplaceSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::applyStyleToInsertedNodes):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::modifyExtendingRightForward):
+        (khtml::Selection::modifyMovingRightForward):
+        (khtml::Selection::modifyExtendingLeftBackward):
+        (khtml::Selection::modifyMovingLeftBackward):
+        (khtml::Selection::modify):
+        (khtml::Selection::validate):
+        * khtml/editing/visible_position.cpp:
+        (khtml::visiblePositionsOnDifferentLines):
+        * khtml/editing/visible_units.cpp:
+        (khtml::rootBoxForLine):
+        (khtml::startOfLine):
+        (khtml::endOfLine):
+        (khtml::inSameLine):
+        (khtml::isStartOfLine):
+        (khtml::isEndOfLine):
+        (khtml::previousLinePosition):
+        (khtml::nextLinePosition):
+        (khtml::previousSentencePosition):
+        (khtml::nextSentencePosition):
+        (khtml::previousParagraphPosition):
+        (khtml::nextParagraphPosition):
+        * khtml/editing/visible_units.h:
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection):
+        (KHTMLPart::selectClosestWordFromMouseEvent):
+        (KHTMLPart::handleMousePressEventTripleClick):
+        (KHTMLPart::handleMousePressEventSingleClick):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::positionForCoordinates):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::positionForCoordinates):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretRect):
+        (RenderObject::positionForCoordinates):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousCharacterPosition):
+        (DOM::Position::nextCharacterPosition):
+        (DOM::Position::leadingWhitespacePosition):
+        (DOM::Position::trailingWhitespacePosition):
+        * khtml/xml/dom_position.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject value]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject doAXLineForTextMarker:]):
+        (-[KWQAccObject doAXTextMarkerRangeForLine:]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        (-[KWQAccObject doAXLeftLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]):
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _visiblePositionForPoint:]):
+
 05-02-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken and John.

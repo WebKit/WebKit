@@ -145,7 +145,6 @@ using khtml::startVisiblePosition;
 using khtml::StyleDashboardRegion;
 using khtml::TextIterator;
 using khtml::DOWNSTREAM;
-using khtml::UPSTREAM;
 using khtml::VISIBLE;
 using khtml::VisiblePosition;
 using khtml::WordAwareIterator;

@@ -63,7 +63,7 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
     
-    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
+    virtual VisiblePosition positionForCoordinates(int x, int y);
     virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
     virtual InlineBox *inlineBox(long offset, EAffinity affinity = UPSTREAM);

@@ -182,7 +182,7 @@ long Position::renderedOffset() const
     return result;
 }
 
-Position Position::previousCharacterPosition() const
+Position Position::previousCharacterPosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
@@ -190,7 +190,7 @@ Position Position::previousCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this, khtml::DOWNSTREAM));
+    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
     while (!it.atStart()) {
@@ -210,7 +210,7 @@ Position Position::previousCharacterPosition() const
     return *this;
 }
 
-Position Position::nextCharacterPosition() const
+Position Position::nextCharacterPosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
@@ -218,7 +218,7 @@ Position Position::nextCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this, khtml::UPSTREAM));
+    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
     while (!it.atEnd()) {
@@ -615,7 +615,7 @@ static inline bool isWS(const QChar &c)
     return c.isSpace() && c != nonBreakingSpace;
 }
 
-Position Position::leadingWhitespacePosition() const
+Position Position::leadingWhitespacePosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
@@ -623,7 +623,7 @@ Position Position::leadingWhitespacePosition() const
     if (upstream(StayInBlock).node()->id() == ID_BR)
         return Position();
     
-    Position prev = previousCharacterPosition();
+    Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         DOMString string = static_cast<TextImpl *>(prev.node())->data();
         if (isWS(string[prev.offset()]))
@@ -633,7 +633,7 @@ Position Position::leadingWhitespacePosition() const
     return Position();
 }
 
-Position Position::trailingWhitespacePosition() const
+Position Position::trailingWhitespacePosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
@@ -651,7 +651,7 @@ Position Position::trailingWhitespacePosition() const
     if (downstream(StayInBlock).node()->id() == ID_BR)
         return Position();
 
-    Position next = nextCharacterPosition();
+    Position next = nextCharacterPosition(affinity);
     if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
         DOMString string = static_cast<TextImpl *>(next.node())->data();
         if (isWS(string[0]))

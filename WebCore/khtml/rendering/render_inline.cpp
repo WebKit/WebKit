@@ -343,12 +343,12 @@ bool RenderInline::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return hitTestLines(info, _x, _y, _tx, _ty, hitTestAction);
 }
 
-Position RenderInline::positionForCoordinates(int x, int y, EAffinity *affinity)
+VisiblePosition RenderInline::positionForCoordinates(int x, int y)
 {
     for (RenderObject *c = continuation(); c; c = c->continuation()) {
         if (c->isInline() || c->firstChild())
-            return c->positionForCoordinates(x, y, affinity);
+            return c->positionForCoordinates(x, y);
     }
 
-    return RenderFlow::positionForCoordinates(x, y, affinity);
+    return RenderFlow::positionForCoordinates(x, y);
 }

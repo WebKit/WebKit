@@ -182,7 +182,7 @@ public:
 
     virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
 
-    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
+    virtual VisiblePosition positionForCoordinates(int x, int y);
 
     unsigned int length() const { return str->l; }
     QChar *text() const { return str->s; }

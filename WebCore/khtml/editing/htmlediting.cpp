@@ -2227,17 +2227,18 @@ void DeleteSelectionCommand::initializePositionData()
     //
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
     //
-    m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition();
+    m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.startAffinity());
     bool hasLeadingWhitespaceBeforeAdjustment = m_leadingWhitespace.isNotNull();
     if (m_smartDelete && hasLeadingWhitespaceBeforeAdjustment) {
-        Position pos = VisiblePosition(start, m_selectionToDelete.startAffinity()).previous().deepEquivalent();
+        VisiblePosition visiblePos = VisiblePosition(start, m_selectionToDelete.startAffinity()).previous();
+        Position pos = visiblePos.deepEquivalent();
         // Expand out one character upstream for smart delete and recalculate
         // positions based on this change.
         m_upstreamStart = pos.upstream(StayInBlock);
         m_downstreamStart = pos.downstream(StayInBlock);
-        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition();
+        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(visiblePos.affinity());
     }
-    m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition();
+    m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
     // Note: trailing whitespace is only considered for smart delete if there is no leading
     // whitespace, as in the case where you double-click the first word of a paragraph.
     if (m_smartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_trailingWhitespace.isNotNull()) {
@@ -2246,7 +2247,7 @@ void DeleteSelectionCommand::initializePositionData()
         Position pos = VisiblePosition(end, m_selectionToDelete.endAffinity()).next().deepEquivalent();
         m_upstreamEnd = pos.upstream(StayInBlock);
         m_downstreamEnd = pos.downstream(StayInBlock);
-        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition();
+        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
     }
     m_trailingWhitespaceValid = true;
     
@@ -2266,7 +2267,7 @@ void DeleteSelectionCommand::initializePositionData()
     //
     VisiblePosition visibleEnd(end, m_selectionToDelete.endAffinity());
     if (isFirstVisiblePositionInParagraph(visibleEnd) || isLastVisiblePositionInParagraph(visibleEnd)) {
-        Position previousLineStart = previousLinePosition(visibleEnd, DOWNSTREAM, 0).deepEquivalent();
+        Position previousLineStart = previousLinePosition(visibleEnd, 0).deepEquivalent();
         if (previousLineStart.isNull() || RangeImpl::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
             m_mergeBlocksAfterDelete = false;
     }
@@ -2920,7 +2921,9 @@ void InsertLineBreakCommand::doApply()
         int exception;
         rangeAroundNode->selectNode(nodeToInsert, exception);
 
-        setEndingSelection(Selection(rangeAroundNode, DOWNSTREAM, UPSTREAM));
+        // affinity is not really important since this is a temp selection
+        // just for calling applyStyle
+        setEndingSelection(Selection(rangeAroundNode, khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
         applyStyle(typingStyle);
 
         setEndingSelection(selectionBeforeStyle);
@@ -3154,7 +3157,8 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     // Make sure we do not cause a rendered space to become unrendered.
-    Position leadingWhitespace = pos.leadingWhitespacePosition();
+    // FIXME: We need the affinity for pos, but pos.downstream(StayInBlock) does not give it
+    Position leadingWhitespace = pos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);
     if (leadingWhitespace.isNotNull()) {
         TextImpl *textNode = static_cast<TextImpl *>(leadingWhitespace.node());
         replaceTextInNode(textNode, leadingWhitespace.offset(), 1, nonBreakingSpaceString());
@@ -3433,7 +3437,8 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     
     // Delete any insignificant text that could get in the way of whitespace turning
     // out correctly after the insertion.
-    deleteInsignificantTextDownstream(endingSelection().end().trailingWhitespacePosition());
+    selection = endingSelection();
+    deleteInsignificantTextDownstream(selection.end().trailingWhitespacePosition(selection.endAffinity()));
     
     // Make sure the document is set up to receive text
     Position startPosition = prepareForTextInsertion(adjustDownstream);
@@ -4316,15 +4321,17 @@ void ReplaceSelectionCommand::doApply()
     // check whether to "smart replace" needs to add leading and/or trailing space
     bool addLeadingSpace = false;
     bool addTrailingSpace = false;
+    // FIXME: We need the affinity for startPos and endPos, but Position::downstream
+    // and Position::upstream do not give it
     if (m_smartReplace) {
-        addLeadingSpace = startPos.leadingWhitespacePosition().isNotNull();
+        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY).isNotNull();
         if (addLeadingSpace) {
             QChar previousChar = VisiblePosition(startPos, VP_DEFAULT_AFFINITY).previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
-        addTrailingSpace = endPos.trailingWhitespacePosition().isNotNull();
+        addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY).isNotNull();
         if (addTrailingSpace) {
             QChar thisChar = VisiblePosition(endPos, VP_DEFAULT_AFFINITY).character();
             if (!thisChar.isNull()) {
@@ -4623,7 +4630,9 @@ void ReplaceSelectionCommand::applyStyleToInsertedNodes()
                 int exceptionCode = 0;
                 rangeAroundNode->selectNode(node, exceptionCode);
                 ASSERT(exceptionCode == 0);
-                setEndingSelection(Selection(rangeAroundNode, DOWNSTREAM, UPSTREAM));
+				// affinity is not really important since this is a temp selection
+				// just for calling applyStyle
+                setEndingSelection(Selection(rangeAroundNode, SEL_DEFAULT_AFFINITY, SEL_DEFAULT_AFFINITY));
                 applyStyle(desiredStyle);
                 rangeAroundNode->deref();
             }

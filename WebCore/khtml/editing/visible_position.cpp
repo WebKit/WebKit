@@ -477,8 +477,8 @@ bool visiblePositionsOnDifferentLines(const VisiblePosition &pos1, const Visible
     RenderObject *r2 = p2.node()->renderer();
     if (r1->isBlockFlow() || r2->isBlockFlow())
         return r1 == r2 ? false : true;
-    InlineBox *b1 = r1 ? r1->inlineBox(p1.offset()) : 0;
-    InlineBox *b2 = r2 ? r2->inlineBox(p2.offset()) : 0;
+    InlineBox *b1 = r1 ? r1->inlineBox(p1.offset(), pos1.affinity()) : 0;
+    InlineBox *b2 = r2 ? r2->inlineBox(p2.offset(), pos2.affinity()) : 0;
     return (b1 && b2 && b1->root() != b2->root());
 }
 

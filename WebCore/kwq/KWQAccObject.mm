@@ -500,14 +500,9 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         if (!docPart)
             return nil;
         
-        // FIXME: should use startOfDocument and endOfDocument here
-        EAffinity startAffinity;
-        Position startPos = m_renderer->positionForCoordinates (0, 0, &startAffinity);
-        EAffinity endAffinity;
-        Position endPos = m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, &endAffinity);
-
-        VisiblePosition startVisiblePosition = VisiblePosition(startPos, startAffinity);
-        VisiblePosition endVisiblePosition   = VisiblePosition(endPos, endAffinity);
+        // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
+        VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates (0, 0);
+        VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX);
         QString qString   = plainText(makeRange(startVisiblePosition, endVisiblePosition));
         
         // transform it to a CFString and return that
@@ -975,16 +970,14 @@ static QRect boundingBoxRect(RenderObject* obj)
     
     if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
         // FIXME: should use startOfDocument here
-        EAffinity startAffinity;
-        Position startPos = [self topRenderer]->positionForCoordinates (0, 0, &startAffinity);
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition(startPos, startAffinity)];
+        VisiblePosition startPos = [self topRenderer]->positionForCoordinates (0, 0);
+        return (id) [self textMarkerForVisiblePosition: startPos];
     }
 
     if ([attributeName isEqualToString: (NSString *) kAXEndTextMarkerAttribute]) {
         // FIXME: should use endOfDocument here
-        EAffinity endAffinity;
-        Position endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX, &endAffinity);
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition(endPos, endAffinity)];
+        VisiblePosition endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX);
+        return (id) [self textMarkerForVisiblePosition: endPos];
     }
 #endif
 
@@ -1062,7 +1055,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     while (visiblePos.isNotNull() && visiblePos != savedVisiblePos) {
         lineCount += 1;
         savedVisiblePos = visiblePos;
-        visiblePos = previousLinePosition(visiblePos, khtml::DOWNSTREAM, 0);
+        visiblePos = previousLinePosition(visiblePos, 0);
     }
     
     return [NSNumber numberWithUnsignedInt:lineCount];
@@ -1076,13 +1069,11 @@ static QRect boundingBoxRect(RenderObject* obj)
     // iterate over the lines
     // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    EAffinity affinity;
-    Position pos = [self topRenderer]->positionForCoordinates (0, 0, &affinity);
-    VisiblePosition visiblePos = VisiblePosition(pos, affinity);
+    VisiblePosition visiblePos = [self topRenderer]->positionForCoordinates (0, 0);
     VisiblePosition savedVisiblePos;
     while (--lineCount != 0) {
         savedVisiblePos = visiblePos;
-        visiblePos = nextLinePosition(visiblePos, visiblePos.affinity(), 0);
+        visiblePos = nextLinePosition(visiblePos, 0);
         if (visiblePos.isNull() || visiblePos == savedVisiblePos)
             return nil;
     }
@@ -1125,9 +1116,8 @@ static QRect boundingBoxRect(RenderObject* obj)
     NSPoint windowpoint = [[view window] convertScreenToBase: screenpoint];
     NSPoint ourpoint = [view convertPoint:windowpoint fromView:nil];
 
-    EAffinity affinity;
-    Position pos = [self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y, &affinity);
-    return (id) [self textMarkerForVisiblePosition:VisiblePosition(pos, affinity)];
+    VisiblePosition pos = [self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y);
+    return (id) [self textMarkerForVisiblePosition:pos];
 }
 
 - (id)doAXBoundsForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
@@ -1488,8 +1478,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (prevVisiblePos.isNull())
         return nil;
     
-    VisiblePosition startPosition = startOfLine(prevVisiblePos, prevVisiblePos.affinity());
-    VisiblePosition endPosition = endOfLine(prevVisiblePos, prevVisiblePos.affinity());
+    VisiblePosition startPosition = startOfLine(prevVisiblePos);
+    VisiblePosition endPosition = endOfLine(prevVisiblePos);
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1504,8 +1494,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (nextVisiblePos.isNull())
         return nil;
         
-    VisiblePosition startPosition = startOfLine(nextVisiblePos, nextVisiblePos.affinity());
-    VisiblePosition endPosition = endOfLine(nextVisiblePos, nextVisiblePos.affinity());
+    VisiblePosition startPosition = startOfLine(nextVisiblePos);
+    VisiblePosition endPosition = endOfLine(nextVisiblePos);
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1570,7 +1560,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (nextVisiblePos.isNull())
         return nil;
         
-    VisiblePosition endPosition = endOfLine(nextVisiblePos, nextVisiblePos.affinity());
+    VisiblePosition endPosition = endOfLine(nextVisiblePos);
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
@@ -1585,7 +1575,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (prevVisiblePos.isNull())
         return nil;
         
-    VisiblePosition startPosition = startOfLine(prevVisiblePos, prevVisiblePos.affinity());
+    VisiblePosition startPosition = startOfLine(prevVisiblePos);
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 

@@ -42,13 +42,13 @@ VisiblePosition previousWordPosition(const VisiblePosition &);
 VisiblePosition nextWordPosition(const VisiblePosition &);
 
 // lines
-VisiblePosition startOfLine(const VisiblePosition &, EAffinity);
-VisiblePosition endOfLine(const VisiblePosition &, EAffinity, EIncludeLineBreak = DoNotIncludeLineBreak);
-VisiblePosition previousLinePosition(const VisiblePosition &, EAffinity, int x);
-VisiblePosition nextLinePosition(const VisiblePosition &, EAffinity, int x);
-bool inSameLine(const VisiblePosition &, EAffinity, const VisiblePosition &, EAffinity);
-bool isStartOfLine(const VisiblePosition &, EAffinity);
-bool isEndOfLine(const VisiblePosition &, EAffinity);
+VisiblePosition startOfLine(const VisiblePosition &);
+VisiblePosition endOfLine(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition previousLinePosition(const VisiblePosition &, int x);
+VisiblePosition nextLinePosition(const VisiblePosition &, int x);
+bool inSameLine(const VisiblePosition &, const VisiblePosition &);
+bool isStartOfLine(const VisiblePosition &);
+bool isEndOfLine(const VisiblePosition &);
 
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);
@@ -59,8 +59,8 @@ VisiblePosition nextSentencePosition(const VisiblePosition &);
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
 VisiblePosition startOfParagraph(const VisiblePosition &);
 VisiblePosition endOfParagraph(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
-VisiblePosition previousParagraphPosition(const VisiblePosition &, EAffinity, int x);
-VisiblePosition nextParagraphPosition(const VisiblePosition &, EAffinity, int x);
+VisiblePosition previousParagraphPosition(const VisiblePosition &, int x);
+VisiblePosition nextParagraphPosition(const VisiblePosition &, int x);
 bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfParagraph(const VisiblePosition &);
 bool isEndOfParagraph(const VisiblePosition &);

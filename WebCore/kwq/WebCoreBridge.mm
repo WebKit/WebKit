@@ -1695,9 +1695,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!node->renderer())
         return VisiblePosition();
     
-    EAffinity affinity;
-    Position pos = node->renderer()->positionForCoordinates((int)point.x, (int)point.y, &affinity);
-    return VisiblePosition(pos, affinity);
+    return node->renderer()->positionForCoordinates((int)point.x, (int)point.y);
 }
 
 - (void)moveDragCaretToPoint:(NSPoint)point

@@ -902,16 +902,10 @@ InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos) const
     return s;
 }
 
-Position RenderText::positionForCoordinates(int _x, int _y, EAffinity *affinity)
+VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
 {
-    EAffinity a;
-    if (!affinity)
-        affinity = &a;
-    
-    if (!firstTextBox() || stringLength() == 0) {
-        *affinity = DOWNSTREAM;
-        return Position(element(), 0);
-    }
+    if (!firstTextBox() || stringLength() == 0)
+        return VisiblePosition(element(), 0, DOWNSTREAM);
 
     int absx, absy;
     containingBlock()->absolutePosition(absx, absy);
@@ -919,15 +913,13 @@ Position RenderText::positionForCoordinates(int _x, int _y, EAffinity *affinity)
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left than the first text box left edge
-        *affinity = DOWNSTREAM;
-        return Position(element(), firstTextBox()->m_start);
+        return VisiblePosition(element(), firstTextBox()->m_start, DOWNSTREAM);
     }
 
     if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right than the last text box right edge
-        *affinity = DOWNSTREAM;
-        return Position(element(), lastTextBox()->m_start + lastTextBox()->m_len);
+        return VisiblePosition(element(), lastTextBox()->m_start + lastTextBox()->m_len, DOWNSTREAM);
     }
 
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
@@ -936,27 +928,22 @@ Position RenderText::positionForCoordinates(int _x, int _y, EAffinity *affinity)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
                 int offset = box->offsetForPosition(_x - absx);
-                if (offset != -1) {
-                    *affinity = DOWNSTREAM;
-                    return Position(element(), offset + box->m_start);
-                }
+                if (offset != -1)
+                    return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);
             }
             else if (!box->prevOnLine() && _x < absx + box->m_x) {
                 // box is first on line
                 // and the x coordinate is to the left of the first text box left edge
-                *affinity = DOWNSTREAM;
-                return Position(element(), box->m_start);
+                return VisiblePosition(element(), box->m_start, DOWNSTREAM);
             }
             else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width)
                 // box is last on line
                 // and the x coordinate is to the right of the last text box right edge
-                *affinity = UPSTREAM;
-                return Position(element(), box->m_start + box->m_len);
+                return VisiblePosition(element(), box->m_start + box->m_len, UPSTREAM);
         }
     }
     
-    *affinity = DOWNSTREAM;
-    return Position(element(), 0);
+    return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
 static RenderObject *firstRendererOnNextLine(InlineBox *box)
