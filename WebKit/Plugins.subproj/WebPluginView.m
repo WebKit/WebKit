@@ -601,21 +601,25 @@ static char *newCString(NSString *string)
     }else{
         frame = [webFrame frameNamed:target];
         if(!frame){
-            //FIXME: Create new window here (2931449)
-            return NPERR_GENERIC_ERROR;
-        }
-        if(notifyData){
-            if([target isEqualToString:@"_self"] || [target isEqualToString:@"_current"] || 
-               [target isEqualToString:@"_parent"] || [target isEqualToString:@"_top"]){
-                // return error since notification can't be sent to a plug-in that will no longer exist
-                return NPERR_INVALID_PARAM;
+            [webController openNewWindowWithURL:url];
+            // FIXME: Need to send NPP_URLNotify at the right time.
+            // FIXME: Need to name new frame
+            if(notifyData)
+                NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
+        }else{
+            if(notifyData){
+                if([target isEqualToString:@"_self"] || [target isEqualToString:@"_current"] || 
+                    [target isEqualToString:@"_parent"] || [target isEqualToString:@"_top"]){
+                    // return error since notification can't be sent to a plug-in that will no longer exist
+                    return NPERR_INVALID_PARAM;
+                }
+                [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
             }
-            [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
+            dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
+            [frame setProvisionalDataSource:dataSource];
+            [frame startLoading];
         }
-        dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
-        [frame setProvisionalDataSource:dataSource];
-        [frame startLoading];
     }
     return NPERR_NO_ERROR;
 }

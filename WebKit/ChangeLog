@@ -1,5 +1,12 @@
 2002-05-28  Chris Blumenberg  <cblu@apple.com>
 
+	Added support for creating a new window from a plug-in (2938004)
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+
+2002-05-28  Chris Blumenberg  <cblu@apple.com>
+
 	* Plugins.subproj/IFPluginDatabase.h:
 	* Plugins.subproj/IFPluginDatabase.m:
 	(-[IFPluginDatabase pluginForMimeType:]): renamed
