@@ -1757,8 +1757,7 @@ NS_ENDHANDLER
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    NSPoint windowPoint = [draggingInfo draggingLocation];
-    ASSERT(_private->draggingDocumentView == [self _draggingDocumentViewAtWindowPoint:windowPoint]);
+    ASSERT(_private->draggingDocumentView == [self _draggingDocumentViewAtWindowPoint:[draggingInfo draggingLocation]]);
     
     if (![[self _UIDelegateForwarder] webView:self shouldProcessDragWithDraggingInfo:draggingInfo]) {
         [self _setDraggingDocumentView:nil];
