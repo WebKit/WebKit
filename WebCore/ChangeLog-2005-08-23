@@ -1,3 +1,10 @@
+2004-10-10  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3664375> repro crash in -[KWQAccObject accessibilityAttributeNames]
+
+        (-[KWQAccObject accessibilityActionNames]):
+        check for nil m_renderer
+
 2004-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.

@@ -512,9 +512,9 @@ static QRect boundingBoxRect(RenderObject* obj)
             nil];
     }
     
-    if (m_renderer->isCanvas())
+    if (m_renderer && m_renderer->isCanvas())
         return webAreaAttrs;
-    if (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))
+    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))
         return anchorAttrs;
     return attributes;
 }
