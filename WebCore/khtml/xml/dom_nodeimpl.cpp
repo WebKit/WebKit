@@ -1064,7 +1064,18 @@ NodeBaseImpl::NodeBaseImpl(DocumentPtr *doc)
 NodeBaseImpl::~NodeBaseImpl()
 {
     //kdDebug( 6020 ) << "NodeBaseImpl destructor" << endl;
-    // we have to tell all children, that the parent has died...
+
+    // Avoid deep recursion when destroying the node tree.
+    static bool alreadyInsideDestructor; 
+    bool topLevel = !alreadyInsideDestructor;
+    if (topLevel)
+        alreadyInsideDestructor = true;
+    
+    // List of nodes to be deleted.
+    static NodeImpl *head;
+    static NodeImpl *tail;
+    
+    // We have to tell all children that their parent has died.
     NodeImpl *n;
     NodeImpl *next;
 
@@ -1073,8 +1084,32 @@ NodeBaseImpl::~NodeBaseImpl()
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-	if ( !n->refCount() )
+        
+	if ( !n->refCount() ) {
+            // Add the node to the list of nodes to be deleted.
+            // Reuse the nextSibling pointer for this purpose.
+            if (tail)
+                tail->setNextSibling(n);
+            else
+                head = n;
+            tail = n;
+        }
+    }
+    
+    // Only for the top level call, do the actual deleting.
+    if (topLevel) {
+        while ((n = head) != 0) {
+            next = n->nextSibling();
+            n->setNextSibling(0);
+
+            head = next;
+            if (next == 0)
+                tail = 0;
+            
             delete n;
+        }
+        
+        alreadyInsideDestructor = false;
     }
 }
 

@@ -1,5 +1,14 @@
 2003-04-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3234633 -- page with moderately deep tag nesting causes crash when closed (www.4strokenationals.com)
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeBaseImpl::~NodeBaseImpl): Avoid recursion by using a global
+        list of child nodes to destroy and only doing the actual destruction at the top level.
+
+2003-04-29  Darin Adler  <darin@apple.com>
+
         Mostly reviewed by Ken, some bits reviewed by John.
 
 	- fixed 3188781 -- eliminate globally initialized objects from WebCore
