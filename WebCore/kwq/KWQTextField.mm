@@ -406,6 +406,12 @@
     widget->clicked();
 }
 
+- (void)setAlignment:(NSTextAlignment)alignment
+{
+    [secureField setAlignment:alignment];
+    [super setAlignment:alignment];
+}
+
 @end
 
 @implementation KWQTextFieldFormatter

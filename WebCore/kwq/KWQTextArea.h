@@ -39,19 +39,24 @@ class QTextEdit;
 
 - initWithQTextEdit:(QTextEdit *)w; 
 
-// The following methods corresponds to methods required by KDE.
-- (void)setWordWrap:(BOOL)wrap;
-- (BOOL)wordWrap;
+- (void)setAlignment:(NSTextAlignment)alignment;
+
+- (void)setEditable:(BOOL)flag;
+- (BOOL)isEditable;
+
+- (void)setFont:(NSFont *)font;
+
 - (void)setText:(NSString *)text;
 - (NSString *)text;
 - (NSString *)textWithHardLineBreaks;
+
+- (void)setWordWrap:(BOOL)wrap;
+- (BOOL)wordWrap;
+
 - (void)selectAll;
-- (void)setEditable:(BOOL)flag;
-- (BOOL)isEditable;
-- (void)setFont:(NSFont *)font;
 
 // paragraph-oriented functions for the benefit of QTextEdit
-- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph;
+- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;
 
 @end

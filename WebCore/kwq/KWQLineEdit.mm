@@ -162,3 +162,9 @@ void QLineEdit::clicked()
 {
     m_clicked.call();
 }
+
+void QLineEdit::setAlignment(AlignmentFlags alignment)
+{
+    ASSERT(alignment == AlignLeft || alignment == AlignRight);
+    [(KWQTextField *)getView() setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+}

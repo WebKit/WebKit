@@ -510,23 +510,27 @@ void RenderLineEdit::calcMinMaxWidth()
 
 void RenderLineEdit::updateFromElement()
 {
+    KLineEdit *w = widget();
+    
     int ml = element()->maxLength();
     if ( ml <= 0 || ml > 1024 )
         ml = 1024;
-    if ( widget()->maxLength() != ml )
-        widget()->setMaxLength( ml );
+    if ( w->maxLength() != ml )
+        w->setMaxLength( ml );
 
-    if (element()->value().string() != widget()->text()) {
-        widget()->blockSignals(true);
-        int pos = widget()->cursorPosition();
-        widget()->setText(element()->value().string());
+    if (element()->value().string() != w->text()) {
+        w->blockSignals(true);
+        int pos = w->cursorPosition();
+        w->setText(element()->value().string());
 
-        widget()->setEdited( false );
+        w->setEdited( false );
 
-        widget()->setCursorPosition(pos);
-        widget()->blockSignals(false);
+        w->setCursorPosition(pos);
+        w->blockSignals(false);
     }
-    widget()->setReadOnly(element()->readOnly());
+    w->setReadOnly(element()->readOnly());
+    
+    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
 
     RenderFormElement::updateFromElement();
 }
@@ -1181,6 +1185,7 @@ void RenderTextArea::updateFromElement()
 {
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     w->setReadOnly(element()->readOnly());
+    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
     QString text = element()->value().string();
     if (w->text() != text) {
         w->blockSignals(true);

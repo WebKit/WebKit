@@ -44,18 +44,28 @@ class QTextEdit : public QScrollView
 
     QTextEdit(QWidget *parent);
 
-    QString text() const;
+    void setAlignment(AlignmentFlags);
+
+    void setCursorPosition(int, int);
+    void getCursorPosition(int *, int *) const;
+
+    FocusPolicy focusPolicy() const;
+
+    void setFont(const QFont &);
+
+    void setReadOnly(bool);
+    bool isReadOnly() const;
+
     void setText(const QString &);
+    QString text() const;
     QString textWithHardLineBreaks() const;
 
-    WrapStyle wordWrap() const;
-    void setWordWrap(WrapStyle);
     void setTextFormat(TextFormat);
+
+    void setWordWrap(WrapStyle);
+    WrapStyle wordWrap() const;
+
     void setTabStopWidth(int);
-    bool isReadOnly() const;
-    void setReadOnly(bool);
-    void getCursorPosition(int *, int *) const;
-    void setCursorPosition(int, int);
 
     void selectAll();
 
@@ -63,10 +73,6 @@ class QTextEdit : public QScrollView
     int horizontalScrollBarHeight() const;
 
     void textChanged() { _textChanged.call(); }
-
-    FocusPolicy focusPolicy() const;
-
-    void setFont(const QFont &);
 
     void clicked();
 

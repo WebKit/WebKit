@@ -25,6 +25,7 @@
 
 #import "KWQTextEdit.h"
 
+#import "KWQAssertions.h"
 #import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)
@@ -131,4 +132,10 @@ QWidget::FocusPolicy QTextEdit::focusPolicy() const
 void QTextEdit::clicked()
 {
     _clicked.call();
+}
+
+void QTextEdit::setAlignment(AlignmentFlags alignment)
+{
+    ASSERT(alignment == AlignLeft || alignment == AlignRight);
+    [(KWQTextArea *)getView() setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
 }

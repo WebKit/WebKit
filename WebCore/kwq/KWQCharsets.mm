@@ -48,8 +48,8 @@ static void buildDictionaries()
     encodingToTable = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
 
     for (int i = 0; table[i].name != NULL; i++) {
-        CFDictionarySetValue(nameToTable, table[i].name, &table[i]);
-        CFDictionarySetValue(encodingToTable, reinterpret_cast<void *>(table[i].encoding), &table[i]);
+        CFDictionaryAddValue(nameToTable, table[i].name, &table[i]);
+        CFDictionaryAddValue(encodingToTable, reinterpret_cast<void *>(table[i].encoding), &table[i]);
     }
 }
 

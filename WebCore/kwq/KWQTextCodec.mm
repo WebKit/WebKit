@@ -127,14 +127,29 @@ QTextDecoder *QTextCodec::makeDecoder() const
     return new KWQTextDecoder(_encoding, _flags);
 }
 
+inline CFStringEncoding effectiveEncoding(CFStringEncoding e)
+{
+    switch (e) {
+        case kCFStringEncodingISOLatin1:
+        case kCFStringEncodingASCII:
+            e = kCFStringEncodingWindowsLatin1;
+            break;
+    }
+    return e;
+}
+
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
+    // FIXME: Should really use the same API in both directions, not CF one way and TEC the other.
+    
+    CFStringEncoding encoding = effectiveEncoding(_encoding);
+
     CFStringRef cfs = qcs.getCFString();
     CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
     CFIndex bufferLength;
-    CFStringGetBytes(cfs, range, _encoding, '?', false, NULL, 0x7FFFFFFF, &bufferLength);
+    CFStringGetBytes(cfs, range, encoding, '?', false, NULL, 0x7FFFFFFF, &bufferLength);
     QCString result(bufferLength + 1);
-    CFStringGetBytes(cfs, range, _encoding, '?', false, (UInt8 *)result.data(), bufferLength, &bufferLength);
+    CFStringGetBytes(cfs, range, encoding, '?', false, (UInt8 *)result.data(), bufferLength, &bufferLength);
     result[bufferLength] = 0;
     return result;
 }
@@ -296,19 +311,21 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
 QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
 {
     OSStatus status;
+    
+    CFStringEncoding encoding = effectiveEncoding(_encoding);
 
     // Get a converter for the passed-in encoding.
     if (!_converter) {
-        if (_cachedConverterEncoding == _encoding) {
+        if (_cachedConverterEncoding == encoding) {
             _converter = _cachedConverter;
             _cachedConverter = 0;
             _cachedConverterEncoding = kCFStringEncodingInvalidId;
             TECClearConverterContextInfo(_converter);
         } else {
-            status = TECCreateConverter(&_converter, _encoding,
+            status = TECCreateConverter(&_converter, encoding,
                 CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
             if (status) {
-                ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", _encoding, status);
+                ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
                 return QString::null;
             }
 
@@ -376,7 +393,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
     // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
     // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
     // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
-    if (_encoding == kCFStringEncodingGB_18030_2000) {
+    if (encoding == kCFStringEncodingGB_18030_2000) {
         result.replace(0xE5E5, 0x3000);
     }
     

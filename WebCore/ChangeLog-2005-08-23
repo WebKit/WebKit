@@ -1,3 +1,36 @@
+2003-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3211756 -- form field contents on the left instead of right on page in RtL language
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement): Call setAlignment based on the style's direction.
+        (RenderTextArea::updateFromElement): Ditto.
+        * kwq/KWQLineEdit.h: Added setAlignment.
+        * kwq/KWQLineEdit.mm: (QLineEdit::setAlignment): Added. Calls setAlignment on KWQTextField.
+        * kwq/KWQTextArea.h: Added setAlignment.
+        * kwq/KWQTextArea.mm: (-[KWQTextArea setAlignment:]): Added. Calls setAlignment on NSTextView.
+        * kwq/KWQTextEdit.h: Added setAlignment.
+        * kwq/KWQTextEdit.mm: (QTextEdit::setAlignment): Added. Calls setAlignment on KWQTextField.
+        * kwq/KWQTextField.mm: (-[KWQTextField setAlignment:]): Added. Call setAlignment on secure
+        text field too.
+
+	- fixed 3250538 -- on pages labeled "US-ASCII", non-ASCII chars are not decoded as Latin-1
+          as in other browsers
+
+        * kwq/KWQTextCodec.mm:
+        (effectiveEncoding): Added. Maps ISO Latin-1 and US-ASCII to Windows Latin-1.
+        (QTextCodec::fromUnicode): Use effectiveEncoding.
+        (KWQTextDecoder::convertUsingTEC): Use effectiveEncoding.
+
+        - other changes
+
+        * kwq/KWQCharsets.mm: (buildDictionaries): Make the first encoding in the file win for
+        purposes of deciding which name is used. I thought this was happening before, but actually
+        the last one was winning. Do this by using CFDictionaryAddValue, which does nothing if
+        there's already a dictionary entry, instead of CFDictionarySetValue, which replaces.
+
 2003-05-06  David Hyatt  <hyatt@apple.com>
 
 	Make negative z-index content paint above the background of

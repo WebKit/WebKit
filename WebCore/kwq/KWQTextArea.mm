@@ -417,6 +417,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     return widget;
 }
 
+- (void)setAlignment:(NSTextAlignment)alignment
+{
+    [textView setAlignment:alignment];
+}
+
 @end
 
 @implementation KWQTextAreaTextView

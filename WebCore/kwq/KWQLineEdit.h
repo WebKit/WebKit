@@ -35,21 +35,28 @@ public:
 
     QLineEdit();
 
-    virtual void setEchoMode(EchoMode);
-    virtual void setCursorPosition(int);
-    virtual void setText(const QString &);
-    virtual QString text();
-    virtual void setMaxLength(int);
+    void setAlignment(AlignmentFlags);
 
-    bool isReadOnly() const;
-    void setReadOnly(bool);
+    void setCursorPosition(int);
     int cursorPosition() const;
-    int maxLength() const;
-    void selectAll();
-    bool edited() const;
+
+    void setEchoMode(EchoMode);
+
     void setEdited(bool);
-    
+    bool edited() const;
+
     void setFont(const QFont &font);
+    
+    void setMaxLength(int);
+    int maxLength() const;
+
+    void setReadOnly(bool);
+    bool isReadOnly() const;
+
+    void setText(const QString &);
+    QString text();
+
+    void selectAll();
     
     QSize sizeForCharacterWidth(int numCharacters) const;
     int baselinePosition() const;
