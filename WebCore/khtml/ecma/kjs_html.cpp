@@ -3586,6 +3586,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             float sx = (float)args[0].toNumber(exec);
             float sy = (float)args[1].toNumber(exec);
             CGContextScaleCTM (drawingContext, sx, sy);
+            contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Rotate: {
@@ -3596,6 +3597,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             }
             float angle = (float)args[0].toNumber(exec);
             CGContextRotateCTM (drawingContext, angle);
+            contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Translate: {
@@ -3776,7 +3778,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             offset.height = (float)args[1].toNumber(exec);
             float blur = (float)args[2].toNumber(exec);
             
-            if (numArgs == 3) {
+            QColor color = QColor(args[3].toString(exec).ascii());
+
+             if (numArgs == 3) {
                 CGContextSetShadow (drawingContext, offset, blur);
             } else {
                 CGColorSpaceRef colorSpace;
@@ -3874,23 +3878,50 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             Image *i = static_cast<Image*>(o);
-            float x = (float)args[1].toNumber(exec);
-            float y = (float)args[2].toNumber(exec);
-            float w = (float)args[3].toNumber(exec);
-            float h = (float)args[4].toNumber(exec);
+            int x = args[1].toInt32(exec);
+            int y = args[2].toInt32(exec);
+            int w = args[3].toInt32(exec);
+            int h = args[4].toInt32(exec);
             QString compositeOperator = args[5].toString(exec).qstring().lower();
             QPixmap pixmap = i->image()->pixmap();
-            printf ("%s:%d  %p %f,%f,%f,%f %s\n", __FILE__, __LINE__, pixmap.image(), x, y, w, h, compositeOperator.ascii());
+            QPainter p;
+            p.drawPixmap (x, y, pixmap, 0, 0, w, h, 1, drawingContext);
+            
+            if (contextObject->_needsFlushRasterCache)
+                pixmap.flushRasterCache();
+
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::DrawImageFromRect: {
-            if (args.size() != 10) {
+            if (args.size() != 6) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            // FIXME:  Implement
+            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
+            if (!o->inherits(&Image::info)) {
+                Object err = Error::create(exec,TypeError);
+                exec->setException(err);
+                return err;
+            }
+            Image *i = static_cast<Image*>(o);
+            int sx = args[1].toInt32(exec);
+            int sy = args[2].toInt32(exec);
+            int sw = args[3].toInt32(exec);
+            int sh = args[4].toInt32(exec);
+            int dx = args[5].toInt32(exec);
+            int dy = args[6].toInt32(exec);
+            int dw = args[7].toInt32(exec);
+            int dh = args[8].toInt32(exec);
+            QString compositeOperator = args[9].toString(exec).qstring().lower();
+            QPixmap pixmap = i->image()->pixmap();
+            QPainter p;
+            p.drawPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, 1, drawingContext);
+            
+            if (contextObject->_needsFlushRasterCache)
+                pixmap.flushRasterCache();
+
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -3975,7 +4006,7 @@ void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*a
 }
 
 Context2D::Context2D(const DOM::HTMLElement &e)
-  : _element(static_cast<DOM::HTMLElementImpl*>(e.handle()))
+  : _element(static_cast<DOM::HTMLElementImpl*>(e.handle())), _needsFlushRasterCache(0)
 {
 }
 

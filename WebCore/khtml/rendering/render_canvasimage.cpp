@@ -39,11 +39,20 @@
 #include "misc/htmlattrs.h"
 #include "misc/htmltags.h"
 #include "html/html_formimpl.h"
-#include "html/html_imageimpl.h"
+#include "html/html_canvasimpl.h"
 #include "html/dtd.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_documentimpl.h"
 #include <math.h>
+
+
+
+// To be public in Tiger.  Test on tiger and add conditional.
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+CG_EXTERN_C_BEGIN
+CG_EXTERN CGImageRef CGBitmapContextCreateImage(CGContextRef c);
+CG_EXTERN_C_END
+#endif
 
 using namespace DOM;
 using namespace khtml;
@@ -108,10 +117,6 @@ CGContextRef RenderCanvasImage::drawingContext()
     return _drawingContext;
 }
 
-CG_EXTERN_C_BEGIN
-CG_EXTERN CGImageRef CGBitmapContextCreateImage(CGContextRef c);
-CG_EXTERN_C_END
-
 void RenderCanvasImage::setNeedsImageUpdate()
 {
     _needsImageUpdate = true;
@@ -174,8 +179,18 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
         _needsImageUpdate = false;
     }
     
-    if (drawnImage())
+    if (drawnImage()) {
+         HTMLCanvasElementImpl* i = (element() && element()->id() == ID_IMG) ? static_cast<HTMLCanvasElementImpl*>(element()) : 0;
+         int oldOperation;
+         if (i && !i->compositeOperator().isNull()){
+            oldOperation = QPainter::getCompositeOperation(p->currentContext());
+            QPainter::setCompositeOperation (p->currentContext(),i->compositeOperator());
+        }
         CGContextDrawImage (p->currentContext(), CGRectMake (x, y, cWidth, cHeight), drawnImage());
+        if (i && !i->compositeOperator().isNull()) {
+            QPainter::setCompositeOperation (p->currentContext(),oldOperation);
+        }
+    }
 
     if (drawSelectionTint) {
         QSize tintSize(cWidth, cHeight);

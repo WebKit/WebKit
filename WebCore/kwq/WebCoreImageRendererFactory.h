@@ -36,6 +36,9 @@
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)size;
 - (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name;
 - (NSArray *)supportedMIMETypes;
+- (int)CGCompositeOperationInContext:(CGContextRef)context;
+- (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context;
+- (void)setCGCompositeOperationFromString:(NSString *)op inContext:(CGContextRef)context;
 
 @end
 

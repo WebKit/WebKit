@@ -86,6 +86,8 @@ public:
     void increaseUseCount() const;
     void decreaseUseCount() const;
     
+    void flushRasterCache();
+    
 private:
 
     WebCoreImageRendererPtr imageRenderer;

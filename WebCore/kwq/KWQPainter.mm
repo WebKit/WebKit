@@ -37,6 +37,7 @@
 #import "KWQWidget.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
+#import "WebCoreImageRendererFactory.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
@@ -461,6 +462,21 @@ struct CompositeOperator compositeOperators[NUM_COMPOSITE_OPERATORS] = {
     { "lighter", NSCompositePlusLighter }
 };
 
+int QPainter::getCompositeOperation(CGContextRef context)
+{
+    return (int)[[WebCoreImageRendererFactory sharedFactory] CGCompositeOperationInContext:context];
+}
+
+void QPainter::setCompositeOperation (CGContextRef context, QString op)
+{
+    [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op.getNSString() inContext:context];
+}
+
+void QPainter::setCompositeOperation (CGContextRef context, int op)
+{
+    [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
+}
+
 static NSCompositingOperation compositeOperatorFromString (QString aString)
 {
     if (aString.length()) {
@@ -484,45 +500,42 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r, c
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                            int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
 {
+    drawPixmap (x, y, sw, sh, pixmap, sx, sy, sw, sh, compositeOperator, context);
+}
+
+void QPainter::drawPixmap( int x, int y, int w, int h, const QPixmap &pixmap,
+                           int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
+{
     if (data->state.paintingDisabled)
         return;
         
-#if 0
-    NSGraphicsContext *oldContext = 0;
-    if (context) {
-        oldContext = [NSGraphicsContext currentContext];
-        // Somehow set up a NSGraphicsContext using the context parameter.
-    }
-#endif
-    
     if (sw == -1)
         sw = pixmap.width();
     if (sh == -1)
         sh = pixmap.height();
 
-    NSRect inRect = NSMakeRect(x, y, sw, sh);
+    if (w == -1)
+        w = pixmap.width();
+    if (h == -1)
+        h = pixmap.height();
+
+    NSRect inRect = NSMakeRect(x, y, w, h);
     NSRect fromRect = NSMakeRect(sx, sy, sw, sh);
     
     KWQ_BLOCK_EXCEPTIONS;
     [pixmap.imageRenderer drawImageInRect:inRect
-                                      fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator];
+                                      fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
-
-#if 0
-    if (context) {
-        [NSGraphicsContext setCurrentContext:oldContext];
-    }
-#endif
 }
 
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
-				const QPixmap &pixmap, int sx, int sy )
+				const QPixmap &pixmap, int sx, int sy, CGContextRef context)
 {
     if (data->state.paintingDisabled)
         return;
     
     KWQ_BLOCK_EXCEPTIONS;
-    [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
+    [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy) context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

@@ -25,6 +25,11 @@
     BOOL animatedTile;
 
     int compositeOperator;
+    id redirectContext;
+    CGContextRef context;
+    BOOL needFlushRasterCache;
+    BOOL rasterFlushing;
+    NSImageCacheMode rasterFlushingOldMode;
     
     NSString *MIMEType;
     BOOL isNull;

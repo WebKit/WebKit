@@ -12,11 +12,104 @@
 
 extern NSString *NSImageLoopCount;
 
+/*
+    We need to get the AppKit to redirect drawing to our
+    CGContext.  There is currently (on Panther) no public
+    way to make this happen.  So we create a NSCGSContext
+    subclass and twiddle it's _cgsContext ivar directly.
+    Very fragile, but the only way...
+*/
+@interface NSCGSContext : NSGraphicsContext {
+    CGContextRef _cgsContext;
+}
+@end
+
+@interface NSFocusStack : NSObject
+@end
+
+@interface WebImageContext : NSCGSContext {
+  @private
+    NSFocusStack* _focusStack;
+    NSRect        _bounds;
+    BOOL          _isFlipped;
+}
+- (id)initWithBounds:(NSRect)b context:(CGContextRef)context;
+- (NSRect)bounds;
+@end
+
+@implementation WebImageContext
+
+- (id)initWithBounds:(NSRect)b context:(CGContextRef)context {
+    
+    self = [super init];
+    if (self != nil) {
+	_bounds     = b;
+	_isFlipped  = YES;
+        if (context)
+            _cgsContext = (CGContextRef)CFRetain(context);
+    }
+    
+    return self;
+}
+
+- (void)dealloc {
+    
+    // done with focus stack
+    //
+    [_focusStack release]; _focusStack = nil;
+    
+    // done with context we own
+    //
+    CGContextRelease(_cgsContext); _cgsContext = NULL;
+    
+    [super dealloc];
+}
+
+- (void)saveGraphicsState {
+    if (_cgsContext) {
+        CGContextSaveGState(_cgsContext);
+    }
+}
+
+- (void)restoreGraphicsState {
+    if (_cgsContext) {
+        CGContextRestoreGState(_cgsContext);
+    }
+}
+
+- (BOOL)isDrawingToScreen {
+    return NO;
+}
+
+- (void *)focusStack {
+    if (!_focusStack) _focusStack = [[NSFocusStack allocWithZone:NULL] init];
+    return _focusStack;
+}
+
+- (void)setFocusStack:(void *)stack {
+    id oldstack = _focusStack;
+    _focusStack = [(id)stack retain];
+    [oldstack release];
+}
+
+- (NSRect)bounds {
+    return _bounds;
+}
+
+- (BOOL)isFlipped {
+    return _isFlipped;
+}
+
+@end
+
 #define MINIMUM_DURATION (1.0/30.0)
 
 // Forward declarations
 @interface WebImageRenderer (WebInternal)
 - (void)startAnimationIfNecessary;
+- (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext;
+- (void)_endRedirectContext:(NSGraphicsContext *)aContext;
+- (void)_needsRasterFlush;
 @end
 
 @implementation WebImageRenderer
@@ -179,51 +272,68 @@ static NSMutableSet *activeImageRenderers;
 
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
-    NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
-    NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
-
-    NS_DURING
-        loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
-    NS_HANDLER
-        loadStatus = NSImageRepLoadStatusInvalidData; // Arbitrary choice; any error will do.
-    NS_ENDHANDLER
-
-    // Hold onto the original data in case we need to copy this image.  (Workaround for appkit NSImage
-    // copy flaw).
-    if (isComplete && [self frameCount] > 1)
-        originalData = data;
-    else
-        [data release];
-
-    switch (loadStatus) {
-    case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
-        //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
-        return NO;
-    case NSImageRepLoadStatusReadingHeader:     // image format known, reading header. not yet valid. more data needed
-        //printf ("NSImageRepLoadStatusReadingHeader size %d, isComplete %d\n", length, isComplete);
-        return NO;
-    case NSImageRepLoadStatusWillNeedAllData:   // can't read incrementally. will wait for complete data to become avail.
-        //printf ("NSImageRepLoadStatusWillNeedAllData size %d, isComplete %d\n", length, isComplete);
-        return NO;
-    case NSImageRepLoadStatusInvalidData:       // image decompression encountered error.
-        //printf ("NSImageRepLoadStatusInvalidData size %d, isComplete %d\n", length, isComplete);
-        return NO;
-    case NSImageRepLoadStatusUnexpectedEOF:     // ran out of data before full image was decompressed.
-        //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
-        return NO;
-    case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
-        //printf ("NSImageRepLoadStatusCompleted size %d, isComplete %d\n", length, isComplete);
-        [self _adjustSizeToPixelDimensions];        
-        isNull = NO;
-        return YES;
-    default:
-        [self _adjustSizeToPixelDimensions];
-        //printf ("incrementalLoadWithBytes: size %d, isComplete %d\n", length, isComplete);
-        // We have some valid data.  Return YES so we can attempt to draw what we've got.
-        isNull = NO;
-        return YES;
-    }
+    NSArray *reps = [self representations];
+    NSBitmapImageRep *imageRep = [reps count] > 0 ? [[self representations] objectAtIndex:0] : nil;
     
+    if (imageRep && [imageRep isKindOfClass: [NSBitmapImageRep class]]) {
+        NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
+
+        NS_DURING
+            loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
+        NS_HANDLER
+            loadStatus = NSImageRepLoadStatusInvalidData; // Arbitrary choice; any error will do.
+        NS_ENDHANDLER
+
+        // Hold onto the original data in case we need to copy this image.  (Workaround for appkit NSImage
+        // copy flaw).
+        if (isComplete && [self frameCount] > 1)
+            originalData = data;
+        else
+            [data release];
+
+        switch (loadStatus) {
+        case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
+            //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
+            return NO;
+        case NSImageRepLoadStatusReadingHeader:     // image format known, reading header. not yet valid. more data needed
+            //printf ("NSImageRepLoadStatusReadingHeader size %d, isComplete %d\n", length, isComplete);
+            return NO;
+        case NSImageRepLoadStatusWillNeedAllData:   // can't read incrementally. will wait for complete data to become avail.
+            //printf ("NSImageRepLoadStatusWillNeedAllData size %d, isComplete %d\n", length, isComplete);
+            return NO;
+        case NSImageRepLoadStatusInvalidData:       // image decompression encountered error.
+            //printf ("NSImageRepLoadStatusInvalidData size %d, isComplete %d\n", length, isComplete);
+            return NO;
+        case NSImageRepLoadStatusUnexpectedEOF:     // ran out of data before full image was decompressed.
+            //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
+            return NO;
+        case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
+            //printf ("NSImageRepLoadStatusCompleted size %d, isComplete %d\n", length, isComplete);
+            [self _adjustSizeToPixelDimensions];        
+            isNull = NO;
+            return YES;
+        default:
+            [self _adjustSizeToPixelDimensions];
+            //printf ("incrementalLoadWithBytes: size %d, isComplete %d\n", length, isComplete);
+            // We have some valid data.  Return YES so we can attempt to draw what we've got.
+            isNull = NO;
+            return YES;
+        }
+    }
+    else {
+        if (isComplete) {
+            originalData = [[NSData alloc] initWithBytes:bytes length:length];
+            if ([MIMEType isEqual:@"application/pdf"]) {
+                Class repClass = [NSImageRep imageRepClassForData:originalData];
+                if (repClass) {
+                    NSImageRep *rep = [[repClass alloc] initWithData:originalData];
+                    [self addRepresentation:rep];
+                }
+            }
+            isNull = NO;
+            return YES;
+        }
+    }
     return NO;
 }
 
@@ -234,6 +344,12 @@ static NSMutableSet *activeImageRenderers;
     [patternColor release];
     [MIMEType release];
     [originalData release];
+    
+    if (context) {
+        CFRelease (context);
+        context = 0;
+    }
+    
     [super dealloc];
 }
 
@@ -307,6 +423,48 @@ static NSMutableSet *activeImageRenderers;
                                                    repeats:NO] retain];
 }
 
+- (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext
+{
+    NSGraphicsContext *oldContext = 0;
+    if (aContext) {
+        oldContext = [NSGraphicsContext currentContext];
+        // Assumes that we are redirecting to a CGBitmapContext.
+        size_t w = CGBitmapContextGetWidth (aContext);
+        size_t h = CGBitmapContextGetHeight (aContext);
+        redirectContext = [[WebImageContext alloc] initWithBounds:NSMakeRect(0, 0, (float)w, (float)h) context:aContext];
+        [NSGraphicsContext setCurrentContext:redirectContext];
+    }
+    return oldContext; 
+}
+
+- (void)_endRedirectContext:(NSGraphicsContext *)aContext
+{
+    if (aContext) {
+        [NSGraphicsContext setCurrentContext:aContext];
+        [redirectContext autorelease];
+        redirectContext = 0;
+    }
+}
+
+- (void)_needsRasterFlush
+{
+#if 0
+    // This doesn't work.  The PDF is always rasterized and cached!  Leaving
+    // this code in place, but excluded, pending response from AP.
+    NSImageRep *imageRep = [[self representations] objectAtIndex:0];
+    rasterFlushing = NO;
+    if (needFlushRasterCache && [imageRep isKindOfClass:[NSCachedImageRep class]] && [MIMEType isEqual: @"application/pdf"]) {
+        [self removeRepresentation:imageRep];
+        Class repClass = [NSImageRep imageRepClassForData:originalData];
+        if (repClass) {
+            NSImageRep *rep = [[repClass alloc] initWithData:originalData];
+            [self addRepresentation:rep];
+        }
+    }
+#endif
+}
+
+
 - (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
 {
     if (loadStatus >= 0) {
@@ -340,8 +498,13 @@ static NSMutableSet *activeImageRenderers;
         }
     }
     
+    NSGraphicsContext *oldContext = [self _beginRedirectContext:context];
+    [self _needsRasterFlush];
+
     // This is the operation that handles transparent portions of the source image correctly.
     [self drawInRect:ir fromRect:fr operation:compositeOperator fraction: 1.0];
+
+    [self _endRedirectContext:oldContext];
 }
 
 - (void)nextFrame:(id)context
@@ -378,7 +541,7 @@ static NSMutableSet *activeImageRenderers;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
 {
     if (animatedTile){
-        [self tileInRect:ir fromPoint:tilePoint];
+        [self tileInRect:ir fromPoint:tilePoint context:context];
     }
     else {
         [self drawClippedToValidInRect:ir fromRect:fr];
@@ -388,9 +551,23 @@ static NSMutableSet *activeImageRenderers;
     }
 }
 
-- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)operator
+- (void)flushRasterCache
+{
+    needFlushRasterCache = YES;
+}
+
+- (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)operator context:(CGContextRef)aContext
 {
     compositeOperator = operator;
+    
+    if (context != aContext) {
+        if (context)
+            CFRelease (context);
+        if (aContext)
+            CFRetain (aContext);
+        context = aContext;
+    }
+        
     [self drawImageInRect:ir fromRect:fr];
 }
 
@@ -422,7 +599,7 @@ static NSMutableSet *activeImageRenderers;
     [activeImageRenderers removeObject:self];
 }
 
-- (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
+- (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point context:(CGContextRef)aContext
 {
     // These calculations are only correct for the flipped case.
     ASSERT([self isFlipped]);
@@ -470,6 +647,9 @@ static NSMutableSet *activeImageRenderers;
         patternColorLoadStatus = loadStatus;
     }
         
+    NSGraphicsContext *oldContext = [self _beginRedirectContext:context];
+    [self _needsRasterFlush];
+    
     [NSGraphicsContext saveGraphicsState];
     
     CGContextSetPatternPhase((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], phase);    
@@ -477,6 +657,8 @@ static NSMutableSet *activeImageRenderers;
     [NSBezierPath fillRect:rect];
     
     [NSGraphicsContext restoreGraphicsState];
+
+    [self _endRedirectContext:oldContext];
 
     animatedTile = YES;
     tilePoint = point;

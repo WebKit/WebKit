@@ -209,3 +209,8 @@ void QPixmap::stopAnimations()
 {
     [imageRenderer stopAnimation];
 }
+
+void QPixmap::flushRasterCache()
+{
+    [imageRenderer flushRasterCache];
+}

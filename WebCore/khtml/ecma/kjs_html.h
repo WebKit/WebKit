@@ -240,6 +240,7 @@ namespace KJS {
   ////////////////////// Context2D Object ////////////////////////
 
   class Context2D : public DOMObject {
+  friend class Context2DFunction;
   public:
     Context2D(const DOM::HTMLElement &e);
     ~Context2D();
@@ -264,6 +265,7 @@ namespace KJS {
         SetAlpha};
 
     DOM::HTMLElementImpl *_element;
+    unsigned int _needsFlushRasterCache;
   };
 
   Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);

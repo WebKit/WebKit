@@ -29,6 +29,8 @@
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
+#import <CoreGraphics/CGContextPrivate.h>
+
 @implementation WebImageRendererFactory
 
 + (void)createSharedFactory
@@ -48,9 +50,12 @@
 {
     NSImage *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
 
-    NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
-    [imageRenderer addRepresentation:rep];
-    [rep autorelease];
+    if (![MIMEType isEqual:@"application/pdf"]) {
+        NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
+        [imageRenderer addRepresentation:rep];
+        [rep autorelease];
+    }
+
     [imageRenderer setFlipped:YES];
     
     // Turn the default caching mode back on when the image has completed load.
@@ -119,6 +124,59 @@
     [imageRenderer setScalesWhenResized:NO];
     [imageRenderer setFlipped:YES];
     return imageRenderer;
+}
+
+struct CompositeOperator
+{
+    NSString *name;
+    CGCompositeOperation value;
+};
+
+#define NUM_COMPOSITE_OPERATORS 14
+struct CompositeOperator CGCompositeOperations[NUM_COMPOSITE_OPERATORS] = {
+    { @"clear", kCGCompositeClear },
+    { @"copy", kCGCompositeCopy },
+    { @"source-over", kCGCompositeSover },
+    { @"source-in", kCGCompositeSin },
+    { @"source-out", kCGCompositeSout },
+    { @"source-atop", kCGCompositeSatop },
+    { @"destination-over", kCGCompositeDover },
+    { @"destination-in", kCGCompositeDin },
+    { @"destination-out", kCGCompositeDout },
+    { @"destination-atop", kCGCompositeDatop },
+    { @"xor", kCGCompositeXor },
+    { @"darker", kCGCompositePlusd },
+    { @"highlight", kCGCompositePlusl },
+    { @"lighter", kCGCompositePlusl }    // Per AppKit
+};
+
+- (int)CGCompositeOperationInContext:(CGContextRef)context
+{
+    CGCompositeOperation op = CGContextGetCompositeOperation (context);
+    return (int)op;
+}
+
+- (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context
+{
+    CGContextSetCompositeOperation(context, (CGCompositeOperation)op);
+}
+
+- (void)setCGCompositeOperationFromString:(NSString *)operatorString inContext:(CGContextRef)context
+{
+    CGCompositeOperation op = kCGCompositeSover;
+    
+    if (operatorString) {
+        int i;
+        
+        for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
+            if ([operatorString caseInsensitiveCompare:CGCompositeOperations[i].name] == NSOrderedSame) {
+                op = CGCompositeOperations[i].value;
+                break;
+            }
+        }
+    }
+    
+    CGContextSetCompositeOperation(context, op);
 }
 
 

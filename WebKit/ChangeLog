@@ -1,3 +1,38 @@
+2004-06-01  Richard Williamson   <rjw@apple.com>
+
+		Added support for drawImage and drawImageFromRect to <CANVAS>
+		Added support for composite attribute to <CANVAS>
+
+        Reviewed by Trey.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageContext initWithBounds:context:]):
+        (-[WebImageContext dealloc]):
+        (-[WebImageContext saveGraphicsState]):
+        (-[WebImageContext restoreGraphicsState]):
+        (-[WebImageContext isDrawingToScreen]):
+        (-[WebImageContext focusStack]):
+        (-[WebImageContext setFocusStack:]):
+        (-[WebImageContext bounds]):
+        (-[WebImageContext isFlipped]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer _beginRedirectContext:]):
+        (-[WebImageRenderer _endRedirectContext:]):
+        (-[WebImageRenderer _needsRasterFlush]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:]):
+        (-[WebImageRenderer flushRasterCache]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+        (-[WebImageRenderer tileInRect:fromPoint:context:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]):
+        (-[WebImageRendererFactory imageRendererWithName:]):
+        (-[WebImageRendererFactory CGCompositeOperationInContext:]):
+        (-[WebImageRendererFactory setCGCompositeOperation:inContext:]):
+        (-[WebImageRendererFactory setCGCompositeOperationFromString:inContext:]):
+
 2004-06-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey.
