@@ -121,17 +121,25 @@ static int hex2int( QChar hexchar )
 
 void QColor::setNamedColor(const QString&name)
 {
-
+    // FIXME: The combination of this code with the code that
+    // is in khtml/misc/helper.cpp makes setting colors by
+    // name a real crock. We need to look at the process
+    // of mapping names to colors and figure out something
+    // better.
     if ( name.isEmpty() ) {
 	setRgb( 0 );
     } 
-    else if ( name[0] == '#' || name.length() == 6) {
+    else if ((name.length() == 7 && name[0] == '#') || name.length() == 6) {
         int offset = 0;
+        int len;
         if (name[0] == '#') {
             offset = 1;
+            len = name.length() - 1;
+        }
+        else {
+            len = name.length();
         }
         const QChar *p = name.unicode() + offset;
-        int len = name.length();
         int r, g, b;
         if ( len == 12 ) {
             r = (hex2int(p[0]) << 4) + hex2int(p[1]);

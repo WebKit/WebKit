@@ -439,7 +439,6 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
-    
     [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
 
     _unlockFocus();

@@ -23,27 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
+
 #include <historyprovider.h>
 
 namespace KParts {
 
+static HistoryProvider *instance = 0;
+
 HistoryProvider *HistoryProvider::self()
 {
+    _logNotYetImplemented();
+    if (instance == 0) {
+        instance = new HistoryProvider();
+    }
+    return instance;
 }
 
 
 HistoryProvider::HistoryProvider()
 {
+    _logNotYetImplemented();
 }
 
 
 HistoryProvider::~HistoryProvider()
 {
+    _logNotYetImplemented();
 }
 
 
 bool HistoryProvider::contains(const QString &) const
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 

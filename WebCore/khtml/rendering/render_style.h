@@ -190,6 +190,7 @@ public:
     {
 	width = 3; // medium is default value
 	style = BNONE;
+	color = Qt::black;
     }
     QColor color;
     unsigned short width : 12;
