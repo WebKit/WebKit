@@ -9,8 +9,8 @@
 
 @interface NSView (WebExtras)
 
-// Finds the first superview with the provided name. Returns nil if none is found.
-- (NSView *) _web_superviewWithName:(NSString *)viewName;
+// Returns the nearest enclosing view of the given class, or nil if none.
+- (NSView *)_web_superviewOfClass:(Class)class;
 
 // Returns the first WebView superview. Only works if self is the WebView's document view.
 - (WebView *)_web_parentWebView;

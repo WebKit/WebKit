@@ -50,11 +50,11 @@ static NSImage *image = nil;
 - (void)drawRect:(NSRect)rect {
     WebView *webView;
     WebController *webController;
-    
+
     [super drawRect:rect];
     if(!errorSent){
         errorSent = YES;
-        webView = (WebView *)[self _web_superviewWithName:@"WebView"];
+        webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
         webController = [webView controller];
         [[webController policyHandler] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }

@@ -22,17 +22,17 @@
 
 @implementation NSView (WebExtras)
 
-- (NSView *) _web_superviewWithName:(NSString *)viewName
+- (NSView *)_web_superviewOfClass:(Class)class
 {
     NSView *view;
-    
+
     view = self;
-    while(view){
-        view = [view superview];
-        if([[view className] isEqualToString:viewName]){
+    while ((view = [view superview]) != nil) {
+        if ([view isKindOfClass:class]) {
             return view;
         }
     }
+
     return nil;
 }
 

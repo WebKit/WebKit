@@ -539,8 +539,8 @@
     
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
-    
-    WebView *webView = (WebView *)[self _web_superviewWithName:@"WebView"];
+
+    WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];
@@ -659,7 +659,7 @@
  
 - (void)layout
 {
-    NSRect superFrame = [[self _web_superviewWithName:@"WebView"] frame];
+    NSRect superFrame = [[self _web_superviewOfClass:[WebView class]] frame];
     
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
