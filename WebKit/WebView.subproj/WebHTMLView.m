@@ -3474,6 +3474,17 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+- (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
+{
+    if (style == nil || [style length] == 0 || ![self _canEdit])
+        return;
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
+        [bridge applyParagraphStyle:style withUndoAction:undoAction];
+    }
+}
+
 - (void)_toggleBold
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -3813,8 +3824,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return;
         
-    // FIXME 3675191: This doesn't work yet. Maybe it's blocked by 3654850, or maybe something other than
-    // just applyStyle: needs to be called for block-level attributes like this.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setTextAlign:CSSAlignmentValue];
     [self _applyStyleToSelection:style withUndoAction:undoAction];
@@ -4269,6 +4278,31 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
 }
 
+- (void)toggleBaseWritingDirection:(id)sender
+{
+    if (![self _canEdit])
+        return;
+    
+    NSString *direction;
+    switch ([[self _bridge] baseWritingDirectionForSelectionStart]) {
+        case NSWritingDirectionLeftToRight:
+            direction = @"RTL";
+            break;
+        case NSWritingDirectionRightToLeft:
+            direction = @"LTR";
+            break;
+        // The writingDirectionForSelectionStart method will never return "natural". It
+        // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
+        case NSWritingDirectionNatural:
+            ASSERT_NOT_REACHED();
+            break;
+    }
+
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setDirection:direction];
+    [self _applyParagraphStyleToSelection:style withUndoAction:WebUndoActionSetWritingDirection];
+}
+
 #if 0
 
 // CSS does not have a way to specify an outline font, which may make this difficult to implement.
@@ -4282,7 +4316,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 // === key binding methods that NSTextView has that don't have standard key bindings
 
 // These could be important.
-- (void)toggleBaseWritingDirection:(id)sender;
 - (void)toggleTraditionalCharacterShape:(id)sender;
 - (void)changeBaseWritingDirection:(id)sender;
 

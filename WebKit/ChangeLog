@@ -1,3 +1,17 @@
+2005-02-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3823109> WebKit should support -toggleBaseWritingDirection: (bidi editing support)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _applyParagraphStyleToSelection:withUndoAction:]): New function that calls through to
+        new feature that allows callers to force all properties in a style to be applied as block styles.
+        (-[WebHTMLView _alignSelectionUsingCSSValue:withUndoAction:]): Removed FIXME comment for something that has been fixed.
+        (-[WebHTMLView toggleBaseWritingDirection:]): Implemented.
+
 2005-02-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3977727> WebKit should use new SPI to support faster GIF rendering
