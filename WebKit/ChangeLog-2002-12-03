@@ -1,3 +1,8 @@
+2002-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+	* WebKitPrefix.h: Gratuitous change to make the prefix file
+	rebuild.
+
 2002-05-13  Chris Blumenberg  <cblu@apple.com>
 
 
