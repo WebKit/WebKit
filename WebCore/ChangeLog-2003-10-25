@@ -1,5 +1,15 @@
 2003-01-23  David Hyatt  <hyatt@apple.com>
 
+	Dump textslaves in the regression tests.
+	
+        Reviewed by rjw.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+        (write):
+
+2003-01-23  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3144763, inlines clear too many floats, and jump all the
 	way to the end of the lowest float instead of only moving as far
 	down as they have to in order to fit.

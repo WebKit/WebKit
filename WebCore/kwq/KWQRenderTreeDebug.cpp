@@ -31,6 +31,7 @@
 #include "khtmlview.h"
 #include "render_replaced.h"
 #include "render_table.h"
+#include "render_text.h"
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
@@ -39,6 +40,9 @@ using khtml::RenderLayer;
 using khtml::RenderObject;
 using khtml::RenderTableCell;
 using khtml::RenderWidget;
+using khtml::RenderText;
+using khtml::TextSlave;
+using khtml::TextSlaveArray;
 
 typedef khtml::RenderLayer::RenderLayerElement RenderLayerElement;
 typedef khtml::RenderLayer::RenderZTreeNode RenderZTreeNode;
@@ -48,6 +52,14 @@ static void writeLayers(QTextStream &ts, const RenderObject &o, int indent = 0);
 static QTextStream &operator<<(QTextStream &ts, const QRect &r)
 {
     return ts << "(" << r.x() << "," << r.y() << "," << r.width() << "," << r.height() << ")";
+}
+
+static QTextStream &operator<<(QTextStream &ts, const TextSlave& slave)
+{
+    ts << "TextSlave at pos (";
+    ts << slave.m_x << "," << slave.m_y << ") with width: " << slave.m_width;
+    ts << "\n"; 
+    return ts;
 }
 
 static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
@@ -89,6 +101,15 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     
     ts << o << "\n";
     
+    if (o.isText()) {
+        RenderText* text = (RenderText*)(&o);
+        TextSlaveArray slaves = text->textSlaves();
+        for (unsigned int i = 0; i < slaves.count(); i++) {
+            writeIndent(ts, indent+1);
+            ts << *slaves[i];
+        }
+    }
+
     for (RenderObject *child = o.firstChild(); child; child = child->nextSibling()) {
         if (child->layer()) {
             continue;
