@@ -7,5 +7,5 @@ layer at (0,0) size 800x90
         RenderText {TEXT} at (0,0) size 544x18
           text run at (0,0) width 544: "The following two DIVs should be the same width (resulting in a single 5 by 2 block)."
       RenderBlock {DIV} at (0,34) size 80x16 [bgcolor=#000080]
-        RenderBlock {DIV} at (0,0) size 80x16
+        RenderBlock {DIV} at (0,0) size 80x16 [border: none (32px solid #000000) none (32px solid #000000)]
       RenderBlock {DIV} at (0,50) size 80x16 [bgcolor=#000080]

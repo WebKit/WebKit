@@ -7,12 +7,12 @@ layer at (0,0) size 800x1175
         RenderText {TEXT} at (0,0) size 351x37
           text run at (0,0) width 351: "Safari 1.0 PRE width bug"
       RenderBlock (anonymous) at (0,58) size 784x72 [bgcolor=#000000]
-        RenderText {TEXT} at (0,0) size 101x18 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 101x18
           text run at (0,0) width 101: "As noted in my "
         RenderInline {A} at (0,0) size 28x18 [color=#0000EE]
           RenderText {TEXT} at (101,0) size 28x18
             text run at (101,0) width 28: "blog"
-        RenderText {TEXT} at (129,0) size 777x72 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (129,0) size 777x72
           text run at (129,0) width 8: ", "
           text run at (137,0) width 431: "in certain cases Safari will miscalculate the width of a PRE element. "
           text run at (568,0) width 206: "I think I've found the trigger. If a"
@@ -33,10 +33,10 @@ layer at (0,0) size 800x1175
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99]
+              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 160x15
                     text run at (7,37) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -52,7 +52,7 @@ layer at (0,0) size 800x1175
                 text run at (342,1) width 142: "triggers the width bug."
       RenderBlock (anonymous) at (0,394) size 784x18 [bgcolor=#000000]
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,431) size 784x28 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 2"
@@ -60,10 +60,10 @@ layer at (0,0) size 800x1175
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99]
+              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 96x18 [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 96x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 96x15
                     text run at (7,37) width 96: " D  M  TWJFS"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -85,7 +85,7 @@ layer at (0,0) size 800x1175
                   text run at (0,18) width 97: "nested element."
       RenderBlock (anonymous) at (0,648) size 784x18 [bgcolor=#000000]
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,685) size 784x28 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 3"
@@ -93,10 +93,10 @@ layer at (0,0) size 800x1175
         RenderTableSection {TBODY} at (0,0) size 0x155
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x151 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 174x149 [bgcolor=#CCCC99]
+              RenderBlock {PRE} at (1,1) size 174x149 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {TEXT} at (7,7) size 96x15
                   text run at (7,7) width 96: "        2003"
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,22) size 160x15
                     text run at (7,22) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,52) size 160x90
@@ -113,7 +113,7 @@ layer at (0,0) size 800x1175
                 text run at (1,19) width 60: "triggered."
       RenderBlock (anonymous) at (0,887) size 784x18 [bgcolor=#000000]
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,924) size 784x28 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 4"
@@ -121,12 +121,12 @@ layer at (0,0) size 800x1175
         RenderTableSection {TBODY} at (0,0) size 0x170
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 176x166 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99]
+              RenderBlock {PRE} at (1,1) size 174x164 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderInline {SPAN} at (0,0) size 96x15 [bgcolor=#000000]
                   RenderText {TEXT} at (7,7) size 96x15
                     text run at (7,7) width 96: "        2003"
                 RenderText {TEXT} at (0,0) size 0x0
-                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 160x18 [bgcolor=#000000] [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {TEXT} at (7,37) size 160x15
                     text run at (7,37) width 160: " D  M  T  W  J  F  S"
                 RenderText {TEXT} at (7,67) size 160x90
@@ -144,5 +144,5 @@ layer at (0,0) size 800x1175
                 text run at (285,19) width 292: "a nested element (in this case, another SPAN)."
       RenderBlock (anonymous) at (0,1141) size 784x18 [bgcolor=#000000]
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

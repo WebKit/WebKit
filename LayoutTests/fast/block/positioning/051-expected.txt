@@ -98,7 +98,7 @@ layer at (0,0) size 800x5269 layerType: foreground only
         RenderText {TEXT} at (0,0) size 349x18
           text run at (0,0) width 349: "Using assumed default value of z-index (may not pass):"
 layer at (24,147) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,126) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,126) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -140,7 +140,7 @@ layer at (234,157) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "1"
 layer at (24,783) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,762) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,762) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -154,7 +154,7 @@ layer at (234,1193) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,1419) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,1398) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,1398) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -168,7 +168,7 @@ layer at (234,1829) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,2055) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,2034) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,2034) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -187,7 +187,7 @@ layer at (434,2265) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "3"
 layer at (24,2691) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,2670) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,2670) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -209,7 +209,7 @@ layer at (384,3051) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "4"
 layer at (24,3327) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,3306) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,3306) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -235,7 +235,7 @@ layer at (384,3687) size 200x200
     RenderText zI: 9 {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "4"
 layer at (24,3963) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,3942) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,3942) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
@@ -252,7 +252,7 @@ layer at (234,4373) size 200x200
     RenderText {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "5"
 layer at (24,4633) size 620x620
-  RenderBlock (relative positioned) {DIV} at (16,4612) size 620x620
+  RenderBlock (relative positioned) {DIV} at (16,4612) size 620x620 [border: (10px solid #000000)]
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0

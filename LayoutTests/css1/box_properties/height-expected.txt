@@ -12,22 +12,22 @@ layer at (0,0) size 800x978
           text run at (128,0) width 32: "px;}"
           text run at (0,15) width 136: ".two {height: 100"
           text run at (136,15) width 32: "px;}"
-      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,106) size 784x50 [bgcolor=#000000]
         RenderImage {IMG} at (0,0) size 50x50
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#CCCCCC]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,172) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 275x18
           text run at (0,0) width 275: "The square above should be fifty pixels tall."
       RenderBlock (anonymous) at (0,206) size 784x100 [bgcolor=#000000]
         RenderImage {IMG} at (0,0) size 100x100
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#CCCCCC]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,322) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 335x18
           text run at (0,0) width 335: "The square above should be 100 pixels tall and wide."
       RenderBlock (anonymous) at (0,356) size 784x100 [bgcolor=#000000]
         RenderImage {IMG} at (0,0) size 30x100
-        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#CCCCCC]
+        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,472) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 784x36
           text run at (0,0) width 619: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50"
@@ -38,18 +38,18 @@ layer at (0,0) size 800x978
             text run at (116,20) width 48: "height"
         RenderText {TEXT} at (164,18) size 66x18
           text run at (164,18) width 66: " property)."
-      RenderTable {TABLE} at (0,524) size 784x438 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,524) size 784x438 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x436
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,218) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,218) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x410 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x410 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (4,4) size 762x50
                 RenderImage {IMG} at (0,0) size 50x50
                 RenderText {TEXT} at (0,0) size 0x0

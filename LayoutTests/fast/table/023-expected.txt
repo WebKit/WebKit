@@ -6,30 +6,30 @@ layer at (0,0) size 800x740
       RenderTable {TABLE} at (0,0) size 784x80
         RenderTableSection {TBODY} at (0,0) size 0x80
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,29) size 704x22 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,29) size 704x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {TEXT} at (2,2) size 8x18
                 text run at (2,2) width 8: "1"
-            RenderTableCell {TD} at (708,2) size 60x76 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (708,2) size 60x76 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {TEXT} at (2,2) size 56x72
                 text run at (2,2) width 53: "See, this"
                 text run at (2,20) width 33: "is the"
                 text run at (2,38) width 56: "problem."
                 text run at (2,56) width 49: "It will..."
-            RenderTableCell {TD} at (770,29) size 12x22 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (770,29) size 12x22 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
               RenderText {TEXT} at (2,2) size 8x18
                 text run at (2,2) width 8: "3"
       RenderBlock {P} at (0,96) size 784x0
       RenderTable {TABLE} at (0,96) size 784x196
         RenderTableSection {TBODY} at (0,0) size 0x196
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 780x192 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 780x192 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 776x188
                 RenderTableSection {TBODY} at (0,0) size 0x188
                   RenderTableRow {TR} at (0,0) size 0x0
-                    RenderTableCell {TD} at (2,83) size 696x22 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,83) size 696x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 8x18
                         text run at (2,2) width 8: "1"
-                    RenderTableCell {TD} at (700,2) size 60x184 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (700,2) size 60x184 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 56x180
                         text run at (2,2) width 53: "See, this"
                         text run at (2,20) width 33: "is the"
@@ -41,21 +41,21 @@ layer at (0,0) size 800x740
                         text run at (2,128) width 53: "See, this"
                         text run at (2,146) width 33: "is the"
                         text run at (2,164) width 56: "problem."
-                    RenderTableCell {TD} at (762,83) size 12x22 [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (762,83) size 12x22 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 8x18
                         text run at (2,2) width 8: "3"
       RenderBlock {P} at (0,308) size 784x0
       RenderTable {TABLE} at (0,308) size 515x196
         RenderTableSection {TBODY} at (0,0) size 0x196
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 511x192 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 511x192 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 507x188
                 RenderTableSection {TBODY} at (0,0) size 0x188
                   RenderTableRow {TR} at (0,0) size 0x0
-                    RenderTableCell {TD} at (2,83) size 427x22 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,83) size 427x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 8x18
                         text run at (2,2) width 8: "1"
-                    RenderTableCell {TD} at (431,2) size 60x184 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (431,2) size 60x184 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 56x180
                         text run at (2,2) width 53: "See, this"
                         text run at (2,20) width 33: "is the"
@@ -67,22 +67,22 @@ layer at (0,0) size 800x740
                         text run at (2,128) width 53: "See, this"
                         text run at (2,146) width 33: "is the"
                         text run at (2,164) width 56: "problem."
-                    RenderTableCell {TD} at (493,83) size 12x22 [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (493,83) size 12x22 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
                       RenderText {TEXT} at (2,2) size 8x18
                         text run at (2,2) width 8: "3"
       RenderBlock {P} at (0,520) size 784x0
       RenderTable {TABLE} at (0,520) size 515x196
         RenderTableSection {TBODY} at (0,0) size 0x196
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 511x192 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 511x192 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 507x188
                 RenderTable {TABLE} at (0,0) size 507x188
                   RenderTableSection {TBODY} at (0,0) size 0x188
                     RenderTableRow {TR} at (0,0) size 0x0
-                      RenderTableCell {TD} at (2,83) size 427x22 [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (2,83) size 427x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 8x18
                           text run at (2,2) width 8: "1"
-                      RenderTableCell {TD} at (431,2) size 60x184 [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (431,2) size 60x184 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 56x180
                           text run at (2,2) width 53: "See, this"
                           text run at (2,20) width 33: "is the"
@@ -94,7 +94,7 @@ layer at (0,0) size 800x740
                           text run at (2,128) width 53: "See, this"
                           text run at (2,146) width 33: "is the"
                           text run at (2,164) width 56: "problem."
-                      RenderTableCell {TD} at (493,83) size 12x22 [r=0 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (493,83) size 12x22 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 8x18
                           text run at (2,2) width 8: "3"
       RenderBlock {P} at (0,732) size 784x0

@@ -221,6 +221,10 @@ public:
     	return width==o.width && style==o.style && color==o.color;
     }
 
+    bool operator!=(const BorderValue& o) const
+    {
+        return !(*this == o);
+    }
 };
 
 class OutlineValue : public BorderValue

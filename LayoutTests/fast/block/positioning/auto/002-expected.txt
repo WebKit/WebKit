@@ -12,7 +12,7 @@ layer at (0,0) size 800x78
           text run at (559,18) width 191: "x100, and there should be 100"
           text run at (0,36) width 322: "pixels of padding on the right side of the box stack."
 layer at (8,78) size 240x340
-  RenderBlock (positioned) {DIV} at (8,78) size 240x340
+  RenderBlock (positioned) {DIV} at (8,78) size 240x340 [border: (20px solid #000000)]
     RenderBlock {DIV} at (20,70) size 100x0
 layer at (128,198) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]

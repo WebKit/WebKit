@@ -6,10 +6,10 @@ layer at (0,0) size 800x285
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 245x18
           text run at (0,0) width 245: "These <h1>s should all be left-aligned:"
-      RenderBlock {H1} at (0,39) size 784x43
+      RenderBlock {H1} at (0,39) size 784x43 [border: (3px solid #FF0000)]
         RenderText {TEXT} at (3,3) size 96x37
           text run at (3,3) width 96: "sample"
-      RenderBlock {H1} at (0,103) size 326x43
+      RenderBlock {H1} at (0,103) size 326x43 [border: (3px solid #FF0000)]
         RenderText {TEXT} at (3,3) size 96x37
           text run at (3,3) width 96: "sample"
       RenderBlock {P} at (0,167) size 784x18

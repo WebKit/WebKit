@@ -20,7 +20,7 @@ layer at (0,0) size 800x1264
                     RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,32) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,46) size 784x51 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 110x46
           RenderInline {SPAN} at (0,0) size 110x46
@@ -38,7 +38,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,109) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,123) size 784x78 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 596x74
           RenderInline {SPAN} at (0,0) size 596x74
@@ -54,7 +54,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,213) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,227) size 784x48 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 126x43
           RenderInline {SPAN} at (0,0) size 126x43
@@ -74,7 +74,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,339) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,353) size 784x24 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 128x15
           RenderInline {SPAN} at (0,0) size 128x15
@@ -113,7 +113,7 @@ layer at (0,0) size 800x1264
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,449) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,463) size 784x0 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -161,39 +161,39 @@ layer at (0,0) size 800x1264
                     text run at (0,108) width 45: "Seats:"
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,0) size 0x0
-                RenderTable {TABLE} at (1,127) size 604x46
+                RenderTable {TABLE} at (1,127) size 604x46 [border: (1px outset #808080)]
                   RenderTableSection {TBODY} at (1,1) size 0x44
                     RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
-                      RenderTableCell {TD} at (0,0) size 98x22 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 98x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 43x18
                           text run at (2,2) width 43: "Name"
-                      RenderTableCell {TD} at (98,0) size 37x22 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (98,0) size 37x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 33x18
                           text run at (2,2) width 33: "Seat"
-                      RenderTableCell {TD} at (135,0) size 78x22 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (135,0) size 78x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 45x18
                           text run at (2,2) width 45: "Status"
-                      RenderTableCell {TD} at (213,0) size 316x22 [bgcolor=#000000] [r=0 c=3 rs=1 cs=1]
+                      RenderTableCell {TD} at (213,0) size 316x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 36x18
                           text run at (2,2) width 36: "Type"
-                      RenderTableCell {TD} at (529,0) size 73x22 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
+                      RenderTableCell {TD} at (529,0) size 73x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 69x18
                           text run at (2,2) width 69: "Comment"
                     RenderTableRow {TR} at (0,0) size 0x0
-                      RenderTableCell {TD} at (0,22) size 98x22 [r=1 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 94x18
                           text run at (2,2) width 94: "HAO,SCOTT"
-                      RenderTableCell {TD} at (98,22) size 37x22 [r=1 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 29x18
                           text run at (2,2) width 18: "08"
                           text run at (20,2) width 11: "A"
-                      RenderTableCell {TD} at (135,22) size 78x22 [r=1 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 74x18
                           text run at (2,2) width 74: "confirmed "
-                      RenderTableCell {TD} at (213,22) size 316x22 [r=1 c=3 rs=1 cs=1]
+                      RenderTableCell {TD} at (213,22) size 316x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 312x18
                           text run at (2,2) width 312: "Non-Smoking, Window Seat, Preferred Seat"
-                      RenderTableCell {TD} at (529,22) size 73x22 [r=1 c=4 rs=1 cs=1]
+                      RenderTableCell {TD} at (529,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 604x18
@@ -206,7 +206,7 @@ layer at (0,0) size 800x1264
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,671) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,685) size 784x0 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -254,39 +254,39 @@ layer at (0,0) size 800x1264
                     text run at (0,108) width 45: "Seats:"
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,0) size 0x0
-                RenderTable {TABLE} at (1,127) size 493x46
+                RenderTable {TABLE} at (1,127) size 493x46 [border: (1px outset #808080)]
                   RenderTableSection {TBODY} at (1,1) size 0x44
                     RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
-                      RenderTableCell {TD} at (0,0) size 98x22 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 98x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 43x18
                           text run at (2,2) width 43: "Name"
-                      RenderTableCell {TD} at (98,0) size 37x22 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (98,0) size 37x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 33x18
                           text run at (2,2) width 33: "Seat"
-                      RenderTableCell {TD} at (135,0) size 78x22 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (135,0) size 78x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 45x18
                           text run at (2,2) width 45: "Status"
-                      RenderTableCell {TD} at (213,0) size 205x22 [bgcolor=#000000] [r=0 c=3 rs=1 cs=1]
+                      RenderTableCell {TD} at (213,0) size 205x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 36x18
                           text run at (2,2) width 36: "Type"
-                      RenderTableCell {TD} at (418,0) size 73x22 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
+                      RenderTableCell {TD} at (418,0) size 73x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 69x18
                           text run at (2,2) width 69: "Comment"
                     RenderTableRow {TR} at (0,0) size 0x0
-                      RenderTableCell {TD} at (0,22) size 98x22 [r=1 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 94x18
                           text run at (2,2) width 94: "HAO,SCOTT"
-                      RenderTableCell {TD} at (98,22) size 37x22 [r=1 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 28x18
                           text run at (2,2) width 18: "13"
                           text run at (20,2) width 10: "F"
-                      RenderTableCell {TD} at (135,22) size 78x22 [r=1 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 74x18
                           text run at (2,2) width 74: "confirmed "
-                      RenderTableCell {TD} at (213,22) size 205x22 [r=1 c=3 rs=1 cs=1]
+                      RenderTableCell {TD} at (213,22) size 205x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 201x18
                           text run at (2,2) width 201: "Non-Smoking, Window Seat"
-                      RenderTableCell {TD} at (418,22) size 73x22 [r=1 c=4 rs=1 cs=1]
+                      RenderTableCell {TD} at (418,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 493x18
@@ -299,7 +299,7 @@ layer at (0,0) size 800x1264
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,893) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,907) size 784x0 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -350,7 +350,7 @@ layer at (0,0) size 800x1264
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1033) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1047) size 784x54 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 196x49
           RenderInline {SPAN} at (0,0) size 0x0
@@ -375,7 +375,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1113) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1127) size 784x24 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 182x15
           RenderInline {SPAN} at (0,0) size 182x17
@@ -393,7 +393,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1163) size 784x2 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1177) size 784x24 [bgcolor=#000000]
         RenderInline {SPAN} at (0,0) size 281x15
           RenderInline {SPAN} at (0,0) size 281x15
@@ -408,7 +408,7 @@ layer at (0,0) size 800x1264
             RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1213) size 784x30 [bgcolor=#000000]
-        RenderBlock {HR} at (0,0) size 784x2
+        RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,15) size 784x15
           RenderText {TEXT} at (0,0) size 204x15
             text run at (0,0) width 204: "This itinerary is subject to change. "
@@ -460,27 +460,27 @@ layer at (23,235) size 24x12
     RenderImage {IMG} at (0,24) size 24x24
     RenderText {TEXT} at (0,0) size 0x0
 layer at (28,268) size 529x52
-  RenderTable {TABLE} at (0,0) size 529x52
+  RenderTable {TABLE} at (0,0) size 529x52 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 0x50
       RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
-        RenderTableCell {TD} at (2,2) size 95x22 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (2,2) size 95x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 36x18
             text run at (2,2) width 36: "Type"
-        RenderTableCell {TD} at (99,2) size 45x22 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+        RenderTableCell {TD} at (99,2) size 45x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 28x18
             text run at (2,2) width 28: "City"
-        RenderTableCell {TD} at (146,2) size 379x22 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+        RenderTableCell {TD} at (146,2) size 379x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 47x18
             text run at (2,2) width 47: "Phone"
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
-        RenderTableCell {TD} at (2,26) size 95x22 [r=2 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (2,26) size 95x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 91x18
             text run at (2,2) width 91: "Travel Agent"
-        RenderTableCell {TD} at (99,26) size 45x22 [r=2 c=1 rs=1 cs=1]
+        RenderTableCell {TD} at (99,26) size 45x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 41x18
             text run at (2,2) width 41: "(LAX)"
-        RenderTableCell {TD} at (146,26) size 379x22 [r=2 c=2 rs=1 cs=1]
+        RenderTableCell {TD} at (146,26) size 379x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 375x18
             text run at (2,2) width 141: "RQ0/818 990-4053-"
             text run at (143,2) width 210: "PLAZA TRAVEL - 05838276-"

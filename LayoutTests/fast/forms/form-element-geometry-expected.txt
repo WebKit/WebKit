@@ -16,23 +16,23 @@ layer at (0,0) size 800x621
         RenderTableSection {TBODY} at (0,0) size 0x28
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 56x22
+              RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x18
                   RenderSubmitButton {INPUT} at (2,2) size 52x18
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 66x22
+              RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x18
                   RenderSelect {SELECT} at (2,2) size 62x18
               RenderBlock (anonymous) at (1,23) size 66x0
                 RenderInline {FONT} at (0,0) size 0x0
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x17
+              RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x13
                   RenderRadioButton {INPUT} at (2,2) size 12x13
               RenderBlock (anonymous) at (1,18) size 16x0
                 RenderInline {FONT} at (0,0) size 0x0
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x16
+              RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
                   RenderCheckBox {INPUT} at (2,2) size 12x12
               RenderBlock (anonymous) at (1,17) size 16x0
@@ -41,50 +41,50 @@ layer at (0,0) size 800x621
         RenderTableSection {TBODY} at (0,0) size 0x28
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 56x22
+              RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderSubmitButton {INPUT} at (2,2) size 52x18
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 66x22
+              RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderSelect {SELECT} at (2,2) size 62x18
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x17
+              RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderRadioButton {INPUT} at (2,2) size 12x13
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x16
+              RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderCheckBox {INPUT} at (2,2) size 12x12
       RenderTable {TABLE} at (0,198) size 172x28
         RenderTableSection {TBODY} at (0,0) size 0x28
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 56x22
+              RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x13
                   RenderSubmitButton {INPUT} at (2,2) size 52x18
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 66x22
+              RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x13
                   RenderSelect {SELECT} at (2,2) size 62x18
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x17
+              RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
                   RenderRadioButton {INPUT} at (2,2) size 12x13
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 16x16
+              RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
                   RenderCheckBox {INPUT} at (2,2) size 12x12
       RenderTable {TABLE} at (0,226) size 555x68
         RenderTableSection {TBODY} at (0,0) size 0x68
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 84x25 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 82x23
+              RenderBlock {DIV} at (1,1) size 82x23 [border: (2px solid #0000FF)]
                 RenderLineEdit {INPUT} at (2,2) size 78x19
             RenderTableCell {TD} at (88,2) size 44x64 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 42x62
+              RenderBlock {DIV} at (1,1) size 42x62 [border: (2px solid #0000FF)]
                 RenderSelect {SELECT} at (2,2) size 38x58
             RenderTableCell {TD} at (134,2) size 240x24 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 238x22
+              RenderBlock {DIV} at (1,1) size 238x22 [border: (2px solid #0000FF)]
                 RenderFileButton {INPUT} at (2,2) size 234x18
             RenderTableCell {TD} at (376,2) size 177x38 [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 175x36
+              RenderBlock {DIV} at (1,1) size 175x36 [border: (2px solid #0000FF)]
                 RenderTextArea {TEXTAREA} at (4,4) size 167x28
       RenderBlock {H2} at (0,313) size 784x28
         RenderText {TEXT} at (0,0) size 200x28

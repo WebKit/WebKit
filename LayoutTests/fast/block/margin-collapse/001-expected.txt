@@ -6,7 +6,7 @@ layer at (0,0) size 800x483
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 504x18
           text run at (0,0) width 504: "The following two columns should be pixel perfect identical with no red visible."
-      RenderTable {TABLE} at (0,34) size 78x383
+      RenderTable {TABLE} at (0,34) size 78x383 [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 0x377
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 36x377 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
@@ -24,7 +24,7 @@ layer at (0,0) size 800x483
                   RenderBlock {DIV} at (0,0) size 36x59 [bgcolor=#00FF00]
                     RenderBlock {DIV} at (0,0) size 36x0 [bgcolor=#FF0000]
                     RenderBlock (anonymous) at (0,0) size 36x59 [bgcolor=#000000]
-                      RenderText {TEXT} at (0,0) size 33x59 [bgcolor=#00FF00]
+                      RenderText {TEXT} at (0,0) size 33x59
                         text run at (0,0) width 33: "B"
                 RenderBlock {DIV} at (0,218) size 36x59 [bgcolor=#00FFFF]
                   RenderText {TEXT} at (0,0) size 33x59

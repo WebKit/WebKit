@@ -25,7 +25,7 @@ layer at (0,0) size 800x4169
           text run at (238,126) width 140: "px/200% sans-serif;}"
           text run at (0,140) width 301: ".ten {font: normal 400 80%/2.5 sans-serif;}"
           text run at (0,154) width 266: "SPAN.color {background-color: silver;}"
-      RenderBlock {HR} at (0,206) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,206) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock {P} at (0,220) size 784x14 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 706x14
           text run at (0,0) width 285: "This element is unstyled, and should inherit a font-size of 12"
@@ -133,18 +133,18 @@ layer at (0,0) size 800x4169
             text run at (51,124) width 730: "px, respectively). The text should have a silver background. The background color has been set"
             text run at (0,178) width 679: "on an inline element and should therefore only cover the text, not the interline spacing."
         RenderText {TEXT} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,1759) size 784x2394 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,1759) size 784x2394 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x2392
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,1196) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,1196) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x2366 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x2366 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x36
                 RenderText {TEXT} at (0,0) size 732x36
                   text run at (0,0) width 379: "This element is unstyled, and should inherit a font-size of 12"

@@ -64,7 +64,7 @@ layer at (0,0) size 800x4035
           text run at (248,750) width 32: "in;}"
           text run at (0,765) width 112: " color: maroon"
           text run at (0,780) width 208: "P.twentyfour {color: red;}"
-      RenderBlock {HR} at (0,857) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,857) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock {P} at (0,875) size 784x18 [color=#008000] [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 485x18
           text run at (0,0) width 485: "This paragraph should be green, because only the rotation should be ignored."
@@ -89,23 +89,23 @@ layer at (0,0) size 800x4035
       RenderBlock {P} at (0,1063) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 526x18
           text run at (0,0) width 526: "This paragraph should have a white background, since keywords cannot be quoted."
-      RenderBlock {P} at (0,1097) size 784x42 [bgcolor=#000000]
+      RenderBlock {P} at (0,1097) size 784x42 [bgcolor=#000000] [border: (3px solid #000000)]
         RenderText {TEXT} at (3,3) size 756x36
           text run at (3,3) width 643: "This paragraph should have a medium-width border around it (the same as the next three paragraphs). "
           text run at (646,3) width 113: "This should cause"
           text run at (3,21) width 318: "the user agent to use the default value of 'medium'."
-      RenderBlock {P} at (0,1155) size 784x42 [bgcolor=#000000]
+      RenderBlock {P} at (0,1155) size 784x42 [bgcolor=#000000] [border: (3px solid #000000)]
         RenderText {TEXT} at (3,3) size 740x36
           text run at (3,3) width 740: "This paragraph should have a medium-width border around it (the same as the previous and the next two paragraphs),"
           text run at (3,21) width 228: "because the border-width is invalid. "
           text run at (231,21) width 435: "This should cause the user agent to use the default value of 'medium'."
-      RenderBlock {P} at (0,1213) size 784x60 [bgcolor=#000000]
+      RenderBlock {P} at (0,1213) size 784x60 [bgcolor=#000000] [border: (3px solid #000000)]
         RenderText {TEXT} at (3,3) size 754x54
           text run at (3,3) width 740: "This paragraph should have a medium-width border around it (the same as the next and the previous two paragraphs),"
           text run at (3,21) width 588: "because the border-width units are invalid, and therefore the border-width should be ignored. "
           text run at (591,21) width 166: "This should cause the user"
           text run at (3,39) width 265: "agent to use the default value of 'medium'."
-      RenderBlock {P} at (0,1289) size 784x60 [bgcolor=#000000]
+      RenderBlock {P} at (0,1289) size 784x60 [bgcolor=#000000] [border: (3px solid #000000)]
         RenderText {TEXT} at (3,3) size 767x54
           text run at (3,3) width 743: "This paragraph should have a medium-width border around it (the same as the previous three paragraphs), because the"
           text run at (3,21) width 547: "border-width does not have any value to go with its pixel unit, and is therefore invalid. "
@@ -271,18 +271,18 @@ layer at (0,0) size 800x4035
         RenderText {TEXT} at (0,0) size 751x36
           text run at (0,0) width 751: "This paragraph should be black, because the color declaration after the previous ruleset should be considered part of the"
           text run at (0,18) width 616: "selector for this ruleset, and this ruleset therefore has an invalid selector and should not be applied."
-      RenderTable {TABLE} at (0,2437) size 784x1582 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,2437) size 784x1582 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x1580
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,790) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,790) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x1554 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x1554 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x18 [color=#008000]
                 RenderText {TEXT} at (0,0) size 485x18
                   text run at (0,0) width 485: "This paragraph should be green, because only the rotation should be ignored."
@@ -307,23 +307,23 @@ layer at (0,0) size 800x4035
               RenderBlock {P} at (4,192) size 762x18
                 RenderText {TEXT} at (0,0) size 526x18
                   text run at (0,0) width 526: "This paragraph should have a white background, since keywords cannot be quoted."
-              RenderBlock {P} at (4,226) size 762x42
+              RenderBlock {P} at (4,226) size 762x42 [border: (3px solid #000000)]
                 RenderText {TEXT} at (3,3) size 756x36
                   text run at (3,3) width 643: "This paragraph should have a medium-width border around it (the same as the next three paragraphs). "
                   text run at (646,3) width 113: "This should cause"
                   text run at (3,21) width 318: "the user agent to use the default value of 'medium'."
-              RenderBlock {P} at (4,284) size 762x42
+              RenderBlock {P} at (4,284) size 762x42 [border: (3px solid #000000)]
                 RenderText {TEXT} at (3,3) size 740x36
                   text run at (3,3) width 740: "This paragraph should have a medium-width border around it (the same as the previous and the next two paragraphs),"
                   text run at (3,21) width 228: "because the border-width is invalid. "
                   text run at (231,21) width 435: "This should cause the user agent to use the default value of 'medium'."
-              RenderBlock {P} at (4,342) size 762x60
+              RenderBlock {P} at (4,342) size 762x60 [border: (3px solid #000000)]
                 RenderText {TEXT} at (3,3) size 754x54
                   text run at (3,3) width 740: "This paragraph should have a medium-width border around it (the same as the next and the previous two paragraphs),"
                   text run at (3,21) width 588: "because the border-width units are invalid, and therefore the border-width should be ignored. "
                   text run at (591,21) width 166: "This should cause the user"
                   text run at (3,39) width 265: "agent to use the default value of 'medium'."
-              RenderBlock {P} at (4,418) size 762x60
+              RenderBlock {P} at (4,418) size 762x60 [border: (3px solid #000000)]
                 RenderText {TEXT} at (3,3) size 751x54
                   text run at (3,3) width 743: "This paragraph should have a medium-width border around it (the same as the previous three paragraphs), because the"
                   text run at (3,21) width 547: "border-width does not have any value to go with its pixel unit, and is therefore invalid. "

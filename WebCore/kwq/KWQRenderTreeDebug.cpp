@@ -43,6 +43,8 @@ using khtml::RenderText;
 using khtml::RenderCanvas;
 using khtml::InlineTextBox;
 using khtml::InlineTextBoxArray;
+using khtml::BorderValue;
+using khtml::EBorderStyle;
 
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const QRect& paintDirtyRect, int indent=0);
@@ -57,6 +59,47 @@ static void writeIndent(QTextStream &ts, int indent)
     for (int i = 0; i != indent; ++i) {
         ts << "  ";
     }
+}
+
+static void printBorderStyle(QTextStream &ts, const RenderObject &o, const EBorderStyle borderStyle)
+{
+    switch (borderStyle) {
+        case khtml::BNONE:
+            ts << "none";
+            break;
+        case khtml::BHIDDEN:
+            ts << "hidden";
+            break;
+        case khtml::INSET:
+            ts << "inset";
+            break;
+        case khtml::GROOVE:
+            ts << "groove";
+            break;
+        case khtml::RIDGE:
+            ts << "ridge";
+            break;
+        case khtml::OUTSET:
+            ts << "outset";
+            break;
+        case khtml::DOTTED:
+            ts << "dotted";
+            break;
+        case khtml::DASHED:
+            ts << "dashed";
+            break;
+        case khtml::SOLID:
+            ts << "solid";
+            break;
+        case khtml::DOUBLE:
+            ts << "double";
+            break;
+        case khtml::APPLEAQUA:
+            ts << "aqua";
+            break;
+    }
+    
+    ts << " ";
 }
 
 static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
@@ -77,16 +120,77 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     QRect r(o.xPos(), o.yPos(), o.width(), o.height());
     ts << " " << r;
     
-    if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
-        ts << " [color=" << o.style()->color().name() << "]";
-    if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()))
-        ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
-
+    if (!o.isText()) {
+        if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
+            ts << " [color=" << o.style()->color().name() << "]";
+        if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()))
+            ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
+    
+        if (o.borderTop() || o.borderRight() || o.borderBottom() || o.borderLeft()) {
+            ts << " [border:";
+            
+            BorderValue prevBorder;
+            if (o.style()->borderTop() != prevBorder) {
+                prevBorder = o.style()->borderTop();
+                if (!o.borderTop())
+                    ts << " none";
+                else {
+                    ts << " (" << o.borderTop() << "px ";
+                    printBorderStyle(ts, o, o.style()->borderTopStyle());
+                    QColor col = o.style()->borderTopColor();
+                    if (!col.isValid()) col = o.style()->color();
+                    ts << col.name() << ")";
+                }
+            }
+            
+            if (o.style()->borderRight() != prevBorder) {
+                prevBorder = o.style()->borderRight();
+                if (!o.borderRight())
+                    ts << " none";
+                else {
+                    ts << " (" << o.borderRight() << "px ";
+                    printBorderStyle(ts, o, o.style()->borderRightStyle());
+                    QColor col = o.style()->borderRightColor();
+                    if (!col.isValid()) col = o.style()->color();
+                    ts << col.name() << ")";
+                }
+            }
+            
+            if (o.style()->borderBottom() != prevBorder) {
+                prevBorder = o.style()->borderBottom();
+                if (!o.borderBottom())
+                    ts << " none";
+                else {
+                    ts << " (" << o.borderBottom() << "px ";
+                    printBorderStyle(ts, o, o.style()->borderBottomStyle());
+                    QColor col = o.style()->borderBottomColor();
+                    if (!col.isValid()) col = o.style()->color();
+                    ts << col.name() << ")";
+                }
+            }
+            
+            if (o.style()->borderLeft() != prevBorder) {
+                prevBorder = o.style()->borderLeft();
+                if (!o.borderLeft())
+                    ts << " none";
+                else {                    
+                    ts << " (" << o.borderLeft() << "px ";
+                    printBorderStyle(ts, o, o.style()->borderLeftStyle());
+                    QColor col = o.style()->borderLeftColor();
+                    if (!col.isValid()) col = o.style()->color();
+                    ts << col.name() << ")";
+                }
+            }
+            
+            ts << "]";
+        }
+    }
+    
     if (o.isTableCell()) {
         const RenderTableCell &c = static_cast<const RenderTableCell &>(o);
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
-    
+
     return ts;
 }
 

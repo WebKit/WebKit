@@ -26,7 +26,7 @@ layer at (0,0) size 800x777
           text run at (440,90) width 152: "em; margin-right: 2"
           text run at (592,90) width 24: "em;"
           text run at (0,105) width 480: "             color: black; background: yellow; clear: none;}"
-      RenderBlock {HR} at (0,179) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,179) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,193) size 192x116 [color=#FFFFFF] [bgcolor=#008000]
         RenderBlock {H1} at (8,8) size 176x22 [bgcolor=#000000]
           RenderText {TEXT} at (0,0) size 85x22
@@ -91,18 +91,18 @@ layer at (0,0) size 800x777
           RenderText {TEXT} at (0,0) size 512x36
             text run at (0,0) width 512: "The top of the yellow rectangle (to which this paragraph belongs) should be"
             text run at (0,18) width 331: "vertically aligned with the top of the green rectangle."
-      RenderTable {TABLE} at (192,414) size 592x347 [bgcolor=#000000]
+      RenderTable {TABLE} at (192,414) size 592x347 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x345
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 590x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 590x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,172) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,172) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 578x319 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 578x319 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (floating) {DIV} at (4,4) size 192x116 [color=#FFFFFF] [bgcolor=#008000]
                 RenderBlock {H1} at (8,8) size 176x22 [bgcolor=#000000]
                   RenderText {TEXT} at (0,0) size 85x22

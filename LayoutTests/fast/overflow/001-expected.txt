@@ -14,7 +14,7 @@ layer at (0,0) size 800x256
           text run at (362,0) width 407: "Will this happen? I'm really not sure. This is a test of some of the"
           text run at (76,18) width 443: "strange behavior you will find when using overflow auto or scroll, etc."
 layer at (84,108) size 708x104 clip at (86,110) size 704x100
-  RenderBlock {DIV} at (76,100) size 708x104
+  RenderBlock {DIV} at (76,100) size 708x104 [border: (2px solid #000000)]
     RenderText {TEXT} at (2,2) size 143x18
       text run at (2,2) width 143: "Does the float intrude?"
     RenderBlock (floating) {SPAN} at (606,2) size 100x400 [bgcolor=#800080]

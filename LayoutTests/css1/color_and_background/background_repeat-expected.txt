@@ -22,7 +22,7 @@ layer at (0,0) size 888x1838
           text run at (0,165) width 248: "        background-color: red;}"
           text run at (0,180) width 704: ".nine {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
           text run at (0,195) width 240: "       background-color: red;}"
-      RenderBlock {HR} at (0,272) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,272) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock {P} at (0,290) size 784x54 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 784x18
           text run at (0,0) width 784: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default for"
@@ -149,18 +149,18 @@ layer at (0,0) size 888x1838
           text run at (116,72) width 241: "This ought to be enough text, though. "
           text run at (357,72) width 395: "A background color is present, although if it is visible, then the"
           text run at (0,90) width 255: "image may not have been tiled correctly."
-      RenderTable {TABLE} at (0,1046) size 784x776 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,1046) size 784x776 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x774
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,387) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,387) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x748 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x748 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x54
                 RenderText {TEXT} at (0,0) size 762x36
                   text run at (0,0) width 762: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default"

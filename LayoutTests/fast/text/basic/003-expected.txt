@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x8
   RenderBlock {HTML} at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
-      RenderBlock (floating) {P} at (0,16) size 718x22
+      RenderBlock (floating) {P} at (0,16) size 718x22 [border: (2px solid #0000FF)]
         RenderText {TEXT} at (2,2) size 714x18
           text run at (2,2) width 338: "There should be 12"
           text run at (340,2) width 376: "px of letter spacing."

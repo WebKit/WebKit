@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x345
   RenderBlock {HTML} at (0,0) size 800x345
     RenderBody {BODY} at (0,0) size 800x345
-      RenderBlock {DIV} at (0,0) size 800x121 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,0) size 800x121 [bgcolor=#008000] [border: (1px solid #FFFFFF) none]
         RenderBlock {H1} at (0,51) size 800x70 [color=#FFFFFF] [bgcolor=#000000]
         RenderBlock {DIV} at (0,171) size 800x0 [bgcolor=#000000]
           RenderBlock {UL} at (0,0) size 800x0
-            RenderBlock (floating) {LI} at (0,0) size 455x22
+            RenderBlock (floating) {LI} at (0,0) size 455x22 [border: (2px solid #0000FF)]
               RenderText {TEXT} at (2,2) size 451x18
                 text run at (2,2) width 451: "There should be a gap between this float and the green rectangle above."
-      RenderBlock {DIV} at (0,221) size 800x54 [bgcolor=#DDDDDD]
+      RenderBlock {DIV} at (0,221) size 800x54 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 32x32 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (2,2) size 796x0 [bgcolor=#000000]
-          RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#DDDDDD]
+          RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {DIV} at (2,34) size 796x0 [bgcolor=#000000]
         RenderBlock (anonymous) at (2,34) size 796x18 [bgcolor=#000000]
-          RenderText {TEXT} at (0,0) size 483x18 [bgcolor=#DDDDDD]
+          RenderText {TEXT} at (0,0) size 483x18
             text run at (0,0) width 376: "This text should be inside a black rectangle and below the 2"
             text run at (376,0) width 107: "em white square."
-      RenderBlock {DIV} at (0,291) size 800x54 [bgcolor=#DDDDDD]
+      RenderBlock {DIV} at (0,291) size 800x54 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 32x32 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (2,2) size 796x0 [bgcolor=#000000]
-          RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#DDDDDD]
+          RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {DIV} at (2,34) size 796x0 [bgcolor=#000000]
         RenderBlock (anonymous) at (2,34) size 796x18 [bgcolor=#000000]
-          RenderText {TEXT} at (0,0) size 512x18 [bgcolor=#DDDDDD]
+          RenderText {TEXT} at (0,0) size 512x18
             text run at (0,0) width 405: "This text should also be inside a black rectangle and below the 2"
             text run at (405,0) width 107: "em white square."

@@ -18,7 +18,7 @@ layer at (0,0) size 802x1005
           text run at (0,60) width 552: ".four {margin-right: 25%; text-align: right; background-color: aqua;}"
           text run at (0,75) width 192: ".five {margin-right: -10"
           text run at (192,75) width 224: "px; background-color: aqua;}"
-      RenderBlock {HR} at (0,137) size 784x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,137) size 784x2 [bgcolor=#000000] [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (581,0) size 203x18
           text run at (581,0) width 203: "This element has a class of zero."
@@ -62,18 +62,18 @@ layer at (0,0) size 802x1005
           text run at (114,18) width 386: "In all other respects, however, the element should be normal. "
           text run at (500,18) width 278: "No styles have been applied to it besides the"
           text run at (0,36) width 303: "negative right margin and the background color."
-      RenderTable {TABLE} at (0,553) size 784x436 [bgcolor=#000000]
+      RenderTable {TABLE} at (0,553) size 784x436 [bgcolor=#000000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x434
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18 [bgcolor=#000000]
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,217) size 12x26 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,217) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x408 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x408 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x18 [bgcolor=#C0C0C0]
                 RenderText {TEXT} at (559,0) size 203x18
                   text run at (559,0) width 203: "This element has a class of zero."
