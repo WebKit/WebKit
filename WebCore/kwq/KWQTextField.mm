@@ -532,11 +532,14 @@
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
             lastSelectedRange.location = NSNotFound;
         }
+
         if (lastSelectedRange.location != NSNotFound) {
             [self setSelectedRange:lastSelectedRange];
         }
-
-        [self _KWQ_scrollFrameToVisible];
+        
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+            [self _KWQ_scrollFrameToVisible];
+        }
 
         QFocusEvent event(QEvent::FocusIn);
         const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);

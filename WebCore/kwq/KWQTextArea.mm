@@ -531,7 +531,9 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
             [self selectAll:nil];
         }
-        [self _KWQ_scrollFrameToVisible];
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+            [self _KWQ_scrollFrameToVisible];
+        }        
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
 	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);

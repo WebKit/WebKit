@@ -930,6 +930,23 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
     return partForNode(node)->nextKeyView(node, direction);
 }
 
+bool KWQKHTMLPart::currentEventIsMouseDownInWidget(QWidget *candidate)
+{
+    switch ([[NSApp currentEvent] type]) {
+        case NSLeftMouseDown:
+        case NSRightMouseDown:
+        case NSOtherMouseDown:
+            break;
+        default:
+            return NO;
+    }
+
+    NodeImpl *node = nodeForWidget(candidate);
+    ASSERT(node);
+    return partForNode(node)->nodeUnderMouse() == node;
+}
+
+
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 {
     if (d->m_doc && d->m_jscript) {

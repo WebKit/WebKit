@@ -139,6 +139,8 @@ public:
     NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
     
+    static bool currentEventIsMouseDownInWidget(QWidget *candidate);
+    
     static void setDocumentFocus(QWidget *);
     static void clearDocumentFocus(QWidget *);
     

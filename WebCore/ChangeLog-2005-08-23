@@ -1,3 +1,23 @@
+2003-08-08  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3362481 -- REGRESSION (89-90): clicking in a field causes 
+	page to move; esp. bad if the field moves out from under the mouse
+
+        Reviewed by Darin
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::currentEventIsMouseDownInWidget):
+	new method
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+	only scroll to reveal if currentEventIsMouseDownInWidget is false
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setHasFocus:]):
+	ditto
+
 === WebCore-92.1 ===
 
 2003-08-07  Darin Adler  <darin@apple.com>
