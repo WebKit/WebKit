@@ -24,12 +24,16 @@
  */
 
 #import "KWQClipboard.h"
+#import "KWQAssertions.h"
+#import "KWQKHTMLPart.h"
 #import "KWQStringList.h"
+#import "WebCoreGraphicsBridge.h"
 
 using DOM::DOMString;
 
-KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy)
-  : m_pasteboard([pasteboard retain]), m_forDragging(forDragging), m_policy(policy)
+KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part)
+  : m_pasteboard([pasteboard retain]), m_forDragging(forDragging),
+    m_dragImageElement(0), m_policy(policy), m_dragStarted(false), m_part(part)
 {
     m_changeCount = [m_pasteboard changeCount];
 }
@@ -44,9 +48,16 @@ bool KWQClipboard::isForDragging() const
     return m_forDragging;
 }
 
-void KWQClipboard::becomeNumb()
+void KWQClipboard::setAccessPolicy(AccessPolicy policy)
 {
-    m_policy = Numb;
+    // once you go numb, can never go back
+    ASSERT(m_policy != Numb || policy == Numb);
+    m_policy = policy;
+}
+
+KWQClipboard::AccessPolicy KWQClipboard::accessPolicy() const
+{
+    return m_policy;
 }
 
 // FIXME hardwired for now, will use UTI
@@ -249,28 +260,70 @@ QPoint KWQClipboard::dragLocation() const
     return m_dragLoc;
 }
 
-void KWQClipboard::setDragLocation(const QPoint &p)
-{
-    if (m_policy == Writable) {
-        m_dragLoc = p;
-    }
-}
-
 QPixmap KWQClipboard::dragImage() const
 {
     return m_dragImage;
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm)
+void KWQClipboard::setDragImage(const QPixmap &pm, const QPoint &loc)
 {
-    if (m_policy == Writable) {
+    setDragImage(pm, DOM::Node(0), loc);
+}
+
+const DOM::Node KWQClipboard::dragImageElement()
+{
+    return m_dragImageElement;
+}
+
+void KWQClipboard::setDragImageElement(const DOM::Node &node, const QPoint &loc)
+{
+    setDragImage(QPixmap(), node, loc);
+}
+
+void KWQClipboard::setDragImage(const QPixmap &pm, const DOM::Node &node, const QPoint &loc)
+{
+    if (m_policy == ImageWritable || m_policy == Writable) {
         m_dragImage = pm;
+        m_dragLoc = loc;
+        m_dragImageElement = node;
+        
+        if (m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
+            NSPoint cocoaLoc;
+            NSImage *cocoaImage = dragNSImage(&cocoaLoc);
+            if (cocoaImage) {
+                [[WebCoreGraphicsBridge sharedBridge] setDraggingImage:cocoaImage at:cocoaLoc];
+            }
+        }
+        // Else either 1) we haven't started dragging yet, so we rely on the part to install this drag image
+        // as part of getting the drag kicked off, or 2) Someone kept a ref to the clipboard and is trying to
+        // set the image way too late.
     }
 }
 
-NSImage *KWQClipboard::dragNSImage()
+NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
 {
-    return m_dragImage.image();
+    NSImage *result = nil;
+    if (!m_dragImageElement.isNull()) {
+        if (m_part) {
+            NSRect imageRect;
+            NSRect elementRect;
+            result = m_part->elementImage(m_dragImageElement, &imageRect, &elementRect);
+            if (loc) {
+                // Client specifies point relative to element, not the whole image, which may include child
+                // layers spread out all over the place.
+                loc->x = elementRect.origin.x - imageRect.origin.x + m_dragLoc.x();
+                loc->y = elementRect.origin.y - imageRect.origin.y + m_dragLoc.y();
+                loc->y = imageRect.size.height - loc->y;
+            }
+        }
+    } else {
+        result = m_dragImage.image();
+        if (loc) {
+            *loc = NSPoint(m_dragLoc);
+            loc->y = [result size].height - loc->y;
+        }
+    }
+    return result;
 }
 
 DOM::DOMString KWQClipboard::dropEffect() const

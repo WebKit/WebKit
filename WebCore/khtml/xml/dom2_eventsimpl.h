@@ -396,9 +396,10 @@ public:
     virtual QStringList types() const = 0;
     
     virtual QPoint dragLocation() const = 0;
-    virtual void setDragLocation(const QPoint &) = 0;
     virtual QPixmap dragImage() const = 0;
-    virtual void setDragImage(const QPixmap &) = 0;
+    virtual void setDragImage(const QPixmap &, const QPoint &) = 0;
+    virtual const Node dragImageElement() = 0;
+    virtual void setDragImageElement(const Node &, const QPoint &) = 0;
 };
 
 }; //namespace

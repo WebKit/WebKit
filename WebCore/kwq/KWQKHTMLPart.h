@@ -43,6 +43,7 @@
 #include "KWQDict.h"
 
 class KHTMLPartPrivate;
+class KWQClipboard;
 class KWQWindowWidget;
 
 namespace khtml {
@@ -211,7 +212,7 @@ public:
     QRect selectionRect() const;
     NSRect visibleSelectionRect() const;
     NSImage *selectionImage() const;
-    NSImage *elementImage(DOM::Node node, NSRect *imageRect) const;
+    NSImage *elementImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const;
 
     NSFont *fontForCurrentPosition() const;
 
@@ -328,9 +329,11 @@ private:
     static NSView *documentViewForNode(DOM::NodeImpl *);
     
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
-    bool dispatchDragSrcEvent(int eventId, const QPoint &loc, NSImage **dragImage, NSPoint *dragLoc, unsigned *op) const;
+    bool dispatchDragSrcEvent(int eventId, const QPoint &loc) const;
 
     NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const;
+
+    void freeClipboard();
 
     WebCoreBridge *_bridge;
     
@@ -378,6 +381,7 @@ private:
     bool _dragSrcInSelection;
     bool _dragSrcMayBeDHTML, _dragSrcMayBeUA;   // Are DHTML and/or the UserAgent allowed to drag out?
     bool _dragSrcIsDHTML;
+    KWQClipboard *_dragClipboard;   // used on only the source side of dragging
     
     mutable DOM::Node _elementToDraw;
 };

@@ -1,3 +1,19 @@
+2004-06-12  Trey Matteson  <trey@apple.com>
+
+	Small rearrangement to support dynamic changing of the drag
+	image during DHTML dragging.
+
+        Reviewed by John
+
+        * WebCoreSupport.subproj/WebBridge.m:  Bridge glue moved to WebGraphicsBridge.
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (FlipImageSpec):  Code moved from WebHTMLView.m.
+        (-[WebGraphicsBridge setDraggingImage:at:]):  Ditto.  Plus, we've added a gross
+	event posting hack to force CG drag manager to update the display when we set
+	the drag image.
+        * WebView.subproj/WebHTMLView.m:  Code moved to WebGraphicsBridge.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-06-11  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented the remainder of the drag & drop API.

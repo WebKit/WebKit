@@ -1030,25 +1030,38 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
         case Clipboard::SetDragImage:
         {
             if (args.size() != 3) {
-                Object err = Error::create(exec,SyntaxError,"setData: Invalid number of arguments");
+                Object err = Error::create(exec, SyntaxError,"setDragImage: Invalid number of arguments");
                 exec->setException(err);
                 return err;
             }
-            
+
+            int x = (int)args[1].toNumber(exec);
+            int y = (int)args[2].toNumber(exec);
+
+            // See if they passed us a node
+            DOM::Node node = toNode(args[0]);
+            if (!node.isNull()) {
+                if (node.nodeType() == DOM::Node::ELEMENT_NODE) {
+                    cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
+                    return Undefined();
+                } else {
+                    Object err = Error::create(exec, SyntaxError,"setDragImageFromElement: Invalid first argument");
+                    exec->setException(err);
+                    return err;
+                }
+            }
+
+            // See if they passed us an Image object
             ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (!o->inherits(&Image::info)) {
+            if (o->inherits(&Image::info)) {
+                Image *JSImage = static_cast<Image*>(o);
+                cb->clipboard->setDragImage(JSImage->image()->pixmap(), QPoint(x,y));                
+                return Undefined();
+            } else {
                 Object err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
-
-            Image *JSImage = static_cast<Image*>(o);
-            int x = (int)args[1].toNumber(exec);
-            int y = (int)args[2].toNumber(exec);
-            cb->clipboard->setDragImage(JSImage->image()->pixmap());
-            cb->clipboard->setDragLocation(QPoint(x,y));
-
-            return Undefined();
         }
     }
     return Undefined();

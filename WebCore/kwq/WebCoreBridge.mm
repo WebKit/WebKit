@@ -1581,7 +1581,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                     op = NSDragOperationNone;
                 }
             }
-            clipboard->becomeNumb();    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();
@@ -1603,7 +1603,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             clipboard->ref();
             
             v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);
-            clipboard->becomeNumb();    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();
@@ -1623,7 +1623,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             clipboard->ref();
 
             BOOL result = v->performDragAndDrop(QPoint([info draggingLocation]), clipboard);
-            clipboard->becomeNumb();    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
 
             clipboard->deref();
             v->deref();

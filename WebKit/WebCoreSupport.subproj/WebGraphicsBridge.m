@@ -25,6 +25,9 @@
 
 #import "WebGraphicsBridge.h"
 
+#import <HIServices/CoreDrag.h>
+#import <HIServices/CoreDragPriv.h>
+
 #import "WebAssertions.h"
 
 #ifndef USE_APPEARANCE
@@ -97,5 +100,101 @@
     CGContextSetStyle([[NSGraphicsContext currentContext] graphicsPort], focusRingStyleRef);
     CGStyleRelease(focusRingStyleRef);
 }
+
+static void FlipImageSpec(CoreDragImageSpec* imageSpec) {    
+    // run through and swap each row. we'll need a temporary row to hold the swapped row
+    //
+    unsigned char* tempRow = malloc(imageSpec->bytesPerRow);
+    int            planes  = imageSpec->isPlanar ? imageSpec->samplesPerPixel : 1;
+    
+    int p;
+    for (p = 0; p < planes; p++) {
+	unsigned char* topRow = (unsigned char*)imageSpec->data[p];
+	unsigned char* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
+	int i;
+	for (i = 0; i < imageSpec->pixelsHigh / 2; i++, topRow += imageSpec->bytesPerRow, botRow -= imageSpec->bytesPerRow) {
+	    bcopy(topRow,  tempRow, imageSpec->bytesPerRow);
+	    bcopy(botRow,  topRow,  imageSpec->bytesPerRow);
+	    bcopy(tempRow, botRow,  imageSpec->bytesPerRow);
+	}
+    }
+    free(tempRow);
+}
+
+// Dashboard wants to set the drag image during dragging, but Cocoa does not allow this.  Instead we drop
+// down to the CG API.  Converting an NSImage to a CGImageSpec is copied from NSDragManager.
+- (void)setDraggingImage:(NSImage *)image at:(NSPoint)offset
+{
+    NSSize 		imageSize = [image size];
+    CGPoint             imageOffset = {-offset.x, -(imageSize.height - offset.y)};
+    CGRect		imageRect= CGRectMake(0, 0, imageSize.width, imageSize.height);
+    NSBitmapImageRep 	*bitmapImage;
+    CoreDragImageSpec	imageSpec;
+    CGSRegionObj 	imageShape;
+    BOOL                flipImage;
+    OSStatus		error;
+    
+    // if the image contains an NSBitmapImageRep, we are done
+    bitmapImage = (NSBitmapImageRep *)[image bestRepresentationForDevice:nil];    
+    if (bitmapImage == nil || ![bitmapImage isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes([bitmapImage size], imageSize)) {
+        // otherwise we need to render the image and get the bitmap data from it
+        [image lockFocus];
+        bitmapImage = [[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect *)&imageRect];
+        [image unlockFocus];
+        
+	// we may have to flip the bits we just read if the iamge was flipped since it means the cache was also
+	// and CoreDragSetImage can't take a transform for rendering.
+	flipImage = [image isFlipped];
+        
+    } else {
+        flipImage = NO;
+        [bitmapImage retain];
+    }
+    ASSERT_WITH_MESSAGE(bitmapImage, "dragging image does not contain bitmap");
+    
+    imageSpec.version = kCoreDragImageSpecVersionOne;
+    imageSpec.pixelsWide = [bitmapImage pixelsWide];
+    imageSpec.pixelsHigh = [bitmapImage pixelsHigh];
+    imageSpec.bitsPerSample = [bitmapImage bitsPerSample];
+    imageSpec.samplesPerPixel = [bitmapImage samplesPerPixel];
+    imageSpec.bitsPerPixel = [bitmapImage bitsPerPixel];
+    imageSpec.bytesPerRow = [bitmapImage bytesPerRow];
+    imageSpec.isPlanar = [bitmapImage isPlanar];
+    imageSpec.hasAlpha = [bitmapImage hasAlpha];
+    [bitmapImage getBitmapDataPlanes:(unsigned char **)imageSpec.data];
+    
+    // if image was flipped, we have an upside down bitmap since the cache is rendered flipped
+    //
+    if (flipImage) {
+	FlipImageSpec(&imageSpec);
+    }
+    
+    error = CGSNewRegionWithRect(&imageRect, &imageShape);
+    ASSERT_WITH_MESSAGE(error == kCGErrorSuccess, "Error getting shape for image: %d", error);
+    if (error != kCGErrorSuccess) {
+        [bitmapImage release];
+        return;
+    }
+    
+    // make sure image has integer offset
+    //
+    imageOffset.x = floor(imageOffset.x + 0.5);
+    imageOffset.y = floor(imageOffset.y + 0.5);
+    
+    // TODO: what is overallAlpha for window?
+    error = CoreDragSetImage(CoreDragGetCurrentDrag(), imageOffset, &imageSpec, imageShape, 1.0);
+    CGSReleaseRegion(imageShape);
+    ASSERT_WITH_MESSAGE(error == kCGErrorSuccess, "Error setting image for drag: %d", error);
+    
+    [bitmapImage release];
+
+    // Hack:  This incantation is how you post a flags-changed event through CG.  In this case we're
+    // saying that the CAPSLOCK key was released, which doesn't seem to effect anything.  We post it
+    // to wake up the NSDragManager, which is sitting in a nextEvent call up the stack from us because
+    // the CF drag manager is too lame to use the RunLoop by itself.  If we're lucky for Tiger we can
+    // get the AppKit to listen for a completely innocuous event, which we can then post instead.
+    CGPostKeyboardEvent(0, 57, false);
+}
+
 
 @end

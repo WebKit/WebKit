@@ -1,3 +1,60 @@
+2004-06-12  Trey Matteson  <trey@apple.com>
+
+	The drag image may be updated during a DHTML drag.  This includes updating
+	from a Timer instead of a drag event handler.  In addition, an arbitrary
+	element can be set as the one to snapshot for the drag image.
+
+        Reviewed by John
+
+        * khtml/ecma/kjs_events.cpp:
+        (ClipboardProtoFunc::tryCall):  setDragImage accepts a node.  Previously,
+	it had to be an Image object.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintingRootRect):  Also returns top element's rect.
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * kwq/KWQClipboard.h:  New security mode where image is still writable, but
+	pasteboard is not.
+        (KWQClipboard::):
+        (KWQClipboard::setDragHasStarted):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::KWQClipboard):    Part may be passed.  Needed in the source
+	case to generate an image from an element.
+        (KWQClipboard::setAccessPolicy):  New, replaces former becomeNumb method
+	which wasn't flexible enough.
+        (KWQClipboard::accessPolicy):  New getter.
+        (KWQClipboard::dragImage):  No change, diff confusion.
+        (KWQClipboard::setDragImage):  Call new helper, below.
+        (KWQClipboard::dragImageElement):  New, return any element set.
+        (KWQClipboard::setDragImageElement):  New, call new helper.
+        (KWQClipboard::setDragImage):  New helper, set the image via either a
+	pixmap or an element to snapshot, pushes the result to WebKit if we've
+	already started the drag.
+        (KWQClipboard::dragNSImage):  Generate an NSImage and mouse offset, no
+	matter how the drag image was set (Image or element).
+        * kwq/KWQKHTMLPart.h:  A single clipboard is kept over the life of a
+	source drag instead of making one for each event.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):  Init clipboard.
+        (KWQKHTMLPart::~KWQKHTMLPart):  Free clipboard.
+        (KWQKHTMLPart::freeClipboard):  New helper.
+        (KWQKHTMLPart::dispatchDragSrcEvent):  Most code moved to caller.
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Make clipboard for this drag session.
+	Init clipboard to make an image from the dragSource element.  Mark the
+	drag as having started.
+        (KWQKHTMLPart::dragSourceMovedTo):  Clipboard will update WK with any new
+	drag image, so we don't need to.
+        (KWQKHTMLPart::dragSourceEndedAt):  Ditto.
+        (KWQKHTMLPart::elementImage):  Also return element rect.
+        * kwq/WebCoreBridge.h:  Glue moved to WebCoreGraphicsBridge.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragOperationForDraggingInfo:]):  Use new method.
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):  Ditto
+        (-[WebCoreBridge concludeDragForDraggingInfo:]):  Ditto
+        * kwq/WebCoreGraphicsBridge.h:
+        * kwq/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge setDraggingImage:at:]):  Glue moved from WebBridge
+
 2004-06-11  Chris Blumenberg  <cblu@apple.com>
 
 	Support for WebKit drag & drop API.

@@ -1094,9 +1094,10 @@ void RenderObject::addAbsoluteRectForLayer(QRect& result)
     }
 }
 
-QRect RenderObject::paintingRootRect()
+QRect RenderObject::paintingRootRect(QRect& topLevelRect)
 {
     QRect result = absoluteBoundingBoxRect();
+    topLevelRect = result;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
         current->addAbsoluteRectForLayer(result);
     }

@@ -50,4 +50,8 @@ static WebCoreGraphicsBridge *sharedBridge;
 {
 }
 
+- (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc
+{
+}
+
 @end

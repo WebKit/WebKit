@@ -613,7 +613,7 @@ public:
     virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
 
     // the rect that will be painted if this object is passed as the paintingRoot
-    QRect paintingRootRect();
+    QRect paintingRootRect(QRect& topLevelRect);
 
 #if APPLE_CHANGES
     virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);

@@ -1003,13 +1003,6 @@ static BOOL loggedObjectCacheSize = NO;
     return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }
 
-- (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc
-{
-    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    [docView _setDraggingImage:dragImage at:dragLoc];
-}
-
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];

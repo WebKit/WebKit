@@ -31,15 +31,17 @@
 #import <AppKit/AppKit.h>
 #include "xml/dom2_eventsimpl.h"
 
+class KWQKHTMLPart;
+
 class KWQClipboard : public DOM::ClipboardImpl
 {
 public:
-    // security mechanism
+    // security mechanisms
     typedef enum {
-        Numb, Writable, TypesReadable, Readable
+        Numb, ImageWritable, Writable, TypesReadable, Readable
     } AccessPolicy;
 
-    KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy);
+    KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part = 0);
     virtual ~KWQClipboard();
 
     bool isForDragging() const;
@@ -57,30 +59,37 @@ public:
     // extensions beyond IE's API
     virtual QStringList types() const;
 
-    QPoint dragLocation() const;
-    void setDragLocation(const QPoint &);
+    QPoint dragLocation() const;    // same point as client passed us
     QPixmap dragImage() const;
-    void setDragImage(const QPixmap &);
+    void setDragImage(const QPixmap &, const QPoint &);
+    const DOM::Node dragImageElement();
+    void setDragImageElement(const DOM::Node &, const QPoint &);
 
     // Methods for getting info in Cocoa's type system
-    NSImage *dragNSImage();
+    NSImage *dragNSImage(NSPoint *loc);    // loc converted from dragLoc, based on whole image size
     bool sourceOperation(NSDragOperation *op) const;
     bool destinationOperation(NSDragOperation *op) const;
     void setSourceOperation(NSDragOperation op);
     void setDestinationOperation(NSDragOperation op);
 
-    // sets AccessPolicy = Numb - trap door, once this is set, no going back
-    void becomeNumb();
+    void setAccessPolicy(AccessPolicy policy);
+    AccessPolicy accessPolicy() const;
+    void setDragHasStarted() { m_dragStarted = true; }
 
 private:
+        void setDragImage(const QPixmap &pm, const DOM::Node &, const QPoint &loc);
+
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
     DOM::DOMString m_dropEffect;
     DOM::DOMString m_effectAllowed;
     QPoint m_dragLoc;
     QPixmap m_dragImage;
+    DOM::Node m_dragImageElement;
     AccessPolicy m_policy;
     int m_changeCount;
+    bool m_dragStarted;
+    KWQKHTMLPart *m_part;   // used on the source side to generate dragging images
 };
 
 
