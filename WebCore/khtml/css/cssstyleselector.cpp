@@ -79,12 +79,18 @@ if (isInherit) \
 #define HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
 HANDLE_INHERIT(prop, Prop) \
 else if (isInitial) \
-    style->set##Prop(RenderStyle::initial##Prop());
+{\
+    style->set##Prop(RenderStyle::initial##Prop());\
+    return;\
+}
 
 #define HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
 HANDLE_INHERIT(prop, Prop) \
 else if (isInitial) \
-    style->set##Prop(RenderStyle::initial##Value());
+{\
+    style->set##Prop(RenderStyle::initial##Value());\
+    return;\
+}
 
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) \
