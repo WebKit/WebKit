@@ -30,6 +30,12 @@
 #include <config.h>
 #endif
 
+// _KWQ_COMPLETE_ ==============================================================
+
+#ifdef _KWQ_COMPLETE_
+#include <_qstring.h>
+#else
+
 // FIXME: this clever hack may need to be moved into KWQDef.h or elsewhere
 #define Fixed MacFixed
 #define Rect MacRect
@@ -287,5 +293,7 @@ private:
 #endif
 
 }; // class QConstString =======================================================
+
+#endif // _KWQ_COMPLETE_
 
 #endif

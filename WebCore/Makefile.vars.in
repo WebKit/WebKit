@@ -29,6 +29,7 @@ CLEAN_FILES =
 # Executables
 
 CC = @CC@
+CXX = @CXX@
 AR = @AR@
 LEX = @LEX@
 YACC = @YACC@

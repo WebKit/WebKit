@@ -30,12 +30,18 @@
 #include <config.h>
 #endif
 
+// _KWQ_COMPLETE_ ==============================================================
+
+#ifdef _KWQ_COMPLETE_
+#include <_qcstring.h>
+#else
+
 // FIXME: does our implementation of QCString really need to inherit from
 // QByteArray and QArray?
 
-// added to help in compilation of khtml/khtml_part.h:811
 #include "qarray.h"
 
+#include <iostream>
 #include <string.h>
 
 typedef QArray<char> QByteArray;
@@ -58,18 +64,18 @@ public:
     QCString(const char *, uint);
     QCString(const QCString &);
 
-    ~QCString();
+    ~QCString() {}
 
     // member functions --------------------------------------------------------
 
     bool isEmpty() const;
     bool isNull() const;
-    int find(const char *str, int index=0, bool cs=TRUE) const;
-    int contains(char) const;
+    int find(const char *, int index=0, bool cs=TRUE) const;
+    int contains(char, bool cs=TRUE) const;
     uint length() const;
     bool truncate(uint);
     QCString lower() const;
-    QCString mid(uint index, uint len=0xffffffff) const;
+    QCString mid(uint, uint len=0xffffffff) const;
 
     // operators ---------------------------------------------------------------
 
@@ -79,6 +85,10 @@ public:
     QCString &operator+=(const char *);
     QCString &operator+=(const QCString &);
 
+#ifdef _KWQ_IOSTREAM_
+    friend ostream &operator<<(ostream &, const QCString &);
+#endif
+
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
@@ -87,9 +97,11 @@ public:
 
 // operators associated with QCString ==========================================
 
-bool operator==(const char *, const QCString &);
-bool operator==(const QCString &, const char *);
-bool operator!=(const char *, const QCString &);
-bool operator!=(const QCString &, const char *);
+bool operator==(const char *s1, const QCString &s2);
+bool operator==(const QCString &s1, const char *s2);
+bool operator!=(const char *s1, const QCString &s2);
+bool operator!=(const QCString &s1, const char *s2);
+
+#endif // _KWQ_COMPLETE_
 
 #endif

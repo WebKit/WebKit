@@ -48,6 +48,8 @@ SUBDIRS='
 	src/kdelibs/khtml/java
 	src/kdelibs/khtml/html
 	src/kdelibs/khtml/rendering
+	src/kwq/qt
+	src/kwq/tests/qt
 '
 for subdir in $SUBDIRS; do
 	if (test -f "./$subdir/MakeSystemChanges.sh"); then
@@ -85,6 +87,11 @@ dnl
 AC_PROG_CC
 if test -z "$ac_cv_prog_CC"; then 
 	$CONFIG_ERR cc
+	exit 1
+fi
+AC_PROG_CXX
+if test -z "$ac_cv_prog_CXX"; then 
+	$CONFIG_ERR c++
 	exit 1
 fi
 CFLAGS="-DHAVE_CONFIG_H"
@@ -231,5 +238,7 @@ AC_OUTPUT(
 	src/kdelibs/khtml/java/Makefile
 	src/kdelibs/khtml/html/Makefile
 	src/kdelibs/khtml/rendering/Makefile
+	src/kwq/qt/Makefile
+	src/kwq/tests/qt/Makefile
 )
 

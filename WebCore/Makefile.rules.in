@@ -27,12 +27,12 @@ $(filter %.o,$(COBJECTS)): %.o: %.c
 	$(CC) $(CFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
 $(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
-	$(CC) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
 .SUFFIXES: .cpp .h .c
 
 .cpp.o:
-	$(CC) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
 #----------------------------------------------------------------------
 # Standard subdir targets

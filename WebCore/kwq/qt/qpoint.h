@@ -62,15 +62,46 @@ public:
 
     int manhattanLength() const;
 
+#ifdef _KWQ_COMPLETE_
+    bool isNull() const;
+    void setX(int);
+    void setY(int);
+#endif
+
     // operators ---------------------------------------------------------------
 
-    QPoint &operator=(const QPoint &);
+    /* Note: Trolltech seems to want operator= to be a bitwise copy
+     * QPoint &operator=(const QPoint &);
+     */
     
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
 
+#ifdef _KWQ_COMPLETE_
+    QPoint &operator+=(const QPoint &);
+    QPoint &operator-=(const QPoint &);
+    QPoint &operator*=(int);
+    QPoint &operator*=(double);
+    QPoint &operator/=(int);
+    QPoint &operator/=(double);
+
+    friend inline bool operator==(const QPoint &, const QPoint &);
+    friend inline bool operator!=(const QPoint &, const QPoint &);
+    friend inline QPoint operator*(const QPoint &, int);
+    friend inline QPoint operator*(int, const QPoint &);
+    friend inline QPoint operator*(const QPoint &, double);
+    friend inline QPoint operator*(double, const QPoint &);
+    friend inline QPoint operator-(const QPoint &);
+    friend inline QPoint operator/(const QPoint &, int);
+    friend inline QPoint operator/(const QPoint &, double);
+#endif
+
 // protected -------------------------------------------------------------------
+
 // private ---------------------------------------------------------------------
+
+    QCOORD xx;
+    QCOORD yy;
 
 }; // class QPoint =============================================================
 

@@ -33,8 +33,14 @@
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned uint;
+typedef unsigned long ulong;
 
+typedef char Q_INT8;
+typedef short Q_INT16;  
 typedef int Q_INT32;  
+
+typedef unsigned char Q_UINT8;
+typedef unsigned short Q_UINT16;
 typedef unsigned int Q_UINT32;  
 
 typedef Q_INT32 QCOORD;
@@ -66,5 +72,21 @@ void qWarning(const char *msg, ...);
 #ifdef NEED_BOGUS_X_DEFINES
 typedef int XEvent;
 #endif
+
+/* FIXME: Let's not worrying about malloc/new failing for now.... */
+#define CHECK_PTR(p)
+
+/* Silly hack to avoid "unused parameter" warnings */
+#define Q_UNUSED(x) x=x;
+
+/* We don't handle this, it's needed in QT for wacky hacking Win32 DLLs */
+#define Q_EXPORT
+
+/* unnecessary for our platform */
+#define Q_PACKED
+
+/* Qt const defines */
+#define QT_STATIC_CONST static const
+#define QT_STATIC_CONST_IMPL const
 
 #endif
