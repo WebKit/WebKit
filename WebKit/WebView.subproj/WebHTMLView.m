@@ -1255,7 +1255,7 @@ static WebHTMLView *lastHitView = nil;
     }
     NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:selectedString
                                                                     startingAt:0
-                                                                      language:@""
+                                                                      language:nil
                                                                           wrap:NO
                                                         inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]
                                                                      wordCount:NULL];

@@ -1,3 +1,12 @@
+2005-01-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3928329> WebKit should pass nil for "language" to checkSpellingOfString:
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionMisspelled]): pass nil not @"" for language
+
 2004-12-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
