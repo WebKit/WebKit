@@ -292,7 +292,8 @@ NSSize WebIconLargeSize = {128, 128};
 
     WebFileDatabase *fileDB = _private->fileDatabase;
 
-    // Erase icons that have been released that are on disk
+    // Erase icons that have been released that are on disk.
+    // Must remove icons before writing them to disk or else we could potentially remove the newly written ones.
     NSEnumerator *enumerator = [_private->iconsToEraseWithURLs objectEnumerator];
     NSString *iconURLString;
     
@@ -329,8 +330,9 @@ NSSize WebIconLargeSize = {128, 128};
 - (BOOL)_hasIconForIconURL:(NSURL *)iconURL;
 {
     NSString *iconURLString = [iconURL absoluteString];
-    return ([_private->iconURLToIcons objectForKey:iconURLString] ||
-            [_private->iconsOnDiskWithURLs containsObject:iconURLString]);
+    return (([_private->iconURLToIcons objectForKey:iconURLString] ||
+             [_private->iconsOnDiskWithURLs containsObject:iconURLString]) &&
+            [_private->iconURLToRetainCount objectForKey:iconURLString]);
 }
 
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURLString
@@ -415,7 +417,6 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURL);
     ASSERT(siteURL);
     ASSERT([self _hasIconForIconURL:iconURL]);
-    ASSERT([_private->iconURLToRetainCount objectForKey:[iconURL absoluteString]]);
     
     NSString *siteURLString = [siteURL absoluteString];
     NSString *iconURLString = [iconURL absoluteString];

@@ -1,5 +1,17 @@
 2002-12-03  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3115073 - REGRESSION: plants.com is crashing in WebIconDB with bad retain count
+
+	The plants.com favicon was marked to be removed from disk and thus it had no retain count. The problem was that it was still on disk and _hasIconForIconURL would return YES. If hasIconForIconURL returns YES, its is ok to call  _setIconURL:forSiteURL:. Since there was no retain count, the assert in _setIconURL:forSiteURL: would be hit.
+
+	We now consider icons without retain counts to not exist even if they're on disk.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _setIconURL:forSiteURL:]):
+
+2002-12-03  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed:
 	3112477 - REGRESSION: dropping image within window loads image in current window
 	Fix: Unregister the parent webview for dragging when the drag starts, reregister after the drag ends.
