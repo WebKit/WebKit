@@ -1,3 +1,12 @@
+2003-11-07  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3477067.  Use our case unicode conversion routines.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (toUpper):
+
 2003-11-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3476393.  Call scrollPoint: recursively up the view hierarchy to ensure point is visible.

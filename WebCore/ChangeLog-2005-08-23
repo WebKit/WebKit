@@ -1,3 +1,13 @@
+2003-11-07  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3477067.  Use our case unicode conversion routines.
+
+        Reviewed by Ken.
+
+        * kwq/KWQChar.mm:
+        (QChar::lower):
+        (QChar::upper):
+
 2003-11-06  David Hyatt  <hyatt@apple.com>
 
 	Fixes for 3476717, inline blocks should expand to encompass floats; 3476718, inline blocks should not

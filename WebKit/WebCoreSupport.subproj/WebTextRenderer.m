@@ -2091,25 +2091,9 @@ static inline BOOL fontContainsString (NSFont *font, NSString *string)
     return NO;
 }
 
-static UniChar scratchUniChar;
-
-static CFMutableStringRef GetScratchUniCharString()
-{
-    static CFMutableStringRef s = NULL;
-    if (!s)
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
-    return s;
-}
-
 static inline UniChar toUpper(UniChar c)
 {
-    // Without this first quick case, this function was showing up in profiles.
-    if (c <= 0x7F) {
-        return (char)toupper(c);
-    }
-    scratchUniChar = c;
-    CFStringUppercase(GetScratchUniCharString(), NULL);
-    return scratchUniChar;
+    return WebCoreUnicodeUpperFunction(c);
 }
 
 static inline BOOL isUpper(UniChar c)

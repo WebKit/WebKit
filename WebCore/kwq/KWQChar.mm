@@ -29,16 +29,6 @@
 
 #import <Foundation/Foundation.h>
 
-static UniChar scratchUniChar;
-
-static CFMutableStringRef GetScratchUniCharString()
-{
-    static CFMutableStringRef s = NULL;
-    if (!s)
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
-    return s;
-}
-
 bool QChar::isDigit() const
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetDecimalDigit);
@@ -70,24 +60,12 @@ bool QChar::isPunct() const
 
 QChar QChar::lower() const
 {
-    // Without this first quick case, this function was showing up in profiles.
-    if (c <= 0x7F) {
-        return (char)tolower(c);
-    }
-    scratchUniChar = c;
-    CFStringLowercase(GetScratchUniCharString(), NULL);
-    return scratchUniChar;
+    return WebCoreUnicodeLowerFunction(c);
 }
 
 QChar QChar::upper() const
 {
-    // Without this first quick case, this function was showing up in profiles.
-    if (c <= 0x7F) {
-        return (char)toupper(c);
-    }
-    scratchUniChar = c;
-    CFStringUppercase(GetScratchUniCharString(), NULL);
-    return scratchUniChar;
+    return WebCoreUnicodeUpperFunction(c);
 }
 
 bool QChar::mirrored() const
