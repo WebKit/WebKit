@@ -1,0 +1,12 @@
+<html>
+ <head>
+  <script>
+   function bar() { which = "parent"; document.getElementById("result").innerHTML = which; }
+  </script>
+ </head>
+ <body>
+  <p>The following line should say "parent", meaning that the proper window object was used.</p>
+  <p id="result"></p>
+  <iframe src="resources/child.html"></iframe>
+ </body>
+</html>
