@@ -28,11 +28,7 @@ namespace khtml {
   This function returns true, if the string can bre broken before the 
   character at position pos in the string s with length len
 */
-#ifdef HAVE_THAI_BREAKS
-bool isBreakable( const QChar *s, int pos, int len )
-#else
 bool isBreakable( const QChar *s, int pos, int len)
-#endif    
 {
 #if !APPLE_CHANGES
     const QChar *c = s+pos;

@@ -1,3 +1,11 @@
+2003-05-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris
+
+        * khtml/rendering/break_lines.cpp:
+	Removed #ifdef/#else for which the two sides were identical
+	that I noticed in passing.
+
 2003-05-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
