@@ -18,13 +18,20 @@
 
 - (BOOL)incrementalLoadWithBytes: (const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
+
     NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
     int status;
     
     lastLength = length;
+// FIXME:  This won't compile unless you have > 6C48.
+#ifdef APPLE_PROGRESSIVE_IMAGE_LOADING
     lastStatus = status = [imageRep incrementalLoadFromData:data complete:isComplete];
+#else
+    lastStatus = status = 0;
+    [NSException raise: @"TEMPORARY!!  This code will be removed." format: @"foo"];
+#endif
     [data release];
     switch (status){
     case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data

@@ -1,5 +1,12 @@
 2002-06-04  Richard Williamson  <rjw@apple.com>
 
+    Excluded call to new API until everyone has moved to >= 6C48.
+    
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
     Changes to support progressive image loading.  Currently disabled
     until 2945218 is fixed.
 
