@@ -1,3 +1,7 @@
+2003-08-11  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPart.h: Fixed some small typo-ish strangenesses.
+
 2003-08-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3368672, don't allow frames and framesets to be positioned or relpositioned.

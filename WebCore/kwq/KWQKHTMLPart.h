@@ -218,7 +218,7 @@ public:
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
 
-    NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const;
+    NSColor *bodyBackgroundColor() const;
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
