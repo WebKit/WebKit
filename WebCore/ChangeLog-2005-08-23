@@ -1,3 +1,15 @@
+2004-08-17  David Hyatt  <hyatt@apple.com>
+
+	Fix the line truncation function for Emerson so that at the far left setting of the slider, only the header
+	is visible.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::getHeightForLineCount):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+
 2004-08-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
