@@ -1,3 +1,13 @@
+2004-02-20  Darin Adler <darin@apple.com>
+
+        Reviewed by mjs.
+
+	- fix build breakage caused by removal of kWindowNoBufferingAttribute.  
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+	always used a retained backing store type
+
 2004-02-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3563402>: when copying HTML, relative URLs should be made absolute

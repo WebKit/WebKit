@@ -169,27 +169,17 @@ extern const OSType NSCarbonWindowPropertyTag;
     nativeWindow = GetNativeWindowFromWindowRef(inWindowRef);
 
     // Find out the window's Carbon window attributes.
-    osStatus = GetWindowAttributes(inWindowRef, &windowAttributes);
-    if (osStatus!=noErr) NSLog(@"A Carbon window's attributes couldn't be gotten.");
+    GetWindowAttributes(inWindowRef, &windowAttributes);
 
     // Find out the window's Carbon window features.
-    osStatus = GetWindowFeatures(inWindowRef, &windowFeatures);
-    if (osStatus!=noErr) NSLog(@"A Carbon window's features couldn't be gotten.");
+    GetWindowFeatures(inWindowRef, &windowFeatures);
 
     // Figure out the window's backing store type.
-    // This switch statement is inspired by one in HIToolbox/Windows/Platform/CGSPlatform.c's CreatePlatformWindow().  M.P. Notice - 8/2/00
-    switch (windowAttributes & (kWindowNoBufferingAttribute | kWindowRetainedAttribute)) {
-        case kWindowNoAttributes:
-            backingStoreType = NSBackingStoreBuffered;
-            break;
-        case kWindowRetainedAttribute:
-            backingStoreType = NSBackingStoreRetained;
-            break;
-        case kWindowNoBufferingAttribute:
-        default:
-            backingStoreType = NSBackingStoreNonretained;
-            break;
-    }
+    // At one time, this had code stolen from CreatePlatformWindow in HIToolbox/Windows/Platform/CGSPlatform.c
+	// But now the non-retained window class is a Carbon secret that's not even in
+	// WindowsPriv.h; maybe we'll have to revisit this if someone needs to use WebKit
+	// in a non-retained window.
+    backingStoreType = NSBackingStoreRetained;
 
     // Figure out the window's style mask.
     styleMask = _NSCarbonWindowMask;
