@@ -16,6 +16,7 @@
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
+    BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL inWindow;
     BOOL inNextValidKeyView;
