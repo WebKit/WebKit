@@ -621,8 +621,8 @@ NodeImpl::Id HTMLHtmlElementImpl::id() const
 HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(doc)
 {
     frameBorder = false;
-    marginWidth = 0;
-    marginHeight = 0;
+    marginWidth = -1;
+    marginHeight = -1;
     needWidgetUpdate = false;
 }
 

@@ -1,5 +1,21 @@
 2003-01-29  David Hyatt  <hyatt@apple.com>
 
+	Margins were being lost on documents inside iframes
+	and objects.  This turned out to be 3 different bugs, one
+	of which involved the bad cast of an object element to an
+	iframe element.
+	
+        Reviewed by darin
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLIFrameElementImpl::HTMLIFrameElementImpl):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::slotViewCleared):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart):
+
+2003-01-29  David Hyatt  <hyatt@apple.com>
+
 	Fix for auto width tables.  Prevent overflow when assigning from
 	the computed integer max width back into a short value.
 

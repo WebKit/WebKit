@@ -267,13 +267,21 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         return newPart;
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());
-        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
+        BOOL allowsScrolling = YES;
+        int marginWidth = -1;
+        int marginHeight = -1;
+        if (child.m_type != ChildFrame::Object) {
+            HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
+            allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
+            marginWidth = o->getMarginWidth();
+            marginHeight = o->getMarginHeight();
+        }
         WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
                                                             withURL:url.url().getNSString()
                                                          renderPart:child.m_frame
-                                                    allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-                                                        marginWidth:o->getMarginWidth()
-                                                       marginHeight:o->getMarginHeight()];
+                                                    allowsScrolling:allowsScrolling
+                                                        marginWidth:marginWidth
+                                                       marginHeight:marginHeight];
         return [childBridge part];
     }
 }

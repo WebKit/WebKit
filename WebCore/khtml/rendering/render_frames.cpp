@@ -940,8 +940,8 @@ void RenderPartObject::slotViewCleared()
       QScrollView *view = static_cast<QScrollView *>(m_widget);
       int frameStyle = QFrame::NoFrame;
       QScrollView::ScrollBarMode scroll = QScrollView::Auto;
-      int marginw = 0;
-      int marginh = 0;
+      int marginw = -1;
+      int marginh = -1;
       if ( element()->id() == ID_IFRAME) {
 	  HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
 	  if(frame->frameBorder)
