@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qhbox.h>
+#ifndef KWQFILEBUTTON_H
+#define KWQFILEBUTTON_H
 
-#import <KWQView.h>
+#include <qpushbutton.h>
 
-// This class is ONLY used by FORM <input type=file> elements.  It's used
-// to stretch a LineEditWidget. We probably don't need it at all.
+#ifdef __OBJC__
+@class KWQFileButtonAdapter;
+#else
+class KWQFileButtonAdapter;
+#endif
 
-QHBox::QHBox(QWidget *parent)
-{
-    KWQView *view = (KWQView *)getView();
-    [view setIsFlipped: NO];
-}
+class KWQFileButton : public QPushButton {
+public:
+    KWQFileButton();
+    ~KWQFileButton();
+    
+    void setFilename(const QString &);
+    QString filename() const { return _filename; }
+    
+    QSize sizeHint() const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
+    int baselinePosition() const;
 
-// Override the focus proxy to add the line edit widget as a subview.
-void QHBox::setFocusProxy(QWidget *lineEdit)
-{
-    // Do we also need to set size, or will layout take care of that?
-    [getView() addSubview: lineEdit->getView()];
-}
+private:
+    virtual void clicked();
+    virtual void paint();
+    
+    KWQSignal _textChanged;
+    QString _filename;
+    KWQFileButtonAdapter *_adapter;
+};
 
-void QHBox::setStretchFactor(QWidget *, int stretch)
-{
-}
+#endif

@@ -308,7 +308,6 @@
 				F58786DF02DE3B8601EA4122,
 				F58786E002DE3B8601EA4122,
 				F58786E102DE3B8601EA4122,
-				F58786E202DE3B8601EA4122,
 				F58786E302DE3B8601EA4122,
 				F58786E402DE3B8601EA4122,
 				F58786E502DE3B8601EA4122,
@@ -493,6 +492,8 @@
 				F690CFEC031C47F401CA2AC4,
 				9377FB57032C235C008635CE,
 				93861DE1032C2E52008635CE,
+				93CCF7D6033BD43C008635CE,
+				93CCF7E3033BE9C1008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -536,7 +537,6 @@
 				F587857602DE375901EA4122,
 				F587857702DE375901EA4122,
 				F587857802DE375901EA4122,
-				F587857902DE375901EA4122,
 				F587857A02DE375901EA4122,
 				F587857D02DE375901EA4122,
 				F587857F02DE375901EA4122,
@@ -723,6 +723,7 @@
 				F690CFED031C47F401CA2AC4,
 				9377FB58032C235C008635CE,
 				93861DE2032C2E52008635CE,
+				93CCF7D7033BD43C008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -885,6 +886,42 @@
 			settings = {
 			};
 		};
+		93CCF7D4033BD43C008635CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQFileButton.h;
+			refType = 4;
+		};
+		93CCF7D5033BD43C008635CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQFileButton.mm;
+			refType = 4;
+		};
+		93CCF7D6033BD43C008635CE = {
+			fileRef = 93CCF7D4033BD43C008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93CCF7D7033BD43C008635CE = {
+			fileRef = 93CCF7D5033BD43C008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93CCF7E2033BE9C1008635CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = qhbox.h;
+			refType = 4;
+		};
+		93CCF7E3033BE9C1008635CE = {
+			fileRef = 93CCF7E2033BE9C1008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //930
 //931
 //932
@@ -984,6 +1021,8 @@
 				F58784DA02DE375901EA4122,
 				354F248902EE28590ACA2ACA,
 				354F248A02EE28590ACA2ACA,
+				93CCF7D4033BD43C008635CE,
+				93CCF7D5033BD43C008635CE,
 				F58784EE02DE375901EA4122,
 				F58784EF02DE375901EA4122,
 				F58784FA02DE375901EA4122,
@@ -4328,13 +4367,6 @@
 			path = ../KWQGuardedPtr.mm;
 			refType = 4;
 		};
-		F58784E702DE375901EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = KWQHBox.mm;
-			path = ../KWQHBox.mm;
-			refType = 4;
-		};
 		F58784E802DE375901EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -5145,12 +5177,6 @@
 		};
 		F587857802DE375901EA4122 = {
 			fileRef = F58784E602DE375901EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587857902DE375901EA4122 = {
-			fileRef = F58784E702DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6989,12 +7015,6 @@
 			path = qguardedptr.h;
 			refType = 4;
 		};
-		F587869102DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qhbox.h;
-			refType = 4;
-		};
 		F587869202DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7469,12 +7489,6 @@
 			settings = {
 			};
 		};
-		F58786E202DE3B8601EA4122 = {
-			fileRef = F587869102DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58786E302DE3B8601EA4122 = {
 			fileRef = F587869202DE3B8601EA4122;
 			isa = PBXBuildFile;
@@ -7839,8 +7853,7 @@
 				F587868F02DE3B8601EA4122,
 				F587869002DE3B8601EA4122,
 				F58784E602DE375901EA4122,
-				F587869102DE3B8601EA4122,
-				F58784E702DE375901EA4122,
+				93CCF7E2033BE9C1008635CE,
 				F587869202DE3B8601EA4122,
 				F587869302DE3B8601EA4122,
 				F58784E802DE375901EA4122,

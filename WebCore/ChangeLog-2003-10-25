@@ -1,5 +1,21 @@
 2002-09-20  Darin Adler  <darin@apple.com>
 
+	Some first steps toward implementing input=file.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderFileButton::RenderFileButton): Create a KWQFileButton as the widget.
+        (RenderFileButton::calcMinMaxWidth): Use sizeHint().
+        (RenderFileButton::updateFromElement): Call setFilename().
+        (RenderFileButton::select): Don't try to selectAll() on m_edit.
+
+        * kwq/KWQFileButton.h: Added.
+        * kwq/KWQFileButton.mm: Added.
+        * kwq/qt/qhbox.h: Emptied.
+        * kwq/KWQHBox.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQHBox.mm. Added KWQFileButton.
+
+2002-09-20  Darin Adler  <darin@apple.com>
+
 	- fixed 3056605 -- REGRESSION: blank page at http://www.2ch.net/2ch.html
 
         * kwq/mac-encodings.txt: When people say ShiftJIS, they really mean
