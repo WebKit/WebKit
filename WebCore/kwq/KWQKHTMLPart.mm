@@ -561,6 +561,8 @@ void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, RenderObject *rendere
         
     restoreWindowProperties (windowProperties);
     restoreLocationProperties (locationProperties);
+    
+    checkCompleted();
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForWidget(QWidget *widget)

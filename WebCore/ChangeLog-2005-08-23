@@ -1,5 +1,13 @@
 2002-12-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+	- fixed 3134346 -- country menu at www.apple.com does not work when you go back to that page
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURLFromPageCache): Add call to checkCompleted().
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
 	- fixed 3136391 -- PianoNanny.com screens turn to garbage when resized
@@ -1698,8 +1706,6 @@
 
 2002-12-12  Darin Adler  <darin@apple.com>
 
-2002-12-12  Darin Adler  <darin@apple.com>
-
         Reviewed by Maciej.
 
 	- fixed 3125504 -- REGRESSION: Selection not working correctly for text area on http://glish.com/css/7.asp
@@ -1982,8 +1988,6 @@
 	that are obscured by blocks are properly considered to be
 	above the block background.
 	
-        Reviewed by LUCKY WINNER
-
         * khtml/rendering/render_object.cpp:
         (RenderObject::nodeAtPoint):
 
