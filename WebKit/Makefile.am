@@ -1,33 +1,7 @@
-
 all-am: 
 	pbxbuild -buildstyle $(BUILDSTYLE)
-
-FRAMEWORK_NAME = WebKit
-FRAMEWORK_DIR = $(SYMROOTS)/$(FRAMEWORK_NAME).framework
-FRAMEWORK_DYLIB = $(FRAMEWORK_DIR)/Versions/Current/$(FRAMEWORK_NAME)
-EMBED_HOST = $(SYMROOTS)/Alexander.app
-EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
-
-embed:
-	@if test -f "$(FRAMEWORK_DYLIB)"; then \
-		INSTALL_PATH=`otool -D "$(FRAMEWORK_DYLIB)"`; \
-		WILL_EMBED=`echo $$INSTALL_PATH | sed -n -e "s/@executable_path//p"`; \
-		if test -n "$$WILL_EMBED"; then \
-			if [ -d "$(EMBED_HOST)" ]; then \
-				if [ ! -d "$(EMBED_DIR)" ]; then \
-					mkdir -p "$(EMBED_DIR)"; \
-				fi; \
-				echo "embedding $(FRAMEWORK_NAME) into $(EMBED_HOST)..."; \
-				cp -rf $(FRAMEWORK_DIR) $(EMBED_DIR); \
-			else \
-				echo "$(EMBED_HOST) not found. Not embedding framework"; \
-			fi; \
-		fi; \
-        else \
-		echo "can't find: $(FRAMEWORK_DYLIB)"; \
-		exit 1; \
-        fi
-
 clean-am:
 	pbxbuild clean
 
+FRAMEWORK_NAME = WebKit
+include $(top_srcdir)/embed.am

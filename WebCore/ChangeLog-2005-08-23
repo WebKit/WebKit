@@ -1,3 +1,8 @@
+2002-06-07  Darin Adler  <darin@apple.com>
+
+	* Makefile.am: Use new shared "embed.am" file so we don't need four copies of
+	the embedding rules for WebFoundation, JavaScriptCore, WebCore, and WebKit.
+
 2002-06-07  Maciej Stachowiak  <mjs@apple.com>
 
 	* Makefile.am: Rename libwebcore.dylib to libwebcore.a; since this

@@ -1,5 +1,10 @@
 2002-06-07  Darin Adler  <darin@apple.com>
 
+	* Makefile.am: Use new shared "embed.am" file so we don't need four copies of
+	the embedding rules for WebFoundation, JavaScriptCore, WebCore, and WebKit.
+
+2002-06-07  Darin Adler  <darin@apple.com>
+
 	* JavaScriptCore.pbproj/project.pbxproj: Don't use any warning flags for C that won't work
 	for C++, because PFE uses the C warning flags on a C++ compile.
 

@@ -41,14 +41,13 @@ noinst_DATA = framework-stamp framework-resource-stamp framework-dylib-stamp fra
 # Framework assembly
 
 FRAMEWORK_NAME = WebCore
+include $(top_srcdir)/embed.am
+
 FRAMEWORK_VERSION = A
 FRAMEWORK_RESOURCES = Resources/Info.plist Resources/linkCursor.tiff
 FRAMEWORK_LOCALIZED_RESOURCES = English.lproj/InfoPlist.strings
 
-FRAMEWORK_DIR_NAME = $(FRAMEWORK_NAME).framework
-FRAMEWORK_DIR = $(SYMROOTS)/$(FRAMEWORK_DIR_NAME)
-FRAMEWORK_DYLIB = $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
-FRAMEWORK_LINKFLAGS = $(libwebcore_a_LIBADD) -install_name @executable_path/../Frameworks/$(FRAMEWORK_DIR_NAME)/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
+FRAMEWORK_LINKFLAGS = $(libwebcore_a_LIBADD) -install_name @executable_path/../Frameworks/$(FRAMEWORK_NAME).framework/Versions/$(FRAMEWORK_VERSION)/$(FRAMEWORK_NAME)
 FRAMEWORK_RESOURCE_DIR = $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/Resources
 FRAMEWORK_LOCALIZED_RESOURCE_DIR = $(FRAMEWORK_RESOURCE_DIR)/English.lproj
 
@@ -92,29 +91,3 @@ CLEANFILES = $(noinst_DATA)
 # can't use CLEANFILES for this because it doesn't work for directories
 clean-am:
 	rm -rf $(FRAMEWORK_DIR)
-
-# Embedding into Alexander
-
-EMBED_HOST = $(SYMROOTS)/Alexander.app
-EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
-
-embed:
-	@if test -f "$(FRAMEWORK_DYLIB)"; then \
-		INSTALL_PATH=`otool -D "$(FRAMEWORK_DYLIB)"`; \
-		WILL_EMBED=`echo $$INSTALL_PATH | sed -n -e "s/@executable_path//p"`; \
-		if test -n "$$WILL_EMBED"; then \
-			if [ -d "$(EMBED_HOST)" ]; then \
-				if [ ! -d "$(EMBED_DIR)" ]; then \
-					mkdir -p "$(EMBED_DIR)"; \
-				fi; \
-				echo "embedding $(FRAMEWORK_NAME) into $(EMBED_HOST)..." && \
-                                rm -Rf $(EMBED_DIR)/$(FRAMEWORK_DIR_NAME) && \
-				cp -R $(FRAMEWORK_DIR) $(EMBED_DIR); \
-			else \
-				echo "$(EMBED_HOST) not found. Not embedding framework"; \
-			fi; \
-		fi; \
-        else \
-		echo "can't find: $(FRAMEWORK_DYLIB)"; \
-		exit 1; \
-        fi

@@ -1,5 +1,10 @@
 2002-06-07  Darin Adler  <darin@apple.com>
 
+	* Makefile.am: Use new shared "embed.am" file so we don't need four copies of
+	the embedding rules for WebFoundation, JavaScriptCore, WebCore, and WebKit.
+
+2002-06-07  Darin Adler  <darin@apple.com>
+
 	* MIME.subproj/IFContentHandler.m: (-[IFContentHandler HTMLDocument]):
 	Fix a warning that shows up with the new C++ compiler (not sure why it
 	is not showing up with the old one).
