@@ -1,3 +1,10 @@
+2002-08-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed 3025019: "only-if-cached" attribute fetches data from network if cached but expired
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader iconFromCache]):
+
 2002-08-19  Darin Adler  <darin@apple.com>
 
 	- fixed 2863025 -- Need to implement TABing between widgets in forms

@@ -127,11 +127,16 @@
 - (NSImage *)iconFromCache
 {
     NSImage *icon = [[self _icons] objectForKey:_private->URL];
+    
     if (icon) {
         return icon;
     }
+
+    NSDictionary *attributes, *headers;
     
-    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"" forKey:@"only-if-cached"];
+    headers = [NSDictionary dictionaryWithObject:@"only-if-cached" forKey:@"Cache-Control"];
+    attributes = [NSDictionary dictionaryWithObject:headers forKey:WebHTTPResourceHandleRequestHeaders];
+    
     WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:_private->URL
                                                              userAgent:nil
                                                             attributes:attributes
