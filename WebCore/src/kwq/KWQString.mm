@@ -771,17 +771,15 @@ QString QString::right(uint width) const
 QString QString::mid(uint index, uint width) const
 {
     QString qs;
-    int signedIndex = (int)index;
-    int signedWidth = (int)width;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && (signedIndex < len) && signedWidth) {
-            if (!((signedIndex == 0) && (signedWidth >= len))) {
-                if (signedWidth > (len - signedIndex)) {
-                    signedWidth = len - signedIndex;
+        if (len && (index < (uint)len) && width) {
+            if (!((index == 0) && (width >= (uint)len))) {
+                if (width > (len - index)) {
+                    width = len - index;
                 }
                 CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, CFRangeMake(signedIndex, width));
+                        kCFAllocatorDefault, s, CFRangeMake(index, width));
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);
@@ -1043,7 +1041,6 @@ QString &QString::append(const QString &qs)
 
 QString &QString::insert(uint index, const QString &qs)
 {
-    int signedIndex = (int)index;
     flushCache();
     if (qs.s) {
         CFIndex len = CFStringGetLength(qs.s);
@@ -1052,8 +1049,8 @@ QString &QString::insert(uint index, const QString &qs)
                 s = CFStringCreateMutable(kCFAllocatorDefault, 0);
             }
             if (s) {
-                if (signedIndex < CFStringGetLength(s)) {
-                    CFStringInsert(s, signedIndex, qs.s);
+                if (index < (uint)CFStringGetLength(s)) {
+                    CFStringInsert(s, index, qs.s);
                 } else {
                     CFStringAppend(s, qs.s);
                 }
@@ -1075,16 +1072,14 @@ QString &QString::insert(uint index, char ch)
 
 QString &QString::remove(uint index, uint width)
 {
-    int signedIndex = (int)index;
-    int signedWidth = (int)width;
     flushCache();
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && (signedIndex < len) && signedWidth) {
-            if (signedWidth > (len - signedIndex)) {
-                signedWidth = len - signedIndex;
+        if (len && (index < (uint)len) && width) {
+            if (width > (len - index)) {
+                width = len - index;
             }
-            CFStringDelete(s, CFRangeMake(signedIndex, signedWidth));
+            CFStringDelete(s, CFRangeMake(index, width));
         }
     }
     return *this;
@@ -1115,12 +1110,11 @@ QString &QString::replace(const QRegExp &qre, const QString &qs)
 void QString::truncate(uint newLen)
 {
     flushCache();
-    int signedNewLen = (int)newLen;
     if (s) {
-        if (signedNewLen) {
+        if (newLen) {
             CFIndex len = CFStringGetLength(s);
-            if (len && (signedNewLen < len)) {
-                CFStringDelete(s, CFRangeMake(signedNewLen, len - signedNewLen));
+            if (len && (newLen < (uint)len)) {
+                CFStringDelete(s, CFRangeMake(newLen, len - newLen));
             }
         } else {
             CFRelease(s);
@@ -1330,14 +1324,13 @@ ulong QString::convertToNumber(bool *ok, int base, bool *neg) const
 QString QString::leftRight(uint width, bool left) const
 {
     QString qs;
-    int signedWidth = (int)width;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && signedWidth) {
-            if (len > signedWidth) {
+        if (len && width) {
+            if ((uint)len > width) {
                 CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, left ? CFRangeMake(0, signedWidth)
-                        : CFRangeMake(len - signedWidth, signedWidth));
+                        kCFAllocatorDefault, s, left ? CFRangeMake(0, width)
+                        : CFRangeMake(len - width, width));
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);

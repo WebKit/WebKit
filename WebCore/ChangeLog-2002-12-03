@@ -1,3 +1,11 @@
+2001-12-10  Kenneth Kocienda  <kocienda@apple.com>
+
+        Went back and did a better job of cleaning up the warnings
+        that resulted from comparing signed and unsigned numbers.
+
+	* src/kwq/KWQString.mm: (QString::insert), (QString::remove),
+	(QString::truncate):
+
 2001-12-07  Richard Williamson  <richwill@richwill.com>
 
         Fixed bug that was highlighted when we turned on warnings.
