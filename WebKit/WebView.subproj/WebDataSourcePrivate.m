@@ -15,8 +15,15 @@
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFImageRepresentation.h>
+#import <WebKit/IFTextRepresentation.h>
 #import <KWQKHTMLPartImpl.h>
 #import "IFWebController.h"
+
+#import <kurl.h>
+
+static NSMutableDictionary *_repTypes=nil;
 
 @implementation IFWebDataSourcePrivate 
 
@@ -27,8 +34,6 @@
     frames = nil;
     controller = nil;
     inputURL = nil;
-
-    part = new KHTMLPart();
     
     primaryLoadComplete = NO;
     
@@ -61,8 +66,7 @@
  
     [errors release];
     [mainDocumentError release];
-   
-    part->deref();
+
 
     [super dealloc];
 }
@@ -70,6 +74,18 @@
 @end
 
 @implementation IFWebDataSource (IFPrivate)
+
+- (void)_setResourceData:(NSData *)data
+{
+    [_private->resourceData release];
+    _private->resourceData = [data retain];
+}
+
+- (void)_setRepresentation:(id) representation
+{
+    [_private->representation release];
+    _private->representation = [representation retain];
+}
 
 - (void)_setLoading:(BOOL)loading
 {
@@ -95,19 +111,11 @@
 
 - (void)_setController: (IFWebController *)controller
 {
-    WEBKIT_ASSERT(_private->part != nil);
-    
     if (_private->loading) {
         [controller retain];
         [_private->controller release];
     }
     _private->controller = controller;
-    _private->part->impl->setDataSource(self);
-}
-
-- (KHTMLPart *)_part
-{
-    return _private->part;
 }
 
 - (void)_setParent: (IFWebDataSource *)p
@@ -151,7 +159,7 @@
     }
     theURL = [NSURL URLWithString:urlString];
 
-    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: _private->part];
+    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self];
     [_private->mainHandle addClient: _private->mainURLHandleClient];
     
     // Mark the start loading time.
@@ -159,10 +167,6 @@
     
     // Fire this guy up.
     [_private->mainHandle loadInBackground];
-
-    // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
-    // We should move any code needed out of KWQ.
-    _private->part->openURL(url);
     
     [self _setLoading:YES];
 
@@ -205,7 +209,8 @@
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    _private->part->closeURL();
+    if ([self _isDocumentHTML])
+        [[self representation] part]->closeURL();        
 }
 
 - (void)_recursiveStopLoading
@@ -285,13 +290,21 @@
     _private->downloadPath = [path retain];
 }
 
-
-// This method should only be called by haveContentPolicy in IFWebController
-// and should only be called once.
 - (void) _setContentPolicy:(IFContentPolicy)policy
 {
     _private->contentPolicy = policy;
-    [_private->mainURLHandleClient setContentPolicy:policy];
+}
+
+- (void)_setContentType:(NSString *)type
+{
+    [_private->contentType release];
+    _private->contentType = [type retain];
+}
+
+- (void)_setEncoding:(NSString *)encoding
+{
+    [_private->encoding release];
+    _private->encoding = [encoding retain];
 }
 
 - (IFWebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <IFLocationChangeHandler>)handler;
@@ -343,6 +356,43 @@
     [_private->errors setObject: error forKey: resourceDescription];
 }
 
+- (BOOL)_isDocumentHTML
+{
+    return [[[self representation] className] isEqualToString:@"IFHTMLRepresentation"];
+}
 
++ (NSMutableDictionary *)_repTypes
+{
+    if(!_repTypes){
+        _repTypes = [[NSMutableDictionary dictionary] retain];
+        [_repTypes setObject:[IFHTMLRepresentation class]  forKey:@"text/html"];
+        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/jpeg"];
+        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/gif"];
+        [_repTypes setObject:[IFImageRepresentation class] forKey:@"image/png"];
+        [_repTypes setObject:[IFTextRepresentation class] forKey:@"text/"];
+    }
+    return _repTypes;
+}
+
++ (BOOL)_canShowMIMEType:(NSString *)MIMEType
+{
+    NSMutableDictionary *repTypes = [[self class] _repTypes];
+    NSArray *keys;
+    unsigned i;
+    
+    if([repTypes objectForKey:MIMEType]){
+        return YES;
+    }else{
+        keys = [repTypes allKeys];
+        for(i=0; i<[keys count]; i++){
+            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
+                if([repTypes objectForKey:[keys objectAtIndex:i]]){
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
 
 @end

@@ -10,11 +10,17 @@
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebFoundation/WebFoundation.h>
+#import <WebKit/IFHTMLView.h>
+#import <WebKit/IFImageView.h>
+#import <WebKit/IFTextView.h>
+#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFImageRepresentation.h>
+#import <WebKit/IFTextRepresentation.h>
 
 #import <xml/dom_docimpl.h>
-#import <KWQKHTMLPartImpl.h>
 
 #import <WCWebDataSource.h>
+#import <KWQKHTMLPartImpl.h>
 
 @implementation IFWebDataSource
 
@@ -58,11 +64,19 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
     [super dealloc];
 }
 
-#ifdef TENTATIVE_API
-- initWithData: (NSData *)data 
-- initWithString: (NSString *)string;
-- initWithLoader: (IFLoader *)loader;
-#endif
+- (NSData *)data
+{
+    if(_private->mainHandle){
+        return [_private->mainHandle resourceData];
+    }else{
+        return _private->resourceData;
+    }
+}
+
+- (id) representation
+{
+    return _private->representation;
+}
 
 - (IFWebFrame *)webFrame
 {
@@ -235,32 +249,35 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 - (IFDOMDocument *)document;
 #endif
 
+
 // Get the actual source of the docment.
 - (NSString *)documentText
 {
-    KHTMLPart *part = [self _part];
-    
-    return QSTRING_TO_NSSTRING(part->impl->documentSource());
+    return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
 }
 
-
+// FIXME: Move to representation
 - (NSString *)documentTextFromDOM
 {
-    DOM::DocumentImpl *doc;
-    NSString *string = nil;
-    KHTMLPart *part = [self _part];
-    
-    if (part != 0){
-        doc = [self _part]->xmlDocImpl();
-        if (doc != 0){
-            QString str = doc->recursive_toHTML(1);
-            string = QSTRING_TO_NSSTRING(str);
+    if([self _isDocumentHTML]){
+        DOM::DocumentImpl *doc;
+        NSString *string = nil;
+        KHTMLPart *part = [[self representation] part];
+        
+        if (part != 0){
+            doc = part->xmlDocImpl();
+            if (doc != 0){
+                QString str = doc->recursive_toHTML(1);
+                string = QSTRING_TO_NSSTRING(str);
+            }
         }
+        if (string == nil) {
+            string = @"";
+        }
+        return string;
+    }else{
+        return nil;
     }
-    if (string == nil) {
-        string = @"";
-    }
-    return string;
 }
 
 
@@ -281,8 +298,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 
 - (NSString *)encoding
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::encoding is not implemented"];
-    return nil;
+    return _private->encoding;
 }
 
 // Style sheet
@@ -323,6 +339,11 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
     return _private->contentPolicy;
 }
 
+- (NSString *)contentType
+{
+    return _private->contentType;
+}
+
 - (NSString *)downloadPath
 {
     return _private->downloadPath;
@@ -337,6 +358,37 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 {
     return _private->mainDocumentError;
 }
+
++ (void)registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType
+{
+    NSMutableDictionary *repTypes = [[self class] _repTypes];
+        
+    // FIXME: OK to allow developers to override built-in reps?
+    [repTypes setObject:repClass forKey:MIMEType];
+}
+
++ (id <IFDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType
+{
+    NSMutableDictionary *repTypes = [[self class] _repTypes];
+    Class repClass;
+    NSArray *keys;
+    unsigned i;
+    
+    repClass = [repTypes objectForKey:MIMEType];
+    if(repClass){
+        return [[[repClass alloc] init] autorelease];
+    }else{
+        keys = [repTypes allKeys];
+        for(i=0; i<[keys count]; i++){
+            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
+                repClass = [repTypes objectForKey:[keys objectAtIndex:i]];
+                return [[[repClass alloc] init] autorelease];
+            }
+        }
+    }
+    return nil;
+}
+
 
 
 @end

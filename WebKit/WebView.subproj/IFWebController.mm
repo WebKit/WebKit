@@ -3,32 +3,22 @@
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/IFDocument.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
+#import <WebKit/IFException.h>
+#import <WebKit/IFPluginDatabase.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFException.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
 
 @implementation IFWebController
-
-/*
-+ (id <IFDocumentView>) createViewForMIMEType:(NSString *)MIMEType
-{
-    return nil;
-}
-
-+ (void) registerClass:(Class)class forMIMEType:(NSString *)MIMEType
-{
-
-}
-*/
 
 - init
 {
@@ -66,7 +56,6 @@
 {
     IFWebView *childView;
     IFWebFrame *newFrame;
-    NSScrollView *scrollView;
 
     childView = [[[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
 
@@ -77,12 +66,7 @@
     [childView _setController: self];
     [childDataSource _setController: self];
 
-    if (inScrollView == YES){
-        scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
-        [scrollView setHasVerticalScroller: NO];
-        [scrollView setHasHorizontalScroller: NO];
-        [childView _setFrameScrollView: scrollView];
-    }
+    [childView setAllowsScrolling: inScrollView];
         
     return newFrame;
 }
@@ -262,6 +246,7 @@
 - (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler
 {
     IFWebDataSource *mainDataSource, *mainProvisionalDataSource, *dataSource;
+    NSString *MIMEType;
     
     if(policy == IFContentPolicyNone)
         [NSException raise:NSInvalidArgumentException format:@"Can't set policy of IFContentPolicyNone. Use IFContentPolicyIgnore instead"];
@@ -279,6 +264,24 @@
         }else{
             [dataSource _setContentPolicy:policy];
             [dataSource _setDownloadPath:path];
+            
+            if(policy == IFContentPolicyShow){
+                MIMEType = [dataSource contentType];
+                if([[self class] canShowMIMEType:MIMEType]){
+                    id documentView;
+                    IFWebView *webView;
+                    id <IFDocumentRepresentation> dataRepresentation;
+                    
+                    dataRepresentation = [IFWebDataSource createRepresentationForMIMEType:MIMEType];
+                    [dataSource _setRepresentation:dataRepresentation];
+                    webView = [[dataSource webFrame] view];
+                    documentView = [IFWebView createViewForMIMEType:MIMEType];
+                    [webView _setDocumentView: documentView];
+                    [documentView provisionalDataSourceChanged: dataSource];
+                }else{
+                    // return error with unableToImplementContentPolicy
+                }
+            }
         }
     }
 }
@@ -297,6 +300,19 @@
 
 - (void)startAnimatedImageLooping
 {
+}
+
++ (BOOL)canShowMIMEType:(NSString *)MIMEType
+{
+    if([IFWebView _canShowMIMEType:MIMEType] && [IFWebDataSource _canShowMIMEType:MIMEType]){
+        return YES;
+    }else{
+        // Have the plug-ins register views
+        [IFPluginDatabase installedPlugins];
+        if([IFWebView _canShowMIMEType:MIMEType] && [IFWebDataSource _canShowMIMEType:MIMEType])
+            return YES;
+    }
+    return NO;
 }
 
 @end

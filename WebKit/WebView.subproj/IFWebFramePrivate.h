@@ -9,6 +9,7 @@
 #import <WebKit/IFWebFrame.h>
 
 @class IFWebView;
+@protocol IFDocumentLoading;
 
 namespace khtml {
     class RenderPart;

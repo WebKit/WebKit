@@ -3,10 +3,12 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFNullPluginView.h"
-#import "WCPluginWidget.h"
-#import "IFWebView.h"
-#import "IFWebController.h"
+#import <WebKit/IFNullPluginView.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFNSViewExtras.h>
+
+#import <WCPluginWidget.h>
 
 static BOOL imageLoaded = NO;
 static NSImage *image = nil;
@@ -62,7 +64,7 @@ static NSImage *image = nil;
     [super drawRect:rect];
     if(!errorSent){
         errorSent = YES;
-        webView = [self findSuperview:@"IFWebView"];
+        webView = [self _IF_superviewWithName:@"IFWebView"];
         webController = [webView controller];
         [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }

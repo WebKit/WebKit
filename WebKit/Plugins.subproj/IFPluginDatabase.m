@@ -26,6 +26,10 @@
 #import "IFPluginDatabase.h"
 #import "WebKitDebug.h"
 
+
+NSArray *_pluginLocations(void);
+NSArray *_findPlugins(void);
+
 @implementation IFPluginDatabase
 static IFPluginDatabase *__IFPluginDatabase = nil;
 
@@ -34,7 +38,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
 {
     if(!__IFPluginDatabase){
         __IFPluginDatabase  = [IFPluginDatabase alloc];
-        __IFPluginDatabase->plugins = findPlugins();
+        __IFPluginDatabase->plugins = _findPlugins();
     }
     return __IFPluginDatabase;
 }
@@ -78,7 +82,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (IFPlugin *)pluginForFilename:(NSString *)filename
+- (IFPlugin *)pluginWithFilename:(NSString *)filename
 {
     uint i;
     IFPlugin *plugin;
@@ -97,7 +101,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return plugins;
 }
 
-- (NSArray *) allHandledMIMETypes
+- (NSArray *) MIMETypes
 {
     NSMutableArray *allHandledMIMETypes;
     IFPlugin *plugin;
@@ -117,7 +121,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
 
 @end
 
-NSArray *pluginLocations(void)
+NSArray *_pluginLocations(void)
 {
     NSMutableArray *locations;
     NSBundle *applicationBundle;
@@ -138,7 +142,7 @@ NSArray *pluginLocations(void)
     return locations;
 }
 
-NSArray *findPlugins(void)
+NSArray *_findPlugins(void)
 {
     NSFileManager *fileManager;
     NSArray *pluginDirectories, *files;
@@ -147,7 +151,7 @@ NSArray *findPlugins(void)
     IFPlugin *plugin;
     uint i, n;
     
-    pluginDirectories = pluginLocations();    
+    pluginDirectories = _pluginLocations();    
     fileManager = [NSFileManager defaultManager];
     pluginPaths = [NSMutableArray arrayWithCapacity:10];
     filenames = [NSMutableArray arrayWithCapacity:10];

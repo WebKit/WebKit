@@ -70,7 +70,7 @@
     IFPlugin *plugin;
     NSMutableDictionary *argsCopy;
     
-    plugin = [[IFPluginDatabase installedPlugins] pluginForFilename:@"Java.plugin"];
+    plugin = [[IFPluginDatabase installedPlugins] pluginWithFilename:@"Java.plugin"];
     if (plugin == nil) {
         return nil;
     }

@@ -50,49 +50,84 @@ QWidget* QScrollView::viewport() const
 
 int QScrollView::visibleWidth() const
 {
-    NSScrollView *scrollView = [[getView() superview] superview];
+#if 0
+    id view = getView();
+    NSScrollView *scrollView = [[view superview] superview];
     int visibleWidth;
     
     if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
         visibleWidth = (int)[scrollView documentVisibleRect].size.width;
     else
-        visibleWidth = (int)[getView() bounds].size.width;
+        visibleWidth = (int)[view bounds].size.width;
     return visibleWidth;
+#else
+    NSScrollView *view = (NSScrollView *)getView();
+    int visibleWidth;
+    if (view != nil && [view isKindOfClass: [NSScrollView class]]){
+        visibleWidth = (int)[view documentVisibleRect].size.width;
+    }
+    else
+        visibleWidth = (int)[view bounds].size.width;
+    if (visibleWidth <= 0)
+        visibleWidth = 200;
+    return visibleWidth;
+#endif
 }
 
 
 int QScrollView::visibleHeight() const
 {
-    NSScrollView *scrollView = [[getView() superview] superview];
+#if 0
+    id view = getView();
+    NSScrollView *scrollView = [[view superview] superview];
     int visibleHeight;
     
-    if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
+    if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]]){
         visibleHeight = (int)[scrollView documentVisibleRect].size.height;
+    }
     else
-        visibleHeight = (int)[getView() bounds].size.height;
+        visibleHeight = (int)[view bounds].size.height;
     return visibleHeight;
+#else
+    NSScrollView *view = (NSScrollView *)getView();
+    int visibleHeight;
+    
+    if (view != nil && [view isKindOfClass: [NSScrollView class]]){
+        visibleHeight = (int)[view documentVisibleRect].size.height;
+    }
+    else
+        visibleHeight = (int)[view bounds].size.height;
+        
+    if (visibleHeight <= 0)
+        visibleHeight = 200;
+    return visibleHeight;
+#endif
 }
 
 
 int QScrollView::contentsWidth() const
 {
-    return (int)[getView() bounds].size.width;
+    NSScrollView *view = (NSScrollView *)getView();
+    return (int)[[view documentView] bounds].size.width;
 }
 
 
 int QScrollView::contentsHeight() const
 {
-    return (int)[getView() bounds].size.height;
+    NSScrollView *view = (NSScrollView *)getView();
+    return (int)[[view documentView] bounds].size.height;
 }
 
 int QScrollView::contentsX() const
 {
-    return 0;
+    NSScrollView *view = (NSScrollView *)getView();
+    return (int)[[view documentView] bounds].origin.x;
 }
 
 int QScrollView::contentsY() const
 {
-    return 0;
+    NSScrollView *view = (NSScrollView *)getView();
+    return (int)[[view documentView] bounds].origin.y;
 }
 
 int QScrollView::childX(QWidget *)
@@ -149,6 +184,10 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     }
 
     subView = child->getView();
+    if ([subView isKindOfClass: [NSScrollView class]]) {
+        subView = [subView superview];
+    }
+
     if ([subView superview] == thisView) {
         return;
     }
@@ -167,7 +206,6 @@ void QScrollView::removeChild(QWidget* child)
 void QScrollView::resizeContents(int w, int h)
 {
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
-    //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
     if ([getView() isKindOfClass: [NSScrollView class]]){
         NSScrollView *scrollView = (NSScrollView *)getView();
         IFWebView *wview = [scrollView documentView];

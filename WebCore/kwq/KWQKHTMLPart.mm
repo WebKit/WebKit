@@ -461,14 +461,18 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     
     dataSource = getDataSource();
 
+    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "name %s\n", [nsframeName cString]);
     aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
-        if ([[aFrame view] _provisionalWidget])
-            frame->setWidget ([[aFrame view] _provisionalWidget]);
+        KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "found %s\n", [nsframeName cString]);
+        QWidget *khtmlview = [[[aFrame view] documentView] _provisionalWidget];
+        if (khtmlview)
+            frame->setWidget (khtmlview);
         else
-            frame->setWidget ([[aFrame view] _widget]);
+            frame->setWidget ([[[aFrame view] documentView] _widget]);
     }
     else {        
+        KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "creating %s\n", [nsframeName cString]);
         IFWebDataSource *oldDataSource, *newDataSource;
         NSURL *childURL;
         IFWebFrame *newFrame;
@@ -494,10 +498,10 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
         [newDataSource _setParent: oldDataSource];
         [newFrame setProvisionalDataSource: newDataSource];
     
-        KHTMLView *view = (KHTMLView *)[[newFrame view] _provisionalWidget];
-        view->setMarginWidth (o->getMarginWidth());
-        view->setMarginHeight (o->getMarginWidth());
         
+        [[newFrame view] _setMarginWidth: o->getMarginWidth()];
+        [[newFrame view] _setMarginHeight: o->getMarginHeight()];
+
         [newFrame startLoading];
     }
 
@@ -659,7 +663,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
     
     for (i = 0; i < [children count]; i++){
         aFrame = [children objectAtIndex: i];
-        res.append( [[aFrame dataSource] _part] );
+        res.append( [[[aFrame dataSource] representation] part] );
     }
     return res;
 }
@@ -707,5 +711,5 @@ KHTMLPart *KWQKHTMLPartImpl::parentPart()
     IFWebDataSource *parent, *dataSource = getDataSource();
     
     parent = [dataSource parent];
-    return [parent _part];
+    return [[parent representation] part];
 }

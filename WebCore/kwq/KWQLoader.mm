@@ -203,7 +203,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     NSURL *oldURL = job->url();
 
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", DEBUG_OBJECT(url));
-    [m_dataSource _part]->impl->setBaseURL([[url absoluteString] cString]);
+    [[m_dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
     
     [m_dataSource _setFinalURL: url];
     

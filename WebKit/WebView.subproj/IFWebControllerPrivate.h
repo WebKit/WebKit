@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/IFWebController.h>
+//#import <WebKit/IFDocument.h>
 
 @class IFError;
 @class IFLoadProgress;

@@ -74,18 +74,26 @@ namespace khtml {
 - (void)_addURLHandle: (IFURLHandle *)handle;
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - controller;
-- (KHTMLPart *)_part;
 - (void)_setTitle: (NSString *)title;
 - (void)_setFinalURL: (NSURL *)url;
 - (id <IFLocationChangeHandler>)_locationChangeHandler;
 - (BOOL)_isStopping;
 - (NSArray *)children;
+- representation;
+@end
+
+@interface IFHTMLRepresentation : NSObject
+- (KHTMLPart *)part;
 @end
 
 @interface IFWebView: NSObject
 - (QWidget *)_widget;
 - (QWidget *)_provisionalWidget;
 - (void)setFrameSize: (NSSize)r;
+- (void)_setMarginWidth: (int)w;
+- (int)_marginWidth;
+- (void)_setMarginHeight: (int)h;
+- (int)_marginHeight;
 @end
 
 @interface IFWebFrame: NSObject

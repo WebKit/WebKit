@@ -10,7 +10,9 @@
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
-
+#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLView.h>
+#import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
@@ -137,8 +139,10 @@ static const char * const stateNames[6] = {
     if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
-        [[self view] setNeedsLayout: YES];
-        [[self view] setNeedsDisplay: YES];
+            
+        if([[[self view] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
+            [[[self view] documentView] setNeedsLayout: YES];
+        [[[self view] documentView] setNeedsDisplay: YES];
     }
     else {
         if ([self controller])
@@ -199,36 +203,38 @@ static const char * const stateNames[6] = {
 - (void)_transitionProvisionalToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
-
+    id documentView = [[self view] documentView];
+    BOOL isDocumentHTML = [[self view] isDocumentHTML];
+    
     switch ([self _state]) {
     	case IFWEBFRAMESTATE_PROVISIONAL:
         {
-            id view = [self view];
+            WEBKIT_ASSERT (documentView != nil);
 
-            WEBKIT_ASSERT (view != nil);
-
-            // Make sure any plugsin are shut down cleanly.
-            [view _stopPlugins];
+            if(isDocumentHTML){
             
-            // Remove any widgets.
-            [view _removeSubviews];
+                // Make sure any plugsin are shut down cleanly.
+                [documentView _stopPlugins];
+                
+                // Remove any widgets.
+                [documentView _removeSubviews];
+            }
             
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
             
+            // provisionalDataSourceCommitted: will reset the view and begin trying to
+            // display the new new datasource.
+            [documentView provisionalDataSourceCommitted: _private->provisionalDataSource];
+ 
             // If we're a frame (not the main frame) hookup the kde internals.  This introduces a nasty dependency 
             // in kde on the view.
             khtml::RenderPart *renderPartFrame = [self _renderFramePart];
-            if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")]) {
+            if (renderPartFrame && isDocumentHTML) {
                 // Setting the widget will delete the previous KHTMLView associated with the frame.
-                renderPartFrame->setWidget ([view _provisionalWidget]);
+                renderPartFrame->setWidget ([documentView _widget]);
             }
-        
-            // dataSourceChanged: will reset the view and begin trying to
-            // display the new new datasource.
-            [view dataSourceChanged: _private->provisionalDataSource];
-        
-            
+           
             // Now that the provisional data source is committed, release it.
             [_private setProvisionalDataSource: nil];
         
@@ -328,14 +334,19 @@ static const char * const stateNames[6] = {
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
-                [ds _part]->end();
+                if([ds _isDocumentHTML])
+                    [[ds representation] part]->end();
                 
-                // May need to relayout each time a frame is completely
-                // loaded.
-                [mainView setNeedsLayout: YES];
+                if ([mainView isDocumentHTML]){
+                    // May need to relayout each time a frame is completely
+                    // loaded.
+                    [[mainView documentView] setNeedsLayout: YES];
+                }
                 
-                // Layout this view (eventually).
-                [thisView setNeedsLayout: YES];
+                if ([thisView isDocumentHTML]){
+                    // Layout this view (eventually).
+                    [[thisView documentView] setNeedsLayout: YES];
+                }
                 
                 // Draw this view (eventually), and it's scroll view
                 // (eventually).
@@ -345,15 +356,19 @@ static const char * const stateNames[6] = {
 
                 // Force a relayout and draw NOW if we are complete are the top level.
                 if ([[self controller] mainFrame] == self) {
-                    [mainView layout];
-                    [mainView display];
+                    [[mainView documentView] layout];
+                    [[mainView documentView] display];
                 }
  
                 // Jump to anchor point, if necessary.
-                [ds _part]->impl->gotoBaseAnchor();
+                if ([ds _isDocumentHTML])
+                    [[ds representation] part]->impl->gotoBaseAnchor();
                    
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
-                
+ 
+                //if ([ds _isDocumentHTML])
+                //    [[ds representation] part]->closeURL();        
+               
                 return;
             }
             // A resource was loaded, but the entire frame isn't complete.  Schedule a

@@ -60,6 +60,6 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 { 
     IFWebController *newController = [[m_part->impl->getDataSource() controller] openNewWindowWithURL:url.getNSURL()];
     if (part != NULL) {
-	*part = [[[newController mainFrame] provisionalDataSource] _part];
+	*part = [[[[newController mainFrame] provisionalDataSource] representation] part];
     }
 }

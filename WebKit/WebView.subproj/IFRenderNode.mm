@@ -8,7 +8,8 @@
 
 #import "IFRenderNode.h"
 
-#import <IFWebViewPrivate.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFHTMLViewPrivate.h>
 #import <khtmlview.h>
 #import <khtml_part.h>
 #import <xml/dom_docimpl.h>
@@ -54,7 +55,7 @@
 
 - initWithWebView:(IFWebView *)view
 {
-    return [self initWithRenderObject:[view _widget]->part()->xmlDocImpl()->renderer()];
+    return [self initWithRenderObject:[[view documentView] _widget]->part()->xmlDocImpl()->renderer()];
 }
 
 - (void)dealloc

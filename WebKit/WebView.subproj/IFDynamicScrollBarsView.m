@@ -7,9 +7,6 @@
 //
 
 #import <WebKit/IFDynamicScrollBarsView.h>
-
-#import <WebKit/IFWebView.h>
-
 #import <WebKit/WebKitDebug.h>
 
 @implementation IFDynamicScrollBarsView

@@ -12,7 +12,9 @@
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFDownloadHandler.h>
+#import <WebKit/IFHTMLView.h>
+#import <WebKit/IFHTMLViewPrivate.h>
+
 #import <WebFoundation/WebFoundation.h>
 
 #import <WebKit/WebKitDebug.h>
@@ -152,15 +154,8 @@
         
         [_private setProvisionalDataSource: newDataSource];
         
-        [[self view] provisionalDataSourceChanged: newDataSource];
-    
-    #ifdef OLD_WAY
-        // This introduces a nasty dependency on the view.
-        khtml::RenderPart *renderPartFrame = [self _renderFramePart];
-        id view = [self view];
-        if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
-            renderPartFrame->setWidget ([view _provisionalWidget]);
-    #endif
+        //[[self view] provisionalDataSourceChanged: newDataSource];
+        //[[[self view] documentView] provisionalDataSourceChanged: newDataSource];
     
         [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
     }
@@ -204,7 +199,8 @@
 - (void)reset
 {
     [_private setDataSource: nil];
-    [[_private view] _resetWidget];
+    if([[[self view] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
+        [[[self view] documentView] _resetWidget];
     [_private setView: nil];
 }
 

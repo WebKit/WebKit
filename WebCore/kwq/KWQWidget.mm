@@ -86,7 +86,6 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    KWQDEBUG ("%p %s to w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     internalSetGeometry(pos().x(), pos().y(), w, h);
 }
 
@@ -282,10 +281,12 @@ void QWidget::setCursor(const QCursor &cur)
 {
     data->cursor = cur;
     
+#if 0
     id view = data->view;
     if ([view respondsToSelector:@selector(setCursor:)]) { 
 	[view setCursor:data->cursor.handle()];
     }
+#endif
 }
 
 QCursor QWidget::cursor()
@@ -324,7 +325,12 @@ void QWidget::hide()
 
 void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
-    [data->view setFrame:NSMakeRect(x, y, w, h)];
+    id view = getView();
+    // If we're an scroll view, that means we're a khtmlview, so get
+    // the IFWebView and resize that.
+    if ([view isKindOfClass: [NSScrollView class]])
+       view = [view superview];
+    [view setFrame:NSMakeRect(x, y, w, h)];
 }
 
 void QWidget::showEvent(QShowEvent *)

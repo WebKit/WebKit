@@ -25,6 +25,7 @@
 #endif
 
 @class IFWebDataSourcePrivate;
+@protocol IFDocumentRepresentation;
 
 @interface IFWebDataSource : NSObject
 {
@@ -42,6 +43,10 @@
 - initWithString: (NSString *)string;
 - initWithLoader: (IFLoader *)loader;
 #endif
+
+- (NSData *)data;
+
+- (id)representation;
 
 // Returns YES if this is the main document.  The main document is the 'top'
 // document, typically either a frameset or a normal HTML document.
@@ -112,6 +117,8 @@
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading;
 
+
+/*
 #ifdef TENTATIVE_API
 // Get DOM access to the document.
 - (IFDOMDocument *)document;
@@ -119,9 +126,11 @@
 
 // Get the source of the document by reconstructing it from the DOM.
 - (NSString *)documentTextFromDOM;
+*/
 
 // Get the actual source of the document.
 - (NSString *)documentText;
+
 
 // URL reference point, these should probably not be public for 1.0.
 - (NSURL *)base;
@@ -148,6 +157,8 @@
 
 - (IFContentPolicy)contentPolicy;
 
+- (NSString *)contentType;
+
 - (NSString *)downloadPath;
 
 /*
@@ -158,5 +169,8 @@
 */
 - (IFError *)mainDocumentError;
 
++ (void) registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType;
+
++ (id <IFDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType;
 
 @end

@@ -8,7 +8,8 @@
 
 #import "IFDOMNode.h"
 
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFHTMLViewPrivate.h>
 #import <khtmlview.h>
 #import <khtml_part.h>
 #import <xml/dom_docimpl.h>
@@ -37,7 +38,7 @@
 
 - initWithWebView:(IFWebView *)view
 {
-    return [self initWithDOMNode:[view _widget]->part()->xmlDocImpl()];
+    return [self initWithDOMNode:[[view documentView] _widget]->part()->xmlDocImpl()];
 }
 
 - (void)dealloc

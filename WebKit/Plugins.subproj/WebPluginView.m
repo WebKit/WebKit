@@ -5,30 +5,25 @@
 
 #define USE_CARBON 1
 
-// FIXME: clean up these includes
-
-#import "IFPluginView.h"
-
+#import <WebKit/IFPluginView.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebView.h>
+#import <WebKit/IFPluginDatabase.h>
+#import <WebKit/IFPluginStream.h>
+#import <WebKit/IFPluginNullEventSender.h>
+#import <WebKit/IFNullPluginView.h>
+#import <WebKit/IFPlugin.h>
+#import <WebKit/IFNSViewExtras.h>
+#import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/IFError.h>
+#import <WebFoundation/IFNSStringExtensions.h>
 
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
-
-#import <IFPluginDatabase.h>
-#import <IFPluginStream.h>
-#import <IFWebDataSource.h>
-#import <WebFoundation/IFError.h>
-#import <WebKitDebug.h>
-
-#import <IFPlugin.h>
-#import <qwidget.h>
-#import <IFWebView.h>
-#import <IFPluginNullEventSender.h>
-#import "IFNullPluginView.h"
-
-#import <WebFoundation/IFNSStringExtensions.h>
 
 @implementation IFPluginView
 
@@ -397,21 +392,6 @@ static char *newCString(NSString *string)
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08lx\n", npErr, (int)nPort.port);
 }
 
-
-- (NSView *) findSuperview:(NSString *)viewName
-{
-    NSView *view;
-    
-    view = self;
-    while(view){
-        view = [view superview];
-        if([[view className] isEqualToString:viewName]){
-            return view;
-        }
-    }
-    return nil;
-}
-
 -(void)start
 {
     NPSavedData saved;
@@ -435,12 +415,18 @@ static char *newCString(NSString *string)
     
     theWindow = [self window];
     notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
-    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
-    [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
-    [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
-    [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
-    [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) name:@"NSUserDefaultsDidChangeNotification" object:nil];
+    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+        name:@"NSViewBoundsDidChangeNotification" object:[self _IF_superviewWithName:@"NSClipView"]];
+    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+        name:@"NSWindowDidResizeNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:) 
+        name:@"NSWindowWillCloseNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
+        name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
+        name:@"NSWindowDidResignKeyNotification" object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
+        name:@"NSUserDefaultsDidChangeNotification" object:nil];
     
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
@@ -457,7 +443,7 @@ static char *newCString(NSString *string)
     [eventSender sendNullEvents];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     
-    id webView = [self findSuperview:@"IFWebView"];
+    id webView = [self _IF_superviewWithName:@"IFWebView"];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];

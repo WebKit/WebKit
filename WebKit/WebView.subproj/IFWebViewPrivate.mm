@@ -6,28 +6,31 @@
         NSWebPageView.
 */
 #import <WebKit/WebKitDebug.h>
-
+#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFPluginView.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFHTMLView.h>
+#import <WebKit/IFImageView.h>
+#import <WebKit/IFTextView.h>
 
-// Includes from KDE
-#import <khtmlview.h>
-#import <khtml_part.h>
-#import <html/html_documentimpl.h>
-#import "IFWebController.h"
+static NSMutableDictionary *_viewTypes=nil;
 
 @implementation IFWebViewPrivate
 
+- init
+{
+    [super init];
+    
+    marginWidth = -1;
+    marginHeight = -1;
+    
+    return self;
+}
+
 - (void)dealloc
 {
-    [controller release];
     [frameScrollView release];
-    [draggingTypes release];
-    [cursor release];
-
-    //if (widget)
-    //    delete widget;
-
+    [documentView release];
     [super dealloc];
 }
 
@@ -35,32 +38,37 @@
 
 @implementation IFWebView (IFPrivate)
 
-- (void)_resetWidget
+- (void)_setMarginWidth: (int)w
 {
-    delete _private->widget;
-    _private->widget = 0;
+    _private->marginWidth = w;
 }
 
-- (void)_stopPlugins 
+- (int)_marginWidth
 {
-    NSArray *subviews = [[self subviews] copy];
-    int count = [subviews count];
-    while (count--) {
-        id view = [subviews objectAtIndex:count];
-        if ([view isKindOfClass:[IFPluginView class]]) {
-            IFPluginView *pluginView = (IFPluginView *)view;
-            [pluginView stop];
-        }
-    }
-    [subviews release];
+    return _private->marginWidth;
 }
 
-- (void)_removeSubviews
+- (void)_setMarginHeight: (int)h
 {
-    // Remove all the views.  They will be be re-added if this is a re-layout. 
-    NSArray *subviews = [[self subviews] copy];
-    [subviews makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
-    [subviews release];
+    _private->marginHeight = h;
+}
+
+- (int)_marginHeight
+{
+    return _private->marginHeight;
+}
+
+- (void)_setDocumentView:(id)view
+{
+    [[self _frameScrollView] setDocumentView: view];
+    
+    // Set the size of the new document scroll view to the size
+    // of the IFWebView.
+    [[self _frameScrollView] setFrame:[self frame]];
+    
+    [view retain];
+    [_private->documentView release];
+    _private->documentView = view;
 }
 
 - (void)_setController: (IFWebController *)controller
@@ -69,26 +77,13 @@
     _private->controller = controller;    
 }
 
-- (KHTMLView *)_widget
-{
-    return _private->widget;    
-}
-
-- (KHTMLView *)_provisionalWidget
-{
-    return _private->provisionalWidget;    
-}
-
 - (void)_setFrameScrollView: (NSScrollView *)sv
 {
     [sv retain];
     [_private->frameScrollView release];
     _private->frameScrollView = sv;    
-    //[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    //[sv setHasVerticalScroller: YES];
-    //[sv setHasHorizontalScroller: YES];
-    [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [sv setDocumentView: self];
+    [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview: sv];
 }
 
 - (NSScrollView *)_frameScrollView
@@ -108,6 +103,40 @@
         [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
         [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
     }
+}
+
++ (NSMutableDictionary *)_viewTypes
+{
+    if(!_viewTypes){
+        _viewTypes = [[NSMutableDictionary dictionary] retain];
+        [_viewTypes setObject:[IFHTMLView class]  forKey:@"text/html"];
+        [_viewTypes setObject:[IFTextView class]  forKey:@"text/"];
+        [_viewTypes setObject:[IFImageView class] forKey:@"image/jpeg"];
+        [_viewTypes setObject:[IFImageView class] forKey:@"image/gif"];
+        [_viewTypes setObject:[IFImageView class] forKey:@"image/png"];
+    }
+    return _viewTypes;
+}
+
++ (BOOL)_canShowMIMEType:(NSString *)MIMEType
+{
+    NSMutableDictionary *viewTypes = [[self class] _viewTypes];
+    NSArray *keys;
+    unsigned i;
+    
+    if([viewTypes objectForKey:MIMEType]){
+        return YES;
+    }else{
+        keys = [viewTypes allKeys];
+        for(i=0; i<[keys count]; i++){
+            if([[keys objectAtIndex:i] hasSuffix:@"/"] && [MIMEType hasPrefix:[keys objectAtIndex:i]]){
+                if([viewTypes objectForKey:[keys objectAtIndex:i]]){
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
 }
 
 @end

@@ -1,3 +1,68 @@
+2002-06-12  Chris Blumenberg  <cblu@apple.com>
+
+	Couldn't run ChangeLog because it hung with the massize diffs, so here's
+	a hand-made one.
+	
+	Changes to support inline views.
+
+	Modified Files:
+
+	WebKit/ChangeLog WebKit/Plugins.subproj/IFNullPluginView.mm
+	WebKit/Plugins.subproj/IFPluginDatabase.h
+	WebKit/Plugins.subproj/IFPluginDatabase.m
+	WebKit/Plugins.subproj/IFPluginView.mm   
+	WebKit/WebCoreSupport.subproj/IFImageRenderer.h
+	WebKit/WebCoreSupport.subproj/IFWebCoreViewFactory.m
+	WebKit/WebKit.pbproj/project.pbxproj
+	WebKit/WebView.subproj/IFDOMNode.mm 
+	WebKit/WebView.subproj/IFDynamicScrollBarsView.m
+	WebKit/WebView.subproj/IFMainURLHandleClient.h          
+	WebKit/WebView.subproj/IFMainURLHandleClient.mm
+	WebKit/WebView.subproj/IFRenderNode.mm  
+	WebKit/WebView.subproj/IFWebController.h
+	WebKit/WebView.subproj/IFWebController.mm 
+	WebKit/WebView.subproj/IFWebControllerPrivate.h
+	WebKit/WebView.subproj/IFWebControllerPrivate.mm
+	WebKit/WebView.subproj/IFWebDataSource.h
+	WebKit/WebView.subproj/IFWebDataSource.mm
+	WebKit/WebView.subproj/IFWebDataSourcePrivate.h
+	WebKit/WebView.subproj/IFWebDataSourcePrivate.mm
+	WebKit/WebView.subproj/IFWebFrame.mm
+	WebKit/WebView.subproj/IFWebFramePrivate.h
+	WebKit/WebView.subproj/IFWebFramePrivate.mm
+	WebKit/WebView.subproj/IFWebView.h
+	WebKit/WebView.subproj/IFWebView.mm   
+	WebKit/WebView.subproj/IFWebViewPrivate.h 
+	WebKit/WebView.subproj/IFWebViewPrivate.mm
+	
+ 	Added Files:
+ 	
+	WebKit/Misc.subproj/IFNSViewExtras.h
+	WebKit/Misc.subproj/IFNSViewExtras.m
+	WebKit/WebView.subproj/IFDocument.h
+	WebKit/WebView.subproj/IFHTMLRepresentation.h           
+	WebKit/WebView.subproj/IFHTMLRepresentation.mm 
+	WebKit/WebView.subproj/IFHTMLView.h     
+	WebKit/WebView.subproj/IFHTMLView.mm
+	WebKit/WebView.subproj/IFHTMLViewPrivate.h
+	WebKit/WebView.subproj/IFHTMLViewPrivate.mm
+	WebKit/WebView.subproj/IFImageRepresentation.h  
+	WebKit/WebView.subproj/IFImageRepresentation.m
+	WebKit/WebView.subproj/IFImageView.h
+	WebKit/WebView.subproj/IFImageView.m
+	WebKit/WebView.subproj/IFTextRepresentation.h   
+	WebKit/WebView.subproj/IFTextRepresentation.m
+	WebKit/WebView.subproj/IFTextView.h
+	WebKit/WebView.subproj/IFTextView.m
+	
+	Removed Files:
+
+	WebKit/MIME.subproj/IFContentHandler.h
+	WebKit/MIME.subproj/IFContentHandler.m    
+	WebKit/MIME.subproj/IFMIMEHandler.h
+	WebKit/MIME.subproj/IFMIMEHandler.m
+        
+
 2002-06-12  Kenneth Kocienda  <kocienda@apple.com>
 
 	* Misc.subproj/WebKitDebug.h: Made assertion failure console message bolder and easier to see.

@@ -6,7 +6,7 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFMIMEHandler.h>
+
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebFoundation/IFURLHandle.h>
 
@@ -18,20 +18,14 @@ class KHTMLPart;
 
 @interface IFMainURLHandleClient : NSObject <IFURLHandleClient>
 {
+    NSURL *url;
     id dataSource;
     KHTMLPart *part;
-    BOOL sentFakeDocForNonHTMLContentType, processedBufferedData, downloadStarted, loadFinished, examinedInitialData;
-    IFMIMEHandlerType handlerType;
-    IFDownloadHandler *downloadHandler;
-    IFContentPolicy contentPolicy;
-    NSData *resourceData;
-    NSString *encoding, *MIMEType;
-    NSURL *url;
+    BOOL processedBufferedData;
+    BOOL examinedInitialData;
+    BOOL isFirstChunk;
 }
-- initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;
-- (void)setContentPolicy:(IFContentPolicy)theContentPolicy;
+- initWithDataSource: (IFWebDataSource *)ds;
 
-- (void) processData:(NSData *)data isComplete:(BOOL)complete allDataReceived:(BOOL)allDataReceived;
-- (void) finishProcessingData:(NSData *)data;
 @end
 

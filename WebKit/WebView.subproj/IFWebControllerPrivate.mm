@@ -18,7 +18,6 @@
 
 #import <WebKit/WebKitDebug.h>
 
-
 @implementation IFWebControllerPrivate
 
 - init 
@@ -51,8 +50,8 @@
     [self _clearControllerReferences: mainFrame];
 
     [mainFrame reset];
-    
     [mainFrame autorelease];
+
     [super dealloc];
 }
 

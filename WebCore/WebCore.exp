@@ -34,3 +34,5 @@ __ZNK3DOM9DOMString6stringEv
 __ZNK7QString6latin1Ev
 __ZNK7QWidget7getViewEv
 __ZNK9KHTMLPart10xmlDocImplEv
+__ZN9KHTMLView14setMarginWidthEi
+__ZN9KHTMLView15setMarginHeightEi
