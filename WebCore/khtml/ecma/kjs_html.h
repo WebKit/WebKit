@@ -223,7 +223,7 @@ namespace KJS {
 
   class Image : public DOMObject, public khtml::CachedObjectClient {
   public:
-    Image(const DOM::Document &d);
+    Image(const DOM::Document &d, bool ws, int w, bool hs, int h);
     ~Image();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -242,6 +242,10 @@ namespace KJS {
     QGuardedPtr<DOM::DocumentImpl> doc;
     khtml::CachedImage* img;
     JSEventListener *onLoadListener;
+    bool widthSet;
+    bool heightSet;
+    int width;
+    int height;
   };
 
   ////////////////////// Context2D Object ////////////////////////

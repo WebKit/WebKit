@@ -3340,14 +3340,25 @@ bool ImageConstructorImp::implementsConstruct() const
   return true;
 }
 
-Object ImageConstructorImp::construct(ExecState *, const List &)
+Object ImageConstructorImp::construct(ExecState * exec, const List & list)
 {
-  /* TODO: fetch optional height & width from arguments */
-
-  Object result(new Image(doc));
-  /* TODO: do we need a prototype ? */
-
-  return result;
+    bool widthSet = false, heightSet = false;
+    int width = 0, height = 0;
+    if (list.size() > 0) {
+        widthSet = true;
+        Value w = list.at(0);
+        width = w.toInt32(exec);
+    }
+    if (list.size() > 1) {
+        heightSet = true;
+        Value h = list.at(1);
+        height = h.toInt32(exec);
+    }
+        
+    Object result(new Image(doc, widthSet, width, heightSet, height));
+  
+    /* TODO: do we need a prototype ? */
+    return result;
 }
 
 const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
@@ -3381,22 +3392,26 @@ Value Image::getValueProperty(ExecState *, int token) const
       return Null();
     }
   case Width: {
-    int width = 0;
+    if (widthSet)
+        return Number(width);
+    int w = 0;
     if (img) {
       QSize size = img->pixmap_size();
       if (size.isValid())
-        width = size.width();
+        w = size.width();
     }
-    return Number(width);
+    return Number(w);
   }
   case Height: {
-    int height = 0;
+    if (heightSet)
+        return Number(height);
+    int h = 0;
     if (img) {
       QSize size = img->pixmap_size();
       if (size.isValid())
-        height = size.height();
+        h = size.height();
     }
-    return Number(height);
+    return Number(h);
   }
   default:
     kdWarning() << "Image::getValueProperty unhandled token " << token << endl;
@@ -3425,6 +3440,14 @@ void Image::putValue(ExecState *exec, int token, const Value& value, int /*attr*
     onLoadListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
     if (onLoadListener) onLoadListener->ref();
     break;
+  case Width:
+    widthSet = true;
+    width = value.toInt32(exec);
+    break;
+  case Height:
+    heightSet = true;
+    height = value.toInt32(exec);
+    break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
   }
@@ -3439,9 +3462,13 @@ void Image::notifyFinished(khtml::CachedObject *)
   }
 }
 
-Image::Image(const DOM::Document &d)
+Image::Image(const DOM::Document &d, bool ws, int w, bool hs, int h)
   : doc(static_cast<DOM::DocumentImpl*>(d.handle())), img(0), onLoadListener(0)
 {
+      widthSet = ws;
+      width = w;
+      heightSet = hs;
+      height = h;
 }
 
 Image::~Image()

@@ -1,3 +1,17 @@
+2005-02-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3867759, .mac regression where scrollers don't show up.  Make sure you can set the .width and
+	.height properties on the Image object.
+	
+        Reviewed by John Sullivan
+
+        * khtml/ecma/kjs_html.cpp:
+        (ImageConstructorImp::construct):
+        (Image::getValueProperty):
+        (Image::putValue):
+        (Image::Image):
+        * khtml/ecma/kjs_html.h:
+
 2005-02-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
