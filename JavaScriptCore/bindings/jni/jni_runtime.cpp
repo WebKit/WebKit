@@ -63,7 +63,7 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
         break;
             
         case boolean_type: {
-            jboolean value = callJNIBooleanMethod(fieldJInstance, "getBoolean", "(Ljava/lang/Object;)B", jinstance);
+            jboolean value = callJNIBooleanMethod(fieldJInstance, "getBoolean", "(Ljava/lang/Object;)Z", jinstance);
             return KJS::Boolean((bool)value);
         }
         break;
@@ -74,7 +74,7 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
         
         case int_type:
             jint value;
-            value = callJNIIntMethod(fieldJInstance, "getInt", "(Ljava/lang/Object;)D", jinstance);
+            value = callJNIIntMethod(fieldJInstance, "getInt", "(Ljava/lang/Object;)I", jinstance);
             return Number((int)value);
 
         case long_type:

@@ -1,5 +1,14 @@
 2003-12-01  Richard Williamson   <rjw@apple.com>
 
+	Fixed mistake in method signatures used to get boolean and integer fields.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+
+2003-12-01  Richard Williamson   <rjw@apple.com>
+
 Fixed parameter passing to applet.  Child elements are NOT valid in setStyle().  So we now create the widget before needed with createWidgetIfNecessary.  This either happens when doing the first layout, or when JavaScript first references the applet element.
 
 Fixed early delete of the the main applet instance.  When the JS collector cleaned up the last JS object referring to the applet instance we were deleting the java instance.  This caused the applet instance cached on the applet element to be invalid.  The applet instance is the only Java object not to be cleaned up by the JS collector.
