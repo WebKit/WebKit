@@ -43,14 +43,19 @@ long _GetMillisecondsSinceEpoch();
  * Logging macros
  */
 
-#define KWQ_LOG_NEVER_IMPLEMENTED	0x1
-#define KWQ_LOG_PARTIALLY_IMPLEMENTED	0x2
-#define KWQ_LOG_NOT_YET_IMPLEMENTED	0x4
-#define KWQ_LOG_DEBUG			0x8
-#define KWQ_LOG_ERROR			0x10
+#define KWQ_LOG_NEVER_IMPLEMENTED	0x00000001
+#define KWQ_LOG_PARTIALLY_IMPLEMENTED	0x00000002
+#define KWQ_LOG_NOT_YET_IMPLEMENTED	0x00000004
+#define KWQ_LOG_DEBUG			0x00000008
+#define KWQ_LOG_ERROR			0x00000010
+#define KWQ_LOG_TIMING			0x00000020
+#define KWQ_LOG_LOADING			0x00000040
 
 #define KWQ_LOG_NONE			0
-#define KWQ_LOG_ALL			0xffffffff
+
+// bits in high byte are reserved for clients
+#define KWQ_LOG_ALL_EXCEPT_CLIENTS	0x0000FFFF
+#define KWQ_LOG_ALL			0xFFFFFFFF
 
 void KWQSetLogLevel(int mask);
 unsigned int KWQGetLogLevel();

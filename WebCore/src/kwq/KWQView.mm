@@ -175,7 +175,7 @@
         if (needsLayout){
             double start = CFAbsoluteTimeGetCurrent();
             ((KHTMLView *)widget)->layout(TRUE);
-            KWQDEBUGLEVEL1 (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
+            KWQDEBUGLEVEL1 (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             needsLayout = NO;
         }
     }
@@ -203,7 +203,7 @@
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
-        KWQDEBUGLEVEL1 (0x200, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+        KWQDEBUGLEVEL1 (KWQ_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
         [self unlockFocus];
     }
 }

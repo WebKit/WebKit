@@ -1,3 +1,26 @@
+2002-03-07  John Sullivan  <sullivan@apple.com>
+
+	Defined more symbolic debug-level constants; specified ranges for use by
+	different software levels (core/kit/client==browser) to enable easier
+	isolation of debug messages.
+
+	* Misc.subproj/WebKitDebug.h: #defined new debug levels for existing uses;
+	renamed a couple.
+
+	* Misc.subproj/WebKitDebug.m: (WebKitLog), (WebKitDebug): Updated for
+	renamed debug levels.
+
+	* WebView.subproj/IFBaseWebController.mm: 
+	(-[IFBaseWebController receivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _stopLoading]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView layout]), 
+	(-[IFWebView setNeedsDisplay:]), (-[IFWebView setNeedsLayout:]), (-[IFWebView drawRect:]),
+	(-[IFWebView mouseDragged:]):
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _resetView]):
+	Changed numeric debug levels to symbolic ones.
+
+	* WebKit.pbproj/project.pbxproj: Jaguar/Puma version war.
+
 2002-03-06  Richard Williamson  <rjw@apple.com>
 
         Lots of little changes to improve drawing, and dynamic scroll bar

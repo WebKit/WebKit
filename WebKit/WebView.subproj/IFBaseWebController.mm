@@ -184,7 +184,7 @@ static id IFLoadProgressMake()
     // Check to see if this is the first load for a data source, if so
     // we need to transition the data source from provisional to committed.
     if (progress->bytesSoFar == progress->totalToLoad && [frame provisionalDataSource] == dataSource){
-        WEBKITDEBUGLEVEL1 (0x2000, "resource = %s\n", [resourceDescription cString]);
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "resource = %s\n", [resourceDescription cString]);
         [frame _transitionProvisionalToCommitted];
     }
     

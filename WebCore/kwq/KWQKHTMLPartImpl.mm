@@ -123,18 +123,18 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
+    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
+    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
     [sender autorelease];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
-    KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
+    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
     m_part->closeURL();
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
@@ -147,7 +147,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
-    KWQDEBUGLEVEL3 (0x2000, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
+    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     if (!m_data) {
         m_data = [data retain];
     }
@@ -161,7 +161,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
-    KWQDEBUGLEVEL2 (0x2000, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
+    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [sender contentLength];

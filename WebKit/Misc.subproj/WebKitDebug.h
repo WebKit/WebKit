@@ -5,17 +5,31 @@
 #import <Foundation/Foundation.h>
 
 /*-----------------------------------------------------------------------------
- * Logging macros
- */
+* Logging macros
+*
+* Keep changes in this file synched with kwqdebug.h in WebCore. (Except kwqdebug.h
+* shouldn't mention non-core components.)
+*/
 
-#define WEBKIT_LOG_NEVER_IMPLEMENTED	0x1
-#define WEBKIT_LOG_PARTIALLY_IMPLEMENTED	0x2
-#define WEBKIT_LOG_NOT_YET_IMPLEMENTED	0x4
-#define WEBKIT_LOG_DEBUG			0x8
-#define WEBKIT_LOG_ERROR			0x10
+#define WEBKIT_LOG_NEVER_IMPLEMENTED		0x00000001
+#define WEBKIT_LOG_PARTIALLY_IMPLEMENTED	0x00000002
+#define WEBKIT_LOG_NOT_YET_IMPLEMENTED		0x00000004
+#define WEBKIT_LOG_GENERIC_DEBUG		0x00000008
+#define WEBKIT_LOG_GENERIC_ERROR		0x00000010
+#define WEBKIT_LOG_TIMING			0x00000020
+#define WEBKIT_LOG_LOADING			0x00000040
 
-#define WEBKIT_LOG_NONE			0
-#define WEBKIT_LOG_ALL			0xffffffff
+#define WEBKIT_LOG_EVENTS			0x00010000
+#define WEBKIT_LOG_VIEW				0x00020000
+
+// ranges reserved for different uses to enable easy isolation of certain log messages
+#define WEBKIT_LOG_GENERIC_RANGE		0x000000FF
+#define WEBKIT_LOG_CORE_RANGE			0x0000FF00	
+#define WEBKIT_LOG_KIT_RANGE			0x00FF0000
+#define WEBKIT_LOG_CLIENT_RANGE			0xFF000000
+
+#define WEBKIT_LOG_NONE				0
+#define WEBKIT_LOG_ALL				0xFFFFFFFF
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,13 +53,13 @@ void WebKitLogAtLevel(unsigned int level, NSString *format, ...);
    WEBKITDEBUGLEVEL (WEBKIT_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)\n")
 
 
-#define WEBKITDEBUG(format) WEBKITDEBUGLEVEL(WEBKIT_LOG_DEBUG,format)
-#define WEBKITDEBUG1(format,arg1) WEBKITDEBUGLEVEL1(WEBKIT_LOG_DEBUG,format,arg1)
-#define WEBKITDEBUG2(format,arg1,arg2) WEBKITDEBUGLEVEL2(WEBKIT_LOG_DEBUG,format,arg1,arg2)
-#define WEBKITDEBUG3(format,arg1,arg2,arg3) WEBKITDEBUGLEVEL3(WEBKIT_LOG_DEBUG,format,arg1,arg2,arg3)
-#define WEBKITDEBUG4(format,arg1,arg2,arg3,arg4) WEBKITDEBUGLEVEL4(WEBKIT_LOG_DEBUG,format,arg1,arg2,arg3,arg4)
-#define WEBKITDEBUG5(format,arg1,arg2,arg3,arg4,arg5) WEBKITDEBUGLEVEL5(WEBKIT_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5)
-#define WEBKITDEBUG6(format,arg1,arg2,arg3,arg4,arg5,arg6) WEBKITDEBUGLEVEL6(WEBKIT_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5,arg6)
+#define WEBKITDEBUG(format) WEBKITDEBUGLEVEL(WEBKIT_LOG_GENERIC_DEBUG,format)
+#define WEBKITDEBUG1(format,arg1) WEBKITDEBUGLEVEL1(WEBKIT_LOG_GENERIC_DEBUG,format,arg1)
+#define WEBKITDEBUG2(format,arg1,arg2) WEBKITDEBUGLEVEL2(WEBKIT_LOG_GENERIC_DEBUG,format,arg1,arg2)
+#define WEBKITDEBUG3(format,arg1,arg2,arg3) WEBKITDEBUGLEVEL3(WEBKIT_LOG_GENERIC_DEBUG,format,arg1,arg2,arg3)
+#define WEBKITDEBUG4(format,arg1,arg2,arg3,arg4) WEBKITDEBUGLEVEL4(WEBKIT_LOG_GENERIC_DEBUG,format,arg1,arg2,arg3,arg4)
+#define WEBKITDEBUG5(format,arg1,arg2,arg3,arg4,arg5) WEBKITDEBUGLEVEL5(WEBKIT_LOG_GENERIC_DEBUG,format,arg1,arg2,arg3,arg4,arg5)
+#define WEBKITDEBUG6(format,arg1,arg2,arg3,arg4,arg5,arg6) WEBKITDEBUGLEVEL6(WEBKIT_LOG_GENERIC_DEBUG,format,arg1,arg2,arg3,arg4,arg5,arg6)
 
 #define WEBKITDEBUGLEVEL(level,format) \
    WebKitDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__, format);\

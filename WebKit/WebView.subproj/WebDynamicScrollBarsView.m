@@ -23,12 +23,12 @@
 {
     id cview = [self documentView];
     
-    WEBKITDEBUGLEVEL (0x100, "\n");
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "\n");
     
     // Do nothing if the web view is in the provisional state.
     if ([cview isKindOfClass: NSClassFromString (@"IFWebView")]){
         if ([cview _provisionalWidget] != 0){
-            WEBKITDEBUGLEVEL (0x100, "not changing scrollview, content in provisional state.\n");
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not changing scrollview, content in provisional state.\n");
             return;
         }
     }

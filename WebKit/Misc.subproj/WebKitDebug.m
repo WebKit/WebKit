@@ -28,7 +28,7 @@ unsigned int WebKitGetLogLevel(){
 
 
 void WebKitLog(NSString *format, ...) {    
-    if (WebKitGetLogLevel() & WEBKIT_LOG_ERROR){
+    if (WebKitGetLogLevel() & WEBKIT_LOG_GENERIC_ERROR){
         va_list args;
         va_start(args, format); 
         NSLogv(format, args);
@@ -48,7 +48,7 @@ void WebKitLogAtLevel(unsigned int level, NSString *format, ...) {
 
 
 void WebKitDebug(const char *format, ...) {    
-    if (WebKitGetLogLevel() & WEBKIT_LOG_DEBUG){
+    if (WebKitGetLogLevel() & WEBKIT_LOG_GENERIC_DEBUG){
         va_list args;
         va_start(args, format); 
         vfprintf(stderr, format, args);

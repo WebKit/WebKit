@@ -1,3 +1,23 @@
+2002-03-07  John Sullivan  <sullivan@apple.com>
+
+	* src/kwq/kwqdebug.h: New debug level constants, kept in
+	synch with WebKitDebug.h
+
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidBeginLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidCancelLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidCancelLoading:]), (-[URLLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (Loader::load),
+	(Loader::servePendingRequests):
+	* src/kwq/KWQView.mm: (-[KWQHTMLView layout]), (-[KWQHTMLView drawRect:]):
+	Changed numeric debug levels to symbolic ones.
+
 2002-03-07  Don Melton  <gramps@apple.com>
 
 	Removed unused file in kdelibs that I missed in previous commit.

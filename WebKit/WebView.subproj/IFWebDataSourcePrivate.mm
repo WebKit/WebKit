@@ -102,7 +102,7 @@
     count = [data->urlHandles count];
     for (i = 0; i < count; i++) {
         handle = [data->urlHandles objectAtIndex: i];
-        WEBKITDEBUGLEVEL1 (0x2000, "canceling %s\n", [[[handle url] absoluteString] cString] );
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "canceling %s\n", [[[handle url] absoluteString] cString] );
         [[data->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 

@@ -113,17 +113,17 @@
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
-            WEBKITDEBUGLEVEL (0x100, "doing layout\n");
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout(TRUE);
-            //WebKitDebugAtLevel (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
+            //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
         }
     }
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL2 (0x200, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
 }
 
@@ -284,14 +284,14 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    WEBKITDEBUGLEVEL1 (0x100, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     [super setNeedsDisplay: flag];
 }
 
 
 - (void)setNeedsLayout: (bool)flag
 {
-    WEBKITDEBUGLEVEL1 (0x100, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = flag;
 }
 
@@ -302,12 +302,12 @@
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
 
     if (data->provisionalWidget != 0){
-        WEBKITDEBUGLEVEL (0x100, "not drawing, frame in provisional state.\n");
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "not drawing, frame in provisional state.\n");
         return;
     }
     
     if (widget != 0l){        
-        WEBKITDEBUGLEVEL (0x100, "drawing\n");
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");
         [self layout];
 
 #ifdef _KWQ_TIMING        
@@ -322,7 +322,7 @@
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
-        //WebKitDebugAtLevel (0x200, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+        //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
 
 #ifdef DEBUG_LAYOUT       
         NSRect vframe = [self frame]; 
@@ -346,7 +346,7 @@
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL2 (0x200, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
     }
 }
@@ -367,7 +367,7 @@
 // Override superclass implementation.  We want to relayout when the frame size is changed.
 - (void)setFrame:(NSRect)rect
 {
-    WEBKITDEBUGLEVEL4 (0x100, "(%f,%f) width = %f, height = %f\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    WEBKITDEBUGLEVEL4 (WEBKIT_LOG_VIEW, "(%f,%f) width = %f, height = %f\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     [super setFrame:rect];
 }
 
@@ -439,7 +439,7 @@
 - (void)mouseDragged: (NSEvent *)event
 {
     NSPoint p = [event locationInWindow];
-    //WebKitDebugAtLevel (0x200, "mouseDragged %f, %f\n", p.x, p.y);
+    //WebKitDebugAtLevel (WEBKIT_LOG_EVENTS, "mouseDragged %f, %f\n", p.x, p.y);
 }
 
 @end
