@@ -1,3 +1,17 @@
+2002-07-15  Darin Adler  <darin@apple.com>
+
+        * kwq/qt/qfontmetrics.h: Remove unused, and not properly implemented,
+	empty constructor. Add some const that was missing. Remove most of the
+	parameters of size().
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::charWidth): Add const.
+        (QFontMetrics::floatWidth): Add const.
+        (QFontMetrics::floatCharacterWidth): Add const.
+        (QFontMetrics::size): Remove unused parameters.
+
+        * kwq/WebCoreTextRenderer.h: Remove two unused drawString methods and one
+	unused widthForCharacters method.
+
 2002-07-14  Darin Adler  <darin@apple.com>
 
         * kwq/WebCoreFrame.mm: (-[WebCoreFrame dealloc]): Fix NULL-dereferencing

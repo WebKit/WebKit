@@ -57,10 +57,6 @@ private:
     QFontMetricsPrivate& operator=(const QFontMetricsPrivate&);
 };
 
-QFontMetrics::QFontMetrics()
-{
-}
-
 QFontMetrics::QFontMetrics(const QFont &withFont)
 : data(new QFontMetricsPrivate(withFont))
 {
@@ -114,18 +110,16 @@ int QFontMetrics::width(QChar qc) const
     return [data->getRenderer() widthForCharacters:&c length:1];
 }
 
-int QFontMetrics::charWidth(QString &s, int pos) const
+int QFontMetrics::charWidth(const QString &s, int pos) const
 {
     return width(s[pos]);
 }
-
 
 int QFontMetrics::width(char c) const
 {
     UniChar ch = (uchar) c;
     return [data->getRenderer() widthForCharacters:&ch length:1];
 }
-
 
 int QFontMetrics::width(const QString &qstring, int len) const
 {
@@ -137,31 +131,25 @@ int QFontMetrics::width(const QString &qstring, int len) const
     return [data->getRenderer() widthForString:string];
 }
 
-
 int QFontMetrics::width(const QChar *uchars, int len) const
 {
     return [data->getRenderer() widthForCharacters:(const UniChar *)uchars length:len];
 }
 
-
-float QFontMetrics::floatWidth( QChar *uchars, int slen, int pos, int len ) const
+float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:(unsigned)slen fromCharacterPosition: (int)pos numberOfCharacters: (int)len];
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen fromCharacterPosition:pos numberOfCharacters:len];
 }
 
-
-float QFontMetrics::floatCharacterWidth( QChar *uchars, int slen, int pos) const
+float QFontMetrics::floatCharacterWidth(const QChar *uchars, int slen, int pos) const
 {
-    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:(unsigned)slen characterPosition: (int)pos];
+    return [data->getRenderer() floatWidthForCharacters:(const UniChar *)uchars stringLength:slen characterPosition:pos];
 }
-
-
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 {
     return QRect(0, 0, width(qstring, len), height());
 }
-
 
 QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str) const
 {
@@ -169,20 +157,14 @@ QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags,
     return QRect(x, y, width, height).intersect(boundingRect(str));
 }
 
-
 QRect QFontMetrics::boundingRect(QChar qc) const
 {
     return QRect(0, 0, width(qc), height());
 }
 
-QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops, 
-    int *tabarray, char **intern ) const
+QSize QFontMetrics::size(int, const QString &qstring) const
 {
-    if (tabstops != 0) {
-        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR:  QFontMetrics::size() tabs not supported.\n");
-    }
-    
-    return QSize(width(qstring, len), height());
+    return QSize(width(qstring), height());
 }
 
 int QFontMetrics::rightBearing(QChar) const

@@ -1,3 +1,9 @@
+2002-07-15  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer widthForCharacters:length:]): Remove implementation of some unused
+	methods, including at least one that was never used.
+
 2002-07-15  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit part of fix for Radar 2896356 - cookie "ask for each site" not implemented yet

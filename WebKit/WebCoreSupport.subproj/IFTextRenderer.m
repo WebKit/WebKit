@@ -401,29 +401,6 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 }
 
 
-- (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
-{
-    UniChar localCharacterBuffer[LOCAL_BUFFER_SIZE];
-    UniChar *characterBuffer = localCharacterBuffer;
-    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr((CFStringRef)string);
-    unsigned int length;
-
-    // Get the characters from the string into a buffer.
-    length = [string length];
-    if (!usedCharacterBuffer) {
-        if (length > LOCAL_BUFFER_SIZE)
-            characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
-        [string getCharacters:characterBuffer];
-        usedCharacterBuffer = characterBuffer;
-    }
-
-    [self drawCharacters: usedCharacterBuffer stringLength: length fromCharacterPosition: 0 toCharacterPosition: length atPoint: point withTextColor: color backgroundColor: nil];
-    
-    if (characterBuffer != localCharacterBuffer)
-        free(characterBuffer);
-}
-
-
 - (NSPoint)drawGlyphs: (CGGlyph *)glyphs numGlyphs: (unsigned int)numGlyphs fromGlyphPosition: (int)from toGlyphPosition: (int)to atPoint: (NSPoint)point withTextColor: (NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
     unsigned int i;
@@ -840,25 +817,8 @@ cleanup:
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
 {
-    return [self widthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength];
+    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength applyRounding:YES attemptFontSubstitution: YES]);
 }
-
-- (int)widthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len
-{
-    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len applyRounding:YES attemptFontSubstitution: YES]);
-}
-
-
-// This method is rarely (never?) called.  It's slow.
-- (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style
-{
-    [string drawInRect:rect withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-        font, NSFontAttributeName,
-        color, NSForegroundColorAttributeName,
-        style, NSParagraphStyleAttributeName,
-        nil]];
-}
-
 
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c
 {

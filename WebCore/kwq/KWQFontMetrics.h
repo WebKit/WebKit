@@ -36,12 +36,11 @@ class QFontMetricsPrivate;
 
 class QFontMetrics {
 public:
-
-    QFontMetrics();
     QFontMetrics(const QFont &);
+    ~QFontMetrics();
+
     QFontMetrics(const QFontMetrics &);
     QFontMetrics &operator=(const QFontMetrics &);
-    ~QFontMetrics();
 
     int ascent() const;
     int descent() const;
@@ -51,17 +50,17 @@ public:
     int width(QChar) const;
     int width(char) const;
     int width(const QString &, int len=-1) const;
-    int charWidth(QString &s, int pos) const;
+    int charWidth(const QString &, int pos) const;
     int width(const QChar *, int len) const;
-    float floatWidth( QChar *uchars, int slen, int pos, int len ) const;
-    float floatCharacterWidth( QChar *uchars, int slen, int pos) const;
+    float floatWidth(const QChar *, int slen, int pos, int len) const;
+    float floatCharacterWidth(const QChar *, int slen, int pos) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(QChar) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;
 
-    QSize size(int, const QString &, int len=-1, int tabstops=0, 
-        int *tabarray=0, char **intern=0 ) const;
+    QSize size(int, const QString &) const;
+
     int rightBearing(QChar) const;
     int leftBearing(QChar) const;
     int baselineOffset() const;

@@ -27,26 +27,19 @@
 
 @protocol WebCoreTextRenderer <NSObject>
 
-- (int)widthForString:(NSString *)string;
+// vertical metrics
 - (int)ascent;
 - (int)descent;
 - (int)lineSpacing;
 
-- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor;
-
-- (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
-
-- (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
-
-- (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style;
-
-// A way to bypass NSString for speed.
+// horizontal metrics
+- (int)widthForString:(NSString *)string;
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length;
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition:(int)pos numberOfCharacters:(int)len;
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength characterPosition:(int)pos;
 
-- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len;
-
-- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength characterPosition: (int)pos;
-
-- (int)widthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len;
+// drawing
+- (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor;
+- (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color;
 
 @end
