@@ -12,7 +12,7 @@
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebHTTPRequest.h>

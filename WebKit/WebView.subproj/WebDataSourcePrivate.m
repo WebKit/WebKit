@@ -12,6 +12,7 @@
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -27,7 +28,6 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
-#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResponse.h>

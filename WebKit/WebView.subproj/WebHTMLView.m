@@ -16,6 +16,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
@@ -26,7 +27,6 @@
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUnicode.h>
 
 #import <AppKit/NSResponder_Private.h>

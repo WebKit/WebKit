@@ -13,10 +13,14 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebFileButton.h>
+#import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
@@ -34,11 +38,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
-#import <WebKit/WebFormDelegate.h>
-#import <WebKit/WebFileButton.h>
-#import <WebKit/WebJavaScriptTextInputPanel.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>

@@ -1,5 +1,44 @@
 2003-03-18  Richard Williamson   <rjw@apple.com>
 
+        Renamed WebView*.[hm] to WebFrameView*.[hm]
+        
+        Reviewed by me (I'm bad, it's just a file rename).
+
+        * Misc.subproj/WebKit.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        * Panels.subproj/WebStandardPanels.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPluginController.m:
+        * Plugins.subproj/WebPluginDatabase.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebControllerPrivate.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDebugDOMNode.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebImageView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebRenderNode.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebView.h: Removed.
+        * WebView.subproj/WebView.m: Removed.
+        * WebView.subproj/WebViewPrivate.h: Removed.
+        * WebView.subproj/WebViewPrivate.m: Removed.
+
+2003-03-18  Richard Williamson   <rjw@apple.com>
+
         Stage 2 of WebController to WebView renaming.
         
         Reviewed by hyatt.

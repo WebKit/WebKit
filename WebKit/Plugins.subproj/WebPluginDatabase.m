@@ -7,14 +7,13 @@
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebView.h>
-#import <WebKit/WebViewPrivate.h>
 
 
 @implementation WebPluginDatabase

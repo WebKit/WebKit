@@ -6,10 +6,10 @@
 
 #import <WebKit/WebStandardPanels.h>
 
-#import <WebKit/WebStandardPanelsPrivate.h>
-#import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebFrameView.h>
+#import <WebKit/WebPanelAuthenticationHandler.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebAuthenticationManager.h>

@@ -24,13 +24,13 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
-#import <WebKit/WebView.h>
 
 // FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
 

@@ -3,10 +3,10 @@
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>

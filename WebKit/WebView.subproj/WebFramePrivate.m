@@ -18,6 +18,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
@@ -27,7 +28,6 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSURLExtras.h>

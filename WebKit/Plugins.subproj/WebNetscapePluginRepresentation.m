@@ -5,9 +5,9 @@
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
-#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFoundation.h>

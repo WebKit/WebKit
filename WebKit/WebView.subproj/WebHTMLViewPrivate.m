@@ -20,6 +20,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
@@ -29,7 +30,6 @@
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 

@@ -8,9 +8,9 @@
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebRequest.h>
 

@@ -12,6 +12,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHistory.h>
@@ -23,5 +24,4 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanels.h>
-#import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

@@ -5,8 +5,8 @@
 
 #import "WebDebugDOMNode.h"
 
-#import <WebKit/WebView.h>
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 
 @interface WebKitDOMTreeCopier : NSObject <WebCoreDOMTreeCopier>

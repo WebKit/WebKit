@@ -2,7 +2,7 @@
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebView.h>
+#import <WebKit/WebFrameView.h>
 
 @class WebDynamicScrollBarsView;
 @class WebView;

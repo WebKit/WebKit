@@ -12,12 +12,12 @@
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>

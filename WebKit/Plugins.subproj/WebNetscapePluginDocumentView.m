@@ -7,6 +7,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
@@ -15,7 +16,6 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResponse.h>

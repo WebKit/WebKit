@@ -2,7 +2,7 @@
 	Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
-#import <WebKit/WebView.h>
+#import <WebKit/WebFrameView.h>
 
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
@@ -11,6 +11,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
@@ -21,7 +22,6 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextView.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebViewFactory.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 

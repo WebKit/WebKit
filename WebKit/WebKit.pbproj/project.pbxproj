@@ -287,8 +287,6 @@
 				657D8FA10366687600FA1ED0,
 				35081DAA02B6D4E40ACA2ACA,
 				35081DAC02B6D4E40ACA2ACA,
-				39446092020F50ED0ECA1767,
-				39446093020F50ED0ECA1767,
 				511D5554033FD51000CA2ACD,
 				516F297003A6C45A00CA2D3A,
 				832B2D1603B10990009CF105,
@@ -307,6 +305,8 @@
 				70BC9ED904144FC500A80182,
 				70BC9EDC0414514E00A80182,
 				84CA5F7F042685E800CA2ACA,
+				51A8B53004282B5900CA2D3A,
+				51A8B53404282BD200CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,8 +410,6 @@
 				F5F81C3C02B67C26018635CA,
 				35081DAB02B6D4E40ACA2ACA,
 				35081DAD02B6D4E40ACA2ACA,
-				394460A5020F50ED0ECA1767,
-				394460A6020F50ED0ECA1767,
 				832B2D1703B10990009CF105,
 				84A992C503CE696800CA2ACA,
 				2D81DAB503EB0B2D00A80166,
@@ -425,6 +423,8 @@
 				700BC50E04144DA100A80182,
 				70BC9ED704144F3200A80182,
 				70BC9EDD0414514E00A80182,
+				51A8B53104282B5900CA2D3A,
+				51A8B53504282BD200CA2D3A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -937,30 +937,6 @@
 			path = WebFrame.h;
 			refType = 4;
 		};
-		39446076020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebView.h;
-			refType = 4;
-		};
-		39446077020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebView.m;
-			refType = 4;
-		};
-		39446078020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebViewPrivate.h;
-			refType = 4;
-		};
-		39446079020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebViewPrivate.m;
-			refType = 4;
-		};
 		3944607A020F50ED0ECA1767 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1057,21 +1033,6 @@
 				);
 			};
 		};
-		39446092020F50ED0ECA1767 = {
-			fileRef = 39446076020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		39446093020F50ED0ECA1767 = {
-			fileRef = 39446078020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		39446094020F50ED0ECA1767 = {
 			fileRef = 3944607A020F50ED0ECA1767;
 			isa = PBXBuildFile;
@@ -1122,18 +1083,6 @@
 		};
 		394460A3020F50ED0ECA1767 = {
 			fileRef = 39446073020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		394460A5020F50ED0ECA1767 = {
-			fileRef = 39446077020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		394460A6020F50ED0ECA1767 = {
-			fileRef = 39446079020F50ED0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1354,6 +1303,57 @@
 		};
 		517FA6AE03709FCE00CA2D3A = {
 			fileRef = 517FA6AB03709FCE00CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51A8B52E04282B5900CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFrameView.h;
+			refType = 4;
+		};
+		51A8B52F04282B5900CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFrameView.m;
+			refType = 4;
+		};
+		51A8B53004282B5900CA2D3A = {
+			fileRef = 51A8B52E04282B5900CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		51A8B53104282B5900CA2D3A = {
+			fileRef = 51A8B52F04282B5900CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51A8B53204282BD200CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFrameViewPrivate.h;
+			refType = 4;
+		};
+		51A8B53304282BD200CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFrameViewPrivate.m;
+			refType = 4;
+		};
+		51A8B53404282BD200CA2D3A = {
+			fileRef = 51A8B53204282BD200CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51A8B53504282BD200CA2D3A = {
+			fileRef = 51A8B53304282BD200CA2D3A;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2505,6 +2505,10 @@
 				F5143A370221DCCE01A80181,
 				9CF0E249021361B00ECA16EA,
 				9CF0E24A021361B00ECA16EA,
+				51A8B52E04282B5900CA2D3A,
+				51A8B52F04282B5900CA2D3A,
+				51A8B53204282BD200CA2D3A,
+				51A8B53304282BD200CA2D3A,
 				5152FAE5033FC52200CA2ACD,
 				F5D538E802441F2601A80181,
 				F5D538EC02441FDD01A80181,
@@ -2512,10 +2516,6 @@
 				F5AEBB3D024A527601C1A526,
 				9CAE9D070252A4130ECA16EA,
 				513D422E034CF55A00CA2ACD,
-				39446076020F50ED0ECA1767,
-				39446077020F50ED0ECA1767,
-				39446078020F50ED0ECA1767,
-				39446079020F50ED0ECA1767,
 				511D5553033FD51000CA2ACD,
 			);
 			isa = PBXGroup;

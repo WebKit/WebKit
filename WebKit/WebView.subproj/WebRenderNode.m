@@ -9,7 +9,7 @@
 #import "WebRenderNode.h"
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 
 @interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>

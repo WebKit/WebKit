@@ -2,7 +2,7 @@
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebFrameViewPrivate.h>
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
