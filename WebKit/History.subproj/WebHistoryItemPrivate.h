@@ -31,6 +31,7 @@
 - (NSData *)formData;
 - (NSString *)formContentType;
 - (NSString *)formReferrer;
+- (NSString *)RSSFeedReferrer;
 - (int)visitCount;
 
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
@@ -47,6 +48,7 @@
 - (void)setFormData:(NSData *)data;
 - (void)setFormContentType:(NSString *)type;
 - (void)setFormReferrer:(NSString *)referrer;
+- (void)setRSSFeedReferrer:(NSString *)referrer;
 - (void)setVisitCount:(int)count;
 
 - (NSArray *)children;

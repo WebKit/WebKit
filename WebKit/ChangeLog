@@ -1,3 +1,24 @@
+2004-05-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave.
+        
+        - added private RSSFeedReferrer field to WebHistoryItem so RSS feeds in the
+        back/forward list can remember what page (if any) they were initiated from.
+
+        * History.subproj/WebHistoryItem.m:
+        new RSSFeedReferrer ivar in private structure
+        (-[WebHistoryItemPrivate dealloc]):
+        release RSSFeedReferrer
+        (-[WebHistoryItem copyWithZone:]):
+        copy RSSFeedReferrer
+        (-[WebHistoryItem RSSFeedReferrer]):
+        return RSSFeedReferrer
+        (-[WebHistoryItem setRSSFeedReferrer:]):
+        set RSSFeedReferrer
+
+        * History.subproj/WebHistoryItemPrivate.h:
+        declare -RSSFeedReferrer and -setRSSFeedReferrer:
+
 2004-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

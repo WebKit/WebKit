@@ -53,6 +53,8 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSData *formData;
     NSString *formContentType;
     NSString *formReferrer;
+    // info used to support RSS feeds
+    NSString *RSSFeedReferrer;
 }
 @end
 
@@ -72,6 +74,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [formData release];
     [formContentType release];
     [formReferrer release];
+    [RSSFeedReferrer release];
 
     [super dealloc];
 }
@@ -127,6 +130,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     copy->_private->formData = [_private->formData copy];
     copy->_private->formContentType = [_private->formContentType copy];
     copy->_private->formReferrer = [_private->formReferrer copy];
+    copy->_private->RSSFeedReferrer = [_private->RSSFeedReferrer copy];
 
     return copy;
 }
@@ -476,6 +480,18 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSString *copy = [referrer copy];
     [_private->formReferrer release];
     _private->formReferrer = copy;
+}
+
+- (NSString *)RSSFeedReferrer
+{
+    return _private->RSSFeedReferrer;
+}
+
+- (void)setRSSFeedReferrer:(NSString *)referrer
+{
+    NSString *copy = [referrer copy];
+    [_private->RSSFeedReferrer release];
+    _private->RSSFeedReferrer = copy;
 }
 
 - (NSArray *)children
