@@ -1,3 +1,20 @@
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3382829 - Safari won't load script src javascript if done by a document.write followed by document.close
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::closeInternal): Don't delete the tokenizer if it's
+	waiting for scripts. It will get destroyed later when the part
+	gets all subresources and closes the document.
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::isWaitingForScripts): Added.
+        * khtml/html/htmltokenizer.h: Prototyped.
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLTokenizer::isWaitingForScripts): Added.
+        * khtml/xml/xml_tokenizer.h: Prototyped.
+
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3480108, crash because of the wrong malformedTableParent when stray content is placed inside

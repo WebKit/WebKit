@@ -1206,8 +1206,13 @@ void DocumentImpl::closeInternal( bool checkTokenizer )
     if ( m_render )
         m_render->close();
 
-    delete m_tokenizer;
-    m_tokenizer = 0;
+    // on an explicit document.close(), the tokenizer might still be waiting on scripts,
+    // and in that case we don't want to destroy it because that will prevent the
+    // scripts from getting processed.
+    if (m_tokenizer && !m_tokenizer->isWaitingForScripts()) {
+	delete m_tokenizer;
+	m_tokenizer = 0;
+    }
 
     if (m_view)
         m_view->part()->checkEmitLoadEvent();

@@ -118,6 +118,7 @@ public:
     virtual void end() = 0;
     virtual void finish() = 0;
     virtual void setOnHold(bool /*_onHold*/) {}
+    virtual bool isWaitingForScripts() = 0;
 
 signals:
     void finishedParsing();
@@ -143,6 +144,7 @@ public:
     // from CachedObjectClient
     void notifyFinished(khtml::CachedObject *finishedObj);
 
+    virtual bool isWaitingForScripts();
 protected:
     DOM::DocumentPtr *m_doc;
     KHTMLView *m_view;
