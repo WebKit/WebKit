@@ -1,0 +1,9 @@
+2001-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+	* Cache.subproj/NSURICacheData.m: (+[NSURICacheData
+	dataWithURL:status:error:data:size:notificationString:userData:]),
+	(-[NSURICacheData
+	initWithURL:status:error:data:size:notificationString:userData:]):
+	Remove redundant semicolons between the end of the prototype and
+	the open brace, because they confuse the changelog script.
+
