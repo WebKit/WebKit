@@ -1,3 +1,10 @@
+2004-01-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        brought this file back up to date
+
 2004-01-22  Darin Adler  <darin@apple.com>
 
         - fixed 3536624: Webkit 1.2 links against SecurityNssAsn1.framework

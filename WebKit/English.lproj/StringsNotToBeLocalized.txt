@@ -272,6 +272,7 @@
 "lastVisitedDate"
 "localhost"
 "localized string not found"
+"lproj"
 "mailto:"
 "nullplugin"
 "pluginspage"
