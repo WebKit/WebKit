@@ -1,3 +1,18 @@
+2004-06-02  Trey Matteson  <trey@apple.com>
+
+	Added types property to JS clipboard object.
+
+        Reviewed by Richard.
+
+        * khtml/ecma/kjs_events.cpp:
+        (Clipboard::getValueProperty):  Create JS array for strings coming from the clipboard impl.
+        * khtml/ecma/kjs_events.h:
+        (KJS::Clipboard::):
+        * khtml/ecma/kjs_events.lut.h:
+        * kwq/KWQClipboard.mm:
+        (MIMETypeFromCocoaType):  New helper routine to map types.
+        (KWQClipboard::types):  Implement based on NSPasteboard's types.
+
 2004-06-02  Richard Williamson   <rjw@apple.com>
 
 	Corrected typo ID_IMG should have been ID_CANVAS when

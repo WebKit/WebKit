@@ -889,9 +889,10 @@ Value DOMMutationEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
 const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
 
 /* Source for ClipboardTable. Use "make hashtables" to regenerate.
-@begin ClipboardTable 2
+@begin ClipboardTable 3
   dropEffect	Clipboard::DropEffect	DontDelete
   dropAllowed	Clipboard::DropAllowed	DontDelete
+  types         Clipboard::Types	DontDelete|ReadOnly
 @end
 @begin ClipboardProtoTable 4
   clearData	Clipboard::ClearData	DontDelete|Function 0
@@ -932,6 +933,19 @@ Value Clipboard::getValueProperty(ExecState *exec, int token) const
             return String(clipboard->dropEffect());
         case DropAllowed:
             return String(clipboard->dropAllowed());
+        case Types:
+        {
+            QStringList qTypes = clipboard->types();
+            if (qTypes.isEmpty()) {
+                return Null(); 
+            } else {
+                List list;
+                for (QStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
+                    list.append(String(UString(*it)));
+                }
+                return exec->lexicalInterpreter()->builtinArray().construct(exec, list);
+            }
+        }
         default:
             kdWarning() << "Clipboard::getValueProperty unhandled token " << token << endl;
             return Value();

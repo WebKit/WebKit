@@ -214,11 +214,13 @@ const struct HashTable DOMMutationEventProtoTable = { 2, 1, DOMMutationEventProt
 namespace KJS {
 
 const struct HashEntry ClipboardTableEntries[] = {
-   { "dropEffect", Clipboard::DropEffect, DontDelete, 0, 0 },
+   { "dropEffect", Clipboard::DropEffect, DontDelete, 0, &ClipboardTableEntries[3] },
+   { "types", Clipboard::Types, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
    { "dropAllowed", Clipboard::DropAllowed, DontDelete, 0, 0 }
 };
 
-const struct HashTable ClipboardTable = { 2, 2, ClipboardTableEntries, 2 };
+const struct HashTable ClipboardTable = { 2, 4, ClipboardTableEntries, 3 };
 
 } // namespace
 

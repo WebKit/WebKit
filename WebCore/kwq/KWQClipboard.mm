@@ -95,11 +95,23 @@ static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
     }
 }
 
-/*
-static QString MIMETypeFromCocoaType(NSString type) {
-    return QString("");
+static QString MIMETypeFromCocoaType(NSString *type)
+{
+    if ([type isEqualToString:NSStringPboardType]) {
+        return QString("text/plain");
+    } else if ([type isEqualToString:NSURLPboardType]
+               || [type isEqualToString:NSFilenamesPboardType]) {
+        return QString("text/uri-list");
+    } else if ([type isEqualToString:NSHTMLPboardType]) {
+        return QString("text/html");
+    } else if ([type isEqualToString:NSHTMLPboardType]) {
+        return QString("text/rtf");
+    } else {
+        // FIXME - Better fallback for Foo might be application/Foo
+        // FIXME - Ignore way old _NSAsciiPboardType, used by 3.3 apps
+        return QString::fromNSString(type);
+    }    
 }
-*/
 
 void KWQClipboard::clearData(const DOMString &type)
 {
@@ -197,18 +209,19 @@ bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 
 QStringList KWQClipboard::types() const
 {
-#if 0
     NSArray *types = [m_pasteboard types];
     QStringList result;
     if (types) {
         unsigned count = [types count];
         unsigned i;
         for (i = 0; i < count; i++) {
-            NSString *nsstr = [types objectAtIndex:i];
+            QString qstr = MIMETypeFromCocoaType([types objectAtIndex:i]);
+            if (!result.contains(qstr)) {
+                result.append(qstr);
+            }
         }
     }
-#endif
-    return QStringList();
+    return result;
 }
 
 QPoint KWQClipboard::dragLocation() const

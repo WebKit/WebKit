@@ -200,7 +200,7 @@ namespace KJS {
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { ClearData, GetData, SetData, SetDragImage, DropEffect, DropAllowed };
+    enum { ClearData, GetData, SetData, Types, SetDragImage, DropEffect, DropAllowed };
   private:
     DOM::ClipboardImpl *clipboard;
   };
