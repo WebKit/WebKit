@@ -1,5 +1,11 @@
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
+        Added log to catch more problems with NS/CFURL.
+        
+	* src/kwq/KWQKjobclasses.mm:
+
+2002-04-01  Richard Williamson  <rjw@apple.com>
+
         Cleaned up lots of potentially stale references to controller.
         Added ref count to part.
         

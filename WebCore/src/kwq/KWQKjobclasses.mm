@@ -103,6 +103,10 @@ public:
 	}
 
         url = [[NSURL URLWithString:string] retain];
+        if (url == 0){
+            NSLog (@"Unable to create NSURL (probably a bug in NS/CFURL) for %@\n", string);
+            // Now what?
+        }
 
         handle = nil;
     }
