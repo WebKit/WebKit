@@ -1,5 +1,13 @@
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
+	Removed code that should not have been checked in from
+	last patch.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
         Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
 
 	Fixed w/o introducing a performance regression.

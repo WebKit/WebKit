@@ -261,7 +261,10 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 - (BOOL)isFontFixedPitch: (NSFont *)font
 {
-    return [font isFixedPitch] || [font _isFakeFixedPitch] || [font _web_isFakeFixedPitch];
+    // We don't add additional check for [font _web_isFakeFixedPitch] here because of
+    // performance problems.  Instead the check is done down in WebCore (QFont) and
+    // also in WebTextRenderer.
+    return [font isFixedPitch] || [font _isFakeFixedPitch];
 }
 
 - init
