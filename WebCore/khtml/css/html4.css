@@ -373,6 +373,11 @@ INPUT, TEXTAREA {
 	margin: 3px;
 }
 
+input[type="button"], input[type="submit"], input[type="reset"]
+{
+    margin: 2px;
+}
+
 input[type="image"] {
     margin: 0px;
 }
@@ -392,7 +397,7 @@ PARAM  {
 	display: none; 
 }
 
-SELECT { display: block; margin: 3px; }
+SELECT { display: block; margin: 2px; }
 
 /*
  * inline elements
