@@ -8,6 +8,7 @@
         (HTMLOptionElementImpl::childrenChanged): Update the select element.
 	This ends up getting called when you add a text node to an option that
 	didn't used to have one.
+        * khtml/html/html_formimpl.h: Prototype it.
 
 2003-11-17  Ken Kocienda  <kocienda@apple.com>
 
