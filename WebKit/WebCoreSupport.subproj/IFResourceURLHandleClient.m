@@ -179,7 +179,6 @@
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
 
-    [dataSource _setFinalURL:URL];
     [[dataSource _bridge] setURL:URL];
 
     // FIXME: We do want to tell the client about redirects.

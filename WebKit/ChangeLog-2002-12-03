@@ -1,3 +1,14 @@
+2002-06-26  John Sullivan  <sullivan@apple.com>
+
+	- fixed 2971024 -- wrong item is bookmarked
+
+	-[IFWebDataSource redirectedURL] was returning the URL of a
+	sub-page resource.
+
+        * WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+        (-[IFResourceURLHandleClient IFURLHandle:didRedirectToURL:]):
+	Removed evil call to _setFinalURL here. It had no right to live.
+
 2002-06-26  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/IFImageRendererFactory.m:
