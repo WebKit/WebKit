@@ -131,39 +131,58 @@ enum { WebViewVersion = 1 };
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
+    volatile id result = nil;
+
 NS_DURING
 
-    id result = nil;
-    int version;
-
     result = [super initWithCoder:decoder];
-
-    [decoder decodeValueOfObjCType:@encode(int) at:&version];
-    if (version == 1){
-        NSString *frameName = [decoder decodeObject];
-        NSString *groupName = [decoder decodeObject];
+    // We don't want any of the archived subviews.
+    [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    if ([decoder allowsKeyedCoding]){
+        NSString *frameName = [decoder decodeObjectForKey:@"FrameName"];
+        NSString *groupName = [decoder decodeObjectForKey:@"GroupName"];
         [result _commonInitializationFrameName:frameName groupName:groupName];
-        [result setPreferences: [decoder decodeObject]];
+        [result setPreferences: [decoder decodeObjectForKey:@"Preferences"]];
     }
-    return result;
+    else {
+        int version;
+    
+        [decoder decodeValueOfObjCType:@encode(int) at:&version];
+        if (version == 1){
+            NSString *frameName = [decoder decodeObject];
+            NSString *groupName = [decoder decodeObject];
+            [result _commonInitializationFrameName:frameName groupName:groupName];
+            [result setPreferences: [decoder decodeObject]];
+        }
+    }
     
 NS_HANDLER
 
-    [self release];
-    return nil;
+    result = nil;
+    [self autorelease];
 
 NS_ENDHANDLER
+
+    return result;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
 
-    int version = WebViewVersion;
-    [encoder encodeValueOfObjCType:@encode(int) at:&version];
-    [encoder encodeObject:[[self mainFrame] name]];
-    [encoder encodeObject:[self groupName]];
-    [encoder encodeObject:[self preferences]];
+    if ([encoder allowsKeyedCoding]){
+        [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
+        [encoder encodeObject:[self groupName] forKey:@"GroupName"];
+        [encoder encodeObject:[self preferences] forKey:@"Preferences"];
+    }
+    else {
+        int version = WebViewVersion;
+        [encoder encodeValueOfObjCType:@encode(int) at:&version];
+        [encoder encodeObject:[[self mainFrame] name]];
+        [encoder encodeObject:[self groupName]];
+        [encoder encodeObject:[self preferences]];
+    }
 }
 
 - (void)dealloc

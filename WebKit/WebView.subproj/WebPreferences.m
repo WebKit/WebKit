@@ -97,41 +97,60 @@ enum { WebPreferencesVersion = 1 };
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-NS_DURING
-    int version;
-    id result = nil;
+    volatile id result = nil;
 
+NS_DURING
+
+    int version;
 
     _private = [[WebPreferencesPrivate alloc] init];
-    [decoder decodeValueOfObjCType:@encode(int) at:&version];
-    if (version == 1){
-        _private->identifier = [decoder decodeObject];
-
-        // If we load a nib multiple times, or have instances in multiple
-        // nibs with the same name, the first guy up wins.
-        WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
-        if (instance){
-            [self release];
-            result = instance;
-        }
-        else {
-            _private->values = [decoder decodeObject];
-            result = self;
+    
+    if ([decoder allowsKeyedCoding]){
+        _private->identifier = [[decoder decodeObjectForKey:@"Identifier"] retain];
+        _private->values = [[decoder decodeObjectForKey:@"Values"] retain];
+    }
+    else {
+        [decoder decodeValueOfObjCType:@encode(int) at:&version];
+        if (version == 1){
+            _private->identifier = [[decoder decodeObject] retain];
+            _private->values = [[decoder decodeObject] retain];
         }
     }
-    return result;
+    
+    // If we load a nib multiple times, or have instances in multiple
+    // nibs with the same name, the first guy up wins.
+    WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
+    if (instance){
+        [self autorelease];
+        result = instance;
+    }
+    else {
+        [[self class] _setInstance:self forIdentifier:_private->identifier];
+        result = self;
+    }
+    
 NS_HANDLER
-    [self release];
-    return nil;
+
+    result = nil;
+    [self autorelease];
+    
 NS_ENDHANDLER
+
+    return result;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    int version = WebPreferencesVersion;
-    [encoder encodeValueOfObjCType:@encode(int) at:&version];
-    [encoder encodeObject:_private->identifier];
-    [encoder encodeObject:_private->values];
+    if ([encoder allowsKeyedCoding]){
+        [encoder encodeObject:_private->identifier forKey:@"Identifier"];
+        [encoder encodeObject:_private->values forKey:@"Values"];
+    }
+    else {
+        int version = WebPreferencesVersion;
+        [encoder encodeValueOfObjCType:@encode(int) at:&version];
+        [encoder encodeObject:_private->identifier];
+        [encoder encodeObject:_private->values];
+    }
 }
 
 + (WebPreferences *)standardPreferences
@@ -520,6 +539,29 @@ static NSMutableDictionary *webPreferencesInstances = nil;
                     userInfo:nil];
 }
 
++ (NSArray *)_userDefaultsKeysForIB
+{
+    return [NSArray arrayWithObjects:
+        WebKitStandardFontPreferenceKey,
+        WebKitFixedFontPreferenceKey,
+        WebKitSerifFontPreferenceKey,
+        WebKitSansSerifFontPreferenceKey,
+        WebKitCursiveFontPreferenceKey,
+        WebKitFantasyFontPreferenceKey,
+        WebKitMinimumFontSizePreferenceKey,
+        WebKitDefaultFontSizePreferenceKey,
+        WebKitDefaultFixedFontSizePreferenceKey,
+        WebKitDefaultTextEncodingNamePreferenceKey,
+        WebKitJavaEnabledPreferenceKey,
+        WebKitJavaScriptEnabledPreferenceKey,
+        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
+        WebKitPluginsEnabledPreferenceKey,
+        WebKitAllowAnimatedImagesPreferenceKey,
+        WebKitAllowAnimatedImageLoopingPreferenceKey,
+        WebKitDisplayImagesKey,
+        nil
+    ];
+}
 
 @end
 

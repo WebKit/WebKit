@@ -1,5 +1,22 @@
 2003-05-23  Richard Williamson   <rjw@apple.com>
 
+	Tweaks for IB.
+	Updated WebView and WebPreferences to use
+	keyed archiving.
+	Added private method to export settable user
+	defaults keys.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithCoder:]):
+        (+[WebPreferences _userDefaultsKeysForIB]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithCoder:]):
+
+2003-05-23  Richard Williamson   <rjw@apple.com>
+
 	Added export of _WebHistoryItemChangedNotification.
 
         * WebKit.exp:
