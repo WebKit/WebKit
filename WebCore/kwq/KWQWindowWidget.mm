@@ -88,7 +88,7 @@ QSize KWQWindowWidget::sizeHint() const
 QRect KWQWindowWidget::frameGeometry() const
 {
     NSRect frame = [d->window frame];
-    return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - frame.origin.y),
+    return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
 		 (int)frame.size.width, (int)frame.size.height);
 }
 
@@ -114,7 +114,8 @@ QPoint KWQWindowWidget::mapFromGlobal(const QPoint &p) const
 void KWQWindowWidget::setFrameGeometry(const QRect &r)
 {
     // FIXME: should try to avoid saving changes
-    [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - r.y() - r.height(), r.width(), r.height()) display:NO];
+    [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
+        r.width(), r.height()) display:NO];
 }
 
 @implementation KWQWindowWidgetDeleter

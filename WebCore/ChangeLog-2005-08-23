@@ -1,5 +1,12 @@
 2002-09-26  Darin Adler  <darin@apple.com>
 
+	- fixed 2953256 -- JavaScript window.moveTo() and window.moveBy() methods do not work
+
+        * kwq/KWQWindowWidget.mm: (KWQWindowWidget::frameGeometry): Fix calculation.
+	It was returning the bottom left coordinate instead of the top left.
+
+2002-09-26  Darin Adler  <darin@apple.com>
+
 	- fixed 3060459 -- REGRESSION: crash leaving page that sets cookie in JavaScript
 	unload handler
 
