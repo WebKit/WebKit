@@ -1,3 +1,22 @@
+2004-08-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+
+        - WebKit part of fix for <rdar://problem/3607720> myFrame.print() prints the window 
+        but should only print the frame
+
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        declare new delegate method that includes which frame to print
+
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:printFrameView:]):
+        implement default (no-op) version of new delegate method
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge print]):
+        call new delegate method if available, otherwise call old delegate method, for
+        backward compatibility.
+
 2004-08-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John. 

@@ -168,6 +168,11 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)sender printFrameView:(WebFrameView *)frameView
+{
+}
+
+
 - (BOOL)webView:(WebView *)webView shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent
 {
     return YES;

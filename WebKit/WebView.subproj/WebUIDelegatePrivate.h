@@ -7,7 +7,9 @@
 
 @interface NSObject (WebUIDelegatePrivate)
 
+// webViewPrint: is obsolete; delegates should respond to webView:printFrameView: instead
 - (void)webViewPrint:(WebView *)sender;
+- (void)webView:(WebView *)sender printFrameView:(WebFrameView *)frameView;
 
 - (float)webViewHeaderHeight:(WebView *)sender;
 - (float)webViewFooterHeight:(WebView *)sender;

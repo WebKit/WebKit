@@ -1251,10 +1251,13 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     id wd = [[_frame webView] UIDelegate];
     
-    if ([wd respondsToSelector:@selector(webViewPrint:)]) {
+    if ([wd respondsToSelector:@selector(webView:printFrameView:)]) {
+        [wd webView:[_frame webView] printFrameView:[_frame frameView]];
+    } else if ([wd respondsToSelector:@selector(webViewPrint:)]) {
+        // Backward-compatible, but webViewPrint: was never public, so probably not needed.
         [wd webViewPrint:[_frame webView]];
     } else {
-        [[WebDefaultUIDelegate sharedUIDelegate] webViewPrint:[_frame webView]];
+        [[WebDefaultUIDelegate sharedUIDelegate] webView:[_frame webView] printFrameView:[_frame frameView]];
     }
 }
 
