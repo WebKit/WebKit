@@ -1,3 +1,24 @@
+2002-06-26  Darin Adler  <darin@apple.com>
+
+	- fixed 2971532 -- crash with null KHTMLView at gramicci.com
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView reapplyStyles]): Handle widget == 0 case.
+        (-[IFHTMLView layout]): Handle widget == 0 case.
+
+	Fixed a crash I have seen many times where a data source tries
+	to use its parent to locate the controller after its parent is
+	deallocated.
+
+        * WebView.subproj/IFWebDataSourcePrivate.mm:
+        (-[IFWebDataSourcePrivate dealloc]): Use _parentDataSourceWillBeDeallocated
+	instead of _setController:nil.
+
+        * WebView.subproj/IFWebFramePrivate.h: Add _parentDataSourceWillBeDeallocated.
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _parentDataSourceWillBeDeallocated]): Does both
+	a _setController:nil, and a _setParent:nil on both data sources.
+
 2002-06-26  John Sullivan  <sullivan@apple.com>
 
 	- fixed 2971024 -- wrong item is bookmarked

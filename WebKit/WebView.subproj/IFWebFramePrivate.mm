@@ -107,6 +107,13 @@ static const char * const stateNames[6] = {
 
 @implementation IFWebFrame (IFPrivate)
 
+- (void)_parentDataSourceWillBeDeallocated
+{
+    [_private setController:nil];
+    [_private->dataSource _setParent:nil];
+    [_private->provisionalDataSource _setParent:nil];
+}
+
 - (void)_setController: (IFWebController *)controller
 {
     [_private setController: controller];

@@ -51,12 +51,10 @@ static NSMutableDictionary *_repTypes=nil;
     // retained while loading, so no need to release here
     WEBKIT_ASSERT(!loading);
     
-    int i, count;
-    NSArray *childFrames = [frames allValues];
-    
-    count = [childFrames count];
-    for (i = 0; i < count; i++) {
-        [(IFWebFrame *)[childFrames objectAtIndex: i] _setController: nil];
+    NSEnumerator *e = [[frames allValues] objectEnumerator];
+    IFWebFrame *frame;
+    while ((frame = [e nextObject])) {
+        [frame _parentDataSourceWillBeDeallocated];
     }
     
     [resourceData release];

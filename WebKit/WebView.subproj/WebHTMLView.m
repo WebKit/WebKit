@@ -149,7 +149,7 @@
 {
     KHTMLView *widget = _private->widget;
 
-    if (widget->part()->xmlDocImpl() && 
+    if (widget && widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (_private->needsToApplyStyles){
 #ifdef _KWQ_TIMING        
@@ -177,7 +177,7 @@
     [[self window] setAcceptsMouseMovedEvents: YES];
     [[self window] _setShouldPostEventNotifications: YES];
 
-    if (widget->part()->xmlDocImpl() && 
+    if (widget && widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (_private->needsLayout){
  #ifdef _KWQ_TIMING        
