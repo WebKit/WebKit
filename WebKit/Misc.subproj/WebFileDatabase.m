@@ -13,13 +13,26 @@
 #import "WebFileDatabase.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebFoundationLogging.h"
+#import "WebSystemBits.h"
 
 #define SIZE_FILE_NAME @".size"
 #define SIZE_FILE_NAME_CSTRING ".size"
 
+#if ERROR_DISABLED
+#define BEGIN_EXCEPTION_HANDLER
+#define END_EXCEPTION_HANDLER
+#else
+#define BEGIN_EXCEPTION_HANDLER NS_DURING
+#define END_EXCEPTION_HANDLER \
+    NS_HANDLER \
+        ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
+    NS_ENDHANDLER
+#endif
+
 static pthread_once_t databaseInitControl = PTHREAD_ONCE_INIT;
 static NSNumber *WebFileDirectoryPOSIXPermissions;
 static NSNumber *WebFilePOSIXPermissions;
+static NSRunLoop *syncRunLoop;
 
 typedef enum
 {
@@ -453,6 +466,28 @@ static void URLFileReaderInit(void)
 // creation functions ---------------------------------------------------------------------------
 #pragma mark creation functions
 
++(void)_syncLoop:(id)arg
+{
+    WebSetThreadPriority(WebMinThreadPriority);
+
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    BEGIN_EXCEPTION_HANDLER
+
+    syncRunLoop = [NSRunLoop currentRunLoop];
+
+    while (YES) {
+        BEGIN_EXCEPTION_HANDLER
+        // we specifically use an NSRunLoop here to get autorelease pool support
+        [[NSRunLoop currentRunLoop] run];
+        END_EXCEPTION_HANDLER
+    }
+
+    END_EXCEPTION_HANDLER
+
+    [pool release];
+}
+
 static void databaseInit()
 {
     // set file perms to owner read/write/execute only
@@ -460,6 +495,8 @@ static void databaseInit()
 
     // set file perms to owner read/write only
     WebFilePOSIXPermissions = [[NSNumber numberWithInt:(WEB_UREAD | WEB_UWRITE)] retain];
+
+    [NSThread detachNewThreadSelector:@selector(_syncLoop:) toTarget:[WebFileDatabase class] withObject:nil];
 }
 
 -(id)initWithPath:(NSString *)thePath
@@ -502,7 +539,8 @@ static void databaseInit()
 -(void)setTimer
 {
     if (timer == nil) {
-        timer = [[NSTimer scheduledTimerWithTimeInterval:SYNC_IDLE_THRESHOLD target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
+        timer = [[NSTimer timerWithTimeInterval:SYNC_IDLE_THRESHOLD target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
+        [syncRunLoop addTimer:timer forMode:NSDefaultRunLoopMode];
     }
 }
 
@@ -517,6 +555,8 @@ static void databaseInit()
     ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
+
+    LOG(DiskCacheActivity, "setObject - %p - %@", object, key);
     
     [mutex lock];
     
