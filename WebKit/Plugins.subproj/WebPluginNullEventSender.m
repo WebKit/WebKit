@@ -3,15 +3,17 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "WebPluginNullEventSender.h"
-#import <Carbon/Carbon.h>
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebPluginView.h>
+#import <WebKit/WebPluginNullEventSender.h>
+
+#import <WebFoundation/WebAssertions.h>
+
+#import <Carbon/Carbon.h>
 
 @implementation WebNetscapePluginNullEventSender
 
--(id)initWithPluginView:(WebNetscapePluginView *)pluginView
+-(id)initWithPluginView:(WebBaseNetscapePluginView *)pluginView
 {
     [super init];
     view = [pluginView retain];
@@ -28,7 +30,7 @@
 {
     EventRecord event;
     
-    [WebNetscapePluginView getCarbonEvent:&event];
+    [WebBaseNetscapePluginView getCarbonEvent:&event];
     
     // plug-in should not react to cursor position when not active.
     // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?

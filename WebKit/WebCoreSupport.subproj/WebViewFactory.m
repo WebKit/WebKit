@@ -6,11 +6,11 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-
+#import <WebKit/WebBaseNetscapePluginView.h>
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginView.h>
 #import <WebKit/WebViewFactory.h>
 #import <WebFoundation/WebAssertions.h>
 
@@ -58,7 +58,12 @@
     if (plugin == nil) {
         return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[WebNetscapePluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin URL:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
+    return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0,0,0,0)
+                                                          plugin:plugin
+                                                             URL:pluginURL
+                                                         baseURL:baseURL
+                                                            mime:mimeType
+                                                       arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
@@ -75,7 +80,12 @@
         return nil;
     }
     
-    return [[[WebNetscapePluginView alloc] initWithFrame:frame plugin:plugin URL:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
+    return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:frame
+                                                          plugin:plugin
+                                                             URL:nil
+                                                         baseURL:baseURL
+                                                            mime:@"application/x-java-applet"
+                                                       arguments:parameters] autorelease];
 }
 
 @end

@@ -1,10 +1,11 @@
 /*	
-        WebPluginView.mm
+        WebBaseNetscapePluginView.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #define USE_CARBON 1
 
+#import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
@@ -13,25 +14,23 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginDatabase.h>
+
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebPluginNullEventSender.h>
-#import <WebKit/WebPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebError.h>
+//#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceRequest.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
-@implementation WebNetscapePluginView
+@implementation WebBaseNetscapePluginView
 
 #pragma mark EVENTS
 
@@ -116,15 +115,15 @@
 
 - (BOOL)sendEvent:(EventRecord *)event
 {
-    BOOL defers = [webController _defersCallbacks];
+    BOOL defers = [[self controller] _defersCallbacks];
     if (!defers) {
-        [webController _setDefersCallbacks:YES];
+        [[self controller] _setDefersCallbacks:YES];
     }
 
     BOOL acceptedEvent = NPP_HandleEvent(instance, event);
 
     if (!defers) {
-        [webController _setDefersCallbacks:NO];
+        [[self controller] _setDefersCallbacks:NO];
     }
     
     return acceptedEvent;
@@ -370,92 +369,7 @@
     return nil;
 }
 
-#pragma mark WEB_PLUGIN_VIEW
-
-- (id)initWithFrame:(NSRect)r plugin:(WebNetscapePlugin *)plugin URL:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
-{
-    [super initWithFrame:r];
-    
-    instance = &instanceStruct;
-    instance->ndata = self;
-
-    canRestart = YES;
-    
-    mime = [mimeType retain];
-    srcURL = [theURL retain];
-    baseURL = [theBaseURL retain];
-        
-    // load the plug-in if it is not already loaded
-    if (![plugin load])
-        return nil;
-    
-    // copy function pointers
-    NPP_New = 		[plugin NPP_New];
-    NPP_Destroy = 	[plugin NPP_Destroy];
-    NPP_SetWindow = 	[plugin NPP_SetWindow];
-    NPP_NewStream = 	[plugin NPP_NewStream];
-    NPP_WriteReady = 	[plugin NPP_WriteReady];
-    NPP_Write = 	[plugin NPP_Write];
-    NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
-    NPP_DestroyStream = [plugin NPP_DestroyStream];
-    NPP_HandleEvent = 	[plugin NPP_HandleEvent];
-    NPP_URLNotify = 	[plugin NPP_URLNotify];
-    NPP_GetValue = 	[plugin NPP_GetValue];
-    NPP_SetValue = 	[plugin NPP_SetValue];
-    NPP_Print = 	[plugin NPP_Print];
-
-    LOG(Plugins, "%@", arguments);
-
-    // Convert arguments dictionary to 2 string arrays.
-    // These arrays are passed to NPP_New, but the strings need to be
-    // modifiable and live the entire life of the plugin.
-    
-    // The Java plug-in requires the first argument to be the base URL
-    if ([mime isEqualToString:@"application/x-java-applet"]) {
-        cAttributes = (char **)malloc(([arguments count] + 1) * sizeof(char *));
-        cValues = (char **)malloc(([arguments count] + 1) * sizeof(char *));
-        cAttributes[0] = strdup("DOCBASE");
-        cValues[0] = strdup([[baseURL absoluteString] UTF8String]);
-        argsCount++;
-    } else {
-        cAttributes = (char **)malloc([arguments count] * sizeof(char *));
-        cValues = (char **)malloc([arguments count] * sizeof(char *));
-    }
-    
-    NSEnumerator *e = [arguments keyEnumerator];
-    NSString *key;
-    while ((key = [e nextObject])) {
-        cAttributes[argsCount] = strdup([key UTF8String]);
-        cValues[argsCount] = strdup([[arguments objectForKey:key] UTF8String]);
-        argsCount++;
-    }
-    
-    streams = [[NSMutableArray alloc] init];
-    notificationData = [[NSMutableDictionary alloc] init];
-    
-    return self;
-}
-
--(void)dealloc
-{
-    unsigned i;
-
-    [self stop];
-    
-    for (i = 0; i < argsCount; i++) {
-        free(cAttributes[i]);
-        free(cValues[i]);
-    }
-    [streams removeAllObjects];
-    [streams release];
-    [mime release];
-    [srcURL release];
-    [baseURL release];
-    [notificationData release];
-    free(cAttributes);
-    free(cValues);
-    [super dealloc];
-}
+#pragma mark WEB_NETSCAPE_PLUGIN
 
 - (void)setUpWindowAndPort
 {
@@ -533,15 +447,16 @@
 
 -(void)start
 {
-    if (isStarted || !canRestart || NPP_New == 0)
+    if (isStarted || !canRestart || NPP_New == 0){
         return;
+    }
     
     isStarted = YES;
     
 #if !LOG_DISABLED
     NPError npErr =
 #endif
-    NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
+    NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
     LOG(Plugins, "NPP_New: %d", npErr);
     
     // Create a WindowRef is one doesn't already exist
@@ -566,22 +481,9 @@
         name:NSWindowDidResignKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
         name:NSUserDefaultsDidChangeNotification object:nil];
-    
-    if ([theWindow isKeyWindow])
-        [self sendActivateEvent:YES];
 
-    WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
-    webController = [[webView controller] retain];
-    webFrame = 	    [[webController frameForView:webView] retain];
-    webDataSource = [[webFrame dataSource] retain];
-    
-    if(srcURL){
-        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];
-        if(stream){
-            [stream startLoad];
-            [streams addObject:stream];
-            [stream release];
-        }
+    if ([theWindow isKeyWindow]){
+        [self sendActivateEvent:YES];
     }
     
     eventSender = [[WebNetscapePluginNullEventSender alloc] initWithPluginView:self];
@@ -592,9 +494,11 @@
 - (void)stop
 {
     [self removeTrackingRect];
-    
-    if (!isStarted)
+
+    if (!isStarted){
         return;
+    }
+    
     isStarted = NO;
 
     // Stop any active streams
@@ -610,57 +514,36 @@
     // Stop notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    // Release web objects here to avoid circular retain
-    [webController release];
-    [webFrame release];
-    [webDataSource release];
-    
-#if !LOG_DISABLED
-    NPError npErr =
-#endif
-    NPP_Destroy(instance, NULL);
+    NPError npErr = NPP_Destroy(instance, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
 }
 
-- (WebDataSource *)webDataSource
+- (WebDataSource *)dataSource
 {
-    return webDataSource;
+    // Do nothing. Overridden by subclasses.
+    return nil;
 }
 
-- (WebController *)webController
+- (WebFrame *)webFrame
 {
-    return webController;
+    return [[self dataSource] webFrame];
 }
 
-#pragma mark WEB_DOCUMENT_VIEW
-
-- initWithFrame:(NSRect)frame
+- (WebController *)controller
 {
-    [super initWithFrame:frame];
-    
-    instance = &instanceStruct;
-    instance->ndata = self;
-    
-    canRestart = YES;
-    fullMode = YES;
-    
-    [self setFrame:NSMakeRect(0, 0, 1, 1)];
-    
-    return self;
+    return [[self webFrame] controller];
 }
 
-- (void)setDataSource:(WebDataSource *)dataSource
+- (WebNetscapePlugin *)plugin
 {
-    [webDataSource release];
-    webDataSource = [dataSource retain];
-    
-    mime = [[dataSource contentType] retain];
-    WebNetscapePlugin *plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mime];
-    
-    if (![plugin load])
-        return;
-    
-    // copy function pointers
+    return plugin;
+}
+
+- (void)setPlugin:(WebNetscapePlugin *)thePlugin;
+{
+    [plugin release];
+    plugin = [thePlugin retain];
+
     NPP_New = 		[plugin NPP_New];
     NPP_Destroy = 	[plugin NPP_Destroy];
     NPP_SetWindow = 	[plugin NPP_SetWindow];
@@ -674,38 +557,93 @@
     NPP_GetValue = 	[plugin NPP_GetValue];
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print];
-    
-    [self start];
 }
 
-- (void)dataSourceUpdated:(WebDataSource *)dataSource
+- (void)setMIMEType:(NSString *)theMIMEType
 {
-}
- 
-- (void)setNeedsLayout:(BOOL)flag
-{
-    needsLayout = flag;
+    [MIMEType release];
+    MIMEType = [theMIMEType retain];
 }
 
-- (void)layout
+- (void)setBaseURL:(NSURL *)theBaseURL
 {
-    NSRect superFrame = [[self _web_superviewOfClass:[WebView class]] frame];
-    
-    [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
-    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self setUpWindowAndPort];
+    [baseURL release];
+    baseURL = [theBaseURL retain];
+}
 
-    needsLayout = NO;
+- (void)setArguments:(NSDictionary *)arguments
+{
+    LOG(Plugins, "%@", arguments);
+
+    // Convert arguments dictionary to 2 string arrays.
+    // These arrays are passed to NPP_New, but the strings need to be
+    // modifiable and live the entire life of the plugin.
+
+    // The Java plug-in requires the first argument to be the base URL
+    if ([MIMEType isEqualToString:@"application/x-java-applet"]) {
+        cAttributes = (char **)malloc(([arguments count] + 1) * sizeof(char *));
+        cValues = (char **)malloc(([arguments count] + 1) * sizeof(char *));
+        cAttributes[0] = strdup("DOCBASE");
+        cValues[0] = strdup([[baseURL absoluteString] UTF8String]);
+        argsCount++;
+    } else {
+        cAttributes = (char **)malloc([arguments count] * sizeof(char *));
+        cValues = (char **)malloc([arguments count] * sizeof(char *));
+    }
+
+    NSEnumerator *e = [arguments keyEnumerator];
+    NSString *key;
+    while ((key = [e nextObject])) {
+        cAttributes[argsCount] = strdup([key UTF8String]);
+        cValues[argsCount] = strdup([[arguments objectForKey:key] UTF8String]);
+        argsCount++;
+    }
+}
+
+- (void)setMode:(int)theMode
+{
+    mode = theMode;
 }
 
 #pragma mark NSVIEW
 
+- initWithFrame:(NSRect)frame
+{
+    [super initWithFrame:frame];
+
+    instance = &instanceStruct;
+    instance->ndata = self;
+
+    canRestart = YES;
+
+    streams = [[NSMutableArray alloc] init];
+    notificationData = [[NSMutableDictionary alloc] init];
+
+    return self;
+}
+
+-(void)dealloc
+{
+    unsigned i;
+
+    [self stop];
+
+    for (i = 0; i < argsCount; i++) {
+        free(cAttributes[i]);
+        free(cValues[i]);
+    }
+    [streams removeAllObjects];
+    [streams release];
+    [MIMEType release];
+    [baseURL release];
+    [notificationData release];
+    free(cAttributes);
+    free(cValues);
+    [super dealloc];
+}
+
 - (void)drawRect:(NSRect)rect
 {
-    if(needsLayout){
-        [self layout];
-    }
-
     if(isStarted){
         [self sendUpdateEvent];
     }
@@ -728,8 +666,6 @@
 {
     if (![self window]){
         [self stop];
-    }else{
-        [self start];
     }
     
     [self resetTrackingRect];
@@ -786,9 +722,10 @@
     frame = [notification object];
     URL = [[[frame dataSource] request] URL];
     notifyDataValue = [notificationData objectForKey:URL];
-    
-    if(!notifyDataValue)
+
+    if(!notifyDataValue){
         return;
+    }
     
     notifyData = [notifyDataValue pointerValue];
     frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
@@ -798,51 +735,15 @@
     //FIXME: Need to send other NPReasons
 }
 
-#pragma mark PLUGIN-TO-BROWSER
-
 - (NPP)pluginInstance
 {
     return instance;
 }
 
-- (NPP_NewStreamProcPtr)NPP_NewStream
-{
-    return NPP_NewStream;
-}
-
-- (NPP_WriteReadyProcPtr)NPP_WriteReady
-{
-    return NPP_WriteReady;
-}
-
-- (NPP_WriteProcPtr)NPP_Write
-{
-    return NPP_Write;
-}
-
-- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile
-{
-    return NPP_StreamAsFile;
-}
-
-- (NPP_DestroyStreamProcPtr)NPP_DestroyStream
-{
-    return NPP_DestroyStream;
-}
-
-- (NPP_URLNotifyProcPtr)NPP_URLNotify
-{
-    return NPP_URLNotify;
-}
-
-- (NPP_HandleEventProcPtr)NPP_HandleEvent
-{
-    return NPP_HandleEvent;
-}
 
 @end
 
-@implementation WebNetscapePluginView (WebNPPCallbacks)
+@implementation WebBaseNetscapePluginView (WebNPPCallbacks)
 
 - (NSURL *)pluginURLFromCString:(const char *)URLCString
 {
@@ -869,28 +770,30 @@
     NSURL *URL;
     
     URL = [request URL];
-    
-    if(!URL)
+
+    if(!URL){
         return NPERR_INVALID_URL;
+    }
     
     if(!target){
         stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData];
         if(stream){
-            [stream startLoad];
             [streams addObject:stream];
+            [stream startLoad];
             [stream release];
         }else{
             return NPERR_INVALID_URL;
         }
     }else{
-        frame = [webFrame frameNamed:target];
+        frame = [[self webFrame] frameNamed:target];
         if(!frame){
             // FIXME: Why is it OK to just discard all the attributes in this case?
-            [[webController windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil];
+            [[[self controller] windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil];
             // FIXME: Need to send NPP_URLNotify at the right time.
             // FIXME: Need to name new frame
-            if(notifyData)
+            if(notifyData){
                 NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+            }
         }else{
             if(notifyData){
                 if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
@@ -1042,8 +945,8 @@
 -(void)status:(const char *)message
 {
     LOG(Plugins, "NPN_Status: %s", message);
-    if(webController){
-        [[webController windowOperationsDelegate] setStatusText:[NSString stringWithCString:message]];
+    if([self controller]){
+        [[[self controller] windowOperationsDelegate] setStatusText:[NSString stringWithCString:message]];
     }
 }
 

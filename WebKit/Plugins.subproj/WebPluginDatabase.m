@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebKit/WebPluginDatabase.h>
-
-#import <WebKit/WebPlugin.h>
-#import <WebKit/WebPluginStream.h>
-#import <WebKit/WebPluginView.h>
-#import <WebKit/WebView.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNetscapePluginDocumentView.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebView.h>
+
 
 @implementation WebNetscapePluginDatabase
 
@@ -172,7 +172,7 @@ static NSArray *pluginLocations(void)
     // register plug-in WebDocumentViews and WebDocumentRepresentations
     NSArray *mimes = [self MIMETypes];
     for (i = 0; i < [mimes count]; i++) {
-        [WebView registerViewClass:[WebNetscapePluginView class] forMIMEType:[mimes objectAtIndex:i]];
+        [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:[mimes objectAtIndex:i]];
         [WebDataSource registerRepresentationClass:[WebNetscapePluginStream class] forMIMEType:[mimes objectAtIndex:i]];
     }
 

@@ -95,8 +95,8 @@
 				9C7CABBB0190A37C0ECA16EA,
 				F5B36B400281DE87018635CB,
 				F8CA15B4029A399401000122,
-				25A8176801B5474B0ECA149E,
 				F5065217027F555001C1A526,
+				25A8176801B5474B0ECA149E,
 				F5EBC45202134BB601CA1520,
 				F52CA6C002DF9D78018635CA,
 				254DC334016E1D3F0ECA149E,
@@ -278,6 +278,8 @@
 				511D5554033FD51000CA2ACD,
 				933D659B03413FF2008635CE,
 				8398847C03426FB000BC5F5E,
+				84D4BFF90348EF7600CA2ACA,
+				84D4BFFD0348EF9D00CA2ACA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,6 +370,8 @@
 				5152FAE8033FC52200CA2ACD,
 				933D659C03413FF2008635CE,
 				8398847D03426FB000BC5F5E,
+				84D4BFFA0348EF7600CA2ACA,
+				84D4BFFE0348EF9D00CA2ACA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1321,6 +1325,64 @@
 //832
 //833
 //834
+//840
+//841
+//842
+//843
+//844
+		84D4BFF70348EF7600CA2ACA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginEmbeddedView.h;
+			refType = 4;
+		};
+		84D4BFF80348EF7600CA2ACA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginEmbeddedView.m;
+			refType = 4;
+		};
+		84D4BFF90348EF7600CA2ACA = {
+			fileRef = 84D4BFF70348EF7600CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84D4BFFA0348EF7600CA2ACA = {
+			fileRef = 84D4BFF80348EF7600CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84D4BFFB0348EF9D00CA2ACA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginDocumentView.h;
+			refType = 4;
+		};
+		84D4BFFC0348EF9D00CA2ACA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNetscapePluginDocumentView.m;
+			refType = 4;
+		};
+		84D4BFFD0348EF9D00CA2ACA = {
+			fileRef = 84D4BFFB0348EF9D00CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84D4BFFE0348EF9D00CA2ACA = {
+			fileRef = 84D4BFFC0348EF9D00CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//840
+//841
+//842
+//843
+//844
 //930
 //931
 //932
@@ -1329,7 +1391,7 @@
 		931A72D203265920008635CE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebNetscapePluginViewPrivate.h;
+			path = WebBaseNetscapePluginViewPrivate.h;
 			refType = 4;
 		};
 		931A72D303265920008635CE = {
@@ -1630,7 +1692,7 @@
 			isa = PBXGroup;
 			name = Bookmarks;
 			path = Bookmarks.subproj;
-			refType = 4;
+			refType = 2;
 		};
 		F5065218027F557E01C1A526 = {
 			fileEncoding = 30;
@@ -2589,6 +2651,10 @@
 				F5EBC45502134BC301CA1520,
 				931A72D203265920008635CE,
 				F5EBC45602134BC301CA1520,
+				84D4BFFB0348EF9D00CA2ACA,
+				84D4BFFC0348EF9D00CA2ACA,
+				84D4BFF70348EF7600CA2ACA,
+				84D4BFF80348EF7600CA2ACA,
 				F5883BE0025E5E9D01000102,
 				F5883BE1025E5E9D01000102,
 				F5A672B70263866E01000102,
@@ -2610,13 +2676,13 @@
 		F5EBC45502134BC301CA1520 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebPluginView.h;
+			path = WebBaseNetscapePluginView.h;
 			refType = 4;
 		};
 		F5EBC45602134BC301CA1520 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebPluginView.m;
+			path = WebBaseNetscapePluginView.m;
 			refType = 4;
 		};
 		F5EBC45802134BC301CA1520 = {

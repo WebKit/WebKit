@@ -3,15 +3,18 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebPluginStream.h>
 
-#import <WebKit/WebPluginView.h>
-#import <WebKit/WebLoadProgress.h>
-#import <WebKit/WebView.h>
+
+#import <WebKit/WebBaseNetscapePluginView.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebFrame.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
@@ -31,16 +34,18 @@
 
 @implementation WebNetscapePluginStream
 
-- (void) getFunctionPointersFromPluginView:(WebNetscapePluginView *)pluginView
+- (void) getFunctionPointersFromPluginView:(WebBaseNetscapePluginView *)pluginView
 {
     ASSERT(pluginView);
     
-    NPP_NewStream = 	[pluginView NPP_NewStream];
-    NPP_WriteReady = 	[pluginView NPP_WriteReady];
-    NPP_Write = 	[pluginView NPP_Write];
-    NPP_StreamAsFile = 	[pluginView NPP_StreamAsFile];
-    NPP_DestroyStream = [pluginView NPP_DestroyStream];
-    NPP_URLNotify = 	[pluginView NPP_URLNotify];
+    WebNetscapePlugin *plugin = [pluginView plugin];
+    
+    NPP_NewStream = 	[plugin NPP_NewStream];
+    NPP_WriteReady = 	[plugin NPP_WriteReady];
+    NPP_Write = 	[plugin NPP_Write];
+    NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
+    NPP_DestroyStream = [plugin NPP_DestroyStream];
+    NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
 - init
@@ -50,11 +55,6 @@
     isFirstChunk = YES;
     
     return self;
-}
-
-- initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer
-{        
-    return [self initWithURL:theURL pluginPointer:thePluginPointer notifyData:nil];
 }
 
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer notifyData:(void *)theNotifyData
@@ -71,7 +71,7 @@
         return nil;
     }
        
-    view = [(WebNetscapePluginView *)thePluginPointer->ndata retain];
+    view = [(WebBaseNetscapePluginView *)thePluginPointer->ndata retain];
     ASSERT(view);
     URL = [theURL retain];
     instance = thePluginPointer;
@@ -89,9 +89,8 @@
 {
     [self stop];
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     if(path){
-        [fileManager removeFileAtPath:path handler:nil];
+        [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
         [path release];
     }
     free((void *)npStream.URL);
@@ -104,7 +103,7 @@
 - (void)startLoad
 {
     resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
-    [[view webController] _didStartLoading:[resource URL]];
+    [[view controller] _didStartLoading:[resource URL]];
 }
 
 - (void)stop
@@ -242,7 +241,7 @@
     ASSERT([dataSource webFrame]);
     ASSERT([[dataSource webFrame] webView]);
     ASSERT([[[dataSource webFrame] webView] documentView]);
-    ASSERT([(WebNetscapePluginView *)[[[dataSource webFrame] webView] documentView] pluginInstance]);
+    ASSERT([(WebBaseNetscapePluginView *)[[[dataSource webFrame] webView] documentView] pluginInstance]);
     
     if(isFirstChunk){
         WebFrame *frame = [dataSource webFrame];
@@ -278,19 +277,17 @@
 
 - (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)theURL
 {
-    return [[view webController] userAgentForURL:theURL];
+    return [[view controller] userAgentForURL:theURL];
 }
 
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     ASSERT(resource == handle);
 
-    WebController *webController = [view webController];
-
     [self receivedData:data withHandle:handle];
     
-    [webController _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-        forResourceHandle: handle fromDataSource: [view webDataSource] complete: NO];
+    [[view controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
+        forResourceHandle: handle fromDataSource: [view dataSource] complete: NO];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
@@ -300,14 +297,14 @@
     [resource release];    
     resource = nil;
 
-    WebController *webController = [view webController];
+    WebController *controller = [view controller];
     
-    [webController _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
-            forResourceHandle: handle fromDataSource: [view webDataSource] complete: YES];
+    [controller _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
+            forResourceHandle: handle fromDataSource: [view dataSource] complete: YES];
  
     [self finishedLoadingWithData:resourceData];
           
-    [webController _didStopLoading:URL];
+    [controller _didStopLoading:URL];
 }
 
 - (void)cancel
@@ -318,21 +315,21 @@
     
     [resource cancel];
     
-    WebController *webController = [view webController];
+    WebController *controller = [view controller];
     
     WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                        inDomain:WebErrorDomainWebFoundation
                                                      failingURL:nil];
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:resource];
-    [webController _receivedError: cancelError forResourceHandle: resource 
-        partialProgress: loadProgress fromDataSource: [view webDataSource]];
+    [controller _receivedError: cancelError forResourceHandle: resource 
+        partialProgress: loadProgress fromDataSource: [view dataSource]];
     [loadProgress release];
     
     [cancelError release];
 
     [self receivedError:NPRES_USER_BREAK];
     
-    [webController _didStopLoading:URL];
+    [controller _didStopLoading:URL];
 
     [resource release];
     resource = nil;
@@ -345,26 +342,26 @@
     [resource release];
     resource = nil;
     
-    WebController *webController = [view webController];
+    WebController *controller = [view controller];
     
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:handle];
     
-    [webController _receivedError: result forResourceHandle: handle 
-        partialProgress: loadProgress fromDataSource: [view webDataSource]];
+    [controller _receivedError: result forResourceHandle: handle 
+        partialProgress: loadProgress fromDataSource: [view dataSource]];
     [loadProgress release];
 
     [self receivedError:NPRES_NETWORK_ERR];
     
-    [webController _didStopLoading:URL];
+    [controller _didStopLoading:URL];
 }
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)toURL
 {
-    WebController *webController = [view webController];
+    WebController *controller = [view controller];
     
-    [webController _didStopLoading:URL];
+    [controller _didStopLoading:URL];
     // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
-    [webController _didStartLoading:toURL];
+    [controller _didStartLoading:toURL];
 }
 
 @end

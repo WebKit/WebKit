@@ -5,14 +5,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebNetscapePluginView;
+@class WebBaseNetscapePluginView;
 
 @interface WebNetscapePluginNullEventSender : NSObject
 {
-    WebNetscapePluginView *view;
+    WebBaseNetscapePluginView *view;
 }
 
--(id)initWithPluginView:(WebNetscapePluginView *)pluginView;
+-(id)initWithPluginView:(WebBaseNetscapePluginView *)pluginView;
 -(void)sendNullEvents;
 -(void)stop;
 

@@ -1,3 +1,131 @@
+
+2002-09-30  Chris Blumenberg  <cblu@apple.com>
+
+	A ton o' plugin view clean-up and arch changes. Turned WebPluginView into WebBaseNetscapePluginView. New classes WebNetscapePluginEmbeddedView and WebNetscapePluginDocumentView are subclasses of WebBaseNetscapePluginView. WebNetscapePluginDocumentView handles non-HTML plug-in content and WebNetscapePluginEmbeddedView is the WebHTMLView subview.
+
+	Found that we leak the world on complex pages with plug-ins such as macromedia.com and marvel.com when closing the window. Still need to figure this out.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h: Added.
+        * Plugins.subproj/WebBaseNetscapePluginView.m: Added.
+        (+[WebBaseNetscapePluginView getCarbonEvent:]):
+        (-[WebBaseNetscapePluginView getCarbonEvent:]):
+        (-[WebBaseNetscapePluginView modifiersForEvent:]):
+        (-[WebBaseNetscapePluginView getCarbonEvent:withEvent:]):
+        (-[WebBaseNetscapePluginView keyMessageForEvent:]):
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView sendUpdateEvent]):
+        (-[WebBaseNetscapePluginView acceptsFirstResponder]):
+        (-[WebBaseNetscapePluginView becomeFirstResponder]):
+        (-[WebBaseNetscapePluginView resignFirstResponder]):
+        (-[WebBaseNetscapePluginView mouseDown:]):
+        (-[WebBaseNetscapePluginView mouseUp:]):
+        (-[WebBaseNetscapePluginView mouseEntered:]):
+        (-[WebBaseNetscapePluginView mouseExited:]):
+        (-[WebBaseNetscapePluginView keyUp:]):
+        (-[WebBaseNetscapePluginView keyDown:]):
+        (-[WebBaseNetscapePluginView isInResponderChain]):
+        (-[WebBaseNetscapePluginView performKeyEquivalent:]):
+        (-[WebBaseNetscapePluginView menuForEvent:]):
+        (-[WebBaseNetscapePluginView setUpWindowAndPort]):
+        (-[WebBaseNetscapePluginView setWindow]):
+        (-[WebBaseNetscapePluginView removeTrackingRect]):
+        (-[WebBaseNetscapePluginView resetTrackingRect]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+        (-[WebBaseNetscapePluginView dataSource]):
+        (-[WebBaseNetscapePluginView webFrame]):
+        (-[WebBaseNetscapePluginView controller]):
+        (-[WebBaseNetscapePluginView plugin]):
+        (-[WebBaseNetscapePluginView setMIMEType:]):
+        (-[WebBaseNetscapePluginView setBaseURL:]):
+        (-[WebBaseNetscapePluginView setArguments:]):
+        (-[WebBaseNetscapePluginView setMode:]):
+        (-[WebBaseNetscapePluginView initWithFrame:]):
+        (-[WebBaseNetscapePluginView dealloc]):
+        (-[WebBaseNetscapePluginView drawRect:]):
+        (-[WebBaseNetscapePluginView isFlipped]):
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        (-[WebBaseNetscapePluginView viewHasMoved:]):
+        (-[WebBaseNetscapePluginView windowWillClose:]):
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        (-[WebBaseNetscapePluginView windowResignedKey:]):
+        (-[WebBaseNetscapePluginView defaultsHaveChanged:]):
+        (-[WebBaseNetscapePluginView frameStateChanged:]):
+        (-[WebBaseNetscapePluginView pluginInstance]):
+        (-[WebBaseNetscapePluginView pluginURLFromCString:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        (-[WebBaseNetscapePluginView getURLNotify:target:notifyData:]):
+        (-[WebBaseNetscapePluginView getURL:target:]):
+        (-[WebBaseNetscapePluginView postURLNotify:target:len:buf:file:notifyData:]):
+        (-[WebBaseNetscapePluginView postURL:target:len:buf:file:]):
+        (-[WebBaseNetscapePluginView newStream:target:stream:]):
+        (-[WebBaseNetscapePluginView write:len:buffer:]):
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+        (-[WebBaseNetscapePluginView status:]):
+        (-[WebBaseNetscapePluginView invalidateRect:]):
+        (-[WebBaseNetscapePluginView invalidateRegion:]):
+        (-[WebBaseNetscapePluginView forceRedraw]):
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h: Added.
+        * Plugins.subproj/WebNetscapePluginDocumentView.h: Added.
+        * Plugins.subproj/WebNetscapePluginDocumentView.m: Added.
+        (-[WebNetscapePluginDocumentView initWithFrame:]):
+        (-[WebNetscapePluginDocumentView dealloc]):
+        (-[WebNetscapePluginDocumentView drawRect:]):
+        (-[WebNetscapePluginDocumentView dataSource]):
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        (-[WebNetscapePluginDocumentView dataSourceUpdated:]):
+        (-[WebNetscapePluginDocumentView setNeedsLayout:]):
+        (-[WebNetscapePluginDocumentView layout]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h: Added.
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m: Added.
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:mime:arguments:]):
+        (-[WebNetscapePluginEmbeddedView dealloc]):
+        (-[WebNetscapePluginEmbeddedView viewDidMoveToWindow]):
+        (-[WebNetscapePluginEmbeddedView start]):
+        (-[WebNetscapePluginEmbeddedView dataSource]):
+        * Plugins.subproj/WebNetscapePluginViewPrivate.h: Removed.
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebNetscapePluginDatabase init]):
+        * Plugins.subproj/WebPluginNullEventSender.h:
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        (-[WebNetscapePluginNullEventSender initWithPluginView:]):
+        (-[WebNetscapePluginNullEventSender sendNullEvents]):
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream getFunctionPointersFromPluginView:]):
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:]):
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream startLoad]):
+        (-[WebNetscapePluginStream receivedData:withDataSource:]):
+        (-[WebNetscapePluginStream handleWillUseUserAgent:forURL:]):
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        (-[WebNetscapePluginStream cancel]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        (-[WebNetscapePluginStream handleDidRedirect:toURL:]):
+        * Plugins.subproj/WebPluginView.h: Removed.
+        * Plugins.subproj/WebPluginView.m: Removed.
+        * Plugins.subproj/npapi.m:
+        (NPN_GetURLNotify):
+        (NPN_GetURL):
+        (NPN_PostURLNotify):
+        (NPN_PostURL):
+        (NPN_NewStream):
+        (NPN_Write):
+        (NPN_DestroyStream):
+        (NPN_Status):
+        (NPN_InvalidateRect):
+        (NPN_InvalidateRegion):
+        (NPN_ForceRedraw):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]):
+        (-[WebViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[NSView _web_stopIfPluginView]):
+
 2002-09-30  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebDataSource.m: (-[WebDataSource initWithRequest:]):

@@ -1,39 +1,42 @@
 /*	
-    WebPluginView.h
+    WebBaseNetscapePluginView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebKit.h>
-#import <WebKit/WebFrame.h>
-
 #import <Cocoa/Cocoa.h>
+
 #import <npapi.h>
 
-@class WebNetscapePluginNullEventSender;
-@class WebDataSource;
-@class WebNetscapePlugin;
 @class WebController;
-@protocol WebDocumentView;
+@class WebDataSource;
+@class WebFrame;
+@class WebNetscapePlugin;
+@class WebNetscapePluginNullEventSender;
 
-@interface WebNetscapePluginView : NSView <WebDocumentView>
+
+@interface WebBaseNetscapePluginView : NSView
 {
     WebNetscapePluginNullEventSender *eventSender;
+
+    WebNetscapePlugin *plugin;
+    
+    int mode;
+    
     unsigned argsCount;
-    char **cAttributes, **cValues;
-    
-    WebController *webController;
-    WebDataSource *webDataSource;
-    WebFrame *webFrame;
-    
+    char **cAttributes;
+    char **cValues;
+        
     NPP instance;
     NPWindow window;
     NP_Port nPort;
     NPP_t instanceStruct;
-        
-    BOOL canRestart, isHidden, isStarted, fullMode, needsLayout;
+
+    BOOL canRestart;
+    BOOL isHidden;
+    BOOL isStarted;
             
-    NSString *mime;
-    NSURL *srcURL, *baseURL;
+    NSString *MIMEType;
+    NSURL *baseURL;
     NSTrackingRectTag trackingTag;
     NSMutableArray *streams;
     NSMutableDictionary *notificationData;
@@ -53,22 +56,26 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(WebNetscapePlugin *)plugin URL:(NSURL *)URL baseURL:(NSURL *)baseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
+- (void)start;
 - (void)stop;
 
-- (WebDataSource *)webDataSource;
-- (WebController *)webController;
+- (WebFrame *)webFrame;
+- (WebDataSource *)dataSource;
+- (WebController *)controller;
 
 + (void)getCarbonEvent:(EventRecord *)carbonEvent;
 - (BOOL)sendEvent:(EventRecord *)event;
 - (BOOL)sendUpdateEvent;
 
 - (NPP)pluginInstance;
-- (NPP_NewStreamProcPtr)NPP_NewStream;
-- (NPP_WriteReadyProcPtr)NPP_WriteReady;
-- (NPP_WriteProcPtr)NPP_Write;
-- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile;
-- (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
-- (NPP_URLNotifyProcPtr)NPP_URLNotify;
+
+- (void)setUpWindowAndPort;
+
+- (WebNetscapePlugin *)plugin;
+- (void)setPlugin:(WebNetscapePlugin *)thePlugin;
+- (void)setMIMEType:(NSString *)theMIMEType;
+- (void)setBaseURL:(NSURL *)theBaseURL;
+- (void)setArguments:(NSDictionary *)theArguments;
+- (void)setMode:(int)theMode;
 
 @end

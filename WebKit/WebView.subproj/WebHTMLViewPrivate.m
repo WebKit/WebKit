@@ -20,8 +20,8 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -218,8 +218,8 @@ BOOL _modifierTrackingEnabled = FALSE;
 
 - (void)_web_stopIfPluginView
 {
-    if ([self isKindOfClass:[WebNetscapePluginView class]]) {
-	WebNetscapePluginView *pluginView = (WebNetscapePluginView *)self;
+    if ([self isKindOfClass:[WebNetscapePluginEmbeddedView class]]) {
+	WebNetscapePluginEmbeddedView *pluginView = (WebNetscapePluginEmbeddedView *)self;
         [pluginView stop];
     }
 }
