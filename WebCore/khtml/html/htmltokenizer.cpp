@@ -392,9 +392,8 @@ void HTMLTokenizer::processListing(TokenizerString list)
 
     }
 
-    if ((pending == SpacePending) || (pending == TabPending))
+    if (pending)
         addPending();
-    pending = NonePending;
 
     prePos = 0;
 

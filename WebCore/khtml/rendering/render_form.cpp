@@ -1557,10 +1557,10 @@ void RenderTextArea::updateFromElement()
     w->setDisabled(element()->disabled());
 #endif
     
-    // Call w->text() before calling element()->value(), because in the case of inline
+    // Call text() before calling element()->value(), because in the case of inline
     // input such as Hiragana, w->text() has a side effect of sending the notification
     // that we use in slotTextChanged to update element()->m_value
-    QString widgetText = w->text();
+    QString widgetText = text();
     QString text = element()->value().string();
     text.replace('\\', backslashAsCurrencySymbol());
     if (widgetText != text) {

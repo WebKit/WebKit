@@ -2,6 +2,23 @@
 
         Reviewed by Dave.
 
+        - fixed <rdar://problem/3303968> final newline character omitted from <textarea> when parsing a new page
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::processListing): Handle newline pending
+        cases as well as space and tab pending spaces at the end of this function. This seems right for
+        both scripts and text areas; it's not clear why omittiing the LF is ever needed. Tested by running
+        all the layout tests; no regressions.
+
+        - fixed <rdar://problem/3552736> word wrapped text fields that blur/focus when you type move the insertion point strangely (vtext.com)
+
+        * khtml/rendering/render_form.cpp: (RenderTextArea::updateFromElement): Call text() instead of
+        calling widget->text() directly. This prevents this function from running in cases where the
+        text didn't really change for text areas in wrap mode.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - got rid of ERROR message when running layout tests by implementing text-transform in computed style
 
         * khtml/css/css_computedstyle.cpp:
