@@ -1327,6 +1327,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *startContainer = [[range startContainer] _nodeImpl];
     NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    ASSERT(startContainer);
+    ASSERT(endContainer);
+    ASSERT(startContainer->getDocument());
+    ASSERT(startContainer->getDocument() == endContainer->getDocument());
+    
+    DocumentImpl *doc = startContainer->getDocument();
+    doc->updateLayout();
     KHTMLSelection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
     _part->setSelection(selection);
 }

@@ -1,3 +1,24 @@
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Now calls setFocusNodeIfNeeded.
+        (KHTMLPart::takeSelectionFrom): Now calls setFocusNodeIfNeeded.
+        (KHTMLPart::clearSelection): Now calls setFocusNodeIfNeeded.
+        (KHTMLPart::invalidateSelection): Now calls setFocusNodeIfNeeded.
+        (KHTMLPart::setSelectionVisible): Now calls setFocusNodeIfNeeded.
+        (KHTMLPart::setFocusNodeIfNeeded): New function focuses first element 
+        of a selection that is contenteditable, if any of the nodes are. The "first"
+        determination is made by doing a document-order search.
+        * khtml/khtml_part.h:
+        * khtml/xml/dom_nodeimpl.cpp: Remove debug spam.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:]): Now updates document layout before
+        setting the selection. This was needed for Blot, so that setting the 
+        contenteditable attribute on the body is "seen" when the attempt is made
+        to set the selection right immediately after.
+
 2004-04-06  David Hyatt  <hyatt@apple.com>
 
 	After columns have been expanded to their preferred sizes, if space is left over in the table, then

@@ -1105,6 +1105,11 @@ private:
   /**
    * @internal
    */
+  void setFocusNodeIfNeeded(const KHTMLSelection &);
+
+  /**
+   * @internal
+   */
   void notifySelectionChanged(bool endTyping=true);
 
   /**

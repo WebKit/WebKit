@@ -2472,6 +2472,7 @@ void KHTMLPart::setSelection(const KHTMLSelection &s)
 {
     if (d->m_selection != s) {
         clearCaretRectIfNeeded(); 
+        setFocusNodeIfNeeded(s);
         d->m_selection = s;
         notifySelectionChanged();
     }
@@ -2487,6 +2488,7 @@ void KHTMLPart::takeSelectionFrom(const EditCommand &cmd, bool useEndingSelectio
     
     if (d->m_selection != s) {
         clearCaretRectIfNeeded();        
+        setFocusNodeIfNeeded(s);
         d->m_selection = s;
         notifySelectionChanged(false);
     }
@@ -2495,6 +2497,7 @@ void KHTMLPart::takeSelectionFrom(const EditCommand &cmd, bool useEndingSelectio
 void KHTMLPart::clearSelection()
 {
     clearCaretRectIfNeeded();
+    setFocusNodeIfNeeded(d->m_selection);
     d->m_selection = KHTMLSelection();
     notifySelectionChanged();
 }
@@ -2508,6 +2511,7 @@ void KHTMLPart::deleteSelection()
 void KHTMLPart::invalidateSelection()
 {
     clearCaretRectIfNeeded();
+    setFocusNodeIfNeeded(d->m_selection);
     d->m_selection.setNeedsLayout();
     notifySelectionChanged(false);
 }
@@ -2518,6 +2522,7 @@ void KHTMLPart::setSelectionVisible(bool flag)
         return;
 
     clearCaretRectIfNeeded();
+    setFocusNodeIfNeeded(d->m_selection);
     d->m_caretVisible = flag;
     notifySelectionChanged();
 }
@@ -2537,6 +2542,33 @@ void KHTMLPart::clearCaretRectIfNeeded()
         d->m_caretPaint = false;
         d->m_selection.needsCaretRepaint();
     }        
+}
+
+void KHTMLPart::setFocusNodeIfNeeded(const KHTMLSelection &s)
+{
+    if (!xmlDocImpl() || s.state() == KHTMLSelection::NONE)
+        return;
+
+    NodeImpl *n = s.startNode();
+    NodeImpl *target = n->isContentEditable() ? n : 0;
+    if (!target) {
+        while (n != s.endNode()) {
+            if (n->isContentEditable()) {
+                target = n;
+                break;
+            }
+            n = n->traverseNextNode();
+        }
+    }
+    assert(target == 0 || target->isContentEditable());
+    
+    if (target) {
+        for ( ; target && !target->isFocusable(); target = target->parentNode()); // loop
+        if (target && target->isMouseFocusable())
+            xmlDocImpl()->setFocusNode(target);
+        else if (!target || !target->focused())
+            xmlDocImpl()->setFocusNode(0);
+    }
 }
 
 void KHTMLPart::notifySelectionChanged(bool endTyping)
