@@ -1472,7 +1472,8 @@ static const char *joiningNames[] = {
         FATAL_ALWAYS ("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    ATSLineLayoutOptions lineLayoutOptions = (kATSLineFractDisable | kATSLineDisableAutoAdjustDisplayPos | kATSLineUseDeviceMetrics);
+    ATSLineLayoutOptions lineLayoutOptions = (kATSLineFractDisable | kATSLineDisableAutoAdjustDisplayPos | kATSLineUseDeviceMetrics |
+                                              kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers);
     Boolean rtl = style->rtl;
     ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag, kATSULineDirectionTag };
     ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions), sizeof(Boolean)  };

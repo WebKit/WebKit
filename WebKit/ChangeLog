@@ -1,3 +1,13 @@
+2005-01-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3513067, spaces being lost when RTL text is rendered.  Make sure not to allow hangers or spaces
+	in the margin.
+	
+        Reviewed by john
+	
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _createATSUTextLayoutForRun:style:]):
+
 2005-01-19  Darin Adler <darin@apple.com>
 
         Reviewed by vicki
