@@ -2094,7 +2094,7 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     if (htmlMode() != XHtml) nme = nme.upper();
     for (id = 0; id < m_elementNameCount; id++)
         if (DOMString(m_elementNames[id]) == nme)
-            return makeId(ns, ID_LAST_TAG+id);
+            return makeId(ns, ID_LAST_TAG + 1 + id);
 
     // unknown
     if (readonly) return 0;
@@ -2117,13 +2117,13 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
     m_elementNames[id] = nme.implementation();
     m_elementNames[id]->ref();
 
-    return makeId(ns, ID_LAST_TAG+id);
+    return makeId(ns, ID_LAST_TAG + 1 + id);
 }
 
 DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
 {
-    if (localNamePart(_id) >= ID_LAST_TAG)
-        return m_elementNames[localNamePart(_id)-ID_LAST_TAG];
+    if (localNamePart(_id) > ID_LAST_TAG)
+        return m_elementNames[localNamePart(_id) - (ID_LAST_TAG + 1)];
     else {
         // ### put them in a cache
         if (getDocument()->htmlMode() == DocumentImpl::XHtml)
@@ -2136,7 +2136,7 @@ DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
 
 DOMStringImpl* DocumentImpl::namespaceURI(NodeImpl::Id _id) const
 {
-    if (_id < ID_LAST_TAG)
+    if (_id <= ID_LAST_TAG)
         return htmlMode() == XHtml ? XmlNamespaceTable::getNamespaceURI(xhtmlNamespace).implementation() : 0;
 
     unsigned short ns = _id >> 16;

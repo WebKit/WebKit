@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        - re-fixed <rdar://problem/3760910> please add support for custom tag names in HTML
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::tagId): Use ID_LAST_TAG + 1 for the ID of the first assigned tag ID. Before we'd use ID_LAST_TAG,
+        which resulted in the same number being used for ID_COMMENT and the first custom tag.
+        (DocumentImpl::tagName): Use ID_LAST_TAG + 1, as above.
+        (DocumentImpl::namespaceURI): Change a < ID_LAST_TAG to <= ID_LAST_TAG in the same spirit as above.
+
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3986639> Crash occurs after choosing Undo Typing from the Edit menu
 
         * kwq/KWQTextArea.mm: (-[KWQTextArea viewWillMoveToWindow:]): Remove actions from undo manager when the view is
