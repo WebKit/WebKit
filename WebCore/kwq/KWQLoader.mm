@@ -137,6 +137,74 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
     return true;
 }
 
+static NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
+{
+    NSMutableString *headerString = [[NSMutableString alloc] init];
+    [headerString appendString:[NSString stringWithFormat:@"HTTP/1.0 %d OK\n", statusCode]];
+    
+    NSEnumerator *e = [headers keyEnumerator];
+    NSString *key;
+    
+    bool first = true;
+    
+    while ((key = [e nextObject]) != nil) {
+	if (first) {
+	    first = false;
+	} else {
+	    [headerString appendString:@"\n"];
+	}
+	[headerString appendString:key];
+	[headerString appendString:@": "];
+	[headerString appendString:[headers objectForKey:key]];
+    }
+	
+    return headerString;
+}
+
+QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
+{
+    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
+    WebCoreBridge *bridge = part->bridge();
+
+    part->didTellBridgeAboutLoad(job->url().url());
+
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NSDictionary *headerDict = nil;
+    QString headerString = job->queryMetaData("customHTTPHeader");
+
+    if (!headerString.isEmpty()) {
+	headerDict = [[NSDictionary alloc] _webcore_initWithHeaderString:headerString.getNSString()];
+    }
+
+    NSData *postData = nil;
+    
+
+    if (job->method() == "POST") {
+	postData = [NSData dataWithBytesNoCopy:job->postData().data() length:job->postData().size() freeWhenDone:NO];
+    }
+
+    NSURL *finalNSURL = nil;
+    NSDictionary *responseHeaderDict = nil;
+    int statusCode = 0;
+    NSData *resultData = [bridge syncLoadResourceWithURL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
+    
+    job->kill();
+
+    finalURL = finalNSURL;
+    responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(responseHeaderDict, statusCode));
+
+    QByteArray results([resultData length]);
+
+    memcpy( results.data(), [resultData bytes], [resultData length] );
+
+    return results;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return QByteArray();
+}
+
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
 {
     return Cache::loader()->numRequests(dl);
@@ -218,27 +286,9 @@ void *KWQResponseHeaderString(void *response)
     NSURLResponse *nsResponse = (NSURLResponse *)response;
     if ([nsResponse isKindOfClass:[NSHTTPURLResponse class]]) {
 	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)nsResponse;
-	NSMutableString *headerString = [[NSMutableString alloc] init];
-	[headerString appendString:[NSString stringWithFormat:@"HTTP/1.0 %d OK\n", [httpResponse statusCode]]];
 	NSDictionary *headers = [httpResponse allHeaderFields];
 
-	NSEnumerator *e = [headers keyEnumerator];
-	NSString *key;
-	
-	bool first = true;
-	
-	while ((key = [e nextObject]) != nil) {
-	    if (first) {
-		first = false;
-	    } else {
-		[headerString appendString:@"\n"];
-	    }
-	    [headerString appendString:key];
-	    [headerString appendString:@": "];
-	    [headerString appendString:[headers objectForKey:key]];
-	}
-	
-	return headerString;
+	return KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]);
     }
 
     KWQ_UNBLOCK_EXCEPTIONS;

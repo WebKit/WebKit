@@ -211,7 +211,8 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
     onReadyStateChangeListener(0),
     onLoadListener(0),
     decoder(0),
-    createdDocument(false)
+    createdDocument(false),
+    aborted(false)
 {
 }
 
@@ -275,6 +276,14 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
 
 void XMLHttpRequest::send(const QString& _body)
 {
+  aborted = false;
+
+#if !APPLE_CHANGES
+  if (!async) {
+    return;
+  }
+#endif
+
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
       // FIXME: determine post encoding correctly by looking in headers for charset
       job = KIO::http_post( url, QCString(_body.utf8()), false );
@@ -286,6 +295,19 @@ void XMLHttpRequest::send(const QString& _body)
   if (requestHeaders.length() > 0) {
     job->addMetaData("customHTTPHeader", requestHeaders);
   }
+
+#if APPLE_CHANGES
+  if (!async) {
+    QByteArray data;
+    KURL finalURL;
+    QString headers;
+
+    data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
+    job = 0;
+    processSyncLoadResults(data, finalURL, headers);
+    return;
+  }
+#endif
 
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
@@ -312,6 +334,7 @@ void XMLHttpRequest::abort()
     job->kill();
     job = 0;
   }
+  aborted = true;
 }
 
 void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
@@ -404,7 +427,34 @@ Value XMLHttpRequest::getStatusText() const
   
   return String(firstLine);
 }
-   
+
+#if APPLE_CHANGES   
+void XMLHttpRequest::processSyncLoadResults(const QByteArray &data, const KURL &finalURL, const QString &headers)
+{
+  if (!urlMatchesDocumentDomain(finalURL)) {
+    abort();
+    return;
+  }
+  
+  responseHeaders = headers;
+  changeState(Loaded);
+  if (aborted) {
+    return;
+  }
+  
+  const char *bytes = (const char *)data.data();
+  int len = (int)data.size();
+
+  slotData(0, bytes, len);
+
+  if (aborted) {
+    return;
+  }
+
+  slotFinished(0);
+}
+#endif
+
 void XMLHttpRequest::slotFinished(KIO::Job *)
 {
   if (decoder) {
@@ -423,8 +473,7 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
 {
   if (!urlMatchesDocumentDomain(url)) {
-    job->kill();
-    job = 0;
+    abort();
   }
 }
 
@@ -462,7 +511,7 @@ void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
 
   response += decoded;
 
-  if (job != 0) {
+  if (!aborted) {
     changeState(Interactive);
   }
 }

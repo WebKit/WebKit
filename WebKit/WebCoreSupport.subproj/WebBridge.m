@@ -430,6 +430,54 @@
     [request release];
 }
 
+- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSData *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
+{
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+
+    if (postData) {
+	[newRequest setHTTPMethod:@"POST"];
+	[newRequest setHTTPBody:postData];
+    }
+
+    NSEnumerator *e = [requestHeaders keyEnumerator];
+    NSString *key;
+    while ((key = (NSString *)[e nextObject]) != nil) {
+	[newRequest addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
+    }
+
+    [newRequest setCachePolicy:[[[self dataSource] request] cachePolicy]];
+    [newRequest setHTTPReferrer:[self referrer]];
+    
+    WebView *webView = [_frame webView];
+    [newRequest setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
+    [newRequest setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
+
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    NSData *result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
+
+    if (error == nil) {
+	*finalURL = [response URL];
+	if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+	    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
+	    *responseHeaderDict = [httpResponse allHeaderFields];
+	    *statusCode = [httpResponse statusCode];
+	} else {
+	    *responseHeaderDict = [NSDictionary dictionary];
+	    *statusCode = 200;
+	}
+    } else {
+	*finalURL = URL;
+	*responseHeaderDict = [NSDictionary dictionary];
+	*statusCode = 404;
+    }
+
+    // notify the delegates
+    [self objectLoadedFromCacheWithURL:URL response:response size:[result length]];
+
+    return result;
+}
+
 - (BOOL)isReloading
 {
     return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;

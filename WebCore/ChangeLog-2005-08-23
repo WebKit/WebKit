@@ -1,3 +1,24 @@
+2003-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3487160>: Implement synchronous loading for XMLHttpRequest
+        
+	* khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::XMLHttpRequest):
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequest::processSyncLoadResults):
+        (KJS::XMLHttpRequest::slotRedirection):
+        (KJS::XMLHttpRequest::slotData):
+        * khtml/ecma/xmlhttprequest.h:
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQHeaderStringFromDictionary):
+        (KWQServeSynchronousRequest):
+        (KWQResponseHeaderString):
+        * kwq/WebCoreBridge.h:
+
 2003-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
