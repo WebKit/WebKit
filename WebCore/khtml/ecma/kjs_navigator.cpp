@@ -205,6 +205,12 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     // We assume the string is something like Mozilla/version (properties)
     return String(userAgent.mid(userAgent.find('/') + 1));
   case Product:
+    if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
+        userAgent.find(QString::fromLatin1("compatible")) == -1)
+    {
+	//kdDebug() << "appName -> Mozilla" << endl;
+	return String("Gecko");
+    }
 #ifdef APPLE_CHANGES
     return Undefined();
 #else
