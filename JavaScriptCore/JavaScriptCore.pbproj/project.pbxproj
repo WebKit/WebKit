@@ -13,7 +13,7 @@
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O";
+				OPTIMIZATION_CFLAGS = "-O0";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -435,11 +435,11 @@
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
-			name = Unoptimized;
+			name = Mixed;
 		};
 		F5C290E50284F960018635CA = {
 			children = (

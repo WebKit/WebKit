@@ -14,7 +14,7 @@
 				DEBUG_CFLAGS = "";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O";
+				OPTIMIZATION_CFLAGS = "-O0";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -1530,11 +1530,11 @@
 				DEBUG_CFLAGS = "";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
-			name = Unoptimized;
+			name = Mixed;
 		};
 		F59668C802AD2923018635CA = {
 			isa = PBXFileReference;

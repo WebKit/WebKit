@@ -1,3 +1,12 @@
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Made Development build mode mean what Unoptimized used to mean. Removed Unoptimized build mode. 
+        Added a Mixed build mode which does what Deployment used to. All this to fix:
+        
+        Radar 2955367 - Change default build style to "Unoptimized"
+        
+	* JavaScriptCore.pbproj/project.pbxproj:
+
 2002-06-12  Darin Adler  <darin@apple.com>
 
 	* kjs/nodes.cpp: (Node::finalCheck): A bit of APPLE_CHANGES so we

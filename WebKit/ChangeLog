@@ -1,5 +1,14 @@
 2002-06-15  Maciej Stachowiak  <mjs@apple.com>
 
+        Made Development build mode mean what Unoptimized used to mean. Removed Unoptimized build mode. 
+        Added a Mixed build mode which does what Deployment used to. All this to fix:
+        
+        Radar 2955367 - Change default build style to "Unoptimized"
+        
+	* WebKit.pbproj/project.pbxproj:
+
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
         Added temporary workardound for Radar 2954901 by making the assertion more lenient.
         
 	* WebView.subproj/IFMainURLHandleClient.mm:
