@@ -1,3 +1,9 @@
+2003-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebController.m: Add missing static.
+
 2003-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

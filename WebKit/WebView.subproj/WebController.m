@@ -31,7 +31,7 @@
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 
-const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
+static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
 
 // Turn off inlining to avoid warning with newer gcc.
 #undef __inline
