@@ -381,11 +381,9 @@
 
     array = [NSArray arrayWithContentsOfFile: path];
     if (array == nil) {
-        if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            ERROR("no history file found at %@", path);
-        } else {
+        if ([[NSFileManager defaultManager] fileExistsAtPath: path]) {
             ERROR("attempt to read history from %@ failed; perhaps contents are corrupted", path);
-        }
+        } // else file doesn't exist, which is a normal initial state, so don't spam
         return NO;
     }
 

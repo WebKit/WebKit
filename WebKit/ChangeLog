@@ -1,3 +1,10 @@
+2002-09-10  John Sullivan  <sullivan@apple.com>
+
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:]):
+	removed the ERROR message in the case where the history file was
+	not found, as this is normal initial-state behavior.
+
 2002-09-10  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit part of fix for:
