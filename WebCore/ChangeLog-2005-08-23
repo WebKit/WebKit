@@ -1,3 +1,14 @@
+2002-11-01  Richard Williamson   <rjw@apple.com>
+
+        Removed old implementation.
+        
+        * kwq/KWQChar.mm:
+        (QChar::direction):
+        
+        Renamed JoiningCenter -> JoiningCausing.
+        
+        * kwq/WebCoreUnicode.h:
+
 2002-11-01  Darin Adler  <darin@apple.com>
 
 	- fixed 3062598 -- meta refresh of 0.1s fails

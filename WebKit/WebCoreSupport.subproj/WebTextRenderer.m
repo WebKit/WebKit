@@ -10,6 +10,8 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
+#import <WebCore/WebCoreUnicode.h>
+
 #import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebTextRendererFactory.h>
@@ -441,7 +443,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     
     if (length == 0)
         return;
-        
+                
     // FIXME:  the character to glyph translation must result in less than
     // length glyphs.  This isn't always true.
     if (length > LOCAL_BUFFER_SIZE) {
@@ -712,14 +714,16 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
             break;
         }
 
-        //if (IsNonBaseChar(c)) {
-        //    return [self slowFloatWidthForCharacters: &characters[pos] stringLength: stringLength-pos fromCharacterPostion: 0 numberOfCharacters: len applyRounding: applyRounding];
-        //}
-
         glyphID = glyphForCharacter(characterToGlyphMap, c);
         if (glyphID == nonGlyphID) {
             glyphID = [self extendCharacterToGlyphMapToInclude: c];
         }
+
+#ifdef DEBUG_DIACRITICAL
+        if (IsNonBaseChar(c)){
+            printf ("NonBaseCharacter 0x%04x, joining attribute %d, combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphToWidthMap, glyphID));
+        }
+#endif
         
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
@@ -781,6 +785,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
                 widthBuffer[numGlyphs] = lastWidth;
             numGlyphs++;
         }
+
+#ifdef DEBUG_COMBINING        
+        if (WebCoreUnicodeJoiningFunction(c) != 0 || WebCoreUnicodeCombiningClassFunction(c) != 0)
+            printf ("Character 0x%04x, joining attribute %d, combining class %d, direction %d\n", c, WebCoreUnicodeJoiningFunction(c), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c));
+#endif
         
         totalWidth += lastWidth;       
     }
@@ -825,9 +834,9 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     short unsigned int buffer[INCREMENTAL_BLOCK_SIZE+2];
     
     for (i = 0; i < count; i++){
-        if (IsNonBaseChar(i+start))
-            buffer[i] = 0;
-        else
+        //if (IsNonBaseChar(i+start))
+        //    buffer[i] = 0;
+        //else
             buffer[i] = i+start;
     }
 

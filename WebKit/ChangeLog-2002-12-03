@@ -1,3 +1,23 @@
+2002-11-01  Richard Williamson   <rjw@apple.com>
+
+        Implemented rendering of diacriticals.
+        
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeDigitValue):
+        (_unicodeCategory):
+        (_unicodeDirection):
+        (_unicodeJoining):
+        (_unicodeDecompositionTag):
+        (_unicodeMirrored):
+        (_unicodeCombiningClass):
+        (_unicodeLower):
+        (_unicodeUpper):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]):
+
 2002-11-01  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

@@ -126,7 +126,7 @@ extern "C" {
         JoiningOther,
         JoiningDual,
         JoiningRight,
-        JoiningCenter
+        JoiningCausing
     } WebCoreUnicodeJoining;
 
     typedef enum
