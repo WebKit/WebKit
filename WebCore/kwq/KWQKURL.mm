@@ -26,6 +26,7 @@
 #import "KWQKURL.h"
 
 #import "KWQAssertions.h"
+#import "KWQTextCodec.h"
 
 typedef enum {
     // alpha 
@@ -208,7 +209,7 @@ KURL::KURL() :
 {
 }
 
-KURL::KURL(const char *url, int encoding_hint) :
+KURL::KURL(const char *url) :
     m_isValid(true)
 {
     if (url != NULL && url[0] == '/') {
@@ -219,7 +220,7 @@ KURL::KURL(const char *url, int encoding_hint) :
     }
 }
 
-KURL::KURL(const QString &url, int encoding_hint) :
+KURL::KURL(const QString &url) :
     m_isValid(true)
 
 {
@@ -231,7 +232,7 @@ KURL::KURL(const QString &url, int encoding_hint) :
     }
 }
 
-KURL::KURL(const KURL &base, const QString &relative)
+KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 {
     // Allow at lest absolute URLs to resolve against an empty URL.
     if (!base.m_isValid && !base.isEmpty()) {
@@ -240,7 +241,19 @@ KURL::KURL(const KURL &base, const QString &relative)
     }
     
     bool absolute = false;
-    const char *str = relative.ascii();
+    
+    bool allASCII = relative.isAllASCII();
+    char *strBuffer;
+    const char *str;
+    if (allASCII) {
+        strBuffer = 0;
+        str = relative.ascii();
+    } else {
+        QCString decoded = codec ? codec->fromUnicode(relative)
+            : QTextCodec(kCFStringEncodingUTF8).fromUnicode(relative);
+        strBuffer = strdup(decoded);
+        str = strBuffer;
+    }
     
     // According to the RFC, the reference should be interpreted as an
     // absolute URI if possible, using the "leftmost, longest"
@@ -259,7 +272,7 @@ KURL::KURL(const KURL &base, const QString &relative)
     }
     
     if (absolute) {
-	parse(str, &relative);
+	parse(str, allASCII ? &relative : 0);
     } else {
 	// workaround for sites that put leading whitespace on relative URLs
 	while (*str == ' ') {
@@ -267,9 +280,9 @@ KURL::KURL(const KURL &base, const QString &relative)
 	}
 
 	// if the base is invalid, just append the relative
-	// portion. The RFC does not specify what to do in this case.q
+	// portion. The RFC does not specify what to do in this case.
 	if (!base.m_isValid) {
-	    QString newURL = base.urlString + relative;
+	    QString newURL = base.urlString + str;
 	    parse(newURL.ascii(), &newURL);
 	}
 
@@ -284,7 +297,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 	case '#':
 	    // must be fragment-only reference
 	    {
-		QString newURL = base.urlString.left(base.queryEndPos) + relative;
+		QString newURL = base.urlString.left(base.queryEndPos) + str;
 		parse(newURL.ascii(), &newURL);
 		break;
 	    }
@@ -309,7 +322,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 		char static_buffer[2048];
 		char *buffer;
 		
-		size_t bufferLength = base.pathEndPos + relative.length() + 1;
+		size_t bufferLength = base.pathEndPos + strlen(str) + 1;
 
 		if (bufferLength > sizeof(static_buffer)) {
 		    buffer = (char *)malloc(bufferLength);
@@ -338,7 +351,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 		
                 bufferPos += copyPathRemovingDots(bufferPos, baseStringStart, 0, baseStringEnd - baseStringStart);
 
-		const char *relStringStart = relative.ascii();
+		const char *relStringStart = str;
 		const char *relStringPos = relStringStart;
 		
 		while (*relStringPos != '\0' && *relStringPos != '?' && *relStringPos != '#') {
@@ -389,6 +402,10 @@ KURL::KURL(const KURL &base, const QString &relative)
 		break;
 	    }
 	}
+    }
+    
+    if (strBuffer) {
+        free(strBuffer);
     }
 }
 

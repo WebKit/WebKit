@@ -39,6 +39,7 @@
 
 #if APPLE_CHANGES
 #include "KWQSignal.h"
+#include "decoder.h"
 #endif
 
 class QPaintDevice;
@@ -258,7 +259,12 @@ public:
     QString baseTarget() const { return m_baseTarget; }
     void setBaseTarget(const QString& baseTarget) { m_baseTarget = baseTarget; }
 
+#if APPLE_CHANGES
+    void setDecoder(khtml::Decoder *d) { m_decoder = d; }
+    QString completeURL(const QString &);
+#else
     QString completeURL(const QString& url) { return KURL(baseURL(),url).url(); };
+#endif
 
     // from cachedObjectClient
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr);
@@ -518,6 +524,8 @@ private:
     bool m_inPageCache;
     int m_passwordFields;
     int m_secureForms;
+    
+    khtml::Decoder *m_decoder;
 #endif
 };
 

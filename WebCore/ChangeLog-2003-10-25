@@ -1,3 +1,39 @@
+2003-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3124596 -- failures handling URLs with non-ASCII characters in them
+
+        * khtml/xml/dom_docimpl.h: Add an m_decoder field.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): Initialize m_decoder to 0.
+        (DocumentImpl::completeURL): Pass the QTextCodec from m_decoder to KURL if present.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin): Set the decoder on the document when we make the document if we have a decoder.
+        (KHTMLPart::write): Set the decoder on the document when we make the decoder if we have a document.
+        (KHTMLPart::completeURL): Remove APPLE_CHANGES; we handle the encoding in the document.
+
+        * kwq/KWQKURL.h: Removed "encoding hint" parameters. Add a QTextCodec parameter to the
+        relative URL constructor, which is the one used when we deal with links on a page.
+        * kwq/KWQKURL.mm: (KURL::KURL): Decode the relative string based on the QTextCodec parameter.
+
+        * kwq/KWQString.h: Added isAllASCII, good for detecting when it's safe to use latin1()
+        or ascii() without worrying about character sets.
+        * kwq/KWQString.mm: (QString::isAllASCII): Added.
+
+        * WebCore-tests.exp: Updated for changes in KURL API.
+        * WebCore-combined.exp: Regenerated.
+
+        - other changes
+
+        * khtml/rendering/render_table.cpp: (RenderTableCell::setWidth): Add an assertion that will help
+        us notice future overflow issues.
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Rolled out the APPLE_CHANGES here that
+        were intended to cope with the lack of window.history, which we now have. While KHTML's rule may
+        not be the correct rule, this will now work as well in Safari as in Konqueror.
+
 2003-02-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

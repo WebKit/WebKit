@@ -230,7 +230,9 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : NodeBaseImpl( new DocumentPtr() )
     , m_imageLoadEventTimer(0)
 #if APPLE_CHANGES
-    , m_finishedParsing(this, SIGNAL(finishedParsing())), m_inPageCache(0), m_passwordFields(0), m_secureForms(0)
+    , m_finishedParsing(this, SIGNAL(finishedParsing()))
+    , m_inPageCache(0), m_passwordFields(0), m_secureForms(0)
+    , m_decoder(0)
 #endif
 {
     document->doc = this;
@@ -2187,6 +2189,11 @@ void DocumentImpl::timerEvent(QTimerEvent *)
 }
 
 #if APPLE_CHANGES
+
+QString DocumentImpl::completeURL(const QString &URL)
+{
+    return KURL(baseURL(), URL, m_decoder ? m_decoder->codec() : 0).url();
+}
 
 bool DocumentImpl::inPageCache()
 {

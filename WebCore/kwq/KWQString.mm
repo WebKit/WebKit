@@ -1412,6 +1412,30 @@ int QString::contains(const QString &str, bool caseSensitive) const
     return count;
 }
 
+bool QString::isAllASCII() const
+{
+    if (dataHandle[0]->_isAsciiValid) {
+        const char *p = ascii();
+        int n = dataHandle[0]->_length;
+        while (n--) {
+            unsigned char c = *p++;
+            if (c > 0x7F) {
+                return false;
+            }
+        }
+    }
+    else if (dataHandle[0]->_isUnicodeValid) {
+        const QChar *p = unicode();
+        int n = dataHandle[0]->_length;
+        while (n--) {
+            if ((*p++).unicode() > 0x7F) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 short QString::toShort(bool *ok, int base) const
 {
     long v = toLong( ok, base );

@@ -1417,6 +1417,10 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   // We prefer m_baseURL over m_url because m_url changes when we are
   // about to load a new page.
   d->m_doc->setBaseURL( baseurl.url() );
+#if APPLE_CHANGES
+  if (d->m_decoder)
+    d->m_doc->setDecoder(d->m_decoder);
+#endif
 #if !APPLE_CHANGES
   d->m_doc->docLoader()->setShowAnimations( KHTMLFactory::defaultHTMLSettings()->showAnimations() );
 #else
@@ -1469,6 +1473,10 @@ void KHTMLPart::write( const char *str, int len )
             d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
         else
             d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+#if APPLE_CHANGES
+        if (d->m_doc)
+            d->m_doc->setDecoder(d->m_decoder);
+#endif
     }
   if ( len == 0 )
     return;
@@ -1794,10 +1802,7 @@ KURL KHTMLPart::completeURL( const QString &url )
 {
   if ( !d->m_doc ) return url;
 
-#if APPLE_CHANGES
-  // FIXME: We probably want to pass the encoding to the KURL constructor
-  // that's inside m_doc->completeURL().
-#else
+#if !APPLE_CHANGES
   if (d->m_decoder)
     return KURL(d->m_doc->completeURL(url), d->m_decoder->codec()->mibEnum());
 #endif

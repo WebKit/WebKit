@@ -350,6 +350,7 @@ public:
     const QChar *unicode() const;
     const char *latin1() const;
     const char *ascii() const;
+    bool isAllASCII() const;
     QCString utf8() const;
     QCString local8Bit() const;
 

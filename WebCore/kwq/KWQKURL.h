@@ -30,12 +30,14 @@
 #include "KWQValueList.h"
 #include "KWQRefPtr.h"
 
+class QTextCodec;
+
 class KURL {
 public:
     KURL();
-    KURL(const char *, int encoding_hint=0);
-    KURL(const KURL &, const QString &);
-    KURL(const QString &, int encoding_hint=0);
+    KURL(const char *);
+    KURL(const KURL &, const QString &, const QTextCodec * = 0);
+    KURL(const QString &);
     
     bool isEmpty() const { return urlString.isEmpty(); } 
     bool isMalformed() const { return !m_isValid; }

@@ -1416,6 +1416,7 @@ void RenderTableCell::calcWidth()
 
 void RenderTableCell::setWidth( int width )
 {
+    assert(width <= SHRT_MAX);
     if ( width != m_width ) {
 	m_width = width;
 	m_widthChanged = true;
