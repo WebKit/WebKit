@@ -567,12 +567,16 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
-    case CSS_PROP_OUTLINE_STYLE:        // <border-style> | inherit
+    case CSS_PROP_OUTLINE_STYLE:        // <border-style> | auto | inherit
+        if (id == CSS_VAL_AUTO) {
+            valid_primitive = true;
+            break;
+        } // Fall through!
     case CSS_PROP_BORDER_TOP_STYLE:     //// <border-style> | inherit
     case CSS_PROP_BORDER_RIGHT_STYLE:   //   Defined as:    none | hidden | dotted | dashed |
     case CSS_PROP_BORDER_BOTTOM_STYLE:  //   solid | double | groove | ridge | inset | outset
     case CSS_PROP_BORDER_LEFT_STYLE:    ////
-	if (id >= CSS_VAL_NONE && id <= CSS_VAL__APPLE_AQUA)
+	if (id >= CSS_VAL_NONE && id <= CSS_VAL_DOUBLE)
 	    valid_primitive = true;
 	break;
 

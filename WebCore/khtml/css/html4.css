@@ -345,10 +345,6 @@ INPUT[type="radio"], INPUT[type="checkbox"] {
         margin: 3px 0.5ex;
 }
 
-INPUT[type="image"]:active {
-  outline: -apple-aqua 3px 
-}
-
 OPTION, 
 OPTGROUP, 
 AREA,
@@ -428,7 +424,7 @@ acronym {
 	font-style: italic;
 }
 
-:focus          { outline: -apple-aqua 3px #1f5ccf}
+:focus          { outline: auto 3px #1f5ccf }
 a:link          { color: #0000EE; text-decoration: underline; }
 a:link:active          { color: red }
 a:visited              { color: #551A8B; text-decoration: underline; }

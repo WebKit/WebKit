@@ -188,9 +188,6 @@ enum EFloat {
 // not change this order!
 enum EBorderStyle {
     BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE
-#ifdef APPLE_CHANGES
-    , APPLEAQUA
-#endif
 };
 
 
@@ -232,10 +229,12 @@ class OutlineValue : public BorderValue
 public:
     OutlineValue()
     {
-        offset = 0;
+        _offset = 0;
+        _auto = false;
     }
     
-    int offset;
+    int _offset;
+    bool _auto;
 };
 
 enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
@@ -909,6 +908,7 @@ public:
     unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
     unsigned short outlineWidth() const { if (background->outline.style == BNONE) return 0; return background->outline.width; }
     EBorderStyle    outlineStyle() const {  return background->outline.style; }
+    bool outlineStyleIsAuto() const { return background->outline._auto; }
     const QColor &  	    outlineColor() const {  return background->outline.color; }
 
     EOverflow overflow() const { return  noninherited_flags._overflow; }
@@ -995,7 +995,7 @@ public:
     
     // CSS3 Getter Methods
     int outlineOffset() const { 
-        if (background->outline.style == BNONE) return 0; return background->outline.offset;
+        if (background->outline.style == BNONE) return 0; return background->outline._offset;
     }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
     float opacity() { return css3NonInheritedData->opacity; }
@@ -1054,7 +1054,11 @@ public:
     void setBorderBottomStyle(EBorderStyle v)   {  SET_VAR(surround,border.bottom.style,v) }
     void setBorderBottomColor(const QColor & v) {  SET_VAR(surround,border.bottom.color,v) }
     void setOutlineWidth(unsigned short v) {  SET_VAR(background,outline.width,v) }
-    void setOutlineStyle(EBorderStyle v)   {  SET_VAR(background,outline.style,v) }
+    void setOutlineStyle(EBorderStyle v, bool isAuto = false)   
+    {  
+        SET_VAR(background,outline.style,v)
+        SET_VAR(background,outline._auto, isAuto)
+    }
     void setOutlineColor(const QColor & v) {  SET_VAR(background,outline.color,v) }
 
     void setOverflow(EOverflow v) {  noninherited_flags._overflow = v; }
@@ -1153,7 +1157,7 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
     
     // CSS3 Setters
-    void setOutlineOffset(unsigned short v) {  SET_VAR(background,outline.offset,v) }
+    void setOutlineOffset(unsigned short v) {  SET_VAR(background,outline._offset,v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }
     void setBoxAlign(EBoxAlignment a) { SET_VAR(css3NonInheritedData.access()->flexibleBox, align, a); }

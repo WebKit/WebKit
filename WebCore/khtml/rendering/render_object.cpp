@@ -622,9 +622,6 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
     {
     case BNONE:
     case BHIDDEN:
-#ifdef APPLE_CHANGES
-    case APPLEAQUA:
-#endif
         // should not happen
         if(invalidisInvert && p->rasterOp() == Qt::XorROP)
             p->setRasterOp(Qt::CopyROP);
@@ -938,7 +935,7 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     int offset = style->outlineOffset();
     
 #ifdef APPLE_CHANGES
-    if (os == APPLEAQUA) {
+    if (style->outlineStyleIsAuto()) {
         p->initFocusRing(ow, offset, oc);
         addFocusRingRects(p, _tx, _ty);
         p->drawFocusRing();

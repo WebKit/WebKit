@@ -296,8 +296,7 @@ void RenderInline::paintObject(QPainter *p, int _x, int _y,
     paintLineBoxDecorations(p, _x, _y, _w, _h, _tx, _ty, paintAction);
     if (style()->visibility() == VISIBLE && paintAction == PaintActionOutline) {
 #if APPLE_CHANGES
-        EBorderStyle os = style()->outlineStyle();
-        if (os == APPLEAQUA)
+        if (style()->outlineStyleIsAuto())
             paintFocusRing(p, _tx, _ty);
         else
 #endif
