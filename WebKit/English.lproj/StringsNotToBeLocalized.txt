@@ -233,7 +233,6 @@
 "text/html"
 "text/rtf"
 "text/xml"
-"text_clipping"
 "tiff"
 "url_icon"
 "video/mp4"

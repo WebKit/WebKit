@@ -1,3 +1,7 @@
+2003-01-27  Chris Blumenberg  <cblu@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for changes I previously made.
+
 2003-01-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3156725 - Partially selected links show extra underlining when dragged
