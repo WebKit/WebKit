@@ -72,6 +72,7 @@
 {
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
     NSRect r = [self frame];
+    IFWebView *provisionalView;
     
     // Nasty!  Setup the cross references between the KHTMLView and
     // the KHTMLPart.
@@ -82,7 +83,9 @@
 
     // Create a temporary provisional view.  It will be replaced with
     // the actual view once the datasource has been committed.
-    data->provisionalWidget->setView ([[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)]);
+    provisionalView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
+    data->provisionalWidget->setView (provisionalView);
+    [provisionalView release];
 
     data->provisionalWidget->resize (r.size.width,r.size.height);
 }
