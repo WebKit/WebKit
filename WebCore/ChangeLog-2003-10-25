@@ -1,3 +1,13 @@
+2003-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rolled in fix from Safari-80~1-branch
+
+    2003-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * WebKit.pbproj/project.pbxproj: Removed no longer needed and harmful flag.
+	
 2003-05-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3268589, static position miscomputed when the positioned object is the last item in its enclosing block and when its previous sibling is a text run that ends in a space.  In this case we need to clear our trailingSpaceObject so that we don't mistakenly ignore the positioned object when building up bidi runs.
