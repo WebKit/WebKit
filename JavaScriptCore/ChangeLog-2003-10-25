@@ -1,6 +1,6 @@
 2002-12-04  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by: NOBODY (OOPS!)
+        Reviewed by: Darin Adler
 
 	Set things up so JavaScriptCore builds in PCRE and uses it for
 	regular expressions. This fixes many form validation bugs:
