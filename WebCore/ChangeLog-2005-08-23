@@ -1,5 +1,19 @@
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3782521> Typing newline at start of block does not work
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply): Change handling of case to insert
+        newline at the start of a block.
+        * layout-tests/editing/inserting/insert-br-006-expected.txt: Updated layout test with
+        new results.
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         Checked in incorrect results for these tests. There are the right ones.
