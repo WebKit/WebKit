@@ -1,6 +1,42 @@
 2004-04-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
+
+        Removed concept of currentSelection from EditCommands and refined concept of
+        startingSelection and endingSelection, making them work more sensibly in the 
+        system of composed editing commands.
+
+        * khtml/editing/htmlediting.cpp: Removed currentSelection().
+        * khtml/editing/htmlediting.h: Ditto.
+        * khtml/editing/htmlediting_impl.cpp: currentSelection().
+        (CompositeEditCommandImpl::applyCommandToComposite): Set the startingSelection 
+        and endingSelection for the command being applied to the endingSelection of
+        its new parent. This is the proper starting and ending point.
+        (CompositeEditCommandImpl::deleteSelection): Changed call to currentSelection
+        to endingSelection.
+        (DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl): Ditto.
+        (DeleteSelectionCommandImpl::DeleteSelectionCommandImpl): Changed call from startingSelection
+        to endingSelection.
+        (DeleteSelectionCommandImpl::joinTextNodesWithSameStyle): Changed call to currentSelection
+        to endingSelection.
+        (InputNewlineCommandImpl::doApply): Ditto.
+        (InputTextCommandImpl::deleteCharacter): Ditto.
+        (InputTextCommandImpl::prepareForTextInsertion): Ditto.
+        (InputTextCommandImpl::execute): Ditto.
+        (PasteHTMLCommandImpl::doApply): Ditto.
+        (TypingCommandImpl::insertText): Remove extraneous call to reset endingSelection. This has
+        already been done by the helpers this command uses to do its work.
+        (TypingCommandImpl::issueCommandForDeleteKey): Changed call to currentSelection
+        to endingSelection.
+        (TypingCommandImpl::deleteKeyPressed): Remove extraneous call to reset endingSelection. This has
+        already been done by the helpers this command uses to do its work.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::EditCommandImpl::endingSelection): Remove extraneous call to reset endingSelection. This has
+        already been done by the helpers this command uses to do its work.
+
+2004-04-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
         
         Make paste work again. It has been broken for some undetermined
         period of time.

@@ -172,12 +172,6 @@ KHTMLSelection EditCommand::endingSelection() const
     return get()->endingSelection();
 }
 
-KHTMLSelection EditCommand::currentSelection() const
-{
-    IF_IMPL_NULL_RETURN_ARG(KHTMLSelection());
-    return get()->currentSelection();
-}
-
 void EditCommand::setStartingSelection(const KHTMLSelection &s)
 {
     IF_IMPL_NULL_RETURN;

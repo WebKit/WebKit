@@ -314,13 +314,6 @@ void EditCommandImpl::doReapply()
     doApply();
 }
 
-KHTMLSelection EditCommandImpl::currentSelection() const
-{
-    ASSERT(m_document);
-    ASSERT(m_document->part());
-    return m_document->part()->selection();
-}
-
 void EditCommandImpl::setStartingSelection(const KHTMLSelection &s)
 {
     m_startingSelection = s;
@@ -415,6 +408,8 @@ void CompositeEditCommandImpl::doReapply()
 //
 void CompositeEditCommandImpl::applyCommandToComposite(EditCommand &cmd)
 {
+    cmd.setStartingSelection(endingSelection());
+    cmd.setEndingSelection(endingSelection());
     cmd.setParent(this);
     cmd.apply();
     m_cmds.append(cmd);
@@ -519,7 +514,7 @@ void CompositeEditCommandImpl::replaceText(DOM::TextImpl *node, long offset, lon
 
 void CompositeEditCommandImpl::deleteSelection()
 {
-    if (currentSelection().state() == KHTMLSelection::RANGE) {
+    if (endingSelection().state() == KHTMLSelection::RANGE) {
         DeleteSelectionCommand cmd(document());
         applyCommandToComposite(cmd);
     }
@@ -598,7 +593,7 @@ void AppendNodeCommandImpl::doUnapply()
 // DeleteCollapsibleWhitespaceCommandImpl
 
 DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document)
-    : CompositeEditCommandImpl(document), m_selectionToCollapse(currentSelection()), m_charactersDeleted(0)
+    : CompositeEditCommandImpl(document), m_selectionToCollapse(endingSelection()), m_charactersDeleted(0)
 {
 }
 
@@ -755,7 +750,7 @@ void DeleteCollapsibleWhitespaceCommandImpl::doApply()
 DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document)
     : CompositeEditCommandImpl(document)
 {
-    m_selectionToDelete = startingSelection();
+    m_selectionToDelete = endingSelection();
 }
 
 DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection)
@@ -775,7 +770,7 @@ int DeleteSelectionCommandImpl::commandID() const
 
 void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
 {
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
 
     if (selection.state() != KHTMLSelection::CARET)
         return;
@@ -1038,7 +1033,7 @@ int InputNewlineCommandImpl::commandID() const
 
 void InputNewlineCommandImpl::doApply()
 {
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
 
     if (!selection.startNode()->isTextNode())
         return;
@@ -1046,8 +1041,8 @@ void InputNewlineCommandImpl::doApply()
     // Delete the current selection
     deleteSelection();
     
-    // reset the current selection since it may have changed due to the delete
-    selection = currentSelection();
+    // reset the selection since it may have changed due to the delete
+    selection = endingSelection();
 
     int exceptionCode = 0;
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
@@ -1114,7 +1109,7 @@ void InputTextCommandImpl::deleteCharacter()
 {
     ASSERT(state() == Applied);
 
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
 
     if (!selection.startNode()->isTextNode())
         return;
@@ -1135,7 +1130,7 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion()
 {
     // Prepare for text input by looking at the current position.
     // It may be necessary to insert a text node to receive characters.
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
     ASSERT(selection.state() == KHTMLSelection::CARET);
     
     DOMPosition pos = selection.startPosition().equivalentUpstreamPosition();
@@ -1170,7 +1165,7 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion()
 
 void InputTextCommandImpl::execute(const DOMString &text)
 {
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == KHTMLSelection::RANGE)
@@ -1424,7 +1419,7 @@ void PasteHTMLCommandImpl::doApply()
     ASSERT(firstChild);
     ASSERT(lastChild);
     
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == KHTMLSelection::RANGE)
@@ -1704,19 +1699,16 @@ void TypingCommandImpl::insertText(const DOM::DOMString &text)
         InputTextCommand cmd(document());
         applyCommandToComposite(cmd);
         cmd.input(text);
-        setEndingSelection(cmd.endingSelection());
     }
     else {
         EditCommand lastCommand = m_cmds.last();
         if (lastCommand.commandID() == InputTextCommandID) {
             static_cast<InputTextCommand &>(lastCommand).input(text);
-            setEndingSelection(lastCommand.endingSelection());
         }
         else {
             InputTextCommand cmd(document());
             applyCommandToComposite(cmd);
             cmd.input(text);
-            setEndingSelection(cmd.endingSelection());
         }
     }
 }
@@ -1729,7 +1721,7 @@ void TypingCommandImpl::insertNewline()
 
 void TypingCommandImpl::issueCommandForDeleteKey()
 {
-    KHTMLSelection selection = currentSelection();
+    KHTMLSelection selection = endingSelection();
     ASSERT(selection.state() != KHTMLSelection::NONE);
     
     if (selection.state() == KHTMLSelection::CARET) {
@@ -1754,9 +1746,6 @@ void TypingCommandImpl::deleteKeyPressed()
             cmd.deleteCharacter();
             if (cmd.charactersAdded() == 0) {
                 removeCommand(cmd);
-            }
-            else {
-                setEndingSelection(cmd.endingSelection());
             }
         }
         else if (lastCommand.commandID() == InputNewlineCommandID) {

@@ -105,7 +105,6 @@ public:
 
     virtual KHTMLSelection startingSelection() const = 0;
     virtual KHTMLSelection endingSelection() const = 0;
-    virtual KHTMLSelection currentSelection() const = 0;
 
     virtual void setStartingSelection(const KHTMLSelection &s) = 0;
     virtual void setEndingSelection(const KHTMLSelection &s) = 0;
@@ -141,7 +140,6 @@ public:
 
     KHTMLSelection startingSelection() const;
     KHTMLSelection endingSelection() const;
-    KHTMLSelection currentSelection() const;
 
     void setStartingSelection(const KHTMLSelection &s);
     void setEndingSelection(const KHTMLSelection &s);
