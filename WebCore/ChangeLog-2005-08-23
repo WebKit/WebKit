@@ -1,5 +1,25 @@
 2004-01-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3529120>: text-align style property not respected on input fields
+
+        * khtml/rendering/render_form.h: Added textAlignment function.
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::textAlignment): Added. Converts style alignment to Qt alignment.
+        (RenderLineEdit::setStyle): Call textAlignment intead of using direction from style.
+        (RenderTextArea::setStyle): Call textAlignment intead of using direction from style.
+
+        * kwq/KWQLineEdit.h: Added KWQNSTextAlignmentForAlignmentFlags function.
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setAlignment): Use KWQNSTextAlignmentForAlignmentFlags instead of code
+        that handles only left and right alignment.
+        (KWQNSTextAlignmentForAlignmentFlags): Added. Converts Qt alignment to NS alignment.
+        * kwq/KWQTextEdit.mm: (QTextEdit::setAlignment): Use KWQNSTextAlignmentForAlignmentFlags
+        instead of code that handles only left and right alignment.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3477707>: background image with apostrophe in name missing at http://www.nbc.com

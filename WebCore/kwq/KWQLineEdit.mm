@@ -230,9 +230,8 @@ void QLineEdit::setAlignment(AlignmentFlags alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    ASSERT(alignment == AlignLeft || alignment == AlignRight);
     KWQTextField *textField = getView();
-    [textField setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+    [textField setAlignment:KWQNSTextAlignmentForAlignmentFlags(alignment)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -250,4 +249,18 @@ void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
 bool QLineEdit::checksDescendantsForFocus() const
 {
     return true;
+}
+
+NSTextAlignment KWQNSTextAlignmentForAlignmentFlags(Qt::AlignmentFlags a)
+{
+    switch (a) {
+        default:
+            ERROR("unsupported alignment");
+        case Qt::AlignLeft:
+            return NSLeftTextAlignment;
+        case Qt::AlignRight:
+            return NSRightTextAlignment;
+        case Qt::AlignHCenter:
+            return NSCenterTextAlignment;
+    }
 }

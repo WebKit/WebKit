@@ -202,6 +202,27 @@ void RenderFormElement::slotClicked()
     deref(arena);
 }
 
+Qt::AlignmentFlags RenderFormElement::textAlignment() const
+{
+    switch (style()->textAlign()) {
+        case LEFT:
+        case KHTML_LEFT:
+            return AlignLeft;
+        case RIGHT:
+        case KHTML_RIGHT:
+            return AlignRight;
+        case CENTER:
+        case KHTML_CENTER:
+            return AlignHCenter;
+        case JUSTIFY:
+            // Just fall into the auto code for justify.
+        case TAAUTO:
+            return style()->direction() == RTL ? AlignRight : AlignLeft;
+    }
+    assert(false); // Should never be reached.
+    return AlignLeft;
+}
+
 #if APPLE_CHANGES
 
 void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
@@ -595,8 +616,7 @@ void RenderLineEdit::setStyle(RenderStyle *s)
     RenderFormElement::setStyle(s);
 
     KLineEdit *w = widget();
-
-    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
+    w->setAlignment(textAlignment());
 #if APPLE_CHANGES
     w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
 #endif
@@ -1478,7 +1498,7 @@ void RenderTextArea::setStyle(RenderStyle *s)
     RenderFormElement::setStyle(s);
 
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
-    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
+    w->setAlignment(textAlignment());
 #if APPLE_CHANGES
     w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
 #endif

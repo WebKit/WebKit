@@ -27,6 +27,7 @@
 
 #import "KWQAssertions.h"
 #import "KWQExceptions.h"
+#import "KWQLineEdit.h"
 #import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)
@@ -188,10 +189,8 @@ void QTextEdit::setAlignment(AlignmentFlags alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    ASSERT(alignment == AlignLeft || alignment == AlignRight);
     KWQTextArea *textArea = getView();
-
-    [textArea setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+    [textArea setAlignment:KWQNSTextAlignmentForAlignmentFlags(alignment)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

@@ -78,4 +78,8 @@ private:
     KWQSignal m_clicked;
 };
 
+#ifdef __OBJC__
+NSTextAlignment KWQNSTextAlignmentForAlignmentFlags(Qt::AlignmentFlags);
+#endif
+
 #endif
