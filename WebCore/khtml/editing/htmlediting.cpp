@@ -381,7 +381,12 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
     style->ref();
     CSSValueImpl *value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
     style->deref();
-    return value && strcasecmp(value->cssText(), property->value()->cssText()) == 0;
+    if (!value)
+        return false;
+    value->ref();
+    bool result = strcasecmp(value->cssText(), property->value()->cssText()) == 0;
+    value->deref();
+    return result;
 }
 
 //------------------------------------------------------------------------------------------
@@ -1136,8 +1141,12 @@ void ApplyStyleCommand::removeCSSStyle(CSSStyleDeclarationImpl *style, HTMLEleme
 
     for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
-        if (decl->getPropertyCSSValue(property->id()))
+        CSSValueImpl *value = decl->getPropertyCSSValue(property->id());
+        if (value) {
+            value->ref();
             removeCSSProperty(decl, property->id());
+            value->deref();
+        }
     }
 
     if (elem->id() == ID_SPAN && elem->renderer() && elem->renderer()->isInline()) {

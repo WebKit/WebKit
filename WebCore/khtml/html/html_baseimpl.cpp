@@ -146,14 +146,18 @@ void HTMLBodyElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
                 createLinkDecl();
             m_linkDecl->setProperty(CSS_PROP_COLOR, attr->value(), false, false);
             CSSValueImpl* val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
-            if (val && val->isPrimitiveValue()) {
-                QColor col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val));
-                if (attr->id() == ATTR_LINK)
-                    getDocument()->setLinkColor(col);
-                else if (attr->id() == ATTR_VLINK)
-                    getDocument()->setVisitedLinkColor(col);
-                else
-                    getDocument()->setActiveLinkColor(col);
+            if (val) {
+                val->ref();
+                if (val->isPrimitiveValue()) {
+                    QColor col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val));
+                    if (attr->id() == ATTR_LINK)
+                        getDocument()->setLinkColor(col);
+                    else if (attr->id() == ATTR_VLINK)
+                        getDocument()->setVisitedLinkColor(col);
+                    else
+                        getDocument()->setActiveLinkColor(col);
+                }
+                val->deref();
             }
         }
         

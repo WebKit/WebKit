@@ -106,7 +106,7 @@ DOMString CSSStyleDeclarationImpl::getPropertyValue( int propertyID ) const
 
     CSSValueImpl* value = getPropertyCSSValue( propertyID );
     if ( value )
-        return value->cssText();
+        return CSSValue(value).cssText();
 
     // Shorthand and 4-values properties
     switch ( propertyID ) {
@@ -209,9 +209,11 @@ DOMString CSSStyleDeclarationImpl::get4Values( const int* properties ) const
         if ( !value ) { // apparently all 4 properties must be specified.
             return DOMString();
         }
+        value->ref();
         if ( i > 0 )
             res += " ";
         res += value->cssText();
+        value->deref();
     }
     return res;
 }
@@ -222,9 +224,11 @@ DOMString CSSStyleDeclarationImpl::getShortHandValue( const int* properties, int
     for ( int i = 0 ; i < number ; ++i ) {
         CSSValueImpl* value = getPropertyCSSValue( properties[i] );
         if ( value ) { // TODO provide default value if !value
+            value->ref();
             if ( !res.isNull() )
                 res += " ";
             res += value->cssText();
+            value->deref();
         }
     }
     return res;
@@ -421,7 +425,10 @@ void CSSStyleDeclarationImpl::merge(CSSStyleDeclarationImpl *other, bool argOver
 {
     for (QPtrListIterator<CSSProperty> it(*(other->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
-        if (getPropertyCSSValue(property->id())) {
+        CSSValueImpl *value = getPropertyCSSValue(property->id());
+        if (value) {
+            value->ref();
+            value->deref();
             if (!argOverridesOnConflict)
                 continue;
             removeProperty(property->id());
@@ -443,8 +450,12 @@ void CSSStyleDeclarationImpl::diff(CSSStyleDeclarationImpl *style) const
     for (QPtrListIterator<CSSProperty> it(*style->values()); it.current(); ++it) {
         CSSProperty *property = it.current();
         CSSValueImpl *value = getPropertyCSSValue(property->id());
-        if (value && value->cssText() == property->value()->cssText()) {
-            properties.append(property->id());
+        if (value) {
+            value->ref();
+            if (value->cssText() == property->value()->cssText()) {
+                properties.append(property->id());
+            }
+            value->deref();
         }
     }
     

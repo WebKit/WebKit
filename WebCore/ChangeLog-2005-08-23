@@ -2,6 +2,27 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3880036> Many leaks from CSSComputedStyleDeclarationImpl::getPropertyCSSValue, seen in Mail and Blot
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyValue): Ref and deref the value returned from getPropertyCSSValue,
+        since there's no guarantee it's already ref'd.
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::getPropertyValue): Wrap result in a CSSValue to ref/deref.
+        (CSSStyleDeclarationImpl::get4Values): Ref/deref explicitly.
+        (CSSStyleDeclarationImpl::getShortHandValue): Ditto.
+        (CSSStyleDeclarationImpl::merge): Ditto.
+        (CSSStyleDeclarationImpl::diff): Ditto.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::StyleChange::currentlyHasStyle): Ditto.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Ditto.
+        * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::parseHTMLAttribute): Ditto.
+        * khtml/html/html_tableimpl.cpp: (HTMLTableElementImpl::parseHTMLAttribute): Ditto.
+
+2004-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         Use separate mutable style and computed style types as appropriate.
         For now this should have no effect, but it prepares us for refactoring later.
         Also remove some unnecessary "DOM::" prefixes and in one case factor out

@@ -406,9 +406,13 @@ void HTMLTableElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         if (attr->isNull()) break;
         if (attr->decl()) {
             CSSValueImpl* val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
-            if (val && val->isPrimitiveValue()) {
-                CSSPrimitiveValueImpl* primVal = static_cast<CSSPrimitiveValueImpl*>(val);
-                m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+            if (val) {
+                val->ref();
+                if (val->isPrimitiveValue()) {
+                    CSSPrimitiveValueImpl* primVal = static_cast<CSSPrimitiveValueImpl*>(val);
+                    m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+                }
+                val->deref();
             }
         }
         else {

@@ -861,8 +861,12 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
 DOMString CSSComputedStyleDeclarationImpl::getPropertyValue(int propertyID) const
 {
     CSSValueImpl* value = getPropertyCSSValue(propertyID);
-    if (value)
-        return value->cssText();
+    if (value) {
+        value->ref();
+        DOMString result = value->cssText();
+        value->deref();
+        return result;
+    }
     return "";
 }
 
