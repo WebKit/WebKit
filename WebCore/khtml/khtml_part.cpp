@@ -1990,6 +1990,13 @@ bool KHTMLPart::isImmediateRedirectPending() const
 
 void KHTMLPart::scheduleHistoryNavigation( int steps )
 {
+#if APPLE_CHANGES
+    // navigation will always be allowed in the 0 steps case, which is OK because
+    // that's supposed to force a reload.
+    if (!KWQ(this)->canGoBackOrForward(steps))
+        return;
+#endif
+
     d->m_scheduledRedirection = historyNavigationScheduled;
     d->m_delayRedirect = 0;
     d->m_redirectURL = QString::null;

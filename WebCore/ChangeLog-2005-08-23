@@ -1,5 +1,23 @@
 2004-08-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	<rdar://problem/3778314> REGRESSION: Can't proceed to survey questions on Lominger's Apple website
+
+	Because we will stop parsing when there is a pending redirection,
+	avoid setting one if no navigation would actually take place
+	because the number of steps is out of range.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleHistoryNavigation):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canGoBackOrForward):
+        * kwq/KWQKPartsBrowserInterface.h:
+        * kwq/WebCoreBridge.h:
+
+2004-08-27  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Chris.
 
 	- fixed <rdar://problem/3778043> REGRESSION: innerHTML is broken, breaks automated iBench testing

@@ -329,6 +329,8 @@ public:
 
     DOM::Range markedRange() const;
     void setMarkedRange(const DOM::Range &);
+
+    bool canGoBackOrForward(int distance);
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

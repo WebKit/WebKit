@@ -39,6 +39,7 @@ public:
     
     QVariant property(const char *name) const;
     void callMethod(const char *name, const QVariant &argument);
+    
 
 private:
     KWQKHTMLPart *_part;

@@ -3807,3 +3807,8 @@ void KWQKHTMLPart::setMarkedRange(const DOM::Range &range)
 	m_markedRange.startContainer().handle()->renderer()->repaint();
     }
 }
+
+bool KWQKHTMLPart::canGoBackOrForward(int distance)
+{
+    return [_bridge canGoBackOrForward:distance];
+}
