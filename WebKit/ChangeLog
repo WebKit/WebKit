@@ -1,3 +1,11 @@
+2003-03-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed deployment build failure.
+
+        Reviewed by me.
+
+        * WebView.subproj/WebFramePrivate.m:
+
 2003-03-11  Richard Williamson   <rjw@apple.com>
 
         Added controller: parameter to all WebControllers delegates.

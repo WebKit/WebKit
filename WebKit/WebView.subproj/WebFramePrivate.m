@@ -1012,7 +1012,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:[URL absoluteString]];
-    WebController *c;
+    WebController *c = [self controller];
     [[c _policyDelegateForwarder] controller:c unableToImplementPolicyWithError:error inFrame:self];    
 }
 
