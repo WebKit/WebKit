@@ -1,7 +1,16 @@
 2002-10-26  Darin Adler  <darin@apple.com>
 
+	- changed to use #if APPLE_CHANGES and #if !APPLE_CHANGES consistently
+
+	We no longer do #ifdef APPLE_CHANGES or #ifndef APPLE_CHANGES.
+
+        * lots of files
+
+2002-10-26  Darin Adler  <darin@apple.com>
+
         - changed naming scheme in KWQ for files like qstring.h
-        Now use names like KWQString.h and make a forwarding header called qstring.h.
+
+        Now use names like KWQString.h and a forwarding header called qstring.h.
         
         * tons of files
 

@@ -471,7 +471,7 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
     // If tempEvent is true, this means that the DOM implementation will not be storing a reference to the event, i.e.
     // there is no way to retrieve it from javascript if a script does not already have a reference to it in a variable.
     // So there is no need for the interpreter to keep the event in it's cache
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     if (tempEvent && view && view->part() && view->part()->jScript())
         view->part()->jScript()->finishedWithEvent(evt);
 #else

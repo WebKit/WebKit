@@ -40,7 +40,7 @@ using namespace khtml;
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
         int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d);
 #else
     QString qstr = QConstString(str, slen).string();
@@ -100,7 +100,7 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 #endif
 }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 
 float Font::floatWidth( QChar *chs, int slen, int pos, int len ) const
 {
@@ -117,7 +117,7 @@ void Font::floatCharacterWidths( QChar *str, int slen, int pos, int len, int toA
 
 int Font::width( QChar *chs, int slen, int pos, int len ) const
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     return fm.width(chs + pos, len);
 #else
     QString qstr = QConstString(chs+pos, len).string();
@@ -150,7 +150,7 @@ int Font::width( QChar *chs, int slen, int pos, int len ) const
 
 int Font::width( QChar *chs, int slen, int pos ) const
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     return width(chs, slen, pos, 1);
 #else
     int w;
@@ -175,7 +175,7 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
     f.setItalic( fontDef.italic );
     f.setWeight( fontDef.weight );
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     f.setPixelSize(fontDef.size);
 #else
     QFontDatabase db;
@@ -223,7 +223,7 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
 
     fm = QFontMetrics( f );
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     fontDef.hasNbsp = fm.inFont( 0xa0 );
 #endif
 }

@@ -143,7 +143,7 @@ RenderWidget::~RenderWidget()
 
 void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
 {
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     // ugly hack to limit the maximum size of the widget (as X11 has problems if it's bigger)
     h = QMIN( h, 3072 );
     w = QMIN( w, 2000 );

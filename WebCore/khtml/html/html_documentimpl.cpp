@@ -133,7 +133,7 @@ DOMString HTMLDocumentImpl::lastModified() const
 
 DOMString HTMLDocumentImpl::cookie() const
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     return KWQKCookieJar::cookie(URL());
 #else
     long windowId = 0;

@@ -133,7 +133,7 @@ void HTMLAppletElementImpl::attach()
 }
 
 bool HTMLAppletElementImpl::getMember(const QString & name, JType & type, QString & val) {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     return false;
 #else
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
@@ -148,7 +148,7 @@ bool HTMLAppletElementImpl::getMember(const QString & name, JType & type, QStrin
 }
 
 bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList & args, JType & type, QString & val) {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     return false;
 #else
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
@@ -335,7 +335,7 @@ void HTMLObjectElementImpl::attach()
 
     KHTMLView* w = getDocument()->view();
     bool loadplugin = w->part()->pluginsEnabled();
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // This check showed up during the KDE 3.0 -> 3.0.1 transition.
     // We can't figure out exactly what it's supposed to do, but it prevents
     // plugins from working properly for us, so we've rolled back to the way

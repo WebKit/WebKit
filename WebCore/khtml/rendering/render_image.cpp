@@ -142,7 +142,7 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
         m_height = oldheight;
     }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Stop the previous image, if it may be animating.
     pix.stopAnimations();
 #endif
@@ -196,7 +196,7 @@ void RenderImage::printObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
     {
         if(cWidth > 2 && cHeight > 2)
         {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
             if ( !berrorPic ) {
                 //qDebug("qDrawShadePanel %d/%d/%d/%d", _tx + leftBorder, _ty + topBorder, cWidth, cHeight);
                 p->setPen (Qt::lightGray);
@@ -361,7 +361,7 @@ bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 
 void RenderImage::updateFromElement()
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Treat a lack of src or empty string for src as no image at all, not the page itself
     // loaded as an image.
     DOMString attr = element()->getAttribute(ATTR_SRC);

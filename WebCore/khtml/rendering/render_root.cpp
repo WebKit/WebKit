@@ -24,7 +24,7 @@
 #include "khtmlview.h"
 #include <kdebug.h>
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #include "khtml_part.h"
 #endif
 
@@ -263,7 +263,7 @@ void RenderRoot::close()
     //printTree();
 }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 static QRect enclosingPositionedRect (RenderObject *n)
 {
     RenderObject *enclosingParent = (RenderObject*)n;
@@ -295,7 +295,7 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
     }
     //kdDebug( 6040 ) << "RenderRoot::setSelection(" << s << "," << sp << "," << e << "," << ep << ")" << endl;
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Cut out early if the selection hasn't changed.
     if (m_selectionStart == s && m_selectionStartPos == sp &&
         m_selectionEnd == e && m_selectionEndPos == ep){
@@ -374,7 +374,7 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
                 if (no)
                     no = no->nextSibling();
             }
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         if (o->selectionState() == SelectionInside && !newSelectedInside.containsRef(o))
             newSelectedInside.append(o);
 #endif
@@ -385,7 +385,7 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
     e->setSelectionState(SelectionEnd);
     if(s == e) s->setSelectionState(SelectionBoth);
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     if (!m_view)
         return;
 
@@ -472,7 +472,7 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
 }
 
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 void RenderRoot::clearSelection(bool doRepaint)
 #else
 void RenderRoot::clearSelection()
@@ -483,7 +483,7 @@ void RenderRoot::clearSelection()
     while (o && o!=m_selectionEnd)
     {
         if (o->selectionState()!=SelectionNone)
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
             if (doRepaint)
 #endif
                 o->repaint();
@@ -503,7 +503,7 @@ void RenderRoot::clearSelection()
     if (m_selectionEnd)
     {
         m_selectionEnd->setSelectionState(SelectionNone);
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         if (doRepaint)
 #endif
             m_selectionEnd->repaint();

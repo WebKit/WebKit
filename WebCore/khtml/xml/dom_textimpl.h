@@ -29,7 +29,7 @@
 namespace DOM {
 
     class DocumentImpl;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     class CharacterData;
     class Text;
 #endif
@@ -65,7 +65,7 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static CharacterData createInstance(CharacterDataImpl *impl);
 #endif
 
@@ -123,7 +123,7 @@ public:
     virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static Text createInstance(TextImpl *impl);
 #endif
 

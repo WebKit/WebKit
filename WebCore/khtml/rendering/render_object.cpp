@@ -1016,7 +1016,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
                 vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) +
                         halfleading );
 	    } else if ( va == MIDDLE ) {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 		vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
 #else
 		QRect b = QFontMetrics(f).boundingRect('x');

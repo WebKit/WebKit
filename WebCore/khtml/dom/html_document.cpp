@@ -88,7 +88,7 @@ DOMString HTMLDocument::title() const
 
 void HTMLDocument::setTitle( const DOMString &v )
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     if (!impl) return;
     ((HTMLDocumentImpl *)impl)->setTitle(v);
 #else

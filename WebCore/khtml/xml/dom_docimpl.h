@@ -62,7 +62,7 @@ namespace DOM {
     class DocumentImpl;
     class DocumentType;
     class DocumentTypeImpl;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     class DOMImplementation;
 #endif
     class ElementImpl;
@@ -113,7 +113,7 @@ public:
     // ever be present, and is used as a factory method for creating DocumentImpl objects
     static DOMImplementationImpl *instance();
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static DOMImplementation createInstance (DOMImplementationImpl *impl);
 #endif
 
@@ -525,7 +525,7 @@ public:
     DOMImplementationImpl *implementation() const { return m_implementation; }
     void copyFrom(const DocumentTypeImpl&);
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static DocumentType createInstance (DocumentTypeImpl *impl);
 #endif
 

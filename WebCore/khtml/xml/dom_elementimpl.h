@@ -30,7 +30,7 @@
 #include "xml/dom_stringimpl.h"
 #include "misc/shared.h"
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
@@ -137,7 +137,7 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static Attr createInstance(AttrImpl *impl);
 #endif
 
@@ -210,7 +210,7 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static Element createInstance(ElementImpl *impl);
 #endif
 protected:
@@ -301,7 +301,7 @@ protected:
 
 }; //namespace
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #undef id
 #endif
 

@@ -108,7 +108,7 @@ namespace khtml
 	    m_free = false;
 	    m_cachePolicy = _cachePolicy;
 	    m_request = 0;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
             m_response = 0;
 #endif            
 	    m_expireDate = _expireDate;
@@ -152,7 +152,7 @@ namespace khtml
 
         void setRequest(Request *_request);
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         void *response() { return m_response; }
         void setResponse (void *response);
 #endif
@@ -177,7 +177,7 @@ namespace khtml
 	DOM::DOMString m_url;
         QString m_accept;
         Request *m_request;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         void *m_response;
 #endif
 	Type m_type;
@@ -322,7 +322,7 @@ namespace khtml
 
         friend class Cache;
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     public:
         int dataSize() const { return m_dataSize; }
     private:
@@ -414,7 +414,7 @@ namespace khtml
 
     protected slots:
 	void slotFinished( KIO::Job * );
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 	void slotData( KIO::Job *, const char *data, int size );
         void receivedResponse ( KIO::Job *, void *response );
 #else
@@ -511,7 +511,7 @@ namespace khtml
 
         static void removeCacheEntry( CachedObject *object );
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         struct TypeStatistic {
             int count;
             int size;

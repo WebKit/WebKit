@@ -89,7 +89,7 @@ static const char titleEnd [] = "</title";
 //
 // There may be better equivalents
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 
 // Note that we have more Unicode characters than Qt, so we use the
 // official mapping table from the Unicode 2.0 standard here instead of
@@ -518,7 +518,7 @@ void HTMLTokenizer::scriptHandler()
 void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
                                      int baseLine)
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     if (!view->part())
         return;
 #endif

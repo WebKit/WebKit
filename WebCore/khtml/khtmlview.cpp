@@ -205,7 +205,7 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
     m_medium = "screen";
 
     m_part = part;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     m_part->ref();
 #endif
     d = new KHTMLViewPrivate;
@@ -240,7 +240,7 @@ KHTMLView::~KHTMLView()
         if (doc)
             doc->detach();
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         m_part->deref();
 #endif
     }
@@ -250,7 +250,7 @@ KHTMLView::~KHTMLView()
 
 void KHTMLView::init()
 {
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     if(!d->paintBuffer) d->paintBuffer = new QPixmap(PAINT_BUFFER_HEIGHT, PAINT_BUFFER_HEIGHT);
     if(!d->tp) d->tp = new QPainter();
 #endif
@@ -320,7 +320,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
 
 // this is to get rid of a compiler virtual overload mismatch warning. do not remove
 void KHTMLView::drawContents( QPainter*)
@@ -429,7 +429,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MousePress );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     if (d->clickCount > 0 &&
         QPoint(d->clickX-xm,d->clickY-ym).manhattanLength() <= QApplication::startDragDistance())
 	d->clickCount++;
@@ -471,7 +471,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseDblClick );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     d->clickCount = _mouse->clickCount();
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
@@ -1002,7 +1002,7 @@ QString KHTMLView::mediaType() const
     return m_medium;
 }
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
 
 void KHTMLView::print()
 {
@@ -1193,7 +1193,7 @@ void KHTMLView::restoreScrollBar ( )
         layout();
 //        scheduleRepaint(contentsX(),contentsY(),visibleWidth(),visibleHeight());
     }
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     d->prevScrollbarVisible = verticalScrollBar()->isVisible();
 #endif
 }
@@ -1367,7 +1367,7 @@ void KHTMLView::setIgnoreWheelEvents( bool e )
 
 void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 {
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     if ( d->ignoreWheelEvents && !verticalScrollBar()->isVisible() && m_part->parentPart() ) {
         if ( m_part->parentPart()->view() )
             m_part->parentPart()->view()->wheelEvent( e );
@@ -1384,7 +1384,7 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 }
 #endif
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
 void KHTMLView::dragEnterEvent( QDragEnterEvent* ev )
 {
     // Handle drops onto frames (#16820)

@@ -338,7 +338,7 @@ public:
 
     virtual const char *renderName() const { return "RenderSelect"; }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     short baselinePosition( bool f ) const;
 #endif
 

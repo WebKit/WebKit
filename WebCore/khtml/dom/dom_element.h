@@ -92,7 +92,7 @@ class Attr : public Node
     friend class HTMLDocument;
     friend class ElementImpl;
     friend class NamedAttrMapImpl;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     friend class AttrImpl;
 #endif
 
@@ -211,7 +211,7 @@ class Element : public Node
     friend class Document;
     friend class HTMLDocument;
 //    friend class AttrImpl;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     friend class ElementImpl;
 #endif
     friend class Attr;

@@ -34,7 +34,7 @@
 
 #include <qregexp.h>
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
 #endif
 
@@ -207,7 +207,7 @@ public:
    */
   virtual bool closeURL();
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   /**
    * is called when a certain error situation (i.e. connection timed out) occured.
    * default implementation either shows a KIO error dialog or loads a more verbose
@@ -593,7 +593,7 @@ public:
    */
   KParts::PartManager *partManager();
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   /**
    * Saves the KHTMLPart's complete state (including child frame
    * objects) to the provided @ref QDataStream.
@@ -780,7 +780,7 @@ protected:
    */
   virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   /**
    * Internal reimplementation of KParts::Part::guiActivateEvent .
    */
@@ -795,7 +795,7 @@ protected:
   virtual void urlSelected( const QString &url, int button, int state,
                             const QString &_target, KParts::URLArgs args = KParts::URLArgs());
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   /**
    * This method is called when a new embedded object (include html frames) is to be created.
    * Reimplement it if you want to add support for certain embeddable objects without registering
@@ -869,7 +869,7 @@ private slots:
    * @internal
    */
   void slotDebugRenderTree();
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   /**
    * @internal
    */
@@ -1080,7 +1080,7 @@ private:
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 public:  
   KWQKHTMLPart *kwq;
   friend class KWQKHTMLPart;

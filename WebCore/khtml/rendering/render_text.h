@@ -190,7 +190,7 @@ public:
     DOM::TextImpl *element() const
     { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     TextSlave * findTextSlave( int offset, int &pos );
     TextSlaveArray textSlaves() { return m_lines; }
 #endif
@@ -198,7 +198,7 @@ public:
 protected:
     void printTextOutline(QPainter *p, int tx, int ty, const QRect &prevLine, const QRect &thisLine, const QRect &nextLine);
 
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     TextSlave * findTextSlave( int offset, int &pos );
     
 #endif

@@ -403,7 +403,7 @@ float CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPai
     case CSSPrimitiveValue::CSS_EXS:
 	{
         QFontMetrics fm = style->fontMetrics();
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
         factor = fm.xHeight();
 #else
         QRect b = fm.boundingRect('x');
@@ -660,7 +660,7 @@ FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
     static const QRegExp parenReg(" \\(.*\\)$");
     static const QRegExp braceReg(" \\[.*\\]$");
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     parsedFontName = string;
     // a language tag is often added in braces at the end. Remove it.
     parsedFontName.replace(parenReg, "");
@@ -706,5 +706,5 @@ FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
 	    parsedFontName = available.mid( pos1, pos - pos1 );
 	}
     }
-#endif // APPLE_CHANGES not defined
+#endif // !APPLE_CHANGES
 }

@@ -44,7 +44,7 @@ class HTMLTokenizer;
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_docimpl.h"
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
@@ -350,7 +350,7 @@ protected:
     KHTMLView *view;
 };
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 #undef id
 #endif
 

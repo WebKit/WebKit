@@ -38,7 +38,7 @@ class DocumentImpl;
 class CSSStyleSheetImpl;
 class StyleSheetImpl;
 class DOMString;
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 class ProcessingInstruction;
 #endif
 
@@ -153,7 +153,7 @@ public:
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
     virtual void setStyleSheet(CSSStyleSheetImpl* sheet);
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static ProcessingInstruction createInstance(ProcessingInstructionImpl *impl);
 #endif
 

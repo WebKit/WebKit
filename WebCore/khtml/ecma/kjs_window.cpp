@@ -1761,7 +1761,7 @@ Value History::get(ExecState *exec, const UString &p) const
 Value History::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   case Length:
   {
     KParts::BrowserExtension *ext = part->browserExtension();

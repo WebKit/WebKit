@@ -178,7 +178,7 @@ Length DOMStringImpl::toLength() const
 
 khtml::Length* DOMStringImpl::toLengthArray(int& len) const
 {
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
     QString str(s, l);
 #endif /* APPLE_CHANGES not defined */
     int pos = 0;
@@ -188,7 +188,7 @@ khtml::Length* DOMStringImpl::toLengthArray(int& len) const
     // to fix lists like "1,2px 3 ,4"
     // make sure not to break percentage or relative widths
     // ### what about "auto" ?
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // This alternate version works around a limitation in our QString implementation.
     QChar spacified[l];
     QChar space(' ');

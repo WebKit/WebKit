@@ -355,7 +355,7 @@ public:
      */
     virtual void childrenChanged();
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static Node nodeInstance(NodeImpl *impl);
 #endif
 
@@ -463,7 +463,7 @@ public:
 
     // Other methods (not part of DOM)
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static NodeList createInstance(NodeListImpl *impl);
 #endif
 protected:
@@ -561,7 +561,7 @@ public:
     virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly) = 0;
     virtual bool isReadOnly() { return false; }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     static NamedNodeMap createInstance(NamedNodeMapImpl *impl);
 #endif
 };
