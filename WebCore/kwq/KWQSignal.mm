@@ -66,7 +66,11 @@ void KWQSignal::disconnect(const KWQSlot &slot)
 {
 #if !ERROR_DISABLED
     if (!_slots.contains(slot)
-            && !KWQNamesMatch(_name, SIGNAL(finishedParsing()))) {
+            && !KWQNamesMatch(_name, SIGNAL(finishedParsing()))
+            && !KWQNamesMatch(_name, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))
+            && !KWQNamesMatch(_name, SIGNAL(requestFailed(khtml::DocLoader *, khtml::CachedObject *)))
+            && !KWQNamesMatch(_name, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
+            ) {
         ERROR("disconnecting a signal that wasn't connected, %s", _name);
     }
 #endif

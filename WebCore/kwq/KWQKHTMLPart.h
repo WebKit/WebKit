@@ -26,29 +26,12 @@
 #ifndef KWQKHTMLPart_H
 #define KWQKHTMLPart_H
 
-#include "KWQObject.h"
-#include "KWQKURL.h"
-#include "KWQSignal.h"
+#include "khtml_part.h"
 
-class KHTMLPart;
 class KHTMLPartPrivate;
-class KHTMLView;
-
-namespace KParts {
-    class ReadOnlyPart;
-    class URLArgs;
-}
-
-namespace DOM {
-    class DOMString;
-    class DocumentImpl;
-    class NodeImpl;
-}
 
 namespace khtml {
-    class ChildFrame;
     class RenderObject;
-    class RenderPart;
 }
 
 namespace KJS {
@@ -70,10 +53,10 @@ enum KWQSelectionDirection {
     KWQSelectingPrevious
 };
 
-class KWQKHTMLPart : public QObject
+class KWQKHTMLPart : public KHTMLPart
 {
 public:
-    KWQKHTMLPart(KHTMLPart *);
+    KWQKHTMLPart();
     ~KWQKHTMLPart();
     
     void setBridge(WebCoreBridge *p) { _bridge = p; }
@@ -82,7 +65,9 @@ public:
     void setOwnsView(bool weOwnIt) { _ownsView = weOwnIt; }
     KHTMLView *view() const;
 
-    void openURL(const KURL &);
+    virtual bool openURL(const KURL &);
+    virtual bool closeURL();
+    
     void openURLRequest(const KURL &, const KParts::URLArgs &);
     void submitForm(const KURL &, const KParts::URLArgs &);
     
@@ -134,7 +119,7 @@ public:
     
     // Incoming calls, used by the bridge.
     
-    DOM::DocumentImpl *document();
+    using KHTMLPart::xmlDocImpl;
     khtml::RenderObject *renderer();
     void forceLayout();
     void paint(QPainter *, const QRect &);
@@ -171,9 +156,6 @@ private:
     static DOM::NodeImpl *nodeForWidget(QWidget *);
     static KWQKHTMLPart *partForNode(DOM::NodeImpl *);
     
-    KHTMLPart *part;
-    KHTMLPartPrivate *d;
-    
     WebCoreBridge *_bridge;
     
     KWQSignal _started;
@@ -186,5 +168,8 @@ private:
 
     friend class KHTMLPart;
 };
+
+inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }
+inline const KWQKHTMLPart *KWQ(const KHTMLPart *part) { return static_cast<const KWQKHTMLPart *>(part); }
 
 #endif

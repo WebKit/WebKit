@@ -60,7 +60,7 @@ void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments
 
 void KJavaAppletWidget::showApplet()
 {
-    setView([_context->part()->kwq->bridge()
+    setView([KWQ(_context->part())->bridge()
         viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
                         attributes:_parameters
                            baseURL:_baseURL.getNSString()]);

@@ -868,7 +868,7 @@ void Window::scheduleClose()
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
   Q_ASSERT(winq);
 #if APPLE_CHANGES
-  m_part->kwq->scheduleClose();
+  KWQ(m_part)->scheduleClose();
 #else
   QTimer::singleShot( 0, winq, SLOT( timeoutClose() ) );
 #endif
@@ -998,7 +998,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::Alert:
     part->xmlDocImpl()->updateRendering();
 #if APPLE_CHANGES
-    part->kwq->runJavaScriptAlert(str);
+    KWQ(part)->runJavaScriptAlert(str);
 #else
     KMessageBox::error(widget, QStyleSheet::convertFromPlainText(str), "JavaScript");
 #endif
@@ -1006,7 +1006,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::Confirm:
     part->xmlDocImpl()->updateRendering();
 #if APPLE_CHANGES
-    return Boolean(part->kwq->runJavaScriptConfirm(str));
+    return Boolean(KWQ(part)->runJavaScriptConfirm(str));
 #else
     return Boolean((KMessageBox::warningYesNo(widget, QStyleSheet::convertFromPlainText(str), "JavaScript",
                                                 i18n("OK"), i18n("Cancel")) == KMessageBox::Yes));
@@ -1015,7 +1015,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     part->xmlDocImpl()->updateRendering();
     bool ok;
 #if APPLE_CHANGES
-    ok = part->kwq->runJavaScriptPrompt(str, args.size() >= 2 ? args[1].toString(exec).qstring() : QString::null, str2);
+    ok = KWQ(part)->runJavaScriptPrompt(str, args.size() >= 2 ? args[1].toString(exec).qstring() : QString::null, str2);
 #else
     if (args.size() >= 2)
       str2 = QInputDialog::getText(i18n("Konqueror: Prompt"),
@@ -1336,7 +1336,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     return Undefined();
   case Window::Blur:
 #if APPLE_CHANGES
-    part->kwq->unfocusWindow();
+    KWQ(part)->unfocusWindow();
 #else
     // TODO
 #endif

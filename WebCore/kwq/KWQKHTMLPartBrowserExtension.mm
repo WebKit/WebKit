@@ -35,7 +35,7 @@ KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
 void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
 					       const KParts::URLArgs &args)
 {
-    m_part->kwq->openURLRequest(url, args);
+    KWQ(m_part)->openURLRequest(url, args);
 }
 
 void KHTMLPartBrowserExtension::openURLNotify()
@@ -66,7 +66,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     WebCoreBridge *bridge;
 
     if (frameName != nil) {
-	bridge = [m_part->kwq->bridge() findFramedNamed:frameName];
+	bridge = [KWQ(m_part)->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
 		[bridge loadURL:url.url().getNSString() reload:urlArgs.reload triggeringEvent:nil isFormSubmission:NO];
@@ -76,7 +76,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	}
     }
 
-    bridge = [m_part->kwq->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
+    bridge = [KWQ(m_part)->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -128,10 +128,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [m_part->kwq->bridge() setIconURL:url.url().getNSString()];
+    [KWQ(m_part)->bridge() setIconURL:url.url().getNSString()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [m_part->kwq->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
+    [KWQ(m_part)->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
 }

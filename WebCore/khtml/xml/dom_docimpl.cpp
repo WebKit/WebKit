@@ -523,7 +523,7 @@ void DocumentImpl::setTitle(DOMString _title)
     m_title = _title;
 
 #if APPLE_CHANGES
-    view()->part()->kwq->setTitle(_title);
+    KWQ(view()->part())->setTitle(_title);
 #else
     QString titleStr = m_title.string();
     for (int i = 0; i < titleStr.length(); ++i)

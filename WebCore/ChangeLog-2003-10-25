@@ -1,3 +1,79 @@
+2002-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- made KWQKHTMLPart a subclass of KHTMLPart so we can override virtual functions
+
+        * khtml/khtml_part.h: Get rid of kwq pointer.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): No need to make a KWQKHTMLPart any more.
+        (KHTMLPart::~KHTMLPart): No need to delete a KWQKHTMLPart any more.
+        (KHTMLPart::closeURL): KWQKHTMLPart does saveDocumentState in an override now.
+        (KHTMLPart::begin): KWQ() instead of ->kwq.
+        (KHTMLPart::checkCompleted): KWQ() instead of ->kwq, and ifdef out some unneeded code.
+        (KHTMLPart::urlSelected): KWQ() instead of ->kwq.
+        (KHTMLPart::requestFrameName): KWQ() instead of ->kwq.
+        (KHTMLPart::processObjectRequest): Just call openURL, since we are now KWQKHTMLPart.
+        (KHTMLPart::submitForm): KWQ() instead of ->kwq.
+        (KHTMLPart::popupMenu): Did a bit more ifdef'int out here.
+
+        * kwq/KWQKHTMLPart.h: Include "khtml_part.h" and remove includes we don't need any more.
+	Inherit from KHTMLPart instead of QObject. Remove KHTMLPart parameter from constructor.
+	Override openURL and closeURL. Remove part and d pointers. Add KWQ() inline to avoid casting.
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLPart::completed): KWQ() instead of ->kwq.
+        (KHTMLPart::openURL): Never reached now, since we override.
+        (KHTMLPart::setStatusBarText): KWQ() instead of ->kwq.
+        (KHTMLPart::started): KWQ() instead of ->kwq.
+        (KWQKHTMLPart::KWQKHTMLPart): No need to deal with separate part.
+        (KWQKHTMLPart::bridgeForFrameName): KWQ() instead of ->kwq.
+        (KWQKHTMLPart::openURL): Add bool return value so we can override the existing openURL.
+        (KWQKHTMLPart::slotData): Remove unneeded part->.
+        (KWQKHTMLPart::setView): Remove unneeded part->.
+        (KWQKHTMLPart::document): Remove unneeded part->.
+        (KWQKHTMLPart::renderer): Remove unneeded part->.
+        (KWQKHTMLPart::userAgent): Remove unneeded part->.
+        (KWQKHTMLPart::nextKeyViewInFrame): KWQ() instead of ->kwq.
+        (KWQKHTMLPart::nextKeyViewInFrameHierarchy): KWQ() instead of ->kwq.
+        (KWQKHTMLPart::canCachePage): Remove unneeded part->.
+        (KWQKHTMLPart::saveWindowProperties): Use this instead of part.
+        (KWQKHTMLPart::saveLocationProperties): Use this instead of part.
+        (KWQKHTMLPart::restoreWindowProperties): Use this instead of part.
+        (KWQKHTMLPart::restoreLocationProperties): Use this instead of part.
+        (KWQKHTMLPart::openURLFromPageCache): Remove unneeded part->.
+        (KWQKHTMLPart::partForNode): KWQ() instead of ->kwq.
+        (KWQKHTMLPart::updatePolicyBaseURL): Remove unneeded part->.
+        (KWQKHTMLPart::setPolicyBaseURL): Remove unneeded part->.
+        (KWQKHTMLPart::createDummyDocument): Use this instead of part.
+        (KWQKHTMLPart::scrollToAnchor): Remove unneeded part->.
+        (KWQKHTMLPart::closeURL): Added. Calls saveDocumentState().
+
+        * kwq/WebCoreBridge.h: Use KWQKHTMLPart instead of KHTMLPart.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge init]): Make a KWQKHTMLPart.
+	Use _part instead of _part->kwq in the rest of the file.
+
+        * kwq/KWQSignal.mm: (KWQSignal::disconnect): Add the names of a few signals that are
+	disconnected after the KWQKHTMLPart part of the KHTMLPart is destroyed, to avoid noise.
+
+        * khtml/ecma/kjs_navigator.cpp: (Navigator::getValueProperty): KWQ() instead of ->kwq.
+        * khtml/ecma/kjs_proxy.cpp: (KJSProxyImpl::initScript): KWQ() instead of ->kwq.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::scheduleClose): KWQ() instead of ->kwq.
+        (WindowFunc::tryCall): KWQ() instead of ->kwq.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::setTitle): KWQ() instead of ->kwq.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::openURLRequest): KWQ() instead of ->kwq.
+        (KHTMLPartBrowserExtension::createNewWindow): KWQ() instead of ->kwq.
+        (KHTMLPartBrowserExtension::setIconURL): KWQ() instead of ->kwq.
+        (KHTMLPartBrowserExtension::setTypedIconURL): KWQ() instead of ->kwq.
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::showApplet): KWQ() instead of ->kwq.
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Cast to KWQKHTMLPart instead of casting to KHTMLPart and doing ->kwq.
+        (KWQCheckIfReloading): Ditto.
+        (KWQCheckCacheObjectStatus): Ditto.
+
+        * WebCore.pbproj/project.pbxproj: Let Electron punish the wicked.
+
 2002-12-09  Richard Williamson   <rjw@apple.com>
 
         Many changes for b/f list.

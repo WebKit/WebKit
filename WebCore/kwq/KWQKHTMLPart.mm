@@ -60,14 +60,16 @@ using KIO::Job;
 using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
+unsigned KHTMLPartPrivate::m_frameNameId = 0;
+
 void KHTMLPart::completed()
 {
-    kwq->_completed.call();
+    KWQ(this)->_completed.call();
 }
 
 void KHTMLPart::completed(bool arg)
 {
-    kwq->_completed.call(arg);
+    KWQ(this)->_completed.call(arg);
 }
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
@@ -76,7 +78,7 @@ void KHTMLPart::nodeActivated(const DOM::Node &aNode)
 
 bool KHTMLPart::openURL(const KURL &URL)
 {
-    kwq->openURL(URL);
+    ASSERT_NOT_REACHED();
     return true;
 }
 
@@ -86,12 +88,12 @@ void KHTMLPart::onURL(const QString &)
 
 void KHTMLPart::setStatusBarText(const QString &status)
 {
-    kwq->setStatusBarText(status);
+    KWQ(this)->setStatusBarText(status);
 }
 
 void KHTMLPart::started(Job *j)
 {
-    kwq->_started.call(j);
+    KWQ(this)->_started.call(j);
 }
 
 static void redirectionTimerMonitor(void *context)
@@ -100,11 +102,10 @@ static void redirectionTimerMonitor(void *context)
     kwq->redirectionTimerStartedOrStopped();
 }
 
-KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
-    : part(p), d(part->d)
-    , _started(p, SIGNAL(started(KIO::Job *)))
-    , _completed(p, SIGNAL(completed()))
-    , _completedWithBool(p, SIGNAL(completed(bool)))
+KWQKHTMLPart::KWQKHTMLPart()
+    : _started(this, SIGNAL(started(KIO::Job *)))
+    , _completed(this, SIGNAL(completed()))
+    , _completedWithBool(this, SIGNAL(completed(bool)))
     , _ownsView(false)
 {
     Cache::init();
@@ -125,8 +126,8 @@ WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
     WebCoreBridge *frame;
     if (frameName.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
-        KHTMLPart *parentPart = part->parentPart();
-        frame = parentPart ? parentPart->kwq->_bridge : nil;
+        KHTMLPart *parent = parentPart();
+        frame = parent ? KWQ(parent)->_bridge : nil;
         if ([[frame childFrames] count] != 1) {
             frame = _bridge;
         }
@@ -142,12 +143,13 @@ QString KWQKHTMLPart::generateFrameName()
     return QString::fromNSString([_bridge generateFrameName]);
 }
 
-void KWQKHTMLPart::openURL(const KURL &url)
+bool KWQKHTMLPart::openURL(const KURL &url)
 {
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
     [_bridge loadURL:url.url().getNSString() reload:NO triggeringEvent:nil isFormSubmission:NO];
+    return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
@@ -172,19 +174,19 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
     if (!d->m_workingURL.isEmpty()) {
-        part->receivedFirstData();
+        receivedFirstData();
     }
     
     ASSERT(d->m_doc);
     ASSERT(d->m_doc->parsing());
     
     if (encoding) {
-        part->setEncoding(QString::fromNSString(encoding), forceEncoding);
+        setEncoding(QString::fromNSString(encoding), forceEncoding);
     } else {
-        part->setEncoding(QString::null, false);
+        setEncoding(QString::null, false);
     }
     
-    part->write(bytes, length);
+    write(bytes, length);
 }
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
@@ -233,7 +235,7 @@ void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
             delete d->m_view;
     }
     d->m_view = view;
-    part->setWidget(view);
+    setWidget(view);
     _ownsView = weOwnIt;
 }
 
@@ -303,20 +305,15 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
     }
 }
 
-DocumentImpl *KWQKHTMLPart::document()
-{
-    return part->xmlDocImpl();
-}
-
 RenderObject *KWQKHTMLPart::renderer()
 {
-    DocumentImpl *doc = part->xmlDocImpl();
+    DocumentImpl *doc = xmlDocImpl();
     return doc ? doc->renderer() : 0;
 }
 
 QString KWQKHTMLPart::userAgent() const
 {
-    NSString *us = [_bridge userAgentForURL:part->m_url.url().getNSString()];
+    NSString *us = [_bridge userAgentForURL:m_url.url().getNSString()];
          
     if (us)
         return QString::fromNSString(us);
@@ -325,7 +322,7 @@ QString KWQKHTMLPart::userAgent() const
 
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
-    DocumentImpl *doc = document();
+    DocumentImpl *doc = xmlDocImpl();
     if (!doc) {
         return nil;
     }
@@ -340,7 +337,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
             QWidget *widget = renderWidget->widget();
             KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
             if (childFrameWidget) {
-                NSView *view = childFrameWidget->part()->kwq->nextKeyViewInFrame(0, direction);
+                NSView *view = KWQ(childFrameWidget->part())->nextKeyViewInFrame(0, direction);
                 if (view) {
                     return view;
                 }
@@ -366,9 +363,9 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
         return next;
     }
     
-    KHTMLPart *parentPart = part->parentPart();
-    if (parentPart) {
-        next = parentPart->kwq->nextKeyView(parentPart->frame(part)->m_frame->element(), direction);
+    KHTMLPart *parent = parentPart();
+    if (parent) {
+        next = KWQ(parent)->nextKeyView(parent->frame(this)->m_frame->element(), direction);
         if (next) {
             return next;
         }
@@ -413,10 +410,10 @@ bool KWQKHTMLPart::canCachePage()
     // 4.  The page has no plugins.
     if (d->m_doc &&
         (d->m_frames.count() ||
-        part->parentPart() ||
+        parentPart() ||
         d->m_objects.count() ||
         d->m_doc->getWindowEventListener (DOM::EventImpl::UNLOAD_EVENT) ||
-        (d->m_jscript && KJS::Window::retrieveWindow(part)->hasTimeouts()))){
+        (d->m_jscript && KJS::Window::retrieveWindow(this)->hasTimeouts()))){
         return false;
     }
     return true;
@@ -424,22 +421,22 @@ bool KWQKHTMLPart::canCachePage()
 
 void KWQKHTMLPart::saveWindowProperties(KJS::SavedProperties *windowProperties)
 {
-    KJS::Window::retrieveWindow(part)->saveProperties(*windowProperties);
+    KJS::Window::retrieveWindow(this)->saveProperties(*windowProperties);
 }
 
 void KWQKHTMLPart::saveLocationProperties(KJS::SavedProperties *locationProperties)
 {
-    KJS::Window::retrieveWindow(part)->location()->saveProperties(*locationProperties);
+    KJS::Window::retrieveWindow(this)->location()->saveProperties(*locationProperties);
 }
 
 void KWQKHTMLPart::restoreWindowProperties(KJS::SavedProperties *windowProperties)
 {
-    KJS::Window::retrieveWindow(part)->restoreProperties(*windowProperties);
+    KJS::Window::retrieveWindow(this)->restoreProperties(*windowProperties);
 }
 
 void KWQKHTMLPart::restoreLocationProperties(KJS::SavedProperties *locationProperties)
 {
-    KJS::Window::retrieveWindow(part)->location()->restoreProperties(*locationProperties);
+    KJS::Window::retrieveWindow(this)->location()->restoreProperties(*locationProperties);
 }
 
 void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties)
@@ -448,7 +445,7 @@ void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::
 
     // We still have to close the previous part page.
     if (!d->m_restored){
-        part->closeURL();
+        closeURL();
     }
             
     d->m_bComplete = false;
@@ -463,41 +460,41 @@ void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::
         d->m_kjsDefaultStatusBarText = QString::null;
     }
 
-    part->m_url = *url;
+    m_url = *url;
     
     // set the javascript flags according to the current url
-    d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(part->m_url.host());
+    d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(m_url.host());
     d->m_bJScriptDebugEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptDebugEnabled();
-    d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled(part->m_url.host());
-    d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled(part->m_url.host());
+    d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled(m_url.host());
+    d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled(m_url.host());
     
     // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
     // data arrives) (Simon)
-    if(part->m_url.protocol().startsWith( "http" ) && !part->m_url.host().isEmpty() && part->m_url.path().isEmpty()) {
-        part->m_url.setPath("/");
-        emit d->m_extension->setLocationBarURL( part->m_url.prettyURL() );
+    if(m_url.protocol().startsWith( "http" ) && !m_url.host().isEmpty() && m_url.path().isEmpty()) {
+        m_url.setPath("/");
+        emit d->m_extension->setLocationBarURL( m_url.prettyURL() );
     }
     
     // copy to m_workingURL after fixing m_url above
-    d->m_workingURL = part->m_url;
+    d->m_workingURL = m_url;
         
-    emit part->started( 0L );
+    emit started( 0L );
     
     // -----------begin-----------
-    part->clear();
+    clear();
     
     d->m_bCleared = false;
     d->m_cacheId = 0;
     d->m_bComplete = false;
     d->m_bLoadEventEmitted = false;
             
-    d->m_referrer = part->m_url.url();
-    part->m_url = *url;
+    d->m_referrer = m_url.url();
+    m_url = *url;
     KURL baseurl;
     
     // We don't need KDE chained URI handling or window caption setting
-    if ( !part->m_url.isEmpty() ){
-        baseurl = part->m_url;
+    if ( !m_url.isEmpty() ){
+        baseurl = m_url;
     }
     
     d->m_doc = doc;
@@ -520,7 +517,7 @@ WebCoreBridge *KWQKHTMLPart::bridgeForWidget(QWidget *widget)
 
 KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
 {
-    return node->getDocument()->view()->part()->kwq;
+    return KWQ(node->getDocument()->view()->part());
 }
 
 NodeImpl *KWQKHTMLPart::nodeForWidget(QWidget *widget)
@@ -557,10 +554,10 @@ QPtrList<KWQKHTMLPart> &KWQKHTMLPart::mutableInstances()
 
 void KWQKHTMLPart::updatePolicyBaseURL()
 {
-    if (part->parentPart()) {
-        setPolicyBaseURL(part->parentPart()->docImpl()->policyBaseURL());
+    if (parentPart()) {
+        setPolicyBaseURL(parentPart()->docImpl()->policyBaseURL());
     } else {
-        setPolicyBaseURL(part->m_url.url());
+        setPolicyBaseURL(m_url.url());
     }
 }
 
@@ -568,12 +565,12 @@ void KWQKHTMLPart::setPolicyBaseURL(const DOM::DOMString &s)
 {
     // XML documents will cause this to return null.  docImpl() is
     // an HTMLdocument only. -dwh
-    if (part->docImpl())
-        part->docImpl()->setPolicyBaseURL(s);
+    if (docImpl())
+        docImpl()->setPolicyBaseURL(s);
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
         ReadOnlyPart *subpart = (*it).m_part;
-        static_cast<KHTMLPart *>(subpart)->kwq->setPolicyBaseURL(s);
+        static_cast<KWQKHTMLPart *>(subpart)->setPolicyBaseURL(s);
     }
 }
 
@@ -630,7 +627,7 @@ void KWQKHTMLPart::createDummyDocument()
         d->m_doc->ref();
         
         ASSERT(d->m_view == 0);
-        KHTMLView *kview = new KHTMLView(part, 0);
+        KHTMLView *kview = new KHTMLView(this, 0);
         setView(kview, true);
         
         NSView *view = [[KWQDummyView alloc] initWithWindow:[_bridge window]];
@@ -661,7 +658,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
-    DocumentImpl *doc = document();
+    DocumentImpl *doc = xmlDocImpl();
     if (!doc) {
         return false;
     }
@@ -691,14 +688,20 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
 {
-    part->m_url = URL;
-    part->started(0);
+    m_url = URL;
+    started(0);
 
-    if (!part->gotoAnchor(URL.encodedHtmlRef()))
-        part->gotoAnchor(URL.htmlRef());
+    if (!gotoAnchor(URL.encodedHtmlRef()))
+        gotoAnchor(URL.htmlRef());
 
     d->m_bComplete = true;
     d->m_doc->setParsing(false);
 
-    part->completed();
+    completed();
+}
+
+bool KWQKHTMLPart::closeURL()
+{
+  saveDocumentState();
+  return KHTMLPart::closeURL();
 }

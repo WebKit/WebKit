@@ -34,10 +34,6 @@
 
 #include <qregexp.h>
 
-#if APPLE_CHANGES
-#include "KWQKHTMLPart.h"
-#endif
-
 class KHTMLPartPrivate;
 class KHTMLPartBrowserExtension;
 class KJSProxy;
@@ -1084,7 +1080,6 @@ private:
 
 #if APPLE_CHANGES
 public:  
-  KWQKHTMLPart *kwq;
   friend class KWQKHTMLPart;
 
   void completed();
@@ -1095,5 +1090,9 @@ public:
 #endif
 
 };
+
+#if APPLE_CHANGES
+#include "KWQKHTMLPart.h"
+#endif
 
 #endif

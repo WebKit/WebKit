@@ -178,7 +178,7 @@ Value Navigator::get(ExecState *exec, const Identifier &propertyName) const
 Value Navigator::getValueProperty(ExecState *exec, int token) const
 {
 #if APPLE_CHANGES
-  QString userAgent = m_part->kwq->userAgent();
+  QString userAgent = KWQ(m_part)->userAgent();
 #else
   KURL url = m_part->url();
   QString userAgent = KProtocolManager::userAgentForHost(url.host());

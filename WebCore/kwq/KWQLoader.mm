@@ -45,7 +45,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
-    WebCoreBridge *bridge = ((KHTMLPart *)request->m_docLoader->part())->kwq->bridge();
+    WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(request->m_docLoader->part())->bridge();
 
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithLoader:loader job:job];
     id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:job->url().url().getNSString()];
@@ -57,7 +57,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 
 bool KWQCheckIfReloading(DocLoader *loader)
 {
-    return [((KHTMLPart *)loader->part())->kwq->bridge() isReloading];
+    return [static_cast<KWQKHTMLPart *>(loader->part())->bridge() isReloading];
 }
 
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
@@ -80,7 +80,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     ASSERT(cachedObject->response());
     
     // Notify the caller that we "loaded".
-    WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->kwq->bridge();
+    WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(loader->part())->bridge();
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
     [bridge objectLoadedFromCacheWithURL:cachedObject->url().string().getNSString()
                                 response:(id)cachedObject->response()

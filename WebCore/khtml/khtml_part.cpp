@@ -234,10 +234,6 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   d->m_popupMenuXML = KXMLGUIFactory::readConfigFile( locate( "data", "khtml/khtml_popupmenu.rc", KHTMLFactory::instance() ) );
 #endif
 
-#if APPLE_CHANGES
-  kwq = new KWQKHTMLPart(this);
-#endif
-
   connect( khtml::Cache::loader(), SIGNAL( requestStarted( khtml::DocLoader*, khtml::CachedObject* ) ),
            this, SLOT( slotLoaderRequestStarted( khtml::DocLoader*, khtml::CachedObject* ) ) );
   connect( khtml::Cache::loader(), SIGNAL( requestDone( khtml::DocLoader*, khtml::CachedObject *) ),
@@ -295,8 +291,6 @@ KHTMLPart::~KHTMLPart()
   }
   
 #if APPLE_CHANGES
-  delete kwq;
-
   delete d->m_hostExtension;
 #endif
 
@@ -495,10 +489,6 @@ bool KHTMLPart::openURL( const KURL &url )
 
 bool KHTMLPart::closeURL()
 {
-#if APPLE_CHANGES
-  kwq->saveDocumentState();
-#endif
-
   if ( d->m_job )
   {
     KHTMLPageCache::self()->cancelEntry(d->m_cacheId);
@@ -1321,7 +1311,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
   if(url.isValid()) {
 #if APPLE_CHANGES
-      KHTMLFactory::vLinks()->insert( kwq->requestedURLString() );
+      KHTMLFactory::vLinks()->insert( KWQ(this)->requestedURLString() );
 #else
       QString urlString = url.url();
       KHTMLFactory::vLinks()->insert( urlString );
@@ -1385,7 +1375,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->docLoader()->setShowAnimations( KHTMLFactory::defaultHTMLSettings()->showAnimations() );
 
 #if APPLE_CHANGES
-  kwq->updatePolicyBaseURL();
+  KWQ(this)->updatePolicyBaseURL();
 #endif
 
 #if !APPLE_CHANGES
@@ -1399,7 +1389,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     setUserStyleSheet( KURL( userStyleSheet ) );
 
 #if APPLE_CHANGES
-  kwq->restoreDocumentState();
+  KWQ(this)->restoreDocumentState();
 #else
   d->m_doc->setRestoreState(args.docState);
 #endif
@@ -1662,11 +1652,11 @@ void KHTMLPart::checkCompleted()
       emit completed();
   }
 
+#if !APPLE_CHANGES
   // find the alternate stylesheets
   QStringList sheets;
   if (d->m_doc)
      sheets = d->m_doc->availableStyleSheets();
-#if !APPLE_CHANGES
   d->m_paUseStylesheet->setItems( sheets );
   d->m_paUseStylesheet->setEnabled( !sheets.isEmpty() );
   if (!sheets.isEmpty())
@@ -2389,7 +2379,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
 #if APPLE_CHANGES
   args.metaData()["referrer"] = d->m_referrer;
-  kwq->urlSelected(cURL, button, state, args);
+  KWQ(this)->urlSelected(cURL, button, state, args);
 #else
   if ( hasTarget )
   {
@@ -2677,14 +2667,10 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
   return requestObject( &(*it), completeURL( url ));
 }
 
-#if APPLE_CHANGES
-unsigned KHTMLPartPrivate::m_frameNameId = 0;
-#endif
-
 QString KHTMLPart::requestFrameName()
 {
 #if APPLE_CHANGES
-    return kwq->generateFrameName();
+    return KWQ(this)->generateFrameName();
 #else
     return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);
 #endif
@@ -2790,11 +2776,11 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
   {
     KHTMLPart *part = dynamic_cast<KHTMLPart *>(&*child->m_part);
     if (part)
-      part->kwq->openURL(url);
+      part->openURL(url);
   }
   else
   {
-    KParts::ReadOnlyPart *part = kwq->createPart(*child, url, mimetype);
+    KParts::ReadOnlyPart *part = KWQ(this)->createPart(*child, url, mimetype);
 #else
   if ( !child->m_services.contains( mimetype ) )
   {
@@ -3186,16 +3172,17 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   else
   {
 #if APPLE_CHANGES
-    kwq->submitForm( u, args);
+    KWQ(this)->submitForm( u, args);
 #else
     emit d->m_extension->openURLRequest( u, args );
 #endif
   }
 }
 
+#if !APPLE_CHANGES
+
 void KHTMLPart::popupMenu( const QString &linkUrl )
 {
-#if !APPLE_CHANGES
   KURL popupURL;
   KURL linkKURL;
   if ( linkUrl.isEmpty() ) // click on background
@@ -3213,8 +3200,9 @@ void KHTMLPart::popupMenu( const QString &linkUrl )
   delete client;
 
   emit popupMenu(linkUrl, QCursor::pos());
-#endif
 }
+
+#endif
 
 void KHTMLPart::slotParentCompleted()
 {
@@ -4239,11 +4227,13 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
 #endif
   }
 
+#if !APPLE_CHANGES
   if ( _mouse->button() == RightButton )
   {
     popupMenu( d->m_strSelectedURL );
     d->m_strSelectedURL = d->m_strSelectedURLTarget = QString::null;
   }
+#endif
 }
 
 void KHTMLPart::khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent *event)
