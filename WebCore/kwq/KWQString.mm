@@ -464,6 +464,49 @@ void KWQStringData::initialize(const char *a, uint l)
     }
 }
 
+KWQStringData::KWQStringData(KWQStringData &o)
+    : refCount(1)
+    , _length(o._length)
+    , _unicode(o._unicode)
+    , _ascii(o._ascii)
+    , _maxUnicode(o._maxUnicode)
+    , _isUnicodeValid(o._isUnicodeValid)
+    , _isHeapAllocated(0)
+    , _maxAscii(o._maxAscii)
+    , _isAsciiValid(o._isAsciiValid)
+{
+    // Handle the case where either the Unicode or 8-bit pointer was
+    // pointing to the internal buffer. We need to point at the
+    // internal buffer in the new object, and copy the characters.
+    if (_unicode == reinterpret_cast<QChar *>(o._internalBuffer)) {
+        if (_isUnicodeValid) {
+            ASSERT(!_isAsciiValid || _ascii != o._internalBuffer);
+            ASSERT(_length <= QS_INTERNAL_BUFFER_UCHARS);
+            memcpy(_internalBuffer, o._internalBuffer, _length * sizeof(QChar));
+            _unicode = reinterpret_cast<QChar *>(_internalBuffer);
+        } else {
+            _unicode = 0;
+        }
+    }
+    if (_ascii == o._internalBuffer) {
+        if (_isAsciiValid) {
+            ASSERT(_length <= QS_INTERNAL_BUFFER_CHARS);
+            memcpy(_internalBuffer, o._internalBuffer, _length);
+            _internalBuffer[_length] = 0;
+            _ascii = _internalBuffer;
+        } else {
+            _ascii = 0;
+        }
+    }
+
+    // Clean up the other KWQStringData just enough so that it can be destroyed
+    // cleanly. It's not in a good enough state to use, but that's OK. It just
+    // needs to be in a state where ~KWQStringData won't do anything harmful,
+    // and setting these to 0 will do that (preventing any double-free problems).
+    o._unicode = 0;
+    o._ascii = 0;
+}
+
 KWQStringData *QString::makeSharedNull()
 {
     if (!shared_null) {
@@ -742,25 +785,11 @@ NSString *QString::getNSString() const
 inline void QString::detachInternal()
 {
     KWQStringData *oldData = *dataHandle;
-    KWQStringData *newData;
-    if (oldData->_isAsciiValid)
-        newData = new KWQStringData(oldData->ascii(), oldData->_length);
-    else {
-        ASSERT(oldData->_isUnicodeValid);
-        // No need to copy the allocated unicode bytes.
-        if (oldData->isUnicodeInternal())
-            newData = new KWQStringData(oldData->unicode(), oldData->_length);
-        else {
-            newData = new KWQStringData(oldData->unicode(), oldData->_length, oldData->_maxUnicode);
-            oldData->_unicode = 0;
-            oldData->_isUnicodeValid = 0;
-        }
-    }
+    KWQStringData *newData = new KWQStringData(*oldData);
     newData->_isHeapAllocated = 1;
     newData->refCount = oldData->refCount - 1;
-    *dataHandle = newData;
-    
     oldData->refCount = 1;
+    *dataHandle = newData;    
 }
 
 inline void QString::detachIfInternal()

@@ -331,13 +331,16 @@ struct KWQStringData {
     KWQStringData(QChar *u, uint l, uint m);
     void initialize(QChar *u, uint l, uint m);
     
-    // Copy bytes;
+    // Copy bytes.
     KWQStringData(const QChar *u, uint l);
     void initialize(const QChar *u, uint l);
 
-    // Copy bytes;
+    // Copy bytes.
     KWQStringData(const char *u, uint l);
     void initialize(const char *u, uint l);
+
+    // Move from destination to source.
+    KWQStringData(KWQStringData &);
 
     ~KWQStringData();
 
@@ -371,6 +374,10 @@ struct KWQStringData {
     uint _isAsciiValid:1;
     
     char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
+
+private:
+    KWQStringData(const KWQStringData &);
+    KWQStringData &operator=(const KWQStringData &);
 };
 
 #define QSTRING_NULL QString()

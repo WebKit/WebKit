@@ -2,6 +2,23 @@
 
         Reviewed by Ken.
 
+        - fixed garbage characters seen while I was rigging up the Mozilla JavaScript tests
+
+        * kwq/KWQString.h: Add a "move constructor" for KWQStringData that extracts the data
+        from an existing KWQStringData.
+        * kwq/KWQString.mm:
+        (KWQStringData::KWQStringData): Implement the move constructor.
+        (QString::detachInternal): Use the move constructor rather than making a copy of the
+        data. Should be both more efficient and preserves both the Unicode and the ASCII. The
+        bug here is that TokenizerSubstring relies on the Unicode staying around. We still
+        have a problem in the case where the Unicode is inside the KWQStringData. To deal with
+        that we'll have to add a new QString call that TokenizerSubstring can use. The new call
+        will force QString to keep the Unicode outside the internal KWQStringData.
+
+2004-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3606146>: repro nil-deref in QWidget::move (www.stoltoffshore.com)
 
         * khtml/khtml_part.cpp:
