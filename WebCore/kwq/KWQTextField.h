@@ -35,6 +35,7 @@ class QLineEdit;
     QLineEdit *widget;
     NSTextField *secureField;
     KWQTextFieldFormatter *formatter;
+    BOOL _hasFocus;
     BOOL edited;
     BOOL inNextValidKeyView;
     NSRange lastSelectedRange;

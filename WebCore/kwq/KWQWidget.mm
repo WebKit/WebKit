@@ -31,6 +31,7 @@
 #import "KWQWindowWidget.h"
 
 #import "khtmlview.h"
+#import "render_canvas.h"
 #import "render_replaced.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
@@ -189,11 +190,15 @@ void QWidget::setFocus()
     }
     
     // KHTML will call setFocus on us without first putting us in our
-    // superview and positioning us. This works around that issue.
+    // superview and positioning us. Normally layout computes the position
+    // and the drawing process positions the widget. Do both things explicitly.
     RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(eventFilterObject()));
     int x, y;
-    if (renderWidget && renderWidget->absolutePosition(x, y)) {
-        renderWidget->view()->addChild(this, x, y);
+    if (renderWidget) {
+        renderWidget->canvas()->layoutIfNeeded();
+        if (renderWidget->absolutePosition(x, y)) {
+            renderWidget->view()->addChild(this, x, y);
+        }
     }
     
     NSView *view = getView();

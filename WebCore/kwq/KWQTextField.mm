@@ -25,45 +25,52 @@
 
 #import "KWQTextField.h"
 
-#import "KWQView.h"
-#import "KWQLineEdit.h"
+#import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
+#import "KWQLineEdit.h"
 #import "KWQNSViewExtras.h"
-#import "WebCoreFirstResponderChanges.h"
+#import "KWQView.h"
 #import "WebCoreBridge.h"
+#import "WebCoreFirstResponderChanges.h"
 
 @interface KWQTextField (KWQInternal)
-- (void)didBecomeFirstResponder;
+- (void)setHasFocus:(BOOL)hasFocus;
+@end
+
+// KWQTextFieldCell allows us to tell when we get focus without an editor subclass.
+@interface KWQTextFieldCell : NSTextFieldCell
 @end
 
 // KWQTextFieldFormatter enforces a maximum length.
-
 @interface KWQTextFieldFormatter : NSFormatter
 {
     int maxLength;
 }
-
 - (void)setMaximumLength:(int)len;
 - (int)maximumLength;
-
 @end
 
-// KWQSecureTextField has two purposes.
+// KWQSecureTextField has a few purposes.
 // One is a workaround for bug 3024443.
-// The other is hook up next and previous key views to KHTML.
-
+// Another is hook up next and previous key views to KHTML.
 @interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
 {
-    QLineEdit *widget;
     BOOL inSetFrameSize;
-    BOOL inNextValidKeyView;
 }
+@end
 
-- initWithQLineEdit:(QLineEdit *)widget;
-
+// KWQSecureTextFieldCell allows us to tell when we get focus without an editor subclass.
+@interface KWQSecureTextFieldCell : NSSecureTextFieldCell
 @end
 
 @implementation KWQTextField
+
++ (void)initialize
+{
+    if (self == [KWQTextField class]) {
+        [self setCellClass:[KWQTextFieldCell class]];
+    }
+}
 
 - (void)setUpTextField:(NSTextField *)field
 {
@@ -135,7 +142,7 @@
         [secureField removeFromSuperview];
     } else {
         if (secureField == nil) {
-            secureField = [[KWQSecureTextField alloc] initWithQLineEdit:widget];
+            secureField = [[KWQSecureTextField alloc] init];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
             [secureField setEditable:[self isEditable]];
@@ -206,36 +213,6 @@
     edited = ed;
 }
 
-- (NSText *)currentEditorForEitherField
-{
-    NSResponder *firstResponder = [[self window] firstResponder];
-    if ([firstResponder isKindOfClass:[NSText class]]) {
-        NSText *editor = (NSText *)firstResponder;
-        id delegate = [editor delegate];
-        if (delegate == self || delegate == secureField) {
-            return editor;
-        }
-    }
-    return nil;
-}
-
-- (NSRange)selectedRange
-{
-    NSText *editor = [self currentEditorForEitherField];
-    return editor ? [editor selectedRange] : NSMakeRange(NSNotFound, 0);
-}
-
-- (void)setSelectedRange:(NSRange)range
-{
-    // Range check just in case the saved range has gotten out of sync.
-    // Even though we don't see this in testing, we really don't want
-    // an exception in this case, so we protect ourselves.
-    NSText *editor = [self currentEditorForEitherField];    
-    if (NSMaxRange(range) <= [[editor string] length]) {
-        [editor setSelectedRange:range];
-    }
-}
-
 - (void)controlTextDidBeginEditing:(NSNotification *)notification
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
@@ -244,10 +221,7 @@
 
 - (void)controlTextDidEndEditing:(NSNotification *)notification
 {
-    lastSelectedRange = [self selectedRange];
-
-    QFocusEvent event(QEvent::FocusOut);
-    const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+    [self setHasFocus:NO];
 
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidEndEditing:notification];
@@ -257,6 +231,7 @@
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidChange:notification];
+
     edited = YES;
     widget->textChanged();
 }
@@ -264,16 +239,7 @@
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    if (![bridge control:control textShouldBeginEditing:fieldEditor]) {
-        return NO;
-    }
-    
-    [self _KWQ_scrollFrameToVisible];
-
-    QFocusEvent event(QEvent::FocusIn);
-    const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-
-    return YES;
+    return [bridge control:control textShouldBeginEditing:fieldEditor];
 }
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
@@ -361,31 +327,12 @@
     return view;
 }
 
-- (void)didBecomeFirstResponder
-{
-    // Select all the text if we are tabbing in, but otherwise preserve/remember
-    // the selection from last time we had focus (to match WinIE).
-    // This has to be done after [super becomeFirstResponder] is done, which is why
-    // we can't just do this in textShouldBeginEditing.
-    if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
-        lastSelectedRange.location = NSNotFound;
-    }
-    if (lastSelectedRange.location != NSNotFound) {
-        [self setSelectedRange:lastSelectedRange];
-    }
-}
-
 - (BOOL)becomeFirstResponder
 {
     if ([self passwordMode]) {
         return [[self window] makeFirstResponder:secureField];
     }
-    KWQKHTMLPart::setDocumentFocus(widget);
-    if (![super becomeFirstResponder]) {
-        return NO;
-    }
-    [self didBecomeFirstResponder];
-    return YES;
+    return [super becomeFirstResponder];
 }
 
 - (void)display
@@ -410,6 +357,90 @@
 {
     [secureField setAlignment:alignment];
     [super setAlignment:alignment];
+}
+
+@end
+
+@implementation KWQTextField (KWQInternal)
+
+- (NSText *)currentEditorForEitherField
+{
+    NSResponder *firstResponder = [[self window] firstResponder];
+    if ([firstResponder isKindOfClass:[NSText class]]) {
+        NSText *editor = (NSText *)firstResponder;
+        id delegate = [editor delegate];
+        if (delegate == self || delegate == secureField) {
+            return editor;
+        }
+    }
+    return nil;
+}
+
+- (NSRange)selectedRange
+{
+    NSText *editor = [self currentEditorForEitherField];
+    return editor ? [editor selectedRange] : NSMakeRange(NSNotFound, 0);
+}
+
+- (void)setSelectedRange:(NSRange)range
+{
+    // Range check just in case the saved range has gotten out of sync.
+    // Even though we don't see this in testing, we really don't want
+    // an exception in this case, so we protect ourselves.
+    NSText *editor = [self currentEditorForEitherField];    
+    if (NSMaxRange(range) <= [[editor string] length]) {
+        [editor setSelectedRange:range];
+    }
+}
+
+- (void)setHasFocus:(BOOL)hasFocus
+{
+    if (hasFocus == _hasFocus) {
+        return;
+    }
+
+    _hasFocus = hasFocus;
+
+    if (hasFocus) {
+        KWQKHTMLPart::setDocumentFocus(widget);
+
+        // Select all the text if we are tabbing in, but otherwise preserve/remember
+        // the selection from last time we had focus (to match WinIE).
+        if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
+            lastSelectedRange.location = NSNotFound;
+        }
+        if (lastSelectedRange.location != NSNotFound) {
+            [self setSelectedRange:lastSelectedRange];
+        }
+
+        [self _KWQ_scrollFrameToVisible];
+
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+    } else {
+        lastSelectedRange = [self selectedRange];
+
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+    }
+}
+
+@end
+
+@implementation KWQTextFieldCell
+
+- (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
+{
+    [super editWithFrame:frame inView:view editor:editor delegate:delegate event:event];
+    ASSERT([delegate isKindOfClass:[KWQTextField class]]);
+    [(KWQTextField *)delegate setHasFocus:YES];
+}
+
+- (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
+{
+    [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
+    ASSERT([delegate isKindOfClass:[KWQTextField class]]);
+    [(KWQTextField *)delegate setHasFocus:YES];
 }
 
 @end
@@ -463,40 +494,34 @@
 
 @implementation KWQSecureTextField
 
-- initWithQLineEdit:(QLineEdit *)w
+// Can't use setCellClass: because NSSecureTextField won't let us (for no good reason).
++ (Class)cellClass
 {
-    widget = w;
-    return [super init];
+    return [KWQSecureTextFieldCell class];
 }
 
 - (NSView *)nextKeyView
 {
-    return inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
-        : [super nextKeyView];
+    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
+    return [(KWQTextField *)[self delegate] nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-   return inNextValidKeyView
-        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
-        : [super previousKeyView];
+    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
+    return [(KWQTextField *)[self delegate] previousKeyView];
 }
 
 - (NSView *)nextValidKeyView
 {
-    inNextValidKeyView = YES;
-    NSView *view = [super nextValidKeyView];
-    inNextValidKeyView = NO;
-    return view;
+    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
+    return [(KWQTextField *)[self delegate] nextValidKeyView];
 }
 
 - (NSView *)previousValidKeyView
 {
-    inNextValidKeyView = YES;
-    NSView *view = [super previousValidKeyView];
-    inNextValidKeyView = NO;
-    return view;
+    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
+    return [(KWQTextField *)[self delegate] previousValidKeyView];
 }
 
 // The currentEditor method does not work for secure text fields.
@@ -522,7 +547,7 @@
     if (sender == self && inSetFrameSize) {
         return;
     }
-    
+
     // Don't call the NSSecureTextField's selectText if the field is already first responder.
     // If we do, we'll end up deactivating and then reactivating, which will send
     // unwanted onBlur events and wreak havoc in other ways as well by setting the focus
@@ -543,16 +568,6 @@
     inSetFrameSize = NO;
 }
 
-- (BOOL)becomeFirstResponder
-{
-    KWQKHTMLPart::setDocumentFocus(widget);
-    if (![super becomeFirstResponder]) {
-        return NO;
-    }
-    [(KWQTextField *)[self delegate] didBecomeFirstResponder];
-    return YES;
-}
-
 - (void)display
 {
     // This is a workaround for Radar 2753974.
@@ -562,13 +577,32 @@
 
 - (QWidget *)widget
 {
-    return widget;
+    ASSERT([[self delegate] isKindOfClass:[KWQTextField class]]);
+    return [(KWQTextField *)[self delegate] widget];
 }
 
 - (void)fieldEditorDidMouseDown:(NSEvent *)event
 {
-    widget->sendConsumedMouseUp();
-    widget->clicked();
+    ASSERT([[self delegate] isKindOfClass:[KWQTextField class]]);
+    [[self delegate] fieldEditorDidMouseDown:event];
+}
+
+@end
+
+@implementation KWQSecureTextFieldCell
+
+- (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
+{
+    [super editWithFrame:frame inView:view editor:editor delegate:delegate event:event];
+    ASSERT([[delegate delegate] isKindOfClass:[KWQTextField class]]);
+    [(KWQTextField *)[delegate delegate] setHasFocus:YES];
+}
+
+- (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
+{
+    [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
+    ASSERT([[delegate delegate] isKindOfClass:[KWQTextField class]]);
+    [(KWQTextField *)[delegate delegate] setHasFocus:YES];
 }
 
 @end

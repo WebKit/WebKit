@@ -1,3 +1,50 @@
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3251985 -- REGRESSION: tabbing doesn't scroll text fields into view any more
+
+        * kwq/KWQTextField.h: Add a _hasFocus field, which prevents us from focusing
+        multiple times.
+        * kwq/KWQTextField.mm:
+        (+[KWQTextField initialize]): Set KWQTextFieldCell as the cell class. We need a cell
+        subclass to detect when editing begins.
+        (-[KWQTextField setPasswordMode:]): Don't pass a QLineEdit to the secure text field
+        when creating it. It's no longer needed.
+        (-[KWQTextField controlTextDidEndEditing:]): Call setHasFocus:NO, and do the actual
+        work in there.
+        (-[KWQTextField control:textShouldBeginEditing:]): Remove the work that was done in
+        here. This is only called when you actually start typing, so it's too late.
+        (-[KWQTextField becomeFirstResponder]): Keep the code to forward first responder to
+        the password field, but get rid of the rest, because this code path does not cover
+        all the ways to start editing.
+        (-[KWQTextField currentEditorForEitherField]): Moved this method inside the
+        KWQInternal category.
+        (-[KWQTextField selectedRange]): Ditto.
+        (-[KWQTextField setSelectedRange:]): Ditto.
+        (-[KWQTextField setHasFocus:]): Added. This method does all the work we want to do
+        when we get focus and when we relinquish focus, including scrolling to make the field
+        visible.
+        (-[KWQTextFieldCell editWithFrame:inView:editor:delegate:event:]):
+        Call setHasFocus:YES on the KWQTextField.
+        (-[KWQTextFieldCell selectWithFrame:inView:editor:delegate:start:length:]): Ditto.
+        (+[KWQSecureTextField cellClass]): Use KWQSecureTextFieldCell as the cell class.
+        We need a cell subclass to detect when editing begins and we can't use the normal
+        technique because NSSecureTextField will raise an exception.
+        (-[KWQSecureTextField nextKeyView]): Simplified to just call through to KWQTextField.
+        (-[KWQSecureTextField previousKeyView]): Ditto.
+        (-[KWQSecureTextField nextValidKeyView]): Ditto.
+        (-[KWQSecureTextField previousValidKeyView]): Ditto.
+        (-[KWQSecureTextField widget]): Ditto.
+        (-[KWQSecureTextField fieldEditorDidMouseDown:]): Ditto.
+        (-[KWQSecureTextFieldCell editWithFrame:inView:editor:delegate:event:]):
+        Call setHasFocus:YES on the KWQTextField.
+        (-[KWQSecureTextFieldCell selectWithFrame:inView:editor:delegate:start:length:]): Ditto.
+        
+        * kwq/KWQWidget.mm: (QWidget::setFocus): Do a layout before positioning the widget.
+        The code dealt with calls after a layout and before a draw, before, but not calls
+        before a layout.
+
 2003-05-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for a problem where positioned/floating children with
