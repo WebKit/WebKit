@@ -309,7 +309,7 @@ static const char * const stateNames[] = {
 - (void)_timedLayout: (id)userInfo
 {
     LOG(Timing, "%@:  state = %s", [self name], stateNames[_private->state]);
-    
+
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
     
@@ -323,9 +323,7 @@ static const char * const stateNames[] = {
 
         if ([documentView isKindOfClass: [NSView class]]) {
             NSView *dview = (NSView *)documentView;
-            
-            
-            NSRect frame = [dview frame];
+            NSRect frame = [dview frame];  
             
             if (frame.size.width == 0 || frame.size.height == 0){
                 // We must do the layout now, rather than depend on
@@ -336,17 +334,17 @@ static const char * const stateNames[] = {
                 // Force a layout now.  At this point we could
                 // check to see if any CSS is pending and delay
                 // the layout further to avoid the flash of unstyled
-                // content.                    
+                // content.             
                 [documentView layout];
             }
         }
-            
+          
         [documentView setNeedsDisplay: YES];
-    }
-    else {
-        if ([self controller])
-            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
-    }
+	  }
+	 else {
+	 if ([self controller])
+	  LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+	    }
 }
 
 
@@ -625,19 +623,12 @@ static const char * const stateNames[] = {
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                [thisDocumentView setNeedsLayout:YES];
-                [thisDocumentView layout];
-
-                // Unfortunately if this frame has children we have to lay them
-                // out too.  This could be an expensive operation.
-                // FIXME: If we can figure out how to avoid the layout of children,
-                // (just need for iframe placement/sizing) we could get a few percent
-                // speed improvement.
-                [ds _layoutChildren];
-
-                [thisDocumentView setNeedsDisplay:YES];
-                //[thisDocumentView display];
-
+                if (!([[self webView] isDocumentHTML])) {
+                    [thisDocumentView setNeedsLayout:YES];
+                    [thisDocumentView layout];
+                    [thisDocumentView setNeedsDisplay:YES];
+                }
+                
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.

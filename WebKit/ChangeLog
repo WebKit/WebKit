@@ -1,3 +1,14 @@
+2002-11-14  David Hyatt  <hyatt@apple.com>
+
+	Move text measurement and layout beyond onload.  This
+	shoudl speed up i-bench substantially and morrison's
+	PLT test slightly.  Note that the adjustFrames layout
+	stuff has been removed from isLoadComplete.
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _timedLayout:]):
+        (-[WebFrame _isLoadComplete]):
+
 2002-11-14  Darin Adler  <darin@apple.com>
 
         * English.lproj/Localizable.strings: Updated to include the new
