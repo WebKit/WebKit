@@ -21,12 +21,11 @@
 <script>
 
 function editingTest() {
-    moveSelectionForwardByLineCommand();
-    for (i = 0; i < 4; i++)
-        extendSelectionForwardByLineCommand();
-    for (i = 0; i < 5; i++)
-        extendSelectionBackwardByCharacterCommand();
-    deleteCommand();
+    for (i = 0; i < 8; i++)
+        moveSelectionForwardByLineCommand();
+    moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 3; i++)
+        typeCharacterCommand("x");
 }
 
 </script>
@@ -40,30 +39,57 @@ function editingTest() {
 Tests: 
 <br>
 Our ability to "edit around" content the HTML editing code does not yet handle very well.
-<br><i>For this test: </i>Select and delete a list.
+<br><i>For this test: </i>Test typing at the end of a table.
 </div>
 <br>
 <div class="expected">
 Expected Results:
 <br>
 The content in the red box must exactly match the content in the green box (except for the border color).
-<br><i>For this test: </i>Only list content should get deleted.
-Surrounding content that is not selected should (obviously) not be affected.
+<br><i>For this test: </i>Typed text should appear after (on the line below) the table.
 </div>
 </div>
 
 <div class="results">
-beforeafter
+<table border="1">
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</table>
+xxx
 </div>
 
 <div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
 <div id="test" class="editing">
-before<ul>
-<li>line one</li>
-<li>line two</li>
-<li>line three</li>
-</ul>
-after
+<table border="1">
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</table>
 </div>
 </div>
 

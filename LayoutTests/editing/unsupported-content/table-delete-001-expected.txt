@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x22
             RenderText {TEXT} at (0,50) size 99x22
               text run at (0,50) width 99: "For this test: "
-          RenderText {TEXT} at (99,50) size 168x22
-            text run at (99,50) width 168: "Select and delete a list."
+          RenderText {TEXT} at (99,50) size 181x22
+            text run at (99,50) width 181: "Select and delete a table."
         RenderBlock (anonymous) at (20,92) size 744x22
           RenderBR {BR} at (0,0) size 0x22
         RenderBlock {DIV} at (20,114) size 744x116
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x22
             RenderText {TEXT} at (0,72) size 99x22
               text run at (0,72) width 99: "For this test: "
-          RenderText {TEXT} at (99,72) size 708x44
-            text run at (99,72) width 609: "Only list content should get deleted. Surrounding content that is not selected should"
+          RenderText {TEXT} at (99,72) size 663x44
+            text run at (99,72) width 564: "Only table should get deleted. Surrounding content that is not selected should"
             text run at (0,94) width 201: "(obviously) not be affected."
       RenderBlock {DIV} at (0,260) size 784x32 [border: (2px solid #008000)]
         RenderText {TEXT} at (2,2) size 107x28
