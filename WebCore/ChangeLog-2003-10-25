@@ -1,5 +1,22 @@
 2003-10-18  David Hyatt  <hyatt@apple.com>
 
+	Fix for diveintomark className parsing bug.  class="bigblue blue" would fail to match a rule with .blue.
+	The bug was in the selector matching code for class attributes.
+
+	Also fixing a minmax width bug for blocks on the mozilla.org Web site.  XUL boxes had the same bug as
+	well.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcMinMaxWidth):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcMinMaxWidth):
+
+2003-10-18  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3443502, generated content sometimes doesn't generate.  The bug is caused by an
 	uninitialized variable.  m_isContinuation needed to be set to false in the RenderInline
 	constructor.

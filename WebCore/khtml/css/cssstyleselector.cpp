@@ -843,11 +843,20 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             
             QString str = value.string();
             QString selStr = sel->value.string();
-            int pos = str.find(selStr, 0, isXMLDoc);
-            if(pos == -1) return false;
-            if(pos && str[pos-1] != ' ') return false;
-            pos += selStr.length();
-            if(pos < (int)str.length() && str[pos] != ' ') return false;
+            int startSearchAt = 0;
+            while (true) {
+                int foundPos = str.find(selStr, startSearchAt, isXMLDoc);
+                if (foundPos == -1) return false;
+                if (foundPos == 0 || str[foundPos-1] == ' ') {
+                    uint endStr = foundPos + selStr.length();
+                    if (endStr == str.length() || str[endStr] == ' ')
+                        break; // We found a match.
+                }
+                
+                // No match.  Keep looking.
+                startSearchAt = foundPos + 1;
+            }
+
             break;
         }
         case CSSSelector::Contain:

@@ -1980,25 +1980,17 @@ void RenderBlock::calcMinMaxWidth()
         m_minWidth = m_maxWidth;
 
     if (style()->width().isFixed() && style()->width().value > 0) {
-        m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
-        if (!isTableCell())
-            m_minWidth = m_maxWidth;
+        if (isTableCell())
+            m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
+        else
+            m_minWidth = m_maxWidth = short(style()->width().value);
     }
-    // FIXME: also compare with min/max width CSS properties...
     
     int toAdd = 0;
     toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
 
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
-
-    // Scrolling marquees like to use this trick:
-    // <td><div style="overflow:hidden; width:300px"><nobr>.....[lots of text].....</nobr></div></td>
-    // We need to sanity-check our m_minWidth, and not let it exceed our clipped boundary. -dwh
-    // FIXME: For now, punt on trying to apply this fix to table cells.  We don't know an accurate
-    // width for the cell here, so we can't do a comparison.
-    if (style()->hidesOverflow() && m_minWidth > m_width && !isTableCell())
-        m_minWidth = m_width;
 
     setMinMaxKnown();
 

@@ -219,18 +219,11 @@ void RenderFlexibleBox::calcMinMaxWidth()
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
 
     if (style()->width().isFixed() && style()->width().value > 0)
-        m_minWidth = m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
-    // FIXME: also compare with min/max width CSS properties...
+        m_minWidth = m_maxWidth = short(style()->width().value);
     
     int toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
-
-    // Scrolling marquees like to use this trick:
-    // <td><div style="overflow:hidden; width:300px"><nobr>.....[lots of text].....</nobr></div></td>
-    // We need to sanity-check our m_minWidth, and not let it exceed our clipped boundary.
-    if (style()->hidesOverflow() && m_minWidth > m_width)
-        m_minWidth = m_width;
 
     setMinMaxKnown();
 }
