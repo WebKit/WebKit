@@ -1,3 +1,12 @@
+2002-10-20  Darin Adler  <darin@apple.com>
+
+	- fixed 3007961 -- Crash in DOM::HTMLImageElementImpl::parseAttribute
+
+        * khtml/rendering/render_image.cpp: (RenderImage::updateFromElement):
+	Be sure to call ref on the new image before calling deref on the old
+	image. That's because deref on the old image causes a cache flush,
+	which might cause the image to go away in certain cases.
+
 2002-10-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed possible build failure.
