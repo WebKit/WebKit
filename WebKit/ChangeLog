@@ -1,3 +1,23 @@
+2002-11-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3104183 - Assert loading www.louisvuitton.com
+
+	We need to treat plug-in streams like subresources except they don't change the loading state of the data source.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream start]): call _addPluginStream
+        (-[WebNetscapePluginStream cancel]): call _removePluginStream
+        (-[WebNetscapePluginStream handleDidFinishLoading:]): call _removePluginStream
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]): call _removePluginStream
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): release pluginStreams
+        (-[WebDataSource _addPluginStream:]): just like addSubresourceClient except don't change the loading state.
+        (-[WebDataSource _removePluginStream:]): just like removeSubresourceClient except don't change the loading state.
+        (-[WebDataSource _stopLoading]): stop plug-ins streams
+        (-[WebDataSource _makeHandleDelegates:deferCallbacks:]): 
+        (-[WebDataSource _defersCallbacksChanged]): call _makeHandleDelegates:deferCallbacks: for subresources and plug-in streams.
+
 2002-11-18  Richard Williamson   <rjw@apple.com>
 
         Check for usesBackForwardList was excluding all load types.

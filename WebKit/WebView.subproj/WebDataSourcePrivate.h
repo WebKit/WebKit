@@ -11,6 +11,7 @@
 
 @class WebIconLoader;
 @class WebMainResourceClient;
+@class WebNetscapePluginStream;
 @class WebResourceHandle;
 @class WebResourceRequest;
 @class WebResourceResponse;
@@ -37,6 +38,9 @@
     
     // Clients for other resources.
     NSMutableArray *subresourceClients;
+    
+    // Plugin streams are like subresources except that they don't affect the loading state of the datasource.
+    NSMutableArray *pluginStreams;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
@@ -100,6 +104,8 @@
 - (void)_recursiveStopLoading;
 - (void)_addSubresourceClient:(WebSubresourceClient *)client;
 - (void)_removeSubresourceClient:(WebSubresourceClient *)client;
+- (void)_addPluginStream:(WebNetscapePluginStream *)stream;
+- (void)_removePluginStream:(WebNetscapePluginStream *)stream;
 - (void)_setPrimaryLoadComplete:(BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;

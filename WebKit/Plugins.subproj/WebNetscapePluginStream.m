@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginStream.h>
@@ -46,7 +47,9 @@
 - (void)start
 {
     ASSERT(_startingRequest);
-    [self loadWithRequest:_startingRequest];
+    if([self loadWithRequest:_startingRequest]){
+        [[view dataSource] _addPluginStream:self];
+    }
     [_startingRequest release];
     _startingRequest = nil;
 }
@@ -60,6 +63,7 @@
 
 - (void)cancel
 {
+    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
 
@@ -95,6 +99,7 @@
     [controller _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
 
+    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
     
@@ -109,6 +114,7 @@
 
     [self receivedError:NPRES_NETWORK_ERR];
 
+    [[view dataSource] _removePluginStream:self];
     [view release];
     view = nil;
     
