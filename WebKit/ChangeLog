@@ -1,3 +1,17 @@
+2003-05-01  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3246045 -- History items without a valid date in 
+	History.plist show up with unexpected dates in UI
+
+        Reviewed by Darin.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+	don't set lastVisitedTimeInterval to [nil doubleValue],
+	since this is random
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2003-05-01  Richard Williamson   <rjw@apple.com>
 
         Added missing header and alphabetized.

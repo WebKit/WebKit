@@ -519,7 +519,12 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
 
     [self setAlternateTitle:[dict _web_stringForKey:WebDisplayTitleKey]];
 
-    _private->lastVisitedTimeInterval = [[dict _web_stringForKey:WebLastVisitedTimeIntervalKey] doubleValue];
+    // Do an existence check to avoid calling doubleValue on a nil string. Leave
+    // time interval at 0 if there's no value in dict.
+    NSString *timeIntervalString = [dict _web_stringForKey:WebLastVisitedTimeIntervalKey];
+    if (timeIntervalString != nil) {
+        _private->lastVisitedTimeInterval = [timeIntervalString doubleValue];
+    }
     _private->visitCount = [dict _web_intForKey:WebVisitCountKey];
 
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];
