@@ -106,7 +106,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     linkURL = [element objectForKey:WebElementLinkURLKey];
 
     if (linkURL) {
-        if([NSURLConnection canInitWithRequest:[NSURLRequest requestWithURL:linkURL]]){
+        if([NSURLConnection canHandleRequest:[NSURLRequest requestWithURL:linkURL]]){
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];

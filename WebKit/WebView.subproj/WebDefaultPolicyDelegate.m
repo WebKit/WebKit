@@ -62,7 +62,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 				inFrame:(WebFrame *)frame
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
-    if ([NSURLConnection canInitWithRequest:request]) {
+    if ([NSURLConnection canHandleRequest:request]) {
 	[listener use];
     } else {
 	// A file URL shouldn't fall through to here, but if it did,

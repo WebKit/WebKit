@@ -21,7 +21,7 @@
 {
     [super init];
 
-    if(!theRequest || !thePluginPointer || ![NSURLConnection canInitWithRequest:theRequest]){
+    if(!theRequest || !thePluginPointer || ![NSURLConnection canHandleRequest:theRequest]){
         return nil;
     }
 

@@ -1,5 +1,27 @@
 2003-03-28  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Trey
+
+        NSURLConnection class method changed name:
+            canInitWithRequest: -> canHandleRequest:
+
+        Moved to API-approved model for synchronous loads.
+        Removed fixme I put in yesterday having to do with
+	reposting form data. The feature is fully functional
+	again.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+
+2003-03-28  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Cosmetic change. Instances of 'resource' as a local variable

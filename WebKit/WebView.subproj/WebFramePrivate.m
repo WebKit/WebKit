@@ -35,8 +35,6 @@
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
 
-#import <WebFoundation/WebSynchronousResult.h>
-
 #import <objc/objc-runtime.h>
 
 #ifndef NDEBUG
@@ -1104,9 +1102,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // have the item vanish when we try to use it in the ensuing nav.  This should be
                 // extremely rare, but in that case the user will get an error on the navigation.
                 [request setCachePolicy:NSURLRequestReturnCacheDataDontLoad];
-                /* WebFoundation API FIXME: fix when new synchronous code is implemented */
-                //WebSynchronousResult *result = [WebResource sendSynchronousRequest:request];
-                if (NO) { 
+                NSURLResponse *synchResponse = nil;
+                [NSURLConnection sendSynchronousRequest:request returningResponse:&synchResponse];
+                if (synchResponse == nil) { 
                     // Not in WF cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
                     action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
@@ -1430,7 +1428,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
-        if (![NSURLConnection canInitWithRequest:request]) {
+        if (![NSURLConnection canHandleRequest:request]) {
             [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
             shouldContinue = YES;
