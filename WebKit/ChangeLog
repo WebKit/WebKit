@@ -1,3 +1,10 @@
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+        
+        Only disable timed expiration of CG glyph cache if SPI is available.
+        (per Bertrand's request)
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
 2002-09-05  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff: New generic icon from Steve Lemay.

@@ -2,6 +2,8 @@
     WebTextRendererFactory.m
     Copyright 2002, Apple, Inc. All rights reserved.
 */
+#import <mach-o/dyld.h>                // for NSSymbol, NSAddressOfSymbolWithHint(), NSLookupAndBindSymbolWithHint()
+
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebKitDebug.h>
@@ -126,11 +128,20 @@
 
         // Turn off auto expiration of glyphs in CG's cache
         // and increase the cache size.
-        CGFontCache *fontCache;
-        fontCache = CGFontCacheCreate();
-        CGFontCacheSetMaxSize (fontCache, 1024*1024);
-        CGFontCacheSetShouldAutoExpire (fontCache, false);
-        CGFontCacheRelease(fontCache);
+        NSSymbol symbol;
+        void (*functionPtr)(CGFontCache *,bool) = NULL;
+        
+        symbol = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
+        if (symbol != NULL) {
+            NSLog (@"Disabling glyph auto expiration in CG\n");
+            functionPtr = NSAddressOfSymbol(symbol);
+    
+            CGFontCache *fontCache;
+            fontCache = CGFontCacheCreate();
+            CGFontCacheSetMaxSize (fontCache, 1024*1024);
+            functionPtr (fontCache, false);
+            CGFontCacheRelease(fontCache);
+        }
     }
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
