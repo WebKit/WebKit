@@ -266,20 +266,15 @@ RenderFlow::lowestPosition(bool includeOverflowInterior) const
     int bottom = RenderBox::lowestPosition(includeOverflowInterior);
     if (!includeOverflowInterior && style()->hidesOverflow())
         return bottom;
-    
-    // FIXME: It's not OK to look only at the last non-floating
-    // non-positioned child (e.g., negative margins, or a child that itself has
-    // overflow that goes beyond the last child).  We want to switch over to using overflow,
-    // but we tried it and it didn't work, so there must be some issues with overflow that
-    // still need to be worked out.    
-    bool checkOverhangsOnly = !isRenderBlock() && overhangingContents();
-    if (isRenderBlock() || checkOverhangsOnly) {
-        for (RenderObject *c = lastChild(); c; c = c->previousSibling()) {
-            if (!c->isFloatingOrPositioned() && (!checkOverhangsOnly || c->overhangingContents())) {
-                int lp = c->yPos() + c->lowestPosition(false);
-                bottom = QMAX(bottom, lp);
-                break;
-            }
+
+    // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+    // For now, we have to descend into all the children, since we may have a huge abs div inside
+    // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+    // the abs div.
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+        if (!c->isFloatingOrPositioned()) {
+            int lp = c->yPos() + c->lowestPosition(false);
+            bottom = QMAX(bottom, lp);
         }
     }
     
@@ -291,10 +286,11 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior) const
     int right = RenderBox::rightmostPosition(includeOverflowInterior);
     if (!includeOverflowInterior && style()->hidesOverflow())
         return right;
-    
-    // FIXME: We want to switch over to using overflow,
-    // but we tried it and it didn't work, so there must be some issues with overflow that
-    // still need to be worked out.
+
+    // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+    // For now, we have to descend into all the children, since we may have a huge abs div inside
+    // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+    // the abs div.
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
         if (!c->isFloatingOrPositioned()) {
             int rp = c->xPos() + c->rightmostPosition(false);
