@@ -33,7 +33,7 @@
 
 @end
 
-@implementation IFWebView  (IFPrivate)
+@implementation IFWebView (IFPrivate)
 
 - (void)_resetWidget
 {
@@ -43,21 +43,24 @@
 
 - (void)_stopPlugins 
 {
-    NSArray *views = [self subviews];
-    int count = [views count];
+    NSArray *subviews = [[self subviews] copy];
+    int count = [subviews count];
     while (count--) {
-        id view = [views objectAtIndex: count];
-        if ([view isKindOfClass: NSClassFromString (@"IFPluginView")]) {
+        id view = [subviews objectAtIndex:count];
+        if ([view isKindOfClass:[IFPluginView class]]) {
             IFPluginView *pluginView = (IFPluginView *)view;
             [pluginView stop];
         }
     }
+    [subviews release];
 }
 
 - (void)_removeSubviews
 {
     // Remove all the views.  They will be be re-added if this is a re-layout. 
-    [[self subviews] makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
+    NSArray *subviews = [[self subviews] copy];
+    [subviews makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
+    [subviews release];
 }
 
 - (void)_setController: (id <IFWebController>)controller
