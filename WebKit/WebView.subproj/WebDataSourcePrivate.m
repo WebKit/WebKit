@@ -104,7 +104,7 @@
 
 - (void)_setLoading:(BOOL)loading
 {
-    ASSERT_ARG("loading", loading == NO || loading == YES);
+    ASSERT_ARG(loading, loading == NO || loading == YES);
     
     if (_private->loading == loading)
         return;

@@ -1,3 +1,8 @@
+2002-09-30  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setLoading:]):
+	Remove extra quotes in use of ASSERT_ARG.
+
 2002-09-29  Darin Adler  <darin@apple.com>
 
         * Misc.subproj/WebIconDatabase.m: (-[WebIconDatabase _iconForFileURL:withSize:]):
