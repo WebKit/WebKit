@@ -1092,13 +1092,17 @@ void InputNewlineCommandImpl::doApply()
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
-        appendNode(pos.node()->containingEditableBlock(), breakNode);
-        // EDIT FIXME: This should not insert a non-breaking space after the BR.
-        // But for right now, it gets the BR to render.
-        TextImpl *editingTextNode = document()->createEditingTextNode(nonBreakingSpaceString());
-        insertNodeAfter(editingTextNode, breakNode);
-        setEndingSelection(Position(editingTextNode, 1));
-        editingTextNode->deref();
+        NodeImpl *cb = pos.node()->containingEditableBlock();
+        appendNode(cb, breakNode);
+        
+        // Insert an "extra" BR at the end of the block. This makes the "real" BR we want
+        // to insert appear in the rendering without any significant side effects (and no
+        // real worries either since you can't arrow past this extra one.
+        exceptionCode = 0;
+        ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        appendNode(cb, extraBreakNode);
+        setEndingSelection(Position(extraBreakNode, 0));
     }
     else if (atEnd) {
         LOG(Editing, "input newline case 2");

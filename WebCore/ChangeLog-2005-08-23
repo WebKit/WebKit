@@ -1,3 +1,14 @@
+2004-05-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+		Nifty hack to work around problem where BR's inserted at the end of a block do not 
+		render. Since only the *last* BR has this quirk, insert two when at the end of a block.
+		Once done, you can't caret past the last one, so you never insert two again.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (InputNewlineCommandImpl::doApply)
+
 2004-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken
