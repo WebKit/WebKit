@@ -7,36 +7,50 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebDownload;
 @class WebDownloadPrivate;
 @class WebError;
 @class WebRequest;
 @class WebResponse;
 
+@protocol WebDownloadDecisionListener;
+
 /*!
-    @protocol WebDownloadDecisionListener
-    @discussion An object that conforms to the WebDownloadDecisionListener protocol is passed
-    with the download:decidePathWithListener: method of the WebDownloadDelegate protocol. There is
-    no need to directly create an object that conforms to this protocol.
+    @class WebDownload
+    @discussion A WebDownload loads a request and saves the resource to a file. The progress of the download
+    is reported via the WebDownloadDelegate protocol. Note: The word "download" is used to refer to the process
+    of loading data off a network, decoding the data if necessary and saving the data to a file.
 */
-@protocol WebDownloadDecisionListener <NSObject>
+@interface WebDownload : NSObject
+{
+    @private
+    WebDownloadPrivate *_private;
+}
+
 /*!
-    @method setPath:
-    @abstract This method should be called when the path of the downloaded file has been decided.
-    @param path The path of the downloaded file.
-    @discussion If necessary, to avoid overwriting files, "-n" will be appended to the filename before the
-    extension where "n" is a number. Because of this, use the path passed with download:didCreateFileAtPath:
-    on WebDownload when referring to the path of the downloaded file, not the path set with this method.
+    @method initWithRequest:
+    @abstract Initializes a WebDownload object.
+    @param request The request to download. Must not be nil.
 */
--(void)setPath:(NSString *)path;
+- initWithRequest:(WebRequest *)request;
+
+/*!
+    @method loadWithDelegate:
+    @abstract Starts the download.
+    @param delegate The delegate of the download. Must not be nil.
+*/
+- (void)loadWithDelegate:(id)delegate;
+
+/*!
+    @method cancel
+    @abstract Cancels the download and deletes the downloaded file.
+*/
+- (void)cancel;
 
 @end
 
 /*!
     @protocol WebDownloadDelegate
-    @discussion The delegate of a WebDownload can conform to the WebDownloadDelegate protocol.
-    The delegate is primarily used to report the progress of the download. Note: The word "download" is used to
-    refer to the process of loading data off a network, decoding the data if necessary and saving the data to a file.
+    @discussion The WebDownloadDelegate delegate is primarily used to report the progress of the download.
 */
 @interface NSObject (WebDownloadDelegate)
 
@@ -57,15 +71,16 @@
     that will be used to continue loading the request, and modify it if necessary.
     @param download The download that will send the request.
     @param request The request that will be used to continue loading.
-    @result The request to be used; either the request parameter or a replacement.
+    @result The request to be used; either the request parameter or a replacement. If nil is returned,
+    the download is cancelled.
 */
 - (WebRequest *)download:(WebDownload *)download willSendRequest:(WebRequest *)request;
 
 /*!
     @method download:didReceiveResponse:
-    @abstract This method is called when the download has received enough information to contruct a WebResponse.
+    @abstract This method is called when the download has received a response from the server.
     @param download The download that now has a WebResponse available for inspection.
-    @param response The WebResourceResponse object for the given download.
+    @param response The WebResponse object for the given download.
 */
 - (void)download:(WebDownload *)download didReceiveResponse:(WebResponse *)response;
 
@@ -133,35 +148,20 @@
 @end
 
 /*!
-    @class WebDownload
-    @discussion A WebDownload loads a request and saves the resource to a file. The progress of the download
-    is reported via the WebDownloadDelegate protocol. Note: The word "download" is used to refer to the process
-    of loading data off a network, decoding the data if necessary and saving the data to a file.
+    @protocol WebDownloadDecisionListener
+    @discussion An object that conforms to the WebDownloadDecisionListener protocol is passed
+    with the download:decidePathWithListener:suggestedFilename: method of the WebDownloadDelegate protocol.
+    There is no need to directly create an object that conforms to this protocol.
 */
-@interface WebDownload : NSObject
-{
-@private
-    WebDownloadPrivate *_private;
-}
-
+@protocol WebDownloadDecisionListener <NSObject>
 /*!
-    @method initWithRequest:
-    @abstract Initializes a WebDownload object.
-    @param request The request to download. Must not be nil.
+    @method setPath:
+    @abstract This method should be called when the path of the downloaded file has been decided.
+    @param path The path of the downloaded file.
+    @discussion If necessary, to avoid overwriting files, "-n" (where "n" is a number) will be appended to the
+    filename before the extension. Because of this, use the path passed with download:didCreateFileAtPath:
+    when referring to the path of the downloaded file, not the path set with this method.
 */
-- initWithRequest:(WebRequest *)request;
-
-/*!
-    @method loadWithDelegate:
-    @abstract Starts the download.
-    @param delegate The delegate of the download. Must not be nil.
-*/
-- (void)loadWithDelegate:(id)delegate;
-
-/*!
-    @method cancel
-    @abstract Cancels the download and deletes the downloaded file.
-*/
-- (void)cancel;
+-(void)setPath:(NSString *)path;
 
 @end

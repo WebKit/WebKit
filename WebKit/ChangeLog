@@ -1,3 +1,9 @@
+2003-03-07  Chris Blumenberg  <cblu@apple.com>
+
+	Updated header doc comments.
+
+        * Downloads.subproj/WebDownload.h:
+
 2003-03-07  Richard Williamson   <rjw@apple.com>
 
         Drop mainDocumentError from WebDataSource.
