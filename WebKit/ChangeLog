@@ -1,3 +1,29 @@
+2004-04-14  John Sullivan  <sullivan@apple.com>
+
+        - changed stealth mode preference name from "historyIsFrozen"
+        to "privateBrowsingEnabled"
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        updated for method name change
+        
+        * WebView.subproj/WebPreferences.m:
+        changed preference key name
+        (+[WebPreferences initialize]):
+        updated for preference key name change
+        (-[WebPreferences setPrivateBrowsingEnabled:]):
+        changed name from setHistoryIsFrozen:
+        (-[WebPreferences privateBrowsingEnabled]):
+        changed name from historyIsFrozen:
+        
+        * WebView.subproj/WebPreferencesPrivate.h:
+        changed declared method names
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for this and other recent changes
+
 2004-04-13  Chris Blumenberg  <cblu@apple.com>
 
 	- Added WebElementDOMNodeKey as a potential API so that clients can get the node from an element dictionary.

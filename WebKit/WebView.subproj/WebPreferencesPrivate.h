@@ -22,8 +22,8 @@
 
 + (void)_setIBCreatorID:(NSString *)string;
 
-- (void)setHistoryIsFrozen:(BOOL)newValue;
-- (BOOL)historyIsFrozen;
+- (void)setPrivateBrowsingEnabled:(BOOL)newValue;
+- (BOOL)privateBrowsingEnabled;
 
 - (void)setTabsToLinks:(BOOL)flag;
 - (BOOL)tabsToLinks;

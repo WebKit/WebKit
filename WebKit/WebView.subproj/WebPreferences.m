@@ -46,7 +46,7 @@
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
-#define WebKitHistoryIsFrozenPreferenceKey @"WebKitHistoryIsFrozen"
+#define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -235,7 +235,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
         @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
         [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitHistoryIsFrozenPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -610,14 +610,14 @@ NS_ENDHANDLER
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTabToLinksPreferenceKey];
 }
 
-- (void)setHistoryIsFrozen:(BOOL)flag
+- (void)setPrivateBrowsingEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitHistoryIsFrozenPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitPrivateBrowsingEnabledPreferenceKey];
 }
 
-- (BOOL)historyIsFrozen
+- (BOOL)privateBrowsingEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitHistoryIsFrozenPreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;
