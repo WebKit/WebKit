@@ -1018,7 +1018,7 @@ bool HTMLButtonElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
 // -------------------------------------------------------------------------
 
 HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+   : HTMLGenericFormElementImpl(doc, f)
 {
 }
 
@@ -1038,11 +1038,13 @@ DOMString HTMLFieldSetElementImpl::type() const
 
 void HTMLFieldSetElementImpl::attach()
 {
-    // Fieldsets need to at least get a render object so that the
-    // children will be rendered. Eventually we need to create a
-    // custom object that can draw the label within the grooved
-    // border. -dwh
-    return HTMLElementImpl::attach();
+    createRendererIfNeeded();
+    HTMLGenericFormElementImpl::attach();
+}
+
+RenderObject* HTMLFieldSetElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    return new (arena) RenderFieldset(this);
 }
 
 // -------------------------------------------------------------------------
@@ -1712,7 +1714,7 @@ ElementImpl *HTMLLabelElementImpl::formElement()
 // -------------------------------------------------------------------------
 
 HTMLLegendElementImpl::HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+: HTMLGenericFormElementImpl(doc, f)
 {
 }
 
@@ -1723,6 +1725,17 @@ HTMLLegendElementImpl::~HTMLLegendElementImpl()
 NodeImpl::Id HTMLLegendElementImpl::id() const
 {
     return ID_LEGEND;
+}
+
+void HTMLLegendElementImpl::attach()
+{
+    createRendererIfNeeded();
+    HTMLGenericFormElementImpl::attach();
+}
+
+RenderObject* HTMLLegendElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    return new (arena) RenderLegend(this);
 }
 
 DOMString HTMLLegendElementImpl::type() const

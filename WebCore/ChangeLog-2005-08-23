@@ -1,3 +1,72 @@
+2003-05-20  David Hyatt  <hyatt@apple.com>
+
+        An implementation of fieldset and legend.  This is based off
+	some KHTML trunk code, but only loosely.  I had to rewrite
+	most of it in order to make fieldsets work properly with
+	padding and in order to match the fieldset style of other
+	browsers more closely.
+
+	This code also fixes HTML4 buttons so that they don't fill the
+	width of containing blocks.  This has been a long-standing
+	bug.  Since legends behave the same way as buttons and floats,
+	I made a new helper function, sizesToMaxWidth(), to denote an
+	element that just uses its max intrinsic width when sizing
+	instead of filling a containing block.
+
+        This patch also fixes z-index so it properly only applies to the 
+	root and to positioned/relpositioned elements.  
+        
+        Reviewed by darin
+
+        * ChangeLog:
+        * ForwardingHeaders/rendering/render_block.h: Added.
+        * khtml/css/html4.css:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFieldSetElementImpl::HTMLFieldSetElementImpl):
+        (HTMLFieldSetElementImpl::attach):
+        (HTMLFieldSetElementImpl::createRenderer):
+        (HTMLLegendElementImpl::HTMLLegendElementImpl):
+        (HTMLLegendElementImpl::id):
+        (HTMLLegendElementImpl::attach):
+        (HTMLLegendElementImpl::createRenderer):
+        * khtml/html/html_formimpl.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::calcWidthUsing):
+        * khtml/rendering/render_canvas.cpp:
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::RenderFieldset):
+        (RenderFieldset::layoutLegend):
+        (RenderFieldset::findLegend):
+        (RenderFieldset::paintBoxDecorations):
+        (RenderFieldset::paintBorderMinusLegend):
+        (RenderLegend::RenderLegend):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::sizesToMaxWidth):
+        * khtml/rendering/render_object.h:
+
+2003-05-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3262890, logical font sizes (e.g., large) cannot be applied
+	to monospace tags like <pre> and <tt>.  The fix adds a notion of
+	the current logicalSize in effect for a given FontDef so that
+	shifts in family as you go down the style tree result in an
+	auto-correction of the size.
+
+	Note that with the addition of this cached logicalSize property,
+	it will be possible to eliminate the two separate logical size
+	tables and implement the monospace table as a "zoom factor" applied
+	to the normal table (an idea long ago suggested by darin).
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/font.h:
+
 === Safari-80 ===
 
 2003-05-19  Maciej Stachowiak  <mjs@apple.com>

@@ -353,6 +353,10 @@ public:
     virtual void close() { }
 
     virtual int availableHeight() const { return 0; }
+
+    // Whether or not the element shrinks to its max width (rather than filling the width
+    // of a containing block).  HTML4 buttons, legends, and floating/compact elements do this.
+    bool sizesToMaxWidth() const;
     
     // does a query on the rendertree and finds the innernode
     // and overURL for the given position

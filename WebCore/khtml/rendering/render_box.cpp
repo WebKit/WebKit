@@ -108,6 +108,18 @@ void RenderBox::setStyle(RenderStyle *_style)
         m_layer->removeOnlyThisLayer();
         m_layer = 0;
     }
+
+    if (m_layer) {
+        // Make sure our z-index values are only applied if we're positioned or
+        // relpositioned.
+        if (!isPositioned() && !isRelPositioned()) {
+            // Set the auto z-index flag.
+            if (isRoot())
+                style()->setZIndex(0);
+            else
+                style()->setHasAutoZIndex();
+        }
+    }
 }
 
 RenderBox::~RenderBox()
@@ -710,7 +722,7 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthTyp
         int marginRight = style()->marginRight().minWidth(cw);
         if (cw) width = cw - marginLeft - marginRight;
         
-        if (isFloating() || isCompact()) {
+        if (sizesToMaxWidth()) {
             if (width < m_minWidth) 
                 width = m_minWidth;
             if (width > m_maxWidth) 

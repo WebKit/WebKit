@@ -575,8 +575,130 @@ void RenderLineEdit::select()
 // ---------------------------------------------------------------------------
 
 RenderFieldset::RenderFieldset(HTMLGenericFormElementImpl *element)
-    : RenderFormElement(element)
+: RenderBlock(element)
 {
+}
+
+RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
+{
+    RenderObject* legend = findLegend();
+    if (legend) {
+        if (relayoutChildren)
+            legend->setNeedsLayout(true);
+        legend->layoutIfNeeded();
+
+        int xPos = borderLeft() + paddingLeft() + legend->marginLeft();
+        if (style()->direction() == RTL)
+            xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
+        int b = borderTop();
+        int h = legend->height();
+        legend->setPos(xPos, QMAX((b-h)/2, 0));
+        m_height = QMAX(b,h) + paddingTop();
+    }
+    return legend;
+}
+
+RenderObject* RenderFieldset::findLegend()
+{
+    for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
+      if (!legend->isFloatingOrPositioned() && legend->element() &&
+          legend->element()->id() == ID_LEGEND)
+        return legend;
+    }
+    return 0;
+}
+
+void RenderFieldset::paintBoxDecorations(QPainter *p,int _x, int _y,
+                                         int _w, int _h, int _tx, int _ty)
+{
+    //kdDebug( 6040 ) << renderName() << "::paintDecorations()" << endl;
+
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+    RenderObject* legend = findLegend();
+    if (!legend)
+        return RenderBlock::paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
+
+    int yOff = (legend->yPos() > 0) ? 0 : (legend->height()-borderTop())/2;
+    h -= yOff;
+    _ty += yOff - borderTopExtra();
+
+    int my = QMAX(_ty,_y);
+    int end = QMIN( _y + _h,  _ty + h );
+    int mh = end - my;
+
+    paintBackground(p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
+
+    if (style()->hasBorder())
+        paintBorderMinusLegend(p, _tx, _ty, w, h, style(), legend->xPos(), legend->width());
+}
+
+void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w, int h,
+                                            const RenderStyle* style, int lx, int lw)
+{
+
+    const QColor& tc = style->borderTopColor();
+    const QColor& bc = style->borderBottomColor();
+
+    EBorderStyle ts = style->borderTopStyle();
+    EBorderStyle bs = style->borderBottomStyle();
+    EBorderStyle ls = style->borderLeftStyle();
+    EBorderStyle rs = style->borderRightStyle();
+
+    bool render_t = ts > BHIDDEN;
+    bool render_l = ls > BHIDDEN;
+    bool render_r = rs > BHIDDEN;
+    bool render_b = bs > BHIDDEN;
+
+    if(render_t) {
+        drawBorder(p, _tx, _ty, _tx + lx, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0), 0);
+        drawBorder(p, _tx+lx+lw, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   0, (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+    }
+
+    if(render_b)
+        drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
+                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0),
+                   (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+
+    if(render_l)
+    {
+        const QColor& lc = style->borderLeftColor();
+
+        bool ignore_top =
+            (tc == lc) &&
+            (ls <= OUTSET) &&
+            (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+
+        bool ignore_bottom =
+            (bc == lc) &&
+            (ls <= OUTSET) &&
+            (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+
+        drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
+                   ignore_top?0:style->borderTopWidth(),
+                   ignore_bottom?0:style->borderBottomWidth());
+    }
+
+    if(render_r)
+    {
+        const QColor& rc = style->borderRightColor();
+
+        bool ignore_top =
+            (tc == rc) &&
+            (rs <= SOLID || rs == INSET) &&
+            (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+
+        bool ignore_bottom =
+            (bc == rc) &&
+            (rs <= SOLID || rs == INSET) &&
+            (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+
+        drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,
+                   ignore_top?0:style->borderTopWidth(),
+                   ignore_bottom?0:style->borderBottomWidth());
+    }
 }
 
 // -------------------------------------------------------------------------
@@ -705,7 +827,7 @@ RenderLabel::RenderLabel(HTMLGenericFormElementImpl *element)
 // -------------------------------------------------------------------------
 
 RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
-    : RenderFormElement(element)
+: RenderBlock(element)
 {
 }
 

@@ -47,6 +47,7 @@ public:
 #if APPLE_CHANGES
           , usePrinterFont( false )
 #endif
+          , logicalSize(3)
           {}
     
     bool operator == ( const FontDef &other ) const {
@@ -59,6 +60,7 @@ public:
 #if APPLE_CHANGES
                  && usePrinterFont == other.usePrinterFont
 #endif
+                 && logicalSize == other.logicalSize
                  );
     }
 
@@ -72,14 +74,17 @@ public:
     short int size;
     bool italic 		: 1;
     bool smallCaps 		: 1;
-    bool sizeSpecified		: 1;  // Whether or not CSS specified the size or if we're using the
-                                      // default font size that the user specified via preferences.
+    bool sizeSpecified		: 1;  // Whether or not CSS specified an explicit size
+                                      // (logical sizes like "medium" don't count).
     unsigned int weight 	: 8;
     unsigned int genericFamily	: 3;
     mutable bool hasNbsp	: 1;
 #if APPLE_CHANGES
     bool usePrinterFont		: 1;
 #endif
+    short logicalSize;   	       // If a logical size is in effect, then we need to
+                                       // cache this value for family changes (e.g., medium
+                                       // monospace may be different than medium serif).
 };
 
 

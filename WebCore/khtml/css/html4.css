@@ -7,11 +7,6 @@
  * what you are doing.
  */
 
-/* The root element establishes its own stacking context. */
-:root {
-    z-index: 0
-}
-
 html {
 	display: block;
 } 
@@ -318,10 +313,20 @@ FORM {
     margin: 0__qem 0 1em 0;
 }
 
+LEGEND {
+    display: block;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: none;
+}
+
 FIELDSET {
-	display: block;
-	margin: 1.0em auto;
-} 
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding: 0.75em 0.625em;
+    border: 2px groove ThreeDFace;
+}
 
 BUTTON {
         display: block;
