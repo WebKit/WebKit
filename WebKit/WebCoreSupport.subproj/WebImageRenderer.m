@@ -98,6 +98,7 @@ static NSMutableArray *activeImageRenderers;
         MIMEType = [MIME copy];
     }
     isNull = YES;
+    loadStatus = NSImageRepLoadStatusUnknownType;
     return self;
 }
 
@@ -115,6 +116,7 @@ static NSMutableArray *activeImageRenderers;
         else
             isNull = YES;
     }
+    loadStatus = NSImageRepLoadStatusUnknownType;
     return self;
 }
 
@@ -125,6 +127,7 @@ static NSMutableArray *activeImageRenderers;
     self = [super initWithContentsOfFile:imagePath];
     if (self)
         isNull = NO;
+    loadStatus = NSImageRepLoadStatusUnknownType;
     return self;
 }
 
