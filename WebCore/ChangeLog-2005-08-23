@@ -1,3 +1,18 @@
+2005-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Vicki.
+
+	Fixed <rdar://problem/4062336> REGRESSION (406-407): HTML submenus not working at hrweb.apple.com after going back
+
+	Rolled out the fix for <rdar://problem/4041374> REGRESSION (185-186): unload handlers (at least those added with addEventListener) are broken
+
+	We clearly need a better solution to 4041374. We can't indiscriminately remove event listeners in closeURL() after-all. Since event listeners are registered in a <script> tag, which is evaluated and executed at page load time, this becomes a problem since we don't reevaluate a page's <script> that is in the back/forward cache.  Thus once you leave the page, the listeners are gone for good.  This is the problem.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::detach): 
+
 === Safari-410 ===
 
 2005-03-22  Vicki Murley  <vicki@apple.com>
