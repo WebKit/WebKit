@@ -605,11 +605,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     [self _setupRootForPrinting:YES];
-    if (_drawSelectionOnly) {
-        _part->paintSelectionOnly(p, QRect(rect));
-    } else {
-        _part->paint(p, QRect(rect));
-    }
+    _part->paint(p, QRect(rect));
     [self _setupRootForPrinting:NO];
 }
 
@@ -1147,44 +1143,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSRect)visibleSelectionRect
 {
-    KHTMLView *view = _part->view();
-    if (!view) {
-        return NSZeroRect;
-    }
-    NSView *documentView = view->getDocumentView();
-    if (!documentView) {
-        return NSZeroRect;
-    }
-    return NSIntersectionRect(_part->selectionRect(), [documentView visibleRect]); 
+    return _part->visibleSelectionRect(); 
 }
 
 - (NSImage *)selectionImage
 {
-    NSView *view = _part->view()->getDocumentView();
-    if (!view) {
-        return nil;
-    }
-
-    NSRect rect = [self visibleSelectionRect];
-    NSRect bounds = [view bounds];
-    NSImage *selectionImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
-    [selectionImage setFlipped:YES];
-    [selectionImage lockFocus];
-
-    [NSGraphicsContext saveGraphicsState];
-    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort],
-                          -(NSMinX(rect) - NSMinX(bounds)), -(NSMinY(rect) - NSMinY(bounds)));
-
-    _drawSelectionOnly = YES;
-    [view drawRect:rect];
-    _drawSelectionOnly = NO;
-
-    [NSGraphicsContext restoreGraphicsState];
-        
-    [selectionImage unlockFocus];
-    [selectionImage setFlipped:NO];
-
-    return selectionImage;
+    return _part->selectionImage();
 }
 
 - (void)setName:(NSString *)name
@@ -1600,7 +1564,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             clipboard->ref();
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
-            
+
             if (v->updateDragAndDrop(QPoint([info draggingLocation]), clipboard)) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(&op)) {
@@ -1621,7 +1585,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                     op = NSDragOperationNone;
                 }
             }
-            
+
             clipboard->deref();
             v->deref();
             return op;

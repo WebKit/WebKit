@@ -309,6 +309,9 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
 
 void RenderFlow::paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty)
 {
+    if (!shouldPaintWithinRoot(i))
+        return;
+
     if (!firstLineBox())
         return;
  
@@ -336,6 +339,9 @@ void RenderFlow::paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty)
 
 void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty, bool paintedChildren)
 {
+    if (!shouldPaintWithinRoot(i))
+        return;
+
     // We only paint line box decorations in strict or almost strict mode.
     // Otherwise we let the InlineTextBoxes paint their own decorations.
     if (style()->htmlHacks() || !firstLineBox())

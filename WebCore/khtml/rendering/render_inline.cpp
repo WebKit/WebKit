@@ -267,7 +267,7 @@ void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
         return;
     
     // We don't paint our own background, but we do let the kids paint their backgrounds.
-    PaintInfo paintInfo(i.p, i.r, i.phase);
+    PaintInfo paintInfo(i.p, i.r, i.phase, paintingRootForChildren(i));
     if (i.phase == PaintActionChildBackgrounds)
         paintInfo.phase = PaintActionChildBackground;
 

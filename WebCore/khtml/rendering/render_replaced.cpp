@@ -59,6 +59,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
 {
     if (i.phase != PaintActionForeground && i.phase != PaintActionOutline && i.phase != PaintActionSelection)
         return false;
+
+    if (!shouldPaintWithinRoot(i))
+        return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
     if (style()->visibility() != VISIBLE || m_y <=  -500000)  return false;

@@ -280,6 +280,9 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& i, int _tx, int _ty)
 
 void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
+    if (!shouldPaintWithinRoot(i))
+        return;
+
     //kdDebug( 6040 ) << renderName() << "::paintDecorations()" << endl;
     if (isRoot())
         return paintRootBoxDecorations(i, _tx, _ty);

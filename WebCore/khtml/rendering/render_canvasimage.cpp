@@ -159,6 +159,9 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     if (i.phase != PaintActionForeground && i.phase != PaintActionSelection)
         return;
 
+    if (!shouldPaintWithinRoot(i))
+        return;
+
     bool drawSelectionTint = selectionState() != SelectionNone;
     if (i.phase == PaintActionSelection) {
         if (selectionState() == SelectionNone) {

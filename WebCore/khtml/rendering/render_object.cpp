@@ -158,6 +158,14 @@ RenderObject::~RenderObject()
 {
 }
 
+bool RenderObject::hasAncestor(const RenderObject *obj) const
+{
+    for (const RenderObject *r = this; r; r = r->m_parent)
+        if (r == obj)
+            return true;
+    return false;
+}
+
 bool RenderObject::isRoot() const
 {
     return element() && element()->renderer() == this &&
@@ -1061,6 +1069,40 @@ void RenderObject::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
         rects.append(QRect(_tx, _ty, width(), height()));
 }
 
+QRect RenderObject::absoluteBoundingBoxRect()
+{
+    int x, y;
+    absolutePosition(x, y);
+    QValueList<QRect> rects;
+    absoluteRects(rects, x, y);
+    
+    QValueList<QRect>::ConstIterator it = rects.begin();
+    QRect result = *it;
+    while (++it != rects.end()) {
+        result = result.unite(*it);
+    }
+    return result;
+}
+
+void RenderObject::addAbsoluteRectForLayer(QRect& result)
+{
+    if (layer()) {
+        result = result.unite(absoluteBoundingBoxRect());
+    }
+    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
+        current->addAbsoluteRectForLayer(result);
+    }
+}
+
+QRect RenderObject::paintingRootRect()
+{
+    QRect result = absoluteBoundingBoxRect();
+    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
+        current->addAbsoluteRectForLayer(result);
+    }
+    return result;
+}
+
 #if APPLE_CHANGES
 void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
@@ -1338,7 +1380,8 @@ DOM::NodeImpl* RenderObject::draggableNode() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        if (curr->element()->nodeType() == Node::TEXT_NODE) {
+        DOM::NodeImpl *elt = curr->element();
+        if (elt && elt->nodeType() == Node::TEXT_NODE) {
             // Since there's no way for the author to address the -khtml-user-drag style for a text node,
             // we use our own judgement.
             if (canvas()->view()->part()->shouldDragAutoNode(curr->node()))

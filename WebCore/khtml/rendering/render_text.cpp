@@ -611,6 +611,9 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     if (i.phase != PaintActionForeground && i.phase != PaintActionSelection)
         return;
     
+    if (!shouldPaintWithinRoot(i))
+        return;
+        
     if (style()->visibility() != VISIBLE || !firstTextBox())
         return;
     

@@ -703,9 +703,9 @@ RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
 #endif
 
 void
-RenderLayer::paint(QPainter *p, const QRect& damageRect, bool selectionOnly)
+RenderLayer::paint(QPainter *p, const QRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
 {
-    paintLayer(this, p, damageRect, false, selectionOnly);
+    paintLayer(this, p, damageRect, false, selectionOnly, paintingRoot);
 }
 
 static void setClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipRect)
@@ -737,7 +737,8 @@ static void restoreClip(QPainter* p, const QRect& paintDirtyRect, const QRect& c
 
 void
 RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
-                        const QRect& paintDirtyRect, bool haveTransparency, bool selectionOnly)
+                        const QRect& paintDirtyRect, bool haveTransparency, bool selectionOnly,
+                        RenderObject *paintingRoot)
 {
     // Calculate the clip rects we should use.
     QRect layerBounds, damageRect, clipRectToApply;
@@ -753,6 +754,15 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         haveTransparency = true;
 #endif
 
+    // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
+    // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
+    // Else, our renderer tree may or may not contain the painting root, so we pass that root along
+    // so it will be tested against as we decend through the renderers.
+    RenderObject *paintingRootForRenderer = 0;
+    if (paintingRoot && !m_object->hasAncestor(paintingRoot)) {
+        paintingRootForRenderer = paintingRoot;
+    }
+    
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect);
     if (shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
@@ -767,7 +777,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         setClip(p, paintDirtyRect, damageRect);
 
         // Paint the background.
-        RenderObject::PaintInfo info = RenderObject::PaintInfo(p, damageRect, PaintActionElementBackground);
+        RenderObject::PaintInfo info(p, damageRect, PaintActionElementBackground, paintingRootForRenderer);
         renderer()->paint(info, x - renderer()->xPos(), y - renderer()->yPos());        
 #if APPLE_CHANGES
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
@@ -784,7 +794,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         uint count = m_negZOrderList->count();
         for (uint i = 0; i < count; i++) {
             RenderLayer* child = m_negZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly);
+            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
         }
     }
     
@@ -802,7 +812,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         int tx = x - renderer()->xPos();
         int ty = y - renderer()->yPos();
         RenderObject::PaintInfo info(p, clipRectToApply, 
-                                     selectionOnly ? PaintActionSelection : PaintActionChildBackgrounds);
+                                     selectionOnly ? PaintActionSelection : PaintActionChildBackgrounds,
+                                     paintingRootForRenderer);
         renderer()->paint(info, tx, ty);
         if (!selectionOnly) {
             info.phase = PaintActionFloat;
@@ -822,7 +833,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         uint count = m_posZOrderList->count();
         for (uint i = 0; i < count; i++) {
             RenderLayer* child = m_posZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly);
+            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
         }
     }
     

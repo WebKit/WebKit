@@ -1257,7 +1257,7 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     if (paintAction == PaintActionChildBackgrounds)
         paintAction = PaintActionChildBackground;
-    PaintInfo paintInfo(i.p, i.r, paintAction);
+    PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
     
     paintLineBoxBackgroundBorder(paintInfo, _tx, _ty);
 
@@ -1338,7 +1338,7 @@ void RenderBlock::paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelectio
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (!r->noPaint && !r->node->layer()) {
-            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionElementBackground);
+            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionElementBackground, i.paintingRoot);
             int tx = _tx + r->left - r->node->xPos() + r->node->marginLeft();
             int ty = _ty + r->startY - r->node->yPos() + r->node->marginTop();
             r->node->paint(info, tx, ty);

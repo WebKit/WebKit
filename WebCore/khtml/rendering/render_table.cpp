@@ -425,7 +425,7 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     if (paintAction == PaintActionChildBackgrounds)
         paintAction = PaintActionChildBackground;
-    PaintInfo paintInfo(i.p, i.r, paintAction);
+    PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
     
     for (RenderObject *child = firstChild(); child; child = child->nextSibling())
         if (child->isTableSection() || child == tCaption)

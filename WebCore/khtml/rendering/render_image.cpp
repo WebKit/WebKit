@@ -238,6 +238,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     if (i.phase != PaintActionForeground && i.phase != PaintActionSelection)
         return;
 
+    if (!shouldPaintWithinRoot(i))
+        return;
+        
 #if APPLE_CHANGES
     bool drawSelectionTint = selectionState() != SelectionNone;
     if (i.phase == PaintActionSelection) {

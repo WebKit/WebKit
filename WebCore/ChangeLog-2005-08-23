@@ -1,3 +1,72 @@
+2004-06-07  Trey Matteson  <trey@apple.com>
+
+	WebCore will now generate a default drag image when an element serves as a drag
+	source.  The basic idea is the image contains the element and all its children.
+
+	As for the implementation, instead of adding a new paintAction I added a new
+	field to the paintInfo struct, "paintingRoot".  If this field is set, painting will
+	only paint that root's descendants.
+
+	Some code also moved from the bridge to the part, to be available within WebCore.
+
+        Reviewed by hyatt.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):  Pass along paintingRoot to kids.
+        (khtml::RenderBlock::paintFloats):  Pass along paintingRoot to kids.
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBoxDecorations):  Test paintingRoot before painting.
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):    Test paintingRoot before painting.
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLineBoxBackgroundBorder):    Test paintingRoot before painting.
+        (RenderFlow::paintLineBoxDecorations):    Test paintingRoot before painting.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):    Test paintingRoot before painting.
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paint):    Pass along paintingRoot to kids.
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):   Pass along paintingRoot to kids.
+        (RenderLayer:: paintLayer):  Pass along paintingRoot to kids.  Test if we are within the
+	paintingRoot to decide whether to pass the root to our renderer.
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::hasAncestor):  New utility.
+        (RenderObject::absoluteBoundingBoxRect): Helper for paintingRootRect
+        (RenderObject::addAbsoluteRectForLayer):  Helper for paintingRootRect
+        (RenderObject::paintingRootRect):  Return rect that will be painted if we are
+	the painting root.
+        (RenderObject::draggableNode):  Add test to avoid rare NULL ptr crash.
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::PaintInfo::PaintInfo):  Add paintingRoot field.
+        (khtml::RenderObject::paintingRootForChildren):  New utility.  Return the current
+	paintingRoot, or nil if we are the root (so kids draw normally).
+        (khtml::RenderObject::shouldPaintWithinRoot):  New utility.  We can paint if we
+	are the paintingRoot, or no root is set.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::shouldPaint):  Pass along paintingRoot to kids.
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::paint):   Pass along paintingRoot to kids.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paint):  Test paintingRoot before painting.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):  Init new _elementToDraw member.
+        (KWQKHTMLPart::paint):  Generalized to handle cases of painting selection or a
+	given element.
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Make a default image if dragSrc didn't
+	provide one.
+        (KWQKHTMLPart::selectionRect):  Moved from bridge.
+        (KWQKHTMLPart::visibleSelectionRect):  Ditto.
+        (KWQKHTMLPart::imageFromRect):  Newly factored code, from bridge.
+        (KWQKHTMLPart::selectionImage):  Moved from bridge, wrapper around imageFromRect.
+        (KWQKHTMLPart::elementImage):  New method, wrapper around imageFromRect.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:withPainter:]):  Just call part to draw.
+        (-[WebCoreBridge visibleSelectionRect]):  Guts moved to part.
+        (-[WebCoreBridge selectionImage]):  Ditto.
+
 2004-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

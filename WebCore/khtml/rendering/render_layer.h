@@ -232,7 +232,7 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The nodeAtPoint method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(QPainter *p, const QRect& damageRect, bool selectionOnly=false);
+    void paint(QPainter *p, const QRect& damageRect, bool selectionOnly=false, RenderObject *paintingRoot=0);
     bool nodeAtPoint(RenderObject::NodeInfo& info, int x, int y);
 
     // This method figures out our layerBounds in coordinates relative to
@@ -273,7 +273,7 @@ private:
     void collectLayers(QPtrVector<RenderLayer>*&, QPtrVector<RenderLayer>*&);
 
     void paintLayer(RenderLayer* rootLayer, QPainter *p, const QRect& paintDirtyRect, 
-                    bool haveTransparency=false, bool selectionOnly=false);
+                    bool haveTransparency, bool selectionOnly, RenderObject *paintingRoot);
     RenderLayer* nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
                                      int x, int y, const QRect& hitTestRect);
 

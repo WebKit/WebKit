@@ -181,9 +181,11 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _windowWidget(NULL)
     , _usesInactiveTextBackgroundColor(false)
     , _showsFirstResponder(true)
+    , _drawSelectionOnly(false)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _dragSrc(0)
+    , _elementToDraw(0)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -895,6 +897,10 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
         fillWithRed = false; // Subframe, don't fill with red.
     else if (view() && view()->isTransparent())
         fillWithRed = false; // Transparent, don't fill with red.
+    else if (_drawSelectionOnly)
+        fillWithRed = false; // Selections are transparent, don't fill with red.
+    else if (_elementToDraw != 0)
+        fillWithRed = false; // Element images are transparent, don't fill with red.
     else
         fillWithRed = true;
 
@@ -904,18 +910,11 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 #endif
 
     if (renderer()) {
-        renderer()->layer()->paint(p, rect);
+        // _elementToDraw is used to draw only one element
+        RenderObject *eltRenderer = (_elementToDraw != 0) ? _elementToDraw.handle()->renderer() : 0;
+        renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
     } else {
         ERROR("called KWQKHTMLPart::paint with nil renderer");
-    }
-}
-
-void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
-{
-    if (renderer()) {
-        renderer()->layer()->paint(p, rect, true);
-    } else {
-        ERROR("called KWQKHTMLPart::paintSelectionOnly with nil renderer");
     }
 }
 
@@ -1985,6 +1984,14 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                 NSPoint dragLoc = NSZeroPoint;
                 NSDragOperation srcOp = NSDragOperationNone;
                 if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), true, &dragImage, &dragLoc, &srcOp)) {
+                    if (!dragImage && !_dragSrcIsLink && !_dragSrcIsImage && !_dragSrcInSelection) {
+                        // Element accepted, but didn't supply an image, and WebKit won't be making one
+                        // either - so we make a default one
+                        NSRect imageRect;
+                        dragImage = elementImage(_dragSrc, &imageRect);
+                        dragLoc.x = _mouseDownX - imageRect.origin.x;
+                        dragLoc.y = imageRect.size.height - (_mouseDownY - imageRect.origin.y);
+                    }
                     if ([_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent]) {
                         // Prevent click handling from taking place once we start dragging.
                         d->m_view->invalidateClick();
@@ -2898,6 +2905,72 @@ QRect KWQKHTMLPart::selectionRect() const
     }
 
     return root->selectionRect();
+}
+
+// returns NSRect because going through QRect would truncate any floats
+NSRect KWQKHTMLPart::visibleSelectionRect() const
+{
+    if (!d->m_view) {
+        return NSZeroRect;
+    }
+    NSView *documentView = d->m_view->getDocumentView();
+    if (!documentView) {
+        return NSZeroRect;
+    }
+    return NSIntersectionRect(selectionRect(), [documentView visibleRect]);     
+}
+
+NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
+{
+    NSView *view = d->m_view->getDocumentView();
+    if (!view) {
+        return nil;
+    }
+    
+    NSImage *resultImage = nil;
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    
+    NSRect bounds = [view bounds];
+    resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
+    [resultImage setFlipped:YES];
+    [resultImage lockFocus];
+    
+    [NSGraphicsContext saveGraphicsState];
+    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort],
+                          -(NSMinX(rect) - NSMinX(bounds)), -(NSMinY(rect) - NSMinY(bounds)));
+    [view drawRect:rect];
+    [NSGraphicsContext restoreGraphicsState];
+    
+    [resultImage unlockFocus];
+    [resultImage setFlipped:NO];
+    
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return resultImage;
+}
+
+NSImage *KWQKHTMLPart::selectionImage() const
+{
+    _drawSelectionOnly = true;  // invoke special drawing mode
+    NSImage *result = imageFromRect(visibleSelectionRect());
+    _drawSelectionOnly = false;
+    return result;
+}
+
+NSImage *KWQKHTMLPart::elementImage(DOM::Node node, NSRect *imageRect) const
+{
+    RenderObject *renderer = node.handle()->renderer();
+    if (!renderer) {
+        return nil;
+    }
+    
+    *imageRect = renderer->paintingRootRect();
+    _elementToDraw = node;  // invoke special drawing mode
+    NSImage *result = imageFromRect(*imageRect);
+    _elementToDraw = 0;
+
+    return result;
 }
 
 NSFont *KWQKHTMLPart::fontForCurrentPosition() const

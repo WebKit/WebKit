@@ -189,7 +189,6 @@ public:
     void sendResizeEvent();
     void sendScrollEvent();
     void paint(QPainter *, const QRect &);
-    void paintSelectionOnly(QPainter *p, const QRect &rect);
 
     void adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit);
 
@@ -210,7 +209,10 @@ public:
     int selectionEndOffset() const;
 
     QRect selectionRect() const;
-    
+    NSRect visibleSelectionRect() const;
+    NSImage *selectionImage() const;
+    NSImage *elementImage(DOM::Node node, NSRect *imageRect) const;
+
     NSFont *fontForCurrentPosition() const;
 
     NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
@@ -329,6 +331,8 @@ private:
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
     bool dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc, unsigned *op) const;
 
+    NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const;
+
     WebCoreBridge *_bridge;
     
     KWQSignal _started;
@@ -357,7 +361,8 @@ private:
 
     bool _usesInactiveTextBackgroundColor;
     bool _showsFirstResponder;
-
+    mutable bool _drawSelectionOnly;
+    
     QDict<char> urlsBridgeKnowsAbout;
 
     friend class KHTMLPart;
@@ -371,6 +376,8 @@ private:
     bool _dragSrcIsLink;
     bool _dragSrcIsImage;
     bool _dragSrcInSelection;
+    
+    mutable DOM::Node _elementToDraw;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }
