@@ -459,12 +459,13 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
         // An end midpoint has been encounted within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (int(nextMidpoint.pos+1) <= end) {
-            addRun(new (obj->renderArena())
-                   BidiRun(start, nextMidpoint.pos+1, obj, context, dir));
             betweenMidpoints = true;
-            int nextPos = nextMidpoint.pos+1;
             sCurrMidpoint++;
-            return appendRunsForObject(nextPos, end, obj);
+            if (nextMidpoint.pos != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
+                addRun(new (obj->renderArena())
+                    BidiRun(start, nextMidpoint.pos+1, obj, context, dir));
+                return appendRunsForObject(nextMidpoint.pos+1, end, obj);
+            }
         }
         else
            addRun(new (obj->renderArena()) BidiRun(start, end, obj, context, dir));
@@ -1808,7 +1809,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
             BidiIterator endMid;
             endMid.obj = trailingSpaceObject;
             RenderText* text = static_cast<RenderText *>(trailingSpaceObject);
-            endMid.pos = text->length() >=2 ? text->length() - 2 : 0;
+            endMid.pos = text->length() >=2 ? text->length() - 2 : UINT_MAX;
             addMidpoint(endMid);
         }
     }

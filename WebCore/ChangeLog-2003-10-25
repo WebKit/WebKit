@@ -1,3 +1,25 @@
+2003-03-13  David Hyatt  <hyatt@apple.com>
+
+	This is a fix to stop creating textruns for the whitespace at the
+	end of a block.  This is a major line layout bug that leads to the
+	height of the last line in a paragraph being wrong, especially when
+	<font> tags are used.
+
+	Example of the problem:
+	  <div><nobr>foo</nobr> </div>
+
+	The whitespace between the </nobr> and the end of the </div> was
+	being counted when it should have been stripped.  The problem was
+	an off-by-one error with the endpoint I set up.  I used a position
+	of 0, which is inclusive, so I needed a new value that meant
+	"Stop on this object and don't include any of it."  I'm using
+	UINT_MAX as this special value for the position.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/bidi.h:
+
 2003-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
