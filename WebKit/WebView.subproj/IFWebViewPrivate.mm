@@ -56,8 +56,7 @@
 
 - (void)_setController: (id <IFWebController>)controller
 {
-    [controller retain];
-    [_private->controller release];
+    // Not retained; the controller owns the view.
     _private->controller = controller;    
 }
 
