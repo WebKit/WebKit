@@ -1,3 +1,48 @@
+2003-03-31  Trey Matteson  <trey@apple.com>
+
+	3212724 - bookmarks and history items have screwed up designated inits
+
+	and support code for:
+	3116315 - autocomplete needs some prioritization magic
+
+	The main changes are adding and maintaining a visitCount to the HistoryItem,
+	cleaning up the init methods of HistoryItem.  Also lastVisitedDate is now
+	set explicitly instead of automatically getting the current date.
+
+        Reviewed by John.
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistory addItemForURL:]):  Set lastVisitedDate of new item.
+        (-[WebHistory _itemForURLString:]):  New helper routine.
+        * History.subproj/WebHistoryItem.h:  Conform to NSCopying.
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem init]):  Behave like a designated initializer.
+        (-[WebHistoryItem copyWithZone:]):  New.
+        (-[WebHistoryItem initWithURL:title:]):  Call the designated initializer.
+        (-[WebHistoryItem initWithURL:target:parent:title:]):    Call the designated initializer.
+	Don't blindly init lastVisitedDate.
+        (-[WebHistoryItem setLastVisitedDate:]):  Update visitCount too.
+        (-[WebHistoryItem visitCount]):  New getter.
+        (-[WebHistoryItem setVisitCount:]):  New setter.
+        (-[WebHistoryItem _mergeAutoCompleteHints:]):  Combine autocomplete info
+	of two items.  Used when one item replaces another in the history.
+        (-[WebHistoryItem dictionaryRepresentation]):  Write visitCount.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):  Read visitCount.
+        * History.subproj/WebHistoryItemPrivate.h:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate addItem:]):  Merge autocomplete date from old item to new.
+        (-[WebHistoryPrivate itemForURLString:]):   s/entry/item/
+        (-[WebHistoryPrivate containsItemForURLString:]):   s/entry/item/
+        (-[WebHistoryPrivate containsURL:]):   s/entry/item/
+        (-[WebHistoryPrivate itemForURL:]):   s/entry/item/
+        (-[WebHistoryPrivate _loadHistoryGuts:]):  Skip history items without visitDate.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):  Update last visitTime when we revisit
+	the same URL (since no new history item is created).
+
+2003-03-31  Richard Williamson  <rjw@apple.com>
+
 2003-03-31  Richard Williamson  <rjw@apple.com>
 
         Fixed 3213637.  We weren't calling the correct delegate method,

@@ -629,6 +629,13 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionToItem:currItem];
                 }
+                // Update the last visited time.  Mostly interesting for URL autocompletion
+                // statistics.
+                NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
+                WebHistoryItem *oldItem = [[WebHistory sharedHistory] itemForURL:URL];
+                if (oldItem) {
+                    [oldItem setLastVisitedDate:[NSCalendarDate date]];
+                }
                 [self _makeDocumentView];
                 break;
             }

@@ -16,10 +16,6 @@
 #import <WebFoundation/WebNSURLExtras.h>
 
 
-@interface WebHistoryPrivate (Private)
--(WebHistoryItem *)_entryForURLString:(NSString *)URLString;
-@end
-
 @implementation WebHistoryPrivate
 
 //#define FIX_VISITED
@@ -153,6 +149,14 @@
 #else
     URLString = [[entry URL] absoluteString];
 #endif
+
+    // If we already have an item with this URL, we need to merge info that drives the
+    // URL autocomplete heuristics from that item into the new one.
+    WebHistoryItem *oldEntry = [_entriesByURL objectForKey: URLString];
+    if (oldEntry) {
+        [entry _mergeAutoCompleteHints:oldEntry];
+    }
+
     [self removeItemForURLString: URLString];
 
     if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
@@ -256,31 +260,31 @@
 
 #pragma mark URL MATCHING
 
--(WebHistoryItem *)_entryForURLString:(NSString *)URLString
+- (WebHistoryItem *)itemForURLString:(NSString *)URLString
 {
     return [_entriesByURL objectForKey: URLString];
 }
 
 - (BOOL)containsItemForURLString: (NSString *)URLString
 {
-    return [self _entryForURLString:URLString] != nil;
+    return [self itemForURLString:URLString] != nil;
 }
 
 - (BOOL)containsURL: (NSURL *)URL
 {
 #ifdef FIX_VISITED
-    return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]] != nil;
+    return [self itemForURLString:[[URL _web_canonicalize] absoluteString]] != nil;
 #else
-    return [self _entryForURLString:[URL absoluteString]] != nil;
+    return [self itemForURLString:[URL absoluteString]] != nil;
 #endif
 }
 
 - (WebHistoryItem *)itemForURL:(NSURL *)URL
 {
 #ifdef FIX_VISITED
-    return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]];
+    return [self itemForURLString:[[URL _web_canonicalize] absoluteString]];
 #else
-    return [self _entryForURLString:[URL absoluteString]];
+    return [self itemForURLString:[URL absoluteString]];
 #endif
 }	
 
@@ -368,8 +372,9 @@
 
         entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation: dictionary] autorelease];
 
-        if ([entry URL] == nil) {
+        if ([entry URL] == nil || [entry lastVisitedDate] == nil) {
             // entry without URL is useless; data on disk must have been bad; ignore this one
+            // entry without lastVisitDate should never happen; ignore that one
             continue;
         }
 

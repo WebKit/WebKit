@@ -6,7 +6,6 @@
 
 #import <WebKit/WebHistoryItem.h>
 
-
 @interface WebHistoryItem (WebPrivate)
 - (void)_retainIconInDatabase:(BOOL)retain;
 + (void)_releaseAllPendingPageCaches;
@@ -31,6 +30,9 @@
 - (NSData *)formData;
 - (NSString *)formContentType;
 - (NSString *)formReferrer;
+- (int)visitCount;
+
+- (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
 
 - (void)setURL:(NSURL *)URL;
 - (void)setOriginalURLString:(NSString *)URL;
@@ -45,6 +47,7 @@
 - (void)setFormData:(NSData *)data;
 - (void)setFormContentType:(NSString *)type;
 - (void)setFormReferrer:(NSString *)referrer;
+- (void)setVisitCount:(int)count;
 
 - (NSArray *)children;
 - (void)addChildItem:(WebHistoryItem *)item;

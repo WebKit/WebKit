@@ -33,6 +33,7 @@
     NSMutableDictionary *pageCache;
     BOOL isTargetItem;
     BOOL alwaysAttemptToUsePageCache;
+    int visitCount;
     // info used to repost form data
     NSData *formData;
     NSString *formContentType;
@@ -66,7 +67,9 @@
 
 - (id)init
 {
-    return [self initWithURL:nil title:nil];
+    self = [super init];
+    _private = [[WebHistoryItemPrivate alloc] init];
+    return self;
 }
 
 - (void)dealloc
@@ -76,6 +79,29 @@
     [_private release];
     
     [super dealloc];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    WebHistoryItem *copy = NSCopyObject(self, 0, zone);
+    copy->_private = [[WebHistoryItemPrivate alloc] init];
+    copy->_private->URLString = [_private->URLString copy];
+    [copy _retainIconInDatabase:YES];
+    copy->_private->originalURLString = [_private->originalURLString copy];
+    copy->_private->target = [_private->target copy];
+    copy->_private->parent = [_private->parent copy];
+    copy->_private->title = [_private->title copy];
+    copy->_private->displayTitle = [_private->displayTitle copy];
+    copy->_private->lastVisitedDate = [_private->lastVisitedDate copy];
+    copy->_private->anchor = [_private->anchor copy];
+    if (_private->subItems) {
+        copy->_private->subItems = [[NSMutableArray alloc] initWithArray:_private->subItems copyItems:YES];
+    }
+    copy->_private->formData = [_private->formData copy];
+    copy->_private->formContentType = [_private->formContentType copy];
+    copy->_private->formReferrer = [_private->formReferrer copy];
+
+    return copy;
 }
 
 // FIXME: need to decide it this class ever returns URLs, and the name of this method
@@ -193,34 +219,24 @@
     }
 }
 
-
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
     return [[[self alloc] initWithURL:URL title:nil] autorelease];
 }
 
-
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURL:URL target:nil parent:nil title:title];
+    self = [self init];
+    [self setURL:URL];
+    _private->title = [title copy];
+    return self;
 }
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
-    if (self != [super init])
-    {
-        return nil;
-    }
-
-    _private = [[WebHistoryItemPrivate alloc] init];
-    _private->URLString = [[URL absoluteString] copy];
+    self = [self initWithURL:URL title:title];
     _private->target = [target copy];
     _private->parent = [parent copy];
-    _private->title = [title copy];
-    _private->lastVisitedDate = [[NSCalendarDate alloc] init];
-
-    [self _retainIconInDatabase:YES];
-
     return self;
 }
 
@@ -287,9 +303,24 @@
 
 - (void)setLastVisitedDate:(NSCalendarDate *)date
 {
-    [date retain];
-    [_private->lastVisitedDate release];
-    _private->lastVisitedDate = date;
+    if (date != _private->lastVisitedDate) {
+        if (![_private->lastVisitedDate isEqual:date]) {
+            _private->visitCount++;
+        }
+        [date retain];
+        [_private->lastVisitedDate release];
+        _private->lastVisitedDate = date;
+    }
+}
+
+- (int)visitCount
+{
+    return _private->visitCount;
+}
+
+- (void)setVisitCount:(int)count
+{
+    _private->visitCount = count;
 }
 
 - (void)setDocumentState:(NSArray *)state;
@@ -401,6 +432,13 @@
     return _private->subItems;
 }
 
+- (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem
+{
+    if (otherItem != self) {
+        _private->visitCount += otherItem->_private->visitCount;
+    }
+}
+
 - (void)addChildItem:(WebHistoryItem *)item
 {
     if (!_private->subItems) {
@@ -436,8 +474,11 @@
         [dict setObject:_private->displayTitle forKey:@"displayTitle"];
     }
     if (_private->lastVisitedDate) {
-        [dict setObject:[NSString stringWithFormat:@"%lf", [_private->lastVisitedDate timeIntervalSinceReferenceDate]]
+        [dict setObject:[NSString stringWithFormat:@"%.1lf", [_private->lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey:@"lastVisitedDate"];
+    }
+    if (_private->visitCount) {
+        [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:@"visitCount"];
     }
     if (_private->subItems != nil) {
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_private->subItems count]];
@@ -456,9 +497,10 @@
     NSString *URLString = [dict _web_stringForKey:@""];
     NSString *title = [dict _web_stringForKey:@"title"];
 
-    [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
+    self = [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
 
     [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
+
     NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
     if (date) {
         NSCalendarDate *calendarDate = [[NSCalendarDate alloc]
@@ -466,6 +508,8 @@
         [self setLastVisitedDate:calendarDate];
         [calendarDate release];
     }
+
+    _private->visitCount = [dict _web_intForKey:@"visitCount"];
 
     NSArray *childDicts = [dict objectForKey:@"children"];
     if (childDicts) {

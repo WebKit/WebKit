@@ -97,6 +97,7 @@ static WebHistory *_sharedHistory = nil;
 - (WebHistoryItem *)addItemForURL: (NSURL *)URL
 {
     WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:nil];
+    [entry setLastVisitedDate: [NSCalendarDate date]];
     [self addItem: entry];
     [entry release];
     return entry;
@@ -193,5 +194,11 @@ static WebHistory *_sharedHistory = nil;
 {
     return [_historyPrivate saveHistory];
 }
+
+- (WebHistoryItem *)_itemForURLString:(NSString *)URLString
+{
+    return [_historyPrivate itemForURLString: URLString];
+}
+
 
 @end

@@ -33,6 +33,7 @@
 - (BOOL)containsItemForURLString: (NSString *)URLString;
 - (BOOL)containsURL: (NSURL *)URL;
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
+- (WebHistoryItem *)itemForURLString:(NSString *)URLString;
 
 - (NSURL *)URL;
 - (BOOL)loadHistory;
@@ -48,4 +49,6 @@
 - initWithFile: (NSString *)file;
 - (WebHistoryItem *)addItemForURL: (NSURL *)URL;
 - (BOOL)containsItemForURLString: (NSString *)URLString;
+- (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
+
 @end

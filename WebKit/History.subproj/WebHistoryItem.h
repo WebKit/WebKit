@@ -18,7 +18,7 @@
     WebHistoryItems are set by WebKit.
     WebHistoryItems cannot be created directly.
 */
-@interface WebHistoryItem : NSObject
+@interface WebHistoryItem : NSObject <NSCopying>
 {
 @private
     WebHistoryItemPrivate *_private;
