@@ -46,6 +46,8 @@
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param request The request about to be sent.
+    @param redirectResponse If the request is being made in response to a redirect we received,
+    the response that conveyed that redirect.
     @param dataSource The dataSource that initiated the load.
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.

@@ -113,12 +113,30 @@
     NSURL *URL = [newRequest URL];
 
     LOG(Redirect, "URL = %@", URL);
-    
+
+    NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
-        NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
+        mutableRequest = [newRequest mutableCopy];
         [mutableRequest HTTPSetCookiePolicyBaseURL:URL];
+    }
+
+    // If we're fielding a redirect in response to a POST, force a load from origin, since
+    // this is a common site technique to return to a page viewing some data that the POST
+    // just modified.
+    if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
+        int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
+        if (((status >= 301 && status <= 303) || status == 307)
+            && [[[dataSource initialRequest] HTTPMethod] isEqualToString:@"POST"])
+        {
+            if (!mutableRequest) {
+                mutableRequest = [newRequest mutableCopy];
+            }
+            [mutableRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        }
+    }
+    if (mutableRequest) {
         newRequest = [mutableRequest autorelease];
     }
 

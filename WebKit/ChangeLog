@@ -1,3 +1,28 @@
+2003-04-01  Trey Matteson  <trey@apple.com>
+
+	3174227 - aggressive caching of generated pages causes problems with WIKI
+
+	We decided to fix half the observed behavior, as all the bad behavior is
+	arguably due to a mis-configured server (that sets a max-age=60 on
+	all its pages).
+
+	The fix is that when a redirect comes in response to a POST we force a
+	load from origin, since this is a common technique sites do to prevent
+	a post from ending up in the b/f list, and it is very likely you are
+	on your way back to look at data that you believe you just edited. 
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]):  Nit cleanup.  Remove unused arg.
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):
+	Same nit cleanup.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+	Force loadFromOrigin if we have a redirect in response to a POST.
+        * WebView.subproj/WebResourceLoadDelegate.h:
+	Add headerdoc comment for redirectResponse param.
+
 2003-04-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

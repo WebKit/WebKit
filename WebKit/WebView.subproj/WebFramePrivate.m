@@ -1050,7 +1050,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 // loads content into this frame, as specified by item
-- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType:(WebFrameLoadType)loadType
+- (void)_loadItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)loadType
 {
     NSURL *itemURL = [item URL];
     NSURL *currentURL = [[[self dataSource] request] URL];
@@ -1199,7 +1199,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     } else {
         // We need to reload the content
-        [self _loadItem:item fromItem:fromItem withLoadType:type];
+        [self _loadItem:item withLoadType:type];
     }
 }
 
