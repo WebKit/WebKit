@@ -1,3 +1,11 @@
+2005-02-17  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Chris.
+
+        fix for <rdar://problem/4010028> 8A383: Safari v185 crash loading united.com multi city fare finder page.
+
+        * khtml/dom/dom_string.cpp: (DOM::DOMString::operator += ): prevent nil dereference when DOMString being added is nil
+
 2005-02-17  Jens Alfke  <jens@apple.com>
 
         Reviewed by Hyatt.

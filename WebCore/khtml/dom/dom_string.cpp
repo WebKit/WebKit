@@ -94,15 +94,15 @@ DOMString &DOMString::operator =(const DOMString &other)
 
 DOMString &DOMString::operator += (const DOMString &str)
 {
-    if(!impl)
-    {
-	// ### FIXME!!!
-	impl = str.impl;
-	impl->ref();
-	return *this;
-    }
     if(str.impl)
     {
+        if(!impl)
+        {
+            // ### FIXME!!!
+            impl = str.impl;
+            impl->ref();
+            return *this;
+        }
 	DOMStringImpl *i = impl->copy();
 	impl->deref();
 	impl = i;
