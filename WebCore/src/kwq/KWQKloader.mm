@@ -1117,7 +1117,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [[sender availableResourceData] length];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
 
     m_loader->slotFinished(job);
 

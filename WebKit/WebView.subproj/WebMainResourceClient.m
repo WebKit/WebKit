@@ -143,7 +143,7 @@ static void loadImageDocumentTemplate()
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [[sender availableResourceData] length];
+    loadProgress->bytesSoFar = [sender contentLengthReceived];
 
     IFError *error = [[IFError alloc] initWithErrorCode: result failingURL: [sender url]];
     [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: dataSource];

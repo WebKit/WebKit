@@ -1,3 +1,10 @@
+2002-04-05  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	Use contentLengthReceived rather than getting the length of
+	availableResourceData to determine how much data has arrived.
+
 2002-04-05  Richard Williamson  <rjw@apple.com>
 
         Implemented the same lazily deallocation scheme on frame as in controller
