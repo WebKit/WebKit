@@ -227,7 +227,6 @@
 
         Reviewed by Maciej.
 
->>>>>>> 1.2044
         - fixed 3321247 -- window size box disappears from Help window (caused by WebKit NSView hackery)
 
         * WebView.subproj/WebHTMLViewPrivate.m:
