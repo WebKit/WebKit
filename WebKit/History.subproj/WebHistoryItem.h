@@ -3,7 +3,7 @@
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2001 Apple Computer, Inc. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -21,8 +21,8 @@
 -(id)initWithURL:(NSURL *)url title:(NSString *)title;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image;
 
-- (NSDictionary *)dictionaryRepresentation;
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
+-(NSDictionary *)dictionaryRepresentation;
+-(id)initFromDictionaryRepresentation:(NSDictionary *)dict;
 
 -(NSURL *)url;
 -(NSString *)title;

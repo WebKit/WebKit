@@ -1,5 +1,12 @@
 2002-07-16  Darin Adler  <darin@apple.com>
 
+        * History.subproj/WebBackForwardList.m: Replace MyCompanyName with Apple Computer.
+        (-[WebBackForwardList init]): Fix strange [super init] logic to be standard.
+        * History.subproj/WebHistoryItem.h: Replace MyCompanyName with Apple Computer.
+        * Misc.subproj/WebDownloadHandler.h: Replace MyCompanyName with Apple Computer.
+
+2002-07-16  Darin Adler  <darin@apple.com>
+
 	- fixed 2997891 -- Alexander confused about base page URL for relative links
 
         * WebCoreSupport.subproj/WebSubresourceClient.m:
