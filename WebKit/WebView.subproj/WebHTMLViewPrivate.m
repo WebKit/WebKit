@@ -17,6 +17,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
 
 @interface NSView (WebHTMLViewPrivate)
 - (void)_web_stopIfPluginView;

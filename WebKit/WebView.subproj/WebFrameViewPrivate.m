@@ -65,7 +65,6 @@
     [[self frameScrollView] setDocumentView: view];    
 }
 
-
 - (void)_setController: (WebController *)controller
 {
     // Not retained; the controller owns the view.

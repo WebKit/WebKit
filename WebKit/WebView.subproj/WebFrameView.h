@@ -40,7 +40,6 @@
 // The view must conform to the WebDocumentLoading protocol
 + (void)registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType;
 
-// Called when the contentPolicy is set to WebContentPolicyShow
-+ (id <WebDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType;
+-(void)makeDocumentViewForMIMEType:(NSString *)MIMEType;
 
 @end

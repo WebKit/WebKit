@@ -199,10 +199,10 @@ enum {
     [[self _viewTypes] setObject:viewClass forKey:MIMEType];
 }
 
-+ (id <WebDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType
+-(void)makeDocumentViewForMIMEType:(NSString *)MIMEType
 {
-    Class viewClass = [[self _viewTypes] _web_objectForMIMEType:MIMEType];
-    return viewClass ? [[[viewClass alloc] init] autorelease] : nil;
+    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:MIMEType];
+    [self _setDocumentView: (id<WebDocumentLoading>)(viewClass ? [[[viewClass alloc] init] autorelease] : nil)];
 }
 
 -(BOOL)acceptsFirstResponder

@@ -19,16 +19,6 @@
 
 #import <WebFoundation/WebResourceHandle.h>
 
-@implementation WebDataSource (WebBridge)
-
-- (WebBridge *)_bridge
-{
-    id representation = [self representation];
-    return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
-}
-
-@end
-
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end

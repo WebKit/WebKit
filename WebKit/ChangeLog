@@ -1,3 +1,31 @@
+2002-07-17  Maciej Stachowiak  <mjs@apple.com>
+
+	Some refactoring in preparation for the KHTMLPart change.
+	
+        * WebView.subproj/WebController.m: 
+	(-[WebController haveContentPolicy:andPath:forDataSource:]): Move
+	more of the work of creating and setting the representation and
+	document view into WebDataSource and WebView.
+	
+        * WebView.subproj/WebDataSource.h,
+	WebView.subproj/WebDataSource.m:
+	(+[(id <WebDocumentRepresentation>) createRepresentationForMIMEType:]): Removed.
+        (-[WebDataSource makeRepresentation]): A method to build the right
+	kind of representation for the content type.
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+	(-[WebDataSource _representationClass]): Method to get the right
+	representation class for the current content type.
+	(-[WebDataSource _bridge]): Move here from WebBridge.[mh], so we
+	can later add an assertion that the data source is not provisional.
+	
+        * WebView.subproj/WebHTMLViewPrivate.m: #import WebDataSourcePrivate.h
+        * WebView.subproj/WebView.h, WebView.subproj/WebView.m:
+	(+[(id <WebDocumentRepresentation>) createDocumentViewForMIMEType:]): Removed.
+	(-[WebView makeDocumentViewForMIMEType:]): Method to build the
+	right kind of document view for the specified MIME type.
+
 2002-07-16  Darin Adler  <darin@apple.com>
 
         * History.subproj/WebBackForwardList.m: Replace MyCompanyName with Apple Computer.

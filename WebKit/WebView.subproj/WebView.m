@@ -227,39 +227,30 @@
 
 - (void)haveContentPolicy: (WebContentPolicy)policy andPath: (NSString *)path forDataSource: (WebDataSource *)dataSource
 {
-    NSString *MIMEType;
-    
-    if(policy == WebContentPolicyNone)
+    if (policy == WebContentPolicyNone) {
         [NSException raise:NSInvalidArgumentException format:@"Can't set policy of WebContentPolicyNone. Use WebContentPolicyIgnore instead"];
+    }
         
-    if([dataSource contentPolicy] != WebContentPolicyNone){
+    if ([dataSource contentPolicy] != WebContentPolicyNone) {
         [NSException raise:NSGenericException format:@"Content policy can only be set once on for a dataSource."];
-    }else{
-        [dataSource _setContentPolicy:policy];
-        [dataSource _setDownloadPath:path];
+    }
+    
+    [dataSource _setContentPolicy:policy];
+    [dataSource _setDownloadPath:path];
         
-        if(policy == WebContentPolicyShow){
-            MIMEType = [dataSource contentType];
-            if([[self class] canShowMIMEType:MIMEType]){
-                id documentView;
-                WebView *webView;
-                id <WebDocumentRepresentation> dataRepresentation, oldRepresentation;
-                
-                // Check if the data source was already bound?
-                oldRepresentation = [dataSource representation];
-                dataRepresentation = [WebDataSource createRepresentationForMIMEType:MIMEType];
-                if (!oldRepresentation || ![oldRepresentation isKindOfClass: [dataRepresentation class]])
-                    [dataSource _setRepresentation:dataRepresentation];
-                webView = [[dataSource webFrame] webView];
-                documentView = [WebView createViewForMIMEType:MIMEType];
-                [webView _setDocumentView: documentView];
-                [documentView provisionalDataSourceChanged: dataSource];
-            }else{
-                WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
-                                    inDomain:WebErrorDomainWebKit failingURL: [dataSource inputURL]];
-                [[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
-            }
-        }
+    if (policy == WebContentPolicyShow){
+	if ([[self class] canShowMIMEType:[dataSource contentType]]){
+	    WebView *webView = [[dataSource webFrame] webView];
+	    [dataSource makeRepresentation];
+	    [webView makeDocumentViewForMIMEType:[dataSource contentType]];
+	    // FIXME: this ought to be part of makeDocumentView but I need to figure out
+	    // the provisional / committed situation
+	    [[webView documentView] provisionalDataSourceChanged:dataSource];
+	} else {
+	    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
+			           inDomain:WebErrorDomainWebKit failingURL: [dataSource inputURL]];
+	    [[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
+	}
     }
 }
 

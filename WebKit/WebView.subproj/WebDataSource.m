@@ -345,10 +345,14 @@
     [[self _repTypes] setObject:repClass forKey:MIMEType];
 }
 
-+ (id <WebDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType
+- (void) makeRepresentation
 {
-    Class repClass = [[self _repTypes] _web_objectForMIMEType:MIMEType];
-    return repClass ? [[[repClass alloc] init] autorelease] : nil;
+    Class repClass = [self _representationClass];
+
+    // Check if the data source was already bound?
+    if (![[self representation] isKindOfClass:repClass]) {
+	[self _setRepresentation:repClass != nil ? [[repClass alloc] init] : nil];
+    }
 }
 
 @end

@@ -86,10 +86,15 @@
     _private->resourceData = [data retain];
 }
 
-- (void)_setRepresentation:(id <WebDocumentRepresentation>) representation
+- (void)_setRepresentation: (id<WebDocumentRepresentation>)representation
 {
     [_private->representation release];
     _private->representation = [representation retain];
+}
+
+- (Class)_representationClass
+{
+    return [[[self class] _repTypes] _web_objectForMIMEType:[self contentType]];
 }
 
 - (void)_setLoading:(BOOL)loading
@@ -394,6 +399,12 @@
     [[self _bridge] removeFromFrame];
     [self _setController:nil];
     [self _setLocationChangeHandler:nil];
+}
+
+- (WebBridge *)_bridge
+{
+    id representation = [self representation];
+    return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
 }
 
 @end

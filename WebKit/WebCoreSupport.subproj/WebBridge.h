@@ -20,9 +20,3 @@
 
 @end
 
-// Convenience interface for getting here from an WebDataSource.
-// This returns nil if the representation is not an WebHTMLRepresentation.
-
-@interface WebDataSource (WebBridge)
-- (WebBridge *)_bridge;
-@end
