@@ -1545,8 +1545,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
-    DOM::DocumentImpl *document = _part->xmlDocImpl();
-    DOM::DocumentFragmentImpl *fragment = static_cast<HTMLElementImpl *>(document->documentElement())->createContextualFragment(markupString);
+    DocumentImpl *document = _part->xmlDocImpl();
+    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
+    DocumentFragmentImpl *fragment = element->createContextualFragment(markupString, true); // true to include comments in DOM
     ASSERT(fragment);
     
     if ([baseURLString length] > 0) {

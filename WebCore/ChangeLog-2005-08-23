@@ -2,6 +2,20 @@
 
         Reviewed by Harrison
 
+        Made two small changes that make it possible for comments to have DOM nodes made for them
+        when pasting. This relies on some earlier work I did some days ago.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::startMarkup): Get the string from the comment.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]): Did some very minor
+        rearranging. Now passes a flag when creating a contextual fragment, requesting that comments
+        be included in the DOM.
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         Added some new helpers to the VisiblePosition class. I will begin to use these when I check in
         my improved paste code.
 

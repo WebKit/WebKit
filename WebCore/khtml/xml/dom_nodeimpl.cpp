@@ -313,6 +313,8 @@ QString NodeImpl::startMarkup(const RangeImpl *range) const
         Id parentID = parentNode()->id();
         bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
         return dontEscape ? str.string() : escapeHTML(str.string());        
+    } else if (type == Node::COMMENT_NODE) {
+        return static_cast<const CommentImpl *>(this)->toString().string();
     } else if (type != Node::DOCUMENT_NODE) {
         QString markup = QChar('<') + nodeName().string();
         if (type == Node::ELEMENT_NODE) {
