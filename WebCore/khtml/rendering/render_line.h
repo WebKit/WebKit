@@ -106,7 +106,6 @@ public:
     virtual InlineBox* lastLeafChild();
     InlineBox* nextLeafChild();
     InlineBox* prevLeafChild();
-    InlineBox* closestLeafChildForXPos(int _x, int _tx);
         
     RenderObject* object() const { return m_object; }
 
@@ -223,7 +222,6 @@ public:
     virtual InlineBox* lastLeafChild();
     InlineBox* firstLeafChildAfterBox(InlineBox* start=0);
     InlineBox* lastLeafChildBeforeBox(InlineBox* start=0);
-    InlineBox* closestChildForXPos(int _x, int _tx);
         
     virtual void setConstructed() {
         InlineBox::setConstructed();
@@ -362,7 +360,9 @@ public:
 
     int selectionTop();
     int selectionHeight() { return kMax(0, m_bottomOverflow - selectionTop()); }
-    
+ 
+    InlineBox* closestLeafChildForXPos(int _x, int _tx);
+
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further

@@ -988,26 +988,26 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
-        int pastEnd = box->m_start + box->m_len + 1;
-        InlineTextBox *nextBox = box->nextTextBox();
-        if (affinity == DOWNSTREAM && nextBox && !box->nextOnLine() && 
-            offset == pastEnd && nextBox->m_start != pastEnd) {
-            // We're at the end of a line broken on a word boundary and affinity is downstream.
-            // Try to jump down to the next line.
-            if (box->nextTextBox()) {
-                // Use the next text box
-                box = box->nextTextBox();
-                offset = box->m_start;
+        if (offset <= box->m_start + box->m_len) {
+            // Check if downstream affinity would make us move to the next line.
+            InlineTextBox *nextBox = box->nextTextBox();
+            if (affinity == DOWNSTREAM && nextBox && !box->nextOnLine() && offset == box->m_start + box->m_len) {
+                // We're at the end of a line broken on a word boundary and affinity is downstream.
+                // Try to jump down to the next line.
+                if (nextBox) {
+                    // Use the next text box
+                    box = nextBox;
+                    offset = box->m_start;
+                }
+                else {
+                    // Look on the next line
+                    RenderObject *object = firstRendererOnNextLine(box);
+                    if (object)
+                        return object->caretRect(0, affinity);
+                }
             }
-            else {
-                // Look on the next line
-                RenderObject *object = firstRendererOnNextLine(box);
-                if (object)
-                    return object->caretRect(0, affinity);
-            }
-        }
-        if (offset <= box->m_start + box->m_len)
             break;
+        }
     }
     
     if (!box) {

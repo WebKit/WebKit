@@ -232,22 +232,6 @@ InlineBox* InlineBox::prevLeafChild()
     return parent() ? parent()->lastLeafChildBeforeBox(this) : 0;
 }
 
-InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
-{
-    if (!isInlineFlowBox())
-        return this;
-    
-    InlineFlowBox *flowBox = static_cast<InlineFlowBox*>(this);
-    if (!flowBox->firstChild())
-        return this;
-
-    InlineBox *box = flowBox->closestChildForXPos(_x, _tx);
-    if (!box)
-        return this;
-    
-    return box->closestLeafChildForXPos(_x, _tx);
-}
-
 RenderObject::SelectionState InlineBox::selectionState()
 {
     return object()->selectionState();
@@ -997,25 +981,6 @@ InlineBox* InlineFlowBox::lastLeafChildBeforeBox(InlineBox* start)
     return leaf;
 }
 
-InlineBox* InlineFlowBox::closestChildForXPos(int _x, int _tx)
-{
-    if (_x < _tx + firstChild()->m_x)
-        // if the x coordinate is to the left of the first child
-        return firstChild(); 
-    else if (_x >= _tx + lastChild()->m_x + lastChild()->m_width)
-        // if the x coordinate is to the right of the last child
-        return lastChild(); 
-    else
-        // look for the closest child;
-        // check only the right edges, since the left edge of the first
-        // box has already been checked
-        for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
-            if (_x < _tx + box->m_x + box->m_width)
-                return box;
-
-    return 0;
-}
-
 RenderObject::SelectionState InlineFlowBox::selectionState()
 {
     return RenderObject::SelectionNone;
@@ -1316,6 +1281,30 @@ int RootInlineBox::selectionTop()
 RenderBlock* RootInlineBox::block() const
 {
     return static_cast<RenderBlock*>(m_object);
+}
+
+InlineBox* RootInlineBox::closestLeafChildForXPos(int _x, int _tx)
+{
+    InlineBox *firstLeaf = firstLeafChildAfterBox();
+    if (_x <= _tx + firstLeaf->m_x)
+        // The x coordinate is less or equal to left edge of the firstLeaf.
+        // Return it.
+        return firstLeaf;
+
+    InlineBox *lastLeaf = lastLeafChildBeforeBox();
+    if (_x >= _tx + lastLeaf->m_x + lastLeaf->m_width)
+        // The x coordinate is greater or equal to right edge of the lastLeaf.
+        // Return it.
+        return lastLeaf;
+
+    for (InlineBox *box = firstLeaf; box && box != lastLeaf; box = box->nextLeafChild()) {
+        if (_x >= _tx + box->m_x)
+            // The x coordinate is greater or equal to left edge of the box's start.
+            // Return it.
+            return box;
+    }
+
+    return lastLeaf;
 }
 
 }

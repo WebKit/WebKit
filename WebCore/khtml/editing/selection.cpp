@@ -173,9 +173,6 @@ void Selection::modifyAffinity(EAlter alter, EDirection dir, ETextGranularity gr
             break;
         case PARAGRAPH:
         case LINE:
-            if (dir == BACKWARD || dir == LEFT)
-                m_affinity = UPSTREAM;
-            break;
         case PARAGRAPH_BOUNDARY:
         case DOCUMENT_BOUNDARY:
             // These granularities should not change affinity.

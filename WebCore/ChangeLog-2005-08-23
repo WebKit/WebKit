@@ -1,3 +1,23 @@
+2005-01-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3971609> REGRESSION (Mail): up/down arrow navigation broken after rewrapping text by resizing window
+        <rdar://problem/3975661> REGRESSION (Mail): left/right arrow navigation can place insertion point after last character on line
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::modifyAffinity): PARAGRAPH and LINE movements should not alter affinity. This was
+        just a mistake before when it reset to upstream in some cases.
+        * khtml/rendering/render_line.cpp:
+        (khtml::RootInlineBox::closestLeafChildForXPos): Move this function down from InlineBox, and 
+        rework the implementation. This fixes 3971609.
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect): Rework the algorithm to fix 3975661. This regressed when we began placing
+        the spaces on the end of lines in text boxes when lines wrap.
+
 2005-01-26  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3972522> (179-180) 40% slowdown on iBench JavaScript test
