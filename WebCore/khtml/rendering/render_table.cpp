@@ -203,8 +203,7 @@ void RenderTable::calcWidth()
     else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
-        if (style()->flowAroundFloats())
-            availableWidth = cb->lineWidth( m_y );
+        availableWidth = cb->lineWidth( m_y );
         
         // Subtract out any fixed margins from our available width for auto width tables.
         int marginTotal = 0;

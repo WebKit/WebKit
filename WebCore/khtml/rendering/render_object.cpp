@@ -170,6 +170,11 @@ bool RenderObject::isBody() const
     return element() && element()->renderer() == this && element()->id() == ID_BODY;
 }
 
+bool RenderObject::isHR() const
+{
+    return element() && element()->id() == ID_HR;
+}
+
 bool RenderObject::isHTMLMarquee() const
 {
     return element() && element()->renderer() == this && element()->id() == ID_MARQUEE;
@@ -1937,7 +1942,22 @@ void RenderObject::collectBorders(QPtrList<CollapsedBorderValue>& borderStyles)
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->collectBorders(borderStyles);
 }
-    
+
+bool RenderObject::avoidsFloats() const
+{
+    return isReplaced() || isTable() || style()->hidesOverflow() || isHR() || isFlexibleBox(); 
+}
+
+bool RenderObject::usesLineWidth() const
+{
+    // 1. All auto-width objects that avoid floats should always use lineWidth
+    // 2. For objects with a specified width, we match WinIE's behavior:
+    // (a) tables use contentWidth
+    // (b) <hr>s use lineWidth
+    // (c) all other objects use lineWidth in quirks mode and contentWidth in strict mode.
+    return (avoidsFloats() && (style()->width().isVariable() || isHR() || (style()->htmlHacks() && !isTable())));
+}
+
 QChar RenderObject::backslashAsCurrencySymbol() const
 {
 #if !APPLE_CHANGES

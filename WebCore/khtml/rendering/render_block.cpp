@@ -438,9 +438,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         layoutBlockChildren( relayoutChildren );
 
     // Expand our intrinsic height to encompass floats.
+    int toAdd = borderBottom() + paddingBottom();
+    if (style()->overflow() == OSCROLL && m_layer)
+        toAdd += m_layer->horizontalScrollbarHeight();
     if ( hasOverhangingFloats() && (isInlineBlockOrInlineTable() || isFloatingOrPositioned() || style()->hidesOverflow() ||
                                     (parent() && parent()->isFlexibleBox())) )
-        m_height = floatBottom() + borderBottom() + paddingBottom();
+        m_height = floatBottom() + toAdd;
            
     int oldHeight = m_height;
     calcHeight();
@@ -509,6 +512,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         xPos = m_width - paddingRight() - borderRight();
 
     int toAdd = borderBottom() + paddingBottom();
+    if (style()->overflow() == OSCROLL && m_layer)
+        toAdd += m_layer->horizontalScrollbarHeight();
+    
     m_height = borderTop() + paddingTop();
 
     // Fieldsets need to find their legend and position it inside the border of the object.
@@ -724,10 +730,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // Note this occurs after the test for positioning and floating above, since
         // we want to ensure that we don't artificially increase our height because of
         // a positioned or floating child.
-        if ( (child->style()->hidesOverflow() || child->isFlexibleBox() || child->style()->flowAroundFloats() )
-             && !child->isFloating() &&
-             style()->width().isFixed() && child->minWidth() > lineWidth( m_height ) ) {
-            m_height = QMAX( m_height, floatBottom() );
+        if (child->avoidsFloats() && style()->width().isFixed() && child->minWidth() > lineWidth(m_height)) {
+            m_height = kMax(m_height, floatBottom());
             shouldCollapseChild = false;
             clearOccurred = true;
         }
@@ -868,11 +872,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
             child->setPos(child->xPos(), ypos);
             if (ypos != yPosEstimate) {
-                if (child->style()->htmlHacks() && child->style()->flowAroundFloats() &&
-                    child->style()->width().isPercent())
-                    // The child's width can be a percentage width and if it has the
-                    // quirky flowAroundFloats
-                    // property set, when the child shifts to clear an item, its width can
+                if (child->style()->width().isPercent() && child->usesLineWidth())
+                    // The child's width is a percentage of the line width.
+                    // When the child shifts to clear an item, its width can
                     // change (because it has more available line width).
                     // So go ahead and mark the item as dirty.
                     child->setChildNeedsLayout(true);
@@ -920,13 +922,11 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // If our value of clear caused us to be repositioned vertically to be
             // underneath a float, we might have to do another layout to take into account
             // the extra space we now have available.
-            if (child->style()->htmlHacks() && child->style()->flowAroundFloats() &&
-                child->style()->width().isPercent())
-                // The child's width can be a percentage width and if it has the
-                // quirky flowAroundFloats
-                // property set, when the child shifts to clear an item, its width can
+            if (child->style()->width().isPercent() && child->usesLineWidth())
+                // The child's width is a percentage of the line width.
+                // When the child shifts to clear an item, its width can
                 // change (because it has more available line width).
-                // So go ahead an mark the item as dirty.
+                // So go ahead and mark the item as dirty.
                 child->setChildNeedsLayout(true);
             if (child->containsFloats())
                 child->markAllDescendantsWithFloatsForLayout();
@@ -945,10 +945,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             // Add in our left margin.
             chPos += child->marginLeft();
             
-            // html blocks flow around floats
-            if (child->style()->hidesOverflow() || child->isFlexibleBox() || 
-                child->isTable() || child->isReplaced() || child->style()->flowAroundFloats())
-            {
+            // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
+            // to shift over as necessary to dodge any floats that might get in the way.
+            if (child->avoidsFloats()) {
                 int leftOff = leftOffset(m_height);
                 if (leftOff != xPos) {
                     // The object is shifting right. The object might be centered, so we need to
@@ -965,8 +964,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
         } else {
             chPos -= child->width() + child->marginRight();
-            if (child->style()->hidesOverflow() || child->isFlexibleBox() || 
-                child->isTable() || child->isReplaced() || child->style()->flowAroundFloats())
+            if (child->avoidsFloats())
                 chPos -= (xPos - rightOffset(m_height));
         }
 
@@ -1734,56 +1732,42 @@ RenderBlock::clearFloats()
     if (m_floatingObjects)
         m_floatingObjects->clear();
 
-    if (isFloating() || isPositioned() || style()->hidesOverflow() || style()->flowAroundFloats() || isFlexibleBox()) 
+    // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
+    if (avoidsFloats() || isRoot() || isCanvas() || isFloatingOrPositioned() || isTableCell())
         return;
     
-    RenderObject *prev = previousSibling();
-
-    // find the element to copy the floats from
-    // pass non-flows
-    // pass fAF's unless they contain overhanging stuff
+    // Attempt to locate a previous sibling with overhanging floats.  We skip any elements that are
+    // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
+    // to avoid floats.
     bool parentHasFloats = false;
-    while (prev) {
-        if (!prev->isRenderBlock() || prev->isFloating() || prev->isPositioned() ||
-            prev->style()->hidesOverflow() || prev->isFlexibleBox() ||
-            (prev->style()->flowAroundFloats() &&
-             // A <table> or <ul> can have a height of 0, so its ypos may be the same
-             // as m_y.  That's why we have a <= and not a < here. -dwh
-             (static_cast<RenderBlock *>(prev)->floatBottom()+prev->yPos() <= m_y ))) {
-            if ( prev->isFloating() && parent()->isRenderBlock() ) {
-                parentHasFloats = true;
-            }
-            prev = prev->previousSibling();
-        } else
-            break;
+    RenderObject *prev = previousSibling();
+    while (prev && (!prev->isRenderBlock() || prev->avoidsFloats() || prev->isFloatingOrPositioned())) {
+        if (prev->isFloating())
+            parentHasFloats = true;
+         prev = prev->previousSibling();
     }
 
+    // First add in floats from the parent.
     int offset = m_y;
     if (parentHasFloats)
         addOverHangingFloats( static_cast<RenderBlock *>( parent() ),
                               parent()->borderLeft() + parent()->paddingLeft(), offset, false );
 
     int xoffset = 0;
-    if (prev) {
-        if(prev->isTableCell()) return;
+    if (prev)
         offset -= prev->yPos();
-    } else {
+    else {
         prev = parent();
-        if(!prev) return;
         xoffset += prev->borderLeft() + prev->paddingLeft();
     }
     //kdDebug() << "RenderBlock::clearFloats found previous "<< (void *)this << " prev=" << (void *)prev<< endl;
 
-    // add overhanging special objects from the previous RenderBlock
-    if(!prev->isRenderBlock()) return;
-    RenderBlock * flow = static_cast<RenderBlock *>(prev);
-    if(!flow->m_floatingObjects) return;
-    if (style()->hidesOverflow() || isFlexibleBox() ||
-        (( style()->htmlHacks() || isTable()) && style()->flowAroundFloats()))
-        return; // these elements don't allow floats from previous blocks to intrude into their space.
-
-    if(flow->floatBottom() > offset)
-        addOverHangingFloats( flow, xoffset, offset );
+    // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.
+    if (!prev->isRenderBlock()) return;
+    RenderBlock* block = static_cast<RenderBlock *>(prev);
+    if (!block->m_floatingObjects) return;
+    if (block->floatBottom() > offset)
+        addOverHangingFloats(block, xoffset, offset);
 }
 
 void RenderBlock::addOverHangingFloats( RenderBlock *flow, int xoff, int offset, bool child )

@@ -1,3 +1,47 @@
+2003-11-16  David Hyatt  <hyatt@apple.com>
+
+	3485717, Cleanup of the float code.  Eliminated the -khtml-flow-mode style property in favor of two simple methods,
+	avoidsFloats() and usesLineWidth().  avoidsFloats can be called to tell whether an object does not want
+	floats to intrude into its space (and that it should also move to avoid floats).  usesLineWidth is called
+	to find out if an object's containing block width is the line width or the content width, and has all the
+	right smarts to emulate WinIE's behaviors in both quirks and strict mode.
+
+	Also fixed a bug (3485718) where overflow:scroll blocks with auto height did not factor in the horizontal scrollbar's
+	height (thus causing it to paint on top of content).
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::clearFloats):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::containingBlockWidth):
+        (RenderBox::calcWidth):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isHR):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::avoidsFloats):
+        (khtml::RenderObject::usesLineWidth):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::NonInheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+        (khtml::RenderStyle::initialTextDecoration):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::calcWidth):
+
 2003-11-14  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3485260, regression on Uniview site from incremental repainting.  When appending/inserting child

@@ -1282,12 +1282,12 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
 #if BIDI_DEBUG > 1 || defined( DEBUG_LINEBREAKS )
     kdDebug(6041) << " ------- bidi start " << this << " -------" << endl;
 #endif
-    int toAdd = borderBottom();
-    m_height = borderTop();
-
-    m_height += paddingTop();
-    toAdd += paddingBottom();
-
+    
+    m_height = borderTop() + paddingTop();
+    int toAdd = borderBottom() + paddingBottom();
+    if (style()->overflow() == OSCROLL && m_layer)
+        toAdd += m_layer->horizontalScrollbarHeight();
+    
     // Clear out our line boxes.
     deleteLineBoxes();
     

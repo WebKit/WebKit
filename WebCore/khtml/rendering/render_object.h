@@ -223,6 +223,7 @@ public:
     virtual bool isCanvas() const { return false; }
     bool isRoot() const;
     bool isBody() const;
+    bool isHR() const;
     virtual bool isBR() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableRow() const { return false; }
@@ -632,7 +633,10 @@ public:
     virtual bool containsFloat(RenderObject* o) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
 
-    // positioning of inline childs (bidi)
+    bool avoidsFloats() const;
+    bool usesLineWidth() const;
+
+    // positioning of inline children (bidi)
     virtual void position(InlineBox*, int, int, bool) {}
 
     enum SelectionState {

@@ -513,9 +513,7 @@ short RenderBox::containingBlockWidth() const
         return canvas()->view()->visibleWidth();
     
     RenderBlock* cb = containingBlock();
-    if ((style()->hidesOverflow() || isFlexibleBox() ||
-         ((style()->htmlHacks() || isTable()) && style()->flowAroundFloats()))
-            && style()->width().isVariable())
+    if (usesLineWidth())
         return cb->lineWidth(m_y);
     else
         return cb->contentWidth();
@@ -696,12 +694,8 @@ void RenderBox::calcWidth()
         Length ml = style()->marginLeft();
         Length mr = style()->marginRight();
 
-        int cw;
         RenderBlock *cb = containingBlock();
-        if ((style()->width().isVariable() && (style()->hidesOverflow() || isFlexibleBox())) || style()->flowAroundFloats())
-            cw = cb->lineWidth( m_y );
-        else
-            cw = cb->contentWidth();
+        int cw = containingBlockWidth();
 
         if (cw<0) cw = 0;
 

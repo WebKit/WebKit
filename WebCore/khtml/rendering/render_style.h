@@ -727,7 +727,6 @@ protected:
             (_table_layout == other._table_layout) &&
             (_page_break_before == other._page_break_before) &&
             (_page_break_after == other._page_break_after) &&
-            (_flowAroundFloats == other._flowAroundFloats) &&
             (_styleType == other._styleType) &&
             (_affectedByHover == other._affectedByHover) &&
             (_affectedByActive == other._affectedByActive) &&
@@ -752,8 +751,6 @@ protected:
         
         EPageBreak _page_break_before : 2;
         EPageBreak _page_break_after : 2;
-        
-        bool _flowAroundFloats :1;
 
         PseudoId _styleType : 3;
         bool _affectedByHover : 1;
@@ -815,7 +812,6 @@ protected:
 	noninherited_flags._table_layout = initialTableLayout();
         noninherited_flags._page_break_before = initialPageBreak();
         noninherited_flags._page_break_after = initialPageBreak();
-	noninherited_flags._flowAroundFloats = initialFlowAroundFloats();
 	noninherited_flags._styleType = NOPSEUDO;
         noninherited_flags._affectedByHover = false;
         noninherited_flags._affectedByActive = false;
@@ -1141,9 +1137,6 @@ public:
     bool htmlHacks() const { return inherited_flags._htmlHacks; }
     void setHtmlHacks(bool b=true) { inherited_flags._htmlHacks = b; }
 
-    bool flowAroundFloats() const { return  noninherited_flags._flowAroundFloats; }
-    void setFlowAroundFloats(bool b=true) {  noninherited_flags._flowAroundFloats = b; }
-
     bool hasAutoZIndex() { return box->z_auto; }
     void setHasAutoZIndex() { SET_VAR(box, z_auto, true) }
     int zIndex() const { return box->z_index; }
@@ -1245,7 +1238,6 @@ public:
     static Length initialLineHeight() { return Length(-100, Percent); }
     static ETextAlign initialTextAlign() { return TAAUTO; }
     static ETextDecoration initialTextDecoration() { return TDNONE; }
-    static bool initialFlowAroundFloats() { return false; }
     static int initialOutlineOffset() { return 0; }
     static float initialOpacity() { return 1.0f; }
     static EBoxAlignment initialBoxAlign() { return BSTRETCH; }

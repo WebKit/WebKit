@@ -3044,14 +3044,6 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         style->setTextDecoration(t);
         break;
     }
-    case CSS_PROP__KHTML_FLOW_MODE:
-        HANDLE_INHERIT_AND_INITIAL(flowAroundFloats, FlowAroundFloats)
-        if (!primitiveValue) return;
-        if (primitiveValue->getIdent()) {
-            style->setFlowAroundFloats( primitiveValue->getIdent() == CSS_VAL__KHTML_AROUND_FLOATS );
-            return;
-        }
-        break;
 
 // shorthand properties
     case CSS_PROP_BACKGROUND:

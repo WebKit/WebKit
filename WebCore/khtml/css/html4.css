@@ -107,7 +107,6 @@ HR  {
         border-width: 1px;
         margin-left: auto;
         margin-right: auto;
-        -khtml-flow-mode: -khtml-around-floats;
 }
 
 MAP { 
@@ -166,11 +165,10 @@ H6 {
 
 TABLE { 
 	display: table;
-	border-collapse: separate;
+        border-collapse: separate;
 	text-align: -khtml-auto;
 	border-spacing: 2px;
 	border-color: gray;
-        -khtml-flow-mode: -khtml-around-floats;
 }
 
 TABLE[align="center"] { 

@@ -973,11 +973,6 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
-    case CSS_PROP__KHTML_FLOW_MODE:
-	if ( id == CSS_VAL__KHTML_NORMAL || id == CSS_VAL__KHTML_AROUND_FLOATS )
-	    valid_primitive = true;
-	break;
-
     /* CSS3 properties */
     case CSS_PROP_OUTLINE_OFFSET:
         valid_primitive = validUnit(value, FLength, strict&(!nonCSSHint));
