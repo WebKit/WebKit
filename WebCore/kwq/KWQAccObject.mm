@@ -352,7 +352,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return YES;
 
     if (m_renderer->isText())
-        return !m_renderer->isBR() && !static_cast<RenderText*>(m_renderer)->firstTextBox();
+        return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
     
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NO;
