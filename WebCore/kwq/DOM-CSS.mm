@@ -697,11 +697,6 @@ static inline int getPropertyID(NSString *string)
     [super dealloc];
 }
 
-- (CSSStyleDeclarationImpl *)_styleDeclarationImpl
-{
-    return reinterpret_cast<CSSStyleDeclarationImpl *>(_internal);
-}
-
 - (NSString *)cssText
 {
     return [self _styleDeclarationImpl]->cssText();
@@ -794,6 +789,11 @@ static inline int getPropertyID(NSString *string)
         return [[cachedInstance retain] autorelease];
     
     return [[[self alloc] _initWithStyleDeclarationImpl:impl] autorelease];
+}
+
+- (CSSStyleDeclarationImpl *)_styleDeclarationImpl
+{
+    return reinterpret_cast<CSSStyleDeclarationImpl *>(_internal);
 }
 
 @end

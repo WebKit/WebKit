@@ -1074,6 +1074,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
+@implementation DOMDocument (DOMDocumentExtensions)
+
+- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
+{
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->createCSSStyleDeclaration()];
+}
+
+@end
+
 @implementation DOMDocument (WebCoreInternal)
 
 + (DOMDocument *)_documentWithImpl:(DocumentImpl *)impl

@@ -1,3 +1,15 @@
+2004-04-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Added some plumbing for applying styles.
+
+        * DOM.subproj/DOMExtensions.h: Copied from WebCore.
+        * WebView.subproj/WebView.m:
+        (-[WebView DOMDocument]): Added new helper.
+        (-[WebView styleDeclarationWithText:]): Added new helper.
+        * WebView.subproj/WebViewPrivate.h: Declare above methods.
+
 2004-04-22  Richard Williamson   <rjw@apple.com>
 
 	Updates to plugin binding APIs.

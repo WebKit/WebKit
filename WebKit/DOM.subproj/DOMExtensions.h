@@ -25,6 +25,8 @@
 
 #import "DOMHTML.h"
 
+@class DOMCSSStyleDeclaration;
+
 @interface DOMHTMLEmbedElement : DOMHTMLElement
 - (NSString *)align;
 - (void)setAlign:(NSString *)align;
@@ -59,4 +61,8 @@
 @interface DOMHTMLTableCellElement (DOMHTMLTableCellElementExtensions)
 - (NSString *)background;
 - (void)setBackground:(NSString *)background;
+@end
+
+@interface DOMDocument (DOMDocumentExtensions)
+- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
 @end

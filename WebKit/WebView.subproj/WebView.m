@@ -6,6 +6,7 @@
 #import <WebKit/WebViewInternal.h>
 
 #import <WebKit/DOM.h>
+#import <WebKit/DOMExtensions.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
@@ -2175,6 +2176,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (id)editingDelegate
 {
     return _private->editingDelegate;
+}
+
+- (DOMDocument *)DOMDocument
+{
+    if ([[[[self mainFrame] dataSource] representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
+        return [(id <WebDocumentDOM>)[[[self mainFrame] dataSource] representation] DOMDocument];
+    }
+    return nil;
+}
+
+- (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text
+{
+    DOMCSSStyleDeclaration *decl = [[self DOMDocument] createCSSStyleDeclaration];
+    [decl setCssText:text];
+    return decl;
 }
 
 @end

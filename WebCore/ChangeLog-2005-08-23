@@ -1,3 +1,20 @@
+2004-04-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Added some plumbing for applying styles.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createCSSStyleDeclaration): New factory method.
+        * khtml/xml/dom_docimpl.h: Declare the above.
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration _styleDeclarationImpl]): Expose this in the
+        WebCoreInternal category, "promoting" it from being private to the 
+        DOM-CSS.mm file.
+        * kwq/DOM.mm: Add -(DOMCSSStyleDeclaration *)createCSSStyleDeclaration extension.
+        * kwq/DOMExtensions.h: Delcare the above.
+        * kwq/DOMInternal.h: Add _styleDeclarationImpl to WebCoreInternal category.
+
 2004-04-23  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3631541>: "repro crash in KHTMLPart::setFocusNodeIfNeeded"
