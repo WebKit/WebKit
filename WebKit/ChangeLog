@@ -1,3 +1,13 @@
+2003-05-29  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3272226.  The shared image factory was being released
+	when any renderer had 0 reps!
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]):
+
 2003-05-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3151216 - Safari crashes on Drag&Drop if plugin dialog is open

@@ -60,6 +60,7 @@
     [imageRenderer setCacheMode: NSImageCacheNever];
 
     [imageRenderer setScalesWhenResized:NO];
+        
     return [imageRenderer autorelease];
 }
 
@@ -77,8 +78,8 @@
     [data release];
     
     NSArray *reps = [imageRenderer representations];
-    if ([reps count] == 0) {
-        [self release];
+    if ([reps count] == 0){
+        [imageRenderer release];
         return nil;
     }
 
