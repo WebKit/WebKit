@@ -1,3 +1,14 @@
+2002-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3128651 -- REGRESSION: Mouse wheeling is busted on frames pages
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView hitTest:]):
+	Only do the hitTest magic for left mouse downs; the rest of the clicks end up going
+	to the correct view anyway, without our help. This makes this stop making trouble for
+	the scroll wheel events.
+
 2002-12-14  Don Melton  <gramps@apple.com>
 
 	Fixed 3127173 -- REGRESSION: fboweb.com renders incorrectly
