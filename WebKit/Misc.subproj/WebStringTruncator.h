@@ -19,4 +19,6 @@
 // Default font is [NSFont menuFontOfSize:0].
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth;
 
++ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
+
 @end

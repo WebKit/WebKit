@@ -55,6 +55,40 @@ static float currentEllipsisWidth;
     return [self centerTruncateString:string toWidth:maxWidth withFont:[NSFont menuFontOfSize:0]];
 }
 
++ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
+{
+    unichar stringBuffer[STRING_BUFFER_SIZE];
+    WebTextRenderer *renderer;
+    unichar ellipsis;
+    float ellipsisWidth;
+    float width;
+    unsigned truncatedLength = [string length];
+
+    ASSERT (truncatedLength+1 < STRING_BUFFER_SIZE);
+    // FIXME:  Allocate buffer is string doesn't fit in local buffer.
+    
+    [string getCharacters:stringBuffer];
+    renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+    width = [renderer floatWidthForCharacters:stringBuffer
+                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+    if (width <= maxWidth)
+        return string;
+
+    ellipsis = ELLIPSIS_CHARACTER;
+    ellipsisWidth = [renderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 applyRounding: NO attemptFontSubstitution: YES];
+
+    maxWidth -= ellipsisWidth;
+    while (width > maxWidth && truncatedLength){	
+        truncatedLength--;
+        width = [renderer floatWidthForCharacters:stringBuffer
+                                              stringLength:truncatedLength fromCharacterPosition: 0 numberOfCharacters: truncatedLength applyRounding: NO attemptFontSubstitution: YES];
+    }
+
+    stringBuffer[truncatedLength++] = ELLIPSIS_CHARACTER; 
+    
+    return [NSString stringWithCharacters:stringBuffer length:truncatedLength];
+}
+
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
     unichar stringBuffer[STRING_BUFFER_SIZE];

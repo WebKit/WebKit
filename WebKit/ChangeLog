@@ -1,3 +1,19 @@
+2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
+        More fun and games with dragged links.
+        Draw both a label and url (in a smaller font)
+        into the dragged image.
+
+        * Misc.subproj/WebStringTruncator.h:
+        * Misc.subproj/WebStringTruncator.m:
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        
+        Added right string truncator.  Not optimized, but not used
+        very often.  Currently just for dragged link experiment.
+        
 === Alexander-22 ===
 
 2002-09-06  Ken Kocienda  <kocienda@apple.com>

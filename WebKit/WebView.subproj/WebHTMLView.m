@@ -17,6 +17,7 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
@@ -416,6 +417,8 @@
 #define DragStartXHysteresis  		2.0
 #define DragStartYHysteresis  		1.0
 
+#define DRAG_LABEL_BORDER	2.0
+
 - (void)mouseDragged:(NSEvent *)event
 {
     // Ensure that we're visible wrt the event location.
@@ -442,23 +445,47 @@
                 [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
             }
             else if (linkURL) {
+                BOOL drawURLString = YES;
+                BOOL clipURLString = NO;
+                
                 _private->draggedURL = linkURL;
                                 
                 NSString *label = [element objectForKey: WebContextMenuElementLinkLabelKey];
+                NSString *urlString = [linkURL absoluteString];
                 
-                if (!label)
-                    label = [linkURL absoluteString];
-                    
-                NSFont *dragImageFont = [NSFont systemFontOfSize: 12.0];
-                NSDictionary *dragImageAttributes = [NSDictionary dictionaryWithObject:dragImageFont forKey: NSFontAttributeName];
-                NSSize imageSize = [label sizeWithAttributes: dragImageAttributes];
-                imageSize.width += 4.0;
-                imageSize.height += 4.0;
+                if (!label){
+                    drawURLString = NO;
+                    label = urlString;
+                }
+                
+                NSFont *labelFont = [NSFont systemFontOfSize: 12.0];
+                NSFont *urlFont = [NSFont systemFontOfSize: 8.0];
+                NSDictionary *labelAttributes = [NSDictionary dictionaryWithObject:labelFont forKey: NSFontAttributeName];
+                NSDictionary *urlAttributes = [NSDictionary dictionaryWithObject:urlFont forKey: NSFontAttributeName];
+                NSSize labelSize = [label sizeWithAttributes: labelAttributes];
+                NSSize imageSize, urlStringSize;
+                imageSize.width += labelSize.width + DRAG_LABEL_BORDER*2;
+                imageSize.height += labelSize.height + DRAG_LABEL_BORDER*2;
+                if (drawURLString){
+                    urlStringSize = [urlString sizeWithAttributes: urlAttributes];
+                    imageSize.height += urlStringSize.height;
+                    // Clip the url string to 2.5 times the width of the label.
+                    if (urlStringSize.width > 2.5 * labelSize.width){
+                        imageSize.width = (labelSize.width*2.5)+DRAG_LABEL_BORDER*2;
+                        clipURLString = YES;
+                    }
+                    else
+                        imageSize.width = MAX(labelSize.width+DRAG_LABEL_BORDER*2,urlStringSize.width+DRAG_LABEL_BORDER*2);
+                }
                 NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
                 [dragImage lockFocus];
-                [[NSColor colorWithCalibratedRed: 0.25 green: 0.25 blue: 0.75 alpha: 0.5] set];
+                [[NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 1.0 alpha: 0.75] set];
                 [NSBezierPath fillRect:NSMakeRect(0, 0, imageSize.width, imageSize.height)];
-                [label drawAtPoint: NSMakePoint (2.0,2.0) withAttributes: dragImageAttributes];
+                if (drawURLString){
+                    urlString = [WebStringTruncator rightTruncateString: urlString toWidth: imageSize.width-2.0 withFont: urlFont];
+                    [urlString drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER,DRAG_LABEL_BORDER) withAttributes: urlAttributes];
+                }
+                [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER,DRAG_LABEL_BORDER+urlStringSize.height) withAttributes: labelAttributes];
                 [dragImage unlockFocus];
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
