@@ -1,3 +1,17 @@
+2003-12-05  David Hyatt  <hyatt@apple.com>
+
+	Add support for link clicking as an accessibility action.
+	
+        Reviewed by john
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject anchorElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityActionNames]):
+        (-[KWQAccObject accessibilityActionDescription:]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+
 2003-12-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

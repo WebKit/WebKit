@@ -30,6 +30,7 @@
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
+#import "html_inlineimpl.h"
 #import "dom_string.h"
 #import "dom2_range.h"
 #import "htmlattrs.h"
@@ -43,6 +44,7 @@
 #import "render_text.h"
 
 using DOM::ElementImpl;
+using DOM::HTMLAnchorElementImpl;
 using khtml::RenderObject;
 using khtml::RenderWidget;
 
@@ -114,6 +116,19 @@ using khtml::RenderWidget;
     [data retain];
     [m_data release];
     m_data = data;
+}
+
+-(HTMLAnchorElementImpl*)anchorElement
+{
+    RenderObject* currRenderer;
+    for (currRenderer = m_renderer; 
+         currRenderer && (!currRenderer->element() || !currRenderer->element()->hasAnchor());
+         currRenderer = currRenderer->parent());
+    
+    if (!currRenderer)
+        return 0;
+    
+    return static_cast<HTMLAnchorElementImpl*>(currRenderer->element());
 }
 
 -(KWQAccObject*)firstChild
@@ -198,7 +213,7 @@ using khtml::RenderWidget;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
     if (m_renderer->isImage())
-       return NSAccessibilityButtonRole;
+       return NSAccessibilityImageRole;
     if (m_renderer->isCanvas())
         return NSAccessibilityGroupRole;
     if (m_renderer->isTable() || m_renderer->isTableCell())
@@ -315,25 +330,49 @@ using khtml::RenderWidget;
 
 - (NSArray *)accessibilityAttributeNames
 {
-    return [NSArray arrayWithObjects: NSAccessibilityRoleAttribute,
-        NSAccessibilityRoleDescriptionAttribute,
-        NSAccessibilityChildrenAttribute,
-        NSAccessibilityHelpAttribute,
-        NSAccessibilityParentAttribute,
-        NSAccessibilityPositionAttribute,
-        NSAccessibilitySizeAttribute,
-        //NSAccessibilitySubroleAttribute,
-        NSAccessibilityTitleAttribute,
-        NSAccessibilityValueAttribute,
-        NSAccessibilityFocusedAttribute,
-        NSAccessibilityEnabledAttribute,
-        NSAccessibilityWindowAttribute,
-        nil];
+    static NSArray* attributes = nil;
+    if (attributes == nil) {
+        attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilityChildrenAttribute,
+            NSAccessibilityHelpAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityPositionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityTitleAttribute,
+            NSAccessibilityValueAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityWindowAttribute,
+            nil];
+    }
+    return attributes;
 }
 
 - (NSArray*)accessibilityActionNames
 {
+    static NSArray* actions = nil;
+    if ([self anchorElement]) {
+        if (actions == nil)
+            actions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, nil];
+        return actions;
+    }
     return nil;
+}
+
+- (NSString *)accessibilityActionDescription:(NSString *)action
+{
+    // We only have the one action (press).
+    return UI_STRING("press link", "not real string value yet");
+}
+
+- (void)accessibilityPerformAction:(NSString *)action
+{
+    // We only have the one action (press).
+    // Locate the anchor element. If it doesn't exist, just bail.
+    HTMLAnchorElementImpl* anchorElt = [self anchorElement];
+    if (!anchorElt) return;
+    anchorElt->click();
 }
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
