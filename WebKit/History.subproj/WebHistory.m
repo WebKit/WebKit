@@ -67,6 +67,17 @@
     }
 }
 
+- (void)updateURL:(NSString *)newURLString
+            title:(NSString *)newTitle
+     displayTitle:(NSString *)newDisplayTitle
+           forURL:(NSString *)oldURLString
+{
+    if ([_historyPrivate updateURL:newURLString title:newTitle displayTitle:newDisplayTitle forURL:oldURLString] != nil) {
+        // Consider passing changed entry as parameter to notification
+        [self sendEntriesChangedNotification];
+    }
+}
+
 
 #pragma mark DATE-BASED RETRIEVAL
 

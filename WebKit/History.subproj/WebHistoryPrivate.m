@@ -12,7 +12,7 @@
 #import <WebKit/WebKitDebug.h>
 
 @interface IFWebHistoryPrivate (Private)
-- (void)loadHistory;
+-(IFURIEntry *)_entryForURLString:(NSString *)urlString;
 @end
 
 @implementation IFWebHistoryPrivate
@@ -208,6 +208,34 @@
     return YES;
 }
 
+- (IFURIEntry *)updateURL:(NSString *)newURLString
+                    title:(NSString *)newTitle
+             displayTitle:(NSString *)newDisplayTitle
+                   forURL:(NSString *)oldURLString
+{
+    IFURIEntry *entry;
+
+    WEBKIT_ASSERT (oldURLString != nil);
+
+    entry = [self _entryForURLString:oldURLString];
+    if (entry == nil) {
+        return nil;
+    }
+
+    if (newURLString != nil) {
+        [entry setURL:[NSURL URLWithString:newURLString]];
+    }
+
+    if (newTitle != nil) {
+        [entry setTitle:newTitle];
+    }
+
+    if (newDisplayTitle != nil) {
+        [entry setDisplayTitle:newDisplayTitle];
+    }
+
+    return entry;
+}
 
 #pragma mark DATE-BASED RETRIEVAL
 
@@ -243,9 +271,14 @@
 
 #pragma mark URL MATCHING
 
+-(IFURIEntry *)_entryForURLString:(NSString *)urlString
+{
+    return [_urlDictionary objectForKey: urlString];
+}
+
 - (BOOL)containsURL: (NSURL *)url
 {
-    return [_urlDictionary objectForKey: [url absoluteString]] != nil;
+    return [self _entryForURLString:[url absoluteString]] != nil;
 }
 
 #pragma mark ARCHIVING/UNARCHIVING

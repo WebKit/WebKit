@@ -28,6 +28,12 @@
 - (void)removeEntriesForDay: (NSCalendarDate *)calendarDate;
 - (void)removeAllEntries;
 
+// Update an entry in place. Any nil "new" parameters aren't updated.
+- (void)updateURL:(NSString *)newURLString
+            title:(NSString *)newTitle
+     displayTitle:(NSString *)newDisplayTitle
+           forURL:(NSString *)oldURLString;
+
 // retrieving contents for date-based presentation
 
 // get an array of NSCalendarDate, each one representing a unique day that contains one

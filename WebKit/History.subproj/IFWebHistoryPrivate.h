@@ -23,6 +23,10 @@
 - (BOOL)removeEntry: (IFURIEntry *)entry;
 - (BOOL)removeEntriesForDay: (NSCalendarDate *)calendarDate;
 - (BOOL)removeAllEntries;
+- (IFURIEntry *)updateURL:(NSString *)newURLString
+                    title:(NSString *)newTitle
+             displayTitle:(NSString *)newDisplayTitle
+                   forURL:(NSString *)oldURLString;
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;

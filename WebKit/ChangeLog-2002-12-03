@@ -1,3 +1,21 @@
+2002-04-01  John Sullivan  <sullivan@apple.com>
+
+	Added method for updating url, title, and/or displayTitle
+	on existing entry.
+
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistory.m: 
+	(-[IFWebHistory	updateURL:title:displayTitle:forURL:]):
+	Calls through to IFWebHistoryPrivate.
+
+	* History.subproj/IFWebHistoryPrivate.h:
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(-[IFWebHistoryPrivate _entryForURLString:]): Broke this out
+	from containsURL.
+	(-[IFWebHistoryPrivate containsURL:]): Call broken-out method.
+	(-[IFWebHistoryPrivate updateURL:title:displayTitle:forURL:]):
+	Find existing entry (if any), change its attributes.
+
 2002-04-01  Darin Adler  <darin@apple.com>
 
 	* Misc.subproj/IFError.h: Add the failing URL to IFError.
