@@ -183,8 +183,14 @@ void RenderFormElement::layout()
 
 void RenderFormElement::slotClicked()
 {
+    // FIXME: Should share code with KHTMLView::dispatchMouseEvent, which does a lot of the same stuff.
+
     RenderArena *arena = ref();
 
+#if APPLE_CHANGES
+    QMouseEvent event(QEvent::MouseButtonRelease); // gets "current event"
+    element()->dispatchMouseEvent(&event, EventImpl::CLICK_EVENT, event.clickCount());
+#else
     // We also send the KHTML_CLICK or KHTML_DBLCLICK event for
     // CLICK. This is not part of the DOM specs, but is used for
     // compatibility with the traditional onclick="" and ondblclick=""
@@ -192,11 +198,6 @@ void RenderFormElement::slotClicked()
     // single & double clicks using DOM (only the click count is
     // stored, which is not necessarily the same)
 
-#if APPLE_CHANGES
-    QMouseEvent event(QEvent::MouseButtonRelease); // gets "current event"
-    element()->dispatchMouseEvent(&event, EventImpl::CLICK_EVENT, event.clickCount());
-    element()->dispatchMouseEvent(&event, event.isDoubleClick() ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, event.clickCount());
-#else
     QMouseEvent e2(QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
     element()->dispatchMouseEvent(&e2, EventImpl::CLICK_EVENT, m_clickCount);
     element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);

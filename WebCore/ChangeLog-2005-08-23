@@ -2,6 +2,25 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4013986> REGRESSION (173-174): onclick event not sent when mouse click on checkbox is double-click
+
+        We need to send an onclick event *and* an ondblclick event when we process a double click.
+
+        * khtml/khtmlview.cpp: (KHTMLView::dispatchMouseEvent): In the case where we're sending a CLICK_EVENT,
+        follow it by a KHTML_CLICK_EVENT, a KHTML_DBLCLICK_EVENT when handling a double click, and a DOMACTIVATE_EVENT.
+        We no longer do the DOMACTIVATE_EVENT in dispatchGenericEvent.
+        * khtml/rendering/render_form.cpp: (RenderFormElement::slotClicked): send only CLICK_EVENT here, and
+        lets dispatchMouseEvent deal with the other subsequent events.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent): Remove the code that sends a DOMACTIVATE_EVENT, since there's no longer
+        a good way to figure out if this is the last event that should be sent before it is.
+        (NodeImpl::dispatchMouseEvent): Set the meta key modifier here (as it already is set elsewhere), and
+        follow up a CLICK_EVENT with KHTML_CLICK_EVENT, a KHTML_DBLCLICK_EVENT, and DOMACTIVATE_EVENT as above.
+
+2005-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/4011405> REGRESSION (180-181): Unconfirmed text disappears when text focus moves
 
         The key was to change things around so that we don't push text from the DOM to the widget

@@ -568,15 +568,6 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 	    it.current()->defaultEventHandler(evt);
     }
     
-    // In the case of a mouse click, also send a DOMActivate event, which causes things like form submissions
-    // to occur. Note that this only happens for _real_ mouse clicks (for which we get a KHTML_CLICK_EVENT or
-    // KHTML_DBLCLICK_EVENT), not the standard DOM "click" event that could be sent from js code.
-    if (!evt->defaultPrevented() && !disabled())
-        if (evt->id() == EventImpl::KHTML_CLICK_EVENT)
-            dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, 1);
-        else if (evt->id() == EventImpl::KHTML_DBLCLICK_EVENT)
-            dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, 2);
-
     // deref all nodes in chain
     it.toFirst();
     for (; it.current(); ++it)
@@ -656,7 +647,11 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
                 break;
             case QEvent::MouseButtonDblClick:
                 evtId = EventImpl::CLICK_EVENT;
+#if APPLE_CHANGES
+                detail = _mouse->clickCount();
+#else
                 detail = 1; // ### support for multiple double clicks
+#endif
                 break;
             case QEvent::MouseMove:
                 evtId = EventImpl::MOUSEMOVE_EVENT;
@@ -721,13 +716,66 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
     bool ctrlKey = (_mouse->state() & Qt::ControlButton);
     bool altKey = (_mouse->state() & Qt::AltButton);
     bool shiftKey = (_mouse->state() & Qt::ShiftButton);
-    bool metaKey = false; // ### qt support?
+    bool metaKey = (_mouse->state() & Qt::MetaButton);
 
-    EventImpl *evt = new MouseEventImpl(evtId,true,cancelable,getDocument()->defaultView(),
+    bool swallowEvent = false;
+
+    EventImpl *me = new MouseEventImpl(evtId,true,cancelable,getDocument()->defaultView(),
                    detail,screenX,screenY,clientX,clientY,ctrlKey,altKey,shiftKey,metaKey,
                    button,0);
-    return dispatchEvent(evt,exceptioncode,true);
+    me->ref();
+    dispatchEvent(me, exceptioncode, true);
+    bool defaultHandled = me->defaultHandled();
+    bool defaultPrevented = me->defaultPrevented();
+    if (defaultHandled || defaultPrevented)
+        swallowEvent = true;
+    me->deref();
 
+#if APPLE_CHANGES
+    // Special case: If it's a click event, we also send the KHTML_CLICK or KHTML_DBLCLICK event. This is not part
+    // of the DOM specs, but is used for compatibility with the traditional onclick="" and ondblclick="" attributes,
+    // as there is no way to tell the difference between single & double clicks using DOM (only the click count is
+    // stored, which is not necessarily the same)
+    if (evtId == EventImpl::CLICK_EVENT) {
+        me = new MouseEventImpl(EventImpl::KHTML_CLICK_EVENT,
+                                true,cancelable,getDocument()->defaultView(),
+                                detail,screenX,screenY,clientX,clientY,
+                                ctrlKey,altKey,shiftKey,metaKey,
+                                button,0);
+        me->ref();
+        if (defaultHandled)
+            me->setDefaultHandled();
+        dispatchEvent(me,exceptioncode,true);
+        if (me->defaultHandled())
+            defaultHandled = true;
+        if (me->defaultPrevented())
+            defaultPrevented = true;
+        if (me->defaultHandled() || me->defaultPrevented())
+            swallowEvent = true;
+        me->deref();
+
+        if (_mouse->isDoubleClick()) {
+            me = new MouseEventImpl(EventImpl::KHTML_DBLCLICK_EVENT,
+                                    true,cancelable,getDocument()->defaultView(),
+                                    detail,screenX,screenY,clientX,clientY,
+                                    ctrlKey,altKey,shiftKey,metaKey,
+                                    button,0);
+            me->ref();
+            if (defaultHandled)
+                me->setDefaultHandled();
+            dispatchEvent(me,exceptioncode,true);
+            if (me->defaultHandled() || me->defaultPrevented())
+                swallowEvent = true;
+            me->deref();
+        }
+
+        // Also send a DOMActivate event, which causes things like form submissions to occur.
+        if (!defaultPrevented && !disabled())
+            dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, detail);
+    }
+#endif
+    
+    return swallowEvent;
 }
 
 bool NodeImpl::dispatchUIEvent(int _id, int detail)
