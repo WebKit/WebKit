@@ -61,7 +61,7 @@ public:
 
 
 KURL::KWQKURLPrivate::KWQKURLPrivate(const QString &url) :
-    urlRef(nil),
+    urlRef(NULL),
     iPort(0),
     addedSlash(false),
     refCount(0)
@@ -127,7 +127,14 @@ void KURL::KWQKURLPrivate::makeRef()
 	addedSlash = false;
     }
 
-    urlRef = CFURLCreateWithString(NULL, sURLMaybeAddSlash.getCFMutableString(), NULL);
+    // Escape illegal but unambiguous characters that are actually
+    // found on the web in URLs, like ' ' or '|'
+    CFStringRef escaped = CFURLCreateStringByAddingPercentEscapes(NULL, sURLMaybeAddSlash.getCFMutableString(),
+    								  CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+
+    urlRef = CFURLCreateWithString(NULL, escaped, NULL);
+
+    CFRelease(escaped);
 }
 
 static inline QString CFStringToQString(CFStringRef cfs)
@@ -270,6 +277,7 @@ void KURL::KWQKURLPrivate::compose()
 
 	if (urlRef != NULL) {
 	    CFRelease(urlRef);
+	    urlRef = NULL;
 	}
 
 	sURL = result;
@@ -438,19 +446,22 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 	} else {
 	    base.parse();
 
-            CFStringRef relativeURLString = relative.getCFMutableString();
-            
+	    CFStringRef relativeURLString;
+	    CFStringRef escapedString = CFURLCreateStringByAddingPercentEscapes(NULL, relative.getCFMutableString(),
+										CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+
             // Workaround for CFURL bug with colons, Radar 2891336.
-            bool hideColons = needToHideColons(relativeURLString);
+            bool hideColons = needToHideColons(escapedString );
             if (hideColons) {
-                relativeURLString = copyAndReplaceAll(relativeURLString, CFSTR(":"), CFSTR("INTRIGUE_COLON"));
-            }
+                relativeURLString = copyAndReplaceAll(escapedString, CFSTR(":"), CFSTR("INTRIGUE_COLON"));
+		CFRelease(escapedString);
+            } else {
+		relativeURLString = escapedString;
+	    }
             
 	    CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
 
-            if (hideColons) {
-                CFRelease(relativeURLString);
-            }
+	    CFRelease(relativeURLString);
 
 	    if (relativeURL == NULL) {
 		result = normalizeURLString(relative);

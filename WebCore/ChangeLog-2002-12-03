@@ -1,5 +1,20 @@
 2002-04-03  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed Radar 2893298 (KURL rejects spaces and other illegal but
+	unambiguous characters, leading to load failures).
+
+	* src/kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::makeRef,
+	KURL::normalizeRelativeURLString): Escape forbidden characters
+	(ones that are never legal in a URL), except '#' (since that can
+	start a fragment identifier) and '%'
+	(since that can be the start of a valid escape sequence).
+
+	(KURL::KWQKURLPrivate::KWQKURLPrivate,
+	KURL::KWQKURLPrivate::compose): out of paranoia, make sure urlRef
+	is set to NULL if not a valid value.
+
+2002-04-03  Maciej Stachowiak  <mjs@apple.com>
+
 	* src/kwq/kwqdebug.mm: (KWQGetLogLevel): Allocate and release
 	NSScanner instead of using an autoreleased one, to fix Jersey
 	redness whereby the regression tests leak.
