@@ -245,10 +245,17 @@ NSColor *QColor::getNSColor() const
                 }
             }
 
+#if COLORMATCH_EVERYTHING
             NSColor *result = [NSColor colorWithCalibratedRed:red() / 255.0
                                                         green:green() / 255.0
                                                          blue:blue() / 255.0
-                                                        alpha: qAlpha(color)/255.0];
+                                                        alpha:qAlpha(color)/255.0];
+#else
+            NSColor *result = [NSColor colorWithDeviceRed:red() / 255.0
+                                                    green:green() / 255.0
+                                                     blue:blue() / 255.0
+                                                    alpha:qAlpha(color)/255.0];
+#endif
 
             static int cursor;
             cachedRGBAValues[cursor] = c;

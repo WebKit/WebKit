@@ -207,7 +207,7 @@ static CFDictionaryRef imageSourceOptions;
         size_t csw = (size_t)fr.size.width;
         size_t csh = (size_t)fr.size.height;
                             
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
         size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
         size_t bytesPerRow = ((csw * 8 * (numComponents+1) + 7)/8); // + 1 for alpha
         void *_drawingContextData = malloc(csh * bytesPerRow);

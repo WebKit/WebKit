@@ -73,14 +73,16 @@ struct QPainterPrivate {
 
 static CGColorRef CGColorFromNSColor(NSColor *color)
 {
-    NSColor* deviceColor = [color colorUsingColorSpaceName: @"NSDeviceRGBColorSpace"];
+    // this needs to always use device colorspace so it can de-calibrate the color for
+    // CGColor to possibly recalibrate it
+    NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     float red = [deviceColor redComponent];
     float green = [deviceColor greenComponent];
     float blue = [deviceColor blueComponent];
     float alpha = [deviceColor alphaComponent];
     const float components[] = { red, green, blue, alpha };
     
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
     CGColorRef cgColor = CGColorCreate(colorSpace, components);
     CGColorSpaceRelease(colorSpace);
     return cgColor;
@@ -734,7 +736,9 @@ static int getBlendedColorComponent(int c, int a)
 QColor QPainter::selectedTextBackgroundColor() const
 {
     NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
-    color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    // this needs to always use device colorspace so it can de-calibrate the color for
+    // QColor to possibly recalibrate it
+    color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     
     QColor col = QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
     
@@ -904,3 +908,20 @@ void QPainter::clearFocusRing()
         data->focusRingPath = nil;
     }
 }
+
+CGColorSpaceRef QPainter::rgbColorSpace()
+{
+    return [[WebCoreGraphicsBridge sharedBridge] createRGBColorSpace];
+}
+
+CGColorSpaceRef QPainter::grayColorSpace()
+{
+    return [[WebCoreGraphicsBridge sharedBridge] createGrayColorSpace];
+}
+
+CGColorSpaceRef QPainter::cmykColorSpace()
+{
+    return [[WebCoreGraphicsBridge sharedBridge] createCMYKColorSpace];
+}
+
+

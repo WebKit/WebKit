@@ -59,6 +59,7 @@
 
 #include "qcolor.h"
 #include "qpixmap.h"
+#include "qpainter.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -3912,12 +3913,12 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                             components[1] = qc.green()/255.;
                             components[2] = qc.blue()/255.;
                             components[3] = 1.0f;
-                            colorSpace = CGColorSpaceCreateDeviceRGB();
+                            colorSpace = QPainter::rgbColorSpace();
                         }
                         else {
                             components[0] = (float)args[3].toNumber(exec);
                             components[1] = 1.0f;
-                            colorSpace = CGColorSpaceCreateDeviceGray();
+                            colorSpace = QPainter::grayColorSpace();
                         }
                     }
                     break;
@@ -3930,12 +3931,12 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                             components[1] = qc.green()/255.;
                             components[2] = qc.blue()/255.;
                             components[3] = a;
-                            colorSpace = CGColorSpaceCreateDeviceRGB();
+                            colorSpace = QPainter::rgbColorSpace();
                         }
                         else {
                             components[0] = (float)args[3].toNumber(exec);
                             components[1] = a;
-                            colorSpace = CGColorSpaceCreateDeviceGray();
+                            colorSpace = QPainter::grayColorSpace();
                         }
                     }
                     break;
@@ -3944,7 +3945,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                         components[1] = (float)args[4].toNumber(exec); // g
                         components[2] = (float)args[5].toNumber(exec); // b
                         components[3] = (float)args[6].toNumber(exec); // a
-                        colorSpace = CGColorSpaceCreateDeviceRGB();
+                        colorSpace = QPainter::rgbColorSpace();
                     }
                     break;
                     case 5: {
@@ -3954,7 +3955,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                         components[3] = (float)args[6].toNumber(exec); // k
                         components[4] = (float)args[7].toNumber(exec); // a
 
-                        colorSpace = CGColorSpaceCreateDeviceCMYK();
+                        colorSpace = QPainter::cmykColorSpace();
                     }
                     break;
                     default: {
@@ -4097,7 +4098,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                     size_t csw = (size_t)sw;
                     size_t csh = (size_t)sh;
                                         
-                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
                     size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
                     size_t bytesPerRow = BYTES_PER_ROW(csw,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
                     void *_drawingContextData = malloc(csh * bytesPerRow);
@@ -4393,7 +4394,7 @@ CGColorRef Context2D::colorRefFromValue(ExecState *exec, const Value &value)
         components[1] = qc.green()/255.;
         components[2] = qc.blue()/255.;
         components[3] = qc.alpha();
-        colorSpace = CGColorSpaceCreateDeviceRGB();
+        colorSpace = QPainter::rgbColorSpace();
     }
     else
         return 0;
@@ -4827,7 +4828,7 @@ CGShadingRef Gradient::getShading()
         CGShadingRelease (_shadingRef);
         
     CGFunctionRef _colorFunction = CGFunctionCreate((void *)this, 1, intervalRangeDomin, 4, colorComponentRangeDomains, &gradientCallbacks);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
     
     if (_gradientType == Gradient::Radial) {    
         _shadingRef = CGShadingCreateRadial(colorSpace, CGPointMake(_x0,_y0), _r0, CGPointMake(_x1,_y1), _r1, _colorFunction, true, true);

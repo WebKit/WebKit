@@ -1,3 +1,35 @@
+2004-10-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3824626> Change to do colormatching for DeviceRGB colorspace causes ~11% Safari slowdown
+        
+	- I fixed this by turning off all colormatching for WebKit
+	content. We might turn it back on later. For now, it's possible to
+	turn it on temporarily by defining COLORMATCH_EVERYTHING.
+	
+	* WebCorePrefix.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::colorRefFromValue):
+        (Gradient::getShading):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::createDrawingContext):
+        * kwq/KWQColor.mm:
+        (QColor::getNSColor):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (CGColorFromNSColor):
+        (QPainter::selectedTextBackgroundColor):
+        (QPainter::rgbColorSpace):
+        (QPainter::grayColorSpace):
+        (QPainter::cmykColorSpace):
+        * kwq/WebCoreGraphicsBridge.h:
+        * kwq/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge createRGBColorSpace]):
+        (-[WebCoreGraphicsBridge createGrayColorSpace]):
+        (-[WebCoreGraphicsBridge createCMYKColorSpace]):
+
 2004-10-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -13,6 +13,7 @@
 
 #import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
+#import <CoreGraphics/CGColorSpacePrivate.h>
 
 
 #ifdef USE_CGIMAGEREF
@@ -530,6 +531,7 @@ static NSMutableSet *activeImageRenderers;
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
     [imageRep setSize:size];
+        
     [self setScalesWhenResized:YES];
     [self setSize:size];
 }
@@ -545,6 +547,7 @@ static NSMutableSet *activeImageRenderers;
         NS_DURING
             // Get rep again to avoid bogus compiler warning.
             NSBitmapImageRep *aRep = [[self representations] objectAtIndex:0];
+
             loadStatus = [aRep incrementalLoadFromData:data complete:isComplete];
         NS_HANDLER
             loadStatus = NSImageRepLoadStatusInvalidData; // Arbitrary choice; any error will do.
@@ -745,9 +748,32 @@ static NSMutableSet *activeImageRenderers;
 #endif
 }
 
+- (void)_adjustColorSpace
+{
+#if COLORMATCH_EVERYTHING
+    NSArray *reps = [self representations];
+    NSBitmapImageRep *imageRep = [reps count] > 0 ? [[self representations] objectAtIndex:0] : nil;
+    if (imageRep && [imageRep isKindOfClass: [NSBitmapImageRep class]] &&
+        [imageRep valueForProperty:NSImageColorSyncProfileData] == nil &&
+        [[imageRep colorSpaceName] isEqualToString:NSDeviceRGBColorSpace]) {
+        [imageRep setColorSpaceName:NSCalibratedRGBColorSpace];
+    }
+#else
+    NSArray *reps = [self representations];
+    NSBitmapImageRep *imageRep = [reps count] > 0 ? [[self representations] objectAtIndex:0] : nil;
+    if (imageRep && [imageRep isKindOfClass: [NSBitmapImageRep class]] &&
+        [imageRep valueForProperty:NSImageColorSyncProfileData] == nil &&
+        [[imageRep colorSpaceName] isEqualToString:NSCalibratedRGBColorSpace]) {
+        [imageRep setColorSpaceName:NSDeviceRGBColorSpace];
+    }
+#endif
+}
+
 
 - (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
 {
+    [self _adjustColorSpace];
+
     if (loadStatus >= 0) {
         // The last line might be a partial line, so the number of complete lines is the number
         // we get from NSImage minus one.
@@ -962,6 +988,8 @@ static NSMutableSet *activeImageRenderers;
     // These calculations are only correct for the flipped case.
     ASSERT([self isFlipped]);
     ASSERT([[NSView focusView] isFlipped]);
+
+    [self _adjustColorSpace];
 
     NSSize size = [self size];
 
@@ -1221,7 +1249,7 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
     CGImageRef image;
     CGDataProviderRef dataProvider;
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
     dataProvider = CGDataProviderCreateWithData(NULL, bitmapData, pixelsHigh * bytesPerRow, NULL);
 
     image = CGImageCreate(pixelsWide, pixelsHigh, bitsPerSample, bitsPerPixel, bytesPerRow, colorSpace,
@@ -1234,3 +1262,55 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
     return image;
 }
 #endif
+
+CGColorSpaceRef WebCGColorSpaceCreateRGB(void)
+{
+#ifdef COLORMATCH_EVERYTHING
+#if BUILDING_ON_PANTHER
+    return CGColorSpaceCreateWithName(kCGColorSpaceUserRGB);
+#else // !BUILDING_ON_PANTHER
+    return CGColorSpaceCreateDeviceRGB();
+#endif // BUILDING_ON_PANTHER
+#else // !COLORMATCH_EVERYTHING
+#if BUILDING_ONPANTHER
+    return CGColorSpaceCreateDeviceRGB();
+#else // !BUILDING_ON_PANTHER
+    return CGColorSpaceCreateDisplayRGB();
+#endif // BUILDING_ON_PANTHER
+#endif    
+}
+
+CGColorSpaceRef WebCGColorSpaceCreateGray(void)
+{
+#ifdef COLORMATCH_EVERYTHING
+#if BUILDING_ON_PANTHER
+    return CGColorSpaceCreateWithName(kCGColorSpaceUserGray);
+#else // !BUILDING_ON_PANTHER
+    return CGColorSpaceCreateDeviceGray();
+#endif // BUILDING_ON_PANTHER
+#else // !COLORMATCH_EVERYTHING
+#if BUILDING_ONPANTHER
+    return CGColorSpaceCreateDeviceGray();
+#else // !BUILDING_ON_PANTHER
+    return CGColorSpaceCreateDisplayGray();
+#endif // BUILDING_ON_PANTHER
+#endif    
+}
+
+CGColorSpaceRef WebCGColorSpaceCreateCMYK(void)
+{
+#ifdef COLORMATCH_EVERYTHING
+#if BUILDING_ON_PANTHER
+    return CGColorSpaceCreateWithName(kCGColorSpaceUserCMYK);
+#else // !BUILDING_ON_PANTHER
+    return CGColorSpaceCreateDeviceCMYK();
+#endif // BUILDING_ON_PANTHER
+#else // !COLORMATCH_EVERYTHING
+#if BUILDING_ONPANTHER
+    return CGColorSpaceCreateDeviceCMYK();
+#else // !BUILDING_ON_PANTHER
+    // FIXME: no device CMYK
+    return CGColorSpaceCreateDeviceCMYK();
+#endif // BUILDING_ON_PANTHER
+#endif    
+}

@@ -90,7 +90,7 @@ void RenderCanvasImage::createDrawingContext()
         _drawingContext = 0;
     }
     free (_drawingContextData);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
 
     int cWidth = contentWidth();
     int cHeight = contentHeight();

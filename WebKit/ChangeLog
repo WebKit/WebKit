@@ -1,3 +1,33 @@
+2004-10-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3824626> Change to do colormatching for DeviceRGB colorspace causes ~11% Safari slowdown
+        
+	- I fixed this by turning off all colormatching for WebKit
+	content. We might turn it back on later. For now, it's possible to
+	turn it on temporarily by defining COLORMATCH_EVERYTHING.
+	
+	* WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge setFocusRingStyle:radius:color:]):
+        (-[WebGraphicsBridge additionalPatternPhase]):
+        (-[WebGraphicsBridge createRGBColorSpace]):
+        (-[WebGraphicsBridge createGrayColorSpace]):
+        (-[WebGraphicsBridge createCMYKColorSpace]):
+        * WebCoreSupport.subproj/WebImageData.m:
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer _adjustSizeToPixelDimensions]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer _adjustColorSpace]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        (-[WebImageRenderer tileInRect:fromPoint:context:]):
+        (_createImageRef):
+        (WebCGColorSpaceCreateRGB):
+        (WebCGColorSpaceCreateGray):
+        (WebCGColorSpaceCreateCMYK):
+        * WebKitPrefix.h:
+
 2004-10-13  Richard Williamson   <rjw@apple.com>
 
 	Don't fill background with transparency unless debug flag

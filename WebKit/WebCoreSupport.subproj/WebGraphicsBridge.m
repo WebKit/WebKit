@@ -39,6 +39,8 @@
 #import <CoreGraphics/CGContextGState.h>
 #import <CoreGraphics/CGStyle.h>
 
+#import "WebImageRenderer.h"
+
 @interface NSView (AppKitSecretsWebGraphicsBridgeKnowsAbout)
 - (NSView *)_clipViewAncestor;
 @end
@@ -88,7 +90,7 @@
     if (ringColor) {
         float c[4];
         [ringColor getRed:&c[0] green:&c[1] blue:&c[2] alpha:&c[3]];
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
         CGColorRef colorRef = CGColorCreate(colorSpace, c);
         CGColorSpaceRelease(colorSpace);
         focusRingStyleRef = CGStyleCreateFocusRingWithColor(&focusRingStyle, colorRef);
@@ -203,6 +205,22 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 
 - (NSPoint)additionalPatternPhase {
     return _phase;
+}
+
+
+- (CGColorSpaceRef)createRGBColorSpace
+{
+    WebCGColorSpaceCreateRGB();
+}
+
+- (CGColorSpaceRef)createGrayColorSpace
+{
+    WebCGColorSpaceCreateGray();
+}
+
+- (CGColorSpaceRef)createCMYKColorSpace
+{
+    WebCGColorSpaceCreateCMYK();
 }
 
 @end

@@ -4,9 +4,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-// Needed for CGCompositeOperation
-#import <CoreGraphics/CGContextPrivate.h>
-
 @protocol WebCoreImageRenderer;
 
 //#ifndef OMIT_TIGER_FEATURES
@@ -92,3 +89,9 @@
 @end
 
 #endif
+
+CGColorSpaceRef WebCGColorSpaceCreateRGB(void);
+CGColorSpaceRef WebCGColorSpaceCreateGray(void);
+CGColorSpaceRef WebCGColorSpaceCreateCMYK(void);
+
+
