@@ -462,7 +462,14 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     //DomShared::instanceToCheck = (void *)((DomShared *)d->m_doc);
     d->m_doc->ref();
 
-    d->m_baseURL = KURL();
+    if (d->m_baseURL.isEmpty()) {
+        d->m_baseURL = KURL();
+    }
+    else {
+        // If we get here, this means the part has received a redirect before
+        // m_doc was created. Update the document with the base URL.
+        d->m_doc->setBaseURL(d->m_baseURL.url());
+    }
     d->m_workingURL = url;
 
     /* FIXME: this is a pretty gross way to make sure the decoder gets reinitialized for each page. */
@@ -475,8 +482,9 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     if (!d->m_doc->attached())
 	d->m_doc->attach();
     d->m_doc->setURL( url.url() );
-
-    if (!d->m_workingURL.isEmpty())
+    
+    // do not set base URL if it has already been set
+    if (!d->m_workingURL.isEmpty() && d->m_baseURL.isEmpty())
     {
 	// We're not planning to support the KDE chained URL feature, AFAIK
 #define KDE_CHAINED_URIS 0
@@ -1534,6 +1542,10 @@ void KHTMLPart::setBaseURL(const KURL &url)
     d->m_baseURL = url;
     if (d->m_baseURL.protocol().startsWith( "http" ) && !d->m_baseURL.host().isEmpty() && d->m_baseURL.path().isEmpty()) {
         d->m_baseURL.setPath( "/" );
+        // communicate the change in base URL to the document so that links and subloads work
+        if (d->m_doc) {
+            d->m_doc->setBaseURL(url.url());
+        }
     }
 }
 

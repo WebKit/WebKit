@@ -1,3 +1,15 @@
+2002-04-01  Kenneth Kocienda  <kocienda@apple.com>
+
+        The guts of the fix for this bug:
+
+        Radar 2879234 (Redirected URLs not used for subsequent GETs)
+
+        This change, though small, will fix most of the outstanding problems
+        with URL redirects. Some little bits of work need to be done, but much
+        of that is on the UI level.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::begin), (KHTMLPart::setBaseURL):
+
 2002-04-01  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::jScriptEnabled): Hook this up to the
