@@ -2,6 +2,16 @@
 
         Reviewed by Harrison
 
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::downstream): Fix a bug in downstream that prevented a call with DoNotStayInBlock
+        specified from obeying that directive. The old code would stop at an outer block boundary in
+        the case where that block had a block as its first child. The correct behavior is to drill into
+        that inner block (and continue on drilling down, if possible), to find the correct position.
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         Small improvements to the node-display debugging helpers.
 
         * khtml/xml/dom_nodeimpl.cpp:

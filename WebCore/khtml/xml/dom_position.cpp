@@ -443,7 +443,20 @@ Position Position::downstream(EStayInBlock stayInBlock) const
         if (renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if ((currentNode != startNode && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
+        if (currentNode != startNode && renderer->isBlockFlow()) {
+            if (it.current().offset() == 0) {
+                NodeImpl *node = currentNode;
+                while (NodeImpl *firstChild = node->firstChild()) {
+                    if (node->renderer()->style()->visibility() == VISIBLE && node->renderer()->isBlockFlow())
+                        node = firstChild;
+                }
+                return Position(node, 0);
+            }
+            else
+                continue;
+        }
+
+        if (renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
             else
