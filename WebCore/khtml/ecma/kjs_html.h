@@ -298,18 +298,18 @@ private:
     
     QPtrList<List> stateStack;
     
-    Value _strokeStyle;
-    Value _fillStyle;
-    Value _lineWidth;
-    Value _lineCap;
-    Value _lineJoin;
-    Value _miterLimit;
-    Value _shadowOffsetX;
-    Value _shadowOffsetY;
-    Value _shadowBlur;
-    Value _shadowColor;
-    Value _globalAlpha;
-    Value _globalComposite;
+    ProtectedValue _strokeStyle;
+    ProtectedValue _fillStyle;
+    ProtectedValue _lineWidth;
+    ProtectedValue _lineCap;
+    ProtectedValue _lineJoin;
+    ProtectedValue _miterLimit;
+    ProtectedValue _shadowOffsetX;
+    ProtectedValue _shadowOffsetY;
+    ProtectedValue _shadowBlur;
+    ProtectedValue _shadowColor;
+    ProtectedValue _globalAlpha;
+    ProtectedValue _globalComposite;
   };
 
     struct ColorStop {

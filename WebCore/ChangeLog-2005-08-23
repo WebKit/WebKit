@@ -1,3 +1,13 @@
+2004-12-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3914078> worldclock crashing gc related
+
+	Use ProtectedValue for Context2D instance members.
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/kjs_html.h:
+
 2004-12-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave.
