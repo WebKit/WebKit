@@ -52,7 +52,6 @@ layer at (0,0) size 800x1175
                 text run at (342,1) width 142: "triggers the width bug."
       RenderBlock (anonymous) at (0,394) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,431) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 2"
@@ -85,7 +84,6 @@ layer at (0,0) size 800x1175
                   text run at (0,18) width 97: "nested element."
       RenderBlock (anonymous) at (0,648) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,685) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 3"
@@ -113,7 +111,6 @@ layer at (0,0) size 800x1175
                 text run at (1,19) width 60: "triggered."
       RenderBlock (anonymous) at (0,887) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-        RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {H2} at (0,924) size 784x28
         RenderText {TEXT} at (0,0) size 109x28
           text run at (0,0) width 109: "Example 4"
@@ -144,5 +141,3 @@ layer at (0,0) size 800x1175
                 text run at (285,19) width 292: "a nested element (in this case, another SPAN)."
       RenderBlock (anonymous) at (0,1141) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0

@@ -31,7 +31,6 @@ layer at (0,0) size 800x1094
                 text run at (53,1) width 4: " "
                 text run at (57,1) width 53: "Names"
               RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 104x15
               RenderText {TEXT} at (0,0) size 0x0
@@ -49,7 +48,6 @@ layer at (0,0) size 800x1094
               RenderText {TEXT} at (66,0) size 83x18
                 text run at (66,0) width 83: "Addresses"
               RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
@@ -65,7 +63,6 @@ layer at (0,0) size 800x1094
                 text run at (59,1) width 4: " "
                 text run at (63,1) width 63: "Phones "
               RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,211) size 784x52
       RenderBlock (anonymous) at (0,263) size 784x0
@@ -160,7 +157,6 @@ layer at (0,0) size 800x1094
                   RenderText {TEXT} at (0,108) size 45x18
                     text run at (0,108) width 45: "Seats:"
                   RenderBR {BR} at (0,0) size 0x0
-                  RenderText {TEXT} at (0,0) size 0x0
                 RenderTable {TABLE} at (1,127) size 604x46 [border: (1px outset #808080)]
                   RenderTableSection {TBODY} at (1,1) size 0x44
                     RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
@@ -197,8 +193,7 @@ layer at (0,0) size 800x1094
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 604x18
-                  RenderBR {BR} at (0,0) size 0x17
-                  RenderText {TEXT} at (0,0) size 0x0
+                  RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,567) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -253,7 +248,6 @@ layer at (0,0) size 800x1094
                   RenderText {TEXT} at (0,108) size 45x18
                     text run at (0,108) width 45: "Seats:"
                   RenderBR {BR} at (0,0) size 0x0
-                  RenderText {TEXT} at (0,0) size 0x0
                 RenderTable {TABLE} at (1,127) size 493x46 [border: (1px outset #808080)]
                   RenderTableSection {TBODY} at (1,1) size 0x44
                     RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
@@ -290,8 +284,7 @@ layer at (0,0) size 800x1094
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 493x18
-                  RenderBR {BR} at (0,0) size 0x17
-                  RenderText {TEXT} at (0,0) size 0x0
+                  RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,777) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -342,7 +335,6 @@ layer at (0,0) size 800x1094
                 RenderText {TEXT} at (241,91) size 4x18
                   text run at (241,91) width 4: " "
                 RenderBR {BR} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,905) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -363,16 +355,13 @@ layer at (0,0) size 800x1094
               text run at (20,1) width 4: " "
               text run at (24,1) width 73: "Remarks:"
             RenderBR {BR} at (0,0) size 0x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
           RenderBR {BR} at (0,20) size 0x15
-          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 196x15
             RenderText {TEXT} at (0,35) size 196x15
               text run at (0,35) width 126: "SERVICE FEE MCO "
               text run at (126,35) width 70: "8103220490"
             RenderBR {BR} at (0,0) size 0x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,975) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
@@ -387,7 +376,7 @@ layer at (0,0) size 800x1094
                 text run at (66,1) width 112: "Web Bookings"
             RenderText {TEXT} at (178,1) size 4x18
               text run at (178,1) width 4: " "
-            RenderInline {SPAN} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x17
               RenderBR {BR} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
@@ -404,7 +393,6 @@ layer at (0,0) size 800x1094
                 text run at (20,1) width 4: " "
                 text run at (24,1) width 253: "Remarks and Service Information"
               RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1043) size 784x30
@@ -434,7 +422,6 @@ layer at (23,42) size 104x15
           text run at (24,28) width 80: "HAO, SCOTT"
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
 layer at (48,42) size 0x0
@@ -447,7 +434,6 @@ layer at (23,99) size 592x38
       text run at (24,28) width 56: "Address: "
       text run at (80,28) width 512: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367 "
     RenderBR {BR} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
     RenderImage {IMG} at (0,43) size 20x20
     RenderText {TEXT} at (20,51) size 409x15
       text run at (20,51) width 4: " "

@@ -78,4 +78,3 @@ layer at (14,14) size 200x300 clip at (14,14) size 185x300
     RenderText {TEXT} at (0,396) size 137x18
       text run at (0,396) width 137: "Lots of overflow text."
     RenderBR {BR} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
