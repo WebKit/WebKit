@@ -38,18 +38,6 @@
 - (BOOL)_isFakeFixedPitch;
 @end
 
-@implementation NSFont (WebPrivateExtensions)
-- (BOOL)_web_isFakeFixedPitch
-{
-    // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we should treat Osaka-Mono
-    // as fixed pitch.
-    if ([[self fontName] caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame)
-	return YES;
-    return NO;
-}
-@end
-
-
 @implementation WebTextRendererFactory
 
 - (BOOL)coalesceTextDrawing
@@ -261,7 +249,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 - (BOOL)isFontFixedPitch: (NSFont *)font
 {
-    return [font isFixedPitch] || [font _isFakeFixedPitch] || [font _web_isFakeFixedPitch];
+    return [font isFixedPitch] || [font _isFakeFixedPitch];
 }
 
 - init
@@ -437,14 +425,6 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     while ((availableFont = [availableFonts nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
             NSFont *nameMatchedFont = [NSFont fontWithName:availableFont size:size];
-	    
-	    // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
-	    // treat Osaka-Mono as fixed pitch.
-	    if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraits == 0) {
-		LOG (FontSelection, "found exact match for Osaka-Mono\n");
-		return nameMatchedFont;
-	    }
-	    
             NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
             
             if ((traits & desiredTraits) == desiredTraits){
