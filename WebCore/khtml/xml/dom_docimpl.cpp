@@ -2155,6 +2155,8 @@ EventImpl *DocumentImpl::createEvent(const DOMString &eventType, int &exceptionc
         return new MouseEventImpl();
     else if (eventType == "MutationEvents")
         return new MutationEventImpl();
+    else if (eventType == "KeyboardEvents")
+        return new KeyboardEventImpl();
     else if (eventType == "HTMLEvents")
         return new EventImpl();
     else {

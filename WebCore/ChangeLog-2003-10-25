@@ -1,3 +1,67 @@
+2003-10-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::keyCode): Change over to use ascii value for key code.
+        (UIEvent::which): Ditto.
+        (KeyboardEvent::KeyboardEvent): New key event class which
+	tracks the DOM Level 3 spec more closely.
+        (KeyboardEvent::operator = ): New function.
+        (KeyboardEvent::~KeyboardEvent): New function.
+        (KeyboardEvent::ctrlKey): New function.
+        (KeyboardEvent::shiftKey): New function.
+        (KeyboardEvent::altKey): New function.
+        (KeyboardEvent::metaKey): New function.
+        (KeyboardEvent::altGraphKey): New function.
+        (KeyboardEvent::initKeyboardEvent): New function.
+        * khtml/dom/dom2_events.h: Ditto.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::defaultEventHandler): Use key 
+	identifiers to test which key was pressed, instead of removed keyVal().
+        (HTMLInputElementImpl::defaultEventHandler): Ditto.
+        (HTMLSelectElementImpl::defaultEventHandler): Ditto.
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::defaultEventHandler): Change casts to match new
+	class name. Use key identifiers to test which key was pressed, 
+	instead of removed keyVal(). Use new modifier accessors.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId): Some reorganization of the constants in the
+	switch statements. Name change for these to remove the KHTML_ prefix
+	from the key up and key down events will happen soon.
+        (EventImpl::idToType): Ditto.
+        (KeyboardEventImpl::KeyboardEventImpl): New key event class which
+        tracks the DOM Level 3 spec more closely.
+        (KeyboardEventImpl::~KeyboardEventImpl): Ditto.
+        (KeyboardEventImpl::initKeyboardEvent): Ditto.
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::): Some reorganization of the constants in the
+        switch statements. Name change for these to remove the KHTML_ prefix
+        from the key up and key down events will happen soon.
+        (DOM::KeyboardEventImpl::keyIdentifier): New function.
+        (DOM::KeyboardEventImpl::keyLocation): New function.
+        (DOM::KeyboardEventImpl::ctrlKey): New function.
+        (DOM::KeyboardEventImpl::shiftKey): New function.
+        (DOM::KeyboardEventImpl::altKey): New function.
+        (DOM::KeyboardEventImpl::metaKey): New function.
+        (DOM::KeyboardEventImpl::altGraphKey): New function.
+        (DOM::KeyboardEventImpl::qKeyEvent): New function.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createEvent): Now can create keyboard events.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchKeyEvent): Class name changes.
+        * kwq/KWQEvent.h: Added QString identifier member.
+        * kwq/KWQEvent.mm:
+        (hexDigit): Added helper.
+        (identifierForKeyText): Added new function to map keys to DOM
+	key identifiers as listed in the DOM spec.
+        (QKeyEvent::identifier): Added accessor.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::stateForCurrentEvent): Added check to see if
+	a key press is on one of the numeric keypad keys.
+        * kwq/KWQLogging.h: Added log constant for DOM events.
+        * kwq/KWQLogging.m: Ditto
+
 2003-10-20  David Hyatt  <hyatt@apple.com>
 
 	Make first-letter and before/after work with text transforms.

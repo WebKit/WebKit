@@ -221,6 +221,12 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return SCROLL_EVENT;
     else if (type == "contextmenu")
 	return CONTEXTMENU_EVENT;
+    else if (type == "keydown")
+	return KHTML_KEYDOWN_EVENT;
+    else if (type == "keyup")
+	return KHTML_KEYUP_EVENT;
+    else if (type == "textInput")
+	return TEXTINPUT_EVENT;
     // ignore: KHTML_DBLCLICK_EVENT
     // ignore: KHTML_CLICK_EVENT
     return UNKNOWN_EVENT;
@@ -287,6 +293,12 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "scroll";
         case CONTEXTMENU_EVENT:
             return "contextmenu";
+	case KHTML_KEYDOWN_EVENT:
+            return "keydown";
+	case KHTML_KEYUP_EVENT:
+            return "keyup";
+	case TEXTINPUT_EVENT:
+            return "textInput";
 	// khtml extensions
 	case KHTML_DBLCLICK_EVENT:
             return "dblclick";
@@ -296,12 +308,8 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
             return "khtml_dragdrop";
 	case KHTML_ERROR_EVENT:
             return "khtml_error";
-	case KHTML_KEYDOWN_EVENT:
-            return "khtml_keydown";
 	case KHTML_KEYPRESS_EVENT:
             return "khtml_keypress";
-	case KHTML_KEYUP_EVENT:
-            return "khtml_keyup";
 	case KHTML_MOVE_EVENT:
             return "khtml_move";
         case KHTML_ORIGCLICK_MOUSEUP_EVENT:
@@ -551,266 +559,106 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
 
 //---------------------------------------------------------------------------------------------
 
-
-KeyEventImpl::KeyEventImpl()
+KeyboardEventImpl::KeyboardEventImpl()
 {
-  qKeyEvent = 0;
+  m_keyEvent = 0;
 }
 
-KeyEventImpl::KeyEventImpl(QKeyEvent *key, AbstractViewImpl *view)
+KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
   : UIEventImpl(key->type() == QEvent::KeyRelease ? KHTML_KEYUP_EVENT : key->isAutoRepeat() ? KHTML_KEYPRESS_EVENT : KHTML_KEYDOWN_EVENT,
                 true,true,view,0)
 {
-  qKeyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count() );
-  // Events are supposed to be accepted by default in Qt!
-  // This line made QLineEdit's keyevents be ignored, so they were sent to the khtmlview
-  // (and e.g. space would make it scroll down)
-  //qKeyEvent->ignore();
+    m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
+    // Events are supposed to be accepted by default in Qt!
+    // This line made QLineEdit's keyevents be ignored, so they were sent to the khtmlview
+    // (and e.g. space would make it scroll down)
+    //qKeyEvent->ignore();
 
-  m_detail = key->count();
+    // m_keyIdentifier should contain the unicode value of the pressed key if available.
+    // key->text() returns the unicode sequence as a QString
+    if (!key->text().isNull()) {
+        DOMString identifier(m_keyEvent->identifier());
+        m_keyIdentifier = identifier.implementation();
+        m_keyIdentifier->ref();
+    }
+    else {
+        m_keyIdentifier = DOMString("Unidentified").implementation();
+        m_keyIdentifier->ref();
+    }
 
-  m_numPad = false;
-  m_keyVal = 0;
-  m_virtKeyVal = DOM_VK_UNDEFINED;
-  m_inputGenerated = true;
-
-  switch(key->key())
-  {
-  case Qt::Key_Enter:
-      m_numPad = true;
-      /* fall through */
-  case Qt::Key_Return:
-      m_virtKeyVal = DOM_VK_ENTER;
-      break;
-  case Qt::Key_NumLock:
-      m_numPad = true;
-      m_virtKeyVal = DOM_VK_NUM_LOCK;
-      break;
-  case Qt::Key_Alt:
-      m_virtKeyVal = DOM_VK_RIGHT_ALT;
-      // ### DOM_VK_LEFT_ALT;
-      break;
-  case Qt::Key_Control:
-      m_virtKeyVal = DOM_VK_LEFT_CONTROL;
-      // ### DOM_VK_RIGHT_CONTROL
-      break;
-  case Qt::Key_Shift:
-      m_virtKeyVal = DOM_VK_LEFT_SHIFT;
-      // ### DOM_VK_RIGHT_SHIFT
-      break;
-  case Qt::Key_Meta:
-      m_virtKeyVal = DOM_VK_LEFT_META;
-      // ### DOM_VK_RIGHT_META
-      break;
-  case Qt::Key_CapsLock:
-      m_virtKeyVal = DOM_VK_CAPS_LOCK;
-      break;
-  case Qt::Key_Delete:
-      m_virtKeyVal = DOM_VK_DELETE;
-      break;
-  case Qt::Key_End:
-      m_virtKeyVal = DOM_VK_END;
-      break;
-  case Qt::Key_Escape:
-      m_virtKeyVal = DOM_VK_ESCAPE;
-      break;
-  case Qt::Key_Home:
-      m_virtKeyVal = DOM_VK_HOME;
-      break;
-  case Qt::Key_Insert:
-      m_virtKeyVal = DOM_VK_INSERT;
-      break;
-  case Qt::Key_Pause:
-      m_virtKeyVal = DOM_VK_PAUSE;
-      break;
-  case Qt::Key_Print:
-      m_virtKeyVal = DOM_VK_PRINTSCREEN;
-      break;
-  case Qt::Key_ScrollLock:
-      m_virtKeyVal = DOM_VK_SCROLL_LOCK;
-      break;
-  case Qt::Key_Left:
-      m_virtKeyVal = DOM_VK_LEFT;
-      break;
-  case Qt::Key_Right:
-      m_virtKeyVal = DOM_VK_RIGHT;
-      break;
-  case Qt::Key_Up:
-      m_virtKeyVal = DOM_VK_UP;
-      break;
-  case Qt::Key_Down:
-      m_virtKeyVal = DOM_VK_DOWN;
-      break;
-  case Qt::Key_Next:
-      m_virtKeyVal = DOM_VK_PAGE_DOWN;
-      break;
-  case Qt::Key_Prior:
-      m_virtKeyVal = DOM_VK_PAGE_UP;
-      break;
-  case Qt::Key_F1:
-      m_virtKeyVal = DOM_VK_F1;
-      break;
-  case Qt::Key_F2:
-      m_virtKeyVal = DOM_VK_F2;
-      break;
-  case Qt::Key_F3:
-      m_virtKeyVal = DOM_VK_F3;
-      break;
-  case Qt::Key_F4:
-      m_virtKeyVal = DOM_VK_F4;
-      break;
-  case Qt::Key_F5:
-      m_virtKeyVal = DOM_VK_F5;
-      break;
-  case Qt::Key_F6:
-      m_virtKeyVal = DOM_VK_F6;
-      break;
-  case Qt::Key_F7:
-      m_virtKeyVal = DOM_VK_F7;
-      break;
-  case Qt::Key_F8:
-      m_virtKeyVal = DOM_VK_F8;
-      break;
-  case Qt::Key_F9:
-      m_virtKeyVal = DOM_VK_F9;
-      break;
-  case Qt::Key_F10:
-      m_virtKeyVal = DOM_VK_F10;
-      break;
-  case Qt::Key_F11:
-      m_virtKeyVal = DOM_VK_F11;
-      break;
-  case Qt::Key_F12:
-      m_virtKeyVal = DOM_VK_F12;
-      break;
-  case Qt::Key_F13:
-      m_virtKeyVal = DOM_VK_F13;
-      break;
-  case Qt::Key_F14:
-      m_virtKeyVal = DOM_VK_F14;
-      break;
-  case Qt::Key_F15:
-      m_virtKeyVal = DOM_VK_F15;
-      break;
-  case Qt::Key_F16:
-      m_virtKeyVal = DOM_VK_F16;
-      break;
-  case Qt::Key_F17:
-      m_virtKeyVal = DOM_VK_F17;
-      break;
-  case Qt::Key_F18:
-      m_virtKeyVal = DOM_VK_F18;
-      break;
-  case Qt::Key_F19:
-      m_virtKeyVal = DOM_VK_F19;
-      break;
-  case Qt::Key_F20:
-      m_virtKeyVal = DOM_VK_F20;
-      break;
-  case Qt::Key_F21:
-      m_virtKeyVal = DOM_VK_F21;
-      break;
-  case Qt::Key_F22:
-      m_virtKeyVal = DOM_VK_F22;
-      break;
-  case Qt::Key_F23:
-      m_virtKeyVal = DOM_VK_F23;
-      break;
-  case Qt::Key_F24:
-      m_virtKeyVal = DOM_VK_F24;
-      break;
-  default:
-      m_virtKeyVal = DOM_VK_UNDEFINED;
-      break;
-  }
-
-  // m_keyVal should contain the unicode value
-  // of the pressed key if available.
-  if (m_virtKeyVal == DOM_VK_UNDEFINED && !key->text().isNull())
-      m_keyVal = key->text().unicode()[0];
-
-  //  m_numPad = ???
-
-  // key->state returns enum ButtonState, which is ShiftButton, ControlButton and AltButton or'ed together.
-  m_modifier = key->state();
-
-  // key->text() returns the unicode sequence as a QString
-  m_outputString = DOMString(key->text());
+    // key->state returns enum ButtonState, which is ShiftButton, ControlButton and AltButton or'ed together.
+    int keyState = key->state();
+    if (keyState & Qt::ControlButton)
+        m_ctrlKey = true;
+    if (keyState & Qt::ShiftButton)
+        m_shiftKey = true;
+    if (keyState & Qt::AltButton)
+        m_altKey = true;
+    if (keyState & Qt::MetaButton)
+        m_metaKey = true;
+    // altGraphKey is not supported by Qt.
+    
+    // Note: we only support testing for num pad
+    m_keyLocation = (keyState & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
 }
 
-KeyEventImpl::KeyEventImpl(EventId _id,
-			   bool canBubbleArg,
-			   bool cancelableArg,
-			   AbstractViewImpl *viewArg,
-			   unsigned short detailArg,
-			   DOMString &outputStringArg,
-			   unsigned long keyValArg,
-			   unsigned long virtKeyValArg,
-			   bool inputGeneratedArg,
-			   bool numPadArg)
-  : UIEventImpl(_id,canBubbleArg,cancelableArg,viewArg,detailArg)
+KeyboardEventImpl::KeyboardEventImpl(EventId _id,
+                                        bool canBubbleArg,
+                                        bool cancelableArg,
+                                        AbstractViewImpl *viewArg, 
+                                        const DOMString &keyIdentifierArg, 
+                                        unsigned long keyLocationArg, 
+                                        bool ctrlKeyArg, 
+                                        bool shiftKeyArg, 
+                                        bool altKeyArg, 
+                                        bool metaKeyArg, 
+                                        bool altGraphKeyArg)
+  : UIEventImpl(_id,canBubbleArg,cancelableArg,viewArg,0)
 {
-  qKeyEvent = 0;
-  m_keyVal = keyValArg;
-  m_virtKeyVal = virtKeyValArg;
-  m_inputGenerated = inputGeneratedArg;
-  m_outputString = outputStringArg;
-  m_numPad = numPadArg;
-  m_modifier = 0;
+    m_keyEvent = 0;
+    m_keyIdentifier = keyIdentifierArg.implementation();
+    if (m_keyIdentifier)
+        m_keyIdentifier->ref();
+    m_keyLocation = keyLocationArg;
+    m_ctrlKey = ctrlKeyArg;
+    m_shiftKey = shiftKeyArg;
+    m_altKey = altKeyArg;
+    m_metaKey = metaKeyArg;
+    m_altGraphKey = altGraphKeyArg;
 }
 
-KeyEventImpl::~KeyEventImpl()
+KeyboardEventImpl::~KeyboardEventImpl()
 {
-    delete qKeyEvent;
+    delete m_keyEvent;
+    if (m_keyIdentifier)
+        m_keyIdentifier->deref();
 }
 
-bool KeyEventImpl::checkModifier(unsigned long modifierArg)
+void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
+                        bool canBubbleArg,
+                        bool cancelableArg,
+                        const AbstractView &viewArg, 
+                        const DOMString &keyIdentifierArg, 
+                        unsigned long keyLocationArg, 
+                        bool ctrlKeyArg, 
+                        bool shiftKeyArg, 
+                        bool altKeyArg, 
+                        bool metaKeyArg, 
+                        bool altGraphKeyArg)
 {
-  return ((m_modifier && modifierArg) == modifierArg);
-}
+    if (m_keyIdentifier)
+        m_keyIdentifier->deref();
 
-void KeyEventImpl::initKeyEvent(DOMString &typeArg,
-				bool canBubbleArg,
-				bool cancelableArg,
-				const AbstractView &viewArg,
-				long detailArg,
-				DOMString &outputStringArg,
-				unsigned long keyValArg,
-				unsigned long virtKeyValArg,
-				bool inputGeneratedArg,
-				bool numPadArg)
-{
-  UIEventImpl::initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg);
-
-  m_outputString = outputStringArg;
-  m_keyVal = keyValArg;
-  m_virtKeyVal = virtKeyValArg;
-  m_inputGenerated = inputGeneratedArg;
-  m_numPad = numPadArg;
-}
-
-void KeyEventImpl::initModifier(unsigned long modifierArg,
-				bool valueArg)
-{
-  if (valueArg)
-      m_modifier |= modifierArg;
-  else
-      m_modifier &= (modifierArg ^ 0xFFFFFFFF);
-}
-
-bool             KeyEventImpl::inputGenerated() const
-{
-  return m_inputGenerated;
-}
-
-unsigned long    KeyEventImpl::keyVal() const
-{
-  return m_keyVal;
-}
-
-DOMString        KeyEventImpl::outputString() const
-{
-  return m_outputString;
+    UIEventImpl::initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, 0);
+    m_keyIdentifier = keyIdentifierArg.implementation();
+    if (m_keyIdentifier)
+        m_keyIdentifier->ref();
+    m_keyLocation = keyLocationArg;
+    m_ctrlKey = ctrlKeyArg;
+    m_shiftKey = shiftKeyArg;
+    m_altKey = altKeyArg;
+    m_metaKey = metaKeyArg;
+    m_altGraphKey = altGraphKeyArg;
 }
 
 // -----------------------------------------------------------------------------

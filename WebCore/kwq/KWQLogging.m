@@ -31,3 +31,5 @@ KWQLogChannel KWQLogFrames =            { 0x00000010, "WebCoreLogLevel", KWQLogC
 KWQLogChannel KWQLogLoading =           { 0x00000020, "WebCoreLogLevel", KWQLogChannelUninitialized };
 
 KWQLogChannel KWQLogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KWQLogChannelUninitialized };
+
+KWQLogChannel KWQLogEvents =            { 0x00000080, "WebCoreLogLevel", KWQLogChannelUninitialized };

@@ -856,7 +856,7 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
 	if (evt->id()==EventImpl::KHTML_KEYDOWN_EVENT ||
 	    evt->id()==EventImpl::KHTML_KEYUP_EVENT)
 	{
-	    KeyEventImpl * k = static_cast<KeyEventImpl *>(evt);
+	    KeyboardEventImpl * k = static_cast<KeyboardEventImpl *>(evt);
 	    if (k->keyVal() == QChar('\n').unicode() && m_render && m_render->isWidget() && k->qKeyEvent)
 		QApplication::sendEvent(static_cast<RenderWidget *>(m_render)->widget(), k->qKeyEvent);
 	}
@@ -1725,14 +1725,14 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
         if (!m_form || !m_render || !evt->isKeyboardEvent())
             return;
         
-        unsigned long keyVal = static_cast<KeyEventImpl *>(evt)->keyVal();
+        DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
         
         switch (m_type) {
             case IMAGE:
             case RESET:
             case SUBMIT:
                 // simulate mouse click for spacebar, return, and enter
-                if (keyVal == ' ' || keyVal == '\r' || keyVal == 0x3) {
+                if (key == "U+000020" || key == "U+00000d" || key == "Enter") {
                     simulateButtonClickForEvent(evt);
                 }
                 break;
@@ -1740,7 +1740,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             case RADIO:
                 // for return or enter, find the first successful image or submit element 
                 // send it a simulated mouse click
-                if (keyVal == '\r' || keyVal == 0x3) {
+                if (key == "U+00000d" || key == "Enter") {
                     QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
                     for (; it.current(); ++it) {
                         if (it.current()->id() == ID_INPUT) {
@@ -2279,9 +2279,9 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
         if (!m_form || !m_render || !evt->isKeyboardEvent())
             return;
         
-        unsigned long keyVal = static_cast<KeyEventImpl *>(evt)->keyVal();
+        DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
         
-        if (keyVal == '\r' || keyVal == 0x3) {
+        if (key == "U+00000d" || key == "Enter") {
             QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
             for (; it.current(); ++it) {
                 if (it.current()->id() == ID_INPUT) {

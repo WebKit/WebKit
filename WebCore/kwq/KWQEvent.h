@@ -110,11 +110,13 @@ public:
     int count()  const;
     QString text() const;
     int ascii() const;
+    QString identifier() const;
  private:
     int _key;
     int _ascii;
     ButtonState _state;
     QString _text;
+    QString _identifier;
     bool _autoRepeat;
     int _count;
     bool _isAccepted;

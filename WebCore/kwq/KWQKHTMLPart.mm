@@ -1694,6 +1694,8 @@ int KWQKHTMLPart::stateForCurrentEvent()
         state |= Qt::AltButton;
     if (modifiers & NSCommandKeyMask)
         state |= Qt::MetaButton;
+    if (modifiers & NSNumericPadKeyMask)
+        state |= Qt::Keypad;
     
     return state;
 }

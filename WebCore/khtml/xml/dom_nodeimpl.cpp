@@ -737,23 +737,23 @@ bool NodeImpl::dispatchKeyEvent(QKeyEvent *key)
 {
     int exceptioncode = 0;
     //kdDebug(6010) << "DOM::NodeImpl: dispatching keyboard event" << endl;
-    KeyEventImpl *keyEventImpl = new KeyEventImpl(key, getDocument()->defaultView());
-    keyEventImpl->ref();
-    bool r = dispatchEvent(keyEventImpl,exceptioncode,true);
+    KeyboardEventImpl *keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
+    keyboardEventImpl->ref();
+    bool r = dispatchEvent(keyboardEventImpl,exceptioncode,true);
 
 #if APPLE_CHANGES
     // we want to return false if default is prevented (already taken care of)
     // or if the element is default-handled by the DOM. Otherwise we let it just
     // let it get handled by AppKit 
-    if (keyEventImpl->defaultHandled())
+    if (keyboardEventImpl->defaultHandled())
 #else
     // the default event handler should accept() the internal QKeyEvent
     // to prevent the view from further evaluating it.
-    if (!keyEventImpl->defaultPrevented() && !keyEventImpl->qKeyEvent->isAccepted())
+    if (!keyboardEventImpl->defaultPrevented() && !keyboardEventImpl->qKeyEvent->isAccepted())
 #endif
       r = false;
 
-    keyEventImpl->deref();
+    keyboardEventImpl->deref();
     return r;
 }
 

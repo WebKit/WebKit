@@ -78,14 +78,17 @@ public:
 	RESIZE_EVENT,
 	SCROLL_EVENT,
         CONTEXTMENU_EVENT,
+        // Keyboard events
+	KHTML_KEYDOWN_EVENT,
+	KHTML_KEYUP_EVENT,
+        // Text events
+        TEXTINPUT_EVENT,
 	// khtml events (not part of DOM)
 	KHTML_DBLCLICK_EVENT, // for html ondblclick
 	KHTML_CLICK_EVENT, // for html onclick
 	KHTML_DRAGDROP_EVENT,
 	KHTML_ERROR_EVENT,
-	KHTML_KEYDOWN_EVENT,
 	KHTML_KEYPRESS_EVENT,
-	KHTML_KEYUP_EVENT,
 	KHTML_MOVE_EVENT,
 	KHTML_ORIGCLICK_MOUSEUP_EVENT
     };
@@ -122,7 +125,7 @@ public:
     static EventId typeToId(DOMString type);
     static DOMString idToType(EventId id);
 
-    void setDefaultHandled();
+    virtual void setDefaultHandled();
     bool defaultHandled() const { return m_defaultHandled; }
 
 protected:
@@ -237,270 +240,58 @@ protected:
 };
 
 
-// Introduced in DOM Level 3:
-/**
- * DOM::KeyEvent
- * The detail attribute inherited from UIEvent is used to indicate
- * the number of keypresses which have occurred during key repetition.
- * If this information is not available this value should be 0.
- */
-class KeyEventImpl : public UIEventImpl {
+// Introduced in DOM Level 3
+class KeyboardEventImpl : public UIEventImpl {
 public:
-  KeyEventImpl();
-  KeyEventImpl(EventId _id,
-	       bool canBubbleArg,
-	       bool cancelableArg,
-	       AbstractViewImpl *viewArg,
-	       unsigned short detailArg,
-	       DOMString &outputStringArg,
-	       unsigned long keyValArg,
-	       unsigned long virtKeyValArg,
-	       bool inputGeneratedArg,
-	       bool numPadArg);
-
-  KeyEventImpl(QKeyEvent *key, AbstractViewImpl *view);
-
-  virtual ~KeyEventImpl();
-
-  // VirtualKeyCode
-  enum KeyCodes  {
-         DOM_VK_UNDEFINED               = 0x0,
-         DOM_VK_RIGHT_ALT               = 0x01,
-         DOM_VK_LEFT_ALT                = 0x02,
-         DOM_VK_LEFT_CONTROL            = 0x03,
-         DOM_VK_RIGHT_CONTROL           = 0x04,
-         DOM_VK_LEFT_SHIFT              = 0x05,
-         DOM_VK_RIGHT_SHIFT             = 0x06,
-         DOM_VK_LEFT_META               = 0x07,
-         DOM_VK_RIGHT_META              = 0x08,
-         DOM_VK_CAPS_LOCK               = 0x09,
-         DOM_VK_DELETE                  = 0x0A,
-         DOM_VK_END                     = 0x0B,
-         DOM_VK_ENTER                   = 0x0C,
-         DOM_VK_ESCAPE                  = 0x0D,
-         DOM_VK_HOME                    = 0x0E,
-         DOM_VK_INSERT                  = 0x0F,
-         DOM_VK_NUM_LOCK                = 0x10,
-         DOM_VK_PAUSE                   = 0x11,
-         DOM_VK_PRINTSCREEN             = 0x12,
-         DOM_VK_SCROLL_LOCK             = 0x13,
-         DOM_VK_LEFT                    = 0x14,
-         DOM_VK_RIGHT                   = 0x15,
-         DOM_VK_UP                      = 0x16,
-         DOM_VK_DOWN                    = 0x17,
-         DOM_VK_PAGE_DOWN               = 0x18,
-         DOM_VK_PAGE_UP                 = 0x19,
-         DOM_VK_F1                      = 0x1A,
-         DOM_VK_F2                      = 0x1B,
-         DOM_VK_F3                      = 0x1C,
-         DOM_VK_F4                      = 0x1D,
-         DOM_VK_F5                      = 0x1E,
-         DOM_VK_F6                      = 0x1F,
-         DOM_VK_F7                      = 0x20,
-         DOM_VK_F8                      = 0x21,
-         DOM_VK_F9                      = 0x22,
-         DOM_VK_F10                     = 0x23,
-         DOM_VK_F11                     = 0x24,
-         DOM_VK_F12                     = 0x25,
-         DOM_VK_F13                     = 0x26,
-         DOM_VK_F14                     = 0x27,
-         DOM_VK_F15                     = 0x28,
-         DOM_VK_F16                     = 0x29,
-         DOM_VK_F17                     = 0x2A,
-         DOM_VK_F18                     = 0x2B,
-         DOM_VK_F19                     = 0x2C,
-         DOM_VK_F20                     = 0x2D,
-         DOM_VK_F21                     = 0x2E,
-         DOM_VK_F22                     = 0x2F,
-         DOM_VK_F23                     = 0x30,
-         DOM_VK_F24                     = 0x31
-  };
-
- /**
-  *  checkModifier
-  *
-  * Note: the below description does not match the actual behaviour.
-  *       it's extended in a way that you can query multiple modifiers
-  *       at once by logically OR`ing them.
-  *       also, we use the Qt modifier enum instead of the DOM one.
-  *
-  * The CheckModifier method is used to check the status of a single
-  * modifier key associated with a KeyEvent. The identifier of the
-  * modifier in question is passed into the CheckModifier function. If
-  * the modifier is triggered it will return true. If not, it will
-  * return false.  The list of keys below represents the allowable
-  * modifier paramaters for this method:
-  *     DOM_VK_LEFT_ALT
-  *     DOM_VK_RIGHT_ALT
-  *     DOM_VK_LEFT_CONTROL
-  *     DOM_VK_RIGHT_CONTROL
-  *     DOM_VK_LEFT_SHIFT
-  *     DOM_VK_RIGHT_SHIFT
-  *     DOM_VK_META
-  *
-  * Parameters:
-  *
-  * modifer of type unsigned long
-  *   The modifier which the user wishes to query.
-  *
-  * Return Value: boolean
-  *   The status of the modifier represented as a boolean.
-  *
-  * No Exceptions
-  */
- bool checkModifier(unsigned long modiferArg);
-
- /**
-  * initKeyEvent
-  *
-  * The initKeyEvent method is used to initialize the value of a
-  * MouseEvent created through the DocumentEvent interface. This
-  * method may only be called before the KeyEvent has been dispatched
-  * via the dispatchEvent method, though it may be called multiple
-  * times during that phase if necessary. If called multiple times,
-  * the final invocation takes precedence. This method has no effect
-  * if called after the event has been dispatched.
-  *
-  * Parameters:
-  *
-  * typeArg of type DOMString
-  *   Specifies the event type.
-  * canBubbleArg of type boolean
-  *   Specifies whether or not the event can bubble.
-  * cancelableArg of type boolean
-  *   Specifies whether or not the event's default action can be prevent.
-  * viewArg of type views::AbstractView
-  *   Specifies the KeyEvent's AbstractView.
-  * detailArg of type unsigned short
-  *   Specifies the number of repeated keypresses, if available.
-  * outputStringArg of type DOMString
-  *   Specifies the KeyEvent's outputString attribute
-  * keyValArg of type unsigned long
-  *   Specifies the KeyEvent's keyValattribute
-  * virtKeyValArg of type unsigned long
-  *   Specifies the KeyEvent's virtKeyValattribute
-  * inputGeneratedArg of type boolean
-  *   Specifies the KeyEvent's inputGeneratedattribute
-  * numPadArg of type boolean
-  *   Specifies the KeyEvent's numPadattribute
-  *
-  * No Return Value.
-  * No Exceptions.
-  */
- void initKeyEvent(DOMString &typeArg,
-		   bool canBubbleArg,
-		   bool cancelableArg,
-		   const AbstractView &viewArg,
-		   long detailArg,
-		   DOMString &outputStringArg,
-		   unsigned long keyValArg,
-		   unsigned long virtKeyValArg,
-		   bool inputGeneratedArg,
-		   bool numPadArg);
- /**
-  * initModifier
-  *
-  * The initModifier method is used to initialize the values of any
-  * modifiers associated with a KeyEvent created through the
-  * DocumentEvent interface. This method may only be called before the
-  * KeyEvent has been dispatched via the dispatchEvent method, though
-  * it may be called multiple times during that phase if necessary. If
-  * called multiple times with the same modifier property the final
-  * invocation takes precedence. Unless explicitly give a value of
-  * true, all modifiers have a value of false. This method has no
-  * effect if called after the event has been dispatched.  The list of
-  * keys below represents the allowable modifier paramaters for this
-  * method:
-  *    DOM_VK_LEFT_ALT
-  *    DOM_VK_RIGHT_ALT
-  *    DOM_VK_LEFT_CONTROL
-  *    DOM_VK_RIGHT_CONTROL
-  *    DOM_VK_LEFT_SHIFT
-  *    DOM_VK_RIGHT_SHIFT
-  *    DOM_VK_META
-  *
-  * Parameters:
-  *
-  * modifier of type unsigned long
-  *   The modifier which the user wishes to initialize
-  * value of type boolean
-  *   The new value of the modifier.
-  *
-  * No Return Value
-  * No Exceptions
-  */
- void initModifier(unsigned long modifierArg, bool valueArg);
-
- //Attributes:
-
- /**
-  * inputGenerated of type boolean
-  *
-  *  The inputGenerated attribute indicates whether the key event will
-  *  normally cause visible output. If the key event does not
-  *  generate any visible output, such as the use of a function key
-  *  or the combination of certain modifier keys used in conjunction
-  *  with another key, then the value will be false. If visible
-  *  output is normally generated by the key event then the value
-  *  will be true.  The value of inputGenerated does not guarantee
-  *  the creation of a character. If a key event causing visible
-  *  output is cancelable it may be prevented from causing
-  *  output. This attribute is intended primarily to differentiate
-  *  between keys events which may or may not produce visible output
-  *  depending on the system state.
-  */
- bool             inputGenerated() const;
-
- /** keyVal of type unsigned long
-  *
-  *  The value of keyVal holds the value of the Unicode character
-  *  associated with the depressed key. If the key has no Unicode
-  *  representation or no Unicode character is available the value is
-  *  0.
-  */
- unsigned long    keyVal() const;
-
- /** numPad of type boolean
-  *
-  *  The numPad attribute indicates whether or not the key event was
-  *  generated on the number pad section of the keyboard. If the number
-  *  pad was used to generate the key event the value is true,
-  *  otherwise the value is false.
-  */
-    bool             numPad() const { return m_numPad; }
-
- /**
-  *outputString of type DOMString
-  *
-  *  outputString holds the value of the output generated by the key
-  *  event. This may be a single Unicode character or it may be a
-  *  string. It may also be null in the case where no output was
-  *  generated by the key event.
-  */
- DOMString        outputString() const;
-
- /** virtKeyVal of type unsigned long
-  *
-  *  When the key associated with a key event is not representable via
-  *  a Unicode character virtKeyVale holds the virtual key code
-  *  associated with the depressed key. If the key has a Unicode
-  *  representation or no virtual code is available the value is
-  *  DOM_VK_UNDEFINED.
-  */
-    unsigned long virtKeyVal() const { return m_virtKeyVal; }
-
+    KeyboardEventImpl();
+    KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view);
+    KeyboardEventImpl(EventId _id,
+                bool canBubbleArg,
+                bool cancelableArg,
+                AbstractViewImpl *viewArg,
+                const DOMString &keyIdentifierArg,
+                unsigned long keyLocationArg,
+                bool ctrlKeyArg,
+                bool shiftKeyArg,
+                bool altKeyArg,
+                bool metaKeyArg,
+                bool altGraphKeyArg);
+    virtual ~KeyboardEventImpl();
+    
+    void initKeyboardEvent(const DOMString &typeArg,
+                bool canBubbleArg,
+                bool cancelableArg,
+                const AbstractView &viewArg,
+                const DOMString &keyIdentifierArg,
+                unsigned long keyLocationArg,
+                bool ctrlKeyArg,
+                bool shiftKeyArg,
+                bool altKeyArg,
+                bool metaKeyArg,
+                bool altGraphKeyArg);
+    
+    DOMString keyIdentifier() const { return m_keyIdentifier; }
+    unsigned long keyLocation() const { return m_keyLocation; }
+    
+    bool ctrlKey() const { return m_ctrlKey; }
+    bool shiftKey() const { return m_shiftKey; }
+    bool altKey() const { return m_altKey; }
+    bool metaKey() const { return m_metaKey; }
+    bool altGraphKey() const { return m_altGraphKey; }
+    
+    QKeyEvent *qKeyEvent() const { return m_keyEvent; }
+    
     virtual bool isKeyboardEvent() { return true; }
 
- QKeyEvent *qKeyEvent;
-
 private:
-  unsigned long m_keyVal;
-  unsigned long m_virtKeyVal;
-  bool m_inputGenerated;
-  DOMString m_outputString;
-  bool m_numPad;
-  // bitfield containing state of modifiers. not part of the dom.
-  unsigned long    m_modifier;
+    QKeyEvent *m_keyEvent;
+    DOMStringImpl *m_keyIdentifier;
+    unsigned long m_keyLocation;
+    bool m_ctrlKey : 1;
+    bool m_shiftKey : 1;
+    bool m_altKey : 1;
+    bool m_metaKey : 1;
+    bool m_altGraphKey : 1;
 };
 
 class MutationEventImpl : public EventImpl {

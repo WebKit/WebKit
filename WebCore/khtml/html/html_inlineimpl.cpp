@@ -61,7 +61,7 @@ NodeImpl::Id HTMLAnchorElementImpl::id() const
 void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 {
     // React on clicks and on keypresses.
-    // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
+    // Don't make this KHTML_KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
     if ( ( evt->id() == EventImpl::KHTML_CLICK_EVENT ||
          ( evt->id() == EventImpl::KHTML_KEYDOWN_EVENT && m_focused)) && m_hasAnchor) {
@@ -69,9 +69,9 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         if ( evt->id() == EventImpl::KHTML_CLICK_EVENT )
             e = static_cast<MouseEventImpl*>( evt );
 
-        KeyEventImpl *k = 0;
+        KeyboardEventImpl *k = 0;
         if (evt->id() == EventImpl::KHTML_KEYDOWN_EVENT)
-            k = static_cast<KeyEventImpl *>( evt );
+            k = static_cast<KeyboardEventImpl *>( evt );
 
         QString utarget;
         QString url;
@@ -82,11 +82,11 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         }
 
         if ( k ) {
-            if (k->virtKeyVal() != KeyEventImpl::DOM_VK_ENTER) {
+            if (k->keyIdentifier() != "Enter") {
                 HTMLElementImpl::defaultEventHandler(evt);
                 return;
             }
-            if (k->qKeyEvent) k->qKeyEvent->accept();
+            if (k->qKeyEvent()) k->qKeyEvent()->accept();
         }
 
         url = khtml::parseURL(getAttribute(ATTR_HREF)).string();
@@ -138,11 +138,11 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             }
 	    else if ( k )
 	    {
-	      if ( k->checkModifier(Qt::ShiftButton) )
+	      if ( k->shiftKey() )
                 state |= Qt::ShiftButton;
-	      if ( k->checkModifier(Qt::AltButton) )
+	      if ( k->altKey() )
                 state |= Qt::AltButton;
-	      if ( k->checkModifier(Qt::ControlButton) )
+	      if ( k->ctrlKey() )
                 state |= Qt::ControlButton;
 	    }
 
