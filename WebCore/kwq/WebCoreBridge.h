@@ -145,8 +145,8 @@ enum FrameBorderStyle {
 - (BOOL)isFrameSet;
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
-- (void)forceLayout;
-- (void)forceLayoutForPageWidth:(float)pageWidth;
+- (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
+- (void)forceLayoutForPageWidth:(float)pageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendResizeEvent;
 - (BOOL)needsLayout;
 - (void)adjustFrames:(NSRect)rect;

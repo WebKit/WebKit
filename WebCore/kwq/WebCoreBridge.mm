@@ -374,17 +374,23 @@ static BOOL nowPrinting(WebCoreBridge *self)
     }
 }
 
-- (void)forceLayout
+- (void)forceLayoutAdjustingViewSize:(BOOL)flag
 {
     [self _setupRootForPrinting:YES];
     _part->forceLayout();
+    if (flag) {
+        [self adjustViewSize];
+    }
     [self _setupRootForPrinting:NO];
 }
 
-- (void)forceLayoutForPageWidth:(float)pageWidth
+- (void)forceLayoutForPageWidth:(float)pageWidth adjustingViewSize:(BOOL)flag
 {
     [self _setupRootForPrinting:YES];
     _part->forceLayoutForPageWidth(pageWidth);
+    if (flag) {
+        [self adjustViewSize];
+    }
     [self _setupRootForPrinting:NO];
 }
 
@@ -417,7 +423,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
     // the frame origins during drawing!  So we have to 
     // layout and do a draw with rendering disabled to
     // correctly adjust the frames.
-    [self forceLayout];
+    [self forceLayoutAdjustingViewSize:NO];
     QPainter painter(nowPrinting(self));
     painter.setPaintingDisabled(YES);
     [self drawRect:rect withPainter:&painter];

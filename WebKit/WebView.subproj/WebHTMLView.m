@@ -330,7 +330,7 @@
 
 // Do a layout, but set up a new fixed width for the purposes of doing printing layout.
 // pageWidth==0 implies a non-printing layout
-- (void)layoutToPageWidth:(float)pageWidth
+- (void)layoutToPageWidth:(float)pageWidth adjustingViewSize:(BOOL)adjustViewSize
 {
     [self reapplyStyles];
     
@@ -349,9 +349,9 @@
     LOG(View, "%@ doing layout", self);
 
     if (pageWidth > 0.0) {
-        [[self _bridge] forceLayoutForPageWidth:pageWidth];
+        [[self _bridge] forceLayoutForPageWidth:pageWidth adjustingViewSize:adjustViewSize];
     } else {
-        [[self _bridge] forceLayout];
+        [[self _bridge] forceLayoutAdjustingViewSize:adjustViewSize];
     }
     _private->needsLayout = NO;
     
@@ -378,7 +378,7 @@
 
 - (void)layout
 {
-    [self layoutToPageWidth:0.0];
+    [self layoutToPageWidth:0.0 adjustingViewSize:NO];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
@@ -893,11 +893,8 @@
         _private->printing = printing;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
-        [self layoutToPageWidth:pageWidth];
+        [self layoutToPageWidth:pageWidth adjustingViewSize:adjustViewSize];
         [self setNeedsDisplay:NO];
-        if (adjustViewSize) {
-            [[self _bridge] adjustViewSize];
-        }
     }
 }
 
