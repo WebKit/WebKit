@@ -1,5 +1,20 @@
 2004-09-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Richard
+
+        Fix for this bug:
+        
+        <rdar://problem/3800834> REGRESSION (Mail): Can't delete backwards past quoted text using HTML editing
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey): Use CaretPosition class to get superior
+        smarts about the selection to delete in the "start of block" case. This fixes the bug.
+        While I was in the neighborhood, I cleaned up this function a bit.
+        * layout-tests/editing/deleting/delete-3800834-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3800834-fix.html: Added.
+
+2004-09-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * khtml/css/parser.cpp: Did not regenerate this file from parser.y before last checkin.

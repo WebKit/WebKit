@@ -2301,22 +2301,32 @@ void TypingCommandImpl::insertNewline()
 
 void TypingCommandImpl::issueCommandForDeleteKey()
 {
-    Selection selectionToDelete = endingSelection();
-    ASSERT(selectionToDelete.state() != Selection::NONE);
+    Selection selectionToDelete;
     
-    if (selectionToDelete.state() == Selection::CARET) {
-        Position pos(selectionToDelete.start());
-        if (pos.inFirstEditableInRootEditableElement() && pos.offset() <= pos.node()->caretMinOffset()) {
-            // we're at the start of a root editable block...do nothing
-            return;
+    switch (endingSelection().state()) {
+        case Selection::RANGE:
+            selectionToDelete = endingSelection();
+            break;
+        case Selection::CARET: {
+            // Handle delete at beginning-of-block case.
+            // Do nothing in the case that the caret is at the start of a
+            // root editable element or at the start of a document.
+            Position pos(endingSelection().start());
+            Position start = CaretPosition(pos).previous().deepEquivalent();
+            Position end = CaretPosition(pos).deepEquivalent();
+            if (start.notEmpty() && end.notEmpty() && start.node()->rootEditableElement() == end.node()->rootEditableElement())
+                selectionToDelete = Selection(start, end);
+            break;
         }
-        if (pos.inRenderedContent())
-            selectionToDelete = Selection(pos.previousCharacterPosition(), pos);
-        else
-            selectionToDelete = Selection(pos.upstream(StayInBlock).previousCharacterPosition(), pos.downstream());
+        case Selection::NONE:
+            ASSERT_NOT_REACHED();
+            break;
     }
-    deleteSelection(selectionToDelete);
-    typingAddedToOpenCommand();
+    
+    if (selectionToDelete.notEmpty()) {
+        deleteSelection(selectionToDelete);
+        typingAddedToOpenCommand();
+    }
 }
 
 void TypingCommandImpl::deleteKeyPressed()
