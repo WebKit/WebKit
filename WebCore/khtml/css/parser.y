@@ -828,7 +828,7 @@ expr:
             $$->addValue( $3 );
         }
     }
-    | error {
+    | expr error {
         delete $1;
         $$ = 0;
     }
