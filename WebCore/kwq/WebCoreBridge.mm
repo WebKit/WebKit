@@ -1571,7 +1571,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)ensureCaretVisible
 {
-    if (!_part)
+    if (!_part || _part->selection().state() != Selection::CARET)
         return;
     
     KHTMLView *v = _part->view();

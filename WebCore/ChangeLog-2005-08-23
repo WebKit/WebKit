@@ -1,3 +1,12 @@
+2004-07-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: WebView scrolls to the top after making an editing change via drag & drop
+
+        Fixed by Ken, reviewed by me.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge ensureCaretVisible]): do nothing if the selection is not a caret
+
 === Safari-153 ===
 
 2004-07-26  Maciej Stachowiak  <mjs@apple.com>
