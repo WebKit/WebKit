@@ -974,17 +974,7 @@ void KURL::parse(const char *url, const QString *originalString)
         && tolower(url[3]) == 'p'
         && (url[4] == ':'
             || (tolower(url[4]) == 's' && url[5] == ':'));
-    
-    bool isFILENeedsHostPart = pathStart != pathEnd
-        && tolower(url[0]) == 'f'
-        && tolower(url[1]) == 'i'
-        && tolower(url[2]) == 'l'
-        && tolower(url[3]) == 'e'
-        && url[4] == ':'
-        && !(pathStart + 2 == pathEnd
-             && url[pathStart] == '/'
-             && url[pathStart+1] == '/');
-    
+
     bool hostIsLocalHost = portEnd - userStart == 9
         && tolower(url[userStart]) == 'l'
         && tolower(url[userStart+1]) == 'o'
@@ -995,16 +985,34 @@ void KURL::parse(const char *url, const QString *originalString)
         && tolower(url[userStart+6]) == 'o'
         && tolower(url[userStart+7]) == 's'
         && tolower(url[userStart+8]) == 't';
+
+    bool isFile = tolower(url[0]) == 'f'
+        && tolower(url[1]) == 'i'
+        && tolower(url[2]) == 'l'
+        && tolower(url[3]) == 'e'
+        && url[4] == ':';
+        
+    // File URLs need a host part unless it is just file:// or file://localhost
+    bool degenFilePath = pathStart == pathEnd
+        && (hostStart == hostEnd
+            || hostIsLocalHost);
     
     bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
 
     // add ":" after scheme
     *p++ = ':';
 
-    // if we have at least one authority part or a file URL - add "//"
-    if (isFILENeedsHostPart || haveNonHostAuthorityPart || hostStart != hostEnd)
-    {
-	*p++ = '/';
+    // if we have at least one authority part or a file URL - add "//" and authority
+    if (isFile ? !degenFilePath
+               : (haveNonHostAuthorityPart || hostStart != hostEnd)) {
+
+//if ((isFile && !degenFilePath) || haveNonHostAuthorityPart || hostStart != hostEnd) {
+// still adds // for file://localhost, file://
+
+//if (!(isFile && degenFilePath) && (haveNonHostAuthorityPart || hostStart != hostEnd)) {
+//doesn't add // for things like file:///foo
+
+        *p++ = '/';
 	*p++ = '/';
 
 	userStartPos = p - buffer;
@@ -1034,7 +1042,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	}
 	
 	// copy in the host, except in the case of a file URL with authority="localhost"
-	if (!(isFILENeedsHostPart && hostIsLocalHost && !haveNonHostAuthorityPart)) {
+	if (!(isFile && hostIsLocalHost && !haveNonHostAuthorityPart)) {
             strPtr = url + hostStart;
             const char *hostEndPtr = url + hostEnd;
             while (strPtr < hostEndPtr) {

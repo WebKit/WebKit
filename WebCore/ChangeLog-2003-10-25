@@ -1,3 +1,14 @@
+2003-01-23  Trey Matteson  <trey@apple.com>
+
+	I ran our KURL tests and found that my previous fix for "localhost" urls, fixed too much.
+	This now passes all the tests.
+
+        Reviewed by Darin.
+
+        * kwq/KWQKURL.mm:
+        (KURL::parse):  Use different logic for deciding to add //authority to the URL
+	and stripping localhost off of file URLs.
+
 2003-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
