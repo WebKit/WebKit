@@ -1,3 +1,17 @@
+2003-12-15  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3510459>: REGRESSION (100-113): Pressing button at google.com 
+        removes focus from text field
+
+        Reviewed by Dave.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent):
+        Don't clear the focused widget when a mousedown occurs on a widget that is focusable
+        in the abstract sense but is not mouse focusable or currently keyboard focusable. This
+        matches the behavior of older Safaris (clicking in background or page text will make the
+        webview itself be first responder, but clicking on a button won't).
+
 2003-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

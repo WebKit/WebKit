@@ -1679,7 +1679,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 	    for ( ; nodeImpl && !nodeImpl->isFocusable(); nodeImpl = nodeImpl->parentNode());
             if (nodeImpl && nodeImpl->isMouseFocusable())
                 m_part->xmlDocImpl()->setFocusNode(nodeImpl);
-            else if (!nodeImpl || !nodeImpl->isKeyboardFocusable())
+            else if (!nodeImpl)
                 m_part->xmlDocImpl()->setFocusNode(0);
         }
     }
