@@ -113,6 +113,8 @@
 - (void)_setPreviousBackForwardItem: (WebHistoryItem *)item;
 - (WebHistoryItem *)_previousBackForwardItem;
 - (void)_addBackForwardItem:(WebHistoryItem *)item;
+- (void)_addBackForwardItems:(NSArray *)items;
+- (NSArray *)_backForwardItems;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.

@@ -356,7 +356,12 @@ static const char * const stateNames[] = {
                     [backForwardItem release];
                     // Scroll to top.
                     break;
-    
+
+                case WebFrameLoadTypeClientRedirect:
+                    // update the URL in the BF list
+                    [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
+                    break;
+                    
                 case WebFrameLoadTypeInternal:
                     // Do nothing, this was a frame/iframe non user load.
                 case WebFrameLoadTypeReloadAllowingStaleData:
@@ -523,6 +528,7 @@ static const char * const stateNames[] = {
                         break;
         
                     case WebFrameLoadTypeStandard:
+                    case WebFrameLoadTypeClientRedirect:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:
                         // Do nothing.
@@ -743,6 +749,10 @@ static const char * const stateNames[] = {
                 case WebFrameLoadTypeReloadAllowingStaleData:
                     // no-op: leave as protocol default
                     break;
+                case WebFrameLoadTypeClientRedirect:
+                    // should never start out going to an item in redirect mode
+                default:
+                    ASSERT_NOT_REACHED();
             }
         }
 

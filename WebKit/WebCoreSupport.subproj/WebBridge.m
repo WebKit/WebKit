@@ -213,17 +213,18 @@
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
+    LOG(Redirect, "Client redirect to: %@", URL);
     [[[frame controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
     if (seconds == 0.0) {
         // used to set loadType to internal, to prevent a redirect from going in the backforward list
-        _doingInternalLoad = YES;
+        _doingClientRedirect = YES;
     }
 }
 
 - (void)reportClientRedirectCancelled
 {
     [[[frame controller] locationChangeDelegate] clientRedirectCancelledForFrame:frame];
-    _doingInternalLoad = NO;
+    _doingClientRedirect = NO;
 }
 
 - (void)setFrame:(WebFrame *)webFrame
@@ -304,19 +305,36 @@
         [dataSource _addBackForwardItem:backForwardItem];
         [[[frame controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
     } else {
+        WebFrameLoadType previousLoadType = [frame _loadType];
+        WebDataSource *oldDataSource = [[frame dataSource] retain];
         WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
         [request setReferrer:[self referrer]];
         if (reload) {
             [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
         }
-        if (_doingInternalLoad) {
-            // client side redirects shouldn't be treated like user navigations
-            [frame _setLoadType:WebFrameLoadTypeInternal];
-        }
         [self loadRequest:request];
+        if (_doingClientRedirect) {
+            // client side redirects shouldn't make a new BF item like user navigations
+            // NB: must be done after loadRequest:, which sets the provDataSource, which
+            //     inits the load type to Standard
+            if (previousLoadType == WebFrameLoadTypeInternal) {
+                // Re-set back to Internal load type, so redirect doesn't end up in BF list
+                [frame _setLoadType:WebFrameLoadTypeInternal];
+            } else {
+                // Set load type, so redirect will update current item in BF list
+                [frame _setLoadType:WebFrameLoadTypeClientRedirect];
+            }
+
+            // need to transfer BF items from the dataSource that we're replacing
+            WebDataSource *newDataSource = [frame provisionalDataSource];
+            [newDataSource _setProvisionalBackForwardItem:[oldDataSource _provisionalBackForwardItem]];
+            [newDataSource _setPreviousBackForwardItem:[oldDataSource _previousBackForwardItem]];
+            [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
+        }
         [request release];
+        [oldDataSource release];
     }
-    _doingInternalLoad = NO;
+    _doingClientRedirect = NO;
 }
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType

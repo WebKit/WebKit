@@ -1,3 +1,41 @@
+2002-10-31  Trey Matteson  <trey@apple.com>
+
+	Added API to support 3072505 - SnapBack for user-entered page address
+	Refixed 3041616 - Extra page added in back button history
+	Previous fix was stepped on by a later checkin.  Re-established that fix, then
+	went on to make sure we have the final URL and title in the BF item in the
+	case of a client redirect.  Also handles redirects that happen within frames.
+	Fixed 3078560 - div added to "back" list
+
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList containsEntry:]):
+	Added new API for 3072505.
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]):
+        (-[WebBridge reportClientRedirectCancelled]):
+        (-[WebBridge loadURL:reload:]):
+	Added logging.  Renamed flag.  Establish the right loadtype and set BF items
+	from the old dataSource onto the new dataSource in the case of a client redirect.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setRequest:]):
+	Add logging.
+        (-[WebDataSource _addBackForwardItem:]):
+        (-[WebDataSource _addBackForwardItems:]):
+        (-[WebDataSource _backForwardItems]):
+	New setters/getters to support setting up the new dataSource of a client redirect.
+        * WebView.subproj/WebFramePrivate.h:
+	New loadType WebFrameLoadTypeClientRedirect.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+	Update the URL in the BF list in the client redirect case.
+        (-[WebFrame _isLoadComplete]):
+	NOP case for WebFrameLoadTypeClientRedirect
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+	ASSERT_NOT_REACHED case for WebFrameLoadTypeClientRedirect
+
 2002-10-31  Richard Williamson  <rjw@apple.com>
 
         Corrected extern definitions of lookup tables.
@@ -144,7 +182,6 @@
         * Misc.subproj/WebDownloadHandler.m: Removed.
         * WebKit.pbproj/project.pbxproj:
 
->>>>>>> 1.1051
 2002-10-28  Darin Adler  <darin@apple.com>
 
 	- fixed crash I just introduced

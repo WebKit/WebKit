@@ -281,8 +281,10 @@
     _private->request = [request retain];
 
     // Only send serverRedirectedForDataSource: if URL changed.
-    if (![[oldRequest URL] isEqual: [request URL]])
+    if (![[oldRequest URL] isEqual: [request URL]]) {
+        LOG(Redirect, "Server redirect to: %@", [request URL]);
         [[_private->controller locationChangeDelegate] serverRedirectedForDataSource:self];
+    }
         
     [oldRequest release];
 }
@@ -340,12 +342,32 @@
 
 - (void)_addBackForwardItem:(WebHistoryItem *)item
 {
+    if (!item) {
+        return;
+    }
     if (!_private->ourBackForwardItems) {
         _private->ourBackForwardItems = [[NSMutableArray alloc] initWithCapacity:1];
     }
     if ([_private->ourBackForwardItems indexOfObjectIdenticalTo:item] == NSNotFound) {
         [_private->ourBackForwardItems addObject:item];
     }
+}
+
+- (void)_addBackForwardItems:(NSArray *)items
+{
+    if (!items || [items count] == 0) {
+        return;
+    }
+    if (!_private->ourBackForwardItems) {
+        _private->ourBackForwardItems = [items mutableCopy];
+    } else {
+        [_private->ourBackForwardItems addObjectsFromArray:items];
+    }
+}
+
+- (NSArray *)_backForwardItems
+{
+    return _private->ourBackForwardItems;
 }
 
 - (void)_setMainDocumentError: (WebError *)error

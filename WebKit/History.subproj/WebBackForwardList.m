@@ -112,6 +112,11 @@
     }
 }
 
+- (BOOL)containsEntry:(WebHistoryItem *)entry
+{
+    return [_entries indexOfObjectIdenticalTo:entry] != NSNotFound;
+}
+
 - (NSArray *)backListWithSizeLimit:(int)limit;
 {
     if (_current > 0) {

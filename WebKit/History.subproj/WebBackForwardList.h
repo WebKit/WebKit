@@ -70,6 +70,12 @@
 - (WebHistoryItem *)forwardEntry;
 
 /*!
+    @method containsEntry:
+    @result Returns whether the receiver contains the given entry.
+*/
+- (BOOL)containsEntry:(WebHistoryItem *)entry;
+
+/*!
     @method backListWithSizeLimit:
     @param limit A cap on the size of the array returned.
     @result Returns a portion of the list before current entry, or nil if there are none.  The entries are in the order that they were originally visited.

@@ -35,6 +35,7 @@ typedef enum {
     WebFrameLoadTypeIndexedBackForward,		// a multi-item hop in the backforward list
     WebFrameLoadTypeReload,
     WebFrameLoadTypeReloadAllowingStaleData,
+    WebFrameLoadTypeClientRedirect,
     WebFrameLoadTypeInternal
 } WebFrameLoadType;
 
