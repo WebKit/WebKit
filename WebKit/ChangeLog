@@ -1,3 +1,14 @@
+2003-04-25  Don Melton  <gramps@apple.com>
+
+	Backed out Richard's (hopefully) accidental checkin of our experiments
+	from earlier today.  Otherwise many layout tests are hosed.  But this
+	change, or something like it, will arrive soon.
+
+        Reviewed by me.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
 2003-04-25  Richard Williamson   <rjw@apple.com>
 
         API changes from final review meeting.
