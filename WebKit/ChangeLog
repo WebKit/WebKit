@@ -1,3 +1,13 @@
+2004-10-13  Richard Williamson   <rjw@apple.com>
+
+	Don't fill background with transparency unless debug flag
+	is enabled.
+
+        Reviewed by Hyatt.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]):
+
 2004-10-12  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3829705> Need to remove filling w/ transparency when not drawing backgroundy.

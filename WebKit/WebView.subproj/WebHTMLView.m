@@ -1983,7 +1983,7 @@ static WebHTMLView *lastHitView = nil;
             [textRendererFactoryIfCoalescing startCoalesceTextDrawing];
         }
 
-        if (![self _transparentBackground]) {
+        if ([self _transparentBackground]) {
             [[NSColor clearColor] set];
             NSRectFill (rect);
         }
