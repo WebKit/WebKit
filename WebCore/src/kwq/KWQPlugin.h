@@ -34,6 +34,7 @@
 #include "qstring.h"
 
 #import <WKPluginView.h>
+#import <WKPlugin.h>
     
 // class KWQPlugin ===============================================================
 
@@ -47,7 +48,7 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    KWQPlugin(QWidget *parent=0);
+    KWQPlugin(QWidget *parent=0, WKPlugin *plugin=nil, const QString &url=0, const QString &serviceType=0, const QStringList &args=0);
     ~KWQPlugin();
 
     // member functions --------------------------------------------------------

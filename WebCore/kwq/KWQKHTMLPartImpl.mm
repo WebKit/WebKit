@@ -1397,24 +1397,19 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
                     const QStringList &args)
 {
     WKPlugin *plugin;
-    //KWQPlugin pluginWidget;
-    NPP_t instance;
+    KWQPlugin *pluginWidget;
     
     if(url.isEmpty() || serviceType.isEmpty()){
         return FALSE;
     }
-
     plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
     if(plugin == nil){
         return FALSE;
     }
     [plugin load];
-    [plugin newInstance:&instance withType:QSTRING_TO_NSSTRING(serviceType) withMode:NP_EMBED withArguments:nil withValues:nil];
-    [plugin destroyInstance:&instance]; // this needs to be moved 
-    
-    //frame->setWidget(&pluginWidget);
-
-    return FALSE;
+    pluginWidget = new KWQPlugin(0, plugin, url, serviceType, args);
+    frame->setWidget(pluginWidget);
+    return TRUE;
 }
 
 

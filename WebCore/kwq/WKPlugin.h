@@ -15,15 +15,38 @@
     NSString *name;
     NSString *executablePath;
     BOOL isLoaded;
-    
+    NPPluginFuncs pluginFuncs;
+    NPNetscapeFuncs browserFuncs;
+    uint16 pluginSize;
+    uint16 pluginVersion;
+    NPP_NewProcPtr NPP_New;
+    NPP_DestroyProcPtr NPP_Destroy;
+    NPP_SetWindowProcPtr NPP_SetWindow;
+    NPP_NewStreamProcPtr NPP_NewStream;
+    NPP_DestroyStreamProcPtr NPP_DestroyStream;
+    NPP_StreamAsFileProcPtr NPP_StreamAsFile;
+    NPP_WriteReadyProcPtr NPP_WriteReady;
+    NPP_WriteProcPtr NPP_Write;
+    NPP_PrintProcPtr NPP_Print;
+    NPP_HandleEventProcPtr NPP_HandleEvent;
+    NPP_URLNotifyProcPtr NPP_URLNotify;
+    NPP_GetValueProcPtr NPP_GetValue;
+    NPP_SetValueProcPtr NPP_SetValue;
+    NPP_ShutdownProcPtr NPP_Shutdown; 
+
 }
 
 - (BOOL)initializeWithPath:(NSString *)plugin;
 - (void)load;
-- (void)newInstance:(NPP)instance withType:(NSString *)mimeType withMode:(uint16)mode withArguments:(NSArray *)arguments withValues:(NSArray *)values;
-- (void)destroyInstance:(NPP)instance;
 - (void)unload;
 
+- (NPP_NewProcPtr)NPP_New;
+- (NPP_SetWindowProcPtr)NPP_SetWindow;
+- (NPP_NewStreamProcPtr)NPP_NewStream;
+- (NPP_WriteReadyProcPtr)NPP_WriteReady;
+- (NPP_WriteProcPtr)NPP_Write;
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
+- (NPP_HandleEventProcPtr)NPP_HandleEvent;
 - (NSDictionary *)mimeTypes;
 - (NSString *)name;
 - (NSString *)executablePath;
@@ -34,4 +57,4 @@
 @end
     
 NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef);
-NPError InitializePlugin(mainFuncPtr pluginMainFunc);
+

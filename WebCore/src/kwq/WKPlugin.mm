@@ -9,24 +9,6 @@
 #import "WKPlugin.h"
 #include "kwqdebug.h"
 
-NPPluginFuncs pluginFuncs;
-NPNetscapeFuncs browserFuncs;
-uint16 pluginSize;
-uint16 pluginVersion;
-NPP_NewProcPtr NPP_New;
-NPP_DestroyProcPtr NPP_Destroy;
-NPP_SetWindowProcPtr NPP_SetWindow;
-NPP_NewStreamProcPtr NPP_NewStream;
-NPP_DestroyStreamProcPtr NPP_DestroyStream;
-NPP_StreamAsFileProcPtr NPP_StreamAsFile;
-NPP_WriteReadyProcPtr NPP_WriteReady;
-NPP_WriteProcPtr NPP_Write;
-NPP_PrintProcPtr NPP_Print;
-NPP_HandleEventProcPtr NPP_HandleEvent;
-NPP_URLNotifyProcPtr NPP_URLNotify;
-NPP_GetValueProcPtr NPP_GetValue;
-NPP_SetValueProcPtr NPP_SetValue;
-NPP_ShutdownProcPtr NPP_Shutdown; 
 
 @implementation WKPlugin
 
@@ -111,73 +93,7 @@ NPP_ShutdownProcPtr NPP_Shutdown;
         KWQDebug("WKPlugin: load: GetDiskFragment failed. Error=%d\n", err);
         return;
     }
-    InitializePlugin(pluginMainFunc);
-    KWQDebug("Plugin Loaded\n");
-    isLoaded = TRUE;
-}
-
-- (void)newInstance:(NPP)instance withType:(NSString *)mimeType withMode:(uint16)mode withArguments:(NSArray *)arguments withValues:(NSArray *)values{
-    NPError npErr;
-    char mime[200];
-
-    [mimeType getCString:mime];
-    npErr = NPP_New(mime, instance, mode, 0, NULL, NULL, NULL);
-    KWQDebug("NPP_New: %d\n", npErr);
-}
-
-- (void)destroyInstance:(NPP)instance{
-    NPError npErr;
-    
-    npErr = NPP_Destroy(instance, NULL);
-    KWQDebug("NPP_Destroy: %d\n", npErr);
-}
-
-- (void)unload{
-    // unload library here
-    NPP_Shutdown();
-}
-- (NSDictionary *)mimeTypes{
-    return mimeTypes;
-}
-
-- (NSString *)name{
-    return name;
-}
-
-- (NSString *)executablePath{
-    return executablePath;
-}
-
-- (BOOL)isLoaded{
-    return isLoaded;
-}
-
-- (NSString *)description{
-    NSMutableString *desc;
-    
-    desc = [NSMutableString stringWithCapacity:100];
-    [desc appendString:@"\n"];
-    [desc appendString:@"name: "];
-    [desc appendString:name];
-    [desc appendString:@"\n"];
-    [desc appendString:@"executablePath: "];
-    [desc appendString:executablePath];
-    [desc appendString:@"\n"];
-    [desc appendString:@"isLoaded: "];
-    if(isLoaded){
-        [desc appendString:@"TRUE\n"];
-    }else{
-        [desc appendString:@"FALSE\n"];
-    }
-    [desc appendString:@"mimeTypes: "];
-    [desc appendString:[mimeTypes description]];
-    [desc appendString:@"\n"];
-    return desc;
-}
-@end
-
-NPError InitializePlugin(mainFuncPtr pluginMainFunc){
-    NPError npErr;
+        NPError npErr;
     
     browserFuncs.version = 11;
     browserFuncs.size = sizeof(NPNetscapeFuncs);
@@ -221,8 +137,83 @@ NPError InitializePlugin(mainFuncPtr pluginMainFunc){
     NPP_URLNotify = functionPointerForTVector(pluginFuncs.urlnotify);
     NPP_GetValue = functionPointerForTVector(pluginFuncs.getvalue);
     NPP_SetValue = functionPointerForTVector(pluginFuncs.setvalue);
-    return npErr;
+    
+    KWQDebug("Plugin Loaded\n");
+    isLoaded = TRUE;
+    
 }
+
+- (void)unload{
+    // unload library here
+    NPP_Shutdown();
+}
+
+- (NPP_SetWindowProcPtr)NPP_SetWindow{
+    return NPP_SetWindow;
+}
+
+- (NPP_NewProcPtr)NPP_New{
+    return NPP_New;
+}
+
+- (NPP_NewStreamProcPtr)NPP_NewStream{
+    return NPP_NewStream;
+}
+
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream{
+    return NPP_DestroyStream;
+}
+
+- (NPP_WriteReadyProcPtr)NPP_WriteReady{
+    return NPP_WriteReady;
+}
+- (NPP_WriteProcPtr)NPP_Write{
+    return NPP_Write;
+}
+
+- (NPP_HandleEventProcPtr)NPP_HandleEvent{
+    return NPP_HandleEvent;
+}
+
+- (NSDictionary *)mimeTypes{
+    return mimeTypes;
+}
+
+- (NSString *)name{
+    return name;
+}
+
+- (NSString *)executablePath{
+    return executablePath;
+}
+
+- (BOOL)isLoaded{
+    return isLoaded;
+}
+
+- (NSString *)description{
+    NSMutableString *desc;
+    
+    desc = [NSMutableString stringWithCapacity:100];
+    [desc appendString:@"\n"];
+    [desc appendString:@"name: "];
+    [desc appendString:name];
+    [desc appendString:@"\n"];
+    [desc appendString:@"executablePath: "];
+    [desc appendString:executablePath];
+    [desc appendString:@"\n"];
+    [desc appendString:@"isLoaded: "];
+    if(isLoaded){
+        [desc appendString:@"TRUE\n"];
+    }else{
+        [desc appendString:@"FALSE\n"];
+    }
+    [desc appendString:@"mimeTypes: "];
+    [desc appendString:[mimeTypes description]];
+    [desc appendString:@"\n"];
+    return desc;
+}
+@end
 
 NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef){
     NSMutableDictionary *mimeDict;
@@ -242,3 +233,9 @@ NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef){
     }
     return mimeDict;
 }
+
+
+
+
+
+

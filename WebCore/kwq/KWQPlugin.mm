@@ -27,9 +27,10 @@
 #include <KWQView.h>
 #include <kwqdebug.h>
 
-KWQPlugin::KWQPlugin(QWidget *parent)
+KWQPlugin::KWQPlugin(QWidget *parent, WKPlugin *plugin, const QString &url, const QString &serviceType,
+                    const QStringList &args)
 {
-    setView ([[[WKPluginView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
+    setView ([[[WKPluginView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this plugin: plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) ] autorelease]);
 }
 
 void * KWQPlugin::getPort()
