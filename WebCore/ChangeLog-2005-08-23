@@ -1,3 +1,17 @@
+2003-01-26  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: 3156725 - Partially selected links show extra underlining when dragged
+	Fixed: 3156962 - Text drag image sometimes doesn't include last selected text node
+
+        Reviewed by darin.
+
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::selectionRect): include all nodes that are selected
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::paintDecoration): removed stray ";"
+        (RenderText::paintObject): call paintDecoration with default parameters for "from" and "to" when not painting the selection only
+        * khtml/rendering/render_text.h:
+
 2003-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

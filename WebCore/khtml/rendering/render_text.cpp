@@ -119,7 +119,7 @@ void TextSlave::paintDecoration( QPainter *pt, const Font *f, RenderText* p,
     }
 }
 #else
-void TextSlave::paintDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end);
+void TextSlave::paintDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end)
 {
     _tx += m_x;
     _ty += m_y;
@@ -750,8 +750,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                         s->paintDecoration(p, font, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1, sPos, ePos);
                     }
                 } else {
-                    s->paintDecoration(p, font, this, tx, ty, d,si == 0, si == ( int ) m_lines.count()-1,
-                                       s->m_start, s->m_start+s->m_len);
+                    s->paintDecoration(p, font, this, tx, ty, d,si == 0, si == ( int ) m_lines.count()-1);
                 }
             }
 

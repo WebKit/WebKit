@@ -1,3 +1,12 @@
+2003-01-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3156725 - Partially selected links show extra underlining when dragged
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (drawLineForCharacters...): don't ignore "from" "to" parameters
+
 2003-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -757,12 +757,33 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     int width;
     CGContextRef cgContext;
     float lineWidth;
-    
 
+    if (from > 0) {
+        point.x += [self _floatWidthForCharacters:characters
+                                     stringLength:length
+                            fromCharacterPosition: 0
+                               numberOfCharacters: from
+                                      withPadding: padding
+                                    applyRounding: YES
+                          attemptFontSubstitution: YES
+                                           widths: 0
+                                            fonts: 0
+                                           glyphs: 0
+                                        numGlyphs: 0
+                                    letterSpacing: letterSpacing
+                                      wordSpacing: wordSpacing
+                                     fontFamilies: families];
+    } else if (from == -1) {
+        from = 0;
+    }
+    if (to == -1) {
+        to = length;
+    }
+    
     width = ROUND_TO_INT([self _floatWidthForCharacters:characters
                       stringLength:length
-             fromCharacterPosition: 0
-                numberOfCharacters: length
+             fromCharacterPosition: from
+                numberOfCharacters: to-from
                        withPadding: padding
                      applyRounding: YES
            attemptFontSubstitution: YES
