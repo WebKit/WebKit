@@ -1,3 +1,13 @@
+2003-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3468129 - REGRESSION: FOUC occurs on Surfin' Safari
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): Don't force layout for image
+	width/height if you can determine it statically from the attribute.
+
 === Safari-112 ===
 
 2003-10-30  Ken Kocienda  <kocienda@apple.com>

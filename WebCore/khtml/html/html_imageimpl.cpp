@@ -218,7 +218,25 @@ void HTMLImageElementImpl::detach()
 
 long HTMLImageElementImpl::width() const
 {
-    if (!m_render) return getAttribute(ATTR_WIDTH).toInt();
+    if (!m_render) {
+	// check the attribute first for an explicit pixel value
+	DOM::DOMString attrWidth = getAttribute(ATTR_WIDTH);
+	bool ok;
+	long width = attrWidth.string().toLong(&ok);
+	if (ok) {
+	  return width;
+	}
+    }
+
+    DOM::DocumentImpl* docimpl = getDocument();
+    if (docimpl) {
+	docimpl->updateLayout();
+    }
+
+    if (!m_renderer) {
+	return 0;
+    }
+
 
     // ### make a unified call for this
     if (changed() || m_render->needsLayout()) {
@@ -232,13 +250,23 @@ long HTMLImageElementImpl::width() const
 
 long HTMLImageElementImpl::height() const
 {
-    if (!m_render) return getAttribute(ATTR_HEIGHT).toInt();
+    if (!m_render) {
+	// check the attribute first for an explicit pixel value
+	DOM::DOMString attrHeight = getAttribute(ATTR_HEIGHT);
+	bool ok;
+	long height = attrHeight.string().toLong(&ok);
+	if (ok) {
+	  return Number(height);
+	}
+    }
 
-    // ### make a unified call for this
-    if (changed() || m_render->needsLayout()) {
-        getDocument()->updateRendering();
-        if (getDocument()->view())
-            getDocument()->view()->layout();
+    DOM::DocumentImpl* docimpl = getDocument();
+    if (docimpl) {
+	docimpl->updateLayout();
+    }
+
+    if (!m_renderer) {
+	return 0;
     }
 
     return m_render->contentHeight();

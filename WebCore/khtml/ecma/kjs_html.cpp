@@ -1529,24 +1529,16 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case ImageAlign:           return String(image.align());
     case ImageAlt:             return String(image.alt());
     case ImageBorder:          return Number(image.border());
+    case ImageHeight:          return Number(image.height());
     case ImageHspace:          return Number(image.hspace());
     case ImageIsMap:           return Boolean(image.isMap());
     case ImageLongDesc:        return String(image.longDesc());
     case ImageSrc:             return String(image.src());
     case ImageUseMap:          return String(image.useMap());
     case ImageVspace:          return Number(image.vspace());
-    default:
-      // these attributes need layout
-      DOM::DocumentImpl* docimpl = node.handle()->getDocument();
-      if (docimpl) {
-        docimpl->updateLayout();
-      }
-      switch (token) {
-      case ImageHeight:          return Number(image.height());
-      case ImageWidth:           return Number(image.width());
-      case ImageX:               return Number(image.x());
-      case ImageY:               return Number(image.y());
-      }
+    case ImageWidth:           return Number(image.width());
+    case ImageX:               return Number(image.x());
+    case ImageY:               return Number(image.y());
     }
   }
   break;
