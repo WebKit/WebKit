@@ -1132,7 +1132,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // The current frame tree and the frame tree snapshot in the item have to match.
     if (![item isTargetItem] &&
         [itemURL isEqual:currentURL] &&
-        [_private->name isEqualToString:[item target]] &&
+	(([self name] == nil && [item target] == nil) ||[[self name] isEqualToString:[item target]]) &&
         [self _childFramesMatchItem:item])
     {
         // This content is good, so leave it alone and look for children that need reloading

@@ -1,5 +1,13 @@
 2003-03-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Ken.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (_recursiveGoToItem:fromItem:withLoadType:): Account for
+	possibility of nil target.
+
+2003-03-05  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed crash when going back due to frame name of nil since we
