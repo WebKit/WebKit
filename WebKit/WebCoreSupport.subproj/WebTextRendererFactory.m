@@ -332,6 +332,70 @@ static int getLCDScaleParameters(void)
     return font;
 }
 
+static BOOL acceptableChoice(NSFontTraitMask desiredTraits, int desiredWeight,
+    NSFontTraitMask candidateTraits, int candidateWeight)
+{
+    return (candidateTraits & desiredTraits) == desiredTraits;
+}
+
+static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
+    NSFontTraitMask chosenTraits, int chosenWeight,
+    NSFontTraitMask candidateTraits, int candidateWeight)
+{
+    if (!acceptableChoice(desiredTraits, desiredWeight, candidateTraits, candidateWeight)) {
+        return NO;
+    }
+    
+    // A list of the traits we care about.
+    // The top item in the list is the worst trait to mismatch; if a font has this
+    // and we didn't ask for it, we'd prefer any other font in the family.
+    const NSFontTraitMask masks[] = {
+        NSPosterFontMask,
+        NSSmallCapsFontMask,
+        NSItalicFontMask,
+        NSCompressedFontMask,
+        NSCondensedFontMask,
+        NSExpandedFontMask,
+        NSNarrowFontMask,
+        NSBoldFontMask,
+        0 };
+    int i = 0;
+    NSFontTraitMask mask;
+    while ((mask = masks[i++])) {
+        if ((desiredTraits & mask) != 0) {
+            ASSERT((chosenTraits & mask) != 0);
+            ASSERT((candidateTraits & mask) != 0);
+            continue;
+        }
+        BOOL chosenHasUnwantedTrait = (chosenTraits & mask) != 0;
+        BOOL candidateHasUnwantedTrait = (candidateTraits & mask) != 0;
+        if (!candidateHasUnwantedTrait && chosenHasUnwantedTrait) {
+            return YES;
+        }
+        if (!chosenHasUnwantedTrait && candidateHasUnwantedTrait) {
+            return NO;
+        }
+    }
+    
+    int chosenWeightDelta = chosenWeight - desiredWeight;
+    int candidateWeightDelta = candidateWeight - desiredWeight;
+    
+    int chosenWeightDeltaMagnitude = ABS(chosenWeightDelta);
+    int candidateWeightDeltaMagnitude = ABS(candidateWeightDelta);
+    
+    // Smaller magnitude wins.
+    // If both have same magnitude, tie breaker is that the smaller weight wins.
+    // Otherwise, first font in the array wins (should almost never happen).
+    if (candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude) {
+        return YES;
+    }
+    if (candidateWeightDeltaMagnitude == chosenWeightDeltaMagnitude && candidateWeight < chosenWeight) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 - (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     // Do a simple case insensitive search for a matching font family.
@@ -349,7 +413,7 @@ static int getLCDScaleParameters(void)
     }
     
     // Found a family, now figure out what weight and traits to use.
-    bool choseFont = false;
+    BOOL choseFont = false;
     int chosenWeight = 0;
     NSFontTraitMask chosenTraits = 0;
 
@@ -363,39 +427,23 @@ static int getLCDScaleParameters(void)
         int fontWeight = [[fontInfo objectAtIndex:2] intValue];
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
         
-        // If the traits match, then we might have a winner, depending on the weight.
-        if ((fontTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS)) {
-            bool newWinner;
-            
-            if (!choseFont) {
-                newWinner = true;
-            } else {
-                int chosenWeightDelta = chosenWeight - DESIRED_WEIGHT;
-                int fontWeightDelta = fontWeight - DESIRED_WEIGHT;
-                
-                int chosenWeightDeltaMagnitude = chosenWeightDelta < 0 ? - chosenWeightDelta : chosenWeightDelta;
-                int fontWeightDeltaMagnitude = fontWeightDelta < 0 ? - fontWeightDelta : fontWeightDelta;
-                
-                // Smaller magnitude wins.
-                // If both have same magnitude, tie breaker is that the smaller weight wins.
-                // Otherwise, first font in the array wins (should almost never happen).
-                if (fontWeightDeltaMagnitude < chosenWeightDeltaMagnitude) {
-                    newWinner = true;
-                } else if (fontWeightDeltaMagnitude == chosenWeightDeltaMagnitude && fontWeight < chosenWeight) {
-                    newWinner = true;
-                } else {
-                    newWinner = false;
-                }
-            }
+        BOOL newWinner;
+        
+        if (!choseFont) {
+            newWinner = acceptableChoice(desiredTraits, DESIRED_WEIGHT, fontTraits, fontWeight);
+        } else {
+            newWinner = betterChoice(desiredTraits, DESIRED_WEIGHT,
+                chosenTraits, chosenWeight, fontTraits, fontWeight);
+        }
 
-            if (newWinner) {
-                choseFont = true;
-                chosenWeight = fontWeight;
-                chosenTraits = fontTraits;
-                
-                if (chosenWeight == DESIRED_WEIGHT) {
-                    break;
-                }
+        if (newWinner) {
+            choseFont = YES;
+            chosenWeight = fontWeight;
+            chosenTraits = fontTraits;
+            
+            if (chosenWeight == DESIRED_WEIGHT
+                    && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS)) {
+                break;
             }
         }
     }

@@ -1,3 +1,22 @@
+2003-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3206803 -- REGRESSION: Lucida Handwriting font doesn't work
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (acceptableChoice): Added. Returns NO if the weight/traits are no good.
+        (betterChoice): Added. Returns YES if the new weight/traits are better than the old.
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]): Use the new functions to judge which
+        font is good enough. Now it will accept an italic font if that's all we have.
+
+	- fixed 3206904 -- use "Lucida Handwriting" for "cursive" so it works on systems without Classic
+
+        * WebView.subproj/WebPreferences.m: (+[WebPreferences initialize]):
+        Change default from "Apple Chancery" to "Lucida Handwriting".
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for this change.
+
 2003-03-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

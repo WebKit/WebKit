@@ -70,7 +70,7 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
         @"Courier",                     WebKitFixedFontPreferenceKey,
         @"Times New Roman",             WebKitSerifFontPreferenceKey,
         @"Lucida Grande",               WebKitSansSerifFontPreferenceKey,
-        @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
+        @"Lucida Handwriting",          WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
         @"9",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
