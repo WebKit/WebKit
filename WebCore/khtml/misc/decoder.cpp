@@ -483,7 +483,6 @@ QString Decoder::decode(const char *data, int len)
             const char *ptr = buffer.data();
             const char *pEnd = buffer.length();
 #endif
-            bool inScript = false;
             while(ptr != pEnd)
             {
                 if(*ptr == '<') {
@@ -573,11 +572,7 @@ QString Decoder::decode(const char *data, int len)
 			}
 		    }
                     case ID_SCRIPT:
-                        inScript = true;
-                        break;
                     case (ID_SCRIPT+ID_CLOSE_TAG):
-                        inScript = false;
-                        break;
                     case ID_NOSCRIPT:
                     case (ID_NOSCRIPT+ID_CLOSE_TAG):
                     case ID_STYLE:
@@ -596,8 +591,6 @@ QString Decoder::decode(const char *data, int len)
                     case (0 + ID_CLOSE_TAG ):
                         break;
                     default:
-                        if (inScript)
-                            break;
                         body = true;
 #ifdef DECODE_DEBUG
 			kdDebug( 6005 ) << "Decoder: no charset found. Id=" << id << endl;
