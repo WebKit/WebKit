@@ -390,6 +390,12 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
                 result.l = (jobject) JSObject(nativeHandle).toString();
                 break;
             }
+
+            case Finalize: {
+                JSObject(nativeHandle).finalize();
+                break;
+            }
+            
             default: {
                 fprintf (stderr, "%s:  invalid JavaScript call\n", __PRETTY_FUNCTION__);
             }
