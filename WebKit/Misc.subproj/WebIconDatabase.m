@@ -711,7 +711,8 @@ NSSize WebIconMediumSize = {32, 32};
         
     start = CFAbsoluteTimeGetCurrent();
 
-    if([[NSUserDefaults standardUserDefaults] boolForKey:@"Experiments"]){
+    // Commented out because this was raising "Can't cache image" exceptions in NSImage
+    if(0 /*[[NSUserDefaults standardUserDefaults] boolForKey:@"Experiments"]*/){
         // Note: This doesn't seem to make a difference for scaling up.
         
         NSSize originalSize = [icon size];

@@ -1,3 +1,11 @@
+2002-09-09  Chris Blumenberg  <cblu@apple.com>
+
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconByScalingIcon:toSize:]): Commented out wizzy scaling as it was causing an NSImage exception to be raised.
+        * Plugins.subproj/WebPlugin.m:
+        (-[WebNetscapePlugin _getPluginInfo]): Check Resource Manager errors
+
 2002-09-08  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebPluginStream.m:

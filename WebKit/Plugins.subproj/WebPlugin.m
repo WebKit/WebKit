@@ -73,6 +73,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return NO;
     
     UseResFile(resRef);
+    if(ResError() != noErr){
+        return NO;
+    }
     
     mimeTypes = [NSMutableArray arrayWithCapacity:1];
     for(n=1, i=0; 1; n+=2, i++){
