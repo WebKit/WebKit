@@ -1,3 +1,25 @@
+2002-06-10  Richard Williamson  <rjw@apple.com>
+
+    90% solution to round-off problem.  khtml breaks measures text on space
+    boundaries during layout.  It assumes integer measurement, CG uses float
+    measurements.  Some common fonts have non-integer space width.  So, 
+    differences in between drawing advances and measurement of space characters
+    can easily accumulate enough to be visually apparent.  We may still accumulate
+    differences across words, although it's much less visible than for spaces.
+    As a next step we can fudge the advances of words to force
+    integer widths, although I think, given how khtml work, just accounting for
+    consistency in measuring and drawing spaces may be sufficient.
+    Many sites that looked flaky before now render correctly.
+    
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	
+	Force rounding of advance for space characters.
+	
+	(-[IFTextRenderer floatWidthForCharacters:length:]):
+
+	Force rounding of measurement for space characters.
+
 2002-06-09  John Sullivan  <sullivan@apple.com>
 
 	WebKit part of fix for 2949646 (Can't drag & drop bookmarks

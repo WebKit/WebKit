@@ -425,7 +425,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 - (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     uint i, numGlyphs;
-    CGGlyph *glyphs, localGlyphBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    CGGlyph *glyphs, spaceGlyph = -1, localGlyphBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #ifndef DRAW_WITHOUT_ADVANCES
     CGSize *advances, localAdvanceBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #endif
@@ -494,6 +494,9 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
             }
         }
 
+        if (c == SPACE)
+            spaceGlyph = glyphID;
+        
         glyphs[i] = glyphID;
     }
 
@@ -506,7 +509,10 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     }
 
     for (i = 0; i < numGlyphs; i++) {
-        advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
+        if (glyphs[i] == spaceGlyph)
+            advances[i].width = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphs[i]));
+        else
+            advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
         advances[i].height = 0;
     }
 #endif
@@ -646,7 +652,10 @@ cleanup:
             }
         }
 
-        totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
+        if (c == SPACE)
+            totalWidth += ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+        else
+            totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
     }
 
     return totalWidth;
