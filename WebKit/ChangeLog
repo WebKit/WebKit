@@ -1,5 +1,17 @@
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
+	Implemented initial contextual menus. None activated yet.
+
+        * WebView.subproj/WebDefaultContextMenuHandler.h:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler dealloc]): added
+        (-[WebDefaultContextMenuHandler addMenuItemWithTitle:action:toArray:]): added
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElementInfo:defaultMenuItems:]): create menu items
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): 
+
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
 	More renaming for WebDefaultPolicyHandler.
 
         * WebView.subproj/WebController.m:

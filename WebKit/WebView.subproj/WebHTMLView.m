@@ -219,7 +219,6 @@
     
     point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     elementInfo = [self _elementInfoAtPoint:point];
-    //NSLog([elementInfo description]);
 
     defaultContextMenuHandler = [[self _controller] _defaultContextMenuHandler];
     defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElementInfo: elementInfo  defaultMenuItems: nil];
@@ -237,7 +236,7 @@
         [menu addItem:[menuItems objectAtIndex:i]];
     }
         
-    return nil;
+    return menu;
 }
 
 - (void)setContextMenusEnabled: (BOOL)flag
