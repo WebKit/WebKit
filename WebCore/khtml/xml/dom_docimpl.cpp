@@ -74,6 +74,8 @@
 
 #include "cssvalues.h"
 
+#include "jsediting.h"
+
 #include <kio/job.h>
 
 #ifndef KHTML_NO_XBL
@@ -327,6 +329,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_processingLoadEvent = false;
     m_startTime.restart();
     m_overMinimumLayoutThreshold = false;
+    
+    m_jsEditor = 0;
 }
 
 DocumentImpl::~DocumentImpl()
@@ -390,6 +394,11 @@ DocumentImpl::~DocumentImpl()
     if (m_decoder){
         m_decoder->deref();
         m_decoder = 0;
+    }
+    
+    if (m_jsEditor) {
+        delete m_jsEditor;
+        m_jsEditor = 0;
     }
 }
 
@@ -2816,70 +2825,44 @@ DOMString DocumentImpl::toString() const
 
 #endif // APPLE_CHANGES
 
+// ----------------------------------------------------------------------------
+// Support for Javascript execCommand, and related methods
+
+JSEditor *DocumentImpl::jsEditor()
+{
+    if (!m_jsEditor)
+        m_jsEditor = new JSEditor(this);
+    return m_jsEditor;
+}
+
 bool DocumentImpl::execCommand(const DOMString &command, bool userInterface, const DOMString &value)
 {
-    static AtomicString selectAllCommand("selectall");
-    static AtomicString insertTextCommand("inserttext");
-    static AtomicString undoCommand("undo");
-    static AtomicString redoCommand("redo");
-    static AtomicString deleteCommand("delete");
-    static AtomicString cutCommand("cut");
-    static AtomicString copyCommand("copy");
-    static AtomicString pasteCommand("paste");
+    return jsEditor()->execCommand(command, userInterface, value);
+}
 
-    updateLayout();
+bool DocumentImpl::queryCommandEnabled(const DOMString &command)
+{
+    return jsEditor()->queryCommandEnabled(command);
+}
 
-    AtomicString atom(command.lower());
-    if (atom == selectAllCommand) {
-        if (!part())
-            return false;
-        part()->selectAll();
-        return true;
-    }
-    else if (atom == insertTextCommand) {
-        if (!part() || part()->selection().isEmpty())
-            return false;
-        TypingCommand::insertText(this, value);
-        return true;
-    }
-    else if (atom == undoCommand) {
-        if (!part())
-            return false;
-        KWQ(part())->issueUndoCommand();
-        return true;
-    }
-    else if (atom == redoCommand) {
-        if (!part())
-            return false;
-        KWQ(part())->issueRedoCommand();
-        return true;
-    }
-    else if (atom == deleteCommand) {
-        if (!part() || part()->selection().isEmpty())
-            return false;
-        TypingCommand::deleteKeyPressed(this);
-        return true;
-    }
-    else if (atom == cutCommand) {
-        if (!part() || part()->selection().state() != Selection::RANGE)
-            return false;
-        KWQ(part())->issueCutCommand();
-        return true;
-    }
-    else if (atom == copyCommand) {
-        if (!part() || part()->selection().state() != Selection::RANGE)
-            return false;
-        KWQ(part())->issueCopyCommand();
-        return true;
-    }
-    else if (atom == pasteCommand) {
-        if (!part() || part()->selection().isEmpty())
-            return false;
-        KWQ(part())->issuePasteCommand();
-        return true;
-    }
+bool DocumentImpl::queryCommandIndeterm(const DOMString &command)
+{
+    return jsEditor()->queryCommandIndeterm(command);
+}
 
-    return false;
+bool DocumentImpl::queryCommandState(const DOMString &command)
+{
+    return jsEditor()->queryCommandState(command);
+}
+
+bool DocumentImpl::queryCommandSupported(const DOMString &command)
+{
+    return jsEditor()->queryCommandSupported(command);
+}
+
+DOMString DocumentImpl::queryCommandValue(const DOMString &command)
+{
+    return jsEditor()->queryCommandValue(command);
 }
 
 // ----------------------------------------------------------------------------

@@ -1,3 +1,86 @@
+2004-06-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Made some progress on this set of related bugs:
+        
+        <rdar://problem/3675867>: "Make execCommand work as specified in the Javascript execCommand Compatibility Plan"
+        <rdar://problem/3675898>: "Make queryCommandEnabled work as specified in the Javascript execCommand Compatibility Plan"
+        <rdar://problem/3675899>: "Make queryCommandIndeterm work as specified in the Javascript execCommand Compatibility Plan"
+        <rdar://problem/3675901>: "Make queryCommandState work as specified in the Javascript execCommand Compatibility Plan"
+        <rdar://problem/3675903>: "Make queryCommandSupported work as specified in the Javascript execCommand Compatibility Plan"
+        <rdar://problem/3675904>: "Make queryCommandValue work as specified in the Javascript execCommand Compatibility Plan"
+        
+        I did several things to move the ahead with the plan:
+        
+        1. The latter five methods did not appear in the tree at all. Now they do, although
+        
+        2. I removed the implementation for these editing methods from dom_docimpl.cpp, and moved
+           them out to new js_editing.cpp/js_editing.h files. The remaining code in dom_docimpl.cpp
+           is glue to call over to the new JSEditor object defined in the new files.
+           
+        3. For a couple of the command implementations in js_editing.cpp, I made a stab at returning sensible values.
+           For others, I just return place-holder values. I have added some comments to describe what has been done and
+           what still needs to be done. 
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/dom_doc.cpp: Add call-overs for these methods.
+        (DOM::Document::queryCommandEnabled):
+        (DOM::Document::queryCommandIndeterm):
+        (DOM::Document::queryCommandState):
+        (DOM::Document::queryCommandSupported):
+        (DOM::Document::queryCommandValue):
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/kjs_dom.cpp: Add queryCommandXXX terminology.
+        (DOMDocumentProtoFunc::tryCall):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMDocument::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/editing/jsediting.cpp: Added. This file implements the guts of editing-related JS methods.
+        (DOM::execCommandNotImplemented):
+        (DOM::queryBoolNotImplemented):
+        (DOM::queryValueNotImplemented):
+        (DOM::JSEditor::commandDict):
+        (DOM::JSEditor::JSEditor):
+        (DOM::JSEditor::~JSEditor):
+        (DOM::JSEditor::commandIdentifier):
+        (DOM::JSEditor::addCommand):
+        (DOM::JSEditor::initDict):
+        (DOM::JSEditor::execCommand):
+        (DOM::JSEditor::queryCommandEnabled):
+        (DOM::JSEditor::queryCommandIndeterm):
+        (DOM::JSEditor::queryCommandState):
+        (DOM::JSEditor::queryCommandSupported):
+        (DOM::JSEditor::queryCommandValue):
+        (DOM::JSEditor::execCommandCopy):
+        (DOM::JSEditor::execCommandCut):
+        (DOM::JSEditor::execCommandDelete):
+        (DOM::JSEditor::execCommandInsertText):
+        (DOM::JSEditor::execCommandPaste):
+        (DOM::JSEditor::execCommandRedo):
+        (DOM::JSEditor::execCommandSelectAll):
+        (DOM::JSEditor::execCommandUndo):
+        (DOM::JSEditor::enabledIfPartNotNull):
+        (DOM::JSEditor::enabledIfSelectionNotEmpty):
+        (DOM::JSEditor::enabledIfSelectionIsRange):
+        (DOM::JSEditor::commandSupported):
+        * khtml/editing/jsediting.h: Added.
+        (DOM::JSEditor::CommandIdentifier::CommandIdentifier):
+        (DOM::JSEditor::document):
+        (DOM::JSEditor::part):
+        * khtml/xml/dom_docimpl.cpp: Rework JS editing support into glue that calls over into new JSEditor object.
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::jsEditor):
+        (DocumentImpl::execCommand):
+        (DocumentImpl::queryCommandEnabled):
+        (DocumentImpl::queryCommandIndeterm):
+        (DocumentImpl::queryCommandState):
+        (DocumentImpl::queryCommandSupported):
+        (DocumentImpl::queryCommandValue):
+        * khtml/xml/dom_docimpl.h:
+
 2004-06-03  Richard Williamson   <rjw@apple.com>
 
 	Added setCompositeOperation method to Context2D.

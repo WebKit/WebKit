@@ -791,9 +791,14 @@ public:
     /**
      * not part of the DOM
      *
-     * executes an editing command
+     * javascript editing command support
      */
     bool execCommand(const DOMString &command, bool userInterface, const DOMString &value);
+    bool queryCommandEnabled(const DOMString &command);
+    bool queryCommandIndeterm(const DOMString &command);
+    bool queryCommandState(const DOMString &command);
+    bool queryCommandSupported(const DOMString &command);
+    DOMString queryCommandValue(const DOMString &command);
 
     Document( DocumentImpl *i);
 

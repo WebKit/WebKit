@@ -497,6 +497,46 @@ bool Document::execCommand(const DOMString &command, bool userInterface, const D
     return static_cast<DocumentImpl*>(impl)->execCommand(command, userInterface, value);
 }
 
+bool Document::queryCommandEnabled(const DOMString &command)
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->queryCommandEnabled(command);
+}
+
+bool Document::queryCommandIndeterm(const DOMString &command)
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->queryCommandIndeterm(command);
+}
+
+bool Document::queryCommandState(const DOMString &command)
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->queryCommandState(command);
+}
+
+bool Document::queryCommandSupported(const DOMString &command)
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->queryCommandSupported(command);
+}
+
+DOMString Document::queryCommandValue(const DOMString &command)
+{
+    if (!impl)
+	throw DOMException(DOMException::NOT_FOUND_ERR);
+
+    return static_cast<DocumentImpl*>(impl)->queryCommandValue(command);
+}
+
 // ----------------------------------------------------------------------------
 
 DocumentFragment::DocumentFragment() : Node()

@@ -123,7 +123,9 @@ namespace KJS {
            CreateAttributeNS, GetElementsByTagNameNS, GetElementById,
            CreateRange, CreateNodeIterator, CreateTreeWalker, DefaultView,
            CreateEvent, StyleSheets, PreferredStylesheetSet, 
-           SelectedStylesheetSet, GetOverrideStyle, ReadyState, ExecCommand };
+           SelectedStylesheetSet, GetOverrideStyle, ReadyState, 
+           ExecCommand, QueryCommandEnabled, QueryCommandIndeterm, QueryCommandState, 
+           QueryCommandSupported, QueryCommandValue };
   };
 
   class DOMAttr : public DOMNode {
