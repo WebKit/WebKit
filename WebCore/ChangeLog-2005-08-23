@@ -1,3 +1,31 @@
+2004-08-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed <rdar://problem/3778043> REGRESSION: innerHTML is broken, breaks automated iBench testing
+	- also fixed outerHTML, which would spill over past the node for whch it was supposed to get HTML
+	
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::outerHTML):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::toHTML):
+        (NodeImpl::recursive_toString):
+        (NodeImpl::recursive_toHTML):
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromNode:nodes:]):
+
+	- added new layout tests to cover the problems I fixed
+        
+	* layout-tests/fast/innerHTML/001-expected.txt: Added.
+        * layout-tests/fast/innerHTML/001.html: Added.
+        * layout-tests/fast/innerHTML/002-expected.txt: Added.
+        * layout-tests/fast/innerHTML/002.html: Added.
+        * layout-tests/fast/innerHTML/003-expected.txt: Added.
+        * layout-tests/fast/innerHTML/003.html: Added.
+
 2004-08-27  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3739239, getComputedStyle of top not being implemented broke a site that checked for it.

@@ -850,7 +850,7 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes)
     }
     NodeImpl::Id id = commonAncestor->id();
     bool onlyIncludeChildren = (id != ID_TABLE && id != ID_OL && id != ID_UL);
-    return commonAncestor->recursive_toHTML(onlyIncludeChildren, this, nodes);
+    return commonAncestor->recursive_toHTML(onlyIncludeChildren, true, this, nodes);
 }
 
 DOMString RangeImpl::text() const
