@@ -812,54 +812,6 @@ void CompositeEditCommand::rebalanceWhitespace()
     }
 }
 
-NodeImpl *CompositeEditCommand::applyTypingStyle(NodeImpl *child) const
-{
-    // FIXME: This function should share code with ApplyStyleCommand::applyStyleIfNeeded
-    // and ApplyStyleCommand::computeStyleChange.
-    // Both function do similar work, and the common parts could be factored out.
-
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-
-    // update document layout once before running the rest of the function
-    // so that we avoid the expense of updating before each and every call
-    // to check a computed style
-    document()->updateLayout();
-
-    StyleChange styleChange(document()->part()->typingStyle());
-
-    NodeImpl *childToAppend = child;
-    int exceptionCode = 0;
-
-    if (styleChange.applyItalic()) {
-        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        italicElement->appendChild(childToAppend, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        childToAppend = italicElement;
-    }
-
-    if (styleChange.applyBold()) {
-        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        boldElement->appendChild(childToAppend, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        childToAppend = boldElement;
-    }
-
-    if (styleChange.cssStyle().length() > 0) {
-        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
-        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
-        styleElement->appendChild(childToAppend, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        childToAppend = styleElement;
-    }
-
-    return childToAppend;
-}
-
 void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start, int end)
 {
     if (!textNode || !textNode->renderer() || start >= end)
@@ -1604,9 +1556,6 @@ void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *st
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
 {
-    // FIXME: This function should share code with CompositeEditCommand::applyTypingStyle.
-    // Both functions do similar work, and the common parts could be factored out.
-
     StyleChange styleChange(style, Position(startNode, 0));
     int exceptionCode = 0;
     
@@ -2420,13 +2369,6 @@ void InsertLineBreakCommand::doApply()
     ElementImpl *breakNode = createBreakElement(document());
     NodeImpl *nodeToInsert = breakNode;
     
-    // Handle the case where there is a typing style.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-    if (typingStyle && typingStyle->length() > 0)
-        nodeToInsert = applyTypingStyle(breakNode);
-    
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
@@ -2496,6 +2438,26 @@ void InsertLineBreakCommand::doApply()
         
         setEndingSelection(endingPosition);
     }
+
+    // Handle the case where there is a typing style.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    
+    if (typingStyle && typingStyle->length() > 0) {
+        Selection selectionBeforeStyle = endingSelection();
+
+        DOM::RangeImpl *rangeAroundNode = document()->createRange();
+        int exception;
+        rangeAroundNode->selectNode(nodeToInsert, exception);
+
+        setEndingSelection(Selection(rangeAroundNode));
+        applyStyle(typingStyle);
+
+        setEndingSelection(selectionBeforeStyle);
+    }
+
     rebalanceWhitespace();
 }
 
@@ -2980,17 +2942,12 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
     else
         pos = pos.upstream(StayInBlock);
     
+    Selection typingStyleRange;
+
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *nodeToInsert = textNode;
 
-        // Handle the case where there is a typing style.
-        // FIXME: Improve typing style.
-        // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-        CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-        if (typingStyle && typingStyle->length() > 0)
-            nodeToInsert = applyTypingStyle(textNode);
-        
         // Now insert the node in the right place
         if (pos.node()->isEditableBlock()) {
             LOG(Editing, "prepareForTextInsertion case 1");
@@ -3027,9 +2984,9 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
             TextImpl *editingTextNode = document()->createEditingTextNode("");
             NodeImpl *node = endingSelection().start().upstream(StayInBlock).node();
             if (node->isBlockFlow())
-                insertNodeAt(applyTypingStyle(editingTextNode), node, 0);
+                insertNodeAt(editingTextNode, node, 0);
             else
-                insertNodeAfter(applyTypingStyle(editingTextNode), node);
+                insertNodeAfter(editingTextNode, node);
             pos = Position(editingTextNode, 0);
         }
     }
@@ -3050,10 +3007,12 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     deleteInsignificantTextDownstream(endingSelection().end().trailingWhitespacePosition());
     
     // Make sure the document is set up to receive text
-    Position pos = prepareForTextInsertion(adjustDownstream);
+    Position startPosition = prepareForTextInsertion(adjustDownstream);
     
-    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-    long offset = pos.offset();
+    Position endPosition;
+
+    TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
+    long offset = startPosition.offset();
 
     // Now that we are about to add content, check to see if a placeholder element
     // can be removed.
@@ -3072,18 +3031,15 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
             rebalanceWhitespace();
             document()->updateLayout();
         }
-        if (selectInsertedText)
-            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + spacesPerTab)));
-        else
-            setEndingSelection(Position(textNode, offset + spacesPerTab));
+        
+        endPosition = Position(textNode, offset + spacesPerTab);
+
         m_charactersAdded += spacesPerTab;
     }
     else if (isWS(text)) {
         insertSpace(textNode, offset);
-        if (selectInsertedText)
-            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + 1)));
-        else
-            setEndingSelection(Position(textNode, offset + 1));
+        endPosition = Position(textNode, offset + 1);
+
         m_charactersAdded++;
         rebalanceWhitespace();
     }
@@ -3099,12 +3055,22 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
             replaceTextInNode(textNode, offset - 1, 1, " ");
         }
         insertTextIntoNode(textNode, offset, text);
-        if (selectInsertedText)
-            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + text.length())));
-        else
-            setEndingSelection(Position(textNode, offset + text.length()));
+        endPosition = Position(textNode, offset + text.length());
+
         m_charactersAdded += text.length();
     }
+
+    setEndingSelection(Selection(startPosition, endPosition));
+
+    // Handle the case where there is a typing style.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    if (typingStyle && typingStyle->length() > 0)
+        applyStyle(typingStyle);
+
+    if (!selectInsertedText)
+        setEndingSelection(endingSelection().end());
 }
 
 void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)

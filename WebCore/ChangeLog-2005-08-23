@@ -1,3 +1,23 @@
+2005-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3965466> editing needs to insert text before applying typing style
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): Remove a FIXME comment.
+        (khtml::InsertLineBreakCommand::doApply): Apply style to the BR
+	node after inserting it.
+        (khtml::InsertTextCommand::prepareForTextInsertion): Don't try to
+	apply style to any new nodes created before inserting.
+        (khtml::InsertTextCommand::input): Apply style to the inserted range
+	after doing the text insert.
+        * khtml/editing/htmlediting.h:
+
+	This change leads to improved results on one of the layout tests:
+        
+	* layout-tests/editing/inserting/insert-div-024-expected.txt:
+
 === Safari-180 ===
 
 2005-01-20  Ken Kocienda  <kocienda@apple.com>
