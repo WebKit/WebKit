@@ -375,10 +375,17 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
+    [self stop];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
+    [self stop];
+}
+
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+{
+    
 }
 
 // event methods

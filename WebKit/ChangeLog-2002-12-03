@@ -1,3 +1,17 @@
+2002-04-02  Chris Blumenberg  <cblu@apple.com>
+
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	IFURLHandleResourceDidCancelLoading:]), (-[IFPluginView
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (-[IFPluginView
+	IFURLHandle:didRedirectToURL:]):
+
+	Added support for the above callbacks.
+
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+	Return an error if non-html is requested.	
+
 2002-04-02  Richard Williamson  <rjw@apple.com>
 
         More relaxed about invalid states.

@@ -63,6 +63,17 @@
 {
     WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
+    //FIXME: This is a temporary hack to make sure we don't load non-html content. 
+    //Since the cache returns nil for contentType when the URL is in the cache (2892912),
+    //I assume the contentType is text/html for that case.
+    NSString *contentType = [sender contentType];
+    if(![contentType isEqualToString:@"text/html"] && contentType != nil){
+        [sender cancelLoadInBackground];
+        IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultUnsupportedMediaType failingURL: [sender url]];
+        [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] partialProgress:nil fromDataSource: dataSource];
+        [error release];
+        return;
+    }
     part->slotData(sender, (const char *)[data bytes], [data length]);
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
