@@ -1,3 +1,17 @@
+2005-03-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/4006151> in reply, caret moves to next line after toggling bold style then typing
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::applyInlineStyle): Defer cleaning up empty style until the end of the
+        function. In some situations, the render tree can get confused when we do this removal up front.
+        I wish I understood the reasons more deeply, but this bit of code shuffling seems harmless, and 
+        fixes the bug.
+
 2005-03-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
