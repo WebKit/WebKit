@@ -1,3 +1,23 @@
+2004-06-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/3675806>: "Make API name change for -webViewShouldBeginEditing:inDOMRange:"
+        <rdar://problem/3675809>: "Make API name change for -webViewShouldEndEditing:inDOMRange:"
+
+        New names are -webView:shouldBeginEditingInDOMRange: and -webView:shouldEndEditingInDOMRange:, 
+        respectively.
+
+        * WebView.subproj/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[WebDefaultEditingDelegate webView:shouldEndEditingInDOMRange:]):
+        * WebView.subproj/WebEditingDelegate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _shouldBeginEditingInDOMRange:]):
+        (-[WebView _shouldEndEditingInDOMRange:]):
+
 2004-06-02  Richard Williamson   <rjw@apple.com>
 
 		conformsToProtocol:@protocol(WebPlugin) becomes

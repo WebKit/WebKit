@@ -2351,12 +2351,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range
 {
-    return [[self _editingDelegateForwarder] webViewShouldBeginEditing:self inDOMRange:range];
+    return [[self _editingDelegateForwarder] webView:self shouldBeginEditingInDOMRange:range];
 }
 
 - (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range
 {
-    return [[self _editingDelegateForwarder] webViewShouldEndEditing:self inDOMRange:range];
+    return [[self _editingDelegateForwarder] webView:self shouldEndEditingInDOMRange:range];
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity

@@ -22,12 +22,12 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (BOOL)webViewShouldBeginEditing:(WebView *)webView inDOMRange:(DOMRange *)range
+- (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
 {
     return YES;
 }
 
-- (BOOL)webViewShouldEndEditing:(WebView *)webView inDOMRange:(DOMRange *)range
+- (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range
 {
     return YES;
 }

@@ -18,8 +18,8 @@ typedef enum {
 } WebViewInsertAction;
 
 @interface NSObject (WebViewEditingDelegate)
-- (BOOL)webViewShouldBeginEditing:(WebView *)webView inDOMRange:(DOMRange *)range;
-- (BOOL)webViewShouldEndEditing:(WebView *)webView inDOMRange:(DOMRange *)range;
+- (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range;
+- (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range;
 - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range;
