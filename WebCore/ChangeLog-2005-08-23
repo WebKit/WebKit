@@ -1,3 +1,5 @@
+=== Safari-152 ===
+
 2004-07-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3625611, images offset on first visit to page.  The method for determining the last clean line was
