@@ -278,7 +278,7 @@
     [request release];
 }
 
-- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
     // This prevents a potential bug which may cause a page
@@ -288,6 +288,7 @@
     [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     [request setMethod:@"POST"];
     [request setData:data];
+    [request setContentType:contentType];
     [request setReferrer:referrer];
     [self loadRequest:request withParent:[[frame dataSource] parent]];
     [request release];

@@ -1,9 +1,19 @@
+2002-10-07  Darin Adler  <darin@apple.com>
+
+	WebKit part of implementation of multipart forms posting.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge postWithURL:referrer:data:contentType:]):
+	Add a contentType parameter to match change in WebCore API.
+	Put the contentType value into the request.
+
 2002-10-07  Chris Blumenberg  <cblu@apple.com>
 
-`	Icing fix for: 3063517 - crash loading .png in separate window
+	Icing fix for: 3063517 - crash loading .png in separate window
 	
         * Plugins.subproj/WebPluginDatabase.m:
-        (-[WebNetscapePluginDatabase init]): Don't override document view and rep types for types that have already been registered. 
+        (-[WebNetscapePluginDatabase init]): Don't override document view and rep
+	types for types that have already been registered. 
 
 2002-10-07  Darin Adler  <darin@apple.com>
 

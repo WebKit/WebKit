@@ -238,8 +238,11 @@ void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
     if (!args.doPost()) {
 	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() referrer:referrer(args)];
     } else {
-	NSData *postData = [NSData dataWithBytes:args.postData.data() length:args.postData.size()];
-	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL() referrer:referrer(args) data:postData];
+        QString contentType = args.contentType();
+        ASSERT(contentType.startsWith("Content-Type: "));
+	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL() referrer:referrer(args)
+                   data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
+            contentType:contentType.mid(14).getNSString()];
     }
 }
 

@@ -1,5 +1,15 @@
 2002-10-07  Darin Adler  <darin@apple.com>
 
+	WebCore part of implementation of multipart forms posting.
+
+        * kwq/WebCoreBridge.h: Add a contentType parameter to the bridge's
+	[postWithURL:referrer:data:] method.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::submitForm):
+	Extract the content type from the args, and pass it along to the bridge.
+
+2002-10-07  Darin Adler  <darin@apple.com>
+
 	- fixed 3011025 -- Page up/down is not working when text area has focus
 
         * kwq/KWQTextArea.mm:
