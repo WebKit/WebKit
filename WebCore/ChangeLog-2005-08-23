@@ -1,5 +1,14 @@
 2003-12-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed 3505391: REGRESSION (100-116): pages that move cells around don't repaint correctly
+
+        * khtml/rendering/render_table.cpp: (RenderTableSection::layoutRows): Added code
+        similar to the code in RenderBlock::layoutBlock, but for table cells.
+
+2003-12-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): Add locking around the call to
