@@ -1,5 +1,9 @@
 2003-02-11  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2003-02-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Ed.
 
         - applied a fixed version of Ed Voas's change to make plug-ins position correctly
