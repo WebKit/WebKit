@@ -45,7 +45,7 @@
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
-#define KEY(x) [(_private->identifier?_private->identifier:@"") stringByAppendingString:x]
+#define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))
 
 enum { WebPreferencesVersion = 1 };
 
@@ -72,12 +72,6 @@ enum { WebPreferencesVersion = 1 };
 @interface WebPreferences (WebInternal)
 + (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
 + (NSString *)_IBCreatorID;
-- (NSString *)_stringValueForKey: (NSString *)key;
-- (void)_setStringValue: (NSString *)value forKey: (NSString *)key;
-- (int)_integerValueForKey: (NSString *)key;
-- (void)_setIntegerValue: (int)value forKey: (NSString *)key;
-- (int)_boolValueForKey: (NSString *)key;
-- (void)_setBoolValue: (BOOL)value forKey: (NSString *)key;
 @end
 
 @implementation WebPreferences
@@ -242,72 +236,60 @@ NS_ENDHANDLER
     return _private->identifier;
 }
 
-- (NSString *)_stringValueForKey: (NSString *)key
+- (id)_valueForKey:(NSString *)key
 {
     NSString *_key = KEY(key);
-    NSString *s = [_private->values objectForKey:_key];
-    if (s)
-        return s;
-    s = [[NSUserDefaults standardUserDefaults] stringForKey:_key];
-    if (!s)
-        s = [[NSUserDefaults standardUserDefaults] stringForKey:key];
-    return s;
+    id o = [_private->values objectForKey:_key];
+    if (o)
+        return o;
+    o = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
+    if (!o && key != _key)
+        o = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    return o;
 }
 
-- (void)_setStringValue: (NSString *)value forKey: (NSString *)key
+- (NSString *)_stringValueForKey:(NSString *)key
+{
+    id s = [self _valueForKey:key];
+    return [s isKindOfClass:[NSString class]] ? (NSString *)s : nil;
+}
+
+- (void)_setStringValue:(NSString *)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
-
-    [_private->values setObject: value forKey:_key];
-
+    [_private->values setObject:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
-- (int)_integerValueForKey: (NSString *)key
+- (int)_integerValueForKey:(NSString *)key
 {
-    NSString *_key = KEY(key);
-    NSNumber *n = [_private->values objectForKey:_key];
-    if (n)
-        return [n intValue];
-    n = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
-    if (!n)
-        n = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-    return [n intValue];
+    id o = [self _valueForKey:key];
+    // 
+    return [o respondsToSelector:@selector(intValue)] ? [o intValue] : 0;
 }
 
-- (void)_setIntegerValue: (int)value forKey: (NSString *)key
+- (void)_setIntegerValue:(int)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
-
-    [_private->values _web_setInt: value forKey: _key];
-
+    [_private->values _web_setInt:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
-- (int)_boolValueForKey: (NSString *)key
+- (BOOL)_boolValueForKey:(NSString *)key
 {
-    NSString *_key = KEY(key);
-    NSNumber *n = [_private->values objectForKey:_key];
-    if (n)
-        return [n boolValue];
-    n = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
-    if (!n)
-        n = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-    return [n intValue] != 0 ? YES : NO;
+    return [self _integerValueForKey:key] != 0;
 }
 
-- (void)_setBoolValue: (BOOL)value forKey: (NSString *)key
+- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
-
-    [_private->values _web_setBool: value forKey: _key];
-
+    [_private->values _web_setBool:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -553,7 +535,7 @@ NS_ENDHANDLER
 
 - (BOOL)tabsToLinks
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTabToLinksPreferenceKey];
+    return [self _boolValueForKey:WebKitTabToLinksPreferenceKey];
 }
 
 - (void)setPrivateBrowsingEnabled:(BOOL)flag
@@ -563,7 +545,7 @@ NS_ENDHANDLER
 
 - (BOOL)privateBrowsingEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
 }
 
 @end
@@ -626,16 +608,18 @@ static NSMutableDictionary *webPreferencesInstances = nil;
                     userInfo:nil];
 }
 
-static NSString *classIBCreatorID = 0;
+static NSString *classIBCreatorID = nil;
 
 + (void)_setIBCreatorID:(NSString *)string
 {
-    
-    if (classIBCreatorID != string){
-        [classIBCreatorID release];
-        classIBCreatorID = [string retain];
-    }
+    NSString *old = classIBCreatorID;
+    classIBCreatorID = [string copy];
+    [old release];
 }
+
+@end
+
+@implementation WebPreferences (WebInternal)
 
 + (NSString *)_IBCreatorID
 {
@@ -652,12 +636,13 @@ static NSString *classIBCreatorID = 0;
 
 @end
 
-@implementation NSMutableDictionary (WebPrivate)
+@implementation NSMutableDictionary (WebInternal)
+
 - (void)_web_checkLastReferenceForIdentifier:(NSString *)identifier
 {
     WebPreferences *instance = [webPreferencesInstances objectForKey:identifier];
     if ([instance retainCount] == 1)
         [webPreferencesInstances removeObjectForKey:identifier];
 }
-@end
 
+@end

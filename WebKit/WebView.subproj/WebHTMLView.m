@@ -533,7 +533,6 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT(tag == TRACKING_RECT_TAG);
     if (_private != nil) {
-        ASSERT(_private->trackingRectOwner != nil);
         _private->trackingRectOwner = nil;
     }
 }

@@ -1,3 +1,19 @@
+2004-07-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed problem where tabsToLinks and privateBrowsingEnabled did not work with non-
+          standard WebPreferences objects
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _valueForKey:]): New helper.
+        (-[WebPreferences _stringValueForKey:]): Use _valueForKey.
+        (-[WebPreferences _integerValueForKey:]): Use _valueForKey.
+        (-[WebPreferences _boolValueForKey:]): Use _valueForKey.
+        (-[WebPreferences tabsToLinks]): Use _boolValueForKey; this is the bug fix.
+        (-[WebPreferences privateBrowsingEnabled]): Ditto.
+        (+[WebPreferences _setIBCreatorID:]): Use copy instead of retain for keeping an NSString.
+
 2004-07-01  Trey Matteson  <trey@apple.com>
 
 	3556159 - Crashes in -[WebFrame(WebPrivate) _transitionToCommitted:] at www.mastercardbusiness.com
@@ -293,15 +309,6 @@
         to get CGImageRef; can't include an individual header.
 
 2004-06-15  Richard Williamson   <rjw@apple.com>
-<<<<<<< ChangeLog
-=======
-
-        Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
-
-        Flip the policy for exposing Objective-C methods and properties.
-
-        Reviewed by Trey.
->>>>>>> 1.2589
 
 	Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
 	
