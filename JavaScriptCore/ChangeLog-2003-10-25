@@ -1,5 +1,14 @@
 2002-11-21  Darin Adler  <darin@apple.com>
 
+	- someone somewhere must be defining a macro named check, causing a compile failure in WebCore
+
+	Rename check() to checkConsistency().
+
+        * kjs/property_map.h: Rename.
+        * kjs/property_map.cpp: Yes, rename.
+
+2002-11-21  Darin Adler  <darin@apple.com>
+
 	- add self-check to property map in hopes of finding the cnet.com bug
 
         * kjs/property_map.h: Add check() function.
