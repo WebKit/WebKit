@@ -54,27 +54,27 @@ public:
     long endOffset(int &exceptioncode) const;
     bool collapsed(int &exceptioncode) const;
 
-    NodeImpl *commonAncestorContainer(int &exceptioncode);
+    NodeImpl *commonAncestorContainer(int &exceptioncode) const;
     static NodeImpl *commonAncestorContainer(NodeImpl *containerA, NodeImpl *containerB);
     void setStart ( NodeImpl *refNode, long offset, int &exceptioncode );
     void setEnd ( NodeImpl *refNode, long offset, int &exceptioncode );
     void collapse ( bool toStart, int &exceptioncode );
-    short compareBoundaryPoints ( Range::CompareHow how, RangeImpl *sourceRange, int &exceptioncode );
-    short compareBoundaryPoints ( NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB );
-    bool boundaryPointsValid (  );
+    short compareBoundaryPoints ( Range::CompareHow how, const RangeImpl *sourceRange, int &exceptioncode ) const;
+    static short compareBoundaryPoints ( NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB );
+    bool boundaryPointsValid (  ) const;
     void deleteContents ( int &exceptioncode );
     DocumentFragmentImpl *extractContents ( int &exceptioncode );
     DocumentFragmentImpl *cloneContents ( int &exceptioncode );
     void insertNode( NodeImpl *newNode, int &exceptioncode );
-    DOMString toString ( int &exceptioncode );
-    DOMString toHTML(QPtrList<NodeImpl> *nodes=NULL);
+    DOMString toString ( int &exceptioncode ) const;
+    DOMString toHTML(QPtrList<NodeImpl> *nodes=NULL) const;
     DOMString text() const;
 
-    DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode );
+    DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode ) const;
     
     void detach ( int &exceptioncode );
     bool isDetached() const;
-    RangeImpl *cloneRange(int &exceptioncode);
+    RangeImpl *cloneRange(int &exceptioncode) const;
 
     void setStartAfter( NodeImpl *refNode, int &exceptioncode );
     void setEndBefore( NodeImpl *refNode, int &exceptioncode );
@@ -90,8 +90,6 @@ public:
         CLONE_CONTENTS
     };
     DocumentFragmentImpl *processContents ( ActionType action, int &exceptioncode );
-
-    bool readOnly() { return false; }
 
     NodeImpl *startNode() const;
     NodeImpl *pastEndNode() const;

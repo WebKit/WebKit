@@ -2,6 +2,25 @@
 
         Reviewed by Ken.
 
+        - cleaned up DOM::RangeImpl a little so compareBoundaryPoints can be used outside the class
+
+        * khtml/xml/dom2_rangeimpl.h: Added const to many of the member functions and made the
+        compareBoundaryPoints that works on parameters be a const member function.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::commonAncestorContainer): Added const.
+        (DOM::RangeImpl::compareBoundaryPoints): Added const.
+        (DOM::RangeImpl::boundaryPointsValid): Added const, and wrote cleaner version.
+        (DOM::RangeImpl::insertNode): Simplified by calling containedByReadOnly.
+        (DOM::RangeImpl::toString): Added const.
+        (DOM::RangeImpl::toHTML): Added const.
+        (DOM::RangeImpl::createContextualFragment): Added const.
+        (DOM::RangeImpl::cloneRange): Added const.
+        (DOM::RangeImpl::surroundContents): Simplified by calling containedByReadOnly.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3806990> REGRESSION (125-162): Crash on Select All at http://leuf.net/cgi/wikidn?PerlConvertEolScript
 
         * khtml/rendering/render_replaced.cpp: (RenderWidget::setSelectionState): Added nil check for the
