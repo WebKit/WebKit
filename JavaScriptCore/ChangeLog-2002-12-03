@@ -1,3 +1,7 @@
+2002-06-02  Darin Adler  <darin@apple.com>
+
+	* COPYING.LIB: Fix line endings. It was using CRs.
+
 2002-05-31  Darin Adler  <darin@apple.com>
 
 	* Makefile.am:
