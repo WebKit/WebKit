@@ -1,3 +1,7 @@
+2002-07-16  Darin Adler  <darin@apple.com>
+
+        * almost every file: Renamed IF* -> Web*.
+
 2002-07-15  Darin Adler  <darin@apple.com>
 
 	A teeny weeny bit of refactoring.

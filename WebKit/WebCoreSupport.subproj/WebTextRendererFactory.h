@@ -1,5 +1,5 @@
 //
-//  IFTextRendererFactory.h
+//  WebTextRendererFactory.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
@@ -8,17 +8,17 @@
 
 #import <WebCore/WebCoreTextRendererFactory.h>
 
-@class IFTextRenderer;
+@class WebTextRenderer;
 
-@interface IFTextRendererFactory : WebCoreTextRendererFactory
+@interface WebTextRendererFactory : WebCoreTextRendererFactory
 {
     NSMutableDictionary *cache;
 }
 
 + (void)createSharedFactory;
-+ (IFTextRendererFactory *)sharedFactory;
++ (WebTextRendererFactory *)sharedFactory;
 - init;
 
-- (IFTextRenderer *)rendererWithFont:(NSFont *)font;
+- (WebTextRenderer *)rendererWithFont:(NSFont *)font;
 
 @end

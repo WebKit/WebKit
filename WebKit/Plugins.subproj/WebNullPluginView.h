@@ -1,12 +1,12 @@
 /*	
-    IFNullPluginView.h
+    WebNullPluginView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <AppKit/AppKit.h>
 
 
-@interface IFNullPluginView : NSImageView {
+@interface WebNullPluginView : NSImageView {
 
     BOOL errorSent;
     NSString *mimeType;

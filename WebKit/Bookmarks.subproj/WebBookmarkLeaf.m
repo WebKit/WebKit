@@ -1,34 +1,34 @@
 //
-//  IFBookmarkLeaf.m
+//  WebBookmarkLeaf.m
 //  WebKit
 //
 //  Created by John Sullivan on Tue Apr 30 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFBookmarkLeaf.h>
-#import <WebKit/IFBookmark_Private.h>
-#import <WebKit/IFBookmarkGroup.h>
-#import <WebKit/IFBookmarkGroup_Private.h>
-#import <WebKit/IFURIEntry.h>
+#import <WebKit/WebBookmarkLeaf.h>
+#import <WebKit/WebBookmarkPrivate.h>
+#import <WebKit/WebBookmarkGroup.h>
+#import <WebKit/WebBookmarkGroupPrivate.h>
+#import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitDebug.h>
 
 #define URIDictionaryKey	@"URIDictionary"
 #define URLStringKey		@"URLString"
 
-@implementation IFBookmarkLeaf
+@implementation WebBookmarkLeaf
 
 - (id)init
 {
     [super init];
-    _entry = [[IFURIEntry alloc] init];
+    _entry = [[WebHistoryItem alloc] init];
     return self;
 }
 
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
                   image:(NSImage *)image
-                  group:(IFBookmarkGroup *)group;
+                  group:(WebBookmarkGroup *)group;
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
     
@@ -36,7 +36,7 @@
 
     // Since our URLString may not be valid for creating an NSURL object,
     // just hang onto the string separately and don't bother creating
-    // an NSURL object for the IFURIEntry.
+    // an NSURL object for the WebHistoryItem.
     [self setTitle:title];
     [self setImage:image];
     _URLString = [URLString retain];
@@ -45,7 +45,7 @@
     return self;
 }
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
 
@@ -53,7 +53,7 @@
 
     [self _setGroup:group];
     
-    _entry = [[[IFURIEntry alloc] initFromDictionaryRepresentation:
+    _entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:
         [dict objectForKey:URIDictionaryKey]] retain];
     _URLString = [[dict objectForKey:URLStringKey] retain];
 
@@ -66,7 +66,7 @@
 
     dict = [NSMutableDictionary dictionaryWithCapacity:3];
 
-    [dict setObject:IFBookmarkTypeLeafValue forKey:IFBookmarkTypeKey];
+    [dict setObject:WebBookmarkTypeLeafValue forKey:WebBookmarkTypeKey];
     [dict setObject:[_entry dictionaryRepresentation] forKey:URIDictionaryKey];
     if (_URLString != nil) {
         [dict setObject:_URLString forKey:URLStringKey];
@@ -84,7 +84,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[IFBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
+    return [[WebBookmarkLeaf allocWithZone:zone] initWithURLString:_URLString
                                                             title:[self title]
                                                             image:[self image]
                                                             group:[self group]];
@@ -119,9 +119,9 @@
     [[self group] _bookmarkDidChange:self];    
 }
 
-- (IFBookmarkType)bookmarkType
+- (WebBookmarkType)bookmarkType
 {
-    return IFBookmarkTypeLeaf;
+    return WebBookmarkTypeLeaf;
 }
 
 - (NSString *)URLString

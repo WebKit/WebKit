@@ -1,5 +1,5 @@
 //
-//  IFURIEntry.h
+//  WebHistoryItem.h
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.
@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface IFURIEntry : NSObject
+@interface WebHistoryItem : NSObject
 {
     NSURL *_url;
     NSString *_title;

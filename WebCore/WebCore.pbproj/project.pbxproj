@@ -3772,8 +3772,8 @@
 		};
 		F52CA70F02DFACBD018635CA = {
 			isa = PBXFileReference;
-			name = WebCoreFrame.mm;
-			path = kwq/WebCoreFrame.mm;
+			name = WebCoreFrameBridge.mm;
+			path = kwq/WebCoreFrameBridge.mm;
 			refType = 4;
 		};
 		F52CA71002DFACBD018635CA = {
@@ -4132,8 +4132,8 @@
 		};
 		F58784F802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLPart.mm;
-			path = kwq/KWQKHTMLPart.mm;
+			name = KWQKHTMLPartImpl.mm;
+			path = kwq/KWQKHTMLPartImpl.mm;
 			refType = 4;
 		};
 		F58784F902DE375901EA4122 = {
@@ -4192,8 +4192,8 @@
 		};
 		F587850302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKloader.mm;
-			path = kwq/KWQKloader.mm;
+			name = KWQLoaderImpl.mm;
+			path = kwq/KWQLoaderImpl.mm;
 			refType = 4;
 		};
 		F587850402DE375901EA4122 = {
@@ -4606,8 +4606,8 @@
 		};
 		F587854B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreFrame.h;
-			path = kwq/WebCoreFrame.h;
+			name = WebCoreFrameBridge.h;
+			path = kwq/WebCoreFrameBridge.h;
 			refType = 4;
 		};
 		F587854C02DE375901EA4122 = {

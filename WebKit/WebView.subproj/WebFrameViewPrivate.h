@@ -1,4 +1,4 @@
-/*	IFWebViewPrivate.h
+/*	WebViewPrivate.h
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -6,15 +6,15 @@
         NSWebPageView.
 */
 
-#import <WebKit/IFWebView.h>
+#import <WebKit/WebView.h>
 
-@class IFDynamicScrollBarsView;
+@class WebDynamicScrollBarsView;
 
-@interface IFWebViewPrivate : NSObject
+@interface WebViewPrivate : NSObject
 {
 @public
-    IFWebController *controller;
-    IFDynamicScrollBarsView *frameScrollView;
+    WebController *controller;
+    WebDynamicScrollBarsView *frameScrollView;
     
     // These margin values are used to temporarily hold
     // the margins of a frame until we have the appropriate
@@ -27,10 +27,10 @@
 
 @end
 
-@interface IFWebView (IFPrivate)
-- (void)_setDocumentView:(id <IFDocumentLoading>)view;
-- (void)_setController:(IFWebController *)controller;
-- (IFWebController *)_controller;
+@interface WebView (WebPrivate)
+- (void)_setDocumentView:(id <WebDocumentLoading>)view;
+- (void)_setController:(WebController *)controller;
+- (WebController *)_controller;
 - (int)_marginWidth;
 - (int)_marginHeight;
 - (void)_setMarginWidth:(int)w;

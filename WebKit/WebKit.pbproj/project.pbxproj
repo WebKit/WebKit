@@ -518,62 +518,62 @@
 //354
 		35081D9202B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLRepresentation.h;
-			path = WebView.subproj/IFHTMLRepresentation.h;
+			name = WebHTMLRepresentation.h;
+			path = WebView.subproj/WebHTMLRepresentation.h;
 			refType = 4;
 		};
 		35081D9302B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLRepresentation.mm;
-			path = WebView.subproj/IFHTMLRepresentation.mm;
+			name = WebHTMLRepresentation.m;
+			path = WebView.subproj/WebHTMLRepresentation.m;
 			refType = 4;
 		};
 		35081D9402B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLView.h;
-			path = WebView.subproj/IFHTMLView.h;
+			name = WebHTMLView.h;
+			path = WebView.subproj/WebHTMLView.h;
 			refType = 4;
 		};
 		35081D9502B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLView.mm;
-			path = WebView.subproj/IFHTMLView.mm;
+			name = WebHTMLView.m;
+			path = WebView.subproj/WebHTMLView.m;
 			refType = 4;
 		};
 		35081D9602B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLViewPrivate.h;
-			path = WebView.subproj/IFHTMLViewPrivate.h;
+			name = WebHTMLViewPrivate.h;
+			path = WebView.subproj/WebHTMLViewPrivate.h;
 			refType = 4;
 		};
 		35081D9702B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFHTMLViewPrivate.mm;
-			path = WebView.subproj/IFHTMLViewPrivate.mm;
+			name = WebHTMLViewPrivate.m;
+			path = WebView.subproj/WebHTMLViewPrivate.m;
 			refType = 4;
 		};
 		35081D9802B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFImageRepresentation.h;
-			path = WebView.subproj/IFImageRepresentation.h;
+			name = WebImageRepresentation.h;
+			path = WebView.subproj/WebImageRepresentation.h;
 			refType = 4;
 		};
 		35081D9902B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFImageRepresentation.m;
-			path = WebView.subproj/IFImageRepresentation.m;
+			name = WebImageRepresentation.m;
+			path = WebView.subproj/WebImageRepresentation.m;
 			refType = 4;
 		};
 		35081D9A02B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFImageView.h;
-			path = WebView.subproj/IFImageView.h;
+			name = WebImageView.h;
+			path = WebView.subproj/WebImageView.h;
 			refType = 4;
 		};
 		35081D9B02B6D4D80ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFImageView.m;
-			path = WebView.subproj/IFImageView.m;
+			name = WebImageView.m;
+			path = WebView.subproj/WebImageView.m;
 			refType = 4;
 		};
 		35081D9C02B6D4D80ACA2ACA = {
@@ -641,26 +641,26 @@
 		};
 		35081DA602B6D4E40ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFTextRepresentation.h;
-			path = WebView.subproj/IFTextRepresentation.h;
+			name = WebTextRepresentation.h;
+			path = WebView.subproj/WebTextRepresentation.h;
 			refType = 4;
 		};
 		35081DA702B6D4E40ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFTextRepresentation.m;
-			path = WebView.subproj/IFTextRepresentation.m;
+			name = WebTextRepresentation.m;
+			path = WebView.subproj/WebTextRepresentation.m;
 			refType = 4;
 		};
 		35081DA802B6D4E40ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFTextView.h;
-			path = WebView.subproj/IFTextView.h;
+			name = WebTextView.h;
+			path = WebView.subproj/WebTextView.h;
 			refType = 4;
 		};
 		35081DA902B6D4E40ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFTextView.m;
-			path = WebView.subproj/IFTextView.m;
+			name = WebTextView.m;
+			path = WebView.subproj/WebTextView.m;
 			refType = 4;
 		};
 		35081DAA02B6D4E40ACA2ACA = {
@@ -689,8 +689,8 @@
 		};
 		35081DAE02B6D4F50ACA2ACA = {
 			isa = PBXFileReference;
-			name = IFDocument.h;
-			path = WebView.subproj/IFDocument.h;
+			name = WebDocument.h;
+			path = WebView.subproj/WebDocument.h;
 			refType = 4;
 		};
 		35081DAF02B6D4F50ACA2ACA = {
@@ -732,140 +732,140 @@
 //394
 		39446064020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebController.mm;
-			path = WebView.subproj/IFWebController.mm;
+			name = WebController.m;
+			path = WebView.subproj/WebController.m;
 			refType = 4;
 		};
 		39446065020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebControllerPrivate.h;
-			path = WebView.subproj/IFWebControllerPrivate.h;
+			name = WebControllerPrivate.h;
+			path = WebView.subproj/WebControllerPrivate.h;
 			refType = 4;
 		};
 		39446066020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebControllerPrivate.mm;
-			path = WebView.subproj/IFWebControllerPrivate.mm;
+			name = WebControllerPrivate.m;
+			path = WebView.subproj/WebControllerPrivate.m;
 			refType = 4;
 		};
 		3944606B020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFDynamicScrollBarsView.h;
-			path = WebView.subproj/IFDynamicScrollBarsView.h;
+			name = WebDynamicScrollBarsView.h;
+			path = WebView.subproj/WebDynamicScrollBarsView.h;
 			refType = 4;
 		};
 		3944606C020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFDynamicScrollBarsView.m;
-			path = WebView.subproj/IFDynamicScrollBarsView.m;
+			name = WebDynamicScrollBarsView.m;
+			path = WebView.subproj/WebDynamicScrollBarsView.m;
 			refType = 4;
 		};
 		3944606E020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFPreferences.h;
-			path = WebView.subproj/IFPreferences.h;
+			name = WebPreferences.h;
+			path = WebView.subproj/WebPreferences.h;
 			refType = 4;
 		};
 		3944606F020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebController.h;
-			path = WebView.subproj/IFWebController.h;
+			name = WebController.h;
+			path = WebView.subproj/WebController.h;
 			refType = 4;
 		};
 		39446070020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebDataSource.h;
-			path = WebView.subproj/IFWebDataSource.h;
+			name = WebDataSource.h;
+			path = WebView.subproj/WebDataSource.h;
 			refType = 4;
 		};
 		39446071020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebDataSource.mm;
-			path = WebView.subproj/IFWebDataSource.mm;
+			name = WebDataSource.m;
+			path = WebView.subproj/WebDataSource.m;
 			refType = 4;
 		};
 		39446072020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebDataSourcePrivate.h;
-			path = WebView.subproj/IFWebDataSourcePrivate.h;
+			name = WebDataSourcePrivate.h;
+			path = WebView.subproj/WebDataSourcePrivate.h;
 			refType = 4;
 		};
 		39446073020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebDataSourcePrivate.mm;
-			path = WebView.subproj/IFWebDataSourcePrivate.mm;
+			name = WebDataSourcePrivate.m;
+			path = WebView.subproj/WebDataSourcePrivate.m;
 			refType = 4;
 		};
 		39446074020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebFrame.h;
-			path = WebView.subproj/IFWebFrame.h;
+			name = WebFrame.h;
+			path = WebView.subproj/WebFrame.h;
 			refType = 4;
 		};
 		39446076020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebView.h;
-			path = WebView.subproj/IFWebView.h;
+			name = WebView.h;
+			path = WebView.subproj/WebView.h;
 			refType = 4;
 		};
 		39446077020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebView.mm;
-			path = WebView.subproj/IFWebView.mm;
+			name = WebView.m;
+			path = WebView.subproj/WebView.m;
 			refType = 4;
 		};
 		39446078020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebViewPrivate.h;
-			path = WebView.subproj/IFWebViewPrivate.h;
+			name = WebViewPrivate.h;
+			path = WebView.subproj/WebViewPrivate.h;
 			refType = 4;
 		};
 		39446079020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFWebViewPrivate.mm;
-			path = WebView.subproj/IFWebViewPrivate.mm;
+			name = WebViewPrivate.m;
+			path = WebView.subproj/WebViewPrivate.m;
 			refType = 4;
 		};
 		3944607A020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFException.h;
-			path = Misc.subproj/IFException.h;
+			name = WebException.h;
+			path = Misc.subproj/WebException.h;
 			refType = 4;
 		};
 		3944607B020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			name = IFException.m;
-			path = Misc.subproj/IFException.m;
+			name = WebException.m;
+			path = Misc.subproj/WebException.m;
 			refType = 4;
 		};
 		3944607D020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFBackForwardList.h;
+			path = WebBackForwardList.h;
 			refType = 4;
 		};
 		3944607E020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFBackForwardList.m;
+			path = WebBackForwardList.m;
 			refType = 4;
 		};
 		3944607F020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFURIEntry.h;
+			path = WebHistoryItem.h;
 			refType = 4;
 		};
 		39446080020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFURIEntry.m;
+			path = WebHistoryItem.m;
 			refType = 4;
 		};
 		39446081020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFURIList.h;
+			path = WebHistoryList.h;
 			refType = 4;
 		};
 		39446082020F50ED0ECA1767 = {
 			isa = PBXFileReference;
-			path = IFURIList.m;
+			path = WebHistoryList.m;
 			refType = 4;
 		};
 		39446088020F50ED0ECA1767 = {
@@ -1089,8 +1089,8 @@
 		};
 		9CAE9D070252A4130ECA16EA = {
 			isa = PBXFileReference;
-			name = IFPreferencesPrivate.h;
-			path = WebView.subproj/IFPreferencesPrivate.h;
+			name = WebPreferencesPrivate.h;
+			path = WebView.subproj/WebPreferencesPrivate.h;
 			refType = 2;
 		};
 		9CAE9D080252A4130ECA16EA = {
@@ -1104,26 +1104,26 @@
 		};
 		9CE1F8A002A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = IFImageRenderer.h;
-			path = WebCoreSupport.subproj/IFImageRenderer.h;
+			name = WebImageRenderer.h;
+			path = WebCoreSupport.subproj/WebImageRenderer.h;
 			refType = 2;
 		};
 		9CE1F8A102A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = IFImageRenderer.m;
-			path = WebCoreSupport.subproj/IFImageRenderer.m;
+			name = WebImageRenderer.m;
+			path = WebCoreSupport.subproj/WebImageRenderer.m;
 			refType = 2;
 		};
 		9CE1F8A202A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = IFImageRendererFactory.h;
-			path = WebCoreSupport.subproj/IFImageRendererFactory.h;
+			name = WebImageRendererFactory.h;
+			path = WebCoreSupport.subproj/WebImageRendererFactory.h;
 			refType = 2;
 		};
 		9CE1F8A302A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = IFImageRendererFactory.m;
-			path = WebCoreSupport.subproj/IFImageRendererFactory.m;
+			name = WebImageRendererFactory.m;
+			path = WebCoreSupport.subproj/WebImageRendererFactory.m;
 			refType = 2;
 		};
 		9CE1F8A402A5C6F30ECA2ACD = {
@@ -1152,14 +1152,14 @@
 		};
 		9CF0E249021361B00ECA16EA = {
 			isa = PBXFileReference;
-			name = IFWebFramePrivate.h;
-			path = WebView.subproj/IFWebFramePrivate.h;
+			name = WebFramePrivate.h;
+			path = WebView.subproj/WebFramePrivate.h;
 			refType = 2;
 		};
 		9CF0E24A021361B00ECA16EA = {
 			isa = PBXFileReference;
-			name = IFWebFramePrivate.mm;
-			path = WebView.subproj/IFWebFramePrivate.mm;
+			name = WebFramePrivate.m;
+			path = WebView.subproj/WebFramePrivate.m;
 			refType = 2;
 		};
 		9CF0E24B021361B10ECA16EA = {
@@ -1206,56 +1206,56 @@
 		};
 		F5065218027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmark_Private.h;
-			path = Bookmarks.subproj/IFBookmark_Private.h;
+			name = WebBookmarkPrivate.h;
+			path = Bookmarks.subproj/WebBookmarkPrivate.h;
 			refType = 2;
 		};
 		F5065219027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmark.h;
-			path = Bookmarks.subproj/IFBookmark.h;
+			name = WebBookmark.h;
+			path = Bookmarks.subproj/WebBookmark.h;
 			refType = 2;
 		};
 		F506521A027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmark.m;
-			path = Bookmarks.subproj/IFBookmark.m;
+			name = WebBookmark.m;
+			path = Bookmarks.subproj/WebBookmark.m;
 			refType = 2;
 		};
 		F506521B027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkGroup.h;
-			path = Bookmarks.subproj/IFBookmarkGroup.h;
+			name = WebBookmarkGroup.h;
+			path = Bookmarks.subproj/WebBookmarkGroup.h;
 			refType = 2;
 		};
 		F506521C027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkGroup.m;
-			path = Bookmarks.subproj/IFBookmarkGroup.m;
+			name = WebBookmarkGroup.m;
+			path = Bookmarks.subproj/WebBookmarkGroup.m;
 			refType = 2;
 		};
 		F506521D027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkLeaf.h;
-			path = Bookmarks.subproj/IFBookmarkLeaf.h;
+			name = WebBookmarkLeaf.h;
+			path = Bookmarks.subproj/WebBookmarkLeaf.h;
 			refType = 2;
 		};
 		F506521E027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkLeaf.m;
-			path = Bookmarks.subproj/IFBookmarkLeaf.m;
+			name = WebBookmarkLeaf.m;
+			path = Bookmarks.subproj/WebBookmarkLeaf.m;
 			refType = 2;
 		};
 		F506521F027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkList.h;
-			path = Bookmarks.subproj/IFBookmarkList.h;
+			name = WebBookmarkList.h;
+			path = Bookmarks.subproj/WebBookmarkList.h;
 			refType = 2;
 		};
 		F5065220027F557E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkList.m;
-			path = Bookmarks.subproj/IFBookmarkList.m;
+			name = WebBookmarkList.m;
+			path = Bookmarks.subproj/WebBookmarkList.m;
 			refType = 2;
 		};
 		F5065221027F557E01C1A526 = {
@@ -1320,14 +1320,14 @@
 		};
 		F508472202DED36E01257167 = {
 			isa = PBXFileReference;
-			name = IFPanelCookieAcceptHandler.h;
-			path = Panels.subproj/IFPanelCookieAcceptHandler.h;
+			name = WebPanelCookieAcceptHandler.h;
+			path = Panels.subproj/WebPanelCookieAcceptHandler.h;
 			refType = 4;
 		};
 		F508472302DED36E01257167 = {
 			isa = PBXFileReference;
-			name = IFPanelCookieAcceptHandler.m;
-			path = Panels.subproj/IFPanelCookieAcceptHandler.m;
+			name = WebPanelCookieAcceptHandler.m;
+			path = Panels.subproj/WebPanelCookieAcceptHandler.m;
 			refType = 4;
 		};
 		F508472402DED36E01257167 = {
@@ -1344,14 +1344,14 @@
 		};
 		F508946902B71D59018A9CD4 = {
 			isa = PBXFileReference;
-			name = IFNSViewExtras.h;
-			path = Misc.subproj/IFNSViewExtras.h;
+			name = WebNSViewExtras.h;
+			path = Misc.subproj/WebNSViewExtras.h;
 			refType = 4;
 		};
 		F508946A02B71D59018A9CD4 = {
 			isa = PBXFileReference;
-			name = IFNSViewExtras.m;
-			path = Misc.subproj/IFNSViewExtras.m;
+			name = WebNSViewExtras.m;
+			path = Misc.subproj/WebNSViewExtras.m;
 			refType = 4;
 		};
 		F508946B02B71D59018A9CD4 = {
@@ -1368,8 +1368,8 @@
 		};
 		F50AD3870282028B01C1A526 = {
 			isa = PBXFileReference;
-			name = IFBookmarkGroup_Private.h;
-			path = Bookmarks.subproj/IFBookmarkGroup_Private.h;
+			name = WebBookmarkGroupPrivate.h;
+			path = Bookmarks.subproj/WebBookmarkGroupPrivate.h;
 			refType = 2;
 		};
 		F50AD3880282028B01C1A526 = {
@@ -1380,8 +1380,8 @@
 		};
 		F5143A370221DCCE01A80181 = {
 			isa = PBXFileReference;
-			name = IFWebFrame.mm;
-			path = WebView.subproj/IFWebFrame.mm;
+			name = WebFrame.m;
+			path = WebView.subproj/WebFrame.m;
 			refType = 2;
 		};
 		F5143A380221DCCE01A80181 = {
@@ -1392,12 +1392,12 @@
 		};
 		F520FB190221DEFD01C1A525 = {
 			isa = PBXFileReference;
-			path = IFWebHistory.h;
+			path = WebHistory.h;
 			refType = 4;
 		};
 		F520FB1A0221DEFD01C1A525 = {
 			isa = PBXFileReference;
-			path = IFWebHistory.m;
+			path = WebHistory.m;
 			refType = 4;
 		};
 		F520FB1B0221DEFD01C1A525 = {
@@ -1473,14 +1473,14 @@
 		};
 		F5488CF402CB04EE01FF6274 = {
 			isa = PBXFileReference;
-			name = IFCookieAdapter.h;
-			path = WebCoreSupport.subproj/IFCookieAdapter.h;
+			name = WebCookieAdapter.h;
+			path = WebCoreSupport.subproj/WebCookieAdapter.h;
 			refType = 4;
 		};
 		F5488CF502CB04EE01FF6274 = {
 			isa = PBXFileReference;
-			name = IFCookieAdapter.m;
-			path = WebCoreSupport.subproj/IFCookieAdapter.m;
+			name = WebCookieAdapter.m;
+			path = WebCoreSupport.subproj/WebCookieAdapter.m;
 			refType = 4;
 		};
 		F5488CF602CB04EE01FF6274 = {
@@ -1497,8 +1497,8 @@
 		};
 		F567433E026B5B7B01A80181 = {
 			isa = PBXFileReference;
-			name = IFLocationChangeHandler.h;
-			path = WebView.subproj/IFLocationChangeHandler.h;
+			name = WebLocationChangeHandler.h;
+			path = WebView.subproj/WebLocationChangeHandler.h;
 			refType = 2;
 		};
 		F567433F026B5B7B01A80181 = {
@@ -1524,14 +1524,14 @@
 		};
 		F5883BE0025E5E9D01000102 = {
 			isa = PBXFileReference;
-			name = IFNullPluginView.h;
-			path = Plugins.subproj/IFNullPluginView.h;
+			name = WebNullPluginView.h;
+			path = Plugins.subproj/WebNullPluginView.h;
 			refType = 4;
 		};
 		F5883BE1025E5E9D01000102 = {
 			isa = PBXFileReference;
-			name = IFNullPluginView.mm;
-			path = Plugins.subproj/IFNullPluginView.mm;
+			name = WebNullPluginView.m;
+			path = Plugins.subproj/WebNullPluginView.m;
 			refType = 4;
 		};
 		F5883BE2025E5E9D01000102 = {
@@ -1548,8 +1548,8 @@
 		};
 		F58BAB380250363E01C1A526 = {
 			isa = PBXFileReference;
-			name = IFLoadProgress.mm;
-			path = WebView.subproj/IFLoadProgress.mm;
+			name = WebLoadProgress.m;
+			path = WebView.subproj/WebLoadProgress.m;
 			refType = 4;
 		};
 		F58BAB390250363E01C1A526 = {
@@ -1560,8 +1560,8 @@
 		};
 		F58BAB3A025036CA01C1A526 = {
 			isa = PBXFileReference;
-			name = IFLoadProgress.h;
-			path = WebView.subproj/IFLoadProgress.h;
+			name = WebLoadProgress.h;
+			path = WebView.subproj/WebLoadProgress.h;
 			refType = 4;
 		};
 		F58BAB3B025036CA01C1A526 = {
@@ -1590,8 +1590,8 @@
 		};
 		F5927D4A02D253C401CA2DBB = {
 			isa = PBXFileReference;
-			name = IFWebControllerPolicyHandler.h;
-			path = WebView.subproj/IFWebControllerPolicyHandler.h;
+			name = WebControllerPolicyHandler.h;
+			path = WebView.subproj/WebControllerPolicyHandler.h;
 			refType = 4;
 		};
 		F5927D4B02D253C401CA2DBB = {
@@ -1605,8 +1605,8 @@
 		};
 		F5927D4E02D26C5E01CA2DBB = {
 			isa = PBXFileReference;
-			name = IFWebKitErrors.h;
-			path = Misc.subproj/IFWebKitErrors.h;
+			name = WebKitErrors.h;
+			path = Misc.subproj/WebKitErrors.h;
 			refType = 4;
 		};
 		F5927D4F02D26C5E01CA2DBB = {
@@ -1620,14 +1620,14 @@
 		};
 		F59668C802AD2923018635CA = {
 			isa = PBXFileReference;
-			name = IFStringTruncator.h;
-			path = Misc.subproj/IFStringTruncator.h;
+			name = WebStringTruncator.h;
+			path = Misc.subproj/WebStringTruncator.h;
 			refType = 4;
 		};
 		F59668C902AD2923018635CA = {
 			isa = PBXFileReference;
-			name = IFStringTruncator.m;
-			path = Misc.subproj/IFStringTruncator.m;
+			name = WebStringTruncator.m;
+			path = Misc.subproj/WebStringTruncator.m;
 			refType = 4;
 		};
 		F59668CA02AD2923018635CA = {
@@ -1659,8 +1659,8 @@
 		};
 		F59EAE3E0253C7EE018635CA = {
 			isa = PBXFileReference;
-			name = IFCache.h;
-			path = Misc.subproj/IFCache.h;
+			name = WebCoreStatistics.h;
+			path = Misc.subproj/WebCoreStatistics.h;
 			refType = 4;
 		};
 		F59EAE400253C7EE018635CA = {
@@ -1674,8 +1674,8 @@
 		};
 		F59EAE410253C8DE018635CA = {
 			isa = PBXFileReference;
-			name = IFCache.mm;
-			path = Misc.subproj/IFCache.mm;
+			name = WebCoreStatistics.m;
+			path = Misc.subproj/WebCoreStatistics.m;
 			refType = 4;
 		};
 		F59EAE420253C8DE018635CA = {
@@ -1686,8 +1686,8 @@
 		};
 		F5A55DC702BAA2E8018635CC = {
 			isa = PBXFileReference;
-			name = IFHTMLRepresentationPrivate.h;
-			path = WebView.subproj/IFHTMLRepresentationPrivate.h;
+			name = WebHTMLRepresentationPrivate.h;
+			path = WebView.subproj/WebHTMLRepresentationPrivate.h;
 			refType = 4;
 		};
 		F5A55DC802BAA2E8018635CC = {
@@ -1698,26 +1698,26 @@
 		};
 		F5A672B70263866E01000102 = {
 			isa = PBXFileReference;
-			name = IFPluginNullEventSender.h;
-			path = Plugins.subproj/IFPluginNullEventSender.h;
+			name = WebPluginNullEventSender.h;
+			path = Plugins.subproj/WebPluginNullEventSender.h;
 			refType = 4;
 		};
 		F5A672B80263866E01000102 = {
 			isa = PBXFileReference;
-			name = IFPluginNullEventSender.m;
-			path = Plugins.subproj/IFPluginNullEventSender.m;
+			name = WebPluginNullEventSender.m;
+			path = Plugins.subproj/WebPluginNullEventSender.m;
 			refType = 4;
 		};
 		F5A672B90263866E01000102 = {
 			isa = PBXFileReference;
-			name = IFPluginStream.h;
-			path = Plugins.subproj/IFPluginStream.h;
+			name = WebPluginStream.h;
+			path = Plugins.subproj/WebPluginStream.h;
 			refType = 4;
 		};
 		F5A672BA0263866E01000102 = {
 			isa = PBXFileReference;
-			name = IFPluginStream.mm;
-			path = Plugins.subproj/IFPluginStream.mm;
+			name = WebPluginStream.m;
+			path = Plugins.subproj/WebPluginStream.m;
 			refType = 4;
 		};
 		F5A672BB0263866E01000102 = {
@@ -1746,14 +1746,14 @@
 		};
 		F5A7B11902BC8413018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreFrame.h;
-			path = WebCoreSupport.subproj/IFWebCoreFrame.h;
+			name = WebFrameBridge.h;
+			path = WebCoreSupport.subproj/WebFrameBridge.h;
 			refType = 4;
 		};
 		F5A7B11A02BC8413018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreFrame.m;
-			path = WebCoreSupport.subproj/IFWebCoreFrame.m;
+			name = WebFrameBridge.m;
+			path = WebCoreSupport.subproj/WebFrameBridge.m;
 			refType = 4;
 		};
 		F5A7B11B02BC8413018635CA = {
@@ -1770,8 +1770,8 @@
 		};
 		F5AEBB3D024A527601C1A526 = {
 			isa = PBXFileReference;
-			name = IFPreferences.mm;
-			path = WebView.subproj/IFPreferences.mm;
+			name = WebPreferences.m;
+			path = WebView.subproj/WebPreferences.m;
 			refType = 4;
 		};
 		F5AEBB3E024A527601C1A526 = {
@@ -1782,14 +1782,14 @@
 		};
 		F5AFB45E02B94DC8018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreBridge.h;
-			path = WebCoreSupport.subproj/IFWebCoreBridge.h;
+			name = WebBridge.h;
+			path = WebCoreSupport.subproj/WebBridge.h;
 			refType = 4;
 		};
 		F5AFB45F02B94DC8018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreBridge.mm;
-			path = WebCoreSupport.subproj/IFWebCoreBridge.mm;
+			name = WebBridge.m;
+			path = WebCoreSupport.subproj/WebBridge.m;
 			refType = 4;
 		};
 		F5AFB46002B94DC8018635CA = {
@@ -1831,14 +1831,14 @@
 		};
 		F5B36B410281DF55018635CB = {
 			isa = PBXFileReference;
-			name = IFTextRenderer.h;
-			path = WebCoreSupport.subproj/IFTextRenderer.h;
+			name = WebTextRenderer.h;
+			path = WebCoreSupport.subproj/WebTextRenderer.h;
 			refType = 4;
 		};
 		F5B36B420281DF55018635CB = {
 			isa = PBXFileReference;
-			name = IFTextRenderer.m;
-			path = WebCoreSupport.subproj/IFTextRenderer.m;
+			name = WebTextRenderer.m;
+			path = WebCoreSupport.subproj/WebTextRenderer.m;
 			refType = 4;
 		};
 		F5B36B430281DF55018635CB = {
@@ -1857,14 +1857,14 @@
 		};
 		F5B36B450281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = IFTextRendererFactory.h;
-			path = WebCoreSupport.subproj/IFTextRendererFactory.h;
+			name = WebTextRendererFactory.h;
+			path = WebCoreSupport.subproj/WebTextRendererFactory.h;
 			refType = 4;
 		};
 		F5B36B460281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = IFTextRendererFactory.m;
-			path = WebCoreSupport.subproj/IFTextRendererFactory.m;
+			name = WebTextRendererFactory.m;
+			path = WebCoreSupport.subproj/WebTextRendererFactory.m;
 			refType = 4;
 		};
 		F5B36B480281DF9C018635CB = {
@@ -1887,12 +1887,12 @@
 		};
 		F5B92B820223191D01C1A525 = {
 			isa = PBXFileReference;
-			path = IFWebHistoryPrivate.h;
+			path = WebHistoryPrivate.h;
 			refType = 4;
 		};
 		F5B92B830223191D01C1A525 = {
 			isa = PBXFileReference;
-			path = IFWebHistoryPrivate.m;
+			path = WebHistoryPrivate.m;
 			refType = 4;
 		};
 		F5B92B840223191D01C1A525 = {
@@ -1956,14 +1956,14 @@
 		};
 		F5C81E4102994EA401C1A525 = {
 			isa = PBXFileReference;
-			name = IFBookmarkSeparator.h;
-			path = Bookmarks.subproj/IFBookmarkSeparator.h;
+			name = WebBookmarkSeparator.h;
+			path = Bookmarks.subproj/WebBookmarkSeparator.h;
 			refType = 2;
 		};
 		F5C81E4202994EA401C1A525 = {
 			isa = PBXFileReference;
-			name = IFBookmarkSeparator.m;
-			path = Bookmarks.subproj/IFBookmarkSeparator.m;
+			name = WebBookmarkSeparator.m;
+			path = Bookmarks.subproj/WebBookmarkSeparator.m;
 			refType = 2;
 		};
 		F5C81E4302994EA401C1A525 = {
@@ -1980,8 +1980,8 @@
 		};
 		F5D538E802441F2601A80181 = {
 			isa = PBXFileReference;
-			name = IFMainURLHandleClient.h;
-			path = WebView.subproj/IFMainURLHandleClient.h;
+			name = WebMainResourceClient.h;
+			path = WebView.subproj/WebMainResourceClient.h;
 			refType = 2;
 		};
 		F5D538EA02441F2601A80181 = {
@@ -1992,8 +1992,8 @@
 		};
 		F5D538EC02441FDD01A80181 = {
 			isa = PBXFileReference;
-			name = IFMainURLHandleClient.mm;
-			path = WebView.subproj/IFMainURLHandleClient.mm;
+			name = WebMainResourceClient.m;
+			path = WebView.subproj/WebMainResourceClient.m;
 			refType = 2;
 		};
 		F5D538ED02441FDD01A80181 = {
@@ -2004,12 +2004,12 @@
 		};
 		F5E0A76E02B8FEE401C1A525 = {
 			isa = PBXFileReference;
-			path = IFURLsWithTitles.h;
+			path = WebURLsWithTitles.h;
 			refType = 4;
 		};
 		F5E0A76F02B8FEE401C1A525 = {
 			isa = PBXFileReference;
-			path = IFURLsWithTitles.m;
+			path = WebURLsWithTitles.m;
 			refType = 4;
 		};
 		F5E0A77002B8FEE401C1A525 = {
@@ -2029,14 +2029,14 @@
 		};
 		F5E0E10802BC45F8018635CA = {
 			isa = PBXFileReference;
-			name = IFResourceURLHandleClient.h;
-			path = WebCoreSupport.subproj/IFResourceURLHandleClient.h;
+			name = WebSubresourceClient.h;
+			path = WebCoreSupport.subproj/WebSubresourceClient.h;
 			refType = 4;
 		};
 		F5E0E10902BC45F8018635CA = {
 			isa = PBXFileReference;
-			name = IFResourceURLHandleClient.m;
-			path = WebCoreSupport.subproj/IFResourceURLHandleClient.m;
+			name = WebSubresourceClient.m;
+			path = WebCoreSupport.subproj/WebSubresourceClient.m;
 			refType = 4;
 		};
 		F5E0E10A02BC45F8018635CA = {
@@ -2074,14 +2074,14 @@
 		};
 		F5EBC45502134BC301CA1520 = {
 			isa = PBXFileReference;
-			name = IFPluginView.h;
-			path = Plugins.subproj/IFPluginView.h;
+			name = WebPluginView.h;
+			path = Plugins.subproj/WebPluginView.h;
 			refType = 4;
 		};
 		F5EBC45602134BC301CA1520 = {
 			isa = PBXFileReference;
-			name = IFPluginView.mm;
-			path = Plugins.subproj/IFPluginView.mm;
+			name = WebPluginView.m;
+			path = Plugins.subproj/WebPluginView.m;
 			refType = 4;
 		};
 		F5EBC45802134BC301CA1520 = {
@@ -2098,26 +2098,26 @@
 		};
 		F5F7171E0288493C018635CA = {
 			isa = PBXFileReference;
-			name = IFPlugin.h;
-			path = Plugins.subproj/IFPlugin.h;
+			name = WebPlugin.h;
+			path = Plugins.subproj/WebPlugin.h;
 			refType = 4;
 		};
 		F5F7171F0288493C018635CA = {
 			isa = PBXFileReference;
-			name = IFPlugin.m;
-			path = Plugins.subproj/IFPlugin.m;
+			name = WebPlugin.m;
+			path = Plugins.subproj/WebPlugin.m;
 			refType = 4;
 		};
 		F5F717200288493C018635CA = {
 			isa = PBXFileReference;
-			name = IFPluginDatabase.h;
-			path = Plugins.subproj/IFPluginDatabase.h;
+			name = WebPluginDatabase.h;
+			path = Plugins.subproj/WebPluginDatabase.h;
 			refType = 4;
 		};
 		F5F717210288493C018635CA = {
 			isa = PBXFileReference;
-			name = IFPluginDatabase.m;
-			path = Plugins.subproj/IFPluginDatabase.m;
+			name = WebPluginDatabase.m;
+			path = Plugins.subproj/WebPluginDatabase.m;
 			refType = 4;
 		};
 		F5F717220288493C018635CA = {
@@ -2178,14 +2178,14 @@
 		};
 		F5F7174C02885C5B018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreViewFactory.h;
-			path = WebCoreSupport.subproj/IFWebCoreViewFactory.h;
+			name = WebViewFactory.h;
+			path = WebCoreSupport.subproj/WebViewFactory.h;
 			refType = 4;
 		};
 		F5F7174D02885C5B018635CA = {
 			isa = PBXFileReference;
-			name = IFWebCoreViewFactory.m;
-			path = WebCoreSupport.subproj/IFWebCoreViewFactory.m;
+			name = WebViewFactory.m;
+			path = WebCoreSupport.subproj/WebViewFactory.m;
 			refType = 4;
 		};
 		F5F7174E02885C5B018635CA = {
@@ -2202,14 +2202,14 @@
 		};
 		F5F81C3502B67C0F018635CA = {
 			isa = PBXFileReference;
-			name = IFDOMNode.h;
-			path = WebView.subproj/IFDOMNode.h;
+			name = WebDOMNode.h;
+			path = WebView.subproj/WebDOMNode.h;
 			refType = 4;
 		};
 		F5F81C3602B67C0F018635CA = {
 			isa = PBXFileReference;
-			name = IFDOMNode.mm;
-			path = WebView.subproj/IFDOMNode.mm;
+			name = WebDOMNode.m;
+			path = WebView.subproj/WebDOMNode.m;
 			refType = 4;
 		};
 		F5F81C3702B67C0F018635CA = {
@@ -2229,14 +2229,14 @@
 		};
 		F5F81C3902B67C26018635CA = {
 			isa = PBXFileReference;
-			name = IFRenderNode.h;
-			path = WebView.subproj/IFRenderNode.h;
+			name = WebRenderNode.h;
+			path = WebView.subproj/WebRenderNode.h;
 			refType = 4;
 		};
 		F5F81C3A02B67C26018635CA = {
 			isa = PBXFileReference;
-			name = IFRenderNode.mm;
-			path = WebView.subproj/IFRenderNode.mm;
+			name = WebRenderNode.m;
+			path = WebView.subproj/WebRenderNode.m;
 			refType = 4;
 		};
 		F5F81C3B02B67C26018635CA = {
@@ -2256,14 +2256,14 @@
 		};
 		F5FBAB8F02B88CBF01FF6074 = {
 			isa = PBXFileReference;
-			name = IFDownloadHandler.h;
-			path = Misc.subproj/IFDownloadHandler.h;
+			name = WebDownloadHandler.h;
+			path = Misc.subproj/WebDownloadHandler.h;
 			refType = 4;
 		};
 		F5FBAB9002B88CBF01FF6074 = {
 			isa = PBXFileReference;
-			name = IFDownloadHandler.mm;
-			path = Misc.subproj/IFDownloadHandler.mm;
+			name = WebDownloadHandler.m;
+			path = Misc.subproj/WebDownloadHandler.m;
 			refType = 4;
 		};
 		F5FBAB9102B88CBF01FF6074 = {
@@ -2317,14 +2317,14 @@
 		};
 		F83DCC71029D09F301000131 = {
 			isa = PBXFileReference;
-			name = IFPanelAuthenticationHandler.h;
-			path = Panels.subproj/IFPanelAuthenticationHandler.h;
+			name = WebPanelAuthenticationHandler.h;
+			path = Panels.subproj/WebPanelAuthenticationHandler.h;
 			refType = 4;
 		};
 		F83DCC72029D09F301000131 = {
 			isa = PBXFileReference;
-			name = IFPanelAuthenticationHandler.m;
-			path = Panels.subproj/IFPanelAuthenticationHandler.m;
+			name = WebPanelAuthenticationHandler.m;
+			path = Panels.subproj/WebPanelAuthenticationHandler.m;
 			refType = 4;
 		};
 		F83DCC73029D09F301000131 = {
@@ -2361,26 +2361,26 @@
 		};
 		F8CA15B5029A39D901000122 = {
 			isa = PBXFileReference;
-			name = IFAuthenticationPanel.h;
-			path = Panels.subproj/IFAuthenticationPanel.h;
+			name = WebAuthenticationPanel.h;
+			path = Panels.subproj/WebAuthenticationPanel.h;
 			refType = 4;
 		};
 		F8CA15B6029A39D901000122 = {
 			isa = PBXFileReference;
-			name = IFAuthenticationPanel.m;
-			path = Panels.subproj/IFAuthenticationPanel.m;
+			name = WebAuthenticationPanel.m;
+			path = Panels.subproj/WebAuthenticationPanel.m;
 			refType = 4;
 		};
 		F8CA15B7029A39D901000122 = {
 			isa = PBXFileReference;
-			name = IFStandardPanels.h;
-			path = Panels.subproj/IFStandardPanels.h;
+			name = WebStandardPanels.h;
+			path = Panels.subproj/WebStandardPanels.h;
 			refType = 4;
 		};
 		F8CA15B8029A39D901000122 = {
 			isa = PBXFileReference;
-			name = IFStandardPanels.m;
-			path = Panels.subproj/IFStandardPanels.m;
+			name = WebStandardPanels.m;
+			path = Panels.subproj/WebStandardPanels.m;
 			refType = 4;
 		};
 		F8CA15B9029A39D901000122 = {
@@ -2415,14 +2415,14 @@
 				F8CA15BF029A39FC01000122,
 			);
 			isa = PBXVariantGroup;
-			name = IFAuthenticationPanel.nib;
+			name = WebAuthenticationPanel.nib;
 			path = "";
 			refType = 4;
 		};
 		F8CA15BF029A39FC01000122 = {
 			isa = PBXFileReference;
 			name = English;
-			path = Panels.subproj/English.lproj/IFAuthenticationPanel.nib;
+			path = Panels.subproj/English.lproj/WebAuthenticationPanel.nib;
 			refType = 4;
 		};
 		F8CA15C0029A39FC01000122 = {
@@ -2433,8 +2433,8 @@
 		};
 		F8CA15C1029A3E0D01000122 = {
 			isa = PBXFileReference;
-			name = IFStandardPanelsPrivate.h;
-			path = Panels.subproj/IFStandardPanelsPrivate.h;
+			name = WebStandardPanelsPrivate.h;
+			path = Panels.subproj/WebStandardPanelsPrivate.h;
 			refType = 4;
 		};
 		F8CA15C2029A3E0D01000122 = {

@@ -25,5 +25,5 @@
 
 @class NSString;
 
-extern NSString * const IFMethodNotYetImplemented;
-extern NSString * const IFRuntimeError;
+extern NSString * const WebMethodNotYetImplemented;
+extern NSString * const WebRuntimeError;

@@ -1,3 +1,7 @@
+2002-07-16  Darin Adler  <darin@apple.com>
+
+        * almost every file: Renamed IF* -> Web*.
+
 2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
 
         Removed dependence on window resize notification.  We now

@@ -24,11 +24,11 @@
  */
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFImageRendererFactory.h>
-#import <WebKit/IFImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
+#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFImageRendererFactory
+@implementation WebImageRendererFactory
 
 + (void)createSharedFactory
 {
@@ -38,14 +38,14 @@
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
-+ (IFImageRendererFactory *)sharedFactory
++ (WebImageRendererFactory *)sharedFactory
 {
-    return (IFImageRendererFactory *)[super sharedFactory];
+    return (WebImageRendererFactory *)[super sharedFactory];
 }
 
 - (id <WebCoreImageRenderer>)imageRenderer
 {
-    NSImage *imageRenderer = [[IFImageRenderer alloc] init];
+    NSImage *imageRenderer = [[WebImageRenderer alloc] init];
 
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
     [imageRenderer addRepresentation: rep];
@@ -62,7 +62,7 @@
     // FIXME:  Why must we copy the data here?
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
-    IFImageRenderer *imageRenderer = [[IFImageRenderer alloc] initWithData: data];
+    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData: data];
     [imageRenderer setScalesWhenResized: NO];
     NSArray *reps = [imageRenderer representations];
     NSImageRep *rep = [reps objectAtIndex: 0];
@@ -75,7 +75,7 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithSize: (NSSize)s
 {
-    IFImageRenderer *imageRenderer = [[[IFImageRenderer alloc] initWithSize: s] autorelease];
+    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize: s] autorelease];
     [imageRenderer setScalesWhenResized: NO];
     return imageRenderer;
 }

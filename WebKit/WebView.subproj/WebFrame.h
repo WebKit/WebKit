@@ -1,5 +1,5 @@
 /*	
-        IFWebFrame.h
+        WebFrame.h
 	    
 	    Copyright 2001, Apple, Inc. All rights reserved.
 
@@ -8,27 +8,27 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFError;
-@class IFWebController;
-@class IFWebDataSource;
-@class IFWebView;
+@class WebError;
+@class WebController;
+@class WebDataSource;
+@class WebView;
 
-@class IFWebFramePrivate;
+@class WebFramePrivate;
 
-@interface IFWebFrame : NSObject
+@interface WebFrame : NSObject
 {
 @private
-    IFWebFramePrivate *_private;
+    WebFramePrivate *_private;
 }
 
-- initWithName: (NSString *)name webView: (IFWebView *)view provisionalDataSource: (IFWebDataSource *)dataSource controller: (IFWebController *)controller;
+- initWithName: (NSString *)name webView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controller: (WebController *)controller;
 - (NSString *)name;
 
-- (void)setController: (IFWebController *)controller;
-- (IFWebController *)controller;
+- (void)setController: (WebController *)controller;
+- (WebController *)controller;
 
-- (void)setWebView: (IFWebView *)view;
-- (IFWebView *)webView;
+- (void)setWebView: (WebView *)view;
+- (WebView *)webView;
 
 /*
     Sets the frame's data source.  Note that the data source will be
@@ -36,22 +36,22 @@
     ~some~ data has been received.
     
     Will return NO and not set the provisional data source if the controller
-    disallows by returning a IFURLPolicyIgnore.
+    disallows by returning a WebURLPolicyIgnore.
 */
-- (BOOL)setProvisionalDataSource: (IFWebDataSource *)ds;
+- (BOOL)setProvisionalDataSource: (WebDataSource *)ds;
 
 /*
     Returns the committed data source.  Will return nil if the
     provisional data source hasn't yet been loaded.
 */
-- (IFWebDataSource *)dataSource;
+- (WebDataSource *)dataSource;
 
 /*
     Will return the provisional data source.  The provisional data source will
     return nil if no data source has been set on the frame, or the data source
     has successfully transitioned to the committed data source.
 */
-- (IFWebDataSource *)provisionalDataSource;
+- (WebDataSource *)provisionalDataSource;
 
 
 /*
@@ -88,6 +88,6 @@
     frameNamed returns self for _parent and _top if the receiver it is the mainFrame. 
     nil is returned if a frame with the given name is not found.
 */
-- (IFWebFrame *)frameNamed:(NSString *)name;
+- (WebFrame *)frameNamed:(NSString *)name;
 
 @end

@@ -1,21 +1,21 @@
 //
-//  IFDOMNode.m
+//  WebDOMNode.m
 //  WebKit
 //
 //  Created by Darin Adler on Tue Jun 11 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFDOMNode.h"
+#import "WebDOMNode.h"
 
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 
 @interface WebKitDOMTreeCopier : NSObject <WebCoreDOMTreeCopier>
 @end
 
-@implementation IFDOMNode
+@implementation WebDOMNode
 
 - initWithName:(NSString *)n value:(NSString *)v source:(NSString *)s children:(NSArray *)c
 {
@@ -29,18 +29,18 @@
     return self;
 }
 
-- initWithWebView:(IFWebView *)view
+- initWithWebView:(WebView *)view
 {
     WebKitDOMTreeCopier *copier;
     
     [self dealloc];
 
-    if (![[view documentView] isMemberOfClass:[IFHTMLView class]]) {
+    if (![[view documentView] isMemberOfClass:[WebHTMLView class]]) {
         return nil;
     }
     
     copier = [[WebKitDOMTreeCopier alloc] init];
-    IFHTMLView *htmlView = (IFHTMLView *)[view documentView];
+    WebHTMLView *htmlView = (WebHTMLView *)[view documentView];
     self = [[[htmlView _bridge] copyDOMTree:copier] retain];
     [copier release];
     
@@ -83,7 +83,7 @@
 
 - (NSObject *)nodeWithName:(NSString *)n value:(NSString *)v source:(NSString *)s children:(NSArray *)c
 {
-    return [[[IFDOMNode alloc] initWithName:n value:v source:s children:c] autorelease];
+    return [[[WebDOMNode alloc] initWithName:n value:v source:s children:c] autorelease];
 }
 
 @end

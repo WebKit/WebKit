@@ -1,5 +1,5 @@
 /*	
-        IFWebController.h
+        WebController.h
 	Copyright 2001, 2002, Apple Computer, Inc.
 
         Public header file.
@@ -8,38 +8,38 @@
 #import <Cocoa/Cocoa.h>
 #import <Foundation/Foundation.h>
 
-#import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFWebControllerPolicyHandler.h>
+#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebControllerPolicyHandler.h>
 
 /*
    ============================================================================= 
 
-    IFWebController manages the interaction between IFWebView(s) and IFWebDataSource(s).
+    WebController manages the interaction between WebView(s) and WebDataSource(s).
 
-    The IFWebController implements required behavior.  IFWebView and IFWebDataSource
+    The WebController implements required behavior.  WebView and WebDataSource
     cannot function without a controller.  
     
-    It it expected that alternate implementations of IFWebController will be written for
-    alternate views of the web pages described by IFWebDataSources.  For example, a web
-    crawler may implement a IFWebController with no corresponding view.
+    It it expected that alternate implementations of WebController will be written for
+    alternate views of the web pages described by WebDataSources.  For example, a web
+    crawler may implement a WebController with no corresponding view.
     
-    IFWebController may be subclassed to modify the behavior of the standard
-    IFWebView and IFWebDataSource.
+    WebController may be subclassed to modify the behavior of the standard
+    WebView and WebDataSource.
 
    ============================================================================= 
 */
 
-@class IFDownloadHandler;
-@class IFError;
-@class IFLoadProgress;
-@class IFURLHandle;
-@class IFWebController;
-@class IFWebControllerPrivate;
-@class IFWebDataSource;
-@class IFWebFrame;
-@class IFWebView;
+@class WebDownloadHandler;
+@class WebError;
+@class WebLoadProgress;
+@class WebResourceHandle;
+@class WebController;
+@class WebControllerPrivate;
+@class WebDataSource;
+@class WebFrame;
+@class WebView;
 
-@protocol IFDocumentLoading;
+@protocol WebDocumentLoading;
 
 /*
    ============================================================================= 
@@ -53,7 +53,7 @@
    ============================================================================= 
 */
 
-@protocol IFResourceProgressHandler <NSObject>
+@protocol WebResourceProgressHandler <NSObject>
 
 /*
     A new chunk of data has been received.  This could be a partial load
@@ -61,9 +61,9 @@
     typically for non-base URLs this should be done after a URL (i.e. image)
     has been completely downloaded.
 */
-- (void)receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete;
+- (void)receivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete;
 
-- (void)receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+- (void)receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
 
 @end
 
@@ -71,14 +71,14 @@
 /*
    ============================================================================= 
 
-    A class that implements IFWindowContext provides window-related methods
+    A class that implements WebWindowContext provides window-related methods
     that may be used by Javascript, plugins and other aspects of web pages.
     
    ============================================================================= 
 */
-@protocol IFWindowContext <NSObject>
+@protocol WebWindowContext <NSObject>
 
-- (IFWebController *)openNewWindowWithURL:(NSURL *)URL;
+- (WebController *)openNewWindowWithURL:(NSURL *)URL;
 
 - (void)setStatusText: (NSString *)text;
 - (NSString *)statusText;
@@ -108,11 +108,11 @@
 /*
    ============================================================================= 
 */
-@protocol IFContextMenuHandler
+@protocol WebContextMenuHandler
 // Returns the array of menu items for this node that will be displayed in the context menu.
-// Typically this would be implemented by returning the results of IFWebView defaultContextMenuItemsForNode:
+// Typically this would be implemented by returning the results of WebView defaultContextMenuItemsForNode:
 // after making any desired changes or additions.
-- (NSArray *)contextMenuItemsForNode: (IFDOMNode *);
+- (NSArray *)contextMenuItemsForNode: (WebDOMNode *);
 @end
 #endif
 
@@ -120,38 +120,38 @@
 /*
    ============================================================================= 
 
-    IFWebController implements all the behavior that ties together IFWebView
-    and IFWebDataSource.  See each inherited protocol for a more complete
+    WebController implements all the behavior that ties together WebView
+    and WebDataSource.  See each inherited protocol for a more complete
     description.
     
    ============================================================================= 
 */
 
-@interface IFWebController : NSObject
+@interface WebController : NSObject
 {
 @private
-    IFWebControllerPrivate *_private;
+    WebControllerPrivate *_private;
 }
 
 // Calls designated initializer with nil arguments.
 - init;
 
 // Designated initializer.
-- initWithView: (IFWebView *)view provisionalDataSource: (IFWebDataSource *)dataSource;
+- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource;
 
-- (void)setWindowContext: (id<IFWindowContext>)context;
-- (id<IFWindowContext>)windowContext;
+- (void)setWindowContext: (id<WebWindowContext>)context;
+- (id<WebWindowContext>)windowContext;
 
-- (void)setResourceProgressHandler: (id<IFResourceProgressHandler>)handler;
-- (id<IFResourceProgressHandler>)resourceProgressHandler;
+- (void)setResourceProgressHandler: (id<WebResourceProgressHandler>)handler;
+- (id<WebResourceProgressHandler>)resourceProgressHandler;
 
-- (void)setDownloadProgressHandler: (id<IFResourceProgressHandler>)handler;
-- (id<IFResourceProgressHandler>)downloadProgressHandler;
+- (void)setDownloadProgressHandler: (id<WebResourceProgressHandler>)handler;
+- (id<WebResourceProgressHandler>)downloadProgressHandler;
 
-+ (IFURLPolicy)defaultURLPolicyForURL: (NSURL *)url;
++ (WebURLPolicy)defaultURLPolicyForURL: (NSURL *)url;
 
-- (void)setPolicyHandler: (id<IFWebControllerPolicyHandler>)handler;
-- (id<IFWebControllerPolicyHandler>)policyHandler;
+- (void)setPolicyHandler: (id<WebControllerPolicyHandler>)handler;
+- (id<WebControllerPolicyHandler>)policyHandler;
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag;
 - (BOOL)directsAllLinksToSystemBrowser;
@@ -159,29 +159,29 @@
 // FIXME:  Should this method be private?
 // Called when a data source needs to create a frame.  This method encapsulates the
 // specifics of creating and initializing a view of the appropriate class.
-- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)child inParent: (IFWebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
+- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)child inParent: (WebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
 
 // Look for a frame named name, recursively.
-- (IFWebFrame *)frameNamed: (NSString *)name;
+- (WebFrame *)frameNamed: (NSString *)name;
 
 // Return the top level frame.  Note that even document that are not framesets will have a
 // mainFrame.
-- (IFWebFrame *)mainFrame;
+- (WebFrame *)mainFrame;
 
 // Return the frame associated with the data source.  Traverses the
 // frame tree to find the data source.
-- (IFWebFrame *)frameForDataSource: (IFWebDataSource *)dataSource;
+- (WebFrame *)frameForDataSource: (WebDataSource *)dataSource;
 
 // Return the frame associated with the view.  Traverses the
 // frame tree to find the view. 
-- (IFWebFrame *)frameForView: (IFWebView *)aView;
+- (WebFrame *)frameForView: (WebView *)aView;
 
 // Typically called after requestContentPolicyForContentMIMEType: is sent to a
-// locationChangeHander.  The content policy of HTML URLs should always be IFContentPolicyShow.
-// Setting the policy to IFContentPolicyIgnore will cancel the load of the URL if it is still
-// pending.  The path argument is only used when the policy is either IFContentPolicySave or
-// IFContentPolicySaveAndOpenExternally.
-- (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path  forDataSource: (IFWebDataSource *)dataSource;
+// locationChangeHander.  The content policy of HTML URLs should always be WebContentPolicyShow.
+// Setting the policy to WebContentPolicyIgnore will cancel the load of the URL if it is still
+// pending.  The path argument is only used when the policy is either WebContentPolicySave or
+// WebContentPolicySaveAndOpenExternally.
+- (void)haveContentPolicy: (WebContentPolicy)policy andPath: (NSString *)path  forDataSource: (WebDataSource *)dataSource;
 
 // API to manage animated images.
 - (void)stopAnimatedImages;

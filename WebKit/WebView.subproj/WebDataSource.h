@@ -1,5 +1,5 @@
 /*	
-        IFWebDataSource.h
+        WebDataSource.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.
@@ -7,30 +7,30 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFWebController.h>
+#import <WebKit/WebController.h>
 
 /* 
     =============================================================================
    
-    A IFWebDataSource represents the data associated with a web page.
+    A WebDataSource represents the data associated with a web page.
 
     ============================================================================= */
 
-@class IFWebFrame;
-@class IFURLHandle;
-@class IFWebController;
+@class WebFrame;
+@class WebResourceHandle;
+@class WebController;
 
 #ifdef TENTATIVE_API
-@class IFLoader;
+@class WebLoader;
 #endif
 
-@class IFWebDataSourcePrivate;
-@protocol IFDocumentRepresentation;
+@class WebDataSourcePrivate;
+@protocol WebDocumentRepresentation;
 
-@interface IFWebDataSource : NSObject
+@interface WebDataSource : NSObject
 {
 @private
-    IFWebDataSourcePrivate *_private;
+    WebDataSourcePrivate *_private;
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
@@ -40,13 +40,13 @@
 
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data;
-- initNSURL _IF_URLWithString: (NSString *)string;
-- initWithLoader: (IFLoader *)loader;
+- initNSURL _web_URLWithString: (NSString *)string;
+- initWithLoader: (WebLoader *)loader;
 #endif
 
 - (NSData *)data;
 
-- (id <IFDocumentRepresentation>)representation;
+- (id <WebDocumentRepresentation>)representation;
 
 // Returns YES if this is the main document.  The main document is the 'top'
 // document, typically either a frameset or a normal HTML document.
@@ -54,21 +54,21 @@
 
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
-- (IFWebDataSource *)parent;
+- (WebDataSource *)parent;
 
 // Return the frame that represents this data source. Same as above.
-- (IFWebFrame *)webFrame;
+- (WebFrame *)webFrame;
 
 // Add a child frame.  This should only be called by the data source's controller
 // as a result of a createFrame:inParent:.
 // [Should this be private?]
-- (void)addFrame: (IFWebFrame *)frame;
+- (void)addFrame: (WebFrame *)frame;
 
-// Returns an array of IFWebFrame.  The frames in the array are
+// Returns an array of WebFrame.  The frames in the array are
 // associated with a frame set or iframe.
 - (NSArray *)children;
 
-- (IFWebFrame *)frameNamed: (NSString *)frameName;
+- (WebFrame *)frameNamed: (NSString *)frameName;
 
 // Returns an array of NSStrings or nil.  The NSStrings corresponds to
 // frame names.  If this data source is the main document and has no
@@ -77,7 +77,7 @@
 
 // findDataSourceForFrameNamed: returns the child data source associated with
 // the frame named 'name', or nil. 
-- (IFWebDataSource *) findDataSourceForFrameNamed: (NSString *)name;
+- (WebDataSource *) findDataSourceForFrameNamed: (NSString *)name;
 
 - (BOOL)frameExists: (NSString *)name;
 
@@ -86,9 +86,9 @@
 // Set the controller for this data source.  NOTE:  The controller is not retained by the
 // data source.  Perhaps setController: should be private?  Perhaps the back pointers
 // can be managed externally, i.e. + controllerForDataSource: as a class method on 
-// IFWebController?
-//- (void)setController: (IFWebController *)controller;
-- (IFWebController *)controller;
+// WebController?
+//- (void)setController: (WebController *)controller;
+- (WebController *)controller;
 
 // May return nil if not initialized with a URL.
 - (NSURL *)inputURL;
@@ -96,7 +96,7 @@
 // redirectedURL returns the URL that was actually used if there was a redirect.
 // The value of redirectedURL will change if more than one redirect occurs.  If no
 // redirect occurs the value of redirectedURL will be nil.  To monitor change in
-// the value of the redirected URL override the <IFLocationChangeHandler> 
+// the value of the redirected URL override the <WebLocationChangeHandler> 
 // serverRedirectTo:forDataSource: method.
 - (NSURL *)redirectedURL;
 
@@ -121,7 +121,7 @@
 
 #ifdef TENTATIVE_API
 // Get DOM access to the document.
-- (IFDOMDocument *)document;
+- (WebDOMDocument *)document;
 #endif
 
 - (BOOL)isDocumentHTML;
@@ -157,7 +157,7 @@
 
 - (NSString *)frameName;
 
-- (IFContentPolicy)contentPolicy;
+- (WebContentPolicy)contentPolicy;
 
 // MIME type
 - (NSString *)contentType;
@@ -169,10 +169,10 @@
 
 - (NSDictionary *)errors;
 
-- (IFError *)mainDocumentError;
+- (WebError *)mainDocumentError;
 
 + (void) registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType;
 
-+ (id <IFDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType;
++ (id <WebDocumentRepresentation>) createRepresentationForMIMEType:(NSString *)MIMEType;
 
 @end

@@ -1,17 +1,17 @@
 //
-//  IFBackForwardList.m
+//  WebBackForwardList.m
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.
 //  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
 //
 
-#import "IFBackForwardList.h"
+#import "WebBackForwardList.h"
 
-#import "IFURIEntry.h"
-#import "IFURIList.h"
+#import "WebHistoryItem.h"
+#import "WebHistoryList.h"
 
-@implementation IFBackForwardList
+@implementation WebBackForwardList
 
 -(id)init
 {
@@ -20,7 +20,7 @@
         return nil;
     }
     
-    uriList = [[IFURIList alloc] init];
+    uriList = [[WebHistoryList alloc] init];
     [uriList setAllowsDuplicates:YES];
     index = 0;
     mutex = [[NSLock alloc] init];
@@ -36,7 +36,7 @@
     [super dealloc];
 }
 
--(void)addEntry:(IFURIEntry *)entry
+-(void)addEntry:(WebHistoryItem *)entry
 {
     [mutex lock];
     if (index > 0) {
@@ -54,9 +54,9 @@
     [mutex unlock];
 }
 
--(IFURIEntry *)backEntry
+-(WebHistoryItem *)backEntry
 {
-    IFURIEntry *result;
+    WebHistoryItem *result;
     int count;
     
     [mutex lock];
@@ -71,9 +71,9 @@
     return result;
 }
 
--(IFURIEntry *)currentEntry
+-(WebHistoryItem *)currentEntry
 {
-    IFURIEntry *result;
+    WebHistoryItem *result;
     
     [mutex lock];
     result = [uriList entryAtIndex:index];
@@ -82,9 +82,9 @@
     return result;
 }
 
--(IFURIEntry *)forwardEntry
+-(WebHistoryItem *)forwardEntry
 {
-    IFURIEntry *result;
+    WebHistoryItem *result;
 
     [mutex lock];
     if (index > 0) {
@@ -150,7 +150,7 @@
     result = [NSMutableString stringWithCapacity:512];
     
     [result appendString:@"\n--------------------------------------------\n"];    
-    [result appendString:@"IFBackForwardList:\n"];
+    [result appendString:@"WebBackForwardList:\n"];
     
     for (i = 0; i < [uriList count]; i++) {
         if (i == index) {

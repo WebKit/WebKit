@@ -1,5 +1,5 @@
 //
-//  IFTextRenderer.h
+//  WebTextRenderer.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
@@ -11,7 +11,7 @@
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;
 
-@interface IFTextRenderer : NSObject <WebCoreTextRenderer>
+@interface WebTextRenderer : NSObject <WebCoreTextRenderer>
 {
     int ascent;
     int descent;

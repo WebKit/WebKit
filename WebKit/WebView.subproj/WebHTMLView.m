@@ -1,32 +1,32 @@
 /*	
-    IFHTMLView.mm
+    WebHTMLView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFHTMLView.h>
+#import <WebKit/WebHTMLView.h>
 
-#import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFException.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFNSViewExtras.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebCoreFrame.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebException.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
 
-@implementation IFHTMLView
+@implementation WebHTMLView
 
 - initWithFrame: (NSRect) frame
 {
     [super initWithFrame: frame];
     
-    _private = [[IFHTMLViewPrivate alloc] init];
+    _private = [[WebHTMLViewPrivate alloc] init];
 
     _private->needsLayout = YES;
 
@@ -56,7 +56,7 @@
 
 - (void)copy:(id)sender
 {
-    IFWebCoreBridge *bridge = [self _bridge];
+    WebBridge *bridge = [self _bridge];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     
     [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
@@ -66,7 +66,7 @@
 
 - (void)selectAll: sender
 {
-    IFWebCoreBridge *bridge = [self _bridge];
+    WebBridge *bridge = [self _bridge];
     [bridge selectAll];
 }
 
@@ -115,7 +115,7 @@
 
 // This method is typically called by the view's controller when
 // the data source is changed.
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource 
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
 {
     [[dataSource _bridge]
         createKHTMLViewWithNSView:[[[dataSource webFrame] webView] documentView]
@@ -124,12 +124,12 @@
         marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
 }
 
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource 
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource 
 {
-    [[self _bridge] installInFrame:[[self _IF_parentWebView] frameScrollView]];
+    [[self _bridge] installInFrame:[[self _web_parentWebView] frameScrollView]];
 }
 
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
 }
 
@@ -155,7 +155,7 @@
 
 
 // This method should not be public until we have more completely
-// understood how IFWebView will be subclassed.
+// understood how WebView will be subclassed.
 - (void)layout
 {
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
@@ -184,7 +184,7 @@
 // Stop animating animated GIFs, etc.
 - (void)stopAnimations
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::stopAnimations is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::stopAnimations is not implemented"];
 }
 
 
@@ -210,18 +210,18 @@
 }
 
 // Returns an array of built-in context menu items for this node.
-// Generally called by IFContextMenuHandlers from contextMenuItemsForNode:
+// Generally called by WebContextMenuHandlers from contextMenuItemsForNode:
 #ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (IFDOMNode *)
+- (NSArray *)defaultContextMenuItemsForNode: (WebDOMNode *)
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::defaultContextMenuItemsForNode: is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::defaultContextMenuItemsForNode: is not implemented"];
     return nil;
 }
 #endif
 
 - (void)setContextMenusEnabled: (BOOL)flag
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setContextMenusEnabled: is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::setContextMenusEnabled: is not implemented"];
 }
 
 
@@ -234,7 +234,7 @@
 // Remove the selection.
 - (void)deselectText
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::deselectText: is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::deselectText: is not implemented"];
 }
 
 
@@ -243,14 +243,14 @@
 // is selected.
 - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::searchFor:direction:caseSensitive: is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::searchFor:direction:caseSensitive: is not implemented"];
 }
 
 
 // Get an attributed string that represents the current selection.
 - (NSAttributedString *)selectedText
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::selectedText is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebView::selectedText is not implemented"];
     return nil;
 }
 
@@ -378,7 +378,7 @@
 // Because we currently don't benefit from any of the code in there.
 
 // It implements its own version of keyboard scrolling, but we have our
-// version in IFWebView. It implements some keyboard access to individual
+// version in WebView. It implements some keyboard access to individual
 // nodes, but we are probably going to handle that on the NSView side.
 // We already handle normal typing through the responder chain.
 

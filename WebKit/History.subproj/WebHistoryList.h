@@ -1,17 +1,17 @@
-/*	IFURIList.h
+/*	WebHistoryList.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-@class IFURIEntry;
+@class WebHistoryItem;
 
-typedef struct IFURIListNode IFURIListNode;
+typedef struct WebHistoryListNode WebHistoryListNode;
 
-@interface IFURIList : NSObject 
+@interface WebHistoryList : NSObject 
 {
-    IFURIListNode *_head;
-    IFURIListNode *_tail;
+    WebHistoryListNode *_head;
+    WebHistoryListNode *_tail;
     int _count;
     BOOL _allowsDuplicates;
     int _maximumSize;
@@ -27,14 +27,14 @@ typedef struct IFURIListNode IFURIListNode;
 -(int)maximumSize;
 -(void)setMaximumSize:(int)size;
 
--(IFURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
--(void)addEntry:(IFURIEntry *)entry;
--(IFURIEntry *)removeURL:(NSURL *)url;
--(BOOL)removeEntry:(IFURIEntry *)entry;
+-(WebHistoryItem *)addURL:(NSURL *)url withTitle:(NSString *)title;
+-(void)addEntry:(WebHistoryItem *)entry;
+-(WebHistoryItem *)removeURL:(NSURL *)url;
+-(BOOL)removeEntry:(WebHistoryItem *)entry;
 
--(IFURIEntry *)entryForURL:(NSURL *)url;
--(IFURIEntry *)entryAtIndex:(int)index;
--(IFURIEntry *)removeEntryAtIndex:(int)index;
+-(WebHistoryItem *)entryForURL:(NSURL *)url;
+-(WebHistoryItem *)entryAtIndex:(int)index;
+-(WebHistoryItem *)removeEntryAtIndex:(int)index;
 -(void)removeEntriesToIndex:(int)index;
 
 @end

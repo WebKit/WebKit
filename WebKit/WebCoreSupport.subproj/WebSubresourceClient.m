@@ -1,27 +1,27 @@
 //
-//  IFResourceURLHandleClient.m
+//  WebSubresourceClient.m
 //  WebKit
 //
 //  Created by Darin Adler on Sat Jun 15 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFResourceURLHandleClient.h>
+#import <WebKit/WebSubresourceClient.h>
 
-#import <WebFoundation/IFError.h>
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebResourceHandle.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
-#import <WebKit/IFLoadProgress.h>
-#import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFResourceURLHandleClient
+@implementation WebSubresourceClient
 
-- initWithLoader:(id <WebCoreResourceLoader>)l dataSource:(IFWebDataSource *)s
+- initWithLoader:(id <WebCoreResourceLoader>)l dataSource:(WebDataSource *)s
 {
     [super init];
     
@@ -56,18 +56,18 @@
     [super dealloc];
 }
 
-+ (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-    withURL:(NSURL *)URL dataSource:(IFWebDataSource *)source
++ (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
+    withURL:(NSURL *)URL dataSource:(WebDataSource *)source
 {
-    IFURLHandle *handle;
-    IFResourceURLHandleClient *client;
+    WebResourceHandle *handle;
+    WebSubresourceClient *client;
     
-    handle = [[[IFURLHandle alloc] initWithURL:URL attributes:nil flags:0] autorelease];
+    handle = [[[WebResourceHandle alloc] initWithURL:URL attributes:nil flags:0] autorelease];
     if (handle == nil) {
         [rLoader cancel];
 
-        IFError *badURLError = [IFError errorWithCode:IFURLHandleResultBadURLError
-                                             inDomain:IFErrorCodeDomainWebFoundation
+        WebError *badURLError = [WebError errorWithCode:WebResultBadURLError
+                                             inDomain:WebErrorDomainWebFoundation
                                            failingURL:URL
                                            isTerminal:YES];        
         [[source controller] _receivedError:badURLError forResourceHandle:nil
@@ -87,25 +87,25 @@
     }
 }
 
-- (void)receivedProgressWithHandle:(IFURLHandle *)handle complete:(BOOL)isComplete
+- (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
 {
-    [[dataSource controller] _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
+    [[dataSource controller] _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
         forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
 }
 
-- (void)receivedError:(IFError *)error forHandle:(IFURLHandle *)handle
+- (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
 {
     [[dataSource controller] _receivedError:error forResourceHandle:handle
-        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+        partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
 }
 
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
+- (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {
     [self didStartLoadingWithURL:[handle url]];
     [self receivedProgressWithHandle:handle complete: NO];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
+- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
@@ -113,33 +113,33 @@
     [loader addData:data];
 }
 
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
+- (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)handle
 {
-    IFError *error;
+    WebError *error;
     
     [loader cancel];
     
     [dataSource _removeURLHandle:handle];
         
-    error = [[IFError alloc] initWithErrorCode:IFURLHandleResultCancelled 
-        inDomain:IFErrorCodeDomainWebFoundation failingURL:[dataSource inputURL]];
+    error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
+        inDomain:WebErrorDomainWebFoundation failingURL:[dataSource inputURL]];
     [self receivedError:error forHandle:handle];
     [error release];
 
     [self didStopLoading];
 }
 
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data:(NSData *)data
+- (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data:(NSData *)data
 {    
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-    WEBKIT_ASSERT([handle statusCode] == IFURLHandleStatusLoadComplete);
+    WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
     WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
     [loader finish];
     
     [dataSource _removeURLHandle:handle];
     
-    IFError *nonTerminalError = [handle error];
+    WebError *nonTerminalError = [handle error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
     }
@@ -149,7 +149,7 @@
     [self didStopLoading];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)error
+- (void)WebResourceHandle:(WebResourceHandle *)handle resourceDidFailLoadingWithResult:(WebError *)error
 {
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
@@ -162,7 +162,7 @@
     [self didStopLoading];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)URL
+- (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)URL
 {
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);

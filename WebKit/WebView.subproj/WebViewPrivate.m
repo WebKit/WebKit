@@ -1,24 +1,24 @@
 /*	
-    IFWebControllerPrivate.mm
+    WebControllerPrivate.mm
 	Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFLoadProgress.h>
-#import <WebKit/IFPreferencesPrivate.h>
-#import <WebKit/IFStandardPanelsPrivate.h>
-#import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFError.h>
-#import <WebFoundation/IFFileTypeMappings.h>
-#import <WebFoundation/IFURLCacheLoaderConstants.h>
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebCacheLoaderConstants.h>
+#import <WebFoundation/WebResourceHandle.h>
 
-@implementation IFWebControllerPrivate
+@implementation WebControllerPrivate
 
 - init 
 {
@@ -26,10 +26,10 @@
     return self;
 }
 
-- (void)_clearControllerReferences: (IFWebFrame *)aFrame
+- (void)_clearControllerReferences: (WebFrame *)aFrame
 {
     NSArray *frames;
-    IFWebFrame *nextFrame;
+    WebFrame *nextFrame;
     int i, count;
         
     [[aFrame dataSource] _setController: nil];
@@ -61,11 +61,11 @@
 @end
 
 
-@implementation IFWebController (IFPrivate)
+@implementation WebController (WebPrivate)
 
-- (void)_receivedProgress:(IFLoadProgress *)progress forResourceHandle:(IFURLHandle *)resourceHandle fromDataSource:(IFWebDataSource *)dataSource complete:(BOOL)isComplete
+- (void)_receivedProgress:(WebLoadProgress *)progress forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
-    IFWebFrame *frame = [dataSource webFrame];
+    WebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
     
@@ -81,9 +81,9 @@
     }
 }
 
-- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete
+- (void)_mainReceivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
 {
-    IFWebFrame *frame = [dataSource webFrame];
+    WebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
 
@@ -96,8 +96,8 @@
         
     // Check to see if this is these are the first bits of a provisional data source,
     // if so we need to transition the data source from provisional to committed.
-    // This transition is only done for the IFContentPolicyShow policy.
-    if([frame provisionalDataSource] == dataSource && [dataSource contentPolicy] == IFContentPolicyShow){
+    // This transition is only done for the WebContentPolicyShow policy.
+    if([frame provisionalDataSource] == dataSource && [dataSource contentPolicy] == WebContentPolicyShow){
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [frame _transitionProvisionalToCommitted];
     }
@@ -113,7 +113,7 @@
         // If the frame isn't complete it might be ready for a layout.  Perform that check here.
         // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
         // just indicates that an early layout can be performed.
-        int timedLayoutSize = [[IFPreferences standardPreferences] _initialTimedLayoutSize];
+        int timedLayoutSize = [[WebPreferences standardPreferences] _initialTimedLayoutSize];
         if ([progress bytesSoFar] > timedLayoutSize)
             [frame _transitionProvisionalToLayoutAcceptable];
     }
@@ -121,9 +121,9 @@
 
 
 
-- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
+- (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource webFrame];
+    WebFrame *frame = [dataSource webFrame];
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
@@ -134,9 +134,9 @@
 }
 
 
-- (void)_mainReceivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
+- (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource webFrame];
+    WebFrame *frame = [dataSource webFrame];
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
@@ -148,12 +148,12 @@
 
 - (void)_didStartLoading: (NSURL *)url
 {
-    [[IFStandardPanels sharedStandardPanels] _didStartLoadingURL:url inController:self];
+    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:url inController:self];
 }
 
 - (void)_didStopLoading: (NSURL *)url
 {
-    [[IFStandardPanels sharedStandardPanels] _didStopLoadingURL:url inController:self];
+    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:url inController:self];
 }
 
 + (NSString *)_MIMETypeForFile: (NSString *)path
@@ -163,7 +163,7 @@
     if([extension isEqualToString:@""])
         return @"text/html";
         
-    return [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
 - (BOOL)_openedByScript

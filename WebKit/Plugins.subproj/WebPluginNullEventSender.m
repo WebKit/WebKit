@@ -1,16 +1,16 @@
 /*	
-    IFPluginNullEventSender.m
+    WebPluginNullEventSender.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFPluginNullEventSender.h"
+#import "WebPluginNullEventSender.h"
 #import <Carbon/Carbon.h>
 #import <WebKitDebug.h>
-#import <WebKit/IFPluginView.h>
+#import <WebKit/WebPluginView.h>
 
-@implementation IFPluginNullEventSender
+@implementation WebPluginNullEventSender
 
--(id)initWithPluginView:(IFPluginView *)pluginView
+-(id)initWithPluginView:(WebPluginView *)pluginView
 {
     [super init];
     
@@ -34,7 +34,7 @@
         EventRecord event;
         bool acceptedEvent;
         
-        [IFPluginView getCarbonEvent:&event];
+        [WebPluginView getCarbonEvent:&event];
         
         // plug-in should not react to cursor position when not active.
         if(![window isKeyWindow]){

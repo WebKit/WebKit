@@ -1,14 +1,14 @@
-/*	IFBackForwardList.h
+/*	WebBackForwardList.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-@class IFURIList;
-@class IFURIEntry;
+@class WebHistoryList;
+@class WebHistoryItem;
 
-@interface IFBackForwardList : NSObject {
-    IFURIList *uriList;
+@interface WebBackForwardList : NSObject {
+    WebHistoryList *uriList;
     int index;
     NSLock *mutex;
     int state;
@@ -17,16 +17,16 @@
 -(id)init;
 
 // add to the list
--(void)addEntry:(IFURIEntry *)entry;
+-(void)addEntry:(WebHistoryItem *)entry;
 
 // change position in the list
 -(void)goBack;
 -(void)goForward;
 
 // examine entries without changing position
--(IFURIEntry *)backEntry;
--(IFURIEntry *)currentEntry;
--(IFURIEntry *)forwardEntry;
+-(WebHistoryItem *)backEntry;
+-(WebHistoryItem *)currentEntry;
+-(WebHistoryItem *)forwardEntry;
 
 // examine entire list
 -(NSArray *)backList;

@@ -1,28 +1,28 @@
 //
-//  IFBookmarkGroup.m
+//  WebBookmarkGroup.m
 //  WebKit
 //
 //  Created by John Sullivan on Tue Apr 30 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFBookmarkGroup.h>
-#import <WebKit/IFBookmarkGroup_Private.h>
-#import <WebKit/IFBookmark_Private.h>
-#import <WebKit/IFBookmarkList.h>
-#import <WebKit/IFBookmarkLeaf.h>
-#import <WebKit/IFBookmarkSeparator.h>
+#import <WebKit/WebBookmarkGroup.h>
+#import <WebKit/WebBookmarkGroupPrivate.h>
+#import <WebKit/WebBookmarkPrivate.h>
+#import <WebKit/WebBookmarkList.h>
+#import <WebKit/WebBookmarkLeaf.h>
+#import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebKitDebug.h>
 
-@interface IFBookmarkGroup (IFForwardDeclarations)
-- (void)_setTopBookmark:(IFBookmark *)newTopBookmark;
+@interface WebBookmarkGroup (WebForwardDeclarations)
+- (void)_setTopBookmark:(WebBookmark *)newTopBookmark;
 @end
 
-@implementation IFBookmarkGroup
+@implementation WebBookmarkGroup
 
-+ (IFBookmarkGroup *)bookmarkGroupWithFile: (NSString *)file
++ (WebBookmarkGroup *)bookmarkGroupWithFile: (NSString *)file
 {
-    return [[[IFBookmarkGroup alloc] initWithFile:file] autorelease];
+    return [[[WebBookmarkGroup alloc] initWithFile:file] autorelease];
 }
 
 - (id)initWithFile: (NSString *)file
@@ -50,12 +50,12 @@
     [super dealloc];
 }
 
-- (IFBookmark *)topBookmark
+- (WebBookmark *)topBookmark
 {
     return _topBookmark;
 }
 
-- (void)_sendChangeNotificationForBookmark:(IFBookmark *)bookmark
+- (void)_sendChangeNotificationForBookmark:(WebBookmark *)bookmark
                            childrenChanged:(BOOL)flag
 {
     NSDictionary *userInfo;
@@ -67,20 +67,20 @@
     }
 
     userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-        bookmark, IFModifiedBookmarkKey,
-        [NSNumber numberWithBool:flag], IFBookmarkChildrenChangedKey,
+        bookmark, WebModifiedBookmarkKey,
+        [NSNumber numberWithBool:flag], WebBookmarkChildrenChangedKey,
         nil];
     
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:IFBookmarkGroupChangedNotification
+        postNotificationName:WebBookmarkGroupChangedNotification
                       object:self
                     userInfo:userInfo];
 }
 
-- (void)_setTopBookmark:(IFBookmark *)newTopBookmark
+- (void)_setTopBookmark:(WebBookmark *)newTopBookmark
 {
     WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil ||
-                             [newTopBookmark bookmarkType] == IFBookmarkTypeList);
+                             [newTopBookmark bookmarkType] == WebBookmarkTypeList);
     
     [_topBookmark _setGroup:nil];
     [_topBookmark autorelease];
@@ -88,42 +88,42 @@
     if (newTopBookmark) {
         _topBookmark = [newTopBookmark retain];
     } else {
-        _topBookmark = [[IFBookmarkList alloc] initWithTitle:nil image:nil group:self];
+        _topBookmark = [[WebBookmarkList alloc] initWithTitle:nil image:nil group:self];
     }
 
     [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
 }
 
-- (void)_bookmarkDidChange:(IFBookmark *)bookmark
+- (void)_bookmarkDidChange:(WebBookmark *)bookmark
 {
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:NO];
 }
 
-- (void)_bookmarkChildrenDidChange:(IFBookmark *)bookmark
+- (void)_bookmarkChildrenDidChange:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark bookmarkType] == IFBookmarkTypeList);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
     
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
 
-- (void)_removedBookmark:(IFBookmark *)bookmark
+- (void)_removedBookmark:(WebBookmark *)bookmark
 {
     WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == bookmark);
     [_bookmarksByID removeObjectForKey:[bookmark identifier]];
 }
 
-- (void)_addedBookmark:(IFBookmark *)bookmark
+- (void)_addedBookmark:(WebBookmark *)bookmark
 {
     WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == nil);
     [_bookmarksByID setObject:bookmark forKey:[bookmark identifier]];
 }
 
-- (IFBookmark *)bookmarkForIdentifier:(NSString *)identifier
+- (WebBookmark *)bookmarkForIdentifier:(NSString *)identifier
 {
     return [_bookmarksByID objectForKey:identifier];
 }
 
-- (void)removeBookmark:(IFBookmark *)bookmark
+- (void)removeBookmark:(WebBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
@@ -136,11 +136,11 @@
     }
 }
 
-- (IFBookmark *)addNewBookmarkToBookmark:(IFBookmark *)parent
+- (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                    type:(IFBookmarkType)bookmarkType
+                                    type:(WebBookmarkType)bookmarkType
 {
     return [self insertNewBookmarkAtIndex:[parent numberOfChildren]
                                ofBookmark:parent
@@ -150,29 +150,29 @@
                                      type:bookmarkType];
 }
 
-- (IFBookmark *)insertNewBookmarkAtIndex:(unsigned)index
-                              ofBookmark:(IFBookmark *)parent
+- (WebBookmark *)insertNewBookmarkAtIndex:(unsigned)index
+                              ofBookmark:(WebBookmark *)parent
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                    type:(IFBookmarkType)bookmarkType
+                                    type:(WebBookmarkType)bookmarkType
 {
-    IFBookmark *bookmark;
+    WebBookmark *bookmark;
 
     WEBKIT_ASSERT_VALID_ARG (parent, [parent group] == self);
-    WEBKIT_ASSERT_VALID_ARG (parent, [parent bookmarkType] == IFBookmarkTypeList);
-    WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == IFBookmarkTypeLeaf || (newURLString == nil));
+    WEBKIT_ASSERT_VALID_ARG (parent, [parent bookmarkType] == WebBookmarkTypeList);
+    WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == WebBookmarkTypeLeaf || (newURLString == nil));
     
-    if (bookmarkType == IFBookmarkTypeLeaf) {
-        bookmark = [[[IFBookmarkLeaf alloc] initWithURLString:newURLString
+    if (bookmarkType == WebBookmarkTypeLeaf) {
+        bookmark = [[[WebBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
                                                         image:newImage
                                                         group:self] autorelease];
-    } else if (bookmarkType == IFBookmarkTypeSeparator) {
-        bookmark = [[[IFBookmarkSeparator alloc] initWithGroup:self] autorelease];
+    } else if (bookmarkType == WebBookmarkTypeSeparator) {
+        bookmark = [[[WebBookmarkSeparator alloc] initWithGroup:self] autorelease];
     } else {
-        WEBKIT_ASSERT (bookmarkType == IFBookmarkTypeList);
-        bookmark = [[[IFBookmarkList alloc] initWithTitle:newTitle
+        WEBKIT_ASSERT (bookmarkType == WebBookmarkTypeList);
+        bookmark = [[[WebBookmarkList alloc] initWithTitle:newTitle
                                                     image:newImage
                                                     group:self] autorelease];
     }
@@ -190,7 +190,7 @@
 {
     NSString *path;
     NSDictionary *dictionary;
-    IFBookmarkList *newTopBookmark;
+    WebBookmarkList *newTopBookmark;
 
     path = [self file];
     if (path == nil) {
@@ -211,7 +211,7 @@
     }
 
     _loading = YES;
-    newTopBookmark = [[[IFBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
+    newTopBookmark = [[[WebBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
     [self _setTopBookmark:newTopBookmark];
     _loading = NO;
 

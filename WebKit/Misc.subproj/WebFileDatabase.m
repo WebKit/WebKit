@@ -1,4 +1,4 @@
-/*	IFURLFileDatabase.m
+/*	WebFileDatabase.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
@@ -10,23 +10,23 @@
 #import <pthread.h>
 #import <fts.h>
 
-#import "IFURLFileDatabase.h"
-#import "IFNSFileManagerExtensions.h"
-#import "IFURLCacheLoaderConstantsPrivate.h"
+#import "WebFileDatabase.h"
+#import "WebNSFileManagerExtras.h"
+#import "WebCacheLoaderConstantsPrivate.h"
 #import "WebFoundationDebug.h"
 
 #define SIZE_FILE_NAME @".size"
 #define SIZE_FILE_NAME_CSTRING ".size"
 
 static pthread_once_t databaseInitControl = PTHREAD_ONCE_INIT;
-static NSNumber *IFURLFileDirectoryPosixPermissions;
-static NSNumber *IFURLFilePosixPermissions;
+static NSNumber *WebFileDirectoryPOSIXPermissions;
+static NSNumber *WebFilePOSIXPermissions;
 
 typedef enum
 {
-    IFURLFileDatabaseSetObjectOp,
-    IFURLFileDatabaseRemoveObjectOp,
-} IFURLFileDatabaseOpCode;
+    WebFileDatabaseSetObjectOp,
+    WebFileDatabaseRemoveObjectOp,
+} WebFileDatabaseOpcode;
 
 enum
 {
@@ -101,9 +101,9 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
     return atimeArray;
 }
 
-// interface IFURLFileReader -------------------------------------------------------------
+// interface WebFileReader -------------------------------------------------------------
 
-@interface IFURLFileReader : NSObject
+@interface WebFileReader : NSObject
 {
     NSData *data;
     caddr_t mappedBytes;
@@ -115,7 +115,7 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
 
 @end
 
-// implementation IFURLFileReader -------------------------------------------------------------
+// implementation WebFileReader -------------------------------------------------------------
 
 static NSMutableSet *notMappableFileNameSet = nil;
 static NSLock *mutex;
@@ -126,7 +126,7 @@ static void URLFileReaderInit(void)
     notMappableFileNameSet = [[NSMutableSet alloc] init];    
 }
 
-@implementation IFURLFileReader
+@implementation WebFileReader
 
 - (id)initWithPath:(NSString *)path
 {
@@ -227,36 +227,36 @@ static void URLFileReaderInit(void)
 
 @end
 
-// interface IFURLFileDatabaseOp -------------------------------------------------------------
+// interface WebFileDatabaseOp -------------------------------------------------------------
 
-@interface IFURLFileDatabaseOp : NSObject
+@interface WebFileDatabaseOp : NSObject
 {
-    IFURLFileDatabaseOpCode opcode;
+    WebFileDatabaseOpcode opcode;
     id key;
     id object; 
 }
 
-+(id)opWithCode:(IFURLFileDatabaseOpCode)opcode key:(id)key object:(id)object;
--(id)initWithCode:(IFURLFileDatabaseOpCode)opcode key:(id)key object:(id)object;
++(id)opWithCode:(WebFileDatabaseOpcode)opcode key:(id)key object:(id)object;
+-(id)initWithCode:(WebFileDatabaseOpcode)opcode key:(id)key object:(id)object;
 
--(IFURLFileDatabaseOpCode)opcode;
+-(WebFileDatabaseOpcode)opcode;
 -(id)key;
 -(id)object;
--(void)perform:(IFURLFileDatabase *)target;
+-(void)perform:(WebFileDatabase *)target;
 
 @end
 
 
-// implementation IFURLFileDatabaseOp -------------------------------------------------------------
+// implementation WebFileDatabaseOp -------------------------------------------------------------
 
-@implementation IFURLFileDatabaseOp
+@implementation WebFileDatabaseOp
 
-+(id)opWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
++(id)opWithCode:(WebFileDatabaseOpcode)theOpcode key:(id)theKey object:(id)theObject
 {
-    return [[[IFURLFileDatabaseOp alloc] initWithCode:theOpcode key:theKey object:theObject] autorelease];
+    return [[[WebFileDatabaseOp alloc] initWithCode:theOpcode key:theKey object:theObject] autorelease];
 }
 
--(id)initWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
+-(id)initWithCode:(WebFileDatabaseOpcode)theOpcode key:(id)theKey object:(id)theObject
 {
     WEBFOUNDATION_ASSERT_NOT_NIL(theKey);
 
@@ -273,7 +273,7 @@ static void URLFileReaderInit(void)
     return nil;
 }
 
--(IFURLFileDatabaseOpCode)opcode
+-(WebFileDatabaseOpcode)opcode
 {
     return opcode;
 }
@@ -288,15 +288,15 @@ static void URLFileReaderInit(void)
     return object;
 }
 
--(void)perform:(IFURLFileDatabase *)target
+-(void)perform:(WebFileDatabase *)target
 {
     WEBFOUNDATION_ASSERT_NOT_NIL(target);
 
     switch (opcode) {
-        case IFURLFileDatabaseSetObjectOp:
+        case WebFileDatabaseSetObjectOp:
             [target performSetObject:object forKey:key];
             break;
-        case IFURLFileDatabaseRemoveObjectOp:
+        case WebFileDatabaseRemoveObjectOp:
             [target performRemoveObjectForKey:key];
             break;
         default:
@@ -316,9 +316,9 @@ static void URLFileReaderInit(void)
 @end
 
 
-// interface IFURLFileDatabasePrivate -----------------------------------------------------------
+// interface WebFileDatabasePrivate -----------------------------------------------------------
 
-@interface IFURLFileDatabase (IFURLFileDatabasePrivate)
+@interface WebFileDatabase (WebFileDatabasePrivate)
 
 +(NSString *)uniqueFilePathForKey:(id)key;
 -(void)writeSizeFile:(unsigned)value;
@@ -327,9 +327,9 @@ static void URLFileReaderInit(void)
 
 @end
 
-// implementation IFURLFileDatabasePrivate ------------------------------------------------------
+// implementation WebFileDatabasePrivate ------------------------------------------------------
 
-@implementation IFURLFileDatabase (IFURLFileDatabasePrivate)
+@implementation WebFileDatabase (WebFileDatabasePrivate)
 
 +(NSString *)uniqueFilePathForKey:(id)key
 {
@@ -367,7 +367,7 @@ static void URLFileReaderInit(void)
     
     [mutex lock];
     
-    fd = open(sizeFilePath, O_WRONLY | O_CREAT, [IFURLFilePosixPermissions intValue]);
+    fd = open(sizeFilePath, O_WRONLY | O_CREAT, [WebFilePOSIXPermissions intValue]);
     if (fd > 0) {
         buf = calloc(1, MAX_UNSIGNED_LENGTH);
         sprintf(buf, "%d", value);
@@ -448,9 +448,9 @@ static void URLFileReaderInit(void)
 @end
 
 
-// implementation IFURLFileDatabase -------------------------------------------------------------
+// implementation WebFileDatabase -------------------------------------------------------------
 
-@implementation IFURLFileDatabase
+@implementation WebFileDatabase
 
 // creation functions ---------------------------------------------------------------------------
 #pragma mark creation functions
@@ -458,10 +458,10 @@ static void URLFileReaderInit(void)
 static void databaseInit()
 {
     // set file perms to owner read/write/execute only
-    IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE | IF_UEXEC)] retain];
+    WebFileDirectoryPOSIXPermissions = [[NSNumber numberWithInt:(WEB_UREAD | WEB_UWRITE | WEB_UEXEC)] retain];
 
     // set file perms to owner read/write only
-    IFURLFilePosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE)] retain];
+    WebFilePOSIXPermissions = [[NSNumber numberWithInt:(WEB_UREAD | WEB_UWRITE)] retain];
 }
 
 -(id)initWithPath:(NSString *)thePath
@@ -513,7 +513,7 @@ static void databaseInit()
 
 -(void)setObject:(id)object forKey:(id)key
 {
-    IFURLFileDatabaseOp *op;
+    WebFileDatabaseOp *op;
 
     WEBFOUNDATION_ASSERT_NOT_NIL(object);
     WEBFOUNDATION_ASSERT_NOT_NIL(key);
@@ -523,7 +523,7 @@ static void databaseInit()
     [mutex lock];
     
     [setCache setObject:object forKey:key];
-    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseSetObjectOp key:key object:object];
+    op = [[WebFileDatabaseOp alloc] initWithCode:WebFileDatabaseSetObjectOp key:key object:object];
     [ops addObject:op];
     [self setTimer];
     
@@ -532,7 +532,7 @@ static void databaseInit()
 
 -(void)removeObjectForKey:(id)key
 {
-    IFURLFileDatabaseOp *op;
+    WebFileDatabaseOp *op;
 
     WEBFOUNDATION_ASSERT_NOT_NIL(key);
 
@@ -541,7 +541,7 @@ static void databaseInit()
     [mutex lock];
     
     [removeCache addObject:key];
-    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseRemoveObjectOp key:key object:nil];
+    op = [[WebFileDatabaseOp alloc] initWithCode:WebFileDatabaseRemoveObjectOp key:key object:nil];
     [ops addObject:op];
     [self setTimer];
     
@@ -557,7 +557,7 @@ static void databaseInit()
     [removeCache removeAllObjects];
     [ops removeAllObjects];
     [self close];
-    [[NSFileManager defaultManager] _IF_backgroundRemoveFileAtPath:path];
+    [[NSFileManager defaultManager] _web_backgroundRemoveFileAtPath:path];
     [self open];
     [self writeSizeFile:0];
     usage = 0;
@@ -572,7 +572,7 @@ static void databaseInit()
     id fileKey;
     id object;
     NSString *filePath;
-    IFURLFileReader * volatile fileReader;
+    WebFileReader * volatile fileReader;
     NSData *data;
     NSUnarchiver * volatile unarchiver;
         
@@ -598,8 +598,8 @@ static void databaseInit()
     [mutex unlock];
 
     // go to disk
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-    fileReader = [[IFURLFileReader alloc] initWithPath:filePath];
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
+    fileReader = [[WebFileReader alloc] initWithPath:filePath];
     
     NS_DURING
         if (fileReader && (data = [fileReader data])) {
@@ -628,7 +628,7 @@ static void databaseInit()
 
 -(NSEnumerator *)keys
 {
-    // FIXME: [kocienda] Radar 2859370 (IFURLFileDatabase needs to implement keys method)
+    // FIXME: [kocienda] Radar 2859370 (WebFileDatabase needs to implement keys method)
     return nil;
 }
 
@@ -648,7 +648,7 @@ static void databaseInit()
     WEBFOUNDATION_ASSERT_NOT_NIL(key);
 
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performSetObject - %s - %s",
-        DEBUG_OBJECT(key), DEBUG_OBJECT([IFURLFileDatabase uniqueFilePathForKey:key]));
+        DEBUG_OBJECT(key), DEBUG_OBJECT([WebFileDatabase uniqueFilePathForKey:key]));
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
@@ -657,19 +657,19 @@ static void databaseInit()
     
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
         NSUserName(), NSFileOwnerAccountName,
-        IFURLFilePosixPermissions, NSFilePosixPermissions,
+        WebFilePOSIXPermissions, NSFilePosixPermissions,
         NULL
     ];
 
     directoryAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
         NSUserName(), NSFileOwnerAccountName,
-        IFURLFileDirectoryPosixPermissions, NSFilePosixPermissions,
+        WebFileDirectoryPOSIXPermissions, NSFilePosixPermissions,
         NULL
     ];
 
     defaultManager = [NSFileManager defaultManager];
 
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
     attributes = [defaultManager fileAttributesAtPath:filePath traverseLink:YES];
 
     // update usage and truncate before writing file
@@ -677,7 +677,7 @@ static void databaseInit()
     usage += [data length];
     [self truncateToSizeLimit:[self sizeLimit]];
 
-    result = [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+    result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     if (result) {
         // we're going to write a new file
@@ -710,7 +710,7 @@ static void databaseInit()
     
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performRemoveObjectForKey - %s", DEBUG_OBJECT(key));
 
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
     attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
     result = [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
     if (result && attributes) {
@@ -745,11 +745,11 @@ static void databaseInit()
             attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSDate date], @"NSFileModificationDate",
                 NSUserName(), @"NSFileOwnerAccountName",
-                IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
+                WebFileDirectoryPOSIXPermissions, @"NSFilePosixPermissions",
                 NULL
             ];
             
-	    isOpen = [manager _IF_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
+	    isOpen = [manager _web_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
 	}
 
         sizeFilePathString = [NSString stringWithFormat:@"%@/%@", path, SIZE_FILE_NAME];
@@ -758,7 +758,7 @@ static void databaseInit()
         usage = [self readSizeFile];
 
         // remove any leftover turds
-        [manager _IF_deleteBackgroundRemoveLeftoverFiles:path];
+        [manager _web_deleteBackgroundRemoveLeftoverFiles:path];
     }
     
     return isOpen;
@@ -780,7 +780,7 @@ static void databaseInit()
 
 -(void)lazySync:(NSTimer *)theTimer
 {
-    IFURLFileDatabaseOp *op;
+    WebFileDatabaseOp *op;
 
     WEBFOUNDATION_ASSERT_NOT_NIL(theTimer);
 

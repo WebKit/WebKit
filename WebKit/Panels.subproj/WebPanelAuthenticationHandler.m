@@ -1,18 +1,18 @@
 /*
- IFPanelAuthenticationHandler.m
+ WebPanelAuthenticationHandler.m
 
  Copyright 2002 Apple, Inc. All rights reserved.
  */
 
 
-#import <WebKit/IFPanelAuthenticationHandler.h>
-#import <WebKit/IFAuthenticationPanel.h>
-#import <WebKit/IFStandardPanels.h>
-#import <WebFoundation/IFNSDictionaryExtensions.h>
+#import <WebKit/WebPanelAuthenticationHandler.h>
+#import <WebKit/WebAuthenticationPanel.h>
+#import <WebKit/WebStandardPanels.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
 
-static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
+static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
-@implementation IFPanelAuthenticationHandler
+@implementation WebPanelAuthenticationHandler
 
 -(id)init
 {
@@ -31,24 +31,24 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
     [super dealloc];
 }
 
-// IFAuthenticationHandler methods
--(BOOL)readyToStartAuthentication:(IFAuthenticationRequest *)request
+// WebAuthenticationHandler methods
+-(BOOL)readyToStartAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
 
     if (window == nil) {
-        window = IFModalDialogPretendWindow;
+        window = WebModalDialogPretendWindow;
     }
 
     return [windowToPanel objectForKey:window] == nil;
 }
 
--(void)startAuthentication:(IFAuthenticationRequest *)request
+-(void)startAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
 
     if (window == nil) {
-        window = IFModalDialogPretendWindow;
+        window = WebModalDialogPretendWindow;
     }
 
     if ([windowToPanel objectForKey:window] != nil) {
@@ -56,28 +56,28 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
         return;
     }
 
-    IFAuthenticationPanel *panel = [[IFAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithRequest:result:)];
-    [requestToWindow _IF_setObject:window forUncopiedKey:request];
-    [windowToPanel _IF_setObject:panel forUncopiedKey:window];
+    WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithRequest:result:)];
+    [requestToWindow _web_setObject:window forUncopiedKey:request];
+    [windowToPanel _web_setObject:panel forUncopiedKey:window];
     [panel release];
     
-    if (window == IFModalDialogPretendWindow) {
+    if (window == WebModalDialogPretendWindow) {
         [panel runAsModalDialogWithRequest:request];
     } else {
         [panel runAsSheetOnWindow:window withRequest:request];
     }
 }
 
--(void)cancelAuthentication:(IFAuthenticationRequest *)request
+-(void)cancelAuthentication:(WebAuthenticationRequest *)request
 {
     id window = [requestToWindow objectForKey:request];
     if (window != nil) {
-        IFAuthenticationPanel *panel = [windowToPanel objectForKey:window];
+        WebAuthenticationPanel *panel = [windowToPanel objectForKey:window];
         [panel cancel:self];
     }
 }
 
--(void)_authenticationDoneWithRequest:(IFAuthenticationRequest *)request result:(IFAuthenticationResult *)result
+-(void)_authenticationDoneWithRequest:(WebAuthenticationRequest *)request result:(WebAuthenticationResult *)result
 {
     id window = [requestToWindow objectForKey:request];
     if (window != nil) {

@@ -44,10 +44,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 #endif
 
-@class IFError;
-@class IFURLHandle;
+@class WebError;
+@class WebResourceHandle;
 
-@class WebCoreFrame;
+@class WebCoreFrameBridge;
 
 @protocol WebCoreDOMTreeCopier;
 @protocol WebCoreRenderTreeCopier;
@@ -114,13 +114,13 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (WebCoreBridge *)parent;
 
-- (WebCoreFrame *)frame;
-- (NSArray *)childFrames; // WebCoreFrame objects
-- (WebCoreFrame *)childFrameNamed:(NSString *)name;
-- (WebCoreFrame *)descendantFrameNamed:(NSString *)name;
+- (WebCoreFrameBridge *)frame;
+- (NSArray *)childFrames; // WebCoreFrameBridge objects
+- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name;
+- (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name;
 
-- (WebCoreFrame *)mainFrame;
-- (WebCoreFrame *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+- (WebCoreFrameBridge *)mainFrame;
+- (WebCoreFrameBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
@@ -139,7 +139,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
 
-- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
+- (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 

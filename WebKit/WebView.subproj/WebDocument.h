@@ -1,33 +1,33 @@
 /*	
-    IFDocument.h
+    WebDocument.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@class IFWebDataSource;
-@class IFError;
+@class WebDataSource;
+@class WebError;
 
-@protocol IFDocumentView <NSObject>
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource;
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource;
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource; 
+@protocol WebDocumentView <NSObject>
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource;
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource;
+- (void)dataSourceUpdated:(WebDataSource *)dataSource; 
 - (void)layout;
 @end
 
-@protocol IFDocumentDragSettings
+@protocol WebDocumentDragSettings
 - (void)setCanDragFrom: (BOOL)flag;
 - (BOOL)canDragFrom;
 - (void)setCanDragTo: (BOOL)flag;
 - (BOOL)canDragTo;
 @end
 
-@protocol IFDocumentSearching
+@protocol WebDocumentSearching
 - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
 @end
 
-@protocol IFDocumentRepresentation <NSObject>
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource;
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource;
+@protocol WebDocumentRepresentation <NSObject>
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
 @end

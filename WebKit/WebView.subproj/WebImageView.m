@@ -1,16 +1,16 @@
 /*	
-    IFImageView.m
+    WebImageView.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFImageView.h>
+#import <WebKit/WebImageView.h>
 
-#import <WebKit/IFDocument.h>
-#import <WebKit/IFImageRenderer.h>
-#import <WebKit/IFImageRepresentation.h>
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebDataSource.h>
 
-@implementation IFImageView
+@implementation WebImageView
 
 - (id)initWithFrame:(NSRect)frame
 {    
@@ -40,22 +40,22 @@
     [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
 }
 
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
 {
 }
 
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
 {
     representation = [[dataSource representation] retain];
 }
 
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
 }
 
 - (void)layout
 {
-    IFImageRenderer *image = [representation image];
+    WebImageRenderer *image = [representation image];
     if (image) {
         [self setFrameSize:[image size]];
         [image setFlipped:YES];

@@ -1,20 +1,20 @@
 /*	
-    IFImageRepresentation.m
+    WebImageRepresentation.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFImageRepresentation.h"
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFImageRenderer.h>
-#import <WebKit/IFImageRendererFactory.h>
+#import "WebImageRepresentation.h"
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 
-@implementation IFImageRepresentation
+@implementation WebImageRepresentation
 
 - init
 {
     self = [super init];
     if (self) {
-        //image = [[IFImageRenderer alloc] init];
+        //image = [[WebImageRenderer alloc] init];
     }
     return self;
 }
@@ -26,25 +26,25 @@
     [super dealloc];
 }
 
-- (IFImageRenderer *)image
+- (WebImageRenderer *)image
 {
     return image;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     //[image incrementalLoadWithBytes:[data bytes] length:[data length] complete:isComplete];
 }
 
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
 {
 
 }
 
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     NSData *resourceData = [dataSource data];
-    image = [[[IFImageRendererFactory sharedFactory] imageRendererWithBytes:[resourceData bytes] 
+    image = [[[WebImageRendererFactory sharedFactory] imageRendererWithBytes:[resourceData bytes] 
                 length:[resourceData length]] retain];
 }
 

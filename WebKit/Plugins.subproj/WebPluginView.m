@@ -1,32 +1,32 @@
 /*	
-    IFPluginView.mm
+    WebPluginView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #define USE_CARBON 1
 
-#import <WebKit/IFPluginView.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFPluginDatabase.h>
-#import <WebKit/IFPluginStream.h>
-#import <WebKit/IFPluginNullEventSender.h>
-#import <WebKit/IFNullPluginView.h>
-#import <WebKit/IFPlugin.h>
-#import <WebKit/IFNSViewExtras.h>
+#import <WebKit/WebPluginView.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebPluginNullEventSender.h>
+#import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFError.h>
-#import <WebFoundation/IFNSStringExtensions.h>
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
-@implementation IFPluginView
+@implementation WebPluginView
 
 #pragma mark EVENTS
 
@@ -262,9 +262,9 @@
         [super keyDown:theEvent];
 }
 
-#pragma mark IFPLUGINVIEW
+#pragma mark WEB_PLUGIN_VIEW
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
+- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
     [super initWithFrame:r];
     
@@ -427,7 +427,7 @@
 {
     NSNotificationCenter *notificationCenter;
     NSWindow *theWindow;
-    IFPluginStream *stream;
+    WebPluginStream *stream;
         
     if(isStarted || !canRestart)
         return;
@@ -466,13 +466,13 @@
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
     
-    IFWebView *webView = (IFWebView *)[self _IF_superviewWithName:@"IFWebView"];
+    WebView *webView = (WebView *)[self _web_superviewWithName:@"WebView"];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];
     
     if(srcURL){
-        stream = [[IFPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
+        stream = [[WebPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -480,7 +480,7 @@
         }
     }
     
-    eventSender = [[IFPluginNullEventSender alloc] initWithPluginView:self];
+    eventSender = [[WebPluginNullEventSender alloc] initWithPluginView:self];
     [eventSender sendNullEvents];
     [self resetTrackingRect];
 }
@@ -518,17 +518,17 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
 }
 
-- (IFWebDataSource *)webDataSource
+- (WebDataSource *)webDataSource
 {
     return webDataSource;
 }
 
-- (IFWebController *) webController
+- (WebController *) webController
 {
     return webController;
 }
 
-#pragma mark IFDOCUMENTVIEW
+#pragma mark WEB_DOCUMENT_VIEW
 
 - initWithFrame:(NSRect)frame
 {
@@ -545,12 +545,12 @@
     return self;
 }
 
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
 {
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     
     mime = [[dataSource contentType] retain];
-    plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:mime];
+    plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:mime];
     
     if(![plugin load])
         return;
@@ -573,19 +573,19 @@
     [self start];
 }
 
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
 {
     
 }
 
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
 
 }
  
 - (void)layout
 {
-    NSRect superFrame = [[self _IF_superviewWithName:@"IFWebView"] frame];
+    NSRect superFrame = [[self _web_superviewWithName:@"WebView"] frame];
     
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -667,8 +667,8 @@
 
 - (void) frameStateChanged:(NSNotification *)notification
 {
-    IFWebFrame *frame;
-    IFWebFrameState frameState;
+    WebFrame *frame;
+    WebFrameState frameState;
     NSValue *notifyDataValue;
     void *notifyData;
     NSURL *url;
@@ -681,8 +681,8 @@
         return;
     
     notifyData = [notifyDataValue pointerValue];
-    frameState = (IFWebFrameState)[[[notification userInfo] objectForKey:IFCurrentFrameState] intValue];
-    if(frameState == IFWEBFRAMESTATE_COMPLETE){
+    frameState = (WebFrameState)[[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
+    if(frameState == WebFrameStateComplete){
         NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
     }
     //FIXME: Need to send other NPReasons
@@ -692,21 +692,21 @@
 
 - (NPError) loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
 {
-    IFPluginStream *stream;
-    IFWebDataSource *dataSource;
-    IFWebFrame *frame;
+    WebPluginStream *stream;
+    WebDataSource *dataSource;
+    WebFrame *frame;
     NSURL *url;
     
-    if([URLString _IF_looksLikeAbsoluteURL])
-        url = [NSURL _IF_URLWithString:URLString];
+    if([URLString _web_looksLikeAbsoluteURL])
+        url = [NSURL _web_URLWithString:URLString];
     else
-        url = [NSURL _IF_URLWithString:URLString relativeToURL:baseURL];
+        url = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
     
     if(!url)
         return NPERR_INVALID_URL;
     
     if(!target){
-        stream = [[IFPluginStream alloc] initWithURL:url pluginPointer:instance notifyData:notifyData attributes:attributes];
+        stream = [[WebPluginStream alloc] initWithURL:url pluginPointer:instance notifyData:notifyData attributes:attributes];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -729,13 +729,13 @@
     
                     [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
                     [[NSNotificationCenter defaultCenter] addObserver:self 
-                        selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
+                        selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
                 }
                 // Plug-in docs say to return NPERR_INVALID_PARAM here
                 // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
                 // so we have to allow this as well. Needed for iTools.
             }
-            dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
+            dataSource = [[[WebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
             if([frame setProvisionalDataSource:dataSource])
                 [frame startLoading];
         }
@@ -789,7 +789,7 @@
         theTarget = [NSString stringWithCString:target];
  
     if(file){
-        if([[NSString stringWithCString:buf] _IF_looksLikeAbsoluteURL]){
+        if([[NSString stringWithCString:buf] _web_looksLikeAbsoluteURL]){
             tempURL = [NSURL fileURLWithPath:[NSString stringWithCString:url]];
             path = [tempURL path];
         }else{
@@ -801,8 +801,8 @@
     }
     
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        postData,	IFHTTPURLHandleRequestData,
-        @"POST", 	IFHTTPURLHandleRequestMethod, nil];
+        postData,	WebHTTPResourceHandleRequestData,
+        @"POST", 	WebHTTPResourceHandleRequestMethod, nil];
                 
     return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget 
                 withNotifyData:notifyData andHandleAttributes:attributes];
@@ -841,7 +841,7 @@
     if(!stream->ndata)
         return NPERR_INVALID_INSTANCE_ERROR;
         
-    [(IFPluginStream *)stream->ndata stop];
+    [(WebPluginStream *)stream->ndata stop];
     return NPERR_NO_ERROR;
 }
 

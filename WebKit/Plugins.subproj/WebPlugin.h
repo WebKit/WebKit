@@ -27,7 +27,7 @@
 #import "npapi.h"
 #import <WebCore/WebCoreViewFactory.h>
 
-@interface IFPlugin : NSObject <WebCorePluginInfo>
+@interface WebPlugin : NSObject <WebCorePluginInfo>
 {
     NSMutableArray *mimeTypes;
     NSString *name, *path, *filename, *pluginDescription;

@@ -1,5 +1,5 @@
 //
-//  IFWebHistory.h
+//  WebHistory.h
 //  WebKit
 //
 //  Created by John Sullivan on Mon Feb 18 2002.
@@ -8,24 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFURIEntry;
-@class IFWebHistoryPrivate;
+@class WebHistoryItem;
+@class WebHistoryPrivate;
 
 // notification sent when history is modified
-#define IFWebHistoryEntriesChangedNotification		@"IFWebHistoryEntriesChangedNotification"
+#define WebHistoryEntriesChangedNotification		@"WebHistoryEntriesChangedNotification"
 
-@interface IFWebHistory : NSObject {
+@interface WebHistory : NSObject {
 @private
-    IFWebHistoryPrivate *_historyPrivate;
+    WebHistoryPrivate *_historyPrivate;
 }
 
-+ (IFWebHistory *)webHistoryWithFile: (NSString *)file;
++ (WebHistory *)webHistoryWithFile: (NSString *)file;
 - (id)initWithFile: (NSString *)file;
 
 // modifying contents
-- (void)addEntry: (IFURIEntry *)entry;
+- (void)addEntry: (WebHistoryItem *)entry;
 - (void)addEntries:(NSArray *)newEntries;
-- (void)removeEntry: (IFURIEntry *)entry;
+- (void)removeEntry: (WebHistoryItem *)entry;
 - (void)removeEntries: (NSArray *)entries;
 - (void)removeAllEntries;
 
@@ -41,7 +41,7 @@
 // or more history entries, ordered from most recent to oldest.
 - (NSArray *)orderedLastVisitedDays;
 
-// get an array of IFURIEntry that were last visited on the day represented by the
+// get an array of WebHistoryItem that were last visited on the day represented by the
 // specified NSCalendarDate, ordered from most recent to oldest.
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
 
@@ -56,7 +56,7 @@
 
 // storing contents on disk
 
-// The file path used for storing history, specified in -[IFWebHistory initWithFile:] or +[IFWebHistory webHistoryWithFile:]
+// The file path used for storing history, specified in -[WebHistory initWithFile:] or +[WebHistory webHistoryWithFile:]
 - (NSString *)file;
 
 // Load history from file. This happens automatically at init time, and need not normally be called.

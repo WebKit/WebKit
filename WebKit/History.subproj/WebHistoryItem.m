@@ -1,17 +1,17 @@
 //
-//  IFURIEntry.m
+//  WebHistoryItem.m
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.
 //  Copyright (c) 2001, 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFURIEntry.h"
+#import "WebHistoryItem.h"
 #import "WebKitReallyPrivate.h"
 
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
-@implementation IFURIEntry
+@implementation WebHistoryItem
 
 -(id)init
 {
@@ -77,7 +77,7 @@
     // trying and failing to find it.
     if (!loadedDefaultImage) {
         NSString *pathForDefaultImage =
-            [[NSBundle bundleForClass:[IFURIEntry class]] pathForResource:@"url_icon" ofType:@"tiff"];
+            [[NSBundle bundleForClass:[WebHistoryItem class]] pathForResource:@"url_icon" ofType:@"tiff"];
         if (pathForDefaultImage != nil) {
             defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
         }
@@ -143,7 +143,7 @@
     
     result = NO;
 
-    if ([anObject isMemberOfClass:[IFURIEntry class]]) {
+    if ([anObject isMemberOfClass:[WebHistoryItem class]]) {
         result = [_url isEqual:[anObject url]];
     }
     
@@ -152,7 +152,7 @@
 
 -(NSString *)description
 {
-    return [NSString stringWithFormat:@"IFURIEntry %@", _url];
+    return [NSString stringWithFormat:@"WebHistoryItem %@", _url];
 }
 
 
@@ -187,7 +187,7 @@
     // FIXME: doesn't save/restore images yet
     storedURLString = [dict objectForKey: @"url"];
     if (storedURLString != nil) {
-        _url = [[NSURL _IF_URLWithString:storedURLString] retain];
+        _url = [[NSURL _web_URLWithString:storedURLString] retain];
     }
     _title = [[dict objectForKey: @"title"] copy];
     _displayTitle = [[dict objectForKey: @"displayTitle"] copy];

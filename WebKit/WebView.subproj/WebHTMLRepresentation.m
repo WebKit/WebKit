@@ -1,30 +1,30 @@
 /*	
-    IFHTMLRepresentation.mm
+    WebHTMLRepresentation.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/WebHTMLRepresentation.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebBridge.h>
 
-@interface IFHTMLRepresentationPrivate : NSObject
+@interface WebHTMLRepresentationPrivate : NSObject
 {
 @public
-    IFWebCoreBridge *bridge;
+    WebBridge *bridge;
 }
 @end
 
-@implementation IFHTMLRepresentationPrivate
+@implementation WebHTMLRepresentationPrivate
 @end
 
-@implementation IFHTMLRepresentation
+@implementation WebHTMLRepresentation
 
 - init
 {
     [super init];
     
-    _private = [[IFHTMLRepresentationPrivate alloc] init];
-    _private->bridge = [[IFWebCoreBridge alloc] init];
+    _private = [[WebHTMLRepresentationPrivate alloc] init];
+    _private->bridge = [[WebBridge alloc] init];
     
     return self;
 }
@@ -37,22 +37,22 @@
     [super dealloc];
 }
 
-- (IFWebCoreBridge *)_bridge
+- (WebBridge *)_bridge
 {
     return _private->bridge;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     [_private->bridge receivedData:data withDataSource:dataSource];
 }
 
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
 {
 
 }
 
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
 
 }

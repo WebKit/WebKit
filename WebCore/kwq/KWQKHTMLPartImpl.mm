@@ -33,7 +33,7 @@
 #import <khtmlview.h>
 
 #import <WebCoreBridge.h>
-#import <WebCoreFrame.h>
+#import <WebCoreFrameBridge.h>
 #import <WebCoreViewFactory.h>
 
 #import <kwqdebug.h>
@@ -68,7 +68,7 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
-    WebCoreFrame *frame;
+    WebCoreFrameBridge *frame;
 
     if (!urlArgs.frameName.isEmpty()) {
         frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
@@ -381,7 +381,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 {
     KURL clickedURL(part->completeURL( url));
     KURL refLess(clickedURL);
-    WebCoreFrame *frame;
+    WebCoreFrameBridge *frame;
 	
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
     {
@@ -428,7 +428,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     NSString *name = frameName.getNSString();
 
     KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", DEBUG_OBJECT(name));
-    WebCoreFrame *wcFrame = [bridge childFrameNamed:name];
+    WebCoreFrameBridge *wcFrame = [bridge childFrameNamed:name];
     if (wcFrame) {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
         frame->setWidget([[wcFrame bridge] part]->impl->getView());
@@ -600,7 +600,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> parts;
     NSEnumerator *e = [[bridge childFrames] objectEnumerator];
-    WebCoreFrame *childFrame;
+    WebCoreFrameBridge *childFrame;
     while ((childFrame = [e nextObject])) {
         KHTMLPart *childPart = [[childFrame committedBridge] part];
         if (childPart)

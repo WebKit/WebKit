@@ -1,64 +1,64 @@
-/*	IFWebView.mm
+/*	WebView.mm
 	Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebView.h>
+#import <WebKit/WebView.h>
 
-#import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFImageView.h>
-#import <WebKit/IFTextView.h>
-#import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebCoreViewFactory.h>
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebKitErrors.h>
-#import <WebKit/IFTextRendererFactory.h>
-#import <WebKit/IFImageRenderer.h>
-#import <WebKit/IFImageRendererFactory.h>
-#import <WebKit/IFCookieAdapter.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebImageView.h>
+#import <WebKit/WebTextView.h>
+#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebViewFactory.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
+#import <WebKit/WebCookieAdapter.h>
 
-#import <WebFoundation/IFNSDictionaryExtensions.h>
-#import <WebFoundation/IFNSStringExtensions.h>
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 
 enum {
     SpaceKey = 0x0020
 };
 
-@implementation IFWebView
+@implementation WebView
 
 + (void)initialize
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
     
-    IFErrorDescriptionCantShowMIMEType, [NSNumber numberWithInt: IFErrorCodeCantShowMIMEType],
-    IFErrorDescriptionCouldntFindApplicationForFile, [NSNumber numberWithInt: IFErrorCodeCouldntFindApplicationForFile],
-    IFErrorDescriptionCouldntFindApplicationForURL, [NSNumber numberWithInt: IFErrorCodeCouldntFindApplicationForURL],
-    IFErrorDescriptionFileDoesntExist, [NSNumber numberWithInt: IFErrorCodeFileDoesntExist],
-    IFErrorDescriptionFileNotReadable, [NSNumber numberWithInt: IFErrorCodeFileNotReadable],
-    IFErrorDescriptionFinderCouldntOpenDirectory, [NSNumber numberWithInt: IFErrorCodeFinderCouldntOpenDirectory],
-    IFErrorDescriptionCantShowDirectory, [NSNumber numberWithInt: IFErrorCodeCantShowDirectory],
-    IFErrorDescriptionCantShowURL, [NSNumber numberWithInt: IFErrorCodeCantShowURL],
+    WebErrorDescriptionCannotShowMIMEType, [NSNumber numberWithInt: WebErrorCannotShowMIMEType],
+    WebErrorDescriptionCouldNotFindApplicationForFile, [NSNumber numberWithInt: WebErrorCouldNotFindApplicationForFile],
+    WebErrorDescriptionCouldNotFindApplicationForURL, [NSNumber numberWithInt: WebErrorCouldNotFindApplicationForURL],
+    WebErrorDescriptionFileDoesNotExist, [NSNumber numberWithInt: WebErrorFileDoesNotExist],
+    WebErrorDescriptionFileNotReadable, [NSNumber numberWithInt: WebErrorFileNotReadable],
+    WebErrorDescriptionFinderCouldNotOpenDirectory, [NSNumber numberWithInt: WebErrorFinderCouldNotOpenDirectory],
+    WebErrorDescriptionCannotShowDirectory, [NSNumber numberWithInt: WebErrorCannotShowDirectory],
+    WebErrorDescriptionCannotShowURL, [NSNumber numberWithInt: WebErrorCannotShowURL],
     nil];
 
-    [IFError addErrorsFromDictionary:dict];
+    [WebError addErrorsFromDictionary:dict];
 }
 
 - initWithFrame: (NSRect) frame
 {
     [super initWithFrame: frame];
  
-    [IFWebCoreViewFactory createSharedFactory];
-    [IFTextRendererFactory createSharedFactory];
-    [IFImageRendererFactory createSharedFactory];
-    [IFCookieAdapter createSharedAdapter];
+    [WebViewFactory createSharedFactory];
+    [WebTextRendererFactory createSharedFactory];
+    [WebImageRendererFactory createSharedFactory];
+    [WebCookieAdapter createSharedAdapter];
     
-    _private = [[IFWebViewPrivate alloc] init];
+    _private = [[WebViewPrivate alloc] init];
 
-    IFDynamicScrollBarsView *scrollView  = [[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
+    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
     _private->frameScrollView = scrollView;
     [scrollView setDrawsBackground: NO];
     [scrollView setHasVerticalScroller: NO];
@@ -83,7 +83,7 @@ enum {
 - (void)setFrame: (NSRect)f
 {
     if ([self isDocumentHTML] && !NSEqualRects(f, [self frame]))
-        [(IFHTMLView *)[self documentView] setNeedsLayout: YES];
+        [(WebHTMLView *)[self documentView] setNeedsLayout: YES];
     [super setFrame: f];
 }
 
@@ -118,7 +118,7 @@ enum {
 }
 
 // Note that the controller is not retained.
-- (IFWebController *)controller
+- (WebController *)controller
 {
     return _private->controller;
 }
@@ -126,7 +126,7 @@ enum {
 
 - (BOOL) isDocumentHTML
 {
-    return [[[self documentView] className] isEqualToString:@"IFHTMLView"];
+    return [[[self documentView] className] isEqualToString:@"WebHTMLView"];
 }
 
 
@@ -140,14 +140,14 @@ enum {
         files = [[sender draggingPasteboard] propertyListForType:@"NSFilenamesPboardType"];
         file = [files objectAtIndex:0];
         
-        if([files count] == 1 && [IFWebController canShowFile:file])
+        if([files count] == 1 && [WebController canShowFile:file])
             return NSDragOperationCopy;
             
     }else if([dragType isEqualToString:@"NSURLPboardType"]){
         return NSDragOperationCopy;
     }else if([dragType isEqualToString:@"NSStringPboardType"]){
         URLString = [[sender draggingPasteboard] stringForType:@"NSStringPboardType"];
-        if([URLString _IF_looksLikeAbsoluteURL])
+        if([URLString _web_looksLikeAbsoluteURL])
             return NSDragOperationCopy;
     }
     return NSDragOperationNone;
@@ -165,8 +165,8 @@ enum {
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    IFWebDataSource *dataSource;
-    IFWebFrame *frame;
+    WebDataSource *dataSource;
+    WebFrame *frame;
     NSArray *files;
     NSString *file, *dragType;
     NSURL *URL=nil;
@@ -179,14 +179,14 @@ enum {
     }else if([dragType isEqualToString:@"NSURLPboardType"]){
         URL = [NSURL URLFromPasteboard:[sender draggingPasteboard]];
     }else if([dragType isEqualToString:@"NSStringPboardType"]){
-        URL = [NSURL _IF_URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
+        URL = [NSURL _web_URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
     }
 
     if(!URL){
         return;
     }
     
-    dataSource = [[[IFWebDataSource alloc] initWithURL:URL] autorelease];
+    dataSource = [[[WebDataSource alloc] initWithURL:URL] autorelease];
     frame = nil;
     frame = [[self controller] mainFrame];
     if([frame setProvisionalDataSource:dataSource])
@@ -199,9 +199,9 @@ enum {
     [[self _viewTypes] setObject:viewClass forKey:MIMEType];
 }
 
-+ (id <IFDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType
++ (id <WebDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType
 {
-    Class viewClass = [[self _viewTypes] _IF_objectForMIMEType:MIMEType];
+    Class viewClass = [[self _viewTypes] _web_objectForMIMEType:MIMEType];
     return viewClass ? [[[viewClass alloc] init] autorelease] : nil;
 }
 

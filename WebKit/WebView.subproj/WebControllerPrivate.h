@@ -1,31 +1,31 @@
 /*	
-    IFWebController.mm
+    WebController.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebController.h>
+#import <WebKit/WebController.h>
 
-@class IFError;
-@class IFLoadProgress;
-@class IFWebFrame;
+@class WebError;
+@class WebLoadProgress;
+@class WebFrame;
 
-@interface IFWebControllerPrivate : NSObject
+@interface WebControllerPrivate : NSObject
 {
 @public
-    IFWebFrame *mainFrame;
-    id<IFWindowContext> windowContext;
-    id<IFResourceProgressHandler> resourceProgressHandler;
-    id<IFResourceProgressHandler> downloadProgressHandler;
-    id<IFWebControllerPolicyHandler> policyHandler;
+    WebFrame *mainFrame;
+    id<WebWindowContext> windowContext;
+    id<WebResourceProgressHandler> resourceProgressHandler;
+    id<WebResourceProgressHandler> downloadProgressHandler;
+    id<WebControllerPolicyHandler> policyHandler;
     BOOL openedByScript;
 }
 @end
 
-@interface IFWebController (IFPrivate);
-- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete:(BOOL)isComplete;
-- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
-- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete:(BOOL)isComplete;
-- (void)_mainReceivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+@interface WebController (WebPrivate);
+- (void)_receivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;
+- (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
+- (void)_mainReceivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;
+- (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
 - (void)_didStartLoading: (NSURL *)url;
 - (void)_didStopLoading: (NSURL *)url;
 + (NSString *)_MIMETypeForFile: (NSString *)path;

@@ -1,13 +1,13 @@
 /*	
-    IFTextView.m
+    WebTextView.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFTextView.h>
+#import <WebKit/WebTextView.h>
 
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/WebDataSource.h>
 
-@implementation IFTextView
+@implementation WebTextView
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -22,15 +22,15 @@
     return self;
 }
 
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
 {
 }
 
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
 {
 }
 
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
     NSString *string;
     

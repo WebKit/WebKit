@@ -1,17 +1,17 @@
 /*	
-        IFTextRenderer.m
+        WebTextRenderer.m
 	    
 	    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFTextRenderer.h"
+#import "WebTextRenderer.h"
 
 #import <Cocoa/Cocoa.h>
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
-#import <WebKit/IFTextRendererFactory.h>
+#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <QD/ATSUnicodePriv.h>
@@ -39,13 +39,13 @@
 #define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
 
 
-typedef float IFGlyphWidth;
+typedef float WebGlyphWidth;
 
 struct WidthMap {
     ATSGlyphRef startRange;
     ATSGlyphRef endRange;
     WidthMap *next;
-    IFGlyphWidth *widths;
+    WebGlyphWidth *widths;
 };
 
 struct GlyphMap {
@@ -62,7 +62,7 @@ struct GlyphMap {
 + (NSLanguage *)defaultLanguage;
 @end
 
-@interface NSFont (IFPrivate)
+@interface NSFont (WebPrivate)
 - (ATSUFontID)_atsFontID;
 - (CGFontRef)_backingCGSFont;
 // Private method to find a font for a character.
@@ -77,7 +77,7 @@ struct GlyphMap {
 static CFCharacterSetRef nonBaseChars = NULL;
 
 
-@interface IFTextRenderer (IFPrivate)
+@interface WebTextRenderer (WebPrivate)
 - (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
 @end
@@ -131,9 +131,9 @@ static void setGlyphForCharacter (GlyphMap *map, ATSGlyphRef glyph, UniChar c)
 static double totalCGGetAdvancesTime = 0;
 #endif
 
-static inline IFGlyphWidth widthForGlyph (IFTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
+static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
 {
-    IFGlyphWidth width;
+    WebGlyphWidth width;
     bool errorResult;
     
     if (map == 0){
@@ -142,7 +142,7 @@ static inline IFGlyphWidth widthForGlyph (IFTextRenderer *renderer, WidthMap *ma
     }
         
     if (glyph >= map->startRange && glyph <= map->endRange){
-        width = ((IFGlyphWidth *)map->widths)[glyph-map->startRange];
+        width = ((WebGlyphWidth *)map->widths)[glyph-map->startRange];
         if (width == UNINITIALIZED_GLYPH_WIDTH){
 
 #ifdef _TIMING        
@@ -156,7 +156,7 @@ static inline IFGlyphWidth widthForGlyph (IFTextRenderer *renderer, WidthMap *ma
             double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
             totalCGGetAdvancesTime += thisTime;
 #endif
-            return ((IFGlyphWidth *)map->widths)[glyph-map->startRange];
+            return ((WebGlyphWidth *)map->widths)[glyph-map->startRange];
         }
         return width;
     }
@@ -165,7 +165,7 @@ static inline IFGlyphWidth widthForGlyph (IFTextRenderer *renderer, WidthMap *ma
 }
 
 
-static inline  IFGlyphWidth widthForCharacter (IFTextRenderer *renderer, UniChar c)
+static inline  WebGlyphWidth widthForCharacter (WebTextRenderer *renderer, UniChar c)
 {
     return widthForGlyph (renderer, renderer->glyphToWidthMap, glyphForCharacter(renderer->characterToGlyphMap, c));
 }
@@ -205,7 +205,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 }
 
 
-@implementation IFTextRenderer
+@implementation WebTextRenderer
 
 + (void)initialize
 {
@@ -508,7 +508,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
             // Draw the character in the alternate font.
             substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];
             if (substituteFont){
-                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength fromCharacterPosition: from - charPos toCharacterPosition:to - charPos atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: NO];
+                point = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength fromCharacterPosition: from - charPos toCharacterPosition:to - charPos atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: NO];
             }
             // No substitute font, draw null glyph
             else
@@ -629,7 +629,7 @@ cleanup:
         clusterLength = findLengthOfCharacterCluster(characters, length);
         substituteFont = [self substituteFontForCharacters: characters length: clusterLength];
         if (substituteFont)
-            reason = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+            reason = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
          
          if (!substituteFont || reason != _IFDrawSucceeded)
             [self slowDrawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition:to atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: YES];
@@ -678,7 +678,7 @@ cleanup:
     float totalWidth = 0;
     unsigned int charPos = 0, clusterLength, i, numGlyphs;
     ATSGlyphVector glyphVector;
-    IFGlyphWidth glyphWidth;
+    WebGlyphWidth glyphWidth;
     ATSLayoutRecord *glyphRecord;
     ATSGlyphRef glyphID;
     float lastWidth = 0;
@@ -793,7 +793,7 @@ cleanup:
             clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
-                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len applyRounding: YES attemptFontSubstitution: NO];
+                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len applyRounding: YES attemptFontSubstitution: NO];
             }
         }
 
@@ -915,7 +915,7 @@ cleanup:
     map->endRange = end;
     count = end - start + 1;
 
-    map->widths = (IFGlyphWidth *)malloc (count * sizeof(IFGlyphWidth));
+    map->widths = (WebGlyphWidth *)malloc (count * sizeof(WebGlyphWidth));
 
     for (i = 0; i < count; i++){
         map->widths[i] = UNINITIALIZED_GLYPH_WIDTH;

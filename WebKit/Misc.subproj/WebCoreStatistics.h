@@ -1,5 +1,5 @@
 //
-//  IFCache.h
+//  WebCoreStatistics.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu Mar 28 2002.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface IFCache : NSObject
+@interface WebCoreStatistics : NSObject
 {
 }
 

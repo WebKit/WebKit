@@ -1,30 +1,30 @@
 /*	
-    IFStandardPanels.h
+    WebStandardPanels.h
     
     Copyright 2002 Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFStandardPanels.h>
-#import <WebKit/IFStandardPanelsPrivate.h>
-#import <WebKit/IFPanelAuthenticationHandler.h>
-#import <WebKit/IFPanelCookieAcceptHandler.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebView.h>
-#import <WebFoundation/IFAuthenticationManager.h>
-#import <WebFoundation/IFCookieManager.h>
+#import <WebKit/WebStandardPanels.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebPanelAuthenticationHandler.h>
+#import <WebKit/WebPanelCookieAcceptHandler.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebView.h>
+#import <WebFoundation/WebAuthenticationManager.h>
+#import <WebFoundation/WebCookieManager.h>
 
 #import <Carbon/Carbon.h>
 
-@interface IFStandardPanelsPrivate : NSObject
+@interface WebStandardPanelsPrivate : NSObject
 {
 @public
-    IFPanelAuthenticationHandler *panelAuthenticationHandler;
-    IFPanelCookieAcceptHandler *panelCookieAcceptHandler;
+    WebPanelAuthenticationHandler *panelAuthenticationHandler;
+    WebPanelCookieAcceptHandler *panelCookieAcceptHandler;
     NSMutableDictionary *urlContainers;
 }
 @end
 
-@implementation IFStandardPanelsPrivate
+@implementation WebStandardPanelsPrivate
 
 -(id)init
 {
@@ -44,14 +44,14 @@
 
 @end
 
-@implementation IFStandardPanels
+@implementation WebStandardPanels
 
 // Private init method to implement the singleton pattern
 -(id)_init
 {
     self = [super init];
     if (self != nil) {
-        _privatePanels = [[IFStandardPanelsPrivate alloc] init];
+        _privatePanels = [[WebStandardPanelsPrivate alloc] init];
     }
     return self;
 }
@@ -69,14 +69,14 @@
     [super dealloc];
 }
 
-static IFStandardPanels *sharedStandardPanels = NULL;
+static WebStandardPanels *sharedStandardPanels = NULL;
 
 static void initSharedStandardPanels(void)
 {
-    sharedStandardPanels = [[IFStandardPanels alloc] _init];
+    sharedStandardPanels = [[WebStandardPanels alloc] _init];
 }
 
-+(IFStandardPanels *)sharedStandardPanels
++(WebStandardPanels *)sharedStandardPanels
 {
     static pthread_once_t sharedStandardPanelsOnce = PTHREAD_ONCE_INIT;
     pthread_once(&sharedStandardPanelsOnce, initSharedStandardPanels);
@@ -87,12 +87,12 @@ static void initSharedStandardPanels(void)
 {
     if (use) {
         if (![self useStandardAuthenticationPanel]) {
-            _privatePanels->panelAuthenticationHandler = [[IFPanelAuthenticationHandler alloc] init];
-            [[IFAuthenticationManager sharedAuthenticationManager] addAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
+            _privatePanels->panelAuthenticationHandler = [[WebPanelAuthenticationHandler alloc] init];
+            [[WebAuthenticationManager sharedAuthenticationManager] addAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
         }
     } else {
         if ([self useStandardAuthenticationPanel]) {
-            [[IFAuthenticationManager sharedAuthenticationManager] removeAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
+            [[WebAuthenticationManager sharedAuthenticationManager] removeAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
             [_privatePanels->panelAuthenticationHandler release];
             _privatePanels->panelAuthenticationHandler = nil;
         }        
@@ -108,12 +108,12 @@ static void initSharedStandardPanels(void)
 {
     if (use) {
         if (![self useStandardCookieAcceptPanel]) {
-            _privatePanels->panelCookieAcceptHandler = [[IFPanelCookieAcceptHandler alloc] init];
-            [[IFCookieManager sharedCookieManager] addAcceptHandler:_privatePanels->panelCookieAcceptHandler];
+            _privatePanels->panelCookieAcceptHandler = [[WebPanelCookieAcceptHandler alloc] init];
+            [[WebCookieManager sharedCookieManager] addAcceptHandler:_privatePanels->panelCookieAcceptHandler];
         }
     } else {
         if ([self useStandardCookieAcceptPanel]) {
-            [[IFCookieManager sharedCookieManager] removeAcceptHandler:_privatePanels->panelCookieAcceptHandler];
+            [[WebCookieManager sharedCookieManager] removeAcceptHandler:_privatePanels->panelCookieAcceptHandler];
             [_privatePanels->panelCookieAcceptHandler release];
             _privatePanels->panelCookieAcceptHandler = nil;
         }
@@ -152,7 +152,7 @@ static void initSharedStandardPanels(void)
     }
 }
 
--(void)_didStartLoadingURL:(NSURL *)url inController:(IFWebController *)controller
+-(void)_didStartLoadingURL:(NSURL *)url inController:(WebController *)controller
 {
     NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
 
@@ -164,7 +164,7 @@ static void initSharedStandardPanels(void)
     [set addObject:controller];
 }
 
--(void)_didStopLoadingURL:(NSURL *)url inController:(IFWebController *)controller
+-(void)_didStopLoadingURL:(NSURL *)url inController:(WebController *)controller
 {
     NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
 

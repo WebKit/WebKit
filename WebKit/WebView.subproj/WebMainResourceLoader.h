@@ -1,5 +1,5 @@
 /*	
-    IFMainURLHandleClient.h
+    WebMainResourceClient.h
 
     Private header.
     
@@ -8,20 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFDownloadHandler;
-@class IFWebDataSource;
-@protocol IFURLHandleClient;
-@protocol IFResourceProgressHandler;
+@class WebDownloadHandler;
+@class WebDataSource;
+@protocol WebResourceClient;
+@protocol WebResourceProgressHandler;
 
-@interface IFMainURLHandleClient : NSObject <IFURLHandleClient>
+@interface WebMainResourceClient : NSObject <WebResourceClient>
 {
     NSURL *currentURL;
-    IFWebDataSource *dataSource;
+    WebDataSource *dataSource;
     BOOL processedBufferedData;
     BOOL isFirstChunk;
-    IFDownloadHandler *downloadHandler;
-    id <IFResourceProgressHandler> downloadProgressHandler;
+    WebDownloadHandler *downloadHandler;
+    id <WebResourceProgressHandler> downloadProgressHandler;
 }
-- initWithDataSource:(IFWebDataSource *)dataSource;
-- (IFDownloadHandler *)downloadHandler;
+- initWithDataSource:(WebDataSource *)dataSource;
+- (WebDownloadHandler *)downloadHandler;
 @end

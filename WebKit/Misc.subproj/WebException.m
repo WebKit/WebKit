@@ -24,5 +24,5 @@
  */
 #import <Cocoa/Cocoa.h>
 
-NSString * const IFMethodNotYetImplemented = @"IFMethodNotYetImplemented";
-NSString * const IFRuntimeError = @"IFRuntimeError";
+NSString * const WebMethodNotYetImplemented = @"WebMethodNotYetImplemented";
+NSString * const WebRuntimeError = @"WebRuntimeError";

@@ -1,5 +1,5 @@
 //
-//  IFWebCoreBridge.h
+//  WebBridge.h
 //  WebKit
 //
 //  Created by Darin Adler on Thu Jun 13 2002.
@@ -8,21 +8,21 @@
 
 #import <WebCore/WebCoreBridge.h>
 
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/WebDataSource.h>
 
-@interface IFWebCoreBridge : WebCoreBridge <WebCoreBridge>
+@interface WebBridge : WebCoreBridge <WebCoreBridge>
 {
-    IFWebDataSource *dataSource;
+    WebDataSource *dataSource;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
-- (void)setDataSource:(IFWebDataSource *)ds;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)setDataSource:(WebDataSource *)ds;
 
 @end
 
-// Convenience interface for getting here from an IFWebDataSource.
-// This returns nil if the representation is not an IFHTMLRepresentation.
+// Convenience interface for getting here from an WebDataSource.
+// This returns nil if the representation is not an WebHTMLRepresentation.
 
-@interface IFWebDataSource (IFWebCoreBridge)
-- (IFWebCoreBridge *)_bridge;
+@interface WebDataSource (WebBridge)
+- (WebBridge *)_bridge;
 @end

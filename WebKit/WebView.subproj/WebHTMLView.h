@@ -1,5 +1,5 @@
 /*	
-        IFHTMLView.h
+        WebHTMLView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
         
         Private header file.
@@ -11,31 +11,31 @@
     ============================================================================= 
 */
 
-@class IFWebDataSource;
-@class IFWebController;
-@class IFHTMLViewPrivate;
-@protocol IFDocumentLoading;
-@protocol IFDocumentDragSettings;
-@protocol IFDocumentSearching;
+@class WebDataSource;
+@class WebController;
+@class WebHTMLViewPrivate;
+@protocol WebDocumentLoading;
+@protocol WebDocumentDragSettings;
+@protocol WebDocumentSearching;
 
-@interface IFHTMLView : NSView <IFDocumentLoading, IFDocumentDragSettings, IFDocumentSearching>
+@interface WebHTMLView : NSView <WebDocumentLoading, WebDocumentDragSettings, WebDocumentSearching>
 {
 @private
-    IFHTMLViewPrivate *_private;
+    WebHTMLViewPrivate *_private;
 }
 
 - initWithFrame: (NSRect)frame;
 
 // These methods is typically called by the view's controller when
 // the data source is changed.
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource;
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource;
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource;
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource;
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource;
+- (void)dataSourceUpdated:(WebDataSource *)dataSource;
 
 - (void)setNeedsLayout: (bool)flag;
 
 // This method should not be public until we have a more completely
-// understood way to subclass IFWebView.
+// understood way to subclass WebView.
 - (void)layout;
 
 // Set needsToApplyStyles if you change anything that might impact styles, like
@@ -56,9 +56,9 @@
 - (BOOL)canDragTo;
 
 // Returns an array of built-in context menu items for this node.
-// Generally called by IFContextMenuHandlers from contextMenuItemsForNode:
+// Generally called by WebContextMenuHandlers from contextMenuItemsForNode:
 #ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (IFDOMNode *);
+- (NSArray *)defaultContextMenuItemsForNode: (WebDOMNode *);
 #endif
 - (void)setContextMenusEnabled: (BOOL)flag;
 - (BOOL)contextMenusEnabled;
@@ -89,5 +89,5 @@
             Selection on data source is reflected in view.
             Does the view also need a cover selection API?
             
-        subclassing of IFWebView
+        subclassing of WebView
 */

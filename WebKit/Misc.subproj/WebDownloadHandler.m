@@ -1,18 +1,18 @@
 //
-//  IFDownloadHandler.m
+//  WebDownloadHandler.m
 //  WebKit
 //
 //  Created by Chris Blumenberg on Thu Apr 11 2002.
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
-#import <WebKit/IFDownloadHandler.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFDownloadHandler
+@implementation WebDownloadHandler
 
-- initWithDataSource:(IFWebDataSource *)dSource
+- initWithDataSource:(WebDataSource *)dSource
 {
     [super init];
     
@@ -77,7 +77,7 @@
     [fileHandle closeFile];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
     
-    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally){
+    if([dataSource contentPolicy] == WebContentPolicySaveAndOpenExternally){
         [workspace openFile:path];
     }
 }

@@ -23,46 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebKit/IFPlugin.h>
-#import <WebKit/IFPluginStream.h>
-#import <WebKit/IFPluginView.h>
-#import <WebKit/IFPluginDatabase.h>
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginStream.h>
+#import <WebKit/WebPluginView.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitDebug.h>
 
 NSArray *_pluginLocations(void);
 NSArray *_findPlugins(void);
 
-@implementation IFPluginDatabase
-static IFPluginDatabase *__IFPluginDatabase = nil;
+@implementation WebPluginDatabase
+static WebPluginDatabase *__IFPluginDatabase = nil;
 
 
-+ (IFPluginDatabase *)installedPlugins 
++ (WebPluginDatabase *)installedPlugins 
 {
     if(!__IFPluginDatabase){
-        __IFPluginDatabase  = [IFPluginDatabase alloc];
+        __IFPluginDatabase  = [WebPluginDatabase alloc];
         __IFPluginDatabase->plugins = _findPlugins();
         
-        // register plug-in IFDocumentViews and IFDocumentRepresentations
+        // register plug-in WebDocumentViews and WebDocumentRepresentations
         NSArray *mimes = [__IFPluginDatabase MIMETypes];
         NSString *mime;
         unsigned i;
         
         for(i=0; i<[mimes count]; i++){
             mime = [mimes objectAtIndex:i];
-            [IFWebView registerViewClass:[IFPluginView class] forMIMEType:mime];
-            [IFWebDataSource registerRepresentationClass:[IFPluginStream class] forMIMEType:mime];
+            [WebView registerViewClass:[WebPluginView class] forMIMEType:mime];
+            [WebDataSource registerRepresentationClass:[WebPluginStream class] forMIMEType:mime];
         }
     }
     return __IFPluginDatabase;
 }
 
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (IFPlugin *)pluginForMimeType:(NSString *)mimeType
+- (WebPlugin *)pluginForMimeType:(NSString *)mimeType
 {
     uint i, n;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     NSArray *mimeArray;
     
     for(i=0; i<[plugins count]; i++){      
@@ -77,10 +77,10 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (IFPlugin *)pluginForExtension:(NSString *)extension
+- (WebPlugin *)pluginForExtension:(NSString *)extension
 {
     uint i, n;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     NSArray *mimeArray;
     NSRange hasExtension;
 
@@ -97,10 +97,10 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (IFPlugin *)pluginWithFilename:(NSString *)filename
+- (WebPlugin *)pluginWithFilename:(NSString *)filename
 {
     uint i;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
@@ -119,7 +119,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
 - (NSArray *) MIMETypes
 {
     NSMutableArray *allHandledMIMETypes;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     NSArray *mimeArray;
     uint i, n;
         
@@ -163,7 +163,7 @@ NSArray *_findPlugins(void)
     NSArray *pluginDirectories, *files;
     NSString *file;
     NSMutableArray *pluginPaths, *pluginArray, *filenames;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     uint i, n;
     
     pluginDirectories = _pluginLocations();    
@@ -185,7 +185,7 @@ NSArray *_findPlugins(void)
     pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
     
     for(i=0; i<[pluginPaths count]; i++){
-        plugin = [IFPlugin alloc];
+        plugin = [WebPlugin alloc];
         if([plugin initWithPath:[pluginPaths objectAtIndex:i]]){
             [plugin retain];
             [pluginArray addObject:plugin];

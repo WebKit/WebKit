@@ -1,5 +1,5 @@
 //
-//  IFBookmark.h
+//  WebBookmark.h
 //  WebKit
 //
 //  Created by John Sullivan on Tue Apr 30 2002.
@@ -8,24 +8,24 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class IFBookmarkGroup;
+@class WebBookmarkGroup;
 
 typedef enum {
-    IFBookmarkTypeLeaf,
-    IFBookmarkTypeList,
-    IFBookmarkTypeSeparator,
-} IFBookmarkType;
+    WebBookmarkTypeLeaf,
+    WebBookmarkTypeList,
+    WebBookmarkTypeSeparator,
+} WebBookmarkType;
 
-@interface IFBookmark : NSObject <NSCopying> {
-    IFBookmark *_parent;
-    IFBookmarkGroup *_group;
+@interface WebBookmark : NSObject <NSCopying> {
+    WebBookmark *_parent;
+    WebBookmarkGroup *_group;
     NSString *_identifier;
 }
 
-+ (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
-+ (IFBookmark *)bookmarkOfType:(IFBookmarkType)type;
++ (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
++ (WebBookmark *)bookmarkOfType:(WebBookmarkType)type;
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
 - (NSDictionary *)dictionaryRepresentation;
 
 - (NSString *)title;
@@ -35,35 +35,35 @@ typedef enum {
 - (void)setImage:(NSImage *)image;
 
 // The type of bookmark
-- (IFBookmarkType)bookmarkType;
+- (WebBookmarkType)bookmarkType;
 
 // String intended to represent URL for leaf bookmarks. May not be a valid URL string.
-// This is nil if bookmarkType is not IFBookmarkTypeLeaf.
+// This is nil if bookmarkType is not WebBookmarkTypeLeaf.
 - (NSString *)URLString;
 
 // Sets the string intended to represent URL for leaf bookmarks. URLString need not be
-// a valid URL string. Does nothing if bookmarkType is not IFBookmarkTypeLeaf.
+// a valid URL string. Does nothing if bookmarkType is not WebBookmarkTypeLeaf.
 - (void)setURLString:(NSString *)URLString;
 
-// Array of child IFBookmarks. Returns nil if bookmarkType is not IFBookmarkTypeList.
+// Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
 - (NSArray *)children;
 
-// Number of children. Returns 0 if bookmarkType is not IFBookmarkTypeList.
+// Number of children. Returns 0 if bookmarkType is not WebBookmarkTypeList.
 - (unsigned)numberOfChildren;
 
-// Insert a bookmark into the list. Does nothing if bookmarkType is not IFBookmarkTypeList.
-- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index;
+// Insert a bookmark into the list. Does nothing if bookmarkType is not WebBookmarkTypeList.
+- (void)insertChild:(WebBookmark *)bookmark atIndex:(unsigned)index;
 
-// Remove a bookmark from the list. Does nothing if bookmarkType is not IFBookmarkTypeList.
-- (void)removeChild:(IFBookmark *)bookmark;
+// Remove a bookmark from the list. Does nothing if bookmarkType is not WebBookmarkTypeList.
+- (void)removeChild:(WebBookmark *)bookmark;
 
 // The parent of this bookmark, or nil if this is the top bookmark in a group
-- (IFBookmark *)parent;
+- (WebBookmark *)parent;
 
 // The group that this bookmark belongs to.
-- (IFBookmarkGroup *)group;
+- (WebBookmarkGroup *)group;
 
-// An NSString that can be used to uniquely identify this bookmark; use with +[IFBookmarkGroup bookmarkForIdentifier];
+// An NSString that can be used to uniquely identify this bookmark; use with +[WebBookmarkGroup bookmarkForIdentifier];
 - (NSString *)identifier;
 
 

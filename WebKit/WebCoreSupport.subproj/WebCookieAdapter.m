@@ -1,17 +1,17 @@
 //
-//  IFCookieAdapter.m
+//  WebCookieAdapter.m
 //  WebKit
 //
 //  Created by Maciej Stachowiak on Thu Jun 27 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFCookieAdapter.h"
-#import <WebFoundation/IFCookieManager.h>
+#import "WebCookieAdapter.h"
+#import <WebFoundation/WebCookieManager.h>
 #import <WebKit/WebKitDebug.h>
 
 
-@implementation IFCookieAdapter
+@implementation WebCookieAdapter
 
 + (void)createSharedAdapter
 {
@@ -24,13 +24,13 @@
 - (BOOL)cookiesEnabled
 {
     BOOL result;
-    id acceptCookiesPref = (id)CFPreferencesCopyAppValue((CFStringRef)IFAcceptCookiesPreference, (CFStringRef)IFWebFoundationPreferenceDomain);
+    id acceptCookiesPref = (id)CFPreferencesCopyAppValue((CFStringRef)WebAcceptCookiesPreference, (CFStringRef)WebFoundationPreferenceDomain);
 
-    if ([acceptCookiesPref isEqualTo:IFAcceptCookiesPreferenceNever]) {
+    if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceNever]) {
         result = NO;
-    } else if ([acceptCookiesPref isEqualTo:IFAcceptCookiesPreferenceAsk]) {
+    } else if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceAsk]) {
         result = YES;
-    } else if ([acceptCookiesPref isEqualTo:IFAcceptCookiesPreferenceAlways]) {
+    } else if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceAlways]) {
         result = YES;
     } else {
         // Treat missing or bad value as always accept
@@ -43,12 +43,12 @@
 
 - (NSString *)cookiesForURL:(NSURL *)url
 {
-    return [[[IFCookieManager sharedCookieManager] cookieRequestHeadersForURL:url] objectForKey:@"Cookie"];
+    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:url] objectForKey:@"Cookie"];
 }
 
 - (void)setCookies:(NSString *)cookies forURL:(NSURL *)url
 {
-    [[IFCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:url];    
+    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:url];    
 }
 
 @end

@@ -1,5 +1,5 @@
 //
-//  IFWebCoreViewFactory.m
+//  WebViewFactory.m
 //  WebKit
 //
 //  Created by Darin Adler on Tue May 07 2002.
@@ -7,16 +7,16 @@
 //
 
 
-#import <WebKit/IFNullPluginView.h>
-#import <WebKit/IFPlugin.h>
-#import <WebKit/IFPluginDatabase.h>
-#import <WebKit/IFPluginView.h>
-#import <WebKit/IFWebCoreViewFactory.h>
+#import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginView.h>
+#import <WebKit/WebViewFactory.h>
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
-@implementation IFWebCoreViewFactory
+@implementation WebViewFactory
 
 + (void)createSharedFactory;
 {
@@ -31,7 +31,7 @@
     NSMutableDictionary *arguments;
     NSString *mimeType, *extension;
     NSRange r1, r2, r3;
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     uint i;
         
     arguments = [NSMutableDictionary dictionary];
@@ -48,34 +48,34 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:mimeType];
+        plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:mimeType];
     } else {
         extension = [[pluginURL path] pathExtension];
-        plugin = [[IFPluginDatabase installedPlugins] pluginForExtension:extension];
+        plugin = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         mimeType = [plugin mimeTypeForExtension:extension];
     }
     
     if (plugin == nil) {
-        return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
+        return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
+    return [[[WebPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
 {
-    return [[IFPluginDatabase installedPlugins] plugins];
+    return [[WebPluginDatabase installedPlugins] plugins];
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
 {
-    IFPlugin *plugin;
+    WebPlugin *plugin;
     
-    plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
+    plugin = [[WebPluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }
     
-    return [[[IFPluginView alloc] initWithFrame:frame plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
+    return [[[WebPluginView alloc] initWithFrame:frame plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- *  IFBookmark_Private.h
+ *  WebBookmarkPrivate.h
  *  WebKit
  *
  *  Created by John Sullivan on Tue Apr 30 2002.
@@ -7,17 +7,17 @@
  *
  */
 
-#import <WebKit/IFBookmark.h>
+#import <WebKit/WebBookmark.h>
 
-#define IFBookmarkTypeKey		@"IFBookmarkType"
-#define IFBookmarkTypeLeafValue		@"IFBookmarkTypeLeaf"
-#define IFBookmarkTypeListValue		@"IFBookmarkTypeList"
-#define IFBookmarkTypeSeparatorValue	@"IFBookmarkTypeSeparator"
+#define WebBookmarkTypeKey		@"WebBookmarkType"
+#define WebBookmarkTypeLeafValue		@"WebBookmarkTypeLeaf"
+#define WebBookmarkTypeListValue		@"WebBookmarkTypeList"
+#define WebBookmarkTypeSeparatorValue	@"WebBookmarkTypeSeparator"
 
-@interface IFBookmark(IFPrivate)
+@interface WebBookmark(WebPrivate)
 
-- (void)_setParent:(IFBookmark *)parent;
-- (void)_setGroup:(IFBookmarkGroup *)group;
+- (void)_setParent:(WebBookmark *)parent;
+- (void)_setGroup:(WebBookmarkGroup *)group;
 
 - (unsigned)_numberOfDescendants;
 

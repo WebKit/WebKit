@@ -1,8 +1,8 @@
 /*	
-        IFPreferences.mm
+        WebPreferences.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import "IFPreferences.h"
+#import "WebPreferences.h"
 
 #import <WebKit/WebKitDebug.h>
 
@@ -28,20 +28,20 @@
 #define	WebKitAllowAnimatedImagesPreferenceKey	@"WebKitAllowAnimatedImagesPreferenceKey"
 #define	WebKitAllowAnimatedImageLoopingPreferenceKey	@"WebKitAllowAnimatedImageLoopingPreferenceKey"
 
-@implementation IFPreferences
+@implementation WebPreferences
 
-static IFPreferences *_standardPreferences = nil;
+static WebPreferences *_standardPreferences = nil;
 
-+ (IFPreferences *)standardPreferences
++ (WebPreferences *)standardPreferences
 {
     if (_standardPreferences == nil) {
-        _standardPreferences = [[IFPreferences alloc] init];
+        _standardPreferences = [[WebPreferences alloc] init];
     }
 
     return _standardPreferences;
 }
 
-// if we ever have more than one IFPreferences object, this would move to init
+// if we ever have more than one WebPreferences object, this would move to init
 + (void)load
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

@@ -1,5 +1,5 @@
 //
-//  IFCookieAdapter.h
+//  WebCookieAdapter.h
 //  WebKit
 //
 //  Created by Maciej Stachowiak on Thu Jun 27 2002.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/WebCoreCookieAdapter.h>
 
-@interface IFCookieAdapter : WebCoreCookieAdapter
+@interface WebCookieAdapter : WebCoreCookieAdapter
 {
 }
 

@@ -31,9 +31,9 @@
 #include <qstring.h>
 
 #ifdef __OBJC__
-@class IFURLHandle;
+@class WebResourceHandle;
 #else
-class IFURLHandle;
+class WebResourceHandle;
 #endif
 
 namespace KIO {
@@ -60,8 +60,8 @@ public:
     void addMetaData(const QString &key, const QString &value);
     void kill();
 
-    void setHandle(IFURLHandle *);
-    IFURLHandle *handle() const;
+    void setHandle(WebResourceHandle *);
+    WebResourceHandle *handle() const;
     
     NSURL *url() const;
 

@@ -1,4 +1,4 @@
-/*	IFWebDataSourcePrivate.h
+/*	WebDataSourcePrivate.h
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -6,29 +6,29 @@
         NSWebPageDataSource.
 */
 
-#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
 
-#import <WebKit/IFDocument.h>
-#import <WebKit/IFException.h>
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFImageRepresentation.h>
-#import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFMainURLHandleClient.h>
-#import <WebKit/IFTextRepresentation.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebView.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebException.h>
+#import <WebKit/WebHTMLRepresentation.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFError.h>
-#import <WebFoundation/IFNSDictionaryExtensions.h>
-#import <WebFoundation/IFNSStringExtensions.h>
-#import <WebFoundation/IFNSURLExtensions.h>
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebResourceHandle.h>
 
-@implementation IFWebDataSourcePrivate 
+@implementation WebDataSourcePrivate 
 
 - init
 {
@@ -40,7 +40,7 @@
     
     primaryLoadComplete = NO;
     
-    contentPolicy = IFContentPolicyNone;
+    contentPolicy = WebContentPolicyNone;
     
     return self;
 }
@@ -52,7 +52,7 @@
     WEBKIT_ASSERT(!loading);
     
     NSEnumerator *e = [[frames allValues] objectEnumerator];
-    IFWebFrame *frame;
+    WebFrame *frame;
     while ((frame = [e nextObject])) {
         [frame _parentDataSourceWillBeDeallocated];
     }
@@ -78,7 +78,7 @@
 
 @end
 
-@implementation IFWebDataSource (IFPrivate)
+@implementation WebDataSource (WebPrivate)
 
 - (void)_setResourceData:(NSData *)data
 {
@@ -86,7 +86,7 @@
     _private->resourceData = [data retain];
 }
 
-- (void)_setRepresentation:(id <IFDocumentRepresentation>) representation
+- (void)_setRepresentation:(id <WebDocumentRepresentation>) representation
 {
     [_private->representation release];
     _private->representation = [representation retain];
@@ -114,7 +114,7 @@
     [self _setLoading: _private->mainHandle || [_private->urlHandles count]];
 }
 
-- (void)_setController: (IFWebController *)controller
+- (void)_setController: (WebController *)controller
 {
     if (_private->loading) {
         [controller retain];
@@ -123,7 +123,7 @@
     _private->controller = controller;
 }
 
-- (void)_setParent: (IFWebDataSource *)p
+- (void)_setParent: (WebDataSource *)p
 {
     // Non-retained.
     _private->parent = p;
@@ -151,7 +151,7 @@
     
     [self _clearErrors];
     
-    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self];
+    _private->mainURLHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
     [_private->mainHandle addClient: _private->mainURLHandleClient];
     
     // Mark the start loading time.
@@ -165,7 +165,7 @@
     [_private->mainHandle loadInBackground];
 }
 
-- (void)_addURLHandle: (IFURLHandle *)handle
+- (void)_addURLHandle: (WebResourceHandle *)handle
 {
     if (_private->urlHandles == nil)
         _private->urlHandles = [[NSMutableArray alloc] init];
@@ -173,7 +173,7 @@
     [self _setLoading:YES];
 }
 
-- (void)_removeURLHandle: (IFURLHandle *)handle
+- (void)_removeURLHandle: (WebResourceHandle *)handle
 {
     [_private->urlHandles removeObject: handle];
     [self _updateLoading];
@@ -187,7 +187,7 @@
 - (void)_stopLoading
 {
     int i, count;
-    IFURLHandle *handle;
+    WebResourceHandle *handle;
 
     _private->stopping = YES;
     
@@ -207,9 +207,9 @@
 - (void)_recursiveStopLoading
 {
     NSArray *frames;
-    IFWebFrame *nextFrame;
+    WebFrame *nextFrame;
     int i, count;
-    IFWebDataSource *childDataSource, *childProvisionalDataSource;
+    WebDataSource *childDataSource, *childProvisionalDataSource;
     
     [self _stopLoading];
     
@@ -235,7 +235,7 @@
     if (title == nil) {
         trimmed = nil;
     } else {
-        trimmed = [title _IF_stringByTrimmingWhitespace];
+        trimmed = [title _web_stringByTrimmingWhitespace];
         if ([trimmed length] == 0)
             trimmed = nil;
     }
@@ -252,7 +252,7 @@
     
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
-    if ([[self webFrame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
+    if ([[self webFrame] _state] >= WebFrameStateCommittedPage)
         [[self _locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
@@ -263,12 +263,12 @@
     _private->finalURL = url;
 }
 
-- (id <IFLocationChangeHandler>)_locationChangeHandler
+- (id <WebLocationChangeHandler>)_locationChangeHandler
 {
     return _private->locationChangeHandler;
 }
 
-- (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l
+- (void)_setLocationChangeHandler: (id <WebLocationChangeHandler>)l
 {
     [l retain];
     [_private->locationChangeHandler release];
@@ -281,7 +281,7 @@
     _private->downloadPath = [path retain];
 }
 
-- (void) _setContentPolicy:(IFContentPolicy)policy
+- (void) _setContentPolicy:(WebContentPolicy)policy
 {
     _private->contentPolicy = policy;
 }
@@ -298,10 +298,10 @@
     _private->encoding = [encoding retain];
 }
 
-- (IFWebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <IFLocationChangeHandler>)handler;
+- (WebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <WebLocationChangeHandler>)handler;
 {
-    IFWebDataSource *childProvisionalDataSource, *childDataSource, *dataSource;
-    IFWebFrame *nextFrame;
+    WebDataSource *childProvisionalDataSource, *childDataSource, *dataSource;
+    WebFrame *nextFrame;
     NSArray *frames;
     uint i;
         
@@ -324,7 +324,7 @@
     return nil;
 }
 
-- (void)_setMainDocumentError: (IFError *)error
+- (void)_setMainDocumentError: (WebError *)error
 {
     [error retain];
     [_private->mainDocumentError release];
@@ -340,7 +340,7 @@
 }
 
 
-- (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription
+- (void)_addError: (WebError *)error forResource: (NSString *)resourceDescription
 {
     if (_private->errors == 0)
         _private->errors = [[NSMutableDictionary alloc] init];
@@ -353,7 +353,7 @@
 {
     if ([[self children] count] > 0){
         NSArray *subFrames = [self children];
-        IFWebFrame *subFrame;
+        WebFrame *subFrame;
         unsigned int i;
         id dview;
         for (i = 0; i < [subFrames count]; i++){
@@ -373,11 +373,11 @@
 
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            [IFHTMLRepresentation class], @"text/html",
-            [IFImageRepresentation class], @"image/jpeg",
-            [IFImageRepresentation class], @"image/gif",
-            [IFImageRepresentation class], @"image/png",
-            [IFTextRepresentation class], @"text/",
+            [WebHTMLRepresentation class], @"text/html",
+            [WebImageRepresentation class], @"image/jpeg",
+            [WebImageRepresentation class], @"image/gif",
+            [WebImageRepresentation class], @"image/png",
+            [WebTextRepresentation class], @"text/",
             nil];
     }
     
@@ -386,7 +386,7 @@
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [[self _repTypes] _IF_objectForMIMEType:MIMEType] != nil;
+    return [[self _repTypes] _web_objectForMIMEType:MIMEType] != nil;
 }
 
 - (void)_removeFromFrame

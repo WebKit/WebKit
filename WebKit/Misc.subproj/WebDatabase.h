@@ -1,11 +1,11 @@
-/*	IFDatabase.h
+/*	WebDatabase.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
 
-@interface IFDatabase : NSObject 
+@interface WebDatabase : NSObject 
 {
     NSString *path;
     unsigned count;
@@ -23,14 +23,14 @@
 @end
 
 
-@interface IFDatabase (IFDatabaseCreation)
+@interface WebDatabase (WebDatabaseCreation)
 
 -(id)initWithPath:(NSString *)thePath;
 
 @end
 
 
-@interface IFDatabase (IFDatabaseManagement)
+@interface WebDatabase (WebDatabaseManagement)
 
 -(BOOL)open;
 -(BOOL)close;

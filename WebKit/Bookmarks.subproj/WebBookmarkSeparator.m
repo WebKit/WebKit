@@ -1,20 +1,20 @@
 //
-//  IFBookmarkSeparator.m
+//  WebBookmarkSeparator.m
 //  WebKit
 //
 //  Created by John Sullivan on Mon May 20 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFBookmarkSeparator.h"
+#import "WebBookmarkSeparator.h"
 
-#import "IFBookmark_Private.h"
+#import "WebBookmarkPrivate.h"
 #import <WebKit/WebKitDebug.h>
 
 
-@implementation IFBookmarkSeparator
+@implementation WebBookmarkSeparator
 
-- (id)initWithGroup:(IFBookmarkGroup *)group
+- (id)initWithGroup:(WebBookmarkGroup *)group
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
 
@@ -24,9 +24,9 @@
     return self;    
 }
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
-    if (![[dict objectForKey:IFBookmarkTypeKey] isEqualToString:IFBookmarkTypeSeparatorValue]) {
+    if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeSeparatorValue]) {
         WEBKITDEBUG("Can't initialize Bookmark separator from non-separator type");
         return nil;
     }
@@ -36,17 +36,17 @@
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    return [NSDictionary dictionaryWithObject:IFBookmarkTypeSeparatorValue forKey:IFBookmarkTypeKey];
+    return [NSDictionary dictionaryWithObject:WebBookmarkTypeSeparatorValue forKey:WebBookmarkTypeKey];
 }
 
-- (IFBookmarkType)bookmarkType
+- (WebBookmarkType)bookmarkType
 {
-    return IFBookmarkTypeSeparator;
+    return WebBookmarkTypeSeparator;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[IFBookmarkSeparator alloc] initWithGroup:[self group]];
+    return [[WebBookmarkSeparator alloc] initWithGroup:[self group]];
 }
 
 - (NSString *)title

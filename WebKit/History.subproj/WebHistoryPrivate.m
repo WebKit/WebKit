@@ -1,23 +1,23 @@
 //
-//  IFWebHistoryPrivate.m
+//  WebHistoryPrivate.m
 //  WebKit
 //
 //  Created by John Sullivan on Tue Feb 19 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFWebHistoryPrivate.h"
+#import "WebHistoryPrivate.h"
 
-#import <WebFoundation/IFNSCalendarDateExtensions.h>
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSCalendarDateExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebKit/WebKitDebug.h>
-#import "IFURIEntry.h"
+#import "WebHistoryItem.h"
 
-@interface IFWebHistoryPrivate (Private)
--(IFURIEntry *)_entryForURLString:(NSString *)urlString;
+@interface WebHistoryPrivate (Private)
+-(WebHistoryItem *)_entryForURLString:(NSString *)urlString;
 @end
 
-@implementation IFWebHistoryPrivate
+@implementation WebHistoryPrivate
 
 #pragma mark OBJECT FRAMEWORK
 
@@ -70,7 +70,7 @@
     //FIXME: just does linear search through days; inefficient if many days
     count = [_datesWithEntries count];
     for (*index = 0; *index < count; ++*index) {
-        NSComparisonResult result = [date _IF_compareDay: [_datesWithEntries objectAtIndex: *index]];
+        NSComparisonResult result = [date _web_compareDay: [_datesWithEntries objectAtIndex: *index]];
         if (result == NSOrderedSame) {
             return YES;
         }
@@ -82,7 +82,7 @@
     return NO;
 }
 
-- (void)insertEntry: (IFURIEntry *)entry atDateIndex: (int)dateIndex
+- (void)insertEntry: (WebHistoryItem *)entry atDateIndex: (int)dateIndex
 {
     int index, count;
     NSMutableArray *entriesForDate;
@@ -107,7 +107,7 @@
 - (BOOL)removeEntryForURLString: (NSString *)urlString
 {
     NSMutableArray *entriesForDate;
-    IFURIEntry *entry;
+    WebHistoryItem *entry;
     int dateIndex;
     BOOL foundDate;
 
@@ -135,7 +135,7 @@
 }
 
 
-- (void)addEntry: (IFURIEntry *)entry
+- (void)addEntry: (WebHistoryItem *)entry
 {
     int dateIndex;
     NSString *urlString;
@@ -157,9 +157,9 @@
     [_urlDictionary setObject: entry forKey: urlString];
 }
 
-- (BOOL)removeEntry: (IFURIEntry *)entry
+- (BOOL)removeEntry: (WebHistoryItem *)entry
 {
-    IFURIEntry *matchingEntry;
+    WebHistoryItem *matchingEntry;
     NSString *urlString;
 
     urlString = [[entry url] absoluteString];
@@ -209,7 +209,7 @@
 - (void)addEntries:(NSArray *)newEntries
 {
     NSEnumerator *enumerator;
-    IFURIEntry *entry;
+    WebHistoryItem *entry;
 
     // There is no guarantee that the incoming entries are in any particular
     // order, but if this is called with a set of entries that were created by
@@ -222,12 +222,12 @@
     }
 }
 
-- (IFURIEntry *)updateURL:(NSString *)newURLString
+- (WebHistoryItem *)updateURL:(NSString *)newURLString
                     title:(NSString *)newTitle
              displayTitle:(NSString *)newDisplayTitle
                    forURL:(NSString *)oldURLString
 {
-    IFURIEntry *entry;
+    WebHistoryItem *entry;
 
     WEBKIT_ASSERT (oldURLString != nil);
 
@@ -237,7 +237,7 @@
     }
 
     if (newURLString != nil) {
-        [entry setURL:[NSURL _IF_URLWithString:newURLString]];
+        [entry setURL:[NSURL _web_URLWithString:newURLString]];
     }
 
     if (newTitle != nil) {
@@ -285,7 +285,7 @@
 
 #pragma mark URL MATCHING
 
--(IFURIEntry *)_entryForURLString:(NSString *)urlString
+-(WebHistoryItem *)_entryForURLString:(NSString *)urlString
 {
     return [_urlDictionary objectForKey: urlString];
 }
@@ -309,7 +309,7 @@
                                                       hours:0 minutes:0 seconds:0];
 }
 
-// Return a flat array of IFURIEntries. Leaves out entries older than the age limit.
+// Return a flat array of WebHistoryItems. Leaves out entries older than the age limit.
 // Stops filling array when item count limit is reached, even if there are currently
 // more entries than that.
 - (NSArray *)arrayRepresentation
@@ -332,7 +332,7 @@
         NSArray *entries;
 
         // skip remaining days if they are older than the age limit
-        if ([[_datesWithEntries objectAtIndex:dateIndex] _IF_compareDay:ageLimitDate] != NSOrderedDescending) {
+        if ([[_datesWithEntries objectAtIndex:dateIndex] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
             break;
         }
 
@@ -393,9 +393,9 @@
     ageLimitPassed = NO;
 
     while ((dictionary = [enumerator nextObject]) != nil) {
-        IFURIEntry *entry;
+        WebHistoryItem *entry;
 
-        entry = [[[IFURIEntry alloc] initFromDictionaryRepresentation: dictionary] autorelease];
+        entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation: dictionary] autorelease];
 
         if ([entry url] == nil) {
             // entry without url is useless; data on disk must have been bad; ignore this one
@@ -404,7 +404,7 @@
 
         // test against date limit
         if (!ageLimitPassed) {
-            if ([[entry lastVisitedDate] _IF_compareDay:ageLimitDate] != NSOrderedDescending) {
+            if ([[entry lastVisitedDate] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
                 continue;
             } else {
                 ageLimitPassed = YES;

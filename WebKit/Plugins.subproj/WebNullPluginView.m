@@ -1,19 +1,19 @@
 /*	
-    IFNullPluginView.mm
+    WebNullPluginView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFNullPluginView.h>
+#import <WebKit/WebNullPluginView.h>
 
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFNSViewExtras.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebNSViewExtras.h>
 
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 static NSImage *image = nil;
 
-@implementation IFNullPluginView
+@implementation WebNullPluginView
 
 - initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments
 {
@@ -24,7 +24,7 @@ static NSImage *image = nil;
     if (self) {
         // Set the view's image to the null plugin icon
         if (!image) {
-            bundle = [NSBundle bundleForClass:[IFNullPluginView class]];
+            bundle = [NSBundle bundleForClass:[WebNullPluginView class]];
             imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
             image = [[NSImage alloc] initWithContentsOfFile:imagePath];
         }
@@ -33,7 +33,7 @@ static NSImage *image = nil;
         mimeType = [mime retain];
         pluginPageString = [arguments objectForKey:@"pluginspage"];
         if(pluginPageString)
-            pluginPage = [[NSURL _IF_URLWithString:pluginPageString] retain];
+            pluginPage = [[NSURL _web_URLWithString:pluginPageString] retain];
         
         errorSent = NO;
     }
@@ -48,13 +48,13 @@ static NSImage *image = nil;
 }
 
 - (void)drawRect:(NSRect)rect {
-    IFWebView *webView;
-    IFWebController *webController;
+    WebView *webView;
+    WebController *webController;
     
     [super drawRect:rect];
     if(!errorSent){
         errorSent = YES;
-        webView = (IFWebView *)[self _IF_superviewWithName:@"IFWebView"];
+        webView = (WebView *)[self _web_superviewWithName:@"WebView"];
         webController = [webView controller];
         [[webController policyHandler] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }

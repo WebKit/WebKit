@@ -25,7 +25,7 @@
 
 #import <WebCoreBridge.h>
 
-#import <WebCoreFrame.h>
+#import <WebCoreFrameBridge.h>
 
 #import <KWQKHTMLPartImpl.h>
 #import <khtmlview.h>

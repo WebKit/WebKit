@@ -1,13 +1,13 @@
 /*	
-        IFImageRenderer.m
+        WebImageRenderer.m
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFException.h>
-#import <WebKit/IFImageRenderer.h>
+#import <WebKit/WebException.h>
+#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFImageRenderer
+@implementation WebImageRenderer
 
 static NSMutableArray *activeImageRenderers;
 
@@ -17,7 +17,7 @@ static NSMutableArray *activeImageRenderers;
 
     count = [activeImageRenderers count];
     for (i = count-1; i >= 0; i--){
-        IFImageRenderer *renderer = [activeImageRenderers objectAtIndex: i];
+        WebImageRenderer *renderer = [activeImageRenderers objectAtIndex: i];
         if (renderer->frameView == aView){
             [renderer stopAnimation];
         }
@@ -28,7 +28,7 @@ static NSMutableArray *activeImageRenderers;
 
 - copyWithZone:(NSZone *)zone
 {
-    IFImageRenderer *copy = [super copyWithZone:zone];
+    WebImageRenderer *copy = [super copyWithZone:zone];
     
     // FIXME: If we copy while doing an incremental load, it won't work.
     

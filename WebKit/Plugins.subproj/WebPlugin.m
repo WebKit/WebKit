@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "IFPlugin.h"
+#import "WebPlugin.h"
 #import "WebKitDebug.h"
 
 typedef void (* FunctionPointer) (void);
@@ -31,7 +31,7 @@ typedef void (* TransitionVector) (void);
 FunctionPointer functionPointerForTVector(TransitionVector);
 TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
-@implementation IFPlugin
+@implementation WebPlugin
 
 - (SInt16)_openResourceFile
 {
@@ -202,17 +202,17 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
-            WEBKITDEBUG("IFPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
+            WEBKITDEBUG("WebPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
             return NO;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if(err != noErr){
-            WEBKITDEBUG("IFPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
+            WEBKITDEBUG("WebPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
             return NO;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if(err != noErr){
-            WEBKITDEBUG("IFPlugin: load: GetDiskFragment failed. Error=%d\n", err);
+            WEBKITDEBUG("WebPlugin: load: GetDiskFragment failed. Error=%d\n", err);
             return NO;
         }
         pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);

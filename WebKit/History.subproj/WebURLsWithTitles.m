@@ -1,17 +1,17 @@
 //
-//  IFURLsWithTitles.m
+//  WebURLsWithTitles.m
 //  WebBrowser
 //
 //  Created by John Sullivan on Wed Jun 12 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFURLsWithTitles.h"
+#import "WebURLsWithTitles.h"
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFNSURLExtensions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
-@implementation IFURLsWithTitles
+@implementation WebURLsWithTitles
 
 + (NSArray *)arrayWithIFURLsWithTitlesPboardType
 {
@@ -19,7 +19,7 @@
     static NSArray *cannedArray = nil;
 
     if (cannedArray == nil) {
-        cannedArray = [[NSArray arrayWithObject:IFURLsWithTitlesPboardType] retain];
+        cannedArray = [[NSArray arrayWithObject:WebURLsWithTitlesPboardType] retain];
     }
 
     return cannedArray;
@@ -52,7 +52,7 @@
     }
 
     [pasteboard setPropertyList:[NSArray arrayWithObjects:URLStrings, titlesOrEmptyStrings, nil]
-                        forType:IFURLsWithTitlesPboardType];
+                        forType:WebURLsWithTitlesPboardType];
 }
 
 +(NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard
@@ -61,7 +61,7 @@
         return nil;
     }
 
-    return [[pasteboard propertyListForType:IFURLsWithTitlesPboardType] objectAtIndex:1];
+    return [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:1];
 }
 
 +(NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard
@@ -74,11 +74,11 @@
         return nil;
     }
 
-    URLStrings = [[pasteboard propertyListForType:IFURLsWithTitlesPboardType] objectAtIndex:0];
+    URLStrings = [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:0];
     count = [URLStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _IF_URLWithString:[URLStrings objectAtIndex:index]]];
+        [URLs addObject:[NSURL _web_URLWithString:[URLStrings objectAtIndex:index]]];
     }
 
     return URLs;

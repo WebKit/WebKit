@@ -1,20 +1,20 @@
 /*	
-    IFTextRepresentation.h
+    WebTextRepresentation.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-@class IFError;
-@class IFWebDataSource;
-@protocol IFDocumentRepresentation;
+@class WebError;
+@class WebDataSource;
+@protocol WebDocumentRepresentation;
 
-@interface IFTextRepresentation : NSObject <IFDocumentRepresentation>
+@interface WebTextRepresentation : NSObject <WebDocumentRepresentation>
 {
 
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource;
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
 @end

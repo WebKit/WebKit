@@ -1,20 +1,20 @@
 /*	
-    IFStandardPanels.h
+    WebStandardPanels.h
     
     Copyright 2002 Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@class IFStandardPanelsPrivate;
+@class WebStandardPanelsPrivate;
 
-@interface IFStandardPanels : NSObject
+@interface WebStandardPanels : NSObject
 {
 @private
-    IFStandardPanelsPrivate *_privatePanels;
+    WebStandardPanelsPrivate *_privatePanels;
 }
 
-+(IFStandardPanels *)sharedStandardPanels;
++(WebStandardPanels *)sharedStandardPanels;
 
 -(void)setUseStandardAuthenticationPanel:(BOOL)use;
 -(BOOL)useStandardAuthenticationPanel;

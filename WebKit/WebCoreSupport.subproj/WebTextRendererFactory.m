@@ -1,16 +1,16 @@
 //
-//  IFTextRendererFactory.m
+//  WebTextRendererFactory.m
 //  WebKit
 //
 //  Created by Darin Adler on Thu May 02 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFTextRendererFactory.h>
-#import <WebKit/IFTextRenderer.h>
+#import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
-@interface IFFontCacheKey : NSObject
+@interface WebFontCacheKey : NSObject
 {
     NSString *family;
     NSFontTraitMask traits;
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation IFFontCacheKey
+@implementation WebFontCacheKey
 
 - initWithFamily:(NSString *)f traits:(NSFontTraitMask)t size:(float)s;
 {
@@ -50,7 +50,7 @@
 
 - (BOOL)isEqual:(id)o
 {
-    IFFontCacheKey *other = o;
+    WebFontCacheKey *other = o;
     return [self class] == [other class]
         && [family isEqualToString:other->family]
         && traits == other->traits
@@ -59,7 +59,7 @@
 
 @end
 
-@implementation IFTextRendererFactory
+@implementation WebTextRendererFactory
 
 + (void)createSharedFactory;
 {
@@ -69,9 +69,9 @@
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
-+ (IFTextRendererFactory *)sharedFactory;
++ (WebTextRendererFactory *)sharedFactory;
 {
-    return (IFTextRendererFactory *)[super sharedFactory];
+    return (WebTextRendererFactory *)[super sharedFactory];
 }
 
 - init
@@ -90,11 +90,11 @@
     [super dealloc];
 }
 
-- (IFTextRenderer *)rendererWithFont:(NSFont *)font
+- (WebTextRenderer *)rendererWithFont:(NSFont *)font
 {
-    IFTextRenderer *renderer = [cache objectForKey:font];
+    WebTextRenderer *renderer = [cache objectForKey:font];
     if (renderer == nil) {
-        renderer = [[IFTextRenderer alloc] initWithFont:font];
+        renderer = [[WebTextRenderer alloc] initWithFont:font];
         [cache setObject:renderer forKey:font];
         [renderer release];
     }
@@ -145,7 +145,7 @@
         fontCache = [[NSMutableDictionary alloc] init];
     }
     
-    fontKey = [[IFFontCacheKey alloc] initWithFamily:family traits:traits size:size];
+    fontKey = [[WebFontCacheKey alloc] initWithFamily:family traits:traits size:size];
     font = [fontCache objectForKey:fontKey];
     if (font == nil) {
         font = [self fontWithFamily:family traits:traits size:size];

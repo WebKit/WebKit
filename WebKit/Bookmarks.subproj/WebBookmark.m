@@ -1,24 +1,24 @@
 //
-//  IFBookmark.m
+//  WebBookmark.m
 //  WebKit
 //
 //  Created by John Sullivan on Tue Apr 30 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFBookmark.h>
-#import <WebKit/IFBookmark_Private.h>
-#import <WebKit/IFBookmarkGroup.h>
-#import <WebKit/IFBookmarkGroup_Private.h>
-#import <WebKit/IFBookmarkLeaf.h>
-#import <WebKit/IFBookmarkList.h>
-#import <WebKit/IFBookmarkSeparator.h>
+#import <WebKit/WebBookmark.h>
+#import <WebKit/WebBookmarkPrivate.h>
+#import <WebKit/WebBookmarkGroup.h>
+#import <WebKit/WebBookmarkGroupPrivate.h>
+#import <WebKit/WebBookmarkLeaf.h>
+#import <WebKit/WebBookmarkList.h>
+#import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebKitDebug.h>
 
 // to get NSRequestConcreteImplementation
 #import <Foundation/NSPrivateDecls.h>
 
-@implementation IFBookmark
+@implementation WebBookmark
 
 static unsigned _highestUsedID = 0;
 
@@ -30,7 +30,7 @@ static unsigned _highestUsedID = 0;
 - (id)init
 {
     [super init];
-    _identifier = [[IFBookmark _generateUniqueIdentifier] retain];
+    _identifier = [[WebBookmark _generateUniqueIdentifier] retain];
     return self;
 }
 
@@ -76,10 +76,10 @@ static unsigned _highestUsedID = 0;
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
-- (IFBookmarkType)bookmarkType
+- (WebBookmarkType)bookmarkType
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return IFBookmarkTypeLeaf;
+    return WebBookmarkTypeLeaf;
 }
 
 - (NSString *)URLString
@@ -107,34 +107,34 @@ static unsigned _highestUsedID = 0;
     return 0;
 }
 
-- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
+- (void)insertChild:(WebBookmark *)bookmark atIndex:(unsigned)index
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
-- (void)removeChild:(IFBookmark *)bookmark
+- (void)removeChild:(WebBookmark *)bookmark
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
 
-- (IFBookmark *)parent
+- (WebBookmark *)parent
 {
     return _parent;
 }
 
-- (void)_setParent:(IFBookmark *)parent
+- (void)_setParent:(WebBookmark *)parent
 {
     // Don't retain parent, to avoid circular ownership that prevents dealloc'ing
     // when a parent with children is removed from a group and has no other references.
     _parent = parent;
 }
 
-- (IFBookmarkGroup *)group
+- (WebBookmarkGroup *)group
 {
     return _group;
 }
 
-- (void)_setGroup:(IFBookmarkGroup *)group
+- (void)_setGroup:(WebBookmarkGroup *)group
 {
     if (group == _group) {
         return;
@@ -147,33 +147,33 @@ static unsigned _highestUsedID = 0;
     [group _addedBookmark:self];
 }
 
-+ (IFBookmark *)bookmarkOfType:(IFBookmarkType)type
++ (WebBookmark *)bookmarkOfType:(WebBookmarkType)type
 {
-    if (type == IFBookmarkTypeList) {
-        return [[[IFBookmarkList alloc] init] autorelease];
-    } else if (type == IFBookmarkTypeLeaf) {
-        return [[[IFBookmarkLeaf alloc] init] autorelease];
-    } else if (type == IFBookmarkTypeSeparator) {
-        return [[[IFBookmarkSeparator alloc] init] autorelease];
+    if (type == WebBookmarkTypeList) {
+        return [[[WebBookmarkList alloc] init] autorelease];
+    } else if (type == WebBookmarkTypeLeaf) {
+        return [[[WebBookmarkLeaf alloc] init] autorelease];
+    } else if (type == WebBookmarkTypeSeparator) {
+        return [[[WebBookmarkSeparator alloc] init] autorelease];
     }
 
     return nil;
 }
 
 
-+ (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
++ (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     NSString *typeString;
     
     Class class = nil;
     
-    typeString = [dict objectForKey:IFBookmarkTypeKey];
-    if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
-        class = [IFBookmarkList class];
-    } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
-        class = [IFBookmarkLeaf class];
-    } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
-        class = [IFBookmarkSeparator class];
+    typeString = [dict objectForKey:WebBookmarkTypeKey];
+    if ([typeString isEqualToString:WebBookmarkTypeListValue]) {
+        class = [WebBookmarkList class];
+    } else if ([typeString isEqualToString:WebBookmarkTypeLeafValue]) {
+        class = [WebBookmarkLeaf class];
+    } else if ([typeString isEqualToString:WebBookmarkTypeSeparatorValue]) {
+        class = [WebBookmarkSeparator class];
     }
     
     if (class) {
@@ -184,7 +184,7 @@ static unsigned _highestUsedID = 0;
     return nil;
 }
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;

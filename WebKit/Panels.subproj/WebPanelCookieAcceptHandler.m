@@ -1,18 +1,18 @@
 /*
- IFPanelCookieAcceptHandler.m
+ WebPanelCookieAcceptHandler.m
 
  Copyright 2002 Apple, Inc. All rights reserved.
  */
 
 
 #import <Cocoa/Cocoa.h>
-#import <WebKit/IFPanelCookieAcceptHandler.h>
-#import <WebKit/IFStandardPanels.h>
-#import <WebFoundation/IFNSDictionaryExtensions.h>
+#import <WebKit/WebPanelCookieAcceptHandler.h>
+#import <WebKit/WebStandardPanels.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
 
-static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
+static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
-@implementation IFPanelCookieAcceptHandler
+@implementation WebPanelCookieAcceptHandler
 
 -(id)init
 {
@@ -31,24 +31,24 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
     [super dealloc];
 }
 
-// IFCookieAcceptHandler methods
--(BOOL)readyToStartCookieAcceptCheck:(IFCookieAcceptRequest *)request
+// WebCookieAcceptHandler methods
+-(BOOL)readyToStartCookieAcceptCheck:(WebCookieAcceptRequest *)request
 {
-    id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
 
     if (window == nil) {
-        window = IFModalDialogPretendWindow;
+        window = WebModalDialogPretendWindow;
     }
 
     return [windowToPanel objectForKey:window] == nil;
 }
 
--(void)startCookieAcceptCheck:(IFCookieAcceptRequest *)request
+-(void)startCookieAcceptCheck:(WebCookieAcceptRequest *)request
 {
-    id window = [[IFStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
 
     if (window == nil) {
-        window = IFModalDialogPretendWindow;
+        window = WebModalDialogPretendWindow;
     }
 
     if ([windowToPanel objectForKey:window] != nil) {
@@ -58,7 +58,7 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
 
     NSWindow *panel;
 
-    if (window == IFModalDialogPretendWindow) {
+    if (window == WebModalDialogPretendWindow) {
 	if ([[request cookies] count] == 1) {
 	    panel = NSGetAlertPanel(@"Accept cookie?",
 				    @"Server \"%@\" has sent 1 cookie.",
@@ -71,8 +71,8 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
 				    [[request url] host], [[request cookies] count]);
 	}
 	
-	[requestToWindow _IF_setObject:window forUncopiedKey:request];
-	[windowToPanel _IF_setObject:panel forUncopiedKey:window];
+	[requestToWindow _web_setObject:window forUncopiedKey:request];
+	[windowToPanel _web_setObject:panel forUncopiedKey:window];
 	[panel release];
 	
         [self doneWithCheck:panel returnCode:[NSApp runModalForWindow:panel] contextInfo:request];
@@ -83,18 +83,18 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
 	    NSBeginAlertSheet(@"Accept cookies?", @"Accept", @"Reject", nil, window, self, @selector(doneWithCheck:returnCode:contextInfo:), nil, request, @"Server \"%@\" has sent %d cookies.", [[request url] host], [[request cookies] count]);
 	}
 	panel = [window attachedSheet];
-	[requestToWindow _IF_setObject:window forUncopiedKey:request];
-	[windowToPanel _IF_setObject:panel forUncopiedKey:window];
+	[requestToWindow _web_setObject:window forUncopiedKey:request];
+	[windowToPanel _web_setObject:panel forUncopiedKey:window];
     }
 }
 
--(void)cancelCookieAcceptCheck:(IFCookieAcceptRequest *)request
+-(void)cancelCookieAcceptCheck:(WebCookieAcceptRequest *)request
 {
     id window = [requestToWindow objectForKey:request];
     if (window != nil) {
         NSWindow *panel = [windowToPanel objectForKey:window];
         [panel close];
-        if (window == IFModalDialogPretendWindow) {
+        if (window == WebModalDialogPretendWindow) {
             [NSApp stopModalWithCode:NSAlertAlternateReturn];
         } else {
             [NSApp endSheet:panel returnCode:NSAlertAlternateReturn];
@@ -104,7 +104,7 @@ static NSString *IFModalDialogPretendWindow = @"IFModalDialogPretendWindow";
 
 - (void)doneWithCheck:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
 {
-    IFCookieAcceptRequest *request = (IFCookieAcceptRequest *)contextInfo;
+    WebCookieAcceptRequest *request = (WebCookieAcceptRequest *)contextInfo;
     
     id window = [requestToWindow objectForKey:request];
     if (window != nil) {

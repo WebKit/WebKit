@@ -1,5 +1,5 @@
 /*	
-        IFWebView.h
+        WebView.h
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Public header file.
@@ -11,25 +11,25 @@
     ============================================================================= 
 */
 
-@class IFWebDataSource;
-@class IFWebController;
-@class IFWebViewPrivate;
-@protocol IFDocumentLoading;
-@protocol IFDocumentView;
+@class WebDataSource;
+@class WebController;
+@class WebViewPrivate;
+@protocol WebDocumentLoading;
+@protocol WebDocumentView;
 
-@interface IFWebView : NSView
+@interface WebView : NSView
 {
 @private
-    IFWebViewPrivate *_private;
+    WebViewPrivate *_private;
 }
 
 - initWithFrame: (NSRect) frame;
 
 // Note that the controller is not retained.
-- (IFWebController *)controller;
+- (WebController *)controller;
 
 - frameScrollView;
-- (NSView <IFDocumentView> *)documentView;
+- (NSView <WebDocumentView> *)documentView;
 
 - (BOOL)isDocumentHTML;
 
@@ -37,10 +37,10 @@
 - (BOOL)allowsScrolling;
 
 // Extends the views that WebKit supports
-// The view must conform to the IFDocumentLoading protocol
+// The view must conform to the WebDocumentLoading protocol
 + (void)registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType;
 
-// Called when the contentPolicy is set to IFContentPolicyShow
-+ (id <IFDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType;
+// Called when the contentPolicy is set to WebContentPolicyShow
++ (id <WebDocumentLoading>) createViewForMIMEType:(NSString *)MIMEType;
 
 @end

@@ -1,26 +1,26 @@
 //
-//  IFStringTruncator.m
+//  WebStringTruncator.m
 //
 //  Created by Darin Adler on Fri May 10 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 //  Complete rewrite with API similar to slow truncator by Al Dul
 
-#import <WebKit/IFStringTruncator.h>
+#import <WebKit/WebStringTruncator.h>
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/WebKitDebug.h>
-#import <WebKit/IFTextRendererFactory.h>
-#import <WebKit/IFTextRenderer.h>
+#import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebTextRenderer.h>
 
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026
 
 static NSFont *currentFont;
-static IFTextRenderer *currentRenderer;
+static WebTextRenderer *currentRenderer;
 static float currentEllipsisWidth;
 
-@implementation IFStringTruncator
+@implementation WebStringTruncator
 
 + (unsigned)centerTruncateString:(NSString *)string length:(unsigned)length keepCount:(unsigned)keepCount toBuffer:(unichar *)buffer
 {
@@ -74,8 +74,8 @@ static float currentEllipsisWidth;
         [currentFont release];
         currentFont = [font retain];
         [currentRenderer release];
-        [IFTextRendererFactory createSharedFactory];
-        currentRenderer = [[[IFTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+        [WebTextRendererFactory createSharedFactory];
+        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 applyRounding: NO attemptFontSubstitution: YES];
     }

@@ -1,13 +1,13 @@
-/*	IFLoadProgress.mm
+/*	WebLoadProgress.mm
 
         Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFLoadProgress.h>
+#import <WebKit/WebLoadProgress.h>
 
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebResourceHandle.h>
 
-@implementation IFLoadProgress
+@implementation WebLoadProgress
 
 - (id)init
 {
@@ -26,26 +26,26 @@
     return self;
 }
 
-- (id)initWithURLHandle:(IFURLHandle *)handle
+- (id)initWithResourceHandle:(WebResourceHandle *)handle
 {
     int b = [handle contentLengthReceived];
-    int t = [handle statusCode] == IFURLHandleStatusLoadComplete ? b : [handle contentLength];
+    int t = [handle statusCode] == WebResourceHandleStatusLoadComplete ? b : [handle contentLength];
     return [self initWithBytesSoFar:b totalToLoad:t];
 }
 
-+ (IFLoadProgress *)progress
++ (WebLoadProgress *)progress
 {
-    return [[[IFLoadProgress alloc] init] autorelease];
+    return [[[WebLoadProgress alloc] init] autorelease];
 }
 
-+ (IFLoadProgress *)progressWithBytesSoFar:(int)bytes totalToLoad:(int)total
++ (WebLoadProgress *)progressWithBytesSoFar:(int)bytes totalToLoad:(int)total
 {
-    return [[[IFLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:total] autorelease];
+    return [[[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:total] autorelease];
 }
 
-+ (IFLoadProgress *)progressWithURLHandle:(IFURLHandle *)handle
++ (WebLoadProgress *)progressWithResourceHandle:(WebResourceHandle *)handle
 {
-    return [[[IFLoadProgress alloc] initWithURLHandle:handle] autorelease];
+    return [[[WebLoadProgress alloc] initWithResourceHandle:handle] autorelease];
 }
 
 - (int)bytesSoFar

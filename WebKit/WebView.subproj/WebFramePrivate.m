@@ -1,39 +1,39 @@
 /*	
-    IFWebFramePrivate.mm
+    WebFramePrivate.mm
 	    
     Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/WebFramePrivate.h>
 
-#import <WebKit/IFDocument.h>
-#import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFPreferencesPrivate.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebCoreFrame.h>
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebKitErrors.h>
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
 
 static const char * const stateNames[6] = {
     "zero state",
-    "IFWEBFRAMESTATE_UNINITIALIZED",
-    "IFWEBFRAMESTATE_PROVISIONAL",
-    "IFWEBFRAMESTATE_COMMITTED_PAGE",
-    "IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE",
-    "IFWEBFRAMESTATE_COMPLETE"
+    "WebFrameStateUninitialized",
+    "WebFrameStateProvisional",
+    "WebFrameStateCommittedPage",
+    "WebFrameStateLayoutAcceptable",
+    "WebFrameStateComplete"
 };
 
-@implementation IFWebFramePrivate
+@implementation WebFramePrivate
 
 - (void)dealloc
 {
@@ -59,15 +59,15 @@ static const char * const stateNames[6] = {
     name = [n retain];
 }
 
-- (IFWebView *)webView { return webView; }
-- (void)setWebView: (IFWebView *)v 
+- (WebView *)webView { return webView; }
+- (void)setWebView: (WebView *)v 
 { 
     [webView autorelease];
     webView = [v retain];
 }
 
-- (IFWebDataSource *)dataSource { return dataSource; }
-- (void)setDataSource: (IFWebDataSource *)d
+- (WebDataSource *)dataSource { return dataSource; }
+- (void)setDataSource: (WebDataSource *)d
 {
     if (dataSource != d) {
         [dataSource _removeFromFrame];
@@ -76,14 +76,14 @@ static const char * const stateNames[6] = {
     }
 }
 
-- (IFWebController *)controller { return controller; }
-- (void)setController: (IFWebController *)c
+- (WebController *)controller { return controller; }
+- (void)setController: (WebController *)c
 { 
     controller = c; // not retained (yet)
 }
 
-- (IFWebDataSource *)provisionalDataSource { return provisionalDataSource; }
-- (void)setProvisionalDataSource: (IFWebDataSource *)d
+- (WebDataSource *)provisionalDataSource { return provisionalDataSource; }
+- (void)setProvisionalDataSource: (WebDataSource *)d
 { 
     if (provisionalDataSource != d) {
         [provisionalDataSource autorelease];
@@ -93,7 +93,7 @@ static const char * const stateNames[6] = {
 
 @end
 
-@implementation IFWebFrame (IFPrivate)
+@implementation WebFrame (WebPrivate)
 
 - (void)_parentDataSourceWillBeDeallocated
 {
@@ -102,12 +102,12 @@ static const char * const stateNames[6] = {
     [_private->provisionalDataSource _setParent:nil];
 }
 
-- (void)_setController: (IFWebController *)controller
+- (void)_setController: (WebController *)controller
 {
     [_private setController: controller];
 }
 
-- (void)_setDataSource: (IFWebDataSource *)ds
+- (void)_setDataSource: (WebDataSource *)ds
 {
     [_private setDataSource: ds];
     [ds _setController: [self controller]];
@@ -126,14 +126,14 @@ static const char * const stateNames[6] = {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[_private->state]);
     
     _private->scheduledLayoutPending = NO;
-    if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
-        NSView <IFDocumentView> *documentView = [[self webView] documentView];
+    if (_private->state == WebFrameStateLayoutAcceptable) {
+        NSView <WebDocumentView> *documentView = [[self webView] documentView];
         
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
         if ([[self webView] isDocumentHTML]) {
-            IFHTMLView *htmlView = (IFHTMLView *)documentView;
+            WebHTMLView *htmlView = (WebHTMLView *)documentView;
             
             [htmlView setNeedsLayout: YES];
             
@@ -165,16 +165,16 @@ static const char * const stateNames[6] = {
 - (void)_transitionProvisionalToLayoutAcceptable
 {
     switch ([self _state]) {
-    	case IFWEBFRAMESTATE_COMMITTED_PAGE:
+    	case WebFrameStateCommittedPage:
         {
-            [self _setState: IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE];
+            [self _setState: WebFrameStateLayoutAcceptable];
                     
             // Start a timer to guarantee that we get an initial layout after
             // X interval, even if the document and resources are not completely
             // loaded.
-            BOOL timedDelayEnabled = [[IFPreferences standardPreferences] _initialTimedLayoutEnabled];
+            BOOL timedDelayEnabled = [[WebPreferences standardPreferences] _initialTimedLayoutEnabled];
             if (timedDelayEnabled) {
-                NSTimeInterval defaultTimedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
+                NSTimeInterval defaultTimedDelay = [[WebPreferences standardPreferences] _initialTimedLayoutDelay];
                 double timeSinceStart;
 
                 // If the delay getting to the commited state exceeds the initial layout delay, go
@@ -194,17 +194,17 @@ static const char * const stateNames[6] = {
             break;
         }
 
-        case IFWEBFRAMESTATE_PROVISIONAL:
-        case IFWEBFRAMESTATE_COMPLETE:
-        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
+        case WebFrameStateProvisional:
+        case WebFrameStateComplete:
+        case WebFrameStateLayoutAcceptable:
         {
             break;
         }
         
-        case IFWEBFRAMESTATE_UNINITIALIZED:
+        case WebFrameStateUninitialized:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE from %s", stateNames[_private->state]] userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to WebFrameStateLayoutAcceptable from %s", stateNames[_private->state]] userInfo: nil] raise];
             return;
         }
     }
@@ -214,10 +214,10 @@ static const char * const stateNames[6] = {
 - (void)_transitionProvisionalToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
-    NSView <IFDocumentView> *documentView = [[self webView] documentView];
+    NSView <WebDocumentView> *documentView = [[self webView] documentView];
     
     switch ([self _state]) {
-    	case IFWEBFRAMESTATE_PROVISIONAL:
+    	case WebFrameStateProvisional:
         {
             WEBKIT_ASSERT (documentView != nil);
 
@@ -231,7 +231,7 @@ static const char * const stateNames[6] = {
             // Now that the provisional data source is committed, release it.
             [_private setProvisionalDataSource: nil];
         
-            [self _setState: IFWEBFRAMESTATE_COMMITTED_PAGE];
+            [self _setState: WebFrameStateCommittedPage];
         
             [[[self dataSource] _locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
             
@@ -242,46 +242,46 @@ static const char * const stateNames[6] = {
             break;
         }
         
-        case IFWEBFRAMESTATE_UNINITIALIZED:
-        case IFWEBFRAMESTATE_COMMITTED_PAGE:
-        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
-        case IFWEBFRAMESTATE_COMPLETE:
+        case WebFrameStateUninitialized:
+        case WebFrameStateCommittedPage:
+        case WebFrameStateLayoutAcceptable:
+        case WebFrameStateComplete:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED_PAGE from %s", stateNames[_private->state]] userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to WebFrameStateCommittedPage from %s", stateNames[_private->state]] userInfo: nil] raise];
             return;
         }
     }
 }
 
-- (IFWebFrameState)_state
+- (WebFrameState)_state
 {
     return _private->state;
 }
 
-- (void)_setState: (IFWebFrameState)newState
+- (void)_setState: (WebFrameState)newState
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[_private->state], stateNames[newState]);
     if ([self controller])
         WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
-    if (newState == IFWEBFRAMESTATE_COMPLETE && self == [[self controller] mainFrame]){
+    if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] inputURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSNumber numberWithInt:_private->state], IFPreviousFrameState,
-                    [NSNumber numberWithInt:newState], IFCurrentFrameState, nil];
+                    [NSNumber numberWithInt:_private->state], WebPreviousFrameState,
+                    [NSNumber numberWithInt:newState], WebCurrentFrameState, nil];
                     
-    [[NSNotificationCenter defaultCenter] postNotificationName:IFFrameStateChangedNotification object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebFrameStateChangedNotification object:self userInfo:userInfo];
     
     _private->state = newState;
     
-    if (_private->state == IFWEBFRAMESTATE_PROVISIONAL){
+    if (_private->state == WebFrameStateProvisional){
         [[[self webView] frameScrollView] setDrawsBackground: NO];
     }
     
-    if (_private->state == IFWEBFRAMESTATE_COMPLETE){
+    if (_private->state == WebFrameStateComplete){
         NSScrollView *sv = [[self webView] frameScrollView];
         [sv setDrawsBackground: YES];
         [[sv contentView] setCopiesOnScroll: YES];
@@ -294,48 +294,48 @@ static const char * const stateNames[6] = {
 
     switch ([self _state]) {
         // Shouldn't ever be in this state.
-        case IFWEBFRAMESTATE_UNINITIALIZED:
+        case WebFrameStateUninitialized:
         {
-            [[NSException exceptionWithName:NSGenericException reason:@"invalid state IFWEBFRAMESTATE_UNINITIALIZED during completion check with error" userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason:@"invalid state WebFrameStateUninitialized during completion check with error" userInfo: nil] raise];
             return;
         }
         
-        case IFWEBFRAMESTATE_PROVISIONAL:
+        case WebFrameStateProvisional:
         {
-            IFWebDataSource *pd = [self provisionalDataSource];
+            WebDataSource *pd = [self provisionalDataSource];
             
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional\n", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
             if ([[pd errors] count] != 0 || [pd mainDocumentError]) {
                 // Check all children first.
-                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[pd errors] count]);
+                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateProvisional, %d errors\n", [[self name] cString], [[pd errors] count]);
                 if (![pd isLoading]) {
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional, load done\n", [[self name] cString]);
 
                     [[pd _locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
                     
-                    [self _setState: IFWEBFRAMESTATE_COMPLETE];
+                    [self _setState: WebFrameStateComplete];
                     return;
                 }
             }
             return;
         }
         
-        case IFWEBFRAMESTATE_COMMITTED_PAGE:
-        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
+        case WebFrameStateCommittedPage:
+        case WebFrameStateLayoutAcceptable:
         {
-            IFWebDataSource *ds = [self dataSource];
+            WebDataSource *ds = [self dataSource];
             
-            //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
+            //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![ds isLoading]) {
                 id thisView = [self webView];
-                NSView <IFDocumentView> *thisDocumentView = [thisView documentView];
+                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
 
-                [self _setState: IFWEBFRAMESTATE_COMPLETE];
+                [self _setState: WebFrameStateComplete];
                 
                 [[ds _bridge] end];
 
@@ -352,7 +352,7 @@ static const char * const stateNames[6] = {
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
                 if ([thisView isDocumentHTML]){
-                    IFHTMLView *hview = (IFHTMLView *)thisDocumentView;
+                    WebHTMLView *hview = (WebHTMLView *)thisDocumentView;
                     [hview setNeedsLayout: YES];
                 }
                 [thisDocumentView layout];
@@ -380,10 +380,10 @@ static const char * const stateNames[6] = {
             // A resource was loaded, but the entire frame isn't complete.  Schedule a
             // layout.
             else {
-                if ([self _state] == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
-                    BOOL resourceTimedDelayEnabled = [[IFPreferences standardPreferences] _resourceTimedLayoutEnabled];
+                if ([self _state] == WebFrameStateLayoutAcceptable) {
+                    BOOL resourceTimedDelayEnabled = [[WebPreferences standardPreferences] _resourceTimedLayoutEnabled];
                     if (resourceTimedDelayEnabled) {
-                        NSTimeInterval timedDelay = [[IFPreferences standardPreferences] _resourceTimedLayoutDelay];
+                        NSTimeInterval timedDelay = [[WebPreferences standardPreferences] _resourceTimedLayoutDelay];
                         [self _scheduleLayout: timedDelay];
                     }
                 }
@@ -391,9 +391,9 @@ static const char * const stateNames[6] = {
             return;
         }
         
-        case IFWEBFRAMESTATE_COMPLETE:
+        case WebFrameStateComplete:
         {
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMPLETE\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateComplete\n", [[self name] cString]);
             return;
         }
         
@@ -406,7 +406,7 @@ static const char * const stateNames[6] = {
     }
 }
 
-+ (void)_recursiveCheckCompleteFromFrame: (IFWebFrame *)fromFrame
++ (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame
 {
     int i, count;
     NSArray *childFrames;
@@ -414,10 +414,10 @@ static const char * const stateNames[6] = {
     childFrames = [[fromFrame dataSource] children];
     count = [childFrames count];
     for (i = 0; i < count; i++) {
-        IFWebFrame *childFrame;
+        WebFrame *childFrame;
         
         childFrame = [childFrames objectAtIndex: i];
-        [IFWebFrame _recursiveCheckCompleteFromFrame: childFrame];
+        [WebFrame _recursiveCheckCompleteFromFrame: childFrame];
         [childFrame _isLoadComplete];
     }
     [fromFrame _isLoadComplete];
@@ -430,34 +430,34 @@ static const char * const stateNames[6] = {
     WEBKIT_ASSERT ([self controller] != nil);
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
-    [IFWebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
+    [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
-- (IFWebCoreFrame *)_frameBridge
+- (WebFrameBridge *)_frameBridge
 {
     return _private->frameBridge;
 }
 
-- (BOOL)_shouldShowDataSource:(IFWebDataSource *)dataSource
+- (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource
 {
-    id <IFWebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
+    id <WebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     NSURL *url = [dataSource inputURL];
-    IFFileURLPolicy fileURLPolicy;
+    WebFileURLPolicy fileURLPolicy;
     NSString *path = [url path];
     BOOL isDirectory, fileExists;
-    IFError *error;
+    WebError *error;
     
-    IFURLPolicy urlPolicy = [policyHandler URLPolicyForURL:url];
+    WebURLPolicy urlPolicy = [policyHandler URLPolicyForURL:url];
     
-    if(urlPolicy == IFURLPolicyUseContentPolicy){
+    if(urlPolicy == WebURLPolicyUseContentPolicy){
                     
         if([url isFileURL]){
         
             fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
             
-            NSString *type = [IFWebController _MIMETypeForFile: path];
+            NSString *type = [WebController _MIMETypeForFile: path];
                 
             if(isDirectory){
                 fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: nil dataSource: dataSource isDirectory:YES];
@@ -465,62 +465,62 @@ static const char * const stateNames[6] = {
                 fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: type dataSource: dataSource isDirectory:NO];
             }
             
-            if(fileURLPolicy == IFFileURLPolicyIgnore)
+            if(fileURLPolicy == WebFileURLPolicyIgnore)
                 return NO;
             
             if(!fileExists){
-                error = [[IFError alloc] initWithErrorCode:IFErrorCodeFileDoesntExist 
-                            inDomain:IFErrorCodeDomainWebKit failingURL:url];
+                error = [[WebError alloc] initWithErrorCode:WebErrorFileDoesNotExist 
+                            inDomain:WebErrorDomainWebKit failingURL:url];
                 [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                 return NO;
             }
             
             if(![fileManager isReadableFileAtPath:path]){
-                error = [[IFError alloc] initWithErrorCode:IFErrorCodeFileNotReadable 
-                            inDomain:IFErrorCodeDomainWebKit failingURL:url];
+                error = [[WebError alloc] initWithErrorCode:WebErrorFileNotReadable 
+                            inDomain:WebErrorDomainWebKit failingURL:url];
                 [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                 return NO;
             }
             
-            if(fileURLPolicy == IFFileURLPolicyUseContentPolicy){
+            if(fileURLPolicy == WebFileURLPolicyUseContentPolicy){
                 if(isDirectory){
-                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowDirectory 
-                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                    error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowDirectory 
+                                inDomain:WebErrorDomainWebKit failingURL: url];
                     [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                     return NO;
                 }
-                else if(![IFWebController canShowMIMEType: type]){
-                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowMIMEType 
-                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                else if(![WebController canShowMIMEType: type]){
+                    error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
+                                inDomain:WebErrorDomainWebKit failingURL: url];
                     [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                     return NO;
                 }else{
                     // File exists, its readable, we can show it
                     return YES;
                 }
-            }else if(fileURLPolicy == IFFileURLPolicyOpenExternally){
+            }else if(fileURLPolicy == WebFileURLPolicyOpenExternally){
                 if(![workspace openFile:path]){
-                    error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForFile 
-                                inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                    error = [[WebError alloc] initWithErrorCode:WebErrorCouldNotFindApplicationForFile 
+                                inDomain:WebErrorDomainWebKit failingURL: url];
                     [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                 }
                 return NO;
-            }else if(fileURLPolicy == IFFileURLPolicyReveal){
+            }else if(fileURLPolicy == WebFileURLPolicyReveal){
                 if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
-                        error = [[IFError alloc] initWithErrorCode:IFErrorCodeFinderCouldntOpenDirectory 
-                                    inDomain:IFErrorCodeDomainWebKit failingURL: url];
+                        error = [[WebError alloc] initWithErrorCode:WebErrorFinderCouldNotOpenDirectory 
+                                    inDomain:WebErrorDomainWebKit failingURL: url];
                         [policyHandler unableToImplementFileURLPolicy: error forDataSource: dataSource];
                     }
                 return NO;
             }else{
                 [NSException raise:NSInvalidArgumentException format:
-                    @"fileURLPolicyForMIMEType:dataSource:isDirectory: returned an invalid IFFileURLPolicy"];
+                    @"fileURLPolicyForMIMEType:dataSource:isDirectory: returned an invalid WebFileURLPolicy"];
                 return NO;
             }
         }else{
-            if(![IFURLHandle canInitWithURL:url]){
-            	error = [[IFError alloc] initWithErrorCode:IFErrorCodeCantShowURL 
-                        inDomain:IFErrorCodeDomainWebKit failingURL: url];
+            if(![WebResourceHandle canInitWithURL:url]){
+            	error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowURL 
+                        inDomain:WebErrorDomainWebKit failingURL: url];
                 [policyHandler unableToImplementURLPolicyForURL: url error: error];
                 return NO;
             }
@@ -528,24 +528,24 @@ static const char * const stateNames[6] = {
             return YES;
         }
     }
-    else if(urlPolicy == IFURLPolicyOpenExternally){
+    else if(urlPolicy == WebURLPolicyOpenExternally){
         if(![workspace openURL:url]){
-            error = [[IFError alloc] initWithErrorCode:IFErrorCodeCouldntFindApplicationForURL 
-                        inDomain:IFErrorCodeDomainWebKit failingURL: url];
+            error = [[WebError alloc] initWithErrorCode:WebErrorCouldNotFindApplicationForURL 
+                        inDomain:WebErrorDomainWebKit failingURL: url];
             [policyHandler unableToImplementURLPolicyForURL: url error: error];
         }
         return NO;
     }
-    else if(urlPolicy == IFURLPolicyIgnore){
+    else if(urlPolicy == WebURLPolicyIgnore){
         return NO;
     }
     else{
-        [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid IFURLPolicy"];
+        [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid WebURLPolicy"];
         return NO;
     }
 }
 
-- (void)_setProvisionalDataSource:(IFWebDataSource *)d
+- (void)_setProvisionalDataSource:(WebDataSource *)d
 {
     [_private setProvisionalDataSource:d];
 }

@@ -1,15 +1,15 @@
 /*
-    IFNSViewExtras.h
+    WebNSViewExtras.h
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
 #import <AppKit/AppKit.h>
 
-@class IFWebView;
+@class WebView;
 
-@interface NSView (IFExtensions)
+@interface NSView (WebExtras)
 
-- (NSView *) _IF_superviewWithName:(NSString *)viewName;
-- (IFWebView *)_IF_parentWebView;
+- (NSView *) _web_superviewWithName:(NSString *)viewName;
+- (WebView *)_web_parentWebView;
 
 @end

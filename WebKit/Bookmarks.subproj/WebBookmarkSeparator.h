@@ -1,17 +1,17 @@
 //
-//  IFBookmarkSeparator.h
+//  WebBookmarkSeparator.h
 //  WebKit
 //
 //  Created by John Sullivan on Mon May 20 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFBookmark.h>
+#import <WebKit/WebBookmark.h>
 
 
-@interface IFBookmarkSeparator : IFBookmark {
+@interface WebBookmarkSeparator : WebBookmark {
 }
 
-- (id)initWithGroup:(IFBookmarkGroup *)group;
+- (id)initWithGroup:(WebBookmarkGroup *)group;
 
 @end

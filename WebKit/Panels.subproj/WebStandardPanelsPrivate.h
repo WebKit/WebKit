@@ -1,15 +1,15 @@
 /*	
-    IFStandardPanelsPrivate.h
+    WebStandardPanelsPrivate.h
     
     Copyright 2002 Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFStandardPanels.h>
-#import <WebKit/IFWebController.h>
+#import <WebKit/WebStandardPanels.h>
+#import <WebKit/WebController.h>
 
-@interface IFStandardPanels (Private)
+@interface WebStandardPanels (Private)
 
--(void)_didStartLoadingURL:(NSURL *)url inController:(IFWebController *)controller;
--(void)_didStopLoadingURL:(NSURL *)url inController:(IFWebController *)controller;
+-(void)_didStartLoadingURL:(NSURL *)url inController:(WebController *)controller;
+-(void)_didStopLoadingURL:(NSURL *)url inController:(WebController *)controller;
 
 @end

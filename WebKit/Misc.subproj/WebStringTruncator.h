@@ -1,5 +1,5 @@
 //
-//  IFStringTruncator.h
+//  WebStringTruncator.h
 //
 //  Created by Darin Adler on Fri May 10 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 
 @class NSFont;
 
-@interface IFStringTruncator : NSObject
+@interface WebStringTruncator : NSObject
 {
 }
 

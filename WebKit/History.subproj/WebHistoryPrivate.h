@@ -1,5 +1,5 @@
 //
-//  IFWebHistoryPrivate.h
+//  WebHistoryPrivate.h
 //  WebKit
 //
 //  Created by John Sullivan on Tue Feb 19 2002.
@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFURIEntry;
+@class WebHistoryItem;
 
-@interface IFWebHistoryPrivate : NSObject {
+@interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_urlDictionary;
     NSMutableArray *_datesWithEntries;
@@ -20,12 +20,12 @@
 
 - (id)initWithFile: (NSString *)file;
 
-- (void)addEntry: (IFURIEntry *)entry;
+- (void)addEntry: (WebHistoryItem *)entry;
 - (void)addEntries:(NSArray *)newEntries;
-- (BOOL)removeEntry: (IFURIEntry *)entry;
+- (BOOL)removeEntry: (WebHistoryItem *)entry;
 - (BOOL)removeEntries: (NSArray *)entries;
 - (BOOL)removeAllEntries;
-- (IFURIEntry *)updateURL:(NSString *)newURLString
+- (WebHistoryItem *)updateURL:(NSString *)newURLString
                     title:(NSString *)newTitle
              displayTitle:(NSString *)newDisplayTitle
                    forURL:(NSString *)oldURLString;

@@ -1,15 +1,15 @@
 /*
- IFPanelAuthenticationHandler.h
+ WebPanelAuthenticationHandler.h
 
  Copyright 2002 Apple, Inc. All rights reserved.
  */
 
 #import <Foundation/Foundation.h>
-#import <WebFoundation/IFCookieManager.h>
+#import <WebFoundation/WebCookieManager.h>
 
 @class NSWindow;
 
-@interface IFPanelCookieAcceptHandler : NSObject  <IFCookieAcceptHandler>
+@interface WebPanelCookieAcceptHandler : NSObject  <WebCookieAcceptHandler>
 {
     NSMutableDictionary *windowToPanel;
     NSMutableDictionary *requestToWindow;
@@ -17,9 +17,9 @@
 
 - (void)doneWithCheck:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo;
 
-// IFCookieAcceptHandler methods
--(BOOL)readyToStartCookieAcceptCheck:(IFCookieAcceptRequest *)request;
--(void)startCookieAcceptCheck:(IFCookieAcceptRequest *)request;
--(void)cancelCookieAcceptCheck:(IFCookieAcceptRequest *)request;
+// WebCookieAcceptHandler methods
+-(BOOL)readyToStartCookieAcceptCheck:(WebCookieAcceptRequest *)request;
+-(void)startCookieAcceptCheck:(WebCookieAcceptRequest *)request;
+-(void)cancelCookieAcceptCheck:(WebCookieAcceptRequest *)request;
 
 @end

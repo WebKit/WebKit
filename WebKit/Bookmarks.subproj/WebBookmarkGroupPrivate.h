@@ -1,5 +1,5 @@
 /*
- *  IFBookmarkGroup_Private.h
+ *  WebBookmarkGroupPrivate.h
  *  WebKit
  *
  *  Created by John Sullivan on Thu May 2 2002.
@@ -7,15 +7,15 @@
  *
  */
 
-#import <WebKit/IFBookmarkGroup.h>
+#import <WebKit/WebBookmarkGroup.h>
 
-@interface IFBookmarkGroup(IFPrivate)
+@interface WebBookmarkGroup(WebPrivate)
 
-- (void)_bookmarkDidChange:(IFBookmark *)bookmark;
-- (void)_bookmarkChildrenDidChange:(IFBookmark *)bookmark;
+- (void)_bookmarkDidChange:(WebBookmark *)bookmark;
+- (void)_bookmarkChildrenDidChange:(WebBookmark *)bookmark;
 
-- (void)_removedBookmark:(IFBookmark *)bookmark;
-- (void)_addedBookmark:(IFBookmark *)bookmark;
+- (void)_removedBookmark:(WebBookmark *)bookmark;
+- (void)_addedBookmark:(WebBookmark *)bookmark;
 
 @end
 

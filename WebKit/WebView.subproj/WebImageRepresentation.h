@@ -1,22 +1,22 @@
 /*	
-    IFImageRepresentation.h
+    WebImageRepresentation.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@class IFError;
-@class IFWebDataSource;
-@class IFImageRenderer;
-@protocol IFDocumentRepresentation;
+@class WebError;
+@class WebDataSource;
+@class WebImageRenderer;
+@protocol WebDocumentRepresentation;
 
-@interface IFImageRepresentation : NSObject <IFDocumentRepresentation>
+@interface WebImageRepresentation : NSObject <WebDocumentRepresentation>
 {
-    IFImageRenderer *image;
+    WebImageRenderer *image;
 }
 
-- (IFImageRenderer *)image;
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource;
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource;
+- (WebImageRenderer *)image;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
 @end

@@ -1,18 +1,18 @@
 /*
-    IFAuthenticationPanel.m
+    WebAuthenticationPanel.m
 
     Copyright 2002 Apple, Inc. All rights reserved.
 */
 
 
-#import <WebKit/IFAuthenticationPanel.h>
-#import <WebKit/IFStandardPanelsPrivate.h>
+#import <WebKit/WebAuthenticationPanel.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 
-#define IFAuthenticationPanelNibName @"IFAuthenticationPanel"
+#define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 
-@implementation IFAuthenticationPanel
+@implementation WebAuthenticationPanel
 
 -(id)initWithCallback:(id)cb selector:(SEL)sel
 {
@@ -59,12 +59,12 @@
 - (BOOL)loadNib
 {
     if (!nibLoaded) {
-        if ([NSBundle loadNibNamed:IFAuthenticationPanelNibName owner:self]) {
+        if ([NSBundle loadNibNamed:WebAuthenticationPanelNibName owner:self]) {
             nibLoaded = YES;
             [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
         } else {
             NSLog(@"%s:%d  %s: couldn't load nib named '%@'",
-                  __FILE__, __LINE__, __FUNCTION__,IFAuthenticationPanelNibName);
+                  __FILE__, __LINE__, __FUNCTION__,WebAuthenticationPanelNibName);
             return FALSE;
         }
     }
@@ -74,7 +74,7 @@
 // Methods related to displaying the panel
 
 
--(void)setUpForRequest:(IFAuthenticationRequest *)req
+-(void)setUpForRequest:(WebAuthenticationRequest *)req
 {
     [self loadNib];
 
@@ -99,20 +99,20 @@
     }
 }
 
-- (void)runAsModalDialogWithRequest:(IFAuthenticationRequest *)req
+- (void)runAsModalDialogWithRequest:(WebAuthenticationRequest *)req
 {
     [self setUpForRequest:req];
     usingSheet = FALSE;
-    IFAuthenticationResult *result = nil;
+    WebAuthenticationResult *result = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        result = [IFAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
+        result = [WebAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
     }
 
     [callback performSelector:selector withObject:req withObject:result];
 }
 
-- (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(IFAuthenticationRequest *)req
+- (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(WebAuthenticationRequest *)req
 {
     WEBKIT_ASSERT(!usingSheet);
 
@@ -126,14 +126,14 @@
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
 {
-    IFAuthenticationResult *result = nil;
-    IFAuthenticationRequest *req;
+    WebAuthenticationResult *result = nil;
+    WebAuthenticationRequest *req;
 
     WEBKIT_ASSERT(usingSheet);
     WEBKIT_ASSERT(request != nil);
 
     if (returnCode == 0) {
-        result = [IFAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
+        result = [WebAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];
     }
 
     // We take this tricky approach to nilling out and releasing the request,

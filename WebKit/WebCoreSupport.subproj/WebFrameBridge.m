@@ -1,27 +1,27 @@
 //
-//  IFWebCoreFrame.m
+//  WebFrameBridge.m
 //  WebKit
 //
 //  Created by Darin Adler on Sun Jun 16 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFWebCoreFrame.h>
+#import <WebKit/WebFrameBridge.h>
 
-#import <WebFoundation/IFURLCacheLoaderConstants.h>
+#import <WebFoundation/WebCacheLoaderConstants.h>
 
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFWebCoreFrame
+@implementation WebFrameBridge
 
-// owned by the IFWebFrame
+// owned by the WebFrame
 
-- initWithWebFrame:(IFWebFrame *)f
+- initWithWebFrame:(WebFrame *)f
 {
     [super init];
     
@@ -30,14 +30,14 @@
     return self;
 }
 
-- (IFWebView *)view
+- (WebView *)view
 {
     return [frame webView];
 }
 
-- (IFHTMLView *)HTMLView
+- (WebHTMLView *)HTMLView
 {
-    return (IFHTMLView *)[[self view] documentView];
+    return (WebHTMLView *)[[self view] documentView];
 }
 
 - (WebCoreBridge *)bridge
@@ -54,9 +54,9 @@
     return [[frame dataSource] _bridge];
 }
 
-- (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(IFWebDataSource *)parent
+- (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(WebDataSource *)parent
 {
-    IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
     [newDataSource _setParent:parent];
     if ([frame setProvisionalDataSource:newDataSource]) {
         [frame startLoading];
@@ -71,15 +71,15 @@
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data
 {
-    // When posting, use the IFURLHandleFlagLoadFromOrigin load flag. 
+    // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
     // This prevents a potential bug which may cause a page
     // with a form that uses itself as an action to be returned 
     // from the cache without submitting.
     NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-        data, IFHTTPURLHandleRequestData,
-        @"POST", IFHTTPURLHandleRequestMethod,
+        data, WebHTTPResourceHandleRequestData,
+        @"POST", WebHTTPResourceHandleRequestMethod,
         nil];
-    [self loadURL:URL attributes:attributes flags:IFURLHandleFlagLoadFromOrigin withParent:[[frame dataSource] parent]];
+    [self loadURL:URL attributes:attributes flags:WebResourceHandleFlagLoadFromOrigin withParent:[[frame dataSource] parent]];
     [attributes release];
 }
 

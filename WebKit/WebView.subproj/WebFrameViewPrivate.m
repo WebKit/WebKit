@@ -1,4 +1,4 @@
-/*	IFWebViewPrivate.mm
+/*	WebViewPrivate.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -6,18 +6,18 @@
         NSWebPageView.
 */
 
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
-#import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFImageView.h>
-#import <WebKit/IFTextView.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebImageView.h>
+#import <WebKit/WebTextView.h>
 
-#import <WebFoundation/IFNSDictionaryExtensions.h>
+#import <WebFoundation/WebNSDictionaryExtras.h>
 
-@implementation IFWebViewPrivate
+@implementation WebViewPrivate
 
 - init
 {
@@ -38,7 +38,7 @@
 
 @end
 
-@implementation IFWebView (IFPrivate)
+@implementation WebView (WebPrivate)
 
 - (void)_setMarginWidth: (int)w
 {
@@ -66,13 +66,13 @@
 }
 
 
-- (void)_setController: (IFWebController *)controller
+- (void)_setController: (WebController *)controller
 {
     // Not retained; the controller owns the view.
     _private->controller = controller;    
 }
 
-- (IFWebController *)_controller
+- (WebController *)_controller
 {
     return _private->controller;
 }
@@ -209,11 +209,11 @@
 
     if (!viewTypes) {
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            [IFHTMLView class], @"text/html",
-            [IFTextView class], @"text/",
-            [IFImageView class], @"image/jpeg",
-            [IFImageView class], @"image/gif",
-            [IFImageView class], @"image/png",
+            [WebHTMLView class], @"text/html",
+            [WebTextView class], @"text/",
+            [WebImageView class], @"image/jpeg",
+            [WebImageView class], @"image/gif",
+            [WebImageView class], @"image/png",
             nil];
     }
     
@@ -222,7 +222,7 @@
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [[self _viewTypes] _IF_objectForMIMEType:MIMEType] != nil;
+    return [[self _viewTypes] _web_objectForMIMEType:MIMEType] != nil;
 }
 
 - (void)_goBack

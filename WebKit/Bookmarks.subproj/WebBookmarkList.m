@@ -1,26 +1,26 @@
 //
-//  IFBookmarkList.m
+//  WebBookmarkList.m
 //  WebKit
 //
 //  Created by John Sullivan on Tue Apr 30 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFBookmarkList.h>
-#import <WebKit/IFBookmarkLeaf.h>
-#import <WebKit/IFBookmarkSeparator.h>
-#import <WebKit/IFBookmark_Private.h>
-#import <WebKit/IFBookmarkGroup_Private.h>
+#import <WebKit/WebBookmarkList.h>
+#import <WebKit/WebBookmarkLeaf.h>
+#import <WebKit/WebBookmarkSeparator.h>
+#import <WebKit/WebBookmarkPrivate.h>
+#import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #define TitleKey		@"Title"
 #define ChildrenKey		@"Children"
 
-@implementation IFBookmarkList
+@implementation WebBookmarkList
 
 - (id)initWithTitle:(NSString *)title
               image:(NSImage *)image
-              group:(IFBookmarkGroup *)group
+              group:(WebBookmarkGroup *)group
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
     
@@ -34,10 +34,10 @@
     return self;
 }
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     NSArray *storedChildren;
-    IFBookmark *child;
+    WebBookmark *child;
     unsigned index, count;
     
     WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
@@ -54,7 +54,7 @@
     if (storedChildren != nil) {
         count = [storedChildren count];
         for (index = 0; index < count; ++index) {
-            child = [IFBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:index]
+            child = [WebBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:index]
                                                            withGroup:group];	
 
             if (child != nil) {
@@ -79,14 +79,14 @@
         [dict setObject:_title forKey:TitleKey];
     }
 
-    [dict setObject:IFBookmarkTypeListValue forKey:IFBookmarkTypeKey];
+    [dict setObject:WebBookmarkTypeListValue forKey:WebBookmarkTypeKey];
 
     childCount = [self numberOfChildren];
     if (childCount > 0) {
         childrenAsDictionaries = [NSMutableArray arrayWithCapacity:childCount];
 
         for (index = 0; index < childCount; ++index) {
-            IFBookmark *child;
+            WebBookmark *child;
 
             child = [_list objectAtIndex:index];
             [childrenAsDictionaries addObject:[child dictionaryRepresentation]];
@@ -108,16 +108,16 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    IFBookmarkList *copy;
+    WebBookmarkList *copy;
     unsigned index, count;
     
-    copy = [[IFBookmarkList alloc] initWithTitle:[self title]
+    copy = [[WebBookmarkList alloc] initWithTitle:[self title]
                                            image:[self image]
                                            group:[self group]];
 
     count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {
-        IFBookmark *childCopy;
+        WebBookmark *childCopy;
 
         childCopy = [[[_list objectAtIndex:index] copyWithZone:zone] autorelease];
         [copy insertChild:childCopy atIndex:index];
@@ -179,9 +179,9 @@
     [[self group] _bookmarkDidChange:self]; 
 }
 
-- (IFBookmarkType)bookmarkType
+- (WebBookmarkType)bookmarkType
 {
-    return IFBookmarkTypeList;
+    return WebBookmarkTypeList;
 }
 
 - (NSArray *)children
@@ -198,7 +198,7 @@
 {
     unsigned result;
     unsigned index, count;
-    IFBookmark *child;
+    WebBookmark *child;
 
     count = [self numberOfChildren];
     result = count;
@@ -211,7 +211,7 @@
     return result;
 }
 
-- (void)removeChild:(IFBookmark *)bookmark
+- (void)removeChild:(WebBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
     WEBKIT_ASSERT_VALID_ARG (bookmark, [_list containsObject:bookmark]);
@@ -223,7 +223,7 @@
 }
 
 
-- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
+- (void)insertChild:(WebBookmark *)bookmark atIndex:(unsigned)index
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == nil);
     WEBKIT_ASSERT_VALID_ARG (bookmark, ![_list containsObject:bookmark]);
@@ -235,7 +235,7 @@
     [[self group] _bookmarkChildrenDidChange:self];
 }
 
-- (void)_setGroup:(IFBookmarkGroup *)group
+- (void)_setGroup:(WebBookmarkGroup *)group
 {
     if (group == [self group]) {
         return;

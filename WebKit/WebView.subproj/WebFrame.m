@@ -1,41 +1,41 @@
 /*	
-        IFWebFrame.m
+        WebFrame.m
 	    Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebFrame.h>
+#import <WebKit/WebFrame.h>
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFHTMLRepresentationPrivate.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebCoreFrame.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebLocationChangeHandler.h>
 
 #import <WebFoundation/WebFoundation.h>
 
 #import <WebKit/WebKitDebug.h>
 
-@implementation IFWebFrame
+@implementation WebFrame
 
 - init
 {
     return [self initWithName: nil webView: nil provisionalDataSource: nil controller: nil];
 }
 
-- initWithName: (NSString *)n webView: (IFWebView *)v provisionalDataSource: (IFWebDataSource *)d controller: (IFWebController *)c
+- initWithName: (NSString *)n webView: (WebView *)v provisionalDataSource: (WebDataSource *)d controller: (WebController *)c
 {
     [super init];
 
-    _private = [[IFWebFramePrivate alloc] init];
-    _private->frameBridge = [[IFWebCoreFrame alloc] initWithWebFrame:self];
+    _private = [[WebFramePrivate alloc] init];
+    _private->frameBridge = [[WebFrameBridge alloc] initWithWebFrame:self];
 
-    [self _setState: IFWEBFRAMESTATE_UNINITIALIZED];    
+    [self _setState: WebFrameStateUninitialized];    
 
     [self setController: c];
 
@@ -53,8 +53,8 @@
         // of a non HTML representation.  This is required khtml
         // can reference the frame (window.frames, targeting, etc.).
     
-        IFWebDataSource *dummyDataSource = [[IFWebDataSource alloc] initWithURL:nil];
-        IFHTMLRepresentation *dummyRep = [[IFHTMLRepresentation alloc] init];
+        WebDataSource *dummyDataSource = [[WebDataSource alloc] initWithURL:nil];
+        WebHTMLRepresentation *dummyRep = [[WebHTMLRepresentation alloc] init];
         [[dummyRep _bridge] setDataSource: dummyDataSource];
         [dummyDataSource _setRepresentation: dummyRep];
         [dummyRep release];
@@ -88,47 +88,47 @@
 }
 
 
-- (void)setWebView: (IFWebView *)v
+- (void)setWebView: (WebView *)v
 {
     [_private setWebView: v];
     [v _setController: [self controller]];
 }
 
-- (IFWebView *)webView
+- (WebView *)webView
 {
     return [_private webView];
 }
 
-- (IFWebController *)controller
+- (WebController *)controller
 {
     return [_private controller];
 }
 
 
-- (void)setController: (IFWebController *)controller
+- (void)setController: (WebController *)controller
 {
     [_private setController: controller];
 }
 
 
-- (IFWebDataSource *)provisionalDataSource
+- (WebDataSource *)provisionalDataSource
 {
     return [_private provisionalDataSource];
 }
 
 
-- (IFWebDataSource *)dataSource
+- (WebDataSource *)dataSource
 {
     return [_private dataSource];
 }
 
 
 //    Will return NO and not set the provisional data source if the controller
-//    disallows by returning a IFURLPolicyIgnore.
-- (BOOL)setProvisionalDataSource: (IFWebDataSource *)newDataSource
+//    disallows by returning a WebURLPolicyIgnore.
+- (BOOL)setProvisionalDataSource: (WebDataSource *)newDataSource
 {
-    id <IFLocationChangeHandler>locationChangeHandler;
-    IFWebDataSource *oldDataSource;
+    id <WebLocationChangeHandler>locationChangeHandler;
+    WebDataSource *oldDataSource;
     
     WEBKIT_ASSERT ([self controller] != nil);
 
@@ -137,7 +137,7 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self webView] != nil);
 
-    if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
+    if ([self _state] != WebFrameStateComplete){
         [self stopLoading];
     }
 
@@ -166,7 +166,7 @@
         // We tell the documentView provisionalDataSourceChanged:
         // once it has been created by the controller.
             
-        [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
+        [self _setState: WebFrameStateProvisional];
         
         return YES;
     }
@@ -206,16 +206,16 @@
 {
     [_private setDataSource: nil];
     if ([[self webView] isDocumentHTML]) {
-	IFHTMLView *htmlView = (IFHTMLView *)[[self webView] documentView];
+	WebHTMLView *htmlView = (WebHTMLView *)[[self webView] documentView];
 	[htmlView _reset];
     }
     [_private setWebView: nil];
 }
 
-+ _frameNamed:(NSString *)name fromFrame: (IFWebFrame *)aFrame
++ _frameNamed:(NSString *)name fromFrame: (WebFrame *)aFrame
 {
     int i, count;
-    IFWebFrame *foundFrame;
+    WebFrame *foundFrame;
     NSArray *children;
 
     if ([[aFrame name] isEqualToString: name])
@@ -225,7 +225,7 @@
     count = [children count];
     for (i = 0; i < count; i++){
         aFrame = [children objectAtIndex: i];
-        foundFrame = [IFWebFrame _frameNamed: name fromFrame: aFrame];
+        foundFrame = [WebFrame _frameNamed: name fromFrame: aFrame];
         if (foundFrame)
             return foundFrame;
     }
@@ -237,7 +237,7 @@
     return nil;
 }
 
-- (IFWebFrame *)frameNamed:(NSString *)name
+- (WebFrame *)frameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
     if([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
@@ -249,7 +249,7 @@
     }
     
     else if([name isEqualToString:@"_parent"]){
-        IFWebDataSource *parent = [[self dataSource] parent];
+        WebDataSource *parent = [[self dataSource] parent];
         if(parent){
             return [parent webFrame];
         }
@@ -259,14 +259,14 @@
     }
     
     else if ([name isEqualToString:@"_blank"]){
-        IFWebController *newController = [[[self controller] windowContext] openNewWindowWithURL: nil];
+        WebController *newController = [[[self controller] windowContext] openNewWindowWithURL: nil];
 	[[[[newController windowContext] window] windowController] showWindow:nil];
 
         return [newController mainFrame];
     }
     
     // Now search the namespace associated with this frame's controller.
-    return [IFWebFrame _frameNamed: name fromFrame: [[self controller] mainFrame]];
+    return [WebFrame _frameNamed: name fromFrame: [[self controller] mainFrame]];
 }
 
 @end

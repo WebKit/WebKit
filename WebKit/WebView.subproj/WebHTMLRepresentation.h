@@ -1,23 +1,23 @@
 /*	
-    IFHTMLRepresentation.h
+    WebHTMLRepresentation.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-@class IFError;
-@class IFWebDataSource;
+@class WebError;
+@class WebDataSource;
 
-@protocol IFDocumentRepresentation;
+@protocol WebDocumentRepresentation;
 
-@class IFHTMLRepresentationPrivate;
+@class WebHTMLRepresentationPrivate;
 
-@interface IFHTMLRepresentation : NSObject <IFDocumentRepresentation>
+@interface WebHTMLRepresentation : NSObject <WebDocumentRepresentation>
 {
-    IFHTMLRepresentationPrivate *_private;
+    WebHTMLRepresentationPrivate *_private;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource;
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource;
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;
 @end

@@ -1,24 +1,24 @@
 /*	
-    IFTextRepresentation.h
+    WebTextRepresentation.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFTextRepresentation.h"
+#import "WebTextRepresentation.h"
 
 
-@implementation IFTextRepresentation
+@implementation WebTextRepresentation
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
 
 }
 
-- (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
 {
 
 }
 
-- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
+- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
 
 }

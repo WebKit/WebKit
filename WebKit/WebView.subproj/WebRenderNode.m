@@ -1,21 +1,21 @@
 //
-//  IFRenderNode.m
+//  WebRenderNode.m
 //  WebKit
 //
 //  Created by Darin Adler on Tue Jun 11 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFRenderNode.h"
+#import "WebRenderNode.h"
 
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 
 @interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>
 @end
 
-@implementation IFRenderNode
+@implementation WebRenderNode
 
 - initWithName:(NSString *)n rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
 {
@@ -32,9 +32,9 @@
         NSScrollView *scrollView = (NSScrollView *)view;
         view = [scrollView superview];
     }
-    if ([view isKindOfClass:[IFWebView class]]) {
-        IFWebView *webView = (IFWebView *)view;
-        [collectChildren addObject:[[[IFRenderNode alloc] initWithWebView:webView] autorelease]];
+    if ([view isKindOfClass:[WebView class]]) {
+        WebView *webView = (WebView *)view;
+        [collectChildren addObject:[[[WebRenderNode alloc] initWithWebView:webView] autorelease]];
     }
     
     children = [collectChildren copy];
@@ -43,18 +43,18 @@
     return self;
 }
 
-- initWithWebView:(IFWebView *)view
+- initWithWebView:(WebView *)view
 {
     WebKitRenderTreeCopier *copier;
     
     [self dealloc];
 
-    if (![[view documentView] isMemberOfClass:[IFHTMLView class]]) {
+    if (![[view documentView] isMemberOfClass:[WebHTMLView class]]) {
         return nil;
     }
     
     copier = [[WebKitRenderTreeCopier alloc] init];
-    IFHTMLView *htmlView = (IFHTMLView *)[view documentView];
+    WebHTMLView *htmlView = (WebHTMLView *)[view documentView];
     self = [[[htmlView _bridge] copyRenderTree:copier] retain];
     [copier release];
     
@@ -99,7 +99,7 @@
 
 - (NSObject *)nodeWithName:(NSString *)name rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children
 {
-    return [[[IFRenderNode alloc] initWithName:name rect:rect view:view children:children] autorelease];
+    return [[[WebRenderNode alloc] initWithName:name rect:rect view:view children:children] autorelease];
 }
 
 @end

@@ -1,26 +1,26 @@
 /*	
-    IFWebCoreBridge.mm
+    WebBridge.mm
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/WebBridge.h>
 
-#import <WebKit/IFHTMLRepresentationPrivate.h>
-#import <WebKit/IFResourceURLHandleClient.h>
-#import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebCoreFrame.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFLoadProgress.h>
+#import <WebKit/WebHTMLRepresentationPrivate.h>
+#import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebLoadProgress.h>
 
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFURLHandle.h>
+#import <WebFoundation/WebResourceHandle.h>
 
-@implementation IFWebDataSource (IFWebCoreBridge)
+@implementation WebDataSource (WebBridge)
 
-- (IFWebCoreBridge *)_bridge
+- (WebBridge *)_bridge
 {
     id representation = [self representation];
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
@@ -32,9 +32,9 @@
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
 
-@implementation IFWebCoreBridge
+@implementation WebBridge
 
-- (WebCoreFrame *)frame
+- (WebCoreFrameBridge *)frame
 {
     return [[dataSource webFrame] _frameBridge];
 }
@@ -51,7 +51,7 @@
     NSArray *frames = [dataSource children];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
-    IFWebFrame *frame;
+    WebFrame *frame;
     while ((frame = [e nextObject])) {
         id frameBridge = [frame _frameBridge];
         if (frameBridge)
@@ -60,9 +60,9 @@
     return frameBridges;
 }
 
-- (WebCoreFrame *)childFrameNamed:(NSString *)name
+- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
 {
-    IFWebDataSource *pd;
+    WebDataSource *pd;
     
     pd = [[dataSource webFrame] provisionalDataSource];
     if (pd)
@@ -71,7 +71,7 @@
     return [[dataSource frameNamed:name] _frameBridge];
 }
 
-- (WebCoreFrame *)descendantFrameNamed:(NSString *)name
+- (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name
 {
     return [[[dataSource webFrame] frameNamed:name] _frameBridge];
 }
@@ -82,7 +82,7 @@
 {
     WEBKIT_ASSERT(dataSource);
 
-    IFWebFrame *frame = [[dataSource controller] createFrameNamed:frameName for:nil inParent:dataSource allowsScrolling:allowsScrolling];
+    WebFrame *frame = [[dataSource controller] createFrameNamed:frameName for:nil inParent:dataSource allowsScrolling:allowsScrolling];
     if (frame == nil) {
         return NO;
     }
@@ -99,12 +99,12 @@
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)url
 {
-    IFWebController *newController = [[[dataSource controller] windowContext] openNewWindowWithURL:url];
-    IFWebDataSource *newDataSource;
+    WebController *newController = [[[dataSource controller] windowContext] openNewWindowWithURL:url];
+    WebDataSource *newDataSource;
     
     newDataSource = [[newController mainFrame] provisionalDataSource];
     if ([newDataSource isDocumentHTML])
-        return [(IFHTMLRepresentation *)[newDataSource representation] _bridge];
+        return [(WebHTMLRepresentation *)[newDataSource representation] _bridge];
         
     return nil;
 }
@@ -162,17 +162,17 @@
     [[[dataSource controller] windowContext] setStatusText:status];
 }
 
-- (WebCoreFrame *)mainFrame
+- (WebCoreFrameBridge *)mainFrame
 {
     return [[[dataSource controller] mainFrame] _frameBridge];
 }
 
-- (WebCoreFrame *)frameNamed:(NSString *)name
+- (WebCoreFrameBridge *)frameNamed:(NSString *)name
 {
     return [[[dataSource controller] frameNamed:name] _frameBridge];
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)withDataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
 {
     if (dataSource == nil) {
         [self setDataSource: withDataSource];
@@ -187,24 +187,24 @@
     [self addData:data withEncoding:[dataSource encoding]];
 }
 
-- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
+- (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
-    return [IFResourceURLHandleClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
+    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
 }
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
 {
-    IFURLHandle *handle;
-    IFLoadProgress *loadProgress;
+    WebResourceHandle *handle;
+    WebLoadProgress *loadProgress;
     
-    handle = [[IFURLHandle alloc] initWithURL:URL];
-    loadProgress = [[IFLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
+    handle = [[WebResourceHandle alloc] initWithURL:URL];
+    loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
     [[dataSource controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource: dataSource complete:YES];
     [loadProgress release];
     [handle release];
 }
 
-- (void)setDataSource: (IFWebDataSource *)ds
+- (void)setDataSource: (WebDataSource *)ds
 {
     // FIXME: non-retained because data source owns representation owns bridge
     dataSource = ds;

@@ -1,5 +1,5 @@
 //
-//  IFImageRendererFactory.h
+//  WebImageRendererFactory.h
 //  WebKit
 //
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
@@ -7,14 +7,14 @@
 
 #import <WebCore/WebCoreImageRendererFactory.h>
 
-@class IFImageRenderer;
+@class WebImageRenderer;
 
-@interface IFImageRendererFactory : WebCoreImageRendererFactory
+@interface WebImageRendererFactory : WebCoreImageRendererFactory
 {
 }
 
 + (void)createSharedFactory;
-+ (IFImageRendererFactory *)sharedFactory;
++ (WebImageRendererFactory *)sharedFactory;
 - (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length;
 
 @end

@@ -1,12 +1,12 @@
 /*	
-    IFHTMLRepresentationPrivate.h
+    WebHTMLRepresentationPrivate.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/WebHTMLRepresentation.h>
 
-@class IFWebCoreBridge;
+@class WebBridge;
 
-@interface IFHTMLRepresentation (IFPrivate)
-- (IFWebCoreBridge *)_bridge;
+@interface WebHTMLRepresentation (WebPrivate)
+- (WebBridge *)_bridge;
 @end

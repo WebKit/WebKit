@@ -1,26 +1,26 @@
-/*	IFURIList.m
+/*	WebHistoryList.m
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import "IFURIList.h"
-#import "IFURIEntry.h"
+#import "WebHistoryList.h"
+#import "WebHistoryItem.h"
 #import "WebKitDebug.h"
 
-struct IFURIListNode
+struct WebHistoryListNode
 {
     unsigned hash;
-    IFURIEntry *entry;
-    IFURIListNode *prev;
-    IFURIListNode *next;
+    WebHistoryItem *entry;
+    WebHistoryListNode *prev;
+    WebHistoryListNode *next;
 };
 
-static IFURIListNode *newURIListNode(IFURIEntry *entry)
+static WebHistoryListNode *newURIListNode(WebHistoryItem *entry)
 {
-    IFURIListNode *node;
+    WebHistoryListNode *node;
 
     [entry retain];
     
-    node = malloc(sizeof(IFURIListNode));
+    node = malloc(sizeof(WebHistoryListNode));
     node->hash = [entry hash];
     node->entry = entry;
     node->prev = nil;
@@ -29,7 +29,7 @@ static IFURIListNode *newURIListNode(IFURIEntry *entry)
     return node;    
 }
 
-static void freeNode(IFURIListNode *node)
+static void freeNode(WebHistoryListNode *node)
 {
     // it is important to autorelase here rather than using 
     // a straight release since we often return an entry
@@ -40,7 +40,7 @@ static void freeNode(IFURIListNode *node)
 }
 
 
-@implementation IFURIList
+@implementation WebHistoryList
 
 -(id)init
 {
@@ -59,8 +59,8 @@ static void freeNode(IFURIListNode *node)
 
 -(void)dealloc
 {
-    IFURIListNode *curNode;
-    IFURIListNode *delNode;
+    WebHistoryListNode *curNode;
+    WebHistoryListNode *delNode;
 
     curNode = _head;
 
@@ -101,19 +101,19 @@ static void freeNode(IFURIListNode *node)
 
 
 
--(IFURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
+-(WebHistoryItem *)addURL:(NSURL *)url withTitle:(NSString *)title;
 {
-    IFURIEntry *result;
+    WebHistoryItem *result;
     
-    result = [[IFURIEntry alloc] initWithURL:url title:title];
+    result = [[WebHistoryItem alloc] initWithURL:url title:title];
     [self addEntry:result];
     
     return result;
 }
 
--(void)addEntry:(IFURIEntry *)entry
+-(void)addEntry:(WebHistoryItem *)entry
 {
-    IFURIListNode *node;
+    WebHistoryListNode *node;
     unsigned hash;
 
     if (!_allowsDuplicates) {
@@ -165,10 +165,10 @@ static void freeNode(IFURIListNode *node)
     }
 }
 
--(IFURIEntry *)removeURL:(NSURL *)url
+-(WebHistoryItem *)removeURL:(NSURL *)url
 {
-    IFURIEntry *removedEntry;
-    IFURIListNode *node;
+    WebHistoryItem *removedEntry;
+    WebHistoryListNode *node;
     unsigned hash;
     
     removedEntry = nil;
@@ -202,10 +202,10 @@ static void freeNode(IFURIListNode *node)
     return removedEntry;
 }
 
--(BOOL)removeEntry:(IFURIEntry *)entry
+-(BOOL)removeEntry:(WebHistoryItem *)entry
 {
     BOOL removed;
-    IFURIListNode *node;
+    WebHistoryListNode *node;
     unsigned hash;
     
     removed = NO;
@@ -239,10 +239,10 @@ static void freeNode(IFURIListNode *node)
     return removed;
 }
 
--(IFURIEntry *)entryForURL:(NSURL *)url
+-(WebHistoryItem *)entryForURL:(NSURL *)url
 {
-    IFURIEntry *foundEntry;
-    IFURIListNode *node;
+    WebHistoryItem *foundEntry;
+    WebHistoryListNode *node;
     unsigned hash;
     
     foundEntry = nil;
@@ -258,10 +258,10 @@ static void freeNode(IFURIListNode *node)
     return foundEntry;
 }
 
--(IFURIEntry *)entryAtIndex:(int)index
+-(WebHistoryItem *)entryAtIndex:(int)index
 {
     int i;
-    IFURIListNode *node;
+    WebHistoryListNode *node;
 
     WEBKIT_ASSERT(index >= 0 && index < _count);
 
@@ -274,10 +274,10 @@ static void freeNode(IFURIListNode *node)
     return node->entry;    
 }
 
--(IFURIEntry *)removeEntryAtIndex:(int)index
+-(WebHistoryItem *)removeEntryAtIndex:(int)index
 {
-    IFURIEntry *removedEntry;
-    IFURIListNode *node;
+    WebHistoryItem *removedEntry;
+    WebHistoryListNode *node;
     int i;
 
     WEBKIT_ASSERT(index > 0 && index < _count);
@@ -313,8 +313,8 @@ static void freeNode(IFURIListNode *node)
 
 -(void)removeEntriesToIndex:(int)index
 {
-    IFURIListNode *node;
-    IFURIListNode *delNode;
+    WebHistoryListNode *node;
+    WebHistoryListNode *delNode;
     int i;
 
     WEBKIT_ASSERT(index > 0 && index < _count);

@@ -1,4 +1,4 @@
-/*	IFHTMLViewPrivate.mm
+/*	WebHTMLViewPrivate.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
@@ -6,32 +6,32 @@
         NSWebPageView.
 */
 
-#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
-#import <WebKit/IFImageRenderer.h>
-#import <WebKit/IFNSViewExtras.h>
-#import <WebKit/IFPluginView.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebCoreBridge.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebPluginView.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
-@interface NSView (IFHTMLViewPrivate)
-- (void)_IF_stopIfPluginView;
+@interface NSView (WebHTMLViewPrivate)
+- (void)_web_stopIfPluginView;
 @end
 
-@implementation NSView (IFHTMLViewPrivate)
-- (void)_IF_stopIfPluginView
+@implementation NSView (WebHTMLViewPrivate)
+- (void)_web_stopIfPluginView
 {
-    if ([self isKindOfClass:[IFPluginView class]]) {
-	IFPluginView *pluginView = (IFPluginView *)self;
+    if ([self isKindOfClass:[WebPluginView class]]) {
+	WebPluginView *pluginView = (WebPluginView *)self;
         [pluginView stop];
     }
 }
 @end
 
-@implementation IFHTMLViewPrivate
+@implementation WebHTMLViewPrivate
 
 - (void)dealloc
 {
@@ -42,7 +42,7 @@
 
 @end
 
-@implementation IFHTMLView (IFPrivate)
+@implementation WebHTMLView (WebPrivate)
 
 - (void)_adjustFrames
 {
@@ -57,23 +57,23 @@
 - (void)_reset
 {
     NSArray *subviews = [[self subviews] copy];
-    [subviews makeObjectsPerformSelector:@selector(_IF_stopIfPluginView)];
+    [subviews makeObjectsPerformSelector:@selector(_web_stopIfPluginView)];
     [subviews release];
 
-    [IFImageRenderer stopAnimationsInView:self];
+    [WebImageRenderer stopAnimationsInView:self];
 }
 
-- (void)_setController:(IFWebController *)controller
+- (void)_setController:(WebController *)controller
 {
     // Not retained; the controller owns the view.
     _private->controller = controller;    
 }
 
 // Required so view can access the part's selection.
-- (IFWebCoreBridge *)_bridge
+- (WebBridge *)_bridge
 {
-    IFWebView *webView = [self _IF_parentWebView];
-    IFWebFrame *webFrame = [[webView _controller] frameForView:webView];
+    WebView *webView = [self _web_parentWebView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
     return [[webFrame dataSource] _bridge];
 }
 

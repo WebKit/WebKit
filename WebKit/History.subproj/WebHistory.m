@@ -1,17 +1,17 @@
 //
-//  IFWebHistory.m
+//  WebHistory.m
 //  WebKit
 //
 //  Created by John Sullivan on Mon Feb 18 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "IFWebHistory.h"
-#import "IFWebHistoryPrivate.h"
+#import "WebHistory.h"
+#import "WebHistoryPrivate.h"
 
-@implementation IFWebHistory
+@implementation WebHistory
 
-+ (IFWebHistory *)webHistoryWithFile: (NSString*)file
++ (WebHistory *)webHistoryWithFile: (NSString*)file
 {
     return [[[self alloc] initWithFile:file] autorelease];
 }
@@ -19,7 +19,7 @@
 - (id)initWithFile: (NSString *)file;
 {
     if ((self = [super init]) != nil) {
-        _historyPrivate = [[IFWebHistoryPrivate alloc] initWithFile:file];
+        _historyPrivate = [[WebHistoryPrivate alloc] initWithFile:file];
     }
 
     return self;
@@ -36,17 +36,17 @@
 - (void)sendEntriesChangedNotification
 {
     [[NSNotificationCenter defaultCenter]
-        postNotificationName: IFWebHistoryEntriesChangedNotification
+        postNotificationName: WebHistoryEntriesChangedNotification
                       object: self];
 }
 
-- (void)addEntry: (IFURIEntry *)entry
+- (void)addEntry: (WebHistoryItem *)entry
 {
     [_historyPrivate addEntry: entry];
     [self sendEntriesChangedNotification];
 }
 
-- (void)removeEntry: (IFURIEntry *)entry
+- (void)removeEntry: (WebHistoryItem *)entry
 {
     if ([_historyPrivate removeEntry: entry]) {
         [self sendEntriesChangedNotification];

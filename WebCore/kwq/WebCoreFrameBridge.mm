@@ -1,16 +1,16 @@
 //
-//  WebCoreFrame.m
+//  WebCoreFrameBridge.m
 //  WebCore
 //
 //  Created by Darin Adler on Fri Jul 12 2002.
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "WebCoreFrame.h"
+#import "WebCoreFrameBridge.h"
 
 #import <render_frames.h>
 
-@implementation WebCoreFrame
+@implementation WebCoreFrameBridge
 
 - (void)dealloc
 {

@@ -1,5 +1,5 @@
 //
-//  IFWebCoreViewFactory.h
+//  WebViewFactory.h
 //  WebKit
 //
 //  Created by Darin Adler on Tue May 07 2002.
@@ -8,7 +8,7 @@
 
 #import <WebCore/WebCoreViewFactory.h>
 
-@interface IFWebCoreViewFactory : WebCoreViewFactory
+@interface WebViewFactory : WebCoreViewFactory
 {
 }
 

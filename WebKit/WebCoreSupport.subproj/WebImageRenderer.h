@@ -1,11 +1,11 @@
-/*	IFImageRenderer.h
+/*	WebImageRenderer.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 #import <WebCore/WebCoreImageRenderer.h>
 
-@interface IFImageRenderer : NSImage <WebCoreImageRenderer>
+@interface WebImageRenderer : NSImage <WebCoreImageRenderer>
 {
     NSTimer *frameTimer;
     NSView *frameView;

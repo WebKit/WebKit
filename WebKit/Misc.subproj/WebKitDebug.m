@@ -55,7 +55,7 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 
 #endif
 
-#ifdef IF_MALLOC_TESTING
+#ifdef WEB_MALLOC_TESTING
 #include <objc/malloc.h>
 
 unsigned int if_malloc_counter = 0;
@@ -67,7 +67,7 @@ size_t total_space = 0;
 
 #define BLOCK_SIZE	1024*1024
 #define NUM_BLOCKS	1024
-#define IF_MALLOC_MAGIC	0xfeadface
+#define WEB_MALLOC_MAGIC	0xfeadface
 static malloc_zone_t *if_zone;
 
 void *(*oldMalloc)(struct _malloc_zone_t *zone, size_t size);

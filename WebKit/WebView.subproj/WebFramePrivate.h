@@ -1,77 +1,77 @@
 /*	
-        IFWebFramePrivate.h
+        WebFramePrivate.h
 	    
 	    Copyright 2001, Apple, Inc. All rights reserved.
 
         Private header file.
 */
 
-#import <WebKit/IFWebFrame.h>
+#import <WebKit/WebFrame.h>
 
-@class IFWebCoreFrame;
-@class IFWebView;
-@protocol IFDocumentLoading;
+@class WebFrameBridge;
+@class WebView;
+@protocol WebDocumentLoading;
 
 typedef enum {
-    IFWEBFRAMESTATE_UNINITIALIZED = 1,
-    IFWEBFRAMESTATE_PROVISIONAL = 2,
+    WebFrameStateUninitialized = 1,
+    WebFrameStateProvisional = 2,
     
     // This state indicates we are ready to commit to a page,
     // that means the view will transition to use the new
     // datasource.
-    IFWEBFRAMESTATE_COMMITTED_PAGE = 3,
+    WebFrameStateCommittedPage = 3,
     
     // This state indicates that it is reasonable to perform
     // a layout.
-    IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE = 4,
+    WebFrameStateLayoutAcceptable = 4,
     
-    IFWEBFRAMESTATE_COMPLETE = 5
-} IFWebFrameState;
+    WebFrameStateComplete = 5
+} WebFrameState;
 
-#define IFFrameStateChangedNotification @"IFFrameStateChangedNotification"
+#define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"
 
-#define IFPreviousFrameState @"IFPreviousFrameState"
-#define IFCurrentFrameState  @"IFCurrentFrameState"
+#define WebPreviousFrameState @"WebPreviousFrameState"
+#define WebCurrentFrameState  @"WebCurrentFrameState"
 
-@interface IFWebFramePrivate : NSObject
+@interface WebFramePrivate : NSObject
 {
 @public
     NSString *name;
-    IFWebView *webView;
-    IFWebDataSource *dataSource;
-    IFWebDataSource *provisionalDataSource;
-    IFWebController *controller;
-    IFWebFrameState state;
+    WebView *webView;
+    WebDataSource *dataSource;
+    WebDataSource *provisionalDataSource;
+    WebController *controller;
+    WebFrameState state;
     BOOL scheduledLayoutPending;
-    IFWebCoreFrame *frameBridge;
+    WebFrameBridge *frameBridge;
 }
 
 - (void)setName: (NSString *)n;
 - (NSString *)name;
-- (void)setController: (IFWebController *)c;
-- (IFWebController *)controller;
-- (void)setWebView: (IFWebView *)v;
-- (IFWebView *)webView;
-- (void)setDataSource: (IFWebDataSource *)d;
-- (IFWebDataSource *)dataSource;
-- (void)setProvisionalDataSource: (IFWebDataSource *)d;
-- (IFWebDataSource *)provisionalDataSource;
+- (void)setController: (WebController *)c;
+- (WebController *)controller;
+- (void)setWebView: (WebView *)v;
+- (WebView *)webView;
+- (void)setDataSource: (WebDataSource *)d;
+- (WebDataSource *)dataSource;
+- (void)setProvisionalDataSource: (WebDataSource *)d;
+- (WebDataSource *)provisionalDataSource;
 
 @end
 
-@interface IFWebFrame (IFPrivate)
+@interface WebFrame (WebPrivate)
 - (void)_parentDataSourceWillBeDeallocated;
-- (void)_setController: (IFWebController *)controller;
-- (void)_setDataSource: (IFWebDataSource *)d;
+- (void)_setController: (WebController *)controller;
+- (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionProvisionalToCommitted;
 - (void)_transitionProvisionalToLayoutAcceptable;
-- (IFWebFrameState)_state;
-- (void)_setState: (IFWebFrameState)newState;
-+ (void)_recursiveCheckCompleteFromFrame: (IFWebFrame *)fromFrame;
+- (WebFrameState)_state;
+- (void)_setState: (WebFrameState)newState;
++ (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame;
 - (void)_isLoadComplete;
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
-- (IFWebCoreFrame *)_frameBridge;
-- (BOOL)_shouldShowDataSource:(IFWebDataSource *)dataSource;
-- (void)_setProvisionalDataSource:(IFWebDataSource *)d;
+- (WebFrameBridge *)_frameBridge;
+- (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
+- (void)_setProvisionalDataSource:(WebDataSource *)d;
 @end

@@ -1,12 +1,12 @@
-/*	IFURLFileDatabase.h
+/*	WebFileDatabase.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
 
-#import "IFDatabase.h"
+#import "WebDatabase.h"
 
-@interface IFURLFileDatabase : IFDatabase 
+@interface WebFileDatabase : WebDatabase 
 {
     NSMutableArray *ops;
     NSMutableDictionary *setCache;

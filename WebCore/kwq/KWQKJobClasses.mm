@@ -30,8 +30,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebFoundation/IFURLHandle.h>
-#import <WebFoundation/IFURLHandleClient.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceClient.h>
 
 namespace KIO {
 
@@ -56,7 +56,7 @@ public:
     int status;
     NSMutableDictionary *metaData;
     NSURL *url;
-    IFURLHandle *handle;
+    WebResourceHandle *handle;
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
@@ -113,14 +113,14 @@ void TransferJob::kill()
     [d->handle cancelLoadInBackground];
 }
 
-void TransferJob::setHandle(IFURLHandle *handle)
+void TransferJob::setHandle(WebResourceHandle *handle)
 {
     [handle retain];
     [d->handle release];
     d->handle = handle;
 }
 
-IFURLHandle *TransferJob::handle() const
+WebResourceHandle *TransferJob::handle() const
 {
     return d->handle;
 }

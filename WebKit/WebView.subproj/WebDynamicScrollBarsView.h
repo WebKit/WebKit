@@ -1,5 +1,5 @@
 //
-//  IFDynamicScrollBarsView.h
+//  WebDynamicScrollBarsView.h
 //  WebKit
 //
 //  Created by John Sullivan on Tue Jan 22 2002.
@@ -13,7 +13,7 @@
 // FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
 // and it no longer works outside of WebKit.
 
-@interface IFDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
+@interface WebDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
     NSCursor *cursor;
     BOOL disallowsScrolling;

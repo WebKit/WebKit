@@ -1,17 +1,17 @@
 /*	
-    IFImageView.h
+    WebImageView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@class IFImageRepresentation;
-@protocol IFDocumentLoading;
-@protocol IFDocumentDragSettings;
+@class WebImageRepresentation;
+@protocol WebDocumentLoading;
+@protocol WebDocumentDragSettings;
 
-@interface IFImageView : NSView <IFDocumentLoading, IFDocumentDragSettings>
+@interface WebImageView : NSView <WebDocumentLoading, WebDocumentDragSettings>
 {
-    IFImageRepresentation *representation;
+    WebImageRepresentation *representation;
     BOOL canDragFrom;
     BOOL canDragTo;
     BOOL didSetFrame;

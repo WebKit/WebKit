@@ -1,19 +1,19 @@
-/*	IFHTMLViewPrivate.h
+/*	WebHTMLViewPrivate.h
 	Copyright 2002, Apple, Inc. All rights reserved.
         
         Private header file.  This file may reference classes (both ObjectiveC and C++)
         in WebCore.  Instances of this class are referenced by _private in 
-        IFHTMLView.
+        WebHTMLView.
 */
 
-#import <WebKit/IFHTMLView.h>
+#import <WebKit/WebHTMLView.h>
 
-@class IFWebCoreBridge;
+@class WebBridge;
 
-@interface IFHTMLViewPrivate : NSObject
+@interface WebHTMLViewPrivate : NSObject
 {
 @public
-    IFWebController *controller;
+    WebController *controller;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
@@ -24,9 +24,9 @@
 }
 @end
 
-@interface IFHTMLView (IFPrivate)
+@interface WebHTMLView (WebPrivate)
 - (void)_reset;
-- (void)_setController: (IFWebController *)controller;
-- (IFWebCoreBridge *)_bridge;
+- (void)_setController: (WebController *)controller;
+- (WebBridge *)_bridge;
 - (void)_adjustFrames;
 @end

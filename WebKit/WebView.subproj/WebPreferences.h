@@ -1,5 +1,5 @@
 /*	
-        IFPreferences.h
+        WebPreferences.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.
@@ -7,9 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface IFPreferences: NSObject
+@interface WebPreferences: NSObject
 
-+ (IFPreferences *)standardPreferences;
++ (WebPreferences *)standardPreferences;
 
 - (NSString *)standardFontFamily;
 - (void)setStandardFontFamily:(NSString *)family;

@@ -1,13 +1,13 @@
 /*	
-        IFPreferences.h
+        WebPreferences.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.
 */
 
-#import <WebKit/IFPreferences.h>
+#import <WebKit/WebPreferences.h>
 
-@interface IFPreferences (IFPrivate)
+@interface WebPreferences (WebPrivate)
 
 - (NSTimeInterval)_initialTimedLayoutDelay;
 - (int)_initialTimedLayoutSize;

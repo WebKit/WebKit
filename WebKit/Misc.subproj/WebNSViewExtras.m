@@ -1,10 +1,10 @@
 /*
-        IFNSViewExtras.mm
+        WebNSViewExtras.mm
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFNSViewExtras.h>
-#import <WebKit/IFWebView.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebView.h>
 
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
@@ -14,9 +14,9 @@
 @end
 #endif
 
-@implementation NSView (IFExtensions)
+@implementation NSView (WebExtras)
 
-- (NSView *) _IF_superviewWithName:(NSString *)viewName
+- (NSView *) _web_superviewWithName:(NSString *)viewName
 {
     NSView *view;
     
@@ -30,17 +30,17 @@
     return nil;
 }
 
-- (IFWebView *)_IF_parentWebView
+- (WebView *)_web_parentWebView
 {
-    IFWebView *view = (IFWebView *)[[[self superview] superview] superview];
+    WebView *view = (WebView *)[[[self superview] superview] superview];
     
-    if ([view isKindOfClass: [IFWebView class]])
+    if ([view isKindOfClass: [WebView class]])
         return view;
     return nil;
 }
 
 #ifdef DEBUG_VIEWS
-- (void)_IF_printViewHierarchy: (int)level
+- (void)_web_printViewHierarchy: (int)level
 {
     NSArray *subviews;
     int _level = level, i;
@@ -63,7 +63,7 @@
     printf ("%s renderFramePart %p (%f,%f) w %f, h %f\n", [[[self class] className] cString], rfp, f.origin.x, f.origin.y, f.size.width, f.size.height);
     for (i = 0; i < (int)[subviews count]; i++){
         subview = [subviews objectAtIndex: i];
-        [subview _IF_printViewHierarchy: level + 1];
+        [subview _web_printViewHierarchy: level + 1];
     }
 }
 #endif

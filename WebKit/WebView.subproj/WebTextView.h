@@ -1,24 +1,24 @@
 /*	
-    IFTextView.h
+    WebTextView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
 
-@class IFWebDataSource;
-@protocol IFDocumentLoading;
-@protocol IFDocumentDragSettings;
-@protocol IFDocumentSearching;
+@class WebDataSource;
+@protocol WebDocumentLoading;
+@protocol WebDocumentDragSettings;
+@protocol WebDocumentSearching;
 
-@interface IFTextView : NSTextView <IFDocumentLoading, IFDocumentDragSettings, IFDocumentSearching>
+@interface WebTextView : NSTextView <WebDocumentLoading, WebDocumentDragSettings, WebDocumentSearching>
 {
     BOOL canDragFrom;
     BOOL canDragTo;
 }
 
-- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource;
-- (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource;
-- (void)dataSourceUpdated:(IFWebDataSource *)dataSource; 
+- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource;
+- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource;
+- (void)dataSourceUpdated:(WebDataSource *)dataSource; 
 - (void)layout;
 
 - (void)setCanDragFrom: (BOOL)flag;

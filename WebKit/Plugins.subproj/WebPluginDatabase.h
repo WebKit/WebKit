@@ -25,16 +25,16 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFPlugin;
+@class WebPlugin;
 
-@interface IFPluginDatabase : NSObject {
+@interface WebPluginDatabase : NSObject {
     NSArray *plugins;
 }
 
-+ (IFPluginDatabase *)installedPlugins;
-- (IFPlugin *)pluginForMimeType:(NSString *)mimeType;
-- (IFPlugin *)pluginForExtension:(NSString *)extension;
-- (IFPlugin *)pluginWithFilename:(NSString *)filename;
++ (WebPluginDatabase *)installedPlugins;
+- (WebPlugin *)pluginForMimeType:(NSString *)mimeType;
+- (WebPlugin *)pluginForExtension:(NSString *)extension;
+- (WebPlugin *)pluginWithFilename:(NSString *)filename;
 - (NSArray *) MIMETypes;
 - (NSArray *) plugins;
 

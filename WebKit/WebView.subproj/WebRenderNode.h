@@ -1,5 +1,5 @@
 //
-//  IFRenderNode.h
+//  WebRenderNode.h
 //  WebKit
 //
 //  Created by Darin Adler on Tue Jun 11 2002.
@@ -8,16 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-@class IFWebView;
+@class WebView;
 
-@interface IFRenderNode : NSObject
+@interface WebRenderNode : NSObject
 {
     NSArray *children;
     NSString *name;
     NSRect rect;
 }
 
-- initWithWebView:(IFWebView *)view;
+- initWithWebView:(WebView *)view;
 
 - (NSArray *)children;
 

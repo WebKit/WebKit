@@ -1,23 +1,23 @@
 /*
- IFPanelAuthenticationHandler.h
+ WebPanelAuthenticationHandler.h
 
  Copyright 2002 Apple, Inc. All rights reserved.
  */
 
 #import <Foundation/Foundation.h>
-#import <WebFoundation/IFAuthenticationManager.h>
+#import <WebFoundation/WebAuthenticationManager.h>
 
 
-@interface IFPanelAuthenticationHandler : NSObject <IFAuthenticationHandler>
+@interface WebPanelAuthenticationHandler : NSObject <WebAuthenticationHandler>
 {
     NSMutableDictionary *windowToPanel;
     NSMutableDictionary *requestToWindow;
 }
 
-// IFAuthenticationHandler methods
--(BOOL)readyToStartAuthentication:(IFAuthenticationRequest *)request;
--(void)startAuthentication:(IFAuthenticationRequest *)request;
--(void)cancelAuthentication:(IFAuthenticationRequest *)request;
+// WebAuthenticationHandler methods
+-(BOOL)readyToStartAuthentication:(WebAuthenticationRequest *)request;
+-(void)startAuthentication:(WebAuthenticationRequest *)request;
+-(void)cancelAuthentication:(WebAuthenticationRequest *)request;
 
 
 @end
