@@ -8,6 +8,25 @@
 /* This adds pendantic C++ declarations to KDE/QT C++ code */
 #undef _KWQ_PEDANTIC_
 
+/* Define for using more complete Qt/KDE interfaces */
+/* This may also include "borrowed implementations */
+#undef _KWQ_COMPLETE_
+
+/* Define for using KWQ-implementation of iostreams in KWQ classes */
+#undef _KWQ_IOSTREAM_
+
+/* Define for compiling bootstrap/borrowed Qt environment */
+/* This turns off support for Qt datastreams */
+#undef QT_NO_DATASTREAM
+
+/* Define for compiling bootstrap/borrowed Qt environment */
+/* This turns off support for Qt textcodecs */
+#undef QT_NO_TEXTCODEC
+
+/* Define for compiling bootstrap/borrowed Qt environment */
+/* Our platform requires this to handle certain Qt memory mgmt. conventions */
+#define Q_DELETING_VOID_UNDEFINED 1
+
 /* Define if using alloca.c.  */
 #undef C_ALLOCA
 

@@ -46,11 +46,6 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CMMFLAGS = $(BASECMMFLAGS) \
-    -DQ_DELETING_VOID_UNDEFINED \
-    -DQT_NO_TEXTCODEC \
-    -DQT_NO_DATASTREAM \
-    -D_KWQ_COMPLETE_ \
-    -D_KWQ_IOSTREAM_ \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
