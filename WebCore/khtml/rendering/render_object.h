@@ -229,7 +229,7 @@ public:
 
     void setOverhangingContents(bool p=true);
 
-    virtual void markAllDescendantsWithFloatsForLayout();
+    virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     void setLayouted(bool b=true);
 
     void setMinMaxKnown(bool b=true) {
@@ -516,6 +516,7 @@ public:
 
     bool isFloatingOrPositioned() const { return (isFloating() || isPositioned()); };
     virtual bool containsFloats() { return false; }
+    virtual bool containsFloat(RenderObject* o) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
 
     // positioning of inline childs (bidi)

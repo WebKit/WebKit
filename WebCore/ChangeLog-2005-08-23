@@ -1,3 +1,18 @@
+2003-03-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3166374.  When a float is removed, crawl up and down the
+	tree looking for blocks that contain the float and dirty them all.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::markAllDescendantsWithFloatsForLayout):
+        (RenderObject::removeFromObjectLists):
+        * khtml/rendering/render_object.h:
+
 2003-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

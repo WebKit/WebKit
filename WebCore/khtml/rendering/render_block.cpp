@@ -845,11 +845,20 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
 
             child->setPos(child->xPos(), ypos);
-            if (ypos != yPosEstimate && (child->containsFloats() || containsFloats())) {
+            if (ypos != yPosEstimate) {
+                if (child->style()->htmlHacks() && child->style()->flowAroundFloats() &&
+                    child->style()->width().isPercent())
+                    // The child's width can be a percentage width and if it has the
+                    // quirky flowAroundFloats
+                    // property set, when the child shifts to clear an item, its width can
+                    // change (because it has more available line width).
+                    // So go ahead an mark the item as dirty.
+                    child->setLayouted(false);
+
+                if (child->containsFloats() || containsFloats())
+                    child->markAllDescendantsWithFloatsForLayout();
+
                 // Our guess was wrong. Make the child lay itself out again.
-                // XXXdwh some debugging code for this.
-                // printf("WE WERE WRONG for object %d (%d, %d)!\n", (int)child, yPosEstimate, ypos);
-                child->markAllDescendantsWithFloatsForLayout();
                 if (!child->layouted())
                     child->layout();
             }
@@ -872,9 +881,18 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
 
             // If our value of clear caused us to be repositioned vertically to be
-            // underneath a float, we have to do another layout to take into account
+            // underneath a float, we might have to do another layout to take into account
             // the extra space we now have available.
-            child->markAllDescendantsWithFloatsForLayout();
+            if (child->style()->htmlHacks() && child->style()->flowAroundFloats() &&
+                child->style()->width().isPercent())
+                // The child's width can be a percentage width and if it has the
+                // quirky flowAroundFloats
+                // property set, when the child shifts to clear an item, its width can
+                // change (because it has more available line width).
+                // So go ahead an mark the item as dirty.
+                child->setLayouted(false);
+            if (child->containsFloats())
+                child->markAllDescendantsWithFloatsForLayout();
             if (!child->layouted())
                 child->layout();
         }
@@ -1702,23 +1720,34 @@ void RenderBlock::addOverHangingFloats( RenderBlock *flow, int xoff, int offset,
     }
 }
 
-void RenderBlock::markAllDescendantsWithFloatsForLayout()
+bool RenderBlock::containsFloat(RenderObject* o)
 {
-    if (style()->htmlHacks() && style()->flowAroundFloats() && style()->width().isPercent())
-        // The child's width can be a percentage width and if it has the quirky flowAroundFloats
-        // property set, when the child shifts to clear an item, its width can change (because it
-        // has more available line width.
-        // So go ahead an mark these items as dirty.
-        setLayouted(false);
+    if (m_floatingObjects) {
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        while (it.current()) {
+            if (it.current()->node == o)
+                return true;
+            ++it;
+        }
+    }
+    return false;
+}
 
-    if (isTable() || isFloatingOrPositioned() || !containsFloats())
-        return;
-
+void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove)
+{
     setLayouted(false);
-    
+
+    if (floatToRemove)
+        removeFloatingObject(floatToRemove);
+
     // Iterate over our children and mark them as needed.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->markAllDescendantsWithFloatsForLayout();
+    if (!childrenInline()) {
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (isBlockFlow() && !child->isFloatingOrPositioned() &&
+                (floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()))
+                child->markAllDescendantsWithFloatsForLayout();
+        }
+    }
 }
 
 bool RenderBlock::checkClear(RenderObject *child)

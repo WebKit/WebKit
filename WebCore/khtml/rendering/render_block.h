@@ -119,9 +119,11 @@ public:
     void positionNewFloats();
     void clearFloats();
     bool checkClear(RenderObject *child);
-    virtual void markAllDescendantsWithFloatsForLayout();
+    virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     
     virtual bool containsFloats() { return m_floatingObjects!=0; }
+    virtual bool containsFloat(RenderObject* o);
+
     virtual bool hasOverhangingFloats() { return floatBottom() > m_height; }
     void addOverHangingFloats( RenderBlock *block, int xoffset, int yoffset, bool child = false );
     
