@@ -29,19 +29,39 @@
 #import <Cocoa/Cocoa.h>
 #import "WebCoreTextRendererFactory.h"
 
-QFont::QFont()
+QFontFamily::QFontFamily()
     : _family(@"")
-    , _trait(0)
-    , _size(12.0)
+    , _next(0)
 {
 }
 
-QString QFont::family() const
+QFontFamily::QFontFamily(const QFontFamily& other) 
+{
+    if (other._next)
+        _next = new QFontFamily(*(other._next));
+    else
+        _next = 0;
+    _family = other._family;
+}
+
+QFontFamily& QFontFamily::operator=(const QFontFamily& other) {
+    if (this != &other) {
+        delete _next;
+        if (other._next)
+            _next = new QFontFamily(*(other._next));
+        else 
+            _next = 0;
+        _family = other._family;
+    }
+    return *this;
+}
+
+QString QFontFamily::family() const
 {
     return QString::fromNSString(_family);
 }
 
-void QFont::setFamily(const QString &qfamilyName)
+void QFontFamily::setFamily(const QString &qfamilyName)
 {
     // Use an immutable copy of the name, but keep a set of
     // all family names so we don't end up with too many objects.
@@ -55,6 +75,32 @@ void QFont::setFamily(const QString &qfamilyName)
         [families addObject:mutableName];
         _family = [families member:mutableName];
     }
+}
+
+bool QFontFamily::operator==(const QFontFamily &compareFontFamily) const
+{
+    if ((!_next && compareFontFamily._next) || 
+        (_next && !compareFontFamily._next) ||
+        ((_next && compareFontFamily._next) && (*_next != *(compareFontFamily._next))))
+        return false;
+    
+    return _family == compareFontFamily._family;
+}
+
+QFont::QFont()
+    : _trait(0)
+    , _size(12.0)
+{
+}
+
+QString QFont::family() const
+{
+    return _family.family();
+}
+
+void QFont::setFamily(const QString &qfamilyName)
+{
+    _family.setFamily(qfamilyName);
 }
 
 void QFont::setWeight(int weight)
@@ -104,3 +150,12 @@ NSFont *QFont::getNSFont() const
                 traits:getNSTraits() 
                   size:getNSSize()];
 }
+
+NSFont *QFont::getNSFontWithFamily(QFontFamily* family) const
+{
+    return [[WebCoreTextRendererFactory sharedFactory] 
+    	fontWithFamily:family->getNSFamily()
+                traits:getNSTraits() 
+                  size:getNSSize()];
+}
+

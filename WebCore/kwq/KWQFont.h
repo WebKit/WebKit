@@ -36,6 +36,30 @@ class NSFont;
 class NSString;
 #endif
 
+class QFontFamily {
+public:
+    QFontFamily();
+    ~QFontFamily() { delete _next; }
+    
+    QFontFamily(const QFontFamily& other);    
+    QFontFamily& operator=(const QFontFamily& other);
+        
+    void setFamily(const QString&);
+    QString family() const;
+    
+    NSString* getNSFamily() const { return _family; }
+
+    QFontFamily* next() { return _next; }
+    void appendFamily(QFontFamily* family) { delete _next; _next = family; }
+    
+    bool operator==(const QFontFamily &compareFontFamily) const;
+    bool operator!=(const QFontFamily &x) const { return !(*this == x); }
+    
+private:
+    NSString* _family;
+    QFontFamily* _next;
+};
+
 class QFont {
 public:
     enum Weight { Normal = 50, Bold = 63 };
@@ -45,6 +69,9 @@ public:
     void setFamily(const QString &);
     QString family() const;
 
+    QFontFamily* firstFamily() { return &_family; }
+    void setFirstFamily(const QFontFamily& family) { _family = family; }
+    
     void setWeight(int);
     int weight() const;
     bool bold() const;
@@ -58,14 +85,15 @@ public:
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const { return !(*this == x); }
     
-    NSString *getNSFamily() const { return _family; }
+    NSString *getNSFamily() const { return _family.getNSFamily(); }
     int getNSTraits() const { return _trait; }
     float getNSSize() const { return _size; }
     
     NSFont *getNSFont() const;
-
+    NSFont* getNSFontWithFamily(QFontFamily* fontFamily) const;
+    
 private:
-    NSString *_family;
+    QFontFamily _family;
     int _trait;
     float _size;
 };

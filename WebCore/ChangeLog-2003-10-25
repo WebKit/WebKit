@@ -1,3 +1,27 @@
+2002-11-25  David Hyatt  <hyatt@apple.com>
+
+	Add support to QFont for multiple families.  NOw all that's left
+	is getting the multiple families out of the font and down into
+	WebKit.
+	
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/font.cpp:
+        (Font::update):
+        * khtml/rendering/font.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+        * kwq/KWQFont.h:
+        * kwq/KWQFont.mm:
+        (QFontFamily::QFontFamily):
+        (QFontFamily::operator=):
+        (QFontFamily::family):
+        (QFontFamily::setFamily):
+        (QFontFamily::operator==):
+        (QFont::QFont):
+        (QFont::family):
+        (QFont::setFamily):
+        (QFont::getNSFontWithFamily):
+
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
         Changes for back/forward.  Currently disabled.

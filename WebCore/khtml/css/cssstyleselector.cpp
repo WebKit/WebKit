@@ -2517,55 +2517,68 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         // list of strings and ids
     {
         if(!value->isValueList()) return;
-	FontDef fontDef = style->htmlFont().fontDef;
+        FontDef fontDef = style->htmlFont().fontDef;
         CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
         int len = list->length();
-	QString family;
+        QString family;
+        QFontFamily& firstFamily = fontDef.firstFamily();
+        QFontFamily* currFamily = 0;
+        
         for(int i = 0; i < len; i++) {
             CSSValueImpl *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
             if(!val->primitiveType() == CSSPrimitiveValue::CSS_STRING) return;
             QString face = static_cast<FontFamilyValueImpl *>(val)->fontName();
-	    if ( !face.isEmpty() ) {
-	        if(face == "serif") {
-		    face = settings->serifFontName();
-		    fontDef.setGenericFamily(FontDef::eSerif);
-		}
-		else if(face == "sans-serif") {
-		    face = settings->sansSerifFontName();
-		    fontDef.setGenericFamily(FontDef::eSansSerif);
-		}
-		else if( face == "cursive") {
-		    face = settings->cursiveFontName();
-		    fontDef.setGenericFamily(FontDef::eCursive);
-		}
-		else if( face == "fantasy") {
-		    face = settings->fantasyFontName();
-		    fontDef.setGenericFamily(FontDef::eFantasy);
-		}
-		else if( face == "monospace") {
-		    face = settings->fixedFontName();
-		    fontDef.setGenericFamily(FontDef::eMonospace);
-		}
-		else if( face == "konq_default") {
-		    // Treat this as though it's a generic family, since we will want
-		    // to reset to default sizes when we encounter this (and inherit
-		    // from an enclosing different family like monospace.
-		    face = settings->stdFontName();
-		    fontDef.setGenericFamily(FontDef::eStandard);
-		}
-
-		if ( !face.isEmpty() ) {
-		    fontDef.family = face;
-		    if (style->setFontDef( fontDef )) {
-		      fontDirty = true;
-		    }
-		}
-                return;
-	    }
+            if ( !face.isEmpty() ) {
+                if(face == "serif") {
+                    face = settings->serifFontName();
+                    fontDef.setGenericFamily(FontDef::eSerif);
+                }
+                else if(face == "sans-serif") {
+                    face = settings->sansSerifFontName();
+                    fontDef.setGenericFamily(FontDef::eSansSerif);
+                }
+                else if( face == "cursive") {
+                    face = settings->cursiveFontName();
+                    fontDef.setGenericFamily(FontDef::eCursive);
+                }
+                else if( face == "fantasy") {
+                    face = settings->fantasyFontName();
+                    fontDef.setGenericFamily(FontDef::eFantasy);
+                }
+                else if( face == "monospace") {
+                    face = settings->fixedFontName();
+                    fontDef.setGenericFamily(FontDef::eMonospace);
+                }
+                else if( face == "konq_default") {
+                    // Treat this as though it's a generic family, since we will want
+                    // to reset to default sizes when we encounter this (and inherit
+                    // from an enclosing different family like monospace.
+                    face = settings->stdFontName();
+                    fontDef.setGenericFamily(FontDef::eStandard);
+                }
+    
+                if ( !face.isEmpty() ) {
+                    if (!currFamily) {
+                        // Filling in the first family.
+                        firstFamily.setFamily(face);
+                        currFamily = &firstFamily;
+                    }
+                    else {
+                        QFontFamily* newFamily = new QFontFamily;
+                        newFamily->setFamily(face);
+                        currFamily->appendFamily(newFamily);
+                        currFamily = newFamily;
+                    }
+                    
+                    if (style->setFontDef( fontDef )) {
+                        fontDirty = true;
+                    }
+                }
+            }
         }
-        break;
+      break;
     }
     case CSS_PROP_QUOTES:
         // list of strings or i

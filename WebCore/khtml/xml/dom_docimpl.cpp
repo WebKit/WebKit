@@ -892,17 +892,18 @@ void DocumentImpl::recalcStyle( StyleChange change )
 
 	khtml::FontDef fontDef;
 	QFont f = KGlobalSettings::generalFont();
-	fontDef.family = f.family();
+	fontDef.family = *(f.firstFamily());
 	fontDef.italic = f.italic();
 	fontDef.weight = f.weight();
-        if (m_view) {
-            const KHTMLSettings *settings = m_view->part()->settings();
-	    QString stdfont = settings->stdFontName();
-	    if ( !stdfont.isEmpty() )
-		fontDef.family = stdfont;
-
-            fontDef.size = m_styleSelector->fontSizes()[3];
+    if (m_view) {
+        const KHTMLSettings *settings = m_view->part()->settings();
+        QString stdfont = settings->stdFontName();
+        if ( !stdfont.isEmpty() ) {
+            fontDef.family.setFamily(stdfont);
+            fontDef.family.appendFamily(0);
         }
+        fontDef.size = m_styleSelector->fontSizes()[3];
+    }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
         _style->setFontDef(fontDef);
