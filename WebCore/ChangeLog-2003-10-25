@@ -1,3 +1,13 @@
+2003-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3278079 -- REGRESSION: UTF-8 page claiming to be UTF-16 in XML header gives garbage characters
+
+        * khtml/misc/decoder.cpp: (Decoder::setEncoding): Add EncodingFromXMLHeader as one of the
+        types where we know the encoding is an 8-bit one. The reason this is a regression is that we
+        used to ignore the encoding in the XML header altogether.
+
 2003-06-04  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3279957 -- REGRESSION: assertion failure at launch in 

@@ -298,7 +298,7 @@ void Decoder::setEncoding(const char *_encoding, EncodingType type)
         return;
 
 #if APPLE_CHANGES
-    QTextCodec *codec = (type == EncodingFromMetaTag)
+    QTextCodec *codec = (type == EncodingFromMetaTag || type == EncodingFromXMLHeader)
         ? QTextCodec::codecForNameEightBitOnly(enc)
         : QTextCodec::codecForName(enc);
     if (codec) {
