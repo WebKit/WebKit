@@ -32,8 +32,6 @@
                 iconURL:(NSURL *)iconURL
                   group:(WebBookmarkGroup *)group;
 {
-    WEBKIT_ASSERT_VALID_ARG (group, group != nil);
-    
     [self init];
 
     // Since our URLString may not be valid for creating an NSURL object,

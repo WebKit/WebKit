@@ -16,8 +16,6 @@
 
 - (id)initWithGroup:(WebBookmarkGroup *)group
 {
-    WEBKIT_ASSERT_VALID_ARG (group, group != nil);
-
     [super init];
     [self _setGroup:group];
 

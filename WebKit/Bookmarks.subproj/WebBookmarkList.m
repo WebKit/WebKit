@@ -21,8 +21,6 @@
 - (id)initWithTitle:(NSString *)title
               group:(WebBookmarkGroup *)group
 {
-    WEBKIT_ASSERT_VALID_ARG (group, group != nil);
-    
     [super init];
 
     _title = [title copy];

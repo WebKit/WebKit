@@ -1,3 +1,18 @@
+2002-08-26  John Sullivan  <sullivan@apple.com>
+	
+	- fixed bug where dragging a separator in the Bookmarks window
+	would hit an assertion.
+
+        * Bookmarks.subproj/WebBookmarkSeparator.m:
+        (-[WebBookmarkSeparator initWithGroup:]): Removed obsolete
+	assertion that group is not nil.
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf initWithTitle:group:]):
+	Removed a similar obsolete assertion here.
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initWithTitle:group:]):
+	Removed a similar obsolete assertion here.
+
 2002-08-23  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFrame.m: (-[WebFrame reset]): Remove unneeded call to _reset.
