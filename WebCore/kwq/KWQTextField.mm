@@ -553,6 +553,13 @@
     return attributes;
 }
 
+// Ignore the per-application typesetter setting and instead always use the latest behavior for
+// text fields in web pages. This fixes the "text fields too tall" problem.
+- (NSTypesetterBehavior)_typesetterBehavior
+{
+    return NSTypesetterLatestBehavior;
+}
+
 @end
 
 
@@ -746,6 +753,13 @@
     return attributes;
 }
 
+// Ignore the per-application typesetter setting and instead always use the latest behavior for
+// text fields in web pages. This fixes the "text fields too tall" problem.
+- (NSTypesetterBehavior)_typesetterBehavior
+{
+    return NSTypesetterLatestBehavior;
+}
+
 @end
 
 @implementation KWQSearchField
@@ -899,6 +913,13 @@
     NSMutableDictionary* attributes = [super _textAttributes];
     [[(KWQSearchField*)[self controlView] controller] updateTextAttributes:attributes];
     return attributes;
+}
+
+// Ignore the per-application typesetter setting and instead always use the latest behavior for
+// text fields in web pages. This fixes the "text fields too tall" problem.
+- (NSTypesetterBehavior)_typesetterBehavior
+{
+    return NSTypesetterLatestBehavior;
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,8 +217,13 @@ QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
     return QSize((int)ceil(size.width), (int)ceil(size.height));
 }
 
+QWidget::FocusPolicy QTextEdit::focusPolicy() const
+{
+    FocusPolicy policy = QScrollView::focusPolicy();
+    return policy == TabFocus ? StrongFocus : policy;
+}
+
 bool QTextEdit::checksDescendantsForFocus() const
 {
     return true;
 }
-

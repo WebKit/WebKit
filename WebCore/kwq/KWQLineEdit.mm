@@ -243,6 +243,12 @@ void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+QWidget::FocusPolicy QLineEdit::focusPolicy() const
+{
+    FocusPolicy policy = QWidget::focusPolicy();
+    return policy == TabFocus ? StrongFocus : policy;
+}
+
 bool QLineEdit::checksDescendantsForFocus() const
 {
     return true;

@@ -1,3 +1,36 @@
+2004-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3570877>: REGRESSION: onfocus handler not working at weather.com
+
+        * khtml/ecma/kjs_binding.cpp:
+        (UString::string): Turn a null UString into a null DOMString, but a non-null empty UString into a
+        non-null empty DOMString.
+        (UString::qstring): Ditto, for QString.
+        (Identifier::string): Ditto, for Identifier.
+        (Identifier::qstring): Ditto.
+
+        * kwq/KWQLineEdit.h: Override focusPolicy.
+        * kwq/KWQLineEdit.mm: (QLineEdit::focusPolicy): Return StrongFocus instead of TabFocus, since
+        we allow clicking to focus on these widgets.
+        * kwq/KWQTextEdit.h: More of the same.
+        * kwq/KWQTextEdit.mm: (QTextEdit::focusPolicy): And still more.
+
+        - fixed <rdar://problem/3605919>: text fields in web pages are too tall
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldCell _typesetterBehavior]): Ignore the per-application typesetter setting and
+        instead always use the latest behavior for text fields in web pages.
+        (-[KWQSecureTextFieldCell _typesetterBehavior]): Ditto.
+        (-[KWQSearchFieldCell _typesetterBehavior]): Ditto.
+
+        - additional cleanup
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::isKeyboardFocusable): Check tab focus bit instead of different modes.
+        (HTMLGenericFormElementImpl::isMouseFocusable): Check click focus bit instead of different modes.
+
 2004-03-30  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3603326, spurious line breaks in encyclopedia articles.  Make sure makeChildrenNonInline knows to

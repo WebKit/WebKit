@@ -1,8 +1,8 @@
-layer at (0,0) size 800x625
+layer at (0,0) size 800x624
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x625
-  RenderBlock {HTML} at (0,0) size 800x625
-    RenderBody {BODY} at (8,8) size 784x609
+layer at (0,0) size 800x624
+  RenderBlock {HTML} at (0,0) size 800x624
+    RenderBody {BODY} at (8,8) size 784x608
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {TEXT} at (0,0) size 422x37
           text run at (0,0) width 422: "Form Element Geometry Tests"
@@ -74,9 +74,9 @@ layer at (0,0) size 800x625
       RenderTable {TABLE} at (0,226) size 551x68
         RenderTableSection {TBODY} at (0,0) size 0x68
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 84x25 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 82x23 [border: (2px solid #0000FF)]
-                RenderLineEdit {INPUT} at (2,2) size 78x19
+            RenderTableCell {TD} at (2,2) size 84x24 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 82x22 [border: (2px solid #0000FF)]
+                RenderLineEdit {INPUT} at (2,2) size 78x18
             RenderTableCell {TD} at (88,2) size 40x64 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 38x62 [border: (2px solid #0000FF)]
                 RenderSelect {SELECT} at (2,2) size 34x58
@@ -133,10 +133,10 @@ layer at (0,0) size 800x625
             text run at (164,5) width 3: " "
           RenderCheckBox {INPUT} at (170,5) size 12x12
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,433) size 784x37
+      RenderBlock {DIV} at (0,433) size 784x36
         RenderText {TEXT} at (0,16) size 27x18
           text run at (0,16) width 27: "text "
-        RenderLineEdit {INPUT} at (29,16) size 78x19
+        RenderLineEdit {INPUT} at (29,16) size 78x18
         RenderText {TEXT} at (109,16) size 4x18
           text run at (109,16) width 4: " "
         RenderFileButton {INPUT} at (113,17) size 234x18
@@ -144,10 +144,10 @@ layer at (0,0) size 800x625
           text run at (347,16) width 4: " "
         RenderTextArea {TEXTAREA} at (353,2) size 167x28
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {H2} at (0,489) size 784x28
+      RenderBlock {H2} at (0,488) size 784x28
         RenderText {TEXT} at (0,0) size 197x28
           text run at (0,0) width 197: "Pop-up Menu Sizes"
-      RenderBlock {DIV} at (0,536) size 784x29
+      RenderBlock {DIV} at (0,535) size 784x29
         RenderInline {FONT} at (0,0) size 181x28
           RenderText {TEXT} at (0,0) size 0x0
           RenderSelect {SELECT} at (2,9) size 36x18
@@ -158,7 +158,7 @@ layer at (0,0) size 800x625
             text run at (86,0) width 6: " "
           RenderSelect {SELECT} at (94,9) size 85x18
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,565) size 784x22
+      RenderBlock {DIV} at (0,564) size 784x22
         RenderSelect {SELECT} at (2,2) size 36x18
         RenderText {TEXT} at (40,1) size 4x18
           text run at (40,1) width 4: " "
@@ -167,7 +167,7 @@ layer at (0,0) size 800x625
           text run at (84,1) width 4: " "
         RenderSelect {SELECT} at (90,2) size 85x18
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,587) size 784x22
+      RenderBlock {DIV} at (0,586) size 784x22
         RenderInline {FONT} at (0,0) size 175x13
           RenderText {TEXT} at (0,0) size 0x0
           RenderSelect {SELECT} at (2,2) size 36x18

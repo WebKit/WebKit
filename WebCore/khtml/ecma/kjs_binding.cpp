@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include <kdebug.h>
+
+using DOM::DOMString;
 
 using namespace KJS;
 
@@ -289,7 +291,7 @@ UString::UString(const QString &d)
   rep = UString::Rep::create(dat, len);
 }
 
-UString::UString(const DOM::DOMString &d)
+UString::UString(const DOMString &d)
 {
   if (d.isNull()) {
     attach(&Rep::null);
@@ -302,13 +304,21 @@ UString::UString(const DOM::DOMString &d)
   rep = UString::Rep::create(dat, len);
 }
 
-DOM::DOMString UString::string() const
+DOMString UString::string() const
 {
-  return DOM::DOMString((QChar*) data(), size());
+  if (isNull())
+    return DOMString();
+  if (isEmpty())
+    return DOMString("");
+  return DOMString((QChar*) data(), size());
 }
 
 QString UString::qstring() const
 {
+  if (isNull())
+    return QString();
+  if (isEmpty())
+    return QString("");
   return QString((QChar*) data(), size());
 }
 
@@ -317,13 +327,21 @@ QConstString UString::qconststring() const
   return QConstString((QChar*) data(), size());
 }
 
-DOM::DOMString Identifier::string() const
+DOMString Identifier::string() const
 {
-  return DOM::DOMString((QChar*) data(), size());
+  if (isNull())
+    return DOMString();
+  if (isEmpty())
+    return DOMString("");
+  return DOMString((QChar*) data(), size());
 }
 
 QString Identifier::qstring() const
 {
+  if (isNull())
+    return QString();
+  if (isEmpty())
+    return QString("");
   return QString((QChar*) data(), size());
 }
 
@@ -337,7 +355,7 @@ DOM::Node KJS::toNode(const Value& val)
   return dobj->toNode();
 }
 
-Value KJS::getStringOrNull(DOM::DOMString s)
+Value KJS::getStringOrNull(DOMString s)
 {
   if (s.isNull())
     return Null();
