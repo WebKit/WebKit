@@ -751,6 +751,10 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
+    case CSS_PROP__KHTML_FONT_SIZE_DELTA:           // <length>
+	   valid_primitive = validUnit( value, FLength, strict );
+	break;
+
     case CSS_PROP__KHTML_NBSP_MODE:     // normal | space
 	if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
 	    valid_primitive = true;

@@ -61,6 +61,7 @@ using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
 using DOM::CSSProperty;
 using DOM::CSSStyleDeclarationImpl;
+using DOM::CSSValue;
 using DOM::CSSValueImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
@@ -171,6 +172,22 @@ static DOMString &styleSpanClassString()
 {
     static DOMString styleSpanClassString = "khtml-style-span";
     return styleSpanClassString;
+}
+
+static bool isEmptyStyleSpan(const NodeImpl *node)
+{
+    if (!node || !node->isHTMLElement())
+        return false;
+
+    const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
+    CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
+    if (!inlineStyleDecl || inlineStyleDecl->length() == 0) {
+        NamedAttrMapImpl *map = elem->attributes();
+        if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
+            return true;
+    }
+    
+    return false;
 }
 
 static DOMString &blockPlaceholderClassString()
@@ -763,6 +780,9 @@ void CompositeEditCommand::removeCSSProperty(CSSStyleDeclarationImpl *decl, int 
 
 void CompositeEditCommand::removeNodeAttribute(ElementImpl *element, int attribute)
 {
+    DOMString value = element->getAttribute(attribute);
+    if (value.isEmpty())
+        return;
     EditCommandPtr cmd(new RemoveNodeAttributeCommand(document(), element, attribute));
     applyCommandToComposite(cmd);
 }
@@ -1132,6 +1152,7 @@ void ApplyStyleCommand::doApply()
     if (blockStyle->length() < m_style->length()) {
         CSSMutableStyleDeclarationImpl *inlineStyle = m_style->copy();
         inlineStyle->ref();
+        applyRelativeFontStyleChange(inlineStyle);
         blockStyle->diff(inlineStyle);
         applyInlineStyle(inlineStyle);
         inlineStyle->deref();
@@ -1183,11 +1204,144 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     }
 }
 
+#define NoFontDelta (0.0f)
+#define MinimumFontSize (0.1f)
+
+void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationImpl *style)
+{
+    if (style->getPropertyCSSValue(CSS_PROP_FONT_SIZE)) {
+        // Explicit font size overrides any delta.
+        style->removeProperty(CSS_PROP__KHTML_FONT_SIZE_DELTA);
+        return;
+    }
+
+    // Get the adjustment amount out of the style.
+    CSSValueImpl *value = style->getPropertyCSSValue(CSS_PROP__KHTML_FONT_SIZE_DELTA);
+    if (!value)
+        return;
+    value->ref();
+    float adjustment = NoFontDelta;
+    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+        CSSPrimitiveValueImpl *primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
+        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PX) {
+            // Only PX handled now. If we handle more types in the future, perhaps
+            // a switch statement here would be more appropriate.
+            adjustment = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PX);
+        }
+    }
+    style->removeProperty(CSS_PROP__KHTML_FONT_SIZE_DELTA);
+    value->deref();
+    if (adjustment == NoFontDelta)
+        return;
+    
+    // Adjust to the positions we want to use for applying style.
+    Selection selection = endingSelection();
+    Position start(selection.start().downstream(StayInBlock));
+    Position end(selection.end().upstream(StayInBlock));
+    if (RangeImpl::compareBoundaryPoints(end, start) < 0) {
+        Position swap = start;
+        start = end;
+        end = swap;
+    }
+
+    // Join up any adjacent text nodes.
+    if (start.node()->isTextNode()) {
+        joinChildTextNodes(start.node()->parentNode(), start, end);
+        selection = endingSelection();
+        start = selection.start();
+        end = selection.end();
+    }
+    if (end.node()->isTextNode() && start.node()->parentNode() != end.node()->parentNode()) {
+        joinChildTextNodes(end.node()->parentNode(), start, end);
+        selection = endingSelection();
+        start = selection.start();
+        end = selection.end();
+    }
+
+    // Split the start text nodes if needed to apply style.
+    bool splitStart = splitTextAtStartIfNeeded(start, end); 
+    if (splitStart) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
+    bool splitEnd = splitTextAtEndIfNeeded(start, end);
+    if (splitEnd) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
+
+    NodeImpl *beyondEnd = end.node()->traverseNextNode(); // Calculate loop end point.
+    start = start.upstream(StayInBlock); // Move upstream to ensure we do not add redundant spans.
+
+    // Store away font size before making any changes to the document.
+    // This ensures that changes to one node won't effect another.
+    QMap<const NodeImpl *,float> startingFontSizes;
+    for (const NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
+        startingFontSizes.insert(node, computedFontSize(node));
+
+    // These spans were added by us. If empty after font size changes, they can be removed.
+    QPtrList<NodeImpl> emptySpans;
+    
+    NodeImpl *lastStyledNode = 0;
+    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
+        // Only work on fully selected nodes.
+        if (!nodeFullySelected(node, start, end))
+            continue;
+
+        HTMLElementImpl *elem = 0;
+        if (node->isHTMLElement()) {
+            elem = static_cast<HTMLElementImpl *>(node);
+        }
+        else if (node->isTextNode() && node->parentNode() != lastStyledNode) {
+            // Last styled node was not parent node of this text node, but we wish to style this
+            // text node. To make this possible, add a style span to surround this text node.
+            elem = static_cast<HTMLElementImpl *>(createStyleSpanElement(document()));
+            insertNodeBefore(elem, node);
+            surroundNodeRangeWithElement(node, node, elem);
+        }
+        else {
+            // Only handle HTML elements and text nodes.
+            continue;
+        }
+        lastStyledNode = node;
+        
+        CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->getInlineStyleDecl();
+        float currentFontSize = computedFontSize(node);
+        float desiredFontSize = kMax(MinimumFontSize, startingFontSizes[node] + adjustment);
+        if (inlineStyleDecl->getPropertyCSSValue(CSS_PROP_FONT_SIZE)) {
+            inlineStyleDecl->removeProperty(CSS_PROP_FONT_SIZE, true);
+            currentFontSize = computedFontSize(node);
+        }
+        if (currentFontSize != desiredFontSize) {
+            QString desiredFontSizeString = QString::number(desiredFontSize);
+            desiredFontSizeString += "px";
+            inlineStyleDecl->setProperty(CSS_PROP_FONT_SIZE, desiredFontSizeString, false, false);
+            setNodeAttribute(elem, ATTR_STYLE, inlineStyleDecl->cssText());
+        }
+        if (inlineStyleDecl->length() == 0) {
+            removeNodeAttribute(elem, ATTR_STYLE);
+            if (isEmptyStyleSpan(elem))
+                emptySpans.append(elem);
+        }
+    }
+
+    for (QPtrListIterator<NodeImpl> it(emptySpans); it.current(); ++it)
+        removeNodePreservingChildren(it.current());
+}
+
+#undef NoFontDelta
+#undef MinimumFontSize
+
 void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
 {
     // adjust to the positions we want to use for applying style
     Position start(endingSelection().start().downstream(StayInBlock).equivalentRangeCompliantPosition());
     Position end(endingSelection().end().upstream(StayInBlock));
+    if (RangeImpl::compareBoundaryPoints(end, start) < 0) {
+        Position swap = start;
+        start = end;
+        end = swap;
+    }
 
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
@@ -1373,19 +1527,21 @@ bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Po
     return false;
 }
 
-NodeImpl *ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Position &end)
+bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Position &end)
 {
     if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
         TextImpl *text = static_cast<TextImpl *>(end.node());
         SplitTextNodeCommand *impl = new SplitTextNodeCommand(document(), text, end.offset());
         EditCommandPtr cmd(impl);
         applyCommandToComposite(cmd);
-        NodeImpl *startNode = start.node() == end.node() ? impl->node()->previousSibling() : start.node();
+        NodeImpl *prevNode = impl->node()->previousSibling();
+        ASSERT(prevNode);
+        NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        setEndingSelection(Selection(Position(startNode, start.offset()), Position(impl->node()->previousSibling(), impl->node()->previousSibling()->caretMaxOffset())));
-        return impl->node()->previousSibling();
+        setEndingSelection(Selection(Position(startNode, start.offset()), Position(prevNode, prevNode->caretMaxOffset())));
+        return true;
     }
-    return end.node();
+    return false;
 }
 
 void ApplyStyleCommand::surroundNodeRangeWithElement(NodeImpl *startNode, NodeImpl *endNode, ElementImpl *element)
@@ -1502,6 +1658,61 @@ Position ApplyStyleCommand::positionInsertionPoint(Position pos)
 #endif
     
     return pos;
+}
+
+float ApplyStyleCommand::computedFontSize(const NodeImpl *node)
+{
+    float size = 0.0f;
+    
+    if (!node)
+        return size;
+    
+    Position pos(const_cast<NodeImpl *>(node), 0);
+    CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
+    if (!computedStyle)
+        return size;
+    computedStyle->ref();
+
+    CSSPrimitiveValueImpl *value = static_cast<CSSPrimitiveValueImpl *>(computedStyle->getPropertyCSSValue(CSS_PROP_FONT_SIZE));
+    if (value) {
+        value->ref();
+        size = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
+        value->deref();
+    }
+
+    computedStyle->deref();
+    return size;
+}
+
+void ApplyStyleCommand::joinChildTextNodes(NodeImpl *node, const Position &start, const Position &end)
+{
+    if (!node)
+        return;
+
+    Position newStart = start;
+    Position newEnd = end;
+    
+    NodeImpl *child = node->firstChild();
+    while (child) {
+        NodeImpl *next = child->nextSibling();
+        if (child->isTextNode() && next && next->isTextNode()) {
+            TextImpl *childText = static_cast<TextImpl *>(child);
+            TextImpl *nextText = static_cast<TextImpl *>(next);
+            if (next == start.node())
+                newStart = Position(childText, childText->length() + start.offset());
+            if (next == end.node())
+                newEnd = Position(childText, childText->length() + end.offset());
+            DOMString textToMove = nextText->data();
+            insertTextIntoNode(childText, childText->length(), textToMove);
+            removeNode(next);
+            // don't move child node pointer. it may want to merge with more text nodes.
+        }
+        else {
+            child = child->nextSibling();
+        }
+    }
+
+    setEndingSelection(Selection(newStart, newEnd));
 }
 
 //------------------------------------------------------------------------------------------
@@ -1990,7 +2201,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (m_startNode == m_endingPosition.node())
+    if (m_startNode == m_endingPosition.node() && m_startNode->inDocument() && !m_startNode->isBlockFlow())
         document()->part()->setTypingStyle(0);
     else {
         CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
@@ -4259,6 +4470,15 @@ ElementImpl *createBreakElement(DocumentImpl *document)
     ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
     ASSERT(exceptionCode == 0);
     return breakNode;
+}
+
+ElementImpl *createStyleSpanElement(DocumentImpl *document)
+{
+    int exceptionCode = 0;
+    ElementImpl *styleElement = document->createHTMLElement("SPAN", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+    return styleElement;
 }
 
 } // namespace khtml

@@ -1827,6 +1827,16 @@ void removeWrapperForRGB(QRgb value)
     [self setProperty:@"font-size-adjust" :fontSizeAdjust :@""];
 }
 
+- (NSString *)_fontSizeDelta
+{
+    return [self getPropertyValue:@"-khtml-font-size-delta"];
+}
+
+- (void)_setFontSizeDelta:(NSString *)fontSizeDelta
+{
+    [self setProperty:@"-khtml-font-size-delta" :fontSizeDelta :@""];
+}
+
 - (NSString *)fontStretch
 {
     return [self getPropertyValue:@"font-stretch"];

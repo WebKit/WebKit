@@ -274,13 +274,16 @@ private:
 
     // style-application helpers
     void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
+    void applyRelativeFontStyleChange(DOM::CSSMutableStyleDeclarationImpl *);
     void applyInlineStyle(DOM::CSSMutableStyleDeclarationImpl *);
     void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *);
     void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
+    bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
     DOM::Position positionInsertionPoint(DOM::Position);
+    float computedFontSize(const DOM::NodeImpl *);
+    void joinChildTextNodes(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end);
     
     DOM::CSSMutableStyleDeclarationImpl *m_style;
     EditAction m_editingAction;
@@ -792,6 +795,7 @@ private:
 DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
+DOM::ElementImpl *createStyleSpanElement(DOM::DocumentImpl *document);
 
 //------------------------------------------------------------------------------------------
 

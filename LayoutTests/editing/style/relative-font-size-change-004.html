@@ -1,0 +1,62 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    for (i = 0; i < 5; i++)
+        extendSelectionForwardByWordCommand();
+    for (i = 0; i < 6; i++)
+        fontSizeDeltaCommand("+1px");
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable="true">
+<div class="explanation">
+Size check should say: 30px. All text in the red boxes should appear to be 24px. This test checks removing
+font size tags when they are no longer necessary.
+</div>
+
+<div style="font-size: 24px; margin-bottom: 16px;">Size check: <span id="check"></span></div>
+
+<div id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">There is a tide
+<div id="sizeTest" class="editing">In the affairs of men
+</div>
+Which taken at the flood
+</div>
+</div>
+
+<script>
+runEditingTest();
+
+test = document.getElementById("sizeTest");
+check = document.getElementById("check");
+size = document.defaultView.getComputedStyle(test, "").getPropertyValue("font-size");
+check.innerHTML = size;
+for (i = 0; i < 6; i++)
+    fontSizeDeltaCommand("-1px");
+
+</script>
+
+</body>
+</html>

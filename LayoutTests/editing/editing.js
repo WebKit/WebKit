@@ -202,6 +202,54 @@ function boldCommand() {
     }
 }
 
+//-------------------------------------------------------------------------------------------------------
+
+function execFontNameCommand() {
+    document.execCommand("FontName", false, "Courier");
+}
+function fontNameCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execFontNameCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execFontNameCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execFontSizeCommand(s) {
+    if (arguments.length == 0 || s == undefined || s.length == 0)
+        s = '12px';
+    document.execCommand("FontSize", false, s);
+}
+function fontSizeCommand(s) {
+    if (commandDelay > 0) {
+        window.setTimeout(execFontSizeCommand, commandCount * commandDelay, s);
+        commandCount++;
+    }
+    else {
+        execFontSizeCommand(s);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execFontSizeDeltaCommand(s) {
+    if (arguments.length == 0 || s == undefined || s.length == 0)
+        s = '1px';
+    document.execCommand("FontSizeDelta", false, s);
+}
+function fontSizeDeltaCommand(s) {
+    if (commandDelay > 0) {
+        window.setTimeout(execFontSizeDeltaCommand, commandCount * commandDelay, s);
+        commandCount++;
+    }
+    else {
+        execFontSizeDeltaCommand(s);
+    }
+}
 
 //-------------------------------------------------------------------------------------------------------
 
@@ -456,23 +504,6 @@ function backColorCommand() {
     }
     else {
         execBackColorCommand();
-    }
-}
-
-
-//-------------------------------------------------------------------------------------------------------
-
-
-function execFontNameCommand() {
-    document.execCommand("FontName", false, "Courier");
-}
-function fontNameCommand() {
-    if (commandDelay > 0) {
-        window.setTimeout(execFontNameCommand, commandCount * commandDelay);
-        commandCount++;
-    }
-    else {
-        execFontNameCommand();
     }
 }
 

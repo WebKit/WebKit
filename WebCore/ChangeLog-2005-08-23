@@ -1,3 +1,49 @@
+2005-01-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3786659> REGRESSION (Mail): editable WebViews don't work with 
+        "size up" and "size down" NSFontManager changes
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): Add support for parsing new font size delta property.
+        * khtml/css/cssproperties.c: Generated file.
+        * khtml/css/cssproperties.h: Ditto.
+        * khtml/css/cssproperties.in: Add support for parsing new font size delta property.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isEmptyStyleSpan): New helper function. Code existed before, but now factored out for convenient use.
+        (khtml::CompositeEditCommand::removeNodeAttribute): Does check on value to see it exists before creating
+        and running command to do the removal.
+        (khtml::ApplyStyleCommand::doApply): Now calls new applyRelativeFontStyleChange() function as part of its work.
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange): New function that does the "heavy lifting" to handle 
+        relative font size changes.
+        (khtml::ApplyStyleCommand::applyInlineStyle): Range check the start and end positions to make sure the start is
+        before or equal to the end. Swap them if not true. I ran into this problem in some similar code in 
+        applyRelativeFontStyleChange(). Moving that goodness here too.
+        (khtml::ApplyStyleCommand::splitTextAtEndIfNeeded): Uses a local variable to save a value used often.
+        Code is the same, but reads better now. Function now returns bool as well, just like splitTextAtStartIfNeeded.
+        I use the bool return value now (I obviously did not need it before).
+        (khtml::ApplyStyleCommand::computedFontSize): New helper function.
+        (khtml::ApplyStyleCommand::joinChildTextNodes): Ditto.
+        (khtml::createStyleSpanElement): Ditto.
+        * khtml/editing/htmlediting.h: Update header accordingly.
+        * khtml/editing/jsediting.cpp: Add new command string to enable relative font size changes.
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration _fontSizeDelta]): New convenience.
+        (-[DOMCSSStyleDeclaration _setFontSizeDelta:]): Ditto.
+        * kwq/DOMPrivate.h: Declare new conveniences.
+        * layout-tests/editing/editing.js: Add new JS to enable relative font size changes, as well as explicit font size setting.
+        * layout-tests/editing/style/relative-font-size-change-001-expected.txt: Added.
+        * layout-tests/editing/style/relative-font-size-change-001.html: Added.
+        * layout-tests/editing/style/relative-font-size-change-002-expected.txt: Added.
+        * layout-tests/editing/style/relative-font-size-change-002.html: Added.
+        * layout-tests/editing/style/relative-font-size-change-003-expected.txt: Added.
+        * layout-tests/editing/style/relative-font-size-change-003.html: Added.
+        * layout-tests/editing/style/relative-font-size-change-004-expected.txt: Added.
+        * layout-tests/editing/style/relative-font-size-change-004.html: Added.
+
 2005-01-14  Darin Adler  <darin@apple.com>
 
         * khtml/css/cssproperties.c: Regenerated with gperf 3.0.1.

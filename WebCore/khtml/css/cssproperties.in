@@ -59,6 +59,7 @@ empty-cells
 float
 font-family
 font-size
+-khtml-font-size-delta
 font-stretch
 font-style
 font-variant

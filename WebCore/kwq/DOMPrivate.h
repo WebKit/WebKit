@@ -38,3 +38,8 @@
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
 @end
+
+@interface DOMCSSStyleDeclaration (WebPrivate)
+- (NSString *)_fontSizeDelta;
+- (void)_setFontSizeDelta:(NSString *)fontSizeDelta;
+@end
