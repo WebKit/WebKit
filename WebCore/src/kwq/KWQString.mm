@@ -1062,12 +1062,30 @@ void QString::truncate(uint newLen)
     }
 }
 
-void QString::fill(QChar, int)
+void QString::fill(QChar qc, int len)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (s) {
+        if (len < 0) {
+            len = CFStringGetLength(s);
+        }
+        CFRelease(s);
+        s = NULL;
+    }
+    if (len > 0) {
+        UniChar *ucs = CFAllocatorAllocate(kCFAllocatorDefault,
+                len * sizeof (UniChar), 0);
+        if (ucs) {
+            for (int i = 0; i < len; i++) {
+                ucs[i] = qc.c;
+            }
+            s = CFStringCreateMutableWithExternalCharactersNoCopy(
+                    kCFAllocatorDefault, ucs, len, 0, kCFAllocatorDefault);
+            if (!s) {
+                CFAllocatorDeallocate(kCFAllocatorDefault, ucs);
+            }
+        }
+    }
 }
 
 void QString::compose()
