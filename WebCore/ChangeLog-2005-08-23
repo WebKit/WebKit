@@ -1,3 +1,21 @@
+2002-07-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3008660, arstechnica regression.  Move the acquisition
+	of the document's text color (and the addition of CSS properties)
+	to the attach() call instead of the constructor.  The table won't
+	add the properties until it is building its render object.
+
+	Also removing the #ifndef around the layout scheduler.  This fixes
+	:hover feedback and reflows from things like the marquee on
+	livepage.apple.com.
+	
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::id):
+        (HTMLTableElementImpl::attach):
+        * khtml/html/html_tableimpl.h:
+        * khtml/rendering/render_object.h:
+
 2002-07-29  Darin Adler  <darin@apple.com>
 
 	- fixed 3010875 -- Find only works for latin characters

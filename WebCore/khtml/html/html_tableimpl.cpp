@@ -59,15 +59,6 @@ HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
     incremental = false;
     m_noBorder = true;
     m_solid = false;
-
-    // reset font color and sizes here, if we don't have strict parse mode.
-    // this is 90% compatible to ie and mozilla, and the by way easiest solution...
-    // only difference to 100% correct is that in strict mode <font> elements are propagated into tables.
-    if ( getDocument()->parseMode() != DocumentImpl::Strict ) {
-        addCSSProperty( CSS_PROP_FONT_SIZE, CSS_VAL_SMALL ); // browser defaults use small, not medium
-        addCSSProperty( CSS_PROP_COLOR, getDocument()->textColor() );
-        addCSSProperty( CSS_PROP_FONT_FAMILY, "konq_default" );
-    }
 }
 
 HTMLTableElementImpl::~HTMLTableElementImpl()
@@ -77,6 +68,23 @@ HTMLTableElementImpl::~HTMLTableElementImpl()
 NodeImpl::Id HTMLTableElementImpl::id() const
 {
     return ID_TABLE;
+}
+
+void HTMLTableElementImpl::attach()
+{
+    assert(!m_attached);
+    if (parent()->renderer()) {
+        // reset font color and sizes here, if we don't have strict parse mode.
+        // this is 90% compatible to ie and mozilla, and the by way easiest solution...
+        // only difference to 100% correct is that in strict mode <font> elements are propagated into tables.
+        if ( getDocument()->parseMode() != DocumentImpl::Strict ) {
+            addCSSProperty( CSS_PROP_FONT_SIZE, CSS_VAL_SMALL ); // browser defaults use small, not medium
+            addCSSProperty( CSS_PROP_COLOR, getDocument()->textColor() );
+            addCSSProperty( CSS_PROP_FONT_FAMILY, "konq_default" );
+        }
+    }
+
+    return HTMLElementImpl::attach();
 }
 
 NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
