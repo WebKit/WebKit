@@ -1,3 +1,59 @@
+2003-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	More exception blocking.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::~KWQKHTMLPart):
+        (KWQKHTMLPart::generateFrameName):
+        (KWQKHTMLPart::openURL):
+        (KWQKHTMLPart::openURLRequest):
+        (regExpForLabels):
+        (KWQKHTMLPart::clearRecordedFormValues):
+        (KWQKHTMLPart::recordFormValue):
+        (KWQKHTMLPart::submitForm):
+        (KHTMLPart::frameDetached):
+        (KWQKHTMLPart::urlSelected):
+        (KWQKHTMLPart::createPart):
+        (KWQKHTMLPart::setTitle):
+        (KWQKHTMLPart::setStatusBarText):
+        (KWQKHTMLPart::scheduleClose):
+        (KWQKHTMLPart::unfocusWindow):
+        (KWQKHTMLPart::jumpToSelection):
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped):
+        (KWQKHTMLPart::userAgent):
+        (KWQKHTMLPart::mimeTypeForFileName):
+        (KWQKHTMLPart::nextKeyView):
+        (KWQKHTMLPart::currentEventIsMouseDownInWidget):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::saveDocumentState):
+        (KWQKHTMLPart::restoreDocumentState):
+        (KWQKHTMLPart::requestedURLString):
+        (KWQKHTMLPart::incomingReferrer):
+        (KWQKHTMLPart::runJavaScriptAlert):
+        (KWQKHTMLPart::runJavaScriptConfirm):
+        (KWQKHTMLPart::runJavaScriptPrompt):
+        (KWQKHTMLPart::createEmptyDocument):
+        (KWQKHTMLPart::keyEvent):
+        (KWQKHTMLPart::khtmlMousePressEvent):
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        (KWQKHTMLPart::lastEventIsMouseUp):
+        (findViewInSubviews):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::passSubframeEventToSubframe):
+        (KWQKHTMLPart::buttonForCurrentEvent):
+        (KWQKHTMLPart::stateForCurrentEvent):
+        (KWQKHTMLPart::mouseDown):
+        (KWQKHTMLPart::mouseDragged):
+        (KWQKHTMLPart::mouseUp):
+        (KWQKHTMLPart::sendFakeEventsAfterWidgetTracking):
+        (KWQKHTMLPart::mouseMoved):
+        (KWQKHTMLPart::sendContextMenuEvent):
+        (fileWrapperForElement):
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::keyboardUIMode):
+
 2003-10-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3176170>: OBJECT tag with no or empty TYPE is mishandled
