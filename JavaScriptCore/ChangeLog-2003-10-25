@@ -1,3 +1,5 @@
+=== Safari-109 ===
+
 2003-10-06  Darin Adler  <darin@apple.com>
 
         * kjs/create_hash_table: Remove stray semicolon.

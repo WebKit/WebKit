@@ -1,3 +1,5 @@
+=== Safari-109 ===
+
 2003-10-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3436723, the shrink-to-fit algorithm for positioned elements did not match

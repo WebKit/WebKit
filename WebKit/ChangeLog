@@ -1,3 +1,5 @@
+=== Safari-109 ===
+
 2003-10-03  Richard Williamson (Home0  <rjw@apple.com>
 
 	Fix part of 3438071.  Creating an instance of WebPreferences using init
