@@ -1,5 +1,13 @@
 2002-08-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Remove stray references to CompletionType and CompletionImp.
+	
+        * kjs/completion.h:
+        * kjs/object.cpp:
+        * kjs/value.h:
+
+2002-08-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Separated Completion from Value and made it a pure stack
 	object. This removed another 160,000 of the remaining 580,000
 	garbage collected object allocations.

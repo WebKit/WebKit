@@ -48,7 +48,6 @@ namespace KJS {
   public:
     Completion(ComplType c = Normal, const Value& v = Value(),
                const UString &t = UString::null);
-    Completion(CompletionImp *v);
 
     ComplType complType() const;
     Value value() const;

@@ -193,7 +193,6 @@ void ObjectImp::put(ExecState *exec, const UString &propertyName,
                      const Value &value, int attr)
 {
   assert(!value.isNull());
-  assert(value.type() != CompletionType);
   assert(value.type() != ListType);
 
   /* TODO: check for write permissions directly w/o this call */
