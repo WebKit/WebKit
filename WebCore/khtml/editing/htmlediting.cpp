@@ -943,11 +943,7 @@ void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
     if (renderer->height() > 0)
         return;
 
-    int exceptionCode = 0;
-    ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
-    ASSERT(exceptionCode == 0);
-    breakNode->setAttribute(ATTR_CLASS, blockPlaceholderClassString());
-    appendNode(breakNode, node);
+    appendNode(createBlockPlaceholderElement(document()), node);
 }
 
 bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
@@ -2183,12 +2179,7 @@ InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand()
 
 ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
 {
-    static DOMString paragraphStyle("margin-top: 0.1em; margin-bottom: 0.1em");
-
-    int exceptionCode = 0;
-    ElementImpl *element = document()->createHTMLElement("p", exceptionCode);
-    ASSERT(exceptionCode == 0);
-    element->setAttribute(ATTR_STYLE, paragraphStyle);
+    ElementImpl *element = createDefaultParagraphElement(document());
     element->ref();
     clonedNodes.append(element);
     return element;
@@ -4021,6 +4012,25 @@ bool TypingCommand::preservesTypingStyle() const
 bool TypingCommand::isTypingCommand() const
 {
     return true;
+}
+
+ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
+{
+    static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");
+    int exceptionCode = 0;
+    ElementImpl *element = document->createHTMLElement("p", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    element->setAttribute(ATTR_STYLE, defaultParagraphStyle);
+    return element;
+}
+
+ElementImpl *createBlockPlaceholderElement(DocumentImpl *document)
+{
+    int exceptionCode = 0;
+    ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    breakNode->setAttribute(ATTR_CLASS, blockPlaceholderClassString());
+    return breakNode;
 }
 
 } // namespace khtml

@@ -25,10 +25,13 @@
 
 #include "markup.h"
 
+#include "htmlediting.h"
+
 #include "html/html_elementimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
 #include "rendering/render_text.h"
+#include "misc/htmlattrs.h"
 #include "misc/htmltags.h"
 #include "html/dtd.h"
 
@@ -381,58 +384,68 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
     DocumentFragmentImpl *fragment = document->createDocumentFragment();
     fragment->ref();
     
-    QString string = text;
+    if (!text.isEmpty()) {
+        QString string = text;
 
-    // Replace tabs with four plain spaces.
-    // These spaces will get converted along with the other existing spaces below.
-    string.replace('\t', "    ");
+        // Replace tabs with four plain spaces.
+        // These spaces will get converted along with the other existing spaces below.
+        string.replace('\t', "    ");
 
-    int offset = 0;
-    int stringLength = string.length();
-    while (1) {
-        // FIXME: This only converts plain old spaces, and does not
-        // deal with more exotic whitespace. Note that we want to 
-        // leave newlines and returns alone at this point anyway, 
-        // since those are handled specially later.
-        int spacesPos = string.find("  ", offset);
-        if (spacesPos < 0)
-            break;
-            
-        // Found two adjoining spaces.
-        // Now, lookahead to see if these two spaces are followed by:
-        //   1. another space and then a non-space
-        //   2. another space and then the end of the string
-        // If either 1 or 2 is true, replace the three spaces found with nbsp+nbsp+space, 
-        // otherwise, replace the first two spaces with nbsp+space.
-        if ((spacesPos + 3 < stringLength && string[spacesPos + 2] == ' ' && string[spacesPos + 3] != ' ')
-                || (spacesPos + 3 == stringLength && string[spacesPos + 2] == ' ')) {
-            string.replace(spacesPos, 3, "\xA0\xA0 ");
-        } else {
-            string.replace(spacesPos, 2, "\xA0 ");
+        // FIXME: Wrap the NBSP's in a span that says "converted space".
+        int offset = 0;
+        int stringLength = string.length();
+        while (1) {
+            // FIXME: This only converts plain old spaces, and does not
+            // deal with more exotic whitespace. Note that we want to 
+            // leave newlines and returns alone at this point anyway, 
+            // since those are handled specially later.
+            int spacesPos = string.find("  ", offset);
+            if (spacesPos < 0)
+                break;
+
+            // Found two adjoining spaces.
+            // Now, lookahead to see if these two spaces are followed by:
+            //   1. another space and then a non-space
+            //   2. another space and then the end of the string
+            // If either 1 or 2 is true, replace the three spaces found with nbsp+nbsp+space, 
+            // otherwise, replace the first two spaces with nbsp+space.
+            if ((spacesPos + 3 < stringLength && string[spacesPos + 2] == ' ' && string[spacesPos + 3] != ' ')
+                    || (spacesPos + 3 == stringLength && string[spacesPos + 2] == ' ')) {
+                string.replace(spacesPos, 3, "\xA0\xA0 ");
+            } else {
+                string.replace(spacesPos, 2, "\xA0 ");
+            }
+            offset = spacesPos + 2;
         }
-        offset = spacesPos + 2;
-    }
-    
-    // Handle line endings, replacing them with BR elements.
-    string.replace(QString("\r\n"), "\n");
-    string.replace('\r', '\n');
-    QStringList list = QStringList::split('\n', string, true); // true gets us empty strings in the list
-    bool firstNode = true;
-    while (!list.isEmpty()) {
-        int exceptionCode = 0;
-        if (firstNode) {
-            firstNode = false;
-        } else {
-            ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
-            assert(exceptionCode == 0);
-            fragment->appendChild(breakNode, exceptionCode);
-            assert(exceptionCode == 0);
-        }
-        QString s = list.first();
-        list.pop_front();
-        if (!s.isEmpty()) {
-            NodeImpl *textNode = document->createTextNode(s);
-            fragment->appendChild(textNode, exceptionCode);
+
+        // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
+        string.replace(QString("\r\n"), "\n");
+        string.replace('\r', '\n');
+        QStringList list = QStringList::split('\n', string, true); // true gets us empty strings in the list
+        while (!list.isEmpty()) {
+            QString s = list.first();
+            list.pop_front();
+
+            int exceptionCode = 0;
+            ElementImpl *element;
+            if (s.isEmpty() && list.isEmpty()) {
+                // For last line, use the "magic BR" rather than a P.
+                element = document->createHTMLElement("br", exceptionCode);
+                assert(exceptionCode == 0);
+                element->setAttribute(ATTR_CLASS, AppleInterchangeNewline);            
+            } else {
+                element = createDefaultParagraphElement(document);
+                NodeImpl *paragraphContents;
+                if (s.isEmpty()) {
+                    paragraphContents = createBlockPlaceholderElement(document);
+                } else {
+                    paragraphContents = document->createTextNode(s);
+                    assert(exceptionCode == 0);
+                }
+                element->appendChild(paragraphContents, exceptionCode);
+                assert(exceptionCode == 0);
+            }
+            fragment->appendChild(element, exceptionCode);
             assert(exceptionCode == 0);
         }
     }

@@ -1,3 +1,29 @@
+2004-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - use <p> elements rather than <br> when pasting plain text; also use margin of 0 rather than 0.1 em
+          after talking this over with Dave and Ken
+
+        * khtml/editing/htmlediting.h: Added createDefaultParagraphElement and createBlockPlaceholderElement.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::insertBlockPlaceholderIfNeeded): Use new createBlockPlaceholderElement
+        helper so this can share code with the plain-text conversion code.
+        (khtml::InsertParagraphSeparatorCommand::createParagraphElement): Use new createDefaultParagraphElement
+        helper so this can share code with the plain-text conversion code.
+        (khtml::createDefaultParagraphElement): Added.
+        (khtml::createBlockPlaceholderElement): Added.
+
+        * khtml/editing/markup.cpp: (khtml::createFragmentFromText): Use paragraphs rather than
+        <br> elements for pasting plain text.
+
+        - regenerated these files with the newer gperf
+
+        * khtml/css/cssproperties.c: Regenerated.
+        * khtml/css/cssvalues.c: Regenerated.
+        * khtml/misc/htmlattrs.c: Regenerated.
+        * khtml/misc/htmltags.c: Regenerated.
+
 2004-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
