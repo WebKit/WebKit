@@ -126,7 +126,8 @@
         [data->dataSourceMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
     }
     
-    [view dataSourceChanged];
+    if (dataSource != nil)
+        [view dataSourceChanged];
 }
 
 
