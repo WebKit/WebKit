@@ -1031,7 +1031,14 @@ void HTMLButtonElementImpl::defaultEventHandler(EventImpl *evt)
 
 bool HTMLButtonElementImpl::isSuccessfulSubmitButton() const
 {
-    return m_type == SUBMIT && !m_disabled && !name().isEmpty();
+    // HTML spec says that buttons must have names
+    // to be considered successful. However, other browsers
+    // do not impose this constraint. Therefore, we behave
+    // differently and can use different buttons than the 
+    // author intended. 
+    // Remove the name constraint for now.
+    // Was: m_type == SUBMIT && !m_disabled && !name().isEmpty()
+    return m_type == SUBMIT && !m_disabled;
 }
 
 bool HTMLButtonElementImpl::isActivatedSubmit() const
@@ -1437,7 +1444,13 @@ DOMString HTMLInputElementImpl::altText() const
 
 bool HTMLInputElementImpl::isSuccessfulSubmitButton() const
 {
-    return !m_disabled && (m_type == IMAGE || (m_type == SUBMIT && !name().isEmpty()));
+    // HTML spec says that buttons must have names
+    // to be considered successful. However, other browsers
+    // do not impose this constraint. Therefore, we behave
+    // differently and can use different buttons than the 
+    // author intended. 
+    // Was: (m_type == SUBMIT && !name().isEmpty())
+    return !m_disabled && (m_type == IMAGE || m_type == SUBMIT);
 }
 
 bool HTMLInputElementImpl::isActivatedSubmit() const

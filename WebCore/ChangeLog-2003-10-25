@@ -1,3 +1,23 @@
+2003-10-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+	Fix for these bugs:
+
+	<rdar://problem/3171929>: Safari picks a different button in a 
+	form when you hit return if the first button has no name
+	<rdar://problem/3200386>: investigate which button is activated 
+	when hitting return in form text input fields
+
+	HTML spec says that buttons must have names to be considered
+	successful. However, other browsers do not impose this constraint.
+	Therefore, we behave differently, and can use different buttons than
+	the author intended.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLButtonElementImpl::isSuccessfulSubmitButton)
+        (HTMLInputElementImpl::isSuccessfulSubmitButton)
+
 2003-10-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3460726, the user agent string was returning nil.  
