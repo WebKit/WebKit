@@ -382,29 +382,35 @@ static void reverseRuns(int start, int end)
         curr = curr->nextRun;
     }
 
-    BidiRun* newEnd = curr;
-    BidiRun* prev = 0;
+    BidiRun* startRun = curr;
     while (i < end) {
+        i++;
+        curr = curr->nextRun;
+    }
+    BidiRun* endRun = curr;
+    BidiRun* afterEnd = curr->nextRun;
+
+    i = start;
+    curr = startRun;
+    BidiRun* newNext = afterEnd;
+    while (i <= end) {
         // Do the reversal.
         BidiRun* next = curr->nextRun;
-        curr->nextRun = prev;
-        prev = curr;
+        curr->nextRun = newNext;
+        newNext = curr;
         curr = next;
         i++;
     }
 
-    BidiRun* newStart = curr;
-    BidiRun* afterEnd = curr->nextRun;
-
     // Now hook up beforeStart and afterEnd to the newStart and newEnd.
     if (beforeStart)
-        beforeStart->nextRun = newStart;
+        beforeStart->nextRun = endRun;
     else
-        sFirstBidiRun = newStart;
+        sFirstBidiRun = endRun;
 
-    newEnd->nextRun = afterEnd;
+    startRun->nextRun = afterEnd;
     if (!afterEnd)
-        sLastBidiRun = newEnd;
+        sLastBidiRun = startRun;
 }
 
 static void addMidpoint(const BidiIterator& midpoint)
