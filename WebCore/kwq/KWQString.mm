@@ -1903,14 +1903,8 @@ QString &QString::setLatin1(const char *str, int len)
     
     // Free our handle if it isn't the shared null handle, and if no-one else is using it.
     bool needToFreeHandle = dataHandle != shared_null_handle && dataHandle[0]->refCount == 1;
-        
-    if (len == 0) {
-        deref();
-        if (needToFreeHandle)
-            freeHandle(dataHandle);
-        dataHandle = makeSharedNullHandle();
-        dataHandle[0]->ref();
-    } else if (len+1 > (int)dataHandle[0]->_maxAscii || dataHandle[0]->refCount != 1 || !dataHandle[0]->_isAsciiValid) {
+   
+    if (len+1 > (int)dataHandle[0]->_maxAscii || dataHandle[0]->refCount != 1 || !dataHandle[0]->_isAsciiValid) {
         deref();
         if (needToFreeHandle)
             freeHandle(dataHandle);

@@ -1,3 +1,18 @@
+2003-06-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3288035, the wrong value was being filled in for
+	textfields.  Fixed a bug in QString's assignment operator
+	that made empty strings become null strings upon assignment.
+	Also ensured that the form control never sets the value to
+	null but always uses empty instead.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::slotTextChanged):
+        * kwq/KWQString.mm:
+        (QString::setLatin1):
+
 2003-06-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3287870, the <embed hidden=true> feature didn't work.
