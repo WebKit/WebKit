@@ -1,3 +1,11 @@
+2002-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m: Remove private _flags
+	and _attributes accessors, now that Ken added public versions.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload:]): Remove sole use thereof.
+
 === Alexander-17 ===
 
 2002-08-10  Ken Kocienda  <kocienda@apple.com>

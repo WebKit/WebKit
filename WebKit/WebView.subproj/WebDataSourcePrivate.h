@@ -121,7 +121,4 @@
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 
-- (int)_flags;
-- (NSDictionary *)_attributes;
-
 @end

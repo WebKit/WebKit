@@ -201,9 +201,9 @@
 	return;
     }
 
-    flags = [dataSource _flags] | WebResourceHandleFlagLoadFromOrigin;
+    flags = [dataSource flags] | WebResourceHandleFlagLoadFromOrigin;
 
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource _attributes] flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource attributes] flags:flags];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeRefresh];

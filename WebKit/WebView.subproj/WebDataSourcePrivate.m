@@ -495,15 +495,4 @@
     return _private->mainHandle;
 }
 
-- (int)_flags
-{
-    return _private->flags;
-}
-
-- (NSDictionary *)_attributes
-{
-    return _private->attributes;
-}
-
-
 @end
