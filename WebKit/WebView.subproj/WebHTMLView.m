@@ -328,8 +328,12 @@ static BOOL forceRealHitTest = NO;
         string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
     }
     if (string != nil) {
-        NSArray *elements = [[NSArray alloc] initWithObjects:@"style", nil];
-        NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:elements, NSExcludedElementsDocumentAttribute, nil];
+        NSArray *elements = [[NSArray alloc] initWithObjects:
+            // Omit style since we want style to be inline so the fragment can be easily inserted.
+            @"style", nil];
+        NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+            elements, NSExcludedElementsDocumentAttribute,
+            self, @"WebResourceHandler", nil];
         [elements release];
         NSArray *subresources;
         DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
@@ -338,12 +342,7 @@ static BOOL forceRealHitTest = NO;
                                                       subresources:&subresources];
         [documentAttributes release];
         [string release];
-        if (fragment) {
-            if ([subresources count] != 0) {
-                [[self _dataSource] _addSubresources:subresources];
-            }
-            return fragment;
-        }
+        return fragment;
     }
 #endif
     
@@ -360,6 +359,31 @@ static BOOL forceRealHitTest = NO;
     
     return nil;
 }
+
+#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
+- (WebResource *)resourceForData:(NSData *)data preferredFilename:(NSString *)name
+{
+    // This method is called by [NSAttributedString _documentFromRange::::] 
+    // which uses the URL of the resource for the fragment that it returns.
+    NSString *extension = [name pathExtension];
+    NSString *MIMEType = nil;
+    if ([extension length] != 0) {
+        MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    }
+    // Only support image resources.
+    if (MIMEType == nil || ![[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
+        return nil;
+    }
+    NSURL *URL = [NSURL _web_URLWithUserTypedString:[NSString stringWithFormat:@"/%@", name] relativeToURL:[NSURL _web_uniqueWebDataURL]];
+    WebResource *resource = [[[WebResource alloc] initWithData:data
+                                                           URL:URL
+                                                      MIMEType:MIMEType 
+                                              textEncodingName:nil
+                                                     frameName:nil] autorelease];
+    [[self _dataSource] addSubresource:resource];
+    return resource;
+}
+#endif
 
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {

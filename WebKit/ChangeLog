@@ -1,3 +1,15 @@
+2005-01-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3948862> REGRESSION: missing images when RTFD is pasted into editable WebView
+
+	This problem occurred because we were creating image elements before creating corresponding image resources. The fix is to have AppKit call us back to create the resources before it creates the elements.
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): don't deal with subresources since that's now done by the following method
+        (-[WebHTMLView resourceForData:preferredFilename:]): new handler method called by AppKit
+
 === Safari-178 ===
 
 2005-01-06  David Harrison  <harrison@apple.com>
