@@ -138,7 +138,10 @@
     if (activate)
         event.modifiers |= activeFlag;
     
-    BOOL acceptedEvent = [self sendEvent:&event]; 
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
 }
@@ -171,7 +174,10 @@
     [self getCarbonEvent:&event];
     event.what = getFocusEvent;
     
-    BOOL acceptedEvent = [self sendEvent:&event]; 
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d\n", acceptedEvent);
     return YES;
@@ -184,7 +190,10 @@
     [self getCarbonEvent:&event];
     event.what = loseFocusEvent;
     
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d\n", acceptedEvent);
     return YES;
@@ -197,7 +206,10 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
 
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
@@ -209,7 +221,10 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
 
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
@@ -221,7 +236,10 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
@@ -233,7 +251,10 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event]; 
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
     
@@ -336,7 +357,10 @@
     EventRecord event;
     
     [self getCarbonEvent:&event withEvent:theEvent];
-    BOOL acceptedEvent = [self sendEvent:&event];
+#ifndef NDEBUG
+    BOOL acceptedEvent =
+#endif
+    [self sendEvent:&event];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 

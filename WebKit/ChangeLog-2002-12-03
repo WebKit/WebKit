@@ -1,5 +1,12 @@
 2002-09-04  Darin Adler  <darin@apple.com>
 
+	Fix unused variable warnings for deployment builds.
+
+        * Plugins.subproj/WebPluginView.m: Add ifndef NDEBUG around variable
+	used only in log statements.
+
+2002-09-04  Darin Adler  <darin@apple.com>
+
 	Removed the now-unnecessary iconURL from bookmarks and history.
 
         * Bookmarks.subproj/WebBookmark.h:
