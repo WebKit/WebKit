@@ -582,12 +582,17 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TFOOT:
         case ID_TBODY:
         case ID_TR:
+	case ID_TD:
             switch(id)
             {
             case ID_TABLE:
                 popBlock(ID_TABLE); // end the table
                 handled = true;      // ...and start a new one
                 break;
+	    case ID_CAPTION:
+		popBlock(current->id());
+		handled = true;
+		break;
             case ID_TEXT:
             {
                 TextImpl *t = static_cast<TextImpl *>(n);

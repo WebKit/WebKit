@@ -1,3 +1,14 @@
+2004-07-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3745808> Seed: WebKit: Table's caption broken
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode): When a caption appears in an illegal
+	place in a table, pop blocks until we hit a place where it's
+	allowed.
+
 === Safari-154 ===
 
 2004-07-29  Darin Adler  <darin@apple.com>
