@@ -5,7 +5,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/npapi.h>
 
 @class WebNetscapePluginPackage;

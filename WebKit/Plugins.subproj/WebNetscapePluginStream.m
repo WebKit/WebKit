@@ -5,6 +5,7 @@
 
 #import <WebKit/WebNetscapePluginStream.h>
 
+#import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -60,9 +61,16 @@
 - (void)start
 {
     ASSERT(_startingRequest);
-    [_loader loadWithRequest:_startingRequest];
+
+    [[_loader dataSource] _addSubresourceClient:_loader];
+
+    BOOL succeeded = [_loader loadWithRequest:_startingRequest];
     [_startingRequest release];
     _startingRequest = nil;
+
+    if (!succeeded) {
+        [[_loader dataSource] _removeSubresourceClient:_loader];
+    }
 }
 
 - (void)cancelWithReason:(NPReason)theReason
@@ -140,19 +148,29 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    [[view webView] _finishedLoadingResourceFromDataSource:[view dataSource]];
+    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    [self retain];
+
+    [[self dataSource] _removeSubresourceClient:self];
+    [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [stream finishedLoadingWithData:resourceData];
     [super connectionDidFinishLoading:con];
+
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
-    // retain/release self in this delegate method since the additional processing can do
-    // anything including possibly releasing self; one example of this is 3266216
+    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // The other additional processing can do anything including possibly releasing self;
+    // one example of this is 3266216
     [self retain];
-    [[view webView] _receivedError:error fromDataSource:[view dataSource]];
+
+    [[self dataSource] _removeSubresourceClient:self];
+    [[view webView] _receivedError:error fromDataSource:[self dataSource]];
     [stream receivedError:error];
     [super connection:con didFailWithError:error];
+
     [self release];
 }
 

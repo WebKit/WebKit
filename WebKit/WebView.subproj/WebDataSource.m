@@ -27,7 +27,6 @@
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -206,19 +205,16 @@
     }
 }
 
-- (void)_addSubresourceClient:(WebSubresourceClient *)client
+- (void)_addSubresourceClient:(WebBaseResourceHandleDelegate *)client
 {
     if (_private->subresourceClients == nil) {
         _private->subresourceClients = [[NSMutableArray alloc] init];
-    }
-    if ([_private->webView defersCallbacks]) {
-        [client setDefersCallbacks:YES];
     }
     [_private->subresourceClients addObject:client];
     [self _setLoading:YES];
 }
 
-- (void)_removeSubresourceClient:(WebSubresourceClient *)client
+- (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client
 {
     [_private->subresourceClients removeObject:client];
     [self _updateLoading];
@@ -668,7 +664,7 @@
     [_private->mainClient setDefersCallbacks:defers];
 
     NSEnumerator *e = [_private->subresourceClients objectEnumerator];
-    WebSubresourceClient *client;
+    WebBaseResourceHandleDelegate *client;
     while ((client = [e nextObject])) {
         [client setDefersCallbacks:defers];
     }

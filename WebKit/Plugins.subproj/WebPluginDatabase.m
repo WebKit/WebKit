@@ -3,6 +3,8 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebPluginDatabase.h>
+
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -12,8 +14,8 @@
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
-#import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <CoreGraphics/CPSProcesses.h>
 

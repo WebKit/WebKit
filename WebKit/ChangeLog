@@ -1,3 +1,51 @@
+2003-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixes 3457162 -- selecting text during a page load that blows the text field away causes a crash
+        - fixes 3160035 -- crash or hang if you hold down a button while "go to about:blank soon" test runs
+        - without causing 3484608 -- REGRESSION: Flash broken at http://www.macromedia.com/
+
+        The WebKit part of this fix is making setDefersCallbacks: work. It had succumbed to bit rot.
+        This has a side effect of not considering a page load done until all the plug-in streams are loaded.
+        If that's not a good idea, we'll have to keep two separate lists in WebDataSource.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: (-[WebBaseResourceHandleDelegate setDataSource:]):
+        Set the defersCallbacks state from the WebView here so that clients don't have to do it.
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource _addSubresourceClient:]): Remove call to
+        set the defersCallbacks state on the subresource client, because the above change obviates it.
+        (the client/delegate terminology makes it confusing, but it's a subclass). Also loosen the type
+        so we can call this on clients for plug-in streams too.
+        (-[WebDataSource _removeSubresourceClient:]): Loosen type here too.
+        (-[WebDataSource _defersCallbacksChanged]): And here.
+        * WebView.subproj/WebDataSourcePrivate.h: Loosen type of subresource client so we can pass in the
+        delegates for plug-in streams too.
+
+        * WebView.subproj/WebMainResourceClient.h: Added an _initialRequest field so we can defer the very
+        first callback, which does not rely on NSURLConnection.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]): Release the initial request.
+        (-[WebMainResourceClient loadWithRequestNow:]): Moved the guts of loadWithRequest in here; to be
+        used when the request is no longer deferred. Also removed the code to call setDefersCallbacks:
+        on the connection, and assert that we are only called when callbacks are not deferred. Because
+        the very first callback was not deferred, we would end up calling setDefersCallbacks:NO on the
+        WebView, so nothing would be deferred.
+        (-[WebMainResourceClient loadWithRequest:]): If callbacks are not deferred, then call the
+        loadWithRequestNow: method, otherwise simply store the request in _initialRequest.
+        (-[WebMainResourceClient setDefersCallbacks:]): If there is an _initialRequest and we are
+        ceasing deferral of callbacks, then call the loadWithRequestNow: method.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream start]): Call _addSubresourceClient, and then _removeSubresourceClient
+        if the load fails to even start.
+        (-[WebNetscapePluginConnectionDelegate connectionDidFinishLoading:]): Call _removeSubresourceClient.
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]): Call _removeSubresourceClient.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: Removed unneeded import.
+        * Plugins.subproj/WebPluginDatabase.m: Add import needed now that WebBaseNetscapePluginStream.h
+        imports less than before.
+
 2003-11-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

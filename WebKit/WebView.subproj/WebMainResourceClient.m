@@ -50,6 +50,8 @@
 
 - (void)dealloc
 {
+    [_initialRequest release];
+
     [proxy setDelegate:nil];
     [proxy release];
     
@@ -311,14 +313,16 @@
     [self receivedError:error];
 }
 
-- (BOOL)loadWithRequest:(NSURLRequest *)r
+- (void)loadWithRequestNow:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
+    ASSERT(![self defersCallbacks]);
+    ASSERT(![[dataSource _webView] defersCallbacks]);
     
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
-    r = [proxy connection:nil willSendRequest:r redirectResponse:nil];
+    r = [self connection:nil willSendRequest:r redirectResponse:nil];
 
     NSURL *URL = [r URL];
     BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
@@ -330,15 +334,25 @@
             MIMEType = [WebView _generatedMIMETypeForURLScheme:[URL scheme]];
         }
 
-	NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
+        NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
             expectedContentLength:0 textEncodingName:nil];
 	[self connection:nil didReceiveResponse:resp];
 	[resp release];
     } else {
         connection = [[NSURLConnection alloc] initWithRequest:r delegate:proxy];
-        if ([self defersCallbacks]) {
-            [connection setDefersCallbacks:YES];
-        }
+    }
+}
+
+- (BOOL)loadWithRequest:(NSURLRequest *)r
+{
+    ASSERT(connection == nil);
+    
+    if (![self defersCallbacks]) {
+        [self loadWithRequestNow:r];
+    } else {
+        NSURLRequest *copy = [r copy];
+        [_initialRequest release];
+        _initialRequest = copy;
     }
 
     return YES;
@@ -346,13 +360,15 @@
 
 - (void)setDefersCallbacks:(BOOL)defers
 {
-    if (request
-            && ![[request URL] _webkit_shouldLoadAsEmptyDocument]
-            && ![WebView _representationExistsForURLScheme:[[request URL] scheme]]) {
-	[super setDefersCallbacks:defers];
+    [super setDefersCallbacks:defers];
+    if (!defers) {
+        NSURLRequest *r = _initialRequest;
+        if (r != nil) {
+            _initialRequest = nil;
+            [self loadWithRequestNow:r];
+            [r release];
+        }
     }
 }
 
-
 @end
-

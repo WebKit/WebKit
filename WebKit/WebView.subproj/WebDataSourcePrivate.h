@@ -9,13 +9,13 @@
 #import <WebKit/WebDataSource.h>
 
 @class NSError;
+@class NSURLRequest;
+@class NSURLResponse;
+@class WebBaseResourceHandleDelegate;
 @class WebBridge;
 @class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceClient;
-@class NSURLRequest;
-@class NSURLResponse;
-@class WebSubresourceClient;
 @class WebView;
 
 @protocol WebDocumentRepresentation;
@@ -123,8 +123,8 @@
 - (void)_stopLoadingInternal;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
-- (void)_addSubresourceClient:(WebSubresourceClient *)client;
-- (void)_removeSubresourceClient:(WebSubresourceClient *)client;
+- (void)_addSubresourceClient:(WebBaseResourceHandleDelegate *)client;
+- (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client;
 - (void)_setPrimaryLoadComplete:(BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
