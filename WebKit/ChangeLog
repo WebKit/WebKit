@@ -1,3 +1,13 @@
+2002-12-18  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3129951.  Don't allow pages that are stopping to enter the page cache.
+        (Fixed yesterday, forgot to checkin.)
+         
+        Reviewed by trey.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]):
+
 2002-12-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Trey.

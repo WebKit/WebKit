@@ -708,6 +708,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && loadType != WebFrameLoadTypeReloadAllowingStaleData
             && loadType != WebFrameLoadTypeSame
             && ![[self dataSource] isLoading]
+            && ![[self dataSource] _isStopping]
             && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {
             if (![item pageCache]){
@@ -864,7 +865,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
-               
                 return;
             }
             // A resource was loaded, but the entire frame isn't complete.  Schedule a
