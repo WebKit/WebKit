@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2295
+layer at (0,0) size 800x2299
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x2295
-  RenderBlock {HTML} at (0,0) size 800x2295
-    RenderBody {BODY} at (8,8) size 784x2279 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x2299
+  RenderBlock {HTML} at (0,0) size 800x2299
+    RenderBody {BODY} at (8,8) size 784x2283 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -47,7 +47,7 @@ layer at (0,0) size 800x2295
           text run at (168,240) width 120: "px; margin: -10"
           text run at (288,240) width 32: "px;}"
       RenderBlock {HR} at (0,317) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,333) size 784x442
+      RenderBlock {P} at (0,333) size 784x443
         RenderText {TEXT} at (0,1) size 779x242
           text run at (0,1) width 252: "This paragraph should have a font size of 14"
           text run at (252,1) width 146: "px and a line height of 20"
@@ -59,12 +59,12 @@ layer at (0,0) size 800x2295
         RenderImage {IMG} at (270,40) size 200x200
         RenderText {TEXT} at (470,223) size 28x20
           text run at (470,223) width 28: " and "
-        RenderImage {IMG} at (498,222) size 200x200
-        RenderText {TEXT} at (698,223) size 780x220
+        RenderImage {IMG} at (498,223) size 200x200
+        RenderText {TEXT} at (698,223) size 780x221
           text run at (698,223) width 8: ". "
           text run at (706,223) width 38: "This is"
-          text run at (0,423) width 780: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
-      RenderBlock {P} at (0,789) size 784x482
+          text run at (0,424) width 780: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
+      RenderBlock {P} at (0,790) size 784x483
         RenderText {TEXT} at (0,1) size 770x202
           text run at (0,1) width 252: "This paragraph should have a font size of 14"
           text run at (252,1) width 146: "px and a line height of 20"
@@ -79,35 +79,35 @@ layer at (0,0) size 800x2295
         RenderImage {IMG} at (372,55) size 130x130 [border: (10px solid #000000)]
         RenderText {TEXT} at (517,183) size 28x20
           text run at (517,183) width 28: " and "
-        RenderImage {IMG} at (560,197) size 130x130 [border: (10px solid #000000)]
-        RenderText {TEXT} at (705,183) size 780x259
+        RenderImage {IMG} at (560,198) size 130x130 [border: (10px solid #000000)]
+        RenderText {TEXT} at (705,183) size 780x260
           text run at (705,183) width 8: ". "
           text run at (713,183) width 38: "This is"
-          text run at (0,343) width 780: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
-          text run at (0,363) width 748: "It is the outer edge of the margin that should be text-bottom and text-top aligned in this paragraph, so for the first image the bottom"
-          text run at (0,383) width 206: "border of the image should begin 15"
-          text run at (206,383) width 506: "px above the bottom of the text, and for the second image the top border should begin 15"
-          text run at (712,383) width 52: "px below"
-          text run at (0,422) width 105: "the top of the text "
-        RenderImage {IMG} at (95,392) size 80x80 [border: (10px solid #000000)]
-        RenderText {TEXT} at (165,422) size 749x61
-          text run at (165,422) width 8: ". "
-          text run at (173,422) width 227: "The last image in this paragraph has -10"
-          text run at (400,422) width 349: "px margins set on it, so that should pull the text in toward the"
-          text run at (0,463) width 379: "image in the vertical direction, and also in the horizontal direction."
-      RenderTable {TABLE} at (0,1285) size 784x994 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x992
+          text run at (0,344) width 780: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
+          text run at (0,364) width 748: "It is the outer edge of the margin that should be text-bottom and text-top aligned in this paragraph, so for the first image the bottom"
+          text run at (0,384) width 206: "border of the image should begin 15"
+          text run at (206,384) width 506: "px above the bottom of the text, and for the second image the top border should begin 15"
+          text run at (712,384) width 52: "px below"
+          text run at (0,423) width 105: "the top of the text "
+        RenderImage {IMG} at (95,393) size 80x80 [border: (10px solid #000000)]
+        RenderText {TEXT} at (165,423) size 749x61
+          text run at (165,423) width 8: ". "
+          text run at (173,423) width 227: "The last image in this paragraph has -10"
+          text run at (400,423) width 349: "px margins set on it, so that should pull the text in toward the"
+          text run at (0,464) width 379: "image in the vertical direction, and also in the horizontal direction."
+      RenderTable {TABLE} at (0,1287) size 784x996 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x994
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,496) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,497) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x966 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x462
+            RenderTableCell {TD} at (12,26) size 770x968 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x463
                 RenderText {TEXT} at (0,1) size 729x242
                   text run at (0,1) width 252: "This paragraph should have a font size of 14"
                   text run at (252,1) width 146: "px and a line height of 20"
@@ -119,12 +119,12 @@ layer at (0,0) size 800x2295
                 RenderImage {IMG} at (372,40) size 200x200
                 RenderText {TEXT} at (572,223) size 28x20
                   text run at (572,223) width 28: " and "
-                RenderImage {IMG} at (0,242) size 200x200
-                RenderText {TEXT} at (200,243) size 741x220
+                RenderImage {IMG} at (0,243) size 200x200
+                RenderText {TEXT} at (200,243) size 741x221
                   text run at (200,243) width 8: ". "
                   text run at (208,243) width 533: "This is additional text to make sure that there is enough room left below the image so that this"
-                  text run at (0,443) width 285: "line does not hit the image that is text-top aligned."
-              RenderBlock {P} at (4,480) size 762x482
+                  text run at (0,444) width 285: "line does not hit the image that is text-top aligned."
+              RenderBlock {P} at (4,481) size 762x483
                 RenderText {TEXT} at (0,1) size 738x202
                   text run at (0,1) width 252: "This paragraph should have a font size of 14"
                   text run at (252,1) width 146: "px and a line height of 20"
@@ -139,19 +139,19 @@ layer at (0,0) size 800x2295
                 RenderImage {IMG} at (460,55) size 130x130 [border: (10px solid #000000)]
                 RenderText {TEXT} at (605,183) size 28x20
                   text run at (605,183) width 28: " and "
-                RenderImage {IMG} at (15,217) size 130x130 [border: (10px solid #000000)]
-                RenderText {TEXT} at (160,203) size 755x239
+                RenderImage {IMG} at (15,218) size 130x130 [border: (10px solid #000000)]
+                RenderText {TEXT} at (160,203) size 755x240
                   text run at (160,203) width 8: ". "
                   text run at (168,203) width 587: "This is additional text to make sure that there is enough room left below the image so that this line does"
-                  text run at (0,363) width 235: "not hit the image that is text-top aligned. "
-                  text run at (235,363) width 496: "It is the outer edge of the margin that should be text-bottom and text-top aligned in this"
-                  text run at (0,383) width 458: "paragraph, so for the first image the bottom border of the image should begin 15"
-                  text run at (458,383) width 290: "px above the bottom of the text, and for the second"
-                  text run at (0,422) width 212: "image the top border should begin 15"
-                  text run at (212,422) width 161: "px below the top of the text "
-                RenderImage {IMG} at (363,392) size 80x80 [border: (10px solid #000000)]
-                RenderText {TEXT} at (433,422) size 750x61
-                  text run at (433,422) width 8: ". "
-                  text run at (441,422) width 227: "The last image in this paragraph has -10"
-                  text run at (668,422) width 82: "px margins set"
-                  text run at (0,463) width 646: "on it, so that should pull the text in toward the image in the vertical direction, and also in the horizontal direction."
+                  text run at (0,364) width 235: "not hit the image that is text-top aligned. "
+                  text run at (235,364) width 496: "It is the outer edge of the margin that should be text-bottom and text-top aligned in this"
+                  text run at (0,384) width 458: "paragraph, so for the first image the bottom border of the image should begin 15"
+                  text run at (458,384) width 290: "px above the bottom of the text, and for the second"
+                  text run at (0,423) width 212: "image the top border should begin 15"
+                  text run at (212,423) width 161: "px below the top of the text "
+                RenderImage {IMG} at (363,393) size 80x80 [border: (10px solid #000000)]
+                RenderText {TEXT} at (433,423) size 750x61
+                  text run at (433,423) width 8: ". "
+                  text run at (441,423) width 227: "The last image in this paragraph has -10"
+                  text run at (668,423) width 82: "px margins set"
+                  text run at (0,464) width 646: "on it, so that should pull the text in toward the image in the vertical direction, and also in the horizontal direction."
