@@ -415,21 +415,22 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 	return QString::fromCFMutableString(cachedResult);
     }
     
+    QString stripped = relative.stripWhiteSpace();
     QString result;
-    if (relative.isEmpty()) {
+    if (stripped.isEmpty()) {
         result = base.urlString;
     } else {
         base.parse();
 
         CFStringRef relativeURLString = CFURLCreateStringByAddingPercentEscapes
-            (NULL, relative.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+            (NULL, stripped.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
 
         CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
 
         CFRelease(relativeURLString);
 
         if (relativeURL == NULL) {
-            result = normalizeURLString(relative);
+            result = normalizeURLString(stripped);
         } else {
             CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
             

@@ -1,3 +1,9 @@
+2002-07-24  Darin Adler  <darin@apple.com>
+
+	- fixed 3006329 - space should be stripped from beginning of relative url
+
+        * kwq/KWQKURL.mm: (KURL::normalizeRelativeURLString): Added a call to stripWhiteSpace.
+
 2002-07-24  Maciej Stachowiak  <mjs@apple.com>
 
 	Made frame names globally unique, not just unique per parent frame
@@ -11,7 +17,7 @@
 
 2002-07-24  Darin Adler  <darin@apple.com>
 
-	- 3006336 -- crash in _NSDescriptionWithLocaleFunc
+	- fixed 3006336 -- crash in _NSDescriptionWithLocaleFunc
 
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::overURL):
 	Don't use the result of getNSString() on a C++ temporary object.
