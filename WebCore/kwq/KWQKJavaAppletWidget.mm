@@ -72,5 +72,4 @@ void KJavaAppletWidget::showApplet()
 viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
                 attributes:m_parameters
                    baseURL:m_baseURL]);
-                
 }

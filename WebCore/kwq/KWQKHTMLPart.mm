@@ -496,7 +496,3 @@ QString KWQKHTMLPartImpl::referrer() const
     return d->m_referrer;
 }
 
-void KWQKHTMLPartImpl::didAddWidget(QWidget *widget)
-{
-    [_bridge didAddSubview:widget->getView()];
-}

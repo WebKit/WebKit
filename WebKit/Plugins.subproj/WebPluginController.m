@@ -9,6 +9,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
@@ -29,7 +30,7 @@
     views = [[NSMutableArray array] retain];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(windowWillClose)
+                                             selector:@selector(windowWillClose:)
                                                  name:NSWindowWillCloseNotification
                                                object:nil];
     
@@ -47,27 +48,37 @@
 
 - (void)addPluginView:(NSView <WebPlugin> *)view
 {
+    LOG(Plugins, "addPluginView: %s: pluginInitialize", [[view className] lossyCString]);
+    
     [views addObject:view];
     [view pluginInitialize];
 }
 
 - (void)didAddPluginView:(NSView <WebPlugin> *)view
 {
+    LOG(Plugins, "didAddPluginView: %s: pluginStart", [[view className] lossyCString]);
+    
     [view pluginStart];
 }
 
 - (void)startAllPlugins
 {
+    LOG(Plugins, "startAllPlugins: pluginStart");
+    
     [views makeObjectsPerformSelector:@selector(pluginStart)];
 }
 
 - (void)stopAllPlugins
 {
+    LOG(Plugins, "stopAllPlugins: pluginStop");
+    
     [views makeObjectsPerformSelector:@selector(pluginStop)];
 }
 
 - (void)destroyAllPlugins
 {
+    LOG(Plugins, "destroyAllPlugins: pluginDestroy");
+    
     [self stopAllPlugins];
     [views makeObjectsPerformSelector:@selector(pluginDestroy)];
     [views removeAllObjects];

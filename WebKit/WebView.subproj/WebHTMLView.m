@@ -14,6 +14,7 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
@@ -22,6 +23,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebPluginController.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
@@ -230,6 +232,15 @@
         }
     }
     [super viewDidMoveToWindow];
+}
+
+- (void)addSubview:(NSView *)view
+{
+    [super addSubview:view];
+
+    if([view conformsToProtocol:@protocol(WebPlugin)]){
+        [[[self _frame] pluginController] didAddPluginView:view];
+    }
 }
 
 - (void)reapplyStyles

@@ -109,6 +109,4 @@ typedef enum {
 
 - (WebPluginController *)pluginController;
 
-- (void)_didAddSubview:(NSView *)view;
-
 @end

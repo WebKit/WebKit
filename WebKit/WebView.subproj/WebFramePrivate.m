@@ -816,11 +816,4 @@ static const char * const stateNames[] = {
     return _private->pluginController;
 }
 
-- (void)_didAddSubview:(NSView *)view
-{
-    if([view conformsToProtocol:@protocol(WebPlugin)]){
-        [_private->pluginController didAddPluginView:view];
-    }
-}
-
 @end

@@ -40,7 +40,7 @@
 
         [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
 
-        description = [MIMEDictionary objectForKey:WebPluginDescriptionKey];
+        description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
         if(!description){
             description = @"";
         }

@@ -1,3 +1,22 @@
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+
+	Some clean-up and bug fixes for new plug-in support.
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithWebFrame:]): need a colon after windowWillClose
+        (-[WebPluginController addPluginView:]): added logging
+        (-[WebPluginController didAddPluginView:]): added logging
+        (-[WebPluginController startAllPlugins]): added logging
+        (-[WebPluginController stopAllPlugins]): added logging
+        (-[WebPluginController destroyAllPlugins]): added logging
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage getMIMEInformation]): use correct dict key for getting MIME descriptions
+        * WebCoreSupport.subproj/WebBridge.m: no more didAddSubview
+        * WebView.subproj/WebFramePrivate.h: no more didAddSubview
+        * WebView.subproj/WebFramePrivate.m: no more didAddSubview
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]): call didAddPluginView on WebPluginController
+
 2002-10-24  John Sullivan  <sullivan@apple.com>
 
         * WebCoreSupport.subproj/WebBridge.m:

@@ -1,3 +1,15 @@
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+
+	Removed didAddSubview calls because that can easily be done in WebKit. Duh!
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::setWidget):
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet):
+        * kwq/WebCoreBridge.h:
+
 2002-10-24  Darin Adler  <darin@apple.com>
 
 	A step in the direction of making KWQ headers much nicer.

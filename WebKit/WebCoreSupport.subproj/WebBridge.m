@@ -525,10 +525,4 @@
     }
 }
 
-
-- (void)didAddSubview:(NSView *)view
-{
-    [frame _didAddSubview:view];
-}
-
 @end
