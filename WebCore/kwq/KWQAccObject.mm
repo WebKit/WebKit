@@ -185,8 +185,6 @@ using khtml::RenderCanvas;
        return NSAccessibilityImageRole;
     if (m_renderer->isCanvas())
         return NSAccessibilityGroupRole;
-    if (m_renderer->isTable() || m_renderer->isTableCell())
-        return NSAccessibilityTableRole;
     
     return NSAccessibilityUnknownRole;
 }
@@ -307,7 +305,7 @@ using khtml::RenderCanvas;
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NO;
     
-    return (!m_renderer->isCanvas() && !m_renderer->isTable() && !m_renderer->isTableCell() &&
+    return (!m_renderer->isCanvas() && 
             !m_renderer->isImage() && !m_renderer->isText() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
               Node(m_renderer->element()).elementId() == ID_BUTTON));

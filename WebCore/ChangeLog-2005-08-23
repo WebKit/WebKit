@@ -1,3 +1,13 @@
+2003-12-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3508792.  Remove tables and cells as AxObjects.
+	
+        Reviewed by john
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject role]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+
 2003-12-15  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3510459>: REGRESSION (100-113): Pressing button at google.com 
