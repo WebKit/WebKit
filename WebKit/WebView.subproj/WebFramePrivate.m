@@ -251,11 +251,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)setController: (WebView *)controller
 {
-    // To set controller to nil, we have to use _controllerWillBeDeallocated, not this.
+    // To set controller to nil, we have to use _detachFromParent, not this.
     ASSERT(controller);
     [_private setController: controller];
 }
-
 
 // helper method used in various nav cases below
 - (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
@@ -357,11 +356,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
 
     return nil;
-}
-
-- (void)_controllerWillBeDeallocated
-{
-    [self _detachFromParent];
 }
 
 - (void)_detachChildren

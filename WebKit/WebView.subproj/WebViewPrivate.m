@@ -45,31 +45,10 @@
     return self;
 }
 
-- (void)_clearControllerReferences: (WebFrame *)aFrame
-{
-    NSArray *frames;
-    WebFrame *nextFrame;
-    int i, count;
-        
-    [[aFrame dataSource] _setController: nil];
-    [[aFrame frameView] _setController: nil];
-    [aFrame _setController: nil];
-
-    // Walk the frame tree, niling the controller.
-    frames = [aFrame childFrames];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        nextFrame = [frames objectAtIndex: i];
-        [self _clearControllerReferences: nextFrame];
-    }
-}
-
 - (void)dealloc
 {
-    [self _clearControllerReferences: mainFrame];
-    [mainFrame _controllerWillBeDeallocated];
+    ASSERT(!mainFrame);
     
-    [mainFrame release];
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
@@ -78,8 +57,6 @@
         [userAgent[i] release];
     }
     
-    [controllerSetName release];
-
     [preferences release];
     [settings release];
     [hostWindow release];
@@ -110,6 +87,18 @@
     return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
 }
 
+- (void)_close
+{
+    if (_private->controllerSetName != nil) {
+        [WebControllerSets removeController:self fromSetNamed:_private->controllerSetName];
+        [_private->controllerSetName release];
+        _private->controllerSetName = nil;
+    }
+
+    [_private->mainFrame _detachFromParent];
+    [_private->mainFrame release];
+    _private->mainFrame = nil;
+}
 
 - (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
 {

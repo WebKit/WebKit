@@ -130,10 +130,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (void)dealloc
 {
-    if (_private->controllerSetName != nil) {
-	[WebControllerSets removeController:self fromSetNamed:_private->controllerSetName];
-    }
-
+    [self _close];
+    
     --WebControllerCount;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];

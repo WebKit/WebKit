@@ -1,3 +1,20 @@
+2003-05-01  Chris Blumenberg  <cblu@apple.com>
+
+        Fixed: 3234888 - REGRESSION: "can't add a plug-in to a defunct WebPluginController" error, then crash
+        Fixed: 3226392 - REGRESSION: Safari crashed while loading Java applet at PopCap.com
+        
+        Reviewed by darin.
+
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame setController:]): fixed comment
+        * WebView.subproj/WebView.m:
+        (-[WebView dealloc]): call [self _close]
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate dealloc]): let the WebView class clear the frames
+        (-[WebView _close]): remove self from controller set and detach and release frame
+
 === Safari-77 ===
 
 2003-05-01  John Sullivan  <sullivan@apple.com>

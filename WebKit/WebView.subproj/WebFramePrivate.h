@@ -107,7 +107,6 @@ typedef enum {
 - (void)setController: (WebView *)controller;
 - (void)_setName:(NSString *)name;
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
-- (void)_controllerWillBeDeallocated;
 - (void)_detachFromParent;
 - (void)_closeOldDataSources;
 - (void)_setController: (WebView *)controller;

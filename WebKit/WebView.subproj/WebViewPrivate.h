@@ -161,6 +161,8 @@ Could be worth adding to the API.
 - _UIDelegateForwarder;
 
 - (void)_registerDraggedTypes;
+
+- (void)_close;
 @end
 
 @interface _WebSafeForwarder : NSObject
