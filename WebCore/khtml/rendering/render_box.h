@@ -30,6 +30,8 @@
 namespace khtml {
     class CachedObject;
     
+    enum WidthType { Width, MinWidth, MaxWidth };
+    
 class RenderBox : public RenderContainer
 {
 
@@ -96,6 +98,8 @@ public:
     virtual void calcWidth();
     virtual void calcHeight();
 
+    int calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType);
+    
     virtual short calcReplacedWidth(bool* ieHack=0) const;
     virtual int   calcReplacedHeight() const;
 

@@ -485,11 +485,11 @@ void RenderBox::calcWidth()
         Length mr = style()->marginRight();
 
         int cw;
-	RenderObject *cb = containingBlock();
-	if ( style()->flowAroundFloats() && cb->isFlow() )
-	    cw = static_cast<RenderFlow *>(cb)->lineWidth( m_y );
-	else
-	    cw = cb->contentWidth();
+        RenderObject *cb = containingBlock();
+        if ( style()->flowAroundFloats() && cb->isFlow() )
+            cw = static_cast<RenderFlow *>(cb)->lineWidth( m_y );
+        else
+            cw = cb->contentWidth();
 
         if (cw<0) cw = 0;
 
@@ -510,28 +510,38 @@ void RenderBox::calcWidth()
 
             return;
         }
-        else if (w.type == Variable)
-        {
-//          kdDebug( 6040 ) << "variable" << endl;
-            m_marginLeft = ml.minWidth(cw);
-            m_marginRight = mr.minWidth(cw);
-            if (cw) m_width = cw - m_marginLeft - m_marginRight;
-
-//          kdDebug( 6040 ) <<  m_width <<"," << cw <<"," <<
-//              m_marginLeft <<"," <<  m_marginRight << endl;
-
-            if (isFloating()) {
-                if(m_width < m_minWidth) m_width = m_minWidth;
-                if(m_width > m_maxWidth) m_width = m_maxWidth;
+        else {
+            LengthType widthType, minWidthType, maxWidthType;
+            if (isReplaced()) {
+                m_width = w.width(cw);
+                m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
+                widthType = w.type;
+            } else {
+                m_width = calcWidthUsing(Width, cw, widthType);
+                int minW = calcWidthUsing(MinWidth, cw, minWidthType);
+                int maxW = style()->maxWidth().value == UNDEFINED ?
+                             m_width : calcWidthUsing(MaxWidth, cw, maxWidthType);
+                
+                if (m_width > maxW) {
+                    m_width = maxW;
+                    widthType = maxWidthType;
+                }
+                else if (m_width < minW) {
+                    m_width = minW;
+                    widthType = minWidthType;
+                }
             }
-        }
-        else
-        {
-//          kdDebug( 6040 ) << "non-variable " << w.type << ","<< w.value << endl;
-            m_width = w.width(cw);
-            m_width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
-
-            calcHorizontalMargins(ml,mr,cw);
+            
+            if (widthType == Variable) {
+    //          kdDebug( 6040 ) << "variable" << endl;
+                m_marginLeft = ml.minWidth(cw);
+                m_marginRight = mr.minWidth(cw);
+            }
+            else
+            {
+//          	kdDebug( 6040 ) << "non-variable " << w.type << ","<< w.value << endl;
+                calcHorizontalMargins(ml,mr,cw);
+            }
         }
 
         if (cw && cw != m_width + m_marginLeft + m_marginRight && !isFloating() && !isInline())
@@ -547,6 +557,40 @@ void RenderBox::calcWidth()
     kdDebug( 6040 ) << "RenderBox::calcWidth(): m_width=" << m_width << " containingBlockWidth()=" << containingBlockWidth() << endl;
     kdDebug( 6040 ) << "m_marginLeft=" << m_marginLeft << " m_marginRight=" << m_marginRight << endl;
 #endif
+}
+
+int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType)
+{
+    int width = m_width;
+    Length w;
+    if (widthType == Width)
+        w = style()->width();
+    else if (widthType == MinWidth)
+        w = style()->minWidth();
+    else
+        w = style()->maxWidth();
+        
+    lengthType = w.type;
+    
+    if (lengthType == Variable) {
+        int marginLeft = style()->marginLeft().minWidth(cw);
+        int marginRight = style()->marginRight().minWidth(cw);
+        if (cw) width = cw - marginLeft - marginRight;
+        
+        if (isFloating()) {
+            if (width < m_minWidth) 
+                width = m_minWidth;
+            if (width > m_maxWidth) 
+                width = m_maxWidth;
+        }
+    }
+    else
+    {
+        width = w.width(cw);
+        width += paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    }
+    
+    return width;
 }
 
 void RenderBox::calcHorizontalMargins(const Length& ml, const Length& mr, int cw)
@@ -629,8 +673,13 @@ void RenderBox::calcHeight()
                 }
 
                 if (cb->isRoot()) {
+                    // Don't allow this to affect the root's m_height member variable, since this
+                    // can get called while the root is still laying out its kids.
+                    // e.g., <html style="height:100%">etc. -dwh
+                    int oldHeight = cb->height();
                     static_cast<RenderRoot*>(cb)->calcHeight();
                     fh = h.width(cb->height()) + borderTop() + paddingTop() + borderBottom() + paddingBottom();
+                    cb->setHeight(oldHeight);
                 }
                 else if (ch.isFixed())
                     fh = h.width(ch.value) + borderTop() + paddingTop() + borderBottom() + paddingBottom();

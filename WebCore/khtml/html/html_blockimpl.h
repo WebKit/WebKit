@@ -94,6 +94,8 @@ class HTMLParagraphElementImpl : public HTMLElementImpl
 public:
     HTMLParagraphElementImpl(DocumentPtr *doc);
 
+    virtual void parseAttribute(AttributeImpl *attr);
+    
     virtual NodeImpl::Id id() const;
 };
 

@@ -111,7 +111,7 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty);
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
 
 protected:
 

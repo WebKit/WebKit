@@ -79,7 +79,7 @@ void RenderRoot::calcHeight()
     else if (!m_view)
     {
         m_height = m_rootHeight;
-    }    
+    }
 }
 
 void RenderRoot::calcWidth()

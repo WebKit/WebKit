@@ -49,6 +49,15 @@ bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 StyleBoxData::StyleBoxData()
     : z_index( 0 ), z_auto(true)
 {
+    // Initialize our min/max widths/heights.
+    min_width.type = Fixed;
+    min_width.value = 0;
+    min_height.type = Fixed;
+    min_height.value = 0;
+    max_width.type = Fixed;
+    max_width.value = UNDEFINED;
+    max_height.type = Fixed;
+    max_height.value = UNDEFINED;
 }
 
 StyleBoxData::StyleBoxData(const StyleBoxData& o )

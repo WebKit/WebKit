@@ -345,9 +345,9 @@ void RenderImage::notifyFinished(CachedObject *finishedObj)
     }
 }
 
-bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
 {
-    bool inside = RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty);
+    inside |= RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty, inside);
 
     if (inside && element()) {
         int tx = _tx + m_x;

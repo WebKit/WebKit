@@ -1,3 +1,49 @@
+2002-12-04  David Hyatt  <hyatt@apple.com>
+
+	Fix shroudedisles.com table misalignment by removing more\
+	bogus rules from html4.css.
+
+	Fix forums on macosx.com by implementing support for the align
+	attribute on the <P> tag.
+
+	Implement min-width and max-width for block level floating
+	and normal flow elements.
+
+	Fix event handling so that :hover notifications get through to
+	objects inside floats.
+	
+        Reviewed by: rjw
+
+        * khtml/css/html4.css:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLParagraphElementImpl::parseAttribute):
+        * khtml/html/html_blockimpl.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidth):
+        (RenderBox::calcWidthUsing):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::nodeAtPoint):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::nodeAtPoint):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::nodeAtPoint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::calcHeight):
+        * khtml/rendering/render_style.cpp:
+        (StyleBoxData::StyleBoxData):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+        * khtml/rendering/render_text.h:
+
 2002-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey and Maciej.

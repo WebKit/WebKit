@@ -187,6 +187,23 @@ NodeImpl::Id HTMLParagraphElementImpl::id() const
     return ID_P;
 }
 
+void HTMLParagraphElementImpl::parseAttribute(AttributeImpl *attr)
+{
+    switch(attr->id())
+    {
+        case ATTR_ALIGN:
+        {
+            DOMString v = attr->value();
+            if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
+                    v = "-konq-center";
+                addCSSProperty(CSS_PROP_TEXT_ALIGN, v);
+                break;
+        }
+        default:
+            HTMLElementImpl::parseAttribute(attr);
+    }
+}
+
 // -------------------------------------------------------------------------
 
 HTMLPreElementImpl::HTMLPreElementImpl(DocumentPtr *doc, unsigned short _tagid)

@@ -520,7 +520,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         }
 
         child->calcVerticalMargins();
-
+         
         //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
 
         // Try to guess our correct y position.  In most cases this guess will
@@ -635,6 +635,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     bottomChildQuirk = child->isBottomMarginQuirk();
                 }
             }
+            
             child->setPos(child->xPos(), ypos);
             if (ypos != yPosEstimate) {
                 // Our guess was wrong. Make the child lay itself out again.
@@ -718,7 +719,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         child = child->nextSibling();
     }
 
-    // XXX This check is unconvincing. Needs to be a reliable way to test for auto height. -dwh
     bool autoHeight = style()->height().isVariable() && style()->height().value == 0;
     
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
@@ -2238,9 +2238,8 @@ void RenderFlow::removeChild(RenderObject *oldChild)
     }
 }
 
-bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inBox)
 {
-    bool inBox = false;
     if (specialObjects) {
         int stx = _tx + xPos();
         int sty = _ty + yPos();
@@ -2257,7 +2256,7 @@ bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
                     sty+o->startY + o->node->marginTop() - o->node->yPos());
     }
 
-    inBox |= RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty);
+    inBox |= RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty, inBox);
     return inBox;
 }
 

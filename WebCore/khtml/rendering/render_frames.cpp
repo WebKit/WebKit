@@ -83,11 +83,11 @@ RenderFrameSet::~RenderFrameSet()
       delete [] m_vSplitVar;
 }
 
-bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
 {
-    RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty);
+    RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty, inside);
 
-    bool inside = m_resizing || canResize(_x, _y);
+    inside = m_resizing || canResize(_x, _y);
 
     if ( inside && element() && !element()->noResize() && !info.readonly()){
         info.setInnerNode(element());

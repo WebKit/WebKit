@@ -249,19 +249,6 @@ DIV[align="right"] > P,
 DIV[align="right"] > DIV
  { margin-left: auto; margin-right: 0px; }
 
-/* don't use "TD[align=...] > *". This sould give problems with
- * constructs as <td align=left><ul><li>...
- * Hope the next ones cover all relevant cases. Lars 
- */ 
-TD[align="right"] > TABLE { margin-left: auto; margin-right: 0px; }
-TD[align="left"] > TABLE { margin-left: 0px; margin-right: auto; }
-TD[align="right"] > DIV { margin-left: auto; margin-right: 0px; text-align: right; }
-TD[align="left"] > DIV { margin-left: 0px; margin-right: auto; text-align: left; }
-TD[align="right"] > P { margin-left: auto; margin-right: 0px; text-align: right; }
-TD[align="left"] > P { margin-left: 0px; margin-right: auto; text-align: left; }
-TD[align="right"] > HR { margin-left: auto; margin-right: 1px; }
-TD[align="left"] > HR { margin-left: 0px; margin-right: auto; }
-
 /*
  * Lists
  */
