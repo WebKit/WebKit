@@ -1,3 +1,12 @@
+2005-01-24  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+	Fixed <rdar://problem/3932374> REGRESSION: 'ReferenceError - Can't find variable' JavaScript error at webxpress.fidelity.com
+
+        * khtml/html/html_miscimpl.h: Missing virtual identifiers for namedItem() and nextNamedItem() exposed a flaw that prevented finding variables in form [HTMLFormCollectionImpl] scopes.
+	
+
 2005-01-24  Vicki Murley <vicki@apple.com>
 
         Reviewed by kocienda.

@@ -84,9 +84,9 @@ public:
     virtual NodeImpl *firstItem() const;
     virtual NodeImpl *nextItem() const;
 
-    NodeImpl *namedItem ( const DOMString &name, bool caseSensitive = true ) const;
+    virtual NodeImpl *namedItem ( const DOMString &name, bool caseSensitive = true ) const;
     // In case of multiple items named the same way
-    NodeImpl *nextNamedItem( const DOMString &name ) const;
+    virtual NodeImpl *nextNamedItem( const DOMString &name ) const;
 
     QValueList<Node> namedItems( const DOMString &name ) const;
 
