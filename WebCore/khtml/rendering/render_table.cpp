@@ -810,10 +810,11 @@ RenderTableCell* RenderTable::cellLeft(const RenderTableCell* cell) const
 
 RenderTableCell* RenderTable::cellRight(const RenderTableCell* cell) const
 {
-    int effCol = colToEffCol(cell->col());
+    int effCol = colToEffCol(cell->col()+cell->colSpan());
     if (effCol == numEffCols()-1)
         return 0;
-    return cell->section()->cellAt(cell->row(), effCol+1);
+    RenderTableCell* result = cell->section()->cellAt(cell->row(), effCol);
+    return (result == (RenderTableCell*)-1) ? 0 : result;
 }
 
 #ifndef NDEBUG
@@ -1800,7 +1801,7 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder() const
 {
     RenderTable* tableElt = table();
     bool inLastColumn = false;
-    int effCol = tableElt->colToEffCol(col());
+    int effCol = tableElt->colToEffCol(col()+colSpan()-1);
     if (effCol == tableElt->numEffCols()-1)
         inLastColumn = true;
     
@@ -1827,7 +1828,7 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder() const
     }
     
     // (5) Our column's right border.
-    RenderTableCol* colElt = table()->colElement(col());
+    RenderTableCol* colElt = table()->colElement(col()+colSpan()-1);
     if (colElt) {
         result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
         if (!result.exists()) return result;
@@ -1835,7 +1836,7 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder() const
     
     // (6) The next column's left border.
     if (!inLastColumn) {
-        colElt = tableElt->colElement(col()+1);
+        colElt = tableElt->colElement(col()+colSpan());
         if (colElt) {
             result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
             if (!result.exists()) return result;

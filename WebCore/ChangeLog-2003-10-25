@@ -1,5 +1,16 @@
 2003-10-19  David Hyatt  <hyatt@apple.com>
 
+	Fix for a regression/crash on tivocommunity.com caused by faulty border-collapse code in the collapsedRightBorder
+	case.  I forgot to deal with colspans.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::cellRight):
+        (RenderTableCell::collapsedRightBorder):
+
+2003-10-19  David Hyatt  <hyatt@apple.com>
+
 	Patch from KHTML trunk that makes textareas work properly even when they have no render objects.
 
         * khtml/html/html_formimpl.cpp:
