@@ -1,8 +1,10 @@
+2003-01-16  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebController.h: Fixed a comment that was out of date.
+
 2003-01-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed comment.
-
-        Reviewed by NOBODY (OOPS!).
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
 
