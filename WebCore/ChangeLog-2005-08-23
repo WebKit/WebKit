@@ -1,3 +1,15 @@
+2003-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3449280 -- REGRESSION: crash copying a selection that ends in a <br>
+
+        * khtml/rendering/render_br.h: Add checkSelectionPointIgnoringContinuations.
+        * khtml/rendering/render_br.cpp: (RenderBR::checkSelectionPointIgnoringContinuations):
+        Override to never return an offset of 1. We can't use a character offset because the
+        DOM doesn't know that we're implemented as a text object. So an offset of 1 turns into
+        "after this element".
+
 2003-10-09  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed crash I just added.

@@ -47,8 +47,7 @@ void RenderBR::cursorPos(int /*offset*/, int &_x, int &_y, int &height)
     int absx, absy;
     absolutePosition(absx,absy);
     if (absx == -1) {
-        // we don't know out absoluate position, and there is not point returning
-        // just a relative one
+        // we don't know our absolute position, and there is no point returning just a relative one
         _x = _y = -1;
     }
     else {
@@ -57,5 +56,20 @@ void RenderBR::cursorPos(int /*offset*/, int &_x, int &_y, int &height)
     }
     height = RenderText::verticalPositionHint( false );
 
+}
+
+FindSelectionResult RenderBR::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
+{
+    FindSelectionResult result = RenderText::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+
+    // Since the DOM does not consider this to be a text element, we can't return an offset of 1,
+    // because that means after the first child (and we have none) rather than after the
+    // first character. Instead we return a result of "after" and an offset of 0.
+    if (offset == 1 && node == element()) {
+        offset = 0;
+        result = SelectionPointAfter;
+    }
+
+    return result;
 }
 
