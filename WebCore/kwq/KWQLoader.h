@@ -49,6 +49,7 @@ void KWQReleaseResponse(void *response);
 void *KWQResponseMIMEType(void *response);
 void *KWQResponseHeaderString(void *response);
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl);
+time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response);
 
 class KWQLoader
 {

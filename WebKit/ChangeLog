@@ -1,3 +1,14 @@
+2003-12-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+        
+        <rdar://problem/3505444>: WebCore cache does not use expiration dates on cache items
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge expiresTimeForResponse:]): New method. Call response
+        freshness lifetime method and add it to the current time to yield
+        an expiration time.
+
 2003-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

@@ -47,6 +47,7 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLResponsePrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #import <WebKit/WebLocalizableStrings.h>
@@ -481,6 +482,21 @@
 - (BOOL)isReloading
 {
     return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
+}
+
+#define MAX_TIME_T ((time_t)-1)    
+
+- (time_t)expiresTimeForResponse:(NSURLResponse *)response
+{
+    time_t now = time(NULL);
+    NSTimeInterval lifetime = [response _freshnessLifetime];
+    if (lifetime < 0)
+        lifetime = 0;
+    
+    if (now + lifetime > MAX_TIME_T)
+        return MAX_TIME_T;
+    
+    return now + lifetime;
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction

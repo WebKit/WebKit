@@ -296,6 +296,21 @@ void *KWQResponseHeaderString(void *response)
     return NULL;
 }
 
+time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response)
+{
+    time_t result = 0;
+
+    KWQ_BLOCK_EXCEPTIONS;
+    
+    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
+    WebCoreBridge *bridge = part->bridge();
+    result = [bridge expiresTimeForResponse:(NSURLResponse *)response];
+    
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return result;
+}
+
 KWQLoader::KWQLoader(Loader *loader)
     : _requestStarted(loader, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
     , _requestDone(loader, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))

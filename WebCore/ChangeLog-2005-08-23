@@ -1,3 +1,25 @@
+2003-12-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+        
+        <rdar://problem/3505444>: WebCore cache does not use expiration dates on cache items
+        
+        * khtml/misc/loader.cpp:
+        (Loader::slotFinished): Don't reset expiration date. We set this once in
+        slotReceivedResponse.
+        (Loader::slotReceivedResponse): Call new KWQ function to get a cache object's
+        expiration date using its NSURLResponse data.
+        (Cache::requestImage): Don't reset expiration date. We set this once in
+        slotReceivedResponse, and we do not want the value from the DocLoader
+	anyway.
+        (Cache::requestStyleSheet): Ditto.
+        (Cache::requestScript): Ditto.
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQCacheObjectExpiresTime): New function. Call over bridge to get access
+        to SPI in NSURLResponse to calculate expiration time.
+        * kwq/WebCoreBridge.h: Declare bridge method.
+
 2003-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

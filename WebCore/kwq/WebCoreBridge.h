@@ -303,6 +303,7 @@ typedef enum {
 - (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSData *)postData finalURL:(NSURL **)finalNSURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode;
 
 - (BOOL)isReloading;
+- (time_t)expiresTimeForResponse:(NSURLResponse *)response;
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
