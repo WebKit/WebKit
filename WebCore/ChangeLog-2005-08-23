@@ -1,3 +1,23 @@
+2004-11-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): Now takes flag to control whether comments
+        are added to the DOM.
+        * khtml/html/html_elementimpl.h: Ditto.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Ditto.
+        (KHTMLParser::getElement): Remove ifdef for comment processing. Replace with flag check.
+        * khtml/html/htmlparser.h: Add flag to constructor so callers can request comment nodes.
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer): Add flag to constructor so callers can request comment nodes.
+        (khtml::HTMLTokenizer::parseComment): Fix code to handle parsing out comment text correctly.
+        There were a couple of indexing errors that resulted in the comment text containing part of the 
+        comment markers.
+        (khtml::HTMLTokenizer::processToken): Don't let token id be reset to ID_TEXT if token is a comment.
+        * khtml/html/htmltokenizer.h:  Add flag to constructor so callers can request comment nodes.
+
 2004-11-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3870907> WebCore unnecessary links against JavaVM and Security

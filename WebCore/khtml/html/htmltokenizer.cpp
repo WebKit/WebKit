@@ -224,7 +224,7 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view)
+HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool includesComments)
 #ifndef NDEBUG
     : inWrite(false)
 #endif
@@ -234,16 +234,17 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view)
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     charsets = KGlobal::charsets();
-    parser = new KHTMLParser(_view, _doc);
+    parser = new KHTMLParser(_view, _doc, includesComments);
     m_executingScript = 0;
     loadingExtScript = false;
     onHold = false;
     attrNamePresent = false;
+    includesCommentsInDOM = includesComments;
     
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *i)
+HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *i, bool includesComments)
 #ifndef NDEBUG
     : inWrite(false)
 #endif
@@ -253,10 +254,11 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     charsets = KGlobal::charsets();
-    parser = new KHTMLParser( i, _doc );
+    parser = new KHTMLParser(i, _doc, includesComments);
     m_executingScript = 0;
     loadingExtScript = false;
     onHold = false;
+    includesCommentsInDOM = includesComments;
 
     begin();
 }
@@ -623,31 +625,36 @@ void HTMLTokenizer::parseComment(TokenizerString &src)
         qDebug("comment is now: *%s*",
                QConstString((QChar*)src.current(), QMIN(16, src.length())).string().latin1());
 #endif
-        if (src->unicode() == '>' &&
-            ( ( brokenComments && !( script || style ) ) ||
-              ( scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' &&
-                scriptCode[scriptCodeSize-2] == '-' ) ||
-              // Other browsers will accept --!> as a close comment, even though it's
-              // not technically valid.
-              ( scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' &&
-                scriptCode[scriptCodeSize-3] == '-' &&
-                scriptCode[scriptCodeSize-2] == '!' ) ) ) {
-            ++src;
-            if ( !( script || xmp || textarea || style) ) {
-#ifdef COMMENTS_IN_DOM
-                checkScriptBuffer();
-                scriptCode[ scriptCodeSize ] = 0;
-                scriptCode[ scriptCodeSize + 1 ] = 0;
-                currToken.id = ID_COMMENT;
-                processListing(TokenizerString(scriptCode, scriptCodeSize - 2));
-                processToken();
-                currToken.id = ID_COMMENT + ID_CLOSE_TAG;
-                processToken();
-#endif
-                scriptCodeSize = 0;
+        if (src->unicode() == '>') {
+            bool handleBrokenComments = brokenComments && !(script || style);
+            int endCharsCount = 1; // start off with one for the '>' character
+            if (scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' && scriptCode[scriptCodeSize-2] == '-') {
+                endCharsCount = 3;
             }
-            comment = false;
-            return; // Finished parsing comment
+            else if (scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' && scriptCode[scriptCodeSize-3] == '-' && 
+                scriptCode[scriptCodeSize-2] == '!') {
+                // Other browsers will accept --!> as a close comment, even though it's
+                // not technically valid.
+                endCharsCount = 4;
+            }
+            if (handleBrokenComments || endCharsCount > 1) {
+                ++src;
+                if (!( script || xmp || textarea || style)) {
+                    if (includesCommentsInDOM) {
+                        checkScriptBuffer();
+                        scriptCode[ scriptCodeSize ] = 0;
+                        scriptCode[ scriptCodeSize + 1 ] = 0;
+                        currToken.id = ID_COMMENT;
+                        processListing(TokenizerString(scriptCode, scriptCodeSize - endCharsCount));
+                        processToken();
+                        currToken.id = ID_COMMENT + ID_CLOSE_TAG;
+                        processToken();
+                    }
+                    scriptCodeSize = 0;
+                }
+                comment = false;
+                return; // Finished parsing comment
+            }
         }
         ++src;
     }
@@ -1822,7 +1829,8 @@ void HTMLTokenizer::processToken()
 #endif
         currToken.text = new DOMStringImpl( buffer, dest - buffer );
         currToken.text->ref();
-        currToken.id = ID_TEXT;
+        if (currToken.id != ID_COMMENT)
+            currToken.id = ID_TEXT;
     }
     else if(!currToken.id) {
         currToken.reset();
