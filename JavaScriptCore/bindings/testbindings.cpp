@@ -19,6 +19,7 @@
  *  Boston, MA 02111-1307, USA.
  *
  */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -70,10 +71,28 @@ static const NP_UTF8 *myPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 	"undefinedValue"
 };
 
-#define NUM_METHOD_IDENTIFIERS		0
+#define ID_LOG_MESSAGE				0
+#define ID_SET_DOUBLE_VALUE			1
+#define ID_SET_INT_VALUE			2
+#define ID_SET_STRING_VALUE			3
+#define ID_SET_BOOLEAN_VALUE		4
+#define ID_GET_DOUBLE_VALUE			5
+#define ID_GET_INT_VALUE			6
+#define ID_GET_STRING_VALUE			7
+#define ID_GET_BOOLEAN_VALUE		8
+#define NUM_METHOD_IDENTIFIERS		9
 
 static NP_Identifier myMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NP_UTF8 *myMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
+	"logMessage",
+	"setDoubleValue",
+	"setIntValue",
+	"setStringValue",
+	"setBooleanValue",
+	"getDoubleValue",
+	"getIntValue",
+	"getStringValue",
+	"getBooleanValue"
 };
 
 static void initializeIdentifiers()
@@ -172,8 +191,91 @@ void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Obje
 	}
 }
 
+void logMessage (NP_String *message)
+{
+	printf ("%s\n", NP_UTF8FromString (message));
+}
+
+void setDoubleValue (MyInterfaceObject *obj, NP_Number *number)
+{
+	obj->doubleValue = NP_DoubleFromNumber (number);
+}
+
+void setIntValue (MyInterfaceObject *obj, NP_Number *number)
+{
+	obj->intValue = NP_IntFromNumber (number);
+}
+
+void setStringValue (MyInterfaceObject *obj, NP_String *string)
+{
+	NP_DeallocateUTF8 ((NP_UTF8 *)obj->stringValue);
+	obj->stringValue = NP_UTF8FromString (string);
+}
+
+void setBooleanValue (MyInterfaceObject *obj, NP_Boolean *boolean)
+{
+	obj->boolValue = NP_BoolFromBoolean (boolean);
+}
+
+NP_Number *getDoubleValue (MyInterfaceObject *obj)
+{
+	return NP_CreateNumberWithDouble (obj->doubleValue);
+}
+
+NP_Number *getIntValue (MyInterfaceObject *obj)
+{
+	return NP_CreateNumberWithInt (obj->intValue);
+}
+
+NP_String *getStringValue (MyInterfaceObject *obj)
+{
+	return NP_CreateStringWithUTF8 (obj->stringValue);
+}
+
+NP_Boolean *getBooleanValue (MyInterfaceObject *obj)
+{
+	return NP_CreateBoolean (obj->boolValue);
+}
+
 NP_Object *myInterfaceInvoke (MyInterfaceObject *obj, NP_Identifier name, NP_Object **args, unsigned argCount)
 {
+	if (name == myMethodIdentifiers[ID_LOG_MESSAGE]) {
+		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_StringClass))
+			logMessage ((NP_String *)args[0]);
+		return 0;
+	}
+	else if (name == myMethodIdentifiers[ID_SET_DOUBLE_VALUE]) {
+		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_NumberClass))
+			setDoubleValue (obj, (NP_Number *)args[0]);
+		return 0;
+	}
+	else if (name == myMethodIdentifiers[ID_SET_INT_VALUE]) {
+		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_NumberClass))
+			setIntValue (obj, (NP_Number *)args[0]);
+		return 0;
+	}
+	else if (name == myMethodIdentifiers[ID_SET_STRING_VALUE]) {
+		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_StringClass))
+			setStringValue (obj, (NP_String *)args[0]);
+		return 0;
+	}
+	else if (name == myMethodIdentifiers[ID_SET_BOOLEAN_VALUE]) {
+		if (argCount == 1 && NP_IsKindOfClass (args[0], NP_BooleanClass))
+			setBooleanValue (obj, (NP_Boolean *)args[0]);
+		return 0;
+	}
+	else if (name == myMethodIdentifiers[ID_GET_DOUBLE_VALUE]) {
+		return getDoubleValue (obj);
+	}
+	else if (name == myMethodIdentifiers[ID_GET_INT_VALUE]) {
+		return getIntValue (obj);
+	}
+	else if (name == myMethodIdentifiers[ID_GET_STRING_VALUE]) {
+		return getStringValue (obj);
+	}
+	else if (name == myMethodIdentifiers[ID_GET_BOOLEAN_VALUE]) {
+		return getBooleanValue (obj);
+	}
 	return NP_GetUndefined();
 }
 
@@ -185,6 +287,12 @@ NP_Object *myInterfaceAllocate ()
 		identifiersInitialized = true;
 		initializeIdentifiers();
 	}
+	
+	
+	newInstance->doubleValue = 666.666;
+	newInstance->intValue = 1234;
+	newInstance->boolValue = true;
+	newInstance->stringValue = strdup("Hello world");
 	
 	return (NP_Object *)newInstance;
 }

@@ -254,6 +254,7 @@
 				5182A47105FFD45000CBD2F2,
 				5182A48E05FFFDC500CBD2F2,
 				5182A53D06012C3000CBD2F2,
+				517BE7F50610E39600221947,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,6 +589,21 @@
 			settings = {
 			};
 		};
+		517BE7F40610E39600221947 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = NP_jsobject.h;
+			path = bindings/NP_jsobject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517BE7F50610E39600221947 = {
+			fileRef = 517BE7F40610E39600221947;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		517D52DC056BF2F5003851BD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -811,6 +827,7 @@
 				5182A4FB06010F8200CBD2F2,
 				5182A47005FFD45000CBD2F2,
 				51532CC705F7FD2C00EC779C,
+				517BE7F40610E39600221947,
 				515B876A05F532B900EABBF9,
 				515B879205F535B300EABBF9,
 				517D52DC056BF2F5003851BD,

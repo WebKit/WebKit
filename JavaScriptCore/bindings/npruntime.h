@@ -35,7 +35,7 @@
  * Revision 4 (March 11, 2004):
  * Added additional convenience NP_SetExceptionWithUTF8().
  * Changed NP_HasPropertyInterface and NP_HasMethodInterface to take NP_Class
- * pointers instead of objects.
+ * pointers instead of NP_Object pointers.
  * Added NP_IsValidIdentifier().
  *
  * Revision 5 (March 17, 2004):
@@ -251,9 +251,11 @@ NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String);
 NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, unsigned int len);
 
 /*
-    Memory returned from NP_UTF8FromString and NP_UTF16FromString must be freed by the caller.
+    Memory returned from NP_UTF8FromString must be deallocated
+    by calling NP_DeallocateUTF8.
 */
 NP_UTF8 *NP_UTF8FromString (NP_String *obj);
+void NP_DeallocateUTF8 (NP_UTF8 *UTF8Buffer);
 NP_UTF16 *NP_UTF16FromString (NP_String *obj);
 int32_t NP_StringLength (NP_String *obj);
 
@@ -292,7 +294,7 @@ NP_Object *NP_ObjectAtIndex (NP_Array *array, int32_t index);
     Returns true if the object is a kind of class as specified by
     aClass.
 */
-bool NP_IsKindOfClass (NP_Object *obj, NP_Class *aClass);
+bool NP_IsKindOfClass (const NP_Object *obj, const NP_Class *aClass);
 
 /*
     NP_SetException may be called to trigger a JavaScript exception upon return

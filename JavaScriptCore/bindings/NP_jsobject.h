@@ -22,29 +22,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _C_UTILITY_H_
-#define _C_UTILITY_H_
-
 #include <NP_runtime.h>
+
+#include <c_utility.h>
 
 #include <runtime.h>
 #include <runtime_object.h>
 #include <runtime_root.h>
-
-typedef enum 
+ 
+typedef struct
 {
-    NP_NumberValueType,
-    NP_StringValueType,
-    NP_BooleanValueType,
-    NP_NullValueType,
-    NP_UndefinedValueType,
-    NP_ObjectValueType,
-    NP_InvalidValueType
-} NP_ValueType;
+    NP_Object object;
+    KJS::ObjectImp *imp;
+    KJS::Bindings::RootObject *root;
+} JavaScriptObject;
 
-
-extern NP_Object *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value);
-extern NP_Object *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value);
-extern KJS::Value convertNPValueTypeToValue (KJS::ExecState *exec, const NP_Object *obj);
-
-#endif

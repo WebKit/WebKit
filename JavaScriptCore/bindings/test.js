@@ -1,6 +1,12 @@
-myInterface.logMessage ("starting test");
+myInterface.logMessage ("Starting test");
 
-myInterface.logMessage ("myInterface.getInt() = " + myInterface.getInt());
+myInterface.logMessage ("Testing properties:");
+myInterface.logMessage ("myInterface.doubleValue = " + myInterface.doubleValue);
+myInterface.logMessage ("myInterface.intValue = " + myInterface.intValue);
+myInterface.logMessage ("myInterface.stringValue = " + myInterface.stringValue);
+myInterface.logMessage ("myInterface.booleanValue = " + myInterface.booleanValue);
+myInterface.logMessage ("myInterface.nullValue = " + myInterface.nullValue);
+myInterface.logMessage ("myInterface.undefinedValue = " + myInterface.undefinedValue);
 
 myInterface.logMessage ("myInterface.setInt_(666) = " + myInterface.setInt_(666));
 myInterface.logMessage ("myInterface.getInt() = " + myInterface.getInt());

@@ -78,44 +78,59 @@ static NP_Identifier identifierCount = 1;
 
 NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name)
 {
-    NP_Identifier identifier = 0;
+    assert (name);
     
-    identifier = (NP_Identifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
-    if (identifier == 0) {
-        identifier = identifierCount++;
-        // We never release identifier names, so this dictionary will grow, as will
-        // the memory for the identifier name strings.
-        const char *identifierName = strdup (name);
+    if (name) {
+        NP_Identifier identifier = 0;
         
-        if (!identifierNames) {
-            identifierNames = (const char **)malloc (sizeof(const char *)*INITIAL_IDENTIFIER_NAME_COUNT);
-            maxIdentifierNames = INITIAL_IDENTIFIER_NAME_COUNT;
-        }
-        
-        if (identifierCount >= maxIdentifierNames) {
-            maxIdentifierNames *= 2;
-            identifierNames = (const char **)realloc ((void *)identifierNames, sizeof(const char *)*maxIdentifierNames);
-        }
-        
-        identifierNames[identifier] = identifierName;
+        identifier = (NP_Identifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
+        if (identifier == 0) {
+            identifier = identifierCount++;
+            // We never release identifier names, so this dictionary will grow, as will
+            // the memory for the identifier name strings.
+            const char *identifierName = strdup (name);
+            
+            if (!identifierNames) {
+                identifierNames = (const char **)malloc (sizeof(const char *)*INITIAL_IDENTIFIER_NAME_COUNT);
+                maxIdentifierNames = INITIAL_IDENTIFIER_NAME_COUNT;
+            }
+            
+            if (identifierCount >= maxIdentifierNames) {
+                maxIdentifierNames *= 2;
+                identifierNames = (const char **)realloc ((void *)identifierNames, sizeof(const char *)*maxIdentifierNames);
+            }
+            
+            identifierNames[identifier] = identifierName;
 
-        CFDictionaryAddValue (getIdentifierDictionary(), identifierName, (const void *)identifier);
+            CFDictionaryAddValue (getIdentifierDictionary(), identifierName, (const void *)identifier);
+        }
+        return identifier;
     }
-
-    return identifier;
+    
+    return 0;
 }
 
 bool NP_IsValidIdentifier (const NP_UTF8 *name)
 {
-    return CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name) == 0 ? false : true;
+    assert (name);
+    
+    if (name)
+        return CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name) == 0 ? false : true;
+
+    return false;
 }
 
 void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *identifiers)
 {
-    int i;
+    assert (names);
+    assert (identifiers);
     
-    for (i = 0; i < nameCount; i++) {
-        identifiers[i] = NP_IdentifierFromUTF8 (names[i]);
+    if (names && identifiers) {
+        int i;
+        
+        for (i = 0; i < nameCount; i++) {
+            identifiers[i] = NP_IdentifierFromUTF8 (names[i]);
+        }
     }
 }
 
@@ -129,23 +144,32 @@ const NP_UTF8 *NP_UTF8FromIdentifier (NP_Identifier identifier)
 
 NP_Object *NP_CreateObject (NP_Class *aClass)
 {
-    NP_Object *obj;
-    
-    if (aClass->allocate != NULL)
-        obj = aClass->allocate ();
-    else
-        obj = (NP_Object *)malloc (sizeof(NP_Object));
-        
-    obj->_class = aClass;
-    obj->referenceCount = 1;
+    assert (aClass);
 
-    return obj;
+    if (aClass) {
+        NP_Object *obj;
+        
+        if (aClass->allocate != NULL)
+            obj = aClass->allocate ();
+        else
+            obj = (NP_Object *)malloc (sizeof(NP_Object));
+            
+        obj->_class = aClass;
+        obj->referenceCount = 1;
+
+        return obj;
+    }
+    
+    return 0;
 }
 
 
 NP_Object *NP_RetainObject (NP_Object *obj)
 {
-    obj->referenceCount++;
+    assert (obj);
+
+    if (obj)
+        obj->referenceCount++;
 
     return obj;
 }
@@ -153,36 +177,51 @@ NP_Object *NP_RetainObject (NP_Object *obj)
 
 void NP_ReleaseObject (NP_Object *obj)
 {
+    assert (obj);
     assert (obj->referenceCount >= 1);
 
-    obj->referenceCount--;
-            
-    if (obj->referenceCount == 0) {
-        if (obj->_class->deallocate)
-            obj->_class->deallocate (obj);
-        else
-            free (obj);
+    if (obj && obj->referenceCount >= 1) {
+        obj->referenceCount--;
+                
+        if (obj->referenceCount == 0) {
+            if (obj->_class->deallocate)
+                obj->_class->deallocate (obj);
+            else
+                free (obj);
+        }
     }
 }
 
-bool NP_IsKindOfClass (NP_Object *obj, NP_Class *aClass)
+bool NP_IsKindOfClass (const NP_Object *obj, const NP_Class *aClass)
 {
-    if (obj->_class == aClass)
-        return true;
-
+    assert (obj);
+    assert (aClass);
+    
+    if (obj && aClass) {
+        if (obj->_class == aClass)
+            return true;
+    }
+    
     return false;
 }
 
+
 void NP_SetExceptionWithUTF8 (NP_Object *obj, const NP_UTF8 *message)
 {
-    NP_String *m = NP_CreateStringWithUTF8(message);
-    NP_SetException (obj, m);
-    NP_ReleaseObject (m);
+    assert (obj);
+    assert (message);
+ 
+    if (obj && message) {
+        NP_String *m = NP_CreateStringWithUTF8(message);
+        NP_SetException (obj, m);
+        NP_ReleaseObject (m);
+    }
 }
 
 
 void NP_SetException (NP_Object *obj, NP_String *message)
 {
+    // FIX ME.  Need to implement.
 }
 
 // ---------------------------------- Types ----------------------------------
@@ -238,23 +277,38 @@ NP_Number *NP_CreateNumberWithDouble (double d)
 
 int NP_IntFromNumber (NP_Number *obj)
 {
-    assert (NP_IsKindOfClass (obj, numberClass));
-    NumberObject *number = (NumberObject *)obj;
-    return (int)number->number;
+    assert (obj && NP_IsKindOfClass (obj, numberClass));
+
+    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+        NumberObject *number = (NumberObject *)obj;
+        return (int)number->number;
+    }
+    
+    return 0;
 }
 
 float NP_FloatFromNumber (NP_Number *obj)
 {
-    assert (NP_IsKindOfClass (obj, numberClass));
-    NumberObject *number = (NumberObject *)obj;
-    return (float)number->number;
+    assert (obj && NP_IsKindOfClass (obj, numberClass));
+
+    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+        NumberObject *number = (NumberObject *)obj;
+        return (float)number->number;
+    }
+    
+    return 0.;
 }
 
 double NP_DoubleFromNumber (NP_Number *obj)
 {
-    assert (NP_IsKindOfClass (obj, numberClass));
-    NumberObject *number = (NumberObject *)obj;
-    return number->number;
+    assert (obj && NP_IsKindOfClass (obj, numberClass));
+    
+    if (obj && NP_IsKindOfClass (obj, numberClass)) {
+        NumberObject *number = (NumberObject *)obj;
+        return number->number;
+    }
+    
+    return 0.;
 }
 
 
@@ -297,89 +351,118 @@ NP_Class *NP_StringClass = stringClass;
 
 NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String)
 {
-    StringObject *string = (StringObject *)NP_CreateObject (stringClass);
+    assert (utf8String);
+    
+    if (utf8String) {
+        StringObject *string = (StringObject *)NP_CreateObject (stringClass);
 
-    CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
+        CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
 
-    string->length = CFStringGetLength (stringRef);
-    string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
+        string->length = CFStringGetLength (stringRef);
+        string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
 
-    // Convert the string to UTF16.
-    CFRange range = { 0, string->length };
-    CFStringGetCharacters (stringRef, range, (UniChar *)string->string);
-    CFRelease (stringRef);
+        // Convert the string to UTF16.
+        CFRange range = { 0, string->length };
+        CFStringGetCharacters (stringRef, range, (UniChar *)string->string);
+        CFRelease (stringRef);
 
-    return (NP_String *)string;
+        return (NP_String *)string;
+    }
+    
+    return 0;
 }
 
 
 NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, int32_t len)
 {
-    StringObject *string = (StringObject *)NP_CreateObject (stringClass);
-
-    string->length = len;
-    string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
-    memcpy ((void *)string->string, utf16String, sizeof(NP_UTF16)*string->length);
+    assert (utf16String);
     
-    return (NP_String *)string;
+    if (utf16String) {
+        StringObject *string = (StringObject *)NP_CreateObject (stringClass);
+
+        string->length = len;
+        string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
+        memcpy ((void *)string->string, utf16String, sizeof(NP_UTF16)*string->length);
+        
+        return (NP_String *)string;
+    }
+
+    return 0;
+}
+
+void NP_DeallocateUTF8 (NP_UTF8 *UTF8Buffer)
+{
+    free (UTF8Buffer);
 }
 
 NP_UTF8 *NP_UTF8FromString (NP_String *obj)
 {
-    assert (NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NP_IsKindOfClass (obj, stringClass));
 
-    StringObject *string = (StringObject *)obj;
+    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+        StringObject *string = (StringObject *)obj;
 
-    // Allow for max conversion factor.
-    UInt8 *buffer;
-    UInt8 _localBuffer[LOCAL_CONVERSION_BUFFER_SIZE];
-    CFIndex maxBufferLength;
-    
-    if (string->length*sizeof(UInt8)*8 > LOCAL_CONVERSION_BUFFER_SIZE) {
-        maxBufferLength = string->length*sizeof(UInt8)*8;
-        buffer = (UInt8 *)malloc(maxBufferLength);
-    }
-    else {
-        maxBufferLength = LOCAL_CONVERSION_BUFFER_SIZE;
-        buffer = _localBuffer;
-    }
-    
-    // Convert the string to UTF8.
-    CFIndex usedBufferLength;
-    CFStringRef stringRef = CFStringCreateWithCharacters (NULL, (UniChar *)string->string, string->length);
-    CFRange range = { 0, string->length };
-    CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
-    
-    NP_UTF8 *resultString = (NP_UTF8 *)malloc (usedBufferLength+1);
-    strncpy ((char *)resultString, (const char *)buffer, usedBufferLength);
-    char *cp = (char *)resultString;
-    cp[usedBufferLength] = 0;
-    
-    CFRelease (stringRef);
-    if (buffer != _localBuffer)
-        free ((void *)buffer);
+        // Allow for max conversion factor.
+        UInt8 *buffer;
+        UInt8 _localBuffer[LOCAL_CONVERSION_BUFFER_SIZE];
+        CFIndex maxBufferLength;
         
-    return resultString;
+        if (string->length*sizeof(UInt8)*8 > LOCAL_CONVERSION_BUFFER_SIZE) {
+            maxBufferLength = string->length*sizeof(UInt8)*8;
+            buffer = (UInt8 *)malloc(maxBufferLength);
+        }
+        else {
+            maxBufferLength = LOCAL_CONVERSION_BUFFER_SIZE;
+            buffer = _localBuffer;
+        }
+        
+        // Convert the string to UTF8.
+        CFIndex usedBufferLength;
+        CFStringRef stringRef = CFStringCreateWithCharacters (NULL, (UniChar *)string->string, string->length);
+        CFRange range = { 0, string->length };
+        CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
+        
+        NP_UTF8 *resultString = (NP_UTF8 *)malloc (usedBufferLength+1);
+        strncpy ((char *)resultString, (const char *)buffer, usedBufferLength);
+        char *cp = (char *)resultString;
+        cp[usedBufferLength] = 0;
+        
+        CFRelease (stringRef);
+        if (buffer != _localBuffer)
+            free ((void *)buffer);
+            
+        return resultString;
+    }
+    
+    return 0;
 }
 
 NP_UTF16 *NP_UTF16FromString (NP_String *obj)
 {
-    assert (NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NP_IsKindOfClass (obj, stringClass));
 
-    StringObject *string = (StringObject *)obj;
+    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+        StringObject *string = (StringObject *)obj;
+        
+        NP_UTF16 *resultString = (NP_UTF16*)malloc(sizeof(int16_t)*string->length);
+        memcpy ((void *)resultString, string->string, sizeof(int16_t)*string->length);
+
+        return resultString;
+    }
     
-    NP_UTF16 *resultString = (NP_UTF16*)malloc(sizeof(int16_t)*string->length);
-    memcpy ((void *)resultString, string->string, sizeof(int16_t)*string->length);
-
-    return resultString;
+    return 0;
 }
 
 int32_t NP_StringLength (NP_String *obj)
 {
-    assert (NP_IsKindOfClass (obj, stringClass));
+    assert (obj && NP_IsKindOfClass (obj, stringClass));
 
-    StringObject *string = (StringObject *)obj;
-    return string->length;
+    if (obj && NP_IsKindOfClass (obj, stringClass)) {
+        StringObject *string = (StringObject *)obj;
+        return string->length;
+    }
+    
+    return 0;
 }
 
 // ---------------------------------- NP_Boolean ----------------------------------
@@ -435,12 +518,16 @@ NP_Boolean *NP_CreateBoolean (bool f)
 
 bool NP_BoolFromBoolean (NP_Boolean *obj)
 {
-    assert (NP_IsKindOfClass (obj, booleanClass) 
+    assert (obj && NP_IsKindOfClass (obj, booleanClass) 
             && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject));
 
-    BooleanObject *booleanObj = (BooleanObject *)obj;
-    if (booleanObj == theTrueObject)
-        return true;
+    if (obj && NP_IsKindOfClass (obj, booleanClass) 
+            && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject)) {
+        BooleanObject *booleanObj = (BooleanObject *)obj;
+        if (booleanObj == theTrueObject)
+            return true;
+    }
+    
     return false;
 }
 

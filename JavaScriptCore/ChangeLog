@@ -1,3 +1,58 @@
+2004-03-23  Richard Williamson   <rjw@apple.com>
+
+	Added implementation of KJS::Value <-> NP_Object conversion functions.
+	Augmented test program for 'C' bindings.
+	Added asserts and parameter checking to all public API.	
+
+        Reviewed by Ken.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        (NP_ToString):
+        * bindings/NP_jsobject.h: Added.
+        * bindings/NP_runtime.cpp:
+        (NP_IdentifierFromUTF8):
+        (NP_IsValidIdentifier):
+        (NP_GetIdentifiers):
+        (NP_CreateObject):
+        (NP_RetainObject):
+        (NP_ReleaseObject):
+        (NP_IsKindOfClass):
+        (NP_SetExceptionWithUTF8):
+        (NP_SetException):
+        (NP_IntFromNumber):
+        (NP_FloatFromNumber):
+        (NP_DoubleFromNumber):
+        (NP_CreateStringWithUTF8):
+        (NP_CreateStringWithUTF16):
+        (NP_DeallocateUTF8):
+        (NP_UTF8FromString):
+        (NP_UTF16FromString):
+        (NP_StringLength):
+        (NP_BoolFromBoolean):
+        * bindings/NP_runtime.h:
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        * bindings/c/c_utility.cpp:
+        (coerceValueToNPString):
+        (convertValueToNPValueType):
+        (convertNPValueTypeToValue):
+        * bindings/c/c_utility.h:
+        * bindings/test.js:
+        * bindings/testC.js: Added.
+        * bindings/testbindings.cpp:
+        (logMessage):
+        (setDoubleValue):
+        (setIntValue):
+        (setStringValue):
+        (setBooleanValue):
+        (getDoubleValue):
+        (getIntValue):
+        (getStringValue):
+        (getBooleanValue):
+        (myInterfaceInvoke):
+        (myInterfaceAllocate):
+
 === Safari-133 ===
 
 2004-03-19  Darin Adler  <darin@apple.com>
