@@ -1206,7 +1206,11 @@
 
 - (void)addSubresource:(WebResource *)subresource
 {
-    [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
+    if (subresource) {
+        [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
+    } else {
+        ASSERT_NOT_REACHED();
+    }
 }
 
 @end

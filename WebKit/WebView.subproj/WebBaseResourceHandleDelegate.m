@@ -300,14 +300,20 @@ static BOOL NSURLConnectionSupportsBufferedData;
         NSData *data = [self resourceData];
         if ([data length] > 0) {
             // Don't have WebResource copy the data since the data is a NSMutableData that we know won't get modified. 
+            ASSERT(originalURL);
+            ASSERT([response MIMEType]);
             WebResource *newResource = [[WebResource alloc] _initWithData:data
                                                                       URL:originalURL
                                                                  MIMEType:[response MIMEType]
                                                          textEncodingName:[response textEncodingName]
                                                                 frameName:nil
                                                                  copyData:NO];
-            [dataSource addSubresource:newResource];
-            [newResource release];
+            if (newResource != nil) {
+                [dataSource addSubresource:newResource];
+                [newResource release];
+            } else {
+                ASSERT_NOT_REACHED();
+            }
         }
     }
 }

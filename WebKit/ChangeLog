@@ -1,3 +1,22 @@
+2005-03-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele.
+        
+        - fixed <rdar://problem/4023337> Safari stops loading any page (-[NSCFDictionary setObject:forKey:]: 
+        attempt to insert nil key)
+        
+        It is very likely that the exception being hit is caused by the same problem as WebFoundation
+        bug 4018486. This change makes the code robust against this kind of problem regardless.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate saveResource]):
+        Don't call addSubresource if newly-created resource is nil (but do assert on debug builds).
+        Also assert that originalURL and MIMEType are not nil.
+        
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource addSubresource:]):
+        Don't add nil subresource to dictionary, but do assert on debug builds.
+
 === Safari-401 ===
 
 2005-03-01  John Sullivan  <sullivan@apple.com>
