@@ -2,7 +2,7 @@
 
         Reviewed by John and Richard.
 
-        - fixed 3367377 -- autoscroll only works when mouse is moving
+        - fixed 3127833 -- autoscroll only works when mouse is moving
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView viewDidMoveToWindow]): Stop the auto-scroll timer. This covers
