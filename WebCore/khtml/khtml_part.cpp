@@ -3237,8 +3237,11 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     // before we could connect the signals, so make sure to send the
     // completed() signal for the child by hand:
     if (url.isEmpty() || url.url() == "about:blank") {
-      KParts::ReadOnlyPart *part = child->m_part;
-      static_cast<KHTMLPart *>(part)->completed();
+      ReadOnlyPart *readOnlyPart = child->m_part;
+      KHTMLPart *part = dynamic_cast<KHTMLPart *>(readOnlyPart);
+      if (part) {
+        part->completed();
+      }
     }
 #else
   if(url.protocol() == "javascript" || url.url() == "about:blank") {

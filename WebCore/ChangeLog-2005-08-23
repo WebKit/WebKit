@@ -1,5 +1,15 @@
 2003-11-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed 3477509 -- REGRESSION (112-113): crash in KHTMLPart::processObjectRequest at espn.com, chosun.com
+
+        * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest): Use a dynamic_cast to check the type of the
+        part rather than assuming it's always a KHTMLPart. The crash was caused by casting a KWQPluginPart to
+        KHTMLPart.
+
+2003-11-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard.
 
         - event cleanup motivated by questions on khtml-devel
