@@ -1,5 +1,9 @@
 2002-01-17  Maciej Stachowiak  <mjs@apple.com>
 
+	* src/kwq/Makefile.am: Fix another bonehead mistake.
+
+2002-01-17  Maciej Stachowiak  <mjs@apple.com>
+
 	Fix bonehead mistakes in last checkin which were killing Jersey.
 
 	* src/kdelibs/khtml/ecma/Makefile.am:
