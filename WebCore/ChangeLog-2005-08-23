@@ -1,3 +1,48 @@
+2003-08-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3368672, don't allow frames and framesets to be positioned or relpositioned.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::requiresLayer):
+        * khtml/rendering/render_object.h:
+
+2003-08-07  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3368463, assert/crash on libraries.uc.edu page.  A stylesheet was making 
+	a <p> a table-column, which is totally nonsensical.  Since this isn't supported in
+	WinIE, it just got ignored.  The fix I chose matches what Mozilla does, which is
+	to not allow table-column renderobjects to have children.
+
+	Fix for 3364412, FM pro file that happens to use a <col> element crashes.  Make sure
+	to patch bidiiterator to have a null check for this bizarre case.  Technically <col>
+	should never have been a table-column, since it's not in the HTML namespace, but
+	that fix will have to wait until we get @namespace support in CSS.
+	
+        Reviewed by john
+
+        * ChangeLog:
+	* khtml/rendering/bidi.cpp
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCol::canHaveChildren):
+        * khtml/rendering/render_table.h:
+
+2003-08-05  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3370654.  Make sure the max width computation for blocks with inline children actually
+	ignores non-pre text runs that consist entirely of whitespace.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth):
+        * khtml/rendering/render_text.h:
+
 2003-08-08  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3362481 -- REGRESSION (89-90): clicking in a field causes 

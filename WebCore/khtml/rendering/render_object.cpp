@@ -316,6 +316,11 @@ RenderLayer* RenderObject::enclosingLayer()
     return 0;
 }
 
+bool RenderObject::requiresLayer()
+{
+    return isRoot() || isPositioned() || isRelPositioned() || style()->opacity() < 1.0f;
+}
+
 int RenderObject::offsetLeft() const
 {
     int x = xPos();

@@ -1959,6 +1959,22 @@ static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
     return result;
 }
 
+static void stripTrailingSpace(bool pre,
+                               int& inlineMax, int& inlineMin,
+                               RenderObject* trailingSpaceChild)
+{
+    if (!pre && trailingSpaceChild && trailingSpaceChild->isText()) {
+        // Collapse away the trailing space at the end of a block.
+        RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
+        const Font *f = t->htmlFont( false );
+        QChar space[1]; space[0] = ' ';
+        int spaceWidth = f->width(space, 1, 0);
+        inlineMax -= spaceWidth;
+        if (inlineMin > inlineMax)
+            inlineMin = inlineMax;
+    }
+}
+
 void RenderBlock::calcInlineMinMaxWidth()
 {
     int inlineMax=0;
@@ -1975,7 +1991,6 @@ void RenderBlock::calcInlineMinMaxWidth()
     normal = oldnormal = style()->whiteSpace() == NORMAL;
 
     InlineMinMaxIterator childIterator(this, this);
-    RenderObject* prev = 0;
     bool addedTextIndent = false; // Only gets added in once.
     while (RenderObject* child = childIterator.next())
     {
@@ -2049,7 +2064,7 @@ void RenderBlock::calcInlineMinMaxWidth()
             }
 
             if (!child->isRenderInline() && !child->isText()) {
-                // Case (2). Inline replaced elements.
+                // Case (2). Inline replaced elements and floats.
                 // Go ahead and terminate the current line as far as
                 // minwidth is concerned.
                 childMin += child->minWidth();
@@ -2085,9 +2100,10 @@ void RenderBlock::calcInlineMinMaxWidth()
 
                 // We are no longer stripping whitespace at the start of
                 // a line.
-                if (!child->isFloating())
+                if (!child->isFloating()) {
                     stripFrontSpaces = false;
-                trailingSpaceChild = 0;
+                    trailingSpaceChild = 0;
+                }
             }
             else if (child->isText())
             {
@@ -2106,6 +2122,11 @@ void RenderBlock::calcInlineMinMaxWidth()
                 t->trimmedMinMaxWidth(beginMin, beginWS, endMin, endWS, hasBreakableChar,
                                       hasBreak, beginMax, endMax,
                                       childMin, childMax, stripFrontSpaces);
+
+                // This text object is insignificant and will not be rendered.  Just
+                // continue.
+                if (!hasBreak && childMax == 0) continue;
+                
                 if (stripFrontSpaces)
                     trailingSpaceChild = child;
                 else
@@ -2173,20 +2194,10 @@ void RenderBlock::calcInlineMinMaxWidth()
         }
 
         oldnormal = normal;
-        prev = child;
     }
 
-    if (trailingSpaceChild && trailingSpaceChild->isText() && !m_pre) {
-        // Collapse away the trailing space at the end of a block.
-        RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
-        const Font *f = t->htmlFont( false );
-        QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1, 0);
-        inlineMax -= spaceWidth;
-        if (inlineMin > inlineMax)
-            inlineMin = inlineMax;
-    }
-
+    stripTrailingSpace(m_pre, inlineMax, inlineMin, trailingSpaceChild);
+    
     if(m_minWidth < inlineMin) m_minWidth = inlineMin;
     if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
     //         kdDebug( 6040 ) << "m_minWidth=" << m_minWidth

@@ -275,8 +275,8 @@ static RenderObject *first( RenderObject *par, bool skipInlines = true )
         else
             return o; // Never skip empty inlines.
     }
-        
-    if (!o->isText() && !o->isBR() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
+
+    if (o && !o->isText() && !o->isBR() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
         o = Bidinext( par, o, skipInlines );
     return o;
 }
