@@ -1,5 +1,15 @@
 2005-03-22  David Harrison  <harrison@apple.com>
 
+        Reviewed by Darin.
+        
+        <rdar://problem/4060266> Double-clicking in Dictionary.app doesn't work for some words (coming just after style change)
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextBox):
+        Complete the check of whether to emit space for collapsed space.
+
+2005-03-22  David Harrison  <harrison@apple.com>
+
         Reviewed by John.
         
         <rdar://problem/4061443> REGRESSION (8A420-8A421): Pasting in the Stickies widget is broken again
