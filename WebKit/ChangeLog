@@ -1,3 +1,12 @@
+2004-03-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences historyIsFrozen]):
+        always return NO on Panther and older, so you can't get into a state
+        where the WebKit pref is invisibly set and affecting Safari.
+
 2004-03-31  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebHTMLView.m: Whitespace tweaks.
