@@ -1,3 +1,53 @@
+2004-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - implemented some of the trivial WebView editing operations; some had bug reports, to wit:
+        - fixed <rdar://problem/3655342>: (Editing: -centerSelectionInVisibleArea: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655398>: (Editing: -deleteWordBackward: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655397>: (Editing: -deleteWordForward: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655387>: (Editing: -insertBacktab: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655386>: (Editing: -insertTab: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655351>: (Editing: -moveWordBackward: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655352>: (Editing: -moveWordBackwardAndModifySelection: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655353>: (Editing: -moveWordForward: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655354>: (Editing: -moveWordForwardAndModifySelection: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655374>: (Editing: -pasteAsPlainText: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655362>: (Editing: -scrollLineDown: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655363>: (Editing: -scrollLineUp: method unimplemented (WebKit editing API))
+
+        * WebView.subproj/WebView.m:
+        (-[WebView centerSelectionInVisibleArea:]): Implemented. The implementation isn't perfect, but it's hooked
+        up. It simply calls ensureCaretVisible for now.
+        (-[WebView moveBackward:]): Implemented. The WebCore API already has a way to specify backward as opposed
+        to left. A separate issue is the fact that these operations don't have bi-di-savvy implementations, but
+        now this method is hooked up and will work at least for left-to-right text.
+        (-[WebView moveBackwardAndModifySelection:]): Ditto.
+        (-[WebView moveForward:]): Ditto.
+        (-[WebView moveForwardAndModifySelection:]): Ditto.
+        (-[WebView moveWordBackward:]): Ditto.
+        (-[WebView moveWordBackwardAndModifySelection:]): Ditto.
+        (-[WebView moveWordForward:]): Ditto.
+        (-[WebView moveWordForwardAndModifySelection:]): Ditto.
+        (-[WebView scrollLineDown:]): Forward to WebFrameView.
+        (-[WebView scrollLineUp:]): Ditto.
+        (-[WebView scrollPageDown:]): Ditto.
+        (-[WebView scrollPageUp:]): Ditto.
+        (-[WebView delete:]): Implemented. Follows pattern used in cut, copy, and paste.
+        (-[WebView pasteAsPlainText:]): Implemented. Calls delegate, then replaceSelectionWithText: on the bridge.
+        (-[WebView insertTab:]): Implemented. Calls delegate, then replaceSelectionWithText: on the bridge.
+        (-[WebView insertBacktab:]): Implemented. Does nothing. If we ever change so that you can use a WebView as
+        a field editor, then we might have to add code here.
+        (-[WebView deleteWordForward:]): Implement by calling moveForwardAndModifySelection: and then delete:.
+        Might not be a perfect implementation in the presence of delegates who refuse to delete because it will
+        change the selection even if the delete is disallowed.
+        (-[WebView deleteWordBackward:]): Implement by calling moveBackwardAndModifySelection: and then delete:.
+        Same issue about about delegates as deleteWordForward:.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _pasteFromPasteboard:]): Added a FIXME.
+
+        * DOM.subproj/DOMViews.h: Updated from recent change to WebCore.
+
 2004-05-21  Richard Williamson   <rjw@apple.com>
 
         Removed _bindObject:forFrame: SPI.
@@ -39,8 +89,8 @@
 
         Provide the methods to glue the WebView's editing delegate so that these methods work:
         
-        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
-        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
 
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge shouldBeginEditing:]): New method used to glue delegate to focus shifts.
@@ -290,8 +340,8 @@
         NSView behavior gives us just what we want, and there is no
         special behavior required for editing.
 
-        <rdar://problem/3655364>: "Editing: -scrollPageDown: method unimplemented (WebKit editing API)"
-        <rdar://problem/3655365>: "Editing: -scrollPageUp: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655364>: "Editing: -scrollPageDown: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655365>: "Editing: -scrollPageUp: method unimplemented (WebKit editing API)"
 
         * WebView.subproj/WebView.h: Comment methods out and add a note about why.
         * WebView.subproj/WebView.m: Remove stubbed out implementation.

@@ -95,5 +95,6 @@
 - (void)cut:(id)sender;
 - (void)copy:(id)sender;
 - (void)paste:(id)sender;
+- (void)delete:(id)sender;
 
 @end

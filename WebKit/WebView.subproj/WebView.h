@@ -607,7 +607,8 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (void)pageUp:(id)sender;
 - (void)scrollLineDown:(id)sender;
 - (void)scrollLineUp:(id)sender;
-// Use default responder behavior for scrollPageDown: and scrollPageUp:.
+- (void)scrollPageDown:(id)sender;
+- (void)scrollPageUp:(id)sender;
 
     /* Selections */
 

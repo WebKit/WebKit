@@ -588,6 +588,9 @@ static WebHTMLView *lastHitView = nil;
         NSString *URLString = [URL _web_originalDataAsString];
         NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
         linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
+        // FIXME: Need to escape the text in the linkLabel, otherwise characters like "<" won't work.
+        // An even better solution would be to make a DOM node with the DOM API rather than creating
+        // a markup string here.
         NSString *markupString = [NSString stringWithFormat:@"<A HREF=\"%@\">%@</A>", URLString, linkLabel];
         [self _replaceSelectionWithMarkupString:markupString];
     } else if ([types containsObject:NSRTFDPboardType]) {
@@ -884,12 +887,29 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)copy:(id)sender
 {
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
     [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (void)cut:(id)sender
 {   
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
     [self copy:sender];
+    [[self _bridge] deleteSelection];
+}
+
+- (void)delete:(id)sender
+{
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
     [[self _bridge] deleteSelection];
 }
 
@@ -1057,27 +1077,6 @@ static WebHTMLView *lastHitView = nil;
         [pasteboard setString:s forType:NSStringPboardType];
         [s release];
     }
-}
-
-- (void)copy:(id)sender
-{
-    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-}
-
-- (void)cut:(id)sender
-{   
-    [self copy:sender];
-    [[self _bridge] deleteSelection];
-}
-
-- (void)delete:(id)sender
-{
-    [[self _bridge] deleteSelection];
-}
-
-- (void)paste:(id)sender
-{
-    [self _pasteFromPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types

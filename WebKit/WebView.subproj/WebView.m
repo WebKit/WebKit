@@ -2570,7 +2570,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)centerSelectionInVisibleArea:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        // FIXME: Does this do the right thing when the selection is not a caret?
+        [[self _bridgeForCurrentSelection] ensureCaretVisible];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(centerSelectionInVisibleArea:) with:sender];
@@ -2579,7 +2580,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveBackward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveBackward:) with:sender];
@@ -2588,7 +2589,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveBackwardAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveBackwardAndModifySelection:) with:sender];
@@ -2615,7 +2616,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveForward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveForward:) with:sender];
@@ -2624,7 +2625,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveForwardAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveForwardAndModifySelection:) with:sender];
@@ -2741,7 +2742,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveWordBackward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordBackward:) with:sender];
@@ -2750,7 +2751,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordBackwardAndModifySelection:) with:sender];
@@ -2759,7 +2760,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveWordForward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordForward:) with:sender];
@@ -2768,7 +2769,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordForwardAndModifySelection:) with:sender];
@@ -2830,8 +2831,9 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)scrollLineDown:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+    WebFrameView *frameView = [[self mainFrame] frameView];
+    if (frameView) {
+        [frameView scrollLineDown:sender];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(scrollLineDown:) with:sender];
@@ -2839,11 +2841,32 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)scrollLineUp:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+    WebFrameView *frameView = [[self mainFrame] frameView];
+    if (frameView) {
+        [frameView scrollLineUp:sender];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
+}
+
+- (void)scrollPageDown:(id)sender
+{
+    WebFrameView *frameView = [[self mainFrame] frameView];
+    if (frameView) {
+        [frameView scrollPageDown:sender];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
+}
+
+- (void)scrollPageUp:(id)sender
+{
+    WebFrameView *frameView = [[self mainFrame] frameView];
+    if (frameView) {
+        [frameView scrollPageUp:sender];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
 }
 
 
@@ -2945,7 +2968,10 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)delete:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            [(WebHTMLView *)view delete:nil];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(delete:) with:sender];
@@ -2954,7 +2980,13 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)pasteAsPlainText:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
+            if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+                [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
+            }
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(pasteAsPlainText:) with:sender];
@@ -3065,7 +3097,12 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)insertTab:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\t" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+                [[self _bridgeForCurrentSelection] replaceSelectionWithText:@"\t"];
+            }
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(insertTab:) with:sender];
@@ -3073,19 +3110,17 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)insertBacktab:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
+    // Doing nothing matches normal NSTextView behavior. If we ever use WebView for a field-editor-type purpose
+    // we might add code here.
     [[self nextResponder] tryToPerform:@selector(insertBacktab:) with:sender];
 }
 
 - (void)insertNewline:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        WebBridge *bridge = [self _bridgeForCurrentSelection];
         // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
         if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\n" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            WebBridge *bridge = [self _bridgeForCurrentSelection];
             [bridge replaceSelectionWithNewline];
             [bridge ensureCaretVisible];
         }
@@ -3157,8 +3192,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)deleteBackward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        WebBridge *bridge = [self _bridgeForCurrentSelection];
         if ([[self _editingDelegateForwarder] webView:self shouldDeleteDOMRange:[self selectedDOMRange]]) {
+            WebBridge *bridge = [self _bridgeForCurrentSelection];
             [bridge deleteKeyPressed];
             [bridge ensureCaretVisible];
         }
@@ -3179,7 +3214,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)deleteWordForward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self moveWordForwardAndModifySelection:sender];
+        [self delete:sender];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(deleteWordForward:) with:sender];
@@ -3188,7 +3224,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)deleteWordBackward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self moveWordBackwardAndModifySelection:sender];
+        [self delete:sender];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(deleteWordBackward:) with:sender];
@@ -3301,8 +3338,8 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 - (void)insertText:(NSString *)text
 {
     if ([self _currentSelectionIsEditable]) {
-        WebBridge *bridge = [self _bridgeForCurrentSelection];
         if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            WebBridge *bridge = [self _bridgeForCurrentSelection];
             [bridge replaceSelectionWithText:text];
             [bridge ensureCaretVisible];
         }
