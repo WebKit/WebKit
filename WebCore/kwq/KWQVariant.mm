@@ -39,6 +39,7 @@ public:
         uint u;
         double d;
         void *p;
+        int i;
     } value;
 
     int refCount;
@@ -59,9 +60,19 @@ QVariant::QVariant() : d(new QVariantPrivate)
 {
 }
 
-QVariant::QVariant(bool val, int i) : d(new QVariantPrivate(Bool))
+QVariant::QVariant(bool val, int) : d(new QVariantPrivate(Bool))
 {
     d->value.d = val;
+}
+
+QVariant::QVariant(int val) : d(new QVariantPrivate(Int))
+{
+    d->value.i = val;
+}
+
+QVariant::QVariant(uint val) : d(new QVariantPrivate(UInt))
+{
+    d->value.u = val;
 }
 
 QVariant::QVariant(double val) : d(new QVariantPrivate(Double))
@@ -99,10 +110,12 @@ bool QVariant::toBool() const
     switch (d->t) {
     case Bool:
         return d->value.b;
-    case UInt:
-        return d->value.u;
     case Double:
         return d->value.d != 0.0;
+    case Int:
+        return d->value.i;
+    case UInt:
+        return d->value.u;
     case Invalid:
     case String:
         break;
@@ -110,15 +123,35 @@ bool QVariant::toBool() const
     return false;
 }
 
+int QVariant::toInt() const
+{
+    switch (d->t) {
+    case Bool:
+        return d->value.b;
+    case Double:
+        return (int)d->value.d;
+    case Int:
+        return d->value.i;
+    case UInt:
+        return d->value.u > INT_MAX ? 0 : d->value.u;
+    case Invalid:
+    case String:
+        break;
+    }
+    return 0;
+}
+
 uint QVariant::toUInt() const
 {
     switch (d->t) {
     case Bool:
         return d->value.b;
-    case UInt:
-        return d->value.u;
     case Double:
         return (uint)d->value.d;
+    case Int:
+        return d->value.i < 0 ? 0 : d->value.i;
+    case UInt:
+        return d->value.u;
     case Invalid:
     case String:
         break;
@@ -129,14 +162,16 @@ uint QVariant::toUInt() const
 QString QVariant::asString() const
 {
     switch (d->t) {
-    case String:
-        return *(QString *)d->value.p;
     case Bool:
         return QString(d->value.b ? "true" : "false");
-    case UInt:
-        return QString().setNum(d->value.u);
     case Double:
         return QString().setNum(d->value.d);
+    case Int:
+        return QString().setNum(d->value.i);
+    case String:
+        return *(QString *)d->value.p;
+    case UInt:
+        return QString().setNum(d->value.u);
     case Invalid:
         break;
     }

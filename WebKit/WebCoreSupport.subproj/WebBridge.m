@@ -625,5 +625,18 @@ static BOOL loggedObjectCacheSize = NO;
     return [docView _mayStartDragWithMouseDragged:event];
 }
 
+- (int)historyLength
+{
+    return [[[frame controller] backForwardList] backListCount];
+}
+
+- (void)goBackOrForward:(int)distance
+{
+    WebController *controller = [frame controller];
+    WebHistoryItem *item = [[controller backForwardList] entryAtIndex:distance];
+    if (item) {
+        [controller goBackOrForwardToItem:item];
+    }
+}
 
 @end

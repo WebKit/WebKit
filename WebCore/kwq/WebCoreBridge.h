@@ -267,6 +267,9 @@ enum FrameBorderStyle {
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event;
 
+- (int)historyLength;
+- (void)goBackOrForward:(int)distance;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

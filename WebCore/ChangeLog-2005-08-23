@@ -1,3 +1,46 @@
+2003-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3126211 -- "go back" buttons that use "history.go(-1)" doesn't work (verizonwireless.com is an example)
+	- fixed 2950618 -- JavaScript window.history object name prints blank
+
+        * khtml/ecma/kjs_window.cpp:
+        (FrameArray::toString): Added. Returns "[object FrameArray]".
+        (History::getValueProperty): Removed #if APPLE_CHANGES to turn more code on.
+        (History::toString): Added. Returns "[object History]".
+
+        * kwq/KWQKPartsBrowserExtension.h: Make browserInterface a pure virtual function
+	instead of always returning 0.
+        * kwq/KWQKHTMLPartBrowserExtension.h: Added browserInterface() function.
+	Also replaced m_part with a _part that is a KWQKHTMLPart to simplify code.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::KHTMLPartBrowserExtension): Create the browser
+	interface object when the browser extension object is created.
+        (KHTMLPartBrowserExtension::openURLRequest): Use _part instead of KWQ(m_part).
+        (KHTMLPartBrowserExtension::createNewWindow): Use _part instead of KWQ(m_part).
+        (KHTMLPartBrowserExtension::setIconURL): Use _part instead of KWQ(m_part).
+        (KHTMLPartBrowserExtension::setTypedIconURL): Use _part instead of KWQ(m_part).
+
+        * kwq/KWQKPartsBrowserInterface.h: Add a constructor, property() function, and
+	_part data member.
+        * kwq/KWQKPartsBrowserInterface.mm:
+	(BrowserInterface::property): Added. Handles historyLength property by calling
+	the historyLength method on the bridge.
+	(BrowserInterface::callMethod): Handles goHistory(int) by calling the
+	goBackOrForward: method on the bridge.
+
+        * kwq/WebCoreBridge.h: Added historyLength and goBackOrForward: methods.
+
+        * kwq/KWQVariant.h: Added Int to the variant enum, added int and uint contructors,
+	and added toInt() member function.
+        * kwq/KWQVariant.mm:
+        (QVariant::QVariant): Implemented int and uint constructors.
+        (QVariant::toBool): Added Int case, sorted alphabetically.
+        (QVariant::toInt): Added.
+        (QVariant::toUInt): Added Int case, sorted alphabetically.
+        (QVariant::asString): Added Int case, sorted alphabetically.
+
 2003-01-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3153605 - Drag image when dragging text should be the actual text

@@ -69,6 +69,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Back, Forward, Go, Length };
+    virtual UString toString(ExecState *exec) const;
   private:
     QGuardedPtr<KHTMLPart> part;
   };
@@ -78,6 +79,7 @@ namespace KJS {
     FrameArray(ExecState *exec, KHTMLPart *p)
       : ObjectImp(exec->interpreter()->builtinObjectPrototype()), part(p) { }
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual UString toString(ExecState *exec) const;
   private:
     QGuardedPtr<KHTMLPart> part;
   };
@@ -1669,6 +1671,11 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
   return ObjectImp::get(exec, p);
 }
 
+UString FrameArray::toString(ExecState *) const
+{
+  return "[object FrameArray]";
+}
+
 ////////////////////// Location Object ////////////////////////
 
 const ClassInfo Location::info = { "Location", 0, 0, 0 };
@@ -1877,7 +1884,6 @@ Value History::get(ExecState *exec, const Identifier &p) const
 Value History::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
-#if !APPLE_CHANGES
   case Length:
   {
     KParts::BrowserExtension *ext = part->browserExtension();
@@ -1895,11 +1901,15 @@ Value History::getValueProperty(ExecState *, int token) const
 
     return Number( length.toUInt() );
   }
-#endif
   default:
     kdWarning() << "Unhandled token in History::getValueProperty : " << token << endl;
     return Undefined();
   }
+}
+
+UString History::toString(ExecState *exec) const
+{
+  return "[object History]";
 }
 
 Value HistoryFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)

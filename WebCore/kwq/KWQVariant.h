@@ -39,11 +39,14 @@ public:
         String,
         UInt,
         Double,
-        Bool
+        Bool,
+        Int
     };
 
     QVariant();
     QVariant(bool, int);
+    QVariant(int);
+    QVariant(uint);
     QVariant(double);
     QVariant(const QString &);
     ~QVariant();
@@ -54,6 +57,7 @@ public:
     Type type() const;
     
     bool toBool() const;
+    int toInt() const;
     uint toUInt() const;
     
     QString asString() const;

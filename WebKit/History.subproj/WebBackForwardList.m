@@ -248,5 +248,21 @@ static BOOL usesPageCache = YES;
     return usesPageCache;
 }
 
+- (int)backListCount
+{
+    return _current;
+}
+
+- (WebHistoryItem *)entryAtIndex:(int)index
+{
+    // Do range checks without doing math on index to avoid overflow.
+    if (index < -_current) {
+        return [_entries objectAtIndex:0];
+    }
+    if (index >= (int)[_entries count] - _current) {
+        return [_entries lastObject];
+    }
+    return [_entries objectAtIndex:index + _current];
+}
 
 @end

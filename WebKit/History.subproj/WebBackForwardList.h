@@ -134,4 +134,17 @@
 */
 - (void)setMaximumSize:(int)size;
 
+/*!
+    @method backListCount
+    @result Returns the back list's current count.
+*/
+- (int)backListCount;
+
+/*!
+    @method entryAtIndex:
+    @param index Index of the back/forward list item; 0 is current item, -1 is back item, 1 is forward item, etc.
+    @result Returns an entry the given distance from the current entry, or the furthest in that direction if there is none.
+*/
+- (WebHistoryItem *)entryAtIndex:(int)index;
+
 @end

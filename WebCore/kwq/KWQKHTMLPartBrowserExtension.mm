@@ -28,8 +28,8 @@
 #import "WebCoreBridge.h"
 
 KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
+    : _part(KWQ(part)), _browserInterface(_part)
 {
-    m_part = part;
 }
 
 void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
@@ -37,21 +37,21 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
 {
     if (url.protocol().lower() == "javascript") {
 	QString string = url.url();
-	KWQ(m_part)->createEmptyDocument();
+	_part->createEmptyDocument();
 	QString script = KURL::decode_string(string.mid(strlen("javascript:")));
-	QVariant ret = KWQ(m_part)->executeScript(script);
+	QVariant ret = _part->executeScript(script);
 
 	// some sites open windows with a javascript: URL that
 	// evaluates to an HTML string which they want placed in the
 	// window - should executing a script always do this?
 	if (ret.type() == QVariant::String) {
-	    m_part->begin();
-	    m_part->write(ret.asString());
-	    m_part->end();
+	    _part->begin();
+	    _part->write(ret.asString());
+	    _part->end();
 	}
 
      } else {
-	KWQ(m_part)->openURLRequest(url, args);
+	_part->openURLRequest(url, args);
     }
 }
 
@@ -83,7 +83,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     WebCoreBridge *bridge;
 
     if (frameName != nil) {
-	bridge = [KWQ(m_part)->bridge() findFramedNamed:frameName];
+	bridge = [_part->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
 		[bridge loadURL:url.url().getNSString() reload:urlArgs.reload triggeringEvent:nil isFormSubmission:NO];
@@ -93,7 +93,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	}
     }
 
-    bridge = [KWQ(m_part)->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
+    bridge = [_part->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -145,10 +145,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [KWQ(m_part)->bridge() setIconURL:url.url().getNSString()];
+    [_part->bridge() setIconURL:url.url().getNSString()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [KWQ(m_part)->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
+    [_part->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
 }

@@ -1,3 +1,19 @@
+2003-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3126211 -- "go back" buttons that use "history.go(-1)" doesn't work (verizonwireless.com is an example)
+
+	Implemented new bridge functions for use by the history object.
+
+        * History.subproj/WebBackForwardList.h: Added backListCount and entryAtIndex:.
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList backListCount]): Added.
+        (-[WebBackForwardList entryAtIndex:]): Added.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge historyLength]): Added. Calls backListCount.
+        (-[WebBridge goBackOrForward:]): Added. Calls entryAtIndex: and then goBackOrForwardToItem:.
+
 2003-01-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3153605 - Drag image when dragging text should be the actual text

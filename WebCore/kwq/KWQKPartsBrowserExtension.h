@@ -93,28 +93,28 @@ struct WindowArgs {
 
 class BrowserExtension : public QObject {
 public:
-     BrowserExtension() { }
-     BrowserInterface *browserInterface() const { return 0; }
-     
-     virtual void openURLRequest(const KURL &, const KParts::URLArgs &args = KParts::URLArgs()) = 0;
-     virtual void openURLNotify() = 0;
-     
-     virtual void createNewWindow(const KURL &url, 
-				  const KParts::URLArgs &urlArgs = KParts::URLArgs()) = 0;
-
-     virtual void createNewWindow(const KURL &url, 
-				  const KParts::URLArgs &urlArgs, 
-				  const KParts::WindowArgs &winArgs, 
-				  KParts::ReadOnlyPart *&part) = 0;
-
-     virtual void setIconURL(const KURL &url) = 0;
-     virtual void setTypedIconURL(const KURL &url, const QString &type) = 0;
-     
-     void setURLArgs(const KParts::URLArgs &args) { m_args = args; }
-     KParts::URLArgs urlArgs() const { return m_args; }
+    BrowserExtension() { }
+    virtual BrowserInterface *browserInterface() = 0;
+    
+    virtual void openURLRequest(const KURL &, const URLArgs &args = URLArgs()) = 0;
+    virtual void openURLNotify() = 0;
+    
+    virtual void createNewWindow(const KURL &url, 
+                                 const URLArgs &urlArgs = URLArgs()) = 0;
+    
+    virtual void createNewWindow(const KURL &url, 
+                                 const URLArgs &urlArgs, 
+                                 const WindowArgs &winArgs, 
+                                 ReadOnlyPart *&part) = 0;
+    
+    virtual void setIconURL(const KURL &url) = 0;
+    virtual void setTypedIconURL(const KURL &url, const QString &type) = 0;
+    
+    void setURLArgs(const URLArgs &args) { m_args = args; }
+    URLArgs urlArgs() const { return m_args; }
 
 private:
-    KParts::URLArgs m_args;
+    URLArgs m_args;
 };
 
 class BrowserHostExtension : public QObject { };
