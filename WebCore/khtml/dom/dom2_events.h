@@ -342,6 +342,12 @@ public:
     int layerY() const;
 
     /**
+     * Non-standard extension to support Netscape-style "which" event property.
+     *
+     */
+    int which() const;
+
+    /**
      * The initUIEvent method is used to initialize the value of a UIEvent
      * created through the DocumentEvent interface. This method may only be
      * called before the UIEvent has been dispatched via the dispatchEvent

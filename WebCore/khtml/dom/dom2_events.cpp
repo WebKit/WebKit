@@ -315,6 +315,29 @@ int UIEvent::layerY() const
         return 0;
 }
 
+int UIEvent::which() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    // Note: This property supports both key events and mouse events
+
+    // Value is just like keyCode()
+    KeyEventImpl *keyEvent = dynamic_cast<KeyEventImpl*>(impl);
+    if (keyEvent)
+        return keyEvent->keyVal();
+
+    // For khtml, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
+    // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
+    // So we can just add 1 to the value returned by calling button().
+    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
+    if (mouseEvent)
+        return mouseEvent->button() + 1;
+
+    return 0;
+}
+
+
 void UIEvent::initUIEvent(const DOMString &typeArg,
                                  bool canBubbleArg,
                                  bool cancelableArg,

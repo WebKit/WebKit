@@ -76,16 +76,21 @@ const struct HashTable EventExceptionConstructorTable = { 2, 1, EventExceptionCo
 namespace KJS {
 
 const struct HashEntry DOMUIEventTableEntries[] = {
-   { "layerY", DOMUIEvent::LayerY, DontDelete|ReadOnly, 0, 0 },
-   { "pageX", DOMUIEvent::PageX, DontDelete|ReadOnly, 0, 0 },
-   { "detail", DOMUIEvent::Detail, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[6] },
-   { "view", DOMUIEvent::View, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[5] },
-   { "layerX", DOMUIEvent::LayerX, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "view", DOMUIEvent::View, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[8] },
    { "keyCode", DOMUIEvent::KeyCode, DontDelete|ReadOnly, 0, 0 },
-   { "pageY", DOMUIEvent::PageY, DontDelete|ReadOnly, 0, 0 }
+   { "layerX", DOMUIEvent::LayerX, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[9] },
+   { "layerY", DOMUIEvent::LayerY, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[10] },
+   { 0, 0, 0, 0, 0 },
+   { "detail", DOMUIEvent::Detail, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[11] },
+   { "pageX", DOMUIEvent::PageX, DontDelete|ReadOnly, 0, 0 },
+   { "pageY", DOMUIEvent::PageY, DontDelete|ReadOnly, 0, 0 },
+   { "which", DOMUIEvent::Which, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMUIEventTable = { 2, 7, DOMUIEventTableEntries, 5 };
+const struct HashTable DOMUIEventTable = { 2, 12, DOMUIEventTableEntries, 8 };
 
 }; // namespace
 

@@ -1,3 +1,19 @@
+2002-12-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for this bug:
+
+	Radar 3128159 (Netscape non-standard DOM event attribute "which" unsupported)
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::which): Added which() definition.
+        * khtml/dom/dom2_events.h: Added declarations for which() functions in UIEvent.
+        * khtml/ecma/kjs_events.cpp: 
+        (DOMUIEvent::getValueProperty): Added which property.
+        * khtml/ecma/kjs_events.h: Ditto.
+        * khtml/ecma/kjs_events.lut.h: File regenerated.
+
 2002-12-13  Richard Williamson   <rjw@apple.com>
     
         Fixed 3127310 and 3127920.
