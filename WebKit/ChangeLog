@@ -1,3 +1,14 @@
+2005-03-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3841186, scrollbar shows up disabled when it should not appear at all.  Make sure updateScrollers
+	is never allowed to be re-entrant from any call point by moving the guard inside the function itself.
+	
+        Reviewed by John Sullivan
+
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+
 2005-03-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4029010> Expose method to retrieve drag image for WebView's selection
@@ -31,6 +42,7 @@
 
 === Safari-401 ===
 
+>>>>>>> 1.3057
 2005-03-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

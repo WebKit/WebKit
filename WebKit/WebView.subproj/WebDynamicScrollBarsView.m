@@ -33,7 +33,11 @@
     // twice would indicate some kind of infinite loop, so we do it at most twice.
     // It's quite efficient to do this work twice in the normal case, so we don't bother
     // trying to figure out of the second pass is needed or not.
+    if (inUpdateScrollers)
+        return;
     
+    inUpdateScrollers = true;
+
     int pass;
     BOOL hasVerticalScroller = [self hasVerticalScroller];
     BOOL hasHorizontalScroller = [self hasHorizontalScroller];
@@ -92,6 +96,8 @@
         [[self verticalScroller] setNeedsDisplay: NO];
         [[self horizontalScroller] setNeedsDisplay: NO];
     }
+    
+    inUpdateScrollers = false;
 }
 
 // Make the horizontal and vertical scroll bars come and go as needed.
@@ -104,11 +110,8 @@
         // http://www.linuxpowered.com/archive/howto/Net-HOWTO-8.html.
         // The underlying cause is some problem in the NSText machinery, but I was not
         // able to pin it down.
-        if (!inUpdateScrollers && [[NSGraphicsContext currentContext] isDrawingToScreen]) {
-            inUpdateScrollers = YES;
+        if (!inUpdateScrollers && [[NSGraphicsContext currentContext] isDrawingToScreen])
             [self updateScrollers];
-            inUpdateScrollers = NO;
-        }
     }
     [super reflectScrolledClipView:clipView];
 
