@@ -1,6 +1,26 @@
 2004-03-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave
+
+        I have clarified the concept (at least in my head) 
+        that each edit command has an obligation to put the
+        selection in the right place after it is applied, 
+        unapplied, or reapplied. Right now, each edit command 
+        calls setStartingSelection and setEndingSelection to do
+        this, I made these function move the selection on 
+        setting.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (EditCommandImpl::setStartingSelection)
+        (EditCommandImpl::setEndingSelection)
+        (InputTextCommandImpl::coalesce)
+        (InputTextCommandImpl::deleteCharacter)
+        (InputTextCommandImpl::execute)
+        * khtml/editing/htmlediting_impl.h:
+
+2004-03-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
     
         Various changes to move us forward on editing.
         

@@ -78,8 +78,8 @@ public:
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
 
-    void setStartingSelection(const KHTMLSelection &s) { m_startingSelection = s; }
-    void setEndingSelection(const KHTMLSelection &s) { m_endingSelection = s; }
+    void setStartingSelection(const KHTMLSelection &s);
+    void setEndingSelection(const KHTMLSelection &s);
 
     void moveToStartingSelection();
     void moveToEndingSelection();
