@@ -1,5 +1,27 @@
 2003-03-24  David Hyatt  <hyatt@apple.com>
 
+	Fix for crash on www.lnt.com.  3199929 is the bug number.  
+
+	Blocks must have all their kids as inlines or all theirs kids
+	as blocks.  Floats and positioned elements are special and
+	disregarded when this check occurs.  
+
+	If a float or positioned element suddenly becomes a normal flow
+	element again, then the parent block might have to make its kids
+	all be non-inline or it might have to wrap a normal flow inline
+	with an anonymous block.
+
+	This patch fixed RenderObject's setStyle method to check for
+	this situation and to make the parent block fix itself up
+	appropriately.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+
+2003-03-24  David Hyatt  <hyatt@apple.com>
+
 	ignore the float property on first-letter styles.
 	The bug # is 3186044.
 	

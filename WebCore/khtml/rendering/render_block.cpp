@@ -1460,7 +1460,7 @@ RenderBlock::lowestPosition() const
     RenderObject *last = 0;
     if ( !m_childrenInline ) {
         last = lastChild();
-        while( last && (last->isPositioned() || last->isFloating()) )
+        while (last && last->isFloatingOrPositioned())
             last = last->previousSibling();
         if( last )
             lp = last->yPos() + last->lowestPosition();

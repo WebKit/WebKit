@@ -875,7 +875,7 @@ void RenderObject::setStyle(RenderStyle *style)
         // Do a repaint with the old style first, e.g., for example if we go from
         // having an outline to not having an outline.
         repaint();
-        
+
     if (isFloating() && !style->isFloating())
         // For changes in float styles, we need to conceivably remove ourselves
         // from the floating objects list.
@@ -884,6 +884,10 @@ void RenderObject::setStyle(RenderStyle *style)
         // For changes in positioning styles, we need to conceivably remove ourselves
         // from the positioned objects list.
         removeFromObjectLists();
+
+    bool affectsParentBlock = (m_style && isFloatingOrPositioned() &&
+        (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
+        && parent() && !parent()->isInline() && parent()->isRenderBlock() && !parent()->isTable());
     
     //qDebug("new style, diff=%d", d);
     // reset style flags
@@ -921,6 +925,30 @@ void RenderObject::setStyle(RenderStyle *style)
                                      m_style->hasBorder() || nb );
     m_hasFirstLine = (style->getPseudoStyle(RenderStyle::FIRST_LINE) != 0);
 
+    if (affectsParentBlock) {
+        // We have gone from not affecting the inline status of the parent block to suddenly
+        // having an impact.  See if there is a mismatch between the parent block's
+        // childrenInline() state and our state.
+        setInline(style->display() == INLINE || // style->display() == INLINE_BLOCK ||
+                  style->display() == INLINE_TABLE);
+        if (isInline() != parent()->childrenInline()) {
+            if (!isInline())
+                static_cast<RenderBlock*>(parent())->makeChildrenNonInline();
+            else {
+                // An anonymous block must be made to wrap this inline.
+                RenderStyle *newStyle = new RenderStyle();
+                newStyle->inheritFrom(m_style);
+                newStyle->setDisplay(BLOCK);
+
+                RenderBlock *box = new (renderArena()) RenderBlock(0 /* anonymous box */);
+                box->setStyle(newStyle);
+                box->setIsAnonymousBox(true);
+                parent()->insertChildNode(box, this);
+                box->appendChildNode(parent()->removeChildNode(this));
+            }
+        }
+    }
+        
     if ( d >= RenderStyle::Position && m_parent ) {
         //qDebug("triggering relayout");
         setMinMaxKnown(false);
