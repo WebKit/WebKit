@@ -14,6 +14,7 @@
 {
     size_t imagesSize;
     CGImageRef *images;
+    CFDictionaryRef *imageProperties;
     CGImageSourceRef imageSource;
 
     CGSize size;
@@ -25,19 +26,18 @@
     size_t frameDurationsSize;
     float *frameDurations;
     
-    size_t imagePropertiesSize;
-    CFDictionaryRef *imageProperties;
-
     size_t currentFrame;
     int repetitionsComplete;
     BOOL animationFinished;
+    
+    NSLock *decodeLock;
 }
 
 - (size_t)numberOfImages;
 - (CGImageRef)imageAtIndex:(size_t)index;
-- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete;
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)size compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c;
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)size compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
 - (void)tileInRect:(CGRect)rect fromPoint:(CGPoint)point context:(CGContextRef)aContext;
 - (BOOL)isNull;
 - (CGSize)size;
@@ -48,6 +48,8 @@
 - (BOOL)isAnimationFinished;
 - (size_t)currentFrame;
 - (CFDictionaryRef)propertiesAtIndex:(size_t)index;
+
+- (void)decodeData:(CFDataRef)data isComplete:(BOOL)f callback:(id)c;
 
 @end
 

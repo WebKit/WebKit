@@ -6,3 +6,4 @@
 #import <Foundation/Foundation.h>
 
 vm_size_t WebSystemMainMemory(void);
+int WebNumberOfCPUs(void);

@@ -11,6 +11,9 @@
 #include <mach/host_info.h>
 #include <mach/mach_error.h>
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
 static host_basic_info_data_t gHostBasicInfo;
 static pthread_once_t initControl = PTHREAD_ONCE_INIT;
 
@@ -34,4 +37,20 @@ vm_size_t WebSystemMainMemory(void)
 {
     pthread_once(&initControl, initCapabilities);
     return gHostBasicInfo.memory_size;
+}
+
+int WebNumberOfCPUs(void)
+{
+    static int numCPUs = 0;
+    
+    if (numCPUs == 0) {
+        int mib[2];
+        size_t len;
+
+        mib[0] = CTL_HW;
+        mib[1] = HW_NCPU;
+        len = sizeof(numCPUs);
+        sysctl(mib, 2, &numCPUs, &len, NULL, 0);
+    }
+    return numCPUs;
 }

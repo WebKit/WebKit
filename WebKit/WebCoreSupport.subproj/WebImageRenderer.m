@@ -42,7 +42,7 @@
     if (self != nil) {
         MIMEType = [MIME copy];
         imageData = [[WebImageData alloc] init];
-        [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+        [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES callback:0];
     }
     return self;
 }
@@ -56,7 +56,7 @@
 
     imageData = [[WebImageData alloc] init];
     NSData *data = [NSData dataWithContentsOfFile:imagePath];
-    [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+    [imageData incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES callback:0];
         
 
     return self;
@@ -120,11 +120,11 @@
     return [imageData isNull];
 }
 
-- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c
 {
     if (!imageData)
         imageData = [[WebImageData alloc] init];
-    return [imageData incrementalLoadWithBytes:bytes length:length complete:isComplete];
+    return [imageData incrementalLoadWithBytes:bytes length:length complete:isComplete callback:c];
 }
 
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
@@ -296,7 +296,7 @@
 - (NSString *)MIMEType;
 - (int)frameCount;
 
-- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete;
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c;
 - (void)resize:(NSSize)s;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator context:(CGContextRef)context;
@@ -605,7 +605,7 @@ static NSMutableSet *activeImageRenderers;
     [self setSize:size];
 }
 
-- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c
 {
     NSArray *reps = [self representations];
     NSBitmapImageRep *imageRep = [reps count] > 0 ? [[self representations] objectAtIndex:0] : nil;
@@ -1251,9 +1251,9 @@ static NSMutableSet *activeImageRenderers;
     [WebInternalImage stopAnimationsInView:aView];
 }
 
-- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c
 {
-    return [image incrementalLoadWithBytes:bytes length:length complete:isComplete];
+    return [image incrementalLoadWithBytes:bytes length:length complete:isComplete callback:c];
 }
 
 - (NSSize)size

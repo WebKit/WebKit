@@ -2310,7 +2310,7 @@ void RenderObject::setPixmap(const QPixmap&, const QRect&, CachedImage *image)
     // would avoid putting this function and the CachedObjectClient base class into RenderObject.
 
     if (image && image->pixmap_size() == image->valid_rect().size() && parent()) {
-        if (element() && (element()->id() == ID_HTML || element()->id() == ID_BODY))
+        if (canvas() && element() && (element()->id() == ID_HTML || element()->id() == ID_BODY))
             canvas()->repaint();    // repaint the entire canvas since the background gets propagated up
         else
             repaint();              // repaint object, which is a box or a container with boxes inside it

@@ -305,6 +305,30 @@ namespace khtml
 
     class ImageSource;
 
+#if APPLE_CHANGES    
+    class CachedImage;
+    
+    class CachedImageCallback
+    {
+    public:
+        CachedImageCallback (CachedImage *c) : cachedImage(c), refCount(1), headerReceived(false) {};
+
+        void ref() { refCount++; }
+        void deref() { if (--refCount == 0) delete this; }
+        
+        void notifyUpdate();
+        void notifyFinished();
+        void notifyDecodingError();
+        void clear();
+        void handleError();
+        
+    private:
+        CachedImage *cachedImage;
+        uint refCount;
+	bool headerReceived;
+    };
+#endif
+        
     /**
      * a cached image
      */
@@ -375,8 +399,12 @@ namespace khtml
 #if APPLE_CHANGES
     public:
         int dataSize() const { return m_dataSize; }
+	CachedImageCallback *decoderCallback() const { return m_decoderCallback; }
     private:
+        friend class CachedImageCallback;
+        
         int m_dataSize;
+        CachedImageCallback *m_decoderCallback;
 #endif
     };
 
@@ -501,7 +529,7 @@ protected:
     {
 	Q_OBJECT
 
-    public:
+    public:	
 	Loader();
 	~Loader();
 
@@ -510,6 +538,10 @@ protected:
         int numRequests( DocLoader* dl ) const;
         void cancelRequests( DocLoader* dl );
 
+#if APPLE_CHANGES
+	void removeBackgroundDecodingRequest (Request *r);
+#endif
+	
         // may return 0L
         KIO::Job *jobForRequest( const DOM::DOMString &url ) const;
 
@@ -518,6 +550,8 @@ protected:
 #endif
 
     signals:
+	friend class CachedImageCallback;
+
         void requestStarted( khtml::DocLoader* dl, khtml::CachedObject* obj );
 	void requestDone( khtml::DocLoader* dl, khtml::CachedObject *obj );
 	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
@@ -537,6 +571,11 @@ protected:
 
 	QPtrList<Request> m_requestsPending;
 	QPtrDict<Request> m_requestsLoading;
+
+#if APPLE_CHANGES
+	QPtrList<Request> m_requestsBackgroundDecoding;
+#endif
+
 #ifdef HAVE_LIBJPEG
         KJPEGFormatType m_jpegloader;
 #endif

@@ -1,3 +1,69 @@
+2004-12-07  Richard Williamson   <rjw@apple.com>
+
+	Support threaded image decoding on machines w/ > 2 CPUs.
+
+        Reviewed by Maciej and Chris.
+
+        * Misc.subproj/WebKitSystemBits.h:
+        * Misc.subproj/WebKitSystemBits.m:
+        (WebSystemMainMemory):
+        (WebNumberOfCPUs):
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (+[WebImageData initialize]):
+        (-[WebImageData init]):
+        (-[WebImageData _commonTermination]):
+        (-[WebImageData dealloc]):
+        (-[WebImageData _invalidateImages]):
+        (-[WebImageData _imageSourceOptions]):
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData _createImages]):
+        (-[WebImageData decodeData:isComplete:callback:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+        (drawPattern):
+        (-[WebImageData tileInRect:fromPoint:context:]):
+        (-[WebImageData isNull]):
+        (-[WebImageData size]):
+        (-[WebImageData _frameDurationAt:]):
+        (-[WebImageData _frameDuration]):
+        (+[WebImageData stopAnimationsInView:]):
+        (-[WebImageData addAnimatingRenderer:inView:]):
+        (-[WebImageData removeAnimatingRenderer:]):
+        * WebCoreSupport.subproj/WebImageDecodeItem.h: Added.
+        * WebCoreSupport.subproj/WebImageDecodeItem.m: Added.
+        (+[WebImageDecodeItem decodeItemWithImage:data:isComplete:callback:]):
+        (-[WebImageDecodeItem initWithImage:data:isComplete:callback:]):
+        (-[WebImageDecodeItem finalize]):
+        (-[WebImageDecodeItem dealloc]):
+        * WebCoreSupport.subproj/WebImageDecoder.h: Added.
+        * WebCoreSupport.subproj/WebImageDecoder.m: Added.
+        (decoderNotifications):
+        (+[WebImageDecoder initialize]):
+        (+[WebImageDecoder notifyMainThread]):
+        (+[WebImageDecoder sharedDecoder]):
+        (+[WebImageDecoder performDecodeWithImage:data:isComplete:callback:]):
+        (+[WebImageDecoder imageDecodesPending]):
+        (+[WebImageDecoder decodeComplete:status:]):
+        (-[WebImageDecoder init]):
+        (-[WebImageDecoder dealloc]):
+        (-[WebImageDecoder finalize]):
+        (-[WebImageDecoder removeItem]):
+        (-[WebImageDecoder addItem:]):
+        (-[WebImageDecoder decodeItem:]):
+        (decoderThread):
+        (startDecoderThread):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithData:MIMEType:]):
+        (-[WebImageRenderer initWithContentsOfFile:]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:callback:]):
+        (-[WebInternalImage incrementalLoadWithBytes:length:complete:callback:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation receivedData:withDataSource:]):
+        (-[WebImageRepresentation receivedError:withDataSource:]):
+        (-[WebImageRepresentation finishedLoadingWithDataSource:]):
+
 2004-12-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fix for performance regression.

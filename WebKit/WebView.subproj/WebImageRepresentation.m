@@ -48,14 +48,14 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)theDataSource
 {
     NSData *allData = [dataSource data];
-    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:NO];
+    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:NO callback:0];
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)theDataSource
 {
     NSData *allData = [dataSource data];
     if ([allData length] > 0) {
-        [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+        [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES callback:0];
     }
     doneLoading = YES;
 }
@@ -63,7 +63,7 @@
 - (void)finishedLoadingWithDataSource:(WebDataSource *)theDataSource
 {
     NSData *allData = [dataSource data];
-    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES callback:0];
     doneLoading = YES;
 }
 

@@ -1,3 +1,48 @@
+2004-12-07  Richard Williamson   <rjw@apple.com>
+
+	Support threaded image decoding on machines w/ > 2 CPUs.
+
+        Reviewed by Maciej and Chris.
+
+        * khtml/misc/loader.cpp:
+        (CachedImageCallback::notifyUpdate):
+        (CachedImageCallback::notifyFinished):
+        (CachedImageCallback::notifyDecodingError):
+        (CachedImageCallback::handleError):
+        (CachedImageCallback::clear):
+        (CachedImage::CachedImage):
+        (CachedImage::clear):
+        (CachedImage::data):
+        (CachedImage::checkNotify):
+        (Loader::servePendingRequests):
+        (Loader::slotFinished):
+        (Loader::numRequests):
+        (Loader::cancelRequests):
+        (Loader::removeBackgroundDecodingRequest):
+        * khtml/misc/loader.h:
+        (khtml::CachedImageCallback::CachedImageCallback):
+        (khtml::CachedImageCallback::ref):
+        (khtml::CachedImageCallback::deref):
+        (khtml::CachedImage::decoderCallback):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setPixmap):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (-[WebImageCallback initWithCallback:khtml::]):
+        (-[WebImageCallback _commonTermination]):
+        (-[WebImageCallback dealloc]):
+        (-[WebImageCallback finalize]):
+        (-[WebImageCallback notify]):
+        (-[WebImageCallback setImageSourceStatus:]):
+        (-[WebImageCallback status]):
+        (QPixmap::shouldUseThreadedDecoding):
+        (QPixmap::receivedData):
+        * kwq/WebCoreImageRenderer.h:
+        * kwq/WebCoreImageRendererFactory.h:
+        * kwq/WebCoreImageRendererFactory.m:
+        (+[WebCoreImageRendererFactory shouldUseThreadedDecoding]):
+        (+[WebCoreImageRendererFactory setShouldUseThreadedDecoding:]):
+
 2004-12-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

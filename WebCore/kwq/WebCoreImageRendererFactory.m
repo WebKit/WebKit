@@ -35,6 +35,18 @@ static WebCoreImageRendererFactory *sharedFactory;
     return sharedFactory;
 }
 
+static BOOL shouldUseThreadedDecoding = NO;
+
++ (BOOL)shouldUseThreadedDecoding
+{
+    return shouldUseThreadedDecoding;
+}
+
++ (void)setShouldUseThreadedDecoding:(BOOL)flag
+{
+    shouldUseThreadedDecoding = flag;
+}
+
 - init
 {
     [super init];

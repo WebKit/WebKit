@@ -365,6 +365,8 @@
 				9305892B070868B300E79D96,
 				832D7E050709D8FB00F49B61,
 				83E679790726D7CF006C7A36,
+				514C4C2E075E7DE500B89CAD,
+				514C4C30075E7DE500B89CAD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -490,6 +492,8 @@
 				93B641FB06E292BC0055F610,
 				51C6513906EFCD9300969825,
 				832D7E060709D8FB00F49B61,
+				514C4C2F075E7DE500B89CAD,
+				514C4C31075E7DE500B89CAD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1227,6 +1231,62 @@
 				ATTRIBUTES = (
 					Private,
 				);
+			};
+		};
+		514C4C2A075E7DE500B89CAD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebImageDecodeItem.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		514C4C2B075E7DE500B89CAD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebImageDecodeItem.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		514C4C2C075E7DE500B89CAD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebImageDecoder.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		514C4C2D075E7DE500B89CAD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebImageDecoder.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		514C4C2E075E7DE500B89CAD = {
+			fileRef = 514C4C2A075E7DE500B89CAD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		514C4C2F075E7DE500B89CAD = {
+			fileRef = 514C4C2B075E7DE500B89CAD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		514C4C30075E7DE500B89CAD = {
+			fileRef = 514C4C2C075E7DE500B89CAD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		514C4C31075E7DE500B89CAD = {
+			fileRef = 514C4C2D075E7DE500B89CAD;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		5152FADD033FC50400CA2ACD = {
@@ -4609,6 +4669,10 @@
 				F5E7B24603025CE801A80180,
 				BE26F18D05517E0800BFA0C3,
 				BE26F18E05517E0800BFA0C3,
+				514C4C2A075E7DE500B89CAD,
+				514C4C2B075E7DE500B89CAD,
+				514C4C2C075E7DE500B89CAD,
+				514C4C2D075E7DE500B89CAD,
 				51C6513606EFCD9300969825,
 				51C6513706EFCD9300969825,
 				9CE1F8A002A5C6F30ECA2ACD,

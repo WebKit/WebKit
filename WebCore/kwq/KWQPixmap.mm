@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#import "loader.h"
 
 #import "KWQPixmap.h"
 #import "KWQFoundationExtras.h"
@@ -108,12 +109,91 @@ CGImageRef QPixmap::imageRef()
     return [imageRenderer imageRef];
 }
 
-bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
+#if !defined(BUILDING_ON_PANTHER)
+@interface WebImageCallback : NSObject
+{
+    khtml::CachedImageCallback *callback;
+    CGImageSourceStatus status;
+}
+- (void)notify;
+- (void)setImageSourceStatus:(CGImageSourceStatus)status;
+- (CGImageSourceStatus)status;
+@end
+@implementation WebImageCallback
+- initWithCallback:(khtml::CachedImageCallback *)c
+{
+    self = [super init];
+    callback = c;
+    c->ref();
+    return self;
+}
+
+- (void)_commonTermination
+{
+    callback->deref();
+}
+
+- (void)dealloc
+{
+    [self _commonTermination];
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    [self _commonTermination];
+    [super finalize];
+}
+
+- (void)notify
+{
+    if (status < kCGImageStatusReadingHeader)
+        callback->notifyDecodingError();
+    else if (status == kCGImageStatusIncomplete) {
+        callback->notifyUpdate();
+    }
+    else if (status == kCGImageStatusComplete) {
+        callback->notifyFinished();
+    }
+}
+
+- (void)setImageSourceStatus:(CGImageSourceStatus)s
+{
+    status = s;
+}
+
+- (CGImageSourceStatus)status
+{
+    return status;
+}
+
+@end
+#endif
+
+bool QPixmap::shouldUseThreadedDecoding()
+{
+    return [WebCoreImageRendererFactory shouldUseThreadedDecoding] ? true : false;
+}
+
+bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback)
 {
     if (imageRenderer == nil) {
         imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:MIMEType]);
     }
-    return [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete];
+    
+#if !defined(BUILDING_ON_PANTHER)
+    WebImageCallback *callbackWrapper = 0;
+    if (decoderCallback)
+        callbackWrapper = [[WebImageCallback alloc] initWithCallback:decoderCallback];
+
+    bool result = [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:callbackWrapper];
+
+    [callbackWrapper release];
+#else
+    bool result = [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:0];
+#endif
+    
+    return result;
 }
 
 bool QPixmap::mask() const
