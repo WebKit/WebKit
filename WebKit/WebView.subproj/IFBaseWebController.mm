@@ -239,21 +239,6 @@
     // Do nothing.  Subclasses typically override this method.
 }
 
-- (void) startedDownloadWithHandler:(IFDownloadHandler *)downloadHandler
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
-- (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
-- (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
 - (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame andURL: (NSURL *)url
 {
     return nil;
@@ -271,6 +256,13 @@
 
 - (void)haveContentPolicy: (IFContentPolicy)policy andPath: (NSString *)path forLocationChangeHandler: (id <IFLocationChangeHandler>)handler
 {
+    IFWebDataSource *dataSource;
+    
+    dataSource = [_private->mainFrame provisionalDataSource];
+    if([dataSource _locationChangeHandler] == handler){
+        [dataSource _setContentPolicy:policy];
+        [dataSource _setDownloadPath:path];
+    }
 }
 
 @end

@@ -7,6 +7,7 @@
 */
 
 #import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFLocationChangeHandler.h>
 
 class KHTMLPart;
 
@@ -50,10 +51,12 @@ class KHTMLPart;
     
     BOOL stopping;
     
-    NSString *pageTitle;
+    NSString *pageTitle, *downloadPath;
     
     // The location change handler for this data source.
     id <IFLocationChangeHandler>locationChangeHandler;
+
+    IFContentPolicy contentPolicy;
 
     BOOL loading; // self and controller are retained while loading
 }
@@ -81,4 +84,8 @@ class KHTMLPart;
 
 - (id <IFLocationChangeHandler>)_locationChangeHandler;
 - (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l;
+- (NSString *)_downloadPath;
+- (void) _setDownloadPath:(NSString *)path;
+- (IFContentPolicy) _contentPolicy;
+- (void) _setContentPolicy:(IFContentPolicy)policy;
 @end

@@ -34,6 +34,7 @@
 - (WCPlugin *)getPluginForMimeType:(NSString *)mimeType;
 - (WCPlugin *)getPluginForExtension:(NSString *)extension;
 - (WCPlugin *)getPluginForFilename:(NSString *)filename;
+- (NSArray *) allHandledMIMETypes;
 - (NSArray *) plugins;
 
 @end

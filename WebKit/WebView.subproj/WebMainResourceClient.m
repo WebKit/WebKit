@@ -62,12 +62,8 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
-    if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
-    }else{
-        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-            forResource: [[sender url] absoluteString] fromDataSource: dataSource];
-    }
+    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
 }
 
@@ -78,25 +74,28 @@
     IFContentHandler *contentHandler;
 
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
-
-    if(handlerType == IFMIMEHANDLERTYPE_TEXT) {
-        contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[sender url]];
-        fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
-        fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-        part->slotData(sender, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
-        [contentHandler release];
+    
+    if([dataSource _contentPolicy] == IFContentPolicyShow){
+        if(handlerType == IFMIMEHANDLERTYPE_TEXT) {
+            contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[sender url]];
+            fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
+            fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
+            part->slotData(sender, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+            [contentHandler release];
+        }
     }
+    
+    else if([dataSource _contentPolicy] == IFContentPolicySave) 
+        [IFMIMEHandler saveFileWithPath:[dataSource _downloadPath] andData:[sender resourceData]];
+               
+    else if([dataSource _contentPolicy] == IFContentPolicyOpenExternally)
+        [IFMIMEHandler saveAndOpenFileWithPath:[dataSource _downloadPath] andData:[sender resourceData]];
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
-    if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
-        [downloadHandler _finishedDownload];
-    }else{
-        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-            forResource: [[sender url] absoluteString] fromDataSource: dataSource];
-    }
+    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
 }
 
@@ -104,7 +103,6 @@
 {
     NSString *fakeHTMLDocument;
     const char *fakeHTMLDocumentBytes;
-    IFMIMEDatabase *mimeDatabase;
     IFContentHandler *contentHandler;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
@@ -112,59 +110,56 @@
     // check the mime type
     if(!typeChecked){
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Main URL's contentType: %s", [[sender contentType] cString]);
-        mimeDatabase = [IFMIMEDatabase sharedMIMEDatabase];
-        mimeHandler = [[mimeDatabase MIMEHandlerForMIMEType:[sender contentType]] retain];
+        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:[sender contentType]];
+        mimeHandler = [[[IFMIMEDatabase sharedMIMEDatabase] MIMEHandlerForMIMEType:[sender contentType]] retain];
         handlerType = [mimeHandler handlerType];
         typeChecked = YES;
     }
     
-    // if it's html, send the data to the part
-    // FIXME: [sender contentType] still returns nil if from cache
-    if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
-        part->slotData(sender, (const char *)[data bytes], [data length]);
-    }
-    
-    // for non-html documents, create html doc that embeds them
-    else if(handlerType == IFMIMEHANDLERTYPE_IMAGE  || 
-            handlerType == IFMIMEHANDLERTYPE_PLUGIN || 
-            handlerType == IFMIMEHANDLERTYPE_TEXT) {
-        if (!sentFakeDocForNonHTMLContentType) {
-            contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[sender url]];
-            fakeHTMLDocument = [contentHandler HTMLDocument];
-            fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-            part->slotData(sender, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
-            [contentHandler release];
-            sentFakeDocForNonHTMLContentType = YES;
-        }
-        
-        // for text documents, the incoming data is part of the main page
-        if(handlerType == IFMIMEHANDLERTYPE_TEXT){
+    if([dataSource _contentPolicy] == IFContentPolicyShow){
+        // if it's html, send the data to the part
+        // FIXME: [sender contentType] still returns nil if from cache
+        if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
             part->slotData(sender, (const char *)[data bytes], [data length]);
         }
-    }
-
-    // downloaded file
-    else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        if(!downloadStarted){
-            downloadHandler = [[IFDownloadHandler alloc] _initWithURLHandle:sender mimeHandler:mimeHandler];
-            [[dataSource _locationChangeHandler] downloadingWithHandler:downloadHandler];
-            downloadStarted = YES;
+        
+        // for non-html documents, create html doc that embeds them
+        else if(handlerType == IFMIMEHANDLERTYPE_IMAGE  || 
+                handlerType == IFMIMEHANDLERTYPE_PLUGIN || 
+                handlerType == IFMIMEHANDLERTYPE_TEXT) {
+            if (!sentFakeDocForNonHTMLContentType) {
+                contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[sender url]];
+                fakeHTMLDocument = [contentHandler HTMLDocument];
+                fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
+                part->slotData(sender, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+                [contentHandler release];
+                sentFakeDocForNonHTMLContentType = YES;
+            }
+            
+            // for text documents, the incoming data is part of the main page
+            if(handlerType == IFMIMEHANDLERTYPE_TEXT){
+                part->slotData(sender, (const char *)[data bytes], [data length]);
+            }
         }
-        [downloadHandler _receivedData:data];
+    
+        else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
+            // can't show a type that we don't handle
+            [[dataSource _locationChangeHandler] unableToImplementContentPolicy:0];
+        }
     }
-
+    
+    else if([dataSource _contentPolicy] == IFContentPolicySave || 
+            [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
+        
+    }
+    
     // update progress
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
-    if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download progress: %d of %d", loadProgress->bytesSoFar, loadProgress->totalToLoad);
-    }else{
-        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-            forResource: [[sender url] absoluteString] fromDataSource: dataSource];
-    }
+    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
 }
 
@@ -176,13 +171,7 @@
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
-    if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
-        [[dataSource controller] receivedError: result forDownloadHandler:downloadHandler 
-            partialProgress: loadProgress];
-    }else{
-        [(IFBaseWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 
-            partialProgress: loadProgress fromDataSource: dataSource];
-    }
+    [(IFBaseWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 	partialProgress: loadProgress fromDataSource: dataSource];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url

@@ -266,4 +266,25 @@
     _private->locationChangeHandler = l;
 }
 
+- (NSString *)_downloadPath
+{
+    return _private->downloadPath;
+}
+
+- (void) _setDownloadPath:(NSString *)path
+{
+    [_private->downloadPath release];
+    _private->downloadPath = [path retain];
+}
+
+- (IFContentPolicy) _contentPolicy
+{
+    return _private->contentPolicy;
+}
+
+- (void) _setContentPolicy:(IFContentPolicy)policy
+{
+    _private->contentPolicy = policy;
+}
+
 @end

@@ -97,6 +97,24 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
     return plugins;
 }
 
+- (NSArray *) allHandledMIMETypes
+{
+    NSMutableArray *allHandledMIMETypes;
+    WCPlugin *plugin;
+    NSArray *mimeArray;
+    uint i, n;
+        
+    allHandledMIMETypes = [NSMutableArray arrayWithCapacity:20];
+    for(i=0; i<[plugins count]; i++){
+        plugin = [plugins objectAtIndex:i];
+        mimeArray = [plugin mimeTypes];
+        for(n=0; n<[mimeArray count]; n++){
+            [allHandledMIMETypes addObject:[[mimeArray objectAtIndex:n] objectAtIndex:0]];
+        }
+    }
+    return allHandledMIMETypes;
+}
+
 @end
 
 NSArray *pluginLocations(void)

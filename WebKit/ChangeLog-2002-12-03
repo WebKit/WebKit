@@ -1,3 +1,40 @@
+2002-04-22  Chris Blumenberg  <cblu@apple.com>
+
+	* MIME.subproj/IFMIMEHandler.h:
+	* MIME.subproj/IFMIMEHandler.m:
+	(+[IFMIMEHandler showableMIMETypes]):
+	(+[IFMIMEHandler saveFileWithPath:andData:]):
+	(+[IFMIMEHandler saveAndOpenFileWithPath:andData:]):
+
+	Added the above factory methods.
+
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController haveContentPolicy:andPath:forLocationChangeHandler:]):
+	
+	Save the content policy and download path on the datasource.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	
+	Made IFMainURLHandleClient use our new content policy API rather than
+	IFDownloadHandler.
+	
+	* WebView.subproj/IFWebController.h:
+
+	Removed some deprecated methods.
+
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _downloadPath]):
+	(-[IFWebDataSource _setDownloadPath:]):
+	(-[IFWebDataSource _contentPolicy]):
+	(-[IFWebDataSource _setContentPolicy:]):
+
+	Added the above methods.
+
 2002-04-22  Darin Adler  <darin@apple.com>
 
 	* Plugins.subproj/IFPluginView.mm:
