@@ -316,7 +316,7 @@ short JSNodeFilter::acceptNode(const DOM::Node &n)
       List args;
       args.append(getDOMNode(exec,n));
       Value result = acceptNodeFunc.call(exec,filter,args);
-      return result.toInteger(exec);
+      return result.toInt32(exec);
     }
   }
 

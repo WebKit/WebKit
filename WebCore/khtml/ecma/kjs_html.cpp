@@ -2084,9 +2084,9 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         return Undefined();
       }
       else if (id == KJS::HTMLElement::TableInsertRow)
-        return getDOMNode(exec,table.insertRow(args[0].toInteger(exec)));
+        return getDOMNode(exec,table.insertRow(args[0].toInt32(exec)));
       else if (id == KJS::HTMLElement::TableDeleteRow) {
-        table.deleteRow(args[0].toInteger(exec));
+        table.deleteRow(args[0].toInt32(exec));
         return Undefined();
       }
     }
@@ -2096,9 +2096,9 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
     case ID_TFOOT: {
       DOM::HTMLTableSectionElement tableSection = element;
       if (id == KJS::HTMLElement::TableSectionInsertRow)
-        return getDOMNode(exec,tableSection.insertRow(args[0].toInteger(exec)));
+        return getDOMNode(exec,tableSection.insertRow(args[0].toInt32(exec)));
       else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
-        tableSection.deleteRow(args[0].toInteger(exec));
+        tableSection.deleteRow(args[0].toInt32(exec));
         return Undefined();
       }
     }
@@ -2106,9 +2106,9 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
     case ID_TR: {
       DOM::HTMLTableRowElement tableRow = element;
       if (id == KJS::HTMLElement::TableRowInsertCell)
-        return getDOMNode(exec,tableRow.insertCell(args[0].toInteger(exec)));
+        return getDOMNode(exec,tableRow.insertCell(args[0].toInt32(exec)));
       else if (id == KJS::HTMLElement::TableRowDeleteCell) {
-        tableRow.deleteCell(args[0].toInteger(exec));
+        tableRow.deleteCell(args[0].toInt32(exec));
         return Undefined();
       }
     }
@@ -2284,9 +2284,9 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
               if (docimpl)
                   docimpl->updateLayout();
               if (token == BodyScrollLeft)
-                  sview->setContentsPos(value.toInteger(exec), sview->contentsY());
+                  sview->setContentsPos(value.toInt32(exec), sview->contentsY());
               else
-                  sview->setContentsPos(sview->contentsX(), value.toInteger(exec));
+                  sview->setContentsPos(sview->contentsX(), value.toInt32(exec));
           }
           return;
         }
@@ -2311,7 +2311,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       DOM::HTMLSelectElement select = element;
       switch (token) {
       // read-only: type
-      case SelectSelectedIndex:   { select.setSelectedIndex(value.toInteger(exec)); return; }
+      case SelectSelectedIndex:   { select.setSelectedIndex(value.toInt32(exec)); return; }
       case SelectValue:           { select.setValue(str); return; }
       case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
                                          Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.options(), select) );
@@ -2324,8 +2324,8 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case SelectDisabled:        { select.setDisabled(value.toBoolean(exec)); return; }
       case SelectMultiple:        { select.setMultiple(value.toBoolean(exec)); return; }
       case SelectName:            { select.setName(str); return; }
-      case SelectSize:            { select.setSize(value.toInteger(exec)); return; }
-      case SelectTabIndex:        { select.setTabIndex(value.toInteger(exec)); return; }
+      case SelectSize:            { select.setSize(value.toInt32(exec)); return; }
+      case SelectTabIndex:        { select.setTabIndex(value.toInt32(exec)); return; }
       }
     }
     break;
@@ -2380,12 +2380,12 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case InputAlt:             { input.setAlt(str); return; }
       case InputChecked:         { input.setChecked(value.toBoolean(exec)); return; }
       case InputDisabled:        { input.setDisabled(value.toBoolean(exec)); return; }
-      case InputMaxLength:       { input.setMaxLength(value.toInteger(exec)); return; }
+      case InputMaxLength:       { input.setMaxLength(value.toInt32(exec)); return; }
       case InputName:            { input.setName(str); return; }
       case InputReadOnly:        { input.setReadOnly(value.toBoolean(exec)); return; }
       case InputSize:            { input.setSize(str); return; }
       case InputSrc:             { input.setSrc(str); return; }
-      case InputTabIndex:        { input.setTabIndex(value.toInteger(exec)); return; }
+      case InputTabIndex:        { input.setTabIndex(value.toInt32(exec)); return; }
       case InputType:            { input.setType(str); return; }
       case InputUseMap:          { input.setUseMap(str); return; }
       case InputValue:           { input.setValue(str); return; }
@@ -2398,12 +2398,12 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case TextAreaDefaultValue:    { textarea.setDefaultValue(str); return; }
       // read-only: form
       case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
-      case TextAreaCols:            { textarea.setCols(value.toInteger(exec)); return; }
+      case TextAreaCols:            { textarea.setCols(value.toInt32(exec)); return; }
       case TextAreaDisabled:        { textarea.setDisabled(value.toBoolean(exec)); return; }
       case TextAreaName:            { textarea.setName(str); return; }
       case TextAreaReadOnly:        { textarea.setReadOnly(value.toBoolean(exec)); return; }
-      case TextAreaRows:            { textarea.setRows(value.toInteger(exec)); return; }
-      case TextAreaTabIndex:        { textarea.setTabIndex(value.toInteger(exec)); return; }
+      case TextAreaRows:            { textarea.setRows(value.toInt32(exec)); return; }
+      case TextAreaTabIndex:        { textarea.setTabIndex(value.toInt32(exec)); return; }
       // read-only: type
       case TextAreaValue:           { textarea.setValue(str); return; }
       }
@@ -2416,7 +2416,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case ButtonAccessKey:       { button.setAccessKey(str); return; }
       case ButtonDisabled:        { button.setDisabled(value.toBoolean(exec)); return; }
       case ButtonName:            { button.setName(str); return; }
-      case ButtonTabIndex:        { button.setTabIndex(value.toInteger(exec)); return; }
+      case ButtonTabIndex:        { button.setTabIndex(value.toInt32(exec)); return; }
       // read-only: type
       case ButtonValue:           { button.setValue(str); return; }
       }
@@ -2457,7 +2457,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       DOM::HTMLOListElement oList = element;
       switch (token) {
       case OListCompact:         { oList.setCompact(value.toBoolean(exec)); return; }
-      case OListStart:           { oList.setStart(value.toInteger(exec)); return; }
+      case OListStart:           { oList.setStart(value.toInt32(exec)); return; }
       case OListType:            { oList.setType(str); return; }
       }
     }
@@ -2487,7 +2487,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       DOM::HTMLLIElement li = element;
       switch (token) {
       case LIType:            { li.setType(str); return; }
-      case LIValue:           { li.setValue(value.toInteger(exec)); return; }
+      case LIValue:           { li.setValue(value.toInt32(exec)); return; }
       }
     }
     break;
@@ -2534,7 +2534,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
     case ID_PRE: {
       DOM::HTMLPreElement pre = element;
       switch (token) {
-      case PreWidth:           { pre.setWidth(value.toInteger(exec)); return; }
+      case PreWidth:           { pre.setWidth(value.toInt32(exec)); return; }
       }
     }
     break;
@@ -2594,7 +2594,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case AnchorRel:             { anchor.setRel(str); return; }
       case AnchorRev:             { anchor.setRev(str); return; }
       case AnchorShape:           { anchor.setShape(str); return; }
-      case AnchorTabIndex:        { anchor.setTabIndex(value.toInteger(exec)); return; }
+      case AnchorTabIndex:        { anchor.setTabIndex(value.toInt32(exec)); return; }
       case AnchorTarget:          { anchor.setTarget(str); return; }
       case AnchorType:            { anchor.setType(str); return; }
       }
@@ -2606,15 +2606,15 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case ImageName:            { image.setName(str); return; }
       case ImageAlign:           { image.setAlign(str); return; }
       case ImageAlt:             { image.setAlt(str); return; }
-      case ImageBorder:          { image.setBorder(value.toInteger(exec)); return; }
-      case ImageHeight:          { image.setHeight(value.toInteger(exec)); return; }
-      case ImageHspace:          { image.setHspace(value.toInteger(exec)); return; }
+      case ImageBorder:          { image.setBorder(value.toInt32(exec)); return; }
+      case ImageHeight:          { image.setHeight(value.toInt32(exec)); return; }
+      case ImageHspace:          { image.setHspace(value.toInt32(exec)); return; }
       case ImageIsMap:           { image.setIsMap(value.toBoolean(exec)); return; }
       case ImageLongDesc:        { image.setLongDesc(str); return; }
       case ImageSrc:             { image.setSrc(str); return; }
       case ImageUseMap:          { image.setUseMap(str); return; }
-      case ImageVspace:          { image.setVspace(value.toInteger(exec)); return; }
-      case ImageWidth:           { image.setWidth(value.toInteger(exec)); return; }
+      case ImageVspace:          { image.setVspace(value.toInt32(exec)); return; }
+      case ImageWidth:           { image.setWidth(value.toInt32(exec)); return; }
       }
     }
     break;
@@ -2635,7 +2635,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case ObjectHspace:          { object.setHspace(str); return; }
       case ObjectName:            { object.setName(str); return; }
       case ObjectStandby:         { object.setStandby(str); return; }
-      case ObjectTabIndex:        { object.setTabIndex(value.toInteger(exec)); return; }
+      case ObjectTabIndex:        { object.setTabIndex(value.toInt32(exec)); return; }
       case ObjectType:            { object.setType(str); return; }
       case ObjectUseMap:          { object.setUseMap(str); return; }
       case ObjectVspace:          { object.setVspace(str); return; }
@@ -2687,7 +2687,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case AreaHref:            { area.setHref(str); return; }
       case AreaNoHref:          { area.setNoHref(value.toBoolean(exec)); return; }
       case AreaShape:           { area.setShape(str); return; }
-      case AreaTabIndex:        { area.setTabIndex(value.toInteger(exec)); return; }
+      case AreaTabIndex:        { area.setTabIndex(value.toInt32(exec)); return; }
       case AreaTarget:          { area.setTarget(str); return; }
       }
     }
@@ -2738,7 +2738,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case TableColAlign:           { tableCol.setAlign(str); return; }
       case TableColCh:              { tableCol.setCh(str); return; }
       case TableColChOff:           { tableCol.setChOff(str); return; }
-      case TableColSpan:            { tableCol.setSpan(value.toInteger(exec)); return; }
+      case TableColSpan:            { tableCol.setSpan(value.toInt32(exec)); return; }
       case TableColVAlign:          { tableCol.setVAlign(str); return; }
       case TableColWidth:           { tableCol.setWidth(str); return; }
       }
@@ -2782,11 +2782,11 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case TableCellBgColor:         { tableCell.setBgColor(str); return; }
       case TableCellCh:              { tableCell.setCh(str); return; }
       case TableCellChOff:           { tableCell.setChOff(str); return; }
-      case TableCellColSpan:         { tableCell.setColSpan(value.toInteger(exec)); return; }
+      case TableCellColSpan:         { tableCell.setColSpan(value.toInt32(exec)); return; }
       case TableCellHeaders:         { tableCell.setHeaders(str); return; }
       case TableCellHeight:          { tableCell.setHeight(str); return; }
       case TableCellNoWrap:          { tableCell.setNoWrap(value.toBoolean(exec)); return; }
-      case TableCellRowSpan:         { tableCell.setRowSpan(value.toInteger(exec)); return; }
+      case TableCellRowSpan:         { tableCell.setRowSpan(value.toInt32(exec)); return; }
       case TableCellScope:           { tableCell.setScope(str); return; }
       case TableCellVAlign:          { tableCell.setVAlign(str); return; }
       case TableCellWidth:           { tableCell.setWidth(str); return; }
@@ -3101,7 +3101,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
   kdDebug(6070) << "KJS::HTMLSelectCollection::tryPut " << propertyName.qstring() << endl;
 #endif
   if ( propertyName == "selectedIndex" ) {
-    element.setSelectedIndex( value.toInteger( exec ) );
+    element.setSelectedIndex( value.toInt32( exec ) );
     return;
   }
   // resize ?

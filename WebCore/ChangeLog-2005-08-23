@@ -1,5 +1,41 @@
 2004-02-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - use toInt32 where we really need an int, rather than toInteger,
+          because toInteger needs to return an integral number as a double,
+          not as an int
+
+        * khtml/ecma/kjs_css.cpp:
+        (DOMCSSStyleDeclarationProtoFunc::tryCall): Call toInt32 intead of toInteger.
+        (DOMStyleSheetListFunc::tryCall): Ditto.
+        (KJS::DOMMediaListProtoFunc::tryCall): Ditto.
+        (DOMCSSStyleSheetProtoFunc::tryCall): Ditto.
+        (DOMCSSRuleListFunc::tryCall): Ditto.
+        (DOMCSSRuleFunc::tryCall): Ditto.
+        (DOMCSSPrimitiveValueProtoFunc::tryCall): Ditto.
+        (DOMCSSValueListFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMCharacterDataProtoFunc::tryCall): Ditto.
+        (DOMTextProtoFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_events.cpp:
+        (DOMUIEventProtoFunc::tryCall): Ditto.
+        (DOMMouseEventProtoFunc::tryCall): Ditto.
+        (DOMKeyboardEventProtoFunc::tryCall): Ditto.
+        (DOMMutationEventProtoFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall): Ditto.
+        (KJS::HTMLElement::putValue): Ditto.
+        (KJS::HTMLSelectCollection::tryPut): Ditto.
+        * khtml/ecma/kjs_range.cpp:
+        (DOMRangeProtoFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_traversal.cpp: (JSNodeFilter::acceptNode): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Ditto.
+        (HistoryFunc::tryCall): Ditto.
+
+2004-02-02  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fix at least some of <rdar://problem/3546393>: 10,000 leaks, many of DOM::AtomicString::add, after one run of cvs-base

@@ -1668,29 +1668,29 @@ Value DOMCharacterDataProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
   DOM::CharacterData data = static_cast<DOMCharacterData *>(thisObj.imp())->toData();
   switch(id) {
     case DOMCharacterData::SubstringData: {
-      const int count = args[1].toInteger(exec);
+      const int count = args[1].toInt32(exec);
       if (count < 0)
         throw DOMException(DOMException::INDEX_SIZE_ERR);
-      return getStringOrNull(data.substringData(args[0].toInteger(exec), count));
+      return getStringOrNull(data.substringData(args[0].toInt32(exec), count));
     }
     case DOMCharacterData::AppendData:
       data.appendData(args[0].toString(exec).string());
       return Undefined();
     case DOMCharacterData::InsertData:
-      data.insertData(args[0].toInteger(exec), args[1].toString(exec).string());
+      data.insertData(args[0].toInt32(exec), args[1].toString(exec).string());
       return Undefined();
     case DOMCharacterData::DeleteData: {
-      const int count = args[1].toInteger(exec);
+      const int count = args[1].toInt32(exec);
       if (count < 0)
         throw DOMException(DOMException::INDEX_SIZE_ERR);
-      data.deleteData(args[0].toInteger(exec), count);
+      data.deleteData(args[0].toInt32(exec), count);
       return Undefined();
     }
     case DOMCharacterData::ReplaceData: {
-      const int count = args[1].toInteger(exec);
+      const int count = args[1].toInt32(exec);
       if (count < 0)
         throw DOMException(DOMException::INDEX_SIZE_ERR);
-      data.replaceData(args[0].toInteger(exec), count, args[2].toString(exec).string());
+      data.replaceData(args[0].toInt32(exec), count, args[2].toString(exec).string());
       return Undefined();
     }
     default:
@@ -1732,7 +1732,7 @@ Value DOMTextProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &ar
   DOM::Text text = static_cast<DOMText *>(thisObj.imp())->toText();
   switch(id) {
     case DOMText::SplitText:
-      return getDOMNode(exec,text.splitText(args[0].toInteger(exec)));
+      return getDOMNode(exec,text.splitText(args[0].toInt32(exec)));
       break;
     default:
       return Undefined();
