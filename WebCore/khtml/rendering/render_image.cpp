@@ -209,12 +209,50 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
         {
 #if APPLE_CHANGES
             if ( !berrorPic ) {
-                //qDebug("qDrawShadePanel %d/%d/%d/%d", _tx + leftBorder, _ty + topBorder, cWidth, cHeight);
                 p->setPen (Qt::lightGray);
                 p->setBrush (Qt::NoBrush);
-                p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad,
-                             cWidth, cHeight);
+                p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight);
 	    }
+
+            bool errorPictureDrawn = false;
+            int imageX = 0, imageY = 0;
+            int usableWidth = cWidth - leftBorder - borderRight() - leftPad - paddingRight();
+            int usableHeight = cHeight - topBorder - borderBottom() - topPad - paddingBottom();
+            
+            if(berrorPic && !pix.isNull() && (usableWidth >= pix.width()) && (usableHeight >= pix.height()) )
+            {
+                // Center the error image, accounting for border and padding.
+                int centerX = (usableWidth - pix.width())/2;
+                if (centerX < 0)
+                    centerX = 0;
+                int centerY = (usableHeight - pix.height())/2;
+                if (centerY < 0)
+                    centerY = 0;
+                imageX = leftBorder + leftPad + centerX;
+                imageY = topBorder + topPad + centerY;
+                p->drawPixmap( QPoint(_tx + imageX, _ty + imageY), pix, pix.rect() );
+                errorPictureDrawn = true;
+            }
+            
+            if(!alt.isEmpty()) {
+                QString text = alt.string();
+                p->setFont (style()->font());
+                p->setPen (style()->color());
+                int ax = _tx + leftBorder + leftPad;
+                int ay = _ty + topBorder + topPad;
+                const QFontMetrics &fm = style()->fontMetrics();
+                int ascent = fm.ascent();
+                
+                // Only draw the alt text if it'll fit within the content box,
+                // and only if it fits above the error image.
+                int textWidth = fm.width (text, text.length());
+                if (errorPictureDrawn){
+                    if (usableWidth > textWidth && fm.height() <= imageY)
+                        p->drawText(ax, ay+ascent, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
+                }
+                else if (usableWidth >= textWidth && cHeight>=fm.height())
+                    p->drawText(ax, ay+ascent, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
+            }
 #else /* not APPLE_CHANGES */
             if ( !berrorPic ) {
                 //qDebug("qDrawShadePanel %d/%d/%d/%d", _tx + leftBorder, _ty + topBorder, cWidth, cHeight);
@@ -369,6 +407,17 @@ void RenderImage::dispatchLoadEvent()
         }
     }
 }
+
+#ifdef FIX_3109150
+void RenderImage::reload()
+{
+    khtml::DocLoader *loader = element()->getDocument()->docLoader();
+    KIO::CacheControl savedCachePolicy = loader->cachePolicy();
+    loader->setCachePolicy(KIO::CC_Reload);
+    updateFromElement();
+    loader->setCachePolicy(savedCachePolicy);
+}
+#endif
 
 void RenderImage::detach(RenderArena *arena)
 {

@@ -28,6 +28,12 @@
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
 
+QPixmap *KWQLoadPixmap(const char *name)
+{
+    QPixmap *p = new QPixmap([[WebCoreImageRendererFactory sharedFactory] imageRendererWithName:[NSString stringWithCString:name]]);
+    return p;
+}
+
 bool canRenderImageType(const QString &type)
 {
     return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type.getNSString()];
@@ -39,6 +45,14 @@ QPixmap::QPixmap()
     MIMEType = 0;
     needCopyOnWrite = false;
 }
+
+QPixmap::QPixmap(WebCoreImageRendererPtr r)
+{
+    imageRenderer = [r retain];
+    MIMEType = 0;
+    needCopyOnWrite = false;
+}
+
 
 QPixmap::QPixmap(void *MIME)
 {
@@ -105,7 +119,7 @@ bool QPixmap::mask() const
 
 bool QPixmap::isNull() const
 {
-    return imageRenderer == nil;
+    return imageRenderer == nil || [imageRenderer isNull];
 }
 
 QSize QPixmap::size() const

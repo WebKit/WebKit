@@ -97,6 +97,7 @@ static NSMutableArray *activeImageRenderers;
     if (self != nil) {
         MIMEType = [MIME copy];
     }
+    isNull = YES;
     return self;
 }
 
@@ -109,32 +110,48 @@ static NSMutableArray *activeImageRenderers;
         [self checkDataForGIFExtensionSignature:data];
 #endif
         MIMEType = [MIME copy];
+        if ([data length] > 0)
+            isNull = NO;
+        else
+            isNull = YES;
     }
     return self;
 }
 
+- (id)initWithContentsOfFile:(NSString *)filename
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
+    self = [super initWithContentsOfFile:imagePath];
+    if (self)
+        isNull = NO;
+    return self;
+}
 
 - copyWithZone:(NSZone *)zone
 {
     WebImageRenderer *copy = [super copyWithZone:zone];
     
     // FIXME: If we copy while doing an incremental load, it won't work.
-    
     copy->frameTimer = nil;
     copy->frameView = nil;
     copy->patternColor = nil;
     copy->MIMEType = [MIMEType copy];
+    copy->isNull = isNull;
         
     return copy;
 }
 
+- (BOOL)isNull
+{
+    return isNull;
+}
 
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
     NSSize size;
-
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     // Part of the workaround for bug 3090341.
@@ -165,10 +182,12 @@ static NSMutableArray *activeImageRenderers;
         size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
         [imageRep setSize:size];
         [self setSize:size];
+        isNull = NO;
         return YES;
     default:
         //printf ("incrementalLoadWithBytes: size %d, isComplete %d\n", length, isComplete);
-        // We have some data.  Return YES so we can attempt to draw what we've got.
+        // We have some valid data.  Return YES so we can attempt to draw what we've got.
+        isNull = NO;
         return YES;
     }
     

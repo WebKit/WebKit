@@ -90,6 +90,15 @@
     return imageRenderer;
 }
 
+- (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name
+{
+    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
+    [imageRenderer setScalesWhenResized:NO];
+    [imageRenderer setFlipped:YES];
+    return imageRenderer;
+}
+
+
 - (NSArray *)supportedMIMETypes
 {
     static NSArray *imageMIMETypes = nil;

@@ -34,5 +34,6 @@
 - (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)stopAnimation;
 - (void)tileInRect:(NSRect)r fromPoint:(NSPoint)p;
+- (BOOL)isNull;
 
 @end

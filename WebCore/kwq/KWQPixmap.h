@@ -48,6 +48,7 @@ class NSString;
 class QWMatrix;
 
 bool canRenderImageType(const QString &type);
+QPixmap *KWQLoadPixmap(const char *name);
 
 class QPixmap : public QPaintDevice, public Qt {
 public:
@@ -58,6 +59,7 @@ public:
     QPixmap(const QByteArray&, void *MIMEType);
     QPixmap(int, int);
     QPixmap(const QPixmap &);
+    QPixmap(WebCoreImageRendererPtr);
     ~QPixmap();
     
     bool isNull() const;
@@ -80,6 +82,7 @@ public:
     void stopAnimations();
 
     WebCoreImageRendererPtr image() { return imageRenderer; };
+    
 private:
 
     WebCoreImageRendererPtr imageRenderer;

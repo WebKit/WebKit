@@ -305,6 +305,7 @@
 				9345D17D0365BF35008635CE,
 				F5883BDF025E5C6A01000102,
 				F5B67131023EDF8901C1A525,
+				5128F1FA04719A4200CA2D3A,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -429,6 +430,7 @@
 				F5B67130023EDF8901C1A525,
 				F5F732D202FF4D4F01A80180,
 				9345D4E70365C58D008635CE,
+				5128F1F904719A4200CA2D3A,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1036,6 +1038,18 @@
 //512
 //513
 //514
+		5128F1F904719A4200CA2D3A = {
+			isa = PBXFileReference;
+			name = missing_image.tiff;
+			path = Resources/missing_image.tiff;
+			refType = 4;
+		};
+		5128F1FA04719A4200CA2D3A = {
+			fileRef = 5128F1F904719A4200CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		513D422E034CF55A00CA2ACD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;

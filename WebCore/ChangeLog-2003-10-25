@@ -1,3 +1,27 @@
+2003-05-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3014661.  We now display (a lame Lemay) image
+	when an image fails to load.  We also display the 
+	alt text if it fits within the image container
+	above the missing image icon.  Alt text is also
+	now shown if image loading is disabled.
+
+        Reviewed by John.
+
+        * khtml/misc/loader.cpp:
+        (CachedImage::data):
+        (Cache::init):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject):
+        (RenderImage::reload):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (KWQLoadPixmap):
+        (QPixmap::QPixmap):
+        (QPixmap::isNull):
+        * kwq/WebCoreImageRenderer.h:
+        * kwq/WebCoreImageRendererFactory.h:
+
 2003-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

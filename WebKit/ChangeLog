@@ -1,3 +1,26 @@
+2003-05-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3014661.  We now display (a lame Lemay) image
+	when an image fails to load.  We also display the 
+	alt text if it fits within the image container
+	above the missing image icon.  Alt text is also
+	now shown if image loading is disabled.
+
+        Reviewed by John.
+
+        * Resources/missing_image.tiff: Added.
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithMIMEType:]):
+        (-[WebImageRenderer initWithData:MIMEType:]):
+        (-[WebImageRenderer initWithContentsOfFile:]):
+        (-[WebImageRenderer copyWithZone:]):
+        (-[WebImageRenderer isNull]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithName:]):
+        * WebKit.pbproj/project.pbxproj:
+
 2003-05-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris and Richard.
