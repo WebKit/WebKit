@@ -360,9 +360,10 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                 cx = _tx;
                 if (pixw == 0)
                     sx = 0;
-                else
+                else {
                     sx =  pixw - ((sptr->backgroundXPosition().minWidth(pw-pixw)) % pixw );
-                sx -= bleft % pixw;
+                    sx -= bleft % pixw;
+                }
             }
 
             if( (bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh ) {
@@ -388,8 +389,8 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                     sy = 0;
                 }else{
                     sy = pixh - ((sptr->backgroundYPosition().minWidth(ph-pixh)) % pixh );
+                    sy -= borderTop() % pixh;
                 }
-                sy -= borderTop() % pixh;
             }
         }
         else

@@ -1,5 +1,14 @@
 2004-04-01  Darin Adler  <darin@apple.com>
 
+        Based on a fix by Eric Albert.
+
+        - fixed <rdar://problem/3594247>: Safari crashes when a background image has a height or width of 0
+
+        * khtml/rendering/render_box.cpp: (RenderBox::paintBackgroundExtended):
+        Change code path so we don't mod with 0.
+
+2004-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3608305>: DEMO: menu in search field has one disabled item: localized string not found
