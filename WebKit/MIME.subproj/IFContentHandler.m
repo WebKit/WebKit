@@ -51,8 +51,9 @@ static NSString *textDocumentTemplate = nil;
         return [self useTemplate:@"plugin_document_template" withGlobal:&pluginDocumentTemplate];
     case IFMIMEHANDLERTYPE_TEXT:
         return [self useTemplate:@"text_document_template" withGlobal:&textDocumentTemplate];
+    default:
+        return nil;
     }
-    return nil;
 }
 
 - (NSString *) textHTMLDocumentBottom;

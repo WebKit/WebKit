@@ -1,3 +1,9 @@
+2002-06-07  Darin Adler  <darin@apple.com>
+
+	* MIME.subproj/IFContentHandler.m: (-[IFContentHandler HTMLDocument]):
+	Fix a warning that shows up with the new C++ compiler (not sure why it
+	is not showing up with the old one).
+
 2002-06-07  Chris Blumenberg  <cblu@apple.com>
 	
 	Allow plug-ins to make a NPP_*URLNotify request when
