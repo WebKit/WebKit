@@ -1,3 +1,7 @@
+2002-05-15  Kenneth Kocienda  <kocienda@apple.com>
+
+	* kwq/KWQInvisibleButton.h: Changed an #include of Cocoa.h to an #import
+
 2002-05-15  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQListImpl.mm:

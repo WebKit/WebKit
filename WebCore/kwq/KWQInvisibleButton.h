@@ -6,7 +6,7 @@
 #endif
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 #endif
 
 #include <qptrlist.h>
