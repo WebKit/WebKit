@@ -1,3 +1,14 @@
+2002-11-12  Trey Matteson  <trey@apple.com>
+
+	fixed 3096030 - Crash in -[WebBackForwardList goToEntry:] when playing with SnapBack and dictionary.com
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _isLoadComplete]):  Set state=completed only after we tell the bridge to
+	end the load.  This allows client redirects to be processed before we think we're complete.
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:]):
+	Only process client redirects as such if we are not already complete.  This makes JS driven
+	navigations after load-time work like the user would expect, as normal navigations.
+
 2002-11-12  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3099487 - REGRESSION: dragging an image always puts it in

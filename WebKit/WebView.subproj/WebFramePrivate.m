@@ -585,8 +585,6 @@ static const char * const stateNames[] = {
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
-                [self _setState: WebFrameStateComplete];
-
 		// FIXME: need to avoid doing this in the non-HTML
 		// case or the bridge may assert. Should make sure
 		// there is a bridge/part in the proper state even for
@@ -595,6 +593,11 @@ static const char * const stateNames[] = {
                 if ([ds isDocumentHTML]) {
 		    [_private->bridge end];
 		}
+
+                // Important to flip the state after we end the load, because client redirects will
+                // come out of those, and we want to treat them as part of the same op from the
+                //user's point of view.
+                [self _setState: WebFrameStateComplete];
 
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
@@ -1082,12 +1085,13 @@ static const char * const stateNames[] = {
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
+        WebFrameState stateBeforeStartingLoad = [self _state];
 
         [self _loadRequest:request triggeringEvent:event];
         // NB: must be done after loadRequest:, which sets the provDataSource, which
         //     inits the load type to Standard
         [self _setLoadType:loadType];
-        if (clientRedirect) {
+        if (clientRedirect && stateBeforeStartingLoad != WebFrameStateComplete) {
             // Inherit the loadType from the operation that spawned the redirect
             [self _setLoadType:previousLoadType];
 
