@@ -1,3 +1,18 @@
+2003-10-31  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3466542, add a real minimum font size setting.
+	
+        Reviewed by john
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setMinimumFontSize:]):
+        (-[WebPreferences minimumLogicalFontSize]):
+        (-[WebPreferences setMinimumLogicalFontSize:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2003-10-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

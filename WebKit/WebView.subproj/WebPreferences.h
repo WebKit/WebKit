@@ -142,6 +142,17 @@ extern NSString *WebPreferencesChangedNotification;
 - (void)setMinimumFontSize:(int)size;
 
 /*!
+    @method minimumLogicalFontSize
+*/
+- (int)minimumLogicalFontSize;
+
+/*!
+    @method setMinimumLogicalFontSize:
+    @param size
+*/
+- (void)setMinimumLogicalFontSize:(int)size;
+
+/*!
     @method defaultTextEncodingName
 */
 - (NSString *)defaultTextEncodingName;

@@ -23,6 +23,7 @@
 #define WebKitCursiveFontPreferenceKey @"WebKitCursiveFont"
 #define WebKitFantasyFontPreferenceKey @"WebKitFantasyFont"
 #define WebKitMinimumFontSizePreferenceKey @"WebKitMinimumFontSize"
+#define WebKitMinimumLogicalFontSizePreferenceKey @"WebKitMinimumLogicalFontSize"
 #define WebKitDefaultFontSizePreferenceKey @"WebKitDefaultFontSize"
 #define WebKitDefaultFixedFontSizePreferenceKey @"WebKitDefaultFixedFontSize"
 #define WebKitDefaultTextEncodingNamePreferenceKey @"WebKitDefaultTextEncodingName"
@@ -202,7 +203,8 @@ NS_ENDHANDLER
         @"Helvetica",                   WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
-        @"9",                           WebKitMinimumFontSizePreferenceKey,
+        @"1",                           WebKitMinimumFontSizePreferenceKey,
+	@"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
@@ -397,6 +399,16 @@ NS_ENDHANDLER
 - (void)setMinimumFontSize:(int)size
 {
     [self _setIntegerValue: size forKey: WebKitMinimumFontSizePreferenceKey];
+}
+
+- (int)minimumLogicalFontSize
+{
+  return [self _integerValueForKey: WebKitMinimumLogicalFontSizePreferenceKey];
+}
+
+- (void)setMinimumLogicalFontSize:(int)size
+{
+  [self _setIntegerValue: size forKey: WebKitMinimumLogicalFontSizePreferenceKey];
 }
 
 - (NSString *)defaultTextEncodingName

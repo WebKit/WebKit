@@ -554,6 +554,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [_private->settings setJavaScriptEnabled:[preferences isJavaScriptEnabled]];
     [_private->settings setJavaScriptCanOpenWindowsAutomatically:[preferences javaScriptCanOpenWindowsAutomatically]];
     [_private->settings setMinimumFontSize:[preferences minimumFontSize]];
+    [_private->settings setMinimumLogicalFontSize:[preferences minimumLogicalFontSize]];
     [_private->settings setPluginsEnabled:[preferences arePlugInsEnabled]];
     [_private->settings setSansSerifFontFamily:[preferences sansSerifFontFamily]];
     [_private->settings setSerifFontFamily:[preferences serifFontFamily]];
