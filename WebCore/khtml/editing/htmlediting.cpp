@@ -3198,27 +3198,13 @@ void InsertParagraphSeparatorCommand::doApply()
     if (selection.isNone())
         return;
     
-    // Delete the current selection.
-    // If the selection is a range and the start and end nodes are in different blocks, 
-    // then this command bails after the delete, but takes the one additional step of
-    // moving the selection downstream so it is in the ending block (if that block is
-    // still around, that is).
     Position pos = selection.start();
     EAffinity affinity = selection.startAffinity();
         
+    // Delete the current selection.
     if (selection.isRange()) {
-        NodeImpl *startBlockBeforeDelete = selection.start().node()->enclosingBlockFlowElement();
-        NodeImpl *endBlockBeforeDelete = selection.end().node()->enclosingBlockFlowElement();
-        bool doneAfterDelete = startBlockBeforeDelete != endBlockBeforeDelete;
         calculateStyleBeforeInsertion(pos);
         deleteSelection(false, false);
-        if (doneAfterDelete) {
-            document()->updateLayout();
-            setEndingSelection(endingSelection().start().downstream(), DOWNSTREAM);
-            rebalanceWhitespace();
-            applyStyleAfterInsertion();
-            return;
-        }
         pos = endingSelection().start();
         affinity = endingSelection().startAffinity();
     }
