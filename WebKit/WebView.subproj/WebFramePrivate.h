@@ -25,9 +25,6 @@ typedef enum {
     // This state indicates that it is reasonable to perform a layout.
     WebFrameStateLayoutAcceptable,
 
-    // We've decided we're complete, and khtml is ending the load
-    WebFrameStateCompleting,
-
     WebFrameStateComplete
 } WebFrameState;
 

@@ -358,7 +358,13 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
        str = resolvedURL.url();
       }
 
+#if APPLE_CHANGES
+      // We want a new history item if this JS was called via a user gesture
+      bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+      part->scheduleRedirection(0, str, !userGesture);
+#else
       part->scheduleRedirection(0, str, false/*don't lock history*/);
+#endif
     }
     break;
   }

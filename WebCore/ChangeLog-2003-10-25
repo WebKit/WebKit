@@ -1,3 +1,43 @@
+2003-02-05  Trey Matteson  <trey@apple.com>
+
+	3137647 - ad frames get their own history entries at channels.netscape.com	
+	3133844 - 2 items in back list at http://www.kiup-bank.com/personal/main01.html
+
+	The logic for deciding whether new entries are added to history is moved here
+	from WebKit.  The advantage is that we can take specific action in each of the
+	relevant cases instead of WK the half-informed guessing WK was doing.
+
+	Here is what we now use for the lockHistory param to scheduleRedirect():
+
+	document.location = XXX  	-    !userGesture
+	window.location = XXX		-    !userGesture
+	window.open			-    false
+	window.replace			-    true
+	window.reload			-    true
+	meta equiv http-refresh		-    delay <= 1
+	http-refresh			-    delay <= 1
+
+        Reviewed by Maciej, Darin.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::wasRunByUserGesture):  Rename of previous isWindowOpenAllowed(),
+	since we know use it for multiple purposes.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::putValue):  Assignment to document.location locks history
+	if not a result of a user gesture.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::put):  Assignment to window.location locks history
+	if not a result of a user gesture.
+        (WindowFunc::tryCall):  Adopt rename to wasRunByUserGesture().
+        (Location::put):  Assignment to window.location locks history
+	if not a result of a user gesture.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::receivedFirstData):  http-refreshes lock history if the timeout<1
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::processHttpEquiv):  http-refreshes lock history if the timeout<1
+
+
 2003-02-04  Trey Matteson  <trey@apple.com>
 
 	Pass formValues up through the bridge at submit time.

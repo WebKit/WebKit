@@ -42,7 +42,6 @@ static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
     "WebFrameStateLayoutAcceptable",
-    "WebFrameStateCompleting",
     "WebFrameStateComplete"
 };
 
@@ -473,7 +472,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
         case WebFrameStateProvisional:
         case WebFrameStateComplete:
-        case WebFrameStateCompleting:
         case WebFrameStateLayoutAcceptable:
             return;
     }
@@ -625,7 +623,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         
         case WebFrameStateCommittedPage:
         case WebFrameStateLayoutAcceptable:
-        case WebFrameStateCompleting:
         case WebFrameStateComplete:
         default:
         {
@@ -824,19 +821,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // Should instead make sure the bridge/part is in the proper state even for
                 // non-HTML content, or make a call to the document and let it deal with the bridge.
 
-                [self _setState:WebFrameStateCompleting];
+                [self _setState:WebFrameStateComplete];
                 if ([ds isDocumentHTML]) {
                     [_private->bridge end];
                 }
 
-                // Important to flip the state after we end the load, because client redirects will
-                // come out of those, and we want to treat them as part of the same op from the
-                //user's point of view. But it's possible we that inside the call to
-                // end we may navigate, so we have to check for a state change since calling end.
-                if ([self _state] == WebFrameStateCompleting) {
-                    [self _setState:WebFrameStateComplete];
-                }
-                
                 // FIXME: Is this subsequent work important if we already navigated away?
                 // Maybe there are bugs because of that, or extra work we can skip because
                 // the new page is ready.
@@ -904,9 +893,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             return;
         }
         
-        case WebFrameStateCompleting:
-            return;
-
         case WebFrameStateComplete:
         {
             LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [self name]);
@@ -1545,19 +1531,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // If we don't have a dataSource, we have no "original" load on which to base a redirect,
         // so we better just treat the redirect as a normal load.
         _private->quickRedirectComing = NO;
-    } else if (lockHistory) {
-        // meta-refresh, or another case WC thinks doens't need a b/f item
-        _private->quickRedirectComing = (seconds <= 1.0);
     } else {
-        // a redirection stemming from a JS call
-        if ([[[self controller] mainFrame] _state] == WebFrameStateCompleting) {
-            // Happened as part of closing a doc, so it's part of an onload
-            // I think delay will always be zero, but it's fine to go with the <1 policy
-            _private->quickRedirectComing = (seconds <= 1.0);
-        } else {
-            // Some other JS action, perhaps handling a user event.  Treat like a normal nav.
-            _private->quickRedirectComing = NO;
-        }
+        _private->quickRedirectComing = lockHistory;
     }
 }
 

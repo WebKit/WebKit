@@ -73,7 +73,7 @@
         // FIXME: It would be nice to stop the load here.
         
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
-                                                         contentURL:[theDataSource URL]
+                                                         contentURL:[[theDataSource URL] absoluteString]
                                                       pluginPageURL:nil
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];

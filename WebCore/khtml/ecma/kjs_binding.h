@@ -121,7 +121,7 @@ namespace KJS {
     /**
      * "Smart" window.open policy
      */
-    bool isWindowOpenAllowed() const;
+    bool wasRunByUserGesture() const;
 
     virtual void mark();
   private:

@@ -1,3 +1,24 @@
+2003-02-06  Trey Matteson  <trey@apple.com>
+
+	3137647 - ad frames get their own history entries at channels.netscape.com	
+	3133844 - 2 items in back list at http://www.kiup-bank.com/personal/main01.html
+
+	Move logic for deciding on "quick redirect" down to WebCore, where we really know
+	what case we're in instead of having to guess from the params we were receiving.
+
+        Reviewed by Maciej, Darin.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):  Fix build error (URL vs String)
+        * WebView.subproj/WebFramePrivate.h:  Nuke Completing state.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToLayoutAcceptable]):  Nuke Completing state.
+        (-[WebFrame _transitionToCommitted:]):  Nuke Completing state.
+        (-[WebFrame _isLoadComplete]):  Nuke Completing state.
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:]):
+	Just obey lockHistory param when deciding whether we are doing a "client redirect"
+	instead of previous guesswork.
+
 2003-02-06  Richard Williamson   <rjw@apple.com>
 
         Rename WebError to WebKitError.

@@ -1473,7 +1473,12 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             bool ok = false;
             int delay = 0;
 	    delay = str.toInt(&ok);
+#if APPLE_CHANGES
+            // We want a new history item if the refresh timeout > 1 second
+            if(ok) v->part()->scheduleRedirection(delay, v->part()->url().url(), delay <= 1);
+#else
             if(ok) v->part()->scheduleRedirection(delay, v->part()->url().url() );
+#endif
         } else {
             double delay = 0;
             bool ok = false;
@@ -1487,7 +1492,12 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             if ( str.length() && str[0] == '=' ) str = str.mid( 1 ).stripWhiteSpace();
             str = parseURL( DOMString(str) ).string();
             if ( ok )
+#if APPLE_CHANGES
+                // We want a new history item if the refresh timeout > 1 second
+                v->part()->scheduleRedirection(delay, getDocument()->completeURL( str ), delay <= 1);
+#else
                 v->part()->scheduleRedirection(delay, getDocument()->completeURL( str ));
+#endif
         }
     }
     else if(strcasecmp(equiv, "expires") == 0)

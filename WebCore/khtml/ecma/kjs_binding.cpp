@@ -224,7 +224,7 @@ void ScriptInterpreter::forgetDOMObjectsForDocument( void* documentHandle )
 }
 
 
-bool ScriptInterpreter::isWindowOpenAllowed() const
+bool ScriptInterpreter::wasRunByUserGesture() const
 {
   if ( m_evt )
   {

@@ -750,9 +750,17 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       if (p) {
         QString dstUrl = p->htmlDocument().completeURL(value.toString(exec).string()).string();
         if (dstUrl.find("javascript:", 0, false) || isSafeScript(exec))
+#if APPLE_CHANGES
+        {
+          // We want a new history item if this JS was called via a user gesture
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+          m_part->scheduleRedirection(0, dstUrl, !userGesture);
+        }
+#else
           m_part->scheduleRedirection(0,
                                       dstUrl,
                                       false /*don't lock history*/);
+#endif
       }
       return;
     }
@@ -1093,7 +1101,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     } else if ( policy == 3 ) // smart
     {
       // window.open disabled unless from a key/mouse event
-      if (static_cast<ScriptInterpreter *>(exec->interpreter())->isWindowOpenAllowed())
+      if (static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture())
 #if !APPLE_CHANGES
         policy = 0;
 #else
@@ -1831,8 +1839,13 @@ void Location::put(ExecState *exec, const Identifier &p, const Value &v, int att
     ObjectImp::put(exec, p, v, attr);
     return;
   }
-
+#if APPLE_CHANGES
+  // We want a new history item if this JS was called via a user gesture
+  bool userGesture = static_cast<ScriptInterpreter *>(exec->interpreter())->wasRunByUserGesture();
+  m_part->scheduleRedirection(0, url.url(), !userGesture);
+#else
   m_part->scheduleRedirection(0, url.url(), false /*don't lock history*/);
+#endif
 }
 
 Value Location::toPrimitive(ExecState *exec, Type) const
