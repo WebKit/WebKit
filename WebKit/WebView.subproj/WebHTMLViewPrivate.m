@@ -48,6 +48,10 @@
 }
 @end
 
+@interface NSMutableDictionary (WebHTMLViewExtras)
+- (void)_web_setObjectIfNotNil:(id)object forKey:(id)key;
+@end
+
 @implementation WebHTMLViewPrivate
 
 - (void)dealloc
@@ -126,12 +130,25 @@ BOOL _modifierTrackingEnabled = FALSE;
     NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
-    [elementInfo addEntriesFromDictionary: elementInfoWC];
-
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementLinkURL] forKey:WebElementLinkURLKey];
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementLinkLabel] forKey:WebElementLinkLabelKey];
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageURL] forKey:WebElementImageURLKey];
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementString] forKey:WebElementStringKey];
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImage] forKey:WebElementImageKey];
+    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageLocation] forKey:WebElementImageLocationKey];
+    
     WebView *webView = [self _web_parentWebView];
     WebFrame *webFrame = [[webView controller] frameForView:webView];
+
+    NSString *frameName = [elementInfoWC objectForKey:WebCoreElementLinkTarget];
+    if ([frameName length] == 0) {
+        [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
+    } else if (![frameName isEqualToString:@"_blank"]) {
+        [elementInfo setObject:[webFrame frameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
+    }
+
     [elementInfo setObject:webFrame forKey:WebElementFrameKey];
-       
+    
     return elementInfo;
 }
 
@@ -213,6 +230,26 @@ BOOL _modifierTrackingEnabled = FALSE;
     if (needToSetAsideSubviews) {
         [self _restoreSubviews];
     }
+}
+
+- (void)_mouseOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned)modifierFlags;
+{
+    if (elementInformation != nil || _private->lastMouseOverElementWasNotNil) {
+        [[[self _controller] windowOperationsDelegate]
+            mouseDidMoveOverElement:elementInformation modifierFlags:modifierFlags];
+    }
+    _private->lastMouseOverElementWasNotNil = elementInformation != nil;
+}
+
+- (BOOL)_insideAnotherHTMLView
+{
+    NSView *view = self;
+    while ((view = [view superview])) {
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 @end
@@ -319,6 +356,18 @@ static BOOL inNSTextViewDrawRect;
         }
     }
     return opaqueAncestor;
+}
+
+@end
+
+@implementation NSMutableDictionary (WebHTMLViewExtras)
+
+- (void)_web_setObjectIfNotNil:(id)object forKey:(id)key
+{
+    if (object == nil) {
+        return;
+    }
+    [self setObject:object forKey:key];
 }
 
 @end

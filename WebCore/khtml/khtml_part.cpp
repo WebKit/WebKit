@@ -2126,14 +2126,7 @@ void KHTMLPart::slotClearSelection()
     emitSelectionChanged();
 }
 
-#ifdef APPLE_CHANGES
-
-void KHTMLPart::overURL( const QString &url, const QString &target, int modifierState )
-{
-  impl->overURL(url, target, modifierState);
-}
-
-#else
+#if !APPLE_CHANGES
 
 void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPressed )
 {
@@ -4266,12 +4259,11 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
   // Not clicked -> mouse over stuff
   if ( !d->m_bMousePressed )
   {
+#if !APPLE_CHANGES
     // The mouse is over something
     if ( url.length() )
     {
-#ifndef APPLE_CHANGES
       bool shiftPressed = ( _mouse->state() & ShiftButton );
-#endif
 
       // Image map
       if ( !innerNode.isNull() && innerNode.elementId() == ID_IMG )
@@ -4290,28 +4282,18 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
             d->m_overURL = url.string() + QString("?%1,%2").arg(x).arg(y);
             d->m_overURLTarget = target.string();
-#ifdef APPLE_CHANGES
-            overURL( d->m_overURL, target.string(), _mouse->state() );
-#else
             overURL( d->m_overURL, target.string(), shiftPressed );
-#endif
             return;
           }
         }
       }
 
       // normal link
-#ifndef APPLE_CHANGES
       if ( d->m_overURL.isEmpty() || d->m_overURL != url || d->m_overURLTarget != target )
-#endif
       {
         d->m_overURL = url.string();
         d->m_overURLTarget = target.string();
-#ifdef APPLE_CHANGES
-	overURL( d->m_overURL, target.string(), _mouse->state() );
-#else
         overURL( d->m_overURL, target.string(), shiftPressed );
-#endif
       }
     }
     else  // Not over a link...
@@ -4324,6 +4306,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         emit setStatusBarText( d->m_kjsDefaultStatusBarText );
       }
     }
+#endif // APPLE_CHANGES
   }
   else {
 #ifndef KHTML_NO_SELECTION

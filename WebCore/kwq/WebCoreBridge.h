@@ -53,12 +53,13 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 
-#define WebCoreElementLinkURL  		@"WebElementLinkURL"
-#define WebCoreElementLinkLabel  	@"WebElementLinkLabel"
-#define WebCoreElementImageURL 		@"WebElementImageURL"
-#define WebCoreElementString   		@"WebElementString"
-#define WebCoreElementImage    		@"WebElementImage"
-#define WebCoreElementImageLocation	@"WebElementImageLocation"
+#define WebCoreElementLinkURL  		@"WebCoreElementLinkURL"
+#define WebCoreElementLinkTarget  	@"WebCoreElementLinkTarget"
+#define WebCoreElementLinkLabel  	@"WebCoreElementLinkLabel"
+#define WebCoreElementImageURL 		@"WebCoreElementImageURL"
+#define WebCoreElementString   		@"WebCoreElementString"
+#define WebCoreElementImage    		@"WebCoreElementImage"
+#define WebCoreElementImageLocation	@"WebCoreElementImageLocation"
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also

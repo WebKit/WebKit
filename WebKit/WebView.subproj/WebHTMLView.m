@@ -144,6 +144,7 @@
 
 - (void)removeMouseMovedObserver
 {
+    [self _mouseOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
 }
 
@@ -156,15 +157,13 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if ([[self window] isMainWindow]) {
-	[self removeMouseMovedObserver];
-    }
+    [self removeMouseMovedObserver];
 }
 
 - (void)viewDidMoveToWindow
 {
     if ([self window]) {
-        if ([[self window] isMainWindow]) {
+        if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
             [self addMouseMovedObserver];
         }
         _private->inWindow = YES;
@@ -431,16 +430,14 @@
 
 - (void)windowDidBecomeMain: (NSNotification *)notification
 {
-    if ([notification object] == [self window]) {
+    if ([notification object] == [self window] && ![self _insideAnotherHTMLView]) {
         [self addMouseMovedObserver];
     }
 }
 
 - (void)windowDidResignMain: (NSNotification *)notification
 {
-    if ([notification object] == [self window]) {
-        [self removeMouseMovedObserver];
-    }
+    [self removeMouseMovedObserver];
 }
 
 - (void)mouseDown: (NSEvent *)event
@@ -687,11 +684,29 @@
 
 - (void)mouseMovedNotification:(NSNotification *)notification
 {
-    // Only act on the mouse move event if it's inside this view (and not inside a subview).
+    ASSERT(![self _insideAnotherHTMLView]);
+    ASSERT([[self window] isMainWindow]);
+    
     NSEvent *event = [[notification userInfo] objectForKey:@"NSEvent"];
-    if ([event window] == [self window] && [[self window] isMainWindow]
-            && [[[self window] contentView] hitTest:[event locationInWindow]] == self) {
-        [[self _bridge] mouseMoved:event];
+
+    WebHTMLView *view = nil;
+    if ([event window] == [self window]) {
+        NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+        while (hitView) {
+            if ([hitView isKindOfClass:[WebHTMLView class]]) {
+                view = (WebHTMLView *)hitView;
+                break;
+            }
+            hitView = [hitView superview];
+        }
+    }
+    
+    if (view == nil) {
+        [self _mouseOverElement:nil modifierFlags:0];
+    } else {
+        [[view _bridge] mouseMoved:event];
+        NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
+        [self _mouseOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
     }
 }
 

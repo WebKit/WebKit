@@ -1,3 +1,25 @@
+2002-10-02  Darin Adler  <darin@apple.com>
+
+	Moved "overURL" handling out of WebCore into WebKit and Alex.
+	Also separated the two levels of the "element dictionary" so they
+	don't rely on having the same keys.
+
+        * khtml/khtml_part.h: Revert the APPLE_CHANGES to overURL.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::overURL): Removed the APPLE_CHANGES and just ifdef'd out
+	the whole thing for our version.
+        (KHTMLPart::khtmlMouseMoveEvent): Get rid of the APPLE_CHANGES and
+	don't do any of the status bar setup.
+
+        * kwq/KWQKHTMLPartImpl.h: Remove overURL.
+        * kwq/KWQKHTMLPartImpl.mm: Ditto.
+
+        * kwq/WebCoreBridge.h: Change keys so they don't match the WebKit ones so
+	we don't accidentally rely on that. Add WebCoreElementLinkTarget.
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Add code to
+	set up WebCoreElementLinkTarget.
+
 2002-10-01  Darin Adler  <darin@apple.com>
 
 	- fixed 3055076 -- window.scroll does a window.scrollby, not a window.scrollto

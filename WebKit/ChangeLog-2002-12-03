@@ -1,3 +1,35 @@
+2002-10-02  Darin Adler  <darin@apple.com>
+
+	Machinery so we can handle mouseover feedback at the browser level.
+
+        * WebView.subproj/WebWindowOperationsDelegate.h: Added mouseDidMoveOverElement:modifierFlags:.
+
+        * WebKit.exp: Export WebElementLinkTargetFrameKey.
+        * WebView.subproj/WebController.h: Add WebElementLinkTargetFrameKey.
+        * WebView.subproj/WebController.m: Ditto.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView removeMouseMovedObserver]): Send a callback when we
+	stop tracking the mouse altogether.
+        (-[WebHTMLView viewDidMoveToWindow]): Only set up the mouse moved
+	observer if we are the top-level HTML view.
+        (-[WebHTMLView windowDidBecomeMain:]): Ditto.
+        (-[WebHTMLView mouseMovedNotification:]): Handle mouse over if we are
+	over any subview of the HTML view. Also send the callback.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Added lastMouseOverElementWasNotNil,
+	_mouseOverElement:modifierFlags: and _insideAnotherHTMLView.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]): Copy over each element separately so
+	we don't rely on keys matching. Find the target frame given the target string,
+	and include it in the dictionary.
+        (-[WebHTMLView _mouseOverElement:modifierFlags]): Added. Calls the window
+	operations delegate method, but doesn't call it over and over again if the
+	information is still "nil".
+        (-[WebHTMLView _insideAnotherHTMLView]): Added.
+        (-[NSMutableDictionary _web_setObjectIfNotNil:forKey:]): Added. Helper for
+	the _elementAtPoint method which could be moved to WebNSDictionaryExtras some day.
+
 2002-10-02  Ken Kocienda  <kocienda@apple.com>
 
 	Implemented HTTP-specific subclass for WebResourceResponse.

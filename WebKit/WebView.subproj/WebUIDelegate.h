@@ -42,6 +42,15 @@
 - (NSString *)statusText;
 
 /*!
+    @method mouseDidMoveOverElement:modifierFlags:
+    @abstract Update the window's feedback for mousing over links to reflect a new item the mouse is over
+    or new modifier flags.
+    @param elementInformation Dictionary that describes the clicked element the mouse is over, or nil.
+    @param modifierFlags The modifier flags as in NSEvent.
+*/
+- (void)mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+
+/*!
     @method areToolbarsVisible
     @abstract Determine whether the window's toolbars are currently visible
     @discussion This method should return true if the window has any

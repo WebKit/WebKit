@@ -28,10 +28,13 @@
     BOOL subviewsSetAside;
 
     NSDictionary *draggingImageElement;
+    
+    BOOL lastMouseOverElementWasNotNil;
 }
 @end
 
 @interface WebHTMLView (WebPrivate)
+
 - (void)_reset;
 - (WebController *)_controller;
 - (WebFrame *)_frame;
@@ -44,8 +47,11 @@
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
 - (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event;
+- (void)_mouseOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned)modifierFlags;
 
 - (void)_setAsideSubviews;
 - (void)_restoreSubviews;
+
+- (BOOL)_insideAnotherHTMLView;
 
 @end

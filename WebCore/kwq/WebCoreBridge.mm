@@ -429,7 +429,8 @@ using khtml::RenderPart;
 
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {
-        ElementImpl* e =  static_cast<ElementImpl*>(URLNode);
+        ElementImpl* e = static_cast<ElementImpl*>(URLNode);
+        
         NSURL *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
         if (URL) {
             // Look for the first #text node to use as a label.
@@ -448,6 +449,14 @@ using khtml::RenderPart;
                 labelParent = childNode;
             }
             [elementInfo setObject:URL forKey:WebCoreElementLinkURL];
+        }
+        
+        DOMString target = e->getAttribute(ATTR_TARGET);
+        if (target.isEmpty() && part->impl->document()) {
+            target = part->impl->document()->baseTarget();
+        }
+        if (!target.isEmpty()) {
+            [elementInfo setObject:target.string().getNSString() forKey:WebCoreElementLinkTarget];
         }
     }
 

@@ -27,6 +27,7 @@
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
 extern NSString *WebElementLinkURLKey;
+extern NSString *WebElementLinkTargetFrameKey;
 extern NSString *WebElementLinkLabelKey;
 extern NSString *WebElementImageURLKey;
 extern NSString *WebElementStringKey;
