@@ -1,5 +1,18 @@
 2003-07-22  Dave Hyatt  <hyatt@apple.com>
 
+	Fix for 3293898, list bullets in ordered lists with an inside list
+	position were rendering as though they had a width of 0.  This was
+	a bug in KWQFontMetrics, which needed to handle the case where a
+	length of -1 was passed in to the width method (in which case
+	you should use the length of the whole string).
+	
+        Reviewed by john
+
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+
+2003-07-22  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for mozilla.org front page.  This patch re-architects 
 	align="left" and align="right" (for rtl and ltr directionality
 	respectively).  The attributes are mapped to custom text-align

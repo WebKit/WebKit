@@ -194,7 +194,8 @@ int QFontMetrics::width(const QString &qstring, int len) const
     
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:len fromCharacterPosition:0 numberOfCharacters:len withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 smallCaps: false fontFamilies: families]);
+    int length = len == -1 ? qstring.length() : len;
+    return ROUND_TO_INT([data->getRenderer() floatWidthForCharacters:(const UniChar *)qstring.unicode() stringLength:length fromCharacterPosition:0 numberOfCharacters:length withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing:0 wordSpacing:0 smallCaps: false fontFamilies: families]);
 }
 
 int QFontMetrics::width(const QChar *uchars, int len) const
