@@ -1,3 +1,20 @@
+2003-08-04  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3363011.  Pass b/f related key down events to super if b/f is disabled.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView keyDown:]):
+
+
+	Fixed 3363345.  Retain static array used by IB to present WebView's bindable keys.
+
+	Review by Maciej
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _declaredKeys]):
+
 2003-08-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

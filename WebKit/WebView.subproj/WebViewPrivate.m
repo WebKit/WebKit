@@ -762,7 +762,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     static NSArray *declaredKeys = nil;
     
     if (!declaredKeys) {
-        declaredKeys = [NSArray arrayWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey, _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, nil];
+        declaredKeys = [[NSArray alloc] initWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey, _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, nil];
     }
 
     return declaredKeys;

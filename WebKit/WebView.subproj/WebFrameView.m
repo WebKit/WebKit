@@ -136,11 +136,16 @@ enum {
     NSString *characters = [event characters];
     int index, count;
     BOOL callSuper = YES;
+    BOOL maintainsBackForwardList = [[[self webFrame] webView] backForwardList] == nil ? NO : YES;
 
     count = [characters length];
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
             case NSDeleteCharacter:
+                if (!maintainsBackForwardList) {
+                    callSuper = YES;
+                    break;
+                }
                 // This odd behavior matches some existing browsers,
                 // including Windows IE
                 if ([event modifierFlags] & NSShiftKeyMask) {
@@ -223,9 +228,22 @@ enum {
                 callSuper = NO;
                 break;
             case NSLeftArrowFunctionKey:
+                // Check back/forward related keys.
                 if ([event modifierFlags] & NSCommandKeyMask) {
+                    if (!maintainsBackForwardList) {
+                        callSuper = YES;
+                        break;
+                    }
                     [self _goBack];
-                } else if ([event modifierFlags] & NSAlternateKeyMask) {
+                } 
+                
+                // Now check scrolling related keys.
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
+
+                if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageLeft];
                 } else {
                     [self _lineLeft];
@@ -233,9 +251,22 @@ enum {
                 callSuper = NO;
                 break;
             case NSRightArrowFunctionKey:
+                // Check back/forward related keys.
                 if ([event modifierFlags] & NSCommandKeyMask) {
+                    if (!maintainsBackForwardList) {
+                        callSuper = YES;
+                        break;
+                    }
                     [self _goForward];
-                } else if ([event modifierFlags] & NSAlternateKeyMask) {
+                } 
+                
+                // Now check scrolling related keys.
+                if (![self allowsScrolling]) {
+                    callSuper = YES;
+                    break;
+                }
+
+                if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageRight];
                 } else {
                     [self _lineRight];
