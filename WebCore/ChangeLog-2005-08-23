@@ -1,3 +1,11 @@
+2004-04-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Added implementations for
+        these four properties: CSS_PROP_WHITE_SPACE, CSS_PROP_DISPLAY, CSS_PROP_FLOAT, and CSS_PROP_COLOR.
+
 2004-04-16  Chris Blumenberg  <cblu@apple.com>
 
 	Subresources weren't being archived for LINK tags.

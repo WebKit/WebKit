@@ -264,8 +264,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_COLOR:
-        // FIXME: unimplemented
-		break;
+        return new CSSPrimitiveValueImpl(m_renderer->style()->color().rgb());
     case CSS_PROP_CONTENT:
         // FIXME: unimplemented
 		break;
@@ -282,14 +281,62 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_DISPLAY:
-        // FIXME: unimplemented
-		break;
+        switch (m_renderer->style()->display()) {
+            case khtml::INLINE:
+                return new CSSPrimitiveValueImpl("inline", CSSPrimitiveValue::CSS_STRING);
+            case khtml::BLOCK:
+                return new CSSPrimitiveValueImpl("block", CSSPrimitiveValue::CSS_STRING);
+            case khtml::LIST_ITEM:
+                return new CSSPrimitiveValueImpl("list-item", CSSPrimitiveValue::CSS_STRING);
+            case khtml::RUN_IN:
+                return new CSSPrimitiveValueImpl("run-in", CSSPrimitiveValue::CSS_STRING);
+            case khtml::COMPACT:
+                return new CSSPrimitiveValueImpl("compact", CSSPrimitiveValue::CSS_STRING);
+            case khtml::INLINE_BLOCK:
+                return new CSSPrimitiveValueImpl("inline-block", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE:
+                return new CSSPrimitiveValueImpl("table", CSSPrimitiveValue::CSS_STRING);
+            case khtml::INLINE_TABLE:
+                return new CSSPrimitiveValueImpl("inline-table", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_ROW_GROUP:
+                return new CSSPrimitiveValueImpl("table-row-group", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_HEADER_GROUP:
+                return new CSSPrimitiveValueImpl("table-header-group", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_FOOTER_GROUP:
+                return new CSSPrimitiveValueImpl("table-footer-group", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_ROW:
+                return new CSSPrimitiveValueImpl("table-row", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_COLUMN_GROUP:
+                return new CSSPrimitiveValueImpl("table-column-group", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_COLUMN:
+                return new CSSPrimitiveValueImpl("table-column", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_CELL:
+                return new CSSPrimitiveValueImpl("table-cell", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TABLE_CAPTION:
+                return new CSSPrimitiveValueImpl("table-caption", CSSPrimitiveValue::CSS_STRING);
+            case khtml::BOX:
+                return new CSSPrimitiveValueImpl("-khtml-box", CSSPrimitiveValue::CSS_STRING);
+            case khtml::INLINE_BOX:
+                return new CSSPrimitiveValueImpl("-khtml-inline-box", CSSPrimitiveValue::CSS_STRING);
+            case khtml::NONE:
+                return new CSSPrimitiveValueImpl("none", CSSPrimitiveValue::CSS_STRING);
+            default:
+                ASSERT_NOT_REACHED();
+        }
     case CSS_PROP_EMPTY_CELLS:
         // FIXME: unimplemented
 		break;
     case CSS_PROP_FLOAT:
-        // FIXME: unimplemented
-		break;
+    {
+        switch (m_renderer->style()->floating()) {
+            case khtml::FNONE:
+                return new CSSPrimitiveValueImpl("none", CSSPrimitiveValue::CSS_STRING);
+            case khtml::FLEFT:
+                return new CSSPrimitiveValueImpl("left", CSSPrimitiveValue::CSS_STRING);
+            case khtml::FRIGHT:
+                return new CSSPrimitiveValueImpl("right", CSSPrimitiveValue::CSS_STRING);
+        }
+    }
     case CSS_PROP_FONT_FAMILY:
     {
         FontDef def = m_renderer->style()->htmlFont().getFontDef();
@@ -496,8 +543,18 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_WHITE_SPACE:
-        // FIXME: unimplemented
-		break;
+    {
+        switch (m_renderer->style()->whiteSpace()) {
+            case khtml::NORMAL:
+                return new CSSPrimitiveValueImpl("normal", CSSPrimitiveValue::CSS_STRING);
+            case khtml::PRE:
+                return new CSSPrimitiveValueImpl("pre", CSSPrimitiveValue::CSS_STRING);
+            case khtml::NOWRAP:
+                return new CSSPrimitiveValueImpl("nowrap", CSSPrimitiveValue::CSS_STRING);
+            case khtml::KHTML_NOWRAP:
+                return new CSSPrimitiveValueImpl("-khtml-nowrap", CSSPrimitiveValue::CSS_STRING);
+        }
+    }
     case CSS_PROP_WIDOWS:
         // FIXME: unimplemented
 		break;
