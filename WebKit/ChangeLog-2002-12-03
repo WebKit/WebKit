@@ -1,3 +1,13 @@
+2002-11-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed - 3091658: REGRESSION: cmd-left for back doesn't work in plain-text viewer
+
+	We now pass text field key events to the next responder which would be WebView in this case.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView keyDown:]):
+        (-[WebTextView keyUp:]):
+
 2002-11-04  Darin Adler  <darin@apple.com>
 
 	- fixed 3090257 -- "leak the world" using the Wallace and Gromit "console"

@@ -127,4 +127,14 @@
     return YES;
 }
 
+// Pass key events to next responder so command-arrows work.
+- (void)keyDown:(NSEvent *)event
+{
+    [[self nextResponder] keyDown:event];
+}
+
+- (void)keyUp:(NSEvent *)event
+{
+    [[self nextResponder] keyUp:event];
+}
 @end
