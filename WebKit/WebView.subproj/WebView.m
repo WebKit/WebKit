@@ -2244,7 +2244,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (NSArray *)pasteboardTypesForElement:(NSDictionary *)element
 {
     if ([element objectForKey:WebElementImageURLKey] != nil) {
-        return [NSPasteboard _web_writableTypesForImage];
+        return [NSPasteboard _web_writableTypesForImageIncludingArchive:([element objectForKey:WebElementDOMNodeKey] != nil)];
     } else if ([element objectForKey:WebElementLinkURLKey] != nil) {
         return [NSPasteboard _web_writableTypesForURL];
     } else if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {

@@ -65,18 +65,32 @@ NSString *WebURLNamePboardType = nil;
     return types;
 }
 
-+ (NSArray *)_web_writableTypesForImage
+static NSArray *_web_writableTypesForImageWithoutArchive ()
 {
     static NSMutableArray *types = nil;
-    if (!types) {
-        types = [[NSMutableArray alloc] initWithObjects:
-            NSTIFFPboardType, 
-            NSRTFDPboardType, 
-            WebArchivePboardType, 
-            nil];
+    if (types == nil) {
+        types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
         [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
     }
     return types;
+}
+
+static NSArray *_web_writableTypesForImageWithArchive ()
+{
+    static NSMutableArray *types = nil;
+    if (types == nil) {
+        types = [[NSMutableArray alloc] initWithArray:_web_writableTypesForImageWithoutArchive()];
+        [types addObject:NSRTFDPboardType];
+        [types addObject:WebArchivePboardType];
+    }
+    return types;
+}
+
++ (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive
+{
+    return hasArchive 
+        ? _web_writableTypesForImageWithArchive()
+        : _web_writableTypesForImageWithoutArchive();
 }
 
 + (NSArray *)_web_dragTypesForURL
@@ -205,6 +219,10 @@ NSString *WebURLNamePboardType = nil;
         if ([types containsObject:WebArchivePboardType]) {
             [self setData:[archive data] forType:WebArchivePboardType];
         }
+    } else {
+        // We should not have declared types that we aren't going to write (4031826).
+        ASSERT(![types containsObject:NSRTFDPboardType]);
+        ASSERT(![types containsObject:WebArchivePboardType]);
     }
 }
 
@@ -216,7 +234,7 @@ NSString *WebURLNamePboardType = nil;
 {
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
-    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImage]];
+    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
     [self _web_writeImage:image URL:URL title:title archive:archive types:types];
     [types release];

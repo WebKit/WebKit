@@ -20,7 +20,7 @@ extern NSString *WebURLNamePboardType;
 + (NSArray *)_web_writableTypesForURL;
 
 // Returns the array of types that _web_writeImage::::: handles.
-+ (NSArray *)_web_writableTypesForImage;
++ (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive;
 
 // Returns the array of drag types that _web_bestURL handles; note that the presence
 // of one or more of these drag types on the pasteboard is not a guarantee that

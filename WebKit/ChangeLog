@@ -1,3 +1,53 @@
+2005-03-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/4031826> REGRESSION (Mail): standalone images from 
+        Safari can't be pasted into Mail (WebKit part of fix)
+        
+        We were always declaring webarchive-related pasteboard types, even in the standalone
+        image cases where we had no webarchive. Unfortunately, the WebView pasteboard-related
+        API doesn't prevent this kind of thing from happening, because the code that
+        declares the types isn't guaranteed to be anywhere near the code that writes
+        the pasteboard data.
+        
+        After this fix, I discovered that pasting standalone images into Mail still doesn't
+        work right, but the remaining issues seem to be entirely in Mail. I wrote up 4041671
+        to cover these.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        (+[NSPasteboard _web_writableTypesForImageIncludingArchive:]):
+        Added boolean parameter; clients must specify whether or not there's an
+        archive involved, because the array of types is different if there is.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (_web_writableTypesForImageWithoutArchive):
+        new static function, constructs (once) and returns the array of types
+        for images that don't have archives
+        (_web_writableTypesForImageWithArchive):
+        new static function, constructs (once) and returns the array of types
+        for images that do have archives
+        (+[NSPasteboard _web_writableTypesForImageIncludingArchive:]):
+        added boolean parameter, now calls one of the two new static functions
+        
+        (-[NSPasteboard _web_writeImage:URL:title:archive:types:]):
+        added asserts that we aren't declaring the archive types if we don't have archive data
+        
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]):
+        updated to pass parameter to _web_writableTypesForImageIncludingArchive:
+        
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]):
+        updated to pass parameter to _web_writableTypesForImageIncludingArchive:
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView copy:]):
+        updated to pass parameter to _web_writableTypesForImageIncludingArchive:
+
+        * WebView.subproj/WebView.m:
+        (-[WebView pasteboardTypesForElement:]):
+        updated to pass parameter to _web_writableTypesForImageIncludingArchive:
+
 2005-03-07  Richard Williamson   <rjw@apple.com>
 
 	More bullet proofing for <rdar://problem/4038304> CrashTracer: ....9 crashes at com.apple.WebKit: -[WebTextRenderer initWithFont:usingPrinterFont:] + 840
