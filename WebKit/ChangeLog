@@ -1,3 +1,9 @@
+2002-03-05  John Sullivan  <sullivan@apple.com>
+
+	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]):
+	Tweak default font sizes so they match what algorithm used in Alexander
+	returns.
+
 2002-03-05  Richard Williamson  <rjw@apple.com>
 
         Pass errors correctly to browser.
