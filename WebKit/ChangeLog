@@ -1,3 +1,30 @@
+2005-02-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - WebKit part of fix for <rdar://problem/4023490> REGRESSION (125-185): Tabbing through links 
+        on frameset page gets stuck at end (tivofaq.com)
+        
+        This tab-to-links stuff has been in shaky condition ever since AppKit futzed with
+        tabbing behavior in Tiger to add support for including the toolbar in the key loop.
+        I made some changes months ago to compensate for that, but some cases, such as this
+        one, still weren't fixed.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge _nextKeyViewOutsideWebFrameViewsWithValidityCheck:]):
+        new bottleneck method, extracted from nextKeyViewOutsideWebFrameViews; handles
+        nextKeyView or nextValidKeyView depending on parameter.
+        (-[WebBridge nextKeyViewOutsideWebFrameViews]):
+        now calls extracted method
+        (-[WebBridge nextValidKeyViewOutsideWebFrameViews]):
+        new method, calls new bottleneck method
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView nextValidKeyView]):
+        when we're stuck at the end of a nextKeyView chain inside a nexted frame, use
+        nextValidKeyViewOutsideWebFrameViews. Make sure we don't end up looking inside
+        the web frame views while doing this.
+
 2005-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

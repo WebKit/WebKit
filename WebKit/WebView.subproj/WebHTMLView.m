@@ -2855,12 +2855,36 @@ static WebHTMLView *lastHitView = nil;
 - (NSView *)nextValidKeyView
 {
     NSView *view = nil;
-    if (![self isHiddenOrHasHiddenAncestor]) {
+    BOOL lookInsideWebFrameViews = YES;
+    if ([self isHiddenOrHasHiddenAncestor]) {
+        lookInsideWebFrameViews = NO;
+    } else if ([self _frame] == [[self _webView] mainFrame]) {
+        // Check for case where first responder is last frame in a frameset, and we are
+        // the top-level documentView.
+        NSResponder *firstResponder = [[self window] firstResponder];
+        if ((firstResponder != self) && [firstResponder isKindOfClass:[WebHTMLView class]] && ([(NSView *)firstResponder nextKeyView] == nil)) {
+            lookInsideWebFrameViews = NO;
+        }
+    }
+    
+    if (lookInsideWebFrameViews) {
         view = [[self _bridge] nextKeyViewInsideWebFrameViews];
     }
+    
     if (view == nil) {
         view = [super nextValidKeyView];
+        // If there's no next view wired up, we must be in the last subframe.
+        // There's no direct link to the next valid key view; get it from the bridge.
+        // Note that view == self here when nextKeyView returns nil, due to AppKit oddness.
+        // We'll check for both nil and self in case the AppKit oddness goes away.
+        // WebFrameView has this same kind of logic for the previousValidKeyView case.
+        if (view == nil || view == self) {
+            ASSERT([self _frame] != [[self _webView] mainFrame]);
+            ASSERT(lookInsideWebFrameViews);
+            view = [[self _bridge] nextValidKeyViewOutsideWebFrameViews];
+        }
     }
+        
     return view;
 }
 

@@ -503,6 +503,7 @@ typedef enum {
 - (void)unfocusWindow;
 
 - (NSView *)nextKeyViewOutsideWebFrameViews;
+- (NSView *)nextValidKeyViewOutsideWebFrameViews;
 - (NSView *)previousKeyViewOutsideWebFrameViews;
 
 - (BOOL)defersLoading;

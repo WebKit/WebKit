@@ -721,7 +721,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return _inNextKeyViewOutsideWebFrameViews;
 }
 
-- (NSView *)nextKeyViewOutsideWebFrameViews
+- (NSView *)_nextKeyViewOutsideWebFrameViewsWithValidityCheck:(BOOL)mustBeValid
 {
     if (_inNextKeyViewOutsideWebFrameViews) {
         // We should never get here, but unrepro bug 3997185 says we sometimes do.
@@ -737,9 +737,20 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // the next key view of the last view in its key view loop.
     // Doing so gives us the correct answer as calculated by AppKit, 
     // and makes HTML views behave like other views.
-    NSView *nextKeyView = [[webView _findLastViewInKeyViewLoop] nextKeyView];
+    NSView *lastViewInLoop = [webView _findLastViewInKeyViewLoop];
+    NSView *nextKeyView = mustBeValid ? [lastViewInLoop nextValidKeyView] : [lastViewInLoop nextKeyView];
     _inNextKeyViewOutsideWebFrameViews = NO;
     return nextKeyView;
+}
+
+- (NSView *)nextKeyViewOutsideWebFrameViews
+{
+    return [self _nextKeyViewOutsideWebFrameViewsWithValidityCheck:NO];
+}
+
+- (NSView *)nextValidKeyViewOutsideWebFrameViews
+{
+    return [self _nextKeyViewOutsideWebFrameViewsWithValidityCheck:YES];
 }
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
