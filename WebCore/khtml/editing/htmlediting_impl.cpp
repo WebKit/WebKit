@@ -624,15 +624,45 @@ void ApplyStyleCommandImpl::doApply()
     if (endingSelection().state() != Selection::RANGE)
         return;
 
-    // Right now, we only apply in place if the start and end are in the same
-    // node. This could be improved in the future to handle more cases that
-    // are only a bit more complex than this case.
-    Position start(endingSelection().start().equivalentDownstreamPosition());
+    // adjust to the positions we want to use for applying style
+    Position start(endingSelection().start().equivalentDownstreamPosition().equivalentRangeCompliantPosition());
     Position end(endingSelection().end().equivalentUpstreamPosition());
-    if (start.node() == end.node())
-        applyInPlace(start, end);
-    else
-        applyUsingFragment();
+
+    // remove style from the selection
+    removeStyle(start, end);
+    bool splitStart = splitTextAtStartIfNeeded(start, end); 
+    if (splitStart) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
+    splitTextAtEndIfNeeded(start, end);
+    start = endingSelection().start();
+    end = endingSelection().end();
+
+    
+    if (start.node() == end.node()) {
+        // simple case...start and end are the same node
+        applyStyleIfNeeded(start.node(), end.node());
+    }
+    else {
+        NodeImpl *node = start.node();
+        while (1) {
+            if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
+                NodeImpl *runStart = node;
+                while (1) {
+                    if (runStart->parentNode() != node->parentNode() || node->isHTMLElement() || node == end.node() || 
+                        (node->renderer() && !node->renderer()->isInline())) {
+                        applyStyleIfNeeded(runStart, node);
+                        break;
+                    }
+                    node = node->traverseNextNode();
+                }
+            }
+            if (node == end.node())
+                break;
+            node = node->traverseNextNode();
+        }
+    }
 }
 
 //------------------------------------------------------------------------------------------
@@ -657,17 +687,17 @@ bool ApplyStyleCommandImpl::isHTMLStyleNode(HTMLElementImpl *elem)
     return false;
 }
 
-void ApplyStyleCommandImpl::removeHTMLStyleNode(HTMLElementImpl *elem, EUndoable undoable)
+void ApplyStyleCommandImpl::removeHTMLStyleNode(HTMLElementImpl *elem)
 {
     // This node can be removed.
     // EDIT FIXME: This does not handle the case where the node
     // has attributes. But how often do people add attributes to <B> tags? 
     // Not so often I think.
     ASSERT(elem);
-    removeNodePreservingChildren(elem, undoable);
+    removeNodePreservingChildren(elem);
 }
 
-void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undoable)
+void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem)
 {
     ASSERT(elem);
 
@@ -678,15 +708,8 @@ void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undo
     for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
         if (decl->getPropertyCSSValue(property->id()))
-            removeCSSProperty(decl, property->id(), undoable);
+            removeCSSProperty(decl, property->id());
     }
-
-    // EDIT FIXME: These four lines of code should not be necessary.
-    // The DOM should update without having to do this extra work.
-    if (decl->values()->count() > 0)
-        setNodeAttribute(elem, ATTR_STYLE, decl->cssText(), undoable);
-    else
-        removeNodeAttribute(elem, ATTR_STYLE, undoable);
 
     if (elem->id() == ID_SPAN) {
         // Check to see if the span is one we added to apply style.
@@ -694,67 +717,123 @@ void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undo
         // class marker, remove the span.
         NamedAttrMapImpl *map = elem->attributes();
         if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
-            removeNodePreservingChildren(elem, undoable);
+            removeNodePreservingChildren(elem);
     }
 }
 
-void ApplyStyleCommandImpl::removeCSSProperty(CSSStyleDeclarationImpl *decl, int property, EUndoable undoable)
+void ApplyStyleCommandImpl::removeStyle(const Position &start, const Position &end)
 {
-    if (undoable == UNDOABLE)
-        CompositeEditCommandImpl::removeCSSProperty(decl, property);
-    else
-        decl->removeProperty(property);
-}
-
-void ApplyStyleCommandImpl::setNodeAttribute(ElementImpl *elem, int attribute, const DOMString &value, EUndoable undoable)
-{
-    if (undoable == UNDOABLE) {
-        CompositeEditCommandImpl::setNodeAttribute(elem, attribute, value);
-    }
-    else {
-        int exceptionCode = 0;
-        elem->setAttribute(attribute, value.implementation(), exceptionCode);
-        ASSERT(exceptionCode == 0);
-    }
-}
-
-void ApplyStyleCommandImpl::removeNodeAttribute(ElementImpl *elem, int attribute, EUndoable undoable)
-{
-    if (undoable == UNDOABLE) {
-        CompositeEditCommandImpl::removeNodeAttribute(elem, attribute);
-    }
-    else {
-        int exceptionCode = 0;
-        elem->removeAttribute(attribute, exceptionCode);
-        ASSERT(exceptionCode == 0);
-    }
-}
-
-void ApplyStyleCommandImpl::removeNodePreservingChildren(NodeImpl *parent, EUndoable undoable)
-{
-    if (undoable == UNDOABLE) {
-        CompositeEditCommandImpl::removeNodePreservingChildren(parent);
-    }
-    else {
-        NodeImpl *grandparent = parent->parentNode();
-        ASSERT(grandparent);
-        int exceptionCode = 0;
-        while (parent->firstChild()) {
-            NodeImpl *child = parent->firstChild();
-            child->ref();
-            parent->removeChild(child, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            grandparent->insertBefore(child, parent, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            child->deref();
+    NodeImpl *node = start.node();
+    while (1) {
+        NodeImpl *next = node->traverseNextNode();
+        if (node->isHTMLElement() && nodeFullySelected(node)) {
+            HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
+            if (isHTMLStyleNode(elem))
+                removeHTMLStyleNode(elem);
+            else
+                removeCSSStyle(elem);
         }
-        parent->parentNode()->removeChild(parent, exceptionCode);
-        ASSERT(exceptionCode == 0);
+        if (node == end.node())
+            break;
+        node = next;
     }
+}
+
+bool ApplyStyleCommandImpl::nodeFullySelected(const NodeImpl *node) const
+{
+    ASSERT(node);
+
+    Position end(endingSelection().end().equivalentUpstreamPosition());
+    
+    if (node == end.node())
+        return end.offset() >= node->caretMaxOffset();
+
+    for (NodeImpl *child = node->lastChild(); child; child = child->lastChild()) {
+        if (child == end.node())
+            return end.offset() >= child->caretMaxOffset();
+    }
+
+    return !node->isAncestor(end.node());
 }
 
 //------------------------------------------------------------------------------------------
-// ApplyStyleCommandImpl: shared helpers
+// ApplyStyleCommandImpl: style-application helpers
+
+
+bool ApplyStyleCommandImpl::splitTextAtStartIfNeeded(const Position &start, const Position &end)
+{
+    if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
+        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+        TextImpl *text = static_cast<TextImpl *>(start.node());
+        SplitTextNodeCommand cmd(document(), text, start.offset());
+        applyCommandToComposite(cmd);
+        setEndingSelection(Selection(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment)));
+        return true;
+    }
+    return false;
+}
+
+NodeImpl *ApplyStyleCommandImpl::splitTextAtEndIfNeeded(const Position &start, const Position &end)
+{
+    if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
+        TextImpl *text = static_cast<TextImpl *>(end.node());
+        SplitTextNodeCommand cmd(document(), text, end.offset());
+        applyCommandToComposite(cmd);
+        NodeImpl *startNode = start.node() == end.node() ? cmd.node()->previousSibling() : start.node();
+        ASSERT(startNode);
+        setEndingSelection(Selection(Position(startNode, start.offset()), Position(cmd.node()->previousSibling(), cmd.node()->previousSibling()->caretMaxOffset())));
+        return cmd.node()->previousSibling();
+    }
+    return end.node();
+}
+
+void ApplyStyleCommandImpl::surroundNodeRangeWithElement(NodeImpl *startNode, NodeImpl *endNode, ElementImpl *element)
+{
+    ASSERT(startNode);
+    ASSERT(endNode);
+    ASSERT(element);
+    
+    NodeImpl *node = startNode;
+    while (1) {
+        NodeImpl *next = node->traverseNextNode();
+        if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
+            removeNode(node);
+            appendNode(element, node);
+        }
+        if (node == endNode)
+            break;
+        node = next;
+    }
+}
+
+void ApplyStyleCommandImpl::applyStyleIfNeeded(DOM::NodeImpl *startNode, DOM::NodeImpl *endNode)
+{
+    StyleChange styleChange = computeStyleChange(Position(startNode, 0), style());
+    int exceptionCode = 0;
+    
+    if (styleChange.cssStyle.length() > 0) {
+        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+        insertNodeBefore(styleElement, startNode);
+        surroundNodeRangeWithElement(startNode, endNode, styleElement);
+    }
+
+    if (styleChange.applyBold) {
+        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        insertNodeBefore(boldElement, startNode);
+        surroundNodeRangeWithElement(startNode, endNode, boldElement);
+    }
+
+    if (styleChange.applyItalic) {
+        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        insertNodeBefore(italicElement, startNode);
+        surroundNodeRangeWithElement(startNode, endNode, italicElement);
+    }
+}
 
 bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos, const CSSProperty *property) const
 {
@@ -799,9 +878,6 @@ ApplyStyleCommandImpl::StyleChange ApplyStyleCommandImpl::computeStyleChange(con
     return styleChange;
 }
 
-//------------------------------------------------------------------------------------------
-// ApplyStyleCommandImpl: apply-in-place helpers
-
 Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
 {
     if (pos.node()->isTextNode() && (pos.offset() > 0 && pos.offset() < pos.node()->maxOffset())) {
@@ -841,288 +917,6 @@ Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
 #endif
     
     return pos;
-}
-
-bool ApplyStyleCommandImpl::splitTextAtStartIfNeeded(const Position &start, const Position &end)
-{
-    if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
-        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
-        TextImpl *text = static_cast<TextImpl *>(start.node());
-        SplitTextNodeCommand cmd(document(), text, start.offset());
-        applyCommandToComposite(cmd);
-        setEndingSelection(Selection(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment)));
-        return true;
-    }
-    return false;
-}
-
-bool ApplyStyleCommandImpl::splitTextAtEndIfNeeded(const Position &start, const Position &end)
-{
-    if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
-        TextImpl *text = static_cast<TextImpl *>(end.node());
-        SplitTextNodeCommand cmd(document(), text, end.offset());
-        applyCommandToComposite(cmd);
-        NodeImpl *startNode = start.node() == end.node() ? cmd.node()->previousSibling() : start.node();
-        ASSERT(startNode);
-        ASSERT(startNode->isTextNode());
-        setEndingSelection(Selection(Position(startNode, start.offset()), Position(cmd.node()->previousSibling(), cmd.node()->previousSibling()->caretMaxOffset())));
-        return true;
-    }
-    return false;
-}
-
-void ApplyStyleCommandImpl::applyStyleIfNeeded(const Position &insertionPoint)
-{
-    ASSERT(insertionPoint.notEmpty());
-
-    StyleChange styleChange = computeStyleChange(insertionPoint, style());
-    NodeImpl *contentNode = insertionPoint.node();
-    int exceptionCode = 0;
-
-    if (styleChange.cssStyle.length() > 0) {
-        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
-        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
-        insertNodeBefore(styleElement, contentNode);
-        removeNode(contentNode);
-        appendNode(styleElement, contentNode);
-    }
-
-    if (styleChange.applyBold) {
-        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        insertNodeBefore(boldElement, contentNode);
-        removeNode(contentNode);
-        appendNode(boldElement, contentNode);
-    }
-
-    if (styleChange.applyItalic) {
-        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        insertNodeBefore(italicElement, contentNode);
-        removeNode(contentNode);
-        appendNode(italicElement, contentNode);
-    }
-}
-
-void ApplyStyleCommandImpl::removeStyle(const Position &s, const Position &e)
-{
-    Position start(s.equivalentDownstreamPosition().equivalentShallowPosition().equivalentRangeCompliantPosition());
-    Position end(e.equivalentUpstreamPosition());
-    NodeImpl *node = start.node();
-    while (node != end.node()) {
-        NodeImpl *next = node->traverseNextNode();
-        if (node->isHTMLElement()) {
-            HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
-            if (isHTMLStyleNode(elem))
-                removeHTMLStyleNode(elem, UNDOABLE);
-            else
-                removeCSSStyle(elem, UNDOABLE);
-        }
-        node = next;
-    }
-}
-
-//------------------------------------------------------------------------------------------
-// ApplyStyleCommandImpl: apply using fragment helpers
-
-DocumentFragmentImpl *ApplyStyleCommandImpl::cloneSelection() const
-{
-    RangeImpl *range = document()->createRange();
-    range->ref();
-    
-    int exceptionCode = 0;
-    Position pos = endingSelection().start();
-    
-    pos = endingSelection().start().equivalentShallowPosition().equivalentRangeCompliantPosition();
-    range->setStart(pos.node(), pos.offset(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-    
-    pos = endingSelection().end().equivalentUpstreamPosition().equivalentRangeCompliantPosition();
-    range->setEnd(pos.node(), pos.offset(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    DocumentFragmentImpl *fragment = range->cloneContents(exceptionCode);
-    ASSERT(exceptionCode == 0);
-    ASSERT(fragment->firstChild());
-
-    range->detach(exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    range->deref();
-
-    return fragment;
-}
-
-void ApplyStyleCommandImpl::removeStyle(DocumentFragmentImpl *fragment)
-{
-    ASSERT(fragment);
-    
-    NodeImpl *node = fragment->firstChild();
-    while (node) {
-        NodeImpl *next = node->traverseNextNode();
-        if (node->isHTMLElement()) {
-            HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
-            if (isHTMLStyleNode(elem))
-                removeHTMLStyleNode(elem, NOTUNDOABLE);
-            else
-                removeCSSStyle(elem, NOTUNDOABLE);
-        }
-        node = next;
-    }
-}
-
-void ApplyStyleCommandImpl::surroundContentsWithElement(DocumentFragmentImpl *fragment, ElementImpl *element) 
-{
-    ASSERT(fragment);
-    ASSERT(element);
-
-    int exceptionCode = 0;
-    NodeImpl *node = fragment->firstChild();
-    while (node) {
-        NodeImpl *next = node->nextSibling();
-        node->ref();
-        fragment->removeChild(node, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        element->appendChild(node, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        node->deref();
-        node = next;
-    }
-    fragment->appendChild(element, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void ApplyStyleCommandImpl::applyStyleIfNeeded(DocumentFragmentImpl *fragment, const Position &insertionPoint)
-{
-    ASSERT(insertionPoint.notEmpty());
-
-    StyleChange styleChange = computeStyleChange(insertionPoint, style());
-    int exceptionCode = 0;
-
-    if (styleChange.cssStyle.length() > 0) {
-        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
-        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
-        surroundContentsWithElement(fragment, styleElement);
-    }
-
-    if (styleChange.applyBold) {
-        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        surroundContentsWithElement(fragment, boldElement);
-    }
-
-    if (styleChange.applyItalic) {
-        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        surroundContentsWithElement(fragment, italicElement);
-    }
-}
-
-void ApplyStyleCommandImpl::insertFragment(DocumentFragmentImpl *fragment, const Position &pos)
-{
-    ASSERT(fragment);
-    ASSERT(pos.notEmpty());
-
-    if (pos.node()->previousSibling()) {
-        NodeImpl *node = fragment->lastChild();
-        while (node) {
-            int exceptionCode = 0;
-            NodeImpl *prev = node->previousSibling();
-            node->ref();
-            fragment->removeChild(node, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            insertNodeAfter(node, pos.node());
-            node->deref();
-            node = prev;
-        }
-    }
-    else {
-        NodeImpl *node = fragment->firstChild();
-        while (node) {
-            int exceptionCode = 0;
-            NodeImpl *next = node->nextSibling();
-            node->ref();
-            fragment->removeChild(node, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            insertNodeBefore(node, pos.node());
-            node->deref();
-            node = next;
-        }
-    }
-}
-
-//------------------------------------------------------------------------------------------
-// ApplyStyleCommandImpl: different cases we recognize and treat differently
-
-void ApplyStyleCommandImpl::applyInPlace(const Position &s, const Position &e)
-{
-    // Style-change request is being done on a sufficiently simple portion of the tree
-    // such that the style change can be done in place.
-
-    // If the start position of the selection is in the middle of a text node, split it.
-    Position start(s);
-    Position end(e);
-    bool splitStart = splitTextAtStartIfNeeded(start, end);
-
-    // If the end position of the selection is in the middle of a text node, split it.
-    if (splitStart) {
-        start = endingSelection().start();
-        end = endingSelection().end();
-    }
-    bool splitEnd = splitTextAtEndIfNeeded(start, end);
-    
-    // If neither start nor end is in the middle of a text node, have a look
-    // to see if any style can be removed from the current selection.
-    if (!splitStart && !splitEnd)
-        removeStyle(start, end);
-    
-    // Apply style if needed (it might not be needed in cases 
-    // where removing style, as done above, makes this content take on the needed style).
-    applyStyleIfNeeded(positionInsertionPoint(endingSelection().start()));
-}
-
-void ApplyStyleCommandImpl::applyUsingFragment()
-{
-    // Style-change request is being done on a sufficiently complex portion of the tree
-    // such that we use a cloned copy of the content in the selection to perform
-    // the style change. 
-    // FIXME: This is more heavy-weight than we might like for some cases,
-    // but it is a start.
-
-    // Start off by creating a cloned document fragment for the selected content
-    // and then delete the selection using the undoable delete. This is an
-    // important part of what makes this operation undoable.
-    DocumentFragmentImpl *fragment = cloneSelection();
-    ASSERT(fragment);
-    fragment->ref();
-    deleteSelection();
-
-    // Move the selection to the edges of the current insertion point left
-    // by the delete selection step. This makes it easy to shift the selection
-    // to the edges of the fragment content once it is reinserted.
-    Position start(endingSelection().start().equivalentUpstreamPosition());
-    Position end(endingSelection().end().equivalentDownstreamPosition());
-
-    // Now process the fragment:
-    // 1. Remove all traces of style we are applying or removing
-    // 2. Apply style if needed (it might not be needed in cases 
-    //    where removing style, as done above, makes this content take on 
-    //    the needed style).
-    // 3. Reinsert fragment into document.
-    // 4. Deref the fragment
-    removeStyle(fragment);
-    applyStyleIfNeeded(fragment, start);
-    insertFragment(fragment, start);
-    fragment->deref();
-
-    // Shift the selection to the edges of the re-inserted fragment content.
-    start = start.equivalentDownstreamPosition();
-    end = end.equivalentUpstreamPosition();
-    setEndingSelection(Selection(start, end));
 }
 
 //------------------------------------------------------------------------------------------

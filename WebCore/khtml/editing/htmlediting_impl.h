@@ -192,36 +192,20 @@ public:
 
 private:
     // style-removal helpers
-    enum EUndoable { UNDOABLE, NOTUNDOABLE };
     bool isHTMLStyleNode(DOM::HTMLElementImpl *);
-    void removeHTMLStyleNode(DOM::HTMLElementImpl *, EUndoable undoable);
-    void removeCSSStyle(DOM::HTMLElementImpl *, EUndoable undoable);
-    void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property, EUndoable undoable);
-    void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &, EUndoable undoable);
-    void removeNodeAttribute(DOM::ElementImpl *, int attribute, EUndoable undoable);
-    void removeNodePreservingChildren(DOM::NodeImpl *, EUndoable undoable);
+    void removeHTMLStyleNode(DOM::HTMLElementImpl *);
+    void removeCSSStyle(DOM::HTMLElementImpl *);
+    void removeStyle(const DOM::Position &start, const DOM::Position &end);
+    bool nodeFullySelected(const DOM::NodeImpl *node) const;
 
-    // shared helpers
+    // style-application helpers
     bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *) const;
     StyleChange computeStyleChange(const DOM::Position &, DOM::CSSStyleDeclarationImpl *);
-     
-    // apply-in-place helpers
-    DOM::Position positionInsertionPoint(DOM::Position);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    void removeStyle(const DOM::Position &start, const DOM::Position &end);
-    void applyStyleIfNeeded(const DOM::Position &);
-
-    // apply using fragment helpers
-    DOM::DocumentFragmentImpl *cloneSelection() const;
-    void removeStyle(DOM::DocumentFragmentImpl *);
-    void surroundContentsWithElement(DOM::DocumentFragmentImpl *, DOM::ElementImpl *);
-    void applyStyleIfNeeded(DOM::DocumentFragmentImpl *, const DOM::Position &);
-    void insertFragment(DOM::DocumentFragmentImpl *, const DOM::Position &);
-
-    // different cases we recognize and treat differently
-    void applyInPlace(const DOM::Position &s, const DOM::Position &e);
-    void applyUsingFragment();
+    DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
+    void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
+    DOM::Position positionInsertionPoint(DOM::Position);
+    void applyStyleIfNeeded(DOM::NodeImpl *start, DOM::NodeImpl *end);
     
     DOM::CSSStyleDeclarationImpl *m_style;
 };

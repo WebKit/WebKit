@@ -1,3 +1,30 @@
+2004-06-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3654850>: "Style changes do not work across blocks"
+        
+        Now, applying styles works across blocks. I did quite a bit
+        of internal redsign on the member functions of this class to
+        make this work. As a bonus, from an architectural standpoint,
+        all style changes are now done "in place". There is no more
+        copying of content in order to perform style changes.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply):
+        (khtml::ApplyStyleCommandImpl::removeHTMLStyleNode):
+        (khtml::ApplyStyleCommandImpl::removeCSSStyle):
+        (khtml::ApplyStyleCommandImpl::removeStyle):
+        (khtml::ApplyStyleCommandImpl::nodeFullySelected):
+        (khtml::ApplyStyleCommandImpl::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommandImpl::splitTextAtEndIfNeeded):
+        (khtml::ApplyStyleCommandImpl::surroundNodeRangeWithElement):
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded):
+        (khtml::ApplyStyleCommandImpl::positionInsertionPoint):
+        * khtml/editing/htmlediting_impl.h:
+
 2004-06-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
