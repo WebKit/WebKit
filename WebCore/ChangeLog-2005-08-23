@@ -1,5 +1,26 @@
 2004-08-24  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3773564> REGRESSION (125-159): Code to remove HTML styles before applying new HTML styles is broken
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply): Unrelated change to constrain downstream position of selection
+        start to block boundaries. This is a new feature of the downstream function and I missed this usage
+        when adding the feature.
+        (khtml::ApplyStyleCommandImpl::removeCSSStyle): There once was code to remove style attributes from spans
+        which became emptied as a result of removing CSS properties, but I do not see such code in the 
+        tree any more. A quick review of the ChangeLog did not reveal anything. I do not remember making such
+        a change myself...
+        
+        In any case, I have restored logic to prune out styling spans we insert if the process of 
+        removing styles caused a span-plus-styles node to become emptied of markup which changes the style
+        of its contents. This fixes the bug.
+
+2004-08-24  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
