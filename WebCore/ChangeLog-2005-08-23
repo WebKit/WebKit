@@ -1,3 +1,12 @@
+2004-01-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3543041>: when pasting an image, cursor should be after the image, not before
+
+        Reviewed by rjw.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::pasteHTMLString): when the last node of the paste is non-text, use 1 instead of 0 as the start offset of the caret
+
 2004-01-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
