@@ -26,6 +26,8 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
+#include <kwqdef.h>
+
 class QPoint {
 public:
     QPoint();
@@ -36,6 +38,13 @@ public:
     int y() const;
 
     friend inline QPoint operator+(const QPoint &, const QPoint &);
+};
+
+// FIXME: QPointArray here to workaround bug in khtml/html/html_imageimpl.cpp
+class QPointArray {
+public:
+    QPointArray(int);
+    void setPoint(uint, int, int);
 };
 
 #endif
