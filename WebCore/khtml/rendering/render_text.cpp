@@ -526,8 +526,8 @@ void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &widt
         return;
     }
 
-    _y = box->m_y;
-    height = box->m_height;
+    height = box->root()->bottomOverflow() - box->root()->topOverflow();
+    _y = box->root()->topOverflow();
 
     const QFontMetrics &fm = metrics(box->isFirstLineStyle());
     QString string(str->s + box->m_start, box->m_len);

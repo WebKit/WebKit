@@ -1,5 +1,18 @@
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Dave
+
+        Caret height is now the height of the tallest element on the line,
+        mimicking NSText behavior.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::caretPos): Use root line box topOverflow and bottomOverflow 
+        for the calculation of caret height.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretPos): Ditto.
+
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         Added a new suite of layout tests for editing, all added

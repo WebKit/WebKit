@@ -1408,8 +1408,15 @@ void RenderBox::caretPos(int offset, bool override, int &_x, int &_y, int &width
     // offset 0 means left, offset 1 means right
     if (_x == -1) {
         _x = xPos() + (offset == 0 ? 0 : m_width);
-        _y = yPos();
-        height = m_height;
+        InlineBox *box = inlineBoxWrapper();
+        if (box) {
+            height = box->root()->bottomOverflow() - box->root()->topOverflow();
+            _y = box->root()->topOverflow();
+        }
+        else {
+            _y = yPos();
+            height = m_height;
+        }
         width = override && offset == 0 ? m_width : 1;
         // If height of box is smaller than font height, use the latter one,
         // otherwise the caret might become invisible.
