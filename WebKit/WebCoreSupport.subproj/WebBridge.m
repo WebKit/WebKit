@@ -197,7 +197,7 @@
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
-    [[[frame controller] locationChangeDelegate] clientRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
+    [[[frame controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
 }
 
 - (void)reportClientRedirectCancelled
@@ -210,7 +210,7 @@
     ASSERT(webFrame != nil);
 
     if (frame == nil) {
-	// FIXME: non-retained because data source owns representation owns bridge
+	// Non-retained because data source owns representation owns bridge
 	frame = webFrame;
         [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
     } else {
@@ -278,11 +278,9 @@
         [[[frame controller] backForwardList] addEntry:backForwardItem];
         [backForwardItem release];
 
-        //id <WebLocationChangeDelegate> delegate = [[frame controller] locationChangeDelegate];
         WebDataSource *dataSource = [frame dataSource];
-        [dataSource _setURL:URL];
-        
-        // FIXME: Call some method here.
+        [dataSource _setURL:URL];        
+        [[[frame controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
         return;
     }
     

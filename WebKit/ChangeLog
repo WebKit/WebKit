@@ -1,3 +1,28 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3017152 -- intra-page anchors not updating page address field
+
+        * WebView.subproj/WebLocationChangeDelegate.h: Rearrange methods so they are
+	in the order they are delivered. Add locationChangedWithinPageForDataSource method.
+	Renamed the redirect methods to match the verb tenses used in the others.
+	Removed the URL parameter from the server redirect method.
+        * WebView.subproj/WebLocationChangeDelegate.m: Update the class to match the
+	changes to the protocol.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]):
+	Update for change to clientWillRedirectTo method name.
+        (-[WebBridge loadURL:]): Call locationChangedWithinPageForDataSource:.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setRequest:]):
+	Update for change to serverRedirectedForDataSource method name.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView mouseMovedNotification:]):
+	Remove overzealous assert that was firing for me.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m: Update comment.
+        * WebView.subproj/WebDataSource.h: Fix comment.
+
 2002-10-15  Darin Adler  <darin@apple.com>
 
 	- fixed 3062393 -- need to send proper referrer for "open in new window" menu items and keyboard shortcuts

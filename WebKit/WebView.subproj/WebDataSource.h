@@ -95,7 +95,7 @@
     @method URL
     @discussion The value of URL will change if a redirect occurs.
     To monitor change in the URL, override the <WebLocationChangeHandler> 
-    serverRedirectTo:forDataSource: method.
+    serverRedirectedForDataSource: method.
     @result Returns the current URL associated with the datasource.
 */
 - (NSURL *)URL;

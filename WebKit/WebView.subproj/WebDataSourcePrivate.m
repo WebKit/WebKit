@@ -279,7 +279,7 @@
     [_private->request release];
     _private->request = request;
 
-    [[_private->controller locationChangeDelegate] serverRedirectTo:[request URL] forDataSource:self];
+    [[_private->controller locationChangeDelegate] serverRedirectedForDataSource:self];
 }
 
 - (void)_setResponse:(WebResourceResponse *)response

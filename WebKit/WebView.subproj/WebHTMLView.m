@@ -706,7 +706,6 @@
 - (void)mouseMovedNotification:(NSNotification *)notification
 {
     ASSERT(![self _insideAnotherHTMLView]);
-    ASSERT([[self window] isMainWindow]);
     
     NSEvent *event = [[notification userInfo] objectForKey:@"NSEvent"];
 

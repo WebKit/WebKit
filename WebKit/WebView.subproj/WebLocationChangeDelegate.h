@@ -27,6 +27,14 @@
 - (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource;
 
 /*!
+    @method serverRedirectedTo:forDataSource:
+    @abstract Notify that the data source has received a server redirect.
+    @param dataSource The data source for which the redirect occurred
+    @discussion You can find the new URL from the data source object.
+*/
+- (void)serverRedirectedForDataSource:(WebDataSource *)dataSource;
+
+/*!
     @method locationChangeCommittedForDataSource:
     @abstract Notify that a location change has been committed on a given data source
     @param dataSource The data source for which the location change has started
@@ -37,16 +45,6 @@
 
 */
 - (void)locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
-
-/*!
-    @method locationChangeDone:forDataSource
-    @abstract Notify that a location change is done (possibly with an error) for a data source
-    @param error The error, if one occurred, or nil if none
-    @param dataSource The data source that finished changing location
-    @discussion This callback will only be received when all
-    subresources are done loading.
-*/
-- (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method receivedPageTitle:forDataSource:
@@ -69,16 +67,28 @@
 - (void)receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method serverRedirectTo:forDataSource:
-    @abstract Notify that the data source has received a server redirect.
-    @param URL The URL redirected to
-    @param dataSource The data source for which the redirect occurred
+    @method locationChangeDone:forDataSource
+    @abstract Notify that a location change is done (possibly with an error) for a data source
+    @param error The error, if one occurred, or nil if none
+    @param dataSource The data source that finished changing location
+    @discussion This callback will only be received when all
+    subresources are done loading.
 */
-- (void)serverRedirectTo:(NSURL *)URL forDataSource:(WebDataSource *)dataSource;
+- (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method clientRedirectTo:delay:fireDate:forFrame:
-    @abstract Notify that the data source has received a client-side redirect that may trigger soon
+    @method locationChangedWithinPageForDataSource:
+    @abstract Notify that a further location change within the page
+    has occurred for an already loaded data source
+    @param dataSource The data source that had a location change
+    @discussion This is normally used for clicks on anchors within a page
+    that is already displayed. You can find the new URL from the data source object.
+*/
+- (void)locationChangedWithinPageForDataSource:(WebDataSource *)dataSource;
+
+/*!
+    @method clientWillRedirectTo:delay:fireDate:forFrame:
+    @abstract Notify that the frame has received a client-side redirect that may trigger soon
     @param URL The URL to be redirected to
     @param seconds Seconds in which the redirect will happen
     @param date The fire date
@@ -87,7 +97,7 @@
     going while a client redirect is pending. A client redirect might
     be cancelled before it fires - see clientRedirectCancelledForFrame.
 */
-- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame;
+- (void)clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame;
 
 /*!
     @method clientRedirectCancelledForFrame:

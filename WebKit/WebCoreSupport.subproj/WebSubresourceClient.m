@@ -114,12 +114,9 @@
 {
     ASSERT(handle == h);
 
-    // FIXME: We do want to tell the client about redirects.
+    // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
-    // the main page from redirects on subresources, so for now we are
-    // just disabling this. Before, we had code that tried to send the
-    // redirect, but sent it to the wrong object.
-    //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
+    // the main page from redirects on subresources.
 
     // FIXME: Need to make sure client sets cookie policy base URL
     // properly on redirect when we have the new redirect
