@@ -1,3 +1,12 @@
+2005-01-13  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+        
+        Better fix for 3905066.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+
 2005-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
