@@ -31,6 +31,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     newInstance->data = [data copyWithZone:zone];
     newInstance->encoding = [encoding copyWithZone:zone];
     newInstance->baseURL = [baseURL copyWithZone:zone];
+    newInstance->MIMEType = [MIMEType copyWithZone:zone];
     return newInstance;
 }
 

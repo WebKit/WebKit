@@ -1,5 +1,14 @@
 2003-04-30  Richard Williamson   <rjw@apple.com>
 
+        Copy MIME type when copying WebDataProtocol's parameters.
+        
+        Reviewed by Ken.
+
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataRequestParameters copyWithZone:]):
+
+2003-04-30  Richard Williamson   <rjw@apple.com>
+
         Documentation fixes.
         Added "ADVISORY NOTE" about possible API change after beta SDK.
         
