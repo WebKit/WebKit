@@ -260,6 +260,7 @@
 				F53444D002E87CBA018635CA,
 				F53444D302E87D4B018635CA,
 				F5934C8A02E894F50197FBCF,
+				F649E40602EE0D1901CA2ACD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,6 +340,7 @@
 				F508472502DED36E01257167,
 				F53444D102E87CBA018635CA,
 				F5934C8B02E894F50197FBCF,
+				F649E40702EE0D1901CA2ACD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1055,6 +1057,8 @@
 				F5143A370221DCCE01A80181,
 				9CF0E249021361B00ECA16EA,
 				9CF0E24A021361B00ECA16EA,
+				F649E40402EE0D1901CA2ACD,
+				F649E40502EE0D1901CA2ACD,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -2258,6 +2262,40 @@
 //F52
 //F53
 //F54
+//F60
+//F61
+//F62
+//F63
+//F64
+		F649E40402EE0D1901CA2ACD = {
+			isa = PBXFileReference;
+			name = WebDefaultControllerPolicyHandler.h;
+			path = ../src/Labyrinth/WebKit/WebView.subproj/WebDefaultControllerPolicyHandler.h;
+			refType = 3;
+		};
+		F649E40502EE0D1901CA2ACD = {
+			isa = PBXFileReference;
+			name = WebDefaultControllerPolicyHandler.m;
+			path = ../src/Labyrinth/WebKit/WebView.subproj/WebDefaultControllerPolicyHandler.m;
+			refType = 3;
+		};
+		F649E40602EE0D1901CA2ACD = {
+			fileRef = F649E40402EE0D1901CA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F649E40702EE0D1901CA2ACD = {
+			fileRef = F649E40502EE0D1901CA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//F60
+//F61
+//F62
+//F63
+//F64
 //F80
 //F81
 //F82

@@ -1,24 +1,25 @@
 /*	
     WebController.mm
-	Copyright 2001, 2002 Apple, Inc. All rights reserved.
+    Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebController.h>
 
+#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultControllerPolicyHandler.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
-#import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
 
@@ -133,9 +134,21 @@
 
 - (id<WebControllerPolicyHandler>)policyHandler
 {
+    if (!_private->policyHandler)
+        _private->policyHandler = [[WebDefaultControllerPolicyHandler alloc] initWithWebController: self];
     return _private->policyHandler;
 }
 
+- (void)setLocationChangeHandler:(id <WebLocationChangeHandler>)handler
+{
+    [_private->locationChangeHandler autorelease];
+    _private->locationChangeHandler = [handler retain];
+}
+
+- (id <WebLocationChangeHandler>)locationChangeHandler
+{
+    return _private->locationChangeHandler;
+}
 
 - (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame
 {

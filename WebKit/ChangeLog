@@ -1,3 +1,45 @@
+2002-07-23  Richard Williamson (Local)  <rjw@apple.com>
+
+        Cleaned up LocationChangeHandler.  We now have one per controller.
+        
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController policyHandler]):
+        (-[WebController setLocationChangeHandler:]):
+        (-[WebController locationChangeHandler]):
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        
+        (-[WebDataSource _setIsDummy:)
+        (-[WebDataSource _isDummy]):
+        Hack on hack.  MJS will remove when the dummy data source hack is removed.
+        
+        (-[WebDataSource _locationChangeHandler]):
+        (-[WebDataSource _removeFromFrame]):
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]):
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]):
+        
+        Added default policy handler.  This is used if no policy handler is
+        set on the controller.
+        
+        * WebView.subproj/WebDefaultControllerPolicyHandler.h: Added.
+        * WebView.subproj/WebDefaultControllerPolicyHandler.m: Added.
+        (-[WebDefaultControllerPolicyHandler initWithWebController:]):
+        (-[WebDefaultControllerPolicyHandler URLPolicyForURL:]):
+        (-[WebDefaultControllerPolicyHandler fileURLPolicyForMIMEType:dataSource:isDirectory:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementFileURLPolicy:forDataSource:]):
+        (-[WebDefaultControllerPolicyHandler requestContentPolicyForMIMEType:dataSource:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementURLPolicyForURL:error:]):
+        (-[WebDefaultControllerPolicyHandler unableToImplementContentPolicy:forDataSource:]):
+        (-[WebDefaultControllerPolicyHandler pluginNotFoundForMIMEType:pluginPageURL:]):
+        * WebView.subproj/WebFrame.m:
+
 2002-07-23  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Clean based on all, not all-am, so it happens before subdirs

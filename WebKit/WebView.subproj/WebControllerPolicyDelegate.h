@@ -36,8 +36,6 @@ typedef enum {
 
 @protocol WebControllerPolicyHandler <NSObject>
 
-- (id <WebLocationChangeHandler>)provideLocationChangeHandlerForDataSource: (WebDataSource *)dataSource;
-
 // URLPolicyForURL: is used to determine what to do BEFORE a URL is loaded, i.e.
 // before it is clicked or loaded via a URL bar.  Clients can choose to handle the
 // URL normally, hand the URL off to launch services, or

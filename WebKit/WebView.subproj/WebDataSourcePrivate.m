@@ -72,11 +72,11 @@
     [contentType release];
     [errors release];
     [mainDocumentError release];
-    [locationChangeHandler release];
     [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
     
+
     [super dealloc];
 }
 
@@ -291,16 +291,21 @@
     [[self _locationChangeHandler] serverRedirectTo:url forDataSource:self];
 }
 
-- (id <WebLocationChangeHandler>)_locationChangeHandler
+- (void)_setIsDummy: (BOOL)f
 {
-    return _private->locationChangeHandler;
+    _private->_isDummy = f;
 }
 
-- (void)_setLocationChangeHandler: (id <WebLocationChangeHandler>)l
+- (BOOL)_isDummy
 {
-    [l retain];
-    [_private->locationChangeHandler release];
-    _private->locationChangeHandler = l;
+    return _private->_isDummy;
+}
+
+- (id <WebLocationChangeHandler>)_locationChangeHandler
+{
+    if ([self _isDummy])
+        return nil;
+    return [_private->controller locationChangeHandler];
 }
 
 - (void)_setDownloadPath:(NSString *)path
@@ -325,32 +330,6 @@
 {
     [_private->encoding release];
     _private->encoding = [encoding retain];
-}
-
-- (WebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <WebLocationChangeHandler>)handler;
-{
-    WebDataSource *childProvisionalDataSource, *childDataSource, *dataSource;
-    WebFrame *nextFrame;
-    NSArray *frames;
-    uint i;
-        
-    if(_private->locationChangeHandler == handler)
-        return self;
-    
-    frames = [self children];
-    for (i = 0; i < [frames count]; i++){
-        nextFrame = [frames objectAtIndex: i];
-        childDataSource = [nextFrame dataSource];
-        dataSource = [childDataSource _recursiveDataSourceForLocationChangeHandler:handler];
-        if(dataSource)
-            return dataSource;
-            
-        childProvisionalDataSource = [nextFrame provisionalDataSource];
-        dataSource = [childProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
-        if(dataSource)
-            return dataSource;
-    }
-    return nil;
 }
 
 - (void)_setMainDocumentError: (WebError *)error
@@ -423,7 +402,6 @@
     WEBKIT_ASSERT(_private->committed);
     [[self _bridge] removeFromFrame];
     [self _setController:nil];
-    [self _setLocationChangeHandler:nil];
 }
 
 - (WebBridge *)_bridge

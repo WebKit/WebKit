@@ -74,6 +74,13 @@
     
     NSURL *iconURL;
     WebIconLoader *iconLoader;
+    
+    
+    // Horrible hack to workaround another horrible hack.
+    // A 'fake' data source is created for every frame to guarantee
+    // that it has a part.  This flag is set if the data source
+    // in a 'fake' data source.
+    BOOL _isDummy;
 }
 
 @end
@@ -95,7 +102,6 @@
 - (void)_setTitle: (NSString *)title;
 - (void)_setFinalURL: (NSURL *)url;
 - (id <WebLocationChangeHandler>)_locationChangeHandler;
-- (void)_setLocationChangeHandler: (id <WebLocationChangeHandler>)l;
 - (void)_setDownloadPath:(NSString *)path;
 - (void)_setContentPolicy:(WebContentPolicy)policy;
 - (void)_setContentType:(NSString *)type;
@@ -110,6 +116,8 @@
 - (void)_loadIcon;
 - (void)_setIconURL:(NSURL *)url;
 - (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType;
+- (BOOL)_isDummy;
+- (void)_setIsDummy: (BOOL)f;
 
 
 // Convenience interface for getting here from an WebDataSource.

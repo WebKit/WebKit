@@ -53,6 +53,7 @@
     [_private setProvisionalDataSource: dummyDataSource];
     [self _setState: WebFrameStateProvisional];
      
+    [dummyDataSource _setIsDummy:YES];	// hack on hack!
     [dummyDataSource _setContentType:@"text/html"];
     [dummyDataSource _setContentPolicy:WebContentPolicyShow];
     [dummyDataSource _receivedData:[NSData data]];
@@ -161,10 +162,8 @@
     // returns YES if we should show the data source
     if([self _shouldShowDataSource:newDataSource]){
         
-        locationChangeHandler = [[[self controller] policyHandler] provideLocationChangeHandlerForDataSource: newDataSource];
-    
-        [newDataSource _setLocationChangeHandler: locationChangeHandler];
-    
+        locationChangeHandler = [[self controller] locationChangeHandler];
+        
         oldDataSource = [self dataSource];
         
         // Is this the top frame?  If so set the data source's parent to nil.

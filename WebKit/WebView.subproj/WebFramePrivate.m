@@ -41,9 +41,7 @@ static const char * const stateNames[6] = {
     
     [webView _setController: nil];
     [dataSource _setController: nil];
-    [dataSource _setLocationChangeHandler: nil];
     [provisionalDataSource _setController: nil];
-    [provisionalDataSource _setLocationChangeHandler: nil];
 
     [name release];
     [webView release];
