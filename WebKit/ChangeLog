@@ -1,5 +1,10 @@
 2002-04-18  Darin Adler  <darin@apple.com>
 
+	* WebKit.pbproj/project.pbxproj: Oops. Take out -Wstrict-prototypes, put back
+	-Wmissing-prototypes.
+
+2002-04-18  Darin Adler  <darin@apple.com>
+
 	* WebKit.pbproj/project.pbxproj: Take out -Wmissing-prototypes
 	because system headers are triggering it when we don't have
 	precompiled headers on.
