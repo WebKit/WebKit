@@ -189,6 +189,11 @@
 
 - (void)drawRect:(NSRect)rect
 {
+    if ([self documentView] == nil) {
+        // Need to paint ourselves if there's no documentView to do it instead.
+        [[NSColor whiteColor] set];
+        NSRectFill(rect);
+    }
 }
 
 - (NSWindow *)window
