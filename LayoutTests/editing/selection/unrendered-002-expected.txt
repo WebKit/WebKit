@@ -1,0 +1,15 @@
+layer at (0,0) size 820x585
+  RenderCanvas at (0,0) size 800x585
+layer at (0,0) size 820x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,64) size 784x457
+      RenderBlock {DIV} at (64,0) size 748x196 [border: (50px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 32x28
+          RenderText {TEXT} at (74,84) size 32x48
+            text run at (74,84) width 32: "foo"
+        RenderText {TEXT} at (106,84) size 40x48
+          text run at (106,84) width 40: " baz"
+selection is CARET:
+start:      position 1 of child 4 {TEXT} of root {DIV}
+upstream:   position 1 of child 4 {TEXT} of root {DIV}
+downstream: position 1 of child 4 {TEXT} of root {DIV}

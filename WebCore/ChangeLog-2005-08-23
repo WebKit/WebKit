@@ -1,5 +1,32 @@
 2004-07-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added new editing-related layout tests
+
+        * layout-tests/editing/deleting/delete-after-span-ws-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-after-span-ws-001.html: Added.
+        * layout-tests/editing/deleting/delete-after-span-ws-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-after-span-ws-002.html: Added.
+        * layout-tests/editing/deleting/delete-after-span-ws-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-after-span-ws-003.html: Added.
+        * layout-tests/editing/selection/unrendered-001-expected.txt: Added.
+        * layout-tests/editing/selection/unrendered-001.html: Added.
+        * layout-tests/editing/selection/unrendered-002-expected.txt: Added.
+        * layout-tests/editing/selection/unrendered-002.html: Added.
+        * layout-tests/editing/selection/unrendered-003-expected.txt: Added.
+        * layout-tests/editing/selection/unrendered-003.html: Added.
+        * layout-tests/editing/selection/unrendered-004-expected.txt: Added.
+        * layout-tests/editing/selection/unrendered-004.html: Added.
+        * layout-tests/editing/selection/unrendered-005-expected.txt: Added.
+        * layout-tests/editing/selection/unrendered-005.html: Added.
+        * layout-tests/traversal/node-iterator-008-expected.txt: Added.
+        * layout-tests/traversal/node-iterator-008.html: Added.
+        * layout-tests/traversal/tree-walker-005-expected.txt: Added.
+        * layout-tests/traversal/tree-walker-005.html: Added.
+
+2004-07-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fixes for these bugs:
