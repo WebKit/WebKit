@@ -37,6 +37,8 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "khtmlview.h"
+#include "htmltags.h"
+
 using namespace DOM;
 using namespace khtml;
 
@@ -361,9 +363,17 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // self-collapsing blocks.
     bool topMarginContributor = true;
     
+    // The last non-collapsed child we encountered.      
+    // We will avoid throwing away the bottom margins if the last non-collapsed child encountered is
+    // an H1-H6 element. -dwh
+    RenderObject* lastNonCollapsedChild = 0;
+    
     // These flags track the previous maximal positive and negative margins.
     int prevPosMargin = maxTopMargin(true);
     int prevNegMargin = maxTopMargin(false);
+    
+    // Whether or not we encountered an element with clear set that actually had to
+    // be pushed down below a float.
     int clearOccurred = false;
     
     int oldPosMargin = prevPosMargin;
@@ -463,6 +473,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     ypos = m_height + prevPosMargin - prevNegMargin;
             }
             else {
+                lastNonCollapsedChild = child;
                 if (!topMarginContributor || 
                      (!canCollapseWithChildren && 
                       (element()->getDocument()->parseMode() == DocumentImpl::Strict ||
@@ -558,11 +569,24 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // with it.
     if (canCollapseWithChildren && !autoHeight)
         canCollapseWithChildren = false;
-        
+    
+    // XXX This is a gross hack. Basically if the last child is marginless, we will (in quirks
+    // mode) allow the collapsed bottom margin to be added to the table cell.  This is a sleazy
+    // way of keeping <td><p>Foo</p></td> from showing a bottom margin but still allowing
+    // <td><font><h3>Foo</h3></font></td> to show a bottom margin.  
+    // A better fix (since we only cared about H1-H6 in the first place would be to recur
+    // into the last non-collapsed children until you don't find one any more, and if that
+    // innermost child was an H1-H6, use it. -dwh
+    int marginBottom = -1;
+    if (lastNonCollapsedChild)
+        marginBottom = lastNonCollapsedChild->marginBottom();
+    
     // If we can't collapse with children then go ahead and add in the bottom margins.
     if (!canCollapseWithChildren && !topMarginContributor &&
         (element()->getDocument()->parseMode() == DocumentImpl::Strict ||
-         !isTableCell()))
+         !isTableCell() || (lastNonCollapsedChild && lastNonCollapsedChild->element() &&
+           lastNonCollapsedChild->element()->id() >= ID_H1 && 
+           lastNonCollapsedChild->element()->id() <= ID_H6) || (marginBottom == 0)))
         m_height += prevPosMargin - prevNegMargin;
         
     m_height += toAdd;
