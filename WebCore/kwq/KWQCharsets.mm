@@ -33,6 +33,7 @@ struct CharsetEntry {
 
 // Until there's a CFString constant for these encodings, this works.
 // Since they are macros, they won't cause a compile failure even a the CFString constant is added.
+#define kCFStringEncodingBig5_DOSVariant (kTextEncodingBig5 | (kBig5_DOSVariant << 16))
 #define kCFStringEncodingEUC_CN_DOSVariant (kTextEncodingEUC_CN | (kEUC_CN_DOSVariant << 16))
 #define kCFStringEncodingEUC_KR_DOSVariant (kTextEncodingEUC_KR | (kEUC_KR_DOSVariant << 16))
 #define kCFStringEncodingKOI8_U kTextEncodingKOI8_U

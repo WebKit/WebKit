@@ -112,7 +112,7 @@ JIS_X0208_83, IsJapanese: JIS_X0208-1983
 JIS_X0208_90, IsJapanese: JIS_X0208-1990
 JIS_X0212_90, IsJapanese: JIS_X0212-1990
 JIS_C6226_78, IsJapanese: JIS_C6226-1978
-ShiftJIS_X0213_00, IsJapanese
+ShiftJIS_X0213_00, IsJapanese: Shift_JIS_X0213-2000
 GB_2312_80
 GBK_95
 GB_18030_2000: GB18030
@@ -137,10 +137,10 @@ EUC_KR_DOSVariant: EUC-KR, cp949, ksc5601
 
 ShiftJIS_DOSVariant, IsJapanese: Shift_JIS, sjis, xsjis
 KOI8_R: KOI8-R, koi, koi8
-Big5
+Big5_DOSVariant: Big5, cnbig5, xxbig5
 MacRomanLatin1: x-mac-roman-latin1
 HZ_GB_2312: HZ-GB-2312
-Big5_HKSCS_1999: Big5, big5hkscs, cnbig5, xxbig5
+Big5_HKSCS_1999: Big5-HKSCS
 KOI8_U: KOI8-U
 
 EBCDIC_US

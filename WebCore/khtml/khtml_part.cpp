@@ -1505,8 +1505,12 @@ void KHTMLPart::write( const char *str, int len )
         if (!d->m_encoding.isNull())
             d->m_decoder->setEncoding(d->m_encoding.latin1(),
                 d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);
-        else
-            d->m_decoder->setEncoding(settings()->encoding().latin1(), Decoder::DefaultEncoding);
+        else {
+            // Inherit the default encoding from the parent frame if there is one.
+            const char *defaultEncoding = parentPart()
+                ? parentPart()->d->m_decoder->encoding() : settings()->encoding().latin1();
+            d->m_decoder->setEncoding(defaultEncoding, Decoder::DefaultEncoding);
+        }
 #if APPLE_CHANGES
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder);

@@ -1,3 +1,20 @@
+2003-07-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3108604 -- add Shift JIS X0213 and HK-SCS to the Text Encoding menu
+
+        * kwq/mac-encodings.txt: Added "Shift_JIS_X0213-2000". Changed all non-HKSCS
+        Big5 encodings to use the DOS variant of Big5 as requested by Peter Edberg,
+        but left Big5-HKSCS alone.
+        * kwq/KWQCharsets.mm: Added kCFStringEncodingBig5_DOSVariant constant.
+        * kwq/KWQCharsetData.c: Regenerated.
+
+        - fixed 3100151 -- subframes without explicit charset settings should inherit from parent, not use default
+
+        * khtml/khtml_part.cpp: (KHTMLPart::write): Get the default encoding from the parent
+        part, if there is one.
+
 2003-07-22  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3293898, list bullets in ordered lists with an inside list
