@@ -24,7 +24,7 @@
  */
 
 #include "qpoint.h"
-
+#include <stdarg.h>
 
 
 QPointArray::QPointArray(int nPoints, const QCOORD *points)
