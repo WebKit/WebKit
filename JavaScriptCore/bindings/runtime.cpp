@@ -96,6 +96,8 @@ Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, 
         return new Bindings::JavaInstance ((jobject)instance);
     if (language == Instance::ObjectiveCLanguage)
         return new Bindings::ObjcInstance ((struct objc_object *)instance);
+    if (language == Instance::CLanguage)
+        return new Bindings::ObjcInstance ((struct objc_object *)instance);
     return 0;
 }
 

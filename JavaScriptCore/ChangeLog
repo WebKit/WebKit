@@ -1,5 +1,23 @@
 2004-03-10  Richard Williamson   <rjw@apple.com>
 
+	Made changes to support new asychronous approach to calls from
+	plugin to JavaScript
+
+        Reviewed by Chris.
+
+        * bindings/NP_jsobject.cpp:
+        (NP_Call):
+        (NP_Evaluate):
+        (NP_GetProperty):
+        (NP_ToString):
+        (NP_GetPropertyAtIndex):
+        * bindings/NP_runtime.h:
+        * bindings/make_testbindings:
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+
+2004-03-10  Richard Williamson   <rjw@apple.com>
+
 	Updated header to include proposed changes from
 	plugin-futures list.  Calls from plugin to JavaScript
 	are now asynchronous.
