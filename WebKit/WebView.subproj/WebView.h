@@ -20,7 +20,6 @@
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebwebViewPolicyDelegate's clickPolicyForElement.
 
 extern NSString *WebElementFrameKey;		// WebFrame of the element
-extern NSString *WebElementHTMLStringKey;   // NSString of the HTML representation of the element
 extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
 extern NSString *WebElementImageKey;		// NSImage of the image element
 extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of the image element

@@ -1,3 +1,17 @@
+2004-02-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3546924>: REGRESSION: dragging text or images over a WebView is jerky
+
+        Reviewed by mjs.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/WebCoreBridge.h: added the DOM node element key constant (SPI for now)
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): instead of calling toHTML for every node, put the node on the element so the caller can get the HTML string representation when it needs to.
+        * kwq/WebCoreDOMNode.mm:
+        (-[WebCoreDOMNode HTMLString]): new
+
 2004-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

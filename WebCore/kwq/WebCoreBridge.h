@@ -63,8 +63,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebDOMNode;
 @protocol WebDOMElement;
 
+extern NSString *WebCoreElementDOMNodeKey;
 extern NSString *WebCoreElementFrameKey;
-extern NSString *WebCoreElementHTMLStringKey;
 extern NSString *WebCoreElementImageAltStringKey;
 extern NSString *WebCoreElementImageKey;
 extern NSString *WebCoreElementImageRectKey;

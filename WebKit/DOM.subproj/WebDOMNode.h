@@ -76,6 +76,8 @@ enum WebNodeType {
 
 - (BOOL)hasAttributes;
 
+- (NSString *)HTMLString;
+
 @end
 
 

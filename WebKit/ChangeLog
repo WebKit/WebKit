@@ -1,5 +1,19 @@
 2004-02-02  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3546924>: REGRESSION: dragging text or images over a WebView is jerky
+
+        Reviewed by mjs.
+
+        * DOM.subproj/WebDOMNode.h: added HTMLString to the protocol
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): get the HTML representation via the DOM node
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): get the HTML representation via the DOM node
+        * WebView.subproj/WebView.h: removed the HTML string element key constant
+        * WebView.subproj/WebView.m: removed the HTML string element key constant
+
+2004-02-02  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3546426>: when copying images via context menus, only some data is added to the pasteboard
 
         Reviewed by john.

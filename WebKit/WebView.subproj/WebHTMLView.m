@@ -677,7 +677,7 @@ static WebHTMLView *lastHitView = nil;
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
-                  HTMLString:[element objectForKey:WebElementHTMLStringKey]
+                  HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] HTMLString]
                        event:_private->mouseDownEvent];
         
     } else if (linkURL) {

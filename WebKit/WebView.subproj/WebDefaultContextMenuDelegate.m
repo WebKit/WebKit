@@ -6,15 +6,17 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebDOMNode.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
+#import <WebCore/WebCoreBridge.h>
 
-#import <WebKit/WebLocalizableStrings.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLRequestPrivate.h>
@@ -213,7 +215,7 @@
                                                   URL:linkURL ? linkURL : imageURL
                                                 title:[element objectForKey:WebElementImageAltStringKey] 
                                           fileWrapper:[webView _fileWrapperForURL:imageURL]
-                                           HTMLString:[element objectForKey:WebElementHTMLStringKey]];
+                                           HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] HTMLString]];
 }
 
 - (void)openFrameInNewWindow:(id)sender

@@ -350,6 +350,12 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return instance.hasAttributes();
 }
 
+- (NSString *)HTMLString
+{
+    DOM::Node instance([self impl]);
+    return instance.handle()->recursive_toHTML(true).getNSString();
+}
+
 @end
 
 

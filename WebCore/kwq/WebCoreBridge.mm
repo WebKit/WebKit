@@ -90,8 +90,8 @@ using KParts::URLArgs;
 
 using KJS::Bindings::RootObject;
 
+NSString *WebCoreElementDOMNodeKey =            @"WebCoreElementDOMNode"; // not in WebKit API for now, could be in API some day
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
-NSString *WebCoreElementHTMLStringKey =         @"WebElementHTMLString";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey =              @"WebElementImage";
 NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
@@ -877,10 +877,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     if (node) {
         [element setObject:[NSNumber numberWithBool:node->isContentEditable()]
                     forKey:WebCoreElementIsEditableKey];
-        NSString *HTMLString = node->recursive_toHTML(true).getNSString();
-        if ([HTMLString length] != 0) {
-            [element setObject:HTMLString forKey:WebCoreElementHTMLStringKey];
-        }
+        
+        [element setObject:[WebCoreDOMNode nodeWithImpl:node] forKey:WebCoreElementDOMNodeKey];
     
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
