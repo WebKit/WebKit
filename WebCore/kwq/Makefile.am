@@ -62,7 +62,6 @@ libkwq_o_SOURCES = \
 	KWQKMimeType.mm \
 	KWQKPartsEvent.mm \
 	KWQKPrinter.mm \
-	KWQKProcess.mm \
 	KWQKProtocolManager.mm \
 	KWQKSimpleConfig.mm \
 	KWQKStringHandler.mm \

@@ -1,5 +1,14 @@
 2002-06-03  Darin Adler  <darin@apple.com>
 
+	A few more unused things.
+
+	* kwq/Makefile.am: Removed KWQKProcess.mm
+	* kwq/KWQKProcess.mm: Removed.
+	* kwq/KWQStrList.h: Removed.
+	* kwq/kdecore/kprocess.h: Removed.
+
+2002-06-03  Darin Adler  <darin@apple.com>
+
 	Forgot one file.
 
 	* kwq/qt/qframe.h: Added.
