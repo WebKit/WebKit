@@ -80,16 +80,15 @@ using KIO::TransferJob;
 
 - (void)cancel
 {
-    ASSERT(_job);
-    ASSERT(_handle);
-
     TransferJob *job = _job;
     id <WebCoreResourceHandle> handle = _handle;
     _job = 0;
     _handle = nil;
 
-    job->setError(1);
-    job->setLoader(nil);
+    if (job) {
+        job->setError(1);
+        job->setLoader(nil);
+    }
     [handle release];
 }
 

@@ -1,3 +1,12 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+	- fixed 3090249 -- random crash on page load
+	- fixed 3090286 -- assert _job in KWQResourceLoader cancel
+
+        * kwq/KWQResourceLoader.mm: (-[KWQResourceLoader cancel]):
+	This function needs to handle the case where the load is already cancelled.
+	I think this also caused Avie's crash.
+
 2002-10-31  Darin Adler  <darin@apple.com>
 
 	- fixed huge leak when doing page load test
