@@ -161,6 +161,11 @@ static BOOL forceRealHitTest = NO;
 - (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText;
 @end
 
+@interface WebHTMLView (WebEditingStyleSupport)
+- (DOMCSSStyleDeclaration *)_emptyStyle;
+- (NSString *)_colorAsString:(NSColor *)color;
+@end
+
 @interface NSView (WebHTMLViewFileInternal)
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_clearPrintingModeRecursive;
@@ -796,7 +801,7 @@ static WebHTMLView *lastHitView = nil;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
             NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
-            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, nil];
     }
     return types;
 }
@@ -2269,6 +2274,11 @@ static WebHTMLView *lastHitView = nil;
     ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) == 0;
 }
 
+- (BOOL)_isNSColorDrag:(id <NSDraggingInfo>)draggingInfo
+{
+    return ([[[draggingInfo draggingPasteboard] types] containsObject:NSColorPboardType]);
+}
+
 - (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
 {
     NSDragOperation operation = NSDragOperationNone;
@@ -2281,9 +2291,14 @@ static WebHTMLView *lastHitView = nil;
     if ((actionMask & WebDragDestinationActionEdit) &&
         !_private->webCoreHandlingDrag
         && [self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        WebView *webView = [self _webView];
-        [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-        operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
+        if ([self _isNSColorDrag:draggingInfo]) {
+            operation = NSDragOperationGeneric;
+        }
+        else {
+            WebView *webView = [self _webView];
+            [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
+            operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
+        }
     } else {
         [[self _webView] removeDragCaret];
     }
@@ -2307,24 +2322,39 @@ static WebHTMLView *lastHitView = nil;
         [bridge concludeDragForDraggingInfo:draggingInfo];
         return YES;
     } else if (actionMask & WebDragDestinationActionEdit) {
-        BOOL didInsert = NO;
-        if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-            NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES];
-            if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+        if ([self _isNSColorDrag:draggingInfo]) {
+            NSColor *color = [NSColor colorFromPasteboard:[draggingInfo draggingPasteboard]];
+            if (!color)
+                return NO;
+            DOMCSSStyleDeclaration *style = [self _emptyStyle];
+            [style setProperty:@"color" :[self _colorAsString:color] :@""];
+            if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if ([self _isMoveDrag]) {
-                    BOOL smartMove = [[self _bridge] selectionGranularity] == WebSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
-                    [bridge moveSelectionToDragCaret:fragment smartMove:smartMove];
-                } else {
-                    [bridge setSelectionToDragCaret];
-                    [bridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
-                }
-                didInsert = YES;
+                [bridge applyStyle:style];
+                return YES;
             }
+            return NO;
         }
-        [webView removeDragCaret];
-        return didInsert;
+        else {
+            BOOL didInsert = NO;
+            if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+                NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+                DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES];
+                if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+                    [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
+                    if ([self _isMoveDrag]) {
+                        BOOL smartMove = [[self _bridge] selectionGranularity] == WebSelectByWord && [self _canSmartReplaceWithPasteboard:pasteboard];
+                        [bridge moveSelectionToDragCaret:fragment smartMove:smartMove];
+                    } else {
+                        [bridge setSelectionToDragCaret];
+                        [bridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+                    }
+                    didInsert = YES;
+                }
+            }
+            [webView removeDragCaret];
+            return didInsert;
+        }
     }
     return NO;
 }

@@ -1,3 +1,19 @@
+2004-10-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3814236> REGRESSION (Mail): Can't set the color of text in Mail compose window using drag/drag from color panel
+
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _insertablePasteboardTypes]): Add NSColorPboardType to list.
+        (-[WebHTMLView _isNSColorDrag:]): New helper. Determines if drag is an NSColor drag.
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): Add a case for NSColor drags,
+        else do what we did before.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Add a case for NSColor drags, which creates
+        a CSS style containing color info and calls the bridge to apply the style. Otherwise, do what we did before.
+
 2004-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
