@@ -1,3 +1,13 @@
+2004-01-14  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3527819, marquee makes page layout too wide.  Make sure marquees have a minimum width of 0.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcMinMaxWidth):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+
 2004-01-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3527707, crash on w3c css page.  Make sure height isn't allowed to be negative when computing
