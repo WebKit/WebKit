@@ -385,7 +385,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     
     // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
     // margins in our container.
-    bool quirkContainer = isTableCell();
+    bool quirkContainer = isTableCell() || isBody();
     
     // Sometimes an element will be shoved down away from a previous sibling, e.g., when
     // clearing to pass beyond a float.  In this case, you don't need to collapse.  This
@@ -514,12 +514,14 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 // This child is collapsing with the top of the
                 // block.  If it has larger margin values, then we need to update
                 // our own maximal values.
-                if (posTop > m_maxTopPosMargin)
-                    m_maxTopPosMargin = posTop;
+                if (strictMode || !quirkContainer || !topQuirk) {
+                    if (posTop > m_maxTopPosMargin)
+                        m_maxTopPosMargin = posTop;
                 
-                if (negTop > m_maxTopNegMargin)
-                    m_maxTopNegMargin = negTop;
-                 
+                    if (negTop > m_maxTopNegMargin)
+                        m_maxTopNegMargin = negTop;
+                }
+                
                 // The minute any of the margins involved isn't a quirk, don't
                 // collapse it away, even if the margin is smaller (www.webreference.com
                 // has an example of this, a <dt> with 0.8em author-specified inside

@@ -1,5 +1,17 @@
 2002-11-16  David Hyatt  <hyatt@apple.com>
 
+	Implement the collapsing top margin quirk for <body> (the same
+	quirk used for table cells) and make sure it works even when the
+	<body> has margins of its own.
+
+	Fixes www.eflightpacks.com (the top frame was shoved down because
+	the <p> margin didn't collapse away).
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
+2002-11-16  David Hyatt  <hyatt@apple.com>
+
 	Sigh. Amazingly enough, all other browsers seem to treat
 	stray </p>s as <p></p> (Mac IE treats it as <br>, but
 	I'm going with the WinIE/Gecko behavior of <p></p>).
