@@ -1,3 +1,11 @@
+2005-03-13  Darin Adler  <darin@apple.com>
+
+        - fixed <rdar://problem/4049172> REGRESSION (403-405): Gmail: text box in "Invite a friend" section overlaps other sections
+
+        Rolled out fix for <rdar://problem/3952698> Function buttons do not display properly with Telia Webmail
+
+        * khtml/rendering/render_replaced.cpp: (RenderReplaced::calcMinMaxWidth): Back to previous version of this file.
+
 2005-03-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

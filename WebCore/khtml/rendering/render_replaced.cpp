@@ -98,12 +98,12 @@ void RenderReplaced::calcMinMaxWidth()
 #endif
 
     int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
-    // FIXME: If this is image-specific, then why not move it down into RenderImage?
-    if (isImage() && style()->width().isPercent())
+    if (style()->width().isPercent() || (style()->width().isVariable() && style()->height().isPercent())) {
         m_minWidth = 0;
+        m_maxWidth = width;
+    }
     else
-        m_minWidth = width;
-    m_maxWidth = width;
+        m_minWidth = m_maxWidth = width;
 
     setMinMaxKnown();
 }
