@@ -626,6 +626,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             case ID_TEXT:
             {
                 TextImpl *t = static_cast<TextImpl *>(n);
+                if (t->containsOnlyWhitespace())
+                    return false;
                 DOMStringImpl *i = t->string();
                 unsigned int pos = 0;
                 while(pos < i->l && ( *(i->s+pos) == QChar(' ') ||

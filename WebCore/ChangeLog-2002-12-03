@@ -1,3 +1,10 @@
+2002-11-18  David Hyatt  <hyatt@apple.com>
+
+	Fix my <konqblock> regression on ign.com.
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         * force-js-clean-timestamp: Rebuild for JSC changes.
