@@ -1,4 +1,27 @@
-<<<<<<< ChangeLog
+2003-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, changes by Dave.
+
+        - fixed 3181790 -- REGRESSION: TextRun objects of length 0 or with just the character '\n' leak
+
+        * khtml/rendering/render_text.cpp: (RenderText::position): Destroy the passed-in
+        TextRun if it's the kind that's not needed, rather than just returning.
+
+        - fixed 3181794 -- REGRESSION: objects created by RenderObject::createInlineBox leak
+        	        
+        * khtml/rendering/render_box.cpp: (RenderBox::position): Only do work for replaced
+        elements, and for those elements, destroy the passed-in InlineBox. Dave says this
+        is not the real solution, but it does plug the leak.
+        
+        * khtml/rendering/render_flow.cpp: (RenderFlow::createInlineBox): Call through
+        to the inherited createInlineBox for all replaced elements. This code was making
+        the wrong kind of InlineBox for replaced elements.
+        
+        - removed Id cvs magic string which causes big headaches in generated files
+
+        * khtml/css/parser.cpp: Removed Id cvs magic string.
+        * khtml/css/parser.y: Removed Id cvs magic string.
+
 2003-02-24  David Hyatt  <hyatt@apple.com>
 
 	The new CSS1 parser, implementation of attr(), improvement of
@@ -159,7 +182,6 @@
         (QPainter::drawLine):
         * kwq/KWQString.h:
 
-=======
 2003-02-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
@@ -171,7 +193,6 @@
         (HTMLDocumentImpl::HTMLDocumentImpl): Added new processingLoadEvent bool.
         (HTMLDocumentImpl::close): Guard against re-entering the load event handler.
 
->>>>>>> 1.1437
 2003-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

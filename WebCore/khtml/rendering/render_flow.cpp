@@ -153,6 +153,9 @@ void RenderFlow::detach(RenderArena* renderArena)
 
 InlineBox* RenderFlow::createInlineBox()
 {
+    if (isReplaced()) // Inline tables and inline blocks.
+        return RenderBox::createInlineBox();
+
     InlineFlowBox* flowBox = 0;
     if (isInlineFlow())
         flowBox = new (renderArena()) InlineFlowBox(this);

@@ -437,8 +437,13 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
 
 void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
 {
-    m_x = box->xPos();
-    m_y = box->yPos();
+    if (isReplaced()) {
+        m_x = box->xPos();
+        m_y = box->yPos();
+
+        // Nuke the box.  We don't need it for replaced elements.
+        box->detach(renderArena());
+    }
 }
 
 void RenderBox::repaint(bool immediate)
