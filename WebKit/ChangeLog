@@ -1,3 +1,5 @@
+=== Safari-182 ===
+
 2005-02-01  Richard Williamson   <rjw@apple.com>
 
 	Added new SPI for <rdar://problem/3967063> need spi on WebView to turn of lcd text for Dashboard
