@@ -69,8 +69,8 @@ public:
     void paintLineBoxDecorations(QPainter *p, int _x, int _y,
                                  int _w, int _h, int _tx, int _ty, PaintAction paintAction);
 
-    virtual void repaint(bool immediate = false);
-
+    virtual QRect getAbsoluteRepaintRect();
+    
     virtual int lowestPosition(bool includeOverflowInterior=true) const;
     virtual int rightmostPosition(bool includeOverflowInterior=true) const;
     

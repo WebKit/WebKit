@@ -323,6 +323,21 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     
     parentLayer->convertToLayerCoords(ancestorLayer, x, y);
 
+    if (m_object->style()->position() == ABSOLUTE && parentLayer->renderer()->style()->position() == RELATIVE &&
+        parentLayer->renderer()->isInline() && !parentLayer->renderer()->isReplaced()) {
+        // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
+        // box from the rest of the content, but only in the cases where we know we're positioned
+        // relative to the inline itself.
+        RenderFlow* flow = static_cast<RenderFlow*>(parentLayer->renderer());
+        if (flow->firstLineBox()) {
+            bool isInlineType = m_object->style()->isOriginalDisplayInlineType();
+            if (!m_object->hasStaticX() || (m_object->hasStaticX() && !isInlineType))
+                x += flow->firstLineBox()->xPos();
+            if (!m_object->hasStaticY())
+                y += flow->firstLineBox()->yPos();
+        }
+    }
+    
     x += xPos();
     y += yPos();
 }

@@ -35,6 +35,9 @@
 #include "rendering/render_style.h"
 #include "khtml_events.h"
 
+// Uncomment to turn on incremental repainting.
+// #define INCREMENTAL_REPAINTING 1
+
 class QPainter;
 class QTextStream;
 class CSSStyle;
@@ -237,7 +240,10 @@ public:
     bool mouseInside() const;
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
-    bool needsLayout() const   { return m_needsLayout; }
+    bool needsLayout() const   { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout; }
+    bool selfNeedsLayout() const { return m_needsLayout; }
+    bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
+    bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
     bool minMaxKnown() const{ return m_minMaxKnown; }
     bool overhangingContents() const { return m_overhangingContents; }
     bool hasFirstLine() const { return m_hasFirstLine; }
@@ -259,8 +265,9 @@ public:
     void setOverhangingContents(bool p=true);
 
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
+    void markContainingBlocksForLayout();
     void setNeedsLayout(bool b);
-
+    void setChildNeedsLayout(bool b);
     void setMinMaxKnown(bool b=true) {
 	m_minMaxKnown = b;
 	if ( !b ) {
@@ -289,8 +296,12 @@ public:
     void setReplaced(bool b=true) { m_replaced = b; }
     void setIsSelectionBorder(bool b=true) { m_isSelectionBorder = b; }
 
-    void scheduleRelayout(RenderObject* clippedObj = 0);
-
+#ifdef INCREMENTAL_REPAINTING
+    void scheduleRelayout();
+#else
+    void scheduleRelayout(RenderObject* clippedObj);
+#endif
+    
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox);
     
     // for discussion of lineHeight see CSS2 spec
@@ -559,13 +570,37 @@ public:
 
     virtual void setTable(RenderTable*) {};
 
-    // force a complete repaint
-    virtual void repaint(bool immediate = false) { if(m_parent) m_parent->repaint(immediate); }
-    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate = false, bool f=false);
+    // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
+    // style changes.
+    void repaint(bool immediate = false);
 
+    // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
+    void repaintRectangle(const QRect& r, bool immediate = false);
+
+#ifdef INCREMENTAL_REPAINTING
+    // Repaint only if our old bounds and new bounds are different.
+    virtual void repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds);
+
+    // Repaint only if the object moved.
+    virtual void repaintIfMoved(int oldX, int oldY);
+
+    // Called to repaint a block's positioned objects and floats.
+    virtual void repaintPositionedAndFloatingDescendants();
+#endif
+
+    // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
+    // coordinate space.  This method deals with outlines and overflow.
+    virtual QRect getAbsoluteRepaintRect();
+
+#ifdef INCREMENTAL_REPAINTING
+    virtual void getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& boundsWithChildren);
+#endif
+
+    // Given a rect in the object's coordinate space, this method converts the rectangle to the view's
+    // coordinate space.
+    virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
+    
     virtual unsigned int length() const { return 1; }
-
-    virtual bool isHidden() const { return isFloating() || isPositioned(); }
 
     bool isFloatingOrPositioned() const { return (isFloating() || isPositioned()); };
     virtual bool containsFloats() { return false; }
@@ -650,12 +685,13 @@ private:
     short m_verticalPosition;
 
     bool m_needsLayout               : 1;
-    bool m_unused                    : 1;
+    bool m_normalChildNeedsLayout    : 1;
+    bool m_posChildNeedsLayout       : 1;
     bool m_minMaxKnown               : 1;
     bool m_floating                  : 1;
 
     bool m_positioned                : 1;
-    bool m_overhangingContents : 1;
+    bool m_overhangingContents       : 1;
     bool m_relPositioned             : 1;
     bool m_paintBackground           : 1; // if the box has something to paint in the
                                           // background painting phase (background, border, etc)
@@ -665,9 +701,9 @@ private:
     bool m_isText                    : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
-    bool m_mouseInside : 1;
+    bool m_mouseInside               : 1;
     bool m_hasFirstLine              : 1;
-    bool m_isSelectionBorder          : 1;
+    bool m_isSelectionBorder         : 1;
 
     void arenaDelete(RenderArena *arena, void *objectBase);
 

@@ -92,7 +92,12 @@ public:
 
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     virtual void removeChild(RenderObject *oldChild);
-        
+
+#ifdef INCREMENTAL_REPAINTING
+    virtual void repaintPositionedAndFloatingDescendants();
+    virtual void getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& fullBounds);
+#endif
+
     virtual void setStyle(RenderStyle* _style);
 
     virtual void layout();
@@ -166,8 +171,6 @@ public:
     virtual void calcMinMaxWidth();
     void calcInlineMinMaxWidth();
     void calcBlockMinMaxWidth();
-
-    virtual void close();
 
     virtual int getBaselineOfFirstLineBox();
     virtual InlineFlowBox* getFirstLineBox();

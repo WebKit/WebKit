@@ -214,8 +214,21 @@ void RenderTable::layout()
     KHTMLAssert( minMaxKnown() );
     KHTMLAssert( !needSectionRecalc );
 
+    if (posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
+        // All we have to is lay out our positioned objects.
+        layoutPositionedObjects(true);
+        setNeedsLayout(false);
+        return;
+    }
+    
     //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", needsLayout=" << needsLayout() << endl;
 
+#ifdef INCREMENTAL_REPAINTING
+    // FIXME: We should be smarter about this, but for now just always repaint a table whenever it
+    // does a layout.
+    repaint();
+#endif
+    
     m_height = 0;
     initMaxMarginValues();
     
@@ -344,6 +357,12 @@ void RenderTable::layout()
     // ### only pass true if width or height changed.
     layoutPositionedObjects( true );
 
+#ifdef INCREMENTAL_REPAINTING
+    // FIXME: We should be smarter about this, but for now just always repaint a table whenever it
+    // does a layout.
+    repaint();
+#endif
+    
     setNeedsLayout(false);
 }
 
@@ -1383,13 +1402,15 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-void RenderTableRow::repaint(bool immediate)
+QRect RenderTableRow::getAbsoluteRepaintRect()
 {
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this.
     RenderTable* parentTable = table();
     if (parentTable)
-        parentTable->repaint(immediate);
+        return parentTable->getAbsoluteRepaintRect();
+    else
+        return QRect();
 }
 
 // -------------------------------------------------------------------------
@@ -1482,10 +1503,10 @@ void RenderTableCell::close()
 }
 
 
-void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
+void RenderTableCell::computeAbsoluteRepaintRect(QRect& r, bool f)
 {
-    y += _topExtra;
-    RenderBlock::repaintRectangle(x, y, w, h, immediate, f);
+    r.setY(r.y() + _topExtra);
+    RenderBlock::computeAbsoluteRepaintRect(r, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)

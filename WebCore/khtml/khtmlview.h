@@ -187,6 +187,8 @@ public:
 
     void timerEvent ( QTimerEvent * );
 
+    void repaintRectangle(const QRect& r, bool immediate);
+    
 #if APPLE_CHANGES
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
@@ -204,12 +206,13 @@ private:
 
     void resetCursor();
 
+#ifdef INCREMENTAL_REPAINTING
+    void scheduleRelayout();
+#else
     void scheduleRelayout(khtml::RenderObject* clippedObj=0);
+#endif
     void unscheduleRelayout();
 
-    void scheduleRepaint(int x, int y, int w, int h);
-    void unscheduleRepaint();
-    
     /**
      * Paints the HTML document to a QPainter.
      * The document will be scaled to match the width of
@@ -256,9 +259,11 @@ private:
 
     void complete();
 
+#ifndef INCREMENTAL_REPAINTING
     // Returns the clipped object we will repaint when we perform our scheduled layout.
     khtml::RenderObject* layoutObject() { return m_layoutObject; }
-
+#endif
+    
     // ------------------------------------- member variables ------------------------------------
  private:
     unsigned _refCount;
@@ -273,10 +278,12 @@ private:
     KHTMLViewPrivate *d;
 
     QString m_medium;   // media type
-    
+
+#ifndef INCREMENTAL_REPAINTING
     // An overflow: hidden clipped object.  If this is set, a scheduled layout will only repaint
     // the object's clipped area, and it will not do a full repaint.
     khtml::RenderObject* m_layoutObject;
+#endif
 };
 
 #endif

@@ -71,7 +71,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     // The root always paints its background/border.
     if (isRoot())
         setShouldPaintBackgroundOrBorder(true);
-    
+
     setInline(_style->isDisplayInlineType());
     
     switch(_style->position())
@@ -189,8 +189,12 @@ void RenderBox::paint(QPainter *p, int _x, int _y, int _w, int _h,
 
 void RenderBox::setPixmap(const QPixmap &, const QRect&, CachedImage *image)
 {
-    if(image && image->pixmap_size() == image->valid_rect().size() && parent())
-        repaint();      //repaint bg when it finished loading
+    if (image && image->pixmap_size() == image->valid_rect().size() && parent()) {
+        if (element() && (element()->id() == ID_HTML || element()->id() == ID_BODY))
+            canvas()->repaint(); // repaint the entire canvas, since the background gets propagated up.
+        else
+            repaint();      //repaint bg when it finished loading
+    }
 }
 
 void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
@@ -498,11 +502,6 @@ QRect RenderBox::getClipRect(int tx, int ty)
     return cr;
 }
 
-void RenderBox::close()
-{
-    setNeedsLayoutAndMinMaxRecalc();
-}
-
 short RenderBox::containingBlockWidth() const
 {
     if (isRoot() && canvas()->view())
@@ -569,24 +568,19 @@ void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
     }
 }
 
-void RenderBox::repaint(bool immediate)
+QRect RenderBox::getAbsoluteRepaintRect()
 {
-    //kdDebug( 6040 ) << "repaint!" << endl;
-    if (isRoot() || isBody()) {
-        RenderObject *cb = containingBlock();
-        if(cb != this)
-            cb->repaint(immediate);
-        return;
-    }
     int ow = style() ? style()->outlineWidth() : 0;
-    repaintRectangle(-ow, -ow, overflowWidth(false)+ow*2, overflowHeight(false)+ow*2, immediate);
+    QRect r(-ow, -ow, overflowWidth(false)+ow*2, overflowHeight(false)+ow*2);
+    computeAbsoluteRepaintRect(r);
+    return r;
 }
 
-void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
+void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
 {
-    x += m_x;
-    y += m_y;
-    
+    int x = r.x() + m_x;
+    int y = r.y() + m_y;
+     
     // Apply the relative position offset when invalidating a rectangle.  The layer
     // is translated, but the render box isn't, so we need to do this to get the
     // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
@@ -594,7 +588,8 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, boo
     if (style()->position() == RELATIVE)
         relativePositionOffset(x,y);
     
-    if (style()->position()==FIXED) f=true;
+    if (style()->position()==FIXED)
+        f = true;
 
     RenderObject* o = container();
     if (o) {
@@ -603,18 +598,41 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, boo
             QRect boxRect(-ow, -ow, o->width()+ow*2, o->height()+ow*2);
             if (o->layer())
                 o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
-            QRect repaintRect(x, y, w, h);
-            if (!repaintRect.intersects(boxRect))
+            QRect repaintRect(x, y, r.width(), r.height());
+            if (!repaintRect.intersects(boxRect)) {
+                r = QRect();
                 return;
-            repaintRect = repaintRect.intersect(boxRect);
-            x = repaintRect.x();
-            y = repaintRect.y();
-            w = repaintRect.width();
-            h = repaintRect.height();
+            }
+            r = repaintRect.intersect(boxRect);
         }
-        o->repaintRectangle(x, y, w, h, immediate, f);
+        else {
+            r.setX(x);
+            r.setY(y);
+        }
+        o->computeAbsoluteRepaintRect(r, f);
     }
 }
+
+#ifdef INCREMENTAL_REPAINTING
+void RenderBox::repaintIfMoved(int oldX, int oldY)
+{
+    if (isCanvas())
+        return;
+    
+    int newX = m_x;
+    int newY = m_y;
+    if (oldX != newX || oldY != newY) {
+        // The child moved.  Invalidate the object's old and new positions.  We have to do this
+        // since the object may not have gotten a layout.
+        m_x = oldX; m_y = oldY;
+        repaint();
+        repaintPositionedAndFloatingDescendants();
+        m_x = newX; m_y = newY;
+        repaint();
+        repaintPositionedAndFloatingDescendants();
+    }
+}
+#endif
 
 void RenderBox::relativePositionOffset(int &tx, int &ty)
 {
@@ -1003,8 +1021,9 @@ void RenderBox::calcAbsoluteHorizontal()
     int pab = borderLeft()+ borderRight()+ paddingLeft()+ paddingRight();
 
     l=r=ml=mr=w=AUTO;
-
-    RenderBlock* cb = containingBlock();
+ 
+    // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
+    RenderObject* cb = container();
     cw = containingBlockWidth() + cb->paddingLeft() + cb->paddingRight();
 
     if(!style()->left().isVariable())
@@ -1040,7 +1059,6 @@ void RenderBox::calcAbsoluteHorizontal()
             || style()->right().isStatic())
     {
         RenderObject* po = parent();
-        RenderBlock* cb = containingBlock();
         static_distance = m_staticX - cb->borderLeft(); // Should already have been set through layout of the parent().
         while (po && po!=containingBlock()) {
             static_distance+=po->xPos();
@@ -1158,7 +1176,8 @@ void RenderBox::calcAbsoluteVertical()
 
     int pab = borderTop()+borderBottom()+paddingTop()+paddingBottom();
 
-    RenderObject* cb = containingBlock();
+    // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
+    RenderObject* cb = container();
     Length hl = cb->style()->height();
     if (hl.isFixed())
         ch = hl.value + cb->paddingTop()

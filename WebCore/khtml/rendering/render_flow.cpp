@@ -229,7 +229,7 @@ void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
     }
 }
 
-void RenderFlow::repaint(bool immediate)
+QRect RenderFlow::getAbsoluteRepaintRect()
 {
     if (isInlineFlow()) {
         // Find our leftmost position.
@@ -243,19 +243,22 @@ void RenderFlow::repaint(bool immediate)
         int ow = style() ? style()->outlineWidth() : 0;
         if (isCompact())
             left -= m_x;
-        containingBlock()->repaintRectangle(-ow+left, -ow+top,
-                                            width()+ow*2, height()+ow*2, immediate);
+        QRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
+        containingBlock()->computeAbsoluteRepaintRect(r);
+        return r;
     }
     else {
         if (firstLineBox() && firstLineBox()->topOverflow() < 0) {
             int ow = style() ? style()->outlineWidth() : 0;
-            repaintRectangle(-ow, -ow+firstLineBox()->topOverflow(),
-                             overflowWidth(false)+ow*2,
-                             overflowHeight(false)+ow*2-firstLineBox()->topOverflow(), immediate);
+            QRect r(-ow, -ow+firstLineBox()->topOverflow(),
+                    overflowWidth(false)+ow*2,
+                    overflowHeight(false)+ow*2-firstLineBox()->topOverflow());
+            computeAbsoluteRepaintRect(r);
+            return r;
         }
-        else
-            return RenderBox::repaint(immediate);
     }
+
+    return RenderBox::getAbsoluteRepaintRect();
 }
 
 int

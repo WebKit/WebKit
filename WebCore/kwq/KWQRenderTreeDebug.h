@@ -29,4 +29,4 @@ namespace khtml {
     class RenderObject;
 }
 
-QString externalRepresentation(const khtml::RenderObject *);
+QString externalRepresentation(khtml::RenderObject *);

@@ -100,8 +100,6 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
         beforeChild = lastChild();
     
-    setNeedsLayout(true);
-
     bool madeBoxesNonInline = FALSE;
 
     RenderStyle* pseudoStyle=0;
@@ -311,10 +309,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
         box->appendChildNode(removeChildNode(inlineRunEnd));
         box->close();
         box->setPos(box->xPos(), -500000);
-        box->setNeedsLayout(true);
     }
-
-    setNeedsLayout(true);
 }
 
 void RenderBlock::removeChild(RenderObject *oldChild)
@@ -360,7 +355,6 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             appendChildNode(anonBlock->removeChildNode(no));
             no->setNeedsLayoutAndMinMaxRecalc();
         }
-        setNeedsLayoutAndMinMaxRecalc();
         
         // Nuke the now-empty block.
         anonBlock->detach(renderArena());
@@ -415,12 +409,28 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     //     t.start();
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
-    
+
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
         return;	    		                     // cause us to come in here.  Just bail. -dwh
 
-    int oldWidth = m_width;
+    if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
+        // All we have to is lay out our positioned objects.
+        layoutPositionedObjects(relayoutChildren);
+        setNeedsLayout(false);
+        return;
+    }
 
+#ifdef INCREMENTAL_REPAINTING
+    // FIXME: For now, if we have dirty inline children, we just always repaint.
+    if (normalChildNeedsLayout() && childrenInline())
+        repaint();
+    
+    QRect oldBounds, oldFullBounds;
+    getAbsoluteRepaintRectIncludingDescendants(oldBounds, oldFullBounds);
+#endif
+
+    int oldWidth = m_width;
+    
     calcWidth();
     m_overflowWidth = m_width;
 
@@ -524,14 +534,22 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
-    // Always ensure our overflow width is at least as large as our width.
+    // Always ensure our overflow width/height are at least as large as our width/height.
     if (m_overflowWidth < m_width)
         m_overflowWidth = m_width;
-
+    if (m_overflowHeight < m_height)
+        m_overflowHeight = m_height;
+    
     // Update our scrollbars if we're overflow:auto/scroll now that we know if
     // we overflow or not.
     if (style()->scrollsOverflow() && m_layer)
         m_layer->checkScrollbarsAfterLayout();
+
+#ifdef INCREMENTAL_REPAINTING
+    // Repaint with our new bounds if they are different from our old bounds.
+    if (!isCanvas())
+        repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
+#endif
     
     setNeedsLayout(false);
 }
@@ -638,7 +656,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (relayoutChildren || floatBottom() > m_y ||
             (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())) ||
             (child->isRenderBlock() && child->style()->height().isPercent()))
-            child->setNeedsLayout(true);
+            child->setChildNeedsLayout(true);
 
         //         kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->needsLayout() << endl;
         //         kdDebug( 6040 ) << t.elapsed() << endl;
@@ -774,12 +792,17 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
         // take care in case we inherited floats
         if (child && floatBottom() > m_height)
-            child->setNeedsLayout(true);
+            child->setChildNeedsLayout(true);
         
         child->calcVerticalMargins();
 
         //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
 
+#ifdef INCREMENTAL_REPAINTING
+        int oldChildX = child->xPos();
+        int oldChildY = child->yPos();
+#endif
+        
         // Try to guess our correct y position.  In most cases this guess will
         // be correct.  Only if we're wrong (when we compute the real y position)
         // will we have to relayout.
@@ -788,7 +811,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         {
             yPosEstimate += QMAX(prevFlow->collapsedMarginBottom(), child->marginTop());
             if (prevFlow->yPos()+prevFlow->floatBottom() > yPosEstimate)
-                child->setNeedsLayout(true);
+                child->setChildNeedsLayout(true);
             else
                 prevFlow=0;
         }
@@ -910,7 +933,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     // property set, when the child shifts to clear an item, its width can
                     // change (because it has more available line width).
                     // So go ahead and mark the item as dirty.
-                    child->setNeedsLayout(true);
+                    child->setChildNeedsLayout(true);
 
                 if (child->containsFloats() || containsFloats())
                     child->markAllDescendantsWithFloatsForLayout();
@@ -962,7 +985,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 // property set, when the child shifts to clear an item, its width can
                 // change (because it has more available line width).
                 // So go ahead an mark the item as dirty.
-                child->setNeedsLayout(true);
+                child->setChildNeedsLayout(true);
             if (child->containsFloats())
                 child->markAllDescendantsWithFloatsForLayout();
             child->layoutIfNeeded();
@@ -1048,6 +1071,14 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             child->style()->setDisplay(COMPACT);
             treatCompactAsBlock = false;
         }
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants.  An exception is if we need a layout.  In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+#ifdef INCREMENTAL_REPAINTING
+        if (!selfNeedsLayout())
+            child->repaintIfMoved(oldChildX, oldChildY);
+#endif
         
         child = child->nextSibling();
     }
@@ -1106,11 +1137,66 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         for ( ; (r = it.current()); ++it ) {
             //kdDebug(6040) << "   have a positioned object" << endl;
             if ( relayoutChildren )
-                r->setNeedsLayout(true);
+                r->setChildNeedsLayout(true);
             r->layoutIfNeeded();
         }
     }
 }
+
+#ifdef INCREMENTAL_REPAINTING
+void RenderBlock::getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& fullBounds)
+{
+    bounds = fullBounds = getAbsoluteRepaintRect();
+    if (m_positionedObjects) {
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        for ( ; (r = it.current()); ++it ) {
+            QRect childRect, childFullRect;
+            r->getAbsoluteRepaintRectIncludingDescendants(childRect, childFullRect);
+            fullBounds = fullBounds.unite(childFullRect);
+        }
+    }
+
+    // Include any overhanging floats (if we know we're the one to paint them).
+    if (hasOverhangingFloats()) {
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it) {
+            // Only repaint the object if our noPaint flag isn't set.
+            if (!r->noPaint) {
+                QRect childRect, childFullRect;
+                r->node->getAbsoluteRepaintRectIncludingDescendants(childRect, childFullRect);
+                fullBounds = fullBounds.unite(childFullRect);
+            }
+        }
+    }
+}
+
+void RenderBlock::repaintPositionedAndFloatingDescendants()
+{
+    if (m_positionedObjects) {
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        for ( ; (r = it.current()); ++it ) {
+            r->repaint();
+            r->repaintPositionedAndFloatingDescendants();
+        }
+    }
+
+    // Repaint any overhanging floats (if we know we're the one to paint them).
+    if (hasOverhangingFloats()) {
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it) {
+            // Only repaint the object if our noPaint flag isn't set.
+            if (!r->noPaint) {
+                r->node->repaint();
+                r->node->repaintPositionedAndFloatingDescendants();
+            }
+        }
+    }
+}
+#endif
 
 void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
@@ -1210,7 +1296,7 @@ void RenderBlock::paintFloats(QPainter *p, int _x, int _y,
     QPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
-        if (r->node->isFloating() && !r->noPaint && !r->node->layer()) {
+        if (!r->noPaint && !r->node->layer()) {
             if (paintSelection) {
                 r->node->paint(p, _x, _y, _w, _h,
                                _tx + r->left - r->node->xPos() + r->node->marginLeft(),
@@ -2343,14 +2429,6 @@ void RenderBlock::calcBlockMinMaxWidth()
         
         child = child->nextSibling();
     }
-}
-
-void RenderBlock::close()
-{
-    if (lastChild() && lastChild()->isAnonymousBox())
-        lastChild()->close();
-
-    RenderFlow::close();
 }
 
 short RenderBlock::lineHeight(bool b, bool isRootLineBox) const

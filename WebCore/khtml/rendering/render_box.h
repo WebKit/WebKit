@@ -50,8 +50,6 @@ public:
     virtual void paint(QPainter *p, int _x, int _y, int _w, int _h,
                        int _tx, int _ty, PaintAction paintAction);
 
-    virtual void close();
-
     virtual void detach(RenderArena* renderArena);
     
     virtual short minWidth() const { return m_minWidth; }
@@ -88,10 +86,13 @@ public:
     virtual int lowestPosition(bool includeOverflowInterior=true) const;
     virtual int rightmostPosition(bool includeOverflowInterior=true) const;
 
-    virtual void repaint(bool immediate=false);
+    virtual QRect getAbsoluteRepaintRect();
+    virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
 
-    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate=false, bool f=false);
-
+#ifdef INCREMENTAL_REPAINTING
+    virtual void repaintIfMoved(int oldX, int oldY);
+#endif
+    
     virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
 
     virtual short containingBlockWidth() const;

@@ -44,15 +44,16 @@ public:
     virtual void calcHeight();
     virtual void calcMinMaxWidth();
     virtual bool absolutePosition(int &xPos, int&yPos, bool f = false);
-    virtual void close();
-
+    
     int docHeight() const;
     int docWidth() const;
 
     KHTMLView *view() const { return m_view; }
 
-    virtual void repaint(bool immediate=false);
-    virtual void repaintRectangle(int x, int y, int w, int h, bool immediate = false, bool f=false);
+    virtual QRect getAbsoluteRepaintRect();
+    virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
+    virtual void repaintViewRectangle(const QRect& r, bool immediate = false);
+    
     virtual void paint(QPainter *, int x, int y, int w, int h, int tx, int ty,
                        PaintAction paintAction);
     void paintObject(QPainter *p, int _x, int _y,

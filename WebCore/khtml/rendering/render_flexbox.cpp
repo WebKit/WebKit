@@ -240,6 +240,13 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     KHTMLAssert(needsLayout());
     KHTMLAssert(minMaxKnown());
 
+    if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
+        // All we have to is lay out our positioned objects.
+        layoutPositionedObjects(relayoutChildren);
+        setNeedsLayout(false);
+        return;
+    }
+    
     int oldWidth = m_width;
     int oldHeight = m_height;
     

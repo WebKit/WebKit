@@ -122,8 +122,9 @@ m_parent( 0 ),
 m_previous( 0 ),
 m_next( 0 ),
 m_verticalPosition( PositionUndefined ),
-m_needsLayout( true ),
-m_unused( false ),
+m_needsLayout( false ),
+m_normalChildNeedsLayout( false ),
+m_posChildNeedsLayout( false ),
 m_minMaxKnown( false ),
 m_floating( false ),
 
@@ -420,32 +421,81 @@ void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 
 void RenderObject::setNeedsLayout(bool b) 
 {
+#ifdef INCREMENTAL_REPAINTING
+    bool alreadyNeededLayout = m_needsLayout;
+#else
+    bool alreadyNeededLayout = false;
+#endif
     m_needsLayout = b;
     if (b) {
-        RenderObject *o = container();
-        RenderObject *root = this;
-
-        // If an attempt is made to
-        // setNeedsLayout(true) an object inside a clipped (overflow:hidden) object, we 
-        // have to make sure to repaint only the clipped rectangle.
-        // We do this by passing an argument to scheduleRelayout.  This hint really
-        // shouldn't be needed, and it's unfortunate that it is necessary.  -dwh
-
-        RenderObject* clippedObj = 
-            (style()->hidesOverflow() && !isText()) ? this : 0;
-        
-        while( o ) {
-            root = o;
-            o->m_needsLayout = true;
-            if (o->style()->hidesOverflow() && !clippedObj)
-                clippedObj = o;
-            o = o->container();
-        }
-        
-        root->scheduleRelayout(clippedObj);
+        if (!alreadyNeededLayout)
+            markContainingBlocksForLayout();
+    }
+    else {
+        m_posChildNeedsLayout = false;
+        m_normalChildNeedsLayout = false;
     }
 }
+
+void RenderObject::setChildNeedsLayout(bool b)
+{
+#ifdef INCREMENTAL_REPAINTING
+    bool alreadyNeededLayout = m_normalChildNeedsLayout;
+#else
+    bool alreadyNeededLayout = false;
+#endif
+    m_normalChildNeedsLayout = b;
+    if (b) {
+        if (!alreadyNeededLayout)
+            markContainingBlocksForLayout();
+    }
+    else {
+        m_posChildNeedsLayout = false;
+        m_normalChildNeedsLayout = false;
+    }
+}
+
+void RenderObject::markContainingBlocksForLayout()
+{
+#ifndef INCREMENTAL_REPAINTING
+    RenderObject* clippedObj = (style()->hidesOverflow() && !isText()) ? this : 0;
+#endif
     
+    RenderObject *o = container();
+    RenderObject *last = this;
+
+    while (o) {
+        if (last->style()->position() == FIXED || last->style()->position() == ABSOLUTE) {
+#ifdef INCREMENTAL_REPAINTING
+            if (o->m_posChildNeedsLayout)
+                return;
+#endif
+            o->m_posChildNeedsLayout = true;
+        }
+        else {
+#ifdef INCREMENTAL_REPAINTING
+            if (o->m_normalChildNeedsLayout)
+                return;
+#endif
+            o->m_normalChildNeedsLayout = true;
+        }
+
+#ifndef INCREMENTAL_REPAINTING
+        if (o->style()->hidesOverflow() && !clippedObj)
+            clippedObj = o;
+#endif
+
+        last = o;
+        o = o->container();
+    }
+
+#ifdef INCREMENTAL_REPAINTING
+    last->scheduleRelayout();
+#else
+    last->scheduleRelayout(clippedObj);
+#endif
+}
+
 RenderBlock* RenderObject::containingBlock() const
 {
     if(isTableCell())
@@ -460,8 +510,16 @@ RenderBlock* RenderObject::containingBlock() const
     }
     else if (m_style->position() == ABSOLUTE) {
         while (o && (o->style()->position() == STATIC || (o->isInline() && !o->isReplaced()))
-               && !o->isRoot() && !o->isCanvas())
+               && !o->isRoot() && !o->isCanvas()) {
+            // For relpositioned inlines, we return the nearest enclosing block.  We don't try
+            // to return the inline itself.  This allows us to avoid having a positioned objects
+            // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
+            // from this method.  The container() method can actually be used to obtain the
+            // inline directly.
+            if (o->style()->position() == RELATIVE && o->isInline() && !o->isReplaced())
+                return o->containingBlock();
             o = o->parent();
+        }
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
                      || o->isTableCol()))
@@ -844,9 +902,80 @@ void RenderObject::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty
     paintObject(p, x, y, w, h, tx, ty, paintAction);
 }
 
-void RenderObject::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
+void RenderObject::repaint(bool immediate)
 {
-    if(parent()) parent()->repaintRectangle(x, y, w, h, immediate, f);
+    RenderObject* c = canvas();
+    if (!c || !c->isCanvas())
+        return;
+    RenderCanvas* canvasObj = static_cast<RenderCanvas*>(c);
+    if (canvasObj->printingMode())
+        return; // Don't repaint if we're printing.
+
+    canvasObj->repaintViewRectangle(getAbsoluteRepaintRect(), immediate);    
+}
+
+void RenderObject::repaintRectangle(const QRect& r, bool immediate)
+{
+    RenderObject* c = canvas();
+    if (!c || !c->isCanvas())
+        return;
+    RenderCanvas* canvasObj = static_cast<RenderCanvas*>(c);
+    if (canvasObj->printingMode())
+        return; // Don't repaint if we're printing.
+
+    QRect absRect(r);
+    computeAbsoluteRepaintRect(absRect);
+    canvasObj->repaintViewRectangle(absRect, immediate);
+}
+
+#ifdef INCREMENTAL_REPAINTING
+void RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
+{
+    if (!isFloatingOrPositioned() && parent() && parent()->selfNeedsLayout())
+        return;
+    
+    QRect newBounds, newFullBounds;
+    getAbsoluteRepaintRectIncludingDescendants(newBounds, newFullBounds);
+    if (newBounds != oldBounds || selfNeedsLayout()) {
+        RenderObject* c = canvas();
+        if (!c || !c->isCanvas())
+            return;
+        RenderCanvas* canvasObj = static_cast<RenderCanvas*>(c);
+        if (canvasObj->printingMode())
+            return; // Don't repaint if we're printing.
+        canvasObj->repaintViewRectangle(oldFullBounds);
+        if (newBounds != oldBounds)
+            canvasObj->repaintViewRectangle(newFullBounds);
+    }
+}
+
+void RenderObject::repaintIfMoved(int x, int y)
+{
+}
+
+void RenderObject::repaintPositionedAndFloatingDescendants()
+{
+}
+#endif
+
+QRect RenderObject::getAbsoluteRepaintRect()
+{
+    if (parent())
+        return parent()->getAbsoluteRepaintRect();
+    return QRect();
+}
+
+#ifdef INCREMENTAL_REPAINTING
+void RenderObject::getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& fullBounds)
+{
+    bounds = fullBounds = getAbsoluteRepaintRect();
+}
+#endif
+
+void RenderObject::computeAbsoluteRepaintRect(QRect& r, bool f)
+{
+    if (parent())
+        return parent()->computeAbsoluteRepaintRect(r, f);
 }
 
 #ifndef NDEBUG
@@ -998,7 +1127,12 @@ void RenderObject::setStyle(RenderStyle *style)
 
     RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
 
-    if (m_style && m_parent && d == RenderStyle::Visible && !isText())
+    // The background of the root element or the body element could propagate up to
+    // the canvas.  Just dirty the entire canvas when our style changes substantially.
+    if (m_style && d >= RenderStyle::Visible && element() &&
+        (element()->id() == ID_HTML || element()->id() == ID_BODY))
+        canvas()->repaint();
+    else if (m_style && m_parent && d == RenderStyle::Visible && !isText())
         // Do a repaint with the old style first, e.g., for example if we go from
         // having an outline to not having an outline.
         repaint();
@@ -1058,7 +1192,7 @@ void RenderObject::setStyle(RenderStyle *style)
     if ( d >= RenderStyle::Position && m_parent ) {
         //qDebug("triggering relayout");
         setNeedsLayoutAndMinMaxRecalc();
-    } else if ( m_parent && !isText()) {
+    } else if ( m_parent && !isText() && d == RenderStyle::Visible ) {
         //qDebug("triggering repaint");
     	repaint();
     }
@@ -1178,6 +1312,15 @@ RenderCanvas* RenderObject::canvas() const
 
 RenderObject *RenderObject::container() const
 {
+    // This method is extremely similar to containingBlock(), but with a few notable
+    // exceptions.
+    // (1) It can be used on orphaned subtrees, i.e., it can be called safely even when
+    // the object is not part of the primary document subtree yet.
+    // (2) For normal flow elements, it just returns the parent.
+    // (3) For absolute positioned elements, it will return a relative positioned inline.
+    // containingBlock() simply skips relpositioned inlines and lets an enclosing block handle
+    // the layout of the positioned object.  This does mean that calcAbsoluteHorizontal and
+    // calcAbsoluteVertical have to use container().
     EPosition pos = m_style->position();
     RenderObject *o = 0;
     if( pos == FIXED ) {
@@ -1253,6 +1396,7 @@ RenderArena* RenderObject::renderArena() const
 
 void RenderObject::detach(RenderArena* renderArena)
 {
+#ifndef INCREMENTAL_REPAINTING
     // If we're an overflow:hidden object that currently needs layout, we need
     // to make sure the view isn't holding on to us.
     if (needsLayout() && style()->hidesOverflow()) {
@@ -1260,7 +1404,8 @@ void RenderObject::detach(RenderArena* renderArena)
         if (r && r->view()->layoutObject() == this)
             r->view()->unscheduleRelayout();
     }
-    
+#endif
+
     remove();
     
     m_next = m_previous = 0;
@@ -1557,12 +1702,20 @@ void RenderObject::recalcMinMaxWidths()
     m_recalcMinMax = false;
 }
 
+#ifdef INCREMENTAL_REPAINTING
+void RenderObject::scheduleRelayout()
+#else
 void RenderObject::scheduleRelayout(RenderObject* clippedObj)
+#endif
 {
     if (!isCanvas()) return;
     KHTMLView *view = static_cast<RenderCanvas *>(this)->view();
-    if ( view )
+    if (view)
+#ifdef INCREMENTAL_REPAINTING
+        view->scheduleRelayout();
+#else
         view->scheduleRelayout(clippedObj);
+#endif
 }
 
 

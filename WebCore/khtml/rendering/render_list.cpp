@@ -495,10 +495,10 @@ void RenderListMarker::setPixmap( const QPixmap &p, const QRect& r, CachedImage 
         return;
     }
 
-    if(m_width != m_listImage->pixmap_size().width() || m_height != m_listImage->pixmap_size().height())
+    if (m_width != m_listImage->pixmap_size().width() || m_height != m_listImage->pixmap_size().height())
         setNeedsLayoutAndMinMaxRecalc();
     else
-        repaintRectangle(0, 0, m_width, m_height);
+        repaint();
 }
 
 void RenderListMarker::calcMinMaxWidth()

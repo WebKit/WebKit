@@ -1577,10 +1577,8 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
 
 void KWQKHTMLPart::clearTimers(KHTMLView *view)
 {
-    if (view) {
+    if (view)
         view->unscheduleRelayout();
-        view->unscheduleRepaint();
-    }
 }
 
 void KWQKHTMLPart::clearTimers()
