@@ -3,6 +3,8 @@
         Reviewed by Don.
 
 	- follow-on to my fix for 3125877 that fixes a crash I observed when a plug-in fails to NPP_New
+        
+        I filed bug 3136870 about the fact that we don't do a good job reporting the error.
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView sendEvent:]): Return quietly if this is called when
