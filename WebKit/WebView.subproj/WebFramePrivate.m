@@ -1246,7 +1246,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->quickRedirectComing = NO;
 
     [dataSrc _setURL:URL];
-    if (!isRedirect) {
+    if (!isRedirect && ![self _shouldTreatURLAsSameAsCurrent:URL]) {
         ASSERT(![_private previousItem]);
         // NB: must happen after _setURL, since we add based on the current request.
         // Must also happen before we openURL and displace the scroll position, since
@@ -1303,8 +1303,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     BOOL sameURL = [self _shouldTreatURLAsSameAsCurrent:URL];
 
+    // Make sure to do scroll to anchor processing even if the URL is
+    // exactly the same so pages with '#' links and DHTML side effects
+    // work properly.
     if (!isFormSubmission
-        && !sameURL
         && loadType != WebFrameLoadTypeReload
         && loadType != WebFrameLoadTypeSame
         && ![_private->bridge isFrameSet]

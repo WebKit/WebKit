@@ -1,3 +1,16 @@
+2002-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3123057 - SJ: DHTML doesn't always work on http://www.pixar.com/howwedoit/
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+	Treat a click on a link to the same URL with an anchor as a scroll
+	to anchor, not a same URL load.
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]): Avoid
+	adding the same anchor URL to the back/forward list many times.
+
 2002-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
