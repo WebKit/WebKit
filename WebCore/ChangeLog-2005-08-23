@@ -1,3 +1,12 @@
+2003-11-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+        * khtml/ecma/kjs_window.cpp: Don't make event read-only, some
+	sites want to set their own top-level function named "event" and
+	will hang if they can't.
+        * khtml/ecma/kjs_window.lut.h: Regenerated.
+
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3472167, for shrink-to-fit style printing, grow the width of the initial containing block

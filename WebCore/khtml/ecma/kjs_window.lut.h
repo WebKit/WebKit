@@ -34,7 +34,7 @@ const struct HashEntry WindowTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "DOMException", Window::DOMException, DontDelete, 0, &WindowTableEntries[103] },
    { "closed", Window::Closed, DontDelete|ReadOnly, 0, &WindowTableEntries[96] },
-   { "event", Window::Event, DontDelete|ReadOnly, 0, &WindowTableEntries[108] },
+   { "event", Window::Event, DontDelete, 0, &WindowTableEntries[108] },
    { 0, 0, 0, 0, 0 },
    { "onload", Window::Onload, DontDelete, 0, 0 },
    { "frames", Window::Frames, DontDelete|ReadOnly, 0, 0 },

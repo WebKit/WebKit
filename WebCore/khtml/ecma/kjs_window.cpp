@@ -190,7 +190,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   CSSRule	Window::CSSRule		DontDelete
   frames	Window::Frames		DontDelete|ReadOnly
   history	Window::_History	DontDelete|ReadOnly
-  event		Window::Event		DontDelete|ReadOnly
+  event		Window::Event		DontDelete
   innerHeight	Window::InnerHeight	DontDelete|ReadOnly
   innerWidth	Window::InnerWidth	DontDelete|ReadOnly
   length	Window::Length		DontDelete|ReadOnly
