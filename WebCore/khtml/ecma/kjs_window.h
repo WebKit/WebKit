@@ -108,7 +108,7 @@ namespace KJS {
            OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
            ScreenTop, ScreenLeft,
-           ScrollTo, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
+           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
            Image, Option, Alert, Confirm, Prompt, Open, SetTimeout, ClearTimeout,
            Focus, Blur, Close, SetInterval, ClearInterval, CaptureEvents, Onabort, Onblur,
            Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, Onfocus,

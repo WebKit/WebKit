@@ -210,6 +210,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   scroll	Window::Scroll		DontDelete|Function 2
   scrollBy	Window::ScrollBy	DontDelete|Function 2
   scrollTo	Window::ScrollTo	DontDelete|Function 2
+  scrollX       Window::ScrollX         DontDelete|ReadOnly
+  scrollY       Window::ScrollY         DontDelete|ReadOnly
   moveBy	Window::MoveBy		DontDelete|Function 2
   moveTo	Window::MoveTo		DontDelete|Function 2
   resizeBy	Window::ResizeBy	DontDelete|Function 2
@@ -482,6 +484,12 @@ Value Window::get(ExecState *exec, const UString &p) const
     case ScreenY: {
 	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
       return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
+    }
+    case ScrollX: {
+      return Number(m_part->view()->contentsX());
+    }
+    case ScrollY: {
+      return Number(m_part->view()->contentsY());
     }
     case Scrollbars:
       return Undefined(); // ###
