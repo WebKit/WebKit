@@ -1,3 +1,14 @@
+2003-03-31  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3211862 and 3212750, add error-handling cases for
+	property values to the CSS parser so the whole sheet doesn't
+	get rejected.
+	
+        Reviewed by darin
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
 2003-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

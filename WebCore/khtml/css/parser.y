@@ -792,6 +792,10 @@ declaration:
 	delete p->valueList;
 	p->valueList = 0;
     }
+    |
+    error {
+        $$ = false;
+    }
   ;
 
 property:
