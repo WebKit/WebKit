@@ -7,6 +7,18 @@
 
         Reviewed by Chris.
 
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setPrinting:pageWidth:]):
+
+2003-04-25  Richard Williamson   <rjw@apple.com>
+
+        Final API review changes.
+
+        parent -> parentFrame
+        children -> childFrames
+
+        Reviewed by Chris.
+
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge childFrames]):
         (-[WebBridge frameDetached]):

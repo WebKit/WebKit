@@ -801,7 +801,7 @@
 - (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth
 {
     WebFrame *frame = [self _frame];
-    NSArray *subframes = [frame children];
+    NSArray *subframes = [frame childFrames];
     unsigned n = [subframes count];
     unsigned i;
     for (i = 0; i != n; ++i) {
