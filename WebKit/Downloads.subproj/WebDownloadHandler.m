@@ -19,6 +19,7 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
+#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -167,9 +168,9 @@
     NSString *path = [dataSource downloadPath];
     NSObject <WebDownloadDecoder> *lastDecoder = [decoderSequence lastObject];
         
-    NSString *filename = [lastDecoder filename];
+    NSString *filename = [[lastDecoder filename] _web_filenameByFixingIllegalCharacters];
 
-    if (filename) {
+    if ([filename length] != 0) {
         path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
     }
 

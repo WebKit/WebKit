@@ -1,3 +1,12 @@
+2003-02-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3163073 - SECURITY: Need to check if filename in encoded download is safe
+
+        Reviewed by kocienda, darin, mjs.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler createFileIfNecessary]): call _web_filenameByFixingIllegalCharacters on the encoded filename
+
 2003-02-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Ken.
