@@ -1,5 +1,19 @@
 2002-06-13  Chris Blumenberg  <cblu@apple.com>
 
+	Removed MIME.subproj. Moved IFDownloadHandler to Misc.
+
+	* MIME.subproj/IFDownloadHandler.h: Removed.
+	* MIME.subproj/IFDownloadHandler.mm: Removed.
+	* Misc.subproj/IFDownloadHandler.h: Added.
+	* Misc.subproj/IFDownloadHandler.mm: Added.
+	(-[IFDownloadHandler initWithDataSource:]):
+	(-[IFDownloadHandler dealloc]):
+	(-[IFDownloadHandler receivedData:isComplete:]):
+	(-[IFDownloadHandler cancel]):
+	* WebKit.pbproj/project.pbxproj:
+
+2002-06-13  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed downloads.
 	Now write out download files as data comes in.
 	Removed useless lproj's.
