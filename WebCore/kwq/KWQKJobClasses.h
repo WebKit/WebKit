@@ -73,6 +73,8 @@ public:
     void emitResult();
     void emitReceivedResponse(void *);
 
+    QByteArray postData() const;
+    QString method() const;
 private:
     TransferJobPrivate *d;
 

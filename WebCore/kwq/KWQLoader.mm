@@ -59,7 +59,15 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 
     KWQ_BLOCK_EXCEPTIONS;
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithJob:job];
-    id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL()];
+
+    id <WebCoreResourceHandle> handle;
+
+    if (job->method() == "POST") {
+	NSData *postData = [NSData dataWithBytesNoCopy:job->postData().data() length:job->postData().size() freeWhenDone:NO];
+	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() postData:postData];
+    } else {
+	handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL()];
+    }
     [resourceLoader setHandle:handle];
     [resourceLoader release];
     return handle != nil;

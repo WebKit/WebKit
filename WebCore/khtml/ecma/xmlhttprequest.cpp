@@ -175,7 +175,9 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
 
 XMLHttpRequest::~XMLHttpRequest()
 {
-  delete decoder;
+  if (decoder) {
+    decoder->deref();
+  }
 }
 
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
@@ -203,6 +205,7 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
 void XMLHttpRequest::send(const QString& _body)
 {
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
+      // FIXME: determine post encoding correctly by looking in headers for charset
       job = KIO::http_post( url, QCString(_body.utf8()), false );
       job->addMetaData("content-type", "text/plain" );
   }
@@ -234,8 +237,17 @@ void XMLHttpRequest::send(const QString& _body)
 
 void XMLHttpRequest::slotFinished(KIO::Job *)
 {
+  if (decoder) {
+    response += decoder->flush();
+  }
+
   changeState(Completed);
   job = 0;
+  
+  if (decoder) {
+    decoder->deref();
+    decoder = 0;
+  }
 }
 
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
@@ -273,9 +285,6 @@ void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
     len = strlen(data);
 
   QString decoded = decoder->decode(data, len);
-
-  if (decoded.isEmpty()) 
-    return;
 
   response += decoded;
 

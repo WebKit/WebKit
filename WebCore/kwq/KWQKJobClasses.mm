@@ -40,11 +40,22 @@ namespace KIO {
 class TransferJobPrivate
 {
 public:
-    TransferJobPrivate(const KURL &kurl)
+    TransferJobPrivate(const KURL& kurl)
         : status(0)
         , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
-        , URL(kurl)
-        , loader(nil)
+	, URL(kurl)
+	, loader(nil)
+	, method("GET")
+    {
+    }
+
+    TransferJobPrivate(const KURL& kurl, const QByteArray &_postData)
+        : status(0)
+        , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
+	, URL(kurl)
+	, loader(nil)
+	, method("POST")
+	, postData(_postData)
     {
     }
 
@@ -58,6 +69,8 @@ public:
     NSMutableDictionary *metaData;
     KURL URL;
     KWQResourceLoader *loader;
+    QString method;
+    QByteArray postData;
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
@@ -70,7 +83,7 @@ TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
 }
 
 TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showProgressInfo)
-    : d(new TransferJobPrivate(url)),
+    : d(new TransferJobPrivate(url, postData)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
       m_result(this, SIGNAL(result(KIO::Job*))),
@@ -144,6 +157,16 @@ void TransferJob::setLoader(KWQResourceLoader *loader)
 KURL TransferJob::url() const
 {
     return d->URL;
+}
+
+QByteArray TransferJob::postData() const
+{
+    return d->postData;
+}
+
+QString TransferJob::method() const
+{
+    return d->method;
 }
 
 void TransferJob::emitData(const char *data, int size)
