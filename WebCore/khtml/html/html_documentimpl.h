@@ -96,7 +96,6 @@ protected slots:
      */
     void slotHistoryChanged();
 private:
-    mutable DOMString m_domain;
     QTime m_startTime;
     // we actually store ints inside the pointer value itself; would use void *
     // but that makes the template unhappy.

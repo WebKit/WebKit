@@ -1,3 +1,13 @@
+2003-07-21  Dave Hyatt  <hyatt@apple.com>
+
+	Checking in David Faure's patch that fixes getElementsByTagName(*).
+	
+        Reviewed by me
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::getElementsByTagNameNS):
+        (TagNodeListImpl::nodeMatches):
+
 2003-07-18  Dave Hyatt  <hyatt@apple.com>
 
 	Enable domain() and setDomain() to work for all documents (XML
