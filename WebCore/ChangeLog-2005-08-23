@@ -1,3 +1,15 @@
+2005-03-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4029741> REGRESSION (188-189): <input type=text> are cleared when you hide/show them
+
+        * khtml/html/html_formimpl.h: Added detach functions for both input and text area elements, since
+        both have m_valueMatchesRenderer flags.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::detach): Set m_valueMatchesRenderer to false, since the renderer is going away.
+        (DOM::HTMLTextAreaElementImpl::detach): Ditto.
+
 2005-03-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
