@@ -780,7 +780,7 @@ static const char * const stateNames[] = {
     [newDataSource release];
 }
 
--(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event
+-(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event request:(WebResourceRequest *)request
 {
     NSPoint point = [[[self webView] documentView] convertPoint:[event locationInWindow] fromView:nil];
     WebController *controller = [self controller];
@@ -788,7 +788,9 @@ static const char * const stateNames[] = {
 
     clickPolicy = [[controller policyDelegate] clickPolicyForElement:[(WebHTMLView *)[[self webView] documentView] _elementAtPoint:point]
                                                               button:[event type]
-                                                       modifierFlags:[event modifierFlags]];
+                                                       modifierFlags:[event modifierFlags]
+ 					                     request:request
+						             inFrame:self];
 
     WebPolicyAction clickAction = [clickPolicy policyAction];
     NSURL *URL = [clickPolicy URL];
@@ -819,7 +821,13 @@ static const char * const stateNames[] = {
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
 - (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event
 {
-    if (event != nil && ![self _continueAfterClickPolicyForEvent:event]) {
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [request setReferrer:[_private->bridge referrer]];
+    if (loadType == WebFrameLoadTypeReload) {
+	[request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+    }
+
+    if (event != nil && ![self _continueAfterClickPolicyForEvent:event request:request]) {
 	return;
     }
 
@@ -840,11 +848,7 @@ static const char * const stateNames[] = {
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
-        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-        [request setReferrer:[_private->bridge referrer]];
-        if (loadType == WebFrameLoadTypeReload) {
-            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-        }
+
         [self _loadRequest:request];
         // NB: must be done after loadRequest:, which sets the provDataSource, which
         //     inits the load type to Standard

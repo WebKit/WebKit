@@ -211,7 +211,7 @@ typedef enum {
      @param modifierFlags The modifier flags as described in NSEvent.h.
      @result The WebClickPolicy for WebKit to implement
 */
-- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierFlags: (unsigned int)modifierFlags;
+- (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierFlags: (unsigned int)modifierFlags request:(WebResourceRequest *)request inFrame:(WebFrame *)frame;
 
 /*!
     @method URLPolicyForURL:inFrame:

@@ -1,3 +1,15 @@
+2002-11-05  Maciej Stachowiak  <mjs@apple.com>
+
+	Added request and frame to click policy callback.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate clickPolicyForElement:button:modifierFlags:request:inFrame:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:]):
+
 2002-11-04  Richard Williamson  <rjw@apple.com>
 
         Changes to support cursive letter forms.  It works, but I've
