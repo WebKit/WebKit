@@ -1,4 +1,8 @@
-2002-07-23  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-23  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Fix paths for newly added files.
+
+2002-07-23  Richard Williamson  <rjw@apple.com>
 
         Cleaned up LocationChangeHandler.  We now have one per controller.
         

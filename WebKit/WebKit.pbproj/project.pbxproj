@@ -2269,15 +2269,13 @@
 //F64
 		F649E40402EE0D1901CA2ACD = {
 			isa = PBXFileReference;
-			name = WebDefaultControllerPolicyHandler.h;
-			path = ../src/Labyrinth/WebKit/WebView.subproj/WebDefaultControllerPolicyHandler.h;
-			refType = 3;
+			path = WebDefaultControllerPolicyHandler.h;
+			refType = 4;
 		};
 		F649E40502EE0D1901CA2ACD = {
 			isa = PBXFileReference;
-			name = WebDefaultControllerPolicyHandler.m;
-			path = ../src/Labyrinth/WebKit/WebView.subproj/WebDefaultControllerPolicyHandler.m;
-			refType = 3;
+			path = WebDefaultControllerPolicyHandler.m;
+			refType = 4;
 		};
 		F649E40602EE0D1901CA2ACD = {
 			fileRef = F649E40402EE0D1901CA2ACD;
