@@ -60,6 +60,15 @@ static inline id KWQRetainNSRelease(id obj)
     return obj;
 }
 
+// CF objects need to be "made collectable" for autorelease to work
+// properly in GC
+static inline id KWQCFAutorelease(CFTypeRef obj)
+{
+    CFMakeCollectable(obj);
+    [(id) obj autorelease];
+    return (id) obj;
+}
+
 // Definitions for GC-specific methods for Panther.
 // The finalize method simply won't be called.
 
