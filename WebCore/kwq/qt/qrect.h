@@ -60,6 +60,12 @@ public:
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
     QRect unite(const QRect &) const;
+
+    bool contains(int x, int y, bool proper = false) {
+        if (proper)
+            return x > xp && x < (xp + w - 1) && y > yp && y < (yp + h - 1);
+        return x >= xp && x < xp + w && y >= yp && y < yp + h;
+    }
     
     inline QRect operator&(const QRect &r) const { return intersect(r); }
 

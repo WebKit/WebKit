@@ -223,7 +223,7 @@ using khtml::RenderPart;
 #endif
 
     if (renderer && renderer->layer())
-        renderer->layer()->paint(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
+        renderer->layer()->paint(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
 }
 
 - (void)drawRect:(NSRect)rect
@@ -425,7 +425,7 @@ using khtml::RenderPart;
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject::NodeInfo nodeInfo(true, true);
-    part->impl->renderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
+    part->impl->renderer()->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 

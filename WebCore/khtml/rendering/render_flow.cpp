@@ -1584,15 +1584,10 @@ bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
     if (specialObjects) {
         int stx = _tx;
         int sty = _ty;
-        // special case - special objects in root are relative to viewport
-        if (isRoot()) {
-            stx += static_cast<RenderRoot*>(this)->view()->contentsX();
-            sty += static_cast<RenderRoot*>(this)->view()->contentsY();
-        }
         SpecialObject* o;
         QPtrListIterator<SpecialObject> it(*specialObjects);
         for (it.toLast(); (o = it.current()); --it)
-            if (o->node->containingBlock() == this)
+            if (!o->node->layer() && o->node->containingBlock() == this)
                 inBox |= o->node->nodeAtPoint(info, _x, _y, stx+xPos(), sty+yPos());
     }
 

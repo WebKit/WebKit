@@ -146,7 +146,7 @@ RenderLayer::convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y)
 }
 
 void
-RenderLayer::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty)
+RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
 {
     // Create the z-tree of layers that should be displayed.
     RenderLayer::RenderZTreeNode* node = constructZTree(QRect(x, y, w, h), this);
@@ -169,15 +169,50 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty)
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
         
         elt->layer->renderer()->print(p, x, y, w, h,
-                                      tx + elt->absBounds.x() - elt->layer->renderer()->xPos(),
-                                      ty + elt->absBounds.y() - elt->layer->renderer()->yPos());
+                                      elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                      elt->absBounds.y() - elt->layer->renderer()->yPos());
     }
     delete node;
 }
 
+bool
+RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
+{
+    bool inside = false;
+    RenderLayer::RenderZTreeNode* node = constructZTree(QRect(x, y, 0, 0), this, true);
+    if (!node)
+        return false;
+
+    // Flatten the tree into a back-to-front list for painting.
+    QPtrVector<RenderLayer::RenderLayerElement> layerList;
+    constructLayerList(node, &layerList);
+
+    // Walk the list and test each layer, adding in the appropriate offset.
+    uint count = layerList.count();
+    for (int i = count-1; i >= 0; i--) {
+        RenderLayer::RenderLayerElement* elt = layerList.at(i);
+
+        // Elements add in their own positions as a translation factor.  This forces
+        // us to subtract that out, so that when it's added back in, we get the right
+        // bounds.  This is really disgusting (that print only sets up the right paint
+        // position after you call into it). -dwh
+        //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
+
+        inside = elt->layer->renderer()->nodeAtPoint(info, x, y,
+                                      elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                      elt->absBounds.y() - elt->layer->renderer()->yPos());
+        if (inside)
+            break;
+    }
+    delete node;
+
+    return inside;
+}
+
 RenderLayer::RenderZTreeNode*
 RenderLayer::constructZTree(const QRect& damageRect, 
-                            RenderLayer* rootLayer)
+                            RenderLayer* rootLayer,
+                            bool eventProcessing)
 {
     // This variable stores the result we will hand back.
     RenderLayer::RenderZTreeNode* returnNode = 0;
@@ -204,7 +239,7 @@ RenderLayer::constructZTree(const QRect& damageRect,
         if (child->zIndex() < 0)
             continue; // Ignore negative z-indices in this first pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer);
+        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, eventProcessing);
         if (childNode) {
             // Put the new node into the tree at the front of the parent's list.
             if (lastChildNode)
@@ -217,7 +252,9 @@ RenderLayer::constructZTree(const QRect& damageRect,
 
     // Now add a leaf node for ourselves, but only if we intersect the damage
     // rect.
-    if (!m_parent || layerBounds.intersects(damageRect)) {
+    if (!m_parent ||
+        (eventProcessing && layerBounds.contains(x,y)) ||
+        (!eventProcessing && layerBounds.intersects(damageRect))) {
         RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, x, y);
         if (returnNode->child) {
             RenderZTreeNode* leaf = new RenderZTreeNode(layerElt);
@@ -233,7 +270,7 @@ RenderLayer::constructZTree(const QRect& damageRect,
         if (child->zIndex() >= 0)
             continue; // Ignore non-negative z-indices in this second pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer);
+        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, eventProcessing);
         if (childNode) {
             // Deal with the case where all our children views had negative z-indices.
             // Demote our leaf node and make a new interior node that can hold these

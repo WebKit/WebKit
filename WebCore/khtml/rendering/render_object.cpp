@@ -833,9 +833,7 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
     int tx = _tx + xPos();
     int ty = _ty + yPos();
-    if (isRelPositioned())
-        static_cast<RenderBox*>(this)->relativePositionOffset(tx, ty);
-
+    
     bool inside = (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + height()) &&
                   (_x >= tx) && (_x < tx + width()))) || isBody() || isHtml();
     bool inner = !info.innerNode();
@@ -843,7 +841,7 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
     // ### table should have its own, more performant method
     if (overhangingContents() || isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside() ) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling())
-            if (!child->isPositioned() && child->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos()))
+            if (!child->layer() && child->nodeAtPoint(info, _x, _y, _tx+xPos(), _ty+yPos()))
                 inside = true;
     }
 
