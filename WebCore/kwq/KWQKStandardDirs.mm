@@ -24,17 +24,18 @@
  */
 
 #include <kstddirs.h>
+#include <kwqdebug.h>
 
-
-QString locate(const char *type, const QString& filename, 
-    const KInstance* instance=KGlobal::instance())
+QString locate(const char *type, const QString& filename,
+        const KInstance* instance)
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
-
-QString locateLocal(const char *type, const QString &filename, 
-    const KInstance *instance=KGlobal::instance())
+QString locateLocal(const char *type, const QString &filename,
+        const KInstance *instance)
 {
+    _logNotYetImplemented();
+    return QString();
 }
-
-
