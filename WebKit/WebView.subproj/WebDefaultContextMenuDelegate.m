@@ -1,21 +1,19 @@
 /*
-      WebDefaultContextMenuHandler.h
-
+      WebDefaultContextMenuDelegate.m
       Copyright 2002, Apple, Inc. All rights reserved.
-
 */
 
-#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultContextMenuHandler.h>
+#import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
-@implementation WebDefaultContextMenuHandler
+@implementation WebDefaultContextMenuDelegate
 
 - (void)dealloc
 {
@@ -96,14 +94,14 @@
 {
     WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
     WebController *controller = [webFrame controller];
-    [[controller windowContext] openNewWindowWithURL:URL referrer:referrer];
+    [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer];
 }
 
 - (void)downloadURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
     WebController *controller = [webFrame controller];
-    WebContentPolicy *contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:@"application/octet-stream" URL:URL inFrame:webFrame];
+    WebContentPolicy *contentPolicy = [[controller policyDelegate] contentPolicyForMIMEType:@"application/octet-stream" URL:URL inFrame:webFrame];
     [controller _downloadURL:URL toPath:[contentPolicy path]];
 }
 

@@ -16,7 +16,7 @@
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -68,7 +68,7 @@
 {
     ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL referrer:referrer];
+    WebController *newController = [[[frame controller] windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer];
     [newController _setTopLevelFrameName:name];
     WebFrame *newFrame = [newController mainFrame];
     return [newFrame _bridge];
@@ -77,13 +77,13 @@
 - (BOOL)areToolbarsVisible
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowContext] areToolbarsVisible];
+    return [[[frame controller] windowOperationsDelegate] areToolbarsVisible];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowContext] setToolbarsVisible:visible];
+    [[[frame controller] windowOperationsDelegate] setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
@@ -101,25 +101,25 @@
 - (BOOL)isStatusBarVisible
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowContext] isStatusBarVisible];
+    return [[[frame controller] windowOperationsDelegate] isStatusBarVisible];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowContext] setStatusBarVisible:visible];
+    [[[frame controller] windowOperationsDelegate] setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowContext] setFrame:frameRect];
+    [[[frame controller] windowOperationsDelegate] setFrame:frameRect];
 }
 
 - (NSWindow *)window
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowContext] window];
+    return [[[frame controller] windowOperationsDelegate] window];
 }
 
 - (void)setTitle:(NSString *)title
@@ -130,7 +130,7 @@
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(frame != nil);
-    [[[frame controller] windowContext] setStatusText:status];
+    [[[frame controller] windowOperationsDelegate] setStatusText:status];
 }
 
 - (WebCoreBridge *)mainFrame
@@ -181,12 +181,12 @@
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
-    [[[frame controller] locationChangeHandler] clientRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
+    [[[frame controller] locationChangeDelegate] clientRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
 }
 
 - (void)reportClientRedirectCancelled
 {
-    [[[frame controller] locationChangeHandler] clientRedirectCancelledForFrame:frame];
+    [[[frame controller] locationChangeDelegate] clientRedirectCancelledForFrame:frame];
 }
 
 - (void)setFrame:(WebFrame *)webFrame

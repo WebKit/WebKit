@@ -14,13 +14,13 @@
 @public
     WebFrame *mainFrame;
     
-    id<WebWindowContext> windowContext;
-    id<WebResourceProgressHandler> resourceProgressHandler;
-    id<WebResourceProgressHandler> downloadProgressHandler;
-    id<WebContextMenuHandler> contextMenuHandler;
-    id<WebContextMenuHandler> defaultContextMenuHandler;
-    id<WebControllerPolicyHandler> policyHandler;
-    id<WebLocationChangeHandler> locationChangeHandler;
+    id<WebWindowOperationsDelegate> windowContext;
+    id<WebResourceProgressDelegate> resourceProgressDelegate;
+    id<WebResourceProgressDelegate> downloadProgressDelegate;
+    id<WebContextMenuDelegate> contextMenuDelegate;
+    id<WebContextMenuDelegate> defaultContextMenuDelegate;
+    id<WebControllerPolicyDelegate> policyDelegate;
+    id<WebLocationChangeDelegate> locationChangeDelegate;
     
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
@@ -47,7 +47,7 @@
 - (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)child inParent: (WebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
 
 
-- (id<WebContextMenuHandler>)_defaultContextMenuHandler;
+- (id<WebContextMenuDelegate>)_defaultContextMenuDelegate;
 - (void)_receivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;
 - (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
 - (void)_mainReceivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;

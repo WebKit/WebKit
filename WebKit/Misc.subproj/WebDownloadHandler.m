@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
-#import <WebKit/WebControllerPolicyHandlerPrivate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebKitErrors.h>

@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 
 @class WebDownloadHandler;
 @class WebDataSource;
 @class WebResourceHandle;
 @protocol WebResourceClient;
-@protocol WebResourceProgressHandler;
+@protocol WebResourceProgressDelegate;
 
 @interface WebMainResourceClient : NSObject <WebResourceClient>
 {
@@ -23,7 +23,7 @@
     BOOL isFirstChunk;
     BOOL suppressErrors;
     WebDownloadHandler *downloadHandler;
-    id <WebResourceProgressHandler> downloadProgressHandler;
+    id <WebResourceProgressDelegate> downloadProgressDelegate;
     WebContentAction policyAction;
     NSMutableData *resourceData;
 }

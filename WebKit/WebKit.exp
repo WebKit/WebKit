@@ -6,8 +6,8 @@
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDOMNode
 .objc_class_name_WebDataSource
-.objc_class_name_WebDefaultContextMenuHandler
-.objc_class_name_WebDefaultPolicyHandler
+.objc_class_name_WebDefaultContextMenuDelegate
+.objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebFileURLPolicy
 .objc_class_name_WebFrame
 .objc_class_name_WebHTMLView

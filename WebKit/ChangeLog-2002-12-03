@@ -1,3 +1,118 @@
+2002-09-23  Richard Williamson   <rjw@apple.com>
+
+        WebContextMenuHandler becomes WebContextMenuDelegate
+        WebControllerPolicyHandler becomes WebControllerPolicyDelegate
+        WebLocationChangeHandler becomes WebLocationChangeDelegate
+        WebResourceProgressHandler becomes WebResourceProgressDelegate
+        WebWindowContext becomes WebWindowOperationsDelegate
+
+        * Misc.subproj/WebDownloadHandler.m:
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView drawRect:]):
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        (-[WebNetscapePluginView status:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge openNewWindowWithURL:referrer:frameName:]):
+        (-[WebBridge areToolbarsVisible]):
+        (-[WebBridge setToolbarsVisible:]):
+        (-[WebBridge isStatusBarVisible]):
+        (-[WebBridge setStatusBarVisible:]):
+        (-[WebBridge setWindowFrame:]):
+        (-[WebBridge window]):
+        (-[WebBridge setStatusText:]):
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]):
+        (-[WebBridge reportClientRedirectCancelled]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebContextMenuDelegate.h:
+        * WebView.subproj/WebContextMenuHandler.h: Removed.
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setWindowOperationsDelegate:]):
+        (-[WebController windowOperationsDelegate]):
+        (-[WebController setResourceProgressDelegate:]):
+        (-[WebController resourceProgressDelegate]):
+        (-[WebController setDownloadProgressDelegate:]):
+        (-[WebController downloadProgressDelegate]):
+        (-[WebController setContextMenuDelegate:]):
+        (-[WebController contextMenuDelegate]):
+        (-[WebController setPolicyDelegate:]):
+        (-[WebController policyDelegate]):
+        (-[WebController setLocationChangeDelegate:]):
+        (-[WebController locationChangeDelegate]):
+        * WebView.subproj/WebControllerPolicyDelegate.m: Added.
+        (-[WebPolicyPrivate dealloc]):
+        (-[WebPolicy _setPolicyAction:]):
+        (-[WebPolicy policyAction]):
+        (-[WebPolicy path]):
+        (-[WebPolicy URL]):
+        (-[WebPolicy _setPath:]):
+        (-[WebPolicy dealloc]):
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:andPath:]):
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h:
+        * WebView.subproj/WebControllerPolicyHandler.h: Removed.
+        * WebView.subproj/WebControllerPolicyHandler.m: Removed.
+        * WebView.subproj/WebControllerPolicyHandlerPrivate.h: Removed.
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]):
+        (-[WebControllerPrivate dealloc]):
+        (-[WebController _defaultContextMenuDelegate]):
+        (-[WebController _receivedProgress:forResourceHandle:fromDataSource:complete:]):
+        (-[WebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]):
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]):
+        (-[WebController _mainReceivedError:forResourceHandle:partialProgress:fromDataSource:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _setURL:]):
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:referrer:]):
+        (-[WebDefaultContextMenuDelegate downloadURL:]):
+        * WebView.subproj/WebDefaultContextMenuHandler.h: Removed.
+        * WebView.subproj/WebDefaultContextMenuHandler.m: Removed.
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebDefaultPolicyHandler.h: Removed.
+        * WebView.subproj/WebDefaultPolicyHandler.m: Removed.
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        (-[WebFrame frameNamed:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _timedLayout:]):
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame handleUnimplementablePolicy:errorCode:forURL:]):
+        (-[WebFrame _shouldShowURL:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView setNeedsLayout:]):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebLocationChangeDelegate.m:
+        * WebView.subproj/WebLocationChangeHandler.h: Removed.
+        * WebView.subproj/WebLocationChangeHandler.m: Removed.
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient receivedProgressWithHandle:complete:]):
+        (-[WebMainResourceClient receivedError:forHandle:]):
+        (-[WebMainResourceClient handleDidReceiveData:data:]):
+        * WebView.subproj/WebResourceProgressDelegate.h:
+        * WebView.subproj/WebResourceProgressHandler.h: Removed.
+        * WebView.subproj/WebView.m:
+        (-[WebView window]):
+        * WebView.subproj/WebWindowContext.h: Removed.
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2002-09-23  Darin Adler  <darin@apple.com>
 
 	- fixed 3052543 -- iframes don't work with z-index

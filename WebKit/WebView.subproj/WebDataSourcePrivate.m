@@ -18,7 +18,7 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
-#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
@@ -181,7 +181,7 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller locationChangeHandler] locationChangeStartedForDataSource:self];
+    [[_private->controller locationChangeDelegate] locationChangeStartedForDataSource:self];
 
     // Fire this guy up.
     if (!_private->mainHandle) {
@@ -273,7 +273,7 @@
     
     // The title doesn't get communicated to the controller until we are committed.
     if (_private->committed)
-        [[_private->controller locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
 - (void)_setURL:(NSURL *)URL
@@ -287,7 +287,7 @@
     [_private->finalURL release];
     _private->finalURL = URL;
 
-    [[_private->controller locationChangeHandler] serverRedirectTo:URL forDataSource:self];
+    [[_private->controller locationChangeDelegate] serverRedirectTo:URL forDataSource:self];
 }
 
 - (void) _setContentPolicy:(WebContentPolicy *)policy
@@ -446,7 +446,7 @@
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
     [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];
-    [[_private->controller locationChangeHandler] receivedPageIcon:nil forDataSource:self];
+    [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -460,7 +460,7 @@
         
         if([iconDB _hasIconForSiteURL:dataSourceURL]){
             // Tell about the icon immediately if the db already has it
-            [[_private->controller locationChangeHandler] receivedPageIcon:nil forDataSource:self];
+            [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
         }else{
             
             if(!_private->iconURL){

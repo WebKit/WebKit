@@ -6,13 +6,13 @@
 #import <WebKit/WebController.h>
 
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerSets.h>
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultPolicyHandler.h>
+#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
@@ -22,9 +22,9 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebResourceProgressHandler.h>
+#import <WebKit/WebResourceProgressDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceHandle.h>
@@ -74,80 +74,69 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
 }
 
 
-- (void)setWindowContext:(id <WebWindowContext>)context
+- (void)setWindowOperationsDelegate:(id <WebWindowOperationsDelegate>)delegate
 {
-    [context retain];
-    [_private->windowContext release];
-    _private->windowContext = context;
+    _private->windowContext = delegate;
 }
 
-- (id <WebWindowContext>)windowContext
+- (id <WebWindowOperationsDelegate>)windowOperationsDelegate
 {
     return _private->windowContext;
 }
 
-- (void)setResourceProgressHandler: (id <WebResourceProgressHandler>)handler
+- (void)setResourceProgressDelegate: (id <WebResourceProgressDelegate>)delegate
 {
-    [handler retain];
-    [_private->resourceProgressHandler release];
-    _private->resourceProgressHandler = handler;
+    _private->resourceProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceProgressHandler>)resourceProgressHandler
+- (id<WebResourceProgressDelegate>)resourceProgressDelegate
 {
-    return _private->resourceProgressHandler;
+    return _private->resourceProgressDelegate;
 }
 
 
-- (void)setDownloadProgressHandler: (id<WebResourceProgressHandler>)handler
+- (void)setDownloadProgressDelegate: (id<WebResourceProgressDelegate>)delegate
 {
-    [handler retain];
-    [_private->downloadProgressHandler release];
-    _private->downloadProgressHandler = handler;
+    _private->downloadProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceProgressHandler>)downloadProgressHandler
+- (id<WebResourceProgressDelegate>)downloadProgressDelegate
 {
-    return _private->downloadProgressHandler;
+    return _private->downloadProgressDelegate;
 }
 
-- (void)setContextMenuHandler: (id<WebContextMenuHandler>)handler
+- (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate
 {
-    [handler retain];
-    [_private->contextMenuHandler release];
-    _private->contextMenuHandler = handler;
+    _private->contextMenuDelegate = delegate;
 }
 
-- (id<WebContextMenuHandler>)contextMenuHandler
+- (id<WebContextMenuDelegate>)contextMenuDelegate
 {
-    return _private->contextMenuHandler;
+    return _private->contextMenuDelegate;
 }
 
-- (void)setPolicyHandler:(id <WebControllerPolicyHandler>)handler
+- (void)setPolicyDelegate:(id <WebControllerPolicyDelegate>)delegate
 {
-    [handler retain];
-    [_private->policyHandler release];
-    _private->policyHandler = handler;
+    _private->policyDelegate = delegate;
 }
 
-- (id<WebControllerPolicyHandler>)policyHandler
+- (id<WebControllerPolicyDelegate>)policyDelegate
 {
-    if (!_private->policyHandler)
-        _private->policyHandler = [[WebDefaultPolicyHandler alloc] initWithWebController: self];
-    return _private->policyHandler;
+    if (!_private->policyDelegate)
+        _private->policyDelegate = [[WebDefaultPolicyDelegate alloc] initWithWebController: self];
+    return _private->policyDelegate;
 }
 
-- (void)setLocationChangeHandler:(id <WebLocationChangeHandler>)handler
+- (void)setLocationChangeDelegate:(id <WebLocationChangeDelegate>)delegate
 {
-    [_private->locationChangeHandler autorelease];
-    _private->locationChangeHandler = [handler retain];
+    _private->locationChangeDelegate = delegate;
 }
 
-- (id <WebLocationChangeHandler>)locationChangeHandler
+- (id <WebLocationChangeDelegate>)locationChangeDelegate
 {
-    return _private->locationChangeHandler;
+    return _private->locationChangeDelegate;
 }
 
 - (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame

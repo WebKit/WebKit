@@ -1,15 +1,11 @@
 /*
- *  WebControllerPolicyHandlerPrivate.h
- *  WebKit
- *
- *  Created by Chris Blumenberg on Thu Jul 25 2002.
- *  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
- *
- */
+        WebControllerPolicyDelegatePrivate.h
+        Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 
 @interface WebPolicy (WebPrivate)
 

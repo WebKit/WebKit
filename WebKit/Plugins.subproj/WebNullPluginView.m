@@ -56,7 +56,7 @@ static NSImage *image = nil;
         errorSent = YES;
         webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
         webController = [webView controller];
-        [[webController policyHandler] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
+        [[webController policyDelegate] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }
 }
 

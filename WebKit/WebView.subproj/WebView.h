@@ -8,8 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebLocationChangeHandler.h>
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 
 @class WebBackForwardList;
 @class WebController;
@@ -22,9 +22,9 @@
 @class WebResourceHandle;
 @class WebView;
 
-@protocol WebWindowContext;
-@protocol WebResourceProgressHandler;
-@protocol WebContextMenuHandler;
+@protocol WebWindowOperationsDelegate;
+@protocol WebResourceProgressDelegate;
+@protocol WebContextMenuDelegate;
 
 
 /*!
@@ -71,70 +71,70 @@
 - initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controllerSetName: (NSString *)name;
 
 /*!
-    @method setWindowContext:
-    @param context
+    @method setWindowOperationsDelegate:
+    @param delegate
 */    
-- (void)setWindowContext: (id<WebWindowContext>)context;
+- (void)setWindowOperationsDelegate: (id<WebWindowOperationsDelegate>)delegate;
 
 /*!
-    @method windowContext
+    @method windowOperationsDelegate
 */
-- (id<WebWindowContext>)windowContext;
+- (id<WebWindowOperationsDelegate>)windowOperationsDelegate;
 
 /*!
-    @method setResourceProgressHandler:
-    @param handler
+    @method setResourceProgressDelegate:
+    @param delegate
 */
-- (void)setResourceProgressHandler: (id<WebResourceProgressHandler>)handler;
+- (void)setResourceProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
 
 /*!
-    @method resourceProgressHandler
+    @method resourceProgressDelegate
 */    
-- (id<WebResourceProgressHandler>)resourceProgressHandler;
+- (id<WebResourceProgressDelegate>)resourceProgressDelegate;
 
 /*!
-    @method setDownloadProgressHandler:
-    @param handler
+    @method setDownloadProgressDelegate:
+    @param delegate
 */    
-- (void)setDownloadProgressHandler: (id<WebResourceProgressHandler>)handler;
+- (void)setDownloadProgressDelegate: (id<WebResourceProgressDelegate>)delegate;
 
 /*!
-    @method downloadProgressHandler
+    @method downloadProgressDelegate
 */    
-- (id<WebResourceProgressHandler>)downloadProgressHandler;
+- (id<WebResourceProgressDelegate>)downloadProgressDelegate;
 
 /*!
-    @method setContextMenuHandler:
-    @param handler
+    @method setContextMenuDelegate:
+    @param delegate
 */    
-- (void)setContextMenuHandler: (id<WebContextMenuHandler>)handler;
+- (void)setContextMenuDelegate: (id<WebContextMenuDelegate>)delegate;
 
 /*!
-    @method contextMenuHandler
+    @method contextMenuDelegate
 */    
-- (id<WebContextMenuHandler>)contextMenuHandler;
+- (id<WebContextMenuDelegate>)contextMenuDelegate;
 
 /*!
-    @method setLocationChangeHandler:
-    @param handler
+    @method setLocationChangeDelegate:
+    @param delegate
 */    
-- (void)setLocationChangeHandler:(id <WebLocationChangeHandler>)handler;
+- (void)setLocationChangeDelegate:(id <WebLocationChangeDelegate>)delegate;
 
 /*!
-    @method locationChangeHandler
+    @method locationChangeDelegate
 */    
-- (id <WebLocationChangeHandler>)locationChangeHandler;
+- (id <WebLocationChangeDelegate>)locationChangeDelegate;
 
 /*!
-    @method setPolicyHandler:
-    @param handler
+    @method setPolicyDelegate:
+    @param delegate
 */    
-- (void)setPolicyHandler: (id<WebControllerPolicyHandler>)handler;
+- (void)setPolicyDelegate: (id<WebControllerPolicyDelegate>)delegate;
 
 /*!
-    @method policyHandler
+    @method policyDelegate
 */    
-- (id<WebControllerPolicyHandler>)policyHandler;
+- (id<WebControllerPolicyDelegate>)policyDelegate;
 
 /*!
     @method frameNamed:

@@ -1,5 +1,5 @@
 /*	
-        WebDefaultPolicyHandler.h
+        WebDefaultPolicyDelegate.h
 	Copyright 2002, Apple Computer, Inc.
 
         Public header file.
@@ -7,7 +7,7 @@
 
 @class WebController;
 
-@interface WebDefaultPolicyHandler : NSObject <WebControllerPolicyHandler>
+@interface WebDefaultPolicyDelegate : NSObject <WebControllerPolicyDelegate>
 {
     WebController *webController;
 }

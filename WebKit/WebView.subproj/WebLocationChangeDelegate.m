@@ -1,11 +1,11 @@
 /*	
-        WebLocationChangeHandler.m
+        WebLocationChangeDelegate.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "WebLocationChangeHandler.h"
+#import "WebLocationChangeDelegate.h"
 
-@implementation WebLocationChangeHandler
+@implementation WebLocationChangeDelegate
 
 - (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
 - (void)locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }

@@ -22,7 +22,7 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebViewFactory.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -216,7 +216,7 @@ enum {
     NSWindow *window = [super window];
 
     if (window == nil) {
-	window = [[[self controller] windowContext] window];
+	window = [[[self controller] windowOperationsDelegate] window];
     }
 
     return window;

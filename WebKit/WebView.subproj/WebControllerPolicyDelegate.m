@@ -1,12 +1,9 @@
-//
-//  WebControllerPolicyHandler.m
-//  WebKit
-//
-//  Created by Christopher Blumenberg on Thu Jul 25 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*
+        WebControllerPolicyDelegate.m
+        Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
-#import <WebKit/WebControllerPolicyHandler.h>
+#import <WebKit/WebControllerPolicyDelegate.h>
 
 @interface WebPolicyPrivate : NSObject
 {

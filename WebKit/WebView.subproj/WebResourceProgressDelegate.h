@@ -1,5 +1,5 @@
 /*
-        WebResourceProgressHandler.h
+        WebResourceProgressDelegate.h
         Copyright 2001, 2002, Apple Computer, Inc.
         
         Public header file.
@@ -12,7 +12,7 @@
     @discussion Implementors of this protocol will receive messages indicating
     data has been received for resources loaded by a data source.
 */
-@protocol WebResourceProgressHandler <NSObject>
+@protocol WebResourceProgressDelegate <NSObject>
 
 /*!
     @method receivedProgress:forResourceHandle:fromDataSource:complete:

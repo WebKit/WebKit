@@ -14,9 +14,9 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLoadProgress.h>
-#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebResourceProgressHandler.h>
+#import <WebKit/WebResourceProgressDelegate.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebError.h>
@@ -62,7 +62,7 @@
     ASSERT(currentURL == nil);
     ASSERT(downloadHandler == nil);
     
-    [downloadProgressHandler release];
+    [downloadProgressDelegate release];
     [resourceData release];
     [dataSource release];
     
@@ -88,7 +88,7 @@
         if (isComplete) {
             [dataSource _setPrimaryLoadComplete:YES];
         }
-        [downloadProgressHandler receivedProgress:progress forResourceHandle:handle 
+        [downloadProgressDelegate receivedProgress:progress forResourceHandle:handle 
             fromDataSource:dataSource complete:isComplete];
     } else {
         [[dataSource controller] _mainReceivedProgress:progress forResourceHandle:handle 
@@ -106,7 +106,7 @@
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
-        [downloadProgressHandler receivedError:error forResourceHandle:handle 
+        [downloadProgressDelegate receivedError:error forResourceHandle:handle 
             partialProgress:progress fromDataSource:dataSource];
     } else {
         [[dataSource controller] _mainReceivedError:error forResourceHandle:handle 
@@ -216,14 +216,14 @@
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[[handle response] characterSet]];
         
-        // retain the downloadProgressHandler just in case this is a download.
+        // retain the downloadProgressDelegate just in case this is a download.
         // Alexander releases the WebController if no window is created for it.
         // This happens in the cases mentioned in 2981866 and 2965312.
-        downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
+        downloadProgressDelegate = [[[dataSource controller] downloadProgressDelegate] retain];
 
         WebContentPolicy *contentPolicy = [dataSource contentPolicy];
         if(contentPolicy == nil){
-            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:contentType URL:currentURL inFrame:frame];
+            contentPolicy = [[controller policyDelegate] contentPolicyForMIMEType:contentType URL:currentURL inFrame:frame];
             [dataSource _setContentPolicy:contentPolicy];
         }
         policyAction = [contentPolicy policyAction];
@@ -241,7 +241,7 @@
     case WebContentPolicySaveAndOpenExternally:
         if (!downloadHandler) {
             [frame _setProvisionalDataSource:nil];
-	    [[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+	    [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         }
         downloadError = [downloadHandler receivedData:data];
@@ -250,7 +250,7 @@
         [handle cancelLoadInBackground];
         [self didCancelWithHandle:handle];
         [frame _setProvisionalDataSource:nil];
-	[[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+	[[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
         break;
     default:
         [NSException raise:NSInvalidArgumentException format:@"contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy."];

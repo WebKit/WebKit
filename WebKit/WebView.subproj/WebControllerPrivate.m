@@ -4,18 +4,18 @@
 */
 
 #import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebControllerPolicyHandlerPrivate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultContextMenuHandler.h>
+#import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourceProgressHandler.h>
+#import <WebKit/WebResourceProgressDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -30,7 +30,7 @@
 - init 
 {
     backForwardList = [[WebBackForwardList alloc] init];
-    defaultContextMenuHandler = [[WebDefaultContextMenuHandler alloc] init];
+    defaultContextMenuDelegate = [[WebDefaultContextMenuDelegate alloc] init];
     textSizeMultiplier = 1;
     userAgentLock = [[NSLock alloc] init];
     return self;
@@ -62,13 +62,6 @@
     [mainFrame reset];
     
     [mainFrame release];
-    [windowContext release];
-    [resourceProgressHandler release];
-    [downloadProgressHandler release];
-    [contextMenuHandler release];
-    [defaultContextMenuHandler release];
-    [policyHandler release];
-    [locationChangeHandler release];
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
@@ -109,9 +102,9 @@
 }
 
 
-- (id<WebContextMenuHandler>)_defaultContextMenuHandler
+- (id<WebContextMenuDelegate>)_defaultContextMenuDelegate
 {
-    return _private->defaultContextMenuHandler;
+    return _private->defaultContextMenuDelegate;
 }
 
 - (void)_receivedProgress:(WebLoadProgress *)progress forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
@@ -120,7 +113,7 @@
     
     ASSERT(dataSource != nil);
     
-    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
+    [[self resourceProgressDelegate] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
 
     // This resource has completed, so check if the load is complete for all frames.
@@ -138,7 +131,7 @@
     
     ASSERT(dataSource != nil);
 
-    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
+    [[self resourceProgressDelegate] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
     
     // The frame may be nil if a previously cancelled load is still making progress callbacks.
@@ -168,7 +161,7 @@
 {
     WebFrame *frame = [dataSource webFrame];
 
-    [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+    [[self resourceProgressDelegate] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
     NSString *resourceIdentifier = [[[resourceHandle request] URL] absoluteString];
     if (resourceIdentifier == nil) {
@@ -186,7 +179,7 @@
 {
     WebFrame *frame = [dataSource webFrame];
 
-    [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+    [[self resourceProgressDelegate] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
     [dataSource _setMainDocumentError: error];
     [dataSource _setPrimaryLoadComplete: YES];

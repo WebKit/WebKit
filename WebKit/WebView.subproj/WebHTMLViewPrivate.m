@@ -13,7 +13,7 @@
 #import <WebFoundation/WebAssertions.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -22,7 +22,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginView.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
@@ -140,7 +140,7 @@ BOOL _modifierTrackingEnabled = FALSE;
     WebController *controller = [self _controller];
     WebClickPolicy *clickPolicy;
 
-    clickPolicy = [[controller policyHandler] clickPolicyForElement:[self _elementAtPoint:point]
+    clickPolicy = [[controller policyDelegate] clickPolicyForElement:[self _elementAtPoint:point]
                                                              button:[event type]
                                                        modifierMask:[event modifierFlags]];
 
@@ -151,7 +151,7 @@ BOOL _modifierTrackingEnabled = FALSE;
         case WebClickPolicyShow:
             return YES;
         case WebClickPolicyOpenNewWindow:
-            [[controller windowContext] openNewWindowWithURL:URL referrer:nil];
+            [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:nil];
             break;
         case WebClickPolicySave:
         case WebClickPolicySaveAndOpenExternally:

@@ -1,5 +1,5 @@
 /*	
-        WebLocationChangeHandler.h
+        WebLocationChangeDelegate.h
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 
         Public header file.
@@ -12,10 +12,10 @@
 @class WebFrame;
 
 /*!
-    @protocol WebLocationChangeHandler
-    @abstract A controller's WebLocationChangeHandler track changes it's frame's location. 
+    @protocol WebLocationChangeDelegate
+    @abstract A controller's WebLocationChangeDelegate track changes it's frame's location. 
 */
-@protocol WebLocationChangeHandler <NSObject>
+@protocol WebLocationChangeDelegate <NSObject>
 
 /*!
     @method locationChangeStartedForDataSource:
@@ -75,12 +75,12 @@
 @end
 
 /*!
-    @class WebLocationChangeHandler
-    @discussion The WebLocationChangeHandler class responds to all WebLocationChangeHandler protocol
+    @class WebLocationChangeDelegate
+    @discussion The WebLocationChangeDelegate class responds to all WebLocationChangeDelegate protocol
     methods by doing nothing. It's provided for the convenience of clients who only want
     to implement some of the above methods and ignore others.
 */
-@interface WebLocationChangeHandler : NSObject <WebLocationChangeHandler>
+@interface WebLocationChangeDelegate : NSObject <WebLocationChangeDelegate>
 {
 }
 @end

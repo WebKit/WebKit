@@ -1,5 +1,5 @@
 /*	
-        WebContextMenuHandler.h
+        WebContextMenuDelegate.h
 	Copyright 2001, 2002, Apple Computer, Inc.
 
         Public header file.
@@ -20,7 +20,7 @@ extern NSString *WebContextMenuElementFrameKey;
     a clicked element.
 */
 
-@protocol WebContextMenuHandler <NSObject>
+@protocol WebContextMenuDelegate <NSObject>
 
 /*!
     @method contextMenuItemsForElement:defaultMenuItems:

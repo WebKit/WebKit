@@ -1,15 +1,13 @@
 /*	
-        WebDefaultPolicyHandler.h
+        WebDefaultPolicyDelegate.m
 	Copyright 2002, Apple Computer, Inc.
-
-        Public header file.
 */
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebDefaultPolicyHandler.h>
+#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
 
 
-@implementation WebDefaultPolicyHandler
+@implementation WebDefaultPolicyDelegate
 
 - initWithWebController: (WebController *)wc
 {

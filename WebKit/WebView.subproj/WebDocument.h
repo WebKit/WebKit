@@ -25,6 +25,12 @@
 - (void)dataSourceUpdated: (WebDataSource *)dataSource;
 
 /*!
+    @method setNeedsLayout:
+    @param flag
+*/
+- (void)setNeedsLayout: (BOOL)flag;
+
+/*!
     @method layout
 */
 - (void)layout;

@@ -1,5 +1,5 @@
 /*
-     WebDefaultContextMenuHandler.h
+     WebDefaultContextMenuDelegate.h
      Copyright 2002, Apple, Inc. All rights reserved.
 
      Public header file.
@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol WebContextMenuHandler;
+@protocol WebContextMenuDelegate;
 
 /*!
     @class WebDefaultContextMenuHandler
 */
-@interface WebDefaultContextMenuHandler : NSObject <WebContextMenuHandler>
+@interface WebDefaultContextMenuDelegate : NSObject <WebContextMenuDelegate>
 {
     NSDictionary *element;
 }

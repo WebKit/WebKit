@@ -49,6 +49,10 @@
 {
 }
 
+- (void)setNeedsLayout: (BOOL)flag
+{
+}
+
 - (void)layout
 {
     WebImageRenderer *image = [representation image];

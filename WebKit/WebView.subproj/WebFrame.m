@@ -17,9 +17,9 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWindowContext.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -111,7 +111,7 @@
 //    disallows by returning a WebURLPolicyIgnore.
 - (BOOL)setProvisionalDataSource: (WebDataSource *)newDataSource
 {
-    id <WebLocationChangeHandler>locationChangeHandler;
+    id <WebLocationChangeDelegate>locationChangeDelegate;
     WebDataSource *oldDataSource;
     
     ASSERT([self controller] != nil);
@@ -142,7 +142,7 @@
     // returns YES if we should show the data source
     if([self _shouldShowURL:[newDataSource URL]]){
         
-        locationChangeHandler = [[self controller] locationChangeHandler];
+        locationChangeDelegate = [[self controller] locationChangeDelegate];
         
         oldDataSource = [self dataSource];
         
@@ -261,8 +261,8 @@
     }
     
     else if ([name isEqualToString:@"_blank"]){
-        WebController *newController = [[[self controller] windowContext] openNewWindowWithURL:nil referrer:nil];
-	[[[[newController windowContext] window] windowController] showWindow:nil];
+        WebController *newController = [[[self controller] windowOperationsDelegate] openNewWindowWithURL:nil referrer:nil];
+	[[[[newController windowOperationsDelegate] window] windowController] showWindow:nil];
 
         return [newController mainFrame];
     }

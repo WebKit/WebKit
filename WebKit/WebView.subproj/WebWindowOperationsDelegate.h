@@ -1,5 +1,5 @@
 /*
-        WebWindowContext.h
+        WebWindowOperationsDelegate.h
         Copyright 2001, 2002, Apple Computer, Inc.
         
         Public header file.
@@ -10,13 +10,13 @@
 @class WebController;
 
 /*!
-    @protocol WebWindowContext
-    @discussion A class that implements WebWindowContext provides
+    @protocol WebWindowOperationsDelegate
+    @discussion A class that implements WebWindowOperationsDelegate provides
     window-related methods that may be used by Javascript, plugins and
     other aspects of web pages. These methods are used to open new
     windows and control aspects of existing windows.
 */
-@protocol WebWindowContext <NSObject>
+@protocol WebWindowOperationsDelegate <NSObject>
 /*!
     @method openNewWindowWithURL:referrer:
     @abstract Open a new window and load the specified URL.

@@ -6,7 +6,7 @@
 #import <WebKit/WebHTMLView.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -234,7 +234,7 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    id <WebContextMenuHandler> contextMenuHandler, defaultContextMenuHandler;
+    id <WebContextMenuDelegate> contextMenuDelegate, defaultContextMenuDelegate;
     NSArray *menuItems, *defaultMenuItems;
     NSDictionary *elementInfo;
     NSMenu *menu = nil;
@@ -244,12 +244,12 @@
     point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     elementInfo = [self _elementAtPoint:point];
 
-    defaultContextMenuHandler = [[self _controller] _defaultContextMenuHandler];
-    defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElement: elementInfo  defaultMenuItems: nil];
-    contextMenuHandler = [[self _controller] contextMenuHandler];
+    defaultContextMenuDelegate = [[self _controller] _defaultContextMenuDelegate];
+    defaultMenuItems = [defaultContextMenuDelegate contextMenuItemsForElement: elementInfo  defaultMenuItems: nil];
+    contextMenuDelegate = [[self _controller] contextMenuDelegate];
 
-    if(contextMenuHandler){
-        menuItems = [contextMenuHandler contextMenuItemsForElement: elementInfo  defaultMenuItems: defaultMenuItems];
+    if(contextMenuDelegate){
+        menuItems = [contextMenuDelegate contextMenuItemsForElement: elementInfo  defaultMenuItems: defaultMenuItems];
     } else {
         menuItems = defaultMenuItems;
     }

@@ -19,7 +19,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
-#import <WebKit/WebLocationChangeHandler.h>
+#import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -179,12 +179,13 @@ static const char * const stateNames[] = {
         if ([self controller])
             LOG(Timing, "%s:  performing timed layout, %f seconds since start of document load", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
-        if ([[self webView] isDocumentHTML]) {
-            WebHTMLView *htmlView = (WebHTMLView *)documentView;
+        [documentView setNeedsLayout: YES];
+
+        if ([documentView isKindOfClass: [NSView class]]) {
+            NSView *dview = (NSView *)documentView;
             
-            [htmlView setNeedsLayout: YES];
             
-            NSRect frame = [htmlView frame];
+            NSRect frame = [dview frame];
             
             if (frame.size.width == 0 || frame.size.height == 0){
                 // We must do the layout now, rather than depend on
@@ -196,7 +197,7 @@ static const char * const stateNames[] = {
                 // check to see if any CSS is pending and delay
                 // the layout further to avoid the flash of unstyled
                 // content.                    
-                [htmlView layout];
+                [documentView layout];
             }
         }
             
@@ -323,11 +324,11 @@ static const char * const stateNames[] = {
             }
             
             // Tell the client we've committed this URL.
-	    [[[self controller] locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
+	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:[self dataSource]];
             
             // If we have a title let the controller know about it.
             if ([[self dataSource] pageTitle])
-		[[[self controller] locationChangeHandler] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
+		[[[self controller] locationChangeDelegate] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
             break;
         }
         
@@ -395,7 +396,7 @@ static const char * const stateNames[] = {
                 if (![pd isLoading]) {
                     LOG(Loading, "%s:  checking complete in WebFrameStateProvisional, load done", [[self name] cString]);
 
-                    [[[self controller] locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
+                    [[[self controller] locationChangeDelegate] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
@@ -489,7 +490,7 @@ static const char * const stateNames[] = {
                     }
                 }
 
-                [[[self controller] locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
+                [[[self controller] locationChangeDelegate] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -561,13 +562,13 @@ static const char * const stateNames[] = {
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:[URL absoluteString]];
-    [[[self controller] policyHandler] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
+    [[[self controller] policyDelegate] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
 }
 
 - (BOOL)_shouldShowURL:(NSURL *)URL
 {
-    id <WebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
-    WebURLPolicy *URLPolicy = [policyHandler URLPolicyForURL:URL inFrame:self];
+    id <WebControllerPolicyDelegate> policyDelegate = [[self controller] policyDelegate];
+    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForURL:URL inFrame:self];
 
     switch ([URLPolicy policyAction]) {
         case WebURLPolicyIgnore:
@@ -594,7 +595,7 @@ static const char * const stateNames[] = {
                 BOOL isDirectory;
                 BOOL fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
                 NSString *type = [WebController _MIMETypeForFile: path];
-                WebFileURLPolicy *fileURLPolicy = [policyHandler fileURLPolicyForMIMEType:type inFrame:self isDirectory:isDirectory];
+                WebFileURLPolicy *fileURLPolicy = [policyDelegate fileURLPolicyForMIMEType:type inFrame:self isDirectory:isDirectory];
 
                 if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
                     return NO;
