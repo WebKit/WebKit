@@ -2421,10 +2421,8 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
     }
 
     // Insert a break after the top blockquote.
-    int exceptionCode = 0;
     m_breakNode = createBreakElement(document());
     m_breakNode->ref();
-    ASSERT(exceptionCode == 0);
     insertNodeAfter(m_breakNode, topBlockquote);
 
     if (!isLastVisiblePositionInNode(VisiblePosition(pos), topBlockquote)) {
@@ -2490,7 +2488,6 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
             ElementImpl *b = createBreakElement(document());
             b->ref();
             clonedNodes.append(b);
-            ASSERT(exceptionCode == 0);
             appendNode(b, leftParent);
         }
         
