@@ -1570,6 +1570,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 #endif
 
   d->m_doc->open();
+  d->m_doc->setParsing(true);
   // clear widget
   if (d->m_view)
     d->m_view->resizeContents( 0, 0 );

@@ -2,6 +2,19 @@
 
         Reviewed by John.
 
+	<rdar://problem/3805311> REGRESSION (159-163): onload in dynamically written document not called (causes blank search page at Japanese EPP site, many others)
+
+        * khtml/khtml_part.cpp:
+	(KHTMLPart::begin): call setParsing on document here after opening
+	- from now on we'll only set parsing to true for a document open
+	caused by page loading, not a programmatic one.
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::open): don't setParsing to true here any more.
+
+2004-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 	- fix recent regression from collection perf fixes.
 	
         * khtml/html/html_miscimpl.cpp:
