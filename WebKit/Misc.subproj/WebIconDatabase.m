@@ -26,6 +26,7 @@ NSString *WebIconNotificationUserInfoSiteURLKey = @"WebIconNotificationUserInfoS
 
 NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
+NSSize WebIconLargeSize = {128, 128};
 
 
 @interface WebIconDatabase (WebInternal)

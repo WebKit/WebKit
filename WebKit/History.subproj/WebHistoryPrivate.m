@@ -296,6 +296,11 @@
     return [self _entryForURLString:[URL absoluteString]] != nil;
 }
 
+- (WebHistoryItem *)entryForURL:(NSURL *)URL
+{
+    return [self _entryForURLString:[URL absoluteString]];
+}	
+
 #pragma mark ARCHIVING/UNARCHIVING
 
 // Return a date that marks the age limit for history entries saved to or

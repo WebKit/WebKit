@@ -131,6 +131,11 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
     return [_historyPrivate containsURL: URL];
 }
 
+- (WebHistoryItem *)entryForURL:(NSURL *)URL
+{
+    return [_historyPrivate entryForURL:URL];
+}
+
 #pragma mark SAVING TO DISK
 
 - (NSString *)file

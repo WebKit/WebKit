@@ -35,6 +35,7 @@
 - (NSArray *)entriesWithAddressContainingString: (NSString *)string;
 - (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
 - (BOOL)containsURL: (NSURL *)URL;
+- (WebHistoryItem *)entryForURL:(NSURL *)URL;
 
 - (NSString *)file;
 - (BOOL)loadHistory;

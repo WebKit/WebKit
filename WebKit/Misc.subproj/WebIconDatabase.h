@@ -32,6 +32,7 @@ extern NSString *WebIconNotificationUserInfoSiteURLKey;
 
 extern NSSize WebIconSmallSize;  // 16 x 16
 extern NSSize WebIconMediumSize; // 32 x 32
+extern NSSize WebIconLargeSize;  // 128 x 128
 
 @class WebIconDatabasePrivate;
 

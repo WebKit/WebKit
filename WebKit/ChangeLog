@@ -1,3 +1,15 @@
+2002-09-10  Chris Blumenberg  <cblu@apple.com>
+
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[WebHistory entryForURL:]): added
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate entryForURL:]): added
+        * Misc.subproj/WebIconDatabase.h: added WebIconLargeSize
+        * Misc.subproj/WebIconDatabase.m: added WebIconLargeSize
+        * WebKit.exp: export link label key and WebIconLargeSize
+
 2002-09-10  Darin Adler  <darin@apple.com>
 
 	WebKit part of weaning WebCore from getting directly at WebKit defaults.
