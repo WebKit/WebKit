@@ -16,11 +16,12 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *fontSizeArray = [NSArray arrayWithObjects:@"7", @"8", @"9", @"10", @"12", @"13", @"14", @"16", nil];
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
 //        @"0xffffffff", 		@"WebKitLogLevel",
         @"0x0", 		@"WebKitLogLevel",
-        @"Times-Roman", 		@"WebKitStandardFont",
+        @"Times-Roman", 	@"WebKitStandardFont",
         @"Courier",  		@"WebKitFixedFont",
         @"Times-Roman", 	@"WebKitSerifFont",
         @"Arial", 		@"WebKitSansSerifFont", 
@@ -29,6 +30,7 @@
         @"6", 			@"WebKitMinimumFontSize",
         fontSizeArray,		@"WebKitFontSizes",
         pluginsEnabled,		@"WebKitPluginsEnabled",
+        javaEnabled,		@"WebKitJavaEnabled",
         nil];
 
     [defaults registerDefaults:dict];

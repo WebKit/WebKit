@@ -535,8 +535,7 @@ void KHTMLPart::setJavaEnabled( bool enable )
 
 bool KHTMLPart::javaEnabled() const
 {
-    _logNotYetImplemented();
-    return FALSE;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
 }
 
 
