@@ -149,7 +149,8 @@ Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
         mimeType = MIMETypeOverride;
       }
       
-      if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml") {
+      if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
+          mimeType == "text/xsl") {
 	responseXML = DOM::Document(doc->implementation()->createDocument());
 
 	DOM::DocumentImpl *docImpl = static_cast<DOM::DocumentImpl *>(responseXML.handle());

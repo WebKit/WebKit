@@ -1,3 +1,17 @@
+2004-08-03  David Hyatt  <hyatt@apple.com>
+
+	Add the deprecated text/xsl MIME type (introduced by Internet Explorer 5) as an acceptable MIME type for XML
+	documents.
+	
+        Reviewed by john
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * khtml/misc/loader.cpp:
+        (CachedXBLDocument::CachedXBLDocument):
+
 2004-08-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

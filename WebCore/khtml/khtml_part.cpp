@@ -1489,8 +1489,8 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
     emit setWindowCaption( i18n( "no title", "* Unknown *" ) );
 #endif
 
-  // ### not sure if XHTML documents served as text/xml should use DocumentImpl or HTMLDocumentImpl
-  if (args.serviceType == "text/xml" || args.serviceType == "application/xml" || args.serviceType == "application/xhtml+xml")
+  if (args.serviceType == "text/xml" || args.serviceType == "application/xml" || args.serviceType == "application/xhtml+xml" ||
+      args.serviceType == "text/xsl")
     d->m_doc = DOMImplementationImpl::instance()->createDocument( d->m_view );
   else
     d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument( d->m_view );
