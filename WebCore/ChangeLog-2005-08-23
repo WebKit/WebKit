@@ -2,6 +2,17 @@
 
         Reviewed by Ken.
 
+	<rdar://problem/3965196> security fix for javascript: exploit missed one case (already fixed in updates)
+        
+	* khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): correct mistake in earlier fix for the following bug, caught by Adele:
+
+	<rdar://problem/3790449> REGRESSION (Mail): underline behavior is flaky because of how CSS handles text-decoration
+
+2005-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
 	<rdar://problem/3965466> editing needs to insert text before applying typing style
 	
         * khtml/editing/htmlediting.cpp:
