@@ -1844,8 +1844,11 @@ void RenderBlock::calcMinMaxWidth()
     if (preOrNowrap && childrenInline())
         m_minWidth = m_maxWidth;
 
-    if (style()->width().isFixed() && style()->width().value > 0)
+    if (style()->width().isFixed() && style()->width().value > 0) {
         m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
+        if (!isTableCell())
+            m_minWidth = m_maxWidth;
+    }
 
     int toAdd = 0;
     toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
