@@ -146,11 +146,6 @@ static NSMutableArray *activeImageRenderers;
                                                     selector:@selector(nextFrame:)
                                                     userInfo:nil
                                                     repeats:NO] retain];
-
-    if (!activeImageRenderers) {
-        activeImageRenderers = [[NSMutableArray alloc] init];
-    }
-    [activeImageRenderers addObject:self];
 }
 
 - (void)nextFrame:(id)context
@@ -215,6 +210,10 @@ static NSMutableArray *activeImageRenderers;
         targetRect = ir;
         frameView = [[NSView focusView] retain];
         [self scheduleFrame];
+	if (!activeImageRenderers) {
+	    activeImageRenderers = [[NSMutableArray alloc] init];
+	}
+	[activeImageRenderers addObject:self];
     }
 }
 

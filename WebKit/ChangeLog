@@ -1,3 +1,22 @@
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Avoid throwing an exception while stopping animations. Image
+	renders were getting into the array multiple times, which means
+	the code that iterated over the array backwards could throw an
+	exception, because callling removeObject: on the array would remove
+	all instances of the object.
+
+	This probably fixes the following crashers, and a bunch of huge leaks:
+
+	Radar 2999853 - Uninitialized memory access in plugins on theonion.com
+	Radar 2999892 - Crash disconnecting view from next view chain on theonion.com
+	Radar 2999911 - Infinite loop in [WebHTMLView dealloc], resulting in crash
+	
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer scheduleFrame]): Move adding to array of image
+	renderers from here...
+        (-[WebImageRenderer beginAnimationInRect:fromRect:]): To here.
+
 === Alexander-13 ===
 
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
