@@ -811,6 +811,27 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
     }
 }
 
+bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const DOMPosition &start, const DOMPosition &end)
+{
+    // Returns whether the range contains only whitespace characters.
+    // This is inclusive of the start, but not of the end.
+    EditIterator it(start);
+    while (!it.atEnd()) {
+        if (!it.current().node()->isTextNode())
+            return false;
+        const DOMString &text = static_cast<TextImpl *>(it.current().node())->data();
+        // EDIT FIXME: signed/unsigned mismatch
+        if (text.length() > INT_MAX)
+            return false;
+        if (it.current().offset() < (int)text.length() && !isWS(text[it.current().offset()]))
+            return false;
+        it.next();
+        if (it.current() == end)
+            break;
+    }
+    return true;
+}
+
 void DeleteSelectionCommandImpl::doApply()
 {
     if (m_selectionToDelete.state() != KHTMLSelection::RANGE)
@@ -827,15 +848,17 @@ void DeleteSelectionCommandImpl::doApply()
     DOMPosition upstreamEnd = selection.endPosition().equivalentUpstreamPosition();
     DOMPosition downstreamEnd = selection.endPosition().equivalentDownstreamPosition();
 
-    bool startCompletelySelected = 
-        downstreamStart.offset() <= downstreamStart.node()->caretMinOffset() &&
+    bool onlyWhitespace = containsOnlyWhitespace(upstreamStart, downstreamEnd);
+ 
+    bool startCompletelySelected = !onlyWhitespace &&
+        (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset() &&
         ((downstreamStart.node() != upstreamEnd.node()) ||
-         (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset()));
+         (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset())));
 
-    bool endCompletelySelected = 
-        upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset() &&
+    bool endCompletelySelected = !onlyWhitespace &&
+        (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset() &&
         ((downstreamStart.node() != upstreamEnd.node()) ||
-         (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset()));
+         (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset())));
 
     unsigned long startRenderedOffset = downstreamStart.renderedOffset();
     
@@ -852,6 +875,7 @@ void DeleteSelectionCommandImpl::doApply()
     LOG(Editing,  "at start block:      %s", startAtStartOfBlock ? "YES" : "NO");
     LOG(Editing,  "at start root block: %s", startAtStartOfRootEditableBlock ? "YES" : "NO");
     LOG(Editing,  "at end block:        %s", endAtEndOfBlock ? "YES" : "NO");
+    LOG(Editing,  "only whitespace:     %s", onlyWhitespace ? "YES" : "NO");
 
     // Start is not completely selected
     if (startAtStartOfBlock) {
@@ -916,9 +940,23 @@ void DeleteSelectionCommandImpl::doApply()
 
     // work on start node
     if (startCompletelySelected) {
+        LOG(Editing,  "start node delete case 1");
         removeNodeAndPrune(downstreamStart.node());
     }
+    else if (onlyWhitespace) {
+        // Selection only contains whitespace. This is really a special-case to 
+        // handle significant whitespace that is collapsed at the end of a line,
+        // but also handles deleting a space in mid-line.
+        LOG(Editing,  "start node delete case 2");
+        ASSERT(upstreamStart.node()->isTextNode());
+        TextImpl *text = static_cast<TextImpl *>(upstreamStart.node());
+        int length = downstreamStart.node() == upstreamStart.node() ? 
+            kMax(downstreamStart.offset() - upstreamStart.offset(), 1L) : 
+            text->length() - upstreamStart.offset();
+        deleteText(text, upstreamStart.offset(), length);
+    }
     else if (downstreamStart.node()->isTextNode()) {
+        LOG(Editing,  "start node delete case 3");
         TextImpl *text = static_cast<TextImpl *>(downstreamStart.node());
         int endOffset = text == upstreamEnd.node() ? upstreamEnd.offset() : text->length();
         if (endOffset > downstreamStart.offset()) {
@@ -928,10 +966,11 @@ void DeleteSelectionCommandImpl::doApply()
     else {
         // we have clipped the end of a non-text element
         // the offset must be 1 here. if it is, do nothing and move on.
+        LOG(Editing,  "start node delete case 4");
         ASSERT(downstreamStart.offset() == 1);
     }
 
-    if (downstreamStart.node() != upstreamEnd.node()) {
+    if (!onlyWhitespace && downstreamStart.node() != upstreamEnd.node()) {
         // work on intermediate nodes
         while (n != upstreamEnd.node()) {
             NodeImpl *d = n;

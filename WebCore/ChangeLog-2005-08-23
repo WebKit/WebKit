@@ -1,3 +1,18 @@
+2004-04-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/editing/htmlediting_impl.cpp: New helper.
+        (DeleteSelectionCommandImpl::containsOnlyWhitespace): Fix deleting collapsed whitespace 
+        at the end of a line where text has flowed to the next line and the caret is at the 
+        beginning of the next line. 
+        (DeleteSelectionCommandImpl::doApply): Updated for new helper.
+        * khtml/editing/htmlediting_impl.h:
+        * layout-tests/editing/deleting/delete-line-end-ws-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-end-ws-001.html: Added.
+        * layout-tests/editing/deleting/delete-line-end-ws-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-end-ws-002.html: Added.
+
 === Safari-137 ===
 
 2004-04-16  Richard Williamson   <rjw@apple.com>
