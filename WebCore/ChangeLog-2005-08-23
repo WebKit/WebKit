@@ -1,3 +1,12 @@
+2005-02-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4026639> www.bmw.ca configurator does not work with Safari
+
+        Reviewed by john.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::tryGet): when frameset.<name of frame child> is called, return the window object of the frame child
+
 2005-02-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
