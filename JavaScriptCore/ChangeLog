@@ -1,5 +1,7 @@
 2002-10-04  Darin Adler  <darin@apple.com>
 
+        Fixed problems parsing numbers that are larger than a long with parseInt.
+
         * kjs/config.h: Define HAVE_FUNC_STRTOLL.
         * kjs/function.cpp: (GlobalFuncImp::call):
 	Change parseInt to use strtoll if available.
