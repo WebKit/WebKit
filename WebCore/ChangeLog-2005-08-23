@@ -1,3 +1,20 @@
+2005-01-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3964350> Deleting all content and typing in a message gets one letter, then beeps
+
+        This is a problem with the way we turn key events, when a user starts typing, into editing commands. 
+        Right now, that initial delete key in an empty window is turned into an editing command, and much 
+        editing code runs that need not run. What's more, this is confusing the selection machinery. The
+        solution is to detect the "delete in an empty window" case and don't turn this into an editing
+        command at all.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::TypingCommand::deleteKeyPressed)
+
 2005-01-23  Adele Amchan  <adele@apple.com>
 
         Fixed <rdar://problem/3964286> REGRESSION (178-179): menus and "go to old site" link at Ameritrade's new site don't work
