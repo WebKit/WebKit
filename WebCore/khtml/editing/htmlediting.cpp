@@ -4004,7 +4004,7 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
         m_hasMoreThanOneBlock = true;
         
     // Prepare this fragment to merge styles correctly into the destination.
-    computeStylesForNodes();
+    computeStylesAndRemoveUnrendered();
     removeStyleNodes();
 }
 
@@ -4129,7 +4129,7 @@ void ReplacementFragment::insertNodeBefore(NodeImpl *node, NodeImpl *refNode)
     ASSERT(exceptionCode == 0);
 }
 
-void ReplacementFragment::computeStylesForNodes()
+void ReplacementFragment::computeStylesAndRemoveUnrendered()
 {
     // This function inserts the nodes from the fragment into the destination
     // document and computes the style for each. This information will be
@@ -4142,6 +4142,7 @@ void ReplacementFragment::computeStylesForNodes()
     ElementImpl *holder = createDefaultParagraphElement(m_document);
     holder->ref();
 
+    QPtrList<NodeImpl> unrendered;
     int exceptionCode = 0;
     holder->appendChild(m_fragment, exceptionCode);
     ASSERT(exceptionCode == 0);
@@ -4149,13 +4150,18 @@ void ReplacementFragment::computeStylesForNodes()
     ASSERT(exceptionCode == 0);
     m_document->updateLayout();
     for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode()) {
-        CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
-        computedStyle->ref();
-        CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-        style->ref();
-        node->ref();
-        m_styles[node] = style;
-        computedStyle->deref();
+        if (!isNodeRendered(node)) {
+            unrendered.append(node);
+        }
+        else {
+            CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
+            computedStyle->ref();
+            CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+            style->ref();
+            node->ref();
+            m_styles[node] = style;
+            computedStyle->deref();
+        }
     }
     body->removeChild(holder, exceptionCode);
     ASSERT(exceptionCode == 0);
@@ -4169,6 +4175,9 @@ void ReplacementFragment::computeStylesForNodes()
         ASSERT(exceptionCode == 0);
         node->deref();
     }
+
+    for (QPtrListIterator<NodeImpl> it(unrendered); it.current(); ++it)
+        removeNode(it.current());
 
     holder->deref();
 }
@@ -4199,6 +4208,18 @@ void ReplacementFragment::removeStyleNodes()
         }
         node = next;
     }
+}
+
+bool isNodeRendered(const NodeImpl *node)
+{
+    if (!node)
+        return false;
+
+    RenderObject *renderer = node->renderer();
+    if (!renderer)
+        return false;
+
+    return renderer->style()->visibility() == VISIBLE;
 }
 
 bool isProbablyBlock(const NodeImpl *node)

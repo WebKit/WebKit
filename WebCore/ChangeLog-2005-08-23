@@ -4,6 +4,28 @@
 
         Fix for this bug:
         
+        <rdar://problem/3996737> REGRESSION (Mail): Copy/paste in Mail inserts returns
+
+        The root cause of the problem is that a couple of pieces of code in AppKit and Mail 
+        insert newlines into markup as it is generated, and the paste code in WebCore was 
+        not smart about nodes that do not render (as is the case with these added newlines). 
+        So, the solution is to remove these unrendered nodes in the paste code in a pre-pass. 
+        Fortunately, my recent addition of such a pass to the paste code to handle styles 
+        gave me a convenient place to put this new logic.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment): Use new name for function below.
+        (khtml::ReplacementFragment::computeStylesAndRemoveUnrendered): Name change from computeStylesForNodes().
+        Now does the additional work of removing unrendered nodes, as mentioned above.
+        (khtml::isNodeRendered): New helper function.
+        * khtml/editing/htmlediting.h: Updated as necessary.
+
+2005-02-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
         <rdar://problem/3998892> REGRESSION (Mail): bolding a selection from end of line changes unselected text on starting line.
         
         The styling code did not move to the next node when the starting position was 
