@@ -1,5 +1,14 @@
 2005-02-02  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3960304> can't load a particular applet (at www.escape.de) unless it's the first applet to be loaded
+
+        Reviewed by hyatt.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): when getting the MIME type from the PARAM tag, make sure the MIME type is the text from the left of the semi-colon if there is one. We do this elsewhere as well.
+
+2005-02-02  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3983628> control-click on WebView is not selecting the word under the cursor (Mail, non-editable WebView)
 
         Reviewed by rjw.

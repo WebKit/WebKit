@@ -747,6 +747,10 @@ void RenderPartObject::updateWidget()
               }
               if (serviceType.isEmpty() && name == "type") {
                   serviceType = p->value();
+                  int pos = serviceType.find( ";" );
+                  if (pos != -1) {
+                      serviceType = serviceType.left(pos);
+                  }
               }
               if (!embed) {
                   bool dummyValue = true;
