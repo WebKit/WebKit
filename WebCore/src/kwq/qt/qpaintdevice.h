@@ -26,4 +26,6 @@
 #ifndef QPAINTDEVICE_H_
 #define QPAINTDEVICE_H_
 
+#include "qrect.h"
+
 #endif

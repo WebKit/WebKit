@@ -26,6 +26,8 @@
 #ifndef QPIXMAP_H_
 #define QPIXMAP_H_
 
+#include "qpaintdevice.h"
+
 class QPixmap {
 };
 
