@@ -395,6 +395,7 @@ OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffe
         // Now, do a conversion on the buffer.
         status = TECConvertText(_converter, _bufferedBytes, _numBufferedBytes + bytesToPutInBuffer, &bytesRead,
             reinterpret_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+        ASSERT(bytesRead <= _numBufferedBytes + bytesToPutInBuffer);
 
         if (status == kTECPartialCharErr && bytesRead == 0) {
             // Handle the case where the partial character was not converted.
@@ -428,6 +429,7 @@ OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffe
     } else {
         status = TECConvertText(_converter, inputBuffer, inputBufferLength, &bytesRead,
             static_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+        ASSERT(static_cast<int>(bytesRead) <= inputBufferLength);
     }
 
     // Work around bug 3351093, where sometimes we get kTECBufferBelowMinimumSizeErr instead of kTECOutputBufferFullStatus.

@@ -1,5 +1,10 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertOneChunkUsingTEC):
+        Added some more assertions I used to track down what looks like a TEC bug.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed <rdar://problem/3779122> No accesskey support on LABEL element
