@@ -1,3 +1,14 @@
+2003-04-15  Trey Matteson  <trey@apple.com>
+
+	3229318 - no back entry created when searching at lonelyplanet.com
+
+        Reviewed by Darin.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::wasRunByUserGesture):  Treat blur/focus events as being
+	user gestures, since they probably were caused by something the user did.
+	This cues us to not lock history for navigations that are spawned by these events.
+
 2003-04-15  David Hyatt  <hyatt@apple.com>
 
 	A collection of fixes.

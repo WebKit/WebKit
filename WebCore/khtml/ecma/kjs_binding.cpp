@@ -238,6 +238,7 @@ bool ScriptInterpreter::wasRunByUserGesture() const
       id == DOM::EventImpl::KHTML_KEYUP_EVENT ||
       // other accepted events
       id == DOM::EventImpl::SELECT_EVENT || id == DOM::EventImpl::CHANGE_EVENT ||
+      id == DOM::EventImpl::FOCUS_EVENT || id == DOM::EventImpl::BLUR_EVENT ||
       id == DOM::EventImpl::SUBMIT_EVENT );
     kdDebug(6070) << "Window.open, smart policy: id=" << id << " eventOk=" << eventOk << endl;
     if (eventOk)
