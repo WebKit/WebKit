@@ -24,6 +24,9 @@ PROGRAMS = \
     qsize-test \
     qrect-test \
     qmap-test \
+    qvaluelist-test \
+    qstringlist-test \
+    qlist-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -67,6 +70,15 @@ qsize-test: qsize-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qmap-test: qmap-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qvaluelist-test: qvaluelist-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qstringlist-test: qstringlist-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qlist-test: qlist-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 

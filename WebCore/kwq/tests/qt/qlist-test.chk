@@ -1,0 +1,8 @@
+QList: [size: 7; items: 0, 1, 2, 3, 4, 5, 6]
+finding index of 2: 2
+QList: [size: 6; items: 1, 2, 3, 4, 5, 6]
+QList: [size: 5; items: 1, 2, 3, 4, 5]
+taking last item: 5
+QList: [size: 4; items: 1, 2, 3, 4]
+contains 3: 1
+contains 0: 0
