@@ -84,6 +84,7 @@ _WebViewDidChangeSelectionNotification
 _WebPlugInBaseURLKey
 _WebPlugInAttributesKey
 _WebPlugInContainerKey
+_WebPlugInModeKey
 
 ##
 ## Carbon Support

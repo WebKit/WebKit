@@ -1,3 +1,7 @@
+2004-10-29  Chris Blumenberg  <cblu@apple.com>
+
+        * WebKit.exp: added _WebPlugInModeKey, forgot to add it earlier
+
 2004-10-29  Darin Adler  <darin@apple.com>
 
         - fixed <rdar://problem/3855573> Remove reference to "WebScriptMethods" from WebScriptObject.h comments
