@@ -1,3 +1,42 @@
+2003-11-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for these bugs:
+
+        <rdar://problem/3467558>: Cannot tab to form file input widgets
+        <rdar://problem/3473631>: WebFileButton sends notifications to communicate with WebCore
+
+        Tabbing now works for these widgets. While I was in the neighborhood,
+        I improved the communication mechanism between the WebKit and WebCore
+        sides of the file button implementation, replacing notifications
+        with a callback object.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge fileButtonWithDelegate:]): Method now takes a 
+	delegate object.
+        * WebCoreSupport.subproj/WebFileButton.h:
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton initWithBridge:delegate:]):
+        (-[WebFileButton initWithFrame:]):
+        (-[WebFileButton dealloc]):
+        (-[WebFileButton chooseFilename:]): Sends callback rather than posting
+	a notification.
+        (-[WebFileButton chooseButtonPressed:]): Ditto.
+        (-[WebFileButton mouseDown:]):
+        (-[WebFileButton acceptsFirstResponder]):
+        (-[WebFileButton becomeFirstResponder]): Make the button subview
+        first responder.
+        (-[WebFileButton nextKeyView]): Hook up to WebBridge key view machinery.
+        (-[WebFileButton previousKeyView]): Ditto.
+        (-[WebFileButton nextValidKeyView]): Ditto.
+        (-[WebFileButton previousValidKeyView]): Ditto.
+        (-[WebFileChooserButton initWithDelegate:]):
+        (-[WebFileChooserButton nextValidKeyView]): Ditto.
+        (-[WebFileChooserButton previousValidKeyView]): Ditto.
+        (-[WebFileChooserButton resignFirstResponder]): Sends a focus change 
+        callback.
+
 2003-11-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John, except for one bit reviewed by Maciej.

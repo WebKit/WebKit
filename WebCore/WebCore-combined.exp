@@ -22,8 +22,6 @@ _WebCoreElementLinkTargetFrameKey
 _WebCoreElementLinkTitleKey
 _WebCoreElementLinkURLKey
 _WebCoreElementTitleKey
-_WebCoreFileButtonClicked
-_WebCoreFileButtonFilenameChanged
 _WebCoreInitializeEmptyTextStyle
 _WebCoreInitializeTextRun
 _WebCorePageCacheStateKey

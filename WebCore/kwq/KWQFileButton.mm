@@ -30,16 +30,16 @@
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
-NSString *WebCoreFileButtonFilenameChanged = @"WebCoreFileButtonFilenameChanged";
-NSString *WebCoreFileButtonClicked = @"WebCoreFileButtonClicked";
-
-
-@interface KWQFileButtonAdapter : NSObject
+@interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
 {
     KWQFileButton *button;
 }
 
 - initWithKWQFileButton:(KWQFileButton *)button;
+
+- (void)filenameChanged:(NSString *)filename;
+- (void)focusChanged:(BOOL)nowHasFocus;
+- (void)clicked;
 
 @end
 
@@ -50,8 +50,8 @@ KWQFileButton::KWQFileButton(KHTMLPart *part)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    setView([KWQ(part)->bridge() fileButton]);
     _adapter = [[KWQFileButtonAdapter alloc] initWithKWQFileButton:this];
+    setView([KWQ(part)->bridge() fileButtonWithDelegate:_adapter]);
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -118,17 +118,21 @@ int KWQFileButton::baselinePosition(int height) const
     return 0;
 }
 
-void KWQFileButton::filenameChanged()
+void KWQFileButton::filenameChanged(const QString &filename)
 {
-    NSView <WebCoreFileButton> *button = getView();
-
-    QString filename;
-
-    KWQ_BLOCK_EXCEPTIONS;
-    filename = QString::fromNSString([button filename]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     _textChanged.call(filename);
+}
+
+void KWQFileButton::focusChanged(bool nowHasFocus)
+{
+    if (nowHasFocus) {
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
+    }
+    else {
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
+    }
 }
 
 void KWQFileButton::clicked()
@@ -143,25 +147,25 @@ void KWQFileButton::clicked()
 {
     [super init];
     button = b;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(filenameChanged:)
-        name:WebCoreFileButtonFilenameChanged object:b->getView()];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clicked:)
-        name:WebCoreFileButtonClicked object:b->getView()];
     return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 
-- (void)filenameChanged:(NSNotification *)notification
+- (void)filenameChanged:(NSString *)filename
 {
-    button->filenameChanged();
+    button->filenameChanged(QString::fromNSString(filename));
 }
 
--(void)clicked:(NSNotification *)notification
+- (void)focusChanged:(BOOL)nowHasFocus
+{
+    button->focusChanged(nowHasFocus);
+}
+
+-(void)clicked
 {
     button->sendConsumedMouseUp();
     button->clicked();

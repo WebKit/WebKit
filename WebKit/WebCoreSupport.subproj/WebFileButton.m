@@ -30,6 +30,13 @@
 // AppKit calls this kThemePushButtonSmallTextOffset.
 #define BUTTON_VERTICAL_FUDGE_FACTOR 2
 
+@interface WebFileChooserButton : NSButton
+{
+    id <WebCoreFileButtonDelegate> _delegate;
+}
+- (id)initWithDelegate:(id <WebCoreFileButtonDelegate>)delegate;
+@end
+
 @implementation WebFileButton
 
 - (void)positionButton
@@ -38,11 +45,12 @@
     [_button setFrameOrigin:NSMakePoint(0, 0)];
 }
 
-- (id)initWithBridge:(WebBridge *)bridge
+- (id)initWithBridge:(WebBridge *)bridge delegate:(id <WebCoreFileButtonDelegate>)delegate
 {
     self = [super init];
     if (self) {
 	_bridge = bridge; // Don't retain to avoid cycle
+        _delegate = [delegate retain];
     }
     return self;
 }
@@ -51,7 +59,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _button = [[NSButton alloc] init];
+        _button = [[WebFileChooserButton alloc] initWithDelegate:_delegate];
         
         [_button setTitle:UI_STRING("Choose File", "title for file button used in HTML forms")];
         [[_button cell] setControlSize:NSSmallControlSize];
@@ -59,6 +67,7 @@
         [_button setBezelStyle:NSRoundedBezelStyle];
         [_button setTarget:self];
         [_button setAction:@selector(chooseButtonPressed:)];
+        [_button setNextResponder:self];
         
         [self addSubview:_button];
         
@@ -74,6 +83,7 @@
     [_button release];
     [_icon release];
     [_label release];
+    [_delegate release];
     [super dealloc];
 }
 
@@ -213,7 +223,7 @@
 - (void)chooseFilename:(NSString *)fileName
 {
     [self setFilename:fileName];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebCoreFileButtonFilenameChanged object:self];
+    [_delegate filenameChanged:fileName];
     [_bridge release];
 }
 
@@ -225,13 +235,85 @@
 
 - (void)chooseButtonPressed:(id)sender
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebCoreFileButtonClicked object:self];
+    [_delegate clicked];
     [self beginSheet];
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
     [self beginSheet];
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL become = [_button acceptsFirstResponder];
+    if (become) {
+        [_delegate focusChanged:YES];
+        [[self window] makeFirstResponder:_button];
+    }
+    return become;
+}
+
+- (NSView *)nextKeyView
+{
+    return (_inNextValidKeyView && ![_bridge inNextKeyViewOutsideWebFrameViews])
+    ? [_bridge nextKeyView]
+    : [super nextKeyView];
+}
+
+- (NSView *)previousKeyView
+{
+    return (_inNextValidKeyView)
+    ? [_bridge previousKeyView]
+    : [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    _inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    _inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    _inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    _inNextValidKeyView = NO;
+    return view;
+}
+
+@end
+
+@implementation WebFileChooserButton
+
+- (id)initWithDelegate:(id <WebCoreFileButtonDelegate>)delegate
+{
+    [super init];
+    _delegate = delegate; // Don't retain to avoid cycle
+    return self;
+}
+
+- (NSView *)nextValidKeyView
+{
+    return [[self superview] nextValidKeyView];
+}
+
+- (NSView *)previousValidKeyView
+{
+    return [[self superview] previousValidKeyView];
+}
+
+- (BOOL)resignFirstResponder
+{
+    [_delegate focusChanged:NO];
+    return YES;
 }
 
 @end

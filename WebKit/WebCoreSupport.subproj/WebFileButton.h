@@ -9,16 +9,20 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol WebCoreFileButton;
+@protocol WebCoreFileButtonDelegate;
 @protocol WebOpenPanelResultListener;
 @class WebBridge;
+@class WebFileChooserButton;
 
 @interface WebFileButton : NSView <WebCoreFileButton, WebOpenPanelResultListener>
 {
     NSString *_filename;
-    NSButton *_button;
+    WebFileChooserButton *_button;
     NSImage *_icon;
     NSString *_label;
     WebBridge *_bridge;
+    BOOL _inNextValidKeyView;
+    id <WebCoreFileButtonDelegate> _delegate;
 }
-- (id)initWithBridge:(WebBridge *)bridge;
+- (id)initWithBridge:(WebBridge *)bridge delegate:(id <WebCoreFileButtonDelegate>)delegate;
 @end

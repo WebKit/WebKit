@@ -56,6 +56,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 @protocol WebCoreFileButton;
+@protocol WebCoreFileButtonDelegate;
 @protocol WebDOMDocument;
 @protocol WebDOMNode;
 @protocol WebDOMElement;
@@ -349,7 +350,7 @@ typedef enum {
 - (BOOL)control:(NSControl *)control isValidObject:(id)obj;
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 
-- (NSView <WebCoreFileButton> *)fileButton;
+- (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate;
 
 - (void)setHasBorder:(BOOL)hasBorder;
 
@@ -385,5 +386,8 @@ typedef enum {
 - (NSSize)bestVisualFrameSizeForCharacterCount:(int)count;
 @end
 
-extern NSString *WebCoreFileButtonFilenameChanged;
-extern NSString *WebCoreFileButtonClicked;
+@protocol WebCoreFileButtonDelegate <NSObject>
+- (void)filenameChanged:(NSString *)filename;
+- (void)focusChanged:(BOOL)nowHasFocus;
+- (void)clicked;
+@end

@@ -301,9 +301,9 @@
     return *result != nil;
 }
 
-- (NSView <WebCoreFileButton> *)fileButton
+- (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate
 {
-    return [[WebFileButton alloc] initWithBridge:self];
+    return [[WebFileButton alloc] initWithBridge:self delegate:delegate];
 }
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener

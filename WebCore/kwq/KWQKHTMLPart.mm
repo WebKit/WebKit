@@ -951,10 +951,6 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
             }
         }
         else if ([_bridge keyboardUIMode] == WebCoreFullKeyboardAccess) {
-            DocumentImpl *doc = xmlDocImpl();
-            if (!doc) {
-                return nil;
-            }
             doc->setFocusNode(node);
             if (view()) {
                 QRect rect = node->getRect();

@@ -1,3 +1,43 @@
+2003-11-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for these bugs:
+
+	<rdar://problem/3467558>: Cannot tab to form file input widgets
+	<rdar://problem/3473631>: WebFileButton sends notifications to communicate with WebCore
+
+	Tabbing now works for these widgets. While I was in the neighborhood,
+	I improved the communication mechanism between the WebKit and WebCore
+	sides of the file button implementation, replacing notifications
+	with a callback object.
+
+        * WebCore-combined.exp: Remove no-longer used WebCoreFileButtonClicked
+    	and WebCoreFileButtonFilenameChanged notofication strings.
+        * WebCore.exp: Ditto.
+        * kwq/KWQFileButton.h: Changed declarations to match changes in
+        callback functions.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Now sets the view after creating
+        the delegate object.
+        (KWQFileButton::filenameChanged): Now takes a QString argument
+        which indicates the filename.
+        (KWQFileButton::focusChanged): New function. Sends DOM focus and
+        blur events.
+        (-[KWQFileButtonAdapter initWithKWQFileButton:]): No longer needs
+        to register for notifications.
+        (-[KWQFileButtonAdapter dealloc]): No longer needs to remove itself
+        from the notification center.
+        (-[KWQFileButtonAdapter filenameChanged:]): No longer a notification
+        callback. Now a WebCoreFileButtonCallback callback.
+        (-[KWQFileButtonAdapter focusChanged:]): New WebCoreFileButtonCallback
+        callback.
+        (-[KWQFileButtonAdapter clicked]): No longer a notification
+        callback. Now a WebCoreFileButtonCallback callback.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Unrelated cleanup.
+        * kwq/WebCoreBridge.h: Declared new WebCoreFileButtonDelegate protocol.
+
 2003-11-05  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed deployment build
