@@ -41,37 +41,37 @@ using namespace khtml;
 using namespace DOM;
 
 #ifndef NDEBUG
-static bool inTextRunDetach;
+static bool inInlineTextBoxDetach;
 #endif
 
-void TextRun::detach(RenderArena* renderArena)
+void InlineTextBox::detach(RenderArena* renderArena)
 {
 #ifndef NDEBUG
-    inTextRunDetach = true;
+    inInlineTextBoxDetach = true;
 #endif
     delete this;
 #ifndef NDEBUG
-    inTextRunDetach = false;
+    inInlineTextBoxDetach = false;
 #endif
     
     // Recover the size left there for us by operator delete and free the memory.
     renderArena->free(*(size_t *)this, this);
 }
 
-void* TextRun::operator new(size_t sz, RenderArena* renderArena) throw()
+void* InlineTextBox::operator new(size_t sz, RenderArena* renderArena) throw()
 {
     return renderArena->allocate(sz);
 }
 
-void TextRun::operator delete(void* ptr, size_t sz)
+void InlineTextBox::operator delete(void* ptr, size_t sz)
 {
-    assert(inTextRunDetach);
+    assert(inInlineTextBoxDetach);
     
     // Stash size where detach can find it.
     *(size_t *)ptr = sz;
 }
 
-void TextRun::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
+void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
 {
     if(startPos > m_len) return;
     if(startPos < 0) startPos = 0;
@@ -97,14 +97,14 @@ void TextRun::paintSelection(const Font *f, RenderText *text, QPainter *p, Rende
 #endif
     ty += m_baseline;
 
-    //kdDebug( 6040 ) << "textRun::painting(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
+    //kdDebug( 6040 ) << "InlineTextBox::painting(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
     f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
 		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, startPos, endPos, c);
     p->restore();
 }
 
 #ifdef APPLE_CHANGES
-void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
+void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
 {
     _tx += m_x;
     _ty += m_y;
@@ -128,7 +128,7 @@ void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
     }
 }
 #else
-void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int decoration)
+void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int decoration)
 {
     _tx += m_x;
     _ty += m_y;
@@ -160,9 +160,9 @@ void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int decoration)
 
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
-FindSelectionResult TextRun::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineHeight)
+FindSelectionResult InlineTextBox::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineHeight)
 {
-//     kdDebug(6040) << "TextRun::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
+//     kdDebug(6040) << "InlineTextBox::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
 //                   << " _tx+m_x=" << _tx+m_x << " _ty+m_y=" << _ty+m_y << endl;
     offset = 0;
 
@@ -189,7 +189,7 @@ FindSelectionResult TextRun::checkSelectionPoint(int _x, int _y, int _tx, int _t
     int pos = f->checkSelectionPoint (text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
 #else
     int delta = _x - (_tx + m_x);
-    //kdDebug(6040) << "TextRun::checkSelectionPoint delta=" << delta << endl;
+    //kdDebug(6040) << "InlineTextBox::checkSelectionPoint delta=" << delta << endl;
     int pos = 0;
     if ( m_reversed ) {
 	delta -= m_width;
@@ -221,21 +221,21 @@ FindSelectionResult TextRun::checkSelectionPoint(int _x, int _y, int _tx, int _t
 
 // -----------------------------------------------------------------------------
 
-TextRunArray::TextRunArray()
+InlineTextBoxArray::InlineTextBoxArray()
 {
     setAutoDelete(false);
 }
 
-int TextRunArray::compareItems( Item d1, Item d2 )
+int InlineTextBoxArray::compareItems( Item d1, Item d2 )
 {
     assert(d1);
     assert(d2);
 
-    return static_cast<TextRun*>(d1)->m_y - static_cast<TextRun*>(d2)->m_y;
+    return static_cast<InlineTextBox*>(d1)->m_y - static_cast<InlineTextBox*>(d2)->m_y;
 }
 
 // remove this once QVector::bsearch is fixed
-int TextRunArray::findFirstMatching(Item d) const
+int InlineTextBoxArray::findFirstMatching(Item d) const
 {
     int len = count();
 
@@ -346,7 +346,7 @@ void RenderText::deleteRuns(RenderArena *arena)
         if (!arena)
             arena = renderArena();
         for(unsigned int i=0; i < len; i++) {
-            TextRun* s = m_lines.at(i);
+            InlineTextBox* s = m_lines.at(i);
             if (s)
                 s->detach(arena);
             m_lines.remove(i);
@@ -356,7 +356,7 @@ void RenderText::deleteRuns(RenderArena *arena)
     KHTMLAssert(m_lines.count() == 0);
 }
 
-TextRun * RenderText::findTextRun( int offset, int &pos )
+InlineTextBox * RenderText::findNextInlineTextBox( int offset, int &pos )
 {
     // The text runs point to parts of the rendertext's str string
     // (they don't include '\n')
@@ -366,7 +366,7 @@ TextRun * RenderText::findTextRun( int offset, int &pos )
     if ( m_lines.isEmpty() )
         return 0L;
 
-    TextRun* s = m_lines[0];
+    InlineTextBox* s = m_lines[0];
     uint si = 1;
     int off = s->m_len;
     while(offset > off && si < m_lines.count())
@@ -384,7 +384,7 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 {
     assert(parent());
 
-    TextRun *s = m_lines.count() ? m_lines[0] : 0;
+    InlineTextBox *s = m_lines.count() ? m_lines[0] : 0;
     int si = 0;
     while(s) {
         if((_y >=_ty + s->m_y) && (_y < _ty + s->m_y + s->height()) &&
@@ -421,24 +421,24 @@ FindSelectionResult RenderText::checkSelectionPointIgnoringContinuations(int _x,
 {
 //     kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
 //                   << " _tx=" << _tx << " _ty=" << _ty << endl;
-    TextRun *lastPointAfterInline=0;
+    InlineTextBox *lastPointAfterInline=0;
 
     for(unsigned int si = 0; si < m_lines.count(); si++)
     {
-        TextRun* s = m_lines[si];
+        InlineTextBox* s = m_lines[si];
         int result;
         const Font *f = htmlFont( si==0 );
         result = s->checkSelectionPoint(_x, _y, _tx, _ty, f, this, offset, m_lineHeight);
 
 //         kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
-        if ( result == SelectionPointInside ) // x,y is inside the textrun
+        if ( result == SelectionPointInside ) // x,y is inside the InlineTextBox
         {
             offset += s->m_start; // add the offset from the previous lines
             //kdDebug(6040) << "RenderText::checkSelectionPoint inside -> " << offset << endl;
             node = element();
             return SelectionPointInside;
         } else if ( result == SelectionPointBefore ) {
-            // x,y is before the textrun -> stop here
+            // x,y is before the InlineTextBox -> stop here
             if ( si > 0 && lastPointAfterInline ) {
                 offset = lastPointAfterInline->m_start + lastPointAfterInline->m_len;
                 //kdDebug(6040) << "RenderText::checkSelectionPoint before -> " << offset << endl;
@@ -471,7 +471,7 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
   }
 
   int pos;
-  TextRun * s = findTextRun( offset, pos );
+  InlineTextBox * s = findNextInlineTextBox( offset, pos );
   _y = s->m_y;
   height = s->m_height;
 
@@ -515,7 +515,7 @@ void RenderText::posOfChar(int chr, int &x, int &y)
     //chr = str->l;
 
     int pos;
-    TextRun * s = findTextRun( chr, pos );
+    InlineTextBox * s = findNextInlineTextBox( chr, pos );
 
     if ( s )
     {
@@ -569,7 +569,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
     int ow = style()->outlineWidth();
     RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
     int d = style()->textDecorationsInEffect();
-    TextRun f(0, y-ty);
+    InlineTextBox f(0, y-ty);
     int si = m_lines.findFirstMatching(&f);
     // something matching found, find the first one to print
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
@@ -597,7 +597,7 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
             //kdDebug(6040) << this << " Selection from " << startPos << " to " << endPos << endl;
         }
 
-        TextRun* s;
+        InlineTextBox* s;
         int minx =  1000000;
         int maxx = -1000000;
         int outlinebox_y = m_lines[si]->m_y;
@@ -1220,12 +1220,12 @@ InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox)
 {
     // FIXME: Either ditch the array or get this object into it.
     KHTMLAssert(!isRootLineBox);
-    return new (renderArena()) TextRun(this);
+    return new (renderArena()) InlineTextBox(this);
 }
 
 void RenderText::position(InlineBox* box, int from, int len, bool reverse)
 {
-    TextRun *s = static_cast<TextRun*>(box);
+    InlineTextBox *s = static_cast<InlineTextBox*>(box);
     
     // ### should not be needed!!!
     if (len == 0 || (str->l && len == 1 && *(str->s+from) == '\n')) {
@@ -1288,7 +1288,7 @@ short RenderText::width() const
     int maxx = 0;
     // slooow
     for(unsigned int si = 0; si < m_lines.count(); si++) {
-        TextRun* s = m_lines[si];
+        InlineTextBox* s = m_lines[si];
         if(s->m_x < minx)
             minx = s->m_x;
         if(s->m_x + s->m_width > maxx)

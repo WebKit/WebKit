@@ -58,7 +58,7 @@ public:
     virtual bool isInlineBox() { return false; }
     virtual bool isInlineFlowBox() { return false; }
     virtual bool isContainer() { return false; }
-    virtual bool isTextRun() { return false; }
+    virtual bool isInlineTextBox() { return false; }
     virtual bool isRootInlineBox() { return false; }
     
     bool isConstructed() { return m_constructed; }
@@ -173,7 +173,7 @@ public:
         }
         child->setFirstLineStyleBit(m_firstLine);
         child->setParent(this);
-        if (child->isTextRun())
+        if (child->isInlineTextBox())
             m_hasTextChildren = true;
     }
 

@@ -1,3 +1,50 @@
+2003-09-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+
+	Name change: TextRun is now InlineTextBox. Some related names
+	have been changed as well. There should be no change in
+	behavior as a result of this patch.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectedText):
+        (firstRunAt):
+        (lastRunAt):
+        (startAndEndLineNodesIncludingNode):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLineBoxDecorations):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::placeBoxesHorizontally):
+        (InlineFlowBox::placeBoxesVertically):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::detach):
+        (throw):
+        (InlineTextBox::operator delete):
+        (InlineTextBox::paintSelection):
+        (InlineTextBox::paintDecoration):
+        (InlineTextBox::checkSelectionPoint):
+        (InlineTextBoxArray::InlineTextBoxArray):
+        (InlineTextBoxArray::compareItems):
+        (InlineTextBoxArray::findFirstMatching):
+        (RenderText::deleteRuns):
+        (RenderText::findNextInlineTextBox):
+        (RenderText::nodeAtPoint):
+        (RenderText::checkSelectionPointIgnoringContinuations):
+        (RenderText::cursorPos):
+        (RenderText::posOfChar):
+        (RenderText::paintObject):
+        (RenderText::createInlineBox):
+        (RenderText::position):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (writeTextRun):
+        (write):
+
 2003-09-25  Darin Adler  <darin@apple.com>
 
         Added a new layout test.

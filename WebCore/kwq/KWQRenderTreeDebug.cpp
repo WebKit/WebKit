@@ -39,8 +39,8 @@ using khtml::RenderObject;
 using khtml::RenderTableCell;
 using khtml::RenderWidget;
 using khtml::RenderText;
-using khtml::TextRun;
-using khtml::TextRunArray;
+using khtml::InlineTextBox;
+using khtml::InlineTextBoxArray;
 
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const QRect& paintDirtyRect, int indent=0);
@@ -113,7 +113,7 @@ static QString quoteAndEscapeNonPrintables(const QString &s)
     return result;
 }
 
-static void writeTextRun(QTextStream &ts, const RenderText &o, const TextRun &run)
+static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextBox &run)
 {
     ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width << ": "
     	<< quoteAndEscapeNonPrintables(o.data().string().mid(run.m_start, run.m_len))
@@ -128,7 +128,7 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     
     if (o.isText()) {
         const RenderText &text = static_cast<const RenderText &>(o);
-        TextRunArray runs = text.textRuns();
+        InlineTextBoxArray runs = text.inlineTextBoxes();
         for (unsigned int i = 0; i < runs.count(); i++) {
             writeIndent(ts, indent+1);
             writeTextRun(ts, text, *runs[i]);

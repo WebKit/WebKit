@@ -85,7 +85,7 @@ using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
-using khtml::TextRunArray;
+using khtml::InlineTextBoxArray;
 using khtml::VISIBLE;
 
 using KIO::Job;
@@ -1970,7 +1970,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     }
                     else {
                         RenderText* textObj = static_cast<RenderText*>(renderer);
-                        TextRunArray runs = textObj->textRuns();
+                        InlineTextBoxArray runs = textObj->inlineTextBoxes();
                         if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
                             // We have no runs, but we do have a length.  This means we must be
                             // whitespace that collapsed away at the end of a line.

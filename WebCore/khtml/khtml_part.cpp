@@ -99,7 +99,7 @@ using namespace DOM;
 using khtml::Decoder;
 using khtml::RenderObject;
 using khtml::RenderText;
-using khtml::TextRunArray;
+using khtml::InlineTextBoxArray;
 
 using KParts::BrowserInterface;
 
@@ -2220,8 +2220,8 @@ QString KHTMLPart::selectedText() const
 {
     // FIXME: This whole function should use the render tree and not the DOM tree, since elements could
     // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
-    // text objects walk their renderers' TextRuns, so that we at least get the whitespace stripped out properly
-    // and obey CSS visibility for text runs.
+    // text objects walk their renderers' InlineTextBox objects, so that we at least get the whitespace 
+    // stripped out properly and obey CSS visibility for text runs.
   bool hasNewLine = true;
   bool addedSpace = true;
   QString text;
@@ -2245,7 +2245,7 @@ QString KHTMLPart::selectedText() const
               }
               else {
                   RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
-                  TextRunArray runs = textObj->textRuns();
+                  InlineTextBoxArray runs = textObj->inlineTextBoxes();
                   if (runs.count() == 0 && str.length() > 0 && !addedSpace) {
                       // We have no runs, but we do have a length.  This means we must be
                       // whitespace that collapsed away at the end of a line.
@@ -4272,7 +4272,7 @@ static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, lo
     for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
         if (n->isText()) {
             RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
-            TextRunArray runs = textRenderer->textRuns();
+            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
             for (unsigned i = 0; i != runs.count(); i++) {
                 if (runs[i]->m_y == y) {
                     startNode = textRenderer->element();
@@ -4308,7 +4308,7 @@ static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long 
     
         if (n->isText()) {
             RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
-            TextRunArray runs = textRenderer->textRuns();
+            InlineTextBoxArray runs = textRenderer->inlineTextBoxes();
             for (int i = (int)runs.count()-1; i >= 0; i--) {
                 if (runs[i]->m_y == y) {
                     endNode = textRenderer->element();
@@ -4332,7 +4332,7 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
         int pos;
         int selectionPointY;
         khtml::RenderText *renderer = static_cast<khtml::RenderText *>(node->renderer());
-        khtml::TextRun * run = renderer->findTextRun( offset, pos );
+        khtml::InlineTextBox * run = renderer->findNextInlineTextBox( offset, pos );
         DOMString t = node->nodeValue();
         DOM::NodeImpl* startNode;
         DOM::NodeImpl* endNode;

@@ -206,7 +206,7 @@ void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
 
     if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
         // We only paint line box decorations in strict or almost strict mode.
-        // Otherwise we let the TextRuns paint their own decorations.
+        // Otherwise we let the InlineTextBoxes paint their own decorations.
         if (style()->htmlHacks())
             return;
         
