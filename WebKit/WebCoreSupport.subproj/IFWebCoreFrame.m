@@ -59,9 +59,9 @@
 {
     IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
     [newDataSource _setParent:parent];
-    [frame setProvisionalDataSource:newDataSource];
+    if([frame setProvisionalDataSource:newDataSource])
+        [frame startLoading];
     [newDataSource release];
-    [frame startLoading];
 }
 
 - (void)loadURL:(NSURL *)URL

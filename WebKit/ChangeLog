@@ -1,5 +1,17 @@
 2002-07-02  Chris Blumenberg  <cblu@apple.com>
 
+	Can't call startLoading on a frame if setProvisionalDataSource 
+returned NO.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+        * WebCoreSupport.subproj/IFWebCoreFrame.m:
+        (-[IFWebCoreFrame loadURL:attributes:flags:withParent:]):
+        * WebView.subproj/IFWebView.mm:
+        (-[IFWebView performDragOperation:]):
+
+2002-07-02  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed asseration failure caused by an iframe not having a correct mime type.
 	We now assume that local files without extensions are html files. 
 

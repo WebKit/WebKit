@@ -164,8 +164,8 @@
     dataSource = [[[IFWebDataSource alloc] initWithURL:URL] autorelease];
     frame = nil;
     frame = [[self controller] mainFrame];
-    [frame setProvisionalDataSource:dataSource];
-    [frame startLoading];
+    if([frame setProvisionalDataSource:dataSource])
+        [frame startLoading];
     
     return YES;
 }

@@ -725,8 +725,8 @@ static char *newCString(NSString *string)
                 // so we have to allow this as well. Needed for iTools.
             }
             dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
-            [frame setProvisionalDataSource:dataSource];
-            [frame startLoading];
+            if([frame setProvisionalDataSource:dataSource])
+                [frame startLoading];
         }
     }
     return NPERR_NO_ERROR;
