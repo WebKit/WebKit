@@ -1,3 +1,12 @@
+2004-01-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3519003, crash in mail because <dir> and <menu> don't allow the same children as <ul> and <ol>.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
 2004-01-08  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3524359>: REGRESSSION (119-120): 

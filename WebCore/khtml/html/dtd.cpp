@@ -638,6 +638,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_MARQUEE:
     case ID_UL:
     case ID_OL:
+    case ID_DIR:
+    case ID_MENU:
         // DIV: _1 *
         return check_array(childID, tag_list_1);
     case ID_MAP:
@@ -659,11 +661,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_DL:
         // DL: _6 +
         return check_array(childID, tag_list_1);
-    case ID_DIR:
-    case ID_MENU:
-        // (DIR|MENU): LI + - _3
-        if(childID == ID_LI) return true;
-        return false;
     case ID_FORM:
         // FORM: _1 * - FORM
         return check_array(childID, tag_list_1);
