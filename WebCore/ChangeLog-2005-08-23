@@ -1,3 +1,14 @@
+2004-11-09  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3872440> NSTimer prematurely released.
+
+        Reviewed by Darin.
+
+        * kwq/KWQTimer.mm:
+        (QTimer::fire):
+        * kwq/KWQWidget.mm:
+        (QWidget::paint):
+
 2004-11-09  Chris Blumenberg  <cblu@apple.com>
 
         Reviewed by vicki.
