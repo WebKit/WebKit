@@ -1,3 +1,13 @@
+2003-03-26  David Hyatt  <hyatt@apple.com>
+
+	Make <label> use tag list 1.  Fixes 3206063.  Residual style
+	changes called this out.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
 2003-03-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

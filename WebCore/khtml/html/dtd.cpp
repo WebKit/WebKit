@@ -669,8 +669,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // FORM: _1 * - FORM
         return check_array(childID, tag_list_1);
     case ID_LABEL:
-        // LABEL: _0 * - LABEL
-        return check_array(childID, tag_list_0);
+        // LABEL: _1 * - LABEL
+        return check_array(childID, tag_list_1);
         // KEYGEN does not really allow any childs
         // from outside, just need this to be able
         // to add the keylengths ourself
