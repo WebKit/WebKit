@@ -10,7 +10,7 @@
 
 @class IFBookmarkGroup;
 
-@interface IFBookmark : NSObject {
+@interface IFBookmark : NSObject <NSCopying> {
     IFBookmark *_parent;
     IFBookmarkGroup *_group;
 }

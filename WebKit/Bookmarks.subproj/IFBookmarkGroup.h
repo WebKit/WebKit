@@ -35,9 +35,6 @@
 - (IFBookmark *)topBookmark;
 
 // modifying contents
-- (void)insertBookmark:(IFBookmark *)bookmark
-               atIndex:(unsigned)index
-            ofBookmark:(IFBookmark *)parent;
 - (void)removeBookmark:(IFBookmark *)bookmark;
 
 - (IFBookmark *)insertNewBookmarkAtIndex:(unsigned)index

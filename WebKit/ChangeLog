@@ -1,3 +1,24 @@
+2002-05-14  John Sullivan  <sullivan@apple.com>
+
+	Work to support copying bookmarks, needed for drag & drop
+	in Bookmarks window.
+
+	* Bookmarks.subproj/IFBookmark.h: Make IFBookmark conform to NSCopying.
+
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark copyWithZone:]): insist that subclasses implement this.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup insertBookmark:atIndex:ofBookmark:]):
+	Removed this unnecessary method.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf copyWithZone:]): New method.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList copyWithZone:]): New method.
+
 2002-05-14  Richard J. Williamson  <rjw@apple.com>
 
     Fixed exception in log code.

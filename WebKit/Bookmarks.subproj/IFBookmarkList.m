@@ -115,6 +115,26 @@
     [super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    IFBookmarkList *copy;
+    unsigned index, count;
+    
+    copy = [[IFBookmarkList alloc] initWithTitle:[self title]
+                                           image:[self image]
+                                           group:[self _group]];
+
+    count = [self numberOfChildren];
+    for (index = 0; index < count; ++index) {
+        IFBookmark *childCopy;
+
+        childCopy = [[[_list objectAtIndex:index] copyWithZone:zone] autorelease];
+        [copy insertChild:childCopy atIndex:index];
+    }
+
+    return copy;
+}
+
 - (NSString *)title
 {
     return _title;

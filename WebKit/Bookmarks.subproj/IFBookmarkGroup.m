@@ -113,13 +113,6 @@
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
 
-- (void)insertBookmark:(IFBookmark *)bookmark
-               atIndex:(unsigned)index
-            ofBookmark:(IFBookmark *)parent
-{
-    _logNotYetImplemented();
-}
-
 - (void)removeBookmark:(IFBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _group] == self);
@@ -172,7 +165,6 @@
     }
 
     [parent insertChild:bookmark atIndex:index];
-
     return bookmark;
 }
 

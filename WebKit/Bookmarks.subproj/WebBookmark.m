@@ -22,6 +22,12 @@
     [super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    return nil;
+}
+
 - (NSString *)title
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);

@@ -71,6 +71,14 @@
     [super dealloc];
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [[IFBookmarkLeaf alloc] initWithURLString:_URLString
+                                               title:[self title]
+                                               image:[self image]
+                                               group:[self _group]];
+}
+
 - (NSString *)title
 {
     return [_entry title];
