@@ -1465,7 +1465,7 @@ void RenderTable::layoutRows(int yoff)
     {
         RenderObject* c = containingBlock();
         for ( ; 
-             !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
+	     !c->isRoot() && !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
              c = c->containingBlock()) {
             Length ch = c->style()->height();
             if (ch.isFixed()) {
