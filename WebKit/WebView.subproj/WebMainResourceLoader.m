@@ -259,16 +259,19 @@
 
 -(void)checkContentPolicyForResponse:(NSURLResponse *)r
 {
-    listener = [[WebPolicyDecisionListener alloc]
-		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
+    WebPolicyDecisionListener *l = [[WebPolicyDecisionListener alloc]
+				       _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
+    listener = l;
     policyResponse = [r retain];
 
     WebView *wv = [dataSource _webView];
     [wv setDefersCallbacks:YES];
+    [l retain];
     [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:[r MIMEType]
                                                             request:[dataSource request]
                                                               frame:[dataSource webFrame]
                                                    decisionListener:listener];
+    [l release];
 }
 
 

@@ -1,3 +1,14 @@
+2004-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3652498>: new sniffing support is crashing
+        
+	* WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient checkContentPolicyForResponse:]): Retain
+	listener around call, in case delegate does something that ends up
+	invalidating it, like navigating to a new URL.
+
 2004-05-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed regression where undoing typing would undo character-by-character.
