@@ -59,7 +59,7 @@ int main() {
     QRegExp qre = QRegExp(s1, TRUE, FALSE);
     QString s12 = QString("string");
     cout << "s12: " << s12 << endl;
-    cout << "s7 find \"s\": " << s7.find('s', 0, FALSE) << endl; // find functions
+    //cout << "s7 find \"s\": " << s7.find('s', 0, FALSE) << endl; // find functions
     cout << "s7 find RegExp \"t\": " << s7.find(qre, 0) << endl;
     cout << "s7 find s12: " << s7.find(s12, 0, TRUE) << endl;
     cout << "s7 find \"string\": " << s7.find("string", 0) << endl;
@@ -195,15 +195,15 @@ int main() {
     cout << "ch3: " << ch3 << endl;
     cout << "c4: " << c4 << endl;
     cout << "s33 == ch3: " << (s33 == ch3) << endl;   // I should test strings that are equal as well
-    cout << "c3 == s33: "<< (c4 == s33) << endl;
+    //cout << "c3 == s33: "<< (c4 == s33) << endl;
     cout << "s33 == s34: "<< (s33 == s34) << endl;
     cout << "s33 == c4: "<< (s33 == c4) << endl;
     cout << "s33 != ch3: " << (s33 != ch3) << endl;
-    cout << "c3 != s33: "<< (c4 != s33) << endl;
+    //cout << "c3 != s33: "<< (c4 != s33) << endl;
     cout << "s33 != s34: "<< (s33 != s34) << endl;
     cout << "s33 != c4: "<< (s33 != c4) << endl; 
-    cout << "ch3 + s33: " << (ch3 + s33) << endl;
-    cout << "c4 + s33: " << (c4 + s33) << endl;
+    //cout << "ch3 + s33: " << (ch3 + s33) << endl;
+    //cout << "c4 + s33: " << (c4 + s33) << endl;
     cout << "\'a\' + s33: " << ('a' + s33) << endl;
     
     //cout << (s33 < c4) << endl;

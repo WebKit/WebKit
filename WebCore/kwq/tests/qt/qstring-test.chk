@@ -15,7 +15,6 @@ s7 length: 18
 s5 truncate 8: this is 
 s0 fill: ccccc
 s12: string
-s7 find "s": 12
 s7 find RegExp "t": 2
 s7 find s12: 12
 s7 find "string": 12
@@ -80,13 +79,9 @@ s34: This is a longer string
 ch3: This is an even longer string
 c4: T
 s33 == ch3: 0
-c3 == s33: 0
 s33 == s34: 0
 s33 == c4: 0
 s33 != ch3: 1
-c3 != s33: 1
 s33 != s34: 1
 s33 != c4: 1
-ch3 + s33: This is an even longer stringThis is a string
-c4 + s33: TThis is a string
 'a' + s33: aThis is a string

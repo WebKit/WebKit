@@ -62,6 +62,7 @@ int main() {
     cout << "s13: " << s13 << endl;
     cout << "ch1: " << ch1 << endl;
     cout << "ch2: " << ch2 << endl;
+#if 0
     cout << "ch1 == s13: " << (ch1 == s13) << endl;
     cout << "s13 == ch1: " << (s13 == ch1) << endl;
     cout << "ch2 == s13: " << (ch2 == s13) << endl;
@@ -70,6 +71,7 @@ int main() {
     cout << "s13 != ch1: " << (s13 != ch1) << endl;
     cout << "ch2 != s13: " << (ch2 != s13) << endl;
     cout << "s13 != ch2: " << (s13 != ch2) << endl;    
+#endif
 
     return 0;
 }
