@@ -25,6 +25,7 @@
 
 #include <kwqdebug.h>
 #include <qpixmap.h>
+#include <qbitmap.h>
 
 /*
  * FIXME: This is a bad hack which really should go away.
@@ -108,10 +109,11 @@ void QPixmap::setMask(const QBitmap &)
     _logNotYetImplemented();
 }
 
-
+static QBitmap *theMask = new QBitmap();
 const QBitmap *QPixmap::mask() const
 {
     _logNotYetImplemented();
+    return theMask;
 }
 
 
@@ -178,6 +180,7 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 QImage QPixmap::convertToImage() const
 {
     _logNotYetImplemented();
+    return QImage();
 }
 
 

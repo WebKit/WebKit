@@ -51,6 +51,8 @@ const QChar QChar::null;
 
 // constructors, copy constructors, and destructors ----------------------------
 
+#ifndef _KWQ_QCHAR_INLINES_
+
 QChar::QChar()
 {
     c = 0;
@@ -95,6 +97,8 @@ QChar::~QChar()
 {
     // do nothing because the single data member is a UniChar
 }
+
+#endif  // _KWQ_QCHAR_INLINES_
 
 // member functions ------------------------------------------------------------
 
@@ -231,6 +235,8 @@ int QChar::digitValue() const
 
 // operators -------------------------------------------------------------------
 
+#ifndef _KWQ_QCHAR_INLINES_
+
 bool operator==(QChar qc1, QChar qc2)
 {
     return qc1.c == qc2.c;
@@ -320,6 +326,8 @@ bool operator<(char ch, QChar qc)
 {
     return ch < qc.c;
 }
+
+#endif  // _KWQ_QCHAR_INLINES_
 
 #else // USING_BORROWED_QSTRING
 // This will help to keep the linker from complaining about empty archives

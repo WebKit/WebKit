@@ -33,31 +33,37 @@ kdbgstream::kdbgstream(unsigned int area, unsigned int level, bool print=true)
 
 kdbgstream &kdbgstream::operator<<(int)
 {
+    return *this;
 }
 
 
 kdbgstream &kdbgstream::operator<<(const char *)
 {
+    return *this;
 }
 
 
 kdbgstream &kdbgstream::operator<<(const void *)
 {
+    return *this;
 }
 
 
 kdbgstream &kdbgstream::operator<<(const QString &)
 {
+    return *this;
 }
 
 
 kdbgstream &kdbgstream::operator<<(const QCString &)
 {
+    return *this;
 }
 
 
 kdbgstream &kdbgstream::operator<<(KDBGFUNC)
 {
+    return *this;
 }
 
 
@@ -65,36 +71,43 @@ kdbgstream &kdbgstream::operator<<(KDBGFUNC)
 
 kdbgstream kdDebug(int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdWarning(int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdWarning(bool cond, int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdError(int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdError(bool cond, int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdFatal(int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 
 kdbgstream kdFatal(bool cond, int area = 0)
 {
+    return kdbgstream(0,0);
 }
 
 

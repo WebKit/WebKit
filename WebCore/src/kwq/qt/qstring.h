@@ -175,6 +175,145 @@ private:
 
 }; // class QChar ==============================================================
 
+#if defined (_KWQ_QCHAR_INLINES_) && ! defined (_KWQ_QCHAR_INLINES_INCLUDED_)
+#define _KWQ_QCHAR_INLINES_INCLUDED_
+
+inline QChar::QChar()
+{
+    c = 0;
+}
+
+inline QChar::QChar(char ch)
+{
+    c = ch;
+}
+
+inline QChar::QChar(uchar uch)
+{
+    c = uch;
+}
+
+inline QChar::QChar(short n)
+{
+    c = n;
+}
+
+inline QChar::QChar(ushort n)
+{
+    c = n;
+}
+
+inline QChar::QChar(uint n)
+{
+    c = n;
+}
+
+inline QChar::QChar(int n)
+{
+    c = n;
+}
+
+inline QChar::QChar(const QChar &qc)
+{
+    c = qc.c;
+}
+
+inline QChar::~QChar()
+{
+    // do nothing because the single data member is a UniChar
+}
+
+inline bool operator==(QChar qc1, QChar qc2)
+{
+    return qc1.c == qc2.c;
+}
+
+inline bool operator==(QChar qc, char ch)
+{
+    return qc.c == ch;
+}
+
+inline bool operator==(char ch, QChar qc)
+{
+    return ch == qc.c;
+}
+
+inline bool operator!=(QChar qc1, QChar qc2)
+{
+    return qc1.c != qc2.c;
+}
+
+inline bool operator!=(QChar qc, char ch)
+{
+    return qc.c != ch;
+}
+
+inline bool operator!=(char ch, QChar qc)
+{
+    return ch != qc.c;
+}
+
+inline bool operator>=(QChar qc1, QChar qc2)
+{
+    return qc1.c >= qc2.c;
+}
+
+inline bool operator>=(QChar qc, char ch)
+{
+    return qc.c >= ch;
+}
+
+inline bool operator>=(char ch, QChar qc)
+{
+    return ch >= qc.c;
+}
+
+inline bool operator>(QChar qc1, QChar qc2)
+{
+    return qc1.c > qc2.c;
+}
+
+inline bool operator>(QChar qc, char ch)
+{
+    return qc.c > ch;
+}
+
+inline bool operator>(char ch, QChar qc)
+{
+    return ch > qc.c;
+}
+
+inline bool operator<=(QChar qc1, QChar qc2)
+{
+    return qc1.c <= qc2.c;
+}
+
+inline bool operator<=(QChar qc, char ch)
+{
+    return qc.c <= ch;
+}
+
+inline bool operator<=(char ch, QChar qc)
+{
+    return ch <= qc.c;
+}
+
+inline bool operator<(QChar qc1, QChar qc2)
+{
+    return qc1.c < qc2.c;
+}
+
+inline bool operator<(QChar qc, char ch)
+{
+    return qc.c < ch;
+}
+
+inline bool operator<(char ch, QChar qc)
+{
+    return ch < qc.c;
+}
+
+#endif  // _KWQ_QCHAR_INLINES_
 
 // QString class ===============================================================
 
@@ -399,6 +538,66 @@ QString operator+(const char *, const QString &);
 QString operator+(QChar, const QString &);
 QString operator+(char, const QString &);
 
+#if defined (_KWQ_QSTRING_INLINES_) && ! defined (_KWQ_QSTRING_INLINES_INCLUDED_)
+#define _KWQ_QSTRING_INLINES_INCLUDED_
+
+inline QString::QString()
+{
+    s = NULL;
+    cache = NULL;
+    cacheType = CacheInvalid;
+}
+
+inline QString::~QString()
+{
+    if (s) {
+        CFRelease(s);
+    }
+    if (cache) {
+        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
+    }
+}
+
+inline QString &QString::operator=(QChar qc)
+{
+    return *this = QString(qc);
+}
+
+inline QString &QString::operator=(char ch)
+{
+    return *this = QString(QChar(ch));
+}
+
+inline uint QString::length() const
+{
+    return s ? CFStringGetLength(s) : 0;
+}
+
+inline bool QString::isNull() const
+{
+    // NOTE: do NOT use "unicode() == NULL"
+    return s == NULL;
+}
+
+inline bool QString::isEmpty() const
+{
+    return length() == 0;
+}
+
+inline QChar QString::at(uint index) const
+{
+    // FIXME: this might cause some errors on *big* indexes
+    CFIndex signedIndex = (CFIndex)index;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (signedIndex < len) {
+            return QChar(CFStringGetCharacterAtIndex(s, signedIndex));
+        }
+    }
+    return QChar(0);
+}
+
+#endif // _KWQ_QSTRING_INLINES_
 
 // class QConstString ==========================================================
 

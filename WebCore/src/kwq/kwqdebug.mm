@@ -25,37 +25,7 @@
 
 #include <kwqdebug.h>
 
-
-#if defined(__MACH__)
-#include <stdlib.h>
-#include <sys/time.h>
-#endif
-#if defined(__WIN32__)
-#import <sys/utime.h>
-#endif
-
-
-long _GetMillisecondsSinceEpoch() {
-    long result;
-    struct timeval tp;
-    struct timezone tzp;
-
-    result = 0;
-    tzp.tz_minuteswest = 0;
-    tzp.tz_dsttime = 0;
-
-    // FIXME: need to ifdef for Win32 at some point, 
-    // or use something from Foundation
-    if (gettimeofday(&tp, &tzp) == 0) {
-        result = (tp.tv_sec * 1000) + (tp.tv_usec / 1000);    
-    }
-  
-    return result;   
-}
-
-
 unsigned int KWQ_LOG_LEVEL = KWQ_LOG_ALL;
-
 
 void KWQSetLogLevel(int mask) {
     KWQ_LOG_LEVEL = mask;    

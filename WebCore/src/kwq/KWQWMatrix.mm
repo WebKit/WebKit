@@ -43,5 +43,6 @@ QWMatrix &QWMatrix::scale(double _sx, double _sy)
     empty = FALSE;
     sx = _sx;
     sy = _sy;
+    return *this;
 }
 

@@ -729,7 +729,8 @@ void RenderTable::calcFinalColMax(int c, ColInfo* col)
         oldmin+=colMinWidth[o];
     }
 
-    int smin = col->min;
+    // [kocienda] smin in unused
+    //int smin = col->min;
     int smax = col->max;
 
     if (col->type == Percent)
@@ -1357,7 +1358,8 @@ void RenderTable::layoutRows(int yoff)
                 continue;
             if ( c < totalCols - 1 && cell == cells[r][c+1] )
                 continue;
-            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
+            // [kocienda] fixed signed/unsigned comparison
+            if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
                 continue;
 
     	    cell->calcVerticalMargins();
@@ -1378,7 +1380,8 @@ void RenderTable::layoutRows(int yoff)
     else if (h.isPercent())
     {
         Length ch = containingBlock()->style()->height();
-        RenderObject *containing = containingBlock();
+        // [kocienda] containing is unused
+        //RenderObject *containing = containingBlock();
         if (ch.isFixed())
             th = h.width(ch.value);
         else 
@@ -1425,7 +1428,8 @@ void RenderTable::layoutRows(int yoff)
                 continue;
             if ( c < totalCols - 1 && cell == cells[r][c+1] )
                 continue;
-            if ( r < (int)totalRows - 1 && cell == cells[r+1][c] )
+            // [kocienda] fixed signed/unsigned comparison
+            if ( (int)r < (int)totalRows - 1 && cell == cells[r+1][c] )
                 continue;
 
             if ( ( indx = c-cell->colSpan()+1 ) < 0 )

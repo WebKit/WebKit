@@ -132,10 +132,14 @@ int QFont::weight() const
 
 bool QFont::setItalic(bool flag)
 {
-    if (flag)
+    if (flag) {
         _setTrait (NSItalicFontMask);
-    else
+        return TRUE;
+    }
+    else {
         _setTrait (NSUnitalicFontMask);
+        return FALSE;        
+    }
 }
 
 

@@ -87,9 +87,10 @@ QRegion::~QRegion()
     free(data);
 }
 
-QRegion QRegion::intersect(const QRegion &) const
+QRegion QRegion::intersect(const QRegion &region) const
 {
     _logNotYetImplemented();
+    return region;
 }
 
 bool QRegion::contains(const QPoint &point) const
@@ -113,4 +114,5 @@ QRegion &QRegion::operator=(const QRegion &other)
     }
     data->path = [[NSBezierPath bezierPath] retain];
     [data->path appendBezierPath:other.data->path];
+    return *this;
 }

@@ -145,7 +145,6 @@ static NSMutableDictionary *metricsCache = nil;
 - (NSRect)rectForString:(NSString *)string
  {
     KWQLayoutFragment *cachedFragment, *fragment;
-    NSTextStorage *textStorage;
 
     if (fragmentCache == nil){
         fragmentCache = [[NSMutableDictionary alloc] init];

@@ -915,6 +915,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 -(id)initWithLoader:(Loader *)loader
 {
     m_loader = loader;
+    return self;
 }
 
 -(void)cacheDataAvailable:(NSNotification *)notification

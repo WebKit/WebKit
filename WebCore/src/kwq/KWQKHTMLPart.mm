@@ -28,7 +28,7 @@
 #include <qfont.h>
 #include <qtextcodec.h>
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 #include <job.h>
 #include <jobclasses.h>
@@ -45,11 +45,14 @@
 #include <kjs.h>
 #include <kjs_dom.h>
 #include <dom_doc.h>
+#include <qcursor.h>
 
 #include <KWQKHTMLPart.h>
 
 #import <WCURICache.h>
 #import <WCURICacheData.h>
+
+#import <KWQView.h>
 
 static bool cache_init = false;
 
@@ -279,6 +282,8 @@ bool KHTMLPart::closeURL()
     
 
     //d->m_doc = 0;
+    
+    return true;
 }
 
 
@@ -421,7 +426,7 @@ bool KHTMLPart::onlyLocalReferences() const
 }
 
 #ifdef _KWQ_TIMING        
-    static long totalWriteTime = 0;
+    static double totalWriteTime = 0;
 #endif
 
 
@@ -509,7 +514,7 @@ void KHTMLPart::write(const char *str, int len)
     if ( len == -1 )
         len = strlen( str );
     
-    long start = _GetMillisecondsSinceEpoch();
+    double start = CFAbsoluteTimeGetCurrent();
     
     QString decoded = d->m_decoder->decode( str, len );
             
@@ -525,9 +530,9 @@ void KHTMLPart::write(const char *str, int len)
         t->write( decoded, true );
 
 #ifdef _KWQ_TIMING        
-    long thisTime = _GetMillisecondsSinceEpoch() - start;
+    double thisTime = CFAbsoluteTimeGetCurrent() - start;
     totalWriteTime += thisTime;
-    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %d, total = %d\n", len, thisTime, totalWriteTime);
+    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %e, milliseconds = %e, total = %e\n", len, thisTime, totalWriteTime);
 #endif
 }
 
@@ -665,10 +670,12 @@ void KHTMLPart::setURLCursor( const QCursor &c )
     _logNeverImplemented();
 }
 
-
+// FIXME: this should be removed
+static const QCursor staticURLCursor = QCursor();
 const QCursor& KHTMLPart::urlCursor() const
 {
     _logNeverImplemented();
+    return staticURLCursor;
 }
 
 
@@ -707,6 +714,7 @@ QString KHTMLPart::selectedText() const
 DOM::Range KHTMLPart::selection() const
 {
     _logNeverImplemented();
+    return DOM::Range();
 }
 
 
@@ -946,7 +954,8 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
     // The mouse is over something
     if ( url.length() )
     {
-      bool shiftPressed = ( _mouse->state() & ShiftButton );
+      // FIXME: this is unused
+      //bool shiftPressed = ( _mouse->state() & ShiftButton );
 
       // Image map
       if ( !innerNode.isNull() && innerNode.elementId() == ID_IMG )
@@ -1067,7 +1076,6 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
 void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 {
-  QMouseEvent *_mouse = event->qmouseEvent();
   DOM::Node innerNode = event->innerNode();
   d->m_mousePressNode = DOM::Node();
 
@@ -1080,7 +1088,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        [((QWidget *)view())->getView() resetView];
+        [((KWQHTMLView *)((QWidget *)view())->getView()) resetView];
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
         openURL (clickedURL);
         // [kocienda]: shield your eyes!

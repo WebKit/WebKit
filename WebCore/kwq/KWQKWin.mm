@@ -30,4 +30,6 @@
 KWin::Info KWin::info(int win)
 {
     _logNotYetImplemented();
+    KWin::Info result;
+    return result;
 }

@@ -28,10 +28,12 @@
 
 //FIX ME:
 static QString tempQString = QString();
+static KMimeType::Ptr tempPtr = KMimeType::Ptr();
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t=0, bool=false, bool)
 {
     _logNotYetImplemented();
+    return tempPtr;
 }
 
 

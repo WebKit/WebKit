@@ -266,8 +266,6 @@ QStringList QStringList::grep( const QRegExp &expr ) const
     for ( QStringList::ConstIterator it = begin(); it != end(); ++it )
 	if ( (*it).contains( expr ) )
 	    res << *it;
-#else
-#warning function is not implemented
 #endif
     return res;
 }

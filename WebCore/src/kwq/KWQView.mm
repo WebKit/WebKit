@@ -78,7 +78,7 @@
     return self;
 }
 
-- action: sender
+- (void)action: sender
 {
     widget->emitAction(QObject::ACTION_BUTTON_CLICKED);
 }
@@ -149,9 +149,9 @@
     if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
         ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
         if (needsLayout){
-            long start = _GetMillisecondsSinceEpoch();
+            double start = CFAbsoluteTimeGetCurrent();
             ((KHTMLView *)widget)->layout(TRUE);
-            KWQDEBUGLEVEL1 (0x200, "layout time %d\n", _GetMillisecondsSinceEpoch() - start);
+            KWQDEBUGLEVEL1 (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             needsLayout = NO;
         }
     }
@@ -174,12 +174,12 @@
         
         [self lockFocus];
 
-        long start = _GetMillisecondsSinceEpoch();
+        double start = CFAbsoluteTimeGetCurrent();
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
-        KWQDEBUGLEVEL1 (0x200, "draw time %d\n", _GetMillisecondsSinceEpoch() - start);
+        KWQDEBUGLEVEL1 (0x200, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
         [self unlockFocus];
     }
 }

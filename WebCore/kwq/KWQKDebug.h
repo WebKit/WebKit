@@ -66,16 +66,16 @@ public:
 	kdbgstream &operator<<(const QCString &);
 	kdbgstream &operator<<(KDBGFUNC);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
 // add copy constructor
 // this private declaration prevents copying
 #ifdef _KWQ_PEDANTIC_
     kdbgstream(const kdbgstream &);
 #endif
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
 
 // add assignment operator 
 // this private declaration prevents assignment

@@ -174,6 +174,7 @@ const QBrush &QPainter::brush() const
 QRect QPainter::xForm(const QRect &) const
 {
     _logNotYetImplemented();
+    return QRect();
 }
 
 
@@ -246,8 +247,6 @@ void QPainter::_setColorFromPen()
 
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
-    NSBezierPath *path;
-
     _lockFocus();
     _setColorFromPen();
 
@@ -346,7 +345,6 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
     int _npoints, bool fill)
 {
     NSBezierPath *path;
-    float fa, falen;
     int i;
     int npoints = _npoints != -1 ? _npoints : _points.size()-index;
 
@@ -470,7 +468,6 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 {
     NSString *string;
     NSFont *font;
-    const char *ascii;
     
     _lockFocus();
     
@@ -529,7 +526,6 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
 {
     NSString *string;
     NSFont *font;
-    const char *ascii;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
     _lockFocus();
@@ -622,6 +618,7 @@ Qt::RasterOp QPainter::rasterOp() const
     return CopyROP;
 #else
     _logNeverImplemented();
+    return CopyROP;
 #endif
 }
 
@@ -657,12 +654,14 @@ bool QPainter::begin(const QPaintDevice *bd)
     data->bufferDevice = bd;
     const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
     [pixmap->nsimage setFlipped: YES];
+    return true;
 }
 
 
 bool QPainter::end()
 {
     data->bufferDevice = 0L;
+    return true;
 }
 
 

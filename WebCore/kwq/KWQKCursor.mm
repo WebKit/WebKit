@@ -27,15 +27,15 @@
 
 void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
-QCursor KCursor::arrowCursor() {}
-QCursor KCursor::crossCursor() {}
-QCursor KCursor::sizeAllCursor() {}
-QCursor KCursor::sizeHorCursor() {}
-QCursor KCursor::sizeVerCursor() {}
-QCursor KCursor::sizeBDiagCursor() {}
-QCursor KCursor::sizeFDiagCursor() {}
-QCursor KCursor::ibeamCursor() {}
-QCursor KCursor::waitCursor() {}
+QCursor KCursor::arrowCursor() { return QCursor(); }
+QCursor KCursor::crossCursor() { return QCursor(); }
+QCursor KCursor::sizeAllCursor() { return QCursor(); }
+QCursor KCursor::sizeHorCursor() { return QCursor(); }
+QCursor KCursor::sizeVerCursor() { return QCursor(); }
+QCursor KCursor::sizeBDiagCursor() { return QCursor(); }
+QCursor KCursor::sizeFDiagCursor() { return QCursor(); }
+QCursor KCursor::ibeamCursor() { return QCursor(); }
+QCursor KCursor::waitCursor() { return QCursor(); }
 
 
 KCursor::KCursor()

@@ -60,5 +60,6 @@ QFrame::QFrame(const QFrame &)
 QFrame &QFrame::operator=(const QFrame &)
 {
     _logNeverImplemented();
+    return *this;
 }
 

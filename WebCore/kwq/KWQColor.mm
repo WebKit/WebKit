@@ -374,8 +374,6 @@ void QColor::setHsv(int h, int s, int v)
 
 QColor QColor::light(int factor) const
 {
-    NSColor *newColor;
-
     if (factor <= 0) {
         return QColor(*this);
     }
@@ -407,8 +405,6 @@ QColor QColor::light(int factor) const
 
 QColor QColor::dark(int factor) const
 {
-    NSColor *newColor;
-
     if (factor <= 0) {
         return QColor(*this);
     }
@@ -493,7 +489,9 @@ QT_STATIC_CONST_IMPL QColor & Qt::darkYellow = stdcol[18];
 
 void QColor::initGlobalColors()
 {
-    NSAutoreleasePool *colorPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+    NSAutoreleasePool *colorPool;
+    
+    colorPool = [[NSAutoreleasePool allocWithZone:NULL] init];
      
     globals_init = TRUE;
 

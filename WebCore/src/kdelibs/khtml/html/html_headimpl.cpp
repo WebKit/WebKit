@@ -464,8 +464,8 @@ void HTMLTitleElementImpl::setTitle()
     s.compose();
     s = KStringHandler::csqueeze( s.visual(), 128 );
 
-    HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(ownerDocument());
     // FIXME: need to uncomment this eventually
+    //HTMLDocumentImpl *d = static_cast<HTMLDocumentImpl *>(ownerDocument());
     //if ( !d->view()->part()->parentPart() )
     //    emit d->view()->part()->setWindowCaption( s.visual() );
 }

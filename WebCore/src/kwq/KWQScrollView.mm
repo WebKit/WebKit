@@ -260,5 +260,6 @@ QScrollView::QScrollView(const QScrollView &)
 QScrollView &QScrollView::operator=(const QScrollView &)
 {
     _logNeverImplemented();
+    return *this;
 }
 

@@ -97,7 +97,7 @@ int QCString::find(const char *s, int index=0, bool cs=TRUE) const
 
     result = -1;
 
-    if (!s || index >= size()) {
+    if (!s || index >= (int)size()) {
         result = -1;
     }
     else if (!*s) {

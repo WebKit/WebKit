@@ -146,12 +146,26 @@ QString QString::fromCFMutableString(CFMutableStringRef cfs)
 
 // constructors, copy constructors, and destructors ----------------------------
 
+#ifndef _KWQ_QSTRING_INLINES_
+
 QString::QString()
 {
     s = NULL;
     cache = NULL;
     cacheType = CacheInvalid;
 }
+
+QString::~QString()
+{
+    if (s) {
+        CFRelease(s);
+    }
+    if (cache) {
+        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
+    }
+}
+
+#endif // _KWQ_QSTRING_INLINES_
 
 QString::QString(QChar qc)
 {
@@ -232,16 +246,6 @@ QString::QString(const QString &qs)
     cacheType = CacheInvalid;
 }
 
-QString::~QString()
-{
-    if (s) {
-        CFRelease(s);
-    }
-    if (cache) {
-        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
-    }
-}
-
 // assignment operators --------------------------------------------------------
 
 QString &QString::operator=(const QString &qs)
@@ -268,6 +272,8 @@ QString &QString::operator=(const char *chs)
     return *this = QString(chs);
 }
 
+#ifndef _KWQ_QSTRING_INLINES_
+
 QString &QString::operator=(QChar qc)
 {
     return *this = QString(qc);
@@ -278,12 +284,40 @@ QString &QString::operator=(char ch)
     return *this = QString(QChar(ch));
 }
 
+#endif // _KWQ_QSTRING_INLINES_
+
 // member functions ------------------------------------------------------------
+
+#ifndef _KWQ_QSTRING_INLINES_
 
 uint QString::length() const
 {
     return s ? CFStringGetLength(s) : 0;
 }
+
+bool QString::isNull() const
+{
+    // NOTE: do NOT use "unicode() == NULL"
+    return s == NULL;
+}
+
+bool QString::isEmpty() const
+{
+    return length() == 0;
+}
+
+QChar QString::at(uint index) const
+{
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (index < len) {
+            return QChar(CFStringGetCharacterAtIndex(s, index));
+        }
+    }
+    return QChar(0);
+}
+
+#endif // _KWQ_QSTRING_INLINES_
 
 const QChar *QString::unicode() const
 {
@@ -362,30 +396,6 @@ QCString QString::local8Bit() const
 {
     return convertToQCString(kCFStringEncodingMacRoman);
 }
-
-bool QString::isNull() const
-{
-    // NOTE: do NOT use "unicode() == NULL"
-    return s == NULL;
-}
-
-bool QString::isEmpty() const
-{
-    return length() == 0;
-}
-
-//#ifdef USING_BORROWED_KURL
-QChar QString::at(uint index) const
-{
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (index < len) {
-            return QChar(CFStringGetCharacterAtIndex(s, index));
-        }
-    }
-    return QChar(0);
-}
-//#endif // USING_BORROWED_KURL
 
 int QString::compare(const QString &qs) const
 {
@@ -760,15 +770,17 @@ QString QString::right(uint width) const
 QString QString::mid(uint index, uint width) const
 {
     QString qs;
+    int signedIndex = (int)index;
+    int signedWidth = (int)width;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && (index < len) && width) {
-            if (!((index == 0) && (width >= len))) {
-                if (width > (len - index)) {
-                    width = len - index;
+        if (len && (signedIndex < len) && signedWidth) {
+            if (!((signedIndex == 0) && (signedWidth >= len))) {
+                if (signedWidth > (len - signedIndex)) {
+                    signedWidth = len - signedIndex;
                 }
                 CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, CFRangeMake(index, width));
+                        kCFAllocatorDefault, s, CFRangeMake(signedIndex, width));
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);
@@ -1030,6 +1042,7 @@ QString &QString::append(const QString &qs)
 
 QString &QString::insert(uint index, const QString &qs)
 {
+    int signedIndex = (int)index;
     flushCache();
     if (qs.s) {
         CFIndex len = CFStringGetLength(qs.s);
@@ -1038,8 +1051,8 @@ QString &QString::insert(uint index, const QString &qs)
                 s = CFStringCreateMutable(kCFAllocatorDefault, 0);
             }
             if (s) {
-                if (index < CFStringGetLength(s)) {
-                    CFStringInsert(s, index, qs.s);
+                if (signedIndex < CFStringGetLength(s)) {
+                    CFStringInsert(s, signedIndex, qs.s);
                 } else {
                     CFStringAppend(s, qs.s);
                 }
@@ -1061,14 +1074,16 @@ QString &QString::insert(uint index, char ch)
 
 QString &QString::remove(uint index, uint width)
 {
+    int signedIndex = (int)index;
+    int signedWidth = (int)width;
     flushCache();
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && (index < len) && width) {
-            if (width > (len - index)) {
-                width = len - index;
+        if (len && (signedIndex < len) && signedWidth) {
+            if (signedWidth > (len - signedIndex)) {
+                signedWidth = len - signedIndex;
             }
-            CFStringDelete(s, CFRangeMake(index, width));
+            CFStringDelete(s, CFRangeMake(signedIndex, signedWidth));
         }
     }
     return *this;
@@ -1099,11 +1114,12 @@ QString &QString::replace(const QRegExp &qre, const QString &qs)
 void QString::truncate(uint newLen)
 {
     flushCache();
+    int signedNewLen = (int)newLen;
     if (s) {
-        if (newLen) {
+        if (signedNewLen) {
             CFIndex len = CFStringGetLength(s);
-            if (len && (newLen < len)) {
-                CFStringDelete(s, CFRangeMake(newLen, len - newLen));
+            if (len && (signedNewLen < len)) {
+                CFStringDelete(s, CFRangeMake(signedNewLen, len - signedNewLen));
             }
         } else {
             CFRelease(s);
@@ -1313,13 +1329,14 @@ ulong QString::convertToNumber(bool *ok, int base, bool *neg) const
 QString QString::leftRight(uint width, bool left) const
 {
     QString qs;
+    int signedWidth = (int)width;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && width) {
-            if (len > width) {
+        if (len && signedWidth) {
+            if (len > signedWidth) {
                 CFStringRef tmp = CFStringCreateWithSubstring(
-                        kCFAllocatorDefault, s, left ? CFRangeMake(0, width)
-                        : CFRangeMake(len - width, width));
+                        kCFAllocatorDefault, s, left ? CFRangeMake(0, signedWidth)
+                        : CFRangeMake(len - signedWidth, signedWidth));
                 if (tmp) {
                     qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
                             tmp);

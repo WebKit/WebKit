@@ -69,8 +69,9 @@ void RenderHR::print(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _
         prev = prev->previousSibling();
     if(prev && static_cast<RenderFlow *>(prev)->floatBottom() > prev->height() )
         xp += static_cast<RenderFlow *>(prev)->leftOffset( prev->height() );
-
-    int yp = _ty ;
+    
+    // [kocienda] yp is unused because of #if 0 block
+    //int yp = _ty ;
 
 
 

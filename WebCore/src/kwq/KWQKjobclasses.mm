@@ -108,8 +108,6 @@ private:
 
 TransferJob::TransferJob(const KURL &url, bool reload=false, bool showProgressInfo=true)
 {
-    NSString *string;
-
     _url = url;
     _reload = reload;
     _showProgressInfo = showProgressInfo;

@@ -41,13 +41,15 @@ KLineEdit::~KLineEdit()
 
 void KLineEdit::setMouseTracking(bool)
 {
-    KWQNSTextField *fieldView = (KWQNSTextField *)getView();
+    KWQNSTextField *fieldView;
+    fieldView = (KWQNSTextField *)getView();
 }
 
 
 void KLineEdit::setContextMenuEnabled(bool showMenu)
 {
-    KWQNSTextField *fieldView = (KWQNSTextField *)getView();
+    KWQNSTextField *fieldView;
+    fieldView = (KWQNSTextField *)getView();
 }
 
 

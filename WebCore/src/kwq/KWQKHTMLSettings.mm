@@ -33,7 +33,7 @@ KHTMLSettings::KHTMLSettings()
     // set available font families...ask the system
     NSFontManager *sharedFontManager;
     NSArray *array, *fontSizeArray;
-    int i;
+    unsigned int i;
         
     sharedFontManager = [NSFontManager sharedFontManager];
     array = [sharedFontManager availableFontFamilies];

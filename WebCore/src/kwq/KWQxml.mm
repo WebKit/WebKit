@@ -195,6 +195,7 @@ QXmlParseException::QXmlParseException()
 QString QXmlParseException::message() const
 {
     _logNotYetImplemented();
+    return QString();
 }
 
 

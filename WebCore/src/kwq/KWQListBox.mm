@@ -60,7 +60,7 @@ QListBox::~QListBox()
 
 uint QListBox::count() const
 {
-    (uint)[matrix numberOfRows];
+    return (uint)[matrix numberOfRows];
 }
 
 
@@ -105,7 +105,7 @@ void QListBox::insertItem(const QListBoxItem *newItem, int index)
     if ( !newItem )
 	return;
 
-    if ( index < 0 || index >= count())
+    if ( index < 0 || index >= (int)count())
 	index = count();
 
     QListBoxItem *item = (QListBoxItem *)newItem;

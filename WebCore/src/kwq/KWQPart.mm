@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <qwidget.h>
 #include <kwqdebug.h>
 #include <part.h>
 
@@ -41,9 +42,11 @@ KParts::Part::~Part()
 }
 
 
+static QWidget *theWidget = new QWidget();
 QWidget *KParts::Part::widget()
 {
     _logNotYetImplemented();
+    return theWidget;
 }
 
 
@@ -67,8 +70,10 @@ KParts::ReadOnlyPart::~ReadOnlyPart()
 }
 
 
+static const KURL emptyURL = KURL();
 const KURL &KParts::ReadOnlyPart::url() const
 {
     // must override
     _logNeverImplemented();
+    return emptyURL;
 }

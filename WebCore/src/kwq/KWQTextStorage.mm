@@ -49,7 +49,7 @@ static KWQTextStorage *sharedInstance = nil;
     return sharedInstance;
 }
 
-+ setString:(NSString *)str attributes:(NSDictionary *)attrs 
++ (void)setString:(NSString *)str attributes:(NSDictionary *)attrs 
 {
     [[KWQTextStorage sharedInstance] setString: str attributes: attrs];
 }

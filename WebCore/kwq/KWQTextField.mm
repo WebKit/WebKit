@@ -160,15 +160,13 @@
 - (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error
 {
     *obj = string;
+    return YES;
 }
 
 
 - (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error
 {
-    int i, length = [(NSString *)partialString length];
-    NSString *string = @"";
-
-    if ([partialString length] >= maxLength){
+    if ((int)[partialString length] >= maxLength){
         *newString = nil;
         return NO;
     }
