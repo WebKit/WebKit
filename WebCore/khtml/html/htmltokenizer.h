@@ -372,9 +372,7 @@ protected:
 
     QGuardedPtr<KHTMLView> view;
     
-#ifndef NDEBUG
     bool inWrite;
-#endif
 };
 
 }

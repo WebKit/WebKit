@@ -234,9 +234,7 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
 // ----------------------------------------------------------------------------
 
 HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool includesComments)
-#ifndef NDEBUG
     : inWrite(false)
-#endif
 {
     view = _view;
     buffer = 0;
@@ -256,9 +254,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool incl
 }
 
 HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *i, bool includesComments)
-#ifndef NDEBUG
     : inWrite(false)
-#endif
 {
     view = 0;
     buffer = 0;
@@ -1563,10 +1559,8 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     if (timerId)
         return;
 
-#ifndef NDEBUG
     bool wasInWrite = inWrite;
     inWrite = true;
-#endif
     
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
@@ -1798,11 +1792,9 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
         printf("Ending write at time %d\n", parser->doc()->elapsedTime());
 #endif
     
-#ifndef NDEBUG
     inWrite = wasInWrite;
-#endif
 
-    if (noMoreData && !loadingExtScript && !m_executingScript && !timerId)
+    if (noMoreData && !inWrite && !loadingExtScript && !m_executingScript && !timerId)
         end(); // this actually causes us to be deleted
 }
 
@@ -1882,7 +1874,7 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
 
 void HTMLTokenizer::allDataProcessed()
 {
-    if (noMoreData && !loadingExtScript && !m_executingScript && !onHold && !timerId) {
+    if (noMoreData && !inWrite && !loadingExtScript && !m_executingScript && !onHold && !timerId) {
         if (!parser || !parser->doc() || !parser->doc()->part())
             return;
         KHTMLPart* part = parser->doc()->part();
@@ -1959,7 +1951,7 @@ void HTMLTokenizer::finish()
     // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
-    if (!loadingExtScript && !m_executingScript && !onHold && !timerId)
+    if (!inWrite && !loadingExtScript && !m_executingScript && !onHold && !timerId)
         end(); // this actually causes us to be deleted
 }
 

@@ -1,3 +1,19 @@
+2005-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4045203> REGRESSION (125-188): Redundant JS imports crash Safari
+
+        * khtml/html/htmltokenizer.h: Take inWRite bool out of NDEBUG ifdef.
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer): Take inWrite bool management code out of NDEBUG ifdef.
+        (khtml::HTMLTokenizer::write): Ditto. Don't call end if inWrite is true, since it will be called
+        when you return to the body of the outer write() call.
+        (khtml::HTMLTokenizer::allDataProcessed): Don't call end() if inWrite is true for the same reason.
+        (khtml::HTMLTokenizer::finish): Ditto.
+
+        * kwq/KWQWidget.mm: (QWidget::getOuterView): Removed bogus assertion that has been vexing us of late.
+
 2005-03-16  David Harrison  <harrison@apple.com>
 
         Reviewed by me (written by Patti Yeh).
