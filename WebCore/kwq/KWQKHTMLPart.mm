@@ -42,6 +42,8 @@
 #include <loader.h>
 
 #include <KWQKHTMLPart.h>
+
+#import <WCURICache.h>
 #import <WCURICacheData.h>
 
 static bool cache_init = false;
@@ -62,12 +64,14 @@ static bool cache_init = false;
     id <WCURICacheData> data;
     
     data = [notification object];
+    
     m_part->write((const char *)[data cacheData], [data cacheDataSize]);    
 }
 
 -(void)cacheFinished:(NSNotification *)notification
 {
     // FIXME: need an implementation for this
+    m_part->closeURL();
 }
 
 @end
@@ -100,7 +104,7 @@ public:
             cache_init = true;
         }
         m_part = part;
-        m_doc = new HTMLDocumentImpl(NULL);
+        m_doc = 0L;
         m_decoder = 0L;
         m_bFirstData = true;
         m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
@@ -169,6 +173,14 @@ bool KHTMLPart::openURL( const KURL &url )
     
     // Keep a reference to the current working URL.
     d->m_workingURL = url;
+
+    id <WCURICache> cache;
+    NSString *nsurl;
+    
+    cache = WCGetDefaultURICache();
+    nsurl = [NSString stringWithCString:url.url().latin1()];
+    
+    [cache requestWithString:nsurl requestor:d->m_recv];
 
     return true;
 }
