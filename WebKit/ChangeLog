@@ -1,3 +1,22 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3211730 -- REGRESSION: Flash spawns blank page then loads new page inside banner itself
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        Load the request in the frame we found or created, not always in our own frame (oops!).
+
+        - other changes
+
+        * History.subproj/WebHistory.h: Update comments to all say "Item" instead of "Entry".
+        They didn't match the method names any more.
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView acceptsFirstResponder]): Return YES.
+        (-[WebView becomeFirstResponder]): Pass first responder on to the WebFrameView in the same way
+        the WebFrameView passes it on to the document view.
+
 2003-03-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

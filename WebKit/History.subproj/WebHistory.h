@@ -11,7 +11,7 @@
 
 // Notifications sent when history is modified.
 // The first two come with a userInfo dictionary with a single key "Entries", which contains
-// an array of entries that were added or removed.
+// an array of items that were added or removed.
 
 // posted from addItems:
 extern NSString *WebHistoryItemsAddedNotification;
@@ -55,32 +55,32 @@ extern NSString *WebHistoryLoadedNotification;
 - initWithContentsOfURL:(NSURL *)URL;
 
 /*!
-    @method addEntries:
-    @param newEntries An array of WebHistoryItems to add to the WebHistory.
+    @method addItems:
+    @param newItems An array of WebHistoryItems to add to the WebHistory.
 */
-- (void)addItems:(NSArray *)newEntries;
+- (void)addItems:(NSArray *)newItems;
 
 /*!
-    @method removeEntries:
-    @param entries An array of WebHistoryItems to remove from the WebHistory.
+    @method removeItems:
+    @param items An array of WebHistoryItems to remove from the WebHistory.
 */
-- (void)removeItems:(NSArray *)entries;
+- (void)removeItems:(NSArray *)items;
 
 /*!
-    @method removeAllEntries
+    @method removeAllItems
 */
 - (void)removeAllItems;
 
 /*!
     @method orderedLastVisitedDays
     @discussion Get an array of NSCalendarDates, each one representing a unique day that contains one
-    or more history entries, ordered from most recent to oldest.
+    or more history items, ordered from most recent to oldest.
     @result Returns an array of NSCalendarDates for which history items exist in the WebHistory.
 */
 - (NSArray *)orderedLastVisitedDays;
 
 /*!
-    @method orderedEntriesLastVisitedOnDay:
+    @method orderedItemsLastVisitedOnDay:
     @discussion Get an array of WebHistoryItem that were last visited on the day represented by the
     specified NSCalendarDate, ordered from most recent to oldest.
     @param calendarDate A date identifying the unique day of interest.

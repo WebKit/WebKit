@@ -446,6 +446,19 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return userAgent;
 }
 
+-(BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    if ([[self mainFrame] frameView]) {
+        [[self window] makeFirstResponder:[[self mainFrame] frameView]];
+    }
+    return YES;
+}
+
 @end
 
 

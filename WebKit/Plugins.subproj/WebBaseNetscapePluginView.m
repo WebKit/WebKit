@@ -1058,7 +1058,7 @@ typedef struct {
             NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
         }
     } else {
-        [[self webFrame] loadRequest:request];
+        [frame loadRequest:request];
         if (notifyData) {
             // FIXME: How do we notify about failures? It seems this will only notify about success.
         
