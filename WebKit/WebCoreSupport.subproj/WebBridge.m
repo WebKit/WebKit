@@ -691,13 +691,6 @@
     }
 }
 
-- (void)setNeedsLayout
-{
-    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    [view setNeedsLayout:YES];
-    [view setNeedsDisplay:YES];
-}
-
 // OK to be an NSString rather than an NSURL.
 // This URL is only used for coloring visited links.
 - (NSString *)requestedURLString

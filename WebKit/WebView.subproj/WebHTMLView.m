@@ -741,9 +741,7 @@ static WebHTMLView *lastHitView = nil;
             displayRect = NSIntersectionRect(displayRect, dirtyRect);
         }
         if (!NSIsEmptyRect(displayRect)) {
-            if ([[self _bridge] needsLayout])
-                _private->needsLayout = YES;
-            if (_private->needsToApplyStyles || _private->needsLayout)
+            if (_private->needsToApplyStyles || [[self _bridge] needsLayout])
                 [self layout];
         }
     }
@@ -887,8 +885,7 @@ static WebHTMLView *lastHitView = nil;
     _private = [[WebHTMLViewPrivate alloc] init];
 
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
-    _private->needsLayout = YES;
-
+    
     return self;
 }
 
@@ -1177,7 +1174,7 @@ static WebHTMLView *lastHitView = nil;
     [[self window] setAcceptsMouseMovedEvents: YES];
     [[self window] _setShouldPostEventNotifications: YES];
 
-    if (!_private->needsLayout) {
+    if (![[self _bridge] needsLayout]) {
         return;
     }
 
@@ -1192,8 +1189,7 @@ static WebHTMLView *lastHitView = nil;
     } else {
         [[self _bridge] forceLayoutAdjustingViewSize:adjustViewSize];
     }
-    _private->needsLayout = NO;
-    
+
     if (!_private->printing) {
 	// get size of the containing dynamic scrollview, so
 	// appearance and disappearance of scrollbars will not show up
@@ -1290,7 +1286,8 @@ static WebHTMLView *lastHitView = nil;
 - (void)setNeedsLayout: (BOOL)flag
 {
     LOG(View, "%@ flag = %d", self, (int)flag);
-    _private->needsLayout = flag;
+    if (flag)
+        [[self _bridge] setNeedsLayout];
 }
 
 

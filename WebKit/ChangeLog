@@ -1,3 +1,17 @@
+2004-01-09  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3510669 and 3515442, blank frame problems caused by WebKit's resizing not scheduling actual
+	layouts via WebCore.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _web_layoutIfNeededRecursive:testDirtyRect:]):
+        (-[WebHTMLView initWithFrame:]):
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        (-[WebHTMLView setNeedsLayout:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
