@@ -435,9 +435,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     if (len == -1)
         len = qstring.length();
 
-    [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor()];
+    drawText(x, y, qstring, 0, len, LTR);
 
     _unlockFocus();
 }
@@ -445,8 +443,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
 void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDirection dir)
 {
-    //drawText(x, y, qstring, 0, len, dir);
-    drawText(x, y, qstring, len);
+    drawText(x, y, qstring, 0, len, dir);
 }
 
 void QPainter::drawText (int x, int y, const QString &qstring, int from, int to, QColor backgroundColor)
@@ -468,18 +465,10 @@ void QPainter::drawText (int x, int y, const QString &qstring, int pos, int len,
         _logPartiallyImplemented();
     }
 
-#if 1
     if (pos != 0)
         drawText(x, y, qstring.mid(pos, len), len, dir);
     else
         drawText(x, y, qstring, len, dir);
-#else
-
-    id <WebCoreTextRenderer>renderer = [[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()];
-        
-    [renderer drawCharacters:(const UniChar *)qstring.unicode() stringLength: qstring.length() fromCharacterPosition: pos numberOfCharacters: len atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor()];
-#endif
 }
 
 

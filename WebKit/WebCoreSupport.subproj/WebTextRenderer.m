@@ -415,7 +415,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         usedCharacterBuffer = characterBuffer;
     }
 
-    [self drawCharacters: usedCharacterBuffer length: length atPoint: point withTextColor: color];
+    [self drawCharacters: usedCharacterBuffer stringLength: length fromCharacterPosition: 0 toCharacterPosition: length atPoint: point withTextColor: color backgroundColor: nil];
     
     if (characterBuffer != localCharacterBuffer)
         free(characterBuffer);
@@ -542,9 +542,13 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     }
 
     fragmentLength = numGlyphs - lastDrawnGlyph;
-    if (fragmentLength > 0)
-        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: fromGlyph-lastDrawnGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+    if (fragmentLength > 0){
+        int _fromGlyph = fromGlyph-lastDrawnGlyph;
         
+        if (_fromGlyph < 0)
+            _fromGlyph = 0;
+        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: _fromGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+    }
     if (glyphs)
         free(glyphs);
     
@@ -619,16 +623,6 @@ cleanup:
         free(glyphs);
     }
     return result;
-}
-
-- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: backgroundColor
-{
-    [self drawCharacters: characters stringLength: length fromCharacterPosition: 0 toCharacterPosition: length atPoint: point withTextColor: textColor backgroundColor: backgroundColor]; 
-}
-
-- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withTextColor:(NSColor *)textColor
-{
-    [self drawCharacters: characters length: length atPoint: point withTextColor: textColor backgroundColor: nil];
 }
 
 

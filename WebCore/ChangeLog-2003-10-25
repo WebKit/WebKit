@@ -1,3 +1,12 @@
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
+        Removed calls to old method.
+        
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+        Removed old methods.
+
 2002-06-27  Darin Adler  <darin@apple.com>
 
         * khtml/rendering/render_applet.cpp: Remove include of <iostream.h> to avoid bloat.

@@ -1,3 +1,13 @@
+2002-06-27  Richard Williamson  <rjw@apple.com>
+
+        Removed old methods and references.
+        
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer drawString:atPoint:withColor:]):
+        (-[IFTextRenderer slowDrawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:attemptFontSubstitution:]):
+        (-[IFTextRenderer _drawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:]):
+        Fixed final fragment rendering glitch.
+
 2002-06-27  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/IFWebCoreViewFactory.m:
