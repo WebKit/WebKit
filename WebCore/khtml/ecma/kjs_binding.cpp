@@ -294,9 +294,6 @@ bool ScriptInterpreter::isSafeScript (const Interpreter *_target)
 
 Interpreter *ScriptInterpreter::interpreterForGlobalObject (const ValueImp *imp)
 {
-    if (!isGlobalObject(imp))
-	return 0;
-	
     const KJS::Window *win = static_cast<const KJS::Window *>(imp);
     return win->interpreter();
 }
