@@ -1,3 +1,13 @@
+2002-09-09  ken  <kocienda@apple.com>
+
+	Content length information now accessible via WebResourceResponse object,
+        rather than from WebResourceHandle.
+
+        * WebView.subproj/WebLoadProgress.m:
+        (-[WebLoadProgress initWithResourceHandle:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidReceiveData:data:]):
+
 2002-09-09  Richard Williamson  <rjw@apple.com>
 
         Make both calls to adjust CG font cache dynamic.

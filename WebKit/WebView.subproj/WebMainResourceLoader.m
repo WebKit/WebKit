@@ -240,7 +240,7 @@
 
     [self receivedProgressWithHandle:handle complete:NO];
     
-    LOG(Download, "%d of %d", [handle contentLengthReceived], [handle contentLength]);
+    LOG(Download, "%d of %d", [[handle response] contentLengthReceived], [[handle response] contentLength]);
     isFirstChunk = NO;
 }
 

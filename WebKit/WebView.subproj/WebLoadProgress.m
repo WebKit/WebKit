@@ -29,8 +29,9 @@
 
 - (id)initWithResourceHandle:(WebResourceHandle *)handle
 {
-    int b = [handle contentLengthReceived];
-    int t = [[handle response] statusCode] == WebResourceHandleStatusLoadComplete ? b : [handle contentLength];
+    WebResourceResponse *theResponse = [handle response];
+    int b = [theResponse contentLengthReceived];
+    int t = [theResponse statusCode] == WebResourceHandleStatusLoadComplete ? b : [theResponse contentLength];
     return [self initWithBytesSoFar:b totalToLoad:t];
 }
 
