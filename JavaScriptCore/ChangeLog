@@ -1,3 +1,30 @@
+2005-01-26  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3972522> (179-180) 40% slowdown on iBench JavaScript test
+
+	I added a member variable to ObjectImp.  This changed it's size and consequently
+	hampered the optimizations built into the garbage collector.  Objects no longer
+	fit within the allocators cell size, and thus allocation fell back to a slower
+	allocator.
+
+	As a result of this fix I also dramatically cleaned up how runtime objects are
+	accessed.  The path mostly *removes* code.
+	
+        Reviewed by Chris.
+
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::call):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+        (RuntimeObjectImp::defaultValue):
+        * bindings/runtime_object.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::ObjectImp):
+        * kjs/object.h:
+
 2005-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by me, changes by Han Ming Ong.

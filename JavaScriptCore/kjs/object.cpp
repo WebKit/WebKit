@@ -124,13 +124,13 @@ Value Object::call(ExecState *exec, Object &thisObj, const List &args)
 // ------------------------------ ObjectImp ------------------------------------
 
 ObjectImp::ObjectImp(const Object &proto)
-  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _forwardingScriptMessage(false)
+  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
 }
 
 ObjectImp::ObjectImp(ObjectImp *proto)
-  : _proto(proto), _internalValue(0L), _forwardingScriptMessage(false)
+  : _proto(proto), _internalValue(0L)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
 }
@@ -140,7 +140,6 @@ ObjectImp::ObjectImp()
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
   _proto = NullImp::staticNull;
   _internalValue = 0L;
-  _forwardingScriptMessage = false;
 }
 
 ObjectImp::~ObjectImp()

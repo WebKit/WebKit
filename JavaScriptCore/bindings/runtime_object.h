@@ -38,7 +38,6 @@ public:
     ~RuntimeObjectImp();
     
     RuntimeObjectImp(Bindings::Instance *i, bool ownsInstance = true);
-    RuntimeObjectImp(Bindings::Instance *i, const Value &fallback, bool ownsInstance = true);
 
     const ClassInfo *classInfo() const { return &info; }
 
@@ -63,13 +62,10 @@ public:
 
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
-
-    Value fallbackObject() { return fallback; }
     
     static const ClassInfo info;
 
 private:
-    ProtectedValue fallback;
     Bindings::Instance *instance;
     bool ownsInstance;
 };

@@ -1,5 +1,36 @@
 2005-01-26  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3972522> (179-180) 40% slowdown on iBench JavaScript test
+
+	I added a member variable to ObjectImp.  This changed it's size and consequently
+	hampered the optimizations built into the garbage collector.  Objects no longer
+	fit within the allocators cell size, and thus allocation fell back to a slower
+	allocator.
+
+	As a result of this fix I also dramatically cleaned up how runtime objects are
+	accessed.  The path mostly *removes* code.
+	
+        Reviewed by Chris.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocumentProtoFunc::tryCall):
+        (DOMElementProtoFunc::tryCall):
+        (KJS::getRuntimeObject):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLElement::tryGet):
+        (KJS::HTMLElement::implementsCall):
+        (KJS::HTMLElement::call):
+        (KJS::HTMLElement::tryPut):
+        (KJS::HTMLCollection::tryGet):
+        (KJS::HTMLCollection::getNamedItems):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+
+2005-01-26  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3757712> REGRESSION (Mail): WebCore does not allow Devanagari ligature input
 
 	For now we are using ICU UBreakIterator to determine grapheme boundaries for

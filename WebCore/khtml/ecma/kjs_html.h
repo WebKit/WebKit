@@ -68,6 +68,11 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
 
+#if APPLE_CHANGES
+    virtual Value call(ExecState *exec, Object &thisObj, const List&args);
+    virtual bool implementsCall() const;
+#endif
+
     static const ClassInfo html_info, head_info, link_info, title_info,
       meta_info, base_info, isIndex_info, style_info, body_info, form_info,
       select_info, optGroup_info, option_info, input_info, textArea_info,

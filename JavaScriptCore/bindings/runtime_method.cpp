@@ -74,7 +74,8 @@ bool RuntimeMethodImp::implementsCall() const
 Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
     if (_methodList.length() > 0) {
-        RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
+	Value runtimeObject = thisObj.get(exec, "__apple_runtime_object");
+        RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
         if (imp) {
             Instance *instance = imp->getInternalInstance();
             
