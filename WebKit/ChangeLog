@@ -1,3 +1,5 @@
+=== Safari-166 ===
+
 2004-10-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3827002> assertion failure in WebBaseNetscapePluginStream on abc.go.com

@@ -1,3 +1,5 @@
+=== Safari-166 ===
+
 2004-10-05  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3819234> NPN_SetException (and throwException:) isn't implemented
