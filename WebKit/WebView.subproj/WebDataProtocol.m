@@ -76,20 +76,6 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @end
 
-// This private interface declaration is need because NSURLProtocol
-// has no mechanism to remove a property from a NSURLRequest.
-// See 4046775.
-@interface _NSURLRequestInternal : NSObject
-{
-    @public
-    NSURL *URL;
-    NSURLRequestCachePolicy cachePolicy;
-    NSTimeInterval timeoutInterval;
-    NSURL *mainDocumentURL;
-    NSMutableDictionary *properties;
-}
-@end
-
 
 @implementation NSURLRequest (WebDataRequest)
 
@@ -152,12 +138,6 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
         [newRequest setURL:[self _webDataRequestExternalURL]];
     } 
     return newRequest;
-}
-
-- (void)_webDataRequestSanitize
-{
-    _NSURLRequestInternal *internal = (_NSURLRequestInternal *)_internal;
-    [internal->properties removeObjectForKey:WebDataRequestPropertyKey];
 }
 
 @end

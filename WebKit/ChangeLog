@@ -1,3 +1,30 @@
+2005-03-14  Vicki Murley  <vicki@apple.com>
+
+	- roll out the fix for 4040321, since it is still pending CCC review.
+
+    2005-03-10  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/4040321> Exception: Someone's trying to encode a WebDataRequestParameters instance 
+
+        Reviewed by Darin.
+
+        If a delegate returns a mutated applewebdata: request in it's willSendRequest:
+        method, we don't load using the WebDataRequest.  Instead we do a normal load.
+        Unfortunately, if the request they return is mutated *copy* of the applewebdata: 
+        request it will hold the applewebdata: special properties.  These properties 
+        will be encoded into the cache.   They should not be.  So, to fix, we sanitize the
+        request, by removing the special properties from the request.
+
+        Note that we had to dig into the private guts of NSURLRequest because there is
+        no public mechanism to remove properties from a request, see 4046775.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate willSendRequest:redirectResponse:]):
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (-[NSURLRequest _webDataRequestExternalRequest]):
+        (-[NSURLRequest _webDataRequestSanitize]):
+
 === Safari-406 ===
 
 2005-03-13  Darin Adler  <darin@apple.com>
