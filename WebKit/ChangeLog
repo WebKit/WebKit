@@ -1,3 +1,12 @@
+2003-07-10  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3298153.  Force use of printer font when printing.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (_drawGlyphs):
+
 2003-07-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3161102>: Avoid retain cycles by destroying plug-ins in the page cache before dealloc
