@@ -1,5 +1,14 @@
 2004-05-27  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - moved to new symlink technique for embedding frameworks
+
+        * WebCore.pbproj/project.pbxproj: Get rid of embed-frameworks build step
+        because we don't need it any more.
+
+2004-05-27  Darin Adler  <darin@apple.com>
+
         - fixed bug where all pages with images would cause a crash
         - fixed Deployment build
 

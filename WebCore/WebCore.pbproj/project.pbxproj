@@ -136,7 +136,6 @@
 				0867D69EFE84028FC02AAC07,
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
-				255AF6590250FC030ECA149E,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -850,25 +849,6 @@
 //082
 //083
 //084
-//250
-//251
-//252
-//253
-//254
-		255AF6590250FC030ECA149E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
-		};
-//250
-//251
-//252
-//253
-//254
 //350
 //351
 //352
