@@ -697,19 +697,19 @@ Range findPlainText(const Range &r, const QString &s, bool forward, bool caseSen
 
     {
         CharacterIterator it(r);
-        while (!it.atEnd()) {
+        while (1) {
             // Fill the buffer.
             while (long needed = buffer.neededCharacters()) {
-                long available = it.numCharacters();
-                long runLength = kMin(needed, available);
-                buffer.append(runLength, it.characters());
-                it.advance(runLength);
                 if (it.atBreak()) {
                     if (it.atEnd()) {
                         goto done;
                     }
                     buffer.clear();
                 }
+                long available = it.numCharacters();
+                long runLength = kMin(needed, available);
+                buffer.append(runLength, it.characters());
+                it.advance(runLength);
             }
 
             // Do the search.

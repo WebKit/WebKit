@@ -1,3 +1,29 @@
+2004-06-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3709385> Find on page doesn't find a string at the very end of the file
+
+        * khtml/misc/khtml_text_operations.cpp: (khtml::findPlainText): Rearrange loop to avoid an early
+        exit once we have all the characters we need, but are at the end of the range we are searching.
+
+        - fixed <rdar://problem/3102271>: (text areas have scroll bars even when they don't need them)
+        - fixed <rdar://problem/3665430>: (horizontal scroll bar of text area does not show, even when text is wide in "no wrap" mode)
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _configureTextViewForWordWrapMode]): Added. Helper method that sets up the
+        view for a new word wrap mode.
+        (-[KWQTextArea _createTextView]): Moved much of the code inside _configureTextViewForWordWrapMode.
+        (-[KWQTextArea _frameSizeChanged]): Added. Method shared by setFrame: and initWithFrame: to
+        avoid duplicate code that was there before. The old code also had redundant code to update
+        the text container size, but NSText handles that automatically.
+        (-[KWQTextArea initWithFrame:]): Set wrap to YES by default, which is the key to fixing bug 3665430.
+        Call setAutohidesScrollers:YES, which fixes bug 3102271. Also call the new _frameSizeChanged method.
+        (-[KWQTextArea setWordWrap:]): Call _configureTextViewForWordWrapMode instead of trying
+        to do the work here. The old version did both too little and too much.
+        (-[KWQTextArea setFrame:]): Call _frameSizeChanged instead of trying to do the work here.
+        The old version did both too little and too much.
+
 2004-06-24  John Sullivan  <sullivan@apple.com>
 
         Darin made this change on my machine; I reviewed it.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,51 +82,56 @@
 
 const float LargeNumberForText = 1.0e7;
 
+- (void)_configureTextViewForWordWrapMode
+{
+    [self setHasHorizontalScroller:!wrap];
+
+    [textView setHorizontallyResizable:!wrap];
+    [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
+
+    [[textView textContainer] setContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
+    [[textView textContainer] setWidthTracksTextView:wrap];
+}
+
 - (void)_createTextView
 {
-    NSSize size = [self frame].size;
-    NSRect textFrame;
-    textFrame.origin.x = textFrame.origin.y = 0;
-    if (size.width > 0 && size.height > 0) {
-        textFrame.size = [[self class] contentSizeForFrameSize:size
-            hasHorizontalScroller:[self hasHorizontalScroller]
-            hasVerticalScroller:[self hasVerticalScroller]
-            borderType:[self borderType]];
-    } else {
-        textFrame.size.width = LargeNumberForText;
-        textFrame.size.height = LargeNumberForText;
-    }
+    textView = [[KWQTextAreaTextView alloc] init];
 
-    textView = [[KWQTextAreaTextView alloc] initWithFrame:textFrame];
     [textView setRichText:NO];
-    [[textView textContainer] setWidthTracksTextView:YES];
-
-    // Set up attributes for default case, WRAP=SOFT|VIRTUAL or WRAP=HARD|PHYSICAL.
-    // If WRAP=OFF we reset many of these attributes.
-
-    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    [style setLineBreakMode:NSLineBreakByWordWrapping];
-    [style setAlignment:NSLeftTextAlignment];
-    [textView _KWQ_setTypingParagraphStyle:style];
-    [style release];
-    
-    [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
+    [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
     [textView setDelegate:self];
-    
+
     [self setDocumentView:textView];
+
+    [self _configureTextViewForWordWrapMode];
+}
+
+- (void)_frameSizeChanged
+{
+    NSSize contentSize = [[self class] contentSizeForFrameSize:[self frame].size
+        hasHorizontalScroller:[self hasHorizontalScroller]
+        hasVerticalScroller:[self hasVerticalScroller]
+        borderType:[self borderType]];
+    NSRect textFrame = [textView frame];
+    textFrame.size.width = contentSize.width;
+    [textView setFrame:textFrame];
 }
 
 - initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
-    
+
+    wrap = YES;
+
     [self setHasVerticalScroller:YES];
-    [self setHasHorizontalScroller:NO];
     [self setBorderType:NSBezelBorder];
-    
+
     [self _createTextView];
-    
+    [self _frameSizeChanged];
+
+    // Do this last, because it works better if done after the scrollers are created.
+    [self setAutohidesScrollers:YES];
+
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
     // it causes some bad problems if that clip is cached between calls.
@@ -138,7 +143,7 @@ const float LargeNumberForText = 1.0e7;
     // <rdar://problem/3310943>: REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
     [[self contentView] releaseGState];
     [[self documentView] releaseGState];
-    
+
     return self;
 }
 
@@ -169,45 +174,10 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setWordWrap:(BOOL)f
 {
-    if (f == wrap) {
-        return;
+    if (f != wrap) {
+        wrap = f;
+        [self _configureTextViewForWordWrapMode];
     }
-    
-    // This widget may have issues toggling back and forth between WRAP=YES and WRAP=NO.
-    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    
-    if (f) {
-        [self setHasHorizontalScroller:NO];
-
-        [[textView textContainer] setWidthTracksTextView:NO];
-
-        // FIXME: Same as else below. Is this right?
-        [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-        [textView setHorizontallyResizable:NO];
-
-        [style setLineBreakMode:NSLineBreakByWordWrapping];
-    } else {
-        [self setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-        [[self contentView] setAutoresizesSubviews:YES];
-        [self setHasHorizontalScroller:YES];
-
-        [[textView textContainer] setContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-        [[textView textContainer] setWidthTracksTextView:NO];
-        [[textView textContainer] setHeightTracksTextView:NO];
-
-        [textView setMinSize:[textView frame].size];
-        [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-        [textView setHorizontallyResizable:YES];
-
-        [style setLineBreakMode:NSLineBreakByClipping];
-    }
-    
-    [style setAlignment:NSLeftTextAlignment];
-    
-    [textView _KWQ_setTypingParagraphStyle:style];
-    [style release];
-    
-    wrap = f;
 }
 
 - (BOOL)wordWrap
@@ -299,20 +269,9 @@ const float LargeNumberForText = 1.0e7;
 }
 
 - (void)setFrame:(NSRect)frameRect
-{    
+{
     [super setFrame:frameRect];
-
-    if ([self wordWrap]) {
-        NSSize contentSize = [[self class] contentSizeForFrameSize:frameRect.size
-            hasHorizontalScroller:[self hasHorizontalScroller]
-            hasVerticalScroller:[self hasVerticalScroller]
-            borderType:[self borderType]];
-        NSRect textFrame = [textView frame];
-        textFrame.size.width = contentSize.width;
-        contentSize.height = LargeNumberForText;
-        [textView setFrame:textFrame];
-        [[textView textContainer] setContainerSize:contentSize];
-    }
+    [self _frameSizeChanged];
 }
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
