@@ -56,12 +56,12 @@ public:
     
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual void closeRenderer();
 
     bool getMember(const QString &, JType &, QString &);
     bool callMember(const QString &, const QStringList &, JType &, QString &);
     
 #if APPLE_CHANGES
-    virtual void setAllParamsAvailable();
     virtual bool allParamsAvailable();
     void setupApplet() const;
     KJS::Bindings::Instance *getAppletInstance() const;

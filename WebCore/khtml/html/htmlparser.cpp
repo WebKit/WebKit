@@ -339,6 +339,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 if (!states.isEmpty())
                     n->restoreState(states);
             }
+            n->closeRenderer();
 #endif
         }
 
@@ -981,13 +982,6 @@ void KHTMLParser::processCloseTag(Token *t)
     case ID_SELECT+ID_CLOSE_TAG:
         inSelect = false;
         break;
-    case ID_APPLET+ID_CLOSE_TAG:
-        // Applets can't be laid out till the entire tag is parsed, because the contents of all of
-        // the embedded <param> tags have to be passed to Java at once. [3603191]
-        if(current->id() == ID_APPLET) { 
-            static_cast<HTMLAppletElementImpl*>(current)->setAllParamsAvailable();
-        }
-        break;
     default:
         break;
     }
@@ -1426,6 +1420,9 @@ void KHTMLParser::popOneBlock(bool delBlock)
             if (!states.isEmpty())
                 current->restoreState(states);
         }
+        
+        // A few elements (<applet>, <object>) need to know when all child elements (<param>s) are available:
+        current->closeRenderer();
     }
 #endif
 
@@ -1436,7 +1433,7 @@ void KHTMLParser::popOneBlock(bool delBlock)
 
     if (Elem->strayTableContent)
         inStrayTableContent--;
-
+    
     if (delBlock)
         delete Elem;
 }

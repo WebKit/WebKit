@@ -1,3 +1,25 @@
+2005-03-10  Jens Alfke  <jens@apple.com>
+
+        Reviewed by rjw.
+
+	Fixes <rdar://problem/4040848> "REGR: Sun security-check demo applet does not load". My earlier fix for 3603191 deferred loading the applet until the </applet> tag is reached, so all <param>s will be available. Unfortunately that meant that if the </applet> tag was missing, the applet would never load at all. So instead, the loading needs to happen when the ID_APPLET tag is popped from the parser stack for any reason.
+
+	I've restored the old NodeImpl::closeRenderer() method. Except it's now virtual, with a no-op base implementation, and is overridden by HTMLAppletElementImpl, replacing its setAllParamsAvailable method that I added a few weeks ago when fixing 3603191.
+
+	This ensures that the applet will get loaded even if there is no explicit </applet> tag.
+
+	The changes to htmlparser.cpp back out my earlier change and restore the lines that were deleted on 8/3/04 when the old closeRenderer was removed.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::closeRenderer):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        (KHTMLParser::processCloseTag):
+        (KHTMLParser::popOneBlock):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::closeRenderer):
+
 2005-03-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
