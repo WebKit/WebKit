@@ -14,30 +14,6 @@
 
 #import <WCWebDataSource.h>
 
-@interface _IFDataSourceHolder : NSObject
-{
-    IFWebDataSource *dataSource;
-}
-- initWithDataSource: (IFWebDataSource *)c;
-- (void)_checkReadyToDealloc: userInfo;
-@end
-@implementation _IFDataSourceHolder
-- initWithDataSource: (IFWebDataSource *)d
-{
-    dataSource = d;	// Non-retained
-    return [super init];
-}
-
-- (void)_checkReadyToDealloc: userInfo
-{
-    if (![dataSource isLoading])
-        [dataSource dealloc];
-    else {
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-    }
-}
-@end
-
 @implementation IFWebDataSource
 
 static id IFWebDataSourceMake(void *url) 
@@ -45,7 +21,7 @@ static id IFWebDataSourceMake(void *url)
     return [[[IFWebDataSource alloc] initWithURL: (NSURL *)url] autorelease];
 }
 
-+(void) load
++ (void)load
 {
     WCSetIFWebDataSourceMakeFunc(IFWebDataSourceMake);
 }
@@ -62,16 +38,6 @@ static id IFWebDataSourceMake(void *url)
     [self _commonInitialization];
     _private->inputURL = [inputURL retain];
     return self;
-}
-
-- (oneway void)release {
-    if ([self retainCount] == 1){
-        _IFDataSourceHolder *ch = [[[_IFDataSourceHolder alloc] initWithDataSource: self] autorelease];
-        [self stopLoading];
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:ch selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-        return;
-    }
-    [super release];
 }
 
 - (void)dealloc

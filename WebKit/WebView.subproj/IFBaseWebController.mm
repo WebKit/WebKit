@@ -14,30 +14,6 @@
 
 #import <WebKit/WebKitDebug.h>
 
-@interface _IFControllerHolder : NSObject
-{
-    IFBaseWebController *controller;
-}
-- initWithController: (IFBaseWebController *)c;
-- (void)_checkReadyToDealloc: userInfo;
-@end
-@implementation _IFControllerHolder
-- initWithController: (IFBaseWebController *)c
-{
-    controller = c;	// Non-retained
-    return [super init];
-}
-
-- (void)_checkReadyToDealloc: userInfo
-{
-    if (![[[controller mainFrame] dataSource] isLoading] && ![[[controller mainFrame] provisionalDataSource] isLoading])
-        [controller dealloc];
-    else {
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-    }
-}
-@end
-
 @implementation IFBaseWebController
 
 - init
@@ -52,7 +28,7 @@
     _private = [[IFBaseWebControllerPrivate alloc] init];
     _private->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
 
-    return self;   
+    return self;
 }
 
 - (void)dealloc
@@ -61,29 +37,16 @@
     [super dealloc];
 }
 
-
-- (oneway void)release {
-    if ([self retainCount] == 1){
-        _IFControllerHolder *ch = [[[_IFControllerHolder alloc] initWithController: self] autorelease];
-        [[self mainFrame] stopLoading];
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:ch selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-        return;
-    }
-    [super release];
-}
-
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
 }
-
 
 - (BOOL)directsAllLinksToSystemBrowser
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::directsAllLinksToSystemBrowser is not implemented"];
     return NO;
 }
-
 
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource inScrollView: (BOOL)inScrollView
 {

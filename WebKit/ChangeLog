@@ -1,4 +1,33 @@
-ret2002-04-16  John Sullivan  <sullivan@apple.com>
+2002-04-16  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFBaseWebController.mm: Remove special release handling because
+	data sources now retain the controller as long as they are loading.
+
+	* WebView.subproj/IFWebDataSource.mm: Remove special release handling because
+	data sources now retain themselves as long as they are loading.
+
+	* WebView.subproj/IFWebFrame.mm: Remove special release handling, because
+	data sources now retain the controller as long as they are loading, and the
+	controller retains the frame.
+
+	* WebView.subproj/IFWebDataSourcePrivate.h: Add a "loading" boolean.
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setLoading:]):
+	Change the "loading" state, retaining or releasing this object and the controller
+	as necessary.
+	(-[IFWebDataSource _updateLoading]): Update the loading state; called when
+	some part of loading is done to see if it's all done.
+	(-[IFWebDataSource _setController:]): Retain the new controller and release the
+	old controller when loading.
+	(-[IFWebDataSource _setPrimaryLoadComplete:]): Call _updateLoading.
+	(-[IFWebDataSource _startLoading:]): Call _setLoading:YES.
+	(-[IFWebDataSource _addURLHandle:]): Call _setLoading:YES.
+	(-[IFWebDataSource _removeURLHandle:]): Call _updateLoading.
+
+	* WebView.subproj/IFWebFrame.h: Use the real type, IFWebView, for setView and view.
+	* WebView.subproj/IFWebFramePrivate.h: Formatting tweak.
+	* WebKit.pbproj/project.pbxproj: Version wars.
+
+2002-04-16  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/IFWebViewPrivate.mm: 
 	(-[IFWebView _setController:]): removed a mistaken

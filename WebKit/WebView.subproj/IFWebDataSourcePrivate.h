@@ -46,14 +46,16 @@ class KHTMLPart;
     // The time when the data source was told to start loading.
     double loadingStartedTime;
     
-    bool primaryLoadComplete;
+    BOOL primaryLoadComplete;
     
-    bool stopping;
+    BOOL stopping;
     
     NSString *pageTitle;
     
     // The location change handler for this data source.
     id <IFLocationChangeHandler>locationChangeHandler;
+
+    BOOL loading; // self and controller are retained while loading
 }
 
 - init;

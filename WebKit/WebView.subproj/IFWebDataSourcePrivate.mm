@@ -34,16 +34,15 @@
 
 - (void)dealloc
 {
-    // controller is not retained!  IFWebControllers maintain
-    // a reference to the main frame, which in turn refers to it's
-    // view and data source.
+    // controller is only retained while loading, but this object is also
+    // retained while loading, so no need to release here
+    WEBKIT_ASSERT(!loading);
+    
     int i, count;
     NSArray *childFrames = [frames allValues];
     
-    controller = nil;
-    
     count = [childFrames count];
-    for (i = 0; i < count; i++){
+    for (i = 0; i < count; i++) {
         [(IFWebFrame *)[childFrames objectAtIndex: i] _setController: nil];
     }
     [frames release];
@@ -56,7 +55,6 @@
     [locationChangeHandler release];
     
     part->deref();
-    part = 0;
 
     [super dealloc];
 }
@@ -64,14 +62,40 @@
 @end
 
 @implementation IFWebDataSource (IFPrivate)
-- (void)_setController: (id <IFWebController>)controller
-{
-    WEBKIT_ASSERT (_private->part != nil);
 
-    _private->controller = controller;
-    _private->part->setDataSource (self);
+- (void)_setLoading:(BOOL)loading
+{
+    WEBKIT_ASSERT_VALID_ARG("loading", loading == NO || loading == YES);
+    
+    if (_private->loading == loading)
+        return;
+    _private->loading = loading;
+    
+    if (loading) {
+        [self retain];
+        [_private->controller retain];
+    } else {
+        [_private->controller release];
+        [self release];
+    }
 }
 
+- (void)_updateLoading
+{
+    [self _setLoading: _private->mainHandle || [_private->urlHandles count]];
+}
+
+- (void)_setController: (id <IFWebController>)controller
+{
+    WEBKIT_ASSERT(_private->part != nil);
+    
+    if (_private->loading) {
+        [controller retain];
+        [_private->controller release];
+    }
+    _private->controller = controller;
+    _private->part->setDataSource(self);
+}
 
 - (KHTMLPart *)_part
 {
@@ -87,11 +111,12 @@
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
     _private->primaryLoadComplete = flag;
-    if (flag == YES){
+    if (flag) {
         [_private->mainURLHandleClient release];
         _private->mainURLHandleClient = 0; 
         [_private->mainHandle autorelease];
-        _private->mainHandle = 0; 
+        _private->mainHandle = 0;
+        [self _updateLoading];
     }
 }
 
@@ -118,7 +143,7 @@
     }
     theURL = [NSURL URLWithString:urlString];
 
-    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: [self _part]];
+    _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: _private->part];
     
     _private->mainHandle = [[IFURLHandle alloc] initWithURL:theURL];
     [_private->mainHandle addClient: _private->mainURLHandleClient];
@@ -131,22 +156,25 @@
 
     // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
     // We should move any code needed out of KWQ.
-    [self _part]->openURL (url);
+    _private->part->openURL(url);
     
+    [self _setLoading:YES];
+
     [[self _locationChangeHandler] locationChangeStarted];
 }
-
 
 - (void)_addURLHandle: (IFURLHandle *)handle
 {
     if (_private->urlHandles == nil)
         _private->urlHandles = [[NSMutableArray alloc] init];
     [_private->urlHandles addObject: handle];
+    [self _setLoading:YES];
 }
 
 - (void)_removeURLHandle: (IFURLHandle *)handle
 {
     [_private->urlHandles removeObject: handle];
+    [self _updateLoading];
 }
 
 - (BOOL)_isStopping
@@ -171,9 +199,8 @@
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    [self _part]->closeURL ();
+    _private->part->closeURL();
 }
-
 
 - (void)_recursiveStopLoading
 {

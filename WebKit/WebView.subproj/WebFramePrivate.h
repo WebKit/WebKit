@@ -41,7 +41,7 @@ typedef enum {
     IFWebFrameState state;
     NSMutableDictionary *errors;
     IFError *mainDocumentError;
-    bool scheduledLayoutPending;
+    BOOL scheduledLayoutPending;
 }
 
 - (void)setName: (NSString *)n;

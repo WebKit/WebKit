@@ -18,30 +18,6 @@
 #include <KWQKHTMLPart.h>
 #include <rendering/render_frames.h>
 
-@interface _IFFrameHolder : NSObject
-{
-    id object;
-}
-- initWithObject: o;
-- (void)_checkReadyToDealloc: userInfo;
-@end
-@implementation _IFFrameHolder
-- initWithObject: o
-{
-    object = o;	// Non-retained
-    return [super init];
-}
-
-- (void)_checkReadyToDealloc: userInfo
-{
-    if ([object dataSource] == nil || ![[object dataSource] isLoading])
-        [object dealloc];
-    else {
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-    }
-}
-@end
-
 @implementation IFWebFrame
 
 - init
@@ -70,21 +46,8 @@
     if (v)
         [self setView: v];
     
-    return self; 
+    return self;
 }
-
-- (oneway void)release {
-#ifdef THIS_MAY_BE_BAD
-    if ([self retainCount] == 1){
-        _IFFrameHolder *ch = [[[_IFFrameHolder alloc] initWithObject: self] autorelease];
-        [self stopLoading];
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:ch selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
-        return;
-    }
-#endif
-    [super release];
-}
-
 
 - (void)dealloc
 {
