@@ -2116,29 +2116,28 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id()) {
             it.current()->listener->handleEvent(ev, true);
-	    return;
 	}
     }
 }
 
-void DocumentImpl::setWindowEventListener(int id, EventListener *listener)
+void DocumentImpl::setHTMLWindowEventListener(int id, EventListener *listener)
 {
     // If we already have it we don't want removeWindowEventListener to delete it
     if (listener)
 	listener->ref();
-    removeWindowEventListener(id);
+    removeHTMLWindowEventListener(id);
     if (listener) {
-	RegisteredEventListener *rl = new RegisteredEventListener(static_cast<EventImpl::EventId>(id),listener,false);
-	m_windowEventListeners.append(rl);
+	addWindowEventListener(id, listener, false);
 	listener->deref();
     }
 }
 
-EventListener *DocumentImpl::getWindowEventListener(int id)
+EventListener *DocumentImpl::getHTMLWindowEventListener(int id)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
-	if (it.current()->id == id) {
+	if (it.current()->id == id &&
+            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
 	    return it.current()->listener;
 	}
     }
@@ -2146,15 +2145,54 @@ EventListener *DocumentImpl::getWindowEventListener(int id)
     return 0;
 }
 
-void DocumentImpl::removeWindowEventListener(int id)
+void DocumentImpl::removeHTMLWindowEventListener(int id)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
-	if (it.current()->id == id) {
+	if (it.current()->id == id &&
+            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
 	    m_windowEventListeners.removeRef(it.current());
 	    return;
 	}
     }
+}
+
+void DocumentImpl::addWindowEventListener(int id, EventListener *listener, const bool useCapture)
+{
+    listener->ref();
+
+    // remove existing identical listener set with identical arguments - the DOM2
+    // spec says that "duplicate instances are discarded" in this case.
+    removeWindowEventListener(id,listener,useCapture);
+
+    RegisteredEventListener *rl = new RegisteredEventListener(static_cast<EventImpl::EventId>(id), listener, useCapture);
+    m_windowEventListeners.append(rl);
+
+    listener->deref();
+}
+
+void DocumentImpl::removeWindowEventListener(int id, EventListener *listener, bool useCapture)
+{
+    RegisteredEventListener rl(static_cast<EventImpl::EventId>(id),listener,useCapture);
+
+    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    for (; it.current(); ++it)
+        if (*(it.current()) == rl) {
+            m_windowEventListeners.removeRef(it.current());
+            return;
+        }
+}
+
+bool DocumentImpl::hasWindowEventListener(int id)
+{
+    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    for (; it.current(); ++it) {
+	if (it.current()->id == id) {
+	    return true;
+	}
+    }
+
+    return false;
 }
 
 EventListener *DocumentImpl::createHTMLEventListener(QString code)

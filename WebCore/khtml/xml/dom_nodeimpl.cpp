@@ -399,10 +399,14 @@ void NodeImpl::addEventListener(int id, EventListener *listener, const bool useC
 	m_regdListeners->setAutoDelete(true);
     }
 
-    // remove existing ones of the same type - ### is this correct (or do we ignore the new one?)
+    listener->ref();
+
+    // remove existing identical listener set with identical arguments - the DOM2
+    // spec says that "duplicate instances are discarded" in this case.
     removeEventListener(id,listener,useCapture);
 
     m_regdListeners->append(rl);
+    listener->deref();
 }
 
 void NodeImpl::removeEventListener(int id, EventListener *listener, bool useCapture)

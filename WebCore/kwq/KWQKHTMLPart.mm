@@ -913,7 +913,7 @@ bool KWQKHTMLPart::canCachePage()
     if (d->m_doc &&
         (d->m_frames.count() ||
         parentPart() ||
-        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
+        d->m_doc->hasWindowEventListener (EventImpl::UNLOAD_EVENT) ||
         d->m_doc->hasPasswordField())) {
         return false;
     }

@@ -130,23 +130,23 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     }
     case ATTR_ONLOAD:
-        getDocument()->setWindowEventListener(EventImpl::LOAD_EVENT,
+        getDocument()->setHTMLWindowEventListener(EventImpl::LOAD_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONUNLOAD:
-        getDocument()->setWindowEventListener(EventImpl::UNLOAD_EVENT,
+        getDocument()->setHTMLWindowEventListener(EventImpl::UNLOAD_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONBLUR:
-        getDocument()->setWindowEventListener(EventImpl::BLUR_EVENT,
+        getDocument()->setHTMLWindowEventListener(EventImpl::BLUR_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONFOCUS:
-        getDocument()->setWindowEventListener(EventImpl::FOCUS_EVENT,
+        getDocument()->setHTMLWindowEventListener(EventImpl::FOCUS_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONRESIZE:
-        getDocument()->setWindowEventListener(EventImpl::RESIZE_EVENT,
+        getDocument()->setHTMLWindowEventListener(EventImpl::RESIZE_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_NOSAVE:

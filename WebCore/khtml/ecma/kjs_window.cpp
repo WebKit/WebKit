@@ -981,7 +981,7 @@ void Window::setListener(ExecState *exec, int eventId, Value func)
   if (!doc)
     return;
 
-  doc->setWindowEventListener(eventId,getJSEventListener(func,true));
+  doc->setHTMLWindowEventListener(eventId,getJSEventListener(func,true));
 }
 
 Value Window::getListener(ExecState *exec, int eventId) const
@@ -992,7 +992,7 @@ Value Window::getListener(ExecState *exec, int eventId) const
   if (!doc)
     return Undefined();
 
-  DOM::EventListener *listener = doc->getWindowEventListener(eventId);
+  DOM::EventListener *listener = doc->getHTMLWindowEventListener(eventId);
   if (listener)
     return static_cast<JSEventListener*>(listener)->listenerObj();
   else
@@ -1481,8 +1481,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener) {
-            DOM::Document doc = part->document();
-            doc.addEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+	    DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(part->document().handle());
+            docimpl->addWindowEventListener(DOM::EventImpl::typeToId(args[0].toString(exec).string()),listener,args[2].toBoolean(exec));
         }
         return Undefined();
     }
@@ -1491,8 +1491,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	    return Undefined();
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener) {
-            DOM::Document doc = part->document();
-            doc.removeEventListener(args[0].toString(exec).string(),listener,args[2].toBoolean(exec));
+	    DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(part->document().handle());
+            docimpl->removeWindowEventListener(DOM::EventImpl::typeToId(args[0].toString(exec).string()),listener,args[2].toBoolean(exec));
         }
         return Undefined();
     }

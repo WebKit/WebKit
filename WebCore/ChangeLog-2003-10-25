@@ -1,3 +1,49 @@
+2003-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3240129 - REGRESSION: www.ezprints.com navigation buttons don't show up (window.addEventListener)
+
+	The problem here was that event handlers set using
+	window.addEventListener were set as regular event handlers on the
+	document object instead of as window event handlers - and the load
+	event does not fire properly that way. 
+
+	The fix was to add support for both HTML and non-HTML window event
+	handlers. The old window event methods supported only "HTML"
+	handlers, but were not named as such.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::setListener): Use setHTMLWindowEventListener.
+        (Window::getListener): Use getHTMLWindowEventListener.
+        (WindowFunc::tryCall): use addWindowEventListener and removeWindowEventListener
+	on the DocumentImpl instead of addEventListener and removeEventListener on the
+	Document.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute): Use setHTMLWindowEventListener
+	instead of the old setWindowEventListener.
+        * khtml/xml/dom_docimpl.cpp:
+	(DocumentImpl::defaultEventHandler): Don't stop after the first
+	window event handler - keep going, since there might now be more
+	than one for the same event.
+        (DocumentImpl::setHTMLWindowEventListener): Renamed from setWindowEventListener.
+        (DocumentImpl::getHTMLWindowEventListener): Renamed from getWindowEventListener.
+        (DocumentImpl::removeHTMLWindowEventListener): Renamed from removeWindowEventListener.
+        (DocumentImpl::addWindowEventListener): Implemented - support adding non-HTML window
+	event listeners, which, unlike html listeners, are nto exclusive - there may be more
+	than one.
+        (DocumentImpl::removeWindowEventListener): Implemented.
+        (DocumentImpl::hasWindowEventListener): Check if a window has any handler at all
+	for a prticular event.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::addEventListener): Add ref/deref pair to protect against last ref of listener
+	going away on remove. Correct comment about the removal.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage): Check for an UNLOAD event handler
+	using hasWindowEventListener instead of getHTMLWindowEventListener, to
+	check for even addListener-style unload handlers.
+
 2003-05-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3222607.  divs that specify a fixed width should have
