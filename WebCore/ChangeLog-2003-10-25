@@ -1,3 +1,24 @@
+2003-05-11  David Hyatt  <hyatt@apple.com>
+
+	The root element (HTML) tries to set itself to the lowest position
+	of the canvas, before the canvas has necessarily even determined
+	the correct lowest position.  This creates a timing problem.
+
+	This code is legacy code anyyway, left over from before KHTML
+	understood about overflow.  The HTML should not be resizing itself
+	to enclose positioned content or floats.  They should just spill
+	out of the HTML object, so the fix is easy: kill the legacy code.
+	
+	There's a second fix required as well, which is to make the canvas
+	avoid scanning its positioned objects list when computing its
+	lowest and rightmost position.  Fixed positioned objects can't
+	be scrolled, so it's incorrect to show scrollbars because of
+	fixed positioned objects (since they are locked to the viewport).
+	
+        Reviewed by darin/gramps
+
+        * khtml/rendering/render_block.cpp:
+
 2003-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
@@ -9,6 +30,7 @@
         nodes at each level of the tree, so our recursion is O(depth of tree) rather
         than O(size of tree).
 
+>>>>>>> 1.1706
 2003-05-10  David Hyatt  <hyatt@apple.com>
 
 	Fix the misrendering at the top of cnn.com (the extra tearing

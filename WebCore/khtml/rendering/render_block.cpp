@@ -530,24 +530,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_layer->checkScrollbarsAfterLayout();
     
     setNeedsLayout(false);
-
-    if (isRoot()) {
-        //kdDebug(0) << renderName() << " height = " << m_height << endl;
-        RenderObject *r = canvas();
-        int lp = r ? r->lowestPosition() : lowestPosition();
-
-        // margins of Html element can only be fixed, right?
-        int margins  = style()->marginTop().isFixed() ? style()->marginTop().value : 0;
-        margins += style()->marginBottom().isFixed() ? style()->marginBottom().value : 0;
-
-        if( m_height + margins < lp )
-            m_height = lp - margins;
-
-        m_layer->setHeight(m_height);
-        m_layer->setWidth(m_width);
-
-        //kdDebug(0) << "docHeight = " << m_height << endl;
-    }
 }
 
 void RenderBlock::layoutBlockChildren( bool relayoutChildren )
@@ -1521,7 +1503,9 @@ RenderBlock::lowestPosition(bool includeOverflowInterior) const
         }
     }
 
-    if (m_positionedObjects) {
+    // Fixed positioned objects do not scroll and thus should not constitute
+    // part of the lowest position.
+    if (m_positionedObjects && !isCanvas()) {
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -1552,7 +1536,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior) const
         }
     }
 
-    if (m_positionedObjects) {
+    if (m_positionedObjects && !isCanvas()) {
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
