@@ -1,20 +1,14 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 58x158
-  RenderBlock {HTML} at (0,0) size 0x158
-    RenderBody {BODY} at (8,8) size 0x142
-      RenderTable {TABLE} at (0,0) size 44x40
-        RenderTableSection {TBODY} at (0,0) size 0x40
+layer at (0,0) size 800x56
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x40
+      RenderTable {TABLE} at (0,0) size 83x23
+        RenderTableSection {TBODY} at (0,0) size 0x23
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 40x36 [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 38x34
-                text run at (1,1) width 35: "Hello"
-                text run at (1,18) width 38: "world"
-      RenderBlock (anonymous) at (0,40) size 0x102
-        RenderText {TEXT} at (0,0) size 50x102
-          text run at (0,0) width 35: "Hello"
-          text run at (0,17) width 34: "also?"
-          text run at (0,34) width 28: "Why"
-          text run at (0,51) width 29: "isn't"
-          text run at (0,68) width 26: "this"
-          text run at (0,85) width 50: "visible?"
+            RenderTableCell {TD} at (2,2) size 79x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 77x17
+                text run at (1,1) width 77: "Hello world"
+      RenderBlock (anonymous) at (0,23) size 784x17
+        RenderText {TEXT} at (0,0) size 222x17
+          text run at (0,0) width 222: "Hello also? Why isn't this visible?"

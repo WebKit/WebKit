@@ -4,40 +4,28 @@ layer at (0,0) size 800x203
   RenderBlock {HTML} at (0,0) size 800x203
     RenderBody {BODY} at (0,0) size 800x203
       RenderPartObject {IFRAME} at (0,0) size 500x100
-        layer at (0,0) size 91x172
-          RenderCanvas at (0,0) size 0x0
-        layer at (0,0) size 91x172
-          RenderBlock {HTML} at (0,0) size 0x172
-            RenderBody {BODY} at (8,8) size 0x150
-              RenderBlock {P} at (0,0) size 0x68
-                RenderText {TEXT} at (0,0) size 37x68
-                  text run at (0,0) width 29: "This"
-                  text run at (0,17) width 12: "is"
-                  text run at (0,34) width 37: "some"
-                  text run at (0,51) width 32: "text."
-              RenderBlock {P} at (0,82) size 0x68
-                RenderText {TEXT} at (0,0) size 83x68
-                  text run at (0,0) width 29: "This"
-                  text run at (0,17) width 27: "text"
-                  text run at (0,34) width 12: "is"
-                  text run at (0,51) width 83: "underneath."
+        layer at (0,0) size 485x100
+          RenderCanvas at (0,0) size 485x100
+        layer at (0,0) size 485x70
+          RenderBlock {HTML} at (0,0) size 485x70
+            RenderBody {BODY} at (8,8) size 469x48
+              RenderBlock {P} at (0,0) size 469x17
+                RenderText {TEXT} at (0,0) size 122x17
+                  text run at (0,0) width 122: "This is some text."
+              RenderBlock {P} at (0,31) size 469x17
+                RenderText {TEXT} at (0,0) size 163x17
+                  text run at (0,0) width 163: "This text is underneath."
       RenderText {TEXT} at (500,86) size 4x17
         text run at (500,86) width 4: " "
       RenderPartObject {OBJECT} at (0,103) size 500x100
-        layer at (0,0) size 91x172
-          RenderCanvas at (0,0) size 0x0
-        layer at (0,0) size 91x172
-          RenderBlock {HTML} at (0,0) size 0x172
-            RenderBody {BODY} at (8,8) size 0x150
-              RenderBlock {P} at (0,0) size 0x68
-                RenderText {TEXT} at (0,0) size 37x68
-                  text run at (0,0) width 29: "This"
-                  text run at (0,17) width 12: "is"
-                  text run at (0,34) width 37: "some"
-                  text run at (0,51) width 32: "text."
-              RenderBlock {P} at (0,82) size 0x68
-                RenderText {TEXT} at (0,0) size 83x68
-                  text run at (0,0) width 29: "This"
-                  text run at (0,17) width 27: "text"
-                  text run at (0,34) width 12: "is"
-                  text run at (0,51) width 83: "underneath."
+        layer at (0,0) size 485x100
+          RenderCanvas at (0,0) size 485x100
+        layer at (0,0) size 485x70
+          RenderBlock {HTML} at (0,0) size 485x70
+            RenderBody {BODY} at (8,8) size 469x48
+              RenderBlock {P} at (0,0) size 469x17
+                RenderText {TEXT} at (0,0) size 122x17
+                  text run at (0,0) width 122: "This is some text."
+              RenderBlock {P} at (0,31) size 469x17
+                RenderText {TEXT} at (0,0) size 163x17
+                  text run at (0,0) width 163: "This text is underneath."
