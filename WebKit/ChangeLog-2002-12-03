@@ -1,5 +1,19 @@
 2002-10-27  Darin Adler  <darin@apple.com>
 
+	- WebKit part of filename width fix
+
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton drawRect:]): Compute left position by starting at
+	the right side of the button frame rather than by starting at the right
+	side of the overall bounds. Removes dependency on fixed-width filename area.
+        (-[WebFileButton updateLabel]): Added. Computes ellipsized filename.
+        (-[WebFileButton setFilename:]): Use updateLabel instead of code in line here.
+        (-[WebFileButton setFrameSize:]): Call updateLabel.
+        (-[WebFileButton bestVisualFrameSizeForCharacterCount:]): Compute a width based
+	on the count passed in rather than a hardcoded 200-pixel constant.
+
+2002-10-27  Darin Adler  <darin@apple.com>
+
 	- fixed 3037369 -- Status text not cleared after start of drag from page
 
         * WebView.subproj/WebHTMLView.m:

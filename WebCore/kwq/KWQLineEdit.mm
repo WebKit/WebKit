@@ -130,6 +130,8 @@ void QLineEdit::setEdited(bool flag)
 
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 {
+    ASSERT(numCharacters > 0);
+    
     NSMutableString *nominalWidthString = [NSMutableString stringWithCapacity:numCharacters];
     for (int i = 0; i < numCharacters; ++i) {
         [nominalWidthString appendString:@"x"];

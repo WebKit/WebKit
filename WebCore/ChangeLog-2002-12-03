@@ -1,3 +1,22 @@
+2002-10-27  Darin Adler  <darin@apple.com>
+
+	- fixed 3058845 -- <input type=file> uses hard-coded width of 200
+	pixels for filename
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::calcMinMaxWidth): Use a default of 20 "x-widths" wide, to
+	match Mozilla, rather than the 17 that is in KHTML by default.
+        (RenderFileButton::calcMinMaxWidth): Pass in a character width here, using
+	the same 20-character rule as above.
+        * kwq/KWQFileButton.h: Replace sizeHint() with sizeForCharacterWidth(int).
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::sizeForCharacterWidth): Pass character count to the WebCoreFileButton.
+        (KWQFileButton::baselinePosition): Fix baseline computation. It was computing some huge
+	negative number before and was obviously broken.
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Add an assertion.
+        * kwq/WebCoreViewFactory.h: Replace bestVisualFrameSize with
+	bestVisualFrameSizeForCharacterCount:.
+
 2002-10-27  Don Melton  <gramps@apple.com>
 
         * khtml/ecma/kjs_navigator.cpp:

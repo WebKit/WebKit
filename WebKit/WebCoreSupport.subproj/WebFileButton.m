@@ -19,10 +19,6 @@
 #define ICON_HEIGHT 16
 #define ICON_WIDTH 16
 #define ICON_FILENAME_SPACING 2
-// FIXME: Is it OK to hard-code the width of the filename part?
-#define FILENAME_WIDTH 200
-
-#define ADDITIONAL_WIDTH (AFTER_BUTTON_SPACING + ICON_WIDTH + ICON_FILENAME_SPACING + FILENAME_WIDTH)
 
 // We empirically determined that buttons have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
@@ -79,7 +75,7 @@
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(NSIntersectionRect(bounds, rect));
 
-    float left = bounds.size.width - ADDITIONAL_WIDTH + AFTER_BUTTON_SPACING;
+    float left = NSMaxX([_button frame]) + AFTER_BUTTON_SPACING;
 
     if (_icon) {
         float bottom = (bounds.size.height - BUTTON_BOTTOM_MARGIN - BUTTON_TOP_MARGIN - ICON_HEIGHT) / 2
@@ -97,20 +93,33 @@
     [NSGraphicsContext restoreGraphicsState];
 }
 
+- (void)updateLabel
+{
+    [_label release];
+    
+    NSString *label;
+    if ([_filename length]) {
+        label = _filename;
+    } else {
+        label = [UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected") retain];
+    }
+    
+    float left = NSMaxX([_button frame]) + AFTER_BUTTON_SPACING;
+    if (_icon) {
+        left += ICON_WIDTH + ICON_FILENAME_SPACING;
+    }
+    float labelWidth = [self bounds].size.width - left;
+
+    _label = labelWidth <= 0 ? nil : [[WebStringTruncator centerTruncateString:
+        [[NSFileManager defaultManager] displayNameAtPath:label]
+        toWidth:labelWidth withFont:[_button font]] copy];
+}
+
 - (void)setFilename:(NSString *)filename
 {
     NSString *copy = [filename copy];
     [_filename release];
     _filename = copy;
-    
-    [_label release];
-    if (![_filename length]) {
-        _label = [UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected") retain];
-    } else {
-        _label = [[WebStringTruncator centerTruncateString:
-            [[NSFileManager defaultManager] displayNameAtPath:_filename]
-            toWidth:FILENAME_WIDTH withFont:[_button font]] copy];
-    }
     
     [_icon release];
     if (![_filename length]) {
@@ -118,6 +127,8 @@
     } else {
         _icon = [[[NSWorkspace sharedWorkspace] iconForFile:_filename] retain];
     }
+    
+    [self updateLabel];
     
     [self setNeedsDisplay:YES];
 }
@@ -129,17 +140,20 @@
 
 - (void)setFrameSize:(NSSize)size
 {
-    // FIXME: Can we just use springs instead?
-    [self positionButton];
     [super setFrameSize:size];
+    // FIXME: Can we just springs and struts instead of calling positionButton?
+    [self positionButton];
+    [self updateLabel];
 }
 
-- (NSSize)bestVisualFrameSize
+- (NSSize)bestVisualFrameSizeForCharacterCount:(int)count
 {
+    ASSERT(count > 0);
     NSSize size = [[_button cell] cellSize];
     size.height -= BUTTON_TOP_MARGIN + BUTTON_BOTTOM_MARGIN;
     size.width -= BUTTON_LEFT_MARGIN + BUTTON_RIGHT_MARGIN;
-    size.width += ADDITIONAL_WIDTH;
+    size.width += AFTER_BUTTON_SPACING + ICON_WIDTH + ICON_FILENAME_SPACING;
+    size.width += count * [[_button font] widthOfString:@"x"];
     return size;
 }
 

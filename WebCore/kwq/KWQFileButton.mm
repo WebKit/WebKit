@@ -25,6 +25,7 @@
 
 #import "KWQFileButton.h"
 
+#import "KWQAssertions.h"
 #import "WebCoreViewFactory.h"
 
 @interface KWQFileButtonAdapter : NSObject
@@ -54,9 +55,10 @@ void KWQFileButton::setFilename(const QString &f)
     [(NSView <WebCoreFileButton> *)getView() setFilename:f.getNSString()];
 }
 
-QSize KWQFileButton::sizeHint() const 
+QSize KWQFileButton::sizeForCharacterWidth(int characters) const
 {
-    return QSize([(NSView <WebCoreFileButton> *)getView() bestVisualFrameSize]);
+    ASSERT(characters > 0);
+    return QSize([(NSView <WebCoreFileButton> *)getView() bestVisualFrameSizeForCharacterCount:characters]);
 }
 
 QRect KWQFileButton::frameGeometry() const
@@ -71,8 +73,8 @@ void KWQFileButton::setFrameGeometry(const QRect &rect)
 
 int KWQFileButton::baselinePosition() const
 {
-    float baseline = [(NSView <WebCoreFileButton> *)getView() baseline];
-    return (int)(NSMaxX([getView() frame]) - baseline);
+    NSView <WebCoreFileButton> *button = (NSView <WebCoreFileButton> *)getView();
+    return (int)(NSMaxY([button frame]) - [button baseline] - [button visualFrame].origin.y);
 }
 
 void KWQFileButton::filenameChanged()

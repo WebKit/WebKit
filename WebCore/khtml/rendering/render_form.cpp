@@ -506,7 +506,7 @@ void RenderLineEdit::calcMinMaxWidth()
 #if APPLE_CHANGES
     // Let the widget tell us how big it wants to be.
     int size = element()->size();
-    QSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 17));
+    QSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 20));
 #else
     const QFontMetrics &fm = style()->fontMetrics();
     QSize s;
@@ -602,7 +602,8 @@ void RenderFileButton::calcMinMaxWidth()
 
 #if APPLE_CHANGES
     // Let the widget tell us how big it wants to be.
-    QSize s(widget()->sizeHint());
+    int size = element()->size();
+    QSize s(static_cast<KWQFileButton *>(widget())->sizeForCharacterWidth(size > 0 ? size : 20));
 #else
     const QFontMetrics &fm = style()->fontMetrics();
     QSize s;
