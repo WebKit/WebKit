@@ -63,30 +63,6 @@
     return [[frame frameNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)childRenderPart
-    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
-{
-    ASSERT(frame != nil);
-    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
-    if (newFrame == nil) {
-        return nil;
-    }
-    
-    [[newFrame _bridge] setRenderPart:childRenderPart];
-    
-    [[newFrame webView] _setMarginWidth:width];
-    [[newFrame webView] _setMarginHeight:height];
-    
-    [[newFrame _bridge] loadURL:URL withParent:[self dataSource]];
-    
-    // Set the load type so this load doesn't end up in the back
-    // forward list.
-    [newFrame _setLoadType:WebFrameLoadTypeInternal];
-
-    return [newFrame _bridge];
-}
-
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name
 {
     ASSERT(frame != nil);
@@ -282,9 +258,10 @@
     [request release];
 }
 
-- (void)loadURL:(NSURL *)URL withParent:(WebDataSource *)parent
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer withParent:(WebDataSource *)parent
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [request setReferrer:referrer];
     [self loadRequest:request withParent:parent];
     [request release];
 }
@@ -302,6 +279,31 @@
     [request setReferrer:referrer];
     [self loadRequest:request withParent:[[frame dataSource] parent]];
     [request release];
+}
+
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
+    withURL:(NSURL *)URL referrer:(NSString *)referrer
+    renderPart:(KHTMLRenderPart *)childRenderPart
+    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
+{
+    ASSERT(frame != nil);
+    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
+    if (newFrame == nil) {
+        return nil;
+    }
+    
+    [[newFrame _bridge] setRenderPart:childRenderPart];
+    
+    [[newFrame webView] _setMarginWidth:width];
+    [[newFrame webView] _setMarginHeight:height];
+    
+    [[newFrame _bridge] loadURL:URL referrer:referrer withParent:[self dataSource]];
+    
+    // Set the load type so this load doesn't end up in the back
+    // forward list.
+    [newFrame _setLoadType:WebFrameLoadTypeInternal];
+
+    return [newFrame _bridge];
 }
 
 - (void)reportBadURL:(NSString *)badURL

@@ -73,7 +73,7 @@
     [request setRequestCachePolicy:[[source request] requestCachePolicy]];
     [request setResponseCachePolicy:[[source request] responseCachePolicy]];
     [request setReferrer:referrer];
-    WebResourceHandle *h = [[[WebResourceHandle alloc] initWithRequest:request client:client] autorelease];
+    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request client:client];
     [request release];
     
     if (h == nil) {
@@ -88,7 +88,7 @@
         return nil;
     }
     
-    client->handle = [h retain];
+    client->handle = h;
     [source _addSubresourceClient:client];
     [client didStartLoadingWithURL:[h URL]];
     [client receivedProgressWithComplete:NO];

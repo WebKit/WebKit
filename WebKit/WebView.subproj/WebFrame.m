@@ -174,7 +174,7 @@
     if (self == [[self controller] mainFrame])
         LOG(DocumentLoad, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
 
-    [_private->provisionalDataSource startLoading:[self _loadType] == WebFrameLoadTypeRefresh];
+    [_private->provisionalDataSource startLoading];
 }
 
 
@@ -187,7 +187,7 @@
 }
 
 
-- (void)reload: (BOOL)forceRefresh
+- (void)reload
 {
     WebDataSource *dataSource = [self dataSource];
     WebResourceRequest *request;
@@ -202,7 +202,7 @@
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
-	[self _setLoadType:WebFrameLoadTypeRefresh];
+	[self _setLoadType:WebFrameLoadTypeReload];
         [self startLoading];
     }
     [newDataSource release];

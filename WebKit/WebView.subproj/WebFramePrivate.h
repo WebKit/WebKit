@@ -27,15 +27,15 @@ typedef enum {
 } WebFrameState;
 
 typedef enum {
-    WebFrameLoadTypeUninitialized = 0,
-    WebFrameLoadTypeStandard = 1,
-    WebFrameLoadTypeBack = 2,
-    WebFrameLoadTypeForward = 3,
-    WebFrameLoadTypeIndexedBack = 4,
-    WebFrameLoadTypeIndexedForward = 5,
-    WebFrameLoadTypeRefresh = 6,
-    WebFrameLoadTypeInternal = 7,
-    WebFrameLoadTypeIntermediateBack = 8
+    WebFrameLoadTypeStandard,
+    WebFrameLoadTypeBack,
+    WebFrameLoadTypeForward,
+    WebFrameLoadTypeIndexedBack,
+    WebFrameLoadTypeIndexedForward,
+    WebFrameLoadTypeReload,
+    WebFrameLoadTypeReloadAllowingStaleData,
+    WebFrameLoadTypeInternal,
+    WebFrameLoadTypeIntermediateBack
 } WebFrameLoadType;
 
 #define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"
@@ -96,5 +96,7 @@ typedef enum {
 - (void)_textSizeMultiplierChanged;
 
 - (void)_defersCallbacksChanged;
+
+- (void)_reloadAllowingStaleData;
 
 @end

@@ -37,6 +37,7 @@ public:
     
     virtual void openURLRequest(const KURL &, 
 				const KParts::URLArgs &args = KParts::URLArgs());
+    virtual void openURLNotify();
      
     virtual void createNewWindow(const KURL &url, 
 				 const KParts::URLArgs &urlArgs = KParts::URLArgs());

@@ -38,6 +38,10 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
     m_part->impl->openURLRequest(url, args);
 }
 
+void KHTMLPartBrowserExtension::openURLNotify()
+{
+}
+
 void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
 						const KParts::URLArgs &urlArgs) 
 {

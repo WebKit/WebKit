@@ -78,6 +78,10 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
 }
 #endif
 
+// CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better
+
+#define CRASH() *(int *)0x0badbeef = 0
+
 // ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED
 
 #if ASSERT_DISABLED
@@ -91,18 +95,18 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
         KWQReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion); \
-        raise(SIGQUIT); \
+        CRASH(); \
     } \
 while (0)
 #define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) do \
     if (!(assertion)) { \
         KWQReportAssertionFailureWithMessage(__FILE__, __LINE__, __PRETTY_FUNCTION__, #assertion, formatAndArgs); \
-        raise(SIGQUIT); \
+        CRASH(); \
     } \
 while (0)
 #define ASSERT_NOT_REACHED() do { \
     KWQReportAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, 0); \
-    raise(SIGQUIT); \
+    CRASH(); \
 } while (0)
 
 #endif
@@ -118,7 +122,7 @@ while (0)
 #define ASSERT_ARG(argName, assertion) do \
     if (!(assertion)) { \
         KWQReportArgumentAssertionFailure(__FILE__, __LINE__, __PRETTY_FUNCTION__, #argName, #assertion); \
-        raise(SIGQUIT); \
+        CRASH(); \
     } \
 while (0)
 
@@ -131,7 +135,7 @@ while (0)
 #else
 #define FATAL(formatAndArgs...) do { \
     KWQReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs); \
-    raise(SIGQUIT); \
+    CRASH(); \
 } while (0)
 #endif
 

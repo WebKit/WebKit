@@ -155,7 +155,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
 
 - (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
+    withURL:(NSURL *)URL referrer:(NSString *)referrer
+    renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
 - (BOOL)areToolbarsVisible;

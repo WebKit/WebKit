@@ -35,6 +35,14 @@
 - (void)timerFired:(id)userInfo;
 @end
 
+@interface KWQSingleShotTimerTarget : NSObject
+{
+    KWQSlot *slot;
+}
++ (KWQSingleShotTimerTarget *)targetWithQObject:(QObject *)object member:(const char *)member;
+- (void)timerFired:(id)userInfo;
+@end
+
 @implementation KWQTimerTarget
 
 + (KWQTimerTarget *)targetWithQTimer:(QTimer *)t
@@ -47,6 +55,28 @@
 - (void)timerFired:(id)userInfo
 {
     timer->fire();
+}
+
+@end
+
+@implementation KWQSingleShotTimerTarget
+
++ (KWQSingleShotTimerTarget *)targetWithQObject:(QObject *)object member:(const char *)member
+{
+    KWQSingleShotTimerTarget *target = [[[self alloc] init] autorelease];
+    target->slot = new KWQSlot(object, member);
+    return target;
+}
+
+- (void)dealloc
+{
+    delete slot;
+    [super dealloc];
+}
+
+- (void)timerFired:(id)userInfo
+{
+    slot->call();
 }
 
 @end
@@ -106,3 +136,13 @@ void QTimer::fire()
         m_timer = nil;
     }
 }
+
+void QTimer::singleShot(int msec, QObject *receiver, const char *member)
+{
+    [NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
+                                     target:[KWQSingleShotTimerTarget targetWithQObject:receiver member:member]
+                                   selector:@selector(timerFired:)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+

@@ -637,14 +637,14 @@
 - (void)setTextEncoding:(CFStringEncoding)encoding
 {
     WebFrame *frame = [self _frame];
-    [frame reload:NO];
+    [frame reload];
     [[frame provisionalDataSource] _setOverrideEncoding:encoding];
 }
 
 - (void)setDefaultTextEncoding
 {
     WebFrame *frame = [self _frame];
-    [frame reload:NO];
+    [frame reload];
     [[frame provisionalDataSource] _setOverrideEncoding:kCFStringEncodingInvalidId];
 }
 

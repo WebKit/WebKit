@@ -218,4 +218,19 @@ extern NSString *WebContextMenuElementFrameKey;
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL;
 
+// Find out if the current web page supports text encodings.
+- (BOOL)supportsTextEncoding;
+
+// Make the page display with a different text encoding; stops any load in progress.
+// The text encoding passed in overrides the normal text encoding smarts including
+// what's specified in a web page's header or HTTP response.
+// The text encoding automatically goes back to the default when the top level frame
+// changes to a new location.
+- (void)setCustomTextEncoding:(CFStringEncoding)encoding;
+- (void)resetTextEncoding;
+
+// Find out the current state. It's an error to call customTextEncoding if hasCustomTextEncoding is NO.
+- (BOOL)hasCustomTextEncoding;
+- (CFStringEncoding)customTextEncoding;
+
 @end

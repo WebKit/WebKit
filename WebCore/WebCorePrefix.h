@@ -37,8 +37,6 @@
 
 #ifdef __OBJC__
 
-#import <Foundation/NSURLPathUtilities.h>
-
 #import <Cocoa/Cocoa.h>
 
 #endif

@@ -23,7 +23,8 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebResourceHandle.h>
 
 NSString * WebContextMenuElementLinkURLKey = @"WebContextLinkURL";
 NSString * WebContextMenuElementLinkLabelKey = @"WebContextLinkLabel";
@@ -441,6 +442,39 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     // can tell that they are talking to Alexander. Maybe also incorporate something
     // that identifies WebKit's involvement.
     return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
+}
+
+- (BOOL)supportsTextEncoding
+{
+    // FIXME: Implement this.
+    return YES;
+}
+
+- (void)setCustomTextEncoding:(CFStringEncoding)encoding
+{
+    // FIXME: Implement this.
+}
+
+- (void)resetTextEncoding
+{
+    // FIXME: Implement this.
+}
+
+- (BOOL)hasCustomTextEncoding
+{
+    // FIXME: Implement this.
+    return NO;
+}
+
+- (CFStringEncoding)customTextEncoding
+{
+    if (![self hasCustomTextEncoding]) {
+        ERROR("must not ask for customTextEncoding is hasCustomTextEncoding is NO");
+        return kCFStringEncodingInvalidId;
+    }
+
+    // FIXME: Implement this.
+    return kCFStringEncodingInvalidId;
 }
 
 @end

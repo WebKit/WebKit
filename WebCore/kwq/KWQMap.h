@@ -224,6 +224,12 @@ public:
 	    return ConstIterator(end());
 	}
     }
+    
+    bool contains(const K &key) const
+    {
+	QMapNode<K,V> tmp(key, V());
+	return findInternal(&tmp);
+    }
 
     QMap<K,V>& operator=(const QMap<K,V>&map)
     {

@@ -100,8 +100,7 @@
 
 // Start actually getting (if initialized with a URL) and parsing data. If the data source
 // is still performing a previous load it will be stopped.
-// If forceRefresh is YES the document will load from the net, not the cache.
-- (void)startLoading: (BOOL)forceRefresh;
+- (void)startLoading;
 
 // Cancels any pending loads.  A data source is conceptually only ever loading
 // one document at a time, although one document may have many related

@@ -49,6 +49,7 @@ using khtml::RenderWidget;
 
 using KIO::Job;
 
+using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
 void KHTMLPart::onURL(const QString &)
@@ -207,55 +208,22 @@ void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const
     [targetBridge loadURL:cocoaURL referrer:referrer(args)];
 }
 
-bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
-                                     const QStringList &params, bool isIFrame )
+ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    ASSERT([_bridge frameNamed:frameName.getNSString()] == nil);
-
-    NSURL *childURL = part->completeURL(url).getNSURL();
+    LOG(Frames, "name %s", child.m_name.ascii());
+    
+    NSURL *childURL = url.getNSURL();
     if (childURL == nil) {
         // FIXME: Do we need to report an error to someone?
-        return false;
+        return 0;
     }
     
-    LOG(Frames, "name %s", frameName.ascii());
-    
-    HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-    WebCoreBridge *childBridge = [_bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
-				  renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-				  marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
-
-    if (!childBridge) {
-        return false;
-    }
-    
-    ChildFrame childFrame;
-    childFrame.m_name = frameName;
-    childFrame.m_type = isIFrame ? khtml::ChildFrame::IFrame : khtml::ChildFrame::Frame;
-    childFrame.m_frame = frame;
-    childFrame.m_params = params;
-    childFrame.m_part = [childBridge part];
-    d->m_frames.append(childFrame);
-
-#ifdef _SUPPORT_JAVASCRIPT_URL_    
-    if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 && !isIFrame )
-    {
-        // static cast is safe as of isIFrame being false.
-        // but: shouldn't we support this javascript hack for iframes aswell?
-        RenderFrame* rf = static_cast<RenderFrame*>(frame);
-        assert(rf);
-        QVariant res = executeScript( DOM::Node(rf->frameImpl()), url.right( url.length() - 11) );
-        if ( res.type() == QVariant::String ) {
-            KURL myurl;
-            myurl.setProtocol("javascript");
-            myurl.setPath(res.asString());
-            return processObjectRequest(&(*it), myurl, QString("text/html") );
-        }
-        return false;
-    }
-#endif
-
-    return true;
+    HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
+    WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
+        withURL:childURL referrer:referrer(child.m_args)
+        renderPart:child.m_frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+        marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
+    return [childBridge part];
 }
 
 bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args)

@@ -161,7 +161,7 @@
 }
 
 
-- (void)_startLoading: (BOOL)forceRefresh
+- (void)_startLoading
 {
     ASSERT([self _isStopping] == NO);
 
@@ -180,7 +180,7 @@
 
     // Fire this guy up.
     if (!_private->mainHandle) {
-        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource: self];
+        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request client:_private->mainClient];
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];

@@ -100,8 +100,8 @@ public:
     uint count() const { return impl.count(); }
     bool isEmpty() const { return impl.isEmpty(); }
 
-    void append(const T &val) { impl.appendNode(new QValueListNode<T>(val)); } 
-    void prepend(const T &val) { impl.prependNode(new QValueListNode<T>(val)); } 
+    Iterator append(const T &val) { return impl.appendNode(new QValueListNode<T>(val)); } 
+    Iterator prepend(const T &val) { return impl.prependNode(new QValueListNode<T>(val)); } 
     void remove(const T &val) { QValueListNode<T> node(val); impl.removeEqualNodes(&node, nodesEqual); }
     uint contains(const T &val) const { QValueListNode<T> node(val); return impl.containsEqualNodes(&node, nodesEqual); }
 

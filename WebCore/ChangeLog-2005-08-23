@@ -1,4 +1,52 @@
-2002-09-12  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-12  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQAssertions.h: Update assertions from from the copy in WebFoundation.
+        * WebCorePrefix.h: Remove NSURLPathUtilities.h include.
+
+	Use even more of the KHTML code so we get referrers in one more place.
+
+        * kwq/WebCoreBridge.h: Add referrer to createChildFrameNamed.
+
+        * khtml/khtml_part.h: Less APPLE_CHANGES, no substantive change.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestFrame): Use more of this, less APPLE_CHANGES.
+        (KHTMLPart::requestObject): Ditto.
+        (KHTMLPart::processObjectRequest): Ditto.
+
+        * khtml/rendering/render_frames.h: Less APPLE_CHANGES.
+        * khtml/rendering/render_frames.cpp: Less APPLE_CHANGES.
+
+        * kwq/kparts/browserextension.h: Add lockHistory/setLockHistory and
+	openURLNotify.
+
+        * kwq/khtml/khtml_ext.h: Add openURLNotify.
+        * kwq/KWQKHTMLPartImpl.h: Add openURLNotify.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::openURLNotify): Implement.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::createPart):
+	Changed name from requestFrame. Do less work.
+
+        * kwq/qt/qtimer.h: Add singleShot.
+        * kwq/KWQTimer.mm:
+        (+[KWQSingleShotTimerTarget targetWithQObject:member:]): Added.
+	Used to implement singleShot.
+        (-[KWQSingleShotTimerTarget dealloc]): Ditto.
+        (-[KWQSingleShotTimerTarget timerFired:]): Ditto.
+        (QTimer::singleShot): Added.
+
+        * kwq/qt/qmap.h: Add contains.
+
+        * kwq/qt/qvaluelist.h: Add iterator return value for append and prepend.
+        * kwq/KWQValueListImpl.h: Add iterator return value for appendNode
+	and prependNode.
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::appendNode): Add iterator.
+        (KWQValueListImpl::prependNode): Add iterator.
+
+        * kwq/kparts/part.h: Add openURL.
+
+2002-09-12  Richard Williamson  <rjw@apple.com>
 
         Rewrite of khtml selection drawing code.  Now does
         a delta between old and new selection and only

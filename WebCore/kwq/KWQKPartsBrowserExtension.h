@@ -56,15 +56,17 @@ struct URLArgs {
     bool doPost() const { return m_doPost; }
     void setDoPost(bool post) { m_doPost = post; }
     
-    void setLockHistory(bool) { }
+    bool lockHistory() const { return m_lockHistory; }
+    void setLockHistory(bool lock) { m_lockHistory = lock; }
 
     QMap<QString, QString> &metaData() { return m_metadata; }
     const QMap<QString, QString> &metaData() const { return m_metadata; }
 
 private:
-    QMap<QString, QString> m_metadata;
-    bool m_doPost;
     QString m_contentType;
+    bool m_doPost;
+    bool m_lockHistory;
+    QMap<QString, QString> m_metadata;
 
 };
 
@@ -95,6 +97,7 @@ public:
      BrowserInterface *browserInterface() const { return 0; }
      
      virtual void openURLRequest(const KURL &, const KParts::URLArgs &args = KParts::URLArgs()) = 0;
+     virtual void openURLNotify() = 0;
      
      virtual void createNewWindow(const KURL &url, 
 				  const KParts::URLArgs &urlArgs = KParts::URLArgs()) = 0;

@@ -68,8 +68,8 @@ public:
     uint count() const;
     bool isEmpty() const;
 
-    void appendNode(KWQValueListNodeImpl *node);
-    void prependNode(KWQValueListNodeImpl *node);
+    KWQValueListIteratorImpl appendNode(KWQValueListNodeImpl *node);
+    KWQValueListIteratorImpl prependNode(KWQValueListNodeImpl *node);
     void removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *));
     uint containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const;
 

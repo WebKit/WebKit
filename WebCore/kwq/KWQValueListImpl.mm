@@ -201,7 +201,7 @@ bool KWQValueListImpl::isEmpty() const
     return d->count == 0;
 }
 
-void KWQValueListImpl::appendNode(KWQValueListNodeImpl *node)
+KWQValueListIteratorImpl KWQValueListImpl::appendNode(KWQValueListNodeImpl *node)
 {
     copyOnWrite();
 
@@ -222,9 +222,11 @@ void KWQValueListImpl::appendNode(KWQValueListNodeImpl *node)
     }
 
     d->count++;
+    
+    return node;
 }
 
-void KWQValueListImpl::prependNode(KWQValueListNodeImpl *node)
+KWQValueListIteratorImpl KWQValueListImpl::prependNode(KWQValueListNodeImpl *node)
 {
     copyOnWrite();
 
@@ -237,6 +239,8 @@ void KWQValueListImpl::prependNode(KWQValueListNodeImpl *node)
     }
 
     d->count++;
+    
+    return node;
 }
 
 void KWQValueListImpl::removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *))

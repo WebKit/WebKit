@@ -187,12 +187,9 @@
 }
 
 
-// Start actually getting (if initialized with a URL) and parsing data. If the data source
-// is still performing a previous load it will be stopped.
-// If forceRefresh is YES the document will load from the net, not the cache.
-- (void)startLoading: (BOOL)forceRefresh
+- (void)startLoading
 {
-    [self _startLoading: forceRefresh];
+    [self _startLoading];
 }
 
 

@@ -284,7 +284,7 @@ static const char * const stateNames[] = {
                     [self _restoreScrollPosition];
                     break;
                     
-                case WebFrameLoadTypeRefresh:
+                case WebFrameLoadTypeReload:
                     [self _scrollToTop];
                     break;
     
@@ -301,11 +301,11 @@ static const char * const stateNames[] = {
     
                 case WebFrameLoadTypeInternal:
                     // Do nothing, this was a frame/iframe non user load.
+                case WebFrameLoadTypeReloadAllowingStaleData:
                     break;
                     
                 // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
                 // if we're in the WebFrameLoadTypeUninitialized state.
-                case WebFrameLoadTypeUninitialized:
                 default:
 		    ASSERT_NOT_REACHED();
                 }
@@ -462,22 +462,18 @@ static const char * const stateNames[] = {
                         [self _restoreScrollPosition];
                         break;
                         
-                    case WebFrameLoadTypeRefresh:
+                    case WebFrameLoadTypeReload:
                         [self _scrollToTop];
                         break;
         
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
+                    case WebFrameLoadTypeReloadAllowingStaleData:
                         // Do nothing.
                         break;
                         
-                    // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
-                    // if we're in the WebFrameLoadTypeUninitialized state.
-                    case WebFrameLoadTypeUninitialized:
-                        break;
-                        
                     default:
-                        [[NSException exceptionWithName:NSGenericException reason:@"invalid load type during commit transition" userInfo: nil] raise];
+                        ASSERT_NOT_REACHED();
                         break;
                     }
                 }
@@ -702,6 +698,11 @@ static const char * const stateNames[] = {
 {
     [[self provisionalDataSource] _defersCallbacksChanged];
     [[self dataSource] _defersCallbacksChanged];
+}
+
+- (void)_reloadAllowingStaleData
+{
+    // FIXME: Implement.
 }
 
 @end

@@ -73,7 +73,7 @@
 
 /*
 */
-- (void)reload: (BOOL)forceRefresh;
+- (void)reload;
 
 
 /*

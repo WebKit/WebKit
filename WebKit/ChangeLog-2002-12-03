@@ -1,11 +1,53 @@
-2002-09-12  Richard Williamson (Home)  <rjw@apple.com>
+2002-09-12  Darin Adler  <darin@apple.com>
+
+	Prep work for fixes to the text encoding for subframes.
+
+        * WebCoreSupport.subproj/WebBridge.h: Remove [loadURL:withParent:].
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Added referrer parameter.
+
+        * WebView.subproj/WebController.h: Add new methods, not implemented yet.
+        * WebView.subproj/WebController.m:
+        (-[WebController supportsTextEncoding]): Here is one.
+        (-[WebController setCustomTextEncoding:]): Another.
+        (-[WebController resetTextEncoding]): Etc.
+        (-[WebController hasCustomTextEncoding]): Etc.
+        (-[WebController customTextEncoding]): Etc.
+
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource startLoading]): Remove the forceRefresh flag.
+	This is now controlled by the WebResourceRequest.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]): Same for this private version.
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame startLoading]): Remove the forceRefresh flag.
+        (-[WebFrame reload]): Remove the forceRefresh flag.
+	A reload without a forceRefresh is only used internally, not requested
+	by the caller.
+
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]): Add handling for the case where we
+	reload, but allow stale data.
+        (-[WebFrame _isLoadComplete]): Ditto.
+        (-[WebFrame _reloadAllowingStaleData]): Placeholder, not implemented yet.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setTextEncoding:]): Update for new API, but this is going away.
+        (-[WebHTMLView setDefaultTextEncoding]): Ditto.
+
+2002-09-12  Richard Williamson  <rjw@apple.com>
 
         Don't initiate a drag if an autoscroll happened.
         
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView mouseDragged:]):
 
-2002-09-12  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-12  Richard Williamson  <rjw@apple.com>
 
         Added absolute position column to render node for 
         render tree view.
