@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -173,7 +173,7 @@ void KWQSignal::call(Job *j, const KURL &u) const
     }
 }
 
-void KWQSignal::call(Job *j, void *d) const
+void KWQSignal::call(Job *j, NSData *d) const
 {
     if (!_object->_signalsBlocked) {
         KWQObjectSenderScope senderScope(_object);
@@ -185,3 +185,14 @@ void KWQSignal::call(Job *j, void *d) const
     }
 }
 
+void KWQSignal::call(Job *j, NSURLResponse *r) const
+{
+    if (!_object->_signalsBlocked) {
+        KWQObjectSenderScope senderScope(_object);
+        QValueList<KWQSlot> copiedSlots(_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(j, r);
+        }
+    }
+}

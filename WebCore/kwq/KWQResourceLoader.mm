@@ -111,10 +111,11 @@ using KIO::TransferJob;
     [self finishJobAndHandle];
 }
 
-- (void)finish
+- (void)finishWithData:(NSData *)data
 {
     ASSERT(_job);
     ASSERT(_handle);
+    _job->emitAllData(data);
     [self finishJobAndHandle];
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,8 @@ public:
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
     void call(KIO::Job *, const char *data, int size) const;
     void call(KIO::Job *, const KURL &) const;
-    void call(KIO::Job *, void *) const;
+    void call(KIO::Job *, NSData *) const;
+    void call(KIO::Job *, NSURLResponse *) const;
     
 private:
     // forbid copying and assignment

@@ -11,6 +11,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
@@ -31,6 +32,7 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDocumentView.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
@@ -996,9 +998,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
             response = [responses objectAtIndex: i];
-            [_private->bridge objectLoadedFromCacheWithURL:[response URL]
-                    response: response
-                    size: [response expectedContentLength]];
+            [self _sendResourceLoadDelegateMessagesForURL:[response URL]
+                                                 response:response
+                                                   length:[response expectedContentLength]];
         }
         
         // Release the resources kept in the page cache.  They will be
@@ -2495,6 +2497,44 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (id)_internalLoadDelegate
 {
     return _private->internalLoadDelegate;
+}
+
+- (void)_sendResourceLoadDelegateMessagesForURL:(NSURL *)URL response:(NSURLResponse *)response length:(unsigned)length
+{
+    ASSERT(response != nil);
+    
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    WebView *wv = [self webView];
+    id delegate = [wv resourceLoadDelegate];
+    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
+    id identifier;
+    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
+    WebDataSource *dataSource = [self dataSource];
+    
+    // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
+    if (implementations.delegateImplementsIdentifierForRequest)
+        identifier = [delegate webView:wv identifierForInitialRequest: request fromDataSource:dataSource];
+    else
+        identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+    
+    if (implementations.delegateImplementsDidReceiveResponse)
+        [delegate webView:wv resource: identifier didReceiveResponse: response fromDataSource:dataSource];
+    else
+        [sharedDelegate webView:wv resource: identifier didReceiveResponse: response fromDataSource:dataSource];
+    
+    if (implementations.delegateImplementsDidReceiveContentLength)
+        [delegate webView:wv resource: identifier didReceiveContentLength:length fromDataSource:dataSource];
+    else
+        [sharedDelegate webView:wv resource: identifier didReceiveContentLength:length fromDataSource:dataSource];
+    
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+        [delegate webView:wv resource: identifier didFinishLoadingFromDataSource:dataSource];
+    else
+        [sharedDelegate webView:wv resource: identifier didFinishLoadingFromDataSource:dataSource];
+    
+    [wv _finishedLoadingResourceFromDataSource:dataSource];
+    
+    [request release];
 }
 
 @end

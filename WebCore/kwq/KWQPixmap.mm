@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,50 +43,53 @@ bool canRenderImageType(const QString &type)
 QPixmap::QPixmap()
 {
     imageRenderer = nil;
-    MIMEType = 0;
+    MIMEType = nil;
     needCopyOnWrite = false;
 }
+
+#if 0
 
 QPixmap::QPixmap(WebCoreImageRendererPtr r)
 {
     imageRenderer = KWQRetain(r);
-    MIMEType = 0;
+    MIMEType = nil;
     needCopyOnWrite = false;
 }
 
+#endif
 
-QPixmap::QPixmap(void *MIME)
+QPixmap::QPixmap(NSString *MIME)
 {
     imageRenderer = nil;
-    MIMEType = (NSString *)[((NSString *)MIME) copy];
+    MIMEType = KWQRetainNSRelease([MIME copy]);
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QSize &sz)
 {
     imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(sz.width(), sz.height())]);
-    MIMEType = 0;
+    MIMEType = nil;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
     imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()]);
-    MIMEType = 0;
+    MIMEType = nil;
     needCopyOnWrite = false;
 }
 
-QPixmap::QPixmap(const QByteArray &bytes, void *MIME)
+QPixmap::QPixmap(const QByteArray &bytes, NSString *MIME)
 {
-    MIMEType = (NSString *)[((NSString *)MIME) copy];
-    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:(NSString *)MIMEType]);
+    MIMEType = KWQRetainNSRelease([MIME copy]);
+    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:MIMEType]);
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
     imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)]);
-    MIMEType = 0;
+    MIMEType = nil;
     needCopyOnWrite = false;
 }
 

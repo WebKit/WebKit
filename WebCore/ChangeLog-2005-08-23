@@ -1,3 +1,38 @@
+2004-11-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3685766> WebDataSource is missing subresources when they use cached WebCore data
+	<rdar://problem/3722434> REGRESSION?: Assertion failure trying to drag image in iframe (itapema.sc.gov.br)
+
+        Reviewed by darin.
+
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject): release m_allData
+        (CachedObject::setAllData): new
+        (Loader::servePendingRequests): connect slotAllData
+        (Loader::slotAllData): new
+        (Cache::requestImage): tweak
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::CachedObject): set allData to 0
+        (khtml::CachedObject::allData): new
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::TransferJob): set m_allData
+        (KIO::TransferJob::emitAllData): new
+        * kwq/KWQLoader.mm:
+        (KWQCheckCacheObjectStatus): pass WebKit the data instead of the length of the resource
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishWithData:]): renamed to pass all data for the resource
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): support for slotAllData
+        (KWQSlot::call):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreResourceLoader.h:
+
+2004-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 2004-11-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
@@ -15,6 +50,7 @@
 
         Reviewed by John.
 
+>>>>>>> 1.3551
 	- fix recent regression from collection perf fixes.
 	
         * khtml/html/html_miscimpl.cpp:

@@ -1,3 +1,22 @@
+2004-11-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3685766> WebDataSource is missing subresources when they use cached WebCore data
+	<rdar://problem/3722434> REGRESSION?: Assertion failure trying to drag image in iframe (itapema.sc.gov.br)
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]): renamed to pass all data for the resource, moved delegate code to new method
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]): call renamed method
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient didFinishLoading]): call renamed method
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]): call _sendResourceLoadDelegateMessagesForURL:response:length:, not objectLoadedFromCacheWithURL:response:data:
+        (-[WebFrame _internalLoadDelegate]):
+        (-[WebFrame _sendResourceLoadDelegateMessagesForURL:response:length:]): moved from objectLoadedFromCacheWithURL:response:data:
+        * WebView.subproj/WebFrameInternal.h:
+
 2004-11-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

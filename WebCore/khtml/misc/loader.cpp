@@ -4,7 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2003 Apple Computer, Inc.
+    Copyright (C) 2004 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -89,7 +89,8 @@ CachedObject::~CachedObject()
     Cache::removeFromLRUList(this);
     m_deleted = true;
 #if APPLE_CHANGES
-    KWQReleaseResponse(m_response);
+    setResponse(0);
+    setAllData(0);
 #endif
 }
 
@@ -133,17 +134,6 @@ bool CachedObject::isExpired() const
     time_t now = time(0);
     return (difftime(now, m_expireDate) >= 0);
 }
-
-#if APPLE_CHANGES
-
-void CachedObject::setResponse(void *response)
-{
-    KWQRetainResponse(response);
-    KWQReleaseResponse(m_response);
-    m_response = response;
-}
-
-#endif
 
 void CachedObject::setRequest(Request *_request)
 {
@@ -252,8 +242,8 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next()) {
-        if (m_response && !KWQIsResponseURLEqualToURL(m_response,m_url))
-            c->setStyleSheet(DOMString (KWQResponseURL(m_response)), m_sheet);
+        if (m_response && !KWQIsResponseURLEqualToURL(m_response, m_url))
+            c->setStyleSheet(DOMString(KWQResponseURL(m_response)), m_sheet);
         else
             c->setStyleSheet(m_url, m_sheet);
     }
@@ -1431,7 +1421,8 @@ void Loader::servePendingRequests()
 #if APPLE_CHANGES
   connect( job, SIGNAL( data( KIO::Job*, const char *, int)),
            SLOT( slotData( KIO::Job*, const char *, int)));
-  connect( job, SIGNAL( receivedResponse( KIO::Job *, void *)), SLOT( slotReceivedResponse( KIO::Job *, void *)) );
+  connect( job, SIGNAL( receivedResponse( KIO::Job *, NSURLResponse *)), SLOT( slotReceivedResponse( KIO::Job *, NSURLResponse *)) );
+  connect( job, SIGNAL( allData( KIO::Job *, NSData *)), SLOT( slotAllData( KIO::Job *, NSData *)) );
 
   if (KWQServeRequest(this, req, job))
       m_requestsLoading.insert(job, req);
@@ -1488,7 +1479,8 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
 }
 
 #if APPLE_CHANGES
-void Loader::slotReceivedResponse(KIO::Job* job, void *response)
+
+void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
 {
     Request *r = m_requestsLoading[job];
     ASSERT(r);
@@ -1496,6 +1488,15 @@ void Loader::slotReceivedResponse(KIO::Job* job, void *response)
     r->object->setResponse(response);
     r->object->setExpireDate(KWQCacheObjectExpiresTime(r->m_docLoader, response), false);
 }
+
+void Loader::slotAllData(KIO::Job* job, NSData *data)
+{
+    Request *r = m_requestsLoading[job];
+    ASSERT(r);
+    ASSERT(data);
+    r->object->setAllData(data);
+}
+
 #endif
 
 #if APPLE_CHANGES
@@ -1691,7 +1692,6 @@ CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, 
         return 0;
     }
 #endif
-
 
     CachedObject *o = 0;
     if (!reload)
@@ -1889,7 +1889,8 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
 #endif
         return 0;
     }
-
+    
+    
 #ifdef CACHE_DEBUG
     if( o->status() == CachedObject::Pending )
         kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
