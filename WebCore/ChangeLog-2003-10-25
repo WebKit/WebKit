@@ -1,3 +1,10 @@
+2002-09-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed livepage crash on Marklar. It is naughty to divide by 0 on marklar so we now check before doing that.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::printBackground):
+
 2002-09-12  David Hyatt  <hyatt@apple.com>
 
 	Fix crash on trekweb.com.  My simplified FOUC code was a little
