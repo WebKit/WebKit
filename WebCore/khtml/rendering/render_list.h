@@ -56,6 +56,8 @@ public:
 
     virtual void calcWidth();
 
+    virtual InlineBox* createInlineBox(bool, bool, bool);
+
     virtual short lineHeight(bool b, bool isRootLineBox=false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
     
@@ -77,6 +79,13 @@ protected:
     CachedImage *m_listImage;
     long m_value;
     RenderListItem* m_listItem;
+};
+
+class ListMarkerBox : public InlineBox
+{
+public:
+    ListMarkerBox(RenderObject* obj) :InlineBox(obj) {}
+    virtual bool isText() const { return !static_cast<RenderListMarker*>(object())->listImage(); }
 };
 
 class RenderListItem : public RenderBlock

@@ -1,3 +1,16 @@
+2004-10-05  David Hyatt  <hyatt@apple.com>
+
+	Fix lists so that they properly participate in line layout as though they are text (when text bullets are
+	used) and as images (when image bullets are used).
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::createInlineBox):
+        * khtml/rendering/render_list.h:
+        (khtml::ListMarkerBox:::InlineBox):
+        (khtml::ListMarkerBox::isText):
+
 2004-10-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

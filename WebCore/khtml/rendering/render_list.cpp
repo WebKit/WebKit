@@ -343,6 +343,13 @@ void RenderListMarker::setStyle(RenderStyle *s)
     }
 }
 
+InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
+{
+    KHTMLAssert(!isRootLineBox);
+    ListMarkerBox* box = new (renderArena()) ListMarkerBox(this);
+    m_inlineBoxWrapper = box;
+    return box;
+}
 
 void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 {
