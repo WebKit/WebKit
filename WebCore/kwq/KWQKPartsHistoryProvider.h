@@ -26,17 +26,16 @@
 #ifndef HISTORYPROVIDER_H_
 #define HISTORYPROVIDER_H_
 
-#include "part.h"
-
-class QString;
+// FIXME: do we still need "part.h"?
+//#include "part.h"
+#include <qobject.h>
 
 // added to help in compilation of khtml/khtml_factory.h:34
 namespace KParts {
 
-class HistoryProvider {
+class HistoryProvider : public QObject {
 public:
-    static HistoryProvider * self();
-    
+    static HistoryProvider *self();
     bool contains(const QString &) const;
 };
 
