@@ -1,5 +1,22 @@
 2002-06-18  Chris Blumenberg  <cblu@apple.com>
 
+	Fix for 2961733 - Progress of plug-in files not shown in activity window
+	Plugin classed must call _IF_superviewWithName: not _IF_parentWebView
+
+	* Plugins.subproj/IFNullPluginView.mm:
+	(-[IFNullPluginView drawRect:]):
+	* Plugins.subproj/IFPluginStream.mm: minor cleanup
+	(-[IFPluginStream IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]):
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[IFPluginStream IFURLHandle:didRedirectToURL:]):
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView start]):
+	(-[IFPluginView layout]):
+
+2002-06-18  Chris Blumenberg  <cblu@apple.com>
+
 	Enabled the viewing of plug-in content inline
 	(aka direct links to plugin media). Made IFPluginView a
 	IFDocumentView and IFPluginStream a IFDocumentRespresentation.

@@ -420,7 +420,12 @@ static char *newCString(NSString *string)
     
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
-
+    
+    id webView = [self _IF_superviewWithName:@"IFWebView"];
+    webController = [[webView controller] retain];
+    webFrame = 	    [[webController frameForView:webView] retain];
+    webDataSource = [[webFrame dataSource] retain];
+    
     if(srcURL){
         stream = [[IFPluginStream alloc] initWithURL:srcURL pluginPointer:instance];
         if(stream){
@@ -433,11 +438,6 @@ static char *newCString(NSString *string)
     eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent window:theWindow];
     [eventSender sendNullEvents];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
-    
-    id webView = [self _IF_parentWebView];
-    webController = [[webView controller] retain];
-    webFrame = 	    [[webController frameForView:webView] retain];
-    webDataSource = [[webFrame dataSource] retain];
 }
 
 - (void)stop
@@ -544,7 +544,7 @@ static char *newCString(NSString *string)
  
 - (void)layout
 {
-    NSRect superFrame = [[self _IF_parentWebView] frame];
+    NSRect superFrame = [[self _IF_superviewWithName:@"IFWebView"] frame];
     
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

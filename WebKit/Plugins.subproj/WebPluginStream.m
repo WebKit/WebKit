@@ -230,6 +230,8 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
+    IFWebController *webController = [view webController];
+    
     if(isFirstChunk){
         NSString *URLString = [[sender url] absoluteString];
         char *cURL = (char *)malloc([URLString cStringLength]+1);
@@ -245,50 +247,58 @@ static NSString *getCarbonPath(NSString *posixPath);
     }
     [self receivedData:data];
     
-    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
         forResourceHandle: sender fromDataSource: [view webDataSource] complete: NO];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
-    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+    IFWebController *webController = [view webController];
+    
+    [webController _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
             forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
  
     [self finishedLoadingWithData:data];
           
-    [[view webController] _didStopLoading:URL];
+    [webController _didStopLoading:URL];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    [[view webController] _receivedProgress:[IFLoadProgress progress]
+    IFWebController *webController = [view webController];
+    
+    [webController _receivedProgress:[IFLoadProgress progress]
         forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
             
     [self receivedError];
     
-    [[view webController] _didStopLoading:URL];
+    [webController _didStopLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
+    IFWebController *webController = [view webController];
+    
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     
-    [[view webController] _receivedError: result forResourceHandle: sender 
+    [webController _receivedError: result forResourceHandle: sender 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     
     [self receivedError];
     
-    [[view webController] _didStopLoading:URL];
+    [webController _didStopLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)toURL
 {
-    [[view webController] _didStopLoading:URL];
+    IFWebController *webController = [view webController];
+    
+    [webController _didStopLoading:URL];
     // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
-    [[view webController] _didStartLoading:toURL];
+    [webController _didStartLoading:toURL];
 }
 
 @end
