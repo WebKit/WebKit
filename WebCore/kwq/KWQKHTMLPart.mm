@@ -204,11 +204,9 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     bool onLoad = false;
     
     if (jScript() && jScript()->interpreter()) {
-        KHTMLPart *rootPart;
-        
-        rootPart = this;
+        KHTMLPart *rootPart = this;
         while (rootPart->parentPart() != 0)
-            rootPart = parentPart();
+            rootPart = rootPart->parentPart();
         KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy(rootPart)->interpreter());
         DOM::Event *evt = interpreter->getCurrentEvent();
         

@@ -1,3 +1,12 @@
+2003-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3465063 -- REGRESSION (107-108): hang when fetching a page with an ad in a subframe (theage.com.au)
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURL): Follow the parent chain properly rather
+        than repeatedly getting the part's own parent!
+
 2003-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
