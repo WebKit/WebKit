@@ -243,6 +243,8 @@ Could be worth adding to the API.
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 
+-  (void)_willChangeValueForKey:(NSString *)key;
+-  (void)_didChangeValueForKey:(NSString *)key;
 @end
 
 @interface _WebSafeForwarder : NSObject

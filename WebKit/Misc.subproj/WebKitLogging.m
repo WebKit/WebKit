@@ -29,3 +29,5 @@ WebLogChannel WebKitLogFormDelegate = 	        { 0x00200000, "WebKitLogLevel", W
 WebLogChannel WebKitLogFileDatabaseActivity =   { 0x00400000, "WebKitLogLevel", WebLogChannelUninitialized };
 
 WebLogChannel WebKitLogHistory =                { 0x00800000, "WebKitLogLevel", WebLogChannelUninitialized };
+
+WebLogChannel WebKitLogBindings =                { 0x01000000, "WebKitLogLevel", WebLogChannelUninitialized };

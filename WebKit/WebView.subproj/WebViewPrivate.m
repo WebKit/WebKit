@@ -19,6 +19,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -649,9 +650,22 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 #define UnknownTotalBytes -1
 #define WebProgressItemDefaultEstimatedLength 1024*16
 
+- (void)_didChangeValueForKey: (NSString *)key
+{
+    LOG (Bindings, "calling didChangeValueForKey: %@", key);
+    [self didChangeValueForKey: key];
+}
+
+- (void)_willChangeValueForKey: (NSString *)key
+{
+    LOG (Bindings, "calling willChangeValueForKey: %@", key);
+    [self willChangeValueForKey: key];
+}
+
+
 - (void)_progressStarted
 {
-    [self willChangeValueForKey: @"estimatedProgress"];
+    [self _willChangeValueForKey: @"estimatedProgress"];
     if (_private->numProgressTrackedFrames == 0){
         _private->totalPageAndResourceBytesToLoad = 0;
         _private->totalBytesReceived = 0;
@@ -660,12 +674,12 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
-    [self didChangeValueForKey: @"estimatedProgress"];
+    [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_progressCompleted
 {
-    [self willChangeValueForKey: @"estimatedProgress"];
+    [self _willChangeValueForKey: @"estimatedProgress"];
     if (![[[self mainFrame] dataSource] isLoading])
         _private->numProgressTrackedFrames = 0;
         
@@ -675,7 +689,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         _private->progressValue = 1;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
     }
-    [self didChangeValueForKey: @"estimatedProgress"];
+    [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
@@ -712,7 +726,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     if (!item)
         return;
 
-    [self willChangeValueForKey: @"estimatedProgress"];
+    [self _willChangeValueForKey: @"estimatedProgress"];
 
     unsigned bytesReceived = [data length];
     double increment = 0, percentOfRemainingBytes;
@@ -746,7 +760,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
         _private->lastNotifiedProgressValue = _private->progressValue;
     }
 
-    [self didChangeValueForKey: @"estimatedProgress"];
+    [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_completeProgressForConnection:(NSURLConnection *)con
@@ -760,6 +774,11 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     long long delta = item->bytesReceived - item->estimatedLength;
     _private->totalPageAndResourceBytesToLoad += delta;
     item->estimatedLength = item->bytesReceived;
+}
+
+// Required to prevent automatic observer notifications.
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key {
+    return NO;
 }
 
 - (NSArray *)_declaredKeys {
@@ -784,51 +803,51 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 
 - (void)_willChangeBackForwardKeys
 {
-    [self willChangeValueForKey: _WebCanGoBackKey];
-    [self willChangeValueForKey: _WebCanGoForwardKey];
+    [self _willChangeValueForKey: _WebCanGoBackKey];
+    [self _willChangeValueForKey: _WebCanGoForwardKey];
 }
 
 - (void)_didChangeBackForwardKeys
 {
-    [self didChangeValueForKey: _WebCanGoBackKey];
-    [self didChangeValueForKey: _WebCanGoForwardKey];
+    [self _didChangeValueForKey: _WebCanGoBackKey];
+    [self _didChangeValueForKey: _WebCanGoForwardKey];
 }
 
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
     [self _willChangeBackForwardKeys];
     if (frame == [self mainFrame]){
-        [self willChangeValueForKey: _WebIsLoadingKey];
-        [self willChangeValueForKey: _WebMainFrameURLKey];
+        [self _willChangeValueForKey: _WebIsLoadingKey];
+        [self _willChangeValueForKey: _WebMainFrameURLKey];
     }
 }
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
-        [self didChangeValueForKey: _WebMainFrameURLKey];
+        [self _didChangeValueForKey: _WebMainFrameURLKey];
 }
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
 {
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame])
-        [self didChangeValueForKey: _WebIsLoadingKey];
+        [self _didChangeValueForKey: _WebIsLoadingKey];
 }
 
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame])
-        [self didChangeValueForKey: _WebIsLoadingKey];
+        [self _didChangeValueForKey: _WebIsLoadingKey];
 }
 
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
-        [self didChangeValueForKey: _WebIsLoadingKey];
-        [self didChangeValueForKey: _WebMainFrameURLKey];
+        [self _didChangeValueForKey: _WebIsLoadingKey];
+        [self _didChangeValueForKey: _WebMainFrameURLKey];
     }
 }
 

@@ -301,10 +301,10 @@
     if (!trimmed || [trimmed length] == 0)
         return;
         
-    [_private->webView willChangeValueForKey: _WebMainFrameTitleKey];
+    [_private->webView _willChangeValueForKey: _WebMainFrameTitleKey];
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
-    [_private->webView didChangeValueForKey: _WebMainFrameTitleKey];
+    [_private->webView _didChangeValueForKey: _WebMainFrameTitleKey];
     
     // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
@@ -610,7 +610,7 @@
 
     
     if ([self webFrame] == [_private->webView mainFrame])
-        [_private->webView willChangeValueForKey:_WebMainFrameIconKey];
+        [_private->webView _willChangeValueForKey:_WebMainFrameIconKey];
     
     NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
     [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
@@ -618,7 +618,7 @@
                                                             forFrame:[self webFrame]];
     
     if ([self webFrame] == [_private->webView mainFrame])
-        [_private->webView didChangeValueForKey:_WebMainFrameIconKey];
+        [_private->webView _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader

@@ -1,3 +1,32 @@
+2003-08-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3376077.  Override automaticallyNotifiesObserversForKey: to
+	prevent unnecessary additional notifications from being sent.  Also
+	added development-only logging (bulk of the change).
+
+        Reviewed by Chris.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _didChangeValueForKey:]):
+        (-[WebView _willChangeValueForKey:]):
+        (-[WebView _progressStarted]):
+        (-[WebView _progressCompleted]):
+        (-[WebView _incrementProgressForConnection:data:]):
+        (+[WebView automaticallyNotifiesObserversForKey:]):
+        (-[WebView _willChangeBackForwardKeys]):
+        (-[WebView _didChangeBackForwardKeys]):
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+        (-[WebView _didCommitLoadForFrame:]):
+        (-[WebView _didFinishLoadForFrame:]):
+        (-[WebView _didFailLoadWithError:forFrame:]):
+        (-[WebView _didFailProvisionalLoadWithError:forFrame:]):
+
 2003-08-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3347134>: After first successful POST in Flash, Safari does not repeat POST and gives cached reply
