@@ -1,5 +1,16 @@
 2003-02-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Revert Dave's patch to these files, since it turned out to cause
+	layout regressions.
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        (RenderObject::container):
+
+2003-02-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin Adler.
 
 	- fixed 3173276 - hang in kjs string at iteslj.org page
