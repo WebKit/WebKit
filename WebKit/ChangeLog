@@ -1,3 +1,13 @@
+2002-09-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3050665 - REGRESSION: mp3 audio loads and plays, but no progress or play control is visible
+
+        * Plugins.subproj/WebPluginView.h:
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView setNeedsLayout:]):
+        (-[WebNetscapePluginView layout]):
+        (-[WebNetscapePluginView drawRect:]):
+
 2002-09-25  Darin Adler  <darin@apple.com>
 
 	Make the "set aside subviews" logic stronger so it can handle a display

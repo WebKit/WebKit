@@ -691,6 +691,7 @@
  
 - (void)setNeedsLayout:(BOOL)flag
 {
+    needsLayout = flag;
 }
 
 - (void)layout
@@ -700,16 +701,25 @@
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [self setUpWindowAndPort];
+
+    needsLayout = NO;
 }
 
 #pragma mark NSVIEW
 
 - (void)drawRect:(NSRect)rect
 {
-    if(!isStarted)
+    if(needsLayout){
+        [self layout];
+    }
+
+    if(!isStarted){
         [self start];
-    if(isStarted)
+    }
+
+    if(isStarted){
         [self sendUpdateEvent];
+    }
 }
 
 - (BOOL)isFlipped

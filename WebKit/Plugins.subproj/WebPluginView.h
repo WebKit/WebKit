@@ -30,7 +30,7 @@
     NP_Port nPort;
     NPP_t instanceStruct;
         
-    BOOL canRestart, isHidden, isStarted, fullMode;
+    BOOL canRestart, isHidden, isStarted, fullMode, needsLayout;
             
     NSString *mime;
     NSURL *srcURL, *baseURL;
