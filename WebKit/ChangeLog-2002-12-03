@@ -1,6 +1,6 @@
 2002-06-14  Darin Adler  <darin@apple.com>
 
-	* Panels.subproj/IFStandardPanels.m: Use the read PTHREAD_ONCE_INIT,
+	* Panels.subproj/IFStandardPanels.m: Use the real PTHREAD_ONCE_INIT,
 	remove the workaround for 2905545.
 
 	* IFWebCoreBridge.h: Moved into WebCoreSupport.subproj.
