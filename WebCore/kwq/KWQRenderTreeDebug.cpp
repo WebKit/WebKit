@@ -35,32 +35,37 @@
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
 
+using khtml::RenderLayer;
 using khtml::RenderObject;
 using khtml::RenderTableCell;
 using khtml::RenderWidget;
 
+typedef khtml::RenderLayer::RenderLayerElement RenderLayerElement;
+
+static void writeLayers(QTextStream &ts, const RenderObject &o, int indent = 0);
+
+static QTextStream &operator<<(QTextStream &ts, const QRect &r)
+{
+    return ts << "(" << r.x() << "," << r.y() << "," << r.width() << "," << r.height() << ")";
+}
+
 static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
 {
     ts << o.renderName();
-    ts << "  ";
-    if (o.isInline()) ts << "il ";
-    if (o.childrenInline()) ts << "ci ";
-    if (o.isFloating()) ts << "fl ";
-    if (o.isAnonymousBox()) ts << "an ";
-    if (o.isRelPositioned()) ts << "rp ";
-    if (o.isPositioned()) ts << "ps ";
-    if (o.overhangingContents()) ts << "oc ";
-    if (o.layouted()) ts << "lt ";
-    if (o.mouseInside()) ts << "mi ";
     
-    if (o.style() && o.style()->zIndex()) ts << "zI: " << o.style()->zIndex();
+    if (o.style() && o.style()->zIndex()) {
+        ts << " zI: " << o.style()->zIndex();
+    }
     
-    if (o.element() && o.element()->active()) ts << "act ";
-    if (o.element() && o.element()->hasAnchor()) ts << "anchor ";
-    if (o.element() && o.element()->focused()) ts << "focus ";
-    if (o.element()) ts << " <" << getTagName(o.element()->id()).string() << ">";
+    if (o.element()) {
+        QString tagName(getTagName(o.element()->id()).string());
+        if (!tagName.isEmpty()) {
+            ts << " {" << tagName << "}";
+        }
+    }
     
-    ts << " (" << o.xPos() << "," << o.yPos() << "," << o.width() << "," << o.height() << ")";
+    QRect r(o.xPos(), o.yPos(), o.width(), o.height());
+    ts << " " << r;
     
     if (o.isTableCell()) {
         const RenderTableCell &c = static_cast<const RenderTableCell &>(o);
@@ -70,17 +75,23 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     return ts;
 }
 
+static void writeIndent(QTextStream &ts, int indent)
+{
+    for (int i = 0; i != indent; ++i) {
+        ts << "  ";
+    }
+}
+
 static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
 {
-    {
-        QString indentationSpaces;
-        indentationSpaces.fill(' ', indent * 2);
-        ts << indentationSpaces;
-    }
+    writeIndent(ts, indent);
     
-    ts << o << '\n';
+    ts << o << "\n";
     
     for (RenderObject *child = o.firstChild(); child; child = child->nextSibling()) {
+        if (child->layer()) {
+            continue;
+        }
         write(ts, *child, indent + 1);
     }
     
@@ -89,9 +100,41 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
         if (view) {
             RenderObject *root = KWQ(view->part())->renderer();
             if (root) {
-                write(ts, *root, indent + 1);
+                writeLayers(ts, *root, indent + 1);
             }
         }
+    }
+}
+
+static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
+{
+    RenderLayer &l = *e.layer;
+    
+    writeIndent(ts, indent);
+    
+    ts << "RenderLayer";
+    
+    QRect r(l.xPos(), l.yPos(), l.width(), l.height());
+    
+    ts << " " << r;
+    
+    if (r != r.intersect(e.backgroundClipRect)) {
+        ts << " backgroundClip" << e.backgroundClipRect;
+    }
+    if (r != r.intersect(e.clipRect)) {
+        ts << " clip" << e.clipRect;
+    }
+    
+    ts << "\n";
+
+    write(ts, *l.renderer(), indent + 1);
+}
+
+static void writeLayers(QTextStream &ts, const RenderObject &o, int indent)
+{
+    QPtrVector<RenderLayerElement> list = o.layer()->elementList();
+    for (unsigned i = 0; i != list.count(); ++i) {
+        write(ts, *list[i], indent);
     }
 }
 
@@ -101,7 +144,7 @@ QString externalRepresentation(const RenderObject *o)
     {
         QTextStream ts(&s);
         if (o) {
-            write(ts, *o);
+            writeLayers(ts, *o);
         }
     }
     return s;

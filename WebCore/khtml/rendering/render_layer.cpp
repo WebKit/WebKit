@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002 Apple Computer, Inc.
+ * Copyright (C) 2002, 2003 Apple Computer, Inc.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -213,13 +213,13 @@ void
 RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
 {
     // Create the z-tree of layers that should be displayed.
-    QRect damageRect = QRect(x,y,w,h);
-    RenderLayer::RenderZTreeNode* node = constructZTree(damageRect, damageRect, this);
+    QRect damageRect(x,y,w,h);
+    RenderZTreeNode* node = constructZTree(damageRect, damageRect, this);
     if (!node)
         return;
 
     // Flatten the tree into a back-to-front list for painting.
-    QPtrVector<RenderLayer::RenderLayerElement> layerList;
+    QPtrVector<RenderLayerElement> layerList;
     constructLayerList(node, &layerList);
 
     // Walk the list and paint each layer, adding in the appropriate offset.
@@ -228,7 +228,7 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
     
     uint count = layerList.count();
     for (uint i = 0; i < count; i++) {
-        RenderLayer::RenderLayerElement* elt = layerList.at(i);
+        RenderLayerElement* elt = layerList.at(i);
 
         // Elements add in their own positions as a translation factor.  This forces
         // us to subtract that out, so that when it's added back in, we get the right
@@ -319,18 +319,18 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 {
     bool inside = false;
     QRect damageRect(m_x, m_y, m_width, m_height);
-    RenderLayer::RenderZTreeNode* node = constructZTree(damageRect, damageRect, this, true, x, y);
+    RenderZTreeNode* node = constructZTree(damageRect, damageRect, this, true, x, y);
     if (!node)
         return false;
 
     // Flatten the tree into a back-to-front list for painting.
-    QPtrVector<RenderLayer::RenderLayerElement> layerList;
+    QPtrVector<RenderLayerElement> layerList;
     constructLayerList(node, &layerList);
 
     // Walk the list and test each layer, adding in the appropriate offset.
     uint count = layerList.count();
     for (int i = count-1; i >= 0; i--) {
-        RenderLayer::RenderLayerElement* elt = layerList.at(i);
+        RenderLayerElement* elt = layerList.at(i);
 
         // Elements add in their own positions as a translation factor.  This forces
         // us to subtract that out, so that when it's added back in, we get the right
@@ -358,7 +358,7 @@ RenderLayer::constructZTree(QRect overflowClipRect, QRect posClipRect,
     RenderArena* renderArena = renderer()->renderArena();
     
     // This variable stores the result we will hand back.
-    RenderLayer::RenderZTreeNode* returnNode = 0;
+    RenderZTreeNode* returnNode = 0;
     
     // If a layer isn't visible, then none of its child layers are visible either.
     // Don't build this branch of the z-tree, since these layers should not be painted.
@@ -488,10 +488,10 @@ RenderLayer::constructZTree(QRect overflowClipRect, QRect posClipRect,
 }
 
 void
-RenderLayer::constructLayerList(RenderZTreeNode* ztree, QPtrVector<RenderLayer::RenderLayerElement>* result)
+RenderLayer::constructLayerList(RenderZTreeNode* ztree, QPtrVector<RenderLayerElement>* result)
 {
     // This merge buffer is just a temporary used during computation as we do merge sorting.
-    QPtrVector<RenderLayer::RenderLayerElement> mergeBuffer;
+    QPtrVector<RenderLayerElement> mergeBuffer;
     ztree->constructLayerList(&mergeBuffer, result);
 }
 
@@ -602,7 +602,7 @@ void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElem
     // Now set all of the elements' z-indices to match the parent's explicit z-index, so that
     // they will be layered properly in the ancestor layer's stacking context.
     for (uint i = startIndex; i < endIndex; i++) {
-        RenderLayer::RenderLayerElement* elt = buffer->at(i);
+        RenderLayerElement* elt = buffer->at(i);
         elt->zindex = explicitZIndex;
     }
 }
@@ -674,3 +674,16 @@ void RenderLayer::RenderZTreeNode::detach(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
+QPtrVector<RenderLayer::RenderLayerElement> RenderLayer::elementList()
+{
+    QPtrVector<RenderLayerElement> list;
+    
+    QRect damageRect(m_x, m_y, m_width, m_height);
+    RenderZTreeNode *node = constructZTree(damageRect, damageRect, this);
+    if (node) {
+        constructLayerList(node, &list);
+        node->detach(renderer()->renderArena());
+    }
+    
+    return list;
+}

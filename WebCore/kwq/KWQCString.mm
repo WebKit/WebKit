@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002, 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #import "KWQCString.h"
 
 #import <ctype.h>
+
+using std::ostream;
 
 QCString::QCString() : QByteArray(0)
 {
@@ -302,8 +304,11 @@ bool operator==(const QCString &s1, const char *s2)
 }
 
 #ifdef _KWQ_IOSTREAM_
-std::ostream &operator<<(std::ostream &o, const QCString &s)
+
+ostream &operator <<(ostream &o, const QCString &s)
 {
-    return o << (const char *)s.data();
+    const char *chs = s;
+    return o << chs;
 }
+
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002 Apple Computer, Inc.
+ * Copyright (C) 2002, 2003 Apple Computer, Inc.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -231,6 +231,9 @@ public:
       // The normal operator new is disallowed.
       void* operator new(size_t sz) throw();
     };
+    
+    // For debugging.
+    QPtrVector<RenderLayerElement> elementList();
       
 private:
     // The constructZTree function creates a z-tree for a given layer hierarchy

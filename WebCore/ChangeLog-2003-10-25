@@ -1,5 +1,25 @@
 2003-01-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+	- clean room rewrite of QCString::operator<<.
+
+        * kwq/KWQCString.mm: (operator<<): Rewrote it.
+
+	- update format of render tree dumping for real use
+
+        * khtml/rendering/render_layer.h: Added elementList().
+        * khtml/rendering/render_layer.cpp: (RenderLayer::elementList): Added.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<): Added an overload for writing out QRect.
+        (writeIndent): Added.
+        (write): Use the overload for QRect, also reorganize to dump layers.
+        (writeLayers): Use this to dump the layers.
+        (externalRepresentation): Call writeLayers instead of write.
+
+2003-01-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
 	- removed unused KWQDrawUtil code
