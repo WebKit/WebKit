@@ -1,5 +1,16 @@
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Merged KHTMLPart::openURL method with khtml original.
+
+        * khtml/khtml_part.cpp:
+	(KHTMLPart::openURL): Don't call the impl version. Leave most of
+	this #ifdef'd, except the parts that look useful.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::openURL): Removed.
+
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
         Merged KHTMLPart::begin method with khtml original.
 
 	* khtml/khtml_part.cpp:

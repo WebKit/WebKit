@@ -352,10 +352,7 @@ bool KHTMLPart::openURL( const KURL &url )
 
   d->m_redirectionTimer.stop();
 
-#ifdef APPLE_CHANGES
-  impl->openURL(url);
-  return true;
-#else
+#ifndef APPLE_CHANGES
   // check to see if this is an "error://" URL. This is caused when an error
   // occurs before this part was loaded (e.g. KonqRun), and is passed to
   // khtmlpart so that it can display the error.
@@ -451,6 +448,7 @@ bool KHTMLPart::openURL( const KURL &url )
 
   connect( d->m_job, SIGNAL(redirection(KIO::Job*, const KURL&) ),
            SLOT( slotRedirection(KIO::Job*,const KURL&) ) );
+#endif // APPLE_CHANGES
 
   d->m_bComplete = false;
   d->m_bLoadEventEmitted = false;
@@ -479,6 +477,7 @@ bool KHTMLPart::openURL( const KURL &url )
   // copy to m_workingURL after fixing m_url above
   d->m_workingURL = m_url;
 
+#ifndef APPLE_CHANGES
   kdDebug( 6050 ) << "KHTMLPart::openURL now (before started) m_url = " << m_url.url() << endl;
 
   connect( d->m_job, SIGNAL( speed( KIO::Job*, unsigned long ) ),
@@ -488,9 +487,9 @@ bool KHTMLPart::openURL( const KURL &url )
            this, SLOT( slotJobPercent( KIO::Job*, unsigned long ) ) );
 
   emit started( 0L );
+#endif // APPLE_CHANGES
 
   return true;
-#endif // APPLE_CHANGES
 }
 
 

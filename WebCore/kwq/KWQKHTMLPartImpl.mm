@@ -95,12 +95,6 @@ bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &u
     return true;
 }
 
-void KWQKHTMLPartImpl::openURL(const KURL &url)
-{
-    d->m_workingURL = url;
-    part->m_url = url;
-}
-
 void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int length, bool complete)
 {
 // NOTE: This code emulates the interface used by the original khtml part  

@@ -67,8 +67,6 @@ public:
     KHTMLView *getView() const;
 
     bool openURLInFrame(const KURL &, const KParts::URLArgs &);
-    void openURL(const KURL &);
-    void write(const char *str, int len);
     void end();
     
     void slotData(NSString *, const char *bytes, int length, bool complete = false);
