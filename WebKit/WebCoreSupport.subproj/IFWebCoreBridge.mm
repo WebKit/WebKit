@@ -5,7 +5,7 @@
 
 #import <WebKit/IFWebCoreBridge.h>
 
-#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFResourceURLHandleClient.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebCoreFrame.h>

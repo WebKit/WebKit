@@ -1,3 +1,8 @@
+2002-07-08  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm: Fix compiles under newer compiler
+	(Jaguar 6C89 and newer) by adding missing include.
+
 2002-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         WebCore part of fix for Radar 2953431 - JavaScript window.close()
