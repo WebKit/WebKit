@@ -34,6 +34,14 @@
 @end
 
 
+static WCIFPluginMakeFunc WCIFPluginMake = NULL;
+
+void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func)
+{
+    WCIFPluginMake = func;
+}
+
+
 WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
@@ -66,7 +74,7 @@ WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QStrin
         return;
     }
     [plugin load];
-    setView([[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:mimeType arguments:arguments] autorelease]);
+    setView(WCIFPluginMake(NSMakeRect(0,0,0,0), this, plugin, QSTRING_TO_NSSTRING(url), mimeType, arguments));
 }
 
 WCPluginWidget::~WCPluginWidget()

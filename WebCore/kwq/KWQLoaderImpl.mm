@@ -30,6 +30,7 @@
 #include <loader.h>
 
 #include <WCURLHandle.h>
+#include <WCLoadProgress.h>
 
 // up to which size is a picture for sure cacheable
 #define MAXCACHEABLE 40*1024
@@ -57,6 +58,16 @@
 
 using namespace khtml;
 using namespace DOM;
+
+
+static WCIFLoadProgressMakeFunc WCIFLoadProgressMake;
+
+void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
+{
+    WCIFLoadProgressMake = func;
+}
+
+
 
 void CachedObject::finish()
 {
@@ -988,7 +999,7 @@ typedef enum {
     id <IFLoadHandler> controller;
     
     controller = [m_dataSource controller];
-    IFLoadProgress *loadProgress = [[[IFLoadProgress alloc] init] autorelease];
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
@@ -1008,7 +1019,7 @@ typedef enum {
     id <IFLoadHandler> controller;
     
     controller = [m_dataSource controller];
-    IFLoadProgress *loadProgress = [[[IFLoadProgress alloc] init] autorelease];
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = [data length];
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];

@@ -11,6 +11,7 @@
 #import <WebKit/IFException.h>
 
 #include <KWQKHTMLPart.h>
+#include <WCLoadProgress.h>
 #include <rendering/render_frames.h>
 
 
@@ -70,6 +71,17 @@
 @end
 
 @implementation IFLoadProgress
+
+static id IFLoadProgressMake() 
+{
+    return [[[IFLoadProgress alloc] init] autorelease];
+}
+
++(void) load
+{
+    WCSetIFLoadProgressMakeFunc(IFLoadProgressMake);
+}
+
 - init
 {
     return [super init];

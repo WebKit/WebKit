@@ -1,3 +1,24 @@
+2002-02-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix prebinding:
+
+	* src/Makefile.am: Enable prebinding, set first segment address to
+	0x2200000 to avoid colliding with apps or our other
+	frameworks. Change other link flags to support prebinding.
+
+	Set up some hacks to avoid link-time dependency on
+	WebKit. Prebinding is incompatible with - undefined suppress, so
+	we can't have WebCore depend on symbols provided by WebKit any
+	more:
+	
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKloader.mm: (WCSetIFLoadProgressMakeFunc), (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:data:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]):
+	* src/kwq/WCPluginWidget.h:
+	* src/kwq/WCPluginWidget.mm: (WCSetIFPluginMakeFunc),
+	(WCPluginWidget::WCPluginWidget):
+
 2002-02-22  Richard Williamson  <rjw@apple.com>
 
         Added data: to IFURLHandleResourceDidFinishLoading:

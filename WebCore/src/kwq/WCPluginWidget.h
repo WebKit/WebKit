@@ -33,6 +33,10 @@
 #include "qwidget.h"
 #include "qstring.h"
 #import <WCPlugin.h>
+
+
+typedef id (*WCIFPluginMakeFunc)(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments);
+void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func);
     
 // class WCPluginWidget ===============================================================
 

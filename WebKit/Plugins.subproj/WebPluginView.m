@@ -12,6 +12,7 @@
 #include <WCURLHandle.h>
 #import <IFWebDataSource.h>
 #import <IFBaseWebController.h>
+#include <WCPluginWidget.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +61,16 @@ extern "C" {
 @end
 
 @implementation IFPluginView
+
+static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments) 
+{
+    return [[[IFPluginView alloc] initWithFrame:rect widget:widget plugin:plugin url:url mime:mimeType arguments:arguments] autorelease];
+}
+
++(void) load
+{
+    WCSetIFPluginMakeFunc(IFPluginMake);
+}
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType  arguments:(NSDictionary *)arguments
 {

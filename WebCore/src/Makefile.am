@@ -29,9 +29,15 @@ LIBWEBCORE_INSTALL_PATH=$(symrootsdir)
 endif
 
 LDFLAGS = \
+	-framework Cocoa \
+	-framework CoreFoundation \
+	-F$(symrootsdir) -framework WebFoundation \
         -dynamiclib \
-        -flat_namespace -undefined suppress \
+	-twolevel_namespace \
+	-prebind \
+        -undefined error \
         -all_load \
+	-seg1addr 0x2200000 \
         -install_name $(LIBWEBCORE_INSTALL_PATH)/libwebcore.dylib \
 	$(NULL)
 

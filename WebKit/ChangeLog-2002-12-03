@@ -1,3 +1,20 @@
+2002-02-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix prebinding:
+
+	* WebKit.pbproj/project.pbxproj: Set first segment address
+	0x4000000 to avoid colliding with apps or our other frameworks.
+
+	Set up some hacks to avoid link-time dependency on
+	WebKit. Prebinding is incompatible with - undefined suppress, so
+	we can't have WebCore depend on symbols provided by WebKit any
+	more:
+
+	* Plugins.subproj/IFPluginView.mm: (IFPluginMake), (+[IFPluginView load]),
+	(startupVolumeName):
+	* WebView.subproj/IFBaseWebController.mm: (IFLoadProgressMake), (+[IFLoadProgress
+	load]):
+
 2002-02-22  John Sullivan  <sullivan@apple.com>
 
 	Updated for modified NSCalendarDate extensions API.
