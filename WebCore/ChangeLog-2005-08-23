@@ -1,3 +1,19 @@
+2004-08-24  David Hyatt  <hyatt@apple.com>
+
+	Add support for Atom and RSS MIME types to the set of XML types.
+	
+        Reviewed by rjw
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * khtml/misc/loader.cpp:
+        (CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (CachedXBLDocument::CachedXBLDocument):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+
 2004-08-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3746447> hang loading geocities.com/cinemaorchestra
