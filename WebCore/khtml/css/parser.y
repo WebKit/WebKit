@@ -517,7 +517,11 @@ selector:
     }
     | selector combinator simple_selector {
     	$$ = $3;
-        if ($$) {
+        if (!$1) {
+            delete $3;
+            $$ = 0;
+        }
+        else if ($$) {
             CSSSelector *end = $$;
             while( end->tagHistory )
                 end = end->tagHistory;

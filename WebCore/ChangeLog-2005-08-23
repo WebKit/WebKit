@@ -1,5 +1,17 @@
 2003-04-30  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3210725, invalid n/a selector treated as valid.  This
+	fix also makes the CSS1 test on the test suite for forward-compatible
+	parsing completely pass (yay!), which was an issue on
+	diveintomark's list.
+
+        Reviewed by gramps
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
+2003-04-30  David Hyatt  <hyatt@apple.com>
+
 	Fixes for 3227983 and 3224521, both bugs involving bad letter-spacing
 	property values.  This fixes all Movable Type blogs that had this
 	error in their stylesheets.
