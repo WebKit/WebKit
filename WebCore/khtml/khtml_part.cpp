@@ -4133,8 +4133,6 @@ void KHTMLPart::setZoomFactor (int percent)
 #if !APPLE_CHANGES
       QApplication::setOverrideCursor( waitCursor );
 #endif
-    if (d->m_doc->styleSelector())
-      d->m_doc->styleSelector()->computeFontSizes(d->m_doc->paintDeviceMetrics());
     d->m_doc->recalcStyle( NodeImpl::Force );
 #if !APPLE_CHANGES
     QApplication::restoreOverrideCursor();

@@ -138,9 +138,6 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     userSheet = 0;
     paintDeviceMetrics = doc->paintDeviceMetrics();
 
-    if (paintDeviceMetrics) // this may be null, not everyone uses khtmlview (Niko)
-        computeFontSizes(paintDeviceMetrics);
-        
     if ( !userStyleSheet.isEmpty() ) {
         userSheet = new DOM::CSSStyleSheetImpl(doc);
         userSheet->parseString( DOMString( userStyleSheet ) );
@@ -286,44 +283,6 @@ void CSSStyleSelector::clear()
     defaultSheet = 0;
     styleNotYetAvailable = 0;
 }
-
-#define MAXFONTSIZES 15
-
-void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics)
-{
-#if APPLE_CHANGES
-    // We don't want to scale the settings by the dpi.
-    const float toPix = 1;
-#else
-    // ### get rid of float / double
-    float toPix = paintDeviceMetrics->logicalDpiY()/72.;
-    if (toPix  < 96./72.) toPix = 96./72.;
-#endif
-
-    m_fontSizes.clear();
-    const float factor = 1.2;
-    float scale = 1.0 / (factor*factor*factor);
-    float mediumFontSize;
-    float minFontSize;
-    if (!khtml::printpainter) {
-        mediumFontSize = settings->mediumFontSize() * toPix;
-        minFontSize = toPix;
-        m_fixedScaleFactor = (settings->mediumFixedFontSize() * toPix) / mediumFontSize;
-    }
-    else {
-        // ## depending on something / configurable ?
-        mediumFontSize = 12;
-        minFontSize = 1;
-        m_fixedScaleFactor = 1.0;
-    }
-
-    for ( int i = 0; i < MAXFONTSIZES; i++ ) {
-        m_fontSizes << int(KMAX( mediumFontSize * scale + 0.5f, minFontSize));
-        scale *= factor;
-    }
-}
-
-#undef MAXFONTSIZES
 
 static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
 {
@@ -2674,7 +2633,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_FONT_SIZE:
     {
         FontDef fontDef = style->htmlFont().fontDef;
-        float oldSize;
+        float oldSize = 0;
         float size = 0;
         
         bool parentIsAbsoluteSize = false;
@@ -2682,30 +2641,29 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             oldSize = parentStyle->htmlFont().fontDef.specifiedSize;
             parentIsAbsoluteSize = parentStyle->htmlFont().fontDef.isAbsoluteSize;
         }
-        else
-            oldSize = m_fontSizes[3];
 
         if (isInherit)
             size = oldSize;
         else if (isInitial)
-            size = m_fontSizes[3];
+            size = fontSizeForKeyword(CSS_VAL_MEDIUM, style->htmlHacks());
         else if (primitiveValue->getIdent()) {
-            // keywords are being used.  Pick the correct default
-            // based off the font family.
+            // Keywords are being used.
             switch (primitiveValue->getIdent()) {
-            case CSS_VAL_XX_SMALL: size = m_fontSizes[0]; break;
-            case CSS_VAL_X_SMALL:  size = m_fontSizes[1]; break;
-            case CSS_VAL_SMALL:    size = m_fontSizes[2]; break;
-            case CSS_VAL_MEDIUM:   size = m_fontSizes[3]; break;
-            case CSS_VAL_LARGE:    size = m_fontSizes[4]; break;
-            case CSS_VAL_X_LARGE:  size = m_fontSizes[5]; break;
-            case CSS_VAL_XX_LARGE: size = m_fontSizes[6]; break;
-            case CSS_VAL__KHTML_XXX_LARGE:  size = ( m_fontSizes[6]*5 )/3; break;
+            case CSS_VAL_XX_SMALL:
+            case CSS_VAL_X_SMALL:
+            case CSS_VAL_SMALL:
+            case CSS_VAL_MEDIUM:
+            case CSS_VAL_LARGE:
+            case CSS_VAL_X_LARGE:
+            case CSS_VAL_XX_LARGE:
+            case CSS_VAL__KHTML_XXX_LARGE:
+                size = fontSizeForKeyword(primitiveValue->getIdent(), style->htmlHacks());
+                break;
             case CSS_VAL_LARGER:
-                size = oldSize * 1.2;
+                size = largerFontSize(oldSize, style->htmlHacks());
                 break;
             case CSS_VAL_SMALLER:
-                size = oldSize / 1.2;
+                size = smallerFontSize(oldSize, style->htmlHacks());
                 break;
             default:
                 return;
@@ -3513,9 +3471,10 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderSt
 
   // We know the parent is monospace or the child is monospace, and that font
   // size was unspecified.  We want to scale our font size as appropriate.
+  float fixedScaleFactor = ((float)settings->mediumFixedFontSize())/settings->mediumFontSize();
   float size = (parentFont.genericFamily == FontDef::eMonospace) ? 
-      childFont.specifiedSize/m_fixedScaleFactor :
-      childFont.specifiedSize*m_fixedScaleFactor;
+      childFont.specifiedSize/fixedScaleFactor :
+      childFont.specifiedSize*fixedScaleFactor;
   
   FontDef newFontDef(childFont);
   setFontSize(newFontDef, size);
@@ -3557,6 +3516,81 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
         zoomedSize = minLogicalSize;
     
     return KMAX(zoomedSize, 1.0f);
+}
+
+const int fontSizeTableMax = 16;
+const int fontSizeTableMin = 9;
+const int totalKeywords = 8;
+
+// WinIE/Nav4 table for font sizes.  Designed to match the legacy font mapping system of HTML.
+static const int quirksFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][totalKeywords] =
+{
+      { 9,    9,     9,     9,    11,    14,    18,    28 },
+      { 9,    9,     9,    10,    12,    15,    20,    31 },
+      { 9,    9,     9,    11,    13,    17,    22,    34 },
+      { 9,    9,    10,    12,    14,    18,    24,    37 },
+      { 9,    9,    10,    13,    16,    20,    26,    40 }, // fixed font default (13)
+      { 9,    9,    11,    14,    17,    21,    28,    42 },
+      { 9,   10,    12,    15,    17,    23,    30,    45 },
+      { 9,   10,    13,    16,    18,    24,    32,    48 }  // proportional font default (16)
+};
+// HTML       1      2      3      4      5      6      7
+// CSS  xxs   xs     s      m      l     xl     xxl
+//                          |
+//                      user pref
+
+// Strict mode table matches MacIE and Mozilla's settings exactly.
+static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][totalKeywords] =
+{
+      { 9,    9,     9,     9,    11,    14,    18,    27 },
+      { 9,    9,     9,    10,    12,    15,    20,    30 },
+      { 9,    9,    10,    11,    13,    17,    22,    33 },
+      { 9,    9,    10,    12,    14,    18,    24,    36 },
+      { 9,   10,    12,    13,    16,    20,    26,    39 }, // fixed font default (13)
+      { 9,   10,    12,    14,    17,    21,    28,    42 },
+      { 9,   10,    13,    15,    18,    23,    30,    45 },
+      { 9,   10,    13,    16,    18,    24,    32,    48 }  // proportional font default (16)
+};
+// HTML       1      2      3      4      5      6      7
+// CSS  xxs   xs     s      m      l     xl     xxl
+//                          |
+//                      user pref
+
+// For values outside the range of the table, we use Todd Fahrner's suggested scale
+// factors for each keyword value.
+static const float fontSizeFactors[totalKeywords] = { 0.60, 0.75, 0.89, 1.0, 1.2, 1.5, 2.0, 3.0 };
+
+float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode) const
+{
+    // FIXME: One issue here is that we set up the fixed font size as a scale factor applied
+    // to the proportional pref.  This means that we won't get pixel-perfect size matching for
+    // the 13px default, since we actually use the 16px row in the table and apply the fixed size
+    // scale later.
+    int mediumSize = settings->mediumFontSize();
+    if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
+        // Look up the entry in the table.
+        int row = mediumSize - fontSizeTableMin;
+        int col = (keyword - CSS_VAL_XX_SMALL);
+        return quirksMode ? quirksFontSizeTable[row][col] : strictFontSizeTable[row][col];
+    }
+    
+    // Value is outside the range of the table. Apply the scale factor instead.
+    float minLogicalSize = kMax(settings->minLogicalFontSize(), 1.0f);
+    return kMax(fontSizeFactors[keyword - CSS_VAL_XX_SMALL]*mediumSize, minLogicalSize);
+}
+
+float CSSStyleSelector::largerFontSize(float size, bool quirksMode) const
+{
+    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
+    // the next size level.  
+    return size*1.2;
+}
+
+float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
+{
+    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
+    // the next size level. 
+    return size/1.2;
 }
 
 } // namespace khtml

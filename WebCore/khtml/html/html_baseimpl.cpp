@@ -120,7 +120,7 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
 	else if ( attr->id() == ATTR_VLINK )
 	    aStr = "a:visited";
 	else if ( attr->id() == ATTR_ALINK )
-	    aStr = "a:active";
+            aStr = "a:link:active, a:visited:active";
 	aStr += " { color: " + attr->value().string() + "; }";
         m_styleSheet->parseString(aStr, !getDocument()->inCompatMode());
         m_styleSheet->setNonCSSHints();

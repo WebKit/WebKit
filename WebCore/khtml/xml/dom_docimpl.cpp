@@ -68,6 +68,8 @@
 #include "html/html_tableimpl.h"
 #include "html/html_objectimpl.h"
 
+#include "cssvalues.h"
+
 #include <kio/job.h>
 
 #if APPLE_CHANGES
@@ -984,7 +986,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
                 fontDef.family.setFamily(stdfont);
                 fontDef.family.appendFamily(0);
             }
-            m_styleSelector->setFontSize(fontDef, m_styleSelector->fontSizes()[3]);
+            m_styleSelector->setFontSize(fontDef, m_styleSelector->fontSizeForKeyword(CSS_VAL_MEDIUM, inCompatMode()));
         }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
@@ -1085,7 +1087,6 @@ void DocumentImpl::attach()
     
     // Create the rendering tree
     m_render = new (m_renderArena) RenderCanvas(this, m_view);
-    m_styleSelector->computeFontSizes(paintDeviceMetrics());
     recalcStyle( Force );
 
     RenderObject* render = m_render;

@@ -1,5 +1,46 @@
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3415771, Safari should use mini form controls when necessary.  This patch adds heuristics for
+	swapping in mini form controls and also drops intrinsic margins when mini form controls are used.
+
+	Fix for 3486454, options/optgroups should strip leading/trailing space.
+	
+	Together these two fixes solve 3486581, travelocity misrenders because form controls are too large.
+
+	Reviewed by Darin
+
+	Also fixing 3474994, alink needs to be restricted to actual links and not all <a> tags.
+
+	Reviewed by John
+
+	Finally, adding :active outlines around <input type=image> (covered by the old bug 3141767).
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::applyRule):
+        (khtml::CSSStyleSelector::checkForGenericFamilyChange):
+        (khtml::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        (khtml::):
+        (khtml::CSSStyleSelector::fontSizeForKeyword):
+        (khtml::CSSStyleSelector::largerFontSize):
+        (khtml::CSSStyleSelector::smallerFontSize):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/html4.css:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setZoomFactor):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::addIntrinsicMarginsIfAllowed):
+        (RenderSelect::updateFromElement):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::attach):
+        * kwq/KWQButton.mm:
+        (KWQNSControlSizeForFont):
+
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
 	Back out my change to exclude text runs from getting a relayout on a style change.  I totally forgot about
 	text zooming.
 	

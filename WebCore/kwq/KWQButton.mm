@@ -298,19 +298,14 @@ void QButton::setFont(const QFont &f)
 
 NSControlSize KWQNSControlSizeForFont(const QFont &f)
 {
-    return NSSmallControlSize;
-    // Dave is going to turn this on once he figures out what he wants to do
-    // about mini controls.
-#if 0
     const int fontSize = f.pixelSize();
-    if (fontSize >= 20) {
+    if (fontSize >= 16) {
         return NSRegularControlSize;
     }
-    if (fontSize >= 10) {
+    if (fontSize >= 11) {
         return NSSmallControlSize;
     }
     return NSMiniControlSize;
-#endif
 }
 
 QWidget::FocusPolicy QButton::focusPolicy() const

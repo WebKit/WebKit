@@ -332,9 +332,9 @@ BUTTON:active {
 
 /* XXX Need to implement support for CSS2 system fonts, so that I don't have to hard code this.
    -dwh */
-INPUT, TEXTAREA {
-	font: 11px 'Lucida Grande';
-        margin: 0__qem;
+INPUT, TEXTAREA, SELECT, BUTTON {
+    margin: 0__qem;
+    font: 11px 'Lucida Grande';
 }
 
 INPUT[type="hidden"] {
@@ -345,8 +345,8 @@ INPUT[type="radio"], INPUT[type="checkbox"] {
         margin: 3px 0.5ex;
 }
 
-SELECT {
-        margin: 0__qem;
+INPUT[type="image"]:active {
+  outline: -apple-aqua 3px 
 }
 
 OPTION, 
