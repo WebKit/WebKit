@@ -111,11 +111,11 @@ class JSObject
 public:
     JSObject(jlong nativeHandle);
     
-    jobject call(const char *methodName, jobjectArray args) const;
-    jobject eval(const char *script) const;
-    jobject getMember(const char *memberName) const;
-    void setMember(const char *memberName, jobject value) const;
-    void removeMember(const char *memberName) const;
+    jobject call(jstring methodName, jobjectArray args) const;
+    jobject eval(jstring script) const;
+    jobject getMember(jstring memberName) const;
+    void setMember(jstring memberName, jobject value) const;
+    void removeMember(jstring memberName) const;
     jobject getSlot(jint index) const;
     void setSlot(jint index, jobject value) const;
     jstring toString() const;

@@ -1,5 +1,41 @@
 2003-12-12  Richard Williamson   <rjw@apple.com>
 
+	Added implementation of stubs in JSObject.  All that
+	remains is a couple of simple conversion functions stubs and
+	we're done with LiveConnect.  Also, changed string passing to
+	JS to use uchars instead of chars.  
+
+        Reviewed by Maciej.
+
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaString::JavaString):
+        (Bindings::JavaString::_commonInit):
+        (Bindings::JavaString::_commonCopy):
+        (Bindings::JavaString::_commonDelete):
+        (Bindings::JavaString::~JavaString):
+        (Bindings::JavaString::operator=):
+        (Bindings::JavaString::uchars):
+        (Bindings::JavaString::length):
+        (Bindings::JavaString::ustring):
+        * bindings/jni/jni_utility.cpp:
+        (getUCharactersFromJStringInEnv):
+        (releaseUCharactersForJStringInEnv):
+        (convertValueToJObject):
+        (convertJObjectToValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/jni_jsobject.cpp:
+        (Bindings::JSObject::invoke):
+        (Bindings::JSObject::call):
+        (Bindings::JSObject::eval):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::setMember):
+        (Bindings::JSObject::removeMember):
+        (Bindings::JSObject::getSlot):
+        (Bindings::JSObject::setSlot):
+        * bindings/jni_jsobject.h:
+
+2003-12-12  Richard Williamson   <rjw@apple.com>
+
 	Ensure that all calls from Java into JavaScript are
 	performed on a designated thread (the main thread).
 

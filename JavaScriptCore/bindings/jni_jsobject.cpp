@@ -358,27 +358,27 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
             }
         
             case Call: {
-                result.l = JSObject(nativeHandle).call(JavaString(context->string).characters(), context->args);
+                result.l = JSObject(nativeHandle).call(context->string, context->args);
                 break;
             }
             
             case Eval: {
-                result.l = JSObject(nativeHandle).eval(JavaString(context->string).characters());
+                result.l = JSObject(nativeHandle).eval(context->string);
                 break;
             }
         
             case GetMember: {
-                result.l = JSObject(nativeHandle).getMember(JavaString(context->string).characters());
+                result.l = JSObject(nativeHandle).getMember(context->string);
                 break;
             }
             
             case SetMember: {
-                JSObject(nativeHandle).setMember(JavaString(context->string).characters(), context->value);
+                JSObject(nativeHandle).setMember(context->string, context->value);
                 break;
             }
             
             case RemoveMember: {
-                JSObject(nativeHandle).removeMember(JavaString(context->string).characters());
+                JSObject(nativeHandle).removeMember(context->string);
                 break;
             }
         
@@ -423,13 +423,13 @@ JSObject::JSObject(jlong nativeJSObject)
 }
 
 
-jobject JSObject::call(const char *methodName, jobjectArray args) const
+jobject JSObject::call(jstring methodName, jobjectArray args) const
 {
-    JS_LOG ("methodName = %s\n", methodName);
+    JS_LOG ("methodName = %s\n", JavaString(methodName).characters());
 
     // Lookup the function object.
     ExecState *exec = _root->interpreter()->globalExec();
-    Value func = _imp->get (exec, Identifier (methodName));
+    Value func = _imp->get (exec, Identifier (JavaString(methodName).ustring()));
     if (func.isNull() || func.type() == UndefinedType) {
         // Maybe throw an exception here?
         return 0;
@@ -445,40 +445,61 @@ jobject JSObject::call(const char *methodName, jobjectArray args) const
     return convertValueToJObject (exec, result);
 }
 
-jobject JSObject::eval(const char *script) const
+jobject JSObject::eval(jstring script) const
 {
-    JS_LOG ("script = %s\n", script);
-    return 0;
+    JS_LOG ("script = %s\n", JavaString(script).characters());
+
+    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    KJS::Value result = _root->interpreter()->evaluate(JavaString(script).ustring(),thisObj).value();
+    ExecState *exec = _root->interpreter()->globalExec();
+
+    return convertValueToJObject (exec, result);
 }
 
-jobject JSObject::getMember(const char *memberName) const
+jobject JSObject::getMember(jstring memberName) const
 {
-    JS_LOG ("memberName = %s\n", memberName);
-    return 0;
+    JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
+
+    ExecState *exec = _root->interpreter()->globalExec();
+    Value result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
+
+    return convertValueToJObject (exec, result);
 }
 
-void JSObject::setMember(const char *memberName, jobject value) const
+void JSObject::setMember(jstring memberName, jobject value) const
 {
-    JS_LOG ("memberName = %s\n", memberName);
+    JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
+    ExecState *exec = _root->interpreter()->globalExec();
+    _imp->put (exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(exec, value));
 }
 
 
-void JSObject::removeMember(const char *memberName) const
+void JSObject::removeMember(jstring memberName) const
 {
-    JS_LOG ("memberName = %s\n", memberName);
+    JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
+
+    ExecState *exec = _root->interpreter()->globalExec();
+    _imp->deleteProperty (exec, Identifier (JavaString(memberName).ustring()));
 }
 
 
 jobject JSObject::getSlot(jint index) const
 {
     JS_LOG ("index = %d\n", index);
-    return 0;
+
+    ExecState *exec = _root->interpreter()->globalExec();
+    Value result = _imp->get (exec, (unsigned)index);
+
+    return convertValueToJObject (exec, result);
 }
 
 
 void JSObject::setSlot(jint index, jobject value) const
 {
     JS_LOG ("index = %d, value = %p\n", index, value);
+
+    ExecState *exec = _root->interpreter()->globalExec();
+    _imp->put (exec, (unsigned)index, convertJObjectToValue(exec, value));
 }
 
 

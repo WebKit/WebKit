@@ -346,6 +346,22 @@ void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char
     env->ReleaseStringUTFChars (aJString, s);
 }
 
+const jchar *getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
+{
+    jboolean isCopy;
+    const jchar *s = env->GetStringChars((jstring)aJString, &isCopy);
+    if (!s) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+    }
+    return s;
+}
+
+void releaseUCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const jchar *s)
+{
+    env->ReleaseStringChars (aJString, s);
+}
+
 JNIType JNITypeFromClassName(const char *name)
 {
     JNIType type;
@@ -605,6 +621,12 @@ jobject convertValueToJObject (KJS::ExecState *exec, KJS::Value value)
 {
     // FIXME:  Implement!
     return 0;
+}
+
+KJS::Value convertJObjectToValue (KJS::ExecState *exec, jobject)
+{
+    // FIXME:  Implement!
+    return KJS::Undefined();
 }
 
 KJS::List listFromJArray(jobjectArray jArray)
