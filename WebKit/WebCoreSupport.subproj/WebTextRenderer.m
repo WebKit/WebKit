@@ -415,19 +415,20 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         usedCharacterBuffer = characterBuffer;
     }
 
-    [self drawCharacters: usedCharacterBuffer length: length atPoint: point withColor: color];
+    [self drawCharacters: usedCharacterBuffer length: length atPoint: point withTextColor: color];
     
     if (characterBuffer != localCharacterBuffer)
         free(characterBuffer);
 }
 
 
-- (NSPoint)drawGlyphs: (CGGlyph *)glyphs numGlyphs: (unsigned int)numGlyphs atPoint: (NSPoint)point withColor: (NSColor *)color
+- (NSPoint)drawGlyphs: (CGGlyph *)glyphs numGlyphs: (unsigned int)numGlyphs fromGlyphPosition: (int)from toGlyphPosition: (int)to atPoint: (NSPoint)point withTextColor: (NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
     unsigned int i;
     CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
     CGContextRef cgContext;
     NSPoint advancePoint = point;
+    float startX, backgroundWidth;
 
     if (numGlyphs == 0)
         return point;
@@ -451,16 +452,28 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         advancePoint.x += advances[i].width;
     }
 
+    startX = point.x;
+    for (i = 0; (int)i < from; i++)
+        startX += advances[i].width;
+ 
+     for (i = from; (int)i < to; i++)
+        backgroundWidth += advances[i].width;
+    
+    if (backgroundColor != nil){
+        [backgroundColor set];
+        [NSBezierPath fillRect:NSMakeRect(startX, point.y - ascent, backgroundWidth, lineSpacing)];
+    }
+    
     // Setup the color and font.
-    [color set];
+    [textColor set];
     [font set];
     
     // Finally, draw the glyphs.
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-
-    CGContextSetTextPosition (cgContext, point.x, point.y);
-    CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
-    //CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
+    if (from < (int)numGlyphs){
+        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        CGContextSetTextPosition (cgContext, startX, point.y);
+        CGContextShowGlyphsWithAdvances (cgContext, &glyphs[from], &advances[from], to - from);
+    }
 
     if (advances != localAdvanceBuffer) {
         free(advances);
@@ -470,14 +483,20 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
 // Useful page for testing http://home.att.net/~jameskass
 
-- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color attemptFontSubstitution: (BOOL)attemptFontSubstitution
+- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor attemptFontSubstitution: (BOOL)attemptFontSubstitution
 {
     unsigned int charPos = 0, lastDrawnGlyph = 0;
     unsigned int clusterLength, i, numGlyphs, fragmentLength;
     NSFont *substituteFont;
     CGGlyph *glyphs;
     ATSGlyphRef glyphID;
+    int fromGlyph = INT32_MAX, toGlyph = INT32_MAX;
     
+    if (from == -1)
+        from = 0;
+    if (to == -1)
+        to = length;
+        
     [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &glyphs numGlyphs: &numGlyphs];
 
     // FIXME:  This assumes that we'll always get one glyph per character cluster.
@@ -485,19 +504,28 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         glyphID = glyphs[i];
 
         clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
+
+        if ((int)charPos >= from && fromGlyph == INT32_MAX)
+            fromGlyph = i;
         
+        if ((int)charPos >= to && toGlyph == INT32_MAX)
+            toGlyph = i-1;
+                
         if (glyphID == 0 && attemptFontSubstitution){
+            
             // Draw everthing up to this point.
             fragmentLength = i - lastDrawnGlyph;
             if (fragmentLength > 0)
-                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength atPoint: point withColor: color];
+                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: fromGlyph-lastDrawnGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
             
             // Draw the character in the alternate font.
             substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];
-            if (substituteFont)
-                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength atPoint: point withColor: color attemptFontSubstitution: NO];
+            if (substituteFont){
+                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength fromCharacterPosition: from - charPos toCharacterPosition:to - charPos atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: NO];
+            }
+            // No substitute font, draw null glyph
             else
-                point = [self drawGlyphs: &glyphs[i] numGlyphs: 1 atPoint: point withColor: color];
+                point = [self drawGlyphs: &glyphs[i] numGlyphs: 1 fromGlyphPosition: fromGlyph-i toGlyphPosition:MIN((toGlyph-(int)i), 1) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
                 
             lastDrawnGlyph = i+1;
         }
@@ -507,7 +535,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
     fragmentLength = numGlyphs - lastDrawnGlyph;
     if (fragmentLength > 0)
-        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength atPoint: point withColor: color];
+        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: fromGlyph-lastDrawnGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
         
     if (glyphs)
         free(glyphs);
@@ -517,12 +545,12 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
 
 typedef enum {
-	_IFNonBaseCharacter,
-	_IFMissingGlyph,
-	_IFDrawSucceeded,
+    _IFNonBaseCharacter,
+    _IFMissingGlyph,
+    _IFDrawSucceeded,
 } _IFFailedDrawReason;
 
-- (_IFFailedDrawReason)_drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+- (_IFFailedDrawReason)_drawCharacters:(const UniChar *)characters length: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
     uint i;
     CGGlyph *glyphs, localGlyphBuffer[LOCAL_BUFFER_SIZE];
@@ -571,7 +599,12 @@ typedef enum {
         glyphs[i] = glyphID;
     }
 
-    [self drawGlyphs: glyphs numGlyphs: length atPoint: point withColor: color];
+    if (from == -1)
+        from = 0;
+    if (to == -1)
+        to = length;
+        
+    [self drawGlyphs: glyphs numGlyphs: length fromGlyphPosition: from toGlyphPosition:to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
 
 cleanup:
     if (glyphs != localGlyphBuffer) {
@@ -580,17 +613,27 @@ cleanup:
     return result;
 }
 
+- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: backgroundColor
+{
+    [self drawCharacters: characters stringLength: length fromCharacterPosition: 0 toCharacterPosition: length atPoint: point withTextColor: textColor backgroundColor: backgroundColor]; 
+}
 
-- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withTextColor:(NSColor *)textColor
+{
+    [self drawCharacters: characters length: length atPoint: point withTextColor: textColor backgroundColor: nil];
+}
+
+
+- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
     //printf("draw: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
 
     NSFont *substituteFont;
-    _IFFailedDrawReason reason = [self _drawCharacters: characters length: length atPoint: point withColor: color];
+    _IFFailedDrawReason reason = [self _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
     
     // ASSUMPTION:  We normally fail because we're trying to render characters
-    // that doesn't have glyphs in the specified fonts.  Instead of immediately using the slow path
-    // we look for a font corresponding to the first character cluster in the string
+    // that don't have glyphs in the specified fonts.  If we failed in this way
+    // look for a font corresponding to the first character cluster in the string
     // and try rendering the entire string with that font.  If that fails we fall back 
     // to the safe slow drawing.
     if (reason == _IFMissingGlyph) {
@@ -599,13 +642,13 @@ cleanup:
         clusterLength = findLengthOfCharacterCluster(characters, length);
         substituteFont = [self substituteFontForCharacters: characters length: clusterLength];
         if (substituteFont)
-            reason = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length atPoint: point withColor: color];
+            reason = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
          
          if (!substituteFont || reason != _IFDrawSucceeded)
-            [self slowDrawCharacters: characters length: length atPoint: point withColor: color attemptFontSubstitution: YES];
+            [self slowDrawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition:to atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: YES];
     }
     else if (reason == _IFNonBaseCharacter) {
-        [self slowDrawCharacters: characters length: length atPoint: point withColor: color attemptFontSubstitution: YES];
+        [self slowDrawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition:to atPoint: point withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: YES];
     }
 }
 

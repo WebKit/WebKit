@@ -42,9 +42,17 @@ void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, Ren
     if(startPos < 0) startPos = 0;
 
     p->save();
+#ifdef APPLE_CHANGES
+    QColor textColor = style->color();
+    QColor c = QPainter::selectedTextBackgroundColor();
+    
+    if (textColor == c)
+        c = QColor (0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
+    p->setPen(style->color());
+#else
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
-
+#endif
     ty += m_baseline;
 
     //kdDebug( 6040 ) << "textSlave::printing(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;

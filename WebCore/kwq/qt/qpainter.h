@@ -98,6 +98,7 @@ public:
         QRect *br=0, char **internal=0);
     void drawText(int, int, const QString &, int, TextDirection);
     void drawText(int, int, const QString &, int, int, TextDirection);
+    void QPainter::drawText (int x, int y, const QString &qstring, int from, int to, QColor backgroundColor);
 
     void fillRect(int, int, int, int, const QBrush &);
     void drawConvexPolygon(const QPointArray &);
@@ -121,6 +122,8 @@ public:
 
     void drawUnderlineForText(int x, int y, const QString &, int len=-1);
 
+    static QColor selectedTextBackgroundColor();
+    
 private:
     // no copying or assignment
     // note that these are "standard" (no pendantic stuff needed)

@@ -1,3 +1,28 @@
+2002-06-26  Richard Williamson  <rjw@apple.com>
+
+        Many improvements to selection.  More Cocoa like,
+        normalized all text drawing code paths for selected 
+        and unselected cases.  Still need to work on
+        TextSlave::checkSelectionPoint.  Fixed redraw region
+        problems.
+        
+        khtml redraw the entire visible region when selection changes.
+        This could be optimzed.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        (Font::width):
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::printSelection):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        (QPainter::selectedTextBackgroundColor):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::contentsX):
+        (QScrollView::contentsY):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/qt/qpainter.h:
+
 2002-06-26  Maciej Stachowiak  <mjs@apple.com>
 
         Implement KHTMLPart::findFrame() to fix the following Radar bugs:

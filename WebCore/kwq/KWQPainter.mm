@@ -437,7 +437,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()]
-        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withColor:data->qpen.color().getNSColor()];
+        drawCharacters:(const UniChar *)qstring.unicode() length: len atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor()];
 
     _unlockFocus();
 }
@@ -445,20 +445,41 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
 void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDirection dir)
 {
-    if (dir == RTL) {
-        _logPartiallyImplemented();
-    }
-
+    //drawText(x, y, qstring, 0, len, dir);
     drawText(x, y, qstring, len);
+}
+
+void QPainter::drawText (int x, int y, const QString &qstring, int from, int to, QColor backgroundColor)
+{
+    _lockFocus();
+
+    id <WebCoreTextRenderer>renderer = [[WebCoreTextRendererFactory sharedFactory]
+        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()];
+        
+    [renderer drawCharacters:(const UniChar *)qstring.unicode() stringLength: qstring.length() fromCharacterPosition: from toCharacterPosition: to atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor() backgroundColor: backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
+
+    _unlockFocus();
 }
 
 
 void QPainter::drawText (int x, int y, const QString &qstring, int pos, int len, TextDirection dir)
 {
+    if (dir == RTL) {
+        _logPartiallyImplemented();
+    }
+
+#if 1
     if (pos != 0)
         drawText(x, y, qstring.mid(pos, len), len, dir);
     else
         drawText(x, y, qstring, len, dir);
+#else
+
+    id <WebCoreTextRenderer>renderer = [[WebCoreTextRendererFactory sharedFactory]
+        rendererWithFamily:data->qfont.getNSFamily() traits:data->qfont.getNSTraits() size:data->qfont.getNSSize()];
+        
+    [renderer drawCharacters:(const UniChar *)qstring.unicode() stringLength: qstring.length() fromCharacterPosition: pos numberOfCharacters: len atPoint:NSMakePoint(x,y) withTextColor:data->qpen.color().getNSColor()];
+#endif
 }
 
 
@@ -514,6 +535,14 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
         drawString:string inRect:NSMakeRect(x, y, w, h) withColor:data->qpen.color().getNSColor() paragraphStyle:style];
 
     _unlockFocus();
+}
+
+QColor QPainter::selectedTextBackgroundColor()
+{
+    NSColor *color = [NSColor selectedTextBackgroundColor];
+    
+    color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    return QColor ((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
 

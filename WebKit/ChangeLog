@@ -1,3 +1,14 @@
+2002-06-26  Richard Williamson  <rjw@apple.com>
+
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer drawString:atPoint:withColor:]):
+        (-[IFTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withTextColor:backgroundColor:]):
+        (-[IFTextRenderer slowDrawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:attemptFontSubstitution:]):
+        (-[IFTextRenderer _drawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:]):
+        (-[IFTextRenderer drawCharacters:length:atPoint:withTextColor:backgroundColor:]):
+        (-[IFTextRenderer drawCharacters:length:atPoint:withTextColor:]):
+        (-[IFTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:]):
+
 2002-06-26  Darin Adler  <darin@apple.com>
 
 	- fixed 2969280 -- if trailing / not specified for site, relative URLs are

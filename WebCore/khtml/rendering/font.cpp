@@ -40,61 +40,69 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 {
     QString qstr = QConstString(str, slen).string();
 
+    //fprintf (stdout, "x %d, y %d, pos %d, qstr.length() %d, len %d, toAdd %d, from %d, to %d, str \"%s\"\n", x, y, pos, qstr.length(), len, toAdd, from, to, qstr.ascii());
+#ifdef APPLE_CHANGES    
+    if (pos != 0)
+        p->drawText(x, y, qstr.mid(pos, len), from, to, bg);
+    else if (len < slen) {
+        qstr.truncate(len);
+        p->drawText(x, y, qstr, from, to, bg);
+    }
+    else 
+        p->drawText(x, y, qstr, from, to, bg);
+#else
     // hack for fonts that don't have a welldefined nbsp
     if ( !fontDef.hasNbsp ) {
-#ifdef APPLE_CHANGES    
-	qstr.truncate( slen );
-#else
-	// str.setLength() always does a deep copy, so the replacement code below is safe.
-	qstr.setLength( slen );
-#endif	
-	QChar *uc = (QChar *)qstr.unicode();
-	for( int i = 0; i < slen; i++ )
-	    if ( (uc+i)->unicode() == 0xa0 )
-		*(uc+i) = ' ';
+        // str.setLength() always does a deep copy, so the replacement code below is safe.
+        qstr.setLength( slen );
+        QChar *uc = (QChar *)qstr.unicode();
+        for( int i = 0; i < slen; i++ )
+            if ( (uc+i)->unicode() == 0xa0 )
+            *(uc+i) = ' ';
     }
 
     // ### fixme for RTL
     if ( !letterSpacing && !wordSpacing && !toAdd && from==-1 ) {
-	// simply draw it
-	p->drawText( x, y, qstr, pos, len, d );
+        // simply draw it
+        p->drawText( x, y, qstr, pos, len, d );
     } else {
-	int numSpaces = 0;
-	if ( toAdd ) {
-	    for( int i = 0; i < len; i++ )
-		if ( str[i+pos].direction() == QChar::DirWS )
-		    numSpaces++;
-	}
-
-	if ( d == QPainter::RTL ) {
-	    x += width( str, slen, pos, len ) + toAdd;
-	}
-	for( int i = 0; i < len; i++ ) {
-	    int chw = fm.charWidth( qstr, pos+i );
-	    if ( letterSpacing )
-		chw += letterSpacing;
-	    if ( (wordSpacing || toAdd) && str[i+pos].isSpace() ) {
-		chw += wordSpacing;
-		if ( numSpaces ) {
-		    int a = toAdd/numSpaces;
-		    chw += a;
-		    toAdd -= a;
-		    numSpaces--;
-		}
-	    }
-	    if ( d == QPainter::RTL )
-		x -= chw;
+        int numSpaces = 0;
+        if ( toAdd ) {
+            for( int i = 0; i < len; i++ )
+            if ( str[i+pos].direction() == QChar::DirWS )
+                numSpaces++;
+        }
+    
+        if ( d == QPainter::RTL ) {
+            x += width( str, slen, pos, len ) + toAdd;
+        }
+        for( int i = 0; i < len; i++ ) {
+            int chw = fm.charWidth( qstr, pos+i );
+            if ( letterSpacing )
+                chw += letterSpacing;
+            if ( (wordSpacing || toAdd) && str[i+pos].isSpace() ) {
+                chw += wordSpacing;
+                if ( numSpaces ) {
+                    int a = toAdd/numSpaces;
+                    chw += a;
+                    toAdd -= a;
+                    numSpaces--;
+                }
+            }
+            if ( d == QPainter::RTL )
+                x -= chw;
             if ( to==-1 || (i>=from && i<to) )
             {
                 if ( bg.isValid() )
                     p->fillRect( x, y-fm.ascent(), chw, fm.height(), bg );
 
-	        p->drawText( x, y, qstr, pos+i, 1, d );
+                p->drawText( x, y, qstr, pos+i, 1, d );
             }
-	    if ( d != QPainter::RTL )
-		x += chw;
-	}
+            if ( d != QPainter::RTL )
+                x += chw;
+        }
     }
+#endif
 }
 
 
@@ -118,14 +126,14 @@ int Font::width( QChar *chs, int slen, int pos, int len ) const
     int w = fm.width( qstr );
 
     if ( letterSpacing )
-	w += len*letterSpacing;
+	    w += len*letterSpacing;
 
     if ( wordSpacing )
-	// add amount
-	for( int i = 0; i < len; i++ ) {
-	    if( chs[i+pos].isSpace() )
-		w += wordSpacing;
-	}
+        // add amount
+        for( int i = 0; i < len; i++ ) {
+            if( chs[i+pos].isSpace() )
+            w += wordSpacing;
+        }
 
     return w;
 #endif
