@@ -45,11 +45,11 @@ void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, Ren
 
     p->save();
 #ifdef APPLE_CHANGES
+    // Macintosh-style text highlighting is to draw with a particular background color, not invert.
     QColor textColor = style->color();
     QColor c = QPainter::selectedTextBackgroundColor();
-    
     if (textColor == c)
-        c = QColor (0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
+        c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
     p->setPen(style->color());
 #else
     QColor c = style->color();
@@ -77,6 +77,7 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
         width -= p->paddingRight() + p->borderRight();
 
 #ifdef APPLE_CHANGES
+    // Use a special function for underlines to get the positioning exactly right.
     if(deco & UNDERLINE) {
         QConstString s(p->str->s + m_start, m_len);
         pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
@@ -160,6 +161,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
     }
 
 #ifdef APPLE_CHANGES
+    // Floating point version needed for best results with Mac OS X text.
     float delta = _x - (_tx + m_x);
     //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
     int pos = 0;

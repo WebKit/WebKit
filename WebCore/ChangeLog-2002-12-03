@@ -1,3 +1,26 @@
+2002-07-22  Darin Adler  <darin@apple.com>
+
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::printSelection): Add comments to APPLE_CHANGES.
+        (TextSlave::printDecoration): Add comments to APPLE_CHANGES.
+        (TextSlave::checkSelectionPoint): Add comments to APPLE_CHANGES.
+
+        * khtml/xml/dom_stringimpl.cpp: Add comments to APPLE_CHANGES.
+
+        * khtml/xml/xml_tokenizer.cpp: (XMLTokenizer::end): Remove APPLE_CHANGES.
+        * kwq/KWQsignals.mm: Add a new signal dummy function.
+
+        * kwq/WebCoreJavaScript.h: Fix header.
+        * kwq/WebCoreJavaScript.mm: Fix header.
+
+        * kwq/WebCoreSettings.h: Added. Not used yet.
+        * kwq/WebCoreSettings.m: Added. Not used yet.
+        * WebCore.pbproj/project.pbxproj: Added WebCoreSettings.h and .m.
+
+        * English.lproj/InfoPlist.strings: Fixed a spelling error.
+
+        * kwq/WebCoreTextRendererFactory.h: Tweak.
+
 2002-07-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed Radar 3004897 - assert at mapquest

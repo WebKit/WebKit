@@ -25,16 +25,58 @@
 
 #import <Foundation/Foundation.h>
 
-@interface WebCoreJavaScript : NSObject
+@interface WebCoreSettings : NSObject
 {
+    NSString *standardFontFamily;
+    NSString *fixedFontFamily;
+    NSString *serifFontFamily;
+    NSString *sansSerifFontFamily;
+    NSString *cursiveFontFamily;
+    NSString *fantasyFontFamily;
+    float minimumFontSize;
+    float mediumFontSize;
+    BOOL JavaEnabled;
+    BOOL pluginsEnabled;
+    BOOL JavaScriptEnabled;
+    BOOL JavaScriptCanOpenWindowsAutomatically;
 }
 
-+ (int)interpreterCount;
++ (WebCoreSettings *)sharedSettings;
 
-+ (int)objectCount;
-+ (int)noGCAllowedObjectCount;
-+ (int)referencedObjectCount;
+- (void)setStandardFontFamily:(NSString *)family;
+- (NSString *)standardFontFamily;
 
-+ (void)garbageCollect;
+- (void)setFixedFontFamily:(NSString *)family;
+- (NSString *)fixedFontFamily;
+
+- (void)setSerifFontFamily:(NSString *)family;
+- (NSString *)serifFontFamily;
+
+- (void)setSansSerifFontFamily:(NSString *)family;
+- (NSString *)sansSerifFontFamily;
+
+- (void)setCursiveFontFamily:(NSString *)family;
+- (NSString *)cursiveFontFamily;
+
+- (void)setFantasyFontFamily:(NSString *)family;
+- (NSString *)fantasyFontFamily;
+
+- (void)setMinimumFontSize:(float)size;
+- (float)minimumFontSize;
+
+- (void)setMediumFontSize:(float)size;
+- (float)mediumFontSize;
+
+- (void)setJavaEnabled:(BOOL)enabled;
+- (BOOL)JavaEnabled;
+
+- (void)setPluginsEnabled:(BOOL)enabled;
+- (BOOL)pluginsEnabled;
+
+- (void)setJavaScriptEnabled:(BOOL)enabled;
+- (BOOL)JavaScriptEnabled;
+
+- (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)enabled;
+- (BOOL)JavaScriptCanOpenWindowsAutomatically;
 
 @end

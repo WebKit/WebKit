@@ -318,9 +318,7 @@ void XMLTokenizer::write( const QString &str, bool /*appendData*/ )
 
 void XMLTokenizer::end()
 {
-#ifndef APPLE_CHANGES
     emit finishedParsing();
-#endif
 }
 
 void XMLTokenizer::finish()

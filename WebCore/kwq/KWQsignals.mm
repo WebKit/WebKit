@@ -25,15 +25,9 @@
  
 #import <khtmlview.h>
 #import <loader.h>
+#import <xml_tokenizer.h>
 
-void KHTMLView::cleared()
-{
-}
-
-void khtml::Loader::requestDone( khtml::DocLoader *, khtml::CachedObject *obj )
-{
-}
-
-void khtml::Loader::requestFailed( khtml::DocLoader *, khtml::CachedObject *obj )
-{
-}
+void KHTMLView::cleared() { }
+void khtml::Loader::requestDone(khtml::DocLoader *, khtml::CachedObject *) { }
+void khtml::Loader::requestFailed(khtml::DocLoader *, khtml::CachedObject *) { }
+void Tokenizer::finishedParsing() { }

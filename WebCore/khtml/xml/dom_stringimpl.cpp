@@ -31,10 +31,9 @@
 using namespace DOM;
 using namespace khtml;
 
-#ifdef APPLE_CHANGES
 namespace DOM {
+
 using khtml::Fixed;
-#endif
 
 DOMStringImpl::DOMStringImpl(const char *str)
 {
@@ -190,6 +189,7 @@ khtml::Length* DOMStringImpl::toLengthArray(int& len) const
     // make sure not to break percentage or relative widths
     // ### what about "auto" ?
 #ifdef APPLE_CHANGES
+    // This alternate version works around a limitation in our QString implementation.
     QChar spacified[l];
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
@@ -277,6 +277,4 @@ DOMStringImpl *DOMStringImpl::capitalize()
     return c;
 }
 
-#ifdef APPLE_CHANGES
 } // namespace DOM
-#endif

@@ -484,6 +484,7 @@
 				F505847602E0934D018635CE,
 				F5B2A4FE02E2220F018635CB,
 				F5B2A52D02E22573018635CB,
+				F565AE8702ECA583018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -708,6 +709,7 @@
 				F5B2A52E02E22573018635CB,
 				F54A61D402E3523B01A80180,
 				F57B0EE102EBC78B018635CA,
+				F565AE8802ECA583018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3585,6 +3587,31 @@
 			settings = {
 			};
 		};
+		F565AE8502ECA583018635CA = {
+			isa = PBXFileReference;
+			path = WebCoreSettings.h;
+			refType = 4;
+		};
+		F565AE8602ECA583018635CA = {
+			isa = PBXFileReference;
+			path = WebCoreSettings.m;
+			refType = 4;
+		};
+		F565AE8702ECA583018635CA = {
+			fileRef = F565AE8502ECA583018635CA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F565AE8802ECA583018635CA = {
+			fileRef = F565AE8602ECA583018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F57B0EE002EBC78B018635CA = {
 			isa = PBXFileReference;
 			path = KWQStyle.mm;
@@ -5172,6 +5199,8 @@
 				F5B2A52B02E22573018635CB,
 				F5B2A52C02E22573018635CB,
 				F587855002DE375901EA4122,
+				F565AE8502ECA583018635CA,
+				F565AE8602ECA583018635CA,
 				F587855102DE375901EA4122,
 				F587855202DE375901EA4122,
 				F587855302DE375901EA4122,
