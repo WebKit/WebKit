@@ -1,3 +1,14 @@
+2003-04-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3182103 - REGRESSION: one developer.apple.com page is so slow, it almost seems like a hang 
+	
+        * khtml/rendering/bidi.cpp:
+	(RenderBlock::findNextLineBreak): Avoid returning bad iterators
+	that point past the end of an object instead of to the start ot
+	the next one.
+
 2003-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

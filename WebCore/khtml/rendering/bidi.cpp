@@ -1850,6 +1850,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
         }
     }
 
+    // We might have made lBreak an iterator that points past the end
+    // of the object. Do this adjustment to make it point to the start
+    // of the next object instead to avoid confusing the rest of the
+    // code.
+    if (lBreak.pos > 0) {
+	lBreak.pos--;
+	++lBreak;
+    }
+
     return lBreak;
 }
 
