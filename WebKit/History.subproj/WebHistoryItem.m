@@ -114,18 +114,12 @@
 -(NSImage *)icon
 {
     if (!_loadedIcon) {
-        NSImage *newIcon;
-        
-        if (_URL != nil) {
-            newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:_URL withSize:WebIconSmallSize];
-        }else{
-            newIcon = nil;
-        }
+        NSImage *newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:_URL withSize:WebIconSmallSize];
         [self _setIcon:newIcon];
         _loadedIcon = YES;
     }
 
-    return _icon ? _icon : [WebIconLoader defaultIcon];
+    return _icon;
 }
 
 

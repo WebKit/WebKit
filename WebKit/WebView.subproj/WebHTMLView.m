@@ -13,6 +13,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -446,7 +447,7 @@
         
             [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
             [_private->draggedURL writeToPasteboard: pasteboard];
-            [self dragImage:[WebIconLoader defaultIcon]
+            [self dragImage:[[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize]
                         at:[self convertPoint:[event locationInWindow] fromView:nil]
                     offset:NSMakeSize(0.0,0.0)
                     event:event

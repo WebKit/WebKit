@@ -12,7 +12,7 @@
 - (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
 
 - (void)receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
-- (void)receivedPageIcon:(NSImage *)image fromURL:(NSURL *)iconURL forDataSource:(WebDataSource *)dataSource { }
+- (void)receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
 
 - (void)serverRedirectTo:(NSURL *)URL forDataSource:(WebDataSource *)dataSource { }
 

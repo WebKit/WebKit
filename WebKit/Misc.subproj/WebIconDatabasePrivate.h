@@ -34,6 +34,7 @@
     BOOL waitingToCleanup;
 
     NSMutableArray *htmlIcons;
+    NSMutableArray *defaultIcons;
 }
 
 @end
@@ -50,5 +51,7 @@
 - (void)_setIconURL:(NSURL *)iconURL forSiteURL:(NSURL *)siteURL;
 
 - (void)_setBuiltInIcon:(NSImage *)icon forHost:(NSString *)host;
+
+- (BOOL)_hasIconForSiteURL:(NSURL *)siteURL;
 
 @end

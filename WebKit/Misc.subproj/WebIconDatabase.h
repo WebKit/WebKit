@@ -24,8 +24,8 @@
  */
 
 // Sent whenever a site icon has changed. The object of the notification is the icon database.
-// Upon receiving this notification the receiver should call doesNotificationUserInfo: matchSiteURL:
-// to determine if the site URL in question has an updated icon.
+// The userInfo contains the site URL who's icon has changed.
+// It can be accessed with the key WebIconNotificationUserInfoSiteURLKey.
 extern NSString *WebIconDidChangeNotification;
 
 extern NSString *WebIconNotificationUserInfoSiteURLKey;
@@ -49,6 +49,8 @@ extern NSSize WebIconMediumSize; // 32 x 32
 // Usually called by a UI element to determine if a site URL has an associated icon.
 // Also usually called by the observer of WebIconChangedNotification after the notification is sent.
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size;
+
+- (NSImage *)defaultIconWithSize:(NSSize)size;
 
 // Customize the site icon for all web sites with the given host name.
 - (void)setIcon:(NSImage *)icon forHost:(NSString *)host;

@@ -1,3 +1,29 @@
+2002-09-03  Chris Blumenberg  <cblu@apple.com>
+
+	- Moved the default icon method to WebIconDatabase
+	- Removed "icon URL" from the location change handler API
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem icon]): don't worry about iconForSiteURL:withSize: returning nil
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase iconForSiteURL:withSize:]): return defaultIconWithSize if none found
+        (-[WebIconDatabase defaultIconWithSize:]): added, loads, caches default icon
+        (-[WebIconDatabase _hasIconForSiteURL:]): added, called by webdatasource to determine if icon is necessary
+        * Misc.subproj/WebIconDatabasePrivate.h: added _hasIconForSiteURL
+        * Misc.subproj/WebIconLoader.h: removed default icon method
+        * Misc.subproj/WebIconLoader.m: removed default icon method
+        * Resources/url_icon.tiff: resized to 32 x 32
+        * WebKit.exp: export symbol for a dictionary key
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSourcePrivate.m: 
+        (-[WebDataSource _loadIcon]): call _hasIconForSiteURL
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): call defaultIconWithSize
+        * WebView.subproj/WebLocationChangeHandler.h:
+        * WebView.subproj/WebLocationChangeHandler.m:
+        (-[WebLocationChangeHandler receivedPageIcon:forDataSource:]): renamed
+
 2002-09-03  Ken Kocienda  <kocienda@apple.com>
 
 	Modify calls into WebFoundation to use the new WebResourceRequest class,

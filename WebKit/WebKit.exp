@@ -33,4 +33,6 @@ _WebHistoryEntriesChangedNotification
 _WebIconDidChangeNotification
 _WebIconSmallSize
 _WebIconMediumSize
+_WebIconNotificationUserInfoSiteURLKey
+
 

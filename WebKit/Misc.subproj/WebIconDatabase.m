@@ -93,6 +93,11 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size
 {
+
+    if(!siteURL){
+        return [self defaultIconWithSize:size];
+    }
+    
     if([siteURL isFileURL]){
         return [self _iconForFileURL:siteURL withSize:size];
     }
@@ -105,14 +110,14 @@ NSSize WebIconMediumSize = {32, 32};
         if(!iconURL){
             // Don't have it
             //NSLog(@"iconForSiteURL no iconURL for siteURL: %@", siteURL);
-            return nil;
+            return [self defaultIconWithSize:size];
         }
 
         icons = [self _iconsForIconURL:iconURL];
         if(!icons){
             // This should not happen
             //NSLog(@"iconForSiteURL no icon for iconURL: %@", iconURL);
-            return nil;
+            return [self defaultIconWithSize:size];
         }        
     }
 
@@ -122,6 +127,19 @@ NSSize WebIconMediumSize = {32, 32};
     }else{
         return [self _cachedIconFromArray:icons withSize:size];
     }
+}
+
+- (NSImage *)defaultIconWithSize:(NSSize)size
+{
+    if (!_private->defaultIcons) {
+        NSString *pathForDefaultImage = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
+        if (pathForDefaultImage != nil) {
+            NSImage *icon = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+            _private->defaultIcons = [[NSMutableArray arrayWithObject:icon] retain];
+        }
+    }
+
+    return [self _cachedIconFromArray:_private->defaultIcons withSize:size];
 }
 
 - (void)setIcon:(NSImage *)icon forSiteURL:(NSURL *)siteURL
@@ -301,6 +319,19 @@ NSSize WebIconMediumSize = {32, 32};
     [fileDB setObject:_private->siteURLToIconURL forKey:WebSiteURLToIconURLKey];
     [fileDB setObject:_private->iconURLToSiteURLs forKey:WebIconURLToSiteURLsKey];
     [fileDB setObject:_private->hostToSiteURLs forKey:WebHostToSiteURLsKey];
+}
+
+- (BOOL)_hasIconForSiteURL:(NSURL *)siteURL
+{
+    if([siteURL isFileURL]){
+        return YES;
+    }else if([_private->hostToBuiltItIcons objectForKey:[siteURL host]]){
+        return YES;
+    }else if([_private->siteURLToIconURL objectForKey:siteURL]){
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 - (NSImage *)_iconForIconURL:(NSURL *)iconURL

@@ -40,51 +40,6 @@
 
 @implementation WebIconLoader
 
-+ (void)_resizeImage:(NSImage *)image
-{
-    [image setScalesWhenResized:YES];
-    [image setSize:NSMakeSize(IconWidth,IconHeight)];
-}
-
-+ (NSImage *)defaultIcon
-{
-    static NSImage *defaultIcon = nil;
-    static BOOL loadedDefaultImage = NO;
-    
-    // Attempt to load default image only once, to avoid performance penalty of repeatedly
-    // trying and failing to find it.
-    if (!loadedDefaultImage) {
-        NSString *pathForDefaultImage =
-            [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
-        if (pathForDefaultImage != nil) {
-            defaultIcon = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
-            [[self class] _resizeImage:defaultIcon];
-        }
-        loadedDefaultImage = YES;
-    }
-
-    return defaultIcon;
-}
-
-+ (NSImage *)iconForFileAtPath:(NSString *)path
-{
-    static NSImage *htmlIcon = nil;
-    NSImage *icon;
-
-    if([[path pathExtension] rangeOfString:@"htm"].length != 0){
-        if(!htmlIcon){
-            htmlIcon = [[[NSWorkspace sharedWorkspace] iconForFileType:@"html"] retain];
-            [[self class] _resizeImage:htmlIcon];
-        }
-        icon = htmlIcon;
-    }else{
-        icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-        [[self class] _resizeImage:icon];
-    }
-
-    return icon;
-}
-
 + iconLoaderWithURL:(NSURL *)URL
 {
     return [[[self alloc] initWithURL:URL] autorelease];

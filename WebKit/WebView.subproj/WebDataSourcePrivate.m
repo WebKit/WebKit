@@ -452,7 +452,7 @@
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
     [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];
-    [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:[iconLoader URL] forDataSource:self];
+    [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -462,12 +462,12 @@
     if([self isMainDocument] && !_private->mainDocumentError){
         
         NSURL *dataSourceURL = [self URL];
-
-        NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:dataSourceURL withSize:NSMakeSize(0,0)];
-
-        if(icon){
+        WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+        
+        if([iconDB _hasIconForSiteURL:dataSourceURL]){
             // Return the icon immediately if the db already has it
-            [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:nil forDataSource:self];
+            NSImage *icon = [iconDB iconForSiteURL:dataSourceURL withSize:NSMakeSize(0,0)];
+            [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
         }else{
             
             if(!_private->iconURL){
