@@ -1,3 +1,20 @@
+2002-06-25  Richard Williamson  <rjw@apple.com>
+
+        Disable the copy menu item when IFHTMLView has is key
+        and has no selection.
+        
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView validateMenuItem:]):
+        Disable menu if selection is empty.
+        (-[IFHTMLView copy:]):
+        Factored code that gets the bridge.
+        * WebView.subproj/IFHTMLViewPrivate.h:
+        Added _bridge.
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[IFHTMLView _bridge]):
+        We need to access the bridge from the view
+        to get the part's selection.
+
 2002-06-25  Chris Blumenberg  <cblu@apple.com>
 
 	Remove downloaded file if cancelled.

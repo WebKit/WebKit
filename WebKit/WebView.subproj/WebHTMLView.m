@@ -51,11 +51,22 @@
     return self;
 }
 
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item 
+{
+    SEL action = [item action];
+
+    if (action == @selector(copy:)){
+        if ([[[self _bridge] selectedText] length] > 0)
+            return YES;
+    }
+    return NO;
+}
+
+
 - (void)copy:(id)sender
 {
-    IFWebView *webView = [self _IF_parentWebView];
-    IFWebFrame *webFrame = [[webView _controller] frameForView: webView];
-    IFWebCoreBridge *bridge = [[webFrame dataSource] _bridge];
+    IFWebCoreBridge *bridge = [self _bridge];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     
     [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];

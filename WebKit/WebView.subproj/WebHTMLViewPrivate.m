@@ -7,9 +7,14 @@
 */
 #import <WebKit/WebKitDebug.h>
 
-#import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFImageRenderer.h>
+#import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFPluginView.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
 
 // Includes from KDE
 #import <khtmlview.h>
@@ -70,6 +75,14 @@
 - (void)_takeOwnershipOfWidget
 {
     _private->widgetOwned = NO;
+}
+
+// Required so view can access the part's selection.
+- (IFWebCoreBridge *)_bridge
+{
+    IFWebView *webView = [self _IF_parentWebView];
+    IFWebFrame *webFrame = [[webView _controller] frameForView: webView];
+    return [[webFrame dataSource] _bridge];
 }
 
 @end
