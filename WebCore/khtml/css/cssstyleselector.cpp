@@ -529,67 +529,72 @@ const int siblingThreshold = 10;
 
 NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
 {
-    // FIXME: Investigate the difference between elementsCanShareStyle and a pointer compare of renderstyles.
-    if (parent && parent->renderer() && !parent->inlineStyleDecl() && !parent->hasID()) {
-        DOM::NodeImpl* n = parent->previousSibling();
-        RenderStyle* st = parent->renderer()->style();
-        int subcount = 0;
-        while (n) {
-            if (n->renderer() && n->renderer()->style() == st)
-                return n->lastChild();
-            if (subcount++ == siblingThreshold)
-                return 0;
-            n = n->previousSibling();
-        }
-        if (!n && parent->parentNode() && parent->parentNode()->isElementNode())
-            n = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
-        while (n) {
-            if (n->renderer() && n->renderer()->style() == st)
-                return n->lastChild();
-            if (subcount++ == siblingThreshold)
-                return 0;
-            n = n->previousSibling();
+    if (parent && parent->isHTMLElement()) {
+        HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parent);
+        if (p->renderer() && !p->inlineStyleDecl() && !p->hasID()) {
+            DOM::NodeImpl* r = p->previousSibling();
+            int subcount = 0;
+            RenderStyle* st = p->renderer()->style();
+            while (r) {
+                if (r->renderer() && r->renderer()->style() == st)
+                    return r->lastChild();
+                if (subcount++ == siblingThreshold)
+                    return 0;
+                r = r->previousSibling();
+            }
+            if (!r)
+                r = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
+            while (r) {
+                if (r->renderer() && r->renderer()->style() == st)
+                    return r->lastChild();
+                if (subcount++ == siblingThreshold)
+                    return 0;
+                r = r->previousSibling();
+            }
         }
     }
     return 0;
 }
 
-bool CSSStyleSelector::elementsCanShareStyle(ElementImpl* e1, ElementImpl* e2)
+bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
 {
-    bool mouseInside = e2->renderer() ? e2->renderer()->mouseInside() : false;
-    if (e1->renderer() && (e1->id() == e2->id()) && !e1->hasID() &&
-        (e1->hasClass() == e2->hasClass()) && !e1->inlineStyleDecl() &&
-        (e1->hasMappedAttributes() == e2->hasMappedAttributes()) &&
-        (e1->hasAnchor() == e2->hasAnchor()) && 
-        !e1->renderer()->style()->affectedByAttributeSelectors() &&
-        (e1->renderer()->mouseInside() == mouseInside) &&
-        (e1->active() == e2->active()) &&
-        (e1->focused() == e2->focused())) {
-        bool classesMatch = true;
-        if (e1->hasClass()) {
-            const AtomicString& class1 = e2->getAttribute(ATTR_CLASS);
-            const AtomicString& class2 = e1->getAttribute(ATTR_CLASS);
-            classesMatch = (class1 == class2);
-        }
-        
-        if (classesMatch) {
-            bool mappedAttrsMatch = true;
-            if (e1->hasMappedAttributes()) 
-                mappedAttrsMatch = static_cast<HTMLElementImpl*>(e1)->htmlAttributes()->mapsEquivalent(static_cast<HTMLElementImpl*>(e2)->htmlAttributes());
-            if (mappedAttrsMatch) {
-                bool anchorsMatch = true;
-                if (e1->hasAnchor()) {
-                    // We need to check to see if the visited state matches.
-                    QColor linkColor = e2->getDocument()->linkColor();
-                    QColor visitedColor = e2->getDocument()->visitedLinkColor();
-                    if (pseudoState == PseudoUnknown)
-                        checkPseudoState(element, e1->renderer()->style()->pseudoState() != PseudoAnyLink ||
-                                         linkColor != visitedColor);
-                    anchorsMatch = (pseudoState == e1->renderer()->style()->pseudoState());
+    if (n->isHTMLElement()) {
+        bool mouseInside = element->renderer() ? element->renderer()->mouseInside() : false;
+        HTMLElementImpl* s = static_cast<HTMLElementImpl*>(n);
+        if (s->renderer() && (s->id() == element->id()) && !s->hasID() &&
+            (s->hasClass() == element->hasClass()) && !s->inlineStyleDecl() &&
+            (s->hasMappedAttributes() == htmlElement->hasMappedAttributes()) &&
+            (s->hasAnchor() == element->hasAnchor()) && 
+            !s->renderer()->style()->affectedByAttributeSelectors() &&
+            (s->renderer()->mouseInside() == mouseInside) &&
+            (s->active() == element->active()) &&
+            (s->focused() == element->focused())) {
+            bool classesMatch = true;
+            if (s->hasClass()) {
+                const AtomicString& class1 = element->getAttribute(ATTR_CLASS);
+                const AtomicString& class2 = s->getAttribute(ATTR_CLASS);
+                classesMatch = (class1 == class2);
+            }
+            
+            if (classesMatch) {
+                bool mappedAttrsMatch = true;
+                if (s->hasMappedAttributes())
+                    mappedAttrsMatch = s->htmlAttributes()->mapsEquivalent(htmlElement->htmlAttributes());
+                if (mappedAttrsMatch) {
+                    bool anchorsMatch = true;
+                    if (s->hasAnchor()) {
+                        // We need to check to see if the visited state matches.
+                        QColor linkColor = element->getDocument()->linkColor();
+                        QColor visitedColor = element->getDocument()->visitedLinkColor();
+                        if (pseudoState == PseudoUnknown)
+                            checkPseudoState(element, s->renderer()->style()->pseudoState() != PseudoAnyLink ||
+                                             linkColor != visitedColor);
+                        anchorsMatch = (pseudoState == s->renderer()->style()->pseudoState());
+                    }
+                    
+                    if (anchorsMatch)
+                        return true;
                 }
-                
-                if (anchorsMatch)
-                    return true;
             }
         }
     }
@@ -598,22 +603,23 @@ bool CSSStyleSelector::elementsCanShareStyle(ElementImpl* e1, ElementImpl* e2)
 
 RenderStyle* CSSStyleSelector::locateSharedStyle()
 {
-    if (!element->inlineStyleDecl() && !element->hasID() && !element->getDocument()->usesSiblingRules()) {
+    if (htmlElement && !htmlElement->inlineStyleDecl() && !htmlElement->hasID() &&
+        !htmlElement->getDocument()->usesSiblingRules()) {
         // Check previous siblings.
         int count = 0;
         DOM::NodeImpl* n;
         for (n = element->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
         while (n) {
-            if (elementsCanShareStyle(static_cast<ElementImpl*>(n), element))
+            if (canShareStyleWithElement(n))
                 return n->renderer()->style();
             if (count++ == siblingThreshold)
                 return 0;
             for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
         }
-        if (!n && element->parentNode() && element->parentNode()->isElementNode()) 
+        if (!n) 
             n = locateCousinList(static_cast<ElementImpl*>(element->parentNode()));
         while (n) {
-            if (elementsCanShareStyle(static_cast<ElementImpl*>(n), element))
+            if (canShareStyleWithElement(n))
                 return n->renderer()->style();
             if (count++ == siblingThreshold)
                 return 0;
@@ -622,6 +628,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     }
     return 0;
 }
+
 
 RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent, bool allowSharing)
 {

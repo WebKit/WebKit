@@ -1,3 +1,18 @@
+2004-10-06  David Hyatt  <hyatt@apple.com>
+
+	Back out style sharing perf fix.
+	
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::locateCousinList):
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_elementimpl.h:
+        (DOM::HTMLElementImpl::inlineStyleDecl):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_elementimpl.h:
+
 === Safari-166 ===
 
 2004-10-05  David Hyatt  <hyatt@apple.com>
