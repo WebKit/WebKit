@@ -24,8 +24,9 @@
  */
 #include <value.h>
 
-#include <runtime.h>
+#include <runtime_object.h>
 #include <jni_instance.h>
+#include <objc_instance.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -58,13 +59,28 @@ MethodList::~MethodList()
     delete [] _methods;
 }
 
-
-Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
-{
-    if (language == Instance::JavaLanguage)
-        return new Bindings::JavaInstance ((jobject)instance);
-    return 0;
+MethodList::MethodList (const MethodList &other) {
+    _length = other._length;
+    _methods = new Method *[_length];
+    if (_length > 0)
+        memcpy (_methods, other._methods, sizeof(Method *) * _length);
 }
+
+MethodList &MethodList::operator=(const MethodList &other)
+{
+    if (this == &other)
+        return *this;
+            
+    delete [] _methods;
+    
+    _length = other._length;
+    _methods = new Method *[_length];
+    if (_length > 0)
+        memcpy (_methods, other._methods, sizeof(Method *) * _length);
+
+    return *this;
+}
+
 
 Value Instance::getValueOfField (const Field *aField) const {  
     return aField->valueFromInstance (this);
@@ -72,4 +88,19 @@ Value Instance::getValueOfField (const Field *aField) const {
 
 void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, const Value &aValue) const {  
     return aField->setValueToInstance (exec, this, aValue);
+}
+
+Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
+{
+    if (language == Instance::JavaLanguage)
+        return new Bindings::JavaInstance ((jobject)instance);
+    if (language == Instance::ObjectiveCLanguage)
+        return new Bindings::ObjcInstance ((struct objc_object *)instance);
+    return 0;
+}
+
+Object Instance::createRuntimeObject (BindingLanguage language, void *myInterface)
+{
+    Instance *interfaceObject = Instance::createBindingForLanguageInstance (language, (void *)myInterface);
+    return Object(new RuntimeObjectImp(interfaceObject,true));
 }

@@ -1,3 +1,109 @@
+2004-02-13  Richard Williamson   <rjw@apple.com>
+
+	Work towards the JavaScript ObjC bindings.  The bindings now work for 
+	simple scalar types.  testbindings.mm is an illustration of how the 
+	bindings work.
+
+        Reviewed by Ken.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::methodsNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaMethod::returnType):
+        * bindings/make_testbindings: Added.
+        * bindings/objc/objc_class.h: Added.
+        (KJS::Bindings::ObjcClass::~ObjcClass):
+        (KJS::Bindings::ObjcClass::ObjcClass):
+        (KJS::Bindings::ObjcClass::operator=):
+        (KJS::Bindings::ObjcClass::constructorAt):
+        (KJS::Bindings::ObjcClass::numConstructors):
+        * bindings/objc/objc_class.mm: Added.
+        (ObjcClass::_commonDelete):
+        (ObjcClass::_commonCopy):
+        (ObjcClass::_commonInit):
+        (_createClassesByIsAIfNecessary):
+        (ObjcClass::classForIsA):
+        (ObjcClass::ObjcClass):
+        (ObjcClass::name):
+        (ObjcClass::methodsNamed):
+        (ObjcClass::fieldNamed):
+        * bindings/objc/objc_header.h: Added.
+        * bindings/objc/objc_instance.h: Added.
+        (KJS::Bindings::ObjcInstance::getObject):
+        * bindings/objc/objc_instance.mm: Added.
+        (ObjcInstance::ObjcInstance):
+        (ObjcInstance::~ObjcInstance):
+        (ObjcInstance::operator=):
+        (ObjcInstance::begin):
+        (ObjcInstance::end):
+        (ObjcInstance::getClass):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::defaultValue):
+        (ObjcInstance::stringValue):
+        (ObjcInstance::numberValue):
+        (ObjcInstance::booleanValue):
+        (ObjcInstance::valueOf):
+        * bindings/objc/objc_jsobject.h: Added.
+        * bindings/objc/objc_jsobject.mm: Added.
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcField::~ObjcField):
+        (KJS::Bindings::ObjcField::ObjcField):
+        (KJS::Bindings::ObjcField::operator=):
+        (KJS::Bindings::ObjcMethod::ObjcMethod):
+        (KJS::Bindings::ObjcMethod::~ObjcMethod):
+        (KJS::Bindings::ObjcMethod::operator=):
+        * bindings/objc/objc_runtime.mm: Added.
+        (ObjcMethod::ObjcMethod):
+        (ObjcMethod::name):
+        (ObjcMethod::numParameters):
+        (ObjcMethod::getMethodSignature):
+        (ObjcField::ObjcField):
+        (ObjcField::name):
+        (ObjcField::type):
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        * bindings/objc/objc_utility.h: Added.
+        (KJS::Bindings::):
+        * bindings/objc/objc_utility.mm: Added.
+        (KJS::Bindings::JSMethodNameToObjCMethodName):
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        (KJS::Bindings::objcValueTypeForType):
+        * bindings/runtime.cpp:
+        (MethodList::MethodList):
+        (MethodList::operator=):
+        (Instance::setValueOfField):
+        (Instance::createBindingForLanguageInstance):
+        (Instance::createRuntimeObject):
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::RuntimeMethodImp):
+        (RuntimeMethodImp::get):
+        (RuntimeMethodImp::call):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::hasProperty):
+        * bindings/test.js: Added.
+        * bindings/testbindings.mm: Added.
+        (-[MySecondInterface init]):
+        (-[MyFirstInterface init]):
+        (-[MyFirstInterface dealloc]):
+        (+[MyFirstInterface JavaScriptNameForSelector:]):
+        (-[MyFirstInterface getInt]):
+        (-[MyFirstInterface setInt:]):
+        (-[MyFirstInterface getMySecondInterface]):
+        (-[MyFirstInterface logMessage:]):
+        (GlobalImp::className):
+        (readJavaScriptFromFile):
+        (main):
+
 === Safari-128 ===
 
 2004-02-08  Darin Adler  <darin@apple.com>

@@ -17,8 +17,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				SECTORDER_FLAGS = "";
+				STYLE_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
@@ -32,8 +32,8 @@
 				DEBUGGING_SYMBOLS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				SECTORDER_FLAGS = "";
+				STYLE_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -109,6 +109,8 @@
 		};
 		0867D69AFE84028FC02AAC07 = {
 			children = (
+				51F0EC0705C86C9A00E6DF1B,
+				51F0EB6105C86C6B00E6DF1B,
 				6560A4CF04B3B3E7008AE952,
 				6560A63D04B3B69F008AE952,
 				51856D980562F158008B9D83,
@@ -141,11 +143,13 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
+				OTHER_LDFLAGS = "$(STYLE_LDFLAGS) -sub_library libobjc";
+				PREBINDING = NO;
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = JavaScriptCorePrefix.h;
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/JavaScriptCore.order";
+				STYLE_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double";
 				WRAPPER_EXTENSION = framework;
@@ -178,7 +182,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.2</string>
 	<key>CFBundleVersion</key>
-	<string>129u</string>
+	<string>128u</string>
 </dict>
 </plist>
 ";
@@ -244,6 +248,11 @@
 				7073BE3F0581291E005EE2C9,
 				513DF74305C0861F00F89391,
 				51C4974205C0A5D4006FBFF5,
+				518CF93905C72271003CF905,
+				51F0EB0205C85A6300E6DF1B,
+				51F0EC1105C86F3500E6DF1B,
+				51F0EC9805C88DC700E6DF1B,
+				7084D99505DD6211007E4C0E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,6 +314,11 @@
 				51A58A8F057D3A6A00A3E942,
 				7073BE3E0581291E005EE2C9,
 				513DF74205C0861F00F89391,
+				518CF93A05C72271003CF905,
+				518CF93B05C72271003CF905,
+				51F0EB0605C85A9000E6DF1B,
+				51F0EC9905C88DC700E6DF1B,
+				7084D9BA05DD6CF8007E4C0E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,6 +329,8 @@
 				6560A4D004B3B3E7008AE952,
 				6560A63E04B3B69F008AE952,
 				51856D990562F158008B9D83,
+				51F0EB6205C86C6B00E6DF1B,
+				51F0EC0805C86C9A00E6DF1B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -632,7 +648,17 @@
 				51A58A8E057D3A6A00A3E942,
 				70B16A260569A10900DB756D,
 				70B16A270569A10900DB756D,
+				518CF93605C72271003CF905,
+				518CF93705C72271003CF905,
+				51F0EC1005C86F3500E6DF1B,
+				51F0EB0005C85A6300E6DF1B,
+				51F0EB0505C85A9000E6DF1B,
+				7084D99405DD6211007E4C0E,
+				7084D9B905DD6CF8007E4C0E,
 				51C4974105C0A5D4006FBFF5,
+				518CF93805C72271003CF905,
+				51F0EC9605C88DC700E6DF1B,
+				51F0EC9705C88DC700E6DF1B,
 			);
 			isa = PBXGroup;
 			name = bindings;
@@ -649,6 +675,51 @@
 		};
 		51856D990562F158008B9D83 = {
 			fileRef = 51856D980562F158008B9D83;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		518CF93605C72271003CF905 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = objc_class.h;
+			path = bindings/objc/objc_class.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		518CF93705C72271003CF905 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = objc_class.mm;
+			path = bindings/objc/objc_class.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		518CF93805C72271003CF905 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = objc_runtime.mm;
+			path = bindings/objc/objc_runtime.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		518CF93905C72271003CF905 = {
+			fileRef = 518CF93605C72271003CF905;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		518CF93A05C72271003CF905 = {
+			fileRef = 518CF93705C72271003CF905;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		518CF93B05C72271003CF905 = {
+			fileRef = 518CF93805C72271003CF905;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -694,6 +765,109 @@
 		};
 		51C4974205C0A5D4006FBFF5 = {
 			fileRef = 51C4974105C0A5D4006FBFF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EB0005C85A6300E6DF1B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = objc_instance.h;
+			path = bindings/objc/objc_instance.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F0EB0205C85A6300E6DF1B = {
+			fileRef = 51F0EB0005C85A6300E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EB0505C85A9000E6DF1B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = objc_instance.mm;
+			path = bindings/objc/objc_instance.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F0EB0605C85A9000E6DF1B = {
+			fileRef = 51F0EB0505C85A9000E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EB6105C86C6B00E6DF1B = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		51F0EB6205C86C6B00E6DF1B = {
+			fileRef = 51F0EB6105C86C6B00E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EC0705C86C9A00E6DF1B = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libobjc.dylib;
+			path = /usr/lib/libobjc.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		51F0EC0805C86C9A00E6DF1B = {
+			fileRef = 51F0EC0705C86C9A00E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EC1005C86F3500E6DF1B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = objc_header.h;
+			path = bindings/objc/objc_header.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F0EC1105C86F3500E6DF1B = {
+			fileRef = 51F0EC1005C86F3500E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EC9605C88DC700E6DF1B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = objc_utility.h;
+			path = bindings/objc/objc_utility.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F0EC9705C88DC700E6DF1B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = objc_utility.mm;
+			path = bindings/objc/objc_utility.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51F0EC9805C88DC700E6DF1B = {
+			fileRef = 51F0EC9605C88DC700E6DF1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51F0EC9905C88DC700E6DF1B = {
+			fileRef = 51F0EC9705C88DC700E6DF1B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -970,6 +1144,36 @@
 		};
 		7073BE3F0581291E005EE2C9 = {
 			fileRef = 7073BE3D0581291E005EE2C9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7084D99405DD6211007E4C0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = objc_jsobject.h;
+			path = bindings/objc/objc_jsobject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		7084D99505DD6211007E4C0E = {
+			fileRef = 7084D99405DD6211007E4C0E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7084D9B905DD6CF8007E4C0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = objc_jsobject.mm;
+			path = bindings/objc/objc_jsobject.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		7084D9BA05DD6CF8007E4C0E = {
+			fileRef = 7084D9B905DD6CF8007E4C0E;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1280,7 +1484,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				STYLE_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = OptimizedWithSymbols;

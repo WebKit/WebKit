@@ -22,35 +22,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_FUNCTION_H_
-#define _RUNTIME_FUNCTION_H_
+#ifndef _BINDINGS_OBJC_JSOBJECT_H_
+#define _BINDINGS_OBJC_JSOBJECT_H_
 
-#include <JavaScriptCore/runtime.h>
-#include <JavaScriptCore/object.h>
+#include <Foundation/Foundation.h>
 
-namespace KJS {
+#include <value.h>
 
-
-class RuntimeMethodImp : public FunctionImp 
-{
-public:
-    RuntimeMethodImp(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
+/*
+    ObjC      to    JavaScript
+    char            Number
+    short
+    int
+    long
+    float
+    double
+    NSString        string
+    NSArray         []
+    id              wrapper
+    other           exception
     
-    virtual ~RuntimeMethodImp();
+    JavaScript to   ObjC
+    Number          coerced char, short, int, long, float, or double
+    String          NSString
+    wrapper         id
+    Object          JavaScriptObject
+    [], other       exception
+*/
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
 
-    virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+@interface NSObject (JavaScriptMethods)
 
-    virtual CodeType codeType() const;
-    
-    virtual Completion execute(ExecState *exec);
++ (NSString *)JavaScriptNameForSelector:(SEL)aSelector;
++ (BOOL)excludeSelectorFromJavaScript:(SEL)aSelector;
 
-private:
-    Bindings::MethodList _methodList;
-};
+@end
 
-} // namespace KJS
+
+@interface JavaScriptValueConverter
+
++ (void)registerConverter:(JavaScriptValueConverter *)aConverter;
++ (void)unregisterConverter:(JavaScriptValueConverter *)aConverter;
++ (NSArray *)converters;
+
+- (id)objectForValue:(KJS::Value)aValue;
+
+@end
+
+
+@interface JavaScriptObject
+@end
 
 #endif

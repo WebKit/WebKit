@@ -22,71 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _JNI_INSTANCE_H_
-#define _JNI_INSTANCE_H_
+#ifndef _BINDINGS_OBJC_INSTANCE_H_
+#define _BINDINGS_OBJC_INSTANCE_H_
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <JavaVM/jni.h>
-
-#include <JavaScriptCore/runtime.h>
+#include <objc_class.h>
+#include <objc_runtime.h>
+#include <objc_utility.h>
 
 namespace KJS {
 
 namespace Bindings {
 
-class JavaClass;
+class ObjcClass;
 
-class JObjectWrapper
-{
-friend class JavaArray;
-friend class JavaInstance;
-friend class JavaMethod;
-
-protected:
-    JObjectWrapper(jobject instance);    
-    void ref() { _ref++; }
-    void deref() { 
-        _ref--;
-        if (_ref == 0)
-            delete this;
-    }
-    
-    ~JObjectWrapper();
-	
-    jobject _instance;
-
-private:
-    JNIEnv *_env;
-    unsigned int _ref;
-};
-
-class JavaInstance : public Instance
+class ObjcInstance : public Instance
 {
 public:
-    JavaInstance (jobject instance);
+    ObjcInstance (ObjectStructPtr instance);
         
-    ~JavaInstance ();
+    ~ObjcInstance ();
     
     virtual Class *getClass() const;
     
-    JavaInstance (const JavaInstance &other);
+    ObjcInstance (const ObjcInstance &other);
 
-    JavaInstance &operator=(const JavaInstance &other){
-        if (this == &other)
-            return *this;
-        
-        JObjectWrapper *_oldInstance = _instance;
-        _instance = other._instance;
-        _instance->ref();
-        _oldInstance->deref();
-		
-        // Classes are kept around forever.
-        _class = other._class;
-        
-        return *this;
-    };
-
+    ObjcInstance &operator=(const ObjcInstance &other);
+    
     virtual void begin();
     virtual void end();
     
@@ -95,15 +58,17 @@ public:
 
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args);
 
-    jobject javaInstance() const { return _instance->_instance; }
+    ObjectStructPtr getObject() const { return _instance; }
     
     KJS::Value stringValue() const;
     KJS::Value numberValue() const;
     KJS::Value booleanValue() const;
     
 private:
-    JObjectWrapper *_instance;
-	mutable JavaClass *_class;
+    ObjectStructPtr _instance;
+    mutable ObjcClass *_class;
+    ObjectStructPtr _pool;
+    long _beginCount;
 };
 
 } // namespace Bindings

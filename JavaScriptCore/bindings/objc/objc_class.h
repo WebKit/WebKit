@@ -22,88 +22,71 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _JNI_INSTANCE_H_
-#define _JNI_INSTANCE_H_
+#ifndef _BINDINGS_OBJC_CLASS_H_
+#define _BINDINGS_OBJC_CLASS_H_
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <JavaVM/jni.h>
 
-#include <JavaScriptCore/runtime.h>
+#include <runtime.h>
+#include <objc_header.h>
+#include <objc_runtime.h>
 
 namespace KJS {
 
 namespace Bindings {
 
-class JavaClass;
-
-class JObjectWrapper
+class ObjcClass : public KJS::Bindings::Class
 {
-friend class JavaArray;
-friend class JavaInstance;
-friend class JavaMethod;
-
+    // Use the public static factory methods to get instances of JavaClass.
+    
 protected:
-    JObjectWrapper(jobject instance);    
-    void ref() { _ref++; }
-    void deref() { 
-        _ref--;
-        if (_ref == 0)
-            delete this;
+    void _commonInit (ClassStructPtr aClass);
+    void _commonCopy(const ObjcClass &other);
+    void _commonDelete();
+    
+    ObjcClass (ClassStructPtr aClass);
+    
+public:
+    // Return the cached ObjC of the specified name.
+    //static ObjcClass *classForName (const char *name);
+    static ObjcClass *classForIsA (ClassStructPtr aClass);
+            
+    ~ObjcClass () {
+        _commonDelete();
     }
     
-    ~JObjectWrapper();
-	
-    jobject _instance;
-
-private:
-    JNIEnv *_env;
-    unsigned int _ref;
-};
-
-class JavaInstance : public Instance
-{
-public:
-    JavaInstance (jobject instance);
-        
-    ~JavaInstance ();
-    
-    virtual Class *getClass() const;
-    
-    JavaInstance (const JavaInstance &other);
-
-    JavaInstance &operator=(const JavaInstance &other){
-        if (this == &other)
-            return *this;
-        
-        JObjectWrapper *_oldInstance = _instance;
-        _instance = other._instance;
-        _instance->ref();
-        _oldInstance->deref();
-		
-        // Classes are kept around forever.
-        _class = other._class;
-        
-        return *this;
+    ObjcClass (const ObjcClass &other) : Class() {
+        _commonCopy (other);
     };
 
-    virtual void begin();
-    virtual void end();
-    
-    virtual KJS::Value valueOf() const;
-    virtual KJS::Value defaultValue (KJS::Type hint) const;
+    ObjcClass &operator=(const ObjcClass &other)
+    {
+        if (this == &other)
+            return *this;
+            
+        _commonDelete();
+        _commonCopy (other);
+        
+        return *this;
+    }
 
-    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args);
-
-    jobject javaInstance() const { return _instance->_instance; }
+    virtual const char *name() const;
     
-    KJS::Value stringValue() const;
-    KJS::Value numberValue() const;
-    KJS::Value booleanValue() const;
+    virtual MethodList methodsNamed(const char *name) const;
     
+    virtual Field *fieldNamed(const char *name) const;
+    
+    virtual Constructor *constructorAt(long i) const {
+        return 0;
+    };
+    
+    virtual long numConstructors() const { return 0; };
+        
 private:
-    JObjectWrapper *_instance;
-	mutable JavaClass *_class;
+    ClassStructPtr _isa;
+    CFDictionaryRef _methods;
+    CFDictionaryRef _fields;
 };
 
 } // namespace Bindings

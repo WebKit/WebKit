@@ -104,13 +104,13 @@ KJS::Value JavaInstance::booleanValue() const
     return v;
 }
 
-Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList *methodList, const List &args)
+Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodList, const List &args)
 {
     int i, count = args.size();
     jvalue *jArgs;
     Value resultValue;
     Method *method = 0;
-    unsigned int numMethods = methodList->length();
+    unsigned int numMethods = methodList.length();
     
     // Try to find a good match for the overloaded method.  The 
     // fundamental problem is that JavaScript doesn have the
@@ -120,7 +120,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList *method
     unsigned int methodIndex;
     Method *aMethod;
     for (methodIndex = 0; methodIndex < numMethods; methodIndex++) {
-        aMethod = methodList->methodAt (methodIndex);
+        aMethod = methodList.methodAt (methodIndex);
         if (aMethod->numParameters() == count) {
             method = aMethod;
             break;
@@ -146,7 +146,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList *method
     }
     
     jvalue result;
-	jobject obj = _instance->_instance;
+    jobject obj = _instance->_instance;
     switch (jMethod->JNIReturnType()){
         case void_type: {
             callJNIVoidMethodIDA (obj, jMethod->methodID(obj), jArgs);

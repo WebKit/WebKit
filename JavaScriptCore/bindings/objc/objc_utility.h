@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,34 +22,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_FUNCTION_H_
-#define _RUNTIME_FUNCTION_H_
+#ifndef _BINDINGS_OBJC_UTILITY_H_
+#define _BINDINGS_OBJC_UTILITY_H_
 
-#include <JavaScriptCore/runtime.h>
-#include <JavaScriptCore/object.h>
+#include <CoreFoundation/CoreFoundation.h>
 
-namespace KJS {
+#include <value.h>
 
+#include <objc_header.h>
 
-class RuntimeMethodImp : public FunctionImp 
+namespace KJS
 {
-public:
-    RuntimeMethodImp(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
-    
-    virtual ~RuntimeMethodImp();
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+namespace Bindings 
+{
 
-    virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+typedef union {
+    ObjectStructPtr objectValue;
+    bool booleanValue;
+    char charValue;
+    short shortValue;
+    int intValue;
+    long longValue;
+    float floatValue;
+    double doubleValue;
+} ObjcValue;
 
-    virtual CodeType codeType() const;
-    
-    virtual Completion execute(ExecState *exec);
+typedef enum {
+    ObjcVoidType,
+    ObjcObjectType,
+    ObjcCharType,
+    ObjcShortType,
+    ObjcIntType,
+    ObjcLongType,
+    ObjcFloatType,
+    ObjcDoubleType,
+    ObjcInvalidType
+} ObjcValueType;
 
-private:
-    Bindings::MethodList _methodList;
-};
+ObjcValue convertValueToObjcValue (KJS::ExecState *exec, KJS::Value value, ObjcValueType type);
+Value convertObjcValueToValue (KJS::ExecState *exec, void *buffer, ObjcValueType type);
+ObjcValueType objcValueTypeForType (const char *type);
+
+void JSMethodNameToObjCMethodName(const char *name, char *name, unsigned int length);
+
+} // namespace Bindings
 
 } // namespace KJS
 

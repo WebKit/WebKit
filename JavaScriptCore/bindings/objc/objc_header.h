@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,35 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_FUNCTION_H_
-#define _RUNTIME_FUNCTION_H_
+#ifndef _BINDINGS_OBJC_HEADER_H_
+#define _BINDINGS_OBJC_HEADER_H_
 
-#include <JavaScriptCore/runtime.h>
-#include <JavaScriptCore/object.h>
+#ifdef __OBJC__
+#include <objc/objc-class.h>
+#include <objc/objc-runtime.h>
 
-namespace KJS {
+typedef struct objc_class *ClassStructPtr;
+typedef struct objc_object *ObjectStructPtr;
 
+@class NSMethodSignature;
 
-class RuntimeMethodImp : public FunctionImp 
-{
-public:
-    RuntimeMethodImp(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
-    
-    virtual ~RuntimeMethodImp();
+#else
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+typedef struct objc_ivar {} *Ivar;
+typedef struct objc_class {} *ClassStructPtr;
+typedef struct objc_object {} *ObjectStructPtr;
 
-    virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+class NSMethodSignature;
 
-    virtual CodeType codeType() const;
-    
-    virtual Completion execute(ExecState *exec);
-
-private:
-    Bindings::MethodList _methodList;
-};
-
-} // namespace KJS
+#endif
 
 #endif
