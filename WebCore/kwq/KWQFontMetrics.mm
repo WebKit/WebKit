@@ -415,12 +415,12 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, _style, errCode];
     }            
 
-    if ((errCode = ATSUCreateStyle(&_asciiStyle)) != noErr)
+    if ((errCode = ATSUCreateStyle(&_latinStyle)) != noErr)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to alloc ATSUStyle %d", self, errCode];
 
-    __IFFillStyleWithAttributes(_asciiStyle, aFont);
+    __IFFillStyleWithAttributes(_latinStyle, aFont);
 
-    if ((errCode = ATSUGetStyleGroup(_asciiStyle, &_asciiStyleGroup)) != noErr) {
+    if ((errCode = ATSUGetStyleGroup(_latinStyle, &_latinStyleGroup)) != noErr) {
         [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, _style, errCode];
     }            
 #endif
@@ -452,6 +452,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     int i, errorResult;
     size_t numGlyphsInFont = CGFontGetNumberOfGlyphs([font _backingCGSFont]);
     short unsigned int sequentialGlyphs[GLYPH_CACHE_MAX];
+    ATSLayoutRecord *glyphRecords;
             
     if (numGlyphsInFont > GLYPH_CACHE_MAX)
         widthCacheSize = GLYPH_CACHE_MAX;
@@ -461,23 +462,39 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     for (i = 0; i < widthCacheSize; i++)
         sequentialGlyphs[i] = i;
         
-    fprintf (stdout, "number of glyphs in font %s %f = %ld\n", [[font displayName] cString], [font pointSize], CGFontGetNumberOfGlyphs([font _backingCGSFont])); 
     widthCache = (float *)calloc (1, widthCacheSize * sizeof(float));
     errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], widthCacheSize, widthCache, [font pointSize]);
     if (errorResult == 0)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph advances - for %@ %f", self, [font displayName], [font pointSize]];
 
 
-    unsigned int asciiCount = LAST_ASCII_CHAR - FIRST_ASCII_CHAR + 1;
-    short unsigned int asciiBuffer[LAST_ASCII_CHAR+1];
-    for (i = FIRST_ASCII_CHAR; i <= LAST_ASCII_CHAR; i++){
-        asciiBuffer[i] = i;
+    unsigned int latinCount = LAST_CACHE_CHAR - FIRST_CACHE_CHAR + 1;
+    short unsigned int latinBuffer[LAST_CACHE_CHAR+1];
+    
+    for (i = FIRST_CACHE_CHAR; i <= LAST_CACHE_CHAR; i++){
+        latinBuffer[i] = i;
     }
     
-    __IFInitATSGlyphVector(&_asciiCacheGlyphVector, asciiCount);
-    (void)ATSUConvertCharToGlyphs(_asciiStyleGroup, &asciiBuffer[FIRST_ASCII_CHAR], 0, asciiCount, 0, (ATSGlyphVector *)&_asciiCacheGlyphVector);
-    if (_asciiCacheGlyphVector.numGlyphs != asciiCount)
+    __IFInitATSGlyphVector(&_latinCacheGlyphVector, latinCount);
+    (void)ATSUConvertCharToGlyphs(_latinStyleGroup, &latinBuffer[FIRST_CACHE_CHAR], 0, latinCount, 0, (ATSGlyphVector *)&_latinCacheGlyphVector);
+    if (_latinCacheGlyphVector.numGlyphs != latinCount)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  ascii and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
+        
+    int numGlyphs = _latinCacheGlyphVector.numGlyphs;
+    characterToGlyph = (ATSGlyphRef *)calloc (1, _latinCacheGlyphVector.numGlyphs * sizeof(ATSGlyphRef));
+    glyphRecords = _latinCacheGlyphVector.firstRecord;
+    for (i = 0; i < numGlyphs; i++){
+        characterToGlyph[i] = glyphRecords[i].glyphID;
+    }
+    __IFResetATSGlyphVector(&_latinCacheGlyphVector);
+
+#define DEBUG_CACHE_SIZE
+#ifdef DEBUG_CACHE_SIZE
+    static int totalCacheSize = 0;
+    
+    totalCacheSize += widthCacheSize * sizeof(float) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(KWQLayoutInfo);
+    KWQDEBUGLEVEL7 (KWQ_LOG_MEMUSAGE, "Cache initialized for font %s %f (%ld font glyphs), memory usage in bytes:  widths = %ld, latin1 ext. character-to-glyph = %ld, total this cache = %ld, total all caches %d\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, widthCacheSize * sizeof(float), numGlyphs * sizeof(ATSGlyphRef), widthCacheSize * sizeof(float) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(KWQLayoutInfo), totalCacheSize); 
+#endif
 }
 #endif
 
@@ -486,129 +503,149 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
 {
     CGContextRef cgContext;
     int totalWidth = 0;
-    unsigned int i, numGlyphs, index;
+    unsigned int i, index;
     int glyphID;
     ATSLayoutRecord *glyphRecords, *glyphRecordsPtr;
     NSFont *font = [self font];
+    
+    ATSGlyphRef localCharacterToGlyph[LOCAL_GLYPH_BUFFER_SIZE];
+    ATSGlyphRef *usedCharacterToGlyph, *allocateCharacterToGlyph;
+    
     BOOL needGlyphAdvanceLookup = NO;
     BOOL needCharToGlyphLookup = NO;
 
 
+    // Best case, and common case for latin1, performance will require two iterations over
+    // the internalBuffer.
+    // Pass 1 (on characters):  
+    //      Determine if we can use character-to-glyph map by comparing characters to cache
+    //      range.
+    // Pass 2 (on characters):  
+    //      Sum the widths using the character-to-glyph map and width cache.
+    
+    // FIXME:  For non-latin1 character sets we don't optimize.
+    // Worst case performance we must lookup the character-to-glyph map and lookup the glyph
+    // widths.
+    
     if ([font glyphPacking] != NSNativeShortGlyphPacking &&
         [font glyphPacking] != NSTwoByteGlyphPacking)
 	[NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]];
-        
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-
+    
     if (self->widthCache == 0)
         [self _initializeCaches];
 
     // Check if we can use the cached character-to-glyph map.  We only use the character-to-glyph map
-    // if all the characters in the string fall in the safe ASCII range.
+    // if ALL the characters in the string fall in the safe cache range.  This must be done
+    // to ensure that we don't match composable characters incorrectly.  This check could
+    // be smarter.  Also the character-to-glyph could be extended to support other ranges
+    // of unicode.  For now, we only optimize for latin1.
     for (i = 0; i < stringLength; i++){
-        if (internalBuffer[i] < FIRST_ASCII_CHAR || internalBuffer[i] > LAST_ASCII_CHAR){
+        if (internalBuffer[i] < FIRST_CACHE_CHAR || internalBuffer[i] > LAST_CACHE_CHAR){
             //fprintf (stdout, "char to glyph cache miss because of character 0x%04x\n", internalBuffer[i]);
             needCharToGlyphLookup = YES;
             break;
         }
     }
 
-    // If we can't use the cached map, the calculate a map for this string.
+    // If we can't use the cached map, the calculate a map for this string.   Expensive.
     if (needCharToGlyphLookup){
+        unsigned int numGlyphs;
+        
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
         (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, (ATSGlyphVector *)&self->_glyphVector);
         glyphRecords = self->_glyphVector.firstRecord;
         numGlyphs = self->_glyphVector.numGlyphs;
-    }
-    else {
-        glyphRecords = self->_asciiCacheGlyphVector.firstRecord;
-        numGlyphs = stringLength;
-    }
-    
-    // Now we have the glyphs, determine if we can use the cached glyph measurements.
-    for (i = 0; i < numGlyphs; i++){
-        if (needCharToGlyphLookup)
-            index = i;
-        else
-            index = internalBuffer[i]-FIRST_ASCII_CHAR;
-        glyphID = glyphRecords[index].glyphID;
-        if (glyphID > self->widthCacheSize){
-            needGlyphAdvanceLookup = YES;
-            break;
-        }
-    }
-
-    // If we can't use the cached glyph measurement ask CG for the measurements.
-    if (needGlyphAdvanceLookup){
-        char localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
-        char *usedGlyphBuf, *glyphBufPtr, *allocatedGlyphBuf = 0;
-
-        fprintf (stdout, "glyph measurement cache miss\n");
-        
-        // Now construct the glyph buffer.
-        if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE/2)
-            usedGlyphBuf = glyphBufPtr = allocatedGlyphBuf = (char *)malloc (numGlyphs * 2);
-        else
-            usedGlyphBuf = glyphBufPtr = &localGlyphBuf[0];
-                
-        if (needCharToGlyphLookup){
-            int glyphID;
-
-            glyphRecordsPtr = glyphRecords;
-            for (i = 0; i < numGlyphs; i++){
-                glyphID = glyphRecordsPtr->glyphID;
-                *glyphBufPtr++ = (char)((glyphID >> 8) & 0x00FF);
-                *glyphBufPtr++ = (char)(glyphID & 0x00FF);
-                glyphRecordsPtr++;
-            }
-        }
-        else {
-            int glyphID;
-            
-            for (i = 0; i < numGlyphs; i++){
-                index = internalBuffer[i]-FIRST_ASCII_CHAR;
-                glyphID = glyphRecords[index].glyphID;
-                *glyphBufPtr++ = (char)((glyphID >> 8) & 0x00FF);
-                *glyphBufPtr++ = (char)(glyphID & 0x00FF);
-            }
-        }
-        
-        float localAdvanceBuf[LOCAL_GLYPH_BUFFER_SIZE];
-        float *usedAdvanceBuf, *allocatedAdvanceBuf = 0;
 
         if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE)
-            usedAdvanceBuf = allocatedAdvanceBuf = (float *)malloc (numGlyphs * sizeof(float));
+            usedCharacterToGlyph = allocateCharacterToGlyph = (ATSGlyphRef *)calloc (1, numGlyphs * sizeof(ATSGlyphRef));
         else
-            usedAdvanceBuf = &localAdvanceBuf[0];
+            usedCharacterToGlyph = &localCharacterToGlyph[0];
+            
+        for (i = 0; i < numGlyphs; i++)
+            usedCharacterToGlyph[i] = glyphRecords[i].glyphID;
+
+        __IFResetATSGlyphVector(&self->_glyphVector);
+            
+        // Now we have the glyphs, determine if we can use the cached glyph measurements.
+        for (i = 0; i < numGlyphs; i++){
+            glyphID = glyphRecords[i].glyphID;
+            if (glyphID >= self->widthCacheSize){
+                needGlyphAdvanceLookup = YES;
+                break;
+            }
+        }
+
+        // If we can't use the cached glyph measurement ask CG for the measurements.  Expensive.
+        if (needGlyphAdvanceLookup){
+            char localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
+            char *usedGlyphBuf, *glyphBufPtr, *allocatedGlyphBuf = 0;
         
-        if (numGlyphs < LOCAL_GLYPH_BUFFER_SIZE){
+            fprintf (stdout, "glyph measurement cache miss\n");
+            
+            // Now construct the glyph buffer.
+            if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE/2)
+                usedGlyphBuf = glyphBufPtr = allocatedGlyphBuf = (char *)malloc (numGlyphs * 2);
+            else
+                usedGlyphBuf = glyphBufPtr = &localGlyphBuf[0];
+                    
+            if (needCharToGlyphLookup){
+                int glyphID;
+        
+                glyphRecordsPtr = glyphRecords;
+                for (i = 0; i < numGlyphs; i++){
+                    glyphID = glyphRecordsPtr->glyphID;
+                    *glyphBufPtr++ = (char)((glyphID >> 8) & 0x00FF);
+                    *glyphBufPtr++ = (char)(glyphID & 0x00FF);
+                    glyphRecordsPtr++;
+                }
+            }
+            else {
+                int glyphID;
+                
+                for (i = 0; i < numGlyphs; i++){
+                    index = internalBuffer[i]-FIRST_CACHE_CHAR;
+                    glyphID = glyphRecords[index].glyphID;
+                    *glyphBufPtr++ = (char)((glyphID >> 8) & 0x00FF);
+                    *glyphBufPtr++ = (char)(glyphID & 0x00FF);
+                }
+            }
+            
+            float localAdvanceBuf[LOCAL_GLYPH_BUFFER_SIZE];
+            float *usedAdvanceBuf, *allocatedAdvanceBuf = 0;
+        
+            if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE)
+                usedAdvanceBuf = allocatedAdvanceBuf = (float *)malloc (numGlyphs * sizeof(float));
+            else
+                usedAdvanceBuf = &localAdvanceBuf[0];
+            
+            cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             CGFontGetGlyphScaledAdvances ([font _backingCGSFont], (const short unsigned int *)usedGlyphBuf, numGlyphs, usedAdvanceBuf, [font pointSize]);
             for (i = 0; i < numGlyphs; i++){
                 //totalWidth += ScaleEmToUnits (advance[i], info->unitsPerEm);
                 totalWidth += ROUND_TO_INT(usedAdvanceBuf[i]);
             }
-        }
+            
+            if (allocatedAdvanceBuf)
+                free (allocatedAdvanceBuf);
         
-        if (allocatedAdvanceBuf)
-            free (allocatedAdvanceBuf);
-
-        if (allocatedGlyphBuf)
-            free (allocatedGlyphBuf);
-    } 
-    else {
+            if (allocatedGlyphBuf)
+                free (allocatedGlyphBuf);
+        } 
+    }
+    else
+        usedCharacterToGlyph = self->characterToGlyph;
+    
+    if (!needGlyphAdvanceLookup){
         float *widthCache = self->widthCache;
-        for (i = 0; i < numGlyphs; i++){
+        for (i = 0; i < stringLength; i++){
             if (needCharToGlyphLookup)
                 index = i;
             else
-                index = internalBuffer[i]-FIRST_ASCII_CHAR;
-            totalWidth += ROUND_TO_INT(widthCache[glyphRecords[index].glyphID]);
+                index = internalBuffer[i]-FIRST_CACHE_CHAR;
+            totalWidth += ROUND_TO_INT(widthCache[usedCharacterToGlyph[index]]);
         }
     }
     
-    if (needCharToGlyphLookup)
-        __IFResetATSGlyphVector(&self->_glyphVector);
-            
     return NSMakeRect (0,0,(float)totalWidth, (float)self->lineHeight);
 }
 #endif

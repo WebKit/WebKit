@@ -4,7 +4,7 @@
 
 #import "WebKitDebug.h"
 
-unsigned int WEBKIT_LOG_LEVEL = WEBKIT_LOG_ALL;
+unsigned int WEBKIT_LOG_LEVEL = 0;
 
 
 void WebKitSetLogLevel(int mask) {

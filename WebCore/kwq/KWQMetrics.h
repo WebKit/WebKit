@@ -35,8 +35,15 @@
 #define LOCAL_GLYPH_BUFFER_SIZE 1024
 #define GLYPH_CACHE_MAX 1024
 
-#define FIRST_ASCII_CHAR ((int)' ')
-#define LAST_ASCII_CHAR ((int)'}')
+// These definitions are used to bound the character-to-glyph mapping cache.  The
+// range is limited to LATIN1.  Also a check must be made to determine that a
+// character range does not include a composable charcter.
+
+// The first displayable character in latin1. (SPACE)
+#define FIRST_CACHE_CHAR (0x20)
+
+// The last character in latin1 extended A. (LATIN SMALL LETTER LONG S)
+#define LAST_CACHE_CHAR (0x17F)
 
 #define Boolean MacBoolean
 #define Fixed MacFixed
@@ -74,11 +81,12 @@ CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
     ATSStyleGroupPtr _styleGroup;
     ATSUStyle _style;
     ATSGlyphVector _glyphVector;
-    ATSStyleGroupPtr _asciiStyleGroup;
-    ATSUStyle _asciiStyle;
-    ATSGlyphVector _asciiCacheGlyphVector;
+    ATSStyleGroupPtr _latinStyleGroup;
+    ATSUStyle _latinStyle;
+    ATSGlyphVector _latinCacheGlyphVector;
     int widthCacheSize;
     float *widthCache;
+    ATSGlyphRef *characterToGlyph;
 #endif
 }
 

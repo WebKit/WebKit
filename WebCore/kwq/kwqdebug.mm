@@ -25,7 +25,7 @@
 
 #include <kwqdebug.h>
 
-unsigned int KWQ_LOG_LEVEL = KWQ_LOG_ALL;
+unsigned int KWQ_LOG_LEVEL = 0;
 
 void KWQSetLogLevel(int mask) {
     KWQ_LOG_LEVEL = mask;    

@@ -50,6 +50,7 @@ long _GetMillisecondsSinceEpoch();
 #define KWQ_LOG_ERROR			0x00000010
 #define KWQ_LOG_TIMING			0x00000020
 #define KWQ_LOG_LOADING			0x00000040
+#define KWQ_LOG_MEMUSAGE		0x00000080
 
 #define KWQ_LOG_NONE			0
 
@@ -110,6 +111,10 @@ void KWQLogAtLevel(unsigned int level, NSString *format, ...);
 #define KWQDEBUGLEVEL6(level,format,arg1,arg2,arg3,arg4,arg5,arg6) \
    KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
    KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5,arg6);
+            
+#define KWQDEBUGLEVEL7(level,format,arg1,arg2,arg3,arg4,arg5,arg6,arg7) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5,arg6,arg7);
             
 #define DEBUG_OBJECT(object) [[object description] cString]
 

@@ -1,3 +1,11 @@
+2002-03-18  Richard Williamson  <rjw@apple.com>
+
+        Added comments about new layout scheme.  Cleaned up code.
+        Improved core measurement routine.
+
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::boundingRect):
+	* src/kwq/kwqdebug.h:
+
 2002-03-18  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQString.mm: (QString::latin1): Handle null case properly.
