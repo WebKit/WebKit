@@ -1,3 +1,7 @@
+2002-10-11  John Sullivan  <sullivan@apple.com>
+
+        * Resources/url_icon.tiff: new generic URL icon -- no more @!
+
 2002-10-10  Darin Adler  <darin@apple.com>
 
 	- fixed 3069366 -- REGRESSION: no pop-up window at inkfinder.com
