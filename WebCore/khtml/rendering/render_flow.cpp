@@ -61,6 +61,8 @@ RenderFlow::RenderFlow(DOM::NodeImpl* node)
     m_clearStatus = CNONE;
 
     specialObjects = 0;
+    
+    m_maxTopPosMargin = m_maxTopNegMargin = m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
 }
 
 void RenderFlow::setStyle(RenderStyle *_style)
@@ -217,11 +219,11 @@ void RenderFlow::layout()
 
     bool relayoutChildren = false;
     if ( oldWidth != m_width )
-	relayoutChildren = true;
+        relayoutChildren = true;
 
     // need a small hack here, as tables are done a bit differently
     if ( isTableCell() ) //&& static_cast<RenderTableCell *>(this)->widthChanged() )
-	relayoutChildren = true;
+        relayoutChildren = true;
 
 //     kdDebug( 6040 ) << specialObjects << "," << oldWidth << ","
 //                     << m_width << ","<< layouted() << "," << isAnonymousBox() << ","
@@ -256,6 +258,16 @@ void RenderFlow::layout()
     m_height = 0;
     m_clearStatus = CNONE;
 
+    // Start out by setting our margin values to our current margin.
+    if (m_marginTop > 0)
+        m_maxTopPosMargin = m_marginTop;
+    else
+        m_maxTopNegMargin = m_marginTop;
+    if (m_marginBottom > 0)
+        m_maxBottomPosMargin = m_marginBottom;
+    else
+        m_maxBottomNegMargin = m_marginBottom;
+        
 //    kdDebug( 6040 ) << "childrenInline()=" << childrenInline() << endl;
     if(childrenInline()) {
         // ### make bidi resumeable so that we can get rid of this ugly hack
@@ -268,15 +280,15 @@ void RenderFlow::layout()
     int oldHeight = m_height;
     calcHeight();
     if ( oldHeight != m_height )
-	relayoutChildren = true;
+        relayoutChildren = true;
 
     if ( isTableCell() && lastChild() && lastChild()->hasOverhangingFloats() ) {
         m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
-	m_height += borderBottom() + paddingBottom();
+        m_height += borderBottom() + paddingBottom();
     }
     if( hasOverhangingFloats() && (isFloating() || isTableCell()) ) {
-	m_height = floatBottom();
-	m_height += borderBottom() + paddingBottom();
+        m_height = floatBottom();
+        m_height += borderBottom() + paddingBottom();
     }
 
     layoutSpecialObjects( relayoutChildren );
@@ -333,26 +345,27 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         xPos = marginLeft() + m_width - paddingRight() - borderRight();
     }
 
+    bool canCollapseWithChildren = !isPositioned() && !isFloating() && !isTableCell();
+    
     RenderObject *child = firstChild();
     RenderFlow *prevFlow = 0;
 
     int prevMargin = 0;
     if(isTableCell() ) {
-	prevMargin = TABLECELLMARGIN;
+        prevMargin = TABLECELLMARGIN;
     } else if ( m_height == 0 ) {
-	// the elements and childs margin collapse if there is no border and padding.
-	prevMargin = marginTop();
-	if ( parent() )
-	    prevMargin = collapseMargins( prevMargin, parent()->marginTop() );
-	if ( prevMargin != TABLECELLMARGIN )
-	    m_height = -prevMargin;
+        // the elements and childs margin collapse if there is no border and padding.
+        prevMargin = marginTop();
+        if ( parent() )
+            prevMargin = collapseMargins( prevMargin, parent()->marginTop() );
+        if ( prevMargin != TABLECELLMARGIN )
+            m_height = -prevMargin;
     }
     //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
     // take care in case we inherited floats
     if (child && floatBottom() > m_height)
-	child->setLayouted(false);
-
+        child->setLayouted(false);
 
 //     QTime t;
 //     t.start();

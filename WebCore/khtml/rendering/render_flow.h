@@ -134,6 +134,19 @@ public:
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start);
 
+    virtual short maxTopMargin(bool positive) const {
+        if (positive)
+            return m_maxTopPosMargin;
+        else
+            return m_maxTopNegMargin;
+    }
+    virtual short maxBottomMargin(bool positive) const {
+        if (positive)
+            return m_maxBottomPosMargin;
+        else
+            return m_maxBottomNegMargin;
+    }
+
 protected:
 
     struct SpecialObject {
@@ -183,6 +196,11 @@ private:
     bool firstLine        : 1; // used in inline layouting
     bool m_blockBidi : 1;
     EClear m_clearStatus  : 2; // used during layuting of paragraphs
+    
+    short m_maxTopPosMargin;
+    short m_maxTopNegMargin;
+    short m_maxBottomPosMargin;
+    short m_maxBottomNegMargin;
 };
 
     
