@@ -605,8 +605,9 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         else if ( (mev.url.length() || isSubmitImage(mev.innerNode.handle()))
                   && m_part->settings()->changeCursor() )
             c = m_part->urlCursor();
-        else if ( mev.innerNode.nodeType() == Node::TEXT_NODE
-                  || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE )
+        else if ( !mev.innerNode.isNull()
+                  && (mev.innerNode.nodeType() == Node::TEXT_NODE
+                      || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE) )
             c = KCursor::ibeamCursor();
         break;
     case CURSOR_CROSS:

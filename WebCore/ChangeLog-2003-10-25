@@ -1,3 +1,12 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3213093 -- REGRESSION: crash accessing menu items right after launch with about:blank as homepage
+
+        * khtml/khtmlview.cpp: (KHTMLView::viewportMouseMoveEvent):
+        Another place needed a check for null.
+
 2003-03-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3211849.  I accidentally removed a BORDER_COLOR case
