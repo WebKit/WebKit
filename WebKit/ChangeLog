@@ -1,3 +1,8 @@
+	2002-11-22  Chris Blumenberg  <cblu@apple.com>
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Added a FIXME around saveFilenameForResponse:andRequest: because the API expects a path but is asking for a filename.
+
 2002-11-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3104693 - QT movie doesn't show video while still downloading

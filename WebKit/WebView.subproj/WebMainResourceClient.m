@@ -171,7 +171,13 @@
 	[dataSource _setIsDownloading:YES];
 	
 	if ([dataSource downloadPath] == nil) {
-	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:req];
+            // FIXME: Should this be the filename or path?
+	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r
+                                                                                            andRequest:req];
+            // FIXME: Maybe there a cleaner way handle the bad filename case?
+            if(!saveFilename || [saveFilename length] == 0){
+                saveFilename = NSHomeDirectory();
+            }
 	    [dataSource _setDownloadPath:saveFilename];
 	}
 	
