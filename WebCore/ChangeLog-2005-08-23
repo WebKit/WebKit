@@ -1,3 +1,18 @@
+2003-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3500408: Web Kit should pass the MAYSCRIPT attribute from the APPLET tag to the Java plug-in
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::parseAttribute): Allow the "mayscript" attribute.
+        (HTMLAppletElementImpl::createRenderer): Pass the value of the "mayscript" attribute
+        as an argument named "mayScript".
+
+        * khtml/misc/htmlattrs.in: Added "mayscript".
+        * khtml/misc/htmlattrs.c: Regenerated.
+        * khtml/misc/htmlattrs.h: Regenerated.
+
 2003-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

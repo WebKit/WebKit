@@ -75,13 +75,14 @@ void HTMLAppletElementImpl::parseAttribute(AttributeImpl *attr)
 {
     switch( attr->id() )
     {
-    case ATTR_CODEBASE:
+    case ATTR_ALT:
     case ATTR_ARCHIVE:
     case ATTR_CODE:
-    case ATTR_OBJECT:
-    case ATTR_ALT:
+    case ATTR_CODEBASE:
     case ATTR_ID:
+    case ATTR_MAYSCRIPT:
     case ATTR_NAME:
+    case ATTR_OBJECT:
         break;
     case ATTR_WIDTH:
         addCSSLength(CSS_PROP_WIDTH, attr->value());
@@ -125,7 +126,11 @@ RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderSt
 
 	args.insert( "baseURL", getDocument()->baseURL() );
 
-        // Other arguments (from <PARAM> tags are added later.
+        DOMString mayScript = getAttribute(ATTR_MAYSCRIPT);
+        if (!mayScript.isNull())
+            args.insert("mayScript", mayScript.string());
+
+        // Other arguments (from <PARAM> tags) are added later.
         
         return new (getDocument()->renderArena()) RenderApplet(this, args);
     }
