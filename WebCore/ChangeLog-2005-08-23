@@ -1,5 +1,16 @@
 2003-04-29  David Hyatt  <hyatt@apple.com>
 
+	Fix for the Adam Rice float/padding test on diveintomark's list
+	of bugs.  We weren't adding in the parent's border/padding in
+	one case in the clearFloats function, which resulted in the
+	float being incorrectly positioned.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+
+2003-04-29  David Hyatt  <hyatt@apple.com>
+
 	This patch fixes the following bugs:
 
 	(1) 3186174 - padding-left improperly applied to list items.
