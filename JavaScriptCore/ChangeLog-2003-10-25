@@ -1,3 +1,23 @@
+2002-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix major JavaScript memory leak. run-plt says cvs-base improved
+	by 2% and cvs-js-performance improved by 7%. However, this was
+	within the possible noise level in each case.
+        
+	The fix was to store ValueImp *'s in the array instead of Value
+	objects, since the Value wrapper will keep a ref and make the
+	object immortal.
+
+	* kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp):
+        (ArrayInstanceImp::get):
+        (ArrayInstanceImp::put):
+        (ArrayInstanceImp::hasProperty):
+        (ArrayInstanceImp::deleteProperty):
+        (ArrayInstanceImp::setLength):
+        (ArrayInstanceImp::mark):
+        * kjs/array_object.h:
+
 2002-08-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Add the ability to determine the classes of live JavaScript

@@ -43,20 +43,24 @@ ArrayInstanceImp::ArrayInstanceImp(const Object &proto, unsigned initialLength)
   : ObjectImp(proto)
   , length(initialLength)
   , capacity(length)
-  , storage(length ? new Undefined[length] : 0)
+  , storage(length ? new (ValueImp *)[length] : 0)
 {
+  unsigned l = length;
+  for (unsigned i = 0; i < l; ++i) {
+    storage[i] = Undefined().imp();
+  }
 }
 
 ArrayInstanceImp::ArrayInstanceImp(const Object &proto, const List &list)
   : ObjectImp(proto)
   , length(list.size())
   , capacity(length)
-  , storage(length ? new Undefined[length] : 0)
+  , storage(length ? new (ValueImp *)[length] : 0)
 {
   ListIterator it = list.begin();
   const unsigned l = length;
   for (unsigned i = 0; i < l; ++i) {
-    storage[i] = it++;
+    storage[i] = (it++).imp();
   }
 }
 
@@ -75,7 +79,7 @@ Value ArrayInstanceImp::get(ExecState *exec, const UString &propertyName) const
   if (ok) {
     if (index >= length)
       return Undefined();
-    return storage[index];
+    return Value(storage[index]);
   }
 
   return ObjectImp::get(exec, propertyName);
@@ -85,7 +89,7 @@ Value ArrayInstanceImp::get(ExecState *exec, unsigned index) const
 {
   if (index >= length)
     return Undefined();
-  return storage[index];
+  return Value(storage[index]);
 }
 
 // Special implementation of [[Put]] - see ECMA 15.4.5.1
@@ -100,7 +104,7 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
   unsigned index = propertyName.toULong(&ok);
   if (ok) {
     setLength(index + 1);
-    storage[index] = value;
+    storage[index] = value.imp();
     return;
   }
   
@@ -110,7 +114,7 @@ void ArrayInstanceImp::put(ExecState *exec, const UString &propertyName, const V
 void ArrayInstanceImp::put(ExecState *exec, unsigned index, const Value &value, int attr)
 {
   setLength(index + 1);
-  storage[index] = value;
+  storage[index] = value.imp();
 }
 
 bool ArrayInstanceImp::hasProperty(ExecState *exec, const UString &propertyName) const
@@ -123,7 +127,7 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, const UString &propertyName)
   if (ok) {
     if (index >= length)
       return false;
-    return !storage[index].isA(UndefinedType);
+    return storage[index]->type() != UndefinedType;
   }
   
   return ObjectImp::hasProperty(exec, propertyName);
@@ -133,7 +137,7 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, unsigned index) const
 {
   if (index >= length)
     return false;
-  return !storage[index].isA(UndefinedType);
+  return storage[index]->type() != UndefinedType;
 }
 
 bool ArrayInstanceImp::deleteProperty(ExecState *exec, const UString &propertyName)
@@ -146,7 +150,7 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, const UString &propertyNa
   if (ok) {
     if (index >= length)
       return true;
-    storage[index] = Undefined();
+    storage[index] = Undefined().imp();
     return true;
   }
   
@@ -157,7 +161,7 @@ bool ArrayInstanceImp::deleteProperty(ExecState *exec, unsigned index)
 {
   if (index >= length)
     return true;
-  storage[index] = Undefined();
+  storage[index] = Undefined().imp();
   return true;
 }
 
@@ -166,14 +170,16 @@ void ArrayInstanceImp::setLength(unsigned newLength)
   if (newLength < length) {
     const unsigned l = length;
     for (unsigned i = newLength; i < l; ++i)
-      storage[i] = Undefined();
+      storage[i] = Undefined().imp();
   }
   if (newLength > capacity) {
     unsigned newCapacity = (newLength * 3 + 1) / 2;
-    Value *newStorage = new Undefined [newCapacity];
+    ValueImp **newStorage = new (ValueImp *)[newCapacity];
     const unsigned l = length;
     for (unsigned i = 0; i < l; ++i)
       newStorage[i] = storage[i];
+    for (unsigned i = l; i < newLength; i++)
+      newStorage[i] = Undefined().imp();
     delete [] storage;
     storage = newStorage;
     capacity = newCapacity;
@@ -186,7 +192,7 @@ void ArrayInstanceImp::mark()
   ObjectImp::mark();
   const unsigned l = length;
   for (unsigned i = 0; i < l; ++i) {
-    ValueImp *imp = storage[i].imp();
+    ValueImp *imp = storage[i];
     if (!imp->marked())
       imp->mark();
   }

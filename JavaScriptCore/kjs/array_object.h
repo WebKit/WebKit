@@ -54,7 +54,7 @@ namespace KJS {
     
     unsigned length;
     unsigned capacity;
-    Value *storage;
+    ValueImp **storage;
   };
 
  class ArrayPrototypeImp : public ArrayInstanceImp {
