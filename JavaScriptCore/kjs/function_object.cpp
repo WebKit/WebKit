@@ -105,7 +105,7 @@ Value FunctionProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &a
       result = String("function " + static_cast<FunctionImp*>(thisObj.imp())->name().ustring() + "()");
     }
     else {
-      result = String("(Internal function)");
+      result = String("(Internal Function)");
     }
     }
     break;

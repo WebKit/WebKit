@@ -1,3 +1,27 @@
+2004-10-07  Richard Williamson   <rjw@apple.com>
+
+	Added simple JavaScript call tracing.  Very useful for
+        debugging complex pages.
+
+	Tracing is only available in development builds and is
+	enabled by:
+
+	(gdb) set traceJavaScript = 1
+
+	or programatically
+
+	setTraceJavaScript(true)
+
+	Function, args, and return values are printed to console.  Very
+	verbose.
+
+        Reviewed by Ken.
+
+        * kjs/function_object.cpp:
+        (FunctionProtoFuncImp::call):
+        * kjs/object.cpp:
+        (KJS::Object::call):
+
 === Safari-166 ===
 
 2004-10-05  Richard Williamson   <rjw@apple.com>
