@@ -276,7 +276,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSURL *URL;
     WebHistoryItem *bfItem;
 
-    if (useOriginal && 1) {
+    if (useOriginal) {
         request = [dataSrc _originalRequest];
     }
     else {

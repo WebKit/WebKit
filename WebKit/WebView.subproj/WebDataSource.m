@@ -321,6 +321,11 @@
 
 - (void)_setURL:(NSURL *)URL
 {
+    NSMutableURLRequest *newOriginalRequest = [_private->originalRequestCopy mutableCopy];
+    [_private->originalRequestCopy release];
+    [newOriginalRequest setURL:URL];
+    _private->originalRequestCopy = newOriginalRequest;
+
     NSMutableURLRequest *newRequest = [_private->request mutableCopy];
     [_private->request release];
     [newRequest setURL:URL];

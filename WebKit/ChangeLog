@@ -1,3 +1,14 @@
+2003-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3513274: REGRESSION: anchor navigation within frames with "Back" is broken at tivofaq.com
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource _setURL:]):
+        Since this method is only used when you do a fragment scroll, we need to update
+        the original request as well as the request. This ensure that the fragment gets
+        recorded in the history item (which goes in the back/forward history).
+
 === Safari-118 ===
 
 2003-12-17  John Sullivan  <sullivan@apple.com>
