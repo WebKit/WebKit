@@ -1,5 +1,10 @@
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::slotData): Simplified a bit.
+
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
         Merged KHTMLPart::end method with khtml original.
 
         * khtml/khtml_part.cpp:

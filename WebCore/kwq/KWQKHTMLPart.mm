@@ -101,18 +101,8 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
     QString enc;
 
     if (!d->m_workingURL.isEmpty()) {
-        //begin(d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset);
         part->begin(d->m_workingURL, 0, 0);
-
-	//d->m_doc->docLoader()->setReloading(d->m_bReloading);
         d->m_workingURL = KURL();
-    }
-
-    // This flag is used to tell when a load has completed so we can be sure
-    // to process the data even if we have not yet determined the proper
-    // encoding.
-    if (complete) {
-        d->m_bComplete = true;    
     }
 
     if (encoding != NULL) {
