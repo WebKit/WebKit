@@ -1007,7 +1007,7 @@ typedef struct {
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
 
-- (NSURLRequest *)requestWithURLCString:(const char *)URLCString
+- (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString
 {
     if (!URLCString) {
         return nil;
@@ -1021,7 +1021,7 @@ typedef struct {
         return nil;
     }
     
-    return [NSURLRequest requestWithURL:URL];
+    return [NSMutableURLRequest requestWithURL:URL];
 }
 
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
@@ -1163,7 +1163,7 @@ typedef struct {
         return NPERR_INVALID_PARAM;
     }
 
-    NSURLRequest *request = [self requestWithURLCString:URLCString];
+    NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
     [request HTTPSetMethod:@"POST"];
     
     if (allowHeaders) {

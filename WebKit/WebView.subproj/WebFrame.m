@@ -100,7 +100,7 @@
 
     // note this copies request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    NSURLRequest *r = [newDataSource request];
+    NSMutableURLRequest *r = [newDataSource request];
     [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
     if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -137,7 +137,7 @@
 
     // initWithRequest copies the request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:[dataSource request]];
-    NSURLRequest *request = [newDataSource request];
+    NSMutableURLRequest *request = [newDataSource request];
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user

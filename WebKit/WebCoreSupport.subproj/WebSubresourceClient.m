@@ -46,7 +46,7 @@
     
     [source _addSubresourceClient:client];
 
-    NSURLRequest *newRequest = [[NSURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     [newRequest setCachePolicy:[[source request] cachePolicy]];
     [newRequest HTTPSetReferrer:referrer];
     

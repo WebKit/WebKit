@@ -33,7 +33,7 @@
     _private = [[WebDataSourcePrivate alloc] init];
     _private->originalRequest = [request retain];
     _private->originalRequestCopy = [request copy];
-    _private->request = [_private->originalRequest retain];
+    _private->request = [_private->originalRequest mutableCopy];
 
     ++WebDataSourceCount;
     
@@ -69,7 +69,7 @@
     return _private->originalRequest;
 }
 
--(NSURLRequest *)request
+-(NSMutableURLRequest *)request
 {
     return _private->request;
 }

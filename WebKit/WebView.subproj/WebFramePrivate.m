@@ -1085,7 +1085,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];            
         }
         else {
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:itemURL];
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
             [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
@@ -1524,7 +1524,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     BOOL isFormSubmission = (values != nil);
 
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request HTTPSetReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
@@ -1651,7 +1651,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [request HTTPSetMethod:@"POST"];
@@ -1750,7 +1750,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
 
-    NSURLRequest *request = [[dataSource request] copy];
+    NSMutableURLRequest *request = [[dataSource request] mutableCopy];
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [request release];

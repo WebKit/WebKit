@@ -41,7 +41,7 @@
     // The 'working' request for this datasource.  It may be mutated
     // several times from the original request to include additional
     // headers, cookie information, canonicalization and redirects.
-    NSURLRequest *request;
+    NSMutableURLRequest *request;
     
     WebResponse *response;
 

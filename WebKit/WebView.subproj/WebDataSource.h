@@ -12,6 +12,7 @@
 @class WebFrame;
 @class WebResource;
 @class NSURLRequest;
+@class NSMutableURLRequest;
 @class WebResponse;
 
 @protocol WebDocumentRepresentation;
@@ -73,7 +74,7 @@
     @method request
     @result Returns the request that was used to create this datasource.
 */
--(NSURLRequest *)request;
+-(NSMutableURLRequest *)request;
 
 /*!
     @method response
