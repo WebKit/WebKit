@@ -296,7 +296,9 @@ void QScrollView::addChild(QWidget* child, int x, int y)
 {
     ASSERT(child != this);
     
-    child->move(x, y);
+    // we don't need to do the offscreen position initialization that KDE needs
+    if (x != -500000)
+	child->move(x, y);
 
     KWQ_BLOCK_EXCEPTIONS;
 

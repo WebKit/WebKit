@@ -1,3 +1,25 @@
+2004-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Back out one of the previous changes, it causes a crash. Whoops!
+        
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild):
+
+2004-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	These two tiny changes (made w/ Dave's help) should get us about
+	1% or so combined on the HTML iBench.
+
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::setStyle): Don't call superclass setStyle, since
+	according to Dave we don't need any of the work done in there.
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild): Don't actually move the widget if the x
+	coordinate is -500000, since we don't need the initial offscreen
+	positioning that KHTML does and it is costly to do.
+
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
