@@ -1,3 +1,13 @@
+2005-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+	<rdar://problem/3993557> REGRESSION (125-180-ish): getElementsByTagName no longer works with namespace designations
+        
+	* khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::getElementsByTagNameNS): When no namespace is specified, find elements
+	of the specified name in any namespace to match Mozilla and earlier Safari behavior.
+
 2005-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

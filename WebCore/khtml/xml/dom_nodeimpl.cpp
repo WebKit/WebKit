@@ -2034,7 +2034,7 @@ NodeListImpl* NodeBaseImpl::getElementsByTagNameNS ( DOMStringImpl* namespaceURI
     NodeImpl::Id idMask = namespaceMask | localNameMask;
     if (localName->l && localName->s[0] == '*')
         idMask &= ~localNameMask;
-    if (namespaceURI && namespaceURI->l && namespaceURI->s[0] == '*')
+    if (!namespaceURI || (namespaceURI->l && namespaceURI->s[0] == '*'))
         idMask &= ~namespaceMask;
 
     Id id = 0; // 0 means "all items"
