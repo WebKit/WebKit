@@ -925,10 +925,16 @@ void DocumentImpl::recalcStyle( StyleChange change )
 	fontDef.italic = f.italic();
 	fontDef.weight = f.weight();
 #if APPLE_CHANGES
-        fontDef.usePrinterFont = m_paintDevice->devType() == QInternal::Printer;
+        bool printing = m_paintDevice->devType() == QInternal::Printer;
+        fontDef.usePrinterFont = printing;
 #endif
         if (m_view) {
             const KHTMLSettings *settings = m_view->part()->settings();
+#if APPLE_CHANGES
+            if (printing && !settings->shouldPrintBackgrounds()) {
+                _style->setShouldCorrectTextColor(true);
+            }
+#endif
             QString stdfont = settings->stdFontName();
             if ( !stdfont.isEmpty() ) {
                 fontDef.family.setFamily(stdfont);

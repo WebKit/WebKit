@@ -28,6 +28,7 @@
 #define WebKitDefaultTextEncodingNamePreferenceKey @"WebKitDefaultTextEncodingName"
 #define WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
 #define WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
+#define WebKitShouldPrintBackgroundsPreferenceKey @"WebKitShouldPrintBackgroundsPreferenceKey"
 #define WebKitJavaEnabledPreferenceKey @"WebKitJavaEnabled"
 #define WebKitJavaScriptEnabledPreferenceKey @"WebKitJavaScriptEnabled"
 #define WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey @"WebKitJavaScriptCanOpenWindowsAutomatically"
@@ -204,6 +205,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
@@ -430,6 +432,16 @@ NS_ENDHANDLER
     }
     
     [self _setStringValue:locationString forKey: WebKitUserStyleSheetLocationPreferenceKey];
+}
+
+- (BOOL)shouldPrintBackgrounds
+{
+    return [self _boolValueForKey: WebKitShouldPrintBackgroundsPreferenceKey];
+}
+
+- (void)setShouldPrintBackgrounds:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitShouldPrintBackgroundsPreferenceKey];
 }
 
 - (BOOL)isJavaEnabled

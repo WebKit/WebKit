@@ -1,3 +1,28 @@
+2003-09-17  John Sullivan  <sullivan@apple.com>
+
+	- WebKit part of fix for 3157018 -- Would like option to
+	not print backgrounds	
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebPreferences.h:
+	new accessor methods for new shouldPrintBackgrounds preference
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+	set initial value for WebKitShouldPrintBackgroundsPreferenceKey
+	to NO
+        (-[WebPreferences shouldPrintBackgrounds]):
+	new method, read NSUserDefaults value
+        (-[WebPreferences setShouldPrintBackgrounds:]):
+	new method, write NSUserDefault value
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+	tell WebCore about value of shouldPrintBackgrounds
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+	Updated for these and other recent changes
+
 2003-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

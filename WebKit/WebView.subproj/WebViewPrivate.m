@@ -450,6 +450,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     } else {
         [_private->settings setUserStyleSheetLocation:@""];
     }
+    [_private->settings setShouldPrintBackgrounds:[preferences shouldPrintBackgrounds]];
 }
 
 - (void)_releaseUserAgentStrings

@@ -47,6 +47,7 @@ class KHTMLSettings;
     BOOL JavaScriptEnabled;
     BOOL JavaScriptCanOpenWindowsAutomatically;
     BOOL willLoadImagesAutomatically;
+    BOOL shouldPrintBackgrounds;
     NSString *userStyleSheetLocation;
     NSString *defaultTextEncoding;
     
@@ -97,6 +98,9 @@ class KHTMLSettings;
 
 - (void)setUserStyleSheetLocation:(NSString *)location;
 - (NSString *)userStyleSheetLocation;
+
+- (void)setShouldPrintBackgrounds:(BOOL)enabled;
+- (BOOL)shouldPrintBackgrounds;
 
 - (void)setDefaultTextEncoding:(NSString *)encoding;
 - (NSString *)defaultTextEncoding;

@@ -1,3 +1,50 @@
+2003-09-17  John Sullivan  <sullivan@apple.com>
+
+	- WebCore part of fix for 3157018 -- Would like option to
+	not print backgrounds	
+
+        Reviewed by Darin
+
+        * kwq/KWQKHTMLSettings.h:
+	add _shouldPrintBackgrounds field and accessors
+
+        * kwq/WebCoreSettings.h:
+	add shouldPrintBackgrounds field and accessors
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings setShouldPrintBackgrounds:]):
+	new method, passes value to KHTMLSettings
+        (-[WebCoreSettings shouldPrintBackgrounds]):
+	new method
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge styleSheetForPrinting]):
+	new method, returns a style sheet that has backgrounds
+	turned off if preference is set that way.
+        (-[WebCoreBridge reapplyStylesForDeviceType:]):
+	if printing, set the printStyleSheet to the one we
+	created based on the preferences. (KHTML has always
+	had support for a special printStyleSheet, but it was
+	only being used in !APPLE_CHANGES code.)
+
+        * khtml/rendering/render_style.h:
+	add shouldCorrectTextColor boolean field and accessors 
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+	tell style to correct text colors if backgrounds aren't being printed
+
+        * khtml/rendering/render_text.cpp:
+        (TextRun::paintSelection):
+	added comment
+        (simpleDifferenceBetweenColors):
+	new function, computes a quick measure of difference
+	between colors
+        (correctedTextColor):
+	if text and background colors are too similar, returns
+	lightened or darkened text color
+        (RenderText::paintObject):
+	if style says to correct text colors, call correctedTextColor
+
 2003-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

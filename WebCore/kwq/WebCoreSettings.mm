@@ -274,6 +274,17 @@
     return userStyleSheetLocation;
 }
 
+- (void)setShouldPrintBackgrounds:(BOOL)enabled
+{
+    shouldPrintBackgrounds = enabled;
+    settings->setShouldPrintBackgrounds(enabled);
+}
+
+- (BOOL)shouldPrintBackgrounds
+{
+    return shouldPrintBackgrounds;
+}
+
 - (void)setDefaultTextEncoding:(NSString *)s
 {
     if ([defaultTextEncoding isEqualToString:s]) {

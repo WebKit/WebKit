@@ -266,4 +266,16 @@ extern NSString *WebPreferencesChangedNotification;
 */
 - (BOOL)autosaves;
 
+/*!
+    @method setShouldPrintBackgrounds:
+    @param flag
+*/
+- (void)setShouldPrintBackgrounds:(BOOL)flag;
+
+/*!
+    @method shouldPrintBackgrounds
+    @result The value of the shouldPrintBackgrounds preferences flag
+*/
+- (BOOL)shouldPrintBackgrounds;
+
 @end
