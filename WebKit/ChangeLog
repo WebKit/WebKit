@@ -1,5 +1,15 @@
 2003-08-06  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3365378.  Edge case text run > 1024 hit by JS generated string.  We weren't correctly checking size of string length.  Used /2 instead of *2.
+
+        Reviewed by Vicki (and Dan!).
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+
+2003-08-06  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3348630.  Pick up about 1% by moving implementation of _unicodeDirection to WebCore and inlining.
 
         Reviewed by Ken.

@@ -34,7 +34,10 @@
 // bug in CoreGraphics where there seem to be small errors to some metrics.
 #define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
 
-#define LOCAL_BUFFER_SIZE 1024
+// MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
+// use to represent a single unicode code point.
+#define MAX_GLYPH_EXPANSION 4
+#define LOCAL_BUFFER_SIZE 2048
 
 // Covers Latin1.
 #define INITIAL_BLOCK_SIZE 0x200
@@ -837,11 +840,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (run->length == 0)
         return;
 
-    if (length/2 > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)calloc(length*2, sizeof(CGSize));
-        widthBuffer = (float *)calloc(length*2, sizeof(float));
-        glyphBuffer = (CGGlyph *)calloc(length*2, sizeof(ATSGlyphRef));
-        fontBuffer = (NSFont **)calloc(length*2, sizeof(NSFont *));
+    if (length*MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
+        advances = (CGSize *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(CGSize));
+        widthBuffer = (float *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(float));
+        glyphBuffer = (CGGlyph *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(ATSGlyphRef));
+        fontBuffer = (NSFont **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(NSFont *));
     } else {
         advances = localAdvanceBuffer;
         widthBuffer = localWidthBuffer;
@@ -929,11 +932,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     if (run->length == 0)
         return;
 
-    if (length/2 > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)calloc(length*2, sizeof(CGSize));
-        widthBuffer = (float *)calloc(length*2, sizeof(float));
-        glyphBuffer = (CGGlyph *)calloc(length*2, sizeof(ATSGlyphRef));
-        fontBuffer = (NSFont **)calloc(length*2, sizeof(NSFont *));
+    if (length*MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
+        advances = (CGSize *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(CGSize));
+        widthBuffer = (float *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(float));
+        glyphBuffer = (CGGlyph *)calloc(length*MAX_GLYPH_EXPANSION, sizeof(ATSGlyphRef));
+        fontBuffer = (NSFont **)calloc(length*MAX_GLYPH_EXPANSION, sizeof(NSFont *));
     } else {
         advances = localAdvanceBuffer;
         widthBuffer = localWidthBuffer;

@@ -1,5 +1,11 @@
 2003-08-06  Richard Williamson   <rjw@apple.com>
 
+	Fixed development build problem.  WebCore.exp needed a newline at EOF.
+	
+        * WebCore-combined.exp:
+
+2003-08-06  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3348630.  Pick up about 1% by moving implementation of _unicodeDirection to WebCore and inlining.
 
         Reviewed by Ken.
