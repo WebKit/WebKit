@@ -73,10 +73,10 @@
     WebController *controller = [view controller];
 
     WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
-                                                        inDomain:WebErrorDomainWebFoundation
-                                                        failingURL:nil];
+                                                       inDomain:WebErrorDomainWebFoundation
+                                                     failingURL:nil];
     [controller _receivedError:cancelError
-                forResourceHandle:resource
+             forResourceHandle:resource
                 fromDataSource:[view dataSource]];
 
     [cancelError release];

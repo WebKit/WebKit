@@ -243,6 +243,11 @@
     [[NSCursor arrowCursor] set];
 }
 
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+    // Do nothing so that other responders don't respond to the drag that initiated in this view.
+}
+
 - (void)keyUp:(NSEvent *)theEvent
 {
     EventRecord event;
@@ -330,21 +335,6 @@
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     return acceptedEvent;
-}
-
-// Must subclass menuForEvent: for right-click to work.
-- (NSMenu *)menuForEvent:(NSEvent *)theEvent
-{
-    EventRecord event;
-    
-    [self getCarbonEvent:&event withEvent:theEvent];
-
-    BOOL acceptedEvent;
-    acceptedEvent = [self sendEvent:&event];
-    
-    LOG(Plugins, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
-
-    return nil;
 }
 
 #pragma mark WEB_NETSCAPE_PLUGIN

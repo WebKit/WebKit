@@ -1,3 +1,15 @@
+2002-10-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3025868 - Plugin context menu disappears then reappears if you click off of it
+
+	Also fixed some rare dragging weirdness in WebHTMLView. If you attempted to drag a plug-in after dragging an image, the image would drag again.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView mouseDragged:]): subclass and do nothing to prevent calling mouseDragged in WebHTMLView
+        (-[WebBaseNetscapePluginView performKeyEquivalent:]): no changes to this method, removed menuForEvent, wasn't needed after all
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream stop]): minor clean-up
+
 2002-10-20  Darin Adler  <darin@apple.com>
 
 	- fixed a minor problem with autorelease I just ran into
