@@ -341,18 +341,6 @@ Value ElementNode::evaluate(ExecState *exec)
 
 // ------------------------------ ArrayNode ------------------------------------
 
-void ArrayNode::reverseElementList()
-{
-  ElementNode *head = 0;
-  ElementNode *next;
-  for (ElementNode *n = element; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  element = head;
-}
-
 void ArrayNode::ref()
 {
   Node::ref();
@@ -390,18 +378,6 @@ Value ArrayNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ObjectLiteralNode ----------------------------
-
-void ObjectLiteralNode::reverseList()
-{
-  PropertyValueNode *head = 0;
-  PropertyValueNode *next;
-  for (PropertyValueNode *n = list; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  list = head;
-}
 
 void ObjectLiteralNode::ref()
 {
@@ -560,15 +536,6 @@ Reference AccessorNode2::evaluateReference(ExecState *exec)
 
 // ------------------------------ ArgumentListNode -----------------------------
 
-ArgumentListNode::ArgumentListNode(Node *e) : list(0L), expr(e)
-{
-}
-
-ArgumentListNode::ArgumentListNode(ArgumentListNode *l, Node *e)
-  : list(l), expr(e)
-{
-}
-
 void ArgumentListNode::ref()
 {
   for (ArgumentListNode *n = this; n; n = n->list) {
@@ -612,18 +579,6 @@ List ArgumentListNode::evaluateList(ExecState *exec)
 }
 
 // ------------------------------ ArgumentsNode --------------------------------
-
-void ArgumentsNode::reverseList()
-{
-  ArgumentListNode *head = 0;
-  ArgumentListNode *next;
-  for (ArgumentListNode *n = list; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  list = head;
-}
 
 void ArgumentsNode::ref()
 {
@@ -1512,6 +1467,19 @@ Value CommaNode::evaluate(ExecState *exec)
 
 // ------------------------------ StatListNode ---------------------------------
 
+StatListNode::StatListNode(StatementNode *s)
+  : statement(s), list(this)
+{
+  setLoc(s->firstLine(), s->lastLine(), s->sourceId());
+}
+ 
+StatListNode::StatListNode(StatListNode *l, StatementNode *s)
+  : statement(s), list(l->list)
+{
+  l->list = this;
+  setLoc(l->firstLine(), s->lastLine(), l->sourceId());
+}
+
 void StatListNode::ref()
 {
   for (StatListNode *n = this; n; n = n->list) {
@@ -1700,18 +1668,6 @@ void VarDeclListNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ VarStatementNode -----------------------------
 
-void VarStatementNode::reverseList()
-{
-  VarDeclListNode *head = 0;
-  VarDeclListNode *next;
-  for (VarDeclListNode *n = list; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  list = head;
-}
-
 void VarStatementNode::ref()
 {
   Node::ref();
@@ -1744,16 +1700,15 @@ void VarStatementNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ BlockNode ------------------------------------
 
-void BlockNode::reverseList()
+BlockNode::BlockNode(SourceElementsNode *s)
 {
-  SourceElementsNode *head = 0;
-  SourceElementsNode *next;
-  for (SourceElementsNode *n = source; n; n = next) {
-    next = n->elements;
-    n->elements = head;
-    head = n;
+  if (s) {
+    source = s->elements;
+    s->elements = 0;
+    setLoc(s->firstLine(), s->lastLine(), s->sourceId());
+  } else {
+    source = 0;
   }
-  source = head;
 }
 
 void BlockNode::ref()
@@ -1987,18 +1942,6 @@ void WhileNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ ForNode --------------------------------------
-
-VarDeclListNode *ForNode::reverseList(VarDeclListNode *list)
-{
-  VarDeclListNode *head = 0;
-  VarDeclListNode *next;
-  for (VarDeclListNode *n = list; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  return head;
-}
 
 void ForNode::ref()
 {
@@ -2274,18 +2217,6 @@ void WithNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ CaseClauseNode -------------------------------
 
-void CaseClauseNode::reverseList()
-{
-  StatListNode *head = 0;
-  StatListNode *next;
-  for (StatListNode *n = list; n; n = next) {
-    next = n->list;
-    n->list = head;
-    head = n;
-  }
-  list = head;
-}
-
 void CaseClauseNode::ref()
 {
   Node::ref();
@@ -2369,26 +2300,26 @@ void ClauseListNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ CaseBlockNode --------------------------------
 
-void CaseBlockNode::reverseLists()
+CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
+                             ClauseListNode *l2)
 {
-  ClauseListNode *head = 0;
-  ClauseListNode *next;
-  for (ClauseListNode *n = list1; n; n = next) {
-    next = n->nx;
-    n->nx = head;
-    head = n;
+  if (l1) {
+    list1 = l1->nx;
+    l1->nx = 0;
+  } else {
+    list1 = 0;
   }
-  list1 = head;
-  
-  head = 0;
-  for (ClauseListNode *n = list2; n; n = next) {
-    next = n->nx;
-    n->nx = head;
-    head = n;
-  }
-  list2 = head;
-}
 
+  def = d;
+
+  if (l2) {
+    list2 = l2->nx;
+    l2->nx = 0;
+  } else {
+    list2 = 0;
+  }
+}
+ 
 void CaseBlockNode::ref()
 {
   Node::ref();
@@ -2772,18 +2703,6 @@ void FunctionBodyNode::processFuncDecl(ExecState *exec)
 
 // ------------------------------ FuncDeclNode ---------------------------------
 
-void FuncDeclNode::reverseParameterList()
-{
-  ParameterNode *head = 0;
-  ParameterNode *next;
-  for (ParameterNode *n = param; n; n = next) {
-    next = n->next;
-    n->next = head;
-    head = n;
-  }
-  param = head;
-}
-
 void FuncDeclNode::ref()
 {
   Node::ref();
@@ -2837,18 +2756,6 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
 // ------------------------------ FuncExprNode ---------------------------------
 
-void FuncExprNode::reverseParameterList()
-{
-  ParameterNode *head = 0;
-  ParameterNode *next;
-  for (ParameterNode *n = param; n; n = next) {
-    next = n->next;
-    n->next = head;
-    head = n;
-  }
-  param = head;
-}
-
 void FuncExprNode::ref()
 {
   Node::ref();
@@ -2885,6 +2792,19 @@ Value FuncExprNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ SourceElementsNode ---------------------------
+
+SourceElementsNode::SourceElementsNode(StatementNode *s1)
+  : element(s1), elements(this)
+{
+  setLoc(s1->firstLine(), s1->lastLine(), s1->sourceId());
+}
+ 
+SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
+  : element(s2), elements(s1->elements)
+{
+  s1->elements = this;
+  setLoc(s1->firstLine(), s2->lastLine(), s1->sourceId());
+}
 
 void SourceElementsNode::ref()
 {

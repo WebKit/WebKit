@@ -1,3 +1,72 @@
+2003-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - changed list manipulation to use Harri Porten's idea of a circular
+          linked list that is built from head to tail rather than building the
+          list backwards and reversing the list when done
+
+        * kjs/grammar.y: Handle CatchNode and FinallyNode in a type-safe way.
+        Change many places that passed 0L to pass nothing at all, or to pass 0.
+
+        * kjs/nodes.h:
+        (KJS::ElementNode::ElementNode): Build a circular list instead of a 0-terminated
+        backwards list.
+        (KJS::ArrayNode::ArrayNode): Break the circular list instead of reversing the list.
+        (KJS::PropertyValueNode::PropertyValueNode): Moved before ObjectLiteralNode so the
+        inline code in ObjectLiteralNode works. Build a circular list instead of a 0-terminated
+        backwards list. Made the case for the first node separate so we don't need a nil check.
+        (KJS::ObjectLiteralNode::ObjectLiteralNode): Break the circular list instead of
+        reversing the list.
+        (KJS::ArgumentListNode::ArgumentListNode): Build a circular list instead of a 0-terminated
+        backwards list. Also, made the constructors inline (moved here from .cpp file).
+        (KJS::ArgumentsNode::ArgumentsNode): Break the circular list instead of
+        reversing the list.
+        (KJS::NewExprNode::NewExprNode): Changed a 0L to 0.
+        (KJS::StatListNode::StatListNode): Make this constructor no longer inline (moved into
+        .cpp file). The one in the .cpp file builds a circular list instead of a 0-terminated
+        backwards list.
+        (KJS::VarDeclListNode::VarDeclListNode): Build a circular list instead of a 0-terminated
+        backwards list.
+        (KJS::VarStatementNode::VarStatementNode): Break the circular list instead of reversing
+        the list.
+        (KJS::BlockNode::BlockNode): Make this constructor no longer inline (moved into .cpp file).
+        The one in the .cpp file breaks the list instead of reversing it.
+        (KJS::ForNode::ForNode): Break the circular list instead of reversing the list.
+        (KJS::CaseClauseNode::CaseClauseNode): Break the circular list instead of reversing the
+        list.
+        (KJS::ClauseListNode::ClauseListNode): Build a circular list instead of a 0-terminated
+        backwards list.
+        (KJS::CaseBlockNode::CaseBlockNode): Make this constructor no longer inline (moved into
+        .cpp file). The one in the .cpp file breaks the list instead of reversing it.
+        (KJS::TryNode::TryNode): Changed constructor to take typed parameters for the catch and
+        finally nodes rather than just Node.
+        (KJS::ParameterNode::ParameterNode): Build a circular list instead of a 0-terminated
+        backwards list.
+        (KJS::FuncDeclNode::FuncDeclNode): Break the circular list instead of reversing the
+        list.
+        (KJS::FuncExprNode::FuncExprNode): Break the circular list instead of reversing the
+        list.
+
+        * kjs/nodes.cpp:
+        (StatListNode::StatListNode): Moved this constructor here, no longer inline.
+        Did the "break circular list" thing instead of the "reverse list" thing.
+        Added setLoc calls to match KJS in the KDE tree; since we don't currently
+        use the JavaScript debugging support, it's unclear whether there's any benefit, but
+        later we might be using it and it's good to be as close as possible.
+        (BlockNode::BlockNode): Moved this constructor here, no longer inline.
+        Did the "break circular list" thing instead of the "reverse list" thing.
+        Added setLoc calls.
+        (CaseBlockNode::CaseBlockNode): Moved this constructor here, no longer inline.
+        Did the "break circular list" thing instead of the "reverse list" thing.
+        (SourceElementsNode::SourceElementsNode): Moved this constructor here, no longer inline.
+        Did the "break circular list" thing instead of the "reverse list" thing.
+        Added setLoc calls.
+
+        * kjs/grammar.cpp: Regenerated.
+        * kjs/grammar.cpp.h: Regenerated.
+        * kjs/grammar.h: Regenerated.
+
 === Safari-112 ===
 
 2003-10-30  Maciej Stachowiak  <mjs@apple.com>

@@ -23,6 +23,8 @@ typedef union {
   Operator            op;
   PropertyValueNode   *plist;
   PropertyNode        *pnode;
+  CatchNode           *cnode;
+  FinallyNode         *fnode;
 } YYSTYPE;
 
 #ifndef YYLTYPE
