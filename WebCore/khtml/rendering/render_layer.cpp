@@ -137,7 +137,7 @@ RenderLayer::~RenderLayer()
     delete m_marquee;
     
     // Make sure we have no lingering clip rects.
-    clearClipRect();
+    assert(!m_clipRects);
 }
 
 void RenderLayer::computeRepaintRects()

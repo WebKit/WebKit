@@ -135,6 +135,10 @@ void RenderBox::detach()
     RenderLayer* layer = m_layer;
     RenderArena* arena = renderArena();
     
+    // This must be done before we detach the RenderObject.
+    if (layer)
+        layer->clearClipRect();
+        
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
             m_inlineBoxWrapper->remove();
