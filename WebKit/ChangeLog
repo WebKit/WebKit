@@ -1,5 +1,14 @@
 2003-06-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Darin (Richard wrote the first cut), then Don and Dave.
+
+	- fixed 3291467 -- CARBON: context menus are broken when using WebKit from Carbon
+
+        * Carbon.subproj/HIWebView.m: (ContextMenuClick): Rewrite method to create a fake
+        right mouse up event, and pass that to menuForEvent: and _popUpMenuWithEvent.
+
+2003-06-13  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         - fixed 3291778 -- REGRESSION (51-52): QT controller never shows up for mp3 in frame

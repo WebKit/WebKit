@@ -17,6 +17,7 @@
 #include <WebKit/WebKit.h>
 #include "HIViewAdapter.h"
 
+
 extern Boolean GetEventPlatformEventRecord( EventRef inEvent, void * eventRec );
 
 struct HIWebView
@@ -617,31 +618,44 @@ MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 static OSStatus
 ContextMenuClick( HIWebView* inView, EventRef inEvent )
 {
-	CGSEventRecord			eventRec;
-	NSEvent*				kitEvent;
-	OSStatus				result = eventNotHandledErr;
-	NSView*					targ;
-	
-	GetEventPlatformEventRecord( inEvent, &eventRec );
-	RetainEvent( inEvent );
-	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
+    OSStatus result = eventNotHandledErr;
 
-	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
+    NSView *webView = inView->fWebView;
+    NSWindow *window = [webView window];
 
-    if ( [targ _allowsContextMenus] )
-	{
-        NSMenu * contextMenu = [targ menuForEvent:kitEvent];
-
-        if ( contextMenu )
-		{
-            [contextMenu _popUpMenuWithEvent:kitEvent forView:targ];
-			result = noErr;
+    // Get the point out of the event.
+    HIPoint point;
+    GetEventParameter(inEvent, kEventParamMouseLocation, typeHIPoint, NULL, sizeof(point), NULL, &point);
+    HIViewConvertPoint(&point, inView->fViewRef, NULL);
+    
+    // Flip the Y coordinate, since Carbon is flipped relative to the AppKit.
+    NSPoint location = NSMakePoint(point.x, [window frame].size.height - point.y);
+    
+    // Make up an event with the point.
+    NSEvent *kitEvent = [NSEvent mouseEventWithType:NSRightMouseUp
+                                           location:location
+                                      modifierFlags:0
+                                          timestamp:GetEventTime(inEvent)
+                                       windowNumber:[window windowNumber]
+                                            context:0
+                                        eventNumber:0
+                                         clickCount:1
+                                           pressure:0];
+    
+    // Convert from window coordinates to superview coordinates for hit testing.
+    NSPoint superviewPoint = [[webView superview] convertPoint:location fromView:nil];
+    NSView *target = [webView hitTest:superviewPoint];
+    
+    // Pop up the menu.
+    if ([target _allowsContextMenus]) {
+        NSMenu *contextMenu = [target menuForEvent:kitEvent];
+        if (contextMenu) {
+            [contextMenu _popUpMenuWithEvent:kitEvent forView:target];
+            result = noErr;
         }
     }
-
-	[kitEvent release];
-	
-	return result;
+    
+    return result;
 }
 
 //----------------------------------------------------------------------------------
