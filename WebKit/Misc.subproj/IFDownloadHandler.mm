@@ -3,7 +3,7 @@
 //  WebKit
 //
 //  Created by Chris Blumenberg on Thu Apr 11 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2002 Apple Computer, Inc.
 //
 
 #import <WebKit/IFDownloadHandler.h>
@@ -77,7 +77,7 @@
     [fileHandle closeFile];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
     
-    if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
+    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally){
         [workspace openFile:path];
     }
 }
