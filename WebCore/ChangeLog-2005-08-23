@@ -1,3 +1,13 @@
+2004-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3532519>: <select> menus show label property instead of tag contents (ups.com time and cost site)
+
+        * khtml/html/html_formimpl.cpp: (HTMLOptionElementImpl::text): Ignore the label property as
+        a quirk. Neither WinIE nor Mozilla implement the label property, so neither shall we (except
+        on strict pages, where we just go crazy and do everything "right").
+
 2004-01-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

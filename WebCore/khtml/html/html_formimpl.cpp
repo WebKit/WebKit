@@ -2564,7 +2564,10 @@ DOMString HTMLOptionElementImpl::type() const
 
 DOMString HTMLOptionElementImpl::text() const
 {
-    DOMString label = getAttribute(ATTR_LABEL);
+    DOMString label;
+    // WinIE does not use the label attribute, so as a quirk, we ignore it.
+    if (getDocument() && !getDocument()->inCompatMode())
+        label = getAttribute(ATTR_LABEL);
     if (label.isEmpty() && firstChild() && firstChild()->nodeType() == Node::TEXT_NODE) {
 	if (firstChild()->nextSibling()) {
 	    DOMString ret = "";
