@@ -82,7 +82,7 @@ void RenderBox::setStyle(RenderStyle *_style)
             setRelPositioned(true);
     }
     
-    if ((isPositioned() || isRelPositioned() || isFloating()) && !m_layer)
+    if ((isPositioned() || isRelPositioned() || (isFloating() && !isListMarker())) && !m_layer)
         m_layer = new RenderLayer(this);
 }
 

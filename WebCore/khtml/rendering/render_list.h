@@ -60,6 +60,8 @@ public:
 
     virtual void calcWidth();
 
+    virtual bool isListMarker() const { return true; }
+    
 protected:
     friend class RenderListItem;
 

@@ -127,6 +127,7 @@ public:
     virtual bool isFlow() const { return false; }
 
     virtual bool isListItem() const { return false; }
+    virtual bool isListMarker() const { return false; }
     virtual bool isRoot() const { return false; }
     virtual bool isBR() const { return false; }
     virtual bool isHtml() const { return false; }
