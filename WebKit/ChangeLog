@@ -1,3 +1,17 @@
+2002-04-18  Chris Blumenberg  <cblu@apple.com>
+
+	Moved plugin instance creation to the start method in IFPluginView.
+
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView dealloc]),
+	(-[IFPluginView newStream:mimeType:notifyData:]), (-[IFPluginView start]),
+	(-[IFPluginView stop]), (-[IFPluginView drawRect:]), (-[IFPluginView
+	windowBecameKey:]), (-[IFPluginView windowResignedKey:]), (-[IFPluginView
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFPluginView
+	IFURLHandleResourceDidFinishLoading:data:]):
+	
+
 2002-04-17  Darin Adler  <darin@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Update header search paths to find

@@ -38,13 +38,11 @@ extern "C" {
 
 - initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
-    NPError npErr;
-    char *cMime, *s;
-    NPSavedData saved;
+    NSString *baseURLString, *attributeString;
     NSArray *attributes, *values;
-    NSString *attributeString, *baseURLString;
+    char *s;
     uint i;
-        
+    
     [super initWithFrame: r];
     
     // The following line doesn't work for Flash, so I have create a NPP_t struct and point to it
@@ -73,25 +71,28 @@ extern "C" {
     NPP_GetValue = 	[plugin NPP_GetValue];
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print]; 
-    
-    cMime = malloc([mime length]+1);
-    [mime getCString:cMime];
+
 
     // get base URL which was added in the args in the part
     baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
     if(baseURLString)
         baseURL = [[NSURL URLWithString:baseURLString] retain];
             
+    cMime = malloc([mime length]+1);
+    [mime getCString:cMime];
+
     attributes = [arguments allKeys];
     values = 	 [arguments allValues];
         
     if([attributes containsObject:@"hidden"])
-        hidden = TRUE;
+        isHidden = YES;
     else
-        hidden = FALSE;
+        isHidden = NO;
     
     if(![attributes containsObject:@"wkfullmode"]){
         // convert arugments dictionary to 2 string arrays
+        
+        WKFullMode = YES;
         
         cAttributes = malloc(sizeof(char *) * [arguments count]);
         cValues = malloc(sizeof(char *) * [arguments count]);
@@ -107,23 +108,16 @@ extern "C" {
             [attributeString getCString:s];
             cValues[i] = s;
         }
-        npErr = NPP_New(cMime, instance, NP_EMBED, [arguments count], cAttributes, cValues, &saved);
+        argsCount = [arguments count];
     }else{
-        npErr = NPP_New(cMime, instance, NP_FULL, 0, NULL, NULL, &saved);
+        WKFullMode = NO;
     }
-
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
-    
-    free(cMime);
     
     // Initialize globals
-    transferred = FALSE;
-    stopped = FALSE;
+    transferred = NO;
+    stopped = NO;
     filesToErase = [[NSMutableArray arrayWithCapacity:2] retain];
     activeURLHandles = [[NSMutableArray arrayWithCapacity:1] retain];
-    
-    // Create a WindowRef is one doesn't already exist
-    [[self window] _windowRef];
     
     return self;
 }
@@ -146,6 +140,7 @@ extern "C" {
     [mime release];
     [URL release];
     [plugin release];
+    free(cMime);
     free(cAttributes);
     free(cValues);
     [super dealloc];
@@ -192,18 +187,24 @@ extern "C" {
     uint16 transferMode;
     IFURLHandle *urlHandle;
     NSDictionary *attributes;
-    char *cMime;
+    char *mType;
     
     stream = [[IFPluginStream alloc] initWithURL:streamURL mimeType:mimeType notifyData:notifyData];
     npStream = [stream npStream];
     
-    cMime = malloc([mimeType length]+1);
-    [mimeType getCString:cMime];
+    mType = malloc([mimeType length]+1);
+    [mimeType getCString:mType];
     
-    npErr = NPP_NewStream(instance, cMime, npStream, FALSE, &transferMode);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d\n", npErr);
+    npErr = NPP_NewStream(instance, mType, npStream, NO, &transferMode);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, cMime);
+    free(mType);
+    
+    if(npErr != NPERR_NO_ERROR){
+        [stream release];
+        return;
+    }
+    
     [stream setTransferMode:transferMode];
-    free(cMime);
     
     if(transferMode == NP_NORMAL){
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stream type: NP_NORMAL\n");
@@ -228,7 +229,19 @@ extern "C" {
 
 -(void)start
 {
+    NPSavedData saved;
+    NPError npErr;
+    
+    if(WKFullMode){
+        npErr = NPP_New(cMime, instance, NP_EMBED, argsCount, cAttributes, cValues, &saved);
+    }else{
+        npErr = NPP_New(cMime, instance, NP_FULL, 0, NULL, NULL, &saved);
+    }
 
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
+    
+    // Create a WindowRef is one doesn't already exist
+    [[self window] _windowRef];
 }
 
 - (void)stop
@@ -243,7 +256,7 @@ extern "C" {
         [self removeTrackingRect:trackingTag];
         npErr = NPP_Destroy(instance, NULL);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
-        stopped = TRUE;
+        stopped = YES;
     }
 }
 
@@ -301,6 +314,7 @@ extern "C" {
         NSNotificationCenter *notificationCenter;
         NSWindow *theWindow;
         
+        [self start];
         [self setWindow];
         theWindow = [self window];
         notificationCenter = [NSNotificationCenter defaultCenter];
@@ -314,7 +328,7 @@ extern "C" {
             [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
         eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
         [eventSender sendNullEvents];
-        transferred = TRUE;
+        transferred = YES;
         trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
         
         id webView = [self findSuperview:@"IFWebView"];
@@ -458,12 +472,12 @@ extern "C" {
 
 -(void) windowBecameKey:(NSNotification *)notification
 {
-    [self sendActivateEvent:TRUE];
+    [self sendActivateEvent:YES];
 }
 
 -(void) windowResignedKey:(NSNotification *)notification
 {
-    [self sendActivateEvent:FALSE];
+    [self sendActivateEvent:NO];
 }
 
 - (void) windowWillClose:(NSNotification *)notification
@@ -492,9 +506,9 @@ extern "C" {
     
     if(transferMode != NP_ASFILEONLY){
         bytes = NPP_WriteReady(instance, npStream);
-        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%u\n", bytes);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%lu\n", bytes);
         bytes = NPP_Write(instance, npStream, [stream offset], [data length], (void *)[data bytes]);
-        //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Write bytes=%u\n", bytes);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Write bytes=%lu\n", bytes);
         [stream incrementOffset:[data length]];
     }
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
@@ -535,7 +549,8 @@ extern "C" {
         [fileManager removeFileAtPath:path handler:nil];
         [fileManager createFileAtPath:path contents:[stream data] attributes:nil];
         
-        filenameClassic = [NSString stringWithFormat:@"%@%@%@", startupVolumeName(), @":private:tmp:", filename];        	cFilename = malloc([filenameClassic length]+1);
+        filenameClassic = [NSString stringWithFormat:@"%@%@%@", startupVolumeName(), @":private:tmp:", filename];
+        cFilename = malloc([filenameClassic length]+1);
         [filenameClassic getCString:cFilename];
         
         NPP_StreamAsFile(instance, npStream, cFilename);
