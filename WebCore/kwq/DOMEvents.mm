@@ -35,13 +35,13 @@
     return nil;
 }
 
-- (DOMEventTarget *)target
+- (id <DOMEventTarget>)target
 {
     ERROR("unimplemented");
     return nil;
 }
 
-- (DOMEventTarget *)currentTarget
+- (id <DOMEventTarget>)currentTarget
 {
     ERROR("unimplemented");
     return nil;
@@ -84,26 +84,6 @@
 - (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg
 {
     ERROR("unimplemented");
-}
-
-@end
-
-@implementation DOMEventTarget
-
-- (void)addEventListener:(NSString *)type :(DOMEventListener *)listener :(BOOL)useCapture
-{
-    ERROR("unimplemented");
-}
-
-- (void)removeEventListener:(NSString *)type :(DOMEventListener *)listener :(BOOL)useCapture
-{
-    ERROR("unimplemented");
-}
-
-- (BOOL)dispatchEvent:(DOMEvent *)event
-{
-    ERROR("unimplemented");
-    return NO;
 }
 
 @end
@@ -164,13 +144,13 @@
     return 0;
 }
 
-- (DOMEventTarget *)relatedTarget
+- (id <DOMEventTarget>)relatedTarget
 {
     ERROR("unimplemented");
     return nil;
 }
 
-- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(DOMEventTarget *)relatedTargetArg
+- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
     ERROR("unimplemented");
 }

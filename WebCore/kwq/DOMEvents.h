@@ -26,7 +26,6 @@
 #import <WebCore/DOMViews.h>
 
 @class DOMEvent;
-@class DOMEventListener;
 
 extern NSString * const DOMEventException;
 
@@ -34,9 +33,13 @@ enum DOMEventExceptionCode {
     DOM_UNSPECIFIED_EVENT_TYPE_ERR = 0
 };
 
-@interface DOMEventTarget : DOMObject
-- (void)addEventListener:(NSString *)type :(DOMEventListener *)listener :(BOOL)useCapture;
-- (void)removeEventListener:(NSString *)type :(DOMEventListener *)listener :(BOOL)useCapture;
+@protocol DOMEventListener <NSObject>
+- (void)handleEvent:(DOMEvent *)event;
+@end
+
+@protocol DOMEventTarget <NSObject>
+- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture;
+- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture;
 - (BOOL)dispatchEvent:(DOMEvent *)event;
 @end
 
@@ -48,8 +51,8 @@ enum {
 
 @interface DOMEvent : DOMObject
 - (NSString *)type;
-- (DOMEventTarget *)target;
-- (DOMEventTarget *)currentTarget;
+- (id <DOMEventTarget>)target;
+- (id <DOMEventTarget>)currentTarget;
 - (unsigned short)eventPhase;
 - (BOOL)bubbles;
 - (BOOL)cancelable;
@@ -79,8 +82,8 @@ enum {
 - (BOOL)altKey;
 - (BOOL)metaKey;
 - (unsigned short)button;
-- (DOMEventTarget *)relatedTarget;
-- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(DOMEventTarget *)relatedTargetArg;
+- (id <DOMEventTarget>)relatedTarget;
+- (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg;
 @end
 
 enum {

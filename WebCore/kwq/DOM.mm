@@ -344,6 +344,22 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return Node([self _nodeImpl]).hasAttributes();
 }
 
+- (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    ERROR("unimplemented");
+}
+
+- (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    ERROR("unimplemented");
+}
+
+- (BOOL)dispatchEvent:(DOMEvent *)event
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
 @end
 
 @implementation DOMNode (WebCoreInternal)
