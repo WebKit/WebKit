@@ -1,3 +1,10 @@
+2003-10-03  Chris Blumenberg  <cblu@apple.com>
+
+        Removed eastCursor.tiff because it was added by mistake.
+
+        * Resources/eastCursor.tiff: Removed.
+        * WebCore.pbproj/project.pbxproj:
+
 2003-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

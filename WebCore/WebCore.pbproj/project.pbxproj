@@ -522,7 +522,6 @@
 				F5A1B04A02DE8ABA018635CA,
 				F5A1B05402DE8B46018635CA,
 				BC8F629A0405F45600A80004,
-				84C0FA2F052B966D000440A1,
 				84C0FA30052B966D000440A1,
 				84C0FA31052B966D000440A1,
 				84C0FA32052B966D000440A1,
@@ -1011,7 +1010,6 @@
 //844
 		84C0FA1E052B9652000440A1 = {
 			children = (
-				84C0FA23052B966D000440A1,
 				84C0FA24052B966D000440A1,
 				84C0FA25052B966D000440A1,
 				F5A1B04902DE8ABA018635CA,
@@ -1027,14 +1025,6 @@
 			);
 			isa = PBXGroup;
 			name = "Cursor Images";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		84C0FA23052B966D000440A1 = {
-			expectedFileType = image.tiff;
-			isa = PBXFileReference;
-			name = eastCursor.tiff;
-			path = Resources/eastCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1125,12 +1115,6 @@
 			path = Resources/westResizeCursor.tiff;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		84C0FA2F052B966D000440A1 = {
-			fileRef = 84C0FA23052B966D000440A1;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		84C0FA30052B966D000440A1 = {
 			fileRef = 84C0FA24052B966D000440A1;
