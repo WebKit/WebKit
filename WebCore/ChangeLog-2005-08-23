@@ -2,6 +2,17 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3711080> REGRESSION (125-146): form fields have shrunk by 1 pixel, and now clip descenders
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth):
+        Compute the size without ever calling cellSize. After talking with Andrew Platzer,
+        we decided that hard-coding the size of the borders of a text field was the best
+        way for WebCore to handle this.
+
+2004-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3743204> REGRESSION: crash at startribune.com in InlineBox::root()
 
         * khtml/rendering/render_flow.cpp: (RenderFlow::dirtyLinesFromChangedChild):

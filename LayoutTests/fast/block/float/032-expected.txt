@@ -39,14 +39,14 @@ layer at (0,0) size 800x1022
         RenderBlock (anonymous) at (5,5) size 774x0
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 0x0
-        RenderLineEdit {INPUT} at (205,5) size 100x18 [bgcolor=#800080]
+        RenderLineEdit {INPUT} at (205,5) size 100x19 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,622) size 784x18
         RenderBR {BR} at (0,0) size 0x18
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,640) size 784x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderText {TEXT} at (0,0) size 0x0
-        RenderLineEdit {INPUT} at (305,5) size 100x18 [bgcolor=#800080]
+        RenderLineEdit {INPUT} at (305,5) size 100x19 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,750) size 784x18
         RenderBR {BR} at (0,0) size 0x18
@@ -55,12 +55,12 @@ layer at (0,0) size 800x1022
         RenderBlock (anonymous) at (5,5) size 774x0
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 0x0
-        RenderLineEdit {INPUT} at (55,5) size 100x18 [bgcolor=#800080]
+        RenderLineEdit {INPUT} at (55,5) size 100x19 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,878) size 784x18
         RenderBR {BR} at (0,0) size 0x18
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,896) size 784x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderText {TEXT} at (0,0) size 0x0
-        RenderLineEdit {INPUT} at (55,5) size 100x18 [bgcolor=#800080]
+        RenderLineEdit {INPUT} at (55,5) size 100x19 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0

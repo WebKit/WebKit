@@ -34,7 +34,7 @@
 #import "WebCoreViewFactory.h"
 
 @interface NSSearchField (SearchFieldSecrets)
-- (void) _addStringToRecentSearches:(NSString*)string;
+- (void)_addStringToRecentSearches:(NSString *)string;
 @end
 
 QLineEdit::QLineEdit(Type type)
@@ -179,17 +179,18 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     ASSERT(numCharacters > 0);
 
-    NSSize size = { 0, 0 };
+    // We empirically determined these dimensions.
+    // It would be better to get this info from AppKit somehow, but bug 3711080 shows we can't yet.
+    NSSize size = { 8, 6 };
 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSString *value = [textField stringValue];
-    [textField setStringValue:@""];
-    size = [[textField cell] cellSize];
-    [textField setStringValue:value];
+    NSFont *font = [textField font];
+
+    size.height += [font defaultLineHeightForFont];
 
     id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFont:[textField font] usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+        rendererWithFont:font usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
 
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
