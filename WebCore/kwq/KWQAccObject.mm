@@ -1094,7 +1094,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (id)doAXTextMarkerForPosition: (NSPoint) point
 {
     // convert absolute point to view coordinates
-    NSView *view = [self topView]->getView();
+    KHTMLView *docView = [self topView];
+    NSView *view = docView->getView();
     RenderObject *renderer = [self topRenderer];
     NodeImpl *innerNode = NULL;
     NSPoint ourpoint;
@@ -1104,6 +1105,9 @@ static QRect boundingBoxRect(RenderObject* obj)
         // ask the document layer to hitTest
         NSPoint windowCoord = [[view window] convertScreenToBase: point];
         ourpoint = [view convertPoint:windowCoord fromView:nil];
+        ourpoint.x += docView->contentsX();
+        ourpoint.y += docView->contentsY();
+        
         RenderObject::NodeInfo nodeInfo(true, true);
         renderer->layer()->hitTest(nodeInfo, (int)ourpoint.x, (int)ourpoint.y);
         innerNode = nodeInfo.innerNode();
@@ -1126,7 +1130,8 @@ static QRect boundingBoxRect(RenderObject* obj)
         if (!document)
             break;
         renderer = document->renderer();
-        view = static_cast<KHTMLView *>(widget)->getDocumentView();
+        docView = static_cast<KHTMLView *>(widget);
+        view = docView->getDocumentView();
     }
     
     // get position within the node
