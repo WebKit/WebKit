@@ -1,3 +1,7 @@
+2003-01-13  Darin Adler  <darin@apple.com>
+
+        * kjs/ustring.h: Fix spelling of occurrence.
+
 2003-01-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
