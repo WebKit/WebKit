@@ -897,21 +897,6 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
             if (ext)
                 ext->editableWidgetFocused(widget);
         }
-        if (evt->id()==EventImpl::MOUSEDOWN_EVENT || evt->id()==EventImpl::KEYDOWN_EVENT)
-        {
-            setActive();
-        }
-        else if (evt->id() == EventImpl::MOUSEUP_EVENT || evt->id()==EventImpl::KEYUP_EVENT)
-        {
-	    if (m_active)
-	    {
-		setActive(false);
-		setFocus();
-	    }
-	    else {
-                setActive(false);
-            }
-        }
 
 #if APPLE_CHANGES
 	// We don't want this default key event handling, we'll count on

@@ -1,3 +1,12 @@
+2004-02-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        * khtml/html/html_formimpl.cpp: (HTMLGenericFormElementImpl::defaultEventHandler):
+        Removed bogus extra setActive/focus code. Dave says this is no longer needed for
+        the active state handling, and the focus call caused a problem, although I can't
+        find the bug report at the moment.
+
 2004-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
