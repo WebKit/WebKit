@@ -674,10 +674,7 @@ bool DateObjectFuncImp::implementsCall() const
 Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
 {
   if (id == Parse) {
-    if (args[0].type() == StringType)
-      return parseDate(args[0].toString(exec));
-    else
-      return Number(NaN);
+    return parseDate(args[0].toString(exec));
   }
   else { // UTC
     struct tm t;
@@ -710,9 +707,8 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
 // -----------------------------------------------------------------------------
 
 
-Value KJS::parseDate(const String &s)
+Value KJS::parseDate(const UString &u)
 {
-  UString u = s.value();
 #ifdef KJS_VERBOSE
   fprintf(stderr,"KJS::parseDate %s\n",u.ascii());
 #endif
