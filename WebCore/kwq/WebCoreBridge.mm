@@ -35,6 +35,7 @@
 #import "htmlattrs.h"
 #import "htmltags.h"
 #import "khtml_part.h"
+#import "khtml_selection.h"
 #import "khtmlview.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
@@ -360,7 +361,7 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)isSelectionEditable
 {
-	NodeImpl *startNode = _part->getKHTMLSelection().startNode();
+	NodeImpl *startNode = _part->selection().startNode();
 	return startNode ? startNode->isContentEditable() : NO;
 }
 
@@ -387,9 +388,8 @@ static bool initializedKJS = FALSE;
     node->renderer()->absolutePosition(absX, absY);
     node->renderer()->checkSelectionPoint((int)point.x, (int)point.y, absX, absY, tempNode, offset);
     
-    KHTMLSelection &selection = _part->getKHTMLSelection();
-    selection.setSelection(node, offset);
-    _part->xmlDocImpl()->setSelection(selection);
+    KHTMLSelection selection(node, offset);
+    _part->setSelection(selection);
     
     return YES;
 }
@@ -412,12 +412,12 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)haveSelection
 {
-	return _part->getKHTMLSelection().state() == KHTMLSelection::RANGE;
+	return _part->selection().state() == KHTMLSelection::RANGE;
 }
 
 - (NSString *)selectedHTML
 {
-	return _part->selection().toHTML().string().getNSString();
+	return _part->selection().toRange().toHTML().string().getNSString();
 }
 
 - (NSString *)selectedString
@@ -992,7 +992,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 {
     WebCoreDOMNode *startNode = start;
     WebCoreDOMNode *endNode = end;
-    _part->xmlDocImpl()->setSelection([startNode impl], startOffset, [endNode impl], endOffset);
+    KHTMLSelection selection([startNode impl], startOffset, [endNode impl], endOffset);
+    _part->setSelection(selection);
 }
 
 - (NSAttributedString *)selectedAttributedString
@@ -1204,6 +1205,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         string = @"";
     }
     return string;
+}
+
+- (void)undoRedoEditing:(id)object
+{
+    NSNumber *number = (NSNumber *)object;
+    _part->undoRedoEditing([number intValue]);
 }
 
 @end

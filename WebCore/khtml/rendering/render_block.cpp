@@ -1244,11 +1244,11 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
         then paint the caret.
     */
     if (paintAction == PaintActionForeground) {
-        const KHTMLSelection &s = document()->part()->getKHTMLSelection();
+        const KHTMLSelection &s = document()->part()->selection();
         NodeImpl *baseNode = s.baseNode();
         RenderObject *renderer = baseNode ? baseNode->renderer() : 0;
         if (renderer && renderer->containingBlock() == this && baseNode->isContentEditable()) {
-            s.paint(p, QRect(_x, _y, _w, _h));
+            document()->part()->paintCaret(p, QRect(_x, _y, _w, _h));
         }
     }
     

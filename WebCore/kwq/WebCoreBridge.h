@@ -248,6 +248,8 @@ typedef enum {
 
 - (NSString *)reconstructedSource;
 
+- (void)undoRedoEditing:(id)object;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -383,6 +385,8 @@ typedef enum {
 - (void)print;
 
 - (jobject)pollForAppletInView:(NSView *)view;
+
+- (void)registerCommandForUndo:(int)cookie;
 
 @end
 

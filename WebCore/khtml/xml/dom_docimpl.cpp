@@ -1196,34 +1196,30 @@ void DocumentImpl::setVisuallyOrdered()
         m_render->style()->setVisuallyOrdered(true);
 }
 
-void DocumentImpl::setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep)
+void DocumentImpl::updateSelection()
 {
-    if ( m_render )
-        static_cast<RenderCanvas*>(m_render)->setSelection(s->renderer(),sp,e->renderer(),ep);
-}
-
-void DocumentImpl::setSelection(KHTMLSelection &s)
-{
-    if (m_render) {
+    if (!m_render)
+        return;
+    
+    RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
+    KHTMLSelection s = part()->selection();
+    if (s.isEmpty() || s.state() == KHTMLSelection::CARET) {
+        canvas->clearSelection();
+    }
+    else {
         RenderObject *startRenderer = s.startNode() ? s.startNode()->renderer() : 0;
         RenderObject *endRenderer = s.endNode() ? s.endNode()->renderer() : 0;
         static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, s.startOffset(), endRenderer, s.endOffset());
     }
 }
 
-void DocumentImpl::clearSelection()
-{
-    if ( m_render )
-        static_cast<RenderCanvas*>(m_render)->clearSelection();
-}
-
 void DocumentImpl::deleteSelection()
 {
-    KHTMLSelection &selection = part()->getKHTMLSelection();
-    if (!selection.isEmpty()) {
-        clearSelection();
-        Range range(selection.startNode(), selection.startOffset(), selection.endNode(), selection.endOffset());
+    KHTMLSelection s = part()->selection();
+    if (!s.isEmpty()) {
+        Range range(s.startNode(), s.startOffset(), s.endNode(), s.endOffset());
         range.deleteContents();
+        part()->clearSelection();
     }
 }
 
@@ -1231,7 +1227,7 @@ void DocumentImpl::pasteHTMLString(const QString &HTMLString)
 {	
 	deleteSelection();
 	
-	KHTMLSelection &selection = part()->getKHTMLSelection();
+	KHTMLSelection selection = part()->selection();
 	DOM::NodeImpl *startNode = selection.startNode();
     long startOffset = selection.startOffset();
     DOM::NodeImpl *endNode = selection.endNode();
@@ -1260,7 +1256,7 @@ void DocumentImpl::pasteHTMLString(const QString &HTMLString)
 		// Simple text paste. Add the text to the text node with the caret.
 		textNode->insertData(startOffset, static_cast<TextImpl *>(firstChild)->data(), exceptionCode);
 		finalOffset = startOffset + static_cast<TextImpl *>(firstChild)->length();
-		selection.setSelection(textNode, finalOffset);
+		selection.moveTo(textNode, finalOffset);
 	} else {
 		// HTML tree paste.
 		DOM::NodeImpl *parent = startNode->parentNode();
@@ -1292,10 +1288,10 @@ void DocumentImpl::pasteHTMLString(const QString &HTMLString)
 			child = nextChild;
 		}
 		finalOffset = child->isTextNode() ? static_cast<TextImpl *>(child)->length() : 1;
-		selection.setSelection(child, finalOffset);
+		selection.moveTo(child, finalOffset);
 	}
 	
-	setSelection(selection);
+	part()->setSelection(selection);
 }
 
 Tokenizer *DocumentImpl::createTokenizer()

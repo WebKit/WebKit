@@ -26,14 +26,9 @@
 #ifndef __khtml_selection_h__
 #define __khtml_selection_h__
 
-#include <qobject.h>
-
 class KHTMLPart;
-class KHTMLPartPrivate;
-class KHTMLView;
 class QPainter;
 class QRect;
-class QTimerEvent;
 
 namespace DOM {
     class DOMPosition;
@@ -45,12 +40,13 @@ namespace khtml {
     class RenderObject;
 }
 
-class KHTMLSelection : public QObject
+class KHTMLSelection
 {
-  Q_OBJECT
-
 public:
     KHTMLSelection();
+    KHTMLSelection(DOM::NodeImpl *node, long offset);
+    KHTMLSelection(const DOM::DOMPosition &);
+    KHTMLSelection(DOM::NodeImpl *startNode, long startOffset, DOM::NodeImpl *endNode, long endOffset);
     KHTMLSelection(const KHTMLSelection &);
     ~KHTMLSelection();
 
@@ -61,41 +57,45 @@ public:
 
 	EState state() const { return m_state; }
 
-    void setSelection(DOM::NodeImpl *node, long offset);
-    void setSelection(const DOM::Range &);
-    void setSelection(const DOM::DOMPosition &);
-    void setSelection(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset);
+    void moveTo(DOM::NodeImpl *node, long offset);
+    void moveTo(const DOM::Range &);
+    void moveTo(const DOM::DOMPosition &);
+    void moveTo(const KHTMLSelection &);
+    void moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset);
+    bool modify(EAlter, EDirection, ETextElement);
+    void expandToElement(ETextElement);
+    void clear();
+
+    bool moveToRenderedContent();
+    
     void setBase(DOM::NodeImpl *node, long offset);
     void setExtent(DOM::NodeImpl *node, long offset);
-    void expandSelection(ETextElement);
-    bool alterSelection(EAlter, EDirection, ETextElement);
-    void clearSelection();
-    
+
     DOM::NodeImpl *baseNode() const { return m_baseNode; }
     long baseOffset() const { return m_baseOffset; }
 
     DOM::NodeImpl *extentNode() const { return m_extentNode; }
     long extentOffset() const { return m_extentOffset; }
 
-    DOM::NodeImpl *startNode() const;
-    long startOffset() const;
+    DOM::NodeImpl *startNode() const { return m_startNode; }
+    long startOffset() const { return m_startOffset; }
 
-    DOM::NodeImpl *endNode() const;
-    long endOffset() const;
+    DOM::NodeImpl *endNode() const { return m_endNode; }
+    long endOffset() const { return m_endOffset; }
 
-    void setVisible(bool flag=true);
-    bool visible() const { return m_visible; }
-
-    DOM::DOMPosition previousCharacterPosition();
-    DOM::DOMPosition nextCharacterPosition();
+    DOM::DOMPosition previousCharacterPosition() const;
+    static DOM::DOMPosition previousCharacterPosition(const DOM::DOMPosition &from);
+    DOM::DOMPosition nextCharacterPosition() const;
+    static DOM::DOMPosition nextCharacterPosition(const DOM::DOMPosition &from);
         
-    void invalidate();
+    void setNeedsLayout(bool flag=true);
     
     bool isEmpty() const;
+    DOM::Range toRange() const;
+
     
-#ifdef APPLE_CHANGES
-    void paint(QPainter *p, const QRect &rect) const;
-#endif
+    void debugPosition() const;
+    void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
     KHTMLSelection &operator=(const KHTMLSelection &o);
     
@@ -104,35 +104,30 @@ public:
     
     friend class KHTMLPart;
 
-    void debugPosition() const;
-    void debugRenderer(khtml::RenderObject *r, bool selected) const;
-
 private:
-    void setPart(KHTMLPart *part);
+    void init();
+    void validate(ETextElement expandTo=CHARACTER);
 
-    void update();
-
-    void timerEvent(QTimerEvent *e);
-    void repaint(bool immediate=false) const;
+    void layoutCaret();
+    void needsCaretRepaint();
+    QRect getRepaintRect();
+    void paintCaret(QPainter *p, const QRect &rect);
 
 	void setBaseNode(DOM::NodeImpl *);
 	void setBaseOffset(long);
 	void setExtentNode(DOM::NodeImpl *);
 	void setExtentOffset(long);
 
-	void setStart(DOM::NodeImpl *, long);
 	void setStartNode(DOM::NodeImpl *);
 	void setStartOffset(long);
-	void setEnd(DOM::NodeImpl *, long);
 	void setEndNode(DOM::NodeImpl *);
 	void setEndOffset(long);
 
+    bool inRenderedContent(const DOM::DOMPosition &);
     bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
 
     void calculateStartAndEnd(ETextElement select=CHARACTER);
     
-    KHTMLPart *m_part;            // part for this selection
-
     DOM::NodeImpl *m_baseNode;    // base node for the selection
     long m_baseOffset;            // offset into base node where selection is
     DOM::NodeImpl *m_extentNode;  // extent node for the selection
@@ -145,24 +140,19 @@ private:
 
 	EState m_state;               // the state of the selection
 
-    int m_caretBlinkTimer;        // caret blink frequency timer id
-	
 	int m_caretX;
 	int m_caretY;
 	int m_caretSize;
 
-	bool m_baseIsStart : 1;     // true if base node is before the extent node
-    bool m_caretBlinks : 1;     // true if caret blinks
-    bool m_caretPaint : 1;      // flag used to deal with blinking the caret
-    bool m_visible : 1;         // true if selection is to be displayed at all
-	bool m_startEndValid : 1;   // true if the start and end are valid
+	bool m_baseIsStart : 1;       // true if base node is before the extent node
+	bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
 };
 
 
 inline bool operator==(const KHTMLSelection &a, const KHTMLSelection &b)
 {
-    return a.baseNode() == b.baseNode() && a.baseOffset() == b.baseOffset() &&
-        a.extentNode() == b.extentNode() && a.extentOffset() == b.extentOffset();
+    return a.startNode() == b.startNode() && a.startOffset() == b.startOffset() &&
+        a.endNode() == b.endNode() && a.endOffset() == b.endOffset();
 }
 
 inline bool operator!=(const KHTMLSelection &a, const KHTMLSelection &b)

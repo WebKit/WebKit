@@ -61,8 +61,6 @@ using khtml::InlineTextBox;
 using khtml::RenderObject;
 using khtml::RenderText;
 
-enum { CARET_BLINK_FREQUENCY = 500 };
-
 #if APPLE_CHANGES
 static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end);
 static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset);
@@ -71,35 +69,94 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, K
 #endif
 
 
-KHTMLSelection::KHTMLSelection() 
-	: QObject(),
-	  m_part(0),
-	  m_baseNode(0), m_baseOffset(0), m_extentNode(0), m_extentOffset(0),
-	  m_startNode(0), m_startOffset(0), m_endNode(0), m_endOffset(0),
-	  m_state(NONE), m_caretBlinkTimer(0),
-      m_baseIsStart(true), m_caretBlinks(true), m_caretPaint(false), 
-      m_visible(false), m_startEndValid(false)
+KHTMLSelection::KHTMLSelection()
 {
+    init();
+}
+
+KHTMLSelection::KHTMLSelection(NodeImpl *node, long offset)
+{
+    init();
+
+	setBaseNode(node);
+	setExtentNode(node);
+	setBaseOffset(offset);
+	setExtentOffset(offset);
+
+    validate();
+}
+
+KHTMLSelection::KHTMLSelection(const DOM::DOMPosition &pos)
+{
+    init();
+
+	setBaseNode(pos.node());
+	setExtentNode(pos.node());
+	setBaseOffset(pos.offset());
+	setExtentOffset(pos.offset());
+
+    validate();
+}
+
+KHTMLSelection::KHTMLSelection(NodeImpl *baseNode, long baseOffset, NodeImpl *endNode, long endOffset)
+{
+    init();
+
+	setBaseNode(baseNode);
+	setExtentNode(endNode);
+	setBaseOffset(baseOffset);
+	setExtentOffset(endOffset);
+
+    validate();
 }
 
 KHTMLSelection::KHTMLSelection(const KHTMLSelection &o)
-	: QObject(),
-	  m_part(o.m_part),
-	  m_baseNode(0), m_baseOffset(0), m_extentNode(0), m_extentOffset(0),
-	  m_startNode(0), m_startOffset(0), m_endNode(0), m_endOffset(0)
 {
-    setBase(o.baseNode(), o.baseOffset());
-    setExtent(o.extentNode(), o.extentOffset());
-    setStart(o.startNode(), o.startOffset());
-    setEnd(o.endNode(), o.endOffset());
+    init();
+    
+	setBaseNode(o.baseNode());
+	setExtentNode(o.extentNode());
+	setBaseOffset(o.baseOffset());
+	setExtentOffset(o.extentOffset());
 
-	m_state = o.m_state;
-	m_caretBlinkTimer = o.m_caretBlinkTimer;
-	m_baseIsStart = o.m_baseIsStart;
-	m_caretBlinks = o.m_caretBlinks;
-	m_caretPaint = true;
-	m_visible = o.m_visible;
-    m_startEndValid = true;
+	setStartNode(o.startNode());
+	setEndNode(o.endNode());
+	setStartOffset(o.startOffset());
+	setEndOffset(o.endOffset());
+
+    m_state = o.m_state;
+
+    m_baseIsStart = o.m_baseIsStart;
+    m_needsCaretLayout = o.m_needsCaretLayout;
+
+    // Only copy the coordinates over if the other object
+    // has had a layout, otherwise keep the current
+    // coordinates. This prevents drawing artifacts from
+    // remaining when the caret is painted and then moves,
+    // and the old rectangle needs to be repainted.
+    if (!m_needsCaretLayout) {
+        m_caretX = o.m_caretX;
+        m_caretY = o.m_caretY;
+        m_caretSize = o.m_caretSize;
+    }
+}
+
+void KHTMLSelection::init()
+{
+    m_baseNode = 0;
+    m_baseOffset = 0;
+    m_extentNode = 0; 
+    m_extentOffset = 0;
+    m_startNode = 0;
+    m_startOffset = 0;
+    m_endNode = 0;
+    m_endOffset = 0;
+    m_state = NONE; 
+    m_caretX = 0;
+    m_caretY = 0;
+    m_caretSize = 0;
+    m_baseIsStart = true;
+    m_needsCaretLayout = true;
 }
 
 KHTMLSelection::~KHTMLSelection()
@@ -108,77 +165,74 @@ KHTMLSelection::~KHTMLSelection()
         m_baseNode->deref();
     if (m_extentNode)
         m_extentNode->deref();
+    if (m_startNode)
+        m_startNode->deref();
+    if (m_endNode)
+        m_endNode->deref();
 }
 
 KHTMLSelection &KHTMLSelection::operator=(const KHTMLSelection &o)
 {
-    m_part = o.m_part;
-    
-    setBase(o.baseNode(), o.baseOffset());
-    setExtent(o.extentNode(), o.extentOffset());
-    setStart(o.startNode(), o.startOffset());
-    setEnd(o.endNode(), o.endOffset());
+	setBaseNode(o.baseNode());
+	setExtentNode(o.extentNode());
+	setBaseOffset(o.baseOffset());
+	setExtentOffset(o.extentOffset());
 
-	m_state = o.m_state;
-	m_caretBlinkTimer = o.m_caretBlinkTimer;
-	m_baseIsStart = o.m_baseIsStart;
-	m_caretBlinks = o.m_caretBlinks;
-	m_caretPaint = true;
-	m_visible = o.m_visible;
-    m_startEndValid = true;
+	setStartNode(o.startNode());
+	setEndNode(o.endNode());
+	setStartOffset(o.startOffset());
+	setEndOffset(o.endOffset());
+
+    m_state = o.m_state;
+
+    m_baseIsStart = o.m_baseIsStart;
+    m_needsCaretLayout = o.m_needsCaretLayout;
+    
+    // Only copy the coordinates over if the other object
+    // has had a layout, otherwise keep the current
+    // coordinates. This prevents drawing artifacts from
+    // remaining when the caret is painted and then moves,
+    // and the old rectangle needs to be repainted.
+    if (!m_needsCaretLayout) {
+        m_caretX = o.m_caretX;
+        m_caretY = o.m_caretY;
+        m_caretSize = o.m_caretSize;
+    }
+    
     return *this;
 }
 
-void KHTMLSelection::setSelection(DOM::NodeImpl *node, long offset)
+void KHTMLSelection::moveTo(DOM::NodeImpl *node, long offset)
 {
-	setBaseNode(node);
-	setExtentNode(node);
-	setBaseOffset(offset);
-	setExtentOffset(offset);
-	update();
-#if EDIT_DEBUG
-    debugPosition();
-#endif
+    moveTo(node, offset, node, offset);
 }
 
-void KHTMLSelection::setSelection(const DOM::Range &r)
+void KHTMLSelection::moveTo(const DOM::Range &r)
 {
-	setSelection(r.startContainer().handle(), r.startOffset(), 
+	moveTo(r.startContainer().handle(), r.startOffset(), 
 		r.endContainer().handle(), r.endOffset());
 }
 
-void KHTMLSelection::setSelection(const DOM::DOMPosition &pos)
+void KHTMLSelection::moveTo(const DOM::DOMPosition &pos)
 {
-	setSelection(pos.node(), pos.offset());
+	moveTo(pos.node(), pos.offset());
 }
 
-void KHTMLSelection::setSelection(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset)
+void KHTMLSelection::moveTo(const KHTMLSelection &o)
+{
+	moveTo(o.baseNode(), o.baseOffset(), o.extentNode(), o.extentOffset());
+}
+
+void KHTMLSelection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset)
 {
 	setBaseNode(baseNode);
 	setExtentNode(extentNode);
 	setBaseOffset(baseOffset);
 	setExtentOffset(extentOffset);
-	update();
-#if EDIT_DEBUG
-    debugPosition();
-#endif
+	validate();
 }
 
-void KHTMLSelection::setBase(DOM::NodeImpl *node, long offset)
-{
-	setBaseNode(node);
-	setBaseOffset(offset);
-	update();
-}
-
-void KHTMLSelection::setExtent(DOM::NodeImpl *node, long offset)
-{
-	setExtentNode(node);
-	setExtentOffset(offset);
-	update();
-}
-
-bool KHTMLSelection::alterSelection(EAlter alter, EDirection dir, ETextElement elem)
+bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextElement elem)
 {
     DOMPosition pos;
     
@@ -211,141 +265,44 @@ bool KHTMLSelection::alterSelection(EAlter alter, EDirection dir, ETextElement e
         return false;
     
     if (alter == MOVE)
-        setSelection(pos.node(), pos.offset());
+        moveTo(pos.node(), pos.offset());
     else // alter == EXTEND
         setExtent(pos.node(), pos.offset());
     
     return true;
 }
 
-void KHTMLSelection::clearSelection()
+void KHTMLSelection::expandToElement(ETextElement select)
+{
+    validate(select);
+}
+
+void KHTMLSelection::clear()
 {
 	setBaseNode(0);
 	setExtentNode(0);
 	setBaseOffset(0);
 	setExtentOffset(0);
-	update();
+	validate();
 }
 
-NodeImpl *KHTMLSelection::startNode() const
-{ 
-    return m_startNode;
-}
-
-long KHTMLSelection::startOffset() const
-{ 
-    return m_startOffset;
-}
-
-NodeImpl *KHTMLSelection::endNode() const 
+void KHTMLSelection::setBase(DOM::NodeImpl *node, long offset)
 {
-    return m_endNode;
+	setBaseNode(node);
+	setBaseOffset(offset);
+	validate();
 }
 
-long KHTMLSelection::endOffset() const 
-{ 
-    return m_endOffset;
-}
-
-void KHTMLSelection::setVisible(bool flag)
+void KHTMLSelection::setExtent(DOM::NodeImpl *node, long offset)
 {
-    m_visible = flag;
-    update();
+	setExtentNode(node);
+	setExtentOffset(offset);
+	validate();
 }
 
-void KHTMLSelection::invalidate()
+void KHTMLSelection::setNeedsLayout(bool flag)
 {
-    update();
-}
-
-void KHTMLSelection::update()
-{
-    // make sure we do not have a dangling start or end
-	if (!m_baseNode && !m_extentNode) {
-        setBaseOffset(0);
-        setExtentOffset(0);
-        m_baseIsStart = true;
-    }
-	else if (!m_baseNode) {
-		setBaseNode(m_extentNode);
-		setBaseOffset(m_extentOffset);
-        m_baseIsStart = true;
-	}
-	else if (!m_extentNode) {
-		setExtentNode(m_baseNode);
-		setExtentOffset(m_baseOffset);
-        m_baseIsStart = true;
-	}
-    else {
-        // adjust m_baseIsStart as needed
-        if (m_baseNode == m_extentNode) {
-            if (m_baseOffset > m_extentOffset)
-                m_baseIsStart = false;
-            else 
-                m_baseIsStart = true;
-        }
-        else if (nodeIsBeforeNode(m_baseNode, m_extentNode))
-            m_baseIsStart = true;
-        else
-            m_baseIsStart = false;
-    }
-
-    // update start and end
-    m_startEndValid = false;
-    calculateStartAndEnd();
-    
-    // update the blink timer
-    if (m_caretBlinkTimer >= 0)
-        killTimer(m_caretBlinkTimer);
-    if (m_visible && m_state == CARET && m_caretBlinks)
-        m_caretBlinkTimer = startTimer(CARET_BLINK_FREQUENCY);
-    else
-        m_caretBlinkTimer = -1;
-
-    // short-circuit if not visible
-    if (!m_visible) {
-        if (m_caretPaint) {
-            m_caretPaint = false;
-            repaint();
-        }
-        return;
-    }
-
-    // short-circuit if not CARET state
-	if (m_state != CARET)
-		return;
-
-    // calculate the new caret rendering position
-    int oldX = m_caretX;   
-    int oldY = m_caretY;   
-    int oldSize = m_caretSize;
-    
-    int newX = 0;
-    int newY = 0;
-    int newSize = 0;
-    
-    NodeImpl *node = startNode();
-    if (node && node->renderer()) {
-        int w;
-        node->renderer()->caretPos(startOffset(), true, newX, newY, w, newSize);
-    }
-
-    // repaint the old position if necessary
-    // prevents two carets from ever being drawn
-    if (m_caretPaint && (oldX != newX || oldY != newY || oldSize != newSize)) {
-        repaint();
-    }
-
-    // update caret rendering position
-    m_caretX = newX;
-    m_caretY = newY;
-    m_caretSize = newSize;
-    
-    // paint the caret if it is visible
-    if (m_visible && m_caretSize != 0) {
-        m_caretPaint = true;
-        repaint();
-    }
+    m_needsCaretLayout = flag;
 }
 
 bool KHTMLSelection::isEmpty() const
@@ -353,44 +310,91 @@ bool KHTMLSelection::isEmpty() const
     return m_baseNode == 0 && m_extentNode == 0;
 }
 
-#ifdef APPLE_CHANGES
-void KHTMLSelection::paint(QPainter *p, const QRect &rect) const
+Range KHTMLSelection::toRange() const
 {
-    if (!m_caretPaint || m_state != CARET)
+    if (isEmpty())
+        return Range();
+
+    return Range(Node(startNode()), startOffset(), Node(endNode()), endOffset());
+}
+
+void KHTMLSelection::layoutCaret()
+{
+    if (isEmpty() || !startNode()->renderer()) {
+        m_caretX = m_caretY = m_caretSize = 0;
+    }
+    else {
+        int w;
+        startNode()->renderer()->caretPos(startOffset(), true, m_caretX, m_caretY, w, m_caretSize);
+    }
+
+    m_needsCaretLayout = false;
+}
+
+QRect KHTMLSelection::getRepaintRect()
+{
+    // EDIT FIXME: fudge a bit to make sure we don't leave behind artifacts
+    return QRect(m_caretX - 1, m_caretY - 1, 3, m_caretSize + 2);
+}
+
+void KHTMLSelection::needsCaretRepaint()
+{
+    if (isEmpty())
         return;
 
-    QRect pos(m_caretX, m_caretY, 1, m_caretSize);
-    if (pos.intersects(rect)) {
+    if (!startNode()->getDocument())
+        return;
+
+    KHTMLView *v = startNode()->getDocument()->view();
+    if (!v)
+        return;
+
+    if (m_needsCaretLayout) {
+        // repaint old position and calculate new position
+        v->updateContents(getRepaintRect(), false);
+        layoutCaret();
+        
+        // EDIT FIXME: This is an unfortunate hack.
+        // Basically, we can't trust this layout position since we 
+        // can't guarantee that the check to see if we are in unrendered 
+        // content will work at this point. We may have to wait for
+        // a layout and re-render of the document to happen. So, resetting this
+        // flag will cause another caret layout to happen the first time
+        // that we try to paint the caret after this call. That one will work since
+        // it happens after the document has accounted for any editing
+        // changes which may have been done.
+        // And, we need to leave this layout here so the caret moves right 
+        // away after clicking.
+        m_needsCaretLayout = true;
+    }
+    v->updateContents(getRepaintRect(), false);
+}
+
+void KHTMLSelection::paintCaret(QPainter *p, const QRect &rect)
+{
+    if (isEmpty())
+        return;
+
+    if (m_state != CARET)
+        return;
+
+    if (m_needsCaretLayout) {
+        DOMPosition pos = DOMPosition(startNode(), startOffset());
+        if (!inRenderedContent(pos)) {
+            moveToRenderedContent();
+        }
+        layoutCaret();
+    }
+
+    QRect caretRect(m_caretX, m_caretY, 1, m_caretSize);
+    if (caretRect.intersects(rect)) {
         QPen pen = p->pen();
-        pen.setStyle(SolidLine);
+        pen.setStyle(Qt::SolidLine);
         pen.setColor(Qt::black);
         pen.setWidth(1);
         p->setPen(pen);
-        p->drawLine(pos.left(), pos.top(), pos.left(), pos.bottom());
+        p->drawLine(caretRect.left(), caretRect.top(), caretRect.left(), caretRect.bottom());
     }
-}
-#endif
-
-void KHTMLSelection::setPart(KHTMLPart *part)
-{
-    m_part = part;
-}
-
-void KHTMLSelection::timerEvent(QTimerEvent *e)
-{
-    if (e->timerId() == m_caretBlinkTimer && m_visible) {
-        m_caretPaint = !m_caretPaint;
-        repaint();
-    }
-}
-
-void KHTMLSelection::repaint(bool immediate) const
-{
-    KHTMLView *v = m_part->view();
-    if (!v)
-        return;
-    // EDIT FIXME: fudge a bit to make sure we don't leave behind artifacts
-    v->updateContents(m_caretX - 1, m_caretY - 1, 3, m_caretSize + 2, immediate);
 }
 
 void KHTMLSelection::setBaseNode(DOM::NodeImpl *node)
@@ -431,12 +435,6 @@ void KHTMLSelection::setExtentOffset(long offset)
 	m_extentOffset = offset;
 }
 
-void KHTMLSelection::setStart(DOM::NodeImpl *node, long offset)
-{
-    setStartNode(node);
-    setStartOffset(offset);
-}
-
 void KHTMLSelection::setStartNode(DOM::NodeImpl *node)
 {
 	if (m_startNode == node)
@@ -454,12 +452,6 @@ void KHTMLSelection::setStartNode(DOM::NodeImpl *node)
 void KHTMLSelection::setStartOffset(long offset)
 {
 	m_startOffset = offset;
-}
-
-void KHTMLSelection::setEnd(DOM::NodeImpl *node, long offset)
-{
-    setEndNode(node);
-    setEndOffset(offset);
 }
 
 void KHTMLSelection::setEndNode(DOM::NodeImpl *node)
@@ -481,17 +473,39 @@ void KHTMLSelection::setEndOffset(long offset)
 	m_endOffset = offset;
 }
 
-void KHTMLSelection::expandSelection(ETextElement select)
+void KHTMLSelection::validate(ETextElement expandTo)
 {
-    m_startEndValid = false;
-    calculateStartAndEnd(select);
-}
+    // make sure we do not have a dangling start or end
+	if (!m_baseNode && !m_extentNode) {
+        setBaseOffset(0);
+        setExtentOffset(0);
+        m_baseIsStart = true;
+    }
+	else if (!m_baseNode) {
+		setBaseNode(m_extentNode);
+		setBaseOffset(m_extentOffset);
+        m_baseIsStart = true;
+	}
+	else if (!m_extentNode) {
+		setExtentNode(m_baseNode);
+		setExtentOffset(m_baseOffset);
+        m_baseIsStart = true;
+	}
+    else {
+        // adjust m_baseIsStart as needed
+        if (m_baseNode == m_extentNode) {
+            if (m_baseOffset > m_extentOffset)
+                m_baseIsStart = false;
+            else 
+                m_baseIsStart = true;
+        }
+        else if (nodeIsBeforeNode(m_baseNode, m_extentNode))
+            m_baseIsStart = true;
+        else
+            m_baseIsStart = false;
+    }
 
-void KHTMLSelection::calculateStartAndEnd(ETextElement select)
-{
-    if (m_startEndValid)
-        return;
-
+    // calculate the correct start and end positions
 #if !APPLE_CHANGES
     if (m_baseIsStart) {
         setStartNode(m_baseNode);
@@ -506,7 +520,7 @@ void KHTMLSelection::calculateStartAndEnd(ETextElement select)
         setEndOffset(m_baseOffset);
     }
 #else
-    if (select == CHARACTER) {
+    if (expandTo == CHARACTER) {
         if (m_baseIsStart) {
             setStartNode(m_baseNode);
             setStartOffset(m_baseOffset);
@@ -520,7 +534,7 @@ void KHTMLSelection::calculateStartAndEnd(ETextElement select)
             setEndOffset(m_baseOffset);
         }
     }
-    else if (select == WORD) {
+    else if (expandTo == WORD) {
         int baseStartOffset = m_baseOffset;
         int baseEndOffset = m_baseOffset;
         int extentStartOffset = m_extentOffset;
@@ -550,7 +564,7 @@ void KHTMLSelection::calculateStartAndEnd(ETextElement select)
             setEndOffset(baseEndOffset);
         }
     }
-    else {  // select == LINE
+    else {  // expandTo == LINE
         KHTMLSelection baseSelection = *this;
         KHTMLSelection extentSelection = *this;
         if (m_baseNode && (m_baseNode->nodeType() == Node::TEXT_NODE || m_baseNode->nodeType() == Node::CDATA_SECTION_NODE)) {
@@ -584,24 +598,33 @@ void KHTMLSelection::calculateStartAndEnd(ETextElement select)
     }
 #endif  // APPLE_CHANGES
 
-	// update the state
+	// adjust the state
 	if (!m_startNode && !m_endNode)
 		m_state = NONE;
-	if (m_startNode == m_endNode && m_startOffset == m_endOffset)
+	else if (m_startNode == m_endNode && m_startOffset == m_endOffset)
 		m_state = CARET;
 	else
 		m_state = RANGE;
+
+    m_needsCaretLayout = true;
     
-    m_startEndValid = true;
+#if EDIT_DEBUG
+    debugPosition();
+#endif
 }
 
-DOMPosition KHTMLSelection::previousCharacterPosition()
+DOMPosition KHTMLSelection::previousCharacterPosition() const
 {
-    if (!startNode())
-        return DOMPosition();
+    return previousCharacterPosition(DOMPosition(startNode(), startOffset()));
+}
 
-	NodeImpl *node = startNode();
-	long offset = startOffset() - 1;
+DOMPosition KHTMLSelection::previousCharacterPosition(const DOMPosition &from)
+{
+    if (!from.node())
+        return from;
+
+	NodeImpl *node = from.node();
+	long offset = from.offset() - 1;
 
     //
     // Look in this renderer
@@ -653,7 +676,7 @@ DOMPosition KHTMLSelection::previousCharacterPosition()
     			 	continue;
     		}
             offset = renderer->caretMaxOffset();
-            if (!renderer->precedesLineBreak())
+            if (renderer->nextEditable() && !renderer->precedesLineBreak())
                 offset--;
             assert(offset >= 0);
             return DOMPosition(renderer->element(), offset);
@@ -662,16 +685,22 @@ DOMPosition KHTMLSelection::previousCharacterPosition()
     }
 
     // can't move the position
-    return DOMPosition(startNode(), startOffset());
+    return from;
 }
 
-DOMPosition KHTMLSelection::nextCharacterPosition()
+
+DOMPosition KHTMLSelection::nextCharacterPosition() const
 {
-    if (!endNode())
+    return nextCharacterPosition(DOMPosition(endNode(), endOffset()));
+}
+
+DOMPosition KHTMLSelection::nextCharacterPosition(const DOMPosition &from)
+{
+    if (!from.node())
         return DOMPosition();
 
-	NodeImpl *node = endNode();
-	long offset = endOffset() + 1;
+ 	NodeImpl *node = from.node();
+ 	long offset = from.offset() + 1;
 
     //
     // Look in this renderer
@@ -746,9 +775,70 @@ DOMPosition KHTMLSelection::nextCharacterPosition()
     }
 
     // can't move the position
-    return DOMPosition(endNode(), endOffset());
+    return from;
 }
 
+bool KHTMLSelection::moveToRenderedContent()
+{
+    if (isEmpty())
+        return false;
+        
+    if (m_state != CARET)
+        return false;
+
+    DOMPosition pos = DOMPosition(startNode(), startOffset());
+    if (inRenderedContent(pos))
+        return true;
+        
+    // not currently rendered, try moving to next
+    DOMPosition next = nextCharacterPosition(pos);
+    if (next != pos) {
+        moveTo(next);
+        return true;
+    }
+
+    // could not be moved to next, try prev
+    DOMPosition prev = previousCharacterPosition(pos);
+    if (prev != pos) {
+        moveTo(prev);
+        return true;
+    }
+    
+    return false;
+}
+
+bool KHTMLSelection::inRenderedContent(const DOMPosition &pos)
+{
+    if (pos.isEmpty())
+        return false;
+        
+ 	long offset = pos.offset();
+
+    RenderObject *renderer = pos.node()->renderer();
+    if (!renderer)
+        return false;
+    
+    if (renderer->isText() && !renderer->isBR()) {
+        RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer);
+        for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+            if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
+                return true;
+            }
+            else if (offset < box->m_start) {
+                // The offset we're looking for is before this node
+                // this means the offset must be in content that is
+                // not rendered. Return false.
+                return false;
+            }
+        }
+    }
+    else if (offset >= renderer->caretMinOffset() && offset <= renderer->caretMaxOffset()) {
+        return true;
+    }
+    
+    return false;
+}
+ 
 bool KHTMLSelection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
 {
 	if (!n1 || !n2) 
@@ -787,7 +877,7 @@ bool KHTMLSelection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2)
         n2 = n2->parentNode();
     }
     // Iterate through the parent's children until n1 or n2 is found
-    n = n1->parentNode()->firstChild();
+    n = n1->parentNode() ? n1->parentNode()->firstChild() : n1->firstChild();
     while (n) {
         if (n == n1) {
             result = true;
@@ -946,7 +1036,7 @@ static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, K
         if (!lastRunAt (renderNode, selectionPointY, endNode, endOffset))
             return false;
         
-        selection.setSelection(startNode, startOffset, endNode, endOffset);
+        selection.moveTo(startNode, startOffset, endNode, endOffset);
         
         return true;
     }
@@ -1010,7 +1100,7 @@ void KHTMLSelection::debugRenderer(RenderObject *r, bool selected) const
             
             show = show.replace("\n", " ");
             show = show.replace("\r", " ");
-            fprintf(stderr, "==> #text : %s at %d\n", show.latin1(), pos);
+            fprintf(stderr, "==> #text : \"%s\" at offset %d\n", show.latin1(), pos);
             fprintf(stderr, "           ");
             for (int i = 0; i < caret; i++)
                 fprintf(stderr, " ");
@@ -1021,7 +1111,7 @@ void KHTMLSelection::debugRenderer(RenderObject *r, bool selected) const
                 text = text.left(max - 3) + "...";
             else
                 text = text.left(max);
-            fprintf(stderr, "    #text : %s\n", text.latin1());
+            fprintf(stderr, "    #text : \"%s\"\n", text.latin1());
         }
     }
 }

@@ -80,6 +80,7 @@ namespace khtml
   class CachedObject;
   class RenderWidget;
   class CSSStyleSelector;
+  class EditCommand;
 };
 
 namespace KJS {
@@ -563,12 +564,32 @@ public:
   /**
    * Returns the selected part of the HTML.
    */
-  DOM::Range selection() const;
+  const KHTMLSelection &selection() const;
 
   /**
    * Sets the current selection.
    */
-  void setSelection(const DOM::Range &);
+  void setSelection(const KHTMLSelection &);
+
+  /**
+   * Clears the current selection.
+   */
+  void clearSelection();
+
+  /**
+   * Invalidates the current selection.
+   */
+  void invalidateSelection();
+
+  /**
+   * Controls the visibility of the selection.
+   */
+  void setSelectionVisible(bool flag=true);
+
+  /**
+   * Paints the caret.
+   */
+  void paintCaret(QPainter *p, const QRect &rect) const;
 
   /**
    * Returns the text for a part of the document.
@@ -591,15 +612,35 @@ public:
   void selectAll();
 
   /**
-   * Returns the caret.
-   */
-  KHTMLSelection &getKHTMLSelection() const;
-
-  /**
    * Returns whether editing is enabled at the current caret
    * position.
    */
   bool isEditingAtCaret() const;
+
+  /**
+   * Applies the give edit command.
+   */
+  int applyCommand(khtml::EditCommand *);
+
+#if APPLE_CHANGES
+  /**
+   * Performs an undo or redo of the most previous edit
+   * by examining the undo and redo command list and
+   * matching the top item against the cookie passed in.
+   * A hack, but it helps us to hook into Cocoa undo/redo.
+   */
+  int undoRedoEditing(int cookie);
+#endif
+
+  /**
+   * Performs an undo of the edit.
+   */
+  int undoEditing();
+
+  /**
+   * Performs a redo of the edit.
+   */
+  int redoEditing();
 
   /**
    * Convenience method to show the document's view.
@@ -1038,7 +1079,17 @@ private:
   /**
    * @internal
    */
+  void notifySelectionChanged();
+
+  /**
+   * @internal
+   */
   void emitSelectionChanged();
+
+  /**
+   * @internal
+   */
+  void timerEvent(QTimerEvent *);
   
   /**
    * @internal
@@ -1134,6 +1185,7 @@ private:
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
+  friend class KHTMLSelection;
 
 #if APPLE_CHANGES
 public:  

@@ -2714,7 +2714,7 @@ void KWQKHTMLPart::setShowsFirstResponder(bool flag)
             if (node && node->renderer())
                 node->renderer()->repaint();
         }
-        getKHTMLSelection().setVisible(flag);
+        setSelectionVisible(flag);
     }
 }
 
@@ -2825,3 +2825,7 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
     }
 }
 
+void KWQKHTMLPart::registerCommandForUndo(int cookie)
+{
+    [_bridge registerCommandForUndo:cookie];
+}

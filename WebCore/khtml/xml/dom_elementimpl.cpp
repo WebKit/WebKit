@@ -383,14 +383,18 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
         else if (k->keyIdentifier() == "Right") {
             KHTMLPart *part = getDocument()->part();
             if (part) {
-                part->getKHTMLSelection().alterSelection(KHTMLSelection::MOVE, KHTMLSelection::FORWARD, KHTMLSelection::CHARACTER);
+                KHTMLSelection s = part->selection();
+                s.modify(KHTMLSelection::MOVE, KHTMLSelection::FORWARD, KHTMLSelection::CHARACTER);
+                part->setSelection(s);
                 evt->setDefaultHandled();
             }
         }
         else if (k->keyIdentifier() == "Left") {
             KHTMLPart *part = getDocument()->part();
             if (part) {
-                part->getKHTMLSelection().alterSelection(KHTMLSelection::MOVE, KHTMLSelection::BACKWARD, KHTMLSelection::CHARACTER);
+                KHTMLSelection s = part->selection();
+                s.modify(KHTMLSelection::MOVE, KHTMLSelection::BACKWARD, KHTMLSelection::CHARACTER);
+                part->setSelection(s);
                 evt->setDefaultHandled();
             }
         }
@@ -404,11 +408,13 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
             QString text(k->qKeyEvent()->text());
             cmd = new InputTextCommand(getDocument(), text);
         }
-        if (cmd && cmd->apply()) {
-            evt->setDefaultHandled();
-            // EDIT FIXME: until undo is hooked up, the command has no place to go
-            // just delete
-            delete cmd;
+        if (cmd) {
+            KHTMLPart *part = getDocument()->part();
+            int result = EditResultNoActionTaken;
+            if (part)
+                result = part->applyCommand(cmd);
+            if (result == EditResultOK)
+                evt->setDefaultHandled();
         }
     }
     NodeBaseImpl::defaultEventHandler(evt);

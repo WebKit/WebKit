@@ -1,3 +1,62 @@
+2004-02-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        This patch includes two major pieces of work.
+        
+        1. The KHTMLSelection object has been reworked to be a value object.
+        Part-related state has been moved out to KHTMLPart. This change makes
+        it much easier to program with these objects, since they can now be
+        treating unambigously like built-in types. As part of this work, I
+        did a pass over the API and improved some function names. A related
+        part of work was to clean up the relationship between KHTMLSelection, 
+        KHTMLPart and DOMDocumentImpl, and cleared up how to change the selection
+        when that is necessary. (There is now a small set of functions on KHTMLPart). 
+        
+        2. Implemented undo/redo, and hooked into the Cocoa undo architecture. The
+        notion of EditCommands has been enhanced by the addition of EditSteps, which
+        are primitive operations out of which edit commands are built. Most of the
+        existing operations have been updated to use this new design. The last couple
+        will be updated soon, so that all supported editing operations will be undoable.
+
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/htmlediting.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isFocusable): Prevents children of content editable parents
+        from receiving focus.
+        * khtml/khtml_part.cpp: Modified to work with new KHTMLSelection class design.
+        Also added some new code to work with new edit command architecture. 
+        * khtml/khtml_part.h:
+        * khtml/khtml_selection.cpp: Reworked as a value class. Too much state was
+        being stored in this object for it to be convenient to use as a value. That
+        has been fixed.
+        * khtml/khtml_selection.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/khtmlview.cpp: Modified to work with new KHTMLSelection class design.
+        * khtml/rendering/render_block.cpp: Modified to work with new KHTMLSelection class design.
+        (khtml::RenderBlock::paintObject):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        (DocumentImpl::deleteSelection):
+        (DocumentImpl::pasteHTMLString):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp: 
+        (ElementImpl::defaultEventHandler): Modified to work with new edit command architecture.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::registerCommandForUndo): Added hook to Cocoa undo/redo architecture.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge isSelectionEditable]): Modified to work with new edit command architecture.
+        (-[WebCoreBridge moveCaretToPoint:]): Ditto
+        (-[WebCoreBridge haveSelection]): Ditto
+        (-[WebCoreBridge selectedHTML]): Ditto
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]): Ditto
+        (-[WebCoreBridge reconstructedSource]): Ditto
+        (-[WebCoreBridge undoRedoEditing:]): Added hook to Cocoa undo/redo architecture.
+
 2004-02-04  David Hyatt  <hyatt@apple.com>
 
 	Improve rule matching in the style system.  Filter out most rules up front, so that only a small
@@ -200,6 +259,7 @@
 2004-02-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546924>: REGRESSION: dragging text or images over a WebView is jerky
+
 
         Reviewed by mjs.
 

@@ -331,7 +331,8 @@ void KHTMLView::clear()
 //    viewport()->erase();
 
     setStaticBackground(false);
-    m_part->getKHTMLSelection().clearSelection();
+    
+    m_part->clearSelection();
 
     d->reset();
     killTimers();
@@ -597,7 +598,7 @@ void KHTMLView::layout()
 
     root->layout();
 
-    m_part->getKHTMLSelection().invalidate();
+    m_part->invalidateSelection();
         
     //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
    
@@ -1742,14 +1743,14 @@ void KHTMLView::dropEvent( QDropEvent *ev )
 
 void KHTMLView::focusInEvent( QFocusEvent *e )
 {
-    m_part->getKHTMLSelection().setVisible();
+    m_part->setSelectionVisible();
     QScrollView::focusInEvent( e );
 }
 
 void KHTMLView::focusOutEvent( QFocusEvent *e )
 {
     m_part->stopAutoScroll();
-    m_part->getKHTMLSelection().setVisible(false);
+    m_part->setSelectionVisible(false);
     QScrollView::focusOutEvent( e );
 }
 

@@ -38,6 +38,7 @@
 
 #include "dom/dom_string.h"
 #include "dom/dom_element.h"
+#include "editing/htmlediting.h"
 #include "html/html_documentimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/html_miscimpl.h"
@@ -98,11 +99,14 @@ using namespace DOM;
 #endif
 
 using khtml::Decoder;
+using khtml::EditCommand;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::InlineTextBox;
 
 using KParts::BrowserInterface;
+
+enum { CARET_BLINK_FREQUENCY = 500 };
 
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
@@ -185,9 +189,6 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   d->m_view = view;
   setWidget( d->m_view );
   
-  d->m_selection.setPart(this);
-  d->m_selection.setVisible();
-
 #if !APPLE_CHANGES
   d->m_guiProfile = prof;
 #endif
@@ -2214,10 +2215,9 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
                   ->posOfChar(d->m_findPos, x, y);
                 d->m_view->setContentsPos(x-50, y-50);
 #endif
-                
-                d->m_selection.setSelection(d->m_findNode, d->m_findPos, d->m_findNode, d->m_findPos + matchLen);
-                d->m_doc->setSelection(d->m_selection);
-                emitSelectionChanged();
+                KHTMLSelection s = selection();
+                s.moveTo(d->m_findNode, d->m_findPos, d->m_findNode, d->m_findPos + matchLen);
+                setSelection(s);
                 return true;
             }
         }
@@ -2442,7 +2442,7 @@ QString KHTMLPart::text(const DOM::Range &r) const
 
 QString KHTMLPart::selectedText() const
 {
-    return text(selection());
+    return text(selection().toRange());
 }
 
 bool KHTMLPart::hasSelection() const
@@ -2450,35 +2450,89 @@ bool KHTMLPart::hasSelection() const
     return !d->m_selection.isEmpty();
 }
 
-DOM::Range KHTMLPart::selection() const
+const KHTMLSelection &KHTMLPart::selection() const
 {
-    DOM::Range r = document().createRange();
-    if (hasSelection()) {
-        r.setStart(d->m_selection.startNode(), d->m_selection.startOffset());
-        r.setEnd(d->m_selection.endNode(), d->m_selection.endOffset());
-    }
-    return r;
+    return d->m_selection;
 }
 
-void KHTMLPart::setSelection(const DOM::Range &r)
+void KHTMLPart::setSelection(const KHTMLSelection &s)
 {
-    d->m_selection.setSelection(r);
-    d->m_doc->setSelection(d->m_selection);
-    emitSelectionChanged();
+    if (d->m_selection != s) {
+        d->m_selection = s;
+        notifySelectionChanged();
+    }
+}
+
+void KHTMLPart::clearSelection()
+{
+    d->m_selection = KHTMLSelection();
+    notifySelectionChanged();
+}
+
+void KHTMLPart::invalidateSelection()
+{
+    d->m_selection.setNeedsLayout();
+    notifySelectionChanged();
+}
+
+void KHTMLPart::setSelectionVisible(bool flag)
+{
+    if (d->m_caretVisible == flag)
+        return;
+        
+    d->m_caretVisible = flag;
+    notifySelectionChanged();
 }
 
 void KHTMLPart::slotClearSelection()
 {
     bool hadSelection = hasSelection();
-    d->m_selection.clearSelection();
-    d->m_doc->clearSelection();
+    d->m_selection.clear();
     if (hadSelection)
-        emitSelectionChanged();
+        notifySelectionChanged();
 }
 
-KHTMLSelection &KHTMLPart::getKHTMLSelection() const
+void KHTMLPart::notifySelectionChanged()
 {
-    return d->m_selection;
+    // kill any caret blink timer now running
+    if (d->m_caretBlinkTimer >= 0) {
+        killTimer(d->m_caretBlinkTimer);
+        d->m_caretBlinkTimer = -1;
+    }
+
+    // see if a new caret blink timer needs to be started
+    if (d->m_caretVisible && d->m_caretBlinks && 
+        d->m_selection.state() == KHTMLSelection::CARET && d->m_selection.startNode()->isContentEditable()) {
+        d->m_caretBlinkTimer = startTimer(CARET_BLINK_FREQUENCY);
+        d->m_caretPaint = true;
+        d->m_selection.needsCaretRepaint();
+    }
+    else if (d->m_caretPaint) {
+        d->m_caretPaint = false;
+        d->m_selection.needsCaretRepaint();
+    }
+
+    if (d->m_doc)
+        d->m_doc->updateSelection();
+        
+    emitSelectionChanged();
+}
+
+void KHTMLPart::timerEvent(QTimerEvent *e)
+{
+    if (e->timerId() == d->m_caretBlinkTimer && 
+        d->m_caretVisible && 
+        d->m_caretBlinks && 
+        d->m_selection.state() == KHTMLSelection::CARET) {
+        d->m_caretPaint = !d->m_caretPaint;
+        d->m_selection.needsCaretRepaint();
+    }
+}
+
+void KHTMLPart::paintCaret(QPainter *p, const QRect &rect) const
+{
+    if (d->m_caretPaint)
+        d->m_selection.paintCaret(p, rect);
 }
 
 #if !APPLE_CHANGES
@@ -4415,27 +4469,23 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
     QMouseEvent *mouse = event->qmouseEvent();
     DOM::Node innerNode = event->innerNode();
 
-    d->m_selection.clearSelection();
+    KHTMLSelection selection;
 
     if (mouse->button() == LeftButton && !innerNode.isNull() && innerNode.handle()->renderer()) {
         NodeImpl *node = 0;
         int offset = 0;
         checkSelectionPoint(event, node, offset);
         if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
-            d->m_selection.setSelection(node, offset);
-            d->m_selection.expandSelection(KHTMLSelection::WORD);
+            selection.moveTo(node, offset);
+            selection.expandToElement(KHTMLSelection::WORD);
         }
     }
-    
-    if (d->m_selection.state() == KHTMLSelection::CARET) {
-        d->m_doc->clearSelection();
-    }
-    else {
+
+    if (selection.state() != KHTMLSelection::CARET) {
         d->m_textElement = KHTMLSelection::WORD;
-        d->m_doc->setSelection(d->m_selection);
     }
     
-    emitSelectionChanged();
+    setSelection(selection);
     startAutoScroll();
 }
 
@@ -4444,27 +4494,23 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
     QMouseEvent *mouse = event->qmouseEvent();
     DOM::Node innerNode = event->innerNode();
     
-    d->m_selection.clearSelection();
+    KHTMLSelection selection;
     
     if (mouse->button() == LeftButton && !innerNode.isNull() && innerNode.handle()->renderer()) {
-        DOM::NodeImpl* node = 0;
+        NodeImpl* node = 0;
         int offset = 0;
         checkSelectionPoint(event, node, offset);
         if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
-            d->m_selection.setSelection(node, offset);
-            d->m_selection.expandSelection(KHTMLSelection::LINE);
+            selection.moveTo(node, offset);
+            selection.expandToElement(KHTMLSelection::LINE);
         }
     }
     
-    if (d->m_selection.state() == KHTMLSelection::CARET) {
-        d->m_doc->clearSelection();
-    }
-    else {
+    if (selection.state() != KHTMLSelection::CARET) {
         d->m_textElement = KHTMLSelection::LINE;
-        d->m_doc->setSelection(d->m_selection);
     }
     
-    emitSelectionChanged();
+    setSelection(selection);
     startAutoScroll();
 }
 
@@ -4476,10 +4522,8 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
     DOM::Node innerNode = event->innerNode();
     
 	if (mouse->button() == LeftButton) {
-		if (innerNode.isNull() || !innerNode.handle()->renderer()) {
-			d->m_selection.clearSelection();
-		}
-		else {
+        KHTMLSelection selection;
+        if (!innerNode.isNull() && innerNode.handle()->renderer()) {
 #if APPLE_CHANGES
 			// Don't restart the selection when the mouse is pressed on an
 			// existing selection so we can allow for text dragging.
@@ -4490,11 +4534,10 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
 			DOM::NodeImpl* node = 0;
 			int offset = 0;
         	checkSelectionPoint(event, node, offset);
-            d->m_selection.setSelection(node, offset);
-			d->m_doc->clearSelection();
+            selection.moveTo(node, offset);
 		}
 
-		emitSelectionChanged();
+        setSelection(selection);
 		startAutoScroll();
 	}
 }
@@ -4701,23 +4744,22 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
 
 	// Restart the selection if this is the first mouse move. This work is usually
 	// done in khtmlMousePressEvent, but not if the mouse press was on an existing selection.
-	if (!d->m_mouseMovedSinceLastMousePress) {
+	KHTMLSelection sel = selection();
+    if (!d->m_mouseMovedSinceLastMousePress) {
 		d->m_mouseMovedSinceLastMousePress = true;
-        d->m_selection.setSelection(node, offset);
+        sel.moveTo(node, offset);
 	}
 #endif        
 
-    d->m_selection.setExtent(node, offset);
+    sel.setExtent(node, offset);
 
 #if APPLE_CHANGES
     if (d->m_textElement != KHTMLSelection::CHARACTER) {
-        d->m_selection.expandSelection(d->m_textElement);
+        sel.expandToElement(d->m_textElement);
     }
 #endif    
 
-    if (!d->m_selection.isEmpty()) {
-        d->m_doc->setSelection(d->m_selection);
-    }
+    setSelection(sel);
         
 #endif // KHTML_NO_SELECTION
 }
@@ -4779,17 +4821,14 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 		d->m_dragStartPos.y() == event->qmouseEvent()->y() &&
 		d->m_selection.state() == KHTMLSelection::RANGE &&
         d->m_textElement == KHTMLSelection::CHARACTER) {
+            KHTMLSelection selection;
             if (isEditingAtCaret()) {
                 NodeImpl *node = 0;
                 int offset = 0;
                 checkSelectionPoint(event, node, offset);
-                d->m_selection.setSelection(node, offset);
-                d->m_doc->setSelection(d->m_selection);
+                selection.moveTo(node, offset);
             }
-            else {
-                d->m_selection.clearSelection();
-                d->m_doc->clearSelection();
-            }
+            setSelection(selection);
 	}
 #endif
 
@@ -4806,8 +4845,6 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     connect(kapp->clipboard(), SIGNAL(selectionChanged()), SLOT(slotClearSelection()));
     cb->setSelectionMode(false);
 #endif // QT_NO_CLIPBOARD
-
-    emitSelectionChanged();
 
 #endif // KHTML_NO_SELECTION
 }
@@ -4997,9 +5034,8 @@ void KHTMLPart::selectAll()
     return;
   Q_ASSERT(first->renderer());
   Q_ASSERT(last->renderer());
-  d->m_selection.setSelection(first, 0, last, last->nodeValue().length());
-  d->m_doc->setSelection(d->m_selection);
-  emitSelectionChanged();
+  KHTMLSelection selection(first, 0, last, last->nodeValue().length());
+  setSelection(selection);
 }
 
 bool KHTMLPart::isEditingAtCaret() const
@@ -5012,6 +5048,88 @@ bool KHTMLPart::isEditingAtCaret() const
     
     return false;
 }
+
+int KHTMLPart::applyCommand(EditCommand *cmd)
+{
+    int result = cmd->apply();
+    if (result) {
+        return result;
+    }
+    
+    // clear redo commands
+    QPtrListIterator<EditCommand> it(d->m_redoEditCommands);
+    for (; it.current(); ++it)
+        delete it.current();
+    d->m_redoEditCommands.clear();
+
+    // add to undo commands
+    d->m_undoEditCommands.append(cmd);
+#if APPLE_CHANGES
+    KWQ(this)->registerCommandForUndo(cmd->cookie());
+#endif
+
+    return khtml::EditResultOK;
+}
+
+#if APPLE_CHANGES
+int KHTMLPart::undoRedoEditing(int cookie)
+{
+    EditCommand *undoCommand = d->m_undoEditCommands.last();
+    if (undoCommand && undoCommand->cookie() == cookie)
+        return undoEditing();
+    
+    EditCommand *redoCommand = d->m_redoEditCommands.last();
+    if (redoCommand && redoCommand->cookie() == cookie)
+        return redoEditing();
+
+    return khtml::EditResultFailed;
+}
+#endif
+
+int KHTMLPart::undoEditing()
+{
+    EditCommand *cmd = d->m_undoEditCommands.last();
+    if (!cmd) {
+        return khtml::EditResultFailed;
+    }
+
+    int result = cmd->unapply();
+    if (result) {
+        return result;
+    }
+
+    d->m_undoEditCommands.removeLast();
+    d->m_redoEditCommands.append(cmd);
+
+#if APPLE_CHANGES
+    KWQ(this)->registerCommandForUndo(cmd->cookie());
+#endif
+
+    return khtml::EditResultOK;
+}
+
+int KHTMLPart::redoEditing()
+{
+    EditCommand *cmd = d->m_redoEditCommands.last();
+    if (!cmd) {
+        return khtml::EditResultFailed;
+    }
+
+    int result = cmd->reapply();
+    if (result) {
+        return result;
+    }
+
+    d->m_redoEditCommands.removeLast();
+    d->m_undoEditCommands.append(cmd);
+
+#if APPLE_CHANGES
+    KWQ(this)->registerCommandForUndo(cmd->cookie());
+#endif
+
+    return khtml::EditResultOK;
+}
+
 
 #if !APPLE_CHANGES
 

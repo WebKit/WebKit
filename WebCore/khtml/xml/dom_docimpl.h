@@ -263,11 +263,9 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
 
-    void setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep);
-    void setSelection(KHTMLSelection &);
-    void clearSelection();
 	void deleteSelection();
-	
+    void updateSelection();
+    
 	void pasteHTMLString(const QString &HTMLString);
 
     void open();

@@ -703,7 +703,7 @@ void HTMLElementImpl::addHTMLAlignment( const DOMString& alignment )
 
 bool HTMLElementImpl::isFocusable() const
 {
-    return isContentEditable();
+    return isContentEditable() && !parent()->isContentEditable();
 }
 
 bool HTMLElementImpl::isContentEditable() const {

@@ -82,6 +82,7 @@ namespace khtml
     bool m_bNotify;
   };
 
+  class EditCommand;
 };
 
 class FrameList : public QValueList<khtml::ChildFrame>
@@ -120,7 +121,6 @@ public:
     m_bCleared = false;
     m_zoomFactor = 100;
     m_bDnd = true;
-    m_extendAtEnd = true;
 #if !APPLE_CHANGES
     m_linkCursor = KCursor::handCursor();
 #endif
@@ -153,6 +153,10 @@ public:
     m_onlyLocalReferences = false;
 
     m_inEditMode = DOM::FlagNone;
+    m_caretBlinkTimer = 0;
+    m_caretVisible = true;
+    m_caretBlinks = true;
+    m_caretPaint = true;
 
     m_metaRefreshEnabled = true;
     m_bHTTPRefresh = false;
@@ -210,6 +214,16 @@ public:
 #ifndef Q_WS_QWS
     delete m_javaContext;
 #endif
+    
+    QPtrListIterator<khtml::EditCommand> undos(m_undoEditCommands);
+    for (; undos.current(); ++undos) {
+        delete undos.current();
+    }
+    QPtrListIterator<khtml::EditCommand> redos(m_redoEditCommands);
+    for (; redos.current(); ++redos) {
+        delete redos.current();
+    }
+
   }
 
   FrameList m_frames;
@@ -344,11 +358,15 @@ public:
   KHTMLSelection::ETextElement m_textElement;
   bool m_mouseMovedSinceLastMousePress:1;
 #endif
-  KHTMLSelection m_selection;
   QString m_overURL;
   QString m_overURLTarget;
 
-  bool m_extendAtEnd:1;
+  KHTMLSelection m_selection;
+  int m_caretBlinkTimer;
+
+  bool m_caretVisible:1;
+  bool m_caretBlinks:1;
+  bool m_caretPaint:1;
   bool m_bDnd:1;
   bool m_bFirstData:1;
   bool m_bClearing:1;
@@ -357,6 +375,8 @@ public:
   bool m_focusNodeRestored:1;
 
   TristateFlag m_inEditMode;
+  QPtrList<khtml::EditCommand> m_undoEditCommands;
+  QPtrList<khtml::EditCommand> m_redoEditCommands;
 
   int m_focusNodeNumber;
 
