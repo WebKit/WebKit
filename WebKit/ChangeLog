@@ -1,3 +1,25 @@
+2002-03-01  Richard Williamson  <rjw@apple.com>
+
+        Fixed a potentially large leak in frames.  View associated w/
+        frame was not being released.
+        
+        Added scaffolding for correct frame by frame load complete check.
+        
+        Moved private IFWebBaseController method implementations to 
+        IFWebBaseControllerPrivate.mm.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	createFrameNamed:for:inParent:]), (-[IFBaseWebController
+	receivedProgress:forResource:fromDataSource:]), (-[IFBaseWebController
+	receivedError:forResource:partialProgress:fromDataSource:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	dealloc]), (-[IFBaseWebController _changeLocationTo:forFrame:parent:]),
+	(-[IFBaseWebController _changeFrame:dataSource:]), (-[IFBaseWebController
+	_checkLoadCompleteForDataSource:]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate init]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged:]):
+
 2002-02-27  Kenneth Kocienda  <kocienda@apple.com>
 
         I have changed the way that WebCore is glued to WebFoundation and WebKit. 

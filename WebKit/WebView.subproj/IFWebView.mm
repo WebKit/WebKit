@@ -77,14 +77,18 @@
     
     data->widget->resize (r.size.width,r.size.height);
 
+    // Remove any remnants, i.e. form widgets, from the
+    // previous page.
     [self _resetView];
+    
+    // Force a layout.
     [self layout];
 }
 
 
 
 // This method should not be public until we have a more completely
-// understood way to subclass IFWebView.
+// understood how IFWebView will be subclassed.
 - (void)layout
 {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;

@@ -15,6 +15,7 @@
 
 - init
 {
+    // Unnecessary, but I like to know that these ivars should be nil.
     parent = nil;
     frames = nil;
     controller = nil;

@@ -17,4 +17,5 @@
 @interface IFBaseWebController (IFPrivate);
 - (BOOL)_changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame parent: (IFWebDataSource *)parent;
 - (void)_changeFrame: (IFWebFrame *)frame dataSource: (IFWebDataSource *)newDataSource;
+- (void)_checkLoadCompleteForDataSource: (IFWebDataSource *)dataSource;
 @end

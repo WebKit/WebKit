@@ -10,9 +10,7 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFException.h>
 
-#include <KWQKHTMLPart.h>
 #include <WCLoadProgress.h>
-#include <rendering/render_frames.h>
 
 
 // IFObjectHolder holds objects as keys in dictionaries without
@@ -157,7 +155,7 @@ static id IFLoadProgressMake()
     IFWebFrame *newFrame;
     IFDynamicScrollBarsView *scrollView;
 
-    childView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
+    childView = [[[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
 
     newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource controller: self] autorelease];
 
@@ -207,8 +205,6 @@ static id IFLoadProgressMake()
 
 
 
-
-
 // ---------------------------------------------------------------------
 // IFScriptContextHandler
 // ---------------------------------------------------------------------
@@ -240,14 +236,16 @@ static id IFLoadProgressMake()
 // ---------------------------------------------------------------------
 - (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
-    // Do nothing.
+    // Check if the load is complete for this data source.
+    if (progress->bytesSoFar == progress->totalToLoad)
+        [self _checkLoadCompleteForDataSource: dataSource];
 }
 
 
 
 - (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    // FIXME?
+    [self _checkLoadCompleteForDataSource: dataSource];
 }
 
 
@@ -257,45 +255,6 @@ static id IFLoadProgressMake()
 - (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
 {
     return YES;
-}
-
-
-- (BOOL)_changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame parent: (IFWebDataSource *)parent
-{
-    if ([self locationWillChangeTo: url forFrame: frame]){
-        IFWebDataSource *dataSource = [[[IFWebDataSource alloc] initWithURL: url] autorelease];
-        
-        [dataSource _setParent: parent];
-        [self _changeFrame: frame dataSource: dataSource];
-        return YES;
-    }
-    return NO;
-}
-
-
-- (void)_changeFrame: (IFWebFrame *)frame dataSource: (IFWebDataSource *)newDataSource
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    IFWebDataSource *oldDataSource;
-
-    oldDataSource = [frame dataSource];
-    if (frame == data->mainFrame)
-        [newDataSource _setParent: nil];
-    else if (oldDataSource && oldDataSource != newDataSource)
-        [newDataSource _setParent: [oldDataSource parent]];
-            
-    [newDataSource _setController: self];
-    [frame _setDataSource: newDataSource];
-    
-    // dataSourceChanged: will reset the view and begin trying to
-    // display the new new datasource.
-    [[frame view] dataSourceChanged: newDataSource];
-
-    // This introduces a nasty dependency on the view.
-    khtml::RenderPart *renderPartFrame = [frame _renderFramePart];
-    id view = [frame view];
-    if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
-        renderPartFrame->setWidget ([[frame view] _widget]);
 }
 
 
