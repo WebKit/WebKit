@@ -1,3 +1,25 @@
+2004-08-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fix crashes in mozilla tests due to mishandling NaN
+
+        * kjs/array_object.cpp: (ArrayProtoFuncImp::call): Rerranged range checks after
+        calls to toInteger so that NaN will get turned into something that fits in an integer.
+        These were the ones John already fixed, but his fix used isnan and the new fix is
+        more efficient.
+
+        * kjs/number_object.cpp: (NumberProtoFuncImp::call): Rearranged radix range checks
+        after a call to toInteger to handle NaN properly. Also removed separate check
+        for undefined that's not needed.
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): More of the same kinds of changes
+        as in the above two files, but for a lot more functions. Also changed one place with
+        an explicit check for undefined to instead just check isNaN.
+
+        * tests/mozilla/run-mozilla-tests: Changed to invoke jst using $SYMROOTS for people
+        like me who don't keep $SYMROOTS in their $PATH.
+
 === Safari-154 ===
 
 === Safari-153 ===

@@ -583,29 +583,24 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     double begin = 0;
     if (args[0].type() != UndefinedType) {
         begin = args[0].toInteger(exec);
-        if (isnan(begin)) {
-            begin = 0;
-        }
-        if (begin < 0) {
-            begin += length;
-            if (begin < 0)
-                begin = 0;
-        } else {
+        if (begin >= 0) { // false for NaN
             if (begin > length)
                 begin = length;
+        } else {
+            begin += length;
+            if (!(begin >= 0)) // true for NaN
+                begin = 0;
         }
     }
     double end = length;
     if (args[1].type() != UndefinedType) {
       end = args[1].toInteger(exec);
-      if (isnan(end)) {
-        end = length;
-      } else if (end < 0) {
+      if (end < 0) { // false for NaN
         end += length;
         if (end < 0)
           end = 0;
       } else {
-        if (end > length)
+        if (!(end <= length)) // true for NaN
           end = length;
       }
     }

@@ -204,20 +204,19 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     break;
   case CharAt:
     dpos = a0.toInteger(exec);
-    if (dpos < 0 || dpos >= len)
-      u = "";
-    else
+    if (dpos >= 0 && dpos < len) // false for NaN
       u = s.substr(static_cast<int>(dpos), 1);
+    else
+      u = "";
     result = String(u);
     break;
   case CharCodeAt:
     dpos = a0.toInteger(exec);
-    if (dpos < 0 || dpos >= len)
-      d = NaN;
-    else {
+    if (dpos >= 0 && dpos < len) {// false for NaN
       UChar c = s[static_cast<int>(dpos)];
       d = (c.high() << 8) + c.low();
-    }
+    } else
+      d = NaN;
     result = Number(d);
     break;
   case Concat: {
@@ -234,10 +233,11 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       dpos = 0;
     else {
       dpos = a1.toInteger(exec);
-      if (dpos < 0)
+      if (dpos >= 0) { // false for NaN
+        if (dpos > len)
+          dpos = len;
+      } else
         dpos = 0;
-      else if (dpos > len)
-        dpos = len;
     }
     d = s.find(u2, static_cast<int>(dpos));
     result = Number(d);
@@ -249,10 +249,11 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       dpos = len;
     else {
       dpos = a1.toInteger(exec);
-      if (dpos < 0)
+      if (dpos >= 0) { // false for NaN
+        if (dpos > len)
+          dpos = len;
+      } else
         dpos = 0;
-      else if (dpos > len)
-        dpos = len;
     }
     d = s.rfind(u2, static_cast<int>(dpos));
     result = Number(d);
@@ -386,24 +387,24 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     {
         // The arg processing is very much like ArrayProtoFunc::Slice
         double begin = args[0].toInteger(exec);
-        if (begin < 0) {
-          begin += len;
-          if (begin < 0)
-            begin = 0;
-        } else {
+        if (begin >= 0) { // false for NaN
           if (begin > len)
             begin = len;
+        } else {
+          begin += len;
+          if (!(begin >= 0)) // true for NaN
+            begin = 0;
         }
         double end = len;
         if (args[1].type() != UndefinedType) {
           end = args[1].toInteger(exec);
-          if (end < 0) {
-            end += len;
-            if (end < 0)
-              end = 0;
-          } else {
+          if (end >= 0) { // false for NaN
             if (end > len)
               end = len;
+          } else {
+            end += len;
+            if (!(end >= 0)) // true for NaN
+              end = 0;
           }
         }
         //printf( "Slicing from %d to %d \n", begin, end );
@@ -416,7 +417,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     result = res;
     u = s;
     i = p0 = 0;
-    d = (a1.type() != UndefinedType) ? a1.toInteger(exec) : -1; // optional max number
+    d = a1.toInteger(exec);
     if (a0.type() == ObjectType && Object::dynamicCast(a0).inherits(&RegExpImp::info)) {
       Object obj0 = Object::dynamicCast(a0);
       RegExp reg(obj0.get(exec,"source").toString(exec));
@@ -449,11 +450,11 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
 	  put(exec,lengthPropertyName, Number(0));
 	  break;
 	} else {
-	  while (i != d && i < u.size()-1)
+	  while (!(i == d) && i < u.size()-1) // !(i == d) returns true for NaN
 	    res.put(exec, i++, String(u.substr(p0++, 1)));
 	}
       } else {
-	while (i != d && (pos = u.find(u2, p0)) >= 0) {
+	while (!(i == d) && (pos = u.find(u2, p0)) >= 0) { // !(i == d) returns true for NaN
 	  res.put(exec, i, String(u.substr(p0, pos-p0)));
 	  p0 = pos + u2.size();
 	  i++;
@@ -461,7 +462,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       }
     }
     // add remaining string, if any
-    if (i != d)
+    if (!(i == d)) // !(i == d) returns true for NaN
       res.put(exec, i++, String(u.substr(p0)));
     res.put(exec,lengthPropertyName, Number(i));
     }
@@ -469,12 +470,12 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
   case Substr: {
     double d = a0.toInteger(exec);
     double d2 = a1.toInteger(exec);
-    if (d < 0) {
+    if (!(d >= 0)) { // true for NaN
       d += len;
-      if (d < 0)
+      if (!(d >= 0)) // true for NaN
         d = 0;
     }
-    if (a1.type() == UndefinedType)
+    if (isNaN(d2))
       d2 = len - d;
     else {
       if (d2 < 0)
