@@ -121,14 +121,16 @@ static BOOL forceRealHitTest = NO;
     // the +initializers being called before the REQUIRED AppKit initialization
     // that's done in +[NSApplication load].
 
-    class_poseAs(objc_getClass("WebNSView"), objc_getClass("NSView"));
-
-    // Only do these two poses if we have an older AppKit.
     // If AppKit is 705 or newer, this is handled over on the WebCore side,
     // using the new NSTextView SPI.
     if (NSAppKitVersionNumber < 705) {
         class_poseAs(objc_getClass("WebNSTextView"), objc_getClass("NSTextView"));
         class_poseAs(objc_getClass("WebNSWindow"), objc_getClass("NSWindow"));
+    }
+
+    // If AppKit is 711 or newer, this is handled using _setDrawsOwnDescendants.
+    if (NSAppKitVersionNumber < 711) {
+        class_poseAs(objc_getClass("WebNSView"), objc_getClass("NSView"));
     }
 
     [pool release];

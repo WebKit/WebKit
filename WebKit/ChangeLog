@@ -1,3 +1,14 @@
+2003-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3279864 -- remove class_poseAs calls from WebKit
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView initWithFrame:]):
+        Call _setDrawsOwnDescendants, if we have a new enough AppKit.
+        * WebView.subproj/WebHTMLViewPrivate.m: (+[WebHTMLView load]):
+        Don't pose as NSView, if we have a new enough AppKit.
+
 2003-07-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

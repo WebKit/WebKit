@@ -31,22 +31,31 @@
 - (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object;
 @end
 
+@interface NSView (AppKitSecretsIKnowAbout)
+- (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
+@end
+
 @implementation WebHTMLView
 
-+(void)initialize
++ (void)initialize
 {
     WebKitInitializeUnicode();
     [NSApp registerServicesMenuSendTypes:[[self class] _pasteboardTypes] returnTypes:nil];
 }
 
-- initWithFrame: (NSRect) frame
+- (id)initWithFrame:(NSRect)frame
 {
-    [super initWithFrame: frame];
+    [super initWithFrame:frame];
+    
+    // Make all drawing go through us instead of subviews.
+    // The bulk of the code to handle this is in WebHTMLViewPrivate.m.
+    if (NSAppKitVersionNumber >= 711) {
+        [self _setDrawsOwnDescendants:YES];
+    }
     
     _private = [[WebHTMLViewPrivate alloc] init];
 
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
-
     _private->needsLayout = YES;
 
     return self;
