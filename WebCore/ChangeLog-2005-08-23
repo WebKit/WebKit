@@ -1,3 +1,5 @@
+=== Safari-118 ===
+
 2003-12-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3510956, crash on mezzoblue.com.  Relax the float-list searching code that runs when
