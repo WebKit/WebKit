@@ -142,6 +142,30 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 
 @implementation WebView (WebPrivate)
 
++ (NSArray *)_supportedMIMETypes
+{
+    // Load the plug-in DB allowing plug-ins to install types.
+    [WebPluginDatabase installedPlugins];
+    return [[WebFrameView _viewTypesAllowImageTypeOmission:NO] allKeys];
+}
+
++ (NSArray *)_supportedFileExtensions
+{
+    NSMutableSet *extensions = [[NSMutableSet alloc] init];
+    NSArray *MIMETypes = [self _supportedMIMETypes];
+    NSEnumerator *enumerator = [MIMETypes objectEnumerator];
+    NSString *MIMEType;
+    while ((MIMEType = [enumerator nextObject]) != nil) {
+        NSString *extension = [self suggestedFileExtensionForMIMEType:MIMEType];
+        if (extension) {
+            [extensions addObject:extension];
+        }
+    }
+    NSArray *uniqueExtensions = [extensions allObjects];
+    [extensions release];
+    return uniqueExtensions;
+}
+
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 {
     MIMEType = [MIMEType lowercaseString];

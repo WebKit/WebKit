@@ -1,5 +1,18 @@
 2003-10-29  Chris Blumenberg  <cblu@apple.com>
 
+	WebKit part of fix for:
+	<rdar://problem/3467744>: Photoshop files (.psd) don't show up in Open dialog in Safari, but can be viewed
+	<rdar://problem/3109132>: Can't open movie file via open panel even though it can be dropped in browser window
+
+        Reviewed by john.
+
+        * WebView.subproj/WebView.m:
+        (+[WebView _supportedMIMETypes]): new
+        (+[WebView _supportedFileExtensions]): new
+        * WebView.subproj/WebViewPrivate.h:
+
+2003-10-29  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3438716>: jpg and gif images copied from Safari and placed in mail are sent as tiff
 
         Reviewed by john.
