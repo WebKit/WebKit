@@ -33,7 +33,7 @@
 // up to which size is a picture for sure cacheable
 #define MAXCACHEABLE 16*1024
 // default cache size
-#define DEFCACHESIZE 1024*1024
+#define DEFCACHESIZE 4096*1024
 
 #include <qasyncio.h>
 #include <qasyncimageio.h>
