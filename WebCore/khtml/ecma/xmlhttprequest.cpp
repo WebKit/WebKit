@@ -166,9 +166,10 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
   : DOMObject(XMLHttpRequestProto::self(exec)),
     qObject(new XMLHttpRequestQObject(this)),
     doc(static_cast<DOM::DocumentImpl*>(d.handle())),
+    async(true),
+    job(0),
     state(Uninitialized),
     onReadyStateChangeListener(0),
-    async(true),
     decoder(0)
 {
 }
@@ -207,14 +208,11 @@ void XMLHttpRequest::send(const QString& _body)
   if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
       // FIXME: determine post encoding correctly by looking in headers for charset
       job = KIO::http_post( url, QCString(_body.utf8()), false );
-      job->addMetaData("content-type", "text/plain" );
   }
   else
   {
      job = KIO::get( url, false, false );
   }
-
-  // FIXME: should set referrer? args.metaData().insert("referrer", d->m_pageReferrer);
 
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
@@ -233,6 +231,14 @@ void XMLHttpRequest::send(const QString& _body)
 #else 
   KIO::Scheduler::scheduleJob( job );
 #endif
+}
+
+void XMLHttpRequest::abort()
+{
+  if (job) {
+    job->kill();
+    job = 0;
+  }
 }
 
 void XMLHttpRequest::slotFinished(KIO::Job *)
@@ -255,9 +261,9 @@ void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
 }
 
 #if APPLE_CHANGES
-void XMLHttpRequest::slotData( KIO::Job* job, const char *data, int len )
+void XMLHttpRequest::slotData( KIO::Job* _job, const char *data, int len )
 #else
-void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
+void XMLHttpRequest::slotData(KIO::Job* _job, const QByteArray &_data)
 #endif
 {
   if (state < Loaded) {
@@ -288,7 +294,9 @@ void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
 
   response += decoded;
 
-  changeState(Interactive);
+  if (job != 0) {
+    changeState(Interactive);
+  }
 }
 
 Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
@@ -303,6 +311,7 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
 
   switch (id) {
   case XMLHttpRequest::Abort:
+    request->abort();
     return Undefined();
   case XMLHttpRequest::GetAllResponseHeaders:
     return Undefined();

@@ -1,3 +1,15 @@
+2003-11-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3487201 - Implement abort for XMLHttpRequest async loads
+	
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::abort): Kill and clear job.
+        (KJS::XMLHttpRequest::slotData): Avoid moving to state 3 on early abort.
+        (KJS::XMLHttpRequestProtoFunc::tryCall): Call abort when appropriate.
+        * khtml/ecma/xmlhttprequest.h:
+
 2003-11-20  John Sullivan  <sullivan@apple.com>
 
         - WebCore part of <rdar://problem/3183124>: Support page-break-before/after with a value of "always"

@@ -78,20 +78,23 @@ namespace KJS {
 
     void open(const QString& _method, const KURL& _url, bool _async);
     void send(const QString& _body);
+    void abort();
 
     void changeState(XMLHttpRequestState newState);
 
     QGuardedPtr<DOM::DocumentImpl> doc;
+
+    KURL url;
+    QString method;
+    bool async;
+
     KIO::TransferJob * job;
+
     XMLHttpRequestState state;
     JSEventListener *onReadyStateChangeListener;
-    QString method;
-    KURL url;
-    bool async;
 
     khtml::Decoder *decoder;
     QString encoding;
-
     QString response;
   };
 
