@@ -1,3 +1,15 @@
+2002-06-10  John Sullivan  <sullivan@apple.com>
+
+	Fixed leaks in History mechanism, found by overriding
+	release, retain, autorelease, and dealloc and watching
+	the spam fly.
+
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate addEntry:]): Make autoreleased array for
+	entries on a given date.
+	(-[IFWebHistoryPrivate _loadHistoryGuts:]): autorelease entries
+	as they are generated from data on disk.
+
 2002-06-10  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFTextRenderer.m:

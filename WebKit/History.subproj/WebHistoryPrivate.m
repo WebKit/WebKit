@@ -149,7 +149,7 @@
     } else {
         // no other entries exist for this date
         [_datesWithEntries insertObject: [entry lastVisitedDate] atIndex: dateIndex];
-        [_entriesByDate insertObject: [[NSMutableArray alloc] initWithObjects: entry, nil] atIndex: dateIndex];
+        [_entriesByDate insertObject: [NSMutableArray arrayWithObject:entry] atIndex: dateIndex];
     }
 
     [_urlDictionary setObject: entry forKey: urlString];
@@ -393,7 +393,7 @@
     while ((dictionary = [enumerator nextObject]) != nil) {
         IFURIEntry *entry;
 
-        entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: dictionary];
+        entry = [[[IFURIEntry alloc] initFromDictionaryRepresentation: dictionary] autorelease];
 
         if ([entry url] == nil) {
             // entry without url is useless; data on disk must have been bad; ignore this one
