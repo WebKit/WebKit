@@ -1,3 +1,12 @@
+2005-01-24  Vicki Murley <vicki@apple.com>
+
+        Reviewed by kocienda.
+
+	- fix <rdar://problem/3810661> computed style not handled for Apple extensions
+ 
+        * khtml/css/css_computedstyle.cpp: (DOM::):
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): add -apple-line-clamp and -apple-text-size-adjust
+
 2005-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.
