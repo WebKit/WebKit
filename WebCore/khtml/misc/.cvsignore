@@ -1,2 +1,11 @@
 Makefile
 Makefile.in
+*.kde
+*.moc
+khtmldata.h
+htmltags.c
+htmltags.h
+htmltags.gperf
+htmlattrs.c
+htmlattrs.h
+htmlattrs.gperf
