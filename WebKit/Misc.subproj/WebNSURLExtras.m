@@ -113,6 +113,14 @@ static inline void ReleaseIfNotNULL(CFTypeRef object)
     return length;
 }
 
+- (const char *)_web_URLCString
+{
+    NSMutableData *data = [NSMutableData data];
+    [data appendData:[self _web_originalData]];
+    [data appendBytes:"\0" length:1];
+    return (const char *)[data bytes];
+ }
+
 - (NSURL *)_webkit_canonicalize
 {
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:self];

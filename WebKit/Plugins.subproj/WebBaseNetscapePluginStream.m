@@ -7,6 +7,7 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -61,12 +62,8 @@
     [URL release];
     URL = [[r URL] retain];
     
-    NSString *URLString = [URL absoluteString];
-    char *cURL = (char *)malloc([URLString cStringLength]+1);
-    [URLString getCString:cURL];
-
     stream.ndata = self;
-    stream.URL = cURL;
+    stream.URL = strdup([URL _web_URLCString]);
     stream.end = [r expectedContentLength];
     stream.lastmodified = [[r _lastModifiedDate] timeIntervalSince1970];
     stream.notifyData = notifyData;
@@ -182,7 +179,7 @@
     [self destroyStreamWithReason:NPRES_DONE];
     
     if (notifyData) {
-        NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
         LOG(Plugins, "NPP_URLNotify");
     }
 }

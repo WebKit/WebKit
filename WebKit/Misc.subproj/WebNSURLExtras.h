@@ -18,6 +18,7 @@
 
 - (NSString *)_web_displayableString;
 - (int)_web_URLStringLength;
+- (const char *)_web_URLCString;
 
 // FIXME: change these names back to _web_ when identically-named
 // methods are removed from Foundation

@@ -1,5 +1,24 @@
 2003-08-05  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Richard
+
+	Plugins in WebKit need to store URLs in the form of "C-style" strings. 
+	Create and use a new, improved method to make these strings, and do 
+	not traverse through the NSURL absoluteString method, since that can i
+	introduce errors.
+
+        * Misc.subproj/WebNSURLExtras.h: Added _web_URLCString method.
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_URLCString]): Added.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]): Call new _web_URLCString method.
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): Ditto.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView frameStateChanged:]): Ditto.
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): Ditto.
+
+2003-08-05  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
 	Fix for this bug:
