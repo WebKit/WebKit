@@ -1,3 +1,14 @@
+2004-07-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
+	
+        Reviewed by john, trey, kocienda.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canTargetLoadInFrame:]): new method, return YES if the requesting frame is local, the target frame is an entire window or if the domain of the parent of the targeted frame equals this domain
+        (-[WebBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]): call canTargetLoadInFrame: to make sure we can load the request
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): ditto
+
 2004-07-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey.

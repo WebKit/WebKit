@@ -13,6 +13,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/DOMHTML.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
 #import <WebKit/WebFormDelegate.h>
@@ -591,6 +592,32 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
+- (BOOL)canTargetLoadInFrame:(WebFrame *)targetFrame
+{
+    // This method prevents this exploit:
+    // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
+    
+    NSString *thisDomain = [(DOMHTMLDocument *)[_frame DOMDocument] domain];
+    if ([thisDomain length] == 0) {
+        // Allow if the request is made from a local file.
+        return YES;
+    }
+    
+    WebFrame *parentFrame = [targetFrame parentFrame];
+    if (parentFrame == nil) {
+        // Allow if target is an entire window.
+        return YES;
+    }
+    
+    NSString *parentDomain = [(DOMHTMLDocument *)[parentFrame DOMDocument] domain];
+    if (parentDomain != nil && [thisDomain _web_isCaseInsensitiveEqualToString:parentDomain]) {
+        // Allow if the domain of the parent of the targeted frame equals this domain.
+        return YES;
+    }
+
+    return NO;
+}
+
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
@@ -598,6 +625,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
+    if (![self canTargetLoadInFrame:targetFrame]) {
+        return;
+    }
+    
     WebFrameLoadType loadType;
     
     if (reload)
@@ -620,6 +651,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
+    if (![self canTargetLoadInFrame:targetFrame]) {
+        return;
+    }
 
     [_frame _postWithURL:URL referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
 
