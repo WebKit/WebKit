@@ -1,5 +1,17 @@
 2005-01-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kevin.
+
+	<rdar://problem/3935390> Tiger 8A341: nil deref crash in DOM::NodeImpl::traverseNextNode
+        
+	* khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::traverseNextItem): Assert that the starting point is not nil,
+	it should not ever be (now).
+        (HTMLCollectionImpl::item): When traversing items stop when we hit
+	nil, meaning the end to avoid triggering above assert (formerly crash).
+
+2005-01-03  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John and Kevin.
 
 	<rdar://problem/3870317> REGRESSION(125.9-125.11) broken behavior at test.profoundlearning.com - used to
