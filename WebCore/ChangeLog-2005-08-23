@@ -1,3 +1,43 @@
+2004-08-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        <rdar://problem/3751098> HTML email has one set of SPAN tags per character in the message
+        
+        Progress on this bug:
+        <rdar://problem/3755562> Typing styles do not use same tag application conventions as font and color panel
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::applyTypingStyle): Name changed from createTypingStyleElement.
+        Also, interface changed to take the node to which the typing style is to be applied. 
+        This makes it easier to apply what may be up to three levels of nested tags to get the 
+        desired style (<B>, <I>, and <SPAN STYLE="">).
+        Also, Borrow some of the style change smarts from ApplyStyleCommandImpl to use bold and
+        italic tags for applying styles when that is apprpriate. This creates on opportunity to
+        factor the code to do this so that this function and the ApplyStyleCommandImpl class can
+        share the implementation. I will follow up with a change to do that after landing this
+        change. Some future code factoring could be done here to bring together some similar code
+        into one place.
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Add comment about code factoring work.
+        (khtml::ApplyStyleCommandImpl::computeStyleChange): StyleChange struct no longer a member of the
+        ApplyStyleCommandImpl class. CompositeEditCommandImpl needs it now in its applyTypingStyle()
+        function.
+        (khtml::InputNewlineCommandImpl::doApply): Pass along node to style to applyTypingStyle.
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Ditto.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::StyleChange::StyleChange): Pull this struct out of ApplyStyleCommandImpl so 
+        CompositeEditCommandImpl can use it.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::notifySelectionChanged): Always clear typing style when the selection
+        changes, not only when closing typing. This fixes 3751098.
+        
+        These three tests actually had results that treated the buggy behavior as correct!
+        
+        * layout-tests/editing/style/style-3681552-fix-001-expected.txt
+        * layout-tests/editing/style/style-3681552-fix-002-expected.txt
+        * layout-tests/editing/style/typing-style-002-expected.txt
+
 2004-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -540,19 +540,72 @@ void CompositeEditCommandImpl::setNodeAttribute(ElementImpl *element, int attrib
     applyCommandToComposite(cmd);
 }
 
-ElementImpl *CompositeEditCommandImpl::createTypingStyleElement() const
+ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
 {
-    int exceptionCode = 0;
-    ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
-    ASSERT(exceptionCode == 0);
+    // FIXME: This function should share code with ApplyStyleCommandImpl::applyStyleIfNeeded
+    // and ApplyStyleCommandImpl::computeStyleChange.
+    // Both function do similar work, and the common parts could be factored out.
+
+    CSSStyleDeclarationImpl *style = document()->part()->typingStyle();
+    StyleChange styleChange;
+
+    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        switch (property->id()) {
+            case CSS_PROP_FONT_WEIGHT:
+                if (strcasecmp(property->value()->cssText(), "bold") == 0)
+                    styleChange.applyBold = true;
+                else
+                    styleChange.cssStyle += property->cssText();
+                break;
+            case CSS_PROP_FONT_STYLE: {
+                    DOMString cssText(property->value()->cssText());
+                    if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
+                        styleChange.applyItalic = true;
+                    else
+                        styleChange.cssStyle += property->cssText();
+                }
+                break;
+            default:
+                styleChange.cssStyle += property->cssText();
+                break;
+        }
+    }
     
-    styleElement->setAttribute(ATTR_STYLE, document()->part()->typingStyle()->cssText().implementation(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    NodeImpl *childToAppend = child;
+    ElementImpl *element = 0;
+    int exceptionCode = 0;
 
-    styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
-    ASSERT(exceptionCode == 0);
+    if (styleChange.applyItalic) {
+        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        italicElement->appendChild(childToAppend, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        element = italicElement;
+        childToAppend = italicElement;
+    }
 
-    return styleElement;
+    if (styleChange.applyBold) {
+        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        boldElement->appendChild(childToAppend, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        element = boldElement;
+        childToAppend = boldElement;
+    }
+
+    if (styleChange.cssStyle.length() > 0) {
+        ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+        styleElement->appendChild(childToAppend, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        element = styleElement;
+        childToAppend = styleElement;
+    }
+
+    return element;
 }
 
 //==========================================================================================
@@ -824,6 +877,9 @@ void ApplyStyleCommandImpl::surroundNodeRangeWithElement(NodeImpl *startNode, No
 
 void ApplyStyleCommandImpl::applyStyleIfNeeded(NodeImpl *startNode, NodeImpl *endNode)
 {
+    // FIXME: This function should share code with CompositeEditCommandImpl::applyTypingStyle.
+    // Both function do similar work, and the common parts could be factored out.
+
     StyleChange styleChange = computeStyleChange(Position(startNode, 0), style());
     int exceptionCode = 0;
     
@@ -860,7 +916,7 @@ bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos, const CSSProp
     return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
 }
 
-ApplyStyleCommandImpl::StyleChange ApplyStyleCommandImpl::computeStyleChange(const Position &insertionPoint, CSSStyleDeclarationImpl *style)
+StyleChange ApplyStyleCommandImpl::computeStyleChange(const Position &insertionPoint, CSSStyleDeclarationImpl *style)
 {
     ASSERT(insertionPoint.notEmpty());
     ASSERT(style);
@@ -1562,12 +1618,8 @@ void InputNewlineCommandImpl::doApply()
     
     // Handle the case where there is a typing style.
     CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-    if (typingStyle && typingStyle->length() > 0) {
-        ElementImpl *styleElement = createTypingStyleElement();
-        styleElement->appendChild(breakNode, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        nodeToInsert = styleElement;
-    }
+    if (typingStyle && typingStyle->length() > 0)
+        nodeToInsert = applyTypingStyle(breakNode);
     
     Position pos(selection.start().equivalentDownstreamPosition());
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
@@ -1672,13 +1724,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 
         // Handle the case where there is a typing style.
         CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-        if (typingStyle && typingStyle->length() > 0) {
-            int exceptionCode = 0;
-            ElementImpl *styleElement = createTypingStyleElement();
-            styleElement->appendChild(textNode, exceptionCode);
-            ASSERT(exceptionCode == 0);
-            nodeToInsert = styleElement;
-        }
+        if (typingStyle && typingStyle->length() > 0)
+            nodeToInsert = applyTypingStyle(textNode);
         
         // Now insert the node in the right place
         if (pos.node()->isEditableBlock()) {
@@ -1714,15 +1761,9 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
                 setEndingSelection(Position(cmd.node(), 0));
             }
             
-            int exceptionCode = 0;
             TextImpl *editingTextNode = document()->createEditingTextNode("");
-
-            ElementImpl *styleElement = createTypingStyleElement();
-            styleElement->appendChild(editingTextNode, exceptionCode);
-            ASSERT(exceptionCode == 0);
-
             NodeImpl *node = endingSelection().start().equivalentUpstreamPosition().node();
-            insertNodeAfter(styleElement, node);
+            insertNodeAfter(applyTypingStyle(editingTextNode), node);
             pos = Position(editingTextNode, 0);
         }
     }
