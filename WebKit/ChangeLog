@@ -2,6 +2,24 @@
 
         Reviewed by Richard.
 
+	- made API (actually doc-only) changes needed for 3087535 -
+	bugzilla queries come back as downloaded files
+
+	* Downloads.subproj/WebDownload.h: Documented that
+	download:didReceiveResponse: may be sent more than once.
+        * WebView.subproj/WebLocationChangeDelegate.h: Documented that
+	locationChangeCommittedForDataSource: may be sent more than once.
+	* WebView.subproj/WebPolicyDelegate.h: Documented that
+	decideContentPolicyForMIMEType:andRequest:inFrame: may be sent
+	more than once.
+        * WebView.subproj/WebResourceLoadDelegate.h: Documented that
+	resource:didReceiveResponse:fromDataSource: may be sent more than
+	once.
+
+2003-03-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
 	- fixed 3083339 - significant top and side margin appended to new windows
 
 	Part of the fix involves adding new window operation delegate methods.

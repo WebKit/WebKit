@@ -101,8 +101,19 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     the URL represents. Typically, the policy handler methods are called in this order:
 
     decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener: (at most once)<BR>
-    decideNavigationPolicyForAction:inFrame::decisionListener: (one or more times)<BR>
-    decideContentPolicyForMIMEType:andRequest:inFrame: (at most once)<BR>
+    decideNavigationPolicyForAction:inFrame::decisionListener: (zero or more times)<BR>
+    decideContentPolicyForMIMEType:andRequest:inFrame: (zero or more times)<BR>
+
+    New window policy is always checked. Navigation policy is checked
+    for the initial load and every redirect unless blocked by an
+    earlier policy. Content policy is checked once the content type is
+    known, unless an earlier policy prevented it.
+
+    In rare cases, content policy might be checked more than
+    once. This occurs when loading a "multipart/x-mixed-replace"
+    document, also known as "server push". In this case, multiple
+    documents come in one navigation, with each replacing the last. In
+    this case, conent policy will be checked for each one.
 */
 @interface NSObject (WebPolicyDelegate)
 

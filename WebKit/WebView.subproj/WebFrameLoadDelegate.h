@@ -46,6 +46,10 @@
     received. This is done so the old page will not be lost if the new
     page fails to load completely.
 
+    In some cases, a single location change may be committed more than once. This happens
+    in the case of multipart/x-mixed-replace, also known as "server push". In this case,
+    a single location change leads to multiple documents that are loaded in sequence. When
+    this happens, a new commit will be sent for each document.
 */
 - (void)webView:(WebView *)sender locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
 

@@ -54,12 +54,16 @@
 
 /*!
     @method resource:didReceiveResponse:fromDataSource:
-    @discussion This message is sent after a response has been received for this load.
+    @abstract This message is sent after a response has been received for this load.
     @param webView The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param response The response for the request.
     @param dataSource The dataSource that initiated the load.
+    @discussion In some rare cases, multiple responses may be received for a single load.
+    This occurs with multipart/x-mixed-replace, or "server push". In this case, the client
+    should assume that each new response resets progress so far for the resource back to 0,
+    and should check the new response for the expected content length.
 */
 -(void)webView:(WebView *)sender resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
 

@@ -81,6 +81,10 @@
     @abstract This method is called when the download has received a response from the server.
     @param download The download that now has a WebResponse available for inspection.
     @param response The WebResponse object for the given download.
+    @discussion In some rare cases, multiple responses may be received for a single download.
+    This occurs with multipart/x-mixed-replace, or "server push". In this case, the client
+    should assume that each new response resets progress so far for the resource back to 0,
+    and should check the new response for the expected content length.
 */
 - (void)download:(WebDownload *)download didReceiveResponse:(WebResponse *)response;
 
