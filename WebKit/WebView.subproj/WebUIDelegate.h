@@ -24,10 +24,10 @@ enum {
     WebMenuItemTagCopyImageToClipboard,
     WebMenuItemTagOpenFrameInNewWindow,
     WebMenuItemTagCopy,
-	WebMenuItemTagGoBack,
-	WebMenuItemTagGoForward,
-	WebMenuItemTagStop,
-	WebMenuItemTagReload
+    WebMenuItemTagGoBack,
+    WebMenuItemTagGoForward,
+    WebMenuItemTagStop,
+    WebMenuItemTagReload
 };
 
 /*!

@@ -1907,19 +1907,25 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     return NO;
 }
 
-- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
 {
-    NSDragOperation operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
+    NSDragOperation operation = NSDragOperationNone;
+    
+    if (actionMask & WebDragDestinationActionDHTML) {
+        operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
+    }
     _private->webCoreHandlingDrag = (operation != NSDragOperationNone);
-    if (!_private->webCoreHandlingDrag
-        && [self _canProcessDragWithDraggingInfo:draggingInfo]
-        && [[self _webView] _webKitDragRespondsToDragging])
+    
+    if ((actionMask & WebDragDestinationActionEdit) &&
+        !_private->webCoreHandlingDrag
+        && [self _canProcessDragWithDraggingInfo:draggingInfo])
     {
         [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
         operation = (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
     } else {
         [[self _bridge] removeDragCaret];
     }
+    
     return operation;
 }
 
@@ -1929,16 +1935,21 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     [[self _bridge] removeDragCaret];
 }
 
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
 {
+    WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     if (_private->webCoreHandlingDrag) {
-        return [[self _bridge] concludeDragForDraggingInfo:draggingInfo];
-    } else {
+        ASSERT(actionMask & WebDragDestinationActionDHTML);
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
+        [[self _bridge] concludeDragForDraggingInfo:draggingInfo];
+        return YES;
+    } else if (actionMask & WebDragDestinationActionEdit) {
         BOOL didInsert = NO;
-        if ([self _canProcessDragWithDraggingInfo:draggingInfo] && [[self _webView] _webKitDragRespondsToDragging]) {
+        if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
             DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                 if (_private->initiatedDrag && [bridge isSelectionEditable]) {
                     [bridge moveSelectionToDragCaret:fragment];
                 } else {
@@ -1951,6 +1962,7 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
         [bridge removeDragCaret];
         return didInsert;
     }
+    return NO;
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

@@ -214,9 +214,6 @@ Could be worth adding to the API.
 - (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 
-- (void)_setWebKitDragRespondsToDragging:(BOOL)flag;
-- (BOOL)_webKitDragRespondsToDragging;
-
 @end
 
 @interface WebView (WebViewPrintingPrivate)

@@ -67,11 +67,11 @@
     BOOL drawsBackground;
     BOOL editable;
     BOOL initiatedDrag;
-    BOOL doWebKitDragReponse;   // should we do the built-in WebKit handling of incoming drags?
         
     NSString *mediaStyle;
     
     NSView <WebDocumentDragging> *draggingDocumentView;
+    unsigned int dragDestinationActionMask;
     
     DOMCSSStyleDeclaration *typingStyle;
 

@@ -19,9 +19,9 @@
 @end
 
 @protocol WebDocumentDragging <NSObject>
-- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask;
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask;
 - (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 @end
 
 @protocol WebDocumentElement <NSObject>

@@ -1,3 +1,24 @@
+2004-06-09  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented drag destination portion of the new drag & drop API.
+
+        Reviewed by trey.
+
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:dragDestinationActionMaskForDraggingInfo:]): new delegate implementation
+        (-[WebDefaultUIDelegate webView:willPerformDragDestinationAction:forDraggingInfo:]): ditto
+        * WebView.subproj/WebDocumentInternal.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): handle the action mask
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): ditto
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _dragOperationForDraggingInfo:]): call new delegate methods
+        (-[WebView performDragOperation:]): ditto
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-06-09  Richard Williamson   <rjw@apple.com>
 
         Implemented PDF rendering for the drawImage() function

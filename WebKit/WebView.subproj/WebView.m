@@ -1116,16 +1116,6 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     _private->initiatedDrag = initiatedDrag;
 }
 
-- (void)_setWebKitDragRespondsToDragging:(BOOL)flag
-{
-    _private->doWebKitDragReponse = flag;
-}
-
-- (BOOL)_webKitDragRespondsToDragging
-{
-    return _private->doWebKitDragReponse;
-}
-
 @end
 
 
@@ -1250,7 +1240,6 @@ NSMutableDictionary *countInvocations;
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     _private->drawsBackground = YES;
-    _private->doWebKitDragReponse = YES;
 
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
@@ -1722,7 +1711,21 @@ NS_ENDHANDLER
     }
 }
 
-- (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (NSDragOperation)_loadingDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    if (_private->dragDestinationActionMask & WebDragDestinationActionLoad) {
+        NSPoint windowPoint = [draggingInfo draggingLocation];
+        NSView *view = [self hitTest:[[self superview] convertPoint:windowPoint toView:nil]];
+        // Don't accept the drag over a plug-in since plug-ins may want to handle it.
+        if (![view isKindOfClass:[WebBaseNetscapePluginView class]] && !_private->editable && !_private->initiatedDrag) {
+            // If not editing or dragging, use _web_dragOperationForDraggingInfo to find a URL to load on the pasteboard.
+            return [self _web_dragOperationForDraggingInfo:draggingInfo];
+        }
+    }
+    return NSDragOperationNone;
+}
+
+- (NSDragOperation)_delegateDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     NSPoint windowPoint = [draggingInfo draggingLocation];
     NSView <WebDocumentDragging> *newDraggingView = [self _draggingDocumentViewAtWindowPoint:windowPoint];
@@ -1731,21 +1734,16 @@ NS_ENDHANDLER
         [self _setDraggingDocumentView:newDraggingView];
     }
     
+    _private->dragDestinationActionMask = [[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
     NSDragOperation operation = NSDragOperationNone;
-    if ([[self _UIDelegateForwarder] webView:self shouldDetermineDragOperationForDraggingInfo:draggingInfo dragOperation:&operation]) {
-        operation = [_private->draggingDocumentView draggingUpdatedWithDraggingInfo:draggingInfo];
-        if (operation == NSDragOperationNone) {
-            NSView *view = [self hitTest:[[self superview] convertPoint:windowPoint toView:nil]];
-            // Don't accept the drag over a plug-in since plug-ins may want to handle it.
-            if (![view isKindOfClass:[WebBaseNetscapePluginView class]]
-                && !_private->editable && !_private->initiatedDrag)
-            {
-                // If not editing or dragging, use _web_dragOperationForDraggingInfo to find a URL to load on the pasteboard.
-                operation = [self _web_dragOperationForDraggingInfo:draggingInfo];
-            }
-        }
-    } else {
+    
+    if (_private->dragDestinationActionMask == WebDragDestinationActionNone) {
         [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
+    } else {
+        operation = [_private->draggingDocumentView draggingUpdatedWithDraggingInfo:draggingInfo actionMask:_private->dragDestinationActionMask];
+        if (operation == NSDragOperationNone) {
+            return [self _loadingDragOperationForDraggingInfo:draggingInfo];
+        }
     }
     
     return operation;
@@ -1753,12 +1751,12 @@ NS_ENDHANDLER
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
-    return [self _dragOperationForDraggingInfo:draggingInfo];
+    return [self _delegateDragOperationForDraggingInfo:draggingInfo];
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
 {
-    return [self _dragOperationForDraggingInfo:draggingInfo];
+    return [self _delegateDragOperationForDraggingInfo:draggingInfo];
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
@@ -1774,33 +1772,27 @@ NS_ENDHANDLER
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    return YES;
-}
-
-- (void)concludeDragOperation:(id <NSDraggingInfo>)draggingInfo
-{
     ASSERT(_private->draggingDocumentView == [self _draggingDocumentViewAtWindowPoint:[draggingInfo draggingLocation]]);
     
-    if (![[self _UIDelegateForwarder] webView:self shouldProcessDragWithDraggingInfo:draggingInfo]) {
+    if ([_private->draggingDocumentView concludeDragForDraggingInfo:draggingInfo actionMask:_private->dragDestinationActionMask]) {
         [self _setDraggingDocumentView:nil];
-        return;
-    }
-    
-    if ([_private->draggingDocumentView concludeDragForDraggingInfo:draggingInfo]) {
-        [self _setDraggingDocumentView:nil];
-        return;
+        return YES;
     }
     
     [self _setDraggingDocumentView:nil];
-    
-    if (!_private->editable && !_private->initiatedDrag) {
+        
+    if ([self _loadingDragOperationForDraggingInfo:draggingInfo] != NSDragOperationNone) {    
         NSURL *URL = [[self class] URLFromPasteboard:[draggingInfo draggingPasteboard]];
-        if (URL) {
+        if (URL != nil) {
+            [[self _UIDelegateForwarder] webView:self willPerformDragDestinationAction:WebDragDestinationActionLoad forDraggingInfo:draggingInfo];
             NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
             [[self mainFrame] loadRequest:request];
             [request release];
+            return YES;
         }
     }
+    
+    return NO;
 }
 
 - (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types
