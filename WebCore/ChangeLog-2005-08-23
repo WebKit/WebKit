@@ -1,5 +1,13 @@
 2002-11-13  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth):
+	Use the "0" instead of the "x" as the canonical character for width.
+	This is slightly wider and is better for credit card numbers, for example.
+
+        * WebCore.pbproj/project.pbxproj: Tweak.
+
+2002-11-13  Darin Adler  <darin@apple.com>
+
 	- fixed 3083982 -- Logging into AOL gives null view
 
 	Turns out AOL was using a refresh header, which we were not supporting.

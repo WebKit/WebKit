@@ -134,7 +134,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     
     NSMutableString *nominalWidthString = [NSMutableString stringWithCapacity:numCharacters];
     for (int i = 0; i < numCharacters; ++i) {
-        [nominalWidthString appendString:@"x"];
+        [nominalWidthString appendString:@"0"];
     }
         
     KWQTextField *textField = (KWQTextField *)getView();
