@@ -468,6 +468,11 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
     write(bytes, length);
 }
 
+void KHTMLPart::frameDetached()
+{
+    [KWQ(this)->bridge() frameDetached];
+}
+
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
     [_bridge loadURL:url.url().getNSString()

@@ -877,4 +877,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:frame];
 }
 
+- (void)frameDetached
+{
+    [frame stopLoading];
+    [[frame parent] _removeChild:frame];
+}
+
 @end

@@ -1802,6 +1802,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
 }
 
+- (void)_removeChild:(WebFrame *)child
+{
+    [_private->children removeObject: child];
+}
+
 - (void)_addFramePathToString:(NSMutableString *)path
 {
     if ([_private->name hasPrefix:@"<!--framePath "]) {

@@ -1,3 +1,17 @@
+2003-04-07  Richard Williamson  <rjw@apple.com>
+
+        Fix for 3220988.  Cancel frame load if it's detached before
+        finished loading.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameDetached]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _removeChild:]):
+
 2003-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

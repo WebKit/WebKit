@@ -61,7 +61,7 @@
 - (void)loadRequest:(NSURLRequest *)request;
 
 /*!
-    @method loadData:baseURL:
+    @method loadData:encodingName:baseURL:
     @param data The data to use for the main page of the document.
     @param encodingName The encoding of the data.
     @param URL The base URL to apply to relative URLs within the document.
@@ -69,7 +69,7 @@
 - (void)loadData:(NSData *)data encodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
 
 /*!
-    @method loadData:baseURL:
+    @method loadString:baseURL:
     @param string The string to use for the main page of the document.
     @param URL The base URL to apply to relative URLs within the document.
 */

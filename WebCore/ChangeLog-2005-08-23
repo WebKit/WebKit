@@ -1,3 +1,17 @@
+2003-04-07  Richard Williamson  <rjw@apple.com>
+
+        Fix for 3220988.  Cancel frame load if it's detached before
+        finished loading.
+        
+        Reviewed by Maciej.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::detach):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLPart::frameDetached):
+        * kwq/WebCoreBridge.h:
+
 2003-04-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3220395.  nearestFloatBottom() mistakenly returned 0

@@ -154,6 +154,7 @@ typedef enum {
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
 
 - (void)_addChild:(WebFrame *)child;
+- (void)_removeChild:(WebFrame *)child;
 
 - (NSString *)_generateFrameName;
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
