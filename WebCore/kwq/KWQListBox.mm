@@ -44,7 +44,10 @@ const float bottomMargin = 1;
 const float leftMargin = 2;
 const float rightMargin = 2;
 
-@interface KWQListBoxScrollView : WebCoreScrollView
+@interface KWQListBoxScrollView : WebCoreScrollView <KWQWidgetHolder>
+{
+    QListBox *_box;
+}
 @end
 
 @interface KWQTableView : NSTableView <KWQWidgetHolder>
@@ -124,7 +127,7 @@ QListBox::QListBox(QWidget *parent)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = [[KWQListBoxScrollView alloc] init];
+    NSScrollView *scrollView = [[KWQListBoxScrollView alloc] initWithListBox:this];
     setView(scrollView);
     [scrollView release];
     
@@ -348,6 +351,20 @@ void QListBox::clearCachedTextRenderers()
 
 @implementation KWQListBoxScrollView
 
+- (id)initWithListBox:(QListBox *)b
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _box = b;
+    return self;
+}
+
+- (QWidget *)widget
+{
+    return _box;
+}
+
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
@@ -404,9 +421,11 @@ void QListBox::clearCachedTextRenderers()
 - (void)mouseDown:(NSEvent *)event
 {
     processingMouseEvent = YES;
-    QWidget::beforeMouseDown(self);
+    NSView *outerView = [_box->getOuterView() retain];
+    QWidget::beforeMouseDown(outerView);
     [super mouseDown:event];
-    QWidget::afterMouseDown(self);
+    QWidget::afterMouseDown(outerView);
+    [outerView release];
     processingMouseEvent = NO;
 
     if (clickedDuringMouseEvent) {

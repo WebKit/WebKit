@@ -1,3 +1,16 @@
+2004-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+	- fixed <rdar://problem/3906974> assertion failure in QWidget::beforeMouseDown clicking on <select multiple>
+        
+	* kwq/KWQListBox.mm:
+        (QListBox::QListBox): Initialize KWQListBoxScrollView with this.
+        (-[KWQListBoxScrollView initWithListBox:]): Make this class a KWQWidgetHolder.
+        (-[KWQListBoxScrollView widget]): See above.
+        (-[KWQTableView mouseDown:]): Pass outerView rather than self to beforeMouseDown and
+	afterMouseDown, to avoid triggering an assertion failure.
+
 2004-12-06  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3615411, the linesAppended optimization was old and broken, and it's easier with the new code fixes
