@@ -108,15 +108,16 @@ const QBrush &QPainter::brush() const
     return data->state.brush;
 }
 
-QRect QPainter::xForm(const QRect &) const
+QRect QPainter::xForm(const QRect &aRect) const
 {
-    _logNotYetImplemented();
-    return QRect();
+    // No difference between device and model coords, so the identity transform is ok.
+    return aRect;
 }
 
 void QPainter::save()
 {
     data->stack.push(new QPState(data->state));
+    [NSGraphicsContext saveGraphicsState]; 
 }
 
 void QPainter::restore()
@@ -128,6 +129,8 @@ void QPainter::restore()
     QPState *ps = data->stack.pop();
     data->state = *ps;
     delete ps;
+
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -399,6 +402,7 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 void QPainter::setClipRegion(const QRegion &region)
 {
     data->state.clip = region;
+    [(region.getNSBezierPath()) setClip];
 }
 
 const QRegion &QPainter::clipRegion() const
