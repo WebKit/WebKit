@@ -1,3 +1,5 @@
+=== Safari-120 ===
+
 2004-01-06  David Hyatt  <hyatt@apple.com>
 
 	Possible fix for table bugs 3510005 and 3492945, repainting glitches that occurred when table cells moved.
