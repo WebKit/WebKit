@@ -227,6 +227,13 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         pseudo->setOverflow(OVISIBLE); // FIXME: Glazman's blog does this. Wacky.
                                        // This property might need to be allowed if the
                                        // generated content is a block.
+
+        if (isInlineFlow() && pseudo->display() != INLINE)
+            // According to the CSS2 spec (the end of section 12.1), the only allowed
+            // display values for the pseudo style are NONE and INLINE.  Since we already
+            // determined that the pseudo is not display NONE, any display other than
+            // inline should be mutated to INLINE.
+            pseudo->setDisplay(INLINE);
         
         if (pseudo->contentType()==CONTENT_TEXT)
         {

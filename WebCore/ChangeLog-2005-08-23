@@ -1,5 +1,25 @@
 2003-05-01  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3239404, a crash caused because a block-level :after
+	element was being inserted as generated content inside an
+	inline element.
+
+	The fix is to mutate the display of the generated content to
+	be inline when the parent of the generated content is also
+	inline. 
+
+	Section 12.1 of the CSS2 spec (at the very end of the spec)
+	covers this special case.  Once we do the mutation it becomes
+	impossible for generated content to cause a splitFlow, and so
+	the crash is plugged.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+
+2003-05-01  David Hyatt  <hyatt@apple.com>
+
 	Replace effectiveWidth and effectiveHeight with a 
 	parameterized overflowWidth/Height, since this is much better
 	terminology.
