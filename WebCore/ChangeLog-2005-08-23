@@ -1,3 +1,20 @@
+2002-12-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3129008 - REGRESSION: Successive hot/cached runs of cvs-base PLT are slightly slower
+
+	This was due to me reintroducing a leak of the document. Now fixed.
+	
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocument::~DOMDocument): forget self from cached DOM object table.
+        (KJS::getDOMDocumentNode): Instead of storing the document in the
+	marked per-document table, store it in the unmarked table, and as
+	a property on the Window object.
+        (KJS::getDOMNode): use getDocumentNode when appropriate.
+        * khtml/ecma/kjs_dom.h:
+
+
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3128728.  Ensure that list markers get placed into an

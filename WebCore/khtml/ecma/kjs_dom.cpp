@@ -687,6 +687,11 @@ DOMDocument::DOMDocument(ExecState *exec, const DOM::Document &d)
 DOMDocument::DOMDocument(const Object &proto, const DOM::Document &d)
   : DOMNode(proto, d) { }
 
+DOMDocument::~DOMDocument()
+{
+  ScriptInterpreter::forgetDOMObject(node.handle());
+}
+
 Value DOMDocument::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
@@ -1244,6 +1249,33 @@ Value DOMEntity::getValueProperty(ExecState *, int token) const
 
 // -------------------------------------------------------------------------
 
+Value KJS::getDOMDocumentNode(ExecState *exec, const DOM::Document &n)
+{
+  DOMDocument *ret = 0;
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+
+  if ((ret = static_cast<DOMDocument *>(interp->getDOMObject(n.handle()))))
+    return Value(ret);
+
+  if (n.isHTMLDocument())
+    ret = new HTMLDocument(exec, static_cast<DOM::HTMLDocument>(n));
+  else
+    ret = new DOMDocument(exec, n);
+
+  Value val(ret);
+  
+  // Make sure the document is kept around by the window object, and works right with the
+  // back/forward cache.
+  if (n.view()) {
+    static Identifier documentIdentifier("document");
+    Window::retrieveWindow(n.view()->part())->putDirect(documentIdentifier, ret, DontDelete|ReadOnly);
+  }
+
+  interp->putDOMObject(n.handle(), ret);
+
+  return val;
+}
+
 Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
 {
   DOMObject *ret = 0;
@@ -1282,12 +1314,8 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
       ret = new DOMCharacterData(exec, static_cast<DOM::CharacterData>(n));
       break;
     case DOM::Node::DOCUMENT_NODE:
-      if (static_cast<DOM::Document>(n).isHTMLDocument())
-        ret = new HTMLDocument(exec, static_cast<DOM::HTMLDocument>(n));
-      else
-        ret = new DOMDocument(exec, static_cast<DOM::Document>(n));
-      doc = n.handle();
-      break;
+      // we don't want to cache the document itself in the per-document dictionary
+      return getDOMDocumentNode(exec, static_cast<DOM::Document>(n));
     case DOM::Node::DOCUMENT_TYPE_NODE:
       ret = new DOMDocumentType(exec, static_cast<DOM::DocumentType>(n));
       break;
