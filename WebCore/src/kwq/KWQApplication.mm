@@ -26,7 +26,7 @@
 
 #include <qapplication.h>
 #include <qpalette.h>
-
+df
 // FIXME: 
 static QPalette *DEFAULT_PALETTE = NULL;
 static QSize *DEFAULT_SIZE = NULL;
