@@ -171,7 +171,7 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
 
 void QWidget::setFocus()
 {
-    _logNeverImplemented();
+    [[getView() window] makeFirstResponder:getView()];
 }
 
 void QWidget::clearFocus()

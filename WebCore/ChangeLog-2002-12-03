@@ -1,5 +1,11 @@
 2002-08-15  Darin Adler  <darin@apple.com>
 
+	- fixed 2983959 -- pages that try to use JavaScript to focus fail to do so
+
+        * kwq/KWQWidget.mm: (QWidget::setFocus): Call makeFirstResponder.
+
+2002-08-15  Darin Adler  <darin@apple.com>
+
 	Give the same good loving to the check boxes and radio buttons.
 	I'm not saying our rules for where to position them are great, but
 	the rules are implemented cleanly and thus easier to tweak.
