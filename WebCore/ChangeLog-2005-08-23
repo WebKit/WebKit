@@ -1,5 +1,13 @@
 2002-10-18  Darin Adler  <darin@apple.com>
 
+	- fixed 3078293 -- Implement evaluateJavaScript on WebController
+
+        * kwq/KWQVariant.mm: (QVariant::asString): Made this return reasonable
+	values for types other than string. Still may be loose ends left, but
+	this takes care of most of it.
+
+2002-10-18  Darin Adler  <darin@apple.com>
+
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
         (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:]):

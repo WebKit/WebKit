@@ -131,10 +131,13 @@ QString QVariant::asString() const
     switch (d->t) {
     case String:
         return *(QString *)d->value.p;
-    case Invalid:
     case Bool:
+        return QString(d->value.b ? "true" : "false");
     case UInt:
+        return QString().setNum(d->value.u);
     case Double:
+        return QString().setNum(d->value.d);
+    case Invalid:
         break;
     }
     return QString();
