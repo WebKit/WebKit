@@ -190,6 +190,41 @@ ushort QChar::unicode() const
     return c;
 }
 
+int operator==(QChar qc1, QChar qc2)
+{
+    return qc1.c == qc2.c;
+}
+
+int operator==(QChar qc, char ch)
+{
+    return qc.c == ch;
+}
+
+int operator==(char ch, QChar qc)
+{
+    return ch == qc.c;
+}
+
+int operator!=(QChar qc1, QChar qc2)
+{
+    return qc1.c != qc2.c;
+}
+
+int operator!=(QChar qc, char ch)
+{
+    return qc.c != ch;
+}
+
+int operator!=(char ch, QChar qc)
+{
+    return ch != qc.c;
+}
+
+QChar::operator char() const
+{
+    return latin1();
+}
+
 QString::QString()
 {
     s = NULL;
