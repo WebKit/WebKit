@@ -257,12 +257,37 @@
    ============================================================================= 
 
 */
-@protocol WKCredentialsHandler
-// Ken will come up with a proposal for this.  We decided not to have a generic API,
-// rather we'll have an API that explicitly knows about the authentication
-// attributes needed.
-// Client should use this API to collect information necessary to authenticate,
-// usually by putting up a dialog.
+
+/* should this be an interface instead? */
+struct WKSimpleAuthenticationResult {
+    NSString *username;
+    NSString *password;
+    // May need an extra rememberThisPassword flag if the loader mechanism is
+    // going to provide a persistent credentials cache (for starters we can have
+    // just a session cache)
+}
+
+/* should this be an interface instead? */
+struct WKSimpleAuthenticationRequest {
+    NSURL *uri;         // nil if for something non-URI based
+    NSString *domain;   // http authentication domain or some representation of 
+                        // auth domain for non-URI-based locations; otherwise nil.
+    NSString *username; // username, if already provided, otherwise nil
+    BOOL plaintextPassword; // password will be sent in the clear
+                            // TRUE for http basic auth or ftp
+                            // FALSE for http digest auth
+    unsigned previousFailures; // number of times in a row authenticating to this 
+                               // location has failed; useful to be able to show a 
+                               // different dialog based on count
+}
+
+@protocol WKAuthenticationHandler
+// Can we make this work without blocking the UI, or do we need to make it explicitly async
+// somehow?
+- (WKSimpleAuthenticationResult) authenticate: (WKSimpleAuthenticationRequest)request;
+
+// do we need anything for fancier authentication schemes like kerberos or GSSAPI?
+
 // Do we provide a default dialog?
 @end
 

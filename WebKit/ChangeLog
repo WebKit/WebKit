@@ -1,9 +1,16 @@
+2001-12-13  Maciej Stachowiak  <mjs@apple.com
+
+	* WebView.subproj/WKWebController.h: Defined initial version of
+	WKAuthenticationHandler interface, and associated
+	WKSimpleAuthenticationRequest and WKSimpleAuthenticationResult
+	structs.
+
 2001-12-11  Chris Blumenberg  <cblu@apple.com>
 
 	* ChangeLog:
 	* WebView.subproj/NSWebPageDataSource.mm: (+[NSWebPageDataSource initialize]):
 
-2001-12-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+2001-12-11  Chris Blumenberg  <cblu@apple.com>
 
 	* WebView.subproj/NSWebPageDataSource.mm: (+[NSWebPageDataSource initialize]):
 
