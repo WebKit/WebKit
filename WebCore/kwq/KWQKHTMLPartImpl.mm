@@ -46,6 +46,7 @@
 #include <kjs_dom.h>
 #include <dom_doc.h>
 #include <qcursor.h>
+#include <kurl.h>
 
 #include <KWQKHTMLPart.h>
 
@@ -1742,7 +1743,7 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
     // The plugins array is an attempt to avoid multiple creations of the same plug-in.
     // FIXME: Can't have multiple plug-ins with the same URL on a page
     if(!plugins.contains(url)){
-        WCPluginWidget *pluginWidget = new WCPluginWidget(0, url, serviceType, args);
+        WCPluginWidget *pluginWidget = new WCPluginWidget(0, completeURL(url).url(), serviceType, args);
         frame->setWidget(pluginWidget);
         plugins.append(url);
     }
