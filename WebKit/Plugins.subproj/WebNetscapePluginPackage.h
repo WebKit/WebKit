@@ -26,9 +26,7 @@ typedef enum {
     
     uint16 pluginSize;
     uint16 pluginVersion;
-    
-    CFBundleRef cfBundle;
-    
+        
     CFragConnectionID connID;
     
     SInt16 resourceRef;

@@ -1,3 +1,28 @@
+2003-03-26  Chris Blumenberg  <cblu@apple.com>
+
+	Use the private _cfBundle method on NSBundle so we only create 1 bundle per plug-in package class.
+
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage getPluginInfoFromBundleAndMIMEDictionary:]):
+        (-[WebBasePluginPackage dealloc]):
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage getPluginInfoFromPLists]):
+        (-[WebNetscapePluginPackage initWithPath:]):
+        (-[WebNetscapePluginPackage load]):
+        (-[WebNetscapePluginPackage unload]):
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+        (-[WebPluginPackage viewFactory]):
+        (-[WebPluginPackage load]):
+        (-[WebPluginPackage isLoaded]):
+
 2003-03-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

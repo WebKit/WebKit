@@ -8,23 +8,21 @@
 
 #import <WebKit/WebPluginPackage.h>
 
+#import <Foundation/NSBundle_Private.h>
+
 @implementation WebPluginPackage
 
 - initWithPath:(NSString *)pluginPath
 {
     [super initWithPath:pluginPath];
 
-    if (!nsBundle) {
+    if (!bundle) {
         [self release];
         return nil;
     }
     
     UInt32 type = 0;
-    CFBundleRef cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);        
-    if (cfBundle) {
-        CFBundleGetPackageInfo(cfBundle, &type, NULL);
-        CFRelease(cfBundle);
-    }
+    CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
     
     if (type != FOUR_CHAR_CODE('WBPL')) {
         [self release];
@@ -41,12 +39,12 @@
 
 - (Class)viewFactory
 {
-    return [nsBundle principalClass];
+    return [bundle principalClass];
 }
 
 - (BOOL)load
 {
-    [nsBundle principalClass];
+    [bundle principalClass];
     return YES;
 }
 
@@ -56,7 +54,7 @@
 
 - (BOOL)isLoaded
 {
-    return [nsBundle isLoaded];
+    return [bundle isLoaded];
 }
 
 @end

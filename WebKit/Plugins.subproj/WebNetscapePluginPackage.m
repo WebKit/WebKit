@@ -9,6 +9,8 @@
 
 #import <CoreFoundation/CFBundlePriv.h>
 
+#import <Foundation/NSBundle_Private.h>
+
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
@@ -50,7 +52,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     OSErr err;
     
     if (isBundle) {
-        return CFBundleOpenBundleResourceMap(cfBundle);
+        return CFBundleOpenBundleResourceMap([bundle _cfBundle]);
     } else {
         err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
@@ -64,7 +66,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (void)closeResourceFile:(SInt16)resRef
 {
     if (isBundle) {
-        CFBundleCloseBundleResourceMap(cfBundle, resRef);
+        CFBundleCloseBundleResourceMap([bundle _cfBundle], resRef);
     } else {
         CloseResFile(resRef);
     }
@@ -191,12 +193,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (BOOL)getPluginInfoFromPLists
 {
-    if (!nsBundle) {
+    if (!bundle) {
         return NO;
     }
 
     NSDictionary *MIMETypes = nil;
-    NSString *pListFilename = [nsBundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
+    NSString *pListFilename = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
 
     // Check if the MIME types are claimed in a plist in the user's preferences directory.
     if (pListFilename) {
@@ -223,23 +225,19 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {
     [super initWithPath:pluginPath];
     
-    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES];
     OSType type = 0;
 
     // Bundle
-    if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
-        cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
-        if (cfBundle) {
-            isBundle = YES;
-            CFBundleGetPackageInfo(cfBundle, &type, NULL);
-        }
+    if (bundle) {
+        isBundle = YES;
+        CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
     }
-    
 #ifdef __ppc__
     // Single-file plug-in with resource fork
-    if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
-        type = [fileInfo fileHFSTypeCode];
+    else {
+        type = [[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] fileHFSTypeCode];
         isBundle = NO;
+        isCFM = YES;
     }
 #endif
     
@@ -249,8 +247,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 
     // Check if the executable is Mach-O or CFM.
-    if (cfBundle) {
-        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL(cfBundle);
+    if (bundle) {
+        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL([bundle _cfBundle]);
         NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[executableURL path]];
         [executableURL release];
         NSData *data = [executableFile readDataOfLength:8];
@@ -307,6 +305,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     if (isBundle) {
+        CFBundleRef cfBundle = [bundle _cfBundle];
         if (!CFBundleLoadExecutable(cfBundle)) {
             return NO;
         }
@@ -323,7 +322,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             }
         }
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
-    } else { // single CFM file
+    } else {
+        // single CFM file
         FSSpec spec;
         FSRef fref;
         
@@ -461,22 +461,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     [self closeResourceFile:resourceRef];
     
     if (isBundle) {
-        CFBundleUnloadExecutable(cfBundle);
-        CFRelease(cfBundle);
-        cfBundle = NULL;
+        CFBundleUnloadExecutable([bundle _cfBundle]);
     } else {
         CloseConnection(&connID);
     }
     LOG(Plugins, "Plugin Unloaded");
     isLoaded = FALSE;
-}
-
-- (void)dealloc
-{
-    if (cfBundle) {
-        CFRelease(cfBundle);
-    }
-    [super dealloc];
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow

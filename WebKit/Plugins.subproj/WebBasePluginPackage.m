@@ -58,18 +58,18 @@
     [super init];
     extensionToMIME = [[NSMutableDictionary dictionary] retain];
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
-    nsBundle = [[NSBundle alloc] initWithPath:path];
+    bundle = [[NSBundle alloc] initWithPath:path];
     return self;
 }
 
 - (BOOL)getPluginInfoFromBundleAndMIMEDictionary:(NSDictionary *)MIMETypes
 {
-    if (!nsBundle) {
+    if (!bundle) {
         return NO;
     }
     
     if (!MIMETypes) {
-        MIMETypes = [nsBundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
+        MIMETypes = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
         if (!MIMETypes) {
             return NO;
         }
@@ -111,13 +111,13 @@
 
     NSString *filename = [self filename];
 
-    NSString *theName = [nsBundle objectForInfoDictionaryKey:WebPluginNameKey];
+    NSString *theName = [bundle objectForInfoDictionaryKey:WebPluginNameKey];
     if (!theName) {
         theName = filename;
     }
     [self setName:theName];
 
-    description = [nsBundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
+    description = [bundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description) {
         description = filename;
     }
@@ -150,7 +150,7 @@
     [MIMEToExtensions release];
     [extensionToMIME release];
 
-    [nsBundle release];
+    [bundle release];
     
     [super dealloc];
 }
