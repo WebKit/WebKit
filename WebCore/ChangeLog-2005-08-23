@@ -1,3 +1,24 @@
+2004-08-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3775172> Blot crashes after typing one character then deleting it
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Bail early if the element
+        being queried does not have a renderer or that renderer does not have a style. Prevents
+        a crash in the cases that it does not.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::doApply): Add one more case to deleting when the
+        start and end nodes are different. If the downstream end node is the last node in the
+        block, then it may need to be deleted completely. Before this patch, the code
+        erroneously assumed that any deletion in this node had to be trimming of a text node.
+        This was asserted, and the description in 3775172 shows a simple case where this assertion
+        does not hold. The additional case and associated checks now make it all better.
+        * layout-tests/editing/deleting/delete-3775172-fix.html: Added.
+
 2004-08-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3365086, large tables crash Safari.  Make sure to use ints rather than shorts for row and column

@@ -155,6 +155,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     if (docimpl)
         docimpl->updateLayout();
 
+    if (!m_renderer || !m_renderer->style())
+        return 0;
+
     switch(propertyID)
     {
     case CSS_PROP_BACKGROUND_COLOR:

@@ -1127,17 +1127,22 @@ void DeleteSelectionCommandImpl::doApply()
         }
 
         if (upstreamEnd.node() != startNode && upstreamEnd.node()->inDocument() && upstreamEnd.offset() >= upstreamEnd.node()->caretMinOffset()) {
-            // in a text node that needs to be trimmed
-            // offset must be less than the max offset, otherwise it would have been deleted in the while
-            // loop just above.
-            ASSERT(upstreamEnd.offset() < upstreamEnd.node()->caretMaxOffset());
-            TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
-            if (upstreamEnd.offset() > 0) {
-                deleteText(text, 0, upstreamEnd.offset());
+            if (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset()) {
+                // need to delete whole node
+                // we can get here if this is the last node in the block
+                removeNode(upstreamEnd.node());
                 trailingValid = false;
             }
-            if (!upstreamStart.node()->inDocument())
-                endingPosition = Position(text, 0);
+            else {
+                // in a text node that needs to be trimmed
+                TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
+                if (upstreamEnd.offset() > 0) {
+                    deleteText(text, 0, upstreamEnd.offset());
+                    trailingValid = false;
+                }
+            }
+            if (!upstreamStart.node()->inDocument() && upstreamEnd.node()->inDocument())
+                endingPosition = Position(upstreamEnd.node(), 0);
         }
     }
     
