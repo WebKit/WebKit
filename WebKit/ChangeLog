@@ -1,3 +1,5 @@
+=== Safari-67 ===
+
 2003-03-12  Chris Blumenberg  <cblu@apple.com>
 
 	3196673 - REGRESSION: Assertion failure when download fails to create file
