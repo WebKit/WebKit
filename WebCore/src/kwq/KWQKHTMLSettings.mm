@@ -87,7 +87,7 @@ QString KHTMLSettings::fantasyFontName() const
 QString KHTMLSettings::settingsToCSS() const
 {
     _logNotYetImplemented();
-    return "";
+    return QString();
 }
 
 QFont::CharSet KHTMLSettings::charset() const

@@ -458,7 +458,7 @@ QWidget *QWidget::focusWidget() const
 }
 
 
-QPoint QWidget::mapFromGlobal(const QPoint &) const
+QPoint QWidget::mapFromGlobal(const QPoint &point) const
 {
     _logNeverImplemented();
     return QPoint(0,0);

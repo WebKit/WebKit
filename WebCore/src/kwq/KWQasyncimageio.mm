@@ -26,12 +26,15 @@
 #include <kwqdebug.h> 
 #include <qasyncimageio.h> 
 
+// FIXME
+static const char *BOGUS_FORMAT_NAME = "";
+
 // class QImageConsumer ========================================================
 
 const char *QImageConsumer::formatName(const uchar* buffer, int length)
 {
     _logNotYetImplemented();
-    return "";
+    return BOGUS_FORMAT_NAME;
 }
 
 
@@ -40,7 +43,7 @@ const char *QImageConsumer::formatName(const uchar* buffer, int length)
 const char *QImageDecoder::formatName(const uchar* buffer, int length)
 {
     _logNotYetImplemented();
-    return "";
+    return BOGUS_FORMAT_NAME;
 }
 
 
