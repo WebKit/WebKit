@@ -3169,7 +3169,11 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   }
   else
   {
+#if APPLE_CHANGES
+    kwq->submitForm( u, args);
+#else
     emit d->m_extension->openURLRequest( u, args );
+#endif
   }
 }
 

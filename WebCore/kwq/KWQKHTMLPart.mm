@@ -144,7 +144,7 @@ void KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil];
+    [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil isFormSubmission:NO];
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
@@ -155,14 +155,25 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
         return;
     }
     
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:nil isFormSubmission:NO];
+}
+
+void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
+{
+    NSURL *cocoaURL = url.getNSURL();
+    if (cocoaURL == nil) {
+        // FIXME: Do we need to report an error to someone?
+        return;
+    }
+    
     if (!args.doPost()) {
-        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:nil];
+        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent isFormSubmission:YES];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
         [bridgeForFrameName(args.frameName) postWithURL:cocoaURL
             data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-            contentType:contentType.mid(14).getNSString()];
+            contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
     }
 }
 
@@ -193,7 +204,7 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
         return;
     }
     
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent isFormSubmission:NO];
 }
 
 class KWQPluginPart : public ReadOnlyPart

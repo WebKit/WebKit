@@ -1,3 +1,33 @@
+2002-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3050447 - Policy handlers have no way of telling client
+	that the proposed navigation is a form post
+
+	Now we pass form submissions through all the normal policy steps.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:reload:triggeringEvent:isFormSubmission:]):
+        (-[WebBridge postWithURL:data:contentType:triggeringEvent:]):
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setTriggeringAction:]):
+        (-[WebDataSource _triggeringAction]):
+        (-[WebDataSource _lastCheckedRequest]):
+        (-[WebDataSource _setLastCheckedRequest:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowRequest:]):
+        (-[WebFrame _loadRequest:triggeringAction:]):
+        (-[WebFrame _actionInformationForNavigationType:event:]):
+        (-[WebFrame _continueAfterNavigationPolicyForRequest:dataSource:]):
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _loadURL:intoChild:]):
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:]):
+
 2002-11-12  Maciej Stachowiak  <mjs@apple.com>
 
 	Combine click policy and URL policy into navigation policy.

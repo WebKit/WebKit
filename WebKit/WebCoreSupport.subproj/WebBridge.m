@@ -276,15 +276,15 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event
+- (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
-    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect triggeringEvent:event];
+    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect triggeringEvent:event isFormSubmission:isFormSubmission];
     _doingClientRedirect = NO;
 }
 
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
 {
-    [frame _postWithURL:URL data:data contentType:contentType];
+    [frame _postWithURL:URL data:data contentType:contentType triggeringEvent:event];
 }
 
 - (NSString *)generateFrameName
@@ -308,7 +308,7 @@
     [[newFrame webView] _setMarginHeight:height];
 
     // We must avoid loading the document itself as a subframe, like
-    // other browsers do, otherwise bugs like Radar 3083732
+    // other browsers do, otherwise bugs like Radar 3083732 occur
     if (![[[URL _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
 	[frame _loadURL:URL intoChild:newFrame];
     }

@@ -727,7 +727,7 @@ static const char * const stateNames[] = {
 
 - (BOOL)_shouldShowRequest:(WebResourceRequest *)request
 {
-    return [self _continueAfterNavigationPolicyForRequest:request event:[[self provisionalDataSource] _triggeringEvent]];
+    return [self _continueAfterNavigationPolicyForRequest:request dataSource:[self provisionalDataSource]];
 }
 
 - (void)_setProvisionalDataSource:(WebDataSource *)d
@@ -883,10 +883,10 @@ static const char * const stateNames[] = {
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
-- (void)_loadRequest:(WebResourceRequest *)request triggeringEvent:(NSEvent *)event
+- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    [newDataSource _setTriggeringEvent:event];
+    [newDataSource _setTriggeringAction:action];
 
     if ([self setProvisionalDataSource:newDataSource]) {
         [self startLoading];
@@ -896,38 +896,26 @@ static const char * const stateNames[] = {
 
 -(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event
 {
-    switch (navigationType) {
-    case WebNavigationTypeLinkClicked:
-    case WebNavigationTypeFormSubmitted:
-	;
-
+    if (event != nil) {
 	NSView *topViewInEventWindow = [[event window] contentView];
 	NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-
+	
 	ASSERT(viewContainingPoint != nil);
 	ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
-	    
+	
 	NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
 	NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
 	
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-			     [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+				 [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
 			     elementInfo, WebActionElementKey,
 			     [NSNumber numberWithInt:[event type]], WebActionButtonKey,
 			     [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
 			     nil];
-
-
-	break;
-    case WebNavigationTypeOther:
-	return [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:navigationType]
-			     forKey:WebActionNavigationTypeKey];
-
-	break;
-    default:
-	ASSERT_NOT_REACHED();
-	return nil;
     }
+
+    return [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:navigationType]
+			 forKey:WebActionNavigationTypeKey];
 }
 
 -(BOOL)_continueAfterFileURLPolicyForRequest:(WebResourceRequest *)request
@@ -983,14 +971,24 @@ static const char * const stateNames[] = {
     }
 }
 
--(BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request event:(NSEvent *)event
+-(BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource
 {
-    WebController *controller = [self controller];
-    WebPolicyAction policy;
+    NSDictionary *action = [dataSource _triggeringAction];
+    if (action == nil) {
+	action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil];
+	[dataSource _setTriggeringAction:action];
+    }
 
-    policy = [[controller policyDelegate] navigationPolicyForAction:[self _actionInformationForNavigationType:(event != nil ? WebNavigationTypeLinkClicked : WebNavigationTypeOther) event:event]
-				       andRequest:request
-					  inFrame:self];
+    // Don't ask more than once for the same request
+    if ([request isEqual:[dataSource _lastCheckedRequest]]) {
+	return YES;
+    }
+
+    [dataSource _setLastCheckedRequest:request];
+
+    WebPolicyAction policy = [[[self controller] policyDelegate] navigationPolicyForAction:action
+								 andRequest:request
+								 inFrame:self];
 
     switch (policy) {
     case WebPolicyIgnore:
@@ -1001,13 +999,13 @@ static const char * const stateNames[] = {
 	}
 	break;
     case WebPolicyOpenNewWindow:
-	[controller _openNewWindowWithRequest:request behind:NO];
+	[[self controller] _openNewWindowWithRequest:request behind:NO];
 	break;
     case WebPolicyOpenNewWindowBehind:
-	[controller _openNewWindowWithRequest:request behind:YES];
+	[[self controller] _openNewWindowWithRequest:request behind:YES];
 	break;
     case WebPolicySave:
-	[controller _downloadURL:[request URL]];
+	[[self controller] _downloadURL:[request URL]];
 	break;
     case WebPolicyUse:
 	if ([[request URL] isFileURL]) {
@@ -1015,10 +1013,11 @@ static const char * const stateNames[] = {
 	} else {
 	    if (![WebResourceHandle canInitWithRequest:request]) {
 		[self handleUnimplementablePolicy:policy errorCode:WebErrorCannotShowURL forURL:[request URL]];
-		break;
+	    } else {
+		return YES;
 	    }
-	    return YES;
 	}
+	break;
     default:
 	[NSException raise:NSInvalidArgumentException
 		     format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
@@ -1028,7 +1027,7 @@ static const char * const stateNames[] = {
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
@@ -1036,8 +1035,14 @@ static const char * const stateNames[] = {
 	[request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
 
-    if (event != nil && ![self _continueAfterNavigationPolicyForRequest:request event:event]) {
-	return;
+    NSDictionary *action = nil;
+
+    if (isFormSubmission) {
+	action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
+    } else if (event == nil) {
+	action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event];
+    } else {
+	action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event];
     }
 
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
@@ -1047,8 +1052,12 @@ static const char * const stateNames[] = {
         // an anchor in the URL - otherwise this check might prevent us from reloading a document
         // that has subframes that are different than what we're displaying (in other words, a link
         // from within a frame is trying to reload the frameset into _top).
+
         WebDataSource *dataSrc = [self dataSource];
-	[dataSrc _setTriggeringEvent:event];
+	[dataSrc _setTriggeringAction:action];
+	if (![self _continueAfterNavigationPolicyForRequest:request dataSource:dataSrc]) {
+	    return;
+	}
 
         // save scroll position before we open URL, which will jump to anchor
         [self _saveScrollPositionToItem:[_private currentItem]];
@@ -1071,7 +1080,7 @@ static const char * const stateNames[] = {
         WebDataSource *oldDataSource = [[self dataSource] retain];
         WebFrameState stateBeforeStartingLoad = [self _state];
 
-        [self _loadRequest:request triggeringEvent:event];
+        [self _loadRequest:request triggeringAction:action];
         // NB: must be done after loadRequest:, which sets the provDataSource, which
         //     inits the load type to Standard
         [self _setLoadType:loadType];
@@ -1113,7 +1122,7 @@ static const char * const stateNames[] = {
         }
     }
             
-    [childFrame _loadURL:URL loadType:childLoadType clientRedirect:NO triggeringEvent:nil];
+    [childFrame _loadURL:URL loadType:childLoadType clientRedirect:NO triggeringEvent:nil isFormSubmission:NO];
     // want this here???
     if (childItem) {
         if (loadType != WebFrameLoadTypeReload) {
@@ -1126,7 +1135,7 @@ static const char * const stateNames[] = {
     }
 }
 
-- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
+- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1137,7 +1146,11 @@ static const char * const stateNames[] = {
     [request setData:data];
     [request setContentType:contentType];
     [request setReferrer:[_private->bridge referrer]];
-    [self _loadRequest:request triggeringEvent:nil];
+
+    NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
+
+    [self _loadRequest:request triggeringAction:action];
+
     [request release];
 }
 

@@ -57,7 +57,8 @@
     [iconLoader release];
     [iconURL release];
     [ourBackForwardItems release];
-    [triggeringEvent release];
+    [triggeringAction release];
+    [lastCheckedRequest release];
     [downloadPath release];
 
     [super dealloc];
@@ -538,18 +539,32 @@
     return _private->originalRequest;
 }
 
-- (void)_setTriggeringEvent:(NSEvent *)event
+- (void)_setTriggeringAction:(NSDictionary *)action
 {
-    [event retain];
-    [_private->triggeringEvent release];
-    _private->triggeringEvent = event;
+    [action retain];
+    [_private->triggeringAction release];
+    _private->triggeringAction = action;
 }
 
-- (NSEvent *)_triggeringEvent
+- (NSDictionary *)_triggeringAction
 {
-    return [[_private->triggeringEvent retain] autorelease];
+    return [[_private->triggeringAction retain] autorelease];
 }
 
+
+- (WebResourceRequest *)_lastCheckedRequest
+{
+    // It's OK not to make a copy here because we know the caller
+    // isn't going to modify this request
+    return [[_private->lastCheckedRequest retain] autorelease];
+}
+
+- (void)_setLastCheckedRequest:(WebResourceRequest *)request
+{
+    WebResourceRequest *oldRequest = _private->lastCheckedRequest;
+    _private->lastCheckedRequest = [request copy];
+    [oldRequest release];
+}
 
 - (void)_setIsDownloading:(BOOL)isDownloading
 {

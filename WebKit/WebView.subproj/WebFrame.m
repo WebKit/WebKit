@@ -126,10 +126,11 @@
 
     [self _setLoadType: WebFrameLoadTypeStandard];
 
-    // _shouldShowRequest asks the client for the URL policies and reports errors if there are any
+    // _continueAfterNavigationPolicyForRequest:dataSource: asks the
+    // client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
 
-    if (![self _shouldShowRequest:[newDataSource request]]) {
+    if (![self _continueAfterNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource]) {
         return NO;
     }
     

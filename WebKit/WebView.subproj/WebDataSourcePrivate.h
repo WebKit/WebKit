@@ -71,10 +71,14 @@
     // BF items that reference what we loaded - we must keep their titles up to date
     NSMutableArray *ourBackForwardItems;
 
-    // The event that triggered loading of this data source, if any -
+    // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
     // handlers.
-    NSEvent *triggeringEvent;
+    NSDictionary *triggeringAction;
+
+    // The last request that we checked click policy for - kept around
+    // so we can avoid asking again needlessly.
+    WebResourceRequest *lastCheckedRequest;
 
     BOOL isDownloading;
     NSString *downloadPath;
@@ -125,14 +129,12 @@
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
-
-
 - (void)_defersCallbacksChanged;
 - (WebResourceRequest *)_originalRequest;
-
-- (void)_setTriggeringEvent:(NSEvent *)event;
-- (NSEvent *)_triggeringEvent;
-
+- (NSDictionary *)_triggeringAction;
+- (void)_setTriggeringAction:(NSDictionary *)action;
+- (WebResourceRequest *)_lastCheckedRequest;
+- (void)_setLastCheckedRequest:(WebResourceRequest *)request;
 - (void)_setIsDownloading:(BOOL)isDownloading;
 - (void)_setDownloadPath:(NSString *)downloadPath;
 
