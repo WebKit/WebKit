@@ -145,7 +145,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Frameworks;
+				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x9000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
@@ -166,7 +166,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = WebCore;
-			productInstallPath = /System/Library/Frameworks/WebKit.framework/Frameworks;
+			productInstallPath = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>

@@ -1,3 +1,11 @@
+2003-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3295916 - b/c JavaScriptCore and WebCore are installing in wrong location, private headers are public
+
+        * WebCore.pbproj/project.pbxproj: Install in WebKit.framework/Versions/A/Frameworks.
+
 === Safari-88 ===
 
 2003-07-02  Maciej Stachowiak  <mjs@apple.com>

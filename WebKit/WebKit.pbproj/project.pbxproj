@@ -140,6 +140,7 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
+				65CBE7AA04B53388006ACFE6,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1762,6 +1763,19 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		65CBE7AA04B53388006ACFE6 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ln -sf Versions/A/Frameworks ${SYMROOT}/WebKit.framework/Frameworks";
 		};
 //650
 //651

@@ -1,3 +1,11 @@
+2003-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3295916 - b/c JavaScriptCore and WebCore are installing in wrong location, private headers are public
+
+        * WebKit.pbproj/project.pbxproj: Make a link from Frameworks to Versions/A/Frameworks.
+
 === Safari-88 ===
 
 2003-07-07  Darin Adler  <darin@apple.com>
