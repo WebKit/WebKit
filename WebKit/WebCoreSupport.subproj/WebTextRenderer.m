@@ -269,11 +269,18 @@ static NSString *pathFromFont(NSFont *font);
 // Globals
 static CFCharacterSetRef nonBaseChars = NULL;
 static BOOL bufferTextDrawing = NO;
-static NSString *WebFallbackFontFamily = nil;
 static BOOL alwaysUseATSU = NO;
 
 
 @implementation WebTextRenderer
+
++ (NSString *)webFallbackFontFamily
+{
+    static NSString *webFallbackFontFamily = nil;
+    if (!webFallbackFontFamily)
+	webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0] familyName] retain];
+    return webFallbackFontFamily;
+}
 
 + (BOOL)shouldBufferTextDrawing
 {
@@ -320,14 +327,11 @@ static BOOL alwaysUseATSU = NO;
         if ([[font familyName] isEqual:@"Times"])
             fallbackFontFamily = @"Times New Roman";
         else {
-            if (!WebFallbackFontFamily)
-                // Could use any size, we just care about the family of the system font.
-                WebFallbackFontFamily = [[[NSFont systemFontOfSize:16.0] familyName] retain];
-                
-            fallbackFontFamily = WebFallbackFontFamily;
+            fallbackFontFamily = [WebTextRenderer webFallbackFontFamily];
         }
         
-        // Try setting up the alternate font.
+        // Try setting up the alternate font.  This is a last ditch effort to use a
+	// substitute font when something has gone wrong.
         NSFont *initialFont = font;
         [initialFont autorelease];
         NSFont *af = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
@@ -335,8 +339,20 @@ static BOOL alwaysUseATSU = NO;
         NSString *filePath = pathFromFont(initialFont);
         filePath = filePath ? filePath : @"not known";
         if (![self _setupFont]){
-            // Give up!
-            FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+	    if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
+		// OK, couldn't setup Times New Roman as an alternate to Times, fallback
+		// on the system font.  If this fails we have no alternative left.
+		af = [[NSFontManager sharedFontManager] convertFont:font toFamily:[WebTextRenderer webFallbackFontFamily]];
+		font = [(p ? [af printerFont] : [af screenFont]) retain];
+		if (![self _setupFont]){
+		    // We tried, Times, Times New Roman, and the system font.  No joy.  We have to give up.
+		    FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		}
+	    }
+	    else {
+		// We tried the requested font and the syste, font.  No joy.  We have to give up.
+		FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+	    }
         }
 
         // Report the problem.

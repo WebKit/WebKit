@@ -1,5 +1,20 @@
 2004-12-02  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3895810> FATAL ERROR: <WebTextRenderer: 0x9328a20> unable to initialize with font "Times-Roman 16.00 pt. S ....
+
+	We have a hack to replace Times with Times New Roman if we fail
+        to setup Times.  If we then fail to setup Times New Roman we
+        don't attempt to further fallback to the system font.  Added
+        that additional fallback.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (+[WebTextRenderer webFallbackFontFamily]):
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
+2004-12-02  Richard Williamson   <rjw@apple.com>
+
 	Fixed build problem on Tiger8A821.  Private macro and function
 	we were using have been deprecated,
 
