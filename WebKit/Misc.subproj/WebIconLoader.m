@@ -86,14 +86,11 @@
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
     _private->handle = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
     [request release];
-    if (_private->handle) {
-        [_private->handle loadInBackground];
-    }
 }
 
 - (void)stopLoading
 {
-    [_private->handle cancelLoadInBackground];
+    [_private->handle cancel];
     [_private->handle release];
     _private->handle = nil;
 }

@@ -101,7 +101,6 @@
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
-    [resource loadInBackground];
     [request release];
     [[view webController] _didStartLoading:[resource URL]];
 }
@@ -315,7 +314,7 @@
         return;
     }
     
-    [resource cancelLoadInBackground];
+    [resource cancel];
     
     WebController *webController = [view webController];
     

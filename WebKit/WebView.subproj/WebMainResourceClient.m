@@ -247,7 +247,7 @@
         downloadError = [downloadHandler receivedData:data];
         break;
     case WebContentPolicyIgnore:
-        [handle cancelLoadInBackground];
+        [handle cancel];
         [self didCancelWithHandle:handle];
         [frame _setProvisionalDataSource:nil];
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
@@ -262,9 +262,9 @@
         [self receivedError:downloadError forHandle:handle];
 
         // Supress errors because we don't want to confuse the client with
-        // the cancel error that will follow after cancelLoadInBackground.
+        // the cancel error that will follow after cancel.
         suppressErrors = YES;
-        [handle cancelLoadInBackground];
+        [handle cancel];
     }
     
     LOG(Download, "%d of %d", [[handle response] contentLengthReceived], [[handle response] contentLength]);

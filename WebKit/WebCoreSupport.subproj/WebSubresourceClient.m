@@ -75,10 +75,9 @@
     [request setResponseCachePolicy:[[source request] responseCachePolicy]];
     [request setReferrer:referrer];
     [request setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
-    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request delegate:client];
-    [request release];
     
-    if (h == nil) {
+    if (![WebResourceHandle canInitWithRequest:request]) {
+        [request release];
         [rLoader cancel];
 
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
@@ -90,11 +89,12 @@
         return nil;
     }
     
+    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request delegate:client];
     client->handle = h;
     [source _addSubresourceClient:client];
-    [client didStartLoadingWithURL:[h URL]];
+    [client didStartLoadingWithURL:[request canonicalURL]];
     [client receivedProgressWithComplete:NO];
-    [h loadInBackground];
+    [request release];
         
     return [client autorelease];
 }
@@ -195,7 +195,7 @@
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
-    [handle cancelLoadInBackground];
+    [handle cancel];
     
     [loader cancel];
     

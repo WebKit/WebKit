@@ -1,3 +1,32 @@
+2002-09-25  Ken Kocienda  <kocienda@apple.com>
+
+        Changes to move the WebResourceHandle API closer to the
+        specified design. This includes:
+
+        - Removed loadInBackground method from the public interface.
+        - Start asynchronous loading in WebResourceHandle init method. This required some
+	  code reorganization in callers.
+        - Remove loadInForeground: from WebResourceHandle interface.
+        - Move WebResourceHandle callback deferral methods to SPI header file.
+        - Change name of WebResourceHandle cancelLoadInBackground method to cancel.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+        (-[WebIconLoader stopLoading])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad])
+        (-[WebNetscapePluginStream cancel])
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:])
+        (-[WebSubresourceClient cancel])
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading])
+        (-[WebDataSource _addSubresourceClient:])
+        (-[WebDataSource _stopLoading])
+        (-[WebDataSource _defersCallbacksChanged])
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveData:])
+
 2002-09-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3050665 - REGRESSION: mp3 audio loads and plays, but no progress or play control is visible

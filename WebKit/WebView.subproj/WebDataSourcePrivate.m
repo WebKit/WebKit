@@ -35,6 +35,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 
 #import <WebCore/WebCoreEncodings.h>
@@ -197,7 +198,6 @@
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request delegate:_private->mainClient];
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
-    [_private->mainHandle loadInBackground];
 }
 
 - (void)_addSubresourceClient:(WebSubresourceClient *)client
@@ -206,7 +206,7 @@
         _private->subresourceClients = [[NSMutableArray alloc] init];
     }
     if ([_private->controller _defersCallbacks]) {
-        [[client handle] setDefersCallbacks:YES];
+        [[client handle] _setDefersCallbacks:YES];
     }
     [_private->subresourceClients addObject:client];
     [self _setLoading:YES];
@@ -231,7 +231,7 @@
 
     _private->stopping = YES;
     
-    [_private->mainHandle cancelLoadInBackground];
+    [_private->mainHandle cancel];
     [_private->mainClient didCancelWithHandle:_private->mainHandle];
     
     NSArray *clients = [_private->subresourceClients copy];
@@ -516,11 +516,11 @@
     }
 
     _private->defersCallbacks = defers;
-    [_private->mainHandle setDefersCallbacks:defers];
+    [_private->mainHandle _setDefersCallbacks:defers];
     NSEnumerator *e = [_private->subresourceClients objectEnumerator];
     WebSubresourceClient *client;
     while ((client = [e nextObject])) {
-        [[client handle] setDefersCallbacks:defers];
+        [[client handle] _setDefersCallbacks:defers];
     }
 
     [[self children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
