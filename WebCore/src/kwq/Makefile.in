@@ -120,6 +120,7 @@ MMOBJECTS = \
 	KWQString.o \
 	KWQCString.o \
 	KWQRegion.o \
+        KWQDateTime.o \
 	$(NULL)
 
 MOBJECTS = \
