@@ -1,3 +1,12 @@
+2004-06-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3661505>: (REGRESSION (Safari-140) can't drag standalone images more than once)
+
+        Reviewed by john.
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDown:]): set ignoringMouseDraggedEvents to NO. This line of code was deleted somehow.
+
 2004-06-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

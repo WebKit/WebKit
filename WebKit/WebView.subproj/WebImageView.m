@@ -217,6 +217,7 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
+    ignoringMouseDraggedEvents = NO;
     [mouseDownEvent release];
     mouseDownEvent = [event retain];
     [super mouseDown:event];
