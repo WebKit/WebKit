@@ -1,3 +1,14 @@
+2003-04-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fixed call to load synchronous URL. Now conforms to new API
+	which allows callers to access error object associated with 
+	the load.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+
 2003-04-16  Chris Blumenberg  <cblu@apple.com>
 
 	- Progressively load plain text in our text view.

@@ -1157,7 +1157,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // extremely rare, but in that case the user will get an error on the navigation.
                 [request setCachePolicy:NSURLRequestReturnCacheDataDontLoad];
                 NSURLResponse *synchResponse = nil;
-                [NSURLConnection sendSynchronousRequest:request returningResponse:&synchResponse];
+                [NSURLConnection sendSynchronousRequest:request returningResponse:&synchResponse error:nil];
                 if (synchResponse == nil) { 
                     // Not in WF cache
                     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
