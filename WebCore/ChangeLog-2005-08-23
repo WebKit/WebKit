@@ -1,5 +1,16 @@
 2003-08-26  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3335175, www.calstone.com renders as blank.  The fix is to deliberately
+	introduce an error into our HTML parsing code that causes us to honor self-closing
+	XML-style <script/> tags.  This matches Mozilla and Opera behavior (both of them
+	have this bug), but it does not match WinIE.
+	
+        Reviewed by mjs
+
+        * khtml/html/htmltokenizer.cpp:
+
+2003-08-26  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3286229, popup menu misplaced.  <form> needs to be allowed as a child of
 	<h1>-<h6> tags.  All other browsers allow this.
 	

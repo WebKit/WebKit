@@ -935,12 +935,13 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 else
                     // Start Tag
                     beginTag = true;
-                    
+
+                uint tagID = khtml::getTagID(ptr, len);
+                
                 // Accept empty xml tags like <br/>
                 if(len > 1 && ptr[len-1] == '/' )
                     ptr[--len] = '\0';
-
-                uint tagID = khtml::getTagID(ptr, len);
+                
                 if (!tagID) {
 #ifdef TOKEN_DEBUG
                     QCString tmp(ptr, len+1);
@@ -1012,6 +1013,15 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         else {
                             attrName = QString::fromLatin1(QCString(cBuffer, cBufferPos+1).data());
                             attrNamePresent = !attrName.isEmpty();
+
+                            // This is a deliberate quirk to match Mozilla and Opera.  We have to do this
+                            // since sites that use the "standards-compliant" path sometimes send
+                            // <script src="foo.js"/>.  Both Moz and Opera will honor this, despite it
+                            // being bogus HTML.  They do not honor the "/" for other tags.  This behavior
+                            // also deviates from WinIE, but in this case we'll just copy Moz and Opera.
+                            if (currToken.id == ID_SCRIPT && curchar == '>' &&
+                                attrName == "/")
+                                currToken.flat = true;
                         }
                         
                         dest = buffer;
