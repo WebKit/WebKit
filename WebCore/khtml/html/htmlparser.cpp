@@ -778,7 +778,8 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
     }
 }
 
-
+// FIXME: getElement looks like copied code of DocumentImpl::createHTMLElement or vice versa.
+// This has been the cause of bugs. They should share the same code.
 NodeImpl *KHTMLParser::getElement(Token* t)
 {
     NodeImpl *n = 0;

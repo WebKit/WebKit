@@ -697,6 +697,8 @@ unsigned short DocumentImpl::nodeType() const
     return Node::DOCUMENT_NODE;
 }
 
+// FIXME: createHTMLElement looks like copied code of KHTMLParser::getElement or vice versa.
+// This has been the cause of bugs. They should share the same code.
 ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &exceptioncode )
 {
     if (!isValidName(name)) {
@@ -868,6 +870,9 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &except
 // objects, applets and scripts
     case ID_APPLET:
         n = new HTMLAppletElementImpl(docPtr());
+        break;
+    case ID_EMBED:
+        n = new HTMLEmbedElementImpl(docPtr());
         break;
     case ID_OBJECT:
         n = new HTMLObjectElementImpl(docPtr());

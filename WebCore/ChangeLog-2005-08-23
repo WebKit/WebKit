@@ -1,3 +1,13 @@
+2004-09-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3788409> can't create or clone an embed element
+
+        Reviewed by rjw.
+
+        * khtml/html/htmlparser.cpp: added fixme about sharing code
+        * khtml/xml/dom_docimpl.cpp: ditto
+        (DocumentImpl::createHTMLElement): create and return a HTMLEmbedElementImpl
+
 2004-09-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
