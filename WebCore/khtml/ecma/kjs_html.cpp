@@ -2910,7 +2910,7 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
       DOM::Node node = collection.item(u);
 
 #if APPLE_CHANGES
-        if (node.handle()->id() == ID_APPLET) {
+        if (!node.isNull() && node.handle()->id() == ID_APPLET) {
             return getRuntimeObject(exec,node);
         }
 #endif
