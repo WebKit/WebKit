@@ -1,3 +1,10 @@
+2004-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix build.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isImmediateRedirectPending):
+
 2004-08-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3704339> Context2D forces integer positions in drawImage
