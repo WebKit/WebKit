@@ -51,7 +51,7 @@ enum {
     WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebErrorCannotNotFindApplicationForURL],
     nil];
 
-    [WebError addErrorsFromDictionary:dict];
+    [WebError addErrorsWithCodesAndDescriptions:dict inDomain:WebErrorDomainWebKit];
 }
 
 - initWithFrame: (NSRect) frame

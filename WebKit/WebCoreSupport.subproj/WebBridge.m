@@ -309,7 +309,7 @@
 
 - (void)reportBadURL:(NSString *)badURL
 {
-    WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
+    WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
                                                         inDomain:WebErrorDomainWebFoundation
                                                         failingURL:badURL];
     [[frame controller] _receivedError:badURLError

@@ -1,3 +1,10 @@
+2002-09-23  Ken Kocienda  <kocienda@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportBadURL:]): WebFoundation error code constant name change
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]): WebError addErrorsFromDictionary changed to addErrorsWithCodesAndDescriptions
+
 2002-09-22  Darin Adler  <darin@apple.com>
 
 	- fixed 3057380 -- insertion point shows through elements in front of text fields
