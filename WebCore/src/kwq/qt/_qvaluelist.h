@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -433,6 +434,28 @@ protected:
      */
     QValueListPrivate<T>* sh;
 };
+
+
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &o, const QValueList<T>&p)
+{
+    o <<
+        "QValueList: [size: " <<
+        (Q_UINT32)p.count() <<
+        "; items: ";
+        QValueListConstIterator<T> it = p.begin();
+        while (it != p.end()) {
+            o << *it;
+            if (++it != p.end()) {
+                o << ", ";
+            }
+        }
+        o << "]";
+    return o;
+}
+#endif
+
 
 #ifndef QT_NO_DATASTREAM
 template<class T>

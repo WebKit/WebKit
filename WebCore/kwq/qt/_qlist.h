@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -144,6 +145,36 @@ public:
     QListIterator<type>& operator=(const QListIterator<type>&it)
 			      { QGListIterator::operator=(it); return *this; }
 };
+
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &o, const QList<T> &p)
+{
+    QListIterator<T> it = QListIterator<T>(p);
+    int count = it.count();
+
+    o << "QList: [size: " << 
+    count <<
+    "; items: ";
+
+    if (count == 0) {
+        // no-op
+    }
+    else if (count == 1) {
+        o << *(it.current());
+    }
+    else {
+        o << *(it.current());
+        while (!it.atLast()) {
+            ++it;
+            o << ", " << *(it.current());
+        }
+    }
+    o << "]";
+
+    return o;
+}
+#endif
 
 
 #endif // QLIST_H
