@@ -1,4 +1,3 @@
-#include <sys/types.h>
 #include "crc16.h"
 
 static const u_int16_t gMagic[] = {
@@ -45,18 +44,11 @@ static const u_int16_t gMagic[] = {
  */
 u_int16_t CRC16(const u_int8_t *p, u_int32_t len, u_int16_t seed)
 {
-	u_int16_t	reg;				/* crc computed so far */
-	u_int32_t	i;
-
-	reg = seed;				/* start with seed */
-//	while (len--) {
-//		reg = (reg << 8) ^ gMagic[(reg >> 8) ^ *p++];
-//	}
-	for (i = 0; i < len; i++, p++)
-	{
-		reg ^= (*p << 8);
-		reg = (reg << 8) ^ gMagic[(u_int8_t)(reg >> 8)];
-  	}
-
-	return (reg);
-} /* CRC16() */
+    u_int16_t crc = seed;
+    u_int32_t i;
+    for (i = 0; i < len; i++, p++) {
+        crc ^= (*p << 8);
+        crc = (crc << 8) ^ gMagic[(u_int8_t)(crc >> 8)];
+    }
+    return crc;
+}

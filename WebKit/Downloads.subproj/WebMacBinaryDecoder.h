@@ -3,26 +3,24 @@
 //
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
+
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebDownloadDecoder.h>
-
+@protocol WebDownloadDecoder;
 
 @interface WebMacBinaryDecoder : NSObject <WebDownloadDecoder>
 {
-    int			_state;
-    long		_dataLen;
-    long		_rsrcLen;
-    long		_rsrcStart;
-    long		_commentStart;
-    long		_curOffset;
-    u_int32_t		_dateBlock[2];
-    u_int32_t		_fInfo[4];
-    char		_comment[256];
-    char		_name[32];
-    NSMutableData	*_accumulator;
-    BOOL		_streamComplete;
+    int _offset;
+    
+    char _name[64];
+    int _dataForkLength;
+    int _resourceForkLength;
+    int _commentLength;
+    u_int32_t _creationDate;
+    u_int32_t _modificationDate;
+    OSType _fileType;
+    OSType _fileCreator;
+
+    int _commentEnd;
 }
-
-
 @end
