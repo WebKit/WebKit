@@ -1,5 +1,15 @@
 2003-04-15  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Name change from WebProtocolClient to NSURLProtocolClient.
+        No functional changes.
+
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoadingWithCacheObject:]):
+
+2003-04-15  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Name change from WebProtocol to NSURLProtocol.

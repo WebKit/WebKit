@@ -7,7 +7,7 @@
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebProtocolClient.h>
+#import <WebFoundation/NSURLProtocolClient.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 
@@ -144,7 +144,7 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 
 - (void)startLoadingWithCacheObject:(WebCacheObject *)cacheObject
 {
-    NSObject<WebProtocolClient> *client = [self client];
+    NSObject<NSURLProtocolClient> *client = [self client];
     NSURLRequest *request = [self request];
     NSData *data = [request _webDataRequestData];
 
