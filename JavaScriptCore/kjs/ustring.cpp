@@ -606,6 +606,41 @@ UString UString::from(double d)
   return UString(buf);
 }
 
+UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, int rangeCount, const UString *separators, int separatorCount) const
+{
+  int totalLength = 0;
+
+  for (int i = 0; i < rangeCount; i++) {
+    totalLength += substringRanges[i].length;
+  }
+  for (int i = 0; i < separatorCount; i++) {
+    totalLength += separators[i].size();
+  }
+
+  UChar *buffer = static_cast<UChar *>(malloc(totalLength * sizeof(UChar)));
+
+  int maxCount = MAX(rangeCount, separatorCount);
+  int bufferPos = 0;
+  for (int i = 0; i < maxCount; i++) {
+    if (i < rangeCount) {
+      memcpy(buffer + bufferPos, data() + substringRanges[i].position, substringRanges[i].length * sizeof(UChar));
+      bufferPos += substringRanges[i].length;
+    }
+    if (i < separatorCount) {
+      memcpy(buffer + bufferPos, separators[i].data(), separators[i].size() * sizeof(UChar));
+      bufferPos += separators[i].size();
+    }
+  }
+
+  UString::Rep *rep = UString::Rep::create(buffer, totalLength);
+  UString result = UString(rep);
+  rep->deref();
+
+  return result;
+}
+
+
+
 UString &UString::append(const UString &t)
 {
   int thisSize = size();

@@ -170,6 +170,165 @@ bool StringProtoFuncImp::implementsCall() const
   return true;
 }
 
+static inline bool regExpIsGlobal(RegExpImp *regExp, ExecState *exec)
+{
+    Value globalProperty = regExp->get(exec,"global");
+    return globalProperty.type() != UndefinedType && globalProperty.toBoolean(exec);
+}
+
+static inline void expandSourceRanges(UString::Range * & array, int& count, int& capacity)
+{
+  int newCapacity;
+  if (capacity == 0) {
+    newCapacity = 16;
+  } else {
+    newCapacity = capacity * 2;
+  }
+
+  UString::Range *newArray = new UString::Range[newCapacity];
+  for (int i = 0; i < count; i++) {
+    newArray[i] = array[i];
+  }
+
+  delete [] array;
+
+  capacity = newCapacity;
+  array = newArray;
+}
+
+static void pushSourceRange(UString::Range * & array, int& count, int& capacity, UString::Range range)
+{
+  if (count + 1 > capacity)
+    expandSourceRanges(array, count, capacity);
+
+  array[count] = range;
+  count++;
+}
+
+static inline void expandReplacements(UString * & array, int& count, int& capacity)
+{
+  int newCapacity;
+  if (capacity == 0) {
+    newCapacity = 16;
+  } else {
+    newCapacity = capacity * 2;
+  }
+
+  UString *newArray = new UString[newCapacity];
+  for (int i = 0; i < count; i++) {
+    newArray[i] = array[i];
+  }
+  
+  delete [] array;
+
+  capacity = newCapacity;
+  array = newArray;
+}
+
+static void pushReplacement(UString * & array, int& count, int& capacity, UString replacement)
+{
+  if (count + 1 > capacity)
+    expandReplacements(array, count, capacity);
+
+  array[count] = replacement;
+  count++;
+}
+
+static inline UString substituteBackreferences(const UString &replacement, const UString &source, int **ovector, RegExp *reg)
+{
+  UString substitutedReplacement = replacement;
+
+  bool converted;
+
+  for (int i = 0; (i = substitutedReplacement.find(UString("$"), i)) != -1; i++) {
+    if (i+1 < substitutedReplacement.size() && substitutedReplacement[i+1] == '$') {  // "$$" -> "$"
+      substitutedReplacement = substitutedReplacement.substr(0,i) + "$" + substitutedReplacement.substr(i+2);
+      continue;
+    }
+    // Assume number part is one char exactly
+    unsigned long backrefIndex = substitutedReplacement.substr(i+1,1).toULong(&converted, false /* tolerate empty string */);
+    if (converted && backrefIndex <= (unsigned)reg->subPatterns()) {
+      int backrefStart = (*ovector)[2*backrefIndex];
+      int backrefLength = (*ovector)[2*backrefIndex+1] - backrefStart;
+      substitutedReplacement = substitutedReplacement.substr(0,i)
+        + source.substr(backrefStart, backrefLength)
+        + substitutedReplacement.substr(i+2);
+      i += backrefLength - 1; // -1 offsets i++
+    }
+  }
+
+  return substitutedReplacement;
+}
+
+static Value replace(ExecState *exec, const UString &source, const Value &pattern, const Value &replacement)
+{
+  if (pattern.type() == ObjectType && pattern.toObject(exec).inherits(&RegExpImp::info)) {
+    RegExpImp* imp = static_cast<RegExpImp *>( pattern.toObject(exec).imp() );
+    RegExp *reg = imp->regExp();
+    bool global = regExpIsGlobal(imp, exec);
+
+    RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp().imp());
+
+    UString replacementString = replacement.toString(exec);
+
+    int matchIndex = 0;
+    int lastIndex = 0;
+    int startPosition = 0;
+
+    UString::Range *sourceRanges = 0;
+    int sourceRangeCount = 0;
+    int sourceRangeCapacity = 0;
+    UString *replacements = 0;
+    int replacementCount = 0;
+    int replacementCapacity = 0;
+
+    // This is either a loop (if global is set) or a one-way (if not).
+    do {
+      int **ovector = regExpObj->registerRegexp( reg, source );
+      UString matchString = reg->match(source, startPosition, &matchIndex, ovector);
+      regExpObj->setSubPatterns(reg->subPatterns());
+      if (matchIndex == -1)
+        break;
+      int matchLen = matchString.size();
+
+      pushSourceRange(sourceRanges, sourceRangeCount, sourceRangeCapacity, UString::Range(lastIndex, matchIndex - lastIndex));
+
+      UString substitutedReplacement = substituteBackreferences(replacementString, source, ovector, reg);
+      pushReplacement(replacements, replacementCount, replacementCapacity, substitutedReplacement);
+
+      lastIndex = matchIndex + matchLen;
+      startPosition = lastIndex;
+
+      // special case of empty match
+      if (matchLen == 0) {
+        startPosition++;
+        if (startPosition > source.size())
+          break;
+      }
+    } while (global);
+
+    if (lastIndex < source.size())
+      pushSourceRange(sourceRanges, sourceRangeCount, sourceRangeCapacity, UString::Range(lastIndex, source.size() - lastIndex));
+
+    UString result = source.spliceSubstringsWithSeparators(sourceRanges, sourceRangeCount, replacements, replacementCount);
+
+    delete [] sourceRanges;
+    delete [] replacements;
+
+    return String(result);
+  } else { // First arg is a string
+    UString patternString = pattern.toString(exec);
+    int matchPos = source.find(patternString);
+    int matchLen = patternString.size();
+    // Do the replacement
+    if (matchPos == -1)
+      return String(source);
+    else {
+      return String(source.substr(0, matchPos) + replacement.toString(exec) + source.substr(matchPos + matchLen));
+    }
+  }
+}
+
 // ECMA 15.5.4.2 - 15.5.4.20
 Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
@@ -321,70 +480,7 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     break;
   }
   case Replace:
-    u = s;
-    if (a0.type() == ObjectType && a0.toObject(exec).inherits(&RegExpImp::info)) {
-      RegExpImp* imp = static_cast<RegExpImp *>( a0.toObject(exec).imp() );
-      RegExp *reg = imp->regExp();
-      bool global = false;
-      Value tmp = imp->get(exec,"global");
-      if (tmp.type() != UndefinedType && tmp.toBoolean(exec) == true)
-        global = true;
-
-      RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp().imp());
-      int lastIndex = 0;
-      u3 = a1.toString(exec); // replacement string
-      // This is either a loop (if global is set) or a one-way (if not).
-      do {
-        int **ovector = regExpObj->registerRegexp( reg, u );
-        UString mstr = reg->match(u, lastIndex, &pos, ovector);
-        regExpObj->setSubPatterns(reg->subPatterns());
-        if (pos == -1)
-          break;
-        len = mstr.size();
-        UString rstr(u3);
-        bool ok;
-        // check if u3 matches $1 or $2 etc
-        for (int i = 0; (i = rstr.find(UString("$"), i)) != -1; i++) {
-          if (i+1<rstr.size() && rstr[i+1] == '$') {  // "$$" -> "$"
-            rstr = rstr.substr(0,i) + "$" + rstr.substr(i+2);
-            continue;
-          }
-          // Assume number part is one char exactly
-          unsigned long pos = rstr.substr(i+1,1).toULong(&ok, false /* tolerate empty string */);
-          if (ok && pos <= (unsigned)reg->subPatterns()) {
-            rstr = rstr.substr(0,i)
-                      + u.substr((*ovector)[2*pos],
-                                     (*ovector)[2*pos+1]-(*ovector)[2*pos])
-                      + rstr.substr(i+2);
-            i += (*ovector)[2*pos+1]-(*ovector)[2*pos] - 1; // -1 offsets i++
-          }
-        }
-        lastIndex = pos + rstr.size();
-        u = u.substr(0, pos) + rstr + u.substr(pos + len);
-        //fprintf(stderr,"pos=%d,len=%d,lastIndex=%d,u=%s\n",pos,len,lastIndex,u.ascii());
-
-        // special case of empty match
-        if (len == 0) {
-          lastIndex = lastIndex + 1;
-          if (lastIndex > u.size())
-            break;
-        }
-      } while (global);
-
-      result = String(u);
-    } else { // First arg is a string
-      u2 = a0.toString(exec);
-      pos = u.find(u2);
-      len = u2.size();
-      // Do the replacement
-      if (pos == -1)
-        result = String(s);
-      else {
-        u3 = u.substr(0, pos) + a1.toString(exec) +
-             u.substr(pos + len);
-        result = String(u3);
-      }
-    }
+    result = replace(exec, s, a0, a1);
     break;
   case Slice: // http://developer.netscape.com/docs/manuals/js/client/jsref/string.htm#1194366
     {

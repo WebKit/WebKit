@@ -306,6 +306,16 @@ namespace KJS {
      */
     static UString from(double d);
 
+    struct Range {
+    public:
+      Range(int pos, int len) : position(pos), length(len) {}
+      Range() {}
+      int position;
+      int length;
+    };
+
+    UString spliceSubstringsWithSeparators(const Range *substringRanges, int rangeCount, const UString *separators, int separatorCount) const;
+
     /**
      * Append another string.
      */

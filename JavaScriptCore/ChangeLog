@@ -1,3 +1,31 @@
+2004-09-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3794735> Gmail- sending a very long message with Safari is so slow it seems like a hang
+        
+	* kjs/string_object.cpp:
+        (StringProtoFuncImp::call): Replaced implementation of replace()
+	method with function below...
+	(replace): In order to avoid excessive allocation and copying,
+	figure out the ranges of the original string and replacement
+	strings to be assembled, instead of constantly creating new
+	strings at each substitution. The old behavior is basically O(N^2)
+	for a global replace on a pattern that matches many places in the
+	string.
+        (regExpIsGlobal): Helper function for the above.
+        (expandSourceRanges): ditto
+        (pushSourceRange): ditto
+        (expandReplacements): ditto
+        (pushReplacement): ditto
+        * kjs/ustring.cpp:
+	(KJS::UString::spliceSubstringsWithSeparators): New method that
+	pieces together substring ranges of this string together with
+	specified separators, all at one go.
+        * kjs/ustring.h:
+        (KJS::UString::Range::Range): Added new helper class to represent
+	substring choices.
+
 2004-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
