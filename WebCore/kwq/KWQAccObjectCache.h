@@ -46,7 +46,9 @@ public:
     void removeAccObject(khtml::RenderObject* renderer);
     
     void detach(khtml::RenderObject* renderer);
-        
+    
+    void childrenChanged(khtml::RenderObject* renderer);
+    
 private:
     CFMutableDictionaryRef accCache;
 };

@@ -77,6 +77,7 @@ using khtml::RenderBlock;
     [m_data release];
     m_data = 0;
     m_renderer = 0;
+    [self clearChildren];
 }
 
 -(id)data
@@ -441,9 +442,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
 
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
-        NSMutableArray* arr = [NSMutableArray arrayWithCapacity: 8];
-        [self addChildrenToArray: arr];
-        return arr;
+        if (!m_children) {
+            m_children = [NSMutableArray arrayWithCapacity: 8];
+            [m_children retain];
+            [self addChildrenToArray: m_children];
+        }
+        return m_children;
     }
 
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
@@ -487,4 +491,19 @@ static QRect boundingBoxRect(RenderObject* obj)
         return self;
     return obj->document()->getOrCreateAccObjectCache()->accObject(obj);
 }
+
+- (void)childrenChanged
+{
+    [self clearChildren];
+    
+    if ([self accessibilityIsIgnored])
+        [[self parentObject] childrenChanged];
+}
+
+- (void)clearChildren
+{
+    [m_children release];
+    m_children = nil;
+}
+
 @end

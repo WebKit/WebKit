@@ -80,3 +80,15 @@ void KWQAccObjectCache::detach(khtml::RenderObject* renderer)
 {
     removeAccObject(renderer);
 }
+
+void KWQAccObjectCache::childrenChanged(khtml::RenderObject* renderer)
+{
+    if (!accCache)
+        return;
+    
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, renderer);
+    if (!obj)
+        return;
+    
+    [obj childrenChanged];
+}

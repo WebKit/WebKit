@@ -35,6 +35,11 @@
 #include <kdebug.h>
 #include <assert.h>
 
+#if APPLE_CHANGES
+// For accessibility
+#include "KWQAccObjectCache.h" 
+#endif
+
 using namespace khtml;
 
 RenderContainer::RenderContainer(DOM::NodeImpl* node)
@@ -199,6 +204,12 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
+#if APPLE_CHANGES
+    KWQAccObjectCache* cache = document()->getExistingAccObjectCache();
+    if (cache)
+        cache->childrenChanged(this);
+#endif
+    
     return oldChild;
 }
 
@@ -349,6 +360,12 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     
     if (!newChild->isFloatingOrPositioned() && childrenInline())
         dirtyLinesFromChangedChild(newChild);
+    
+#if APPLE_CHANGES
+    KWQAccObjectCache* cache = document()->getExistingAccObjectCache();
+    if (cache)
+        cache->childrenChanged(this);
+#endif
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -384,6 +401,12 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     
     if (!child->isFloatingOrPositioned() && childrenInline())
         dirtyLinesFromChangedChild(child);
+    
+#if APPLE_CHANGES
+    KWQAccObjectCache* cache = document()->getExistingAccObjectCache();
+    if (cache)
+        cache->childrenChanged(this);
+#endif    
 }
 
 

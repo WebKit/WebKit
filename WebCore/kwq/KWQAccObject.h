@@ -33,6 +33,7 @@ namespace khtml {
 {
     khtml::RenderObject* m_renderer;
     id m_data;
+    NSMutableArray* m_children;
 }
 
 -(id)initWithRenderer:(khtml::RenderObject*)renderer;
@@ -48,5 +49,8 @@ namespace khtml {
 -(KWQAccObject*)previousSibling;
 -(KWQAccObject*)nextSibling;
 -(KWQAccObject*)parentObject;
+
+-(void)childrenChanged;
+-(void)clearChildren;
 
 @end
