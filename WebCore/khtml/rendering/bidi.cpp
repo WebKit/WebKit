@@ -2277,15 +2277,15 @@ void RenderBlock::checkLinesForTextOverflow()
                     borderLeft() + paddingLeft(); // FIXME: In theory we will one day do RTL scrollbars, and then this
                                                   // RTL computation will want to add in the vertical scroller's width.
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        int lineBoxEdge = ltr ? curr->xPos() : curr->xPos() + curr->width();
+        int lineBoxEdge = ltr ? curr->xPos() + curr->width() : curr->xPos();
         if ((ltr && lineBoxEdge > blockEdge) || (!ltr && lineBoxEdge < blockEdge)) {
             // This line spills out of our box in the appropriate direction.  Now we need to see if the line
             // can be truncated.  In order for truncation to be possible, the line must have sufficient space to
             // accommodate our truncation string, and no replaced elements (images, tables) can overlap the ellipsis
             // space.
             int width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
-            if (curr->canAccommodateEllipsis(ltr, lineBoxEdge, blockEdge, width))
-                curr->placeEllipsis(ellipsisStr, blockEdge, ltr, width);
+            if (curr->canAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width))
+                curr->placeEllipsis(ellipsisStr, ltr, blockEdge, width);
         }
     }
 }

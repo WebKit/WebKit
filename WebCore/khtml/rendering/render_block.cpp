@@ -1289,7 +1289,8 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         }
     }
     paintLineBoxDecorations(paintInfo, scrolledX, scrolledY, true); // Strike-through
-    
+    paintEllipsisBoxes(paintInfo, scrolledX, scrolledY);
+
     // 3. paint floats.
     if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
         paintFloats(paintInfo, scrolledX, scrolledY, paintAction == PaintActionSelection);
@@ -1352,6 +1353,31 @@ void RenderBlock::paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelectio
                 info.phase = PaintActionOutline;
                 r->node->paint(info, tx, ty);
             }
+        }
+    }
+}
+
+void RenderBlock::paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty)
+{
+    if (!shouldPaintWithinRoot(i) || !firstLineBox())
+        return;
+
+    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
+        // We can check the first box and last box and avoid painting if we don't
+        // intersect.
+        int yPos = _ty + firstLineBox()->yPos();;
+        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
+            return;
+
+        // See if our boxes intersect with the dirty rect.  If so, then we paint
+        // them.  Note that boxes can easily overlap, so we can't make any assumptions
+        // based off positions of our first line box or our last line box.
+        for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
+            yPos = _ty + curr->yPos();
+            h = curr->height();
+            if (curr->ellipsisBox() && (yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+                curr->ellipsisBox()->paint(i, _tx, _ty);
         }
     }
 }

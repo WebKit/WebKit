@@ -291,7 +291,7 @@ float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos,
     return [data->getRenderer() floatWidthForRun:&run style:&style widths:buffer];
 }
 
-int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed) const
+int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
 {
     if (data.isNull()) {
         ERROR("called floatWidth on an empty QFontMetrics");
@@ -311,7 +311,7 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     style.families = families;
     style.padding = toAdd;
 
-    return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed];
+    return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const

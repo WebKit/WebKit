@@ -60,7 +60,7 @@ public:
                      int letterSpacing, int wordSpacing, bool smallCaps) const;
     float floatCharacterWidths(const QChar *, int slen, int pos, int len, int toAdd, float *buffer,
                                int letterSpacing, int wordSpacing, bool smallCaps) const;
-    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed) const;
+    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;

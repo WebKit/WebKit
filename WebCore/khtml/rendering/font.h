@@ -129,7 +129,7 @@ public:
     float floatWidth( QChar *str, int slen, int pos, int len ) const;
     void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const;
     bool isFixedPitch() const;
-    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed) const;
+    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed, bool includePartialGlyphs) const;
     void drawHighlightForText( QPainter *p, int x, int minX, int maxX, int y, int h, 
                    QChar *str, int slen, int pos, int len, int width,
                    QPainter::TextDirection d, bool visuallyOrdered = false, int from=-1, int to=-1, QColor bg=QColor()) const;

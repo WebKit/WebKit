@@ -126,9 +126,9 @@ void Font::floatCharacterWidths( QChar *str, int slen, int pos, int len, int toA
     fm.floatCharacterWidths(str, slen, pos, len, toAdd, buffer, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
-int Font::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed) const
+int Font::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed, bool includePartialGlyphs) const
 {
-    return fm.checkSelectionPoint (s, slen, pos, len, toAdd, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed);
+    return fm.checkSelectionPoint (s, slen, pos, len, toAdd, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed, includePartialGlyphs);
 }
 
 #endif

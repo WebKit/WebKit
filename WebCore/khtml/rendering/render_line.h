@@ -32,7 +32,7 @@ namespace khtml {
 
 class InlineFlowBox;
 class RootInlineBox;
-    
+
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox
@@ -135,7 +135,8 @@ public:
     void dirtyLineBoxes();
     
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
-    
+    virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
+
 public: // FIXME: Would like to make this protected, but methods are accessing these
         // members over in the part.
     RenderObject* m_object;
@@ -267,7 +268,8 @@ public:
     void removeChild(InlineBox* child);
     
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
-    
+    virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
+
 protected:
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;
@@ -280,15 +282,19 @@ class EllipsisBox : public InlineBox
 {
 public:
     EllipsisBox(RenderObject* obj, const DOM::AtomicString& ellipsisStr, InlineFlowBox* p,
-                int w, int y, int h, int b)
+                int w, int y, int h, int b, bool firstLine)
     :InlineBox(obj), m_str(ellipsisStr) {
         m_parent = p;
         m_width = w;
         m_y = y;
         m_height = h;
         m_baseline = b;
+        m_firstLine = firstLine;
+        m_constructed = true;
     }
 
+    void paint(const RenderObject::PaintInfo& i, int _tx, int _ty);
+    
 private:
     DOM::AtomicString m_str;
 };
@@ -329,8 +335,11 @@ public:
     void childRemoved(InlineBox* box);
 
     bool canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
-    void placeEllipsis(const DOM::AtomicString& ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth);
+    void placeEllipsis(const DOM::AtomicString& ellipsisStr, bool ltr, int blockEdge, int ellipsisWidth);
+    virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
+    EllipsisBox* ellipsisBox() const { return m_ellipsisBox; }
+        
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further

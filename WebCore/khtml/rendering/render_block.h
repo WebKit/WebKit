@@ -133,6 +133,7 @@ public:
     virtual void paint(PaintInfo& i, int tx, int ty);
     void paintObject(PaintInfo& i, int tx, int ty);
     void paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelection = false);
+    void paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty);
 
     void insertFloatingObject(RenderObject *o);
     void removeFloatingObject(RenderObject *o);

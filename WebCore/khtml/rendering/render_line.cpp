@@ -187,9 +187,15 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     if (!m_object || !m_object->isReplaced())
         return true;
     
-    QRect boxRect(m_x, 0, m_width, 1);
-    QRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 1);
+    QRect boxRect(m_x, 0, m_width, 10);
+    QRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 10);
     return !(boxRect.intersects(ellipsisRect));
+}
+
+int InlineBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&)
+{
+    // Use -1 to mean "we didn't set the position."
+    return -1;
 }
 
 int InlineFlowBox::marginLeft()
@@ -720,6 +726,26 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
     if (deco != TDNONE && 
         ((!paintedChildren && ((deco & UNDERLINE) || (deco & OVERLINE))) || (paintedChildren && (deco & LINE_THROUGH))) &&
         shouldDrawDecoration(object())) {
+        int x = m_x + borderLeft() + paddingLeft();
+        int w = m_width - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
+        RootInlineBox* rootLine = root();
+        if (rootLine->ellipsisBox()) {
+            int ellipsisX = rootLine->ellipsisBox()->xPos();
+            int ellipsisWidth = rootLine->ellipsisBox()->width();
+            
+            // FIXME: Will need to work with RTL
+            if (rootLine == this) {
+                if (x + w >= ellipsisX + ellipsisWidth)
+                    w -= (x + w - ellipsisX - ellipsisWidth);
+            }
+            else {
+                if (x >= ellipsisX)
+                    return;
+                if (x + w >= ellipsisX)
+                    w -= (x + w - ellipsisX);
+            }
+        }
+            
 #if APPLE_CHANGES
         // Set up the appropriate text-shadow effect for the decoration.
         // FIXME: Support multiple shadow effects.  Need more from the CG API before we can do this.
@@ -733,7 +759,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         
         // We must have child boxes and have decorations defined.
         _tx += borderLeft() + paddingLeft();
-        int w = m_width - (borderLeft() + paddingLeft() + borderRight() + paddingRight());
+        
         QColor underline, overline, linethrough;
         underline = overline = linethrough = styleToUse->color();
         if (!parent())
@@ -820,6 +846,47 @@ bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsis
     return true;
 }
 
+int InlineFlowBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox)
+{
+    int result = -1;
+    for (InlineBox *box = firstChild(); box; box = box->nextOnLine()) {
+        int currResult = box->placeEllipsisBox(ltr, blockEdge, ellipsisWidth, foundBox);
+        if (currResult != -1 && result == -1)
+            result = currResult;
+    }
+    return result;
+}
+
+void EllipsisBox::paint(const RenderObject::PaintInfo& i, int _tx, int _ty)
+{
+    QPainter* p = i.p;
+    RenderStyle* _style = m_firstLine ? m_object->style(true) : m_object->style();
+    if (_style->font() != p->font())
+        p->setFont(_style->font());
+
+    const Font* font = &_style->htmlFont();
+    QColor textColor = _style->color();
+    if (textColor != p->pen().color())
+        p->setPen(textColor);
+    bool setShadow = false;
+    if (_style->textShadow()) {
+        p->setShadow(_style->textShadow()->x, _style->textShadow()->y,
+                     _style->textShadow()->blur, _style->textShadow()->color);
+        setShadow = true;
+    }
+    
+    const DOMString& str = m_str.string();
+    font->drawText(p, m_x + _tx, 
+                      m_y + _ty + m_baseline,
+                      (str.implementation())->s,
+                      str.length(), 0, str.length(),
+                      0, 
+                      QPainter::LTR, _style->visuallyOrdered());
+                      
+    if (setShadow)
+        p->clearShadow();
+}
+
 void RootInlineBox::detach(RenderArena* arena)
 {
     detachEllipsisBox(arena);
@@ -846,15 +913,25 @@ bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxE
     return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth)
+void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, int blockEdge, int ellipsisWidth)
 {
     // Create an ellipsis box.
     m_ellipsisBox = new (m_object->renderArena()) EllipsisBox(m_object, ellipsisStr, this, ellipsisWidth,
-                                                              yPos(), height(), baseline());
+                                                              yPos(), height(), baseline(), !prevRootBox());
 
     // Now attempt to find the nearest glyph horizontally and place just to the right (or left in RTL)
     // of that glyph.  Mark all of the objects that intersect the ellipsis box as not painting (as being
     // truncated).
+    bool foundBox = false;
+    m_ellipsisBox->m_x = placeEllipsisBox(ltr, blockEdge, ellipsisWidth, foundBox);
+}
+
+int RootInlineBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox)
+{
+    int result = InlineFlowBox::placeEllipsisBox(ltr, blockEdge, ellipsisWidth, foundBox);
+    if (result == -1)
+        result = ltr ? blockEdge - ellipsisWidth : blockEdge;
+    return result;
 }
 
 void RootInlineBox::adjustVerticalPosition(int delta)

@@ -145,8 +145,8 @@ struct CharacterWidthIterator
 - (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 // Selection point detection in runs.
-- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
-- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
+- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
+- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs;
 
 // Drawing highlight for runs.
 - (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
@@ -518,15 +518,15 @@ static BOOL alwaysUseATSU = NO;
     }
 }
 
-- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     if (style->smallCaps && !isSmallCapsRenderer) {
-        return [[self _smallCapsRenderer] pointToOffset:run style:style position:x reversed:reversed];
+        return [[self _smallCapsRenderer] pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
     }
 
     if (shouldUseATSU(run))
-        return [self _ATSU_pointToOffset:run style:style position:x reversed:reversed];
-    return [self _CG_pointToOffset:run style:style position:x reversed:reversed];
+        return [self _ATSU_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
+    return [self _CG_pointToOffset:run style:style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
 
 @end
@@ -1548,7 +1548,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         free ((void *)swappedRun.characters);
 }
 
-- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     // The only Cocoa calls made here is to the self call to
     // _createATSUTextLayoutForRun:. This is exception-safe.
@@ -1571,6 +1571,9 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     layout = [self _createATSUTextLayoutForRun:aRun];
 
     primaryOffset = aRun->from;
+    
+    // FIXME: No idea how to avoid including partial glyphs.   Not even sure if that's the behavior
+    // this yields now.
     status = ATSUPositionToOffset(layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
     if (status == noErr){
         offset = (unsigned)primaryOffset;
@@ -1586,7 +1589,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     return offset - aRun->from;
 }
 
-- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     float delta = (float)x;
     float width;
@@ -1600,37 +1603,39 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         delta -= width;
         while (offset < run->length) {
             float w = widthForNextCharacter(&widthIterator, 0, 0);
-            if (w == INVALID_WIDTH){
+            if (w == INVALID_WIDTH) {
                 // Something very bad happened, like we only have half of a surrogate pair.
                 break;
             }
             else {
-                if (w){
-                    float w2 = w/2;
-                    w -= w2;
-                    delta += w2;
+                if (w) {
+                    if (includePartialGlyphs)
+                       w -= w/2;
+                    delta += w;
                     if(delta >= 0)
                         break;
-                    delta += w;
+                    if (includePartialGlyphs)
+                        delta += w;
                 }
                 offset = widthIterator.currentCharacter;
             }
         }
     } else {
-        while(offset < run->length) {
+        while (offset < run->length) {
             float w = widthForNextCharacter(&widthIterator, 0, 0);
-            if (w == INVALID_WIDTH){
+            if (w == INVALID_WIDTH) {
                 // Something very bad happened, like we only have half of a surrogate pair.
                 break;
             }
             else {
-                if (w){
-                    float w2 = w/2;
-                    w -= w2;
-                    delta -= w2;
+                if (w) {
+                    if (includePartialGlyphs)
+                        w -= w/2;
+                    delta -= w;
                     if(delta <= 0) 
                         break;
-                    delta -= w;
+                    if (includePartialGlyphs)
+                        delta -= w;
                 }
                 offset = widthIterator.currentCharacter;
             }

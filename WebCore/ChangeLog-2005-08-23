@@ -1,3 +1,42 @@
+2004-06-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3596620, implement a subset of CSS3 text truncation for Emerson.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/font.cpp:
+        (Font::checkSelectionPoint):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::paintFloats):
+        (khtml::RenderBlock::paintEllipsisBoxes):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineBox::canAccommodateEllipsis):
+        (InlineBox::placeEllipsisBox):
+        (InlineFlowBox::paintDecorations):
+        (InlineFlowBox::placeEllipsisBox):
+        (EllipsisBox::paint):
+        (RootInlineBox::placeEllipsis):
+        (RootInlineBox::placeEllipsisBox):
+        * khtml/rendering/render_line.h:
+        (khtml::EllipsisBox::m_str):
+        (khtml::RootInlineBox::ellipsisBox):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::placeEllipsisBox):
+        (InlineTextBox::paintDecoration):
+        (InlineTextBox::offsetForPosition):
+        (RenderText::positionForCoordinates):
+        (RenderText::paint):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/WebCoreTextRenderer.h:
+
 2004-06-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

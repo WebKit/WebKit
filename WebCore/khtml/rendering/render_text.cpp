@@ -94,6 +94,49 @@ void InlineTextBox::attachLine()
     static_cast<RenderText*>(m_object)->attachTextBox(this);
 }
 
+int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox)
+{
+    if (foundBox) {
+        m_truncation = cFullTruncation;
+        return -1;
+    }
+
+    int ellipsisX = ltr ? blockEdge - ellipsisWidth : blockEdge + ellipsisWidth;
+    
+    // For LTR, if the left edge of the ellipsis is to the left of our text run, then we are the run that will get truncated.
+    if (ltr) {
+        if (ellipsisX <= m_x) {
+            // Too far.  Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
+            m_truncation = cFullTruncation;
+            foundBox = true;
+            return -1;
+        }
+
+        if (ellipsisX < m_x + m_width) {
+            if (m_reversed)
+                return -1; // FIXME: Support LTR truncation when the last run is RTL someday.
+
+            foundBox = true;
+
+            int offset = offsetForPosition(ellipsisX, false);
+            if (offset == 0) {
+                // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
+                // and the ellipsis edge.
+                m_truncation = cFullTruncation;
+                return kMin(ellipsisX, m_x);
+            }
+            
+            // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
+            m_truncation = offset + m_start;
+            return m_x + static_cast<RenderText*>(m_object)->width(m_start, offset, m_firstLine);
+        }
+    }
+    else {
+        // FIXME: Support RTL truncation someday, including both modes (when the leftmost run on the line is either RTL or LTR)
+    }
+    return -1;
+}
+
 void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos, bool extendSelection)
 {
     int offset = m_start;
@@ -164,6 +207,12 @@ void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
     _tx += m_x;
     _ty += m_y;
 
+    if (m_truncation == cFullTruncation)
+        return;
+    
+    int width = (m_truncation == cNoTruncation) ? 
+                m_width : static_cast<RenderText*>(m_object)->width(m_start, m_truncation - m_start, m_firstLine);
+    
     // Get the text decoration colors.
     QColor underline, overline, linethrough;
     object()->getTextDecorationColors(deco, underline, overline, linethrough, true);
@@ -171,15 +220,15 @@ void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
     // Use a special function for underlines to get the positioning exactly right.
     if (deco & UNDERLINE) {
         pt->setPen(underline);
-        pt->drawLineForText(_tx, _ty, m_baseline, m_width);
+        pt->drawLineForText(_tx, _ty, m_baseline, width);
     }
     if (deco & OVERLINE) {
         pt->setPen(overline);
-        pt->drawLineForText(_tx, _ty, 0, m_width);
+        pt->drawLineForText(_tx, _ty, 0, width);
     }
     if (deco & LINE_THROUGH) {
         pt->setPen(linethrough);
-        pt->drawLineForText(_tx, _ty, 2*m_baseline/3, m_width);
+        pt->drawLineForText(_tx, _ty, 2*m_baseline/3, width);
     }
 }
 #else
@@ -230,38 +279,11 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
 
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
-int InlineTextBox::offsetForPosition(int _x, int _tx, const Font *f, const RenderText *text)
+int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs)
 {
-#if APPLE_CHANGES
-    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
-#else
-    int pos = 0;
-    int delta = _x - (_tx + m_x);
-    if (m_reversed) {
-        delta -= m_width;
-        while (pos < m_len) {
-            int w = f->width( text->str->s, text->str->l, m_start + pos);
-            int w2 = w/2;
-            w -= w2;
-            delta += w2;
-            if(delta >= 0) break;
-            pos++;
-            delta += w;
-        }
-    } 
-    else {
-        while (pos < m_len) {
-            int w = f->width( text->str->s, text->str->l, m_start + pos);
-            int w2 = w/2;
-            w -= w2;
-            delta -= w2;
-            if(delta <= 0) break;
-            pos++;
-            delta -= w;
-        }
-    }
-    return pos;
-#endif
+    RenderText* text = static_cast<RenderText*>(m_object);
+    const Font* f = text->htmlFont(m_firstLine);
+    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - m_x, m_reversed, includePartialGlyphs);
 }
 
 // -------------------------------------------------------------------------------------
@@ -491,8 +513,7 @@ Position RenderText::positionForCoordinates(int _x, int _y)
             if (_x < absx + box->m_x + box->m_width) {
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
-                const Font *f = htmlFont(box == firstTextBox());
-                int offset = box->offsetForPosition(_x, absx, f, this);
+                int offset = box->offsetForPosition(_x - absx);
                 if (offset != -1) {
                     return Position(element(), offset + box->m_start);
                 }
@@ -677,6 +698,9 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
             }
         }
 
+        if (s->m_truncation == cFullTruncation)
+            continue;
+        
         RenderStyle* _style = pseudoStyle && s->m_firstLine ? pseudoStyle : style();
 
         if (_style->font() != p->font())
@@ -729,15 +753,14 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
             }
             
             if (!paintSelectedTextOnly && !paintSelectedTextSeparately) {
-#if APPLE_CHANGES
+                // FIXME: Handle RTL direction, handle reversed strings.  For now truncation can only be turned on
+                // for non-reversed LTR strings.
+                int endPoint = s->m_len;
+                if (s->m_truncation != cNoTruncation)
+                    endPoint = s->m_truncation - s->m_start;
                 font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
-                               str->s, str->l, s->m_start, s->m_len,
+                               str->s, str->l, s->m_start, endPoint,
                                s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered());
-#else
-                font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
-                               str->s, str->l, s->m_start, s->m_len,
-                               s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
-#endif
             }
             else {
                 int offset = s->m_start;
