@@ -1,3 +1,12 @@
+2004-11-03  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        Eliminate the use of a marker file to determine how to build.
+
+        * .cvsignore:
+        * Makefile.am:
+
 2004-11-01  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3861469> Latest Real player crashes Safari on some sites.
