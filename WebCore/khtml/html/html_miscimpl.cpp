@@ -56,24 +56,46 @@ HTMLCollectionImpl::HTMLCollectionImpl(NodeImpl *_base, int _type)
     base->ref();
     type = _type;
     idsDone = false;
-    info = base->isDocumentNode() ? static_cast<HTMLDocumentImpl*>(base->getDocument())->collectionInfo(type) : new CollectionInfo;
+    info = base->isDocumentNode() ? static_cast<HTMLDocumentImpl*>(base->getDocument())->collectionInfo(type) : 0;
 }
 
 HTMLCollectionImpl::~HTMLCollectionImpl()
 {
-    if (!base->isDocumentNode())
-        delete info;
     base->deref();
+}
+
+HTMLCollectionImpl::CollectionInfo::CollectionInfo() :
+    version(0)
+{
+    idCache.setAutoDelete(true);
+    nameCache.setAutoDelete(true);
+    reset();
+}
+
+void HTMLCollectionImpl::CollectionInfo::reset()
+{
+    current = 0;
+    position = 0;
+    length = 0;
+    haslength = false;
+    elementsArrayPosition = 0;
+    idCache.clear();
+    nameCache.clear();
+    hasNameCache = false;
 }
 
 void HTMLCollectionImpl::resetCollectionInfo() const
 {
     unsigned int docversion = static_cast<HTMLDocumentImpl*>(base->getDocument())->domTreeVersion();
+
+    if (!info) {
+        info = new CollectionInfo;
+        info->version = docversion;
+        return;
+    }
+
     if (info->version != docversion) {
-        info->current = 0;
-        info->position = 0;
-        info->length = 0;
-        info->haslength = false;
+        info->reset();
         info->version = docversion;
     }
 }
@@ -234,12 +256,28 @@ bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const
     ElementImpl *e = static_cast<ElementImpl *>(node);
     if (caseSensitive) {
         if (checkName) {
+            // document.all returns only images, forms, applets, objects and embeds
+            // by name (though everything by id)
+            if (type == DOC_ALL && 
+                !(e->id() == ID_IMG || e->id() == ID_FORM ||
+                  e->id() == ID_APPLET || e->id() == ID_OBJECT ||
+                  e->id() == ID_EMBED))
+                return false;
+
             return e->getAttribute(ATTR_NAME) == name && e->getAttribute(ATTR_ID) != name;
         } else {
             return e->getAttribute(ATTR_ID) == name;
         }
     } else {
         if (checkName) {
+            // document.all returns only images, forms, applets, objects and embeds
+            // by name (though everything by id)
+            if (type == DOC_ALL && 
+                !(e->id() == ID_IMG || e->id() == ID_FORM ||
+                  e->id() == ID_APPLET || e->id() == ID_OBJECT ||
+                  e->id() == ID_EMBED))
+                return false;
+
             return e->getAttribute(ATTR_NAME).domString().lower() == name.lower() &&
                 e->getAttribute(ATTR_ID).domString().lower() != name.lower();
         } else {
@@ -281,30 +319,73 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensiti
     return info->current;
 }
 
-QValueList<Node> HTMLCollectionImpl::namedItems(const DOMString &name) const
+template<class T> static void appendToVector(QPtrVector<T> *vec, T *item)
 {
-    resetCollectionInfo();
-    
-    QValueList<Node> idResults;
-    QValueList<Node> nameResults;
+    unsigned size = vec->size();
+    unsigned count = vec->count();
+    if (size == count)
+        vec->resize(size == 0 ? 8 : (int)(size * 1.5));
+    vec->insert(count, item);
+}
 
+void HTMLCollectionImpl::updateNameCache() const
+{
+    if (info->hasNameCache)
+        return;
+    
     for (NodeImpl *n = traverseNextItem(base); n; n = traverseNextItem(n)) {
-        if (checkForNameMatch(n, false, name, true)) {
-            idResults.append(Node(n));
-        } 
-        if (checkForNameMatch(n, true, name, true)) {
-            nameResults.append(Node(n));
+        ElementImpl *e = static_cast<ElementImpl *>(n);
+        QString idAttr = e->getAttribute(ATTR_ID).string();
+        QString nameAttr = e->getAttribute(ATTR_NAME).string();
+        if (!idAttr.isEmpty()) {
+            // add to id cache
+            QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttr);
+            if (!idVector) {
+                idVector = new QPtrVector<NodeImpl>;
+                info->idCache.insert(idAttr, idVector);
+            }
+            appendToVector(idVector, n);
+        }
+        if (!nameAttr.isEmpty() && idAttr != nameAttr
+            && (type != DOC_ALL || 
+                (e->id() == ID_IMG || e->id() == ID_FORM ||
+                 e->id() == ID_APPLET || e->id() == ID_OBJECT ||
+                 e->id() == ID_EMBED))) {
+            // add to name cache
+            QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+            if (!nameVector) {
+                nameVector = new QPtrVector<NodeImpl>;
+                info->nameCache.insert(nameAttr, nameVector);
+            }
+            appendToVector(nameVector, n);
         }
     }
 
-    if (idResults.isEmpty())
-        return nameResults;
+    info->hasNameCache = true;
+}
 
-    for (QValueListIterator<Node> iter = nameResults.begin(); iter != nameResults.end(); ++iter) {
-        idResults.append(*iter);
+QValueList<Node> HTMLCollectionImpl::namedItems(const DOMString &name) const
+{
+    QValueList<Node> result;
+
+    if (name.isEmpty())
+        return result;
+
+    resetCollectionInfo();
+    updateNameCache();
+    
+    QPtrVector<NodeImpl> *idResults = info->idCache.find(name.string());
+    QPtrVector<NodeImpl> *nameResults = info->nameCache.find(name.string());
+    
+    for (unsigned i = 0; idResults && i < idResults->count(); ++i) {
+        result.append(idResults->at(i));
     }
 
-    return idResults;
+    for (unsigned i = 0; nameResults && i < nameResults->count(); ++i) {
+        result.append(nameResults->at(i));
+    }
+
+    return result;
 }
 
 
@@ -337,23 +418,18 @@ NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
 
 // -----------------------------------------------------------------------------
 
-HTMLFormCollectionImpl::FormCollectionInfo::FormCollectionInfo()
+HTMLFormCollectionImpl::HTMLFormCollectionImpl(NodeImpl* _base)
+    : HTMLCollectionImpl(_base, 0)
 {
-    reset();
-}
-
-void::HTMLFormCollectionImpl::FormCollectionInfo::reset()
-{
-    elementsArrayPosition = 0;
-}
-
-void HTMLFormCollectionImpl::resetCollectionInfo() const
-{
-    unsigned int docversion = static_cast<HTMLDocumentImpl*>(base->getDocument())->domTreeVersion();
-    if (info->version != docversion) {
-        formInfo.reset();
+    HTMLFormElementImpl *formBase = static_cast<HTMLFormElementImpl*>(base);
+    if (!formBase->collectionInfo) {
+        formBase->collectionInfo = new CollectionInfo();
     }
-    HTMLCollectionImpl::resetCollectionInfo();
+    info = formBase->collectionInfo;
+}
+
+HTMLFormCollectionImpl::~HTMLFormCollectionImpl()
+{
 }
 
 unsigned long HTMLFormCollectionImpl::calcLength() const
@@ -381,18 +457,18 @@ NodeImpl *HTMLFormCollectionImpl::item(unsigned long index) const
     if (!info->current || info->position > index) {
         info->current = 0;
         info->position = 0;
-        formInfo.elementsArrayPosition = 0;
+        info->elementsArrayPosition = 0;
     }
 
     QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
     unsigned currentIndex = info->position;
     
-    for (unsigned i = formInfo.elementsArrayPosition; i < l.count(); i++) {
+    for (unsigned i = info->elementsArrayPosition; i < l.count(); i++) {
         if (l[i]->isEnumeratable() ) {
             if (index == currentIndex) {
                 info->position = index;
                 info->current = l[i];
-                formInfo.elementsArrayPosition = i;
+                info->elementsArrayPosition = i;
                 return l[i];
             }
 
@@ -522,60 +598,72 @@ NodeImpl *HTMLFormCollectionImpl::nextNamedItem( const DOMString &name ) const
     return impl;
 }
 
-QValueList<Node> HTMLFormCollectionImpl::namedItems(const DOMString &name) const
+void HTMLFormCollectionImpl::updateNameCache() const
 {
-    if (name.length()) {
-        return QValueList<Node>();
+    if (info->hasNameCache)
+        return;
+
+    QDict<char> foundInputElements;
+
+    if (base->nodeType() != Node::ELEMENT_NODE ||static_cast<HTMLElementImpl*>(base)->id() != ID_FORM) {
+        info->hasNameCache = true;
+        return;
     }
-
-    resetCollectionInfo();
-
-    QValueList<Node> idResults;
-    QValueList<Node> nameResults;
-
-    if (base->nodeType() != Node::ELEMENT_NODE ||static_cast<HTMLElementImpl*>(base)->id() != ID_FORM)
-        return idResults;
 
     HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(base);
 
-    bool foundInputElements = false;
     HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
     for (unsigned i = 0; i < f->formElements.count(); ++i) {
         HTMLGenericFormElementImpl* e = f->formElements[i];
         if (e->isEnumeratable()) {
-            if (checkForNameMatch(e, false, name, true)) {
-                idResults.append(Node(e));
-                foundInputElements = true;
-            } 
-            if (checkForNameMatch(e, true, name, true)) {
-                nameResults.append(Node(e));
-                foundInputElements = true;
+            QString idAttr = e->getAttribute(ATTR_ID).string();
+            QString nameAttr = e->getAttribute(ATTR_NAME).string();
+            if (!idAttr.isEmpty()) {
+                // add to id cache
+                QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttr);
+                if (!idVector) {
+                    idVector = new QPtrVector<NodeImpl>;
+                    info->idCache.insert(idAttr, idVector);
+                }
+                appendToVector(idVector, static_cast<NodeImpl *>(e));
+                foundInputElements.insert(idAttr, (char *)true);
+            }
+            if (!nameAttr.isEmpty() && idAttr != nameAttr) {
+                // add to name cache
+                QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+                if (!nameVector) {
+                    nameVector = new QPtrVector<NodeImpl>;
+                    info->nameCache.insert(nameAttr, nameVector);
+                }
+                appendToVector(nameVector, static_cast<NodeImpl *>(e));
+                foundInputElements.insert(nameAttr, (char *)true);
             }
         }
     }
 
-    if (!foundInputElements) {
-        HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-
-        for (unsigned i = 0; i < f->imgElements.count(); ++i) {
-            HTMLImageElementImpl* e = f->imgElements[i];
-
-            if (checkForNameMatch(e, false, name, true)) {
-                idResults.append(Node(e));
-            } 
-            if (checkForNameMatch(e, true, name, true)) {
-                nameResults.append(Node(e));
+    for (unsigned i = 0; i < f->imgElements.count(); ++i) {
+        HTMLImageElementImpl* e = f->imgElements[i];
+        QString idAttr = e->getAttribute(ATTR_ID).string();
+        QString nameAttr = e->getAttribute(ATTR_NAME).string();
+        if (!idAttr.isEmpty() && !foundInputElements.find(idAttr)) {
+            // add to id cache
+            QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttr);
+            if (!idVector) {
+                idVector = new QPtrVector<NodeImpl>;
+                info->idCache.insert(idAttr, idVector);
             }
+            appendToVector(idVector, static_cast<NodeImpl *>(e));
+        }
+        if (!nameAttr.isEmpty() && idAttr != nameAttr && !foundInputElements.find(nameAttr)) {
+            // add to name cache
+            QPtrVector<NodeImpl> *nameVector = info->idCache.find(nameAttr);
+            if (!nameVector) {
+                nameVector = new QPtrVector<NodeImpl>;
+                info->nameCache.insert(nameAttr, nameVector);
+            }
+            appendToVector(nameVector, static_cast<NodeImpl *>(e));
         }
     }
 
-    if (idResults.isEmpty())
-        return nameResults;
-
-    for (QValueListIterator<Node> iter = nameResults.begin(); iter != nameResults.end(); ++iter) {
-        idResults.append(*iter);
-    }
-
-    return idResults;
+    info->hasNameCache = true;
 }
-

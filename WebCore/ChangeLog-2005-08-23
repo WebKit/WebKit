@@ -1,3 +1,34 @@
+2004-11-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	<rdar://problem/3492044> performing JavaScript operations on form elements is slower than WinIE (HTMLFormCollection)
+	<rdar://problem/3489679> selecting an item on the Apache bugzilla query page is very slow (HTMLFormCollection)
+	<rdar://problem/3477810> checking 80 check boxes with JavaScript is 10x slower than in IE (HTMLFormCollection)
+	<rdar://problem/3760962> JavaScript that toggles checkboxes is slow (HTMLCollection,HTMLFormCollection)
+        
+	* khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::HTMLCollectionImpl):
+        (HTMLCollectionImpl::~HTMLCollectionImpl):
+        (HTMLCollectionImpl::CollectionInfo::CollectionInfo):
+        (HTMLCollectionImpl::CollectionInfo::reset):
+        (HTMLCollectionImpl::resetCollectionInfo):
+        (HTMLCollectionImpl::checkForNameMatch):
+        (appendToVector):
+        (HTMLCollectionImpl::updateNameCache):
+        (HTMLCollectionImpl::namedItems):
+        (HTMLFormCollectionImpl::HTMLFormCollectionImpl):
+        (HTMLFormCollectionImpl::~HTMLFormCollectionImpl):
+        (HTMLFormCollectionImpl::item):
+        (HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_miscimpl.h:
+
 2004-11-22  David Hyatt  <hyatt@apple.com>
 
 	Improve the WebCore cache so that the maximum cacheable object size is scaled based off the total cache

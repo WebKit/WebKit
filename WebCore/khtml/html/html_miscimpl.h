@@ -25,6 +25,8 @@
 
 #include "html_elementimpl.h"
 #include "misc/shared.h"
+#include <qdict.h>
+#include <qptrvector.h>
 
 namespace DOM {
 
@@ -83,18 +85,25 @@ public:
     // In case of multiple items named the same way
     NodeImpl *nextNamedItem( const DOMString &name ) const;
 
-    virtual QValueList<Node> namedItems( const DOMString &name ) const;
+    QValueList<Node> namedItems( const DOMString &name ) const;
 
     struct CollectionInfo {
-        CollectionInfo() : version(0), current(0), position(0), length(0), haslength(false) {}
+        CollectionInfo();
+        void reset();
         unsigned int version;
         NodeImpl *current;
         unsigned int position;
         unsigned int length;
         bool haslength;
+        int elementsArrayPosition;
+        QDict<QPtrVector<NodeImpl> > idCache;
+        QDict<QPtrVector<NodeImpl> > nameCache;
+        bool hasNameCache;
      };
 
 protected:
+    virtual void updateNameCache() const;
+
     virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
     bool checkForNameMatch(NodeImpl *node, bool checkName, const DOMString &name, bool caseSensitive) const;
     virtual unsigned long calcLength() const;
@@ -116,16 +125,8 @@ class HTMLFormCollectionImpl : public HTMLCollectionImpl
 {
 public:
     // base must inherit HTMLGenericFormElementImpl or this won't work
-    HTMLFormCollectionImpl(NodeImpl* _base)
-        : HTMLCollectionImpl(_base, 0)
-    {};
-    ~HTMLFormCollectionImpl() {}
-
-    struct FormCollectionInfo {
-        FormCollectionInfo(); 
-        void reset();
-        int elementsArrayPosition;
-     };
+    HTMLFormCollectionImpl(NodeImpl* _base);
+    ~HTMLFormCollectionImpl();
 
     virtual NodeImpl *item ( unsigned long index ) const;
     virtual NodeImpl *firstItem() const;
@@ -134,15 +135,13 @@ public:
     NodeImpl *namedItem ( const DOMString &name, bool caseSensitive = true ) const;
     NodeImpl *nextNamedItem( const DOMString &name ) const;
 
-    virtual QValueList<Node> namedItems( const DOMString &name ) const;
 protected:
+    virtual void updateNameCache() const;
     virtual unsigned long calcLength() const;
     virtual NodeImpl *getNamedItem(NodeImpl* current, int attr_id, const DOMString& name, bool caseSensitive) const;
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
 private:
-    virtual void resetCollectionInfo() const;
     NodeImpl* getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
-    mutable FormCollectionInfo formInfo;
     mutable int currentPos;
 };
 

@@ -95,6 +95,7 @@ private:
 HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
+    collectionInfo = 0;
     m_post = false;
     m_multipart = false;
     m_autocomplete = true;
@@ -109,6 +110,8 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
 
 HTMLFormElementImpl::~HTMLFormElementImpl()
 {
+    delete collectionInfo;
+    
     for (unsigned i = 0; i < formElements.count(); ++i)
         formElements[i]->m_form = 0;
     for (unsigned i = 0; i < dormantFormElements.count(); ++i)
