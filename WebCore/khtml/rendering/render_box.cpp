@@ -202,6 +202,7 @@ void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
     QColor c = style()->backgroundColor();
     CachedImage *bg = style()->backgroundImage();
 
+    bool canBeTransparent = true;
     if (!c.isValid() && !bg) {
         // Locate the <body> element using the DOM.  This is easier than trying
         // to crawl around a render tree with potential :before/:after content and
@@ -211,6 +212,10 @@ void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
         for (DOM::NodeImpl* elt = element()->firstChild(); elt; elt = elt->nextSibling()) {
             if (elt->id() == ID_BODY) {
                 bodyObject = elt->renderer();
+                break;
+            }
+            else if (elt->id() == ID_FRAMESET) {
+                canBeTransparent = false; // Can't scroll a frameset document anyway.
                 break;
             }
         }
@@ -224,7 +229,8 @@ void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     if (!c.isValid() && canvas()->view()) {
-        if (element()->getDocument()->ownerElement())
+        DOM::NodeImpl* elt = element()->getDocument()->ownerElement();
+        if (canBeTransparent && elt && elt->id() != ID_FRAME) // Frames are never transparent.
             canvas()->view()->useSlowRepaints(); // The parent must show behind the child.
         else
             c = canvas()->view()->palette().active().color(QColorGroup::Base);
@@ -349,17 +355,16 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                         cw += xPosition;
                     }
                 }
+                cx += bleft;
             } else {
-                cw = w-vpab;
+                cw = w;
                 cx = _tx;
-                if(pixw == 0){
+                if (pixw == 0)
                     sx = 0;
-                }else{
+                else
                     sx =  pixw - ((sptr->backgroundXPosition().minWidth(pw-pixw)) % pixw );
-                }
+                sx -= bleft % pixw;
             }
-
-            cx += bleft;
 
             if( (bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh ) {
                 ch = pixh;
@@ -375,17 +380,18 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
                         ch += yPosition;
                     }
                 }
+                
+                cy += borderTop();
             } else {
-                ch = h-hpab;
+                ch = h;
                 cy = _ty;
                 if(pixh == 0){
                     sy = 0;
                 }else{
                     sy = pixh - ((sptr->backgroundYPosition().minWidth(ph-pixh)) % pixh );
                 }
+                sy -= borderTop() % pixh;
             }
-
-            cy += borderTop();
         }
         else
         {
@@ -424,7 +430,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor &c, CachedImag
             }
 
             QRect fix(cx,cy,cw,ch);
-            QRect ele(_tx+bleft,_ty+borderTop(),w-vpab,h-hpab);
+            QRect ele(_tx,_ty,w,h);
             QRect b = fix.intersect(ele);
             sx+=b.x()-cx;
             sy+=b.y()-cy;
