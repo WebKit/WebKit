@@ -524,7 +524,7 @@ static WebHTMLView *lastHitView = nil;
 {
     NSArray *subresourceURLStrings;
     WebHTMLRepresentation *rep = [[self _dataSource] representation];
-    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedRange] subresourceURLStrings:&subresourceURLStrings];
+    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] subresourceURLStrings:&subresourceURLStrings];
     return [rep _webArchiveWithMarkupString:*markupString subresourceURLStrings:subresourceURLStrings];
 }
 

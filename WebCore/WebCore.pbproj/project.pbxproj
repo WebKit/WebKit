@@ -522,6 +522,8 @@
 				BE94EB6705EFFE6B0032DCB5,
 				515B877605F5332F00EABBF9,
 				BE9970C305F7DD1C00611115,
+				BE9CB65905F9546800514D9C,
+				BEF7EEA205FF8F0D009717EE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -797,6 +799,9 @@
 				BE9185E405EE59B80081354D,
 				BE94EB6805EFFE6B0032DCB5,
 				BE9970C405F7DD1C00611115,
+				BE9CB64E05F942CB00514D9C,
+				BE9CB65A05F9546800514D9C,
+				BEF7EEA305FF8F0D009717EE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2689,6 +2694,48 @@
 			settings = {
 			};
 		};
+		BE9CB64D05F942CB00514D9C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = DOMInternal.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE9CB64E05F942CB00514D9C = {
+			fileRef = BE9CB64D05F942CB00514D9C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE9CB65705F9546800514D9C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = "DOM-CSS.h";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE9CB65805F9546800514D9C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = "DOM-CSS.mm";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE9CB65905F9546800514D9C = {
+			fileRef = BE9CB65705F9546800514D9C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE9CB65A05F9546800514D9C = {
+			fileRef = BE9CB65805F9546800514D9C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BEB1DD0805C197DF00DD1F43 = {
 			children = (
 				BE9185E005EE59B80081354D,
@@ -2753,6 +2800,34 @@
 		};
 		BEB1DD3E05C1982000DD1F43 = {
 			fileRef = BEB1DD3C05C1982000DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEF7EEA005FF8F0D009717EE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = KWQEditCommand.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEF7EEA105FF8F0D009717EE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = KWQEditCommand.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEF7EEA205FF8F0D009717EE = {
+			fileRef = BEF7EEA005FF8F0D009717EE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEF7EEA305FF8F0D009717EE = {
+			fileRef = BEF7EEA105FF8F0D009717EE;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2844,6 +2919,8 @@
 				354F248A02EE28590ACA2ACA,
 				931C8A160380288B008635CE,
 				931C8A170380288B008635CE,
+				BEF7EEA005FF8F0D009717EE,
+				BEF7EEA105FF8F0D009717EE,
 				65A640F00533BB1F0085E777,
 				93CCF7D4033BD43C008635CE,
 				93CCF7D5033BD43C008635CE,
@@ -6246,8 +6323,11 @@
 			children = (
 				BE94EB6305EFFE6B0032DCB5,
 				BE94EB6505EFFE6B0032DCB5,
-				BE94EB6405EFFE6B0032DCB5,
 				BE16801805EDB91A00B87935,
+				BE9CB65705F9546800514D9C,
+				BE9CB65805F9546800514D9C,
+				BE94EB6405EFFE6B0032DCB5,
+				BE9CB64D05F942CB00514D9C,
 			);
 			isa = PBXGroup;
 			name = DOM;

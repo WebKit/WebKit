@@ -2,10 +2,12 @@
     WebViewPrivate.m
     Copyright 2001, Apple, Inc. All rights reserved.
 */
+#import <WebKit/DOM.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 
+@class DOMRange;
 @class NSError;
 @class WebBackForwardList;
 @class WebFrame;
@@ -48,6 +50,8 @@ extern NSString *_WebMainFrameURLKey;
     id frameLoadDelegate;
     id frameLoadDelegateForwarder;
     id <WebFormDelegate> formDelegate;
+    id editingDelegate;
+    id editingDelegateForwarder;
     
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
@@ -197,6 +201,7 @@ Could be worth adding to the API.
 - (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
 - (id)_policyDelegateForwarder;
 - (id)_UIDelegateForwarder;
+- (id)_editingDelegateForwarder;
 
 - (void)_closeWindow;
 
@@ -294,3 +299,50 @@ Could be worth adding to the API.
 + (id)safeForwarderWithTarget:(id)t defaultTarget:(id)dt templateClass:(Class)aClass;
 @end
 
+
+
+/* ------------------------------------------------------------------*/
+
+typedef enum
+{
+	WebViewInsertActionTyped,	
+	WebViewInsertActionPasted,	
+	WebViewInsertActionDropped,	
+} WebViewInsertAction;
+
+extern NSString * const WebViewDidBeginEditingNotification;
+extern NSString * const WebViewDidChangeNotification;
+extern NSString * const WebViewDidEndEditingNotification;
+extern NSString * const WebViewDidChangeTypingStyleNotification;
+extern NSString * const WebViewDidChangeSelectionNotification;
+
+@interface NSObject (WebViewEditingDelegate)
+- (BOOL)webViewShouldBeginEditing:(WebView *)webView;
+- (BOOL)webViewShouldEndEditing:(WebView *)webView;
+- (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
+- (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
+- (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range;
+- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange;
+- (BOOL)webView:(WebView *)webView shouldApplyStyle:(CSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
+- (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(CSSStyleDeclaration *)currentStyle toStyle:(CSSStyleDeclaration *)proposedStyle;
+- (BOOL)webView:(WebView *)webView doCommandBySelector:(SEL)selector;
+- (void)webViewDidBeginEditing:(NSNotification *)notification;
+- (void)webViewDidChange:(NSNotification *)notification;
+- (void)webViewDidEndEditing:(NSNotification *)notification;
+- (void)webViewDidChangeTypingStyle:(NSNotification *)notification;
+- (void)webViewDidChangeSelection:(NSNotification *)notification;
+- (NSUndoManager *)undoManagerForWebView:(WebView *)webView;
+@end
+
+@interface WebView (WebEditingExtras)
+- (WebBridge *)_bridgeForCurrentSelection;
+- (void)setSelectedDOMRange:(DOMRange *)range;
+- (DOMRange *)selectedDOMRange;
+- (void)setEditingDelegate:(id)delegate;
+- (id)editingDelegate;
+@end
+
+
+@interface WebView (WebViewUndoableEditing)
+- (void)insertText:(NSString *)text replacingDOMRange:(DOMRange *)range;    
+@end

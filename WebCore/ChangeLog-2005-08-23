@@ -1,3 +1,39 @@
+2004-03-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+    
+        Various changes to move us forward on editing.
+        
+        1. I reorganized the concrete EditCommand interface and
+        implementation classes alphabetically in their 
+        respective files, to make it easier to find things.
+        
+        2. I added a TypingCommand composite class to gang 
+        up all keystrokes and make it possible to pass a 
+        single command over to the Cocoa undo system in all cases.
+        
+        3. I now send all keystrokes back over to WebKit
+        to be interpreted by the text input system. In concert
+        with the many new NSResponder method implementations I
+        added to WebView, we now respond to keystrokes in a much
+        more Cocoa-like way that sets us down the path to
+        integrating with the Cocoa text input system some day.
+
+        4. I fixed up our integration with the Cocoa undo
+        system. I also removed much of the undo support code
+        from the KHTMPart class. As a replacement, I implemented
+        reporting of undoable commands to KHTMLPart so that 
+        a KDE hookup is quite feasible. As a result, undo 
+        should "just work" in Blot (Chris has reported that 
+        it has been busted).
+
+        5. I added the DOM CSS bindings for Objective-C. This
+        required some rearranging of the existing DOM bindings
+        code, and while I was there, I did various cleanups in the
+        existing DOM bindings.
+
+        * About 400 lines of changed files and functions elided.
+        
 2004-03-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed some spacing issues in reconstructed source and web archives that were caused by a malformed doc type string that we were constructing.

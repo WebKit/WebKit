@@ -102,13 +102,13 @@ using khtml::Decoder;
 using khtml::DeleteKeyCommand;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
-using khtml::EditCommand;
 using khtml::InlineTextBox;
 using khtml::PasteHTMLCommand;
 using khtml::PasteImageCommand;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::Tokenizer;
+using khtml::TypingCommand;
 
 using KParts::BrowserInterface;
 
@@ -392,9 +392,7 @@ bool KHTMLPart::openURL( const KURL &url )
   
   cancelRedirection();
   
-  // clear edit commands
-  d->m_undoEditCommands.clear();
-  d->m_redoEditCommands.clear();
+  // clear last edit command
   d->m_lastEditCommand = EditCommand();
 #if APPLE_CHANGES
   KWQ(this)->clearUndoRedoOperations();
@@ -2478,6 +2476,20 @@ void KHTMLPart::setSelection(const KHTMLSelection &s)
     }
 }
 
+void KHTMLPart::takeSelectionFrom(const EditCommand &cmd, bool useEndingSelection)
+{
+    KHTMLSelection s;
+    if (useEndingSelection)
+        s = cmd.endingSelection();
+    else
+        s = cmd.startingSelection();
+    
+    if (d->m_selection != s) {
+        d->m_selection = s;
+        notifySelectionChanged(false);
+    }
+}
+
 void KHTMLPart::clearSelection()
 {
     d->m_selection = KHTMLSelection();
@@ -2487,13 +2499,13 @@ void KHTMLPart::clearSelection()
 void KHTMLPart::deleteSelection()
 {
     EditCommand cmd(DeleteSelectionCommand(d->m_doc));
-    applyCommand(cmd);
+    cmd.apply();
 }
 
 void KHTMLPart::invalidateSelection()
 {
     d->m_selection.setNeedsLayout();
-    notifySelectionChanged();
+    notifySelectionChanged(false);
 }
 
 void KHTMLPart::setSelectionVisible(bool flag)
@@ -2513,7 +2525,7 @@ void KHTMLPart::slotClearSelection()
         notifySelectionChanged();
 }
 
-void KHTMLPart::notifySelectionChanged()
+void KHTMLPart::notifySelectionChanged(bool endTyping)
 {
     // kill any caret blink timer now running
     if (d->m_caretBlinkTimer >= 0) {
@@ -2535,7 +2547,10 @@ void KHTMLPart::notifySelectionChanged()
 
     if (d->m_doc)
         d->m_doc->updateSelection();
-        
+    
+    if (endTyping)
+        TypingCommand::closeTyping(lastEditCommand());
+                
     emitSelectionChanged();
 }
 
@@ -4843,7 +4858,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 		d->m_selection.state() == KHTMLSelection::RANGE &&
         d->m_textElement == KHTMLSelection::CHARACTER) {
             KHTMLSelection selection;
-            if (isEditingAtCaret()) {
+            if (isEditingAtNode(d->m_selection.baseNode())) {
                 NodeImpl *node = 0;
                 int offset = 0;
                 checkSelectionPoint(event, node, offset);
@@ -5059,105 +5074,55 @@ void KHTMLPart::selectAll()
   setSelection(selection);
 }
 
-bool KHTMLPart::isEditingAtCaret() const
+bool KHTMLPart::isEditingAtNode(const NodeImpl *node) const
 {
     if (inEditMode())
         return true;
     
-    NodeImpl *node = d->m_selection.baseNode();
     return node && node->isContentEditable();
-    
-    return false;
 }
 
-void KHTMLPart::applyCommand(khtml::EditCommand &cmd)
+EditCommand KHTMLPart::lastEditCommand()
 {
-    assert(cmd.notNull());
+    return d->m_lastEditCommand;
+}
 
-    if (d->m_lastEditCommand.isNull() || !d->m_lastEditCommand.coalesce(cmd)) {
-        cmd.apply();
-
-        // add to undo commands
-        d->m_undoEditCommands.append(cmd);
-
-        if (d->m_lastEditCommand.isNull() || !cmd.groupForUndo(d->m_lastEditCommand)) {
-            // clear redo commands
-            d->m_redoEditCommands.clear();
+void KHTMLPart::appliedEditing(EditCommand &cmd)
+{
+    if (d->m_lastEditCommand != cmd) {
 #if APPLE_CHANGES
-            KWQ(this)->registerCommandForUndo();
+        KWQ(this)->registerCommandForUndo(cmd);
 #endif
-        }
-
-        d->m_lastEditCommand = cmd;
     }
+    d->m_lastEditCommand = cmd;
 }
 
-void KHTMLPart::undoEditing()
+void KHTMLPart::unappliedEditing(EditCommand &cmd)
 {
-    assert(d->m_undoEditCommands.count() > 0);
-    
-    EditCommand cmd;
-    EditCommand next;
-
-    do {
-        cmd = d->m_undoEditCommands.last();
-        assert(cmd.notNull());
-        
-        cmd.unapply();
-
-        // EDIT FIXME: Removal is O(N). Improve QValueList to implement 0(1) removal of last element. 
-        d->m_undoEditCommands.remove(cmd); 
-        d->m_redoEditCommands.append(cmd);
-    
-        next = d->m_undoEditCommands.count() > 0 ? d->m_undoEditCommands.last() : EditCommand();
-    } 
-    while (next.notNull() && cmd.groupForUndo(next));
-    
-    d->m_lastEditCommand = EditCommand();
-    
 #if APPLE_CHANGES
-    KWQ(this)->registerCommandForRedo();
+    KWQ(this)->registerCommandForRedo(cmd);
 #endif
+    d->m_lastEditCommand = EditCommand();
 }
 
-void KHTMLPart::redoEditing()
+void KHTMLPart::reappliedEditing(EditCommand &cmd)
 {
-    assert(d->m_redoEditCommands.count() > 0);
-
-    EditCommand cmd;
-    EditCommand next;
-    
-    do {
-        cmd = d->m_redoEditCommands.last();
-        assert(cmd.notNull());
-    
-        cmd.reapply();
-
-        // EDIT FIXME: Removal is O(N). Improve QValueList to implement 0(1) removal of last element. 
-        d->m_redoEditCommands.remove(cmd); 
-        d->m_undoEditCommands.append(cmd);
-
-        next = d->m_redoEditCommands.count() > 0 ? d->m_redoEditCommands.last() : EditCommand();
-    }
-    while (next.notNull() && cmd.groupForRedo(next));
-
-    d->m_lastEditCommand = EditCommand();
-    
 #if APPLE_CHANGES
-    KWQ(this)->registerCommandForUndo();
+    KWQ(this)->registerCommandForUndo(cmd);
 #endif
+    d->m_lastEditCommand = EditCommand();
 }
 
 void KHTMLPart::pasteHTMLString(const QString &HTMLString)
 {
     EditCommand cmd(PasteHTMLCommand(d->m_doc, DOMString(HTMLString)));
-    applyCommand(cmd);
+    cmd.apply();
 }
 
 void KHTMLPart::pasteImage(const QString &src)
 {
     EditCommand cmd(PasteImageCommand(d->m_doc, DOMString(src)));
-    applyCommand(cmd);
+    cmd.apply();
 }
 
 #if !APPLE_CHANGES

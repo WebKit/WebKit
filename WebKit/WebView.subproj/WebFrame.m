@@ -171,9 +171,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [provisionalItem release];
     [previousItem release];
     
-    [undoManager release];
-    undoManager = nil;
-    
     ASSERT(listener == nil);
     ASSERT(policyRequest == nil);
     ASSERT(policyFrameName == nil);
@@ -2472,14 +2469,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self childFrames] makeObjectsPerformSelector:@selector(_reloadForPluginChanges)];
     }
 
-}
-
-- (NSUndoManager *)undoManager
-{
-    if (!_private->undoManager) {
-        _private->undoManager = [[NSUndoManager alloc] init];
-    }
-    return _private->undoManager;
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,31 @@
 
 #include "htmlediting_impl.h"
 
+#include "dom/dom_position.h"
+#include "html/html_elementimpl.h"
+#include "html/html_imageimpl.h"
+#include "htmlattrs.h"
+#include "khtml_part.h"
+#include "khtml_selection.h"
+#include "khtmlview.h"
+#include "rendering/render_object.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
+#include "xml/dom_nodeimpl.h"
+#include "xml/dom_stringimpl.h"
+#include "xml/dom_textimpl.h"
+#include "xml/dom2_rangeimpl.h"
+
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
 #include "KWQLogging.h"
 #endif
 
-#include "khtmlview.h"
-#include "khtml_part.h"
-#include "khtml_selection.h"
-#include "dom/dom_position.h"
-#include "html/html_elementimpl.h"
-#include "html/html_imageimpl.h"
-#include "htmlattrs.h"
-#include "rendering/render_object.h"
-#include "xml/dom_docimpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_nodeimpl.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_textimpl.h"
-
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMPosition;
 using DOM::DOMString;
+using DOM::DOMStringImpl;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
@@ -70,6 +72,8 @@ using khtml::DeleteTextCommand;
 using khtml::DeleteTextCommandImpl;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
+using khtml::InputNewlineCommand;
+using khtml::InputNewlineCommandImpl;
 using khtml::InputTextCommand;
 using khtml::InputTextCommandImpl;
 using khtml::InsertNodeBeforeCommand;
@@ -82,14 +86,14 @@ using khtml::ModifyTextNodeCommand;
 using khtml::ModifyTextNodeCommandImpl;
 using khtml::RemoveNodeCommand;
 using khtml::RemoveNodeCommandImpl;
-using khtml::MoveSelectionToCommand;
-using khtml::MoveSelectionToCommandImpl;
 using khtml::PasteHTMLCommand;
 using khtml::PasteHTMLCommandImpl;
 using khtml::PasteImageCommand;
 using khtml::PasteImageCommandImpl;
 using khtml::SplitTextNodeCommand;
 using khtml::SplitTextNodeCommandImpl;
+using khtml::TypingCommand;
+using khtml::TypingCommandImpl;
 
 #if !APPLE_CHANGES
 #define ASSERT(assertion) ((void)0)
@@ -103,7 +107,7 @@ using khtml::SplitTextNodeCommandImpl;
 // EditCommandImpl
 
 EditCommandImpl::EditCommandImpl(DocumentImpl *document) 
-    : SharedCommandImpl(), m_document(document), m_state(NotApplied)
+    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_isCompositeStep(false)
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
@@ -116,7 +120,6 @@ EditCommandImpl::~EditCommandImpl()
 {
     ASSERT(m_document);
     m_document->deref();
-    fprintf(stderr, "~EditCommandImpl\n");
 }
 
 int EditCommandImpl::commandID() const
@@ -124,41 +127,57 @@ int EditCommandImpl::commandID() const
     return EditCommandID;
 }
 
+void EditCommandImpl::apply()
+{
+    ASSERT(m_document);
+    ASSERT(m_document->part());
+    ASSERT(state() == NotApplied);
+    
+    doApply();
+    
+    m_state = Applied;
+
+    if (!isCompositeStep()) {
+        EditCommand cmd(this);
+        m_document->part()->appliedEditing(cmd);
+    }
+}
+
+void EditCommandImpl::unapply()
+{
+    ASSERT(m_document);
+    ASSERT(m_document->part());
+    ASSERT(state() == Applied);
+    
+    doUnapply();
+    
+    m_state = NotApplied;
+
+    if (!isCompositeStep()) {
+        EditCommand cmd(this);
+        m_document->part()->unappliedEditing(cmd);
+    }
+}
+
 void EditCommandImpl::reapply()
 {
-    apply();
-}
-
-inline void EditCommandImpl::beginApply()
-{
+    ASSERT(m_document);
+    ASSERT(m_document->part());
     ASSERT(state() == NotApplied);
-}
-
-inline void EditCommandImpl::endApply()
-{
+    
+    doReapply();
+    
     m_state = Applied;
-    moveToEndingSelection();
+
+    if (!isCompositeStep()) {
+        EditCommand cmd(this);
+        m_document->part()->reappliedEditing(cmd);
+    }
 }
 
-inline void EditCommandImpl::beginUnapply()
+void EditCommandImpl::doReapply()
 {
-    ASSERT(state() == Applied);
-}
-
-inline void EditCommandImpl::endUnapply()
-{
-    m_state = NotApplied;
-    moveToStartingSelection();
-}
-
-inline void EditCommandImpl::beginReapply()
-{
-    beginApply();
-}
-
-inline void EditCommandImpl::endReapply()
-{
-    endApply();
+    doApply();
 }
 
 KHTMLSelection EditCommandImpl::currentSelection() const
@@ -168,93 +187,18 @@ KHTMLSelection EditCommandImpl::currentSelection() const
     return m_document->part()->selection();
 }
 
-bool EditCommandImpl::coalesce(const EditCommand &cmd)
-{
-    // default is no coalescing
-    return false;
-}
-
-bool EditCommandImpl::groupForUndo(const EditCommand &) const
-{
-    // default is not continuing
-    return false;
-}
-
-bool EditCommandImpl::groupForRedo(const EditCommand &) const
-{
-    // default is not continuing
-    return false;
-}
-
 void EditCommandImpl::moveToStartingSelection()
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
-    m_document->part()->setSelection(m_startingSelection);
+    m_document->part()->takeSelectionFrom(this, false);
 }
 
 void EditCommandImpl::moveToEndingSelection()
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
-    m_document->part()->setSelection(m_endingSelection);
-}
-
-QString EditCommandImpl::name() const
-{
-    switch (commandID()) {
-        case EditCommandID:
-            return "EditCommandImpl";
-            break;
-        case AppendNodeCommandID:
-            return "AppendNodeCommandImpl";
-            break;
-        case CompositeEditCommandID:
-            return "CompositeEditCommandImpl";
-            break;
-        case DeleteKeyCommandID:
-            return "DeleteKeyCommandImpl";
-            break;
-        case DeleteSelectionCommandID:
-            return "DeleteSelectionCommandImpl";
-            break;
-        case DeleteTextCommandID:
-            return "DeleteTextCommandImpl";
-            break;
-        case InputTextCommandID:
-            return "InputTextCommandImpl";
-            break;
-        case InsertNodeBeforeCommandID:
-            return "InsertNodeBeforeCommandImpl";
-            break;
-        case InsertTextCommandID:
-            return "InsertTextCommandImpl";
-            break;
-        case JoinTextNodesCommandID:
-            return "JoinTextNodesCommandImpl";
-            break;
-        case ModifyTextNodeCommandID:
-            return "ModifyTextNodeCommandImpl";
-            break;
-        case RemoveNodeCommandID:
-            return "RemoveNodeCommandImpl";
-            break;
-        case MoveSelectionToCommandID:
-            return "MoveSelectionToCommandImpl";
-            break;
-        case PasteHTMLCommandID:
-            return "PasteHTMLCommandImpl";
-            break;
-        case PasteImageCommandID:
-            return "PasteImageCommandImpl";
-            break;
-        case SplitTextNodeCommandID:
-            return "SplitTextNodeCommandImpl";
-            break;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return "";
+    m_document->part()->takeSelectionFrom(this, true);
 }
 
 //------------------------------------------------------------------------------------------
@@ -269,7 +213,12 @@ CompositeEditCommandImpl::~CompositeEditCommandImpl()
 {
 }
 
-void CompositeEditCommandImpl::unapply()
+int CompositeEditCommandImpl::commandID() const
+{
+    return CompositeEditCommandID;
+}
+
+void CompositeEditCommandImpl::doUnapply()
 {
     if (m_cmds.count() == 0) {
         ERROR("Unapplying composite command containing zero steps");
@@ -283,7 +232,7 @@ void CompositeEditCommandImpl::unapply()
     setState(NotApplied);
 }
 
-void CompositeEditCommandImpl::reapply()
+void CompositeEditCommandImpl::doReapply()
 {
     if (m_cmds.count() == 0) {
         ERROR("Reapplying composite command containing zero steps");
@@ -300,16 +249,18 @@ void CompositeEditCommandImpl::reapply()
 //
 // sugary-sweet convenience functions to help create and apply edit commands in composite commands
 //
-void CompositeEditCommandImpl::applyCommand(EditCommand &cmd)
+void CompositeEditCommandImpl::applyCommandToComposite(EditCommand &cmd)
 {
+    cmd.setIsCompositeStep();
     cmd.apply();
+    setEndingSelection(cmd.endingSelection());
     m_cmds.append(cmd);
 }
 
 void CompositeEditCommandImpl::insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild)
 {
     InsertNodeBeforeCommand cmd(document(), insertChild, refChild);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild)
@@ -340,230 +291,45 @@ void CompositeEditCommandImpl::insertNodeAt(DOM::NodeImpl *insertChild, DOM::Nod
 void CompositeEditCommandImpl::appendNode(DOM::NodeImpl *parent, DOM::NodeImpl *appendChild)
 {
     AppendNodeCommand cmd(document(), parent, appendChild);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::removeNode(DOM::NodeImpl *removeChild)
 {
     RemoveNodeCommand cmd(document(), removeChild);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::splitTextNode(DOM::TextImpl *text, long offset)
 {
     SplitTextNodeCommand cmd(document(), text, offset);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2)
 {
     JoinTextNodesCommand cmd(document(), text1, text2);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text)
 {
     InsertTextCommand cmd(document(), node, offset, text);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::deleteText(DOM::TextImpl *node, long offset, long count)
 {
     DeleteTextCommand cmd(document(), node, offset, count);
-    applyCommand(cmd);
-}
-
-void CompositeEditCommandImpl::moveSelectionTo(const KHTMLSelection &selection)
-{
-    MoveSelectionToCommand cmd(document(), selection);
-    applyCommand(cmd);
-}
-
-void CompositeEditCommandImpl::moveSelectionTo(DOM::NodeImpl *node, long offset)
-{
-    MoveSelectionToCommand cmd(document(), node, offset);
-    applyCommand(cmd);
-}
-
-void CompositeEditCommandImpl::moveSelectionTo(const DOM::DOMPosition &pos)
-{
-    MoveSelectionToCommand cmd(document(), pos);
-    applyCommand(cmd);
+    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::deleteSelection()
 {
     if (currentSelection().state() == KHTMLSelection::RANGE) {
         DeleteSelectionCommand cmd(document());
-        applyCommand(cmd);
+        applyCommandToComposite(cmd);
     }
-}
-
-//------------------------------------------------------------------------------------------
-// InsertNodeBeforeCommandImpl
-
-InsertNodeBeforeCommandImpl::InsertNodeBeforeCommandImpl(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
-    : EditCommandImpl(document), m_insertChild(insertChild), m_refChild(refChild)
-{
-    ASSERT(m_insertChild);
-    m_insertChild->ref();
-
-    ASSERT(m_refChild);
-    m_refChild->ref();
-}
-
-InsertNodeBeforeCommandImpl::~InsertNodeBeforeCommandImpl()
-{
-    if (m_insertChild)
-        m_insertChild->deref();
-    if (m_refChild)
-        m_refChild->deref();
-}
-
-void InsertNodeBeforeCommandImpl::apply()
-{
-    beginApply();
-
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parent());
-
-    int exceptionCode;
-    m_refChild->parent()->insertBefore(m_insertChild, m_refChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endApply();
-}
-
-void InsertNodeBeforeCommandImpl::unapply()
-{
-    beginUnapply();
-
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parent());
-
-    int exceptionCode;
-    m_refChild->parent()->removeChild(m_insertChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endUnapply();
-}
-
-//------------------------------------------------------------------------------------------
-// AppendNodeCommandImpl
-
-AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *parent, NodeImpl *appendChild)
-    : EditCommandImpl(document), m_parent(parent), m_appendChild(appendChild)
-{
-    ASSERT(m_parent);
-    m_parent->ref();
-
-    ASSERT(m_appendChild);
-    m_appendChild->ref();
-}
-
-AppendNodeCommandImpl::~AppendNodeCommandImpl()
-{
-    if (m_parent)
-        m_parent->deref();
-    if (m_appendChild)
-        m_appendChild->deref();
-}
-
-void AppendNodeCommandImpl::apply()
-{
-    beginApply();
-
-    ASSERT(m_parent);
-    ASSERT(m_appendChild);
-
-    int exceptionCode;
-    m_parent->appendChild(m_appendChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endApply();
-}
-
-void AppendNodeCommandImpl::unapply()
-{
-    beginUnapply();
-
-    ASSERT(m_parent);
-    ASSERT(m_appendChild);
-    ASSERT(state() == Applied);
-
-    int exceptionCode;
-    m_parent->removeChild(m_appendChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endUnapply();
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeCommandImpl
-
-RemoveNodeCommandImpl::RemoveNodeCommandImpl(DocumentImpl *document, NodeImpl *removeChild)
-    : EditCommandImpl(document), m_parent(0), m_removeChild(removeChild), m_refChild(0)
-{
-    ASSERT(m_removeChild);
-    m_removeChild->ref();
-
-    m_parent = m_removeChild->parentNode();
-    ASSERT(m_parent);
-    m_parent->ref();
-    
-    NodeListImpl *children = m_parent->childNodes();
-    for (int i = children->length(); i >= 0; i--) {
-        NodeImpl *node = children->item(i);
-        if (node == m_removeChild)
-            break;
-        m_refChild = node;
-    }
-    
-    if (m_refChild)
-        m_refChild->ref();
-}
-
-RemoveNodeCommandImpl::~RemoveNodeCommandImpl()
-{
-    if (m_parent)
-        m_parent->deref();
-    if (m_removeChild)
-        m_removeChild->deref();
-    if (m_refChild)
-        m_refChild->deref();
-}
-
-void RemoveNodeCommandImpl::apply()
-{
-    beginApply();
-
-    ASSERT(m_parent);
-    ASSERT(m_removeChild);
-
-    int exceptionCode;
-    m_parent->removeChild(m_removeChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endApply();
-}
-
-void RemoveNodeCommandImpl::unapply()
-{
-    beginUnapply();
-
-    ASSERT(m_parent);
-    ASSERT(m_removeChild);
-
-    int exceptionCode;
-    if (m_refChild)
-        m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
-    else
-        m_parent->appendChild(m_removeChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endUnapply();
 }
 
 //------------------------------------------------------------------------------------------
@@ -600,6 +366,11 @@ ModifyTextNodeCommandImpl::~ModifyTextNodeCommandImpl()
         m_text1->deref();
 }
 
+int ModifyTextNodeCommandImpl::commandID() const
+{
+    return ModifyTextNodeCommandID;
+}
+
 void ModifyTextNodeCommandImpl::splitTextNode()
 {
     ASSERT(m_text2);
@@ -609,7 +380,7 @@ void ModifyTextNodeCommandImpl::splitTextNode()
 
     ASSERT(m_offset >= m_text2->caretMinOffset() && m_offset <= m_text2->caretMaxOffset());
 
-    int exceptionCode;
+    int exceptionCode = 0;
     m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
     ASSERT(exceptionCode == 0);
     ASSERT(m_text1);
@@ -633,7 +404,7 @@ void ModifyTextNodeCommandImpl::joinTextNodes()
     
     ASSERT(m_text1->nextSibling() == m_text2);
 
-    int exceptionCode;
+    int exceptionCode = 0;
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
@@ -645,192 +416,118 @@ void ModifyTextNodeCommandImpl::joinTextNodes()
     m_text1 = 0;
 }
 
+//==========================================================================================
+// Concrete commands
 //------------------------------------------------------------------------------------------
-// SplitTextNodeCommandImpl
+// AppendNodeCommandImpl
 
-SplitTextNodeCommandImpl::SplitTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
-    : ModifyTextNodeCommandImpl(document, text, offset)
+AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *parent, NodeImpl *appendChild)
+    : EditCommandImpl(document), m_parent(parent), m_appendChild(appendChild)
 {
+    ASSERT(m_parent);
+    m_parent->ref();
+
+    ASSERT(m_appendChild);
+    m_appendChild->ref();
 }
 
-SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl()
+AppendNodeCommandImpl::~AppendNodeCommandImpl()
 {
+    if (m_parent)
+        m_parent->deref();
+    if (m_appendChild)
+        m_appendChild->deref();
 }
 
-void SplitTextNodeCommandImpl::apply()
+int AppendNodeCommandImpl::commandID() const
 {
-    beginApply();
-    splitTextNode();
-    endApply();
+    return AppendNodeCommandID;
 }
 
-void SplitTextNodeCommandImpl::unapply()
+void AppendNodeCommandImpl::doApply()
 {
-    beginUnapply();
-    joinTextNodes();
-    endUnapply();
+    ASSERT(m_parent);
+    ASSERT(m_appendChild);
+
+    int exceptionCode = 0;
+    m_parent->appendChild(m_appendChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
 }
 
-//------------------------------------------------------------------------------------------
-// SplitTextNodeCommandImpl
-
-JoinTextNodesCommandImpl::JoinTextNodesCommandImpl(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
-    : ModifyTextNodeCommandImpl(document, text1, text2)
+void AppendNodeCommandImpl::doUnapply()
 {
-}
+    ASSERT(m_parent);
+    ASSERT(m_appendChild);
+    ASSERT(state() == Applied);
 
-JoinTextNodesCommandImpl::~JoinTextNodesCommandImpl()
-{
-}
-
-void JoinTextNodesCommandImpl::apply()
-{
-    beginApply();
-    joinTextNodes();
-    endApply();
-}
-
-void JoinTextNodesCommandImpl::unapply()
-{
-    beginUnapply();
-    splitTextNode();
-    endUnapply();
+    int exceptionCode = 0;
+    m_parent->removeChild(m_appendChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
 }
 
 //------------------------------------------------------------------------------------------
-// InsertTextCommandImpl
+// DeleteKeyCommandImpl
 
-InsertTextCommandImpl::InsertTextCommandImpl(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
-    : EditCommandImpl(document), m_node(node), m_offset(offset)
-{
-    ASSERT(m_node);
-    ASSERT(m_offset >= 0);
-    ASSERT(text.length() > 0);
-    
-    m_node->ref();
-    m_text = text.copy(); // make a copy to ensure that the string never changes
-}
-
-InsertTextCommandImpl::~InsertTextCommandImpl()
-{
-    if (m_node)
-        m_node->deref();
-}
-
-void InsertTextCommandImpl::apply()
-{
-    beginApply();
-
-    ASSERT(m_node);
-    ASSERT(!m_text.isEmpty());
-
-    int exceptionCode;
-    m_node->insertData(m_offset, m_text, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endApply();
-}
-
-void InsertTextCommandImpl::unapply()
-{
-    beginUnapply();
-
-    ASSERT(m_node);
-    ASSERT(!m_text.isEmpty());
-
-    int exceptionCode;
-    m_node->deleteData(m_offset, m_text.length(), exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endUnapply();
-}
-
-//------------------------------------------------------------------------------------------
-// DeleteTextCommandImpl
-
-DeleteTextCommandImpl::DeleteTextCommandImpl(DocumentImpl *document, TextImpl *node, long offset, long count)
-    : EditCommandImpl(document), m_node(node), m_offset(offset), m_count(count)
-{
-    ASSERT(m_node);
-    ASSERT(m_offset >= 0);
-    ASSERT(m_count >= 0);
-    
-    m_node->ref();
-}
-
-DeleteTextCommandImpl::~DeleteTextCommandImpl()
-{
-    if (m_node)
-        m_node->deref();
-}
-
-void DeleteTextCommandImpl::apply()
-{
-    beginApply();
-
-    ASSERT(m_node);
-
-    int exceptionCode;
-    m_text = m_node->substringData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
-    
-    m_node->deleteData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endApply();
-}
-
-void DeleteTextCommandImpl::unapply()
-{
-    beginUnapply();
-
-    ASSERT(m_node);
-    ASSERT(!m_text.isEmpty());
-
-    int exceptionCode;
-    m_node->insertData(m_offset, m_text, exceptionCode);
-    ASSERT(exceptionCode == 0);
-
-    endUnapply();
-}
-
-//------------------------------------------------------------------------------------------
-// MoveSelectionToCommandImpl
-
-MoveSelectionToCommandImpl::MoveSelectionToCommandImpl(DocumentImpl *document, const KHTMLSelection &selection)
-    : EditCommandImpl(document)
-{
-    setEndingSelection(selection);
-}
-
-MoveSelectionToCommandImpl::MoveSelectionToCommandImpl(DocumentImpl *document, DOM::NodeImpl *node, long offset)
-    : EditCommandImpl(document)
-{
-    KHTMLSelection selection(node, offset);
-    setEndingSelection(selection);
-}
-
-MoveSelectionToCommandImpl::MoveSelectionToCommandImpl(DOM::DocumentImpl *document, const DOM::DOMPosition &pos)
-    : EditCommandImpl(document)
-{
-    KHTMLSelection selection(pos);
-    setEndingSelection(selection);
-}
-
-MoveSelectionToCommandImpl::~MoveSelectionToCommandImpl() 
+DeleteKeyCommandImpl::DeleteKeyCommandImpl(DocumentImpl *document) 
+    : CompositeEditCommandImpl(document)
 {
 }
 
-void MoveSelectionToCommandImpl::apply()
+DeleteKeyCommandImpl::~DeleteKeyCommandImpl() 
 {
-    beginApply();
-    endApply();
 }
 
-void MoveSelectionToCommandImpl::unapply()
+int DeleteKeyCommandImpl::commandID() const
 {
-    beginUnapply();
-    endUnapply();
+    return DeleteKeyCommandID;
+}
+
+void DeleteKeyCommandImpl::doApply()
+{
+    KHTMLPart *part = document()->part();
+    ASSERT(part);
+
+    KHTMLSelection selection = part->selection();
+    ASSERT(!selection.isEmpty());
+
+    // Delete the current selection
+    if (selection.state() == KHTMLSelection::RANGE) {
+        deleteSelection();
+        setEndingSelection(currentSelection());
+        return;
+    }
+
+    NodeImpl *caretNode = selection.startNode();
+
+    if (caretNode->isTextNode()) {
+        // Check if we can delete character at cursor
+        int offset = selection.startOffset() - 1;
+        if (offset >= caretNode->caretMinOffset()) {
+            TextImpl *textNode = static_cast<TextImpl *>(caretNode);
+            deleteText(textNode, offset, 1);
+            selection = KHTMLSelection(textNode, offset);
+            setEndingSelection(selection);
+            return;
+        }
+        
+        // Check if previous sibling is a BR element
+        NodeImpl *previousSibling = caretNode->previousSibling();
+        if (previousSibling && previousSibling->renderer() && previousSibling->renderer()->isBR()) {
+            removeNode(previousSibling);
+            return;
+        }
+        
+        // Check if previous leaf node is a text node
+        NodeImpl *previousLeafNode = caretNode->previousLeafNode();
+        if (previousLeafNode && previousLeafNode->isTextNode()) {
+            TextImpl *textNode = static_cast<TextImpl *>(previousLeafNode);
+            offset = previousLeafNode->caretMaxOffset() - 1;
+            deleteText(textNode, offset, 1);
+            selection = KHTMLSelection(textNode, offset);
+            setEndingSelection(selection);
+            return;
+        }
+    }
 }
 
 //------------------------------------------------------------------------------------------
@@ -845,12 +542,14 @@ DeleteSelectionCommandImpl::~DeleteSelectionCommandImpl()
 {
 }
 	
-void DeleteSelectionCommandImpl::apply()
+int DeleteSelectionCommandImpl::commandID() const
 {
-    beginApply();
+    return DeleteSelectionCommandID;
+}
 
+void DeleteSelectionCommandImpl::doApply()
+{
     if (startingSelection().isEmpty()) {
-        endApply();
         return;
     }
 
@@ -966,8 +665,111 @@ void DeleteSelectionCommandImpl::apply()
     selection.moveTo(endingPosition);
     selection.moveToRenderedContent();
     setEndingSelection(selection);
+}
 
-    endApply();
+//------------------------------------------------------------------------------------------
+// DeleteTextCommandImpl
+
+DeleteTextCommandImpl::DeleteTextCommandImpl(DocumentImpl *document, TextImpl *node, long offset, long count)
+    : EditCommandImpl(document), m_node(node), m_offset(offset), m_count(count)
+{
+    ASSERT(m_node);
+    ASSERT(m_offset >= 0);
+    ASSERT(m_count >= 0);
+    
+    m_node->ref();
+}
+
+DeleteTextCommandImpl::~DeleteTextCommandImpl()
+{
+    if (m_node)
+        m_node->deref();
+}
+
+int DeleteTextCommandImpl::commandID() const
+{
+    return DeleteTextCommandID;
+}
+
+void DeleteTextCommandImpl::doApply()
+{
+    ASSERT(m_node);
+
+    int exceptionCode = 0;
+    m_text = m_node->substringData(m_offset, m_count, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    m_node->deleteData(m_offset, m_count, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void DeleteTextCommandImpl::doUnapply()
+{
+    ASSERT(m_node);
+    ASSERT(!m_text.isEmpty());
+
+    int exceptionCode = 0;
+    m_node->insertData(m_offset, m_text, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// InputNewlineCommandImpl
+
+InputNewlineCommandImpl::InputNewlineCommandImpl(DocumentImpl *document) 
+    : CompositeEditCommandImpl(document)
+{
+}
+
+InputNewlineCommandImpl::~InputNewlineCommandImpl() 
+{
+}
+
+int InputNewlineCommandImpl::commandID() const
+{
+    return InputNewlineCommandID;
+}
+
+void InputNewlineCommandImpl::doApply()
+{
+    KHTMLSelection selection = currentSelection();
+
+    if (!selection.startNode()->isTextNode())
+        return;
+
+    // Delete the current selection
+    deleteSelection();
+    
+    int exceptionCode = 0;
+    ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
+
+    TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
+    bool atStart = selection.startOffset() == textNode->renderer()->caretMinOffset();
+    bool atEnd = selection.startOffset() == textNode->renderer()->caretMaxOffset();
+    if (atStart) {
+        // Set the cursor at the beginning of text node now following the new BR.
+        insertNodeBefore(breakNode, textNode);
+        selection = KHTMLSelection(textNode, 0);
+        setEndingSelection(selection);
+    }
+    else if (atEnd) {
+        insertNodeAfter(breakNode, textNode);
+        // Set the cursor at the beginning of the the BR.
+        selection = selection.nextCharacterPosition();
+        setEndingSelection(selection);
+    }
+    else {
+        TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
+        deleteText(textNode, 0, selection.startOffset());
+        insertNodeBefore(textBeforeNode, textNode);
+        insertNodeBefore(breakNode, textNode);
+        textBeforeNode->deref();
+        // Set the cursor at the beginning of the node after the BR.
+        selection = KHTMLSelection(textNode, 0);
+        setEndingSelection(selection);
+    }
+    
+    breakNode->deref();
 }
 
 //------------------------------------------------------------------------------------------
@@ -978,6 +780,7 @@ InputTextCommandImpl::InputTextCommandImpl(DocumentImpl *document, const DOMStri
 {
     ASSERT(!text.isEmpty());
     m_text = text; 
+    nbsp = DOMString(QChar(0xa0));
 }
 
 InputTextCommandImpl::~InputTextCommandImpl() 
@@ -989,56 +792,43 @@ int InputTextCommandImpl::commandID() const
     return InputTextCommandID;
 }
 
-bool InputTextCommandImpl::isLineBreak(const DOM::DOMString &text) const
+void InputTextCommandImpl::doApply()
 {
-    return text.length() == 1 && (text[0] == '\n' || text[0] == '\r');
-}
-
-bool InputTextCommandImpl::isSpace(const DOM::DOMString &text) const
-{
-    return text.length() == 1 && (text[0] == ' ');
-}
-
-void InputTextCommandImpl::apply()
-{
-    beginApply();
     execute(m_text);
-    endApply();
 }
 
-bool InputTextCommandImpl::coalesce(const EditCommand &cmd)
+void InputTextCommandImpl::coalesce(const DOMString &text)
 {
     ASSERT(state() == Applied);
-    
-    if (cmd->commandID() == InputTextCommandID && endingSelection() == cmd->startingSelection()) {
-        // InputTextCommands coalesce with each other if they 
-        const InputTextCommandImpl *c = static_cast<const InputTextCommandImpl *>(cmd.get());
-        execute(c->text());
-        m_text += c->text();
+    execute(text);
+    m_text += text;
+    moveToEndingSelection();
+}
+
+void InputTextCommandImpl::deleteCharacter()
+{
+    ASSERT(state() == Applied);
+    ASSERT(m_text.length() > 0);
+
+    KHTMLSelection selection = currentSelection();
+
+    if (!selection.startNode()->isTextNode())
+        return;
+
+    int exceptionCode = 0;
+    int offset = selection.startOffset() - 1;
+    if (offset >= selection.startNode()->caretMinOffset()) {
+        TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
+        textNode->deleteData(offset, 1, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        selection = KHTMLSelection(textNode, offset);
+        setEndingSelection(selection);
         moveToEndingSelection();
-        return true;
+        m_text = m_text.string().left(m_text.length() - 1);
     }
-
-    return false;
 }
 
-bool InputTextCommandImpl::groupForUndo(const EditCommand &cmd) const
-{
-    if ((cmd->commandID() == InputTextCommandID || cmd->commandID() == DeleteKeyCommandID) && startingSelection() == cmd->endingSelection()) {
-        return true;
-    }
-    return false;
-}
-
-bool InputTextCommandImpl::groupForRedo(const EditCommand &cmd) const
-{
-    if ((cmd->commandID() == InputTextCommandID || cmd->commandID() == DeleteKeyCommandID) && endingSelection() == cmd->startingSelection()) {
-        return true;
-    }
-    return false;
-}
-
-void InputTextCommandImpl::execute(const DOM::DOMString &text)
+void InputTextCommandImpl::execute(const DOMString &text)
 {
     KHTMLSelection selection = currentSelection();
 
@@ -1049,133 +839,134 @@ void InputTextCommandImpl::execute(const DOM::DOMString &text)
     deleteSelection();
     
     TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
-    
-    if (isLineBreak(text)) {
-        int exceptionCode;
-        ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
-
-        bool atStart = selection.startOffset() == textNode->renderer()->caretMinOffset();
-        bool atEnd = selection.startOffset() == textNode->renderer()->caretMaxOffset();
-        if (atStart) {
-            // Set the cursor at the beginning of text node now following the new BR.
-            insertNodeBefore(breakNode, textNode);
-            selection = KHTMLSelection(textNode, 0);
-            setEndingSelection(selection);
-        }
-        else if (atEnd) {
-            insertNodeAfter(breakNode, textNode);
-            // Set the cursor at the beginning of the the BR.
-            selection = selection.nextCharacterPosition();
-            setEndingSelection(selection);
-        }
-        else {
-            TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
-            deleteText(textNode, 0, selection.startOffset());
-            insertNodeBefore(textBeforeNode, textNode);
-            insertNodeBefore(breakNode, textNode);
-            textBeforeNode->deref();
-            // Set the cursor at the beginning of the node after the BR.
-            selection = KHTMLSelection(textNode, 0);
-            setEndingSelection(selection);
-        }
-        
-        breakNode->deref();
-    }
-    else {
-        insertText(textNode, selection.startOffset(), text);
-        selection = KHTMLSelection(selection.startNode(), selection.startOffset() + text.length());
-        setEndingSelection(selection);
-    }
+    insertText(textNode, selection.startOffset(), text);
+    selection = KHTMLSelection(selection.startNode(), selection.startOffset() + text.length());
+    setEndingSelection(selection);
+    moveToEndingSelection();
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteKeyCommandImpl
+// InsertNodeBeforeCommandImpl
 
-DeleteKeyCommandImpl::DeleteKeyCommandImpl(DocumentImpl *document) 
-    : CompositeEditCommandImpl(document)
+InsertNodeBeforeCommandImpl::InsertNodeBeforeCommandImpl(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
+    : EditCommandImpl(document), m_insertChild(insertChild), m_refChild(refChild)
+{
+    ASSERT(m_insertChild);
+    m_insertChild->ref();
+
+    ASSERT(m_refChild);
+    m_refChild->ref();
+}
+
+InsertNodeBeforeCommandImpl::~InsertNodeBeforeCommandImpl()
+{
+    if (m_insertChild)
+        m_insertChild->deref();
+    if (m_refChild)
+        m_refChild->deref();
+}
+
+int InsertNodeBeforeCommandImpl::commandID() const
+{
+    return InsertNodeBeforeCommandID;
+}
+
+void InsertNodeBeforeCommandImpl::doApply()
+{
+    ASSERT(m_insertChild);
+    ASSERT(m_refChild);
+    ASSERT(m_refChild->parent());
+
+    int exceptionCode = 0;
+    m_refChild->parent()->insertBefore(m_insertChild, m_refChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void InsertNodeBeforeCommandImpl::doUnapply()
+{
+    ASSERT(m_insertChild);
+    ASSERT(m_refChild);
+    ASSERT(m_refChild->parent());
+
+    int exceptionCode = 0;
+    m_refChild->parent()->removeChild(m_insertChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// InsertTextCommandImpl
+
+InsertTextCommandImpl::InsertTextCommandImpl(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
+    : EditCommandImpl(document), m_node(node), m_offset(offset)
+{
+    ASSERT(m_node);
+    ASSERT(m_offset >= 0);
+    ASSERT(text.length() > 0);
+    
+    m_node->ref();
+    m_text = text.copy(); // make a copy to ensure that the string never changes
+}
+
+InsertTextCommandImpl::~InsertTextCommandImpl()
+{
+    if (m_node)
+        m_node->deref();
+}
+
+int InsertTextCommandImpl::commandID() const
+{
+    return InsertTextCommandID;
+}
+
+void InsertTextCommandImpl::doApply()
+{
+    ASSERT(m_node);
+    ASSERT(!m_text.isEmpty());
+
+    int exceptionCode = 0;
+    m_node->insertData(m_offset, m_text, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void InsertTextCommandImpl::doUnapply()
+{
+    ASSERT(m_node);
+    ASSERT(!m_text.isEmpty());
+
+    int exceptionCode = 0;
+    m_node->deleteData(m_offset, m_text.length(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// JoinTextNodesCommandImpl
+
+JoinTextNodesCommandImpl::JoinTextNodesCommandImpl(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
+    : ModifyTextNodeCommandImpl(document, text1, text2)
 {
 }
 
-DeleteKeyCommandImpl::~DeleteKeyCommandImpl() 
+JoinTextNodesCommandImpl::~JoinTextNodesCommandImpl()
 {
 }
 
-int DeleteKeyCommandImpl::commandID() const
+int JoinTextNodesCommandImpl::commandID() const
 {
-    return DeleteKeyCommandID;
+    return JoinTextNodesCommandID;
 }
 
-void DeleteKeyCommandImpl::apply()
+void JoinTextNodesCommandImpl::doApply()
 {
-    beginApply();
-
-    KHTMLPart *part = document()->part();
-    ASSERT(part);
-
-    KHTMLSelection selection = part->selection();
-    ASSERT(!selection.isEmpty());
-
-    // Delete the current selection
-    if (selection.state() == KHTMLSelection::RANGE) {
-        deleteSelection();
-        setEndingSelection(currentSelection());
-        endApply();
-        return;
-    }
-
-    NodeImpl *caretNode = selection.startNode();
-
-    if (caretNode->isTextNode()) {
-        // Check if we can delete character at cursor
-        int offset = selection.startOffset() - 1;
-        if (offset >= caretNode->caretMinOffset()) {
-            TextImpl *textNode = static_cast<TextImpl *>(caretNode);
-            deleteText(textNode, offset, 1);
-            selection = KHTMLSelection(textNode, offset);
-            setEndingSelection(selection);
-            endApply();
-            return;
-        }
-        
-        // Check if previous sibling is a BR element
-        NodeImpl *previousSibling = caretNode->previousSibling();
-        if (previousSibling->renderer() && previousSibling->renderer()->isBR()) {
-            removeNode(previousSibling);
-            endApply();
-            return;
-        }
-        
-        // Check if previous leaf node is a text node
-        NodeImpl *previousLeafNode = caretNode->previousLeafNode();
-        if (previousLeafNode->isTextNode()) {
-            TextImpl *textNode = static_cast<TextImpl *>(previousLeafNode);
-            offset = previousLeafNode->caretMaxOffset() - 1;
-            deleteText(textNode, offset, 1);
-            selection = KHTMLSelection(textNode, offset);
-            setEndingSelection(selection);
-            endApply();
-            return;
-        }
-    }
+    joinTextNodes();
 }
 
-bool DeleteKeyCommandImpl::groupForUndo(const EditCommand &cmd) const
+void JoinTextNodesCommandImpl::doUnapply()
 {
-    if ((cmd->commandID() == InputTextCommandID || cmd->commandID() == DeleteKeyCommandID) && startingSelection() == cmd->endingSelection()) {
-        return true;
-    }
-
-    return false;
+    splitTextNode();
 }
 
-bool DeleteKeyCommandImpl::groupForRedo(const EditCommand &cmd) const
-{
-    if ((cmd->commandID() == InputTextCommandID || cmd->commandID() == DeleteKeyCommandID) && endingSelection() == cmd->startingSelection()) {
-        return true;
-    }
-
-    return false;
-}
+//------------------------------------------------------------------------------------------
+// PasteHTMLCommandImpl
 
 PasteHTMLCommandImpl::PasteHTMLCommandImpl(DocumentImpl *document, const DOMString &HTMLString) 
     : CompositeEditCommandImpl(document)
@@ -1188,10 +979,13 @@ PasteHTMLCommandImpl::~PasteHTMLCommandImpl()
 {
 }
 
-void PasteHTMLCommandImpl::apply()
+int PasteHTMLCommandImpl::commandID() const
 {
-    beginApply();
-    
+    return PasteHTMLCommandID;
+}
+
+void PasteHTMLCommandImpl::doApply()
+{
     DOM::DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_HTMLString);
     ASSERT(root);
     
@@ -1245,9 +1039,10 @@ void PasteHTMLCommandImpl::apply()
         selection = KHTMLSelection(child, child->caretMaxOffset());
         setEndingSelection(selection);
     }
-
-    endApply();
 }
+
+//------------------------------------------------------------------------------------------
+// PasteImageCommandImpl
 
 PasteImageCommandImpl::PasteImageCommandImpl(DocumentImpl *document, const DOMString &src) 
 : CompositeEditCommandImpl(document)
@@ -1260,10 +1055,13 @@ PasteImageCommandImpl::~PasteImageCommandImpl()
 {
 }
 
-void PasteImageCommandImpl::apply()
+int PasteImageCommandImpl::commandID() const
 {
-    beginApply();
-    
+    return PasteImageCommandID;
+}
+
+void PasteImageCommandImpl::doApply()
+{
     deleteSelection();
     
     KHTMLPart *part = document()->part();
@@ -1279,6 +1077,184 @@ void PasteImageCommandImpl::apply()
     insertNodeAt(imageNode, startNode, selection.startOffset());
     selection = KHTMLSelection(imageNode, imageNode->caretMaxOffset());
     setEndingSelection(selection);
-    
-    endApply();
 }
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeCommandImpl
+
+RemoveNodeCommandImpl::RemoveNodeCommandImpl(DocumentImpl *document, NodeImpl *removeChild)
+    : EditCommandImpl(document), m_parent(0), m_removeChild(removeChild), m_refChild(0)
+{
+    ASSERT(m_removeChild);
+    m_removeChild->ref();
+
+    m_parent = m_removeChild->parentNode();
+    ASSERT(m_parent);
+    m_parent->ref();
+    
+    NodeListImpl *children = m_parent->childNodes();
+    for (int i = children->length(); i >= 0; i--) {
+        NodeImpl *node = children->item(i);
+        if (node == m_removeChild)
+            break;
+        m_refChild = node;
+    }
+    
+    if (m_refChild)
+        m_refChild->ref();
+}
+
+RemoveNodeCommandImpl::~RemoveNodeCommandImpl()
+{
+    if (m_parent)
+        m_parent->deref();
+    if (m_removeChild)
+        m_removeChild->deref();
+    if (m_refChild)
+        m_refChild->deref();
+}
+
+int RemoveNodeCommandImpl::commandID() const
+{
+    return RemoveNodeCommandID;
+}
+
+void RemoveNodeCommandImpl::doApply()
+{
+    ASSERT(m_parent);
+    ASSERT(m_removeChild);
+
+    int exceptionCode = 0;
+    m_parent->removeChild(m_removeChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void RemoveNodeCommandImpl::doUnapply()
+{
+    ASSERT(m_parent);
+    ASSERT(m_removeChild);
+
+    int exceptionCode = 0;
+    if (m_refChild)
+        m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
+    else
+        m_parent->appendChild(m_removeChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// SplitTextNodeCommandImpl
+
+SplitTextNodeCommandImpl::SplitTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
+    : ModifyTextNodeCommandImpl(document, text, offset)
+{
+}
+
+SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl()
+{
+}
+
+int SplitTextNodeCommandImpl::commandID() const
+{
+    return SplitTextNodeCommandID;
+}
+
+void SplitTextNodeCommandImpl::doApply()
+{
+    splitTextNode();
+}
+
+void SplitTextNodeCommandImpl::doUnapply()
+{
+    joinTextNodes();
+}
+
+//------------------------------------------------------------------------------------------
+// TypingCommandImpl
+
+TypingCommandImpl::TypingCommandImpl(DocumentImpl *document)
+    : CompositeEditCommandImpl(document)
+{
+}
+
+TypingCommandImpl::~TypingCommandImpl()
+{
+}
+
+int TypingCommandImpl::commandID() const
+{
+    return TypingCommandID;
+}
+
+void TypingCommandImpl::doApply()
+{
+}
+
+void TypingCommandImpl::insertText(const DOM::DOMString &text)
+{
+    if (m_cmds.count() == 0) {
+        InputTextCommand cmd(document(), text);
+        applyCommandToComposite(cmd);
+    }
+    else {
+        EditCommand lastCommand = m_cmds.last();
+        if (lastCommand.commandID() == InputTextCommandID) {
+            static_cast<InputTextCommand &>(lastCommand).coalesce(text);
+            setEndingSelection(lastCommand.endingSelection());
+        }
+        else {
+            InputTextCommand cmd(document(), text);
+            applyCommandToComposite(cmd);
+        }
+    }
+}
+
+void TypingCommandImpl::insertNewline()
+{
+    InputNewlineCommand cmd(document());
+    applyCommandToComposite(cmd);
+}
+
+void TypingCommandImpl::deleteKeyPressed()
+{
+    if (m_cmds.count() == 0) {
+        DeleteKeyCommand cmd(document());
+        applyCommandToComposite(cmd);
+    }
+    else {
+        EditCommand lastCommand = m_cmds.last();
+        if (lastCommand.commandID() == InputTextCommandID) {
+            InputTextCommand cmd = static_cast<InputTextCommand &>(lastCommand);
+            cmd.deleteCharacter();
+            if (cmd.text().length() == 0)
+                removeCommand(cmd);
+            else
+                setEndingSelection(cmd.endingSelection());
+        }
+        else if (lastCommand.commandID() == InputNewlineCommandID) {
+            lastCommand.unapply();
+            removeCommand(lastCommand);
+        }
+        else {
+            DeleteKeyCommand cmd(document());
+            applyCommandToComposite(cmd);
+        }
+    }
+}
+
+void TypingCommandImpl::removeCommand(const EditCommand &cmd)
+{
+    // NOTE: If the passed-in command is the last command in the
+    // composite, we could remove all traces of this typing command
+    // from the system, including the undo chain. Other editors do
+    // not do this, but we could.
+
+    m_cmds.remove(cmd);
+    if (m_cmds.count() == 0)
+        setEndingSelection(startingSelection());
+    else
+        setEndingSelection(m_cmds.last().endingSelection());
+}
+
+//------------------------------------------------------------------------------------------
+

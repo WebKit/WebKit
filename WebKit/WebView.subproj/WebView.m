@@ -12,6 +12,7 @@
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultEditingDelegate.h>
 #import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -125,6 +126,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [resourceProgressDelegateForwarder release];
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
+    [editingDelegateForwarder release];
     
     [progressItems release];
     
@@ -629,6 +631,13 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     if (!_private->UIDelegateForwarder)
         _private->UIDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self UIDelegate] defaultTarget: [WebDefaultUIDelegate sharedUIDelegate] templateClass: [WebDefaultUIDelegate class]];
     return _private->UIDelegateForwarder;
+}
+
+- _editingDelegateForwarder
+{
+    if (!_private->editingDelegateForwarder)
+        _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self editingDelegate] defaultTarget: [WebDefaultEditingDelegate sharedEditingDelegate] templateClass: [WebDefaultEditingDelegate class]];
+    return _private->editingDelegateForwarder;
 }
 
 
@@ -2004,3 +2013,119 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 @end
+
+
+/*!
+    @implementation WebView (WebEditingExtras)
+*/
+@implementation WebView (WebEditingExtras)
+
+- (void)keyDown:(NSEvent *)event
+{
+    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+}
+
+- (WebBridge *)_bridgeForCurrentSelection
+{
+    // FIXME: This does not deal properly with subframes
+    return [[self mainFrame] _bridge];
+}
+
+- (void)setSelectedDOMRange:(DOMRange *)range
+{
+    [[self _bridgeForCurrentSelection] setSelectedDOMRange:range];
+}
+
+- (DOMRange *)selectedDOMRange
+{
+    return [[self _bridgeForCurrentSelection] selectedDOMRange];
+}
+
+- (void)insertText:(NSString *)string
+{
+    [self insertText:string replacingDOMRange:[self selectedDOMRange]];
+}
+
+- (void)_alterSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+{
+    DOMRange *currentRange = [self selectedDOMRange];
+    DOMRange *proposedRange = [[self _bridgeForCurrentSelection] rangeByModifyingRange:currentRange
+        alteration:alteration 
+        direction:direction 
+        granularity:granularity];
+    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange]) {
+        [self setSelectedDOMRange:proposedRange];
+    }
+}
+
+- (void)selectWord:(id)sender
+{
+}
+
+- (void)moveRight:(id)sender
+{
+    [self _alterSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
+}
+
+- (void)moveRightAndModifySelection:(id)sender
+{
+    [self _alterSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [self _alterSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
+}
+
+- (void)moveLeftAndModifySelection:(id)sender
+{
+    [self _alterSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
+}
+
+- (void)deleteBackward:(id)sender
+{
+    [[self _bridgeForCurrentSelection] deleteKeyPressed];
+}
+
+- (void)insertNewline:(id)sender
+{
+    [[self _bridgeForCurrentSelection] insertNewline];
+}
+
+- (void)insertParagraphSeparator:(id)sender
+{
+}
+
+- (void)setEditingDelegate:(id)delegate
+{
+    _private->editingDelegate = delegate;
+    [_private->editingDelegateForwarder release];
+    _private->editingDelegateForwarder = nil;
+}
+
+- (id)editingDelegate
+{
+    return _private->editingDelegate;
+}
+
+- (NSUndoManager *)undoManager
+{
+    NSUndoManager *undoManager = [[self _editingDelegateForwarder] undoManagerForWebView:self];
+    if (undoManager) {
+        return undoManager;
+    }
+    return [super undoManager];
+}
+
+@end
+
+@implementation WebView (WebViewUndoableEditing)
+
+- (void)insertText:(NSString *)text replacingDOMRange:(DOMRange *)range
+{
+    // FIXME: handle switching selections
+    [[self _bridgeForCurrentSelection] insertText:text];
+}
+
+@end
+

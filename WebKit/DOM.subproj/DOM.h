@@ -38,47 +38,59 @@
 //=========================================================================
 //=========================================================================
 
-enum DOMNodeType {
-    DOMElementNodeType                   = 1,
-    DOMAttributeNodeType                 = 2,
-    DOMTextNodeType                      = 3,
-    DOMCDATASectionNodeType              = 4,
-    DOMEntityReferenceNodeType           = 5,
-    DOMEntityNodeType                    = 6,
-    DOMProcessingInstructionNodeType     = 7,
-    DOMCommentNodeType                   = 8,
-    DOMDocumentNodeType                  = 9,
-    DOMDocumentTypeNodeType              = 10,
-    DOMDocumentFragmentNodeType          = 11,
-    DOMNotationNodeType                  = 12,
-};
-
-enum DOMErrorCode {
-    DOMIndexSizeError                 = 1,
-    DOMStringSizeError                = 2,
-    DOMHierarchyRequestError          = 3,
-    DOMWrongDocumentError             = 4,
-    DOMInvalidCharacterError          = 5,
-    DOMNoDataAllowedError             = 6,
-    DOMNoModificationAllowedError     = 7,
-    DOMNotFoundError                  = 8,
-    DOMNotSupportedError              = 9,
-    DOMInUseAttributeError            = 10,
-    DOMInvalidStateError              = 11,
-    DOMSyntaxError                    = 12,
-    DOMInvalidModificationError       = 13,
-    DOMNamespaceError                 = 14,
-    DOMInvalidAccessError             = 15,
-};
-
-enum DOMRangeErrorCode {
-    DOMBadBoundaryPointsError         = 1,
-    DOMInvalidNodeTypeError           = 2,
+enum {
+    //
+    // DOM node types
+    //
+    DOM_ELEMENT_NODE                  = 1,
+    DOM_ATTRIBUTE_NODE                = 2,
+    DOM_TEXT_NODE                     = 3,
+    DOM_CDATA_SECTION_NODE            = 4,
+    DOM_ENTITY_REFERENCE_NODE         = 5,
+    DOM_ENTITY_NODE                   = 6,
+    DOM_PROCESSING_INSTRUCTION_NODE   = 7,
+    DOM_COMMENT_NODE                  = 8,
+    DOM_DOCUMENT_NODE                 = 9,
+    DOM_DOCUMENT_TYPE_NODE            = 10,
+    DOM_DOCUMENT_FRAGMENT_NODE        = 11,
+    DOM_NOTATION_NODE                 = 12,
+    //
+    // DOM core exception codes
+    //
+    DOM_INDEX_SIZE_ERR                = 1,
+    DOM_DOMSTRING_SIZE_ERR            = 2,
+    DOM_HIERARCHY_REQUEST_ERR         = 3,
+    DOM_WRONG_DOCUMENT_ERR            = 4,
+    DOM_INVALID_CHARACTER_ERR         = 5,
+    DOM_NO_DATA_ALLOWED_ERR           = 6,
+    DOM_NO_MODIFICATION_ALLOWED_ERR   = 7,
+    DOM_NOT_FOUND_ERR                 = 8,
+    DOM_NOT_SUPPORTED_ERR             = 9,
+    DOM_INUSE_ATTRIBUTE_ERR           = 10,
+    DOM_INVALID_STATE_ERR             = 11,
+    DOM_SYNTAX_ERR                    = 12,
+    DOM_INVALID_MODIFICATION_ERR      = 13,
+    DOM_NAMESPACE_ERR                 = 14,
+    DOM_INVALID_ACCESS_ERR            = 15,
+    //
+    // DOM range exception codes
+    //
+    DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
+    DOM_INVALID_NODE_TYPE_ERR         = 2,
+    //
+    // DOM range exception codes
+    //
+    DOMCompareStartToStart = 0,
+    DOMCompareStartToEnd   = 1,
+    DOMCompareEndToEnd     = 2,
+    DOMCompareEndToStart   = 3,
 };
 
 extern NSString * const DOMException;
 extern NSString * const DOMRangeException;
 
+@class CSSStyleDeclaration;
+@class CSSStyleSheet;
 @class DOMAttr;
 @class DOMCDATASection;
 @class DOMComment;
@@ -89,7 +101,15 @@ extern NSString * const DOMRangeException;
 @class DOMNamedNodeMap;
 @class DOMNodeList;
 @class DOMProcessingInstruction;
+@class DOMRange;
+@class DOMStyleSheetList;
 @class DOMText;
+
+@protocol DOMDocumentRange;
+@protocol DOMViewCSS;
+@protocol DOMDocumentCSS;
+@protocol DOMImplementationCSS;
+@protocol DOMElementCSSInlineStyle;
 
 typedef struct DOMObjectInternal DOMObjectInternal;
 
@@ -146,10 +166,11 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 
-@interface DOMImplementation : DOMObject
+@interface DOMImplementation : DOMObject <DOMImplementationCSS>
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version;
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId;
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype;
+- (CSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media;
 @end
 
 
@@ -157,7 +178,7 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 
-@interface DOMDocument : DOMNode
+@interface DOMDocument : DOMNode <DOMDocumentRange, DOMViewCSS, DOMDocumentCSS>
 - (DOMDocumentType *)doctype;
 - (DOMImplementation *)implementation;
 - (DOMElement *)documentElement;
@@ -175,6 +196,10 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName;
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 - (DOMElement *)getElementById:(NSString *)elementId;
+- (DOMRange *)createRange;
+- (CSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+- (CSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+- (DOMStyleSheetList *)styleSheets;
 @end
 
 
@@ -199,7 +224,7 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 
-@interface DOMElement : DOMNode
+@interface DOMElement : DOMNode <DOMElementCSSInlineStyle>
 - (NSString *)tagName;
 - (NSString *)getAttribute:(NSString *)name;
 - (void)setAttribute:(NSString *)name :(NSString *)value;
@@ -216,6 +241,7 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
 - (BOOL)hasAttribute:(NSString *)name;
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
+- (CSSStyleDeclaration *)style;
 @end
 
 
@@ -266,14 +292,6 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 
-enum DOMCompareHow
-{
-    DOMCompareStartToStart = 0,
-    DOMCompareStartToEnd   = 1,
-    DOMCompareEndToEnd     = 2,
-    DOMCompareEndToStart   = 3,
-};
-
 @interface DOMRange : DOMObject
 - (DOMNode *)startContainer;
 - (long)startOffset;
@@ -299,4 +317,34 @@ enum DOMCompareHow
 - (DOMRange *)cloneRange;
 - (NSString *)toString;
 - (void)detach;
+@end
+
+
+@protocol DOMDocumentRange
+- (DOMRange *)createRange;
+@end
+
+
+@protocol DOMViewCSS
+- (CSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
+
+
+@protocol DOMDocumentStyle
+- (DOMStyleSheetList *)styleSheets;
+@end
+
+
+@protocol DOMDocumentCSS <DOMDocumentStyle>
+- (CSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+@end
+
+
+@protocol DOMImplementationCSS
+- (CSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media;
+@end
+
+
+@protocol DOMElementCSSInlineStyle
+- (CSSStyleDeclaration *)style;
 @end

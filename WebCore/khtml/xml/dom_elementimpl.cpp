@@ -374,50 +374,15 @@ bool ElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
 
 void ElementImpl::defaultEventHandler(EventImpl *evt)
 {
+#if APPLE_CHANGES
     if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {
-        KeyboardEventImpl *k = static_cast<KeyboardEventImpl *>(evt);
-        EditCommand cmd;
-        if (k->keyIdentifier() == "U+00007F" || 
-            k->keyIdentifier() == "U+000008" || 
-            k->keyIdentifier() == "ForwardDelete") {
-            cmd = DeleteKeyCommand(getDocument());
-        }
-        else if (k->keyIdentifier() == "Right") {
-            KHTMLPart *part = getDocument()->part();
-            if (part) {
-                KHTMLSelection s = part->selection();
-                s.modify(KHTMLSelection::MOVE, KHTMLSelection::FORWARD, KHTMLSelection::CHARACTER);
-                part->setSelection(s);
-                evt->setDefaultHandled();
-            }
-        }
-        else if (k->keyIdentifier() == "Left") {
-            KHTMLPart *part = getDocument()->part();
-            if (part) {
-                KHTMLSelection s = part->selection();
-                s.modify(KHTMLSelection::MOVE, KHTMLSelection::BACKWARD, KHTMLSelection::CHARACTER);
-                part->setSelection(s);
-                evt->setDefaultHandled();
-            }
-        }
-        else if (k->keyIdentifier() == "Up") {
-            // EDIT FIXME: unimplemented
-        }
-        else if (k->keyIdentifier() == "Down") {
-            // EDIT FIXME: unimplemented
-        }
-        else {
-            QString text(k->qKeyEvent()->text());
-            cmd = InputTextCommand(getDocument(), text);
-        }
-        if (cmd.notNull()) {
-            KHTMLPart *part = getDocument()->part();
-            if (part) {
-                part->applyCommand(cmd);
-                evt->setDefaultHandled();
-            }
+        KHTMLPart *part = getDocument()->part();
+        if (part) {
+            KWQ(part)->editingKeyEvent();
+            evt->setDefaultHandled();
         }
     }
+#endif
     NodeBaseImpl::defaultEventHandler(evt);
 }
 

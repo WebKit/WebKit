@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ * 1. Redistributions of source exceptionCode must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOMInternal.h"
+#import "DOM.h"
 
 #include <objc/objc-class.h>
 
@@ -35,6 +35,7 @@
 #import <dom/dom_text.h>
 #import <dom/dom_xml.h>
 #import <dom/dom2_range.h>
+#import <html/html_elementimpl.h>
 #import <xml/dom_docimpl.h>
 #import <xml/dom_elementimpl.h>
 #import <xml/dom_nodeimpl.h>
@@ -42,7 +43,10 @@
 #import <xml/dom_textimpl.h>
 #import <xml/dom_xmlimpl.h>
 #import <xml/dom2_rangeimpl.h>
+#import <xml/dom2_viewsimpl.h>
 
+#import "DOM-CSS.h"
+#import "DOMInternal.h"
 #import "KWQAssertions.h"
 
 using DOM::Attr;
@@ -59,6 +63,7 @@ using DOM::DOMStringImpl;
 using DOM::Element;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
+using DOM::HTMLElementImpl;
 using DOM::NamedNodeMap;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -91,98 +96,6 @@ using DOM::TextImpl;
 @interface DOMNodeList (WebCoreInternal)
 + (DOMNodeList *)_nodeListWithImpl:(NodeListImpl *)impl;
 @end
-
-@interface DOMObject (WebCoreInternal)
-- (id)_init;
-@end
-
-//------------------------------------------------------------------------------------------
-// Static functions and data
-
-NSString * const DOMException = @"DOMException";
-NSString * const DOMRangeException = @"DOMRangeException";
-
-static CFMutableDictionaryRef wrapperCache = NULL;
-
-static id wrapperForImpl(const void *impl)
-{
-    if (!wrapperCache)
-        return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, impl);
-}
-
-static void setWrapperForImpl(id wrapper, const void *impl)
-{
-    if (!wrapperCache) {
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in dealloc methods.
-        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    }
-    CFDictionarySetValue(wrapperCache, impl, wrapper);
-}
-
-static void removeWrapperForImpl(const void *impl)
-{
-    if (!wrapperCache)
-        return;
-    CFDictionaryRemoveValue(wrapperCache, impl);
-}
-
-static void raiseDOMException(int code)
-{
-    ASSERT(code);
-    
-    NSString *name;
-    if (code >= RangeException::_EXCEPTION_OFFSET) {
-        name = DOMRangeException;
-        code -= RangeException::_EXCEPTION_OFFSET;
-    }
-    else {
-        name = DOMException;
-    }
-    NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
-    NSException *exception = [NSException exceptionWithName:name reason:reason
-        userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:name]];
-    [exception raise];
-}
-
-static inline void raiseOnError(int code) 
-{
-    if (code) 
-        raiseDOMException(code);
-}
-
-//------------------------------------------------------------------------------------------
-// DOMString/NSString bridging
-
-DOMString::operator NSString *() const
-{
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(unicode()) length:length()];
-}
-
-DOMString::DOMString(NSString *str)
-{
-    ASSERT(str);
-
-    CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(str));
-    if (size == 0)
-        impl = DOMStringImpl::empty();
-    else {
-        UniChar fixedSizeBuffer[1024];
-        UniChar *buffer;
-        if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-            buffer = static_cast<UniChar *>(malloc(size * sizeof(UniChar)));
-        } else {
-            buffer = fixedSizeBuffer;
-        }
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer);
-        impl = new DOMStringImpl(reinterpret_cast<const QChar *>(buffer), (uint)size);
-        if (buffer != fixedSizeBuffer) {
-            free(buffer);
-        }
-    }
-    impl->ref();
-}
 
 //------------------------------------------------------------------------------------------
 // Factory methods
@@ -228,7 +141,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (void)dealloc
 {
     if (_internal) {
-        removeWrapperForImpl(_internal);
+        removeDOMWrapperForImpl(_internal);
     }
     [super dealloc];
 }
@@ -278,9 +191,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(string);
     
-    int code = 0;
-    [self _nodeImpl]->setNodeValue(string, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _nodeImpl]->setNodeValue(string, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (unsigned short)nodeType
@@ -335,9 +248,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(newChild);
     ASSERT(refChild);
 
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -346,9 +259,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(newChild);
     ASSERT(oldChild);
 
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -356,9 +269,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(oldChild);
 
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->removeChild([oldChild _nodeImpl], code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->removeChild([oldChild _nodeImpl], exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -366,9 +279,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(newChild);
 
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->appendChild([newChild _nodeImpl], code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->appendChild([newChild _nodeImpl], exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -411,9 +324,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(prefix);
 
-    int code = 0;
-    [self _nodeImpl]->setPrefix(prefix, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _nodeImpl]->setPrefix(prefix, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (NSString *)localName
@@ -443,7 +356,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setDOMWrapperForImpl(self, impl);
     return self;
 }
 
@@ -453,7 +366,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = wrapperForImpl(impl);
+    cachedInstance = getDOMWrapperForImpl(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -545,7 +458,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMNode _nodeWithImpl:result.handle()];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -561,7 +474,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMNode _nodeWithImpl:result.handle()];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -599,7 +512,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMNode _nodeWithImpl:result.handle()];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -616,7 +529,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMNode _nodeWithImpl:result.handle()];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -632,7 +545,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setDOMWrapperForImpl(self, impl);
     return self;
 }
 
@@ -642,7 +555,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = wrapperForImpl(impl);
+    cachedInstance = getDOMWrapperForImpl(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -690,7 +603,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setDOMWrapperForImpl(self, impl);
     return self;
 }
 
@@ -700,7 +613,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = wrapperForImpl(impl);
+    cachedInstance = getDOMWrapperForImpl(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -741,9 +654,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(publicId);
     ASSERT(systemId);
 
-    int code = 0;
-    DocumentTypeImpl *impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DocumentTypeImpl *impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:impl]);
 }
 
@@ -752,11 +665,24 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(qualifiedName);
 
-    int code = 0;
+    int exceptionCode = 0;
     DocumentType dt = DocumentTypeImpl::createInstance(static_cast<DocumentTypeImpl *>([doctype _nodeImpl]));
-    DocumentImpl *impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, dt, code);
-    raiseOnError(code);
+    DocumentImpl *impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, dt, exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (CSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
+{
+    ASSERT(title);
+    ASSERT(media);
+
+    int exceptionCode = 0;
+    DOMString titleString(title);
+    DOMString mediaString(media);
+    CSSStyleSheet *result = [CSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(titleString.implementation(), mediaString.implementation(), exceptionCode)];
+    raiseOnDOMError(exceptionCode);
+    return result;
 }
 
 @end
@@ -770,7 +696,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setDOMWrapperForImpl(self, impl);
     return self;
 }
 
@@ -780,7 +706,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = wrapperForImpl(impl);
+    cachedInstance = getDOMWrapperForImpl(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
@@ -834,9 +760,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(tagName);
 
-    int code = 0;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, code)]);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, exceptionCode)]);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -887,7 +813,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return static_cast<DOMAttr *>([DOMNode _nodeWithImpl:result.handle()]);
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -909,9 +835,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
 {
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -920,9 +846,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(qualifiedName);
 
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return static_cast<DOMElement *>(result);
 }
 
@@ -938,7 +864,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return static_cast<DOMAttr *>([DOMNode _nodeWithImpl:result.handle()]);
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -956,6 +882,30 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(elementId);
 
     return static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->getElementById(elementId)]);
+}
+
+- (DOMRange *)createRange
+{
+    return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange()];
+}
+
+- (CSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
+{
+    ElementImpl *elementImpl = [elt _elementImpl];
+    DOMString pseudoEltString(pseudoElt);
+    return [CSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.implementation())];
+}
+
+- (CSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+{
+    // FIXME: This is unimplemented by khtml, 
+    // so for now, we just return the computed style
+    return [self getComputedStyle:elt :pseudoElt];
+}
+
+- (DOMStyleSheetList *)styleSheets
+{
+    return [DOMStyleSheetList _styleSheetListWithImpl:[self _documentImpl]->styleSheets()];
 }
 
 @end
@@ -990,9 +940,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(data);
     
-    int code = 0;
-    [self _characterDataImpl]->setData(data, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _characterDataImpl]->setData(data, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (unsigned long)length
@@ -1002,9 +952,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (NSString *)substringData:(unsigned long)offset :(unsigned long)count
 {
-    int code = 0;
-    NSString *result = [self _characterDataImpl]->substringData(offset, count, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    NSString *result = [self _characterDataImpl]->substringData(offset, count, exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
@@ -1012,34 +962,34 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(arg);
     
-    int code = 0;
-    [self _characterDataImpl]->appendData(arg, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _characterDataImpl]->appendData(arg, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)insertData:(unsigned long)offset :(NSString *)arg
 {
     ASSERT(arg);
     
-    int code = 0;
-    [self _characterDataImpl]->insertData(offset, arg, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _characterDataImpl]->insertData(offset, arg, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)deleteData:(unsigned long)offset :(unsigned long) count;
 {
-    int code = 0;
-    [self _characterDataImpl]->deleteData(offset, count, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _characterDataImpl]->deleteData(offset, count, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)replaceData:(unsigned long)offset :(unsigned long)count :(NSString *)arg
 {
     ASSERT(arg);
 
-    int code = 0;
-    [self _characterDataImpl]->replaceData(offset, count, arg, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _characterDataImpl]->replaceData(offset, count, arg, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 @end
@@ -1068,9 +1018,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(value);
 
-    int code = 0;
-    [self _attrImpl]->setValue(value, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _attrImpl]->setValue(value, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (DOMElement *)ownerElement
@@ -1126,7 +1076,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         element.setAttribute(name, value);
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
     }
 }
 
@@ -1140,7 +1090,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         element.removeAttribute(name);
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
     }
 }
 
@@ -1166,7 +1116,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -1183,7 +1133,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -1216,7 +1166,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         element.setAttributeNS(namespaceURI, qualifiedName, value);
     }
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
     }
 }
 
@@ -1231,7 +1181,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         element.removeAttributeNS(namespaceURI, localName);
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
     }
 }
 
@@ -1258,7 +1208,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
     } 
     catch (const DOM::DOMException &e) {
-        raiseOnError(e.code);
+        raiseOnDOMError(e.code);
         return nil;
     }
 }
@@ -1290,6 +1240,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return element.hasAttributeNS(namespaceURI, localName);
 }
 
+- (CSSStyleDeclaration *)style
+{
+    ElementImpl *impl = [self _elementImpl];
+    if (impl->isHTMLElement())
+        return [CSSStyleDeclaration _styleDeclarationWithImpl:static_cast<HTMLElementImpl *>(impl)->getInlineStyleDecl()];
+    return nil;
+}
+
 @end
 
 @implementation DOMElement (WebCoreInternal)
@@ -1318,9 +1276,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMText *)splitText:(unsigned long)offset
 {
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return static_cast<DOMText *>(result);
 }
 
@@ -1462,9 +1420,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(data);
 
-    int code = 0;
-    [self _processingInstructionImpl]->setData(data, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _processingInstructionImpl]->setData(data, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 @end
@@ -1484,181 +1442,181 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMNode *)startContainer
 {
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->startContainer(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->startContainer(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (long)startOffset
 {
-    int code = 0;
-    long result = [self _rangeImpl]->startOffset(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    long result = [self _rangeImpl]->startOffset(exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (DOMNode *)endContainer
 {
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->endContainer(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->endContainer(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (long)endOffset
 {
-    int code = 0;
-    long result = [self _rangeImpl]->endOffset(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    long result = [self _rangeImpl]->endOffset(exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (BOOL)collapsed
 {
-    int code = 0;
-    BOOL result = [self _rangeImpl]->collapsed(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    BOOL result = [self _rangeImpl]->collapsed(exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (DOMNode *)commonAncestorContainer
 {
-    int code = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->commonAncestorContainer(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->commonAncestorContainer(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (void)setStart:(DOMNode *)refNode :(long)offset
 {
-    int code = 0;
-    [self _rangeImpl]->setStart([refNode _nodeImpl], offset, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setStart([refNode _nodeImpl], offset, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)setEnd:(DOMNode *)refNode :(long)offset
 {
-    int code = 0;
-    [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)setStartBefore:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->setStartBefore([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setStartBefore([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->setStartAfter([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setStartAfter([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->setEndBefore([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setEndBefore([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->setEndAfter([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->setEndAfter([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)collapse:(BOOL)toStart
 {
-    int code = 0;
-    [self _rangeImpl]->collapse(toStart, code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->collapse(toStart, exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)selectNode:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->selectNode([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->selectNode([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
 {
-    int code = 0;
-    [self _rangeImpl]->selectNodeContents([refNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->selectNodeContents([refNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
 {
-    int code = 0;
-    short result = [self _rangeImpl]->compareBoundaryPoints(static_cast<Range::CompareHow>(how), [sourceRange _rangeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    short result = [self _rangeImpl]->compareBoundaryPoints(static_cast<Range::CompareHow>(how), [sourceRange _rangeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (void)deleteContents
 {
-    int code = 0;
-    [self _rangeImpl]->deleteContents(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->deleteContents(exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (DOMDocumentFragment *)extractContents
 {
-    int code = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (DOMDocumentFragment *)cloneContents
 {
-    int code = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (void)insertNode:(DOMNode *)newNode
 {
-    int code = 0;
-    [self _rangeImpl]->insertNode([newNode _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->insertNode([newNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)surroundContents:(DOMNode *)newParent
 {
-    int code = 0;
-    [self _rangeImpl]->surroundContents([newParent _nodeImpl], code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->surroundContents([newParent _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (DOMRange *)cloneRange
 {
-    int code = 0;
-    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(code)];
-    raiseOnError(code);
+    int exceptionCode = 0;
+    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (NSString *)toString
 {
-    int code = 0;
-    NSString *result = [self _rangeImpl]->toString(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    NSString *result = [self _rangeImpl]->toString(exceptionCode);
+    raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (void)detach
 {
-    int code = 0;
-    [self _rangeImpl]->detach(code);
-    raiseOnError(code);
+    int exceptionCode = 0;
+    [self _rangeImpl]->detach(exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 @end
@@ -1672,7 +1630,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(impl);
     impl->ref();
-    setWrapperForImpl(self, impl);
+    setDOMWrapperForImpl(self, impl);
     return self;
 }
 
@@ -1682,7 +1640,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     
     id cachedInstance;
-    cachedInstance = wrapperForImpl(impl);
+    cachedInstance = getDOMWrapperForImpl(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     

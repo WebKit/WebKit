@@ -27,6 +27,7 @@
 
 #import "KWQDOMNode.h"
 #import "KWQDummyView.h"
+#import "KWQEditCommand.h"
 #import "KWQExceptions.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
@@ -55,6 +56,7 @@
 #import "render_table.h"
 #import "render_text.h"
 #import "xml/dom2_eventsimpl.h"
+#import "xml/dom2_rangeimpl.h"
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime_root.h>
 
@@ -73,6 +75,7 @@ using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::RangeImpl;
 
 using khtml::Cache;
 using khtml::ChildFrame;
@@ -2847,17 +2850,29 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
     }
 }
 
-void KWQKHTMLPart::registerCommandForUndo()
+void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
 {
-    [_bridge registerCommandForUndo];
+    ASSERT(cmd.handle());
+
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
+    [_bridge registerCommandForUndo:kwq];
 }
 
-void KWQKHTMLPart::registerCommandForRedo()
+void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommand &cmd)
 {
-    [_bridge registerCommandForRedo];
+    ASSERT(cmd.handle());
+
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
+    [_bridge registerCommandForRedo:kwq];
 }
 
 void KWQKHTMLPart::clearUndoRedoOperations()
 {
     [_bridge clearUndoRedoOperations];
 }
+
+void KWQKHTMLPart::editingKeyEvent()
+{
+    [_bridge keyDown:_currentEvent];
+}
+

@@ -51,9 +51,9 @@ public:
     ~KHTMLSelection();
 
 	enum EState { NONE, CARET, RANGE };
-	enum ETextElement { CHARACTER, WORD, LINE };
-	enum EDirection { FORWARD, BACKWARD };
 	enum EAlter { MOVE, EXTEND };
+	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+	enum ETextGranularity { CHARACTER, WORD, LINE };
 
 	EState state() const { return m_state; }
 
@@ -62,8 +62,8 @@ public:
     void moveTo(const DOM::DOMPosition &);
     void moveTo(const KHTMLSelection &);
     void moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset);
-    bool modify(EAlter, EDirection, ETextElement);
-    void expandToElement(ETextElement);
+    bool modify(EAlter, EDirection, ETextGranularity);
+    void expandToElement(ETextGranularity);
     void clear();
 
     bool moveToRenderedContent();
@@ -106,7 +106,7 @@ public:
 
 private:
     void init();
-    void validate(ETextElement expandTo=CHARACTER);
+    void validate(ETextGranularity expandTo=CHARACTER);
 
     void layoutCaret();
     void needsCaretRepaint();
@@ -126,7 +126,7 @@ private:
     bool inRenderedContent(const DOM::DOMPosition &);
     bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
 
-    void calculateStartAndEnd(ETextElement select=CHARACTER);
+    void calculateStartAndEnd(ETextGranularity select=CHARACTER);
     
     DOM::NodeImpl *m_baseNode;    // base node for the selection
     long m_baseOffset;            // offset into base node where selection is

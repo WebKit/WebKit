@@ -345,7 +345,7 @@ public:
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
 #if APPLE_CHANGES
-  KHTMLSelection::ETextElement m_textElement;
+  KHTMLSelection::ETextGranularity m_textElement;
   bool m_mouseMovedSinceLastMousePress:1;
 #endif
   QString m_overURL;
@@ -365,8 +365,6 @@ public:
   bool m_focusNodeRestored:1;
 
   TristateFlag m_inEditMode;
-  QValueList<khtml::EditCommand> m_undoEditCommands;
-  QValueList<khtml::EditCommand> m_redoEditCommands;
   khtml::EditCommand m_lastEditCommand;
 
   int m_focusNodeNumber;

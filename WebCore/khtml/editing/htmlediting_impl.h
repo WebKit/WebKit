@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,11 @@
 
 #include "htmlediting.h"
 
-#include <khtml_selection.h>
-#include <dom_position.h>
-#include <dom_string.h>
-
-#include <qvaluelist.h>
-#include <shared.h>
+#include "dom_position.h"
+#include "dom_string.h"
+#include "khtml_selection.h"
+#include "qvaluelist.h"
+#include "shared.h"
 
 class KHTMLSelection;
 
@@ -48,7 +47,7 @@ namespace DOM {
 namespace khtml {
 
 //------------------------------------------------------------------------------------------
-// EditCommandImpl classes
+// EditCommandImpl
 
 class EditCommandImpl : public SharedCommandImpl
 {
@@ -57,33 +56,25 @@ public:
 	virtual ~EditCommandImpl();
 
     virtual int commandID() const;
-	virtual QString name() const;
+    bool isCompositeStep() const { return m_isCompositeStep; }
+    void setIsCompositeStep(bool flag=true) { m_isCompositeStep = flag; }
 
     enum ECommandState { NotApplied, Applied };
     
-	virtual void apply() = 0;	
-	virtual void unapply() = 0;
-	virtual void reapply();  // calls apply()
+	void apply();	
+	void unapply();
+	void reapply();
 
-    virtual bool coalesce(const EditCommand &);
+    virtual void doApply() = 0;
+    virtual void doUnapply() = 0;
+    virtual void doReapply();  // calls doApply()
 
-    virtual bool groupForUndo(const EditCommand &) const;
-    virtual bool groupForRedo(const EditCommand &) const;
-            
     virtual DOM::DocumentImpl * const document() const { return m_document; }
 
-    virtual KHTMLSelection startingSelection() const { return m_startingSelection; }
-    virtual KHTMLSelection endingSelection() const { return m_endingSelection; }
-    virtual KHTMLSelection currentSelection() const;
+    KHTMLSelection startingSelection() const { return m_startingSelection; }
+    KHTMLSelection endingSelection() const { return m_endingSelection; }
+    KHTMLSelection currentSelection() const;
         
-protected:
-    void beginApply();
-    void endApply();
-    void beginUnapply();
-    void endUnapply();
-    void beginReapply();
-    void endReapply();
-    
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
 
@@ -98,7 +89,11 @@ private:
     ECommandState m_state;
     KHTMLSelection m_startingSelection;
     KHTMLSelection m_endingSelection;
+    bool m_isCompositeStep;
 };
+
+//------------------------------------------------------------------------------------------
+// CompositeEditCommandImpl
 
 class CompositeEditCommandImpl : public EditCommandImpl
 {
@@ -106,15 +101,17 @@ public:
 	CompositeEditCommandImpl(DOM::DocumentImpl *);
 	virtual ~CompositeEditCommandImpl();
 	
-	virtual void apply() = 0;	
-	virtual void unapply();
-	virtual void reapply();
-    
+    virtual int commandID() const;
+
+	virtual void doApply() = 0;	
+	virtual void doUnapply();
+	virtual void doReapply();
+
 protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void applyCommand(EditCommand &);
+    void applyCommandToComposite(EditCommand &);
     void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
@@ -124,64 +121,14 @@ protected:
     void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
     void insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
     void deleteText(DOM::TextImpl *node, long offset, long count);
-    void moveSelectionTo(const KHTMLSelection &selection);
-	void moveSelectionTo(DOM::NodeImpl *, long);
-	void moveSelectionTo(const DOM::DOMPosition &);
     void deleteSelection();
+    void deleteKeyPressed();
 
     QValueList<EditCommand> m_cmds;
 };
 
-class InsertNodeBeforeCommandImpl : public EditCommandImpl
-{
-public:
-    InsertNodeBeforeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-	virtual ~InsertNodeBeforeCommandImpl();
-
-	virtual void apply();
-	virtual void unapply();
-
-    DOM::NodeImpl *insertChild() const { return m_insertChild; }
-    DOM::NodeImpl *refChild() const { return m_refChild; }
-
-private:
-    DOM::NodeImpl *m_insertChild;
-    DOM::NodeImpl *m_refChild; 
-};
-
-class AppendNodeCommandImpl : public EditCommandImpl
-{
-public:
-    AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
-	virtual ~AppendNodeCommandImpl();
-
-	virtual void apply();
-	virtual void unapply();
-
-    DOM::NodeImpl *parent() const { return m_parent; }
-    DOM::NodeImpl *appendChild() const { return m_appendChild; }
-
-private:
-    DOM::NodeImpl *m_parent;    
-    DOM::NodeImpl *m_appendChild;
-};
-
-class RemoveNodeCommandImpl : public EditCommandImpl
-{
-public:
-	RemoveNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
-	virtual ~RemoveNodeCommandImpl();
-	
-	virtual void apply();
-	virtual void unapply();
-
-    DOM::NodeImpl *node() const { return m_removeChild; }
-
-private:
-    DOM::NodeImpl *m_parent;    
-    DOM::NodeImpl *m_removeChild;
-    DOM::NodeImpl *m_refChild;    
-};
+//------------------------------------------------------------------------------------------
+// ModifyTextNodeCommandImpl
 
 class ModifyTextNodeCommandImpl : public EditCommandImpl
 {
@@ -192,6 +139,8 @@ public:
     ModifyTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
 	virtual ~ModifyTextNodeCommandImpl();
 	
+    virtual int commandID() const;
+
 protected:
     void splitTextNode();
     void joinTextNodes();
@@ -204,56 +153,60 @@ protected:
     long m_offset;
 };
 
-class SplitTextNodeCommandImpl : public ModifyTextNodeCommandImpl
+//==========================================================================================
+// Concrete commands
+//------------------------------------------------------------------------------------------
+// AppendNodeCommandImpl
+
+class AppendNodeCommandImpl : public EditCommandImpl
 {
 public:
-	SplitTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, long);
-	virtual ~SplitTextNodeCommandImpl();
-	
-	virtual void apply();
-	virtual void unapply();
+    AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
+	virtual ~AppendNodeCommandImpl();
 
-    virtual ECommandState joinState() { return Applied; }
-    virtual ECommandState splitState() { return NotApplied; }
+    virtual int commandID() const;
 
-    DOM::TextImpl *node() const { return m_text2; }
-    long offset() const { return m_offset; }
-};
+	virtual void doApply();
+	virtual void doUnapply();
 
-class JoinTextNodesCommandImpl : public ModifyTextNodeCommandImpl
-{
-public:
-	JoinTextNodesCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
-	virtual ~JoinTextNodesCommandImpl();
-	
-	virtual void apply();
-	virtual void unapply();
-
-    virtual ECommandState joinState() { return NotApplied; }
-    virtual ECommandState splitState() { return Applied; }
-
-    DOM::TextImpl *firstNode() const { return m_text1; }
-    DOM::TextImpl *secondNode() const { return m_text2; }
-};
-
-class InsertTextCommandImpl : public EditCommandImpl
-{
-public:
-	InsertTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
-	virtual ~InsertTextCommandImpl();
-	
-	virtual void apply();
-	virtual void unapply();
-
-    DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
-    DOM::DOMString text() const { return m_text; }
+    DOM::NodeImpl *parent() const { return m_parent; }
+    DOM::NodeImpl *appendChild() const { return m_appendChild; }
 
 private:
-    DOM::TextImpl *m_node;
-    long m_offset;
-    DOM::DOMString m_text;
+    DOM::NodeImpl *m_parent;    
+    DOM::NodeImpl *m_appendChild;
 };
+
+//------------------------------------------------------------------------------------------
+// DeleteKeyCommandImpl
+
+class DeleteKeyCommandImpl : public CompositeEditCommandImpl
+{
+public:
+    DeleteKeyCommandImpl(DOM::DocumentImpl *document);
+    virtual ~DeleteKeyCommandImpl();
+    
+    virtual int commandID() const;
+
+    virtual void doApply();
+};
+
+//------------------------------------------------------------------------------------------
+// DeleteSelectionCommandImpl
+
+class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
+{
+public:
+	DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
+	virtual ~DeleteSelectionCommandImpl();
+	
+    virtual int commandID() const;
+
+	virtual void doApply();
+};
+
+//------------------------------------------------------------------------------------------
+// DeleteTextCommandImpl
 
 class DeleteTextCommandImpl : public EditCommandImpl
 {
@@ -261,8 +214,10 @@ public:
 	DeleteTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
 	virtual ~DeleteTextCommandImpl();
 	
-	virtual void apply();
-	virtual void unapply();
+    virtual int commandID() const;
+
+	virtual void doApply();
+	virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
@@ -275,26 +230,22 @@ private:
     DOM::DOMString m_text;
 };
 
-class MoveSelectionToCommandImpl : public EditCommandImpl
+//------------------------------------------------------------------------------------------
+// InputNewlineCommandImpl
+
+class InputNewlineCommandImpl : public CompositeEditCommandImpl
 {
 public:
-	MoveSelectionToCommandImpl(DOM::DocumentImpl *document, const KHTMLSelection &selection);
-	MoveSelectionToCommandImpl(DOM::DocumentImpl *document, DOM::NodeImpl *, long);
-	MoveSelectionToCommandImpl(DOM::DocumentImpl *document, const DOM::DOMPosition &);
-	virtual ~MoveSelectionToCommandImpl();
+    InputNewlineCommandImpl(DOM::DocumentImpl *document);
+    virtual ~InputNewlineCommandImpl();
 
-	virtual void apply();
-	virtual void unapply();
+    virtual int commandID() const;
+
+    virtual void doApply();
 };
 
-class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
-{
-public:
-	DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
-	virtual ~DeleteSelectionCommandImpl();
-	
-	virtual void apply();
-};
+//------------------------------------------------------------------------------------------
+// InputTextCommandImpl
 
 class InputTextCommandImpl : public CompositeEditCommandImpl
 {
@@ -304,36 +255,89 @@ public:
 
     virtual int commandID() const;
 
-    virtual void apply();
-
-    virtual bool coalesce(const EditCommand &);
-
-    virtual bool groupForUndo(const EditCommand &) const;
-    virtual bool groupForRedo(const EditCommand &) const;
+    virtual void doApply();
 
     DOM::DOMString text() const { return m_text; }
-    bool isLineBreak(const DOM::DOMString &text) const;
-    bool isSpace(const DOM::DOMString &text) const;
+
+    void deleteCharacter();
+    void coalesce(const DOM::DOMString &text);
     
 private:
     void execute(const DOM::DOMString &text);
 
     DOM::DOMString m_text;
+    DOM::DOMString nbsp;
 };
 
-class DeleteKeyCommandImpl : public CompositeEditCommandImpl
+//------------------------------------------------------------------------------------------
+// InsertNodeBeforeCommandImpl
+
+class InsertNodeBeforeCommandImpl : public EditCommandImpl
 {
 public:
-    DeleteKeyCommandImpl(DOM::DocumentImpl *document);
-    virtual ~DeleteKeyCommandImpl();
-    
+    InsertNodeBeforeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+	virtual ~InsertNodeBeforeCommandImpl();
+
     virtual int commandID() const;
 
-    virtual void apply();
+	virtual void doApply();
+	virtual void doUnapply();
 
-    virtual bool groupForUndo(const EditCommand &) const;
-    virtual bool groupForRedo(const EditCommand &) const;
+    DOM::NodeImpl *insertChild() const { return m_insertChild; }
+    DOM::NodeImpl *refChild() const { return m_refChild; }
+
+private:
+    DOM::NodeImpl *m_insertChild;
+    DOM::NodeImpl *m_refChild; 
 };
+
+//------------------------------------------------------------------------------------------
+// InsertTextCommandImpl
+
+class InsertTextCommandImpl : public EditCommandImpl
+{
+public:
+	InsertTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
+	virtual ~InsertTextCommandImpl();
+	
+    virtual int commandID() const;
+
+	virtual void doApply();
+	virtual void doUnapply();
+
+    DOM::TextImpl *node() const { return m_node; }
+    long offset() const { return m_offset; }
+    DOM::DOMString text() const { return m_text; }
+
+private:
+    DOM::TextImpl *m_node;
+    long m_offset;
+    DOM::DOMString m_text;
+};
+
+//------------------------------------------------------------------------------------------
+// JoinTextNodesCommandImpl
+
+class JoinTextNodesCommandImpl : public ModifyTextNodeCommandImpl
+{
+public:
+	JoinTextNodesCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
+	virtual ~JoinTextNodesCommandImpl();
+	
+    virtual int commandID() const;
+
+	virtual void doApply();
+	virtual void doUnapply();
+
+    virtual ECommandState joinState() { return NotApplied; }
+    virtual ECommandState splitState() { return Applied; }
+
+    DOM::TextImpl *firstNode() const { return m_text1; }
+    DOM::TextImpl *secondNode() const { return m_text2; }
+};
+
+//------------------------------------------------------------------------------------------
+// PasteHTMLCommandImpl
 
 class PasteHTMLCommandImpl : public CompositeEditCommandImpl
 {
@@ -341,7 +345,9 @@ public:
     PasteHTMLCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &HTMLString);
     virtual ~PasteHTMLCommandImpl();
     
-    virtual void apply();
+    virtual int commandID() const;
+
+    virtual void doApply();
 
     DOM::DOMString HTMLString() const { return m_HTMLString; }
 
@@ -349,20 +355,95 @@ private:
     DOM::DOMString m_HTMLString;
 };
 
+//------------------------------------------------------------------------------------------
+// PasteImageCommandImpl
+
 class PasteImageCommandImpl : public CompositeEditCommandImpl
 {
 public:
     PasteImageCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &src);
     virtual ~PasteImageCommandImpl();
     
-    virtual void apply();
+    virtual int commandID() const;
+
+    virtual void doApply();
     
 private:
     DOM::DOMString m_src;
 };
 
+//------------------------------------------------------------------------------------------
+// RemoveNodeCommandImpl
 
-}; // end namespace khtml
+class RemoveNodeCommandImpl : public EditCommandImpl
+{
+public:
+	RemoveNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
+	virtual ~RemoveNodeCommandImpl();
+	
+    virtual int commandID() const;
+
+	virtual void doApply();
+	virtual void doUnapply();
+
+    DOM::NodeImpl *node() const { return m_removeChild; }
+
+private:
+    DOM::NodeImpl *m_parent;    
+    DOM::NodeImpl *m_removeChild;
+    DOM::NodeImpl *m_refChild;    
+};
+
+//------------------------------------------------------------------------------------------
+// SplitTextNodeCommandImpl
+
+class SplitTextNodeCommandImpl : public ModifyTextNodeCommandImpl
+{
+public:
+	SplitTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, long);
+	virtual ~SplitTextNodeCommandImpl();
+	
+    virtual int commandID() const;
+
+	virtual void doApply();
+	virtual void doUnapply();
+
+    virtual ECommandState joinState() { return Applied; }
+    virtual ECommandState splitState() { return NotApplied; }
+
+    DOM::TextImpl *node() const { return m_text2; }
+    long offset() const { return m_offset; }
+};
+
+//------------------------------------------------------------------------------------------
+// TypingCommandImpl
+
+class TypingCommandImpl : public CompositeEditCommandImpl
+{
+public:
+    TypingCommandImpl(DOM::DocumentImpl *document);
+    virtual ~TypingCommandImpl();
+    
+    virtual int commandID() const;
+
+    virtual void doApply();
+
+    bool openForMoreTyping() const { return m_openForMoreTyping; }
+    void closeTyping() { m_openForMoreTyping = false; }
+
+    void insertText(const DOM::DOMString &text);
+    void insertNewline();
+    void deleteKeyPressed();
+
+private:
+    void removeCommand(const EditCommand &);
+    
+    bool m_openForMoreTyping;
+};
+
+//------------------------------------------------------------------------------------------
+
+} // end namespace khtml
 
 #endif
 

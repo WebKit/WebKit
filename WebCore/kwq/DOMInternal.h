@@ -24,12 +24,16 @@
  */
 
 #import "DOM.h"
+#import "DOM-CSS.h"
 
 namespace DOM {
+    class CSSStyleDeclarationImpl;
+    class CSSStyleSheetImpl;
     class DocumentImpl;
     class ElementImpl;
     class NodeImpl;
     class RangeImpl;
+    class StyleSheetListImpl;
 }
 
 @interface DOMNode (WebCoreInternal)
@@ -50,3 +54,32 @@ namespace DOM {
 + (DOMRange *)_rangeWithImpl:(DOM::RangeImpl *)impl;
 - (DOM::RangeImpl *)_rangeImpl;
 @end
+
+@interface DOMObject (WebCoreInternal)
+- (id)_init;
+@end
+
+@interface CSSStyleDeclaration (WebCoreInternal)
++ (CSSStyleDeclaration *)_styleDeclarationWithImpl:(DOM::CSSStyleDeclarationImpl *)impl;
+@end
+
+@interface DOMStyleSheetList (WebCoreInternal)
++ (DOMStyleSheetList *)_styleSheetListWithImpl:(DOM::StyleSheetListImpl *)impl;
+@end
+
+@interface CSSStyleSheet (WebCoreInternal)
++ (CSSStyleSheet *)_CSSStyleSheetWithImpl:(DOM::CSSStyleSheetImpl *)impl;
+@end
+
+// Helper functions for DOM wrappers and gluing to Objective-C
+
+id getDOMWrapperForImpl(const void *impl);
+void setDOMWrapperForImpl(id wrapper, const void *impl);
+void removeDOMWrapperForImpl(const void *impl);
+void raiseDOMException(int code);
+
+inline void raiseOnDOMError(int code) 
+{
+    if (code) 
+        raiseDOMException(code);
+}

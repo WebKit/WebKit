@@ -85,6 +85,25 @@ typedef enum {
     WebCoreDevicePrinter
 } WebCoreDeviceType;
 
+typedef enum { 
+    WebSelectByMoving, 
+    WebSelectByExtending 
+} WebSelectionAlteration;
+
+typedef enum { 
+    WebSelectForward, 
+    WebSelectBackward, 
+    WebSelectRight, 
+    WebSelectLeft 
+} WebSelectionDirection;
+
+typedef enum { 
+    WebSelectByCharacter, 
+    WebSelectByWord, 
+    WebSelectByLine 
+} WebSelectionGranularity;
+
+
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
 // used in the opposite direction, for simple access to WebCore functions without dealing
@@ -230,7 +249,8 @@ typedef enum {
 - (int)selectionStartOffset;
 - (DOMNode *)selectionEnd;
 - (int)selectionEndOffset;
-- (DOMRange *)selectedRange;
+- (void)setSelectedDOMRange:(DOMRange *)range;
+- (DOMRange *)selectedDOMRange;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
@@ -254,6 +274,10 @@ typedef enum {
 
 - (void)undoEditing:(id)arg;
 - (void)redoEditing:(id)arg;
+- (DOMRange *)rangeByModifyingRange:(DOMRange *)range alteration:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (void)insertText:(NSString *)text;
+- (void)insertNewline;
+- (void)deleteKeyPressed;
 
 @end
 
@@ -391,9 +415,11 @@ typedef enum {
 
 - (jobject)pollForAppletInView:(NSView *)view;
 
-- (void)registerCommandForUndo;
-- (void)registerCommandForRedo;
+- (void)registerCommandForUndo:(id)arg;
+- (void)registerCommandForRedo:(id)arg;
 - (void)clearUndoRedoOperations;
+
+- (void)keyDown:(NSEvent *)event;
 
 @end
 

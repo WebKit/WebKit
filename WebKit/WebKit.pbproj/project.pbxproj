@@ -336,6 +336,7 @@
 				BE91866005EE618F0081354D,
 				BE91866105EE618F0081354D,
 				515B878F05F5348600EABBF9,
+				BE95BEE805FD0805006E1513,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,6 +452,7 @@
 				830E81860585375700AD0891,
 				EDD1A5C905C83987008E3150,
 				84311A1505EAAAF00088EDA4,
+				BE95BEE705FD0805006E1513,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2670,6 +2672,8 @@
 				39446072020F50ED0ECA1767,
 				5152FADD033FC50400CA2ACD,
 				5152FADE033FC50400CA2ACD,
+				BE95BEE605FD0805006E1513,
+				BE95BEE505FD0805006E1513,
 				70BC9ED804144FC500A80182,
 				70BC9ED604144F3200A80182,
 				5152FADF033FC50400CA2ACD,
@@ -3053,6 +3057,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f ./copy-webcore-files-to-webkit ]; then ./copy-webcore-files-to-webkit; fi";
+		};
+		BE95BEE505FD0805006E1513 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebDefaultEditingDelegate.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE95BEE605FD0805006E1513 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebDefaultEditingDelegate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE95BEE705FD0805006E1513 = {
+			fileRef = BE95BEE505FD0805006E1513;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE95BEE805FD0805006E1513 = {
+			fileRef = BE95BEE605FD0805006E1513;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		BECD14290565830A005BB09C = {
 			fileEncoding = 4;

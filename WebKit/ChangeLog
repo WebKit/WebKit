@@ -1,3 +1,50 @@
+2004-03-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+
+        Various changes to begin implementing the draft API proposal. 
+
+        * DOM.subproj/DOM.h: Checking in generated file.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge registerCommandForUndo:]): Now takes an id, a wrapped
+        WebCore EditCommand implementation object.
+        (-[WebBridge registerCommandForRedo:]): Ditto.
+        (-[WebBridge clearUndoRedoOperations]): Use the web view's undo manager.
+        (-[WebBridge keyDown:]): Pass keyDown events through to the web view.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultEditingDelegate.h: Added.
+        * WebView.subproj/WebDefaultEditingDelegate.m: Added. Stubbed in default
+        implementations declared in the draft editing API.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]): WebFrame no longer has an undo manager.
+        * WebView.subproj/WebFramePrivate.h: Ditto.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedWebArchive:]): selectedRange method 
+        is now selectedDOMRange.
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): Dealloc new editingDelegateForwarder.
+        (-[WebView _editingDelegateForwarder]): Added. 
+        (-[WebView keyDown:]): Added. 
+        (-[WebView _bridgeForCurrentSelection]): Added. 
+        (-[WebView setSelectedDOMRange:]): Added. 
+        (-[WebView selectedDOMRange]): Added. 
+        (-[WebView insertText:]): Added. 
+        (-[WebView _alterSelection:direction:granularity:]): Added. 
+        (-[WebView selectWord:]): Added. 
+        (-[WebView moveRight:]): Added. 
+        (-[WebView moveRightAndModifySelection:]): Added. 
+        (-[WebView moveLeft:]): Added. 
+        (-[WebView moveLeftAndModifySelection:]): Added. 
+        (-[WebView deleteBackward:]): Added. 
+        (-[WebView insertNewline:]): Added. 
+        (-[WebView insertParagraphSeparator:]): Added. 
+        (-[WebView setEditingDelegate:]): Added. 
+        (-[WebView editingDelegate]): Added. 
+        (-[WebView undoManager]): Added. 
+        (-[WebView insertText:replacingDOMRange:]): Added. 
+        * WebView.subproj/WebViewPrivate.h: Added a collection of editing API 
+        declarations that will be public some day, but are still under review.
+
 2004-03-11  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3585056>: Assertion failure if error page is loaded from 

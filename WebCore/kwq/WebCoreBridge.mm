@@ -57,6 +57,7 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 #import "KWQDOMNode.h"
+#import "KWQEditCommand.h"
 #import "KWQFont.h"
 #import "KWQFrame.h"
 #import "KWQLoader.h"
@@ -89,6 +90,8 @@ using DOM::NodeImpl;
 using DOM::Range;
 
 using khtml::Decoder;
+using khtml::EditCommand;
+using khtml::EditCommandImpl;
 using khtml::parseURL;
 using khtml::RenderCanvas;
 using khtml::RenderImage;
@@ -96,6 +99,7 @@ using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderStyle;
 using khtml::RenderWidget;
+using khtml::TypingCommand;
 
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
@@ -1258,12 +1262,68 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)undoEditing:(id)arg
 {
-    _part->undoEditing();
+    ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
+    
+    EditCommand cmd([arg impl]);
+    cmd.unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
-    _part->redoEditing();
+    ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
+    
+    EditCommand cmd([arg impl]);
+    cmd.reapply();
+}
+
+- (DOMRange *)rangeByModifyingRange:(DOMRange *)range alteration:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+{
+    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
+    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
+    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    KHTMLSelection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
+    selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
+                     static_cast<KHTMLSelection::EDirection>(direction), 
+                     static_cast<KHTMLSelection::ETextGranularity>(granularity));
+    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+}
+
+- (void)setSelectedDOMRange:(DOMRange *)range
+{
+    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
+    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    KHTMLSelection selection(startContainer, [range startOffset], endContainer, [range endOffset]);
+    _part->setSelection(selection);
+}
+
+- (DOMRange *)selectedDOMRange
+{
+    return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
+}
+
+- (void)insertText:(NSString *)text
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    DOMString s(text);
+    TypingCommand::insertText(_part->xmlDocImpl(), s);
+}
+
+- (void)insertNewline
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    TypingCommand::insertNewline(_part->xmlDocImpl());
+}
+
+- (void)deleteKeyPressed
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
 }
 
 @end
