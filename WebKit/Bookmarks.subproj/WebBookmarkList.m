@@ -228,6 +228,8 @@
 - (void)removeChild:(IFBookmark *)bookmark
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [_list containsObject:bookmark]);
+    
     [_list removeObject:bookmark];
     [bookmark _setParent:nil];
 
@@ -237,8 +239,12 @@
 
 - (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == nil);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, ![_list containsObject:bookmark]);
+    
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
+    [bookmark _setGroup:[self group]];
     
     [[self group] _bookmarkChildrenDidChange:self]; 
 }

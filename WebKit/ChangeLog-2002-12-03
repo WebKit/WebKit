@@ -1,3 +1,17 @@
+2002-06-06  John Sullivan  <sullivan@apple.com>
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList removeChild:]):
+	(-[IFBookmarkList insertChild:atIndex:]):
+	* ChangeLog:
+
+2002-06-06  John Sullivan  <sullivan@apple.com>
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList removeChild:]): Added assert.
+	(-[IFBookmarkList insertChild:atIndex:]): Set the group of
+	the new child, and added assert.
+
 2002-06-06  Darin Adler  <darin@apple.com>
 
 	* MIME.subproj/IFContentHandler.m:
