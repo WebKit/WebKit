@@ -651,6 +651,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         // When we are pre-commit, the currentItem is where the pageCache data resides
         NSDictionary *pageCache = [[_private currentItem] pageCache];
         [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
+        // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
+        [[_private currentItem] setHasPageCache:NO];
     }
 }
 

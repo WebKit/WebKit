@@ -1,3 +1,19 @@
+2004-08-09  Trey Matteson  <trey@apple.com>
+
+	3756599 - REGRESSION: hit assertion in KWQPageState invalidate
+
+	By inspection I found a flaw in the recently added logic, although
+	I have no steps to repro.  My theoretical explanation is that we would
+	get two errors and go through _receivedMainResourceError: twice, which
+	would cause the pageState to be invalidated twice, which is the only
+	way I can see to hit the assert.
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _receivedMainResourceError:]):  Clear the pageState out
+	of the history item after it's been invalidated by WebCore.
+
 2004-08-09  Richard Williamson   <rjw@apple.com>
 
         Inspired by Trey we have a much better approach for conditionally
