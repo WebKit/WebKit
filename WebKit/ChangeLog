@@ -1,5 +1,13 @@
 2003-05-06  Darin Adler  <darin@apple.com>
 
+        - fixed crash on startup
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        Allocate WebHistoryItemPrivate.
+
+2003-05-06  Darin Adler  <darin@apple.com>
+
 	- fixed 3249211 -- WebTextRenderer.h should not use "AttributeGroup" type for styleGroup
 
         * WebCoreSupport.subproj/WebTextRenderer.h: Update to use ATSStyleGroupPtr.

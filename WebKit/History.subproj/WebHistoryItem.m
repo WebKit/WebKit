@@ -82,6 +82,7 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     self = [super init];
+    _private = [[WebHistoryItemPrivate alloc] init];
     _private->lastVisitedTimeInterval = time;
     _private->title = [title copy];
     _private->URLString = [URLString copy];
