@@ -1,3 +1,27 @@
+2002-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+	- Added "remember my password" checkbox (underlying feature not
+	yet implemented).
+
+	- Fixed a bug that caused a crash when cancelling the auth sheet.
+	
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib: Added
+	"remember this password" checkbox.
+        * Panels.subproj/WebAuthenticationPanel.h:
+        * Panels.subproj/WebAuthenticationPanel.m:
+	(-[WebAuthenticationPanel cancel:]): Make sure the panel gets
+	retained a bit longer, so the cleanup that happens after this
+	message is sent can use the panel object.
+        (-[WebAuthenticationPanel logIn:]): Make sure the panel gets
+	retained a bit longer, so the cleanup that happens after this
+	message is sent can use the panel object.
+        (-[WebAuthenticationPanel runAsModalDialogWithRequest:]): Pass
+	proper remembered value with credential.
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+	Pass proper remembered value with credential.
+        * WebKit.pbproj/project.pbxproj: Project Builder had its way with
+	this file.
+
 2002-10-02  Darin Adler  <darin@apple.com>
 
 	Machinery so we can handle mouseover feedback at the browser level.

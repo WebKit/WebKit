@@ -10,6 +10,7 @@
                 mainLabel = id; 
                 panel = id; 
                 password = id; 
+                remember = id; 
                 smallLabel = id; 
                 username = id; 
             }; 

@@ -38,6 +38,12 @@
 
 - (IBAction)cancel:(id)sender
 {
+    // This is required because the body of this method is going to
+    // remove all of the panel's remaining refs, which can cause a
+    // crash later when finishing button hit tracking.  So we make
+    // sure it lives on a bit longer.
+    [[panel retain] autorelease];
+
     [panel close];
     if (usingSheet) {
 	[[NSApplication sharedApplication] endSheet:panel returnCode:1];
@@ -48,6 +54,12 @@
 
 - (IBAction)logIn:(id)sender
 {
+    // This is required because the body of this method is going to
+    // remove all of the panel's remaining refs, which can cause a
+    // crash later when finishing button hit tracking.  So we make
+    // sure it lives on a bit longer.
+    [[panel retain] autorelease];
+
     [panel close];
     if (usingSheet) {
 	[[NSApplication sharedApplication] endSheet:panel returnCode:0];
@@ -108,7 +120,7 @@
     WebCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:NO];
+        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
     }
 
     [callback performSelector:selector withObject:req withObject:credential];
@@ -135,7 +147,7 @@
     ASSERT(request != nil);
 
     if (returnCode == 0) {
-        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:NO];
+        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
     }
 
     // We take this tricky approach to nilling out and releasing the request,

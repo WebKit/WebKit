@@ -15,6 +15,7 @@
     IBOutlet id smallLabel;
     IBOutlet id username;
     IBOutlet id imageView;
+    IBOutlet id remember;
     BOOL nibLoaded;
     BOOL usingSheet;
     id callback;
