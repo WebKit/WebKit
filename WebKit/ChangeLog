@@ -1,5 +1,14 @@
 2004-09-08  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3778785> REGRESSION (Mail): copying from MS word and pasting into editable region leaves internal clipboard data
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): ignore Microsoft's header meta data
+
+2004-09-08  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3792893> WebBaseResourceHandleDelegate always returns cached data for subresource loads
 
         Reviewed by rjw.

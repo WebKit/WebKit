@@ -266,7 +266,17 @@ static BOOL forceRealHitTest = NO;
     NSURL *URL;
     
     if ([types containsObject:NSHTMLPboardType]) {
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSHTMLPboardType] baseURLString:nil];
+        NSString *HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+        // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
+        if ([HTMLString hasPrefix:@"Version:"]) {
+            NSRange range = [HTMLString rangeOfString:@"<html" options:NSCaseInsensitiveSearch];
+            if (range.location != NSNotFound) {
+                HTMLString = [HTMLString substringFromIndex:range.location];
+            }
+        }
+        if ([HTMLString length] != 0) {
+            return [[self _bridge] documentFragmentWithMarkupString:HTMLString baseURLString:nil];
+        }
     }
     
     if ([types containsObject:NSTIFFPboardType]) {
