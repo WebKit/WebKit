@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
                 RenderText {TEXT} at (0,0) size 150x28
                   text run at (0,0) width 150: "xxxxxx xxxxxx"
         RenderBlock (anonymous) at (14,42) size 756x28
-          RenderBlock {P} at (0,0) size 756x28
+          RenderBlock {DIV} at (0,0) size 756x28
             RenderText {TEXT} at (0,0) size 156x28
               text run at (0,0) width 156: " xxxxxx xxxxxx"
         RenderBlock (anonymous) at (14,70) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0
 selection is CARET:
-start:      position 14 of child 1 {TEXT} of child 2 {P} of child 1 {B} of child 4 {SPAN} of root {DIV}
-upstream:   position 14 of child 1 {TEXT} of child 2 {P} of child 1 {B} of child 4 {SPAN} of root {DIV}
-downstream: position 14 of child 1 {TEXT} of child 2 {P} of child 1 {B} of child 4 {SPAN} of root {DIV}
+start:      position 14 of child 1 {TEXT} of child 2 {DIV} of child 1 {B} of child 4 {SPAN} of root {DIV}
+upstream:   position 14 of child 1 {TEXT} of child 2 {DIV} of child 1 {B} of child 4 {SPAN} of root {DIV}
+downstream: position 14 of child 1 {TEXT} of child 2 {DIV} of child 1 {B} of child 4 {SPAN} of root {DIV}

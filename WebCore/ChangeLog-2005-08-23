@@ -4,6 +4,40 @@
 
         Fix for this bug:
         
+        <rdar://problem/3982183> Mail's HTML paragraphs appear with unintended margins in Entourage and Eudora
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::createDefaultParagraphElement): Change element we make from <p> to <div>.
+        This fixes the problem, as these other mailers show <div> elements without margins.
+        
+        Some test files needed to change to preserve the ability to "eyeball" the results.
+        Many others changed just because their <p> elements changed to <div> elements.
+        
+        * layout-tests/editing/deleting/delete-3928305-fix-expected.txt
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-002-expected.txt
+        * layout-tests/editing/inserting/insert-div-013-expected.txt
+        * layout-tests/editing/inserting/insert-div-013.html
+        * layout-tests/editing/inserting/insert-div-014-expected.txt
+        * layout-tests/editing/inserting/insert-div-014.html
+        * layout-tests/editing/inserting/insert-div-018-expected.txt
+        * layout-tests/editing/inserting/insert-div-018.html
+        * layout-tests/editing/inserting/insert-div-019-expected.txt
+        * layout-tests/editing/inserting/insert-div-019.html
+        * layout-tests/editing/inserting/insert-div-020-expected.txt
+        * layout-tests/editing/inserting/insert-div-020.html
+        * layout-tests/editing/inserting/insert-div-021-expected.txt
+        * layout-tests/editing/inserting/insert-div-021.html
+        * layout-tests/editing/style/remove-underline-across-paragraph-expected.txt
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold-expected.txt
+        * layout-tests/editing/style/remove-underline-after-paragraph-expected.txt
+        * layout-tests/editing/style/remove-underline-after-paragraph-in-bold-expected.txt
+
+2005-02-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
         <rdar://problem/3996737> REGRESSION (Mail): Copy/paste in Mail inserts returns
 
         The root cause of the problem is that a couple of pieces of code in AppKit and Mail 

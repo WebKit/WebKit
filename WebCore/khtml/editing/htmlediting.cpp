@@ -5341,11 +5341,13 @@ bool TypingCommand::isTypingCommand() const
 
 ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
 {
-    static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");
+    // We would need this margin-zeroing and attribute-setter code back if we ever 
+    // return to using <p> elements for default paragraphs.
+    //static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");
     int exceptionCode = 0;
-    ElementImpl *element = document->createHTMLElement("p", exceptionCode);
+    ElementImpl *element = document->createHTMLElement("div", exceptionCode);
     ASSERT(exceptionCode == 0);
-    element->setAttribute(ATTR_STYLE, defaultParagraphStyle);
+    //element->setAttribute(ATTR_STYLE, defaultParagraphStyle);
     return element;
 }
 

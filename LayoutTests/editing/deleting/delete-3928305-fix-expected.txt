@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x28
           RenderText {TEXT} at (0,0) size 32x28
             text run at (0,0) width 32: "foo"
-        RenderBlock {P} at (14,42) size 756x28
+        RenderBlock {DIV} at (14,42) size 756x28
           RenderBR {BR} at (0,0) size 0x28
         RenderBlock (anonymous) at (14,70) size 756x0
         RenderBlock {DIV} at (14,70) size 756x28
           RenderText {TEXT} at (0,0) size 34x28
             text run at (0,0) width 34: "baz"
 selection is CARET:
-start:      position 0 of child 1 {BR} of child 2 {P} of root {DIV}
-upstream:   position 0 of child 2 {P} of root {DIV}
-downstream: position 0 of child 1 {BR} of child 2 {P} of root {DIV}
+start:      position 0 of child 1 {BR} of child 2 {DIV} of root {DIV}
+upstream:   position 0 of child 2 {DIV} of root {DIV}
+downstream: position 0 of child 1 {BR} of child 2 {DIV} of root {DIV}
