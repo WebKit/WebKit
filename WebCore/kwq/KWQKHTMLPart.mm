@@ -650,7 +650,10 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         // This flag prevents these from happening.
         // Note that the flag is reset in setView()
         // since this part may get reused if it is pulled from the b/f cache.
-        if (_submittedFormURL == url) {
+        // Only do this for http and https since users may want to submit forms 
+        // more than once for other schemes.
+        QString protocol = url.protocol().lower();
+        if (_submittedFormURL == url && (protocol == "http" || protocol == "https")) {
             return;
         }
         _submittedFormURL = url;
