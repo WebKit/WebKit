@@ -1,5 +1,12 @@
 2003-03-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Trey.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::submitForm): Fix form submission (was completely broken).
+
+2003-03-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Richard.
 
 	- fixed 3127705 - don't open new window on opt-click even if the link requests it

@@ -384,7 +384,7 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
     QString URLString = url.url();    
-    WebCoreBridge *target = [_bridge findFrameNamed:args.frameName.getNSString()];
+    WebCoreBridge *target = args.frameName.length() == 0 ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
     KHTMLPart *targetPart = [target part];
     
     // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
@@ -409,7 +409,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
     }
 
     if (!args.doPost()) {
-        [target loadURL:URLString.getNSString()
+        [_bridge loadURL:URLString.getNSString()
 	       referrer:[_bridge referrer] 
                  reload:args.reload
   	         target:args.frameName.getNSString()
@@ -419,7 +419,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
-        [target postWithURL:URLString.getNSString()
+        [_bridge postWithURL:URLString.getNSString()
 	           referrer:[_bridge referrer] 
 	             target:args.frameName.getNSString()
                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
