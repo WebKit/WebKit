@@ -1,3 +1,20 @@
+2005-02-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        The styling code did not move to the next node when the starting position was 
+        at the last offset of a node. Instead, it styled it. Clearly wrong. Solution 
+        is to borrow a check from the delete algorithm. Though I call caretMaxOffset(),
+        which I consider deprecated, it is still the simplest and most strightforward
+        way to ask the right question for this kind of problem.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::applyInlineStyle): Fixed, as described above.
+        * layout-tests/editing/style/style-3998892-fix-expected.txt: Added.
+        * layout-tests/editing/style/style-3998892-fix.html: Added.
+
 2005-02-16  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/3954842> Forward/reply to an HTML email can result in nothing (in cases with <link> tags for CSS)
