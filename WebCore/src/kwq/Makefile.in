@@ -30,6 +30,7 @@ MMOBJECTS = \
         KWQCursor.o \
 	KWQFont.o \
 	KWQFontMetrics.o \
+        KWQKHTMLPart.o \
         KWQObject.o \
 	KWQPainter.o \
         KWQPaintDevice.o \
@@ -63,8 +64,11 @@ CLEAN_FILES = $(OBJECTS) \
 CMMFLAGS = $(BASECMMFLAGS) \
     -g \
     -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/src/kdelibs/khtml
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
+    -I$(TOPSRCDIR)/src/kwq/kde \
+    -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I. \
     $(NULL)
 
@@ -72,8 +76,11 @@ DEPFLAGS = $(CMMFLAGS)
 
 CMFLAGS = $(BASECMFLAGS) \
     -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/src/kdelibs/khtml
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
+    -I$(TOPSRCDIR)/src/kwq/kde \
+    -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I. \
     $(NULL)
 
