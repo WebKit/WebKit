@@ -53,9 +53,9 @@
     }
 }
 
-- (void)removeEntriesForDay: (NSCalendarDate *)calendarDate
+- (void)removeEntries: (NSArray *)entries
 {
-    if ([_historyPrivate removeEntriesForDay: calendarDate]) {
+    if ([_historyPrivate removeEntries:entries]) {
         [self sendEntriesChangedNotification];
     }
 }
@@ -65,6 +65,12 @@
     if ([_historyPrivate removeAllEntries]) {
         [self sendEntriesChangedNotification];
     }
+}
+
+- (void)addEntries:(NSArray *)newEntries
+{
+    [_historyPrivate addEntries:newEntries];
+    [self sendEntriesChangedNotification];
 }
 
 - (void)updateURL:(NSString *)newURLString

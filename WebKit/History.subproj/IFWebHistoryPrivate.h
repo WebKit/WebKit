@@ -21,8 +21,9 @@
 - (id)initWithFile: (NSString *)file;
 
 - (void)addEntry: (IFURIEntry *)entry;
+- (void)addEntries:(NSArray *)newEntries;
 - (BOOL)removeEntry: (IFURIEntry *)entry;
-- (BOOL)removeEntriesForDay: (NSCalendarDate *)calendarDate;
+- (BOOL)removeEntries: (NSArray *)entries;
 - (BOOL)removeAllEntries;
 - (IFURIEntry *)updateURL:(NSString *)newURLString
                     title:(NSString *)newTitle

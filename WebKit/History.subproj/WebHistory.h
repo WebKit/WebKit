@@ -24,8 +24,9 @@
 
 // modifying contents
 - (void)addEntry: (IFURIEntry *)entry;
+- (void)addEntries:(NSArray *)newEntries;
 - (void)removeEntry: (IFURIEntry *)entry;
-- (void)removeEntriesForDay: (NSCalendarDate *)calendarDate;
+- (void)removeEntries: (NSArray *)entries;
 - (void)removeAllEntries;
 
 // Update an entry in place. Any nil "new" parameters aren't updated.

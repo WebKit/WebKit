@@ -1,3 +1,24 @@
+2002-06-04  John Sullivan  <sullivan@apple.com>
+
+	Made changes here while working on Undo for removing history entries.
+
+	* History.subproj/IFWebHistory.h:
+	New methods addEntries: and removeEntries:, deleted method
+	removeEntriesForDay: (use removeEntries: instead).
+
+	* History.subproj/IFWebHistory.m:
+	(-[IFWebHistory addEntries:]),
+	(-[IFWebHistory removeEntries:]): New methods, each takes an array of
+	entries. Useful for doing multiple things at a time to minimize
+	notifications.
+	(-[IFWebHistory removeEntriesForDay:]): deleted this now-unnecessary method.
+	* History.subproj/IFWebHistoryPrivate.h:
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate removeEntries:]):
+	(-[IFWebHistoryPrivate removeAllEntries]):
+	(-[IFWebHistoryPrivate addEntries:]): Private implementations for the
+	public changes.
+
 2002-06-04  Darin Adler  <darin@apple.com>
 
 	- fixed 2943513 -- move StringTruncator into WebKit from WebBrowser so we

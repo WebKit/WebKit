@@ -175,24 +175,19 @@
     return YES;
 }
 
-- (BOOL)removeEntriesForDay: (NSCalendarDate *)calendarDate
+- (BOOL)removeEntries: (NSArray *)entries
 {
-    int index;
-    NSEnumerator *entriesForDay;
-    IFURIEntry *entry;
+    int index, count;
 
-    if (![self findIndex: &index forDay: calendarDate]) {
+    count = [entries count];
+    if (count == 0) {
         return NO;
     }
 
-    entriesForDay = [[_entriesByDate objectAtIndex: index] objectEnumerator];
-    while ((entry = [entriesForDay nextObject]) != nil) {
-        [_urlDictionary removeObjectForKey: [[entry url] absoluteString]];
+    for (index = 0; index < count; ++index) {
+        [self removeEntry:[entries objectAtIndex:index]];
     }
-
-    [_datesWithEntries removeObjectAtIndex: index];
-    [_entriesByDate removeObjectAtIndex: index];
-
+    
     return YES;
 }
 
@@ -207,6 +202,22 @@
     [_urlDictionary removeAllObjects];
 
     return YES;
+}
+
+- (void)addEntries:(NSArray *)newEntries
+{
+    NSEnumerator *enumerator;
+    IFURIEntry *entry;
+
+    // There is no guarantee that the incoming entries are in any particular
+    // order, but if this is called with a set of entries that were created by
+    // iterating through the results of orderedLastVisitedDays and orderedEntriesLastVisitedOnDayy
+    // then they will be ordered chronologically from newest to oldest. We can make adding them
+    // faster (fewer compares) by inserting them from oldest to newest.
+    enumerator = [newEntries reverseObjectEnumerator];
+    while ((entry = [enumerator nextObject]) != nil) {
+        [self addEntry:entry];
+    }
 }
 
 - (IFURIEntry *)updateURL:(NSString *)newURLString
