@@ -32,6 +32,7 @@
 #include "misc/loader_client.h"
 #include "misc/helper.h"
 #include "rendering/render_style.h"
+#include <qvector.h>
 
 namespace khtml {
     class RenderFlow;
@@ -68,7 +69,120 @@ public:
     void setHeight( int height ) { m_height = height; }
     
     void setPos( int xPos, int yPos ) { m_x = xPos; m_y = yPos; }
+
+protected:
+    // Z-Index Implementation Notes
+    //
+    // In order to properly handle mouse events as well as painting,
+    // we must compute a correct list of layers that should be painted
+    // from back to front (and for mouse events walked from front to
+    // back).
+    //
+    // Positioned elements in the render tree (e.g., relative positioned
+    // divs and absolute positioned divs) have a corresponding layer
+    // that holds them and all children that reside in the same layer.
+    //
+    // When painting is performed on a layer, all render objects in that
+    // layer are painted.  If the render object has descendants in another
+    // layer, those will be dealt with separately.
+    //
+    // A RenderLayerElement represents a single entry in our list of
+    // layers that should be painted.  We perform computations as we
+    // build up this list so that we have the correct translation factor
+    // for painting.  We also use a temporary z-index variable for storage
+    // (more on this below).
+    // 
+    struct RenderLayerElement {
+      RenderLayer* layer;
+      int zindex; // Temporary z-index used for processing and sorting.
+      int x; // The coords relative to the view that will be using this list
+             // to paint.
+      int y;
+    };
+
+    // The list of layer elements is built through a recursive examination
+    // of a tree of z nodes. This tree structure mimics the layer 
+    // hierarchy itself, but only leaf nodes represent items that will
+    // end up in the layer list for painting.
+    //
+    // Every leaf layer in the layer hierarchy will have a corresponding
+    // leaf node in the z-tree.  Layers with children have an
+    // interior z-tree node that contains the tree nodes for the child
+    // layers as well as a leaf node that represents the containing layer.
+    //
+    // Sibling z-tree nodes match the same order as the layers in the
+    // layer hierarchy, which will have been arranged in document order
+    // when the render tree was constructed (since the render tree
+    // constructed the layers).  An exception is if a negative z-index
+    // is specified on a child (see below).
     
+    struct RenderZTreeNode {
+      RenderLayer* layer;
+      RenderZTreeNode* next;
+
+      // Only one of these will ever be defined.
+      RenderZTreeNode* child; // Defined for interior nodes.
+      RenderLayerElement* layerElement; // Defined for leaf nodes.
+    };
+      
+public:
+    // The createZTree function creates a z-tree for a given layer hierarchy
+    // rooted on this layer.  It will ensure that immediate child
+    // elements of a given z-tree node are at least initially sorted
+    // into <negative z-index children>, <this layer>, <positive z-index
+    // children>.
+    //
+    // Here is a concrete example (lifted from Gecko's view system,
+    // which is analogous to our layer system and works the same way):
+    // z-index values as specified by CSS are shown in parentheses.
+    //
+    // L0(auto) --> L1(0) --> L2(auto) --> L3(0)
+    // |        |    +------> L4(2)
+    // |        +-----------> L5(1)
+    // +--------------------> L6(1)
+    //
+    // The corresponding z-tree for this layer hierarchy will be
+    // the following, where |I| represents an interior node, and |L|
+    // represents a leaf RenderLayerElement.
+    //
+    // I(L0) --> L(L0)
+    // +-------> I(L1) --------> L(L1)
+    // |           |   +-------> I(L2) ------> L(L2)
+    // |           |               +---------> L(L3)
+    // |           +-----------> L(L4)
+    // +-------> L(L5)
+    // +-------> L(L6)
+    //
+    void constructZTree(RenderZTreeNode*& ztree) {};
+
+    // Once the z-tree has been constructed, we call constructLayerList
+    // to produce a flattened layer list for rendering/event handling.
+    // This function recursively computes a layer list for each z-tree
+    // node by computing lists for each child node.  It then concatenates
+    // them and sorts them by z-index.
+    //
+    // Z-indices are updated during this computation.  After a list is
+    // computed for one z-tree node, the elements of the layer list are
+    // all changed so that their z-indices match the specified z-index
+    // of the tree node's layer (unless that layer doesn't establish
+    // a z-index, e.g., it just has z-index: auto).
+    //
+    // Continuing the above example, the computation of the list for
+    // L0 would be as follows:
+    //
+    // I(L2) has a list [ L(L2)(0), L(L3)(0), L(L4)(2) ]
+    // I(L2) is auto so the z-indices of the child layer elements remain
+    // unaltered.
+    // I(L1) has a list [ L(L1)(0), L(L2)(0), L(L3)(0), L(L4)(2), L(L5)(1)
+    // The nodes are sorted and then reassigned a z-index of 0, so this
+    // list becomes:
+    //   [ L(L1)(0), L(L2)(0), L(L3)(0), L(L5)(0), L(L4)(0) ]
+    // Finally we end up with the list for L0, which sorted becomes:
+    // [ L(L0)(0), L(L1)(0), L(L2)(0), L(L3)(0), L(L5)(0), L(L4)(0), L(L6)(1) ]
+
+    void constructLayerList(RenderZTreeNode* ztree,
+			    QPtrVector<RenderLayerElement>& layerList) {};
+
 private:
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
