@@ -1,3 +1,12 @@
+2004-08-23  David Hyatt  <hyatt@apple.com>
+
+	Apply leo's fix to marquees.
+	
+        Reviewed by hyatt
+
+        * khtml/rendering/render_layer.cpp:
+        (Marquee::start):
+
 2004-08-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
