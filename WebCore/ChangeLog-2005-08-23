@@ -1,3 +1,14 @@
+2004-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed build failure seen in B&I log (due to case sensitive file system?)
+
+        * kwq/KWQLoader.h: Include "KWQCString.h" rather than "QCString.h". The latter was
+        failing because the forwarding header is called "qcstring.h" and I guess B&I started
+        building with a case sensitive file system. I could have changed this to "qcstring.h",
+        but it seemed better to use the header's real name since we're inside KWQ here.
+
 2004-05-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
