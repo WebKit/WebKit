@@ -536,7 +536,7 @@ static void databaseInit()
 	}
 
         // remove any leftover turds
-        [manager _web_deleteBackgroundRemoveLeftoverFiles:path];
+        [manager _web_backgroundRemoveLeftoverFiles:path];
         
         if (isOpen) {
             [NSThread detachNewThreadSelector:@selector(_createLRUList:) toTarget:self withObject:nil];
