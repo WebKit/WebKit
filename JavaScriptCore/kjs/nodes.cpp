@@ -3135,6 +3135,24 @@ Completion SourceElementsNode::execute(ExecState *exec)
 {
   KJS_CHECKEXCEPTION
 
+#ifdef APPLE_CHANGES
+  Completion c1 = element->execute(exec);
+  KJS_CHECKEXCEPTION;
+  if (c1.complType() != Normal)
+    return c1;
+  
+  for (SourceElementsNode *node = elements; node; node = node->elements) {
+    Completion c2 = node->element->execute(exec);
+    if (c2.complType() != Normal)
+      return c2;
+    // The spec says to return c2 here, but it seems that mozilla returns c1 if
+    // c2 doesn't have a value
+    if (!c2.value().isNull())
+      c1 = c2;
+  }
+  
+  return c1;
+#else
   if (!elements)
     return element->execute(exec);
 
@@ -3152,23 +3170,36 @@ Completion SourceElementsNode::execute(ExecState *exec)
     return c1;
   else
     return c2;
+#endif
 }
 
 // ECMA 14
 void SourceElementsNode::processFuncDecl(ExecState *exec)
 {
+#ifdef APPLE_CHANGES
+  for (SourceElementsNode *node = this; node; node = node->elements) {
+    node->element->processFuncDecl(exec);
+  }
+#else
   if (elements)
     elements->processFuncDecl(exec);
 
   element->processFuncDecl(exec);
+#endif
 }
 
 void SourceElementsNode::processVarDecls(ExecState *exec)
 {
+#ifdef APPLE_CHANGES
+  for (SourceElementsNode *node = this; node; node = node->elements) {
+    node->element->processVarDecls(exec);
+  }
+#else
   if (elements)
     elements->processVarDecls(exec);
 
   element->processVarDecls(exec);
+#endif
 }
 
 ProgramNode::ProgramNode(SourceElementsNode *s): FunctionBodyNode(s) {

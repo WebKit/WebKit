@@ -1,3 +1,35 @@
+2002-06-04  Darin Adler  <darin@apple.com>
+
+	Improve the speed of the JavaScript string append operation by growing
+	the capacity so we don't need to reallocate the string every time.
+
+	Also fix script execution so it doesn't use recursion to advance from
+	one statement to the next, using iteration instead.
+
+	* Makefile.am: Stop using BUILT_SOURCES to build JavaScriptCore-stamp,
+	because this causes the Project Builder project to build *before* the
+	subdir. Intead, use an all-am rule in a way more similar to all our
+	other directories.
+
+	* kjs/grammar.y: Link the SourceElementsNode in the opposite direction,
+	so we can walk the list and execute each element instead of using
+	recursion to reverse the list.
+	* kjs/grammar.cpp: Check in new generated file.
+
+	* kjs/nodes.cpp:
+	(SourceElementsNode::execute):
+	(SourceElementsNode::processFuncDecl):
+	(SourceElementsNode::processVarDecls):
+	Use loops instead of recursion.
+
+	* kjs/ustring.h: Don't initialize all UChar objects to 0. This was
+	wasting a *huge* amount of time.
+	* kjs/ustring.cpp:
+	(UString::Rep::create): Add a "capacity" along with the length.
+	(UString::append): Include 50% extra capacity when appending.
+	(UString::operator=): Reuse the buffer if possible rather than
+	always creating a new one.
+
 2002-06-02  Darin Adler  <darin@apple.com>
 
 	* COPYING.LIB: Fix line endings. It was using CRs.

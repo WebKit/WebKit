@@ -9,12 +9,6 @@ noinst_PROGRAMS = kjs/testkjs
 kjs_testkjs_SOURCES = kjs/testkjs.cpp JavaScriptCore-stamp
 kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 
-BUILT_SOURCES = JavaScriptCore-stamp
-CLEANFILES = $(BUILT_SOURCES)
-
-JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
-	pbxbuild -buildstyle $(BUILDSTYLE) && touch $@
-
 FRAMEWORK_NAME = JavaScriptCore
 FRAMEWORK_DIR = $(SYMROOTS)/$(FRAMEWORK_NAME).framework
 FRAMEWORK_DYLIB = $(FRAMEWORK_DIR)/Versions/Current/$(FRAMEWORK_NAME)
@@ -41,5 +35,12 @@ embed:
 		exit 1; \
         fi
 
+all-am: JavaScriptCore-stamp
+
+JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
+	pbxbuild -buildstyle $(BUILDSTYLE) && touch $@
+
 clean-am:
 	pbxbuild clean
+
+CLEANFILES = JavaScriptCore-stamp

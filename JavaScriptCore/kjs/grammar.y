@@ -620,7 +620,11 @@ Program:
 
 SourceElements:
     SourceElement                  { $$ = new SourceElementsNode($1); }
-  | SourceElements SourceElement   { $$ = new SourceElementsNode($1, $2); }
+/* #ifdef APPLE_CHANGES (not using an actual ifdef because this is yacc) */
+  | SourceElement SourceElements   { $$ = new SourceElementsNode($2, $1); }
+/* #else */
+/*| SourceElements SourceElement   { $$ = new SourceElementsNode($1, $2); } */
+/* #endif */
 ;
 
 SourceElement:

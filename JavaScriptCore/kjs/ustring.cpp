@@ -119,7 +119,11 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
 }
 
 UChar UChar::null;
+#ifdef APPLE_CHANGES
+UString::Rep UString::Rep::null = { 0, 0, 0, 1 };
+#else
 UString::Rep UString::Rep::null = { 0, 0, 1 };
+#endif
 UString UString::null;
 #ifdef APPLE_CHANGES
 // FIXME: fix this once static initializers for pthread_once_t
@@ -173,6 +177,9 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   Rep *r = new Rep;
   r->dat = d;
   r->len = l;
+#ifdef APPLE_CHANGES
+  r->capacity = l;
+#endif
   r->rc = 1;
 
   return r;
@@ -268,12 +275,31 @@ UString UString::from(double d)
 
 UString &UString::append(const UString &t)
 {
+#ifdef APPLE_CHANGES
+  int l = size();
+  int tLen = t.size();
+  int newLen = l + tLen;
+  if (rep->rc == 1 && newLen <= rep->capacity) {
+    memcpy(rep->dat+l, t.data(), tLen * sizeof(UChar));
+    rep->len = newLen;
+    return *this;
+  }
+  
+  int newCapacity = (newLen * 3 + 1) / 2;
+  UChar *n = new UChar[newCapacity];
+  memcpy(n, data(), l * sizeof(UChar));
+  memcpy(n+l, t.data(), tLen * sizeof(UChar));
+  release();
+  rep = Rep::create(n, newLen);
+  rep->capacity = newCapacity;
+#else
   int l = size();
   UChar *n = new UChar[l+t.size()];
   memcpy(n, data(), l * sizeof(UChar));
   memcpy(n+l, t.data(), t.size() * sizeof(UChar));
   release();
   rep = Rep::create(n, l + t.size());
+#endif
 
   return *this;
 }
@@ -318,12 +344,27 @@ char *UString::ascii() const
 
 UString &UString::operator=(const char *c)
 {
+#ifdef APPLE_CHANGES
+  int l = c ? strlen(c) : 0;
+  UChar *d;
+  if (rep->rc == 1 && l < rep->capacity) {
+    d = rep->dat;
+  } else {
+    release();
+    d = new UChar[l];
+    rep = Rep::create(d, l);
+  }
+  for (int i = 0; i < l; i++)
+    d[i].uc = (uchar)c[i];
+#else
   release();
   int l = c ? strlen(c) : 0;
+
   UChar *d = new UChar[l];
   for (int i = 0; i < l; i++)
     d[i].uc = c[i];
   rep = Rep::create(d, l);
+#endif
 
   return *this;
 }
