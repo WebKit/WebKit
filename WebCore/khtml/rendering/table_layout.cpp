@@ -234,15 +234,13 @@ void FixedTableLayout::calcMinMaxWidth()
     // unlimited.
 
     int bs = table->bordersAndSpacing();
-    table->m_minWidth = 0;
-    table->m_maxWidth = 0;
-    short tableWidth = table->style()->width().type == Fixed ? table->style()->width().value - bs : 0;
+    
+    int tableWidth = table->style()->width().type == Fixed ? table->style()->width().value - bs : 0;
+    int mw = calcWidthArray( tableWidth ) + bs;
 
-    table->m_minWidth = calcWidthArray( tableWidth );
-    table->m_minWidth += bs;
-
-    table->m_minWidth = kMax( table->m_minWidth, tableWidth );
+    table->m_minWidth = kMin(kMax( mw, tableWidth ), 0x7fff);
     table->m_maxWidth = table->m_minWidth;
+    
     if ( !tableWidth ) {
 	bool haveNonFixed = false;
 	for ( unsigned int i = 0; i < width.size(); i++ ) {
@@ -269,7 +267,7 @@ void FixedTableLayout::layout()
 #endif
 
 
-    QMemArray<short> calcWidth;
+    QMemArray<int> calcWidth;
     calcWidth.resize( nEffCols );
     calcWidth.fill( -1 );
 
@@ -557,12 +555,8 @@ void AutoTableLayout::calcMinMaxWidth()
 	maxWidth = minWidth;
     }
 
-    // Max widths can overflow. We need to bounds check them.
-    if (maxWidth > 10000)
-        maxWidth = 10000;
-    
-    table->m_maxWidth = maxWidth;
-    table->m_minWidth = minWidth;
+    table->m_maxWidth = kMin(maxWidth, 0x7fff);
+    table->m_minWidth = kMin(minWidth, 0x7fff);
 #ifdef DEBUG_LAYOUT
     qDebug("    minWidth=%d, maxWidth=%d", table->m_minWidth, table->m_maxWidth );
 #endif

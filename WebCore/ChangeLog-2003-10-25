@@ -1,3 +1,18 @@
+2003-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3167025 -- REGRESSION: http://www.buypcdirect.com doesn't wrap correctly b/c of huge cell width value
+
+        * khtml/rendering/table_layout.h: Make the fields in the Layout structure used in table
+        width computations use int instead of short.
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcMinMaxWidth): Make sure we don't overflow m_minWidth or m_maxWidth in case the
+        specified fixed width value is huge.
+        (FixedTableLayout::layout): Use ints for the calcWidth array instead of shorts.
+        (AutoTableLayout::calcMinMaxWidth): Clamp both maxWidth and minWidth to 0x7fff to match the other code in
+        this file, rather than using 10000.
+
 2003-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
