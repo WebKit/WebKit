@@ -39,6 +39,8 @@ public:
 
     virtual bool isHTMLElement() const { return true; }
 
+    virtual bool isInline() const;
+    
     virtual Id id() const = 0;
 
     virtual void parseAttribute(AttributeImpl *token);

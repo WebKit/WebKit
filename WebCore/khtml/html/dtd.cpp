@@ -570,7 +570,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
 
     switch(tagID)
     {
-    case ID_FONT:
     case ID_TT:
     case ID_I:
     case ID_B:
@@ -631,6 +630,9 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // ADDRESS: ( _0 | P ) *
         if( check_array(childID, tag_list_0) ) return true;
         return (childID == ID_P);
+    case ID_FONT:
+        // special handling for FONT: (_0 | 3)
+        return check_array(childID, tag_list_3) || check_array(childID, tag_list_0);
     case ID__KONQBLOCK:
         if ( childID == ID__KONQBLOCK ) return false;
         // Fall through!

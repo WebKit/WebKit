@@ -60,6 +60,47 @@ HTMLElementImpl::~HTMLElementImpl()
 {
 }
 
+bool HTMLElementImpl::isInline() const
+{
+    if (renderer())
+        return ElementImpl::isInline();
+    
+    switch(id()) {
+        case ID_A:
+        case ID_FONT:
+        case ID_TT:
+        case ID_U:
+        case ID_B:
+        case ID_I:
+        case ID_S:
+        case ID_STRIKE:
+        case ID_BIG:
+        case ID_SMALL:
+    
+            // %phrase
+        case ID_EM:
+        case ID_STRONG:
+        case ID_DFN:
+        case ID_CODE:
+        case ID_SAMP:
+        case ID_KBD:
+        case ID_VAR:
+        case ID_CITE:
+        case ID_ABBR:
+        case ID_ACRONYM:
+    
+            // %special
+        case ID_SUB:
+        case ID_SUP:
+        case ID_SPAN:
+        case ID_NOBR:
+        case ID_WBR:
+            return true;
+        default:
+            return ElementImpl::isInline();
+    }
+}
+
 void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 {
     DOMString indexstring;

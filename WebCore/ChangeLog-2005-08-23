@@ -1,3 +1,18 @@
+2002-11-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for the weather.com, slate and espn malformations that
+	could occur.  Also reverting an earlier change for handling
+	font tags like other inlines.  Both FONT and A need to be
+	given special treatment until I can implement a strategy that
+	will allow them to be handled just like the other inlines.
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isInline):
+        * khtml/html/html_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.h:
+
 2002-11-21  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_dom.cpp: (DOMNode::eventHandlerScope): List -> ScopeChain.
