@@ -1,5 +1,6 @@
-/*	WebDatabase.m
-	Copyright 2002-2003, Apple, Inc. All rights reserved.
+/*	
+    WebDatabase.m
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
 #import <Foundation/NSPrivateDecls.h>

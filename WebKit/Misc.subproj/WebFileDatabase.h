@@ -1,5 +1,6 @@
-/*	WebFileDatabase.h
-	Copyright 2002-2003, Apple, Inc. All rights reserved.
+/*	
+    WebFileDatabase.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
 #import <Foundation/Foundation.h>
