@@ -1,3 +1,17 @@
+2004-09-27  David Hyatt  <hyatt@apple.com>
+
+	Don't allow nested headers when only inlines are in between them.  Fixes a hang related to pathological nesting
+	on magicmethodsonline.com.
+	
+        Reviewed by darin
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken):
+        (KHTMLParser::processCloseTag):
+        (KHTMLParser::isHeaderTag):
+        (KHTMLParser::popNestedHeaderTag):
+        * khtml/html/htmlparser.h:
+
 2004-09-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John.
