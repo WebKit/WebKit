@@ -1,3 +1,16 @@
+2004-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed <rdar://problem/3571356>: REGRESSION: Crash in isPointInsideSelection clicking on link in Apple web directory frame
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection): Don't crash if innerNode is
+	NULL, as this can happen mousing over a frame that's in the
+	process of loading and currently empty. Since such a frame
+	obviously can't be inside the selection, this seems like a good
+	enough fix.
+	
 2004-02-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3528839, wide table cut off because of shorts being used instead of ints.
