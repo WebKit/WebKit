@@ -2999,6 +2999,18 @@ static WebHTMLView *lastHitView = nil;
         return self;
 }
 
+- (id)_accessibilityParentForSubview:(NSView *)subview {
+    id accTree = [[self _bridge] accessibilityTree];
+    if (!accTree)
+        return self;
+        
+    id parent = [accTree _accessibilityParentForSubview:subview];
+    if (parent == nil)
+        return self;
+
+    return parent;
+}
+
 - (void)centerSelectionInVisibleArea:(id)sender
 {
     [[self _bridge] centerSelectionInVisibleArea];
