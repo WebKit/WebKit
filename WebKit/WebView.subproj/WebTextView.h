@@ -26,6 +26,4 @@
 - (void)setCanDragTo: (BOOL)flag;
 - (BOOL)canDragTo;
 
-- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
-
 @end

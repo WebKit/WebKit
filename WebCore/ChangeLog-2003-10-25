@@ -1,3 +1,11 @@
+2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+
+        Support for find in HTML.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge searchFor:direction:caseSensitive:]):
+
 2002-07-24  Darin Adler  <darin@apple.com>
 
 	- fixed 2949235 -- checkboxes in wrong place until you scroll away and back

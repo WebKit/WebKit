@@ -438,4 +438,9 @@ using namespace khtml;
 }
 
 
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+{
+    return part->findTextNext (QString::fromCFString((CFStringRef)string), forward, caseFlag, FALSE);
+}
+
 @end

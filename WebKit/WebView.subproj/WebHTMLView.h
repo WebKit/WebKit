@@ -66,10 +66,6 @@
 // Remove the selection.
 - (void)deselectText;
 
-// Search from the end of the currently selected location, or from the beginning of the document if nothing
-// is selected.
-- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
-
 // Get an attributed string that represents the current selection.
 - (NSAttributedString *)selectedText;
 

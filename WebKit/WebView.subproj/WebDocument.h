@@ -23,7 +23,7 @@
 @end
 
 @protocol WebDocumentSearching
-- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
 @end
 
 @protocol WebDocumentRepresentation <NSObject>

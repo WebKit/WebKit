@@ -1,3 +1,15 @@
+2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+
+        Support for find in HTML, find in text view coming soon.
+        
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView searchFor:direction:caseSensitive:]):
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView searchFor:direction:caseSensitive:]):
+
 2002-07-23  Chris Blumenberg  <cblu@apple.com>
 
 	More plumbing for contextual menu support.

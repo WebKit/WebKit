@@ -259,9 +259,9 @@
 
 // Search from the end of the currently selected location, or from the beginning of the document if nothing
 // is selected.
-- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::searchFor:direction:caseSensitive: is not implemented"];
+    return [[self _bridge] searchFor: string direction: forward caseSensitive: caseFlag];
 }
 
 

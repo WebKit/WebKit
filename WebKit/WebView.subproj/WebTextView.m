@@ -78,8 +78,9 @@
     return canDragTo;
 }
 
-- (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
+    return NO;
 }
 
 @end
