@@ -1,5 +1,32 @@
 2002-11-11  Maciej Stachowiak  <mjs@apple.com>
 
+	Store path and the fact that we're downloading in the data source,
+	instead of storing the content policy.
+	
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler cleanUpAfterFailure]):
+        (-[WebDownloadHandler createFileIfNecessary]):
+        (-[WebDownloadHandler finishedLoading]):
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:withContentPolicy:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource registerRepresentationClass:forMIMEType:]):
+        (-[WebDataSource isDownloading]):
+        (-[WebDataSource downloadPath]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _commitIfReady]):
+        (-[WebDataSource _setIsDownloading:]):
+        (-[WebDataSource _setDownloadPath:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+
+2002-11-11  Maciej Stachowiak  <mjs@apple.com>
+
 	Don't ask for the content policy any more if the previous policies
 	said to save - in effect this means to ask only if the previous
 	policies said to use the content policy. Also, remove now-useless

@@ -130,7 +130,7 @@
 
 - (void)cleanUpAfterFailure
 {
-    NSString *path = [[dataSource contentPolicy] path];
+    NSString *path = [dataSource downloadPath];
 
     [self closeFile];
     
@@ -146,7 +146,7 @@
     }
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [[dataSource contentPolicy] path];
+    NSString *path = [dataSource downloadPath];
     NSObject <WebDownloadDecoder> *lastDecoder = [decoderSequence lastObject];
         
     NSString *filename = [lastDecoder filename];
@@ -170,7 +170,7 @@
         }
     }
 
-    [[dataSource contentPolicy] _setPath:path];
+    [dataSource _setDownloadPath:path];
 
     NSDictionary *fileAttributes = [lastDecoder fileAttributes];
     if(!fileAttributes){
@@ -349,7 +349,7 @@
 
     [self closeFile];
 
-    LOG(Download, "Download complete. Saved to: %@", [[dataSource contentPolicy] path]);
+    LOG(Download, "Download complete. Saved to: %@", [dataSource downloadPath]);
 
     return nil;
 }

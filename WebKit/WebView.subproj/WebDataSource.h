@@ -7,7 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class WebContentPolicy;
 @class WebController;
 @class WebDataSourcePrivate;
 @class WebError;
@@ -141,12 +140,6 @@
 - (NSString *)frameName;
 
 /*!
-    @method contentPolicy
-    @result The content policy used by this datasource.
-*/
-- (WebContentPolicy *)contentPolicy;
-
-/*!
     @method fileType
     @result The extension based on the MIME type 
 */
@@ -166,6 +159,11 @@
     kCFStringEncodingISOLatin1 is used.
 */
 - (NSString *)stringWithData:(NSData *)data;
+
+
+- (BOOL)isDownloading;
+- (NSString *)downloadPath;
+
 
 /*!
     @method registerRepresentationClass:forMIMEType:

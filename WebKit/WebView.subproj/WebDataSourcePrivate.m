@@ -53,7 +53,6 @@
     [pageTitle release];
     [response release];
     [mainDocumentError release];
-    [contentPolicy release];
     [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
@@ -61,6 +60,7 @@
     [previousBackForwardItem release];
     [ourBackForwardItems release];
     [triggeringEvent release];
+    [downloadPath release];
 
     [super dealloc];
 }
@@ -300,14 +300,6 @@
     _private->response = [response retain];
 }
 
-- (void) _setContentPolicy:(WebContentPolicy *)policy
-{
-    [policy retain];
-    [_private->contentPolicy release];
-    _private->contentPolicy = policy;
-    [self _commitIfReady];
-}
-
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding
 {
     NSString *copy = [overrideEncoding copy];
@@ -457,7 +449,7 @@
 
 -(void)_commitIfReady
 {
-    if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
+    if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
@@ -483,16 +475,6 @@
     [_private->representation setDataSource:self];
 
     [[[self webFrame] webView] _makeDocumentViewForDataSource:self];
-}
-
--(BOOL)_isReadyForData
-{
-    // The data source is ready for data when the content policy is
-    // determined, and if the policy is show, if it has been committed
-    // (so that we know it's representation and such are ready).
-
-    return [[self contentPolicy] policyAction] != WebContentPolicyNone &&
-	(_private->committed || [[self contentPolicy] policyAction] != WebContentPolicyShow);
 }
 
 -(void)_receivedData:(NSData *)data
@@ -596,6 +578,21 @@
 {
     return [[_private->triggeringEvent retain] autorelease];
 }
+
+
+- (void)_setIsDownloading:(BOOL)isDownloading
+{
+    _private->isDownloading = isDownloading;
+}
+
+- (void)_setDownloadPath:(NSString *)downloadPath
+{
+    [downloadPath retain];
+    [_private->downloadPath release];
+    _private->downloadPath = [downloadPath copy];
+    [downloadPath release];
+}
+
 
 @end
 

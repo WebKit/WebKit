@@ -191,7 +191,7 @@
     WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
         
-    [dataSource _setContentPolicy:contentPolicy];
+    [dataSource _setIsDownloading:YES];
     if([webFrame setProvisionalDataSource:dataSource]){
         [webFrame startLoading];
     }

@@ -67,9 +67,7 @@
 
 - (void)receivedError:(WebError *)error
 {    
-    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
-
-    if (contentAction != WebContentPolicySave) {
+    if (![dataSource isDownloading]) {
         [[dataSource controller] _mainReceivedError:error fromDataSource:dataSource];
     }
 }
@@ -142,21 +140,16 @@
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    // Figure out the content policy.
-    WebContentPolicy *contentPolicy = [dataSource contentPolicy];
+    WebContentPolicy *contentPolicy;
 
-    if ([contentPolicy policyAction] != WebPolicySave) {
+    // Figure out the content policy.
+    if (![dataSource isDownloading]) {
 	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
 								  andRequest:[dataSource request]
 								  inFrame:[dataSource webFrame]];
+    } else {
+	contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:nil];
     }
-
-    if ([contentPolicy policyAction] == WebPolicySave) {
-	NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
-	[contentPolicy _setPath:saveFilename];
-    }
-
-    [dataSource _setContentPolicy:contentPolicy];
 
     policyAction = [contentPolicy policyAction];
 
@@ -166,6 +159,10 @@
         
     case WebContentPolicySave:
         {
+	    [dataSource _setIsDownloading:YES];
+	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
+	    [dataSource _setDownloadPath:saveFilename];
+
             [[dataSource webFrame] _setProvisionalDataSource:nil];
             
             [self notifyDelegatesOfInterruptionByPolicyChange];
@@ -227,14 +224,10 @@
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
-    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
-    
-    // Don't retain data for downloaded files
-    if (contentAction != WebContentPolicySave) {
+    if (![dataSource isDownloading]) {
+	// Don't retain data for downloaded files
     	[dataSource _setResourceData:resourceData];
-    }
 
-    if (contentAction == WebContentPolicyShow) {
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     }
     

@@ -180,11 +180,6 @@
     return _private->pageTitle;
 }
 
-- (WebContentPolicy *) contentPolicy
-{
-    return _private->contentPolicy;
-}
-
 - (NSString *)fileType
 {
     return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[[self response] contentType]];
@@ -214,6 +209,16 @@
 {
     // FIXME: OK to allow developers to override built-in reps?
     [[self _repTypes] setObject:repClass forKey:MIMEType];
+}
+
+- (BOOL)isDownloading
+{
+    return _private->isDownloading;
+}
+
+- (NSString *)downloadPath
+{
+    return [[_private->downloadPath retain] autorelease];
 }
 
 @end
