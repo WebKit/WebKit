@@ -27,6 +27,8 @@
 
 #import "KWQAssertions.h"
 
+#define MIN_LINES 4 /* ensures we have a scroll bar */
+
 @interface KWQListBoxScrollView : NSScrollView
 {
 }
@@ -196,7 +198,7 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     
     NSSize contentSize;
     contentSize.width = ceil(width);
-    contentSize.height = ceil(([tableView rowHeight] + [tableView intercellSpacing].height) * lines);
+    contentSize.height = ceil(([tableView rowHeight] + [tableView intercellSpacing].height) * MAX(MIN_LINES, lines));
     NSSize size = [NSScrollView frameSizeForContentSize:contentSize
         hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
 

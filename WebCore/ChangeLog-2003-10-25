@@ -1,3 +1,10 @@
+2002-11-14  Darin Adler  <darin@apple.com>
+
+	- fixed 3095854 -- small select boxes get no scrollbar
+
+        * kwq/KWQListBox.mm: (QListBox::sizeForNumberOfLines):
+	Always use a minimum of 4 lines.
+
 === Alexander-32 ===
 
 2002-11-14  Darin Adler  <darin@apple.com>
