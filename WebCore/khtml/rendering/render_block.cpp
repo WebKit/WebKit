@@ -1988,19 +1988,6 @@ void RenderBlock::calcInlineMinMaxWidth()
             // the new min-width, if it is the widest chunk seen so far, and
             // it can also become the max-width.
 
-            // For floats, unless the previous element was floating,
-            // we terminate the current line as far as maxwidth
-            // is concerned.
-            // FIXME: This is insanely hard to get right.  Floats can have 'clear' set
-            // on them, which would force them to dodge one another.  Floats can have left
-            // or right alignment as well, and technically a right-aligned float could
-            // sit on the same line even if the previous element is text.
-            // At some point think about clear and float alignment here.
-            if (child->isFloating() && (!prev || !prev->isFloating())) {
-                if (m_maxWidth < inlineMax) m_maxWidth = inlineMax;
-                inlineMax = 0;
-            }
-            
             // Children fall into three categories:
             // (1) An inline flow object.  These objects always have a min/max of 0,
             // and are included in the iteration solely so that their margins can

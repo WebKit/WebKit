@@ -296,8 +296,8 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
             }
         }
         
-        const float dottedLine[2] = { patWidth, patWidth };
-        [path setLineDash:dottedLine count:2 phase:patternOffset];
+        //const float dottedLine[2] = { patWidth, patWidth };
+        //[path setLineDash:dottedLine count:2 phase:patternOffset];
     }
     
     [path moveToPoint:p1];

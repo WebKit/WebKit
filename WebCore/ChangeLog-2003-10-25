@@ -1,3 +1,16 @@
+2003-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Dave.
+
+	- fixed 3363557 - REGRESSION (90-91): float:left element inside position:absolute element positioned wrong
+
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::calcInlineMinMaxWidth): Remove attempt to break line
+	after flaot that follows a non-float. Removing this code fixes the
+	regression and leaves pepboys and the meyerweb matrix theme
+	working properly. Also, I could not find any evidence in the CSS2
+	spec that what this code is trying to do is right.
+
 2003-08-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
