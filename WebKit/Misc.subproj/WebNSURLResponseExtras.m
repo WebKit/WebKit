@@ -56,10 +56,11 @@
 - (NSString *)_web_suggestedFilenameForSavingWithMIMEType:(NSString *)MIMEType
 {
     // Get the filename from the URL. Try the lastPathComponent first.
-    NSString *filename = [[[self path] lastPathComponent] _web_filenameByFixingIllegalCharacters];
+    NSString *lastPathComponent = [[self path] lastPathComponent];
+    NSString *filename = [lastPathComponent _web_filenameByFixingIllegalCharacters];
     NSString *extension = nil;
 
-    if ([filename length] == 0) {
+    if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
         filename = [[self host] _web_filenameByFixingIllegalCharacters];
         if ([filename length] == 0) {

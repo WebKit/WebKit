@@ -1,3 +1,12 @@
+2003-01-29  Chris Blumenberg  <cblu@apple.com>
+
+	3159529 - REGRESSION: URLs with no path are saved as "-.html"
+
+        Reviewed by darin, trey, kocienda.
+
+        * Misc.subproj/WebResourceResponseExtras.m:
+        (-[NSURL _web_suggestedFilenameForSavingWithMIMEType:]): Don't use the lastPathComponent if it is "/".
+
 2003-01-28  Trey Matteson  <trey@apple.com>
 
 	Removing ERROR() that isn't an error, left over from the Safari-48 download firedrill.
