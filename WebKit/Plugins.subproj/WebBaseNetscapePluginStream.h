@@ -15,15 +15,18 @@
 @interface WebBaseNetscapePluginStream : NSObject
 {
     NSMutableData *deliveryData;
-    NSURL *URL;
+    NSURL *requestURL;
+    NSURL *responseURL;
     NPP instance;
     uint16 transferMode;
     int32 offset;
     NPStream stream;
     char *path;
+    BOOL sendNotification;
     void *notifyData;
     WebNetscapePluginPackage *plugin;
     NPReason reason;
+    BOOL isTerminated;
         
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;
@@ -33,13 +36,21 @@
     NPP_URLNotifyProcPtr NPP_URLNotify;
 }
 
-- (void)setPluginPointer:(NPP)pluginPointer;
-- (void)setNotifyData:(void *)theNotifyData;
++ (NPReason)reasonForError:(NSError *)error;
 
-- (void)startStreamWithURL:(NSURL *)theURL 
-     expectedContentLength:(long long)expectedContentLength
-          lastModifiedDate:(NSDate *)lastModifiedDate
-                  MIMEType:(NSString *)MIMEType;
+- (id)initWithRequestURL:(NSURL *)theRequestURL
+           pluginPointer:(NPP)thePluginPointer
+              notifyData:(void *)theNotifyData
+        sendNotification:(BOOL)flag;
+
+- (void)setRequestURL:(NSURL *)theRequestURL;
+- (void)setResponseURL:(NSURL *)theResponseURL;
+- (void)setPluginPointer:(NPP)pluginPointer;
+
+- (void)startStreamResponseURL:(NSURL *)theResponseURL
+         expectedContentLength:(long long)expectedContentLength
+              lastModifiedDate:(NSDate *)lastModifiedDate
+                      MIMEType:(NSString *)MIMEType;
 - (void)startStreamWithResponse:(NSURLResponse *)r;
 - (void)receivedData:(NSData *)data;
 - (void)finishedLoadingWithData:(NSData *)data;

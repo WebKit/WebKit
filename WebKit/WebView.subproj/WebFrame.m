@@ -156,7 +156,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
-
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
 @end
 
@@ -912,12 +911,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSNumber numberWithInt:_private->state], WebPreviousFrameState,
-                    [NSNumber numberWithInt:newState], WebCurrentFrameState, nil];
-                    
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebFrameStateChangedNotification object:self userInfo:userInfo];
-    
     _private->state = newState;
     
     if (_private->state == WebFrameStateProvisional) {
@@ -1029,20 +1022,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [self name]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
-            if ([pd _mainDocumentError]) {
+            NSError *error = [pd _mainDocumentError];
+            if (error != nil) {
                 // Check all children first.
                 LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [self name]);
                 WebHistoryItem *resetItem = [self _currentBackForwardListItemToResetTo];
                 BOOL shouldReset = YES;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
-
-                    [[self webView] _didFailProvisionalLoadWithError:[pd _mainDocumentError] forFrame:self];
+                    [[self webView] _didFailProvisionalLoadWithError:error forFrame:self];
                     _private->delegateIsHandlingProvisionalLoadError = YES;
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
-                                          didFailProvisionalLoadWithError:[pd _mainDocumentError]
+                                          didFailProvisionalLoadWithError:error
                                                                  forFrame:self];
                     _private->delegateIsHandlingProvisionalLoadError = NO;
+                    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
                     
                     [pd _stopLoading];
                     // Finish resetting the load state, but only if another load hasn't been started by the
@@ -1121,16 +1115,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                
-                if ([ds _mainDocumentError]) {
-                    [[self webView] _didFailLoadWithError:[ds _mainDocumentError] forFrame:self];
+                NSError *error = [ds _mainDocumentError];
+                if (error != nil) {
+                    [[self webView] _didFailLoadWithError:error forFrame:self];
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
-                                                     didFailLoadWithError:[ds _mainDocumentError]
+                                                     didFailLoadWithError:error
                                                                  forFrame:self];
+                    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
                 } else {
                     [[self webView] _didFinishLoadForFrame:self];
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                     didFinishLoadForFrame:self];
+                    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
                 }
                 
                 [[self webView] _progressCompleted: self];
@@ -1288,6 +1284,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         
         [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                didChangeLocationWithinPageForFrame:self];
+        [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
     } else {
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
@@ -1742,6 +1739,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                       didChangeLocationWithinPageForFrame:self];
+    [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
 }
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f
@@ -1758,9 +1756,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-
-
--(void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
+- (void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
 {
     if (!request) {
         return;
@@ -2486,6 +2482,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [[self _bridge] setDrawsBackground:[[self webView] drawsBackground]];
     [_private->children makeObjectsPerformSelector:@selector(_updateDrawsBackground)];
+}
+
+- (void)_setInternalLoadDelegate:(id)internalLoadDelegate
+{
+    _private->internalLoadDelegate = internalLoadDelegate;
+}
+
+- (id)_internalLoadDelegate
+{
+    return _private->internalLoadDelegate;
 }
 
 @end

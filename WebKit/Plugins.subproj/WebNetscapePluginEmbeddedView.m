@@ -6,13 +6,15 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebView.h>
 
-#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 @implementation WebNetscapePluginEmbeddedView
 
@@ -51,9 +53,10 @@
 
 - (void)didStart
 {
-    if (URL) {
-        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-        [self loadRequest:request inTarget:nil withNotifyData:nil];
+    if (URL != nil) {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+        [request setHTTPReferrer:[[[[self dataSource] request] URL] _web_originalDataAsString]];
+        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     }
 }
 

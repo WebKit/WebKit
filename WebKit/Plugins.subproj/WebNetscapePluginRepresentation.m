@@ -47,12 +47,13 @@
         return;
     }
     
-    if(!instance){
+    if (instance == NULL) {
+        [self setRequestURL:[[_dataSource request] URL]];
         [self setPluginPointer:[view pluginPointer]];
         [self startStreamWithResponse:[ds response]];
     }
     
-    ASSERT(instance);
+    ASSERT(instance != NULL);
     [self receivedData:data];
 }
 

@@ -1,5 +1,75 @@
 2004-10-04  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3798948> NPP_URLNotify is not called if plug-in calls NPN_*URLNotfy
+	Fixed a number of FIXME's related to notifying plug-ins of loaded pages.
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: 
+		- replaced URL ivar with requestURL and responseURL ivars since we need to pass both to plug-ins
+        	- added sendNotification boolean. Relying on notifyData not being NULL was not information to know whether to call NPP_URLNotify or not.
+		- added isTerminated boolean because determining whether or not stream.ndata is NULL is not enough to know if the stream has been cancelled.
+	* Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (+[WebBaseNetscapePluginStream reasonForError:]): new, factored out from receivedError:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:pluginPointer:notifyData:sendNotification:]): new
+        (-[WebBaseNetscapePluginStream dealloc]): release new ivars
+        (-[WebBaseNetscapePluginStream finalize]): added assert
+        (-[WebBaseNetscapePluginStream setRequestURL:]): new
+        (-[WebBaseNetscapePluginStream setResponseURL:]): new
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]): renamed, use responseURL as it basically did before
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]): call renamed method
+        (-[WebBaseNetscapePluginStream destroyStream]): 
+		- do nothing if terminated
+		- call NPP_StreamAsFile and NPP_DestroyStream if stream.ndata is not NULL
+		- call NPP_URLNotify if sendNotification is YES regardless of value of notifyData
+        (-[WebBaseNetscapePluginStream receivedError:]): call reasonForError
+        (-[WebBaseNetscapePluginStream deliverData]): use renamed ivar
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+		- added observingFrameLoadNotification boolean
+		- renamed dictionary ivar to pendingFrameLoads which has WebFrame keys and WebPluginRequest values
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView addFrameLoadObserver]): new
+        (-[WebBaseNetscapePluginView removeFrameLoadObserver]): new
+        (-[WebBaseNetscapePluginView stop]): call removeFrameLoadObserver
+        (-[WebBaseNetscapePluginView initWithFrame:]): use renamed pendingFrameLoads ivar
+        (-[WebBaseNetscapePluginView dealloc]): ditto
+        (-[WebBaseNetscapePluginView requestWithURLCString:]): set referrer on the request just as IE does
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): 
+		- call NPP_URLNotify depending of value of sendNotification
+		- call new init method on WebBaseNetscapePluginStream rather then setting variables individually
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithReason:]): new, calls NPP_URLNotify at the right time with the right value
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithError:]): new, delegate method called from WebFrame
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): call addFrameLoadObserver
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]): take new sendNotification parameter and pass it
+        (-[WebBaseNetscapePluginView getURLNotify:target:notifyData:]): pass YES for sendNotification
+        (-[WebBaseNetscapePluginView getURL:target:]): pass NO for sendNotification
+        (-[WebBaseNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]): take new sendNotification parameter and pass it
+        (-[WebBaseNetscapePluginView postURLNotify:target:len:buf:file:notifyData:]): pass YES for sendNotification
+        (-[WebBaseNetscapePluginView postURL:target:len:buf:file:]): pass NO for sendNotification
+        (-[WebPluginRequest initWithRequest:frameName:notifyData:sendNotification:]): take new sendNotification parameter
+        (-[WebPluginRequest sendNotification]): new
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]): set referrer on the request just as IE does
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]): set the request URL on the stream
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]): take new sendNotification parameter and pass it
+        (-[WebNetscapePluginStream dealloc]): use renamed ivar
+        (-[WebNetscapePluginStream start]): ditto
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setState:]): removed notification posting code. This was only used by WebBaseNetscapePluginView and it was the wrong notification to send.
+        (-[WebFrame _checkLoadCompleteForThisFrame]): call internal load delegate to tell it that the load has finished
+        (-[WebFrame _loadItem:withLoadType:]): ditto
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]): ditto
+        (-[WebFrame _setInternalLoadDelegate:]): new
+        (-[WebFrame _internalLoadDelegate]): new
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+
+2004-10-04  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3758113> REGRESSION: Macromedia ColdFusion page doesn't show main content
 
 	After bumping up our plug-in version, Flash now sends 2 CRLF's between the headers and body of their POST request. Our code was not prepared for this.

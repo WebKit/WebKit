@@ -9,8 +9,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFramePrivate.h> 
+#import <WebKit/WebFrameInternal.h> 
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -25,6 +24,7 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <Foundation/NSData_NSURLExtras.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
@@ -62,13 +62,15 @@ typedef struct {
     NSURLRequest *_request;
     NSString *_frameName;
     void *_notifyData;
+    BOOL _sendNotification;
 }
 
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData;
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 
 - (NSURLRequest *)request;
 - (NSString *)frameName;
 - (void *)notifyData;
+- (BOOL)sendNotification;
 
 @end
 
@@ -944,6 +946,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     // Stop notifications and callbacks.
     [self removeWindowObservers];
+    [[pendingFrameLoads allKeys] makeObjectsPerformSelector:@selector(_setInternalLoadDelegate:) withObject:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
@@ -1089,7 +1092,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     instance->ndata = self;
 
     streams = [[NSMutableArray alloc] init];
-    streamNotifications = [[NSMutableDictionary alloc] init];
+    pendingFrameLoads = [[NSMutableDictionary alloc] init];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(preferencesHaveChanged:)
@@ -1120,7 +1123,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [streams release];
     [MIMEType release];
     [baseURL release];
-    [streamNotifications release];
+    [pendingFrameLoads release];
 
     [self freeAttributeKeysAndValues];
 
@@ -1293,27 +1296,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
 }
 
-- (void)frameStateChanged:(NSNotification *)notification
-{
-    WebFrame *frame = [notification object];
-    NSURL *URL = [[[frame dataSource] request] URL];
-    NSValue *notifyDataValue = [streamNotifications objectForKey:URL];
-    if (!notifyDataValue) {
-        return;
-    }
-    
-    void *notifyData = [notifyDataValue pointerValue];
-    WebFrameState frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
-    if (frameState == WebFrameStateComplete) {
-        if (isStarted) {
-            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
-        }
-        [streamNotifications removeObjectForKey:URL];
-    }
-
-    //FIXME: Need to send other NPReasons
-}
-
 - (void *)pluginScriptableObject
 {
     if (NPP_GetValue) {
@@ -1344,8 +1326,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!URL) {
         return nil;
     }
-    
-    return [NSMutableURLRequest requestWithURL:URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    [request setHTTPReferrer:[[[[self dataSource] request] URL] _web_originalDataAsString]];
+    return request;
 }
 
 - (void)evaluateJavaScriptPluginRequest:(WebPluginRequest *)JSPluginRequest
@@ -1367,36 +1350,57 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!isStarted) {
         return;
     }
-    
-    void *notifyData = [JSPluginRequest notifyData];
-    
+        
     if ([JSPluginRequest frameName] != nil) {
         // FIXME: If the result is a string, we probably want to put that string into the frame, just
         // like we do in KHTMLPartBrowserExtension::openURLRequest.
-        if (notifyData) {
-            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
+        if ([JSPluginRequest sendNotification]) {
+            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
         }
     } else if ([result length] > 0) {
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
-        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] init];
-        [stream setPluginPointer:instance];
-        [stream setNotifyData:notifyData];
-        [stream startStreamWithURL:URL
-             expectedContentLength:[JSData length]
-                  lastModifiedDate:nil
-                          MIMEType:@"text/plain"];
+        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequestURL:URL
+                                                                                        pluginPointer:instance
+                                                                                           notifyData:[JSPluginRequest notifyData]
+                                                                                     sendNotification:[JSPluginRequest sendNotification]];
+        [stream startStreamResponseURL:URL
+                 expectedContentLength:[JSData length]
+                      lastModifiedDate:nil
+                              MIMEType:@"text/plain"];
         [stream receivedData:JSData];
         [stream finishedLoadingWithData:JSData];
         [stream release];
     }
 }
 
+- (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason
+{
+    ASSERT(isStarted);
+    
+    WebPluginRequest *pluginRequest = [pendingFrameLoads objectForKey:webFrame];
+    ASSERT(pluginRequest != nil);
+    ASSERT([pluginRequest sendNotification]);
+        
+    NPP_URLNotify(instance, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+    
+    [pendingFrameLoads removeObjectForKey:webFrame];
+    [webFrame _setInternalLoadDelegate:nil];
+}
+
+- (void)webFrame:(WebFrame *)webFrame didFinishLoadWithError:(NSError *)error
+{
+    NPReason reason = NPRES_DONE;
+    if (error != nil) {
+        reason = [WebBaseNetscapePluginStream reasonForError:error];
+    }    
+    [self webFrame:webFrame didFinishLoadWithReason:reason];
+}
+
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
 {
     NSURLRequest *request = [pluginRequest request];
     NSString *frameName = [pluginRequest frameName];
-    void *notifyData = [pluginRequest notifyData];
     WebFrame *frame = nil;
     
     NSURL *URL = [request URL];
@@ -1430,25 +1434,21 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         [self evaluateJavaScriptPluginRequest:pluginRequest];
     } else {
         [frame loadRequest:request];
-        if (notifyData) {
-            // FIXME: How do we notify about failures? It seems this will only notify about success.
-        
-            // FIXME: This will overwrite any previous notification for the same URL.
-            // It might be better to keep track of these per frame.
-            [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-            
-            // FIXME: We add this same observer to a frame multiple times. Is that OK?
-            // FIXME: This observer doesn't get removed until the plugin stops, so we could
-            // end up with lots and lots of these.
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(frameStateChanged:)
-                                                         name:WebFrameStateChangedNotification
-                                                       object:frame];
+        if ([pluginRequest sendNotification]) {
+            // Check if another plug-in view or even this view is waiting for the frame to load.
+            // If it is, tell it that the load was cancelled because it will be anyway.
+            WebBaseNetscapePluginView *view = [frame _internalLoadDelegate];
+            if (view != nil) {
+                ASSERT([view isKindOfClass:[WebBaseNetscapePluginView class]]);
+                [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
+            }
+            [pendingFrameLoads _web_setObject:pluginRequest forUncopiedKey:frame];
+            [frame _setInternalLoadDelegate:self];
         }
     }
 }
 
-- (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification
 {
     NSURL *URL = [request URL];
 
@@ -1484,16 +1484,17 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             return NPERR_INVALID_PARAM;
         }
         
-        [request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] _web_originalDataAsString]];
-        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData];
+        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData sendNotification:sendNotification];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
         if (target) {
             CFRelease(target);
         }
     } else {
-        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc]
-            initWithRequest:request pluginPointer:instance notifyData:notifyData];
+        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request 
+                                                                             pluginPointer:instance 
+                                                                                notifyData:notifyData 
+                                                                          sendNotification:sendNotification];
         if (!stream) {
             return NPERR_INVALID_URL;
         }
@@ -1510,7 +1511,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URLCString, cTarget);
 
     NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
-    return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
+    return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData sendNotification:YES];
 }
 
 -(NPError)getURL:(const char *)URLCString target:(const char *)cTarget
@@ -1518,16 +1519,17 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     LOG(Plugins, "NPN_GetURL: %s target: %s", URLCString, cTarget);
 
     NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
-    return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
+    return [self loadRequest:request inTarget:cTarget withNotifyData:NULL sendNotification:NO];
 }
 
-- (NPError)_postURLNotify:(const char *)URLCString
-                   target:(const char *)target
-                      len:(UInt32)len
-                      buf:(const char *)buf
-                     file:(NPBool)file
-               notifyData:(void *)notifyData
-             allowHeaders:(BOOL)allowHeaders
+- (NPError)_postURL:(const char *)URLCString
+             target:(const char *)target
+                len:(UInt32)len
+                buf:(const char *)buf
+               file:(NPBool)file
+         notifyData:(void *)notifyData
+   sendNotification:(BOOL)sendNotification
+       allowHeaders:(BOOL)allowHeaders
 {
     if (!URLCString || !len || !buf) {
         return NPERR_INVALID_PARAM;
@@ -1602,7 +1604,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [request setHTTPBody:postData];
     
-    return [self loadRequest:request inTarget:target withNotifyData:notifyData];
+    return [self loadRequest:request inTarget:target withNotifyData:notifyData sendNotification:sendNotification];
 }
 
 - (NPError)postURLNotify:(const char *)URLCString
@@ -1613,7 +1615,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
               notifyData:(void *)notifyData
 {
     LOG(Plugins, "NPN_PostURLNotify: %s", URLCString);
-    return [self _postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:notifyData allowHeaders:YES];
+    return [self _postURL:URLCString target:target len:len buf:buf file:file notifyData:notifyData sendNotification:YES allowHeaders:YES];
 }
 
 -(NPError)postURL:(const char *)URLCString
@@ -1624,7 +1626,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     LOG(Plugins, "NPN_PostURL: %s", URLCString);        
     // As documented, only allow headers to be specified via NPP_PostURL when using a file.
-    return [self _postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:NULL allowHeaders:file];
+    return [self _postURL:URLCString target:target len:len buf:buf file:file notifyData:NULL sendNotification:NO allowHeaders:file];
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
@@ -1705,12 +1707,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 @implementation WebPluginRequest
 
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification
 {
     [super init];
     _request = [request retain];
     _frameName = [frameName retain];
     _notifyData = notifyData;
+    _sendNotification = sendNotification;
     return self;
 }
 
@@ -1729,6 +1732,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (NSString *)frameName
 {
     return _frameName;
+}
+
+- (BOOL)sendNotification
+{
+    return _sendNotification;
 }
 
 - (void *)notifyData

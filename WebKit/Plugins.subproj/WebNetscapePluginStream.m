@@ -30,19 +30,22 @@
 
 - initWithRequest:(NSURLRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
-       notifyData:(void *)theNotifyData
-{
-    [super init];
-
-    if (!theRequest || !thePluginPointer || ![WebView _canHandleRequest:theRequest]) {
+       notifyData:(void *)theNotifyData 
+ sendNotification:(BOOL)flag
+{    
+    if ([self initWithRequestURL:[theRequest URL]
+                    pluginPointer:thePluginPointer
+                       notifyData:theNotifyData
+                 sendNotification:flag] == nil) {
+        return nil;
+    }
+    
+    if (![WebView _canHandleRequest:theRequest]) {
         [self release];
         return nil;
     }
-
-    _startingRequest = [theRequest copy];
-
-    [self setPluginPointer:thePluginPointer];
-    [self setNotifyData:theNotifyData];
+        
+    request = [theRequest copy];
 
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)instance->ndata;
     _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
@@ -54,20 +57,17 @@
 - (void)dealloc
 {
     [_loader release];
-    [_startingRequest release];
+    [request release];
     [super dealloc];
 }
 
 - (void)start
 {
-    ASSERT(_startingRequest);
+    ASSERT(request);
 
     [[_loader dataSource] _addPlugInStreamClient:_loader];
 
-    BOOL succeeded = [_loader loadWithRequest:_startingRequest];
-    [_startingRequest release];
-    _startingRequest = nil;
-
+    BOOL succeeded = [_loader loadWithRequest:request];
     if (!succeeded) {
         [[_loader dataSource] _removePlugInStreamClient:_loader];
     }

@@ -15,13 +15,14 @@
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {    
-    NSURLRequest *_startingRequest;
     WebNetscapePluginConnectionDelegate *_loader;
+    NSURLRequest *request;
 }
 
 - (id)initWithRequest:(NSURLRequest *)theRequest
         pluginPointer:(NPP)thePluginPointer
-           notifyData:(void *)theNotifyData;
+           notifyData:(void *)theNotifyData
+     sendNotification:(BOOL)sendNotification;
 - (void)start;
 - (void)stop;
 

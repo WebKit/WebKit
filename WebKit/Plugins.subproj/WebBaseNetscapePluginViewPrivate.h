@@ -9,7 +9,7 @@
 
 @interface WebBaseNetscapePluginView (WebNPPCallbacks)
 
-- (NPError)loadRequest:(NSURLRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData;
+- (NPError)loadRequest:(NSURLRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 - (NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
 - (NPError)getURL:(const char *)URL target:(const char *)target;
 - (NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData;

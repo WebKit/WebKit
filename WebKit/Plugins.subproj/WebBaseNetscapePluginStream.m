@@ -20,8 +20,37 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 @implementation WebBaseNetscapePluginStream
 
++ (NPReason)reasonForError:(NSError *)error
+{
+    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled) {
+        return NPRES_USER_BREAK;
+    }
+    return NPRES_NETWORK_ERR;
+}
+
+- (id)initWithRequestURL:(NSURL *)theRequestURL
+           pluginPointer:(NPP)thePluginPointer
+              notifyData:(void *)theNotifyData
+        sendNotification:(BOOL)flag
+{
+    [super init];
+    
+    if (theRequestURL == nil || thePluginPointer == NULL) {
+        [self release];
+        return nil;
+    }
+    
+    [self setRequestURL:theRequestURL];
+    [self setPluginPointer:thePluginPointer];
+    notifyData = theNotifyData;
+    sendNotification = flag;
+    
+    return self;
+}
+
 - (void)dealloc
 {
+    ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
     // FIXME: It's generally considered bad style to do work, like deleting a file,
@@ -31,7 +60,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
         unlink(path);
     }
 
-    [URL release];
+    [requestURL release];
+    [responseURL release];
     [plugin release];
     [deliveryData release];
     
@@ -43,6 +73,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)finalize
 {
+    ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
     // FIXME: Bad for all the reasons mentioned above, but even worse for GC.
@@ -61,6 +92,20 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     return transferMode;
 }
 
+- (void)setRequestURL:(NSURL *)theRequestURL
+{
+    [theRequestURL retain];
+    [requestURL release];
+    requestURL = theRequestURL;
+}
+
+- (void)setResponseURL:(NSURL *)theResponseURL
+{
+    [theResponseURL retain];
+    [responseURL release];
+    responseURL = theResponseURL;
+}
+
 - (void)setPluginPointer:(NPP)pluginPointer
 {
     instance = pluginPointer;
@@ -75,26 +120,21 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
-- (void)setNotifyData:(void *)theNotifyData
+- (void)startStreamResponseURL:(NSURL *)URL
+         expectedContentLength:(long long)expectedContentLength
+              lastModifiedDate:(NSDate *)lastModifiedDate
+                      MIMEType:(NSString *)MIMEType
 {
-    notifyData = theNotifyData;
-}
-
-- (void)startStreamWithURL:(NSURL *)theURL 
-     expectedContentLength:(long long)expectedContentLength
-          lastModifiedDate:(NSDate *)lastModifiedDate
-                  MIMEType:(NSString *)MIMEType
-{
+    ASSERT(!isTerminated);
+    
     if (![plugin isLoaded]) {
         return;
     }
     
-    [theURL retain];
-    [URL release];
-    URL = theURL;
-
+    [self setResponseURL:URL];
+    
     free((void *)stream.url);
-    stream.url = strdup([URL _web_URLCString]);
+    stream.url = strdup([responseURL _web_URLCString]);
 
     stream.ndata = self;
     stream.end = expectedContentLength > 0 ? expectedContentLength : 0;
@@ -108,10 +148,10 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     // FIXME: Need a way to check if stream is seekable
 
     NPError npErr = NPP_NewStream(instance, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
-    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", URL, MIMEType, npErr);
+    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
 
     if (npErr != NPERR_NO_ERROR) {
-        ERROR("NPP_NewStream failed with error: %d URLString: %s", npErr, [URL _web_URLCString]);
+        ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, responseURL);
         // Calling cancelWithReason with WEB_REASON_PLUGIN_CANCELLED cancels the load, but doesn't call NPP_DestroyStream.
         [self cancelWithReason:WEB_REASON_PLUGIN_CANCELLED];
         return;
@@ -138,36 +178,41 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)startStreamWithResponse:(NSURLResponse *)r
 {
-    [self startStreamWithURL:[r URL]
-       expectedContentLength:[r expectedContentLength]
-            lastModifiedDate:[r _lastModifiedDate]
-                    MIMEType:[r MIMEType]];
+    [self startStreamResponseURL:[r URL]
+           expectedContentLength:[r expectedContentLength]
+                lastModifiedDate:[r _lastModifiedDate]
+                        MIMEType:[r MIMEType]];
 }
 
 - (void)destroyStream
 {
-    if (![plugin isLoaded] || !stream.ndata || [deliveryData length] > 0 || reason == WEB_REASON_PLUGIN_CANCELLED) {
+    if (isTerminated || ![plugin isLoaded] || [deliveryData length] > 0 || reason == WEB_REASON_PLUGIN_CANCELLED) {
         return;
     }
     
-    if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
-        ASSERT(path != NULL);
-        const char *carbonPath = CarbonPathFromPOSIXPath(path);
-        ASSERT(carbonPath != NULL);
-        NPP_StreamAsFile(instance, &stream, carbonPath);
-        LOG(Plugins, "NPP_StreamAsFile URL=%@ path=%s", URL, carbonPath);
-    }
-    
-    NPError npErr;
-    npErr = NPP_DestroyStream(instance, &stream, reason);
-    LOG(Plugins, "NPP_DestroyStream URL=%@ error=%d", URL, npErr);
-    
-    stream.ndata = nil;
+    if (stream.ndata != NULL) {
+        if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
+            ASSERT(path != NULL);
+            const char *carbonPath = CarbonPathFromPOSIXPath(path);
+            ASSERT(carbonPath != NULL);
+            NPP_StreamAsFile(instance, &stream, carbonPath);
+            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
+        }
         
-    if (notifyData) {
-        NPP_URLNotify(instance, [URL _web_URLCString], reason, notifyData);
-        LOG(Plugins, "NPP_URLNotify URL=%@ reason=%d", URL, reason);
+        NPError npErr;
+        npErr = NPP_DestroyStream(instance, &stream, reason);
+        LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
+        
+        stream.ndata = nil;
     }
+    
+    if (sendNotification) {
+        // NPP_URLNotify expects the request URL, not the response URL.
+        NPP_URLNotify(instance, [requestURL _web_URLCString], reason, notifyData);
+        LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", requestURL, reason);
+    }
+    
+    isTerminated = YES;
 }
 
 - (void)destroyStreamWithReason:(NPReason)theReason
@@ -187,11 +232,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)receivedError:(NSError *)error
 {
-    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled) {
-        [self destroyStreamWithFailingReason:NPRES_USER_BREAK];
-    } else {
-        [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
-    }
+    [self destroyStreamWithFailingReason:[[self class] reasonForError:error]];
 }
 
 - (void)cancelWithReason:(NPReason)theReason
@@ -248,7 +289,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     
     while (totalBytesDelivered < totalBytes) {
         int32 deliveryBytes = NPP_WriteReady(instance, &stream);
-        LOG(Plugins, "NPP_WriteReady URL=%@ bytes=%d", URL, deliveryBytes);
+        LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", responseURL, deliveryBytes);
         
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
@@ -261,7 +302,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
             offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
-            LOG(Plugins, "NPP_Write URL=%@ bytes=%d total-delivered=%d/%d", URL, deliveryBytes, offset, stream.end);
+            LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", responseURL, deliveryBytes, offset, stream.end);
         }
     }
     
