@@ -207,7 +207,7 @@ bool QScrollBar::scroll(KWQScrollDirection direction, KWQScrollGranularity granu
     float delta = 0.0;
     if ((direction == KWQScrollUp && m_orientation == Vertical) || (direction == KWQScrollLeft && m_orientation == Horizontal)) {
         if (granularity == KWQScrollLine) {
-            delta = -(m_lineStep * 4);
+            delta = -m_lineStep;
         } else if (granularity == KWQScrollPage) {
             delta = -m_pageStep;
         } else if (granularity == KWQScrollDocument) {
@@ -217,7 +217,7 @@ bool QScrollBar::scroll(KWQScrollDirection direction, KWQScrollGranularity granu
         }
     } else if ((direction == KWQScrollDown && m_orientation == Vertical) || (direction == KWQScrollRight && m_orientation == Horizontal)) {
         if (granularity == KWQScrollLine) {
-            delta = (m_lineStep * 4);
+            delta = m_lineStep;
         } else if (granularity == KWQScrollPage) {
             delta = m_pageStep;
         } else if (granularity == KWQScrollDocument) {

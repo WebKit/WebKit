@@ -59,6 +59,10 @@
 #include "KWQKHTMLPart.h" // For Dashboard.
 #endif
 
+// These match the numbers we use over in WebKit (WebFrameView.m).
+#define LINE_STEP   40
+#define PAGE_KEEP   40
+
 using namespace DOM;
 using namespace khtml;
 
@@ -654,9 +658,6 @@ RenderLayer::positionScrollbars(const QRect& absBounds)
                        m_hBar->height());
     }
 }
-
-#define LINE_STEP   10
-#define PAGE_KEEP   40
 
 int RenderLayer::scrollWidth()
 {

@@ -1,3 +1,15 @@
+2005-04-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4077106, make sure that mouse wheeling in overflow sections uses 40 rather than 10 as the base line
+	step.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::positionScrollbars):
+        * kwq/KWQScrollBar.mm:
+        (QScrollBar::scroll):
+
 2005-04-04  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.
