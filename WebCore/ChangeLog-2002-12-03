@@ -1,5 +1,13 @@
 2002-10-20  Darin Adler  <darin@apple.com>
 
+	- fixed 3076390 -- crash in DOM::DocumentImpl::setParsing loading thread detail page
+	at groups.apple.com
+
+        * khtml/khtml_part.cpp: (KHTMLPart::openURL): Don't do any redirect special case
+	if the document is nil. Just do a normal load in that case.
+
+2002-10-20  Darin Adler  <darin@apple.com>
+
 	- fixed 3079864 -- REGRESSION: assertion failure on any page with a form element
 
         * khtml/html/html_formimpl.cpp: (HTMLGenericFormElementImpl::attach):

@@ -383,28 +383,30 @@ bool KHTMLPart::openURL( const KURL &url )
   // operation and d) the caller did not request to reload the page we try to
   // be smart and instead of reloading the whole document we just jump to the
   // request html anchor
-  bool isFrameSet = false;
-  if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
-      HTMLDocumentImpl* htmlDoc = static_cast<HTMLDocumentImpl*>(d->m_doc);
-      isFrameSet = htmlDoc->body() && (htmlDoc->body()->id() == ID_FRAMESET);
-  }
-  if ( !isFrameSet &&
-       urlcmp( url.url(), m_url.url(), true, true ) &&
-       url.hasRef() && !args.doPost() && !args.reload )
-  {
-    kdDebug( 6050 ) << "KHTMLPart::openURL, jumping to anchor. m_url = " << url.url() << endl;
-    m_url = url;
-    emit started( 0L );
+  if (d->m_doc) {
+      bool isFrameSet = false;
+      if ( d->m_doc->isHTMLDocument() ) {
+          HTMLDocumentImpl* htmlDoc = static_cast<HTMLDocumentImpl*>(d->m_doc);
+          isFrameSet = htmlDoc->body() && (htmlDoc->body()->id() == ID_FRAMESET);
+      }
+      if ( !isFrameSet &&
+           urlcmp( url.url(), m_url.url(), true, true ) &&
+           url.hasRef() && !args.doPost() && !args.reload )
+      {
+        kdDebug( 6050 ) << "KHTMLPart::openURL, jumping to anchor. m_url = " << url.url() << endl;
+        m_url = url;
+        emit started( 0L );
 
-    if ( !gotoAnchor( url.encodedHtmlRef()) )
-       gotoAnchor( url.htmlRef() );
+        if ( !gotoAnchor( url.encodedHtmlRef()) )
+           gotoAnchor( url.htmlRef() );
 
-    d->m_bComplete = true;
-    d->m_doc->setParsing(false);
+        d->m_bComplete = true;
+        d->m_doc->setParsing(false);
 
-    kdDebug( 6050 ) << "completed..." << endl;
-    emit completed();
-    return true;
+        kdDebug( 6050 ) << "completed..." << endl;
+        emit completed();
+        return true;
+      }
   }
 
   if (!d->m_restored)
