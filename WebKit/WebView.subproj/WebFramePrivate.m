@@ -1051,7 +1051,7 @@ static const char * const stateNames[] = {
     
     ASSERT(![_private previousItem]);
     // will save form state to current item, since prevItem not set
-    [_private->bridge openURL:URL reload:NO headers:nil];
+    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil];
     [dataSrc _setURL:URL];
     // NB: must happen after _setURL, since we add based on the current request
     [self _addBackForwardItemClippedAtTarget:NO];
@@ -1083,7 +1083,7 @@ static const char * const stateNames[] = {
 
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
     // this will screw up in some cases involving framesets.
-    if (loadType != WebFrameLoadTypeReload && [URL fragment] && [[URL _web_URLByRemovingFragment] isEqual:[[_private->bridge URL] _web_URLByRemovingFragment]]) {
+    if (loadType != WebFrameLoadTypeReload && [URL fragment] && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
         // Just do anchor navigation within the existing content.  Note we only do this if there is
         // an anchor in the URL - otherwise this check might prevent us from reloading a document
         // that has subframes that are different than what we're displaying (in other words, a link

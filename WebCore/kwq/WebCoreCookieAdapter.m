@@ -50,12 +50,12 @@ static WebCoreCookieAdapter *sharedAdapter;
     return FALSE;
 }
 
-- (NSString *)cookiesForURL:(NSURL *)url
+- (NSString *)cookiesForURL:(NSString *)URL
 {
     return nil;
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSURL *)url policyBaseURL:(NSURL *)policyBaseURL
+- (void)setCookies:(NSString *)cookies forURL:(NSString *)URL policyBaseURL:(NSString *)policyBaseURL
 {
 }
 

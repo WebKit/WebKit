@@ -94,7 +94,7 @@ enum FrameBorderStyle {
 
 - (void)setParent:(WebCoreBridge *)parent;
 
-- (void)openURL:(NSURL *)URL reload:(BOOL)reload headers:(NSDictionary *)headers;
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding;
 - (void)closeURL;
@@ -102,7 +102,7 @@ enum FrameBorderStyle {
 - (void)restoreDocumentState;
 - (void)end;
 
-- (NSURL *)URL;
+- (NSString *)URL;
 - (NSString *)referrer;
 
 - (void)installInFrame:(NSView *)view;
@@ -179,21 +179,21 @@ enum FrameBorderStyle {
 /* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
 - (NSString *)generateFrameName;
 
-- (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event;
+- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
+- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event;
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
+- (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name;
 - (void)showWindow;
 
-- (NSString *)userAgentForURL:(NSURL *)URL;
+- (NSString *)userAgentForURL:(NSString *)URL;
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 
-- (void)setIconURL:(NSURL *)URL;
-- (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
+- (void)setIconURL:(NSString *)URL;
+- (void)setIconURL:(NSString *)URL withType:(NSString *)string;
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSString *)URL
     renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
@@ -206,12 +206,11 @@ enum FrameBorderStyle {
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
-- (void)reportBadURL:(NSString *)badURL;
-- (void)objectLoadedFromCache:(NSURL *)URL response:(id)response size:(unsigned)bytes;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSString *)URL;
+- (void)objectLoadedFromCacheWithURL:(NSString *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;
 
-- (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
+- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
 - (void)reportClientRedirectCancelled;
 
 - (void)unfocusWindow;
@@ -227,10 +226,10 @@ enum FrameBorderStyle {
 - (void)setNeedsReapplyStyles;
 - (void)setNeedsLayout;
 
-- (NSURL *)requestedURL;
+- (NSString *)requestedURL;
 
-- (NSView *)viewForPluginWithURL:(NSURL *)URL attributes:(NSArray *)attributesArray baseURL:(NSURL *)baseURL MIMEType:(NSString *)MIMEType;
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame attributes:(NSDictionary *)attributes baseURL:(NSURL *)baseURL;
+- (NSView *)viewForPluginWithURL:(NSString *)URL attributes:(NSArray *)attributesArray baseURL:(NSString *)baseURL MIMEType:(NSString *)MIMEType;
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame attributes:(NSDictionary *)attributes baseURL:(NSString *)baseURL;
 
 @end
 

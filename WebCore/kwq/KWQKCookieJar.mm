@@ -24,12 +24,13 @@
  */
 
 #import "KWQKCookieJar.h"
+
 #import "WebCoreCookieAdapter.h"
 #import "KWQKURL.h"
 
 QString KWQKCookieJar::cookie(const KURL &url)
 {
-    NSString *result = [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.getNSURL()];
+    NSString *result = [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
     if (result != nil) {
         return QString::fromNSString(result);
     } else {
@@ -39,7 +40,8 @@ QString KWQKCookieJar::cookie(const KURL &url)
 
 void KWQKCookieJar::setCookie(const KURL &url, const KURL &policyBaseURL, const QString &cookie)
 {
-    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString() forURL:url.getNSURL() policyBaseURL:policyBaseURL.getNSURL()];
+    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString()
+        forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
 }
 
 bool KWQKCookieJar::cookieEnabled()

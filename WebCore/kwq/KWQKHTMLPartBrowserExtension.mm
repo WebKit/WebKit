@@ -69,15 +69,14 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	bridge = [m_part->kwq->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
-		[bridge loadURL:url.getNSURL() reload:urlArgs.reload triggeringEvent:nil isFormSubmission:NO];
+		[bridge loadURL:url.url().getNSString() reload:urlArgs.reload triggeringEvent:nil isFormSubmission:NO];
 	    }
 	    *partResult = [bridge part];
 	    return;
 	}
     }
 
-    NSURL *cocoaURL = url.isEmpty() ? nil : url.getNSURL();
-    bridge = [m_part->kwq->bridge() createWindowWithURL:cocoaURL frameName:frameName];
+    bridge = [m_part->kwq->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -129,10 +128,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [m_part->kwq->bridge() setIconURL:url.getNSURL()];
+    [m_part->kwq->bridge() setIconURL:url.url().getNSString()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [m_part->kwq->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    [m_part->kwq->bridge() setIconURL:url.url().getNSString() withType:type.getNSString()];
 }

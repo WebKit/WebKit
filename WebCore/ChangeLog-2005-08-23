@@ -1,3 +1,50 @@
+2002-11-17  Darin Adler  <darin@apple.com>
+
+	- moved all NSURL and CFURL use out of WebCore
+
+        * kwq/KWQKURL.h: Remove getNSURL() and getNSURLFromString().
+        * kwq/KWQKURL.mm: Ditto.
+
+        * kwq/KWQKCookieJar.mm:
+        (KWQKCookieJar::cookie): Pass an NSString instead of an NSURL.
+        (KWQKCookieJar::setCookie): Ditto.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL): Ditto.
+        (KWQKHTMLPart::openURLRequest): Ditto.
+        (KWQKHTMLPart::submitForm): Ditto.
+        (KWQKHTMLPart::urlSelected): Ditto.
+        (KWQKHTMLPart::createPart): Ditto.
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped): Ditto.
+        (KWQKHTMLPart::userAgent): Ditto.
+        (KWQKHTMLPart::requestedURLString): Receive an NSString instead of an NSURL.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Pass an NSString instead of an NSURL.
+        (KHTMLPartBrowserExtension::setIconURL): Ditto.
+        (KHTMLPartBrowserExtension::setTypedIconURL): Ditto.
+        * kwq/KWQKJavaAppletWidget.h: Remove use of NSURL, just use QString instead.
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget): No need to set the QString to nil.
+        (KJavaAppletWidget::~KJavaAppletWidget): No need to release the QString.
+        (KJavaAppletWidget::showApplet): Pass an NSString instead of an NSURL.
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Pass an NSString instead of an NSURL.
+        (KWQCheckCacheObjectStatus): Ditto.
+        * kwq/WebCoreBridge.h: Change all methods to use NSString instead of NSURL.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:headers:]): Receive an NSString instead of an NSURL.
+        (-[WebCoreBridge completeURLForDOMString:]): Return an NSString instead of an NSURL.
+        (-[WebCoreBridge elementAtPoint:]): WebCoreElementLinkURL and WebCoreElementImageURL
+	are now strings.
+        (-[WebCoreBridge URL]): Return an NSString instead of an NSURL.
+        * kwq/WebCoreCookieAdapter.h: Change all methods to use NSString instead of NSURL.
+        * kwq/WebCoreCookieAdapter.m:
+        (-[WebCoreCookieAdapter cookiesForURL:]): Ditto.
+        (-[WebCoreCookieAdapter setCookies:forURL:policyBaseURL:]): Ditto.
+
+        * khtml/rendering/render_applet.cpp: (RenderApplet::processArguments):
+	Tweaked this file a tiny bit, mainly because header dependencies weren't working
+	and we need this file to be recompiled due to inline function changes.
+
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
 	Add support for specifying whether repaint should be immediate or

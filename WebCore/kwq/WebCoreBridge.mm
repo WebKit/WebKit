@@ -110,7 +110,7 @@ using khtml::RenderPart;
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSURL *)URL reload:(BOOL)reload headers:(NSDictionary *)headers
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers
 {
     URLArgs args(_part->browserExtension()->urlArgs());
 
@@ -126,7 +126,7 @@ using khtml::RenderPart;
     _part->browserExtension()->setURLArgs(args);
 
     // URL
-    _part->openURL([[URL absoluteString] cString]);
+    _part->openURL([URL cString]);
     
     // Refresh
     NSString *refreshHeader = [headers objectForKey:@"Refresh"];
@@ -443,9 +443,9 @@ using khtml::RenderPart;
     }
 }
 
-- (NSURL *)completeURLForDOMString:(const DOMString &)s
+- (NSString *)completeURLForDOMString:(const DOMString &)s
 {
-    return KURL(_part->kwq->document()->completeURL(s.string())).getNSURL();
+    return _part->kwq->document()->completeURL(s.string()).getNSString();
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
@@ -463,7 +463,7 @@ using khtml::RenderPart;
     if (URLNode) {
         ElementImpl* e = static_cast<ElementImpl*>(URLNode);
         
-        NSURL *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
+        NSString *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
         if (URL) {
             // Look for the first #text node to use as a label.
             NodeImpl *labelParent = e;
@@ -495,7 +495,7 @@ using khtml::RenderPart;
     NodeImpl *node = nodeInfo.innerNonSharedNode();
     if (node && isImage(node)) {
         ElementImpl* i =  static_cast<ElementImpl*>(node);
-        NSURL *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
+        NSString *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
         if (URL) {
             [elementInfo setObject:URL forKey:WebCoreElementImageURL];
             RenderImage *r = (RenderImage *)node->renderer();
@@ -781,9 +781,9 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return _part->name().getNSString();
 }
 
-- (NSURL *)URL
+- (NSString *)URL
 {
-    return _part->url().getNSURL();
+    return _part->url().url().getNSString();
 }
 
 - (NSString *)referrer

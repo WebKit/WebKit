@@ -95,11 +95,11 @@
     return [[frame findOrCreateFramedNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
+- (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name
 {
     ASSERT(frame != nil);
 
-    WebResourceRequest *request = URL ? [WebResourceRequest requestWithURL:URL] : nil;
+    WebResourceRequest *request = [WebResourceRequest requestWithURL:[NSURL _web_URLWithString:URL]];
     WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
@@ -193,20 +193,20 @@
     }
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSString *)URL
 {
     return [WebSubresourceClient startLoadingResource:resourceLoader
-                                              withURL:URL
+                                              withURL:[NSURL _web_URLWithString:URL]
                                              referrer:[self referrer]
                                         forDataSource:[self dataSource]];
 }
 
-- (void)objectLoadedFromCache:(NSURL *)URL response: response size:(unsigned)bytes
+- (void)objectLoadedFromCacheWithURL:(NSString *)URL response: response size:(unsigned)bytes
 {
     ASSERT(frame != nil);
     ASSERT(response != nil);
 
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
     id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
     id identifier;
     
@@ -225,9 +225,9 @@
     return [[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin;
 }
 
-- (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+- (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
-    [frame _clientRedirectedTo:URL delay:seconds fireDate:date];
+    [frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date];
 }
 
 - (void)reportClientRedirectCancelled
@@ -255,24 +255,24 @@
     }
 }
 
-- (void)setIconURL:(NSURL *)URL
+- (void)setIconURL:(NSString *)URL
 {
-    [[self dataSource] _setIconURL:URL];
+    [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL]];
 }
 
-- (void)setIconURL:(NSURL *)URL withType:(NSString *)type
+- (void)setIconURL:(NSString *)URL withType:(NSString *)type
 {
-    [[self dataSource] _setIconURL:URL withType:type];
+    [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
+- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
-    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event isFormSubmission:isFormSubmission];
+    [frame _loadURL:[NSURL _web_URLWithString:URL] loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event isFormSubmission:isFormSubmission];
 }
 
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
+- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
 {
-    [frame _postWithURL:URL data:data contentType:contentType triggeringEvent:event];
+    [frame _postWithURL:[NSURL _web_URLWithString:URL] data:data contentType:contentType triggeringEvent:event];
 }
 
 - (NSString *)generateFrameName
@@ -280,7 +280,7 @@
     return [frame _generateFrameName];
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSString *)URL
     renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
@@ -296,22 +296,12 @@
     [[newFrame webView] _setMarginHeight:height];
 
     // We must avoid loading the document itself as a subframe, like
-    // other browsers do, otherwise bugs like Radar 3083732 occur
-    if (![[[URL _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
-	[frame _loadURL:URL intoChild:newFrame];
+    // other browsers do, otherwise bugs like Radar 3083732 occur.
+    if (![[[[NSURL _web_URLWithString:URL] _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
+	[frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
     }
 
     return [newFrame _bridge];
-}
-
-- (void)reportBadURL:(NSString *)badURL
-{
-    WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
-                                                        inDomain:WebErrorDomainWebFoundation
-                                                        failingURL:badURL];
-    [[frame controller] _receivedError:badURLError
-                        fromDataSource:[self dataSource]];
-    [badURLError release];
 }
 
 - (void)saveDocumentState: (NSArray *)documentState
@@ -332,9 +322,9 @@
     return [[frame _itemForRestoringDocState] documentState];
 }
 
-- (NSString *)userAgentForURL:(NSURL *)URL
+- (NSString *)userAgentForURL:(NSString *)URL
 {
-    return [[frame controller] userAgentForURL:URL];
+    return [[frame controller] userAgentForURL:[NSURL _web_URLWithString:URL]];
 }
 
 - (NSView *)nextKeyViewOutsideWebViews
@@ -374,9 +364,9 @@
     [view setNeedsDisplay:YES];
 }
 
-- (NSURL *)requestedURL
+- (NSString *)requestedURL
 {
-    return [[[self dataSource] request] URL];
+    return [[[[self dataSource] request] URL] absoluteString];
 }
 
 - (NSView <WebPlugin> *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
@@ -398,9 +388,9 @@
     return view;
 }
 
-- (NSView *)viewForPluginWithURL:(NSURL *)URL
+- (NSView *)viewForPluginWithURL:(NSString *)URL
                       attributes:(NSArray *)attributesArray
-                         baseURL:(NSURL *)baseURL
+                         baseURL:(NSString *)baseURL
                         MIMEType:(NSString *)MIMEType
 {
     NSRange r1, r2, r3;
@@ -425,7 +415,7 @@
     if ([MIMEType length]) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
     } else {
-        NSString *extension = [[URL path] pathExtension];
+        NSString *extension = [URL pathExtension];
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         MIMEType = [pluginPackage MIMETypeForExtension:extension];
     }
@@ -434,13 +424,13 @@
         if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                     attributes:attributes
-                                       baseURL:baseURL];
+                                       baseURL:[NSURL _web_URLWithString:baseURL]];
         }
         else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
-                                                                     URL:URL
-                                                                 baseURL:baseURL
+                                                                     URL:[NSURL _web_URLWithString:URL]
+                                                                 baseURL:[NSURL _web_URLWithString:baseURL]
                                                                 MIMEType:MIMEType
                                                               attributes:attributes] autorelease];
         }else{
@@ -463,7 +453,7 @@
         }
 
         WebPluginError *error = [WebPluginError pluginErrorWithCode:errorCode
-                                                                URL:URL
+                                                                URL:[NSURL _web_URLWithString:URL]
                                                       pluginPageURL:pluginPageURL
                                                          pluginName:[pluginPackage name]
                                                            MIMEType:MIMEType];
@@ -476,7 +466,7 @@
     return view;
 }
 
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame attributes:(NSDictionary *)attributes baseURL:(NSURL *)baseURL
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame attributes:(NSDictionary *)attributes baseURL:(NSString *)baseURL
 {
     NSString *MIMEType = @"application/x-java-applet";
     WebBasePluginPackage *pluginPackage;
@@ -493,13 +483,13 @@
             
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                     attributes:theAttributes
-                                       baseURL:baseURL];
+                                       baseURL:[NSURL _web_URLWithString:baseURL]];
         }
         else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:nil
-                                                                 baseURL:baseURL
+                                                                 baseURL:[NSURL _web_URLWithString:baseURL]
                                                                 MIMEType:MIMEType
                                                               attributes:attributes] autorelease];
         }else{

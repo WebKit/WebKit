@@ -31,23 +31,15 @@
 #import "WebCoreBridge.h"
 
 KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *c, QWidget *)
-    : m_applet(*this)
-    , m_baseURL(nil)
-    , m_parameters([[NSMutableDictionary alloc] init])
+    : _applet(*this)
+    , _context(c)
+    , _parameters([[NSMutableDictionary alloc] init])
 {
-    m_context = c;
 }
 
 KJavaAppletWidget::~KJavaAppletWidget()
 {
-    [m_baseURL release];
-    [m_parameters release];
-}
-
-void KJavaAppletWidget::setBaseURL(const QString &baseURL)
-{
-    [m_baseURL release];
-    m_baseURL = [KURL(baseURL).getNSURL() retain];
+    [_parameters release];
 }
 
 void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
@@ -55,7 +47,7 @@ void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
     // When putting strings into dictionaries, we should use an immutable copy.
     // That's not necessary for keys, because they are copied.
     NSString *immutableString = [value.getNSString() copy];
-    [m_parameters setObject:immutableString forKey:name.getNSString()];
+    [_parameters setObject:immutableString forKey:name.getNSString()];
     [immutableString release];
 }
 
@@ -68,8 +60,8 @@ void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments
 
 void KJavaAppletWidget::showApplet()
 {
-    setView([m_context->part()->kwq->bridge()
-viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
-                attributes:m_parameters
-                   baseURL:m_baseURL]);
+    setView([_context->part()->kwq->bridge()
+        viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
+                        attributes:_parameters
+                           baseURL:_baseURL.getNSString()]);
 }

@@ -31,10 +31,8 @@ class KJavaAppletContext;
 class KJavaAppletWidget;
 
 #ifdef __OBJC__
-@class NSURL;
 @class NSMutableDictionary;
 #else
-class NSURL;
 class NSMutableDictionary;
 #endif
 
@@ -63,18 +61,18 @@ public:
     
     void processArguments(const QMap<QString, QString>&);
 
-    KJavaApplet *applet() { return &m_applet; }
+    KJavaApplet *applet() { return &_applet; }
     
-    void setBaseURL(const QString &);
+    void setBaseURL(const QString &baseURL) { _baseURL = baseURL; }
     void setParameter(const QString &, const QString &);
 
     void showApplet();
 
 private:
-    KJavaApplet m_applet;
-    KJavaAppletContext *m_context;
-    NSURL *m_baseURL;
-    NSMutableDictionary *m_parameters;
+    KJavaApplet _applet;
+    KJavaAppletContext *_context;
+    QString _baseURL;
+    NSMutableDictionary *_parameters;
 };
 
 inline void KJavaApplet::setBaseURL(const QString &URL) { m_widget.setBaseURL(URL); }

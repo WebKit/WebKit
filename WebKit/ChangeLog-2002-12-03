@@ -1,3 +1,35 @@
+2002-11-17  Darin Adler  <darin@apple.com>
+
+	- update for change to WebCore API so it never uses NSURL
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): Take NSString instead of NSURL.
+        (-[WebBridge startLoadingResource:withURL:]): Ditto.
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]): Ditto.
+        (-[WebBridge reportClientRedirectToURL:delay:fireDate:]): Ditto.
+        (-[WebBridge setIconURL:]): Ditto.
+        (-[WebBridge setIconURL:withType:]): Ditto.
+        (-[WebBridge loadURL:reload:triggeringEvent:isFormSubmission:]): Ditto.
+        (-[WebBridge postWithURL:data:contentType:triggeringEvent:]): Ditto.
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]): Ditto.
+        (-[WebBridge userAgentForURL:]): Ditto.
+        (-[WebBridge requestedURL]): Return NSString instead of NSURL.
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]): Take NSString instead of NSURL.
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]): Take NSString instead of NSURL.
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesForURL:]): Take NSString instead of NSURL.
+        (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]): Ditto.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]): Pass NSString instead of NSURL.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]): Pass NSString instead of NSURL
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]): Turn bridge URL into NSURL so we
+	can call _web_URLByRemovingFragment on it.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]): Convert NSString to NSURL when making the WebKit element dictionary.
+
 2002-11-17  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 2949193 - implement onKeyDown, onKeyPress, and onKeyUp event handlers

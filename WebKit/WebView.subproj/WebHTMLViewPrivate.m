@@ -8,6 +8,7 @@
 #import <AppKit/NSResponder_Private.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebContextMenuDelegate.h>
@@ -155,9 +156,9 @@
     NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementLinkURL] forKey:WebElementLinkURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebCoreElementLinkURL]] forKey:WebElementLinkURLKey];
     [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementLinkLabel] forKey:WebElementLinkLabelKey];
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageURL] forKey:WebElementImageURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebCoreElementImageURL]] forKey:WebElementImageURLKey];
     [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementString] forKey:WebElementStringKey];
     [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImage] forKey:WebElementImageKey];
     [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageLocation] forKey:WebElementImageLocationKey];

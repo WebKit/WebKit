@@ -137,43 +137,25 @@ QString KWQKHTMLPart::generateFrameName()
 
 void KWQKHTMLPart::openURL(const KURL &url)
 {
-    NSURL *cocoaURL = url.getNSURL();
-    if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return;
-    }
-    
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil isFormSubmission:NO];
+    [_bridge loadURL:url.url().getNSString() reload:NO triggeringEvent:nil isFormSubmission:NO];
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    NSURL *cocoaURL = url.getNSURL();
-    if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return;
-    }
-    
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:nil isFormSubmission:NO];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:nil isFormSubmission:NO];
 }
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
-    NSURL *cocoaURL = url.getNSURL();
-    if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return;
-    }
-    
     if (!args.doPost()) {
-        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent isFormSubmission:YES];
+        [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent isFormSubmission:YES];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
-        [bridgeForFrameName(args.frameName) postWithURL:cocoaURL
+        [bridgeForFrameName(args.frameName) postWithURL:url.url().getNSString()
             data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
             contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
     }
@@ -199,13 +181,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    NSURL *cocoaURL = url.getNSURL();
-    if (cocoaURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return;
-    }
-    
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent isFormSubmission:NO];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent isFormSubmission:NO];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -216,12 +192,6 @@ class KWQPluginPart : public ReadOnlyPart
 
 ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    NSURL *childURL = url.getNSURL();
-    if (childURL == nil) {
-        // FIXME: Do we need to report an error to someone?
-        return 0;
-    }
-    
     if (child.m_type == ChildFrame::Object) {
         NSMutableArray *attributesArray = [NSMutableArray arrayWithCapacity:child.m_params.count()];
         for (uint i = 0; i < child.m_params.count(); i++) {
@@ -229,17 +199,20 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         }
         
         KWQPluginPart *newPart = new KWQPluginPart;
-        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:childURL
+        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.url().getNSString()
                                                           attributes:attributesArray
-                                                             baseURL:KURL(d->m_doc->baseURL()).getNSURL()
+                                                             baseURL:d->m_doc->baseURL().getNSString()
                                                             MIMEType:child.m_args.serviceType.getNSString()]));
         return newPart;
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());
         HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
-        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString() withURL:childURL
-            renderPart:child.m_frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-            marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
+        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
+                                                            withURL:url.url().getNSString()
+                                                         renderPart:child.m_frame
+                                                    allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+                                                        marginWidth:o->getMarginWidth()
+                                                       marginHeight:o->getMarginHeight()];
         return [childBridge part];
     }
 }
@@ -298,9 +271,9 @@ void KWQKHTMLPart::jumpToSelection()
 void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 {
     if (d->m_redirectionTimer.isActive()) {
-        [_bridge reportClientRedirectTo:KURL(d->m_redirectURL).getNSURL()
-                                  delay:d->m_delayRedirect
-                               fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
+        [_bridge reportClientRedirectToURL:d->m_redirectURL.getNSString()
+                                     delay:d->m_delayRedirect
+                                 fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
     } else {
         [_bridge reportClientRedirectCancelled];
     }
@@ -357,7 +330,7 @@ RenderObject *KWQKHTMLPart::renderer()
 
 QString KWQKHTMLPart::userAgent() const
 {
-    return QString::fromNSString([_bridge userAgentForURL:part->m_url.getNSURL()]);
+    return QString::fromNSString([_bridge userAgentForURL:part->m_url.url().getNSString()]);
 }
 
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
@@ -507,7 +480,7 @@ void KWQKHTMLPart::setPolicyBaseURL(const DOM::DOMString &s)
 
 QString KWQKHTMLPart::requestedURLString() const
 {
-    return QString::fromNSString([[_bridge requestedURL] absoluteString]);
+    return QString::fromNSString([_bridge requestedURL]);
 }
 
 void KWQKHTMLPart::forceLayout()

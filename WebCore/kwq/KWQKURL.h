@@ -30,12 +30,6 @@
 #include "KWQValueList.h"
 #include "KWQRefPtr.h"
 
-#ifdef __OBJC__
-@class NSURL;
-#else
-class NSURL;
-#endif
-
 class KURL {
 public:
     KURL();
@@ -71,11 +65,8 @@ public:
 
     QString prettyURL(int trailing=0) const;
     
-    NSURL *getNSURL() const;
-
     static QString decode_string(const QString &);
     static QString encode_string(const QString &);
-    static NSURL *getNSURLFromString(const QString &);
     
     friend bool operator==(const KURL &, const KURL &);
 

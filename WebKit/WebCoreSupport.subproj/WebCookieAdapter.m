@@ -7,10 +7,11 @@
 //
 
 #import "WebCookieAdapter.h"
-#import <WebFoundation/WebCookieManager.h>
+
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebCookieConstants.h>
-
+#import <WebFoundation/WebCookieManager.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebCookieAdapter
 
@@ -32,14 +33,15 @@
     return result;
 }
 
-- (NSString *)cookiesForURL:(NSURL *)URL
+- (NSString *)cookiesForURL:(NSString *)URL
 {
-    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:URL] objectForKey:@"Cookie"];
+    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSURL *)URL policyBaseURL:(NSURL *)policyBaseURL
+- (void)setCookies:(NSString *)cookies forURL:(NSString *)URL policyBaseURL:(NSString *)policyBaseURL
 {
-    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:URL policyBaseURL:policyBaseURL];    
+    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
+        forURL:[NSURL _web_URLWithString:URL] policyBaseURL:[NSURL _web_URLWithString:policyBaseURL]];    
 }
 
 @end
