@@ -145,7 +145,7 @@ extern NSString *WebPreferencesChangedNotification;
 
 /*!
     @method userStyleSheetLocation
-    @discussion The user style sheet is stored as a URL string, e.g. "file://<etc>"
+    @discussion The location of the user style sheet.
 */
 - (NSURL *)userStyleSheetLocation;
 
@@ -156,7 +156,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (void)setUserStyleSheetLocation:(NSURL *)URL;
 
 /*!
-    @method JavaEnabled
+    @method isJavaEnabled
 */
 - (BOOL)isJavaEnabled;
 
@@ -164,10 +164,10 @@ extern NSString *WebPreferencesChangedNotification;
     @method setJavaEnabled:
     @param flag
 */
-- (void)setIsJavaEnabled:(BOOL)flag;
+- (void)setJavaEnabled:(BOOL)flag;
 
 /*!
-    @method JavaScriptEnabled
+    @method isJavaScriptEnabled
 */
 - (BOOL)isJavaScriptEnabled;
 
@@ -175,7 +175,7 @@ extern NSString *WebPreferencesChangedNotification;
     @method setJavaScriptEnabled:
     @param flag
 */
-- (void)setIsJavaScriptEnabled:(BOOL)flag;
+- (void)setJavaScriptEnabled:(BOOL)flag;
 
 /*!
     @method JavaScriptCanOpenWindowsAutomatically
@@ -189,15 +189,15 @@ extern NSString *WebPreferencesChangedNotification;
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag;
 
 /*!
-    @method pluginsEnabled
+    @method arePlugInsEnabled
 */
 - (BOOL)arePlugInsEnabled;
 
 /*!
-    @method setPluginsEnabled:
+    @method setPlugInsEnabled:
     @param flag
 */
-- (void)setArePlugInsEnabled:(BOOL)flag;
+- (void)setPlugInsEnabled:(BOOL)flag;
 
 /*!
     @method allowAnimatedImages

@@ -1,3 +1,16 @@
+2003-04-03  Richard Williamson   <rjw@apple.com>
+
+        As requested by Nancy, drop "Is" and "Are" from setters,
+        but leave them in place on the getters.
+        
+        Reviewed by cblu.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences setJavaEnabled:]):
+        (-[WebPreferences setJavaScriptEnabled:]):
+        (-[WebPreferences setPlugInsEnabled:]):
+
 2003-04-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

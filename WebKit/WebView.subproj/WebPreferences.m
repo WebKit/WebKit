@@ -273,7 +273,7 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     return [self _boolValueForKey: WebKitJavaEnabledPreferenceKey];
 }
 
-- (void)setIsJavaEnabled:(BOOL)flag
+- (void)setJavaEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitJavaEnabledPreferenceKey];
 }
@@ -283,7 +283,7 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     return [self _boolValueForKey: WebKitJavaScriptEnabledPreferenceKey];
 }
 
-- (void)setIsJavaScriptEnabled:(BOOL)flag
+- (void)setJavaScriptEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitJavaScriptEnabledPreferenceKey];
 }
@@ -303,7 +303,7 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     return [self _boolValueForKey: WebKitPluginsEnabledPreferenceKey];
 }
 
-- (void)setArePlugInsEnabled:(BOOL)flag
+- (void)setPlugInsEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
 }
