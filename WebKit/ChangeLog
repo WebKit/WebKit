@@ -1,3 +1,14 @@
+2003-04-11  Chris Blumenberg  <cblu@apple.com>
+
+	Removed WebKitErrorResourceLoadInterruptedByPolicyChange error because it isn't used. 
+
+        Reviewed by john.
+
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors):
+        * WebKit.pbproj/project.pbxproj:
+
 2003-04-11  Trey Matteson  <trey@apple.com>
 
 	3148002 - printing shouldn't depend on the size of the window

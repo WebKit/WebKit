@@ -40,7 +40,6 @@ enum {
     WebKitErrorCannotShowMIMEType = 				100,
     WebKitErrorCannotShowURL = 					101,
     WebKitErrorLocationChangeInterruptedByPolicyChange = 	102,
-    WebKitErrorResourceLoadInterruptedByPolicyChange = 		103,
 };
 
 /*!
