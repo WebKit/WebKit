@@ -1,3 +1,11 @@
+2003-11-06  John Sullivan  <sullivan@apple.com>
+
+        - fixed broken build
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::completeURL):
+        removed stray character
+
 2003-11-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -2396,7 +2396,7 @@ void DocumentImpl::setDecoder(Decoder *decoder)
 
 QString DocumentImpl::completeURL(const QString &URL)
 {
-*    return KURL(baseURL(), URL, m_decoder ? m_decoder->codec() : 0).url();
+    return KURL(baseURL(), URL, m_decoder ? m_decoder->codec() : 0).url();
 }
 
 bool DocumentImpl::inPageCache()
