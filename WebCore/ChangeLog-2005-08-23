@@ -1,3 +1,20 @@
+2003-10-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3163840, the images are mispositioned on the DHTML menus at the top of
+	www.aa.com (and in many other places).  We needed to support returning the right
+	value from hasProperty and tryGet for 'cssFloat'.  
+
+	This patch also adds support for getting/setting our custom CSS properties (-khtml-*)
+	and just factors the code a bit better for all the special values.
+	
+        Reviewed by darin
+
+        * khtml/ecma/kjs_css.cpp:
+        (cssPropertyName):
+        (DOMCSSStyleDeclaration::hasProperty):
+        (DOMCSSStyleDeclaration::tryGet):
+        (DOMCSSStyleDeclaration::tryPut):
+
 2003-10-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
