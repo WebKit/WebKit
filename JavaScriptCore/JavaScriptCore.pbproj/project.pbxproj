@@ -179,7 +179,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>2.0</string>
 	<key>CFBundleVersion</key>
-	<string>141</string>
+	<string>142u</string>
 </dict>
 </plist>
 ";
