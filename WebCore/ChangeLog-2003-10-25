@@ -1,3 +1,9 @@
+2002-03-29  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/rendering/render_image.cpp: (RenderImage::updateFromElement):
+        Make images with no src, or src="" be empty rather than being the page itself
+        loaded as an image.
+
 2002-03-29  Richard Williamson  <rjw@apple.com>
 
         More fixes for cancelling.  Fixed some code that appears to have been
