@@ -143,6 +143,38 @@ DOMString JSEditor::queryCommandValue(const DOMString &command)
 
 namespace {
 
+bool execStyleChange(KHTMLPart *part, int propertyID, const DOMString &propertyValue)
+{
+    CSSStyleDeclarationImpl *style = new CSSStyleDeclarationImpl(0);
+    style->setProperty(propertyID, propertyValue);
+    style->ref();
+    // FIXME: This should share code with WebCoreBridge applyStyle: -- maybe a method on KHTMLPart?
+    switch (part->selection().state()) {
+        case Selection::NONE:
+            // do nothing
+            break;
+        case Selection::CARET:
+            part->setTypingStyle(style);
+            break;
+        case Selection::RANGE:
+            ApplyStyleCommand(part->xmlDocImpl(), style).apply();
+            break;
+    }
+    style->deref();
+    return true;
+}
+
+bool execStyleChange(KHTMLPart *part, int propertyID, const char *propertyValue)
+{
+    return execStyleChange(part, propertyID, DOMString(propertyValue));
+}
+
+CommandState stateStyle(KHTMLPart *part, int propertyID, const char *desiredValue)
+{
+    // FIXME: Needs implementation.
+    return no;
+}
+
 // =============================================================================================
 //
 // execCommand implementations
@@ -151,9 +183,15 @@ namespace {
 // of Microsoft browsers to ensure we are as compatible with their
 // behavior as is sensible.
 
-bool execNotImplemented(KHTMLPart *part, bool userInterface, const DOMString &value)
+bool execBackColor(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    return false;
+    return execStyleChange(part, CSS_PROP_BACKGROUND_COLOR, value);
+}
+
+bool execBold(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    bool isBold = false; // FIXME: Needs implementation.
+    return execStyleChange(part, CSS_PROP_FONT_WEIGHT, isBold ? "normal" : "bold");
 }
 
 bool execCopy(KHTMLPart *part, bool userInterface, const DOMString &value)
@@ -176,74 +214,43 @@ bool execDelete(KHTMLPart *part, bool userInterface, const DOMString &value)
     return true;
 }
 
+bool execFontName(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    return execStyleChange(part, CSS_PROP_FONT_FAMILY, value);
+}
+
+bool execFontSize(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    return execStyleChange(part, CSS_PROP_FONT_SIZE, value);
+}
+
+bool execForeColor(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    return execStyleChange(part, CSS_PROP_COLOR, value);
+}
+
+bool execIndent(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Implement.
+    return false;
+}
+
+bool execInsertParagraph(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Implement.
+    return false;
+}
+
 bool execInsertText(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     TypingCommand::insertText(part->xmlDocImpl(), value);
     return true;
 }
 
-#if SUPPORT_PASTE
-
-bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
-{
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issuePasteCommand();
-    return true;
-}
-
-#endif
-
-bool execRedo(KHTMLPart *part, bool userInterface, const DOMString &value)
-{
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueRedoCommand();
-    return true;
-}
-
-bool execSelectAll(KHTMLPart *part, bool userInterface, const DOMString &value)
-{
-    part->selectAll();
-    return true;
-}
-
-bool execUndo(KHTMLPart *part, bool userInterface, const DOMString &value)
-{
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueUndoCommand();
-    return true;
-}
-
-bool execStyleChange(KHTMLPart *part, int propertyID, const char *propertyValue)
-{
-    CSSStyleDeclarationImpl *style = new CSSStyleDeclarationImpl(0);
-    style->setProperty(propertyID, propertyValue);
-    style->ref();
-    // FIXME: This should share code with WebCoreBridge applyStyle: -- maybe a method on KHTMLPart?
-    switch (part->selection().state()) {
-        case Selection::NONE:
-            // do nothing
-            break;
-        case Selection::CARET:
-            part->setTypingStyle(style);
-            break;
-        case Selection::RANGE:
-            ApplyStyleCommand(part->xmlDocImpl(), style).apply();
-            break;
-    }
-    style->deref();
-    return true;
-}
-
-bool execBold(KHTMLPart *part, bool userInterface, const DOMString &value)
-{
-    // FIXME: Need to change weight back to normal, if selection is bold.
-    return execStyleChange(part, CSS_PROP_FONT_WEIGHT, "bold");
-}
-
 bool execItalic(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Need to change weight back to normal, if selection is italic.
-    return execStyleChange(part, CSS_PROP_FONT_STYLE, "italic");
+    bool isItalic = false; // FIXME: Needs implementation.
+    return execStyleChange(part, CSS_PROP_FONT_STYLE, isItalic ? "normal" : "italic");
 }
 
 bool execJustifyCenter(KHTMLPart *part, bool userInterface, const DOMString &value)
@@ -266,6 +273,42 @@ bool execJustifyRight(KHTMLPart *part, bool userInterface, const DOMString &valu
     return execStyleChange(part, CSS_PROP_TEXT_ALIGN, "right");
 }
 
+bool execOutdent(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Implement.
+    return false;
+}
+
+#if SUPPORT_PASTE
+
+bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Should have a non-KWQ-specific way to do this.
+    KWQ(part)->issuePasteCommand();
+    return true;
+}
+
+#endif
+
+bool execPrint(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Implement.
+    return false;
+}
+
+bool execRedo(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Should have a non-KWQ-specific way to do this.
+    KWQ(part)->issueRedoCommand();
+    return true;
+}
+
+bool execSelectAll(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    part->selectAll();
+    return true;
+}
+
 bool execSubscript(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     return execStyleChange(part, CSS_PROP_VERTICAL_ALIGN, "sub");
@@ -274,6 +317,13 @@ bool execSubscript(KHTMLPart *part, bool userInterface, const DOMString &value)
 bool execSuperscript(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     return execStyleChange(part, CSS_PROP_VERTICAL_ALIGN, "super");
+}
+
+bool execUndo(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    // FIXME: Should have a non-KWQ-specific way to do this.
+    KWQ(part)->issueUndoCommand();
+    return true;
 }
 
 bool execUnselect(KHTMLPart *part, bool userInterface, const DOMString &value)
@@ -306,14 +356,36 @@ bool enabled(KHTMLPart *part)
     return true;
 }
 
-bool enabledIfSelectionNotEmpty(KHTMLPart *part)
+bool enabledAnySelection(KHTMLPart *part)
 {
     return part->selection().notEmpty();
 }
 
-bool enabledIfSelectionIsRange(KHTMLPart *part)
+#if SUPPORT_PASTE
+
+bool enabledPaste(KHTMLPart *part)
+{
+    // FIXME: Should also check if there is something on the pasteboard to paste
+    return part->selection().notEmpty();
+}
+
+#endif
+
+bool enabledRangeSelection(KHTMLPart *part)
 {
     return part->selection().state() == Selection::RANGE;
+}
+
+bool enabledRedo(KHTMLPart *part)
+{
+    // EDIT FIXME: Should check if the undo manager has something to undo
+    return true;
+}
+
+bool enabledUndo(KHTMLPart *part)
+{
+    // EDIT FIXME: Should check if the undo manager has something to redo
+    return true;
 }
 
 // =============================================================================================
@@ -366,14 +438,29 @@ bool enabledIfSelectionIsRange(KHTMLPart *part)
 //
 // Note that, for now, the returned values are just place-holders.
 
-CommandState stateNotImplemented(KHTMLPart *part)
+CommandState stateNo(KHTMLPart *part)
 {
     return no;
 }
 
-CommandState noState(KHTMLPart *part)
+CommandState stateBold(KHTMLPart *part)
 {
-    return no;
+    return stateStyle(part, CSS_PROP_FONT_WEIGHT, "bold");
+}
+
+CommandState stateItalic(KHTMLPart *part)
+{
+    return stateStyle(part, CSS_PROP_FONT_STYLE, "italic");
+}
+
+CommandState stateSubscript(KHTMLPart *part)
+{
+    return stateStyle(part, CSS_PROP_VERTICAL_ALIGN, "sub");
+}
+
+CommandState stateSuperscript(KHTMLPart *part)
+{
+    return stateStyle(part, CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
 // =============================================================================================
@@ -384,13 +471,32 @@ CommandState noState(KHTMLPart *part)
 // of Microsoft browsers to ensure we are as compatible with their
 // behavior as is sensible. For now, the returned values are just place-holders.
 
-DOMString valueNotImplemented(KHTMLPart *part)
+DOMString valueNull(KHTMLPart *part)
 {
     return DOMString();
 }
 
-DOMString nullStringValue(KHTMLPart *part)
+DOMString valueBackColor(KHTMLPart *part)
 {
+    // FIXME: Implement.
+    return DOMString();
+}
+
+DOMString valueFontName(KHTMLPart *part)
+{
+    // FIXME: Implement.
+    return DOMString();
+}
+
+DOMString valueFontSize(KHTMLPart *part)
+{
+    // FIXME: Implement.
+    return DOMString();
+}
+
+DOMString valueForeColor(KHTMLPart *part)
+{
+    // FIXME: Implement.
     return DOMString();
 }
 
@@ -418,39 +524,47 @@ QDict<CommandImp> createCommandDictionary()
 
     static const EditorCommand commands[] = {
 
+        { "backColor", { execBackColor, enabled, stateNo, valueBackColor } },
+        { "bold", { execBold, enabledAnySelection, stateBold, valueNull } },
+        { "copy", { execCopy, enabledRangeSelection, stateNo, valueNull } },
+        { "cut", { execCut, enabledRangeSelection, stateNo, valueNull } },
+        { "delete", { execDelete, enabledAnySelection, stateNo, valueNull } },
+        { "fontName", { execFontName, enabledAnySelection, stateNo, valueFontName } },
+        { "fontSize", { execFontSize, enabledAnySelection, stateNo, valueFontSize } },
+        { "foreColor", { execForeColor, enabledAnySelection, stateNo, valueForeColor } },
+        { "indent", { execIndent, enabledAnySelection, stateNo, valueNull } },
+        { "insertParagraph", { execInsertParagraph, enabledAnySelection, stateNo, valueNull } },
+        { "insertText", { execInsertText, enabledAnySelection, stateNo, valueNull } },
+        { "italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },
+        { "justifyCenter", { execJustifyCenter, enabledAnySelection, stateNo, valueNull } },
+        { "justifyFull", { execJustifyFull, enabledAnySelection, stateNo, valueNull } },
+        { "justifyLeft", { execJustifyLeft, enabledAnySelection, stateNo, valueNull } },
+        { "justifyNone", { execJustifyLeft, enabledAnySelection, stateNo, valueNull } },
+        { "justifyRight", { execJustifyRight, enabledAnySelection, stateNo, valueNull } },
+        { "outdent", { execOutdent, enabledAnySelection, stateNo, valueNull } },
+#if SUPPORT_PASTE
+        { "paste", { execPaste, enabledPaste, stateNo, valueNull } },
+#endif
+        { "print", { execPrint, enabled, stateNo, valueNull } },
+        { "redo", { execRedo, enabledRedo, stateNo, valueNull } },
+        { "selectAll", { execSelectAll, enabled, stateNo, valueNull } },
+        { "subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
+        { "superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
+        { "undo", { execUndo, enabledUndo, stateNo, valueNull } },
+        { "unselect", { execUnselect, enabledAnySelection, stateNo, valueNull } }
+
         // 2d-position (not supported)
         // absoluteposition (not supported)
-
-        { "backcolor", { execNotImplemented, enabled, noState, valueNotImplemented } },
-
         // blockdirltr (not supported)
         // blockdirrtl (not supported)
-
-        { "bold", { execBold, enabledIfSelectionNotEmpty, stateNotImplemented, nullStringValue } },
-
         // browsemode (not supported)
         // clearauthenticationcache (not supported)
-
-        { "copy", { execCopy, enabledIfSelectionIsRange, noState, nullStringValue } },
-
         // createbookmark (not supported)
         // createlink (not supported)
-
-        { "cut", { execCut, enabledIfSelectionIsRange, noState, nullStringValue } },
-        { "delete", { execDelete, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // dirltr (not supported)
         // dirrtl (not supported)
         // editmode (not supported)
-
-        { "fontname", { execNotImplemented, enabledIfSelectionNotEmpty, noState, valueNotImplemented } },
-        { "fontsize", { execNotImplemented, enabledIfSelectionNotEmpty, noState, valueNotImplemented } },
-        { "forecolor", { execNotImplemented, enabledIfSelectionNotEmpty, noState, valueNotImplemented } },
-
         // formatblock (not supported)
-
-        { "indent", { execNotImplemented, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // inlinedirltr (not supported)
         // inlinedirrtl (not supported)
         // insertbutton (not supported)
@@ -470,72 +584,28 @@ QDict<CommandImp> createCommandDictionary()
         // insertinputtext (not supported)
         // insertmarquee (not supported)
         // insertorderedlist (not supported)
-
-        { "insertparagraph", { execNotImplemented, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // insertselectdropdown (not supported)
         // insertselectlistbox (not supported)
-
-        { "inserttext", { execInsertText, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // inserttextarea (not supported)
         // insertunorderedlist (not supported)
-
-        { "italic", { execItalic, enabledIfSelectionNotEmpty, stateNotImplemented, nullStringValue } },
-        { "justifycenter", { execJustifyCenter, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-        { "justifyfull", { execJustifyFull, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-        { "justifyleft", { execJustifyLeft, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-        { "justifynone", { execJustifyLeft, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-        { "justifyright", { execJustifyRight, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // liveresize (not supported)
         // multipleselection (not supported)
         // open (not supported)
-
-        { "outdent", { execNotImplemented, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-
         // overwrite (not supported)
-
-        // paste command (not supported because of security concerns)
-#if SUPPORT_PASTE
-        // EDIT FIXME: Should check if there is something on the pasteboard to paste
-        { "paste", { execPaste, enabledIfSelectionNotEmpty, noState, nullStringValue } },
-#endif
-
         // playimage (not supported)
-
-        { "print", { execNotImplemented, enabled, noState, nullStringValue } },
-
-        // EDIT FIXME: Should check if the undo manager has something to redo
-        { "redo", { execRedo, enabled, noState, nullStringValue } },
-
         // refresh (not supported)
         // removeformat (not supported)
         // removeparaformat (not supported)
         // saveas (not supported)
-
-        { "selectall", { execSelectAll, enabled, noState, nullStringValue } },
-
         // sizetocontrol (not supported)
         // sizetocontrolheight (not supported)
         // sizetocontrolwidth (not supported)
         // stop (not supported)
         // stopimage (not supported)
         // strikethrough (not supported)
-
-        { "subscript", { execSubscript, enabledIfSelectionNotEmpty, stateNotImplemented, nullStringValue } },
-        { "superscript", { execSuperscript, enabledIfSelectionNotEmpty, stateNotImplemented, nullStringValue } },
-
         // unbookmark (not supported)
         // underline (not supported)
-
-        // EDIT FIXME: Should check if the undo manager has something to undo
-        { "undo", { execUndo, enabled, noState, nullStringValue } },
-
         // unlink (not supported)
-
-        { "unselect", { execUnselect, enabledIfSelectionNotEmpty, noState, nullStringValue } }
-
     };
 
     const int numCommands = sizeof(commands) / sizeof(commands[0]);
