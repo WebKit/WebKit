@@ -20,6 +20,7 @@
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
@@ -66,9 +67,9 @@
     [attributes release];
     [finalURL release];
     [frames release];
+    [mainClient release];
     [mainHandle release];
-    [mainHandleClient release];
-    [resourceHandles release];
+    [resourceClients release];
     [pageTitle release];
     [encoding release];
     [contentType release];
@@ -122,7 +123,7 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading: _private->mainHandle || [_private->resourceHandles count]];
+    [self _setLoading:_private->mainClient || [_private->resourceClients count]];
 }
 
 - (void)_setController: (WebController *)controller
@@ -152,8 +153,8 @@
 	// there's no callback for that.
         [self _loadIcon];
 
-        [_private->mainHandleClient release];
-        _private->mainHandleClient = 0; 
+        [_private->mainClient release];
+        _private->mainClient = 0; 
         [_private->mainHandle release];
         _private->mainHandle = 0;
         [self _updateLoading];
@@ -180,30 +181,30 @@
 
     // Fire this guy up.
     if (!_private->mainHandle) {
-        _private->mainHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-        WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
+        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource: self];
+        WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:_private->mainClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request];
         [request release];
-        [_private->mainHandleClient didStartLoadingWithURL:[_private->mainHandle URL]];
     }
+    [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
     [_private->mainHandle loadInBackground];
 }
 
-- (void)_addResourceHandle: (WebResourceHandle *)handle
+- (void)_addSubresourceClient:(WebSubresourceClient *)client
 {
-    if (_private->resourceHandles == nil) {
-        _private->resourceHandles = [[NSMutableArray alloc] init];
+    if (_private->resourceClients == nil) {
+        _private->resourceClients = [[NSMutableArray alloc] init];
     }
     if ([_private->controller _defersCallbacks]) {
-        [handle setDefersCallbacks:YES];
+        [[client handle] setDefersCallbacks:YES];
     }
-    [_private->resourceHandles addObject:handle];
+    [_private->resourceClients addObject:client];
     [self _setLoading:YES];
 }
 
-- (void)_removeResourceHandle: (WebResourceHandle *)handle
+- (void)_removeSubresourceClient:(WebSubresourceClient *)client
 {
-    [_private->resourceHandles removeObject: handle];
+    [_private->resourceClients removeObject:client];
     [self _updateLoading];
 }
 
@@ -214,11 +215,6 @@
 
 - (void)_stopLoading
 {
-    NSArray *handles;
-
-    // Stop download here because handleDidCancelLoading isn't sent when the app quits.
-    [[_private->mainHandleClient downloadHandler] cancel];
-
     if (!_private->loading) {
 	return;
     }
@@ -226,11 +222,11 @@
     _private->stopping = YES;
     
     [_private->mainHandle cancelLoadInBackground];
-    [_private->mainHandleClient didCancelWithHandle:_private->mainHandle];
+    [_private->mainClient didCancelWithHandle:_private->mainHandle];
     
-    handles = [_private->resourceHandles copy];
-    [handles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
-    [handles release];
+    NSArray *clients = [_private->resourceClients copy];
+    [clients makeObjectsPerformSelector:@selector(cancel)];
+    [clients release];
 
     if (_private->committed) {
 	[[self _bridge] closeURL];        
@@ -509,10 +505,10 @@
 
     _private->defersCallbacks = defers;
     [_private->mainHandle setDefersCallbacks:defers];
-    NSEnumerator *e = [_private->resourceHandles objectEnumerator];
-    WebResourceHandle *handle;
-    while ((handle = [e nextObject])) {
-        [handle setDefersCallbacks:defers];
+    NSEnumerator *e = [_private->resourceClients objectEnumerator];
+    WebSubresourceClient *client;
+    while ((client = [e nextObject])) {
+        [[client handle] setDefersCallbacks:defers];
     }
 
     [[self children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];

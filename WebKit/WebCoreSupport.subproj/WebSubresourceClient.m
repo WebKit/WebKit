@@ -86,7 +86,7 @@
     }
     
     client->handle = [h retain];
-    [source _addResourceHandle:h];
+    [source _addSubresourceClient:client];
     [client didStartLoadingWithURL:[h URL]];
     [client receivedProgressWithComplete:NO];
     [h loadInBackground];
@@ -120,21 +120,6 @@
 
 - (void)handleDidCancelLoading:(WebResourceHandle *)h
 {
-    ASSERT(handle == h);
-    
-    [loader cancel];
-    
-    [dataSource _removeResourceHandle:handle];
-        
-    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
-    [self receivedError:error];
-    [error release];
-
-    [self didStopLoading];
-
-    [handle release];
-    handle = nil;
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
@@ -143,9 +128,11 @@
     ASSERT([currentURL isEqual:[handle URL]]);
     ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
+    [self retain];
+
     [loader finish];
     
-    [dataSource _removeResourceHandle:handle];
+    [dataSource _removeSubresourceClient:self];
     
     WebError *nonTerminalError = [[handle response] error];
     if (nonTerminalError) {
@@ -158,16 +145,20 @@
 
     [handle release];
     handle = nil;
+    
+    [self release];
 }
 
 - (void)handleDidFailLoading:(WebResourceHandle *)h withError:(WebError *)error
 {
     ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);
+    
+    [self retain];
 
     [loader cancel];
     
-    [dataSource _removeResourceHandle:handle];
+    [dataSource _removeSubresourceClient:self];
     
     [self receivedError:error];
 
@@ -175,6 +166,8 @@
 
     [handle release];
     handle = nil;
+    
+    [self release];
 }
 
 - (void)handleDidRedirect:(WebResourceHandle *)h toURL:(NSURL *)URL
@@ -197,7 +190,30 @@
 
 - (void)cancel
 {
+    [self retain];
+    
     [handle cancelLoadInBackground];
+    
+    [loader cancel];
+    
+    [dataSource _removeSubresourceClient:self];
+        
+    WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
+        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
+    [self receivedError:error];
+    [error release];
+
+    [self didStopLoading];
+
+    [handle release];
+    handle = nil;
+    
+    [self release];
+}
+
+- (WebResourceHandle *)handle
+{
+    return handle;
 }
 
 @end

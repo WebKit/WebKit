@@ -71,7 +71,7 @@
 - (NSData *)data
 {
     if(!_private->resourceData){
-        return [_private->mainHandleClient resourceData];
+        return [_private->mainClient resourceData];
     }else{
         return _private->resourceData;
     }
@@ -223,7 +223,7 @@
     if (!_private->primaryLoadComplete && _private->loading) {
         return YES;
     }
-    if ([_private->resourceHandles count]) {
+    if ([_private->resourceClients count]) {
 	return YES;
     }
      

@@ -133,6 +133,7 @@
     [self receivedError:error forHandle:handle];
     [error release];
     
+    [downloadHandler cancel];
     [downloadHandler release];
     downloadHandler = nil;
 
@@ -228,6 +229,7 @@
         break;
     case WebContentPolicyIgnore:
         [handle cancelLoadInBackground];
+        [self didCancelWithHandle:handle];
         [frame _setProvisionalDataSource:nil];
 	[[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
         break;

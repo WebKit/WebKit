@@ -1,9 +1,9 @@
 /*	WebDataSourcePrivate.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 
-        Private header file.  This file may reference classes (both ObjectiveC and C++)
+        Private header file.  This file may reference classes
         in WebCore.  Instances of this class are referenced by _private in
-        NSWebPageDataSource.
+        WebDataSource.
 */
 
 #import <WebKit/WebDataSource.h>
@@ -12,6 +12,7 @@
 @class WebIconLoader;
 @class WebResourceHandle;
 @class WebMainResourceClient;
+@class WebSubresourceClient;
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSourcePrivate : NSObject
@@ -36,16 +37,12 @@
     // Child frames of this frame.
     NSMutableDictionary *frames;
 
-    // The main handle.
+    // Client for main resource, and corresponding handle.
+    WebMainResourceClient *mainClient;
     WebResourceHandle *mainHandle;
-
-    // The handle client for the main document associated with the
-    // datasource.
-    WebMainResourceClient *mainHandleClient;
     
-    // Active WebResourceHandles for resources associated with the
-    // datasource.
-    NSMutableArray *resourceHandles;
+    // Clients for other resources.
+    NSMutableArray *resourceClients;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
@@ -93,8 +90,8 @@
 - (void)_stopLoading;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
-- (void)_addResourceHandle: (WebResourceHandle *)handle;
-- (void)_removeResourceHandle: (WebResourceHandle *)handle;
+- (void)_addSubresourceClient:(WebSubresourceClient *)client;
+- (void)_removeSubresourceClient:(WebSubresourceClient *)client;
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle: (NSString *)title;

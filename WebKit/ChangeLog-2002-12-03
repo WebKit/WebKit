@@ -1,3 +1,38 @@
+2002-09-08  Darin Adler  <darin@apple.com>
+
+	Finished weaning us from handleDidCancelLoading. Now I will remove both
+	handleDidBeginLoading and handleDidCancelLoading.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Add a handle method.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidCancelLoading:]): Remove guts, move to cancel.
+        (-[WebSubresourceClient handleDidFinishLoading:]): Remove the client from the
+	data source now, not the handle.
+        (-[WebSubresourceClient handleDidFailLoading:withError:]): Ditto.
+        (-[WebSubresourceClient cancel]): Move guts here, also make the above change.
+        (-[WebSubresourceClient handle]): Added.
+
+        * WebView.subproj/WebDataSource.m: Use clients list, not handles list.
+        * WebView.subproj/WebDataSourcePrivate.h: Keep a list of subresource clients rather
+	than a list of handles for the subresources.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Update to match new field names.
+        (-[WebDataSource _updateLoading]): Use clients, not handles.
+        (-[WebDataSource _startLoading:]): Move line about starting loading out of the if
+	statement. I suspect the if statement is always true, though.
+        (-[WebDataSource _addSubresourceClient:]): New name. Keep client pointer instead of
+	handle now.
+        (-[WebDataSource _removeSubresourceClient:]): Ditto.
+        (-[WebDataSource _stopLoading]): Move download handler line into WebMainResourceClient
+	since the "not sent when application is quitting" issue is gone now. Stop the subresource
+	clients using the cancel call, not by cancelling the handle directly.
+        (-[WebDataSource _defersCallbacksChanged]): Update for clients list, not handles list.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didCancelWithHandle:]): Cancel the download handler here.
+        (-[WebMainResourceClient handleDidReceiveData:data:]): Call didCancelWithHandle here.
+	A loose end from the previous change.
+
 2002-09-07  Chris Blumenberg  <cblu@apple.com>
 
 	Made the wizzy scaling an experiment.
