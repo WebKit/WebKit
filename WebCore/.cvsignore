@@ -1,3 +1,4 @@
 Makefile
 Makefile.in
 WebCore-combined.exp
+previous-clean-timestamp

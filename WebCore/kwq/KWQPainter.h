@@ -91,8 +91,9 @@ public:
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
 
-    void drawText(int x, int y, const QString &, int from, int to, const QColor& backgroundColor);
-    void drawUnderlineForText(int x, int y, const QString &);
+    void drawText(int x, int y, int, int, int alignmentFlags, const QString &);
+    void drawText(int x, int y, const QChar *, int length, int from, int to, const QColor& backgroundColor);
+    void drawUnderlineForText(int x, int y, const QChar *, int length);
     static QColor selectedTextBackgroundColor();
     
     void setPaintingDisabled(bool f);

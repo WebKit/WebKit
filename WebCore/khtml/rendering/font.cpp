@@ -38,19 +38,12 @@ using namespace khtml;
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
         int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
+#ifdef APPLE_CHANGES
+    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, bg);
+#else
     QString qstr = QConstString(str, slen).string();
 
     //fprintf (stdout, "x %d, y %d, pos %d, qstr.length() %d, len %d, toAdd %d, from %d, to %d, str \"%s\"\n", x, y, pos, qstr.length(), len, toAdd, from, to, qstr.ascii());
-#ifdef APPLE_CHANGES    
-    if (pos != 0)
-        p->drawText(x, y, qstr.mid(pos, len), from, to, bg);
-    else if (len < slen) {
-        qstr.truncate(len);
-        p->drawText(x, y, qstr, from, to, bg);
-    }
-    else 
-        p->drawText(x, y, qstr, from, to, bg);
-#else
     // hack for fonts that don't have a welldefined nbsp
     if ( !fontDef.hasNbsp ) {
         // str.setLength() always does a deep copy, so the replacement code below is safe.
@@ -105,8 +98,8 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 #endif
 }
 
-
 #ifdef APPLE_CHANGES
+
 float Font::floatWidth( QChar *chs, int slen, int pos, int len ) const
 {
     return fm.floatWidth(chs, slen, pos, len);
@@ -117,8 +110,8 @@ float Font::floatCharacterWidth( QChar *chs, int slen, int pos) const
 {
     return fm.floatCharacterWidth(chs, slen, pos);
 }
-#endif
 
+#endif
 
 int Font::width( QChar *chs, int slen, int pos, int len ) const
 {
@@ -227,6 +220,7 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
 #endif
 
     fm = QFontMetrics( f );
+
 #ifndef APPLE_CHANGES
     fontDef.hasNbsp = fm.inFont( 0xa0 );
 #endif

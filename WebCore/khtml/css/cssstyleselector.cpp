@@ -2231,11 +2231,6 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         float size = 0;
         int minFontSize = settings->minFontSize();
 
-#ifndef APPLE_CHANGES
-        float toPix = paintDeviceMetrics->logicalDpiY()/72.;
-        if (toPix  < 96./72.) toPix = 96./72.;
-#endif
-
         if(parentNode) {
             oldSize = parentStyle->font().pixelSize();
         } else

@@ -34,7 +34,7 @@ class QTextDecoder;
 class QTextCodec {
 public:
     static QTextCodec *codecForMib(int);
-    static QTextCodec *codecForName(const char *, int accuracy=0);
+    static QTextCodec *codecForName(const char *);
     static QTextCodec *codecForLocale();
 
     QTextCodec(CFStringEncoding e) : encoding(e) { }

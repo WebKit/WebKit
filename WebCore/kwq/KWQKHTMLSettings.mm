@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,49 +22,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <kwqdebug.h>
-#import <khtml_settings.h>
 
-KHTMLSettings::KHTMLSettings()
-{    
-    m_charSet = QFont::Latin1;
-}
+#import <khtml_settings.h>
+#import <kwqdebug.h>
 
 QString KHTMLSettings::stdFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitStandardFont"]);
 }
 
-
 QString KHTMLSettings::fixedFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFixedFont"]);
 }
-
 
 QString KHTMLSettings::serifFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSerifFont"]);
 }
 
-
 QString KHTMLSettings::sansSerifFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSansSerifFont"]);
 }
-
 
 QString KHTMLSettings::cursiveFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCursiveFont"]);
 }
 
-
 QString KHTMLSettings::fantasyFontName() const
 {
     return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFantasyFont"]);
 }
-
 
 QString KHTMLSettings::settingsToCSS() const
 {
@@ -75,12 +65,9 @@ QString KHTMLSettings::settingsToCSS() const
 const QString &KHTMLSettings::encoding() const
 {
     // FIXME: remove this hack
-    static const QString *DEFAULT_ENCODING = NULL;
     _logNotYetImplemented();
-    if (DEFAULT_ENCODING == NULL) {
-        DEFAULT_ENCODING = new QString(QString::fromNSString(@"NSISOLatin1StringEncoding"));
-    }
-    return *DEFAULT_ENCODING;
+    static const QString e(QString::fromNSString(@"NSISOLatin1StringEncoding"));
+    return e;
 }
 
 int KHTMLSettings::minFontSize() const
@@ -93,16 +80,6 @@ int KHTMLSettings::mediumFontSize() const
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMediumFontSize"];
 }
 
-QFont::CharSet KHTMLSettings::script() const
-{
-    return m_charSet;
-}
-
-void KHTMLSettings::setScript(QFont::CharSet c)
-{
-    m_charSet = c;
-}
-
 bool KHTMLSettings::changeCursor() const
 {
     return true;
@@ -110,13 +87,11 @@ bool KHTMLSettings::changeCursor() const
 
 bool KHTMLSettings::isFormCompletionEnabled() const
 {
-    _logNotYetImplemented();
-    return FALSE;
+    return false;
 }
 
 int KHTMLSettings::maxFormCompletionItems() const
 {
-    _logNotYetImplemented();
     return 0;
 }
 

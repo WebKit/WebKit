@@ -1,3 +1,53 @@
+2002-07-23  Darin Adler  <darin@apple.com>
+
+	Changes require a make clean because of the Project Builder bug.
+	So I added the "make clean timestamp" hackery.
+
+        * .cvsignore: Ignore the new clean timestamp.
+        * force-clean-timestamp: Added.
+        * Makefile.am: Add rules for making clean happen.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::defaultEventHandler): Fix NULL dereference
+	bug in here that I ran into. Code later down in the same function has
+	the check for NULL, so clearly this is just a bug.
+
+        * khtml/rendering/font.cpp:
+        (Font::drawText): Simplify by using new drawText that takes a QChar array,
+	no need to make a QConstString.
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::printDecoration): Simplify by using new drawUnderlineForText that
+	takes a QChar array, no need to make a QConstString.
+
+        * kwq/WebCoreTextRenderer.h: Change underline-drawing to use a UniChar array.
+
+        * kwq/qt/qpainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText): Change to take QChar array instead of a QString, but
+	also discovered a bizarre overloading thing that was happening before and
+	dealt with that by adding a new drawText that still does take a QString.
+        (QPainter::drawUnderlineForText): Change to take QChar array.
+
+        * kwq/qt/qcolor.h: Mark constructor explicit, so we don't get subtle strangess
+	like where the string to draw was being converted to a QColor.
+
+        * khtml/css/cssstyleselector.cpp: No need for APPLE_CHANGES for
+	this change any more.
+
+        * kwq/kdecore/kcharsets.h:
+        * kwq/KWQKCharsets.mm: Remove unused functions.
+
+        * kwq/khtml/khtml_settings.h:
+        * kwq/KWQKHTMLSettings.mm: Remove unused functions.
+
+        * kwq/qt/qfont.h:
+        * kwq/KWQFont.mm: Simplify.
+
+        * kwq/KWQPaintDeviceMetrics.mm: Simplify.
+
+        * kwq/qt/qtextcodec.h:
+        * kwq/KWQtextcodec.mm: (QTextCodec::codecForName): Remove unused parameter.
+
 2002-07-23  David Hyatt  <hyatt@apple.com>
 
 	The STYLE element was ignoring both the media and type

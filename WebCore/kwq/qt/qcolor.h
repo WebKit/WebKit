@@ -43,8 +43,8 @@ class QColor {
 public:
     QColor();
     QColor(int,int,int);
-    QColor(const QString &);
-    QColor(const char *);
+    explicit QColor(const QString &);
+    QColor(const char *); // can't be explicit because of helper.cpp
     QColor(const QColor &);
 
     ~QColor();

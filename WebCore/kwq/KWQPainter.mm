@@ -344,7 +344,7 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
 }
 
-void QPainter::drawText(int x, int y, const QString &qstring, int from, int to, const QColor &backgroundColor)
+void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QString &qstring)
 {
     if (data->state.paintingDisabled)
         return;
@@ -352,18 +352,31 @@ void QPainter::drawText(int x, int y, const QString &qstring, int from, int to, 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
     	drawCharacters:(const UniChar *)qstring.unicode() stringLength:qstring.length()
+        fromCharacterPosition:0 toCharacterPosition:qstring.length() atPoint:NSMakePoint(x, y)
+        withTextColor:data->state.pen.color().getNSColor() backgroundColor:nil];
+}
+
+void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, const QColor &backgroundColor)
+{
+    if (data->state.paintingDisabled || len <= 0)
+        return;
+        
+    [[[WebCoreTextRendererFactory sharedFactory]
+        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+    	drawCharacters:(const UniChar *)str stringLength:len
         fromCharacterPosition:from toCharacterPosition:to atPoint:NSMakePoint(x, y)
         withTextColor:data->state.pen.color().getNSColor() backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil];
 }
 
-void QPainter::drawUnderlineForText(int x, int y, const QString &qstring)
+void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)
 {
     if (data->state.paintingDisabled)
         return;
         
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
-        drawUnderlineForString:qstring.getNSString() atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
+        drawUnderlineForCharacters:(const UniChar *)str stringLength:len
+        atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
 }
 
 QColor QPainter::selectedTextBackgroundColor()

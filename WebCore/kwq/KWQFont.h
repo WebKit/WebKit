@@ -27,7 +27,6 @@
 #define QFONT_H_
 
 class QString;
-class QPainter;
 
 #ifdef __OBJC__
 @class NSString;
@@ -37,25 +36,22 @@ class NSString;
 
 class QFont {
 public:
-
-    enum CharSet { Latin1, Unicode };
     enum Weight { Normal = 50, Bold = 63 };
 
     QFont();
-    QFont(const QFont &);
-    QFont &operator=(const QFont &);
 
-    ~QFont();
-
-    int pixelSize() const;
-    QString family() const;
     void setFamily(const QString &);
-    void setPixelSize(int);
+    QString family() const;
+
     void setWeight(int);
     int weight() const;
-    bool setItalic(bool);
-    bool italic() const;
     bool bold() const;
+
+    void setItalic(bool);
+    bool italic() const;
+
+    void setPixelSize(float s) { _size = s; }
+    int pixelSize() const { return (int)_size; }
 
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const { return !(*this == x); }
@@ -68,7 +64,6 @@ private:
     NSString *_family;
     int _trait;
     float _size;
-
 };
 
 #endif

@@ -35,18 +35,6 @@ class KCharsets {
 public:
     QTextCodec *codecForName(const QString &) const;
     QTextCodec *codecForName(const QString &, bool &) const;
-
-    QFont::CharSet charsetForEncoding(const QString &) const;
-    QFont::CharSet charsetForEncoding(const QString &, bool) const;
-
-    void setQFont(QFont &, QFont::CharSet) const { }
-    void setQFont(QFont &, QString) const { }
-
-    QString name(QFont::CharSet);
-    QString xCharsetName(QFont::CharSet) const;
-
-    bool supportsScript(const QFont &, QFont::CharSet);
-
 };
 
 #endif

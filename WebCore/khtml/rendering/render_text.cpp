@@ -50,7 +50,7 @@ void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, Ren
     QColor c = QPainter::selectedTextBackgroundColor();
     if (textColor == c)
         c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
-    p->setPen(style->color());
+    p->setPen(textColor);
 #else
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
@@ -78,10 +78,8 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
 
 #ifdef APPLE_CHANGES
     // Use a special function for underlines to get the positioning exactly right.
-    if(deco & UNDERLINE) {
-        QConstString s(p->str->s + m_start, m_len);
-        pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
-    }
+    if(deco & UNDERLINE)
+        pt->drawUnderlineForText(_tx, _ty + m_baseline, p->str->s + m_start, m_len);
 #else
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;

@@ -35,22 +35,6 @@ QFont::QFont()
 {
 }
 
-QFont::QFont(const QFont &copyFrom)
-    : _family(copyFrom._family)
-    , _trait(copyFrom._trait)
-    , _size(copyFrom._size)
-{
-}
-
-QFont::~QFont()
-{
-}
-
-int QFont::pixelSize() const
-{
-    return (int)_size;
-}
-
 QString QFont::family() const
 {
     return QString::fromNSString(_family);
@@ -72,17 +56,11 @@ void QFont::setFamily(const QString &qfamilyName)
     }
 }
 
-void QFont::setPixelSize(int sz)
-{
-    _size = sz;
-}
-
 void QFont::setWeight(int weight)
 {
     if (weight == Bold) {
         _trait |= NSBoldFontMask;
-    }
-    else if (weight == Normal) {
+    } else if (weight == Normal) {
         _trait &= ~NSBoldFontMask;
     }
 }
@@ -92,15 +70,13 @@ int QFont::weight() const
     return bold() ? Bold : Normal;
 }
 
-bool QFont::setItalic(bool flag)
+void QFont::setItalic(bool flag)
 {
     if (flag) {
         _trait |= NSItalicFontMask;
-    }
-    else {
+    } else {
         _trait &= ~NSItalicFontMask;
     }
-    return false;
 }
 
 bool QFont::italic() const
@@ -111,14 +87,6 @@ bool QFont::italic() const
 bool QFont::bold() const
 {
     return _trait & NSBoldFontMask;
-}
-
-QFont &QFont::operator=(const QFont &assignFrom)
-{
-    _family = assignFrom._family;
-    _trait = assignFrom._trait;
-    _size = assignFrom._size;
-    return *this;
 }
 
 bool QFont::operator==(const QFont &compareFont) const

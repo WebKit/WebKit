@@ -419,6 +419,7 @@
 				F59668C902AD2923018635CA,
 			);
 			isa = PBXGroup;
+			name = Misc;
 			path = Misc.subproj;
 			refType = 4;
 		};
@@ -1170,6 +1171,7 @@
 				F5C81E4202994EA401C1A525,
 			);
 			isa = PBXGroup;
+			name = Bookmarks;
 			path = Bookmarks.subproj;
 			refType = 4;
 		};

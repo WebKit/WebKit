@@ -25,7 +25,6 @@
 
 #import <kcharsets.h>
 #import <qtextcodec.h>
-#import <kwqdebug.h>
 
 QTextCodec *KCharsets::codecForName(const QString &qs) const
 {
@@ -41,41 +40,5 @@ QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
     } else {
         ok = true;
     }
-
     return codec;
-}
-
-QFont::CharSet KCharsets::charsetForEncoding(const QString &) const
-{
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return QFont::Unicode;
-}
-
-QFont::CharSet KCharsets::charsetForEncoding(const QString &, bool) const
-{
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return QFont::Unicode;
-}
-
-QString KCharsets::name(QFont::CharSet)
-{
-    // FIXME: need real implementation here
-    _logPartiallyImplemented();
-    return QString();
-}
-
-QString KCharsets::xCharsetName(QFont::CharSet) const
-{
-    // FIXME: do we need a real implementation here?
-    _logPartiallyImplemented();
-    return QString();
-}
-
-bool KCharsets::supportsScript(const QFont &, QFont::CharSet)
-{
-    // FIXME: do we need a real implementation here?
-    _logPartiallyImplemented();
-    return true;
 }

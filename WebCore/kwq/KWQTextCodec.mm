@@ -61,7 +61,7 @@ QTextCodec *QTextCodec::codecForMib(int mib)
     }
 }
 
-QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
+QTextCodec *QTextCodec::codecForName(const char *name)
 {
     CFStringRef cfname;
     CFStringEncoding encoding;

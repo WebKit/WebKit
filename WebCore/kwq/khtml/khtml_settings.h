@@ -39,8 +39,6 @@ public:
         KAnimationLoopOnce,
         KAnimationEnabled
     };
-
-    KHTMLSettings();
     
     void init() { }
 
@@ -62,9 +60,6 @@ public:
     int minFontSize() const;
     int mediumFontSize() const;
 
-    QFont::CharSet script() const;
-    void setScript( QFont::CharSet c );
-
     bool changeCursor() const;
 
     bool isFormCompletionEnabled() const;
@@ -82,9 +77,6 @@ public:
     bool isPluginsEnabled(const QString &host) const;
     
     QString userStyleSheet() const;
-
-private:
-    QFont::CharSet m_charSet;
 };
 
 #endif

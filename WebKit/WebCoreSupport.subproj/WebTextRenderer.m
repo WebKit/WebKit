@@ -640,10 +640,10 @@ cleanup:
 }
 
 
-- (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
+- (void)drawUnderlineForCharacters:(const UniChar *)characters stringLength:(unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    int width = [self widthForString: string];
+    int width = [self widthForCharacters:characters length:length];
     CGContextRef cgContext;
     float lineWidth;
     
