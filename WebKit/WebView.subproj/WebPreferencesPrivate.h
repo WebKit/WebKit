@@ -22,4 +22,7 @@
 
 + (void)_setIBCreatorID:(NSString *)string;
 
+- (void)setTabsToLinks:(BOOL)flag;
+- (BOOL)tabsToLinks;
+
 @end

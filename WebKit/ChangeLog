@@ -1,3 +1,19 @@
+2003-11-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3481719>: WebKit needs preference for tabbing to links
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]): Add initialization of new 
+	WebKitTabToLinksPreferenceKey.
+        (-[WebPreferences setTabsToLinks:]): Added preference setter.
+        (-[WebPreferences tabsToLinks]): Added preference getter.
+        * WebView.subproj/WebPreferencesPrivate.h: Declared new methods as
+	SPI on WebPreferences.
+
 2003-11-12  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3475082.  Remove unnecessary orderKey before showKey.

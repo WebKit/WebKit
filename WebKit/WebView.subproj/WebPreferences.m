@@ -45,6 +45,7 @@
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
+#define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -75,6 +76,12 @@ enum { WebPreferencesVersion = 1 };
 @interface WebPreferences (WebInternal)
 + (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
 + (NSString *)_IBCreatorID;
+- (NSString *)_stringValueForKey: (NSString *)key;
+- (void)_setStringValue: (NSString *)value forKey: (NSString *)key;
+- (int)_integerValueForKey: (NSString *)key;
+- (void)_setIntegerValue: (int)value forKey: (NSString *)key;
+- (int)_boolValueForKey: (NSString *)key;
+- (void)_setBoolValue: (BOOL)value forKey: (NSString *)key;
 @end
 
 @implementation WebPreferences
@@ -226,6 +233,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
         @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
+        [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -588,6 +596,16 @@ NS_ENDHANDLER
 - (NSTimeInterval)_backForwardCacheExpirationInterval
 {
     return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
+}
+
+- (void)setTabsToLinks:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitTabToLinksPreferenceKey];
+}
+
+- (BOOL)tabsToLinks
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTabToLinksPreferenceKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;
