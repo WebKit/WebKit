@@ -8,37 +8,28 @@
 
 #import "WebBookmarkImporter.h"
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebLocalizableStrings.h>
+#import <WebFoundation/WebNSStringExtras.h>
+
 #import <WebKit/WebBookmark.h>
 #import <WebKit/WebBookmarkPrivate.h>
 #import <WebKit/WebKitErrors.h>
 
 static NSMutableArray *_breakStringIntoLines(NSString *string)
 {
-    unsigned length;
-    unsigned index;
-    unsigned lineStart;
-    unsigned lineEnd;
-    unichar c;
-    BOOL crlf;
-    BOOL blankLine;
-    NSString *line;
-    NSCharacterSet *whitespaceCharacterSet;
-
     NSMutableArray *lines = [NSMutableArray array];
 
-    length = [string length];
-    index = 0;
-    lineStart = 0;
-    lineEnd = 0;
-    crlf = NO;
-    blankLine = YES;
-    whitespaceCharacterSet = [NSCharacterSet whitespaceCharacterSet];
+    unsigned length = [string length];
+    unsigned index = 0;
+    unsigned lineStart = 0;
+    unsigned lineEnd = 0;
+    BOOL blankLine = YES;
     
     while (index < length) {
-        crlf = NO;
-        c = [string characterAtIndex:index];
+        BOOL crlf = NO;
+        unichar c = [string characterAtIndex:index];
         switch (c) {
             case '\r':
                 if (index < length - 1) {
@@ -52,8 +43,34 @@ static NSMutableArray *_breakStringIntoLines(NSString *string)
             case 0x2028: // unicode line break character
             case 0x2029: // ditto
                 if (!blankLine) {
-                    line = [string substringWithRange:NSMakeRange(lineStart, lineEnd - lineStart + 1)];
-                    line = [line stringByTrimmingCharactersInSet:whitespaceCharacterSet];
+                    NSString *line = [[string substringWithRange:NSMakeRange(lineStart, lineEnd - lineStart + 1)]
+                        _web_stringByTrimmingWhitespace];
+                    
+                    // Simple hack to make parsing work better: Break lines before any <DT> or </DL>.
+                    while (1) {
+                        unsigned lineBreakLocation = 0;
+
+                        // Break before the first <DT> or </DL>.
+                        NSRange rangeOfDT = [line rangeOfString:@"<DT>" options:(NSCaseInsensitiveSearch | NSLiteralSearch)];
+                        if (rangeOfDT.location != NSNotFound) {
+                            lineBreakLocation = rangeOfDT.location;
+                        }
+                        NSRange rangeOfDL = [line rangeOfString:@"</DL>" options:(NSCaseInsensitiveSearch | NSLiteralSearch)];
+                        if (rangeOfDL.location != NSNotFound && rangeOfDL.location < lineBreakLocation) {
+                            lineBreakLocation = rangeOfDL.location;
+                        }
+                        
+                        if (lineBreakLocation == 0) {
+                            break;
+                        }
+                        
+                        // Turn the part before the break into a line.
+                        [lines addObject:[[line substringToIndex:lineBreakLocation] _web_stringByTrimmingWhitespace]];
+                        
+                        // Keep going with the part after the break.
+                        line = [[line substringFromIndex:lineBreakLocation] _web_stringByTrimmingWhitespace];
+                    }
+                    
                     [lines addObject:line];
                     blankLine = YES;
                 }
@@ -74,56 +91,23 @@ static NSMutableArray *_breakStringIntoLines(NSString *string)
     return lines;
 }
 
-static NSRange _HREFRangeFromSpec(NSString *spec)
-{
-    NSRange result;
-    unsigned startIndex;
-    unsigned endIndex;
-    int length;
-    int i;
-    unichar c;
-    NSRange range;
-
-    result.location = NSNotFound;
-    result.length = -1;
-    length = [spec length];
-    startIndex = 0;
-    endIndex = 0;
-
-    range = [spec rangeOfString:@"HREF="];
-    if (range.location == NSNotFound) {
-        return result;
-    }
-    startIndex = range.location + range.length;
-    // account for quote
-    startIndex++;
-
-    endIndex = length - startIndex;
-    for (i = startIndex; i < length; i++) {
-        c = [spec characterAtIndex:i];
-        if (c == '"') {
-            endIndex = i;
-            break;
-        }
-    }
-
-    result.location = startIndex;
-    result.length = endIndex - startIndex;
-
-    return result;
-}
-
 static NSString *_HREFTextFromSpec(NSString *spec)
 {
-    NSString *result = nil;
-
-    NSRange range = _HREFRangeFromSpec(spec);
-    
-    if (range.location != NSNotFound) {
-        result = [spec substringWithRange:range];
+    NSRange startRange = [spec rangeOfString:@"HREF=\"" options:(NSCaseInsensitiveSearch | NSLiteralSearch)];
+    if (startRange.location == NSNotFound) {
+        return nil;
     }
     
-    return result;
+    NSRange remainder;
+    remainder.location = startRange.location + startRange.length;
+    remainder.length = [spec length] - remainder.location;
+    
+    NSRange endRange = [spec rangeOfString:@"\"" options:NSLiteralSearch range:remainder];
+    if (endRange.location == NSNotFound) {
+        return nil;
+    }
+    
+    return [spec substringWithRange:NSMakeRange(remainder.location, endRange.location - remainder.location)];
 }
 
 static NSRange _linkTextRangeFromSpec(NSString *spec)
@@ -220,25 +204,22 @@ static NSString *_linkTextFromSpec(NSString *spec)
     for (i = 0; i < lineCount; i++) {
         NSString *line = [lines objectAtIndex:i];
         
-        if ([line hasPrefix:@"<DL>"]) {
-            // ignore this line
-            // we recognize new lists by parsing "<DT><H" lines
-        }
-        else if ([line hasPrefix:@"<DT><H"]) {
+        if ([line _web_hasCaseInsensitivePrefix:@"<DT><H"]) {
             // a bookmark folder specifier
             bookmark = [WebBookmark bookmarkOfType:WebBookmarkTypeList];
             currentBookmarkList = [bookmarkLists lastObject];
             // find the folder name
             NSString *title = _linkTextFromSpec(line);
             if (!title) {
-                continue;
+                // Rather than skipping the folder altogether, make one so we don't get unbalanced with </DL>.
+                title = @"?";
             }
             [bookmark setTitle:title];
             numberOfChildren = [currentBookmarkList numberOfChildren];
             [currentBookmarkList insertChild:bookmark atIndex:numberOfChildren];
             [bookmarkLists addObject:bookmark];
         }
-        else if ([line hasPrefix:@"<DT><A"]) {
+        else if ([line _web_hasCaseInsensitivePrefix:@"<DT><A"]) {
             // a bookmark or folder specifier
             bookmark = [WebBookmark bookmarkOfType:WebBookmarkTypeLeaf];
             currentBookmarkList = [bookmarkLists lastObject];
@@ -260,12 +241,13 @@ static NSString *_linkTextFromSpec(NSString *spec)
             numberOfChildren = [currentBookmarkList numberOfChildren];
             [currentBookmarkList insertChild:bookmark atIndex:numberOfChildren];
         }
-        else if ([line hasPrefix:@"</DL>"]) {
+        else if ([line _web_hasCaseInsensitivePrefix:@"</DL>"]) {
             // ends a bookmark list
-            [bookmarkLists removeLastObject];
-        }
-        else {
-            // ignore this line
+            if ([bookmarkLists count] == 0) {
+                ERROR("unbalanced </DL>, doesn't match the number of <DT><H we saw");
+            } else {
+                [bookmarkLists removeLastObject];
+            }
         }
     }
     

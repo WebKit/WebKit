@@ -1,3 +1,19 @@
+2003-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John and Ken.
+
+	- fixed 3135548 -- exception in Internet Explorer bookmark import code at first startup
+
+        * Bookmarks.subproj/WebBookmarkImporter.m:
+        (_breakStringIntoLines): Break lines before a <DT> or </DL>.
+        (_HREFTextFromSpec): Rewrite to simplify, search in a case-insensitive manner.
+        (-[WebBookmarkImporter initWithPath:]): Change prefix checks to be case-insensitive.
+	Don't discard folders altogether if the name can't be parsed as that would mess up
+	nesting w.r.t the next </DL>. Make the </DL> handling robust so we misparse, but don't
+	crash the whole application by raising an exception.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for this change and recent changes.
+
 2003-01-01  Richard Williamson   <rjw@apple.com>
 
         Obey the font smoothing size preference (3137618).
