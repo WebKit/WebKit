@@ -640,6 +640,10 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       return Value(new XMLHttpRequestConstructorImp(exec, m_part->document()));
     case XMLSerializer:
       return Value(new XMLSerializerConstructorImp(exec));
+    case Focus:
+    case Blur:
+    case Close:
+	return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
     case Alert:
     case Confirm:
     case Prompt:
@@ -647,9 +651,6 @@ Value Window::get(ExecState *exec, const Identifier &p) const
 #if APPLE_CHANGES
     case Print:
 #endif
-    case Focus:
-    case Blur:
-    case Close:
     case Scroll: // compatibility
     case ScrollBy:
     case ScrollTo:
@@ -657,7 +658,6 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case MoveTo:
     case ResizeBy:
     case ResizeTo:
-	return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
     case CaptureEvents:
     case ReleaseEvents:
     case AddEventListener:

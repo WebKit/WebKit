@@ -1,3 +1,13 @@
+2004-12-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3929187> WebKit needs to restrict access to certain window operations by domain
+        
+	* khtml/ecma/kjs_window.cpp:
+        (Window::get): Change most window functions to be restricted by
+	XSS domain check.
+
 2004-12-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
