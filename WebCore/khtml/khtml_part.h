@@ -64,8 +64,6 @@ namespace DOM
   class Selection;
 }
 
-using DOM::TristateFlag;
-
 namespace khtml
 {
   class CachedObject;
@@ -362,10 +360,6 @@ public:
    **/
   bool onlyLocalReferences() const;
 
-  void setEditMode(TristateFlag enable);
-  TristateFlag editMode() const;
-  bool inEditMode() const;
-
 #ifndef KDE_NO_COMPAT
   void enableJScript(bool e) { setJScriptEnabled(e); }
   void enableJava(bool e) { setJavaEnabled(e); }
@@ -633,11 +627,6 @@ public:
    * Marks all text in the document as selected.
    */
   void selectAll();
-
-  /**
-   * Returns whether editing is enabled at the given node.
-   */
-  bool isEditingAtNode(const DOM::NodeImpl *) const;
 
   /**
    * Returns the most recent edit command applied.

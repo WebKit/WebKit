@@ -236,16 +236,3 @@ NodeList HTMLDocument::getElementsByName( const DOMString &elementName )
     if(!impl) return 0;
     return new NameNodeListImpl(impl, elementName);
 }
-
-DOMString HTMLDocument::designMode() const
-{
-    if(!impl) return "inherit";
-    return ((HTMLDocumentImpl *)impl)->designMode();
-}
-
-void HTMLDocument::setDesignMode(const DOMString &s)
-{
-    if(impl)
-        ((HTMLDocumentImpl *)impl)->setDesignMode(s);
-}
-

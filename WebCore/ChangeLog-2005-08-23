@@ -1,3 +1,31 @@
+2004-05-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Removed support for designMode attribute, which we will not be supporting for Tiger.
+        Removed inEditMode from KHTMLPart. This cached designMode value.
+        Removed KHTMLPart::isEditingAtNode function. Asking a node if it is content-editable
+        is a suitable replacement.
+
+        * khtml/dom/dom_misc.h: Remove TristateFlag enum that was used to track designMode values.
+        * khtml/dom/html_document.cpp: Remove designMode and setDesignMode.
+        * khtml/dom/html_document.h: Ditto.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet): Remove designMode.
+        (KJS::HTMLDocument::putValue): Ditto.
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::): Ditto.
+        * khtml/html/html_documentimpl.cpp: Remove designMode and setDesignMode.
+        * khtml/html/html_documentimpl.h: Ditto.
+        * khtml/khtml_part.cpp: Remove setEditMode, editMode, inEditMode, and isEditingAtNode.
+        * khtml/khtml_part.h: Ditto.
+        * khtml/khtmlpart_p.h: Remove m_inEditMode variable.
+        (KHTMLPartPrivate::KHTMLPartPrivate):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::focusNextPrevNode): Change over one use in tree of isEditingAtNode to use
+        isContentEditable instead. isContentEditable will be modified in future patch to handle
+        whether the per-part switch has been thrown to override whether something is editable or not.
+
 2004-05-17  Richard Williamson   <rjw@apple.com>
 
 	Implemented new API for WebScriptObject.

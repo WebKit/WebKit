@@ -1283,7 +1283,7 @@ void KHTMLView::focusNextPrevNode(bool next)
     else {
         // EDIT FIXME: if it's an editable element, activate the caret
         // otherwise, hide it
-        if (!m_part->inEditMode() && newFocusNode->renderer()->isEditable()) {
+        if (newFocusNode->isContentEditable()) {
             // make caret visible
         } 
         else {

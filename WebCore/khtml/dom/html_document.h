@@ -293,9 +293,6 @@ public:
      */
     HTMLCollection all() const;
 
-    DOMString designMode() const;
-    void setDesignMode(const DOMString &);
-
 };
 
 }; //namespace

@@ -152,7 +152,6 @@ public:
     m_bPluginsOverride = false;
     m_onlyLocalReferences = false;
 
-    m_inEditMode = DOM::FlagNone;
     m_caretBlinkTimer = 0;
     m_caretVisible = true;
     m_caretBlinks = true;
@@ -188,7 +187,6 @@ public:
             m_ssl_in_use = part->d->m_ssl_in_use;
 #endif
             m_onlyLocalReferences = part->d->m_onlyLocalReferences;
-            m_inEditMode = part->d->m_inEditMode;
             m_zoomFactor = part->d->m_zoomFactor;
         }
     }
@@ -368,7 +366,6 @@ public:
   bool m_bSecurityInQuestion:1;
   bool m_focusNodeRestored:1;
 
-  TristateFlag m_inEditMode;
   khtml::EditCommand m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
 
