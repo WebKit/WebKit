@@ -112,7 +112,7 @@
 // data source.  Perhaps setController: should be private?  Perhaps the back pointers
 // can be managed externally, i.e. + controllerForDataSource: as a class method on 
 // WKDefaultWebController?
-- (void)setController: (id <WKWebController>)controller;
+//- (void)setController: (id <WKWebController>)controller;
 - (id <WKWebController>)controller;
 
 
