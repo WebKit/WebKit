@@ -424,6 +424,8 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
+    KWQ_ASSERT(!frameExists(frameName));
+
     NSURL *childURL = part->completeURL(url).getNSURL();
     if (childURL == nil) {
         NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path (base URL %s, relative URL %s)", m_baseURL.prettyURL().ascii(), url.ascii());

@@ -1,3 +1,15 @@
+2002-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed Radar 3004897 - assert at mapquest
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLIFrameElementImpl::attach): Put back frame name uniqueness
+	check. Lack of this check was causing duplicate frames to be left
+	floating in space.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::requestFrame): Add an assertion that no frame
+	of the requested name already exists.
+
 2002-07-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 3004889, plugin content on stylesheet pages not
