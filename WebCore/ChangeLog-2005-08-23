@@ -1,3 +1,40 @@
+2003-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3488883 - KIO::TransferJob needs to really use signals instead of calling loader directly
+        
+	* khtml/khtml_part.cpp:
+        (KHTMLPart::openURL):
+        * khtml/misc/loader.cpp:
+        (Loader::servePendingRequests):
+        (Loader::slotReceivedResponse):
+        * khtml/misc/loader.h:
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::TransferJob):
+        (KIO::TransferJob::url):
+        (KIO::TransferJob::emitData):
+        (KIO::TransferJob::emitRedirection):
+        (KIO::TransferJob::emitResult):
+        (KIO::TransferJob::emitReceivedResponse):
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        * kwq/KWQObject.mm:
+        (QObject::connect):
+        * kwq/KWQResourceLoader.h:
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader receivedResponse:]):
+        (-[KWQResourceLoader addData:]):
+        (-[KWQResourceLoader finishJobAndHandle]):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::call):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+
 2003-11-18  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3488244, marquee-increments with percentage values not handled correctly.  Also added a tweak to ensure

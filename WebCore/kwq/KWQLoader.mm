@@ -53,7 +53,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     part->didTellBridgeAboutLoad(request->object->url().string());
 
     KWQ_BLOCK_EXCEPTIONS;
-    KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithLoader:loader job:job];
+    KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithJob:job];
     id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL()];
     [resourceLoader setHandle:handle];
     [resourceLoader release];

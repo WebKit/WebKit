@@ -68,8 +68,18 @@ public:
     
     KURL url() const;
 
+    void emitData(const char *, int);
+    void emitRedirection(const KURL &);
+    void emitResult();
+    void emitReceivedResponse(void *);
+
 private:
     TransferJobPrivate *d;
+
+    KWQSignal m_data;
+    KWQSignal m_redirection;
+    KWQSignal m_result;
+    KWQSignal m_receivedResponse;
 };
 
 } // namespace KIO

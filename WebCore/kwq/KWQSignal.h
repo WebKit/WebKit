@@ -43,7 +43,10 @@ public:
     void call(const QString &) const;
     void call(KIO::Job *) const;
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
-
+    void call(KIO::Job *, const char *data, int size) const;
+    void call(KIO::Job *, const KURL &) const;
+    void call(KIO::Job *, void *) const;
+    
 private:
     // forbid copying and assignment
     KWQSignal(const KWQSignal &);

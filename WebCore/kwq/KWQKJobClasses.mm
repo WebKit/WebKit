@@ -61,13 +61,21 @@ public:
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
+    : d(new TransferJobPrivate(url)),
+      m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
+      m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
+      m_result(this, SIGNAL(result(KIO::Job*))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, void *)))
 {
-    d = new TransferJobPrivate(url);
 }
 
 TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showProgressInfo)
+    : d(new TransferJobPrivate(url)),
+      m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
+      m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
+      m_result(this, SIGNAL(result(KIO::Job*))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, void *)))
 {
-    d = new TransferJobPrivate(url);
 }
 
 TransferJob::~TransferJob()
@@ -136,6 +144,26 @@ void TransferJob::setLoader(KWQResourceLoader *loader)
 KURL TransferJob::url() const
 {
     return d->URL;
+}
+
+void TransferJob::emitData(const char *data, int size)
+{
+    m_data.call(this, data, size);
+}
+
+void TransferJob::emitRedirection(const KURL &url)
+{
+    m_redirection.call(this, url);
+}
+
+void TransferJob::emitResult()
+{
+    m_result.call(this);
+}
+
+void TransferJob::emitReceivedResponse(void *response)
+{
+    m_receivedResponse.call(this, response);
 }
 
 } // namespace KIO

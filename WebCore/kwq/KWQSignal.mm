@@ -148,3 +148,40 @@ void KWQSignal::call(DocLoader *l, CachedObject *o) const
         }
     }
 }
+
+void KWQSignal::call(Job *j, const char *d, int s) const
+{
+    if (!_object->_signalsBlocked) {
+        KWQObjectSenderScope senderScope(_object);
+        QValueList<KWQSlot> copiedSlots(_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(j, d, s);
+        }
+    }
+}
+
+void KWQSignal::call(Job *j, const KURL &u) const
+{
+    if (!_object->_signalsBlocked) {
+        KWQObjectSenderScope senderScope(_object);
+        QValueList<KWQSlot> copiedSlots(_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(j, u);
+        }
+    }
+}
+
+void KWQSignal::call(Job *j, void *d) const
+{
+    if (!_object->_signalsBlocked) {
+        KWQObjectSenderScope senderScope(_object);
+        QValueList<KWQSlot> copiedSlots(_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(j, d);
+        }
+    }
+}
+

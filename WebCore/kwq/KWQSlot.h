@@ -29,6 +29,7 @@
 #include "KWQGuardedPtr.h"
 
 class QString;
+class KURL;
 
 namespace KIO {
     class Job;
@@ -56,7 +57,10 @@ public:
     void call(const QString &) const;
     void call(KIO::Job *) const;
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
-    
+    void call(KIO::Job *, const char *, int) const;
+    void call(KIO::Job *, const KURL &) const;
+    void call(KIO::Job *, void *) const;
+
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 
 private:
