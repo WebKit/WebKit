@@ -1,3 +1,8 @@
+2002-10-24  Darin Adler  <darin@apple.com>
+
+        * ForwardingHeaders/private/qucomextra_p.h: Emptied this out.
+        * kwq/qt/private/qucomextra_p.h: Removed.
+
 2002-10-24  David Hyatt  <hyatt@apple.com>
 
 	Make sure that KHTML's initial layout happens after KHTML
