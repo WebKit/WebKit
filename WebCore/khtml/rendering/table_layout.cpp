@@ -557,6 +557,10 @@ void AutoTableLayout::calcMinMaxWidth()
 	maxWidth = minWidth;
     }
 
+    // Max widths can overflow. We need to bounds check them.
+    if (maxWidth > 10000)
+        maxWidth = 10000;
+    
     table->m_maxWidth = maxWidth;
     table->m_minWidth = minWidth;
 #ifdef DEBUG_LAYOUT

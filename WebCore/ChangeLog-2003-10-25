@@ -1,3 +1,15 @@
+2003-01-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for auto width tables.  Prevent overflow when assigning from
+	the computed integer max width back into a short value.
+
+	Fixes cnn.com and spies.com. Bug # is 3158469.
+	
+        Reviewed by darin
+
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::calcMinMaxWidth):
+
 2003-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
