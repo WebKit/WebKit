@@ -1,3 +1,16 @@
+2002-11-12  Darin Adler  <darin@apple.com>
+
+	- fixed 3083043 -- Alex doesn't decode % sequences in javascript: URLs
+
+	Some places here did KURL::decode_string, but others didn't.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotShowDocument): Added call to KURL::decode_string.
+        (KHTMLPart::overURL): Ditto.
+        (KHTMLPart::urlSelected): Ditto.
+        (KHTMLPart::requestFrame): Ditto.
+        (KHTMLPart::slotChildURLRequest): Ditto.
+
 2002-11-11  Darin Adler  <darin@apple.com>
 
         * kwq/KWQWidget.mm: (QWidget::setCursor): Remove printf I left

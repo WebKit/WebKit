@@ -164,7 +164,7 @@
         name:NSMouseMovedNotification object:nil];
 }
 
-- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+- (void)addSuperviewObservers
 {
     // We watch the bounds of our superview, so that we can do a layout when the size
     // of the superview changes. This is different from other scrollable things that don't
@@ -173,43 +173,72 @@
     // We need to pay attention to both height and width because, our "layout" has to change
     // to extend the background the full height of the space.
     
-    NSView *oldSuperview = [self superview];
-    
-    if (oldSuperview) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSViewFrameDidChangeNotification object:oldSuperview];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSViewBoundsDidChangeNotification object:oldSuperview];
+    NSView *superview = [self superview];
+    if (superview && [self window]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
+            name:NSViewFrameDidChangeNotification object:superview];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
+            name:NSViewBoundsDidChangeNotification object:superview];
     }
+}
 
-    if (newSuperview) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
-            name:NSViewFrameDidChangeNotification object:newSuperview];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
-            name:NSViewBoundsDidChangeNotification object:newSuperview];
+- (void)removeSuperviewObservers
+{
+    NSView *superview = [self superview];
+    if (superview && [self window]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSViewFrameDidChangeNotification object:superview];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSViewBoundsDidChangeNotification object:superview];
     }
+}
+
+- (void)addWindowObservers
+{
+    NSWindow *window = [self window];
+    if (window) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeMain:)
+            name:NSWindowDidBecomeMainNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignMain:)
+            name:NSWindowDidResignMainNotification object:window];
+    }
+}
+
+- (void)removeWindowObservers
+{
+    NSWindow *window = [self window];
+    if (window) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidBecomeMainNotification object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidResignMainNotification object:window];
+    }
+}
+
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    [self removeSuperviewObservers];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    [self addSuperviewObservers];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if ([self window]) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeMainNotification object:[self window]];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignMainNotification object:[self window]];
-    }
     [self removeMouseMovedObserver];
+    [self removeWindowObservers];
+    [self removeSuperviewObservers];
 }
 
 - (void)viewDidMoveToWindow
 {
     if ([self window]) {
+        [self addWindowObservers];
+        [self addSuperviewObservers];
         if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
             [self addMouseMovedObserver];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeMain:)
-                name:NSWindowDidBecomeMainNotification object:[self window]];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignMain:)
-                name:NSWindowDidResignMainNotification object:[self window]];
         }
         _private->inWindow = YES;
     } else {
@@ -218,7 +247,6 @@
         // This is only needed because viewDidMoveToWindow is called even when
         // the window is not changing (bug in AppKit).
         if (_private->inWindow) {
-            [self removeMouseMovedObserver];
             [self _reset];
             _private->inWindow = NO;
         }

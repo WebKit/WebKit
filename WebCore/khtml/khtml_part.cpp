@@ -808,7 +808,7 @@ void KHTMLPart::slotShowDocument( const QString &url, const QString &target )
 
   // TODO: handle child target correctly! currently the script are always executed fur the parent
   if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
-      executeScript( url.right( url.length() - 11) );
+      executeScript( KURL::decode_string( url.right( url.length() - 11) ) );
       return;
   }
 
@@ -2167,7 +2167,7 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
 
   if (url.find( QString::fromLatin1( "javascript:" ),0, false ) != -1 )
   {
-    emit setStatusBarText( url.mid( url.find( "javascript:", 0, false ) ) );
+    emit setStatusBarText( KURL::decode_string( url.mid( url.find( "javascript:", 0, false ) ) ) );
     return;
   }
 
@@ -2327,7 +2327,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
   if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
   {
-    executeScript( url.right( url.length() - 11) );
+    executeScript( KURL::decode_string( url.right( url.length() - 11) ) );
     return;
   }
 
@@ -2651,7 +2651,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
   // Support for <frame src="javascript:string">
   if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
   {
-      QVariant res = executeScript( DOM::Node(frame->element()), url.right( url.length() - 11) );
+      QVariant res = executeScript( DOM::Node(frame->element()), KURL::decode_string( url.right( url.length() - 11) ) );
       KURL myurl;
       myurl.setProtocol("javascript");
       if ( res.type() == QVariant::String )
@@ -3294,7 +3294,7 @@ void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &arg
   // TODO: handle child target correctly! currently the script are always executed fur the parent
   QString urlStr = url.url();
   if ( urlStr.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
-      executeScript( urlStr.right( urlStr.length() - 11) );
+      executeScript( KURL::decode_string( urlStr.right( urlStr.length() - 11) ) );
       return;
   }
 

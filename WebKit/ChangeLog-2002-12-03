@@ -1,3 +1,19 @@
+2002-11-12  Darin Adler  <darin@apple.com>
+
+	- improved the code that manages observing the window and superview
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSuperviewObservers]): Added.
+        (-[WebHTMLView removeSuperviewObservers]): Added.
+        (-[WebHTMLView addWindowObservers]): Added.
+        (-[WebHTMLView removeWindowObservers]): Added.
+        (-[WebHTMLView viewWillMoveToSuperview:]): Call removeSuperviewObservers.
+        (-[WebHTMLView viewDidMoveToSuperview]): Call addSuperviewObservers.
+        (-[WebHTMLView viewWillMoveToWindow:]): Call removeWindowObservers and
+	removeSuperviewObservers.
+        (-[WebHTMLView viewDidMoveToWindow]): Call addWindowObservers and
+	addSuperviewObservers.
+
 2002-11-11  Maciej Stachowiak  <mjs@apple.com>
 
 	Remove contentPolicy parameter from _downloadURL, and remove
