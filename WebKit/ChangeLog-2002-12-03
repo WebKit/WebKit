@@ -1,3 +1,13 @@
+2002-06-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed plug-in positioning.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView 
+initWithFrame:plugin:url:baseURL:mime:arguments:]): added some logging.
+        (-[IFPluginView setWindow]): Use the window's content view as the 
+guide for the port's coordinates. Also added a workaround for Java.
+
 2002-06-27  Darin Adler  <darin@apple.com>
 
 	Fixed DOM tree viewer.

@@ -292,6 +292,8 @@ static char *newCString(NSString *string)
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print];
 
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "%s", [[arguments description] cString]);
+
     // Convert arguments dictionary to 2 string arrays.
     // These arrays are passed to NPP_New, but the strings need to be
     // modifiable and live the entire life of the plugin.
@@ -351,18 +353,27 @@ static char *newCString(NSString *string)
 }
 
 - (void) setWindow
-{
-    NPError npErr;
-    NSRect windowFrame, frameInWindow, visibleRectInWindow;
+{    
     CGrafPtr port = GetWindowPort([[self window] _windowRef]);
-    
-    windowFrame = [[self window] frame];
-    frameInWindow = [self convertRect:[self bounds] toView:nil];
-    visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    NSRect windowFrame = [[self window] frame];
+    NSRect contentViewFrame = [[[self window] contentView] frame];
+    NSRect frameInWindow = [self convertRect:[self bounds] toView:nil];
+    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    float windowContentFrameHeight, toolbarHeight;
+    NPError npErr;
+        
+    if([mime isEqualToString:@"application/x-java-applet"]){
+        // The java plug-in assumes that the port is positioned 22 pixels down from the top-left corner of the window.
+        // This is incorrect if the window has a toolbar. Here's the workaround. 2973586
+        toolbarHeight = windowFrame.size.height - contentViewFrame.size.height - contentViewFrame.origin.y - 22;
+        windowContentFrameHeight = contentViewFrame.size.height + toolbarHeight;
+    }else{
+        windowContentFrameHeight = contentViewFrame.size.height;
+    }
     
     // flip Y coordinates
-    frameInWindow.origin.y =  windowFrame.size.height - frameInWindow.origin.y - frameInWindow.size.height; 
-    visibleRectInWindow.origin.y =  windowFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
+    frameInWindow.origin.y =  windowContentFrameHeight - frameInWindow.origin.y - frameInWindow.size.height; 
+    visibleRectInWindow.origin.y =  windowContentFrameHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
     nPort.port = port;
     
