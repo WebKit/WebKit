@@ -36,7 +36,7 @@
 **********************************************************************/
 
 #include <qcolor.h>
-
+#include <qstring.h>
 
 QRgb qRgb(int r, int g, int b)
 {
@@ -66,13 +66,10 @@ QColor::QColor(int r, int g, int b)
 }
 
 
-QColor::QColor(const char *n)
+QColor::QColor(const char *name)
 {
- //   if ( !globals_init )
-//	initGlobalColors();
-//    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-    // FIXME: need to implement real construction of color based on string
-    _initialize (0,0,0);
+    color = nil;
+    setNamedColor( QString(name) );
 }
 
 
@@ -112,11 +109,58 @@ QString QColor::name() const
 }
 
 
-void QColor::setNamedColor(const QString&n)
+static int hex2int( QChar hexchar )
 {
-    //NSLog (@"WARNING %s:%s %d (NOT YET IMPLEMENTED) color = %s\n", __FILE__, __FUNCTION__, __LINE__, n.ascii());
-    NSLog (@"WARNING %s:%s %d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-    // Do something better here.
+    int v;
+    if ( hexchar.isDigit() )
+	v = hexchar.digitValue();
+    else if ( hexchar >= 'A' && hexchar <= 'F' )
+	v = hexchar.cell() - 'A' + 10;
+    else if ( hexchar >= 'a' && hexchar <= 'f' )
+	v = hexchar.cell() - 'a' + 10;
+    else
+	v = 0;
+    return v;
+}
+
+
+void QColor::setNamedColor(const QString&name)
+{
+    if ( name.isEmpty() ) {
+	setRgb( 0 );
+    } else if ( name[0] == '#' ) {
+	const QChar *p = name.unicode()+1;
+	int len = name.length()-1;
+	int r, g, b;
+	if ( len == 12 ) {
+	    r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+	    g = (hex2int(p[4]) << 4) + hex2int(p[5]);
+	    b = (hex2int(p[8]) << 4) + hex2int(p[9]);
+	} else if ( len == 9 ) {
+	    r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+	    g = (hex2int(p[3]) << 4) + hex2int(p[4]);
+	    b = (hex2int(p[6]) << 4) + hex2int(p[7]);
+	} else if ( len == 6 ) {
+	    r = (hex2int(p[0]) << 4) + hex2int(p[1]);
+	    g = (hex2int(p[2]) << 4) + hex2int(p[3]);
+	    b = (hex2int(p[4]) << 4) + hex2int(p[5]);
+	} else if ( len == 3 ) {
+	    r = (hex2int(p[0]) << 4) + hex2int(p[0]);
+	    g = (hex2int(p[1]) << 4) + hex2int(p[1]);
+	    b = (hex2int(p[2]) << 4) + hex2int(p[2]);
+	} else {
+	    r = g = b = 0;
+	}
+	setRgb( r, g, b );
+    } else {
+	if (color != nil)
+            [color release];
+        color = [NSColor colorWithCatalogName: @"Apple" colorName: QSTRING_TO_NSSTRING(name)];
+        if (color == nil) {
+            NSLog (@"WARNING %s:%d %s couldn't create color using name %s\n", __FILE__, __LINE__, __FUNCTION__, name.ascii());
+            color = [NSColor blackColor];
+        }
+    }
 }
 
 
@@ -187,12 +231,14 @@ void QColor::hsv(int *, int *, int *) const
 QColor QColor::light(int f = 150) const
 {
     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    return *this;
 }
 
 
 QColor QColor::dark(int f = 200) const
 {
     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    return *this;
 }
 
 

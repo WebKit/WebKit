@@ -96,8 +96,8 @@ void RenderBody::layout()
     {
         if (root()->view())
         {
-            root()->view()->horizontalScrollBar()->setPalette(style()->palette());
-            root()->view()->verticalScrollBar()->setPalette(style()->palette());
+            //root()->view()->horizontalScrollBar()->setPalette(style()->palette());
+            //root()->view()->verticalScrollBar()->setPalette(style()->palette());
         }
         scrollbarsStyled=true;
     }

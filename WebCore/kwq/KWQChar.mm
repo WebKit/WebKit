@@ -223,6 +223,15 @@ QChar QChar::mirroredChar() const
     return *this;
 }
 
+int QChar::digitValue() const
+{
+    // ##### just latin1
+    if ( c < '0' || c > '9' )
+	return -1;
+    else
+	return c - '0';
+}
+
 // operators -------------------------------------------------------------------
 
 bool operator==(QChar qc1, QChar qc2)
