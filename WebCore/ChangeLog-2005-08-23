@@ -1,5 +1,18 @@
 2005-02-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3994164> setting a new style attribute with setAttribute("style") doesn't blow away the old style
+
+        * khtml/css/css_valueimpl.h: Renamed parseProperty to parseDeclaration, since it's used to parse
+        an entire style declaration, not a single property.
+        * khtml/css/css_valueimpl.cpp: (DOM::CSSMutableStyleDeclarationImpl::parseDeclaration): Renamed,
+        and added code to clear m_values.
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseHTMLAttribute): Call function by its
+        new name, and remove some unnecessary comments.
+
+2005-02-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3993722> need oncut and onpaste handlers implemented for <textarea> (needed for widgets)

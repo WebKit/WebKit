@@ -350,10 +350,11 @@ void CSSMutableStyleDeclarationImpl::setImageProperty(int propertyId, const DOMS
     setChanged();
 }
 
-void CSSMutableStyleDeclarationImpl::parseProperty(const DOMString &propertyString)
+void CSSMutableStyleDeclarationImpl::parseDeclaration(const DOMString &styleDeclaration)
 {
+    m_values.clear();
     CSSParser parser(strictParsing);
-    parser.parseDeclaration(this, propertyString);
+    parser.parseDeclaration(this, styleDeclaration);
     setChanged();
 }
 

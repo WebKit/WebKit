@@ -397,11 +397,8 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setContentEditable(attr);
         break;
     case ATTR_STYLE:
-        // ### we need to remove old style info in case there was any!
-        // ### the inline sheet ay contain more than 1 property!
-        // stylesheet info
         setHasStyle();
-        getInlineStyleDecl()->parseProperty(attr->value());
+        getInlineStyleDecl()->parseDeclaration(attr->value());
         setChanged();
         break;
     case ATTR_TABINDEX:

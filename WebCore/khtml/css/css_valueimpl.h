@@ -473,7 +473,8 @@ public:
     void setStringProperty(int propertyId, const DOMString &value, CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
     void setImageProperty(int propertyId, const DOMString &URL, bool important = false);
  
-    void parseProperty(const DOMString &propertyString);
+    // The following parses an entire new style declaration.
+    void parseDeclaration(const DOMString &styleDeclaration);
 
     // Besides adding the properties, this also removes any existing properties with these IDs.
     // It does no notification since it's called by the parser.
