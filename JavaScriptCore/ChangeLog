@@ -1,3 +1,12 @@
+2004-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin and Maciej.
+
+        - new function to support fix for DIG bug in WebCore
+
+        * kjs/scope_chain.h: Added new push function that pushes another entire scope chain.
+        * kjs/scope_chain.cpp: (KJS::ScopeChain::push): Ditto.
+
 2004-09-12  Darin Adler  <darin@apple.com>
 
         * tests/mozilla/expected.html: Updated test results for 3 more tests that pass with the new version

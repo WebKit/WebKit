@@ -52,6 +52,7 @@ namespace KJS {
 
         void clear() { deref(); _node = 0; }
         void push(ObjectImp *);
+        void push(const ScopeChain &);
         void pop();
         
         void mark();
