@@ -30,7 +30,7 @@
 // FIXME: 
 static QPalette *DEFAULT_PALETTE = NULL;
 static QSize *DEFAULT_SIZE = NULL;
-
+fsdfgsd
 QPalette QApplication::palette(const QWidget *p)
 {
     if (DEFAULT_PALETTE == NULL) {
