@@ -226,11 +226,11 @@ public:
         XorROP,
     };
 
-    static const unsigned black = 0x000000;
-    static const unsigned white = 0xFFFFFF;
-    static const unsigned darkGray = 0x808080;
-    static const unsigned gray = 0xA0A0A0;
-    static const unsigned lightGray = 0xC0C0C0;
+    static const unsigned black = 0xFF000000;
+    static const unsigned white = 0xFFFFFFFF;
+    static const unsigned darkGray = 0xFF808080;
+    static const unsigned gray = 0xFFA0A0A0;
+    static const unsigned lightGray = 0xFFC0C0C0;
 
 };
 

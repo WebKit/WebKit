@@ -975,6 +975,12 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_OPACITY:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
+    case CSS_PROP_TEXT_SHADOW: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
+        if (id == CSS_VAL_NONE)
+            valid_primitive = true;
+        else
+            return parseShadow(propId, important);
+        break;
     case CSS_PROP_BOX_ALIGN:
         if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)
@@ -1547,12 +1553,12 @@ CSSValueListImpl *CSSParser::parseFontFamily()
 }
 
 
-static QRgb parseColor(const QString &name)
+static bool parseColor(const QString &name, QRgb& rgb)
 {
     int len = name.length();
 
     if ( !len )
-        return khtml::invalidColor;
+        return false;
 
 
     bool ok;
@@ -1560,39 +1566,53 @@ static QRgb parseColor(const QString &name)
     if ( len == 3 || len == 6 ) {
 	int val = name.toInt(&ok, 16);
 	if ( ok ) {
-	    if (len == 6)
-		return (0xff << 24) | val;
-	    else if ( len == 3 )
+            if (len == 6) {
+		rgb =  (0xff << 24) | val;
+                return true;
+            }
+            else if ( len == 3 ) {
 		// #abc converts to #aabbcc according to the specs
-		return (0xff << 24) |
+		rgb = (0xff << 24) |
 		    (val&0xf00)<<12 | (val&0xf00)<<8 |
 		    (val&0xf0)<<8 | (val&0xf0)<<4 |
 		    (val&0xf)<<4 | (val&0xf);
+                return true;
+            }
 	}
     }
 
     // try a little harder
     QColor tc;
     tc.setNamedColor(name.lower());
-    if (tc.isValid()) return tc.rgb();
+    if (tc.isValid()) {
+        rgb = tc.rgb();
+        return true;
+    }
 
-    return khtml::invalidColor;
+    return false;
 }
 
 
 CSSPrimitiveValueImpl *CSSParser::parseColor()
 {
-    QRgb c = khtml::invalidColor;
-    Value *value = valueList->current();
+    return parseColorFromValue(valueList->current());
+}
+
+CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
+{
+    QRgb c = khtml::transparentColor;
     if ( !strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000. ) {
         QString str;
         str.sprintf( "%06d", (int)(value->fValue+.5) );
-        c = ::parseColor( str );
+        if (!::parseColor( str, c ))
+            return 0;
     } else if ( value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
-              value->unit == CSSPrimitiveValue::CSS_IDENT ||
-              value->unit == CSSPrimitiveValue::CSS_DIMENSION )
-	c = ::parseColor( qString( value->string ));
+                value->unit == CSSPrimitiveValue::CSS_IDENT ||
+                value->unit == CSSPrimitiveValue::CSS_DIMENSION ) {
+	if (!::parseColor( qString( value->string ), c))
+            return 0;
+    }
     else if ( value->unit == Value::Function &&
 		value->function->args != 0 &&
 		value->function->args->numValues == 5 /* rgb + two commas */ &&
@@ -1621,12 +1641,184 @@ CSSPrimitiveValueImpl *CSSParser::parseColor()
 	b = QMAX( 0, QMIN( 255, b ) );
 	c = qRgb( r, g, b );
     }
+    else if ( value->unit == Value::Function &&
+              value->function->args != 0 &&
+              value->function->args->numValues == 7 /* rgba + three commas */ &&
+              qString( value->function->name ).lower() == "rgba(" ) {
+        ValueList *args = value->function->args;
+        Value *v = args->current();
+        if ( !validUnit( v, FInteger|FPercent, true ) )
+            return 0;
+        int r = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        v = args->next();
+        if ( v->unit != Value::Operator && v->iValue != ',' )
+            return 0;
+        v = args->next();
+        if ( !validUnit( v, FInteger|FPercent, true ) )
+            return 0;
+        int g = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        v = args->next();
+        if ( v->unit != Value::Operator && v->iValue != ',' )
+            return 0;
+        v = args->next();
+        if ( !validUnit( v, FInteger|FPercent, true ) )
+            return 0;
+        int b = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        v = args->next();
+        if ( v->unit != Value::Operator && v->iValue != ',' )
+            return 0;
+        v = args->next();
+        if ( !validUnit( v, FNumber, true ) )
+            return 0;
+        r = QMAX( 0, QMIN( 255, r ) );
+        g = QMAX( 0, QMIN( 255, g ) );
+        b = QMAX( 0, QMIN( 255, b ) );
+        int a = (int)(QMAX( 0, QMIN( 1.0f, v->fValue ) ) * 255);
+        c = qRgba( r, g, b, a );
+    }    
 
-    if ( c != khtml::invalidColor )
-	return new CSSPrimitiveValueImpl(c);
-    return 0;
+    return new CSSPrimitiveValueImpl(c);
 }
 
+// This class tracks parsing state for shadow values.  If it goes out of scope (e.g., due to an early return)
+// without the allowBreak bit being set, then it will clean up all of the objects and destroy them.
+struct ShadowParseContext {
+    ShadowParseContext()
+    :values(0), x(0), y(0), blur(0), color(0),
+     allowX(true), allowY(false), allowBlur(false), allowColor(true),
+     allowBreak(true)
+    {}
+
+    ~ShadowParseContext() {
+        if (!allowBreak) {
+            delete values;
+            delete x;
+            delete y;
+            delete blur;
+            delete color;
+        }
+    }
+
+    bool allowLength() { return allowX || allowY || allowBlur; }
+
+    bool failed() { return allowBreak = false; }
+    
+    void commitValue() {
+        // Handle the ,, case gracefully by doing nothing.
+        if (x || y || blur || color) {
+            if (!values)
+                values = new CSSValueListImpl();
+            
+            // Construct the current shadow value and add it to the list.
+            values->append(new ShadowValueImpl(x, y, blur, color));
+        }
+        
+        // Now reset for the next shadow value.
+        x = y = blur = color = 0;
+        allowX = allowColor = allowBreak = true;
+        allowY = allowBlur = false;  
+    }
+
+    void commitLength(Value* v) {
+        CSSPrimitiveValueImpl* val = new CSSPrimitiveValueImpl(v->fValue,
+                                                               (CSSPrimitiveValue::UnitTypes)v->unit);
+        if (allowX) {
+            x = val;
+            allowX = false; allowY = true; allowColor = false; allowBreak = false;
+        }
+        else if (allowY) {
+            y = val;
+            allowY = false; allowBlur = true; allowColor = true; allowBreak = true;
+        }
+        else if (allowBlur) {
+            blur = val;
+            allowBlur = false;
+        }
+    }
+
+    void commitColor(CSSPrimitiveValueImpl* val) {
+        color = val;
+        allowColor = false;
+        if (allowX)
+            allowBreak = false;
+        else
+            allowBlur = false;
+    }
+    
+    CSSValueListImpl* values;
+    bool succeeded;
+    CSSPrimitiveValueImpl* x;
+    CSSPrimitiveValueImpl* y;
+    CSSPrimitiveValueImpl* blur;
+    CSSPrimitiveValueImpl* color;
+
+    bool allowX;
+    bool allowY;
+    bool allowBlur;
+    bool allowColor;
+    bool allowBreak;
+};
+
+bool CSSParser::parseShadow( int propId, bool important )
+{
+    ShadowParseContext context;
+    Value* val;
+    while ((val = valueList->current())) {
+        // Check for a comma break first.
+        if (val->unit == Value::Operator) {
+            if (val->iValue != ',' || !context.allowBreak)
+                // Other operators aren't legal or we aren't done with the current shadow
+                // value.  Treat as invalid.
+                return context.failed();
+            
+            // The value is good.  Commit it.
+            context.commitValue();
+        }
+        // Check to see if we're a length.
+        else if (validUnit(val, FLength, true)) {
+            // We required a length and didn't get one. Invalid.
+            if (!context.allowLength())
+                return context.failed();
+
+            // A length is allowed here.  Construct the value and add it.
+            context.commitLength(val);
+        }
+        else {
+            // The only other type of value that's ok is a color value.
+            CSSPrimitiveValueImpl* parsedColor = 0;
+            bool isColor = (val->id >= CSS_VAL_AQUA && val->id <= CSS_VAL_WINDOWTEXT || val->id == CSS_VAL_MENU ||
+                            (val->id >= CSS_VAL_GREY && val->id <= CSS_VAL__KONQ_TEXT && (nonCSSHint|!strict)));
+            if (isColor) {
+                if (!context.allowColor)
+                    return context.failed();
+                parsedColor = new CSSPrimitiveValueImpl(id);
+            }
+
+            if (!parsedColor)
+                // It's not built-in. Try to parse it as a color.
+                parsedColor = parseColorFromValue(val);
+
+            if (!parsedColor || !context.allowColor)
+                return context.failed(); // This value is not a color or length and is invalid or
+                                         // it is a color, but a color isn't allowed at this point.
+            
+            context.commitColor(parsedColor);
+        }
+        
+        valueList->next();
+    }
+
+    if (context.allowBreak) {
+        context.commitValue();
+        if (context.values->length()) {
+            addProperty(propId, context.values, important);
+            valueList->next();
+            return true;
+        }
+    }
+    
+    return context.failed();
+}
 
 static inline int yyerror( const char *str ) {
 #ifdef CSS_DEBUG

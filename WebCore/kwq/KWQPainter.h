@@ -107,6 +107,9 @@ public:
         
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
+
+    void setShadow(int x, int y, int blur, const QColor& color);
+    void clearShadow();
     
 private:
     // no copying or assignment
@@ -116,6 +119,9 @@ private:
     void _setColorFromBrush();
     void _setColorFromPen();
 
+    // A fillRect designed to work around buggy behavior in NSRectFill.
+    void _fillRect(float x, float y, float w, float h, const QColor& color);
+    
     void _drawPoints(const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
 
     void _updateRenderer(NSString **families);

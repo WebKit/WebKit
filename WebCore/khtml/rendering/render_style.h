@@ -54,6 +54,7 @@
 
 namespace DOM {
     class DOMStringImpl;
+    class ShadowValueImpl;
 }
 
 namespace khtml {
@@ -348,8 +349,6 @@ public:
     short counter_increment; //ok, so these are not visual mode spesific
     short counter_reset;     //can't go to inherited, since these are not inherited
 
-    float opacity;         // Whether or not we're transparent.
-    
     QPalette palette;      //widget styling with IE attributes
 };
 
@@ -411,14 +410,67 @@ public:
     EBoxLines lines : 1;
 };
 
+// This struct holds information about shadows for the text-shadow and box-shadow properties.
+struct ShadowData {
+    ShadowData(int _x, int _y, int _blur, const QColor& _color)
+    :x(_x), y(_y), blur(_blur), color(_color), next(0) {}
+    ShadowData(const ShadowData& o);
+    
+    ~ShadowData() { delete next; }
+
+    bool operator==(const ShadowData& o) const;
+    bool operator!=(const ShadowData &o) const {
+        return !(*this == o);
+    }
+    
+    int x;
+    int y;
+    int blur;
+    QColor color;
+    ShadowData* next;
+};
+
+// This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
+// we save space, and only allocate this object when someone actually uses
+// a non-inherited CSS3 property.
+class StyleCSS3NonInheritedData : public Shared<StyleCSS3NonInheritedData>
+{
+public:
+    StyleCSS3NonInheritedData();
+    ~StyleCSS3NonInheritedData() {}
+    StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o);
+
+    bool operator==(const StyleCSS3NonInheritedData& o) const;
+    bool operator!=(const StyleCSS3NonInheritedData &o) const {
+        return !(*this == o);
+    }
+    
+    float opacity;         // Whether or not we're transparent.
+    DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
+};
+
+// This struct is for rarely used inherited CSS3 properties.  By grouping them together,
+// we save space, and only allocate this object when someone actually uses
+// a non-inherited CSS3 property.
+class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>
+{
+public:
+    StyleCSS3InheritedData();
+    ~StyleCSS3InheritedData() {}
+    StyleCSS3InheritedData(const StyleCSS3InheritedData& o);
+
+    bool operator==(const StyleCSS3InheritedData& o) const;
+    bool operator!=(const StyleCSS3InheritedData &o) const {
+        return !(*this == o);
+    }
+    bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
+
+    ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
+};
+
 //------------------------------------------------
 // Inherited attributes.
 //
-// the inherited-decoration and inherited-shadow attributes
-// are inherited from the
-// first parent which is block level
-//
-// this applies to decoration_color too
 
 enum EWhiteSpace {
     NORMAL, PRE, NOWRAP, KONQ_NOWRAP
@@ -523,7 +575,7 @@ struct ContentData {
 
     ContentData* _nextContent;
 };
-
+    
 //------------------------------------------------
 
 enum EDisplay {
@@ -622,11 +674,12 @@ protected:
     DataRef<StyleVisualData> visual;
     DataRef<StyleBackgroundData> background;
     DataRef<StyleSurroundData> surround;
-    DataRef<StyleFlexibleBoxData> flexible_box;
+    DataRef<StyleCSS3NonInheritedData> css3NonInheritedData;
     
 // inherited attributes
+    DataRef<StyleCSS3InheritedData> css3InheritedData;
     DataRef<StyleInheritedData> inherited;
-
+    
 // list of associated pseudo styles
     RenderStyle* pseudoStyle;
 
@@ -832,17 +885,19 @@ public:
     CachedImage *cursorImage() const { return inherited->cursor_image; }
 
     // CSS3 Getter Methods
-    float opacity() { return visual->opacity; }
-    EBoxAlignment boxAlign() { return flexible_box->align; }
+    ShadowData* textShadow() const { return css3InheritedData->textShadow; }
+    float opacity() { return css3NonInheritedData->opacity; }
+    EBoxAlignment boxAlign() { return css3NonInheritedData->flexibleBox->align; }
     EBoxDirection boxDirection() { return inherited_flags._box_direction; }
-    float boxFlex() { return flexible_box->flex; }
-    unsigned int boxFlexGroup() { return flexible_box->flex_group; }
-    EBoxLines boxLines() { return flexible_box->lines; }
-    unsigned int boxOrdinalGroup() { return flexible_box->ordinal_group; }
-    EBoxOrient boxOrient() { return flexible_box->orient; }
-    EBoxAlignment boxPack() { return flexible_box->pack; }
-    int boxFlexedHeight() { return flexible_box->flexed_height; }
-    
+    float boxFlex() { return css3NonInheritedData->flexibleBox->flex; }
+    unsigned int boxFlexGroup() { return css3NonInheritedData->flexibleBox->flex_group; }
+    EBoxLines boxLines() { return css3NonInheritedData->flexibleBox->lines; }
+    unsigned int boxOrdinalGroup() { return css3NonInheritedData->flexibleBox->ordinal_group; }
+    EBoxOrient boxOrient() { return css3NonInheritedData->flexibleBox->orient; }
+    EBoxAlignment boxPack() { return css3NonInheritedData->flexibleBox->pack; }
+    int boxFlexedHeight() { return css3NonInheritedData->flexibleBox->flexed_height; }
+    // End CSS3 Getters
+
 // attribute setter methods
 
     void setDisplay(EDisplay v) {  noninherited_flags._effectiveDisplay = v; }
@@ -983,16 +1038,18 @@ public:
     void setZIndex(int v) { SET_VAR(box, z_auto, false); SET_VAR(box,z_index,v) }
 
     // CSS3 Setters
-    void setOpacity(float f) { SET_VAR(visual, opacity, f); }
-    void setBoxAlign(EBoxAlignment a) { SET_VAR(flexible_box, align, a); }
+    void setTextShadow(ShadowData* val, bool add=false);
+    void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }
+    void setBoxAlign(EBoxAlignment a) { SET_VAR(css3NonInheritedData.access()->flexibleBox, align, a); }
     void setBoxDirection(EBoxDirection d) { inherited_flags._box_direction = d; }
-    void setBoxFlex(float f) { SET_VAR(flexible_box, flex, f); }
-    void setBoxFlexGroup(unsigned int fg) { SET_VAR(flexible_box, flex_group, fg); }
-    void setBoxLines(EBoxLines l) { SET_VAR(flexible_box, lines, l); }
-    void setBoxOrdinalGroup(unsigned int og) { SET_VAR(flexible_box, ordinal_group, og); }
-    void setBoxOrient(EBoxOrient o) { SET_VAR(flexible_box, orient, o); }
-    void setBoxPack(EBoxAlignment p) { SET_VAR(flexible_box, pack, p); }
-    void setBoxFlexedHeight(int h) { SET_VAR(flexible_box, flexed_height, h); }
+    void setBoxFlex(float f) { SET_VAR(css3NonInheritedData.access()->flexibleBox, flex, f); }
+    void setBoxFlexGroup(unsigned int fg) { SET_VAR(css3NonInheritedData.access()->flexibleBox, flex_group, fg); }
+    void setBoxLines(EBoxLines l) { SET_VAR(css3NonInheritedData.access()->flexibleBox, lines, l); }
+    void setBoxOrdinalGroup(unsigned int og) { SET_VAR(css3NonInheritedData.access()->flexibleBox, ordinal_group, og); }
+    void setBoxOrient(EBoxOrient o) { SET_VAR(css3NonInheritedData.access()->flexibleBox, orient, o); }
+    void setBoxPack(EBoxAlignment p) { SET_VAR(css3NonInheritedData.access()->flexibleBox, pack, p); }
+    void setBoxFlexedHeight(int h) { SET_VAR(css3NonInheritedData.access()->flexibleBox, flexed_height, h); }
+    // End CSS3 Setters
     
     QPalette palette() const { return visual->palette; }
     void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);

@@ -322,6 +322,22 @@ public:
     CSSValueListImpl *family;
 };
 
+// Used for text-shadow and box-shadow
+class ShadowValueImpl : public CSSValueImpl
+{
+public:
+    ShadowValueImpl(CSSPrimitiveValueImpl* _x, CSSPrimitiveValueImpl* _y,
+                    CSSPrimitiveValueImpl* _blur, CSSPrimitiveValueImpl* _color);
+    virtual ~ShadowValueImpl();
+
+    virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
+
+    CSSPrimitiveValueImpl* x;
+    CSSPrimitiveValueImpl* y;
+    CSSPrimitiveValueImpl* blur;
+    CSSPrimitiveValueImpl* color;
+};
+    
 // ------------------------------------------------------------------------------
 
 // another helper class

@@ -169,11 +169,9 @@ void QPainter::drawRect(int x, int y, int w, int h)
     if (data->state.paintingDisabled)
         return;
         
-    if (data->state.brush.style() != NoBrush) {
-        _setColorFromBrush();
-        
-        NSRectFillUsingOperation (NSMakeRect(x,y,w,h), NSCompositeSourceOver);
-    }
+    if (data->state.brush.style() != NoBrush)
+        _fillRect(x, y, w, h, data->state.brush.color());
+
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
         NSFrameRect(NSMakeRect(x, y, w, h));
@@ -195,7 +193,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
     if (data->state.paintingDisabled)
         return;
-        
+
     PenStyle penStyle = data->state.pen.style();
     if (penStyle == NoPen)
         return;
@@ -251,6 +249,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     }
 
     _setColorFromPen();
+    
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     BOOL flag = [graphicsContext shouldAntialias];
     [graphicsContext setShouldAntialias: NO];
@@ -259,12 +258,12 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
         if (x1 == x2) {
-            NSRectFill(NSMakeRect(p1.x-width/2, p1.y-width, width, width));
-            NSRectFill(NSMakeRect(p2.x-width/2, p2.y, width, width));
+            _fillRect(p1.x-width/2, p1.y-width, width, width, data->state.pen.color());
+            _fillRect(p2.x-width/2, p2.y, width, width, data->state.pen.color());
         }
         else {
-            NSRectFill(NSMakeRect(p1.x-width, p1.y-width/2, width, width));
-            NSRectFill(NSMakeRect(p2.x, p2.y-width/2, width, width));
+            _fillRect(p1.x-width, p1.y-width/2, width, width, data->state.pen.color());
+            _fillRect(p2.x, p2.y-width/2, width, width, data->state.pen.color());
         }
         
         // Example: 80 pixels with a width of 30 pixels.
@@ -533,15 +532,19 @@ QColor QPainter::selectedTextBackgroundColor() const
     return QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
+void QPainter::_fillRect(float x, float y, float w, float h, const QColor& col)
+{
+    [col.getNSColor() set];
+    NSRectFillUsingOperation(NSMakeRect(x,y,w,h), NSCompositeSourceOver);
+}
+
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
     if (data->state.paintingDisabled)
         return;
-    
-    if (brush.style() == SolidPattern) {
-        [brush.color().getNSColor() set];
-        NSRectFill(NSMakeRect(x, y, w, h));
-    }
+
+    if (brush.style() == SolidPattern)
+        _fillRect(x, y, w, h, brush.color());
 }
 
 void QPainter::addClip(const QRect &rect)
@@ -571,13 +574,28 @@ bool QPainter::paintingDisabled() const
 void QPainter::beginTransparencyLayer(float opacity)
 {
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
-    CGContextBeginTransparencyLayer(context, 0);
     CGContextSetAlpha(context, opacity);
+    CGContextBeginTransparencyLayer(context, 0);
 }
 
 void QPainter::endTransparencyLayer()
 {
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextEndTransparencyLayer(context);
+}
+
+void QPainter::setShadow(int x, int y, int blur, const QColor& color)
+{
+    // FIXME: When CG supports setting the shadow color, we will use it here. An invalid
+    // color should be checked for, as this means that the color was not set for the shadow
+    // and we should therefore do nothing in that case.
+    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
+}
+
+void QPainter::clearShadow()
+{
+    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextSetShadow(context, CGSizeZero, 0);
 }
 

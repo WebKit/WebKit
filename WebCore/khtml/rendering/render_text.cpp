@@ -681,17 +681,35 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
             if(_style->color() != p->pen().color())
                 p->setPen(_style->color());
 
+#if APPLE_CHANGES
+            // Set a text shadow if we have one.
+            // FIXME: Support multiple shadow effects.  Need more from the CG API before
+            // we can do this.
+            bool setShadow = false;
+            if (_style->textShadow()) {
+                p->setShadow(_style->textShadow()->x, _style->textShadow()->y,
+                             _style->textShadow()->blur, _style->textShadow()->color);
+                setShadow = true;
+            }
+#endif
+            
             if (s->m_len > 0) {
                 bool paintSelectedTextOnly = (paintAction == PaintActionSelection);
                 bool paintSelectedTextSeparately = false; // Whether or not we have to do multiple paints.  Only
                                                // necessary when a custom ::selection foreground color is applied.
                 QColor selectionColor = p->pen().color();
+                ShadowData* selectionTextShadow = 0;
                 if (haveSelection) {
                     RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::SELECTION);
-                    if (pseudoStyle && pseudoStyle->color() != selectionColor) {
-                        if (!paintSelectedTextOnly)
-                            paintSelectedTextSeparately = true;
-                        selectionColor = pseudoStyle->color();
+                    if (pseudoStyle) {
+                        if (pseudoStyle->color() != selectionColor || pseudoStyle->textShadow()) {
+                            if (!paintSelectedTextOnly)
+                                paintSelectedTextSeparately = true;
+                            if (pseudoStyle->color() != selectionColor)
+                                selectionColor = pseudoStyle->color();
+                            if (pseudoStyle->textShadow())
+                                selectionTextShadow = pseudoStyle->textShadow();
+                        }
                     }
                 }
                 
@@ -724,14 +742,25 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                     if ( sPos < ePos ) {
                         if (selectionColor != p->pen().color())
                             p->setPen(selectionColor);
-                        
+
+#if APPLE_CHANGES
+                        if (selectionTextShadow)
+                            p->setShadow(selectionTextShadow->x,
+                                         selectionTextShadow->y,
+                                         selectionTextShadow->blur,
+                                         selectionTextShadow->color);
+#endif                       
                         font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
                                        str->l, s->m_start, s->m_len,
                                        s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos);
+#if APPLE_CHANGES
+                        if (selectionTextShadow)
+                            p->clearShadow();
+#endif
                     }
                 } 
             }
-
+            
             if (d != TDNONE && paintAction == PaintActionForeground &&
                 style()->htmlHacks()) {
                 p->setPen(_style->color());
@@ -739,6 +768,9 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
             }
 
 #if APPLE_CHANGES
+            if (setShadow)
+                p->clearShadow();
+            
             } // drawText
 #endif
 

@@ -885,6 +885,9 @@ bool NodeImpl::childAllowed( NodeImpl *newChild )
 
 NodeImpl::StyleChange NodeImpl::diff( khtml::RenderStyle *s1, khtml::RenderStyle *s2 ) const
 {
+    // FIXME: The behavior of this function is just totally wrong.  It doesn't handle
+    // explicit inheritance of non-inherited properties and so you end up not re-resolving
+    // style in cases where you need to.
     StyleChange ch = NoInherit;
     if ( !s1 || !s2 )
 	ch = Inherit;

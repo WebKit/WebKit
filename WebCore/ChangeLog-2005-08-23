@@ -1,3 +1,98 @@
+2003-07-14  Dave Hyatt  <hyatt@apple.com>
+
+	Fix a problem where ems used for non-font values like width
+	and line-height would not zoom. (r=darin)
+
+	The rest is r=rjw.
+	
+	An implementation of the CSS2 text-shadow property. 
+
+	It uses a CoreGraphics API for drawing shadows 
+	(via a custom API on QPainter) to paint the shadows.
+
+        At the moment there are two limitations in CG's API.  The first
+        is that the shadow color cannot be set.  This will be fixed for
+        Panther, and the code passes the color through in preparation
+        for this fix.
+
+	The second limitation is that CG only supports one shadow effect
+	and not multiple shadow effects.  The parsing code on the CSS
+        side is set up to go ahead and parse all of the shadow effects,
+        but the code that makes use of shadows will simply look at the
+        first one for now.  CG will not support multiple shadow effects
+        in the Panther time frame, so it will be a while before this
+        is revisited.
+
+	This patch also fixes a slew of bugs with colors in KHTML.  When
+	we took the CSS parser and all of its associated code from Lars,
+	that code was using QRgb values that assumed RGBA (like the current
+	Qt toolkit uses).  The code even made use of an "invalid color"
+	that wasn't really invalid (kind of like the z-index hack we refused
+	to take, i.e., unlikely but not invalid).
+
+	Our KWQColor implementation has been rewritten in this patch to
+	work the way the current Qt toolkit expects.  That is, the top
+	eight bits actually do contain an alpha channel, and you can obtain
+	the alpha component using the qAlpha method and build a quadruple
+	using the qRgba method.
+
+	This patch adds support for rgba quadruples to CSS, so you can now
+	say, e.g.,color: rgba(255,0,0,0.5); in CSS.
+	
+        * khtml/css/css_valueimpl.cpp:
+        (ShadowValueImpl::~ShadowValueImpl):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (parseColor):
+        (CSSParser::parseColor):
+        (CSSParser::parseColorFromValue):
+        (CSSParser::parseShadow):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/misc/helper.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::paintDecorations):
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData):
+        (opacity):
+        (flexibleBox):
+        (StyleCSS3NonInheritedData::operator==):
+        (textShadow):
+        (StyleCSS3InheritedData):
+        (StyleCSS3InheritedData::operator==):
+        (StyleCSS3InheritedData::shadowDataEquivalent):
+        (RenderStyle::RenderStyle):
+        (RenderStyle::inheritFrom):
+        (RenderStyle::operator==):
+        (RenderStyle::inheritedNotEqual):
+        (RenderStyle::diff):
+        (ContentData::clearContent):
+        (RenderStyle::setTextShadow):
+        (ShadowData::operator==):
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::diff):
+        * kwq/KWQColor.h:
+        * kwq/KWQColor.mm:
+        (qRgb):
+        (qRgba):
+        (qAlpha):
+        (QColor::QColor):
+        (QColor::setNamedColor):
+        (QColor::getNSColor):
+        * kwq/KWQNamespace.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawRect):
+        (QPainter::drawLine):
+        (QPainter::_fillRect):
+        (QPainter::fillRect):
+        (QPainter::setShadow):
+        (QPainter::clearShadow):
+
 2003-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

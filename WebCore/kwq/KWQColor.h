@@ -34,30 +34,30 @@
 class NSColor;
 #endif
 
-typedef unsigned int QRgb;			// RGB triplet
+typedef unsigned int QRgb;			// RGBA quadruplet
 
 QRgb qRgb(int r, int g, int b);
-
-const QRgb KWQInvalidColor = 0x40000000;
+QRgb qRgba(int r, int g, int b, int a);
+int qAlpha(QRgb rgba);
 
 class QColor {
 public:
-    QColor() : color(KWQInvalidColor) { }
-    QColor(QRgb col) : color(col) { }
-    QColor(int r, int g, int b) : color(qRgb(r, g, b)) { }
+    QColor() : color(0), valid(false) { }
+    QColor(QRgb col) : color(col), valid(true) { }
+    QColor(int r, int g, int b) : color(qRgb(r, g, b)), valid(true) { }
     explicit QColor(const char *);
     
     QString name() const;
     void setNamedColor(const QString&);
 
-    bool isValid() const { return color != KWQInvalidColor; }
+    bool isValid() const { return valid; }
 
     int red() const { return (color >> 16) & 0xFF; }
     int green() const { return (color >> 8) & 0xFF; }
     int blue() const { return color & 0xFF; }
-    QRgb rgb() const { return color & 0xFFFFFF; }
-    void setRgb(int r, int g, int b) { color = qRgb(r, g, b); }
-    void setRgb(int rgb) { color = rgb; }
+    QRgb rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
+    void setRgb(int r, int g, int b) { color = qRgb(r, g, b); valid = true; }
+    void setRgb(int rgb) { color = rgb; valid = true; /* Alpha may be set. Preserve it. */ }
 
     void hsv(int *, int *, int *) const;
     void setHsv(int h, int s, int v);
@@ -72,6 +72,7 @@ public:
 
 private:
     QRgb color;
+    bool valid : 1;
 };
 
 inline bool operator==(const QColor &a, const QColor &b)

@@ -40,13 +40,29 @@ QRgb qRgb(int r, int g, int b)
     if (r < 0) r = 0; else if (r > 255) r = 255;
     if (g < 0) g = 0; else if (g > 255) g = 255;
     if (b < 0) b = 0; else if (b > 255) b = 255;
-    return r << 16 | g << 8 | b;
+    return (r << 16 | g << 8 | b) | 0xFF000000;
+}
+
+QRgb qRgba(int r, int g, int b, int a)
+{
+    if (r < 0) r = 0; else if (r > 255) r = 255;
+    if (g < 0) g = 0; else if (g > 255) g = 255;
+    if (b < 0) b = 0; else if (b > 255) b = 255;
+    if (a < 0) a = 0; else if (a > 255) a = 255;
+    return (a << 24 | r << 16 | g << 8 | b);
+}
+
+int qAlpha(QRgb rgba)
+{
+    return (rgba >> 24) & 0xFF; 
 }
 
 QColor::QColor(const char *name)
 {
     const Color *foundColor = findColor(name, strlen(name));
-    color = foundColor ? foundColor->RGBValue : KWQInvalidColor;
+    color = foundColor ? foundColor->RGBValue : 0;
+    color |= 0xFF000000;
+    valid = foundColor;
 }
 
 QString QColor::name() const
@@ -59,7 +75,9 @@ QString QColor::name() const
 void QColor::setNamedColor(const QString &name)
 {
     const Color *foundColor = name.isAllASCII() ? findColor(name.latin1(), name.length()) : 0;
-    color = foundColor ? foundColor->RGBValue : KWQInvalidColor;
+    color = foundColor ? foundColor->RGBValue : 0;
+    color |= 0xFF000000;
+    valid = foundColor;
 }
 
 void QColor::hsv(int *h, int *s, int *v) const
@@ -196,7 +214,7 @@ QColor QColor::dark(int factor) const
 
 NSColor *QColor::getNSColor() const
 {
-    unsigned c = color & 0xFFFFFF;
+    unsigned c = color & 0xFFFFFFFF;
     switch (c) {
         case Qt::black: {
             static NSColor *blackColor = [[NSColor blackColor] retain];
@@ -208,11 +226,11 @@ NSColor *QColor::getNSColor() const
         }
         default: {
             const int cacheSize = 32;
-            static unsigned cachedRGBValues[cacheSize];
+            static unsigned cachedRGBAValues[cacheSize];
             static NSColor *cachedColors[cacheSize];
 
             for (int i = 0; i != cacheSize; ++i) {
-                if (cachedRGBValues[i] == c) {
+                if (cachedRGBAValues[i] == c) {
                     return cachedColors[i];
                 }
             }
@@ -220,10 +238,10 @@ NSColor *QColor::getNSColor() const
             NSColor *result = [NSColor colorWithCalibratedRed:red() / 255.0
                                                         green:green() / 255.0
                                                          blue:blue() / 255.0
-                                                        alpha:1.0];
+                                                        alpha: qAlpha(color)/255.0];
 
             static int cursor;
-            cachedRGBValues[cursor] = c;
+            cachedRGBAValues[cursor] = c;
             [cachedColors[cursor] autorelease];
             cachedColors[cursor] = [result retain];
             if (++cursor == cacheSize) {

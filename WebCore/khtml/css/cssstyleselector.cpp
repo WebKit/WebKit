@@ -2179,12 +2179,9 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                 }
                 else
                     col = colorForCSSValue( ident );
-            } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR ) {
-#if !APPLE_CHANGES
-                if(qAlpha(primitiveValue->getRGBColorValue()))
-#endif
+            } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR )
                     col.setRgb(primitiveValue->getRGBColorValue());
-            } else {
+            else {
                 return;
             }
         }
@@ -3107,6 +3104,41 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         break;
 
     // CSS3 Properties
+    case CSS_PROP_TEXT_SHADOW: {
+        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
+            if (!parentNode) return;
+            style->setTextShadow(parentStyle->textShadow() ? new ShadowData(*parentStyle->textShadow()) : 0);
+            return;
+        }
+
+        if (primitiveValue) { // none
+            style->setTextShadow(0);
+            return;
+        }
+        
+        if (!value->isValueList()) return;
+        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+        int len = list->length();
+        for (int i = 0; i < len; i++) {
+            ShadowValueImpl *item = static_cast<ShadowValueImpl*>(list->item(i));
+
+            int x = item->x->computeLength(style, paintDeviceMetrics, this);
+            int y = item->y->computeLength(style, paintDeviceMetrics, this);
+            int blur = item->blur ? item->blur->computeLength(style, paintDeviceMetrics, this) : 0;
+            QColor col = khtml::transparentColor;
+            if (item->color) {
+                int ident = item->color->getIdent();
+                if (ident)
+                    col = colorForCSSValue( ident );
+                else if (item->color->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+                    col.setRgb(primitiveValue->getRGBColorValue());
+            }
+            ShadowData* shadowData = new ShadowData(x, y, blur, col);
+            style->setTextShadow(shadowData, i != 0);
+        }
+
+        return;
+    }
     case CSS_PROP_OPACITY:
         if (value->cssValueType() == CSSValue::CSS_INHERIT) {
             if (!parentNode) return;
