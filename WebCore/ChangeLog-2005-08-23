@@ -1,3 +1,12 @@
+2003-07-29  Richard Williamson   <rjw@apple.com>
+
+	Use the new KURL getNSURL() method to create an NSURL.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+
 2003-07-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

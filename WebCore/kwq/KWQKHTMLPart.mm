@@ -2016,10 +2016,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                     if (linkStartNode && n.handle() == linkStartNode){
                         DOMString href = khtml::parseURL(linkStartNode->getAttribute(ATTR_HREF));
                         KURL kURL = KWQ(linkStartNode->getDocument()->view()->part())->completeURL(href.string());
-                        NSString *URLString = kURL.url().getNSString();
                         
-                        // FIXME:  create URL using new CFURL API when ready.  see Ken.
-                        NSURL *URL = [NSURL URLWithString:URLString];
+                        NSURL *URL = kURL.getNSURL();
                         [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
                         linkStartNode = 0;
                     }
