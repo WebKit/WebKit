@@ -321,7 +321,7 @@ static void URLFileReaderInit(void)
 +(NSString *)uniqueFilePathForKey:(id)key;
 -(void)writeSizeFile:(unsigned)value;
 -(unsigned)readSizeFile;
--(void)truncateToSizeLimit:(unsigned)size;
+-(void)_truncateToSizeLimit:(unsigned)size;
 
 @end
 
@@ -403,7 +403,7 @@ static void URLFileReaderInit(void)
     return result;
 }
 
--(void)truncateToSizeLimit:(unsigned)size
+-(void)_truncateToSizeLimit:(unsigned)size
 {
     NSFileManager *defaultManager;
     NSDictionary *attributes;
@@ -432,7 +432,7 @@ static void URLFileReaderInit(void)
                 fileSize = [attributes objectForKey:NSFileSize];
                 if (fileSize) {
                     usage -= [fileSize unsignedIntValue];
-                    LOG(DiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %@", size, usage, [fileSize unsignedIntValue], spec->path);
+                    LOG(DiskCacheActivity, "_truncateToSizeLimit - %u - %u - %u, %@", size, usage, [fileSize unsignedIntValue], spec->path);
                     [defaultManager removeFileAtPath:spec->path handler:nil];
                 }
             }
@@ -666,7 +666,7 @@ static void databaseInit()
     // update usage and truncate before writing file
     // this has the effect of _always_ keeping disk usage under sizeLimit by clearing away space in anticipation of the write.
     usage += [data length];
-    [self truncateToSizeLimit:[self sizeLimit]];
+    [self _truncateToSizeLimit:[self sizeLimit]];
 
     result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
@@ -834,7 +834,7 @@ static void databaseInit()
 {
     sizeLimit = limit;
     if (limit < usage) {
-        [self truncateToSizeLimit:limit];
+        [self _truncateToSizeLimit:limit];
     }
 }
 
