@@ -1,3 +1,19 @@
+2002-09-19  Richard Williamson   <rjw@apple.com>
+
+        Implemented double and triple click selection.
+        
+        * khtml/khtml_events.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::customEvent):
+        (KHTMLPart::khtmlMouseDoubleClickEvent):
+        (firstSlaveAt):
+        (lastSlaveAt):
+        (KHTMLPart::khtmlMouseTripleClickEvent):
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_text.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseUp:]):
+
 2002-09-19  Darin Adler  <darin@apple.com>
 
 	- fixed 3045651 -- null-dereference in DOM::CharacterDataImpl constructor

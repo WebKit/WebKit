@@ -3898,6 +3898,14 @@ void KHTMLPart::customEvent( QCustomEvent *event )
     return;
   }
 
+#ifdef APPLE_CHANGES
+  if ( khtml::MouseTripleClickEvent::test( event ) )
+  {
+    khtmlMouseTripleClickEvent( static_cast<khtml::MouseTripleClickEvent *>( event ) );
+    return;
+  }
+#endif
+
   if ( khtml::MouseMoveEvent::test( event ) )
   {
     khtmlMouseMoveEvent( static_cast<khtml::MouseMoveEvent *>( event ) );
@@ -3978,13 +3986,191 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
   }
 }
 
-void KHTMLPart::khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * )
+void KHTMLPart::khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent *event)
 {
+#ifdef APPLE_CHANGES
+    QMouseEvent *_mouse = event->qmouseEvent();
+    DOM::Node innerNode = event->innerNode();
+    
+    d->m_selectionStart = 0;
+    d->m_selectionEnd = 0;
+    d->m_startOffset = 0;
+    d->m_endOffset = 0;
+
+    if ( _mouse->button() == LeftButton ){
+        if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
+            int startOffset = 0, endOffset = 0;
+            DOM::NodeImpl* node = 0;
+            
+            innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+                                        event->absX()-innerNode.handle()->renderer()->xPos(),
+                                        event->absY()-innerNode.handle()->renderer()->yPos(), 
+                                        node, startOffset);
+            
+            if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)){
+                DOMString t = node->nodeValue();
+                QChar *chars = t.unicode();
+                uint len = t.length();
+                
+                if (chars[startOffset] == ' '){
+                    int pos = startOffset;
+                    while (chars[pos].isSpace() && pos >= 0)
+                        pos--;
+                    startOffset = pos+1;
+                    pos = startOffset;
+                    while (chars[pos].isSpace() && pos < (int)len)
+                        pos++;
+                    endOffset = pos;
+                }
+                else {
+                    int pos = startOffset;
+                    while (!chars[pos].isSpace() && pos >= 0)
+                        pos--;
+                    startOffset = pos+1;
+                    pos = startOffset;
+                    while (!chars[pos].isSpace() && pos < (int)len)
+                        pos++;
+                    endOffset = pos;
+                }
+                d->m_startBeforeEnd = true;
+                d->m_selectionStart = node;
+                d->m_startOffset = startOffset;
+                d->m_selectionEnd = d->m_selectionStart;
+                d->m_endOffset = endOffset;
+            }
+        }
+    }
+    if (d->m_selectionStart == 0)
+        d->m_doc->clearSelection();
+    else
+        d->m_doc->setSelection(d->m_selectionStart.handle(), d->m_startOffset,
+                d->m_selectionEnd.handle(),d->m_endOffset);
+                
+    emitSelectionChanged();
+    startAutoScroll();
+#endif
 }
 
 #ifdef APPLE_CHANGES
-void KHTMLPart::khtmlMouseTripleClickEvent( khtml::MouseTripleClickEvent * )
+static bool firstSlaveAt (khtml::RenderObject *renderNode, int y, DOM::NodeImpl*&startNode, int &startOffset)
 {
+    bool found = false;
+    
+    if (renderNode == 0)
+        return false;
+        
+    khtml::RenderText *textRenderer =  static_cast<khtml::RenderText *>(renderNode);
+    khtml::TextSlaveArray slaves = textRenderer->textSlaves();
+    for (int i = 0; i < (int)slaves.count(); i++){
+        if (slaves[i]->m_y == y){
+            startNode = textRenderer->element();
+            startOffset = slaves[i]->m_start;
+            return true;
+        }
+    }
+    
+    found =  firstSlaveAt(renderNode->firstChild(), y, startNode, startOffset);
+    if (found)
+        return found;
+
+    found = firstSlaveAt(renderNode->nextSibling(), y, startNode, startOffset);
+    if (found)
+        return found;
+    
+    return false;
+}
+
+static bool lastSlaveAt (khtml::RenderObject *renderNode, int y, DOM::NodeImpl*&endNode, int &endOffset)
+{
+    bool found = false;
+    
+    if (renderNode == 0)
+        return false;
+        
+    found = lastSlaveAt(renderNode->nextSibling(), y, endNode, endOffset);
+    if (found)
+        return found;
+    
+    found =  lastSlaveAt(renderNode->firstChild(), y, endNode, endOffset);
+    if (found)
+        return found;
+
+    khtml::RenderText *textRenderer =  static_cast<khtml::RenderText *>(renderNode);
+    khtml::TextSlaveArray slaves = textRenderer->textSlaves();
+    for (int i = 0; i < (int)slaves.count(); i++){
+        if (slaves[i]->m_y == y){
+            endNode = textRenderer->element();
+            endOffset = slaves[i]->m_start + slaves[i]->m_len;
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void KHTMLPart::khtmlMouseTripleClickEvent( khtml::MouseTripleClickEvent *event )
+{
+    QMouseEvent *_mouse = event->qmouseEvent();
+    DOM::Node innerNode = event->innerNode();
+    
+    d->m_selectionStart = 0;
+    d->m_selectionEnd = 0;
+    d->m_startOffset = 0;
+    d->m_endOffset = 0;
+
+    if ( _mouse->button() == LeftButton ){
+        if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
+            int startOffset = 0;
+            DOM::NodeImpl* node = 0;
+            
+            innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+                                        event->absX()-innerNode.handle()->renderer()->xPos(),
+                                        event->absY()-innerNode.handle()->renderer()->yPos(), 
+                                        node, startOffset);
+            
+            if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)){
+                int pos;
+                int selectionPointY;
+                khtml::RenderText *renderer = static_cast<khtml::RenderText *>(node->renderer());
+                khtml::TextSlave * slave = renderer->findTextSlave( startOffset, pos );
+                DOMString t = node->nodeValue();
+                DOM::NodeImpl* startNode;
+                DOM::NodeImpl* endNode;
+                int endOffset;
+                
+                selectionPointY = slave->m_y;
+                
+                // Go up to first non-inline element.
+                khtml::RenderObject *renderNode = renderer;
+                while (renderNode && renderNode->isInline())
+                    renderNode = renderNode->parent();
+                
+                renderNode = renderNode->firstChild();
+                
+                // Look for all the first child in the block that is on the same line
+                // as the selection point.
+                firstSlaveAt (renderNode, selectionPointY, startNode, startOffset);
+
+                // Look for all the last child in the block that is on the same line
+                // as the selection point.
+                lastSlaveAt (renderNode, selectionPointY, endNode, endOffset);
+                
+                d->m_startBeforeEnd = true;
+                d->m_selectionStart = startNode;
+                d->m_startOffset = startOffset;
+                d->m_selectionEnd = endNode;
+                d->m_endOffset = endOffset;
+            }
+        }
+    }
+    if (d->m_selectionStart == 0)
+        d->m_doc->clearSelection();
+    else
+        d->m_doc->setSelection(d->m_selectionStart.handle(), d->m_startOffset,
+                d->m_selectionEnd.handle(),d->m_endOffset);
+                
+    emitSelectionChanged();
+    startAutoScroll();
 }
 #endif
 

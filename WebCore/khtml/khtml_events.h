@@ -92,6 +92,7 @@ private:
   static const char *s_strMouseDoubleClickEvent;
 };
 
+#ifdef APPLE_CHANGES
 class MouseTripleClickEvent : public MouseEvent
 {
 public:
@@ -107,6 +108,7 @@ public:
 private:
   static const char *s_strMouseTripleClickEvent;
 };
+#endif
 
 class MouseMoveEvent : public MouseEvent
 {

@@ -73,7 +73,9 @@ namespace khtml
   class MouseEvent;
   class MousePressEvent;
   class MouseDoubleClickEvent;
+#ifdef APPLE_CHANGES
   class MouseTripleClickEvent;
+#endif
   class MouseMoveEvent;
   class MouseReleaseEvent;
   class DrawContentsEvent;
