@@ -344,7 +344,7 @@ void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char
     env->ReleaseStringUTFChars (aJString, s);
 }
 
-JNIType primitiveTypeFromClassName(const char *name)
+JNIType JNITypeFromClassName(const char *name)
 {
     JNIType type;
     
@@ -472,13 +472,13 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
-jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::JavaParameter *aParameter)
+jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName)
 {
     jvalue result;
     double d = 0;
    
     d = value.toNumber(exec);
-    switch (aParameter->getJNIType()){
+    switch (_JNIType){
         case object_type: {
             result.l = (jobject)0;
             
@@ -493,7 +493,7 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::J
             }
             
             // Now convert value to a string if the target type is a java.lang.string.
-            if (result.l == 0 && strcmp(aParameter->type(), "java.lang.String") == 0) {
+            if (result.l == 0 && strcmp(javaClassName, "java.lang.String") == 0) {
                 KJS::UString stringValue = value.toString(exec);
                 JNIEnv *env = getJNIEnv();
                 jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());

@@ -61,6 +61,7 @@ public:
     virtual RuntimeType type() const = 0;
 
     virtual KJS::Value valueFromInstance(const Instance *instance) const = 0;
+    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, KJS::Value aValue) const = 0;
 
     virtual ~Field() {};
 };
@@ -106,6 +107,7 @@ public:
     virtual Class *getClass() const = 0;
     
     virtual KJS::Value getValueOfField (const Field *aField) const;
+    virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, KJS::Value aValue) const;
     
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const Method *method, const KJS::List &args) = 0;
     

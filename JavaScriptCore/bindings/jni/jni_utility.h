@@ -54,10 +54,10 @@ void releaseCharactersForJString (jstring aJString, const char *s);
 const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString);
 void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s);
 
-JNIType primitiveTypeFromClassName(const char *name);
+JNIType JNITypeFromClassName(const char *name);
 const char *signatureFromPrimitiveType(JNIType type);
 
-jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::JavaParameter *aParameter);
+jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName);
 
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
 

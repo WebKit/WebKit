@@ -186,14 +186,17 @@ public:
     }
     
     virtual KJS::Value valueFromInstance(const Instance *instance) const;
+    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, KJS::Value aValue) const;
     
     virtual const char *name() const { return _name.characters(); }
     virtual RuntimeType type() const { return _type.characters(); }
+
+    JNIType getJNIType() const { return _JNIType; }
     
 private:
     JavaString _name;
     JavaString _type;
-    JNIType _primitiveType;
+    JNIType _JNIType;
     JavaInstance *_field;
 };
 

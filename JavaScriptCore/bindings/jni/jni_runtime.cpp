@@ -38,16 +38,16 @@ using namespace Bindings;
 JavaParameter::JavaParameter (JNIEnv *env, jstring type)
 {
     _type = JavaString (env, type);
-    _JNIType = primitiveTypeFromClassName (_type.characters());
+    _JNIType = JNITypeFromClassName (_type.characters());
 };
 
 JavaField::JavaField (JNIEnv *env, jobject aField)
 {
     // Get field type
     jobject fieldType = callJNIObjectMethod (aField, "getType", "()Ljava/lang/Class;");
-    jstring fieldTypeName = (jstring)callJNIObjectMethod (fieldType, "toString", "()Ljava/lang/String;");
+    jstring fieldTypeName = (jstring)callJNIObjectMethod (fieldType, "getName", "()Ljava/lang/String;");
     _type = JavaString(env, fieldTypeName);
-    _primitiveType = primitiveTypeFromClassName (_type.characters());
+    _JNIType = JNITypeFromClassName (_type.characters());
 
     // Get field name
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
@@ -62,7 +62,7 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
     jobject jinstance = instance->javaInstance();
     jobject fieldJInstance = _field->javaInstance();
 
-    switch (_primitiveType) {
+    switch (_JNIType) {
         case object_type: {
             jobject anObject = callJNIObjectMethod(_field->javaInstance(), "get", "(Ljava/lang/Object;)Ljava/lang/Object;", jinstance);
             return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
@@ -98,6 +98,62 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
     return Undefined();
 }
 
+void JavaField::setValueToInstance(KJS::ExecState *exec, const Instance *i, KJS::Value aValue) const
+{
+    const JavaInstance *instance = static_cast<const JavaInstance *>(i);
+    jobject jinstance = instance->javaInstance();
+    jobject fieldJInstance = _field->javaInstance();
+    jvalue javaValue = convertValueToJValue (exec, aValue, _JNIType, type());
+
+    switch (_JNIType) {
+        case object_type: {
+            callJNIVoidMethod(fieldJInstance, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", jinstance, javaValue.l);
+        }
+        break;
+            
+        case boolean_type: {
+            callJNIVoidMethod(fieldJInstance, "setBoolean", "(Ljava/lang/Object;Z)V", jinstance, javaValue.z);
+        }
+        break;
+            
+        case byte_type: {
+            callJNIVoidMethod(fieldJInstance, "setByte", "(Ljava/lang/Object;B)V", jinstance, javaValue.b);
+        }
+        break;
+
+        case char_type: {
+            callJNIVoidMethod(fieldJInstance, "setChar", "(Ljava/lang/Object;C)V", jinstance, javaValue.c);
+        }
+        break;
+
+        case short_type: {
+            callJNIVoidMethod(fieldJInstance, "setShort", "(Ljava/lang/Object;S)V", jinstance, javaValue.s);
+        }
+        break;
+
+        case int_type: {
+            callJNIVoidMethod(fieldJInstance, "setInt", "(Ljava/lang/Object;I)V", jinstance, javaValue.i);
+        }
+        break;
+
+        case long_type: {
+            callJNIVoidMethod(fieldJInstance, "setLong", "(Ljava/lang/Object;J)V", jinstance, javaValue.j);
+        }
+        break;
+
+        case float_type: {
+            callJNIVoidMethod(fieldJInstance, "setFloat", "(Ljava/lang/Object;F)V", jinstance, javaValue.f);
+        }
+        break;
+
+        case double_type: {
+            callJNIVoidMethod(fieldJInstance, "setDouble", "(Ljava/lang/Object;D)V", jinstance, javaValue.d);
+        }
+        break;
+        default:
+        break;
+    }
+}
 
 JavaConstructor::JavaConstructor (JNIEnv *env, jobject aConstructor)
 {
@@ -120,7 +176,7 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
     jobject returnType = callJNIObjectMethod (aMethod, "getReturnType", "()Ljava/lang/Class;");
     jstring returnTypeName = (jstring)callJNIObjectMethod (returnType, "getName", "()Ljava/lang/String;");
     _returnType =JavaString (env, returnTypeName);
-    _JNIReturnType = primitiveTypeFromClassName (_returnType.characters());
+    _JNIReturnType = JNITypeFromClassName (_returnType.characters());
 
     // Get method name
     jstring methodName = (jstring)callJNIObjectMethod (aMethod, "getName", "()Ljava/lang/String;");

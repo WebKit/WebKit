@@ -1,5 +1,34 @@
 2003-12-04  Richard Williamson   <rjw@apple.com>
 
+	LiveConnect:  Added support for setting the value of Java
+	fields.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaField::JavaField):
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        (JavaMethod::JavaMethod):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaField::getJNIType):
+        * bindings/jni/jni_utility.cpp:
+        (JNITypeFromClassName):
+        (convertValueToJValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.cpp:
+        (Instance::setValueOfField):
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::defaultValue):
+
+2003-12-04  Richard Williamson   <rjw@apple.com>
+
 	Added support for string conversions.
 	Changed various JavaString member variables to be inline.
 	Implemented defaultValue for context relevant type coercion.
