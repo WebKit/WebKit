@@ -1,3 +1,12 @@
+2005-02-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3978461> smart paste is broken
+
+        Reviewed by kevin.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): properly check for leading and trailing whitespace. These checks were incorrectly reversed. Also check if we're pasting at the beginning or end of a line. We should not insert spaces in either case.
+
 2005-02-18  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.

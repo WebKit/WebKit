@@ -4335,16 +4335,18 @@ void ReplaceSelectionCommand::doApply()
     // FIXME: We need the affinity for startPos and endPos, but Position::downstream
     // and Position::upstream do not give it
     if (m_smartReplace) {
-        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY).isNotNull();
+        VisiblePosition visiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
+        assert(visiblePos.isNotNull());
+        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY).isNull() && !isFirstVisiblePositionOnLine(visiblePos);
         if (addLeadingSpace) {
-            QChar previousChar = VisiblePosition(startPos, VP_DEFAULT_AFFINITY).previous().character();
+            QChar previousChar = visiblePos.previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
-        addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY).isNotNull();
+        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY).isNull() && !isLastVisiblePositionOnLine(visiblePos);
         if (addTrailingSpace) {
-            QChar thisChar = VisiblePosition(endPos, VP_DEFAULT_AFFINITY).character();
+            QChar thisChar = visiblePos.character();
             if (!thisChar.isNull()) {
                 addTrailingSpace = !part->isCharacterSmartReplaceExempt(thisChar, false);
             }
