@@ -38,6 +38,13 @@
 - (int)minimumFontSize;
 - (void)setMinimumFontSize:(int)size;
 
+- (BOOL)userStyleSheetEnabled;
+- (void)setUserStyleSheetEnabled:(BOOL)flag;
+
+// The user style sheet is stored as a URL string, e.g. "file://<etc>"
+- (NSString *)userStyleSheetLocation;
+- (void)setUserStyleSheetLocation:(NSString *)string;
+
 - (BOOL)javaEnabled;
 - (void)setJavaEnabled:(BOOL)flag;
 

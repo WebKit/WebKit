@@ -1,3 +1,19 @@
+2002-08-06  John Sullivan  <sullivan@apple.com>
+
+	Add mechanism to store userStyleSheet preferences in WebKit in
+	preparation for Dave wiring up the implementation.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences userStyleSheetEnabled]),
+        (-[WebPreferences setUserStyleSheetEnabled:]),
+        (-[WebPreferences userStyleSheetLocation]),
+        (-[WebPreferences setUserStyleSheetLocation:]):
+	New methods, read and write UserDefaults values.
+
+        (+[WebPreferences load]): Set initial values for
+	userStyleSheetEnabled and userStyleSheetLocation
+
 2002-08-06  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed some APPLE_CHANGES no longer needed after the part change.

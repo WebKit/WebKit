@@ -17,6 +17,8 @@
 #define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
 #define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
 #define	       WebKitFixedFontSizePreferenceKey		 @"WebKitFixedFontSize"
+#define	       WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
+#define	       WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
 #define        WebKitJavaEnabledPreferenceKey                @"WebKitJavaEnabled"
 #define        WebKitJavaScriptEnabledPreferenceKey        @"WebKitJavaScriptEnabled"
 #define        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey        @"WebKitJavaScriptCanOpenWindowsAutomatically"
@@ -48,6 +50,7 @@ static WebPreferences *_standardPreferences = nil;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *userStyleSheetEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *javaScriptEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *javaScriptCanOpenWindows = [NSNumber numberWithBool:FALSE];
@@ -72,6 +75,8 @@ static WebPreferences *_standardPreferences = nil;
         @"1.85",                        WebKitResourceTimedLayoutDelayPreferenceKey,
         timedLayoutEnabled,             WebKitInitialTimedLayoutEnabledPreferenceKey,
         resourceTimedLayoutEnabled,     WebKitResourceTimedLayoutEnabledPreferenceKey,
+        userStyleSheetEnabled,          WebKitUserStyleSheetEnabledPreferenceKey,
+        @"",                    	WebKitUserStyleSheetLocationPreferenceKey,
         javaEnabled,                    WebKitJavaEnabledPreferenceKey,
         javaScriptEnabled,              WebKitJavaScriptEnabledPreferenceKey,
         javaScriptCanOpenWindows,       WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
@@ -175,6 +180,26 @@ static WebPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitMinimumFontSizePreferenceKey];
 }
 
+
+- (BOOL)userStyleSheetEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitUserStyleSheetEnabledPreferenceKey];
+}
+
+- (void)setUserStyleSheetEnabled:(BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitUserStyleSheetEnabledPreferenceKey];
+}
+
+- (NSString *)userStyleSheetLocation
+{
+    return [[NSUserDefaults standardUserDefaults] stringForKey:WebKitUserStyleSheetLocationPreferenceKey];
+}
+
+- (void)setUserStyleSheetLocation:(NSString *)string
+{
+    [[NSUserDefaults standardUserDefaults] setObject:string forKey:WebKitUserStyleSheetLocationPreferenceKey];
+}
 
 - (BOOL)javaEnabled
 {
