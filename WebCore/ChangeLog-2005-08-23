@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3806990> REGRESSION (125-162): Crash on Select All at http://leuf.net/cgi/wikidn?PerlConvertEolScript
+
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::setSelectionState): Added nil check for the
+        widget.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3773740> calling addEventListener on a frame that hasn't loaded yet crashes
 
         * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Add nil checks for the document.

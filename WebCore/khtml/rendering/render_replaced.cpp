@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -538,7 +538,9 @@ void RenderWidget::setSelectionState(SelectionState s)
 {
     if (m_selectionState != s) {
         m_selectionState = s;
-        m_widget->setIsSelected(m_selectionState != SelectionNone);
+        if (m_widget) {
+            m_widget->setIsSelected(m_selectionState != SelectionNone);
+        }
     }
 }
 
