@@ -151,7 +151,6 @@ m_inline( true ),
 m_replaced( false ),
 m_mouseInside( false ),
 m_isDragging( false ),
-m_isSelectionBorder( false ),
 m_hasOverflowClip(false)
 {
 }
@@ -1683,6 +1682,12 @@ RenderObject *RenderObject::container() const
     else
 	o = parent();
     return o;
+}
+
+bool RenderObject::isSelectionBorder() const
+{
+    SelectionState st = selectionState();
+    return st == SelectionStart || st == SelectionEnd || st == SelectionBoth;
 }
 
 #if 0

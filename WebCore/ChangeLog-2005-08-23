@@ -1,3 +1,20 @@
+2004-09-14  David Hyatt  <hyatt@apple.com>
+
+	Fix the crash in the layout tests caused by my recent selection changes.  Simply eliminate the buggy
+	selection border setting code and let isSelectionBorder be implemented in terms of the SelectionState.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::setSelection):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::container):
+        (RenderObject::isSelectionBorder):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::minMaxKnown):
+        (khtml::RenderObject::setReplaced):
+
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3778680> REGRESSION: plug-in content sometimes doesn't show up
@@ -56,7 +73,7 @@
 	selection painting and drawing so that the enclosing rect is much more snug.  The containing block rect is no
 	longer used at all.
 	
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by kocienda
 
         * khtml/rendering/render_canvas.cpp:
         (RenderCanvas::selectionRect):
