@@ -1126,15 +1126,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // scan feature argument
       v = args[2];
       QString features;
-      if (!v.isNull() && v.type() != UndefinedType) {
+      if (!v.isNull() && v.type() != UndefinedType && v.toString(exec).length() > 0) {
         features = v.toString(exec).qstring();
         // specifying window params means false defaults
         winargs.menuBarVisible = false;
         winargs.toolBarsVisible = false;
         winargs.statusBarVisible = false;
-#if APPLE_CHANGES
-	winargs.scrollbarsVisible = false;
-#endif
         QStringList flist = QStringList::split(',', features);
         QStringList::ConstIterator it = flist.begin();
         while (it != flist.end()) {
@@ -1202,10 +1199,6 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             winargs.resizable = (val == "1" || val == "yes");
           else if (key == "fullscreen")
             winargs.fullscreen = (val == "1" || val == "yes");
-#if APPLE_CHANGES
-          else if (key == "scrollbars")
-            winargs.scrollbarsVisible = (val == "1" || val == "yes");
-#endif
         }
       }
 
