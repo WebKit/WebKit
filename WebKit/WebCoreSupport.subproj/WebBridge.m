@@ -929,8 +929,13 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)frameDetached
 {
-    [_frame stopLoading];
-    [[_frame parentFrame] _removeChild:_frame];
+    // Put _frame into a local variable because _detachFromParent
+    // will disconnect the bridge from the frame and make _frame nil.
+    WebFrame *frame = _frame;
+
+    [frame stopLoading];
+    [frame _detachFromParent];
+    [[frame parentFrame] _removeChild:frame];
 }
 
 @end

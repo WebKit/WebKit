@@ -1,3 +1,14 @@
+2003-06-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3285808 -- repro world leak when replacing div that contains iframe (at www.kbs.co.kr)
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge frameDetached]):
+        Add a call to _detachFromParent.
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _removeChild:]):
+        Nil out the parent pointer in the removed child.
+
 2003-06-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3288076>: REGRESSION: Fragment scroll stops page load

@@ -1938,7 +1938,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_removeChild:(WebFrame *)child
 {
-    [_private->children removeObject: child];
+    [_private->children removeObject:child];
+    child->_private->parent = nil;
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path
