@@ -280,7 +280,7 @@
     return [[view webController] userAgentForURL:theURL];
 }
 
-- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
+- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     ASSERT(resource == handle);
 

@@ -110,7 +110,7 @@
     return [[dataSource controller] userAgentForURL:URL];
 }
 
-- (void)handleDidReceiveData:(WebResourceHandle *)h data:(NSData *)data
+- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);

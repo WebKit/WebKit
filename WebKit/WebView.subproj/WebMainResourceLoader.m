@@ -195,7 +195,7 @@
     [self release];
 }
 
-- (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
+- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     WebController *controller = [dataSource controller];
     NSString *contentType = [[handle response] contentType];

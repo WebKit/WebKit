@@ -113,7 +113,7 @@
     }
 }
 
-- (void)handleDidReceiveData:(WebResourceHandle *)sender data:(NSData *)data
+- (void)handle:(WebResourceHandle *)sender didReceiveData:(NSData *)data
 {
     [_private->resourceData appendData:data];
 }
