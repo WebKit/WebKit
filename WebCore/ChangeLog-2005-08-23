@@ -1,3 +1,19 @@
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3917929> REGRESSION (Mail): Command-left-arrow leaves insertion point too high after specific steps
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::SimplifiedBackwardsTextIterator::advance): Add new check for leaving a text node and iterating
+        backwards into a different block that is an descendent of the block containing the text node (as in leaving 
+        the "bar" node in this example: <p>foo</p>bar).
+        (khtml::SimplifiedBackwardsTextIterator::handleNonTextNode): Call new emitNewlineForBROrText helper.
+        (khtml::SimplifiedBackwardsTextIterator::emitNewlineForBROrText): Factor out code from handleNonTextNode, since
+        it is called from there, and now also from advance().
+
 2004-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

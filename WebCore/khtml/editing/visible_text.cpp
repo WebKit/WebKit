@@ -543,6 +543,13 @@ void SimplifiedBackwardsTextIterator::advance()
             }
         }
         
+        // Handle case where markup looks like this: <p>foo</p>bar.
+        // Must emit newline when leaving node containing "bar".
+        NodeImpl *block = m_node->enclosingBlockFlowElement();
+        NodeImpl *nextBlock = next->enclosingBlockFlowElement();
+        if (block && nextBlock && nextBlock->isAncestor(block))
+            emitNewlineForBROrText();
+        
         m_node = next;
         if (m_node)
             m_offset = m_node->caretMaxOffset();
@@ -600,19 +607,8 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {
     switch (m_node->id()) {
         case ID_BR:
-        {
-            long offset;
-    
-            if (m_lastTextNode) {
-                offset = m_lastTextNode->nodeIndex();
-                emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
-            } else {
-                offset = m_node->nodeIndex();
-                emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
-            }
+            emitNewlineForBROrText();
             break;
-        }
-
         case ID_TD:
         case ID_TH:
         case ID_BLOCKQUOTE:
@@ -661,6 +657,19 @@ void SimplifiedBackwardsTextIterator::emitCharacter(QChar c, NodeImpl *node, lon
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
     m_lastCharacter = c;
+}
+
+void SimplifiedBackwardsTextIterator::emitNewlineForBROrText()
+{
+    long offset;
+    
+    if (m_lastTextNode) {
+        offset = m_lastTextNode->nodeIndex();
+        emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
+    } else {
+        offset = m_node->nodeIndex();
+        emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
+    }
 }
 
 Range SimplifiedBackwardsTextIterator::range() const
