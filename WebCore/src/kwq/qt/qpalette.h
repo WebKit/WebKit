@@ -32,7 +32,8 @@ class QColorGroup {
 public:
     enum ColorRole { Foreground, Shadow, Light, Mid, Midlight, Dark, Base, ButtonText, Button, Background, Text };
 
-    void setColor(ColorRole role, const QColor &color);
+    const QColor &color(ColorRole) const;
+    void setColor(ColorRole, const QColor &);
     const QColor &foreground() const;
     const QColor &shadow() const;
     const QColor &light() const;
@@ -54,6 +55,7 @@ public:
     const QColorGroup &active() const;
     const QColorGroup &inactive() const;
     const QColorGroup &disabled() const;
+    const QColorGroup &normal() const;
 }; 
 
 #endif
