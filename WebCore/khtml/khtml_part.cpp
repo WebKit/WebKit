@@ -2995,19 +2995,19 @@ QString KHTMLPart::requestFrameName()
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                                const QStringList &params )
 {
-#if !APPLE_CHANGES
-  if (url.isEmpty())
-    return false;
-#endif
   khtml::ChildFrame child;
   QValueList<khtml::ChildFrame>::Iterator it = d->m_objects.append( child );
   (*it).m_frame = frame;
   (*it).m_type = khtml::ChildFrame::Object;
   (*it).m_params = params;
 
+  KURL completedURL;
+  if (!url.isEmpty())
+    completedURL = completeURL(url);
+
   KParts::URLArgs args;
   args.serviceType = serviceType;
-  return requestObject( &(*it), completeURL( url ), args );
+  return requestObject( &(*it), completedURL, args );
 }
 
 bool KHTMLPart::requestObject( khtml::ChildFrame *child, const KURL &url, const KParts::URLArgs &_args )

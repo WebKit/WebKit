@@ -1,3 +1,14 @@
+2003-11-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3466714 -- page with <object> tag with text subtype and no URL causes hang
+
+        * khtml/khtml_part.cpp: (KHTMLPart::requestObject): Added a check so that an empty
+        URL string doesn't get completed, and results in an empty KURL object. Also made the
+        change to allow empty URLs unconditional, because I don't think it's a WebCore-specific
+        thing on further reflection.
+
 2003-10-31  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3470489, I just forgot to commit a piece of my patch.  This has actually even
