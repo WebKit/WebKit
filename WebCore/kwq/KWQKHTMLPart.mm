@@ -183,22 +183,37 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
-    // we do not want to submit more than one form, nor do we want to submit a single form more than once 
-    // this flag prevents these from happening
-    // note that the flag is reset in setView()
-    // since this part may get reused if it is pulled from the b/f cache
-    if (_formSubmittedFlag) {
-        return;
+    WebCoreBridge *target = bridgeForFrameName(args.frameName);
+    KHTMLPart *targetPart = [target part];
+    
+    // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
+    // Eventually when we find a better fix we can remove this altogether.
+    bool willReplaceThisFrame = false;
+    for (KHTMLPart *p = this; p; p = p->parentPart()) {
+        if (p == targetPart) {
+            willReplaceThisFrame = true;
+            break;
+        }
     }
-    _formSubmittedFlag = true;
+    if (willReplaceThisFrame) {
+        // We do not want to submit more than one form from the same page,
+        // nor do we want to submit a single form more than once.
+        // This flag prevents these from happening.
+        // Note that the flag is reset in setView()
+        // since this part may get reused if it is pulled from the b/f cache.
+        if (_formSubmittedFlag) {
+            return;
+        }
+        _formSubmittedFlag = true;
+    }
     
     if (!args.doPost()) {
-        [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
+        [target loadURL:url.url().getNSString() reload:args.reload
             triggeringEvent:_currentEvent isFormSubmission:YES];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
-        [bridgeForFrameName(args.frameName) postWithURL:url.url().getNSString()
+        [target postWithURL:url.url().getNSString()
             data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
             contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
     }
@@ -272,9 +287,9 @@ void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
     setWidget(view);
     _ownsView = weOwnIt;
     
-    // only one form submission is allowed per view of a part
-    // since this part may be getting reused as a result of being
-    // pulled from the back/forward cache, reset this flag
+    // Only one form submission is allowed per view of a part.
+    // Since this part may be getting reused as a result of being
+    // pulled from the back/forward cache, reset this flag.
     _formSubmittedFlag = false;
 }
 

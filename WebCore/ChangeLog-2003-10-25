@@ -1,3 +1,13 @@
+2003-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3143781 -- submitting the same form twice doesn't work properly
+	(example at directory.apple.com)
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::submitForm): Only run the "don't submit the same
+	form twice" logic when the form is one that affects the frame that the form is in.
+
 2003-01-12  Darin Adler  <darin@apple.com>
 
         * WebCorePrefix.h: Needed to touch this file since we now have plain C source (expat).
