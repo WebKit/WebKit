@@ -20,7 +20,7 @@ my %WebCoreFiles = (
 );
 
 my %JavaScriptCoreFiles = (
-    'bindings/NP_runtime.h' => 'Plugins.subproj/npruntime.h',
+    'bindings/npruntime.h' => 'Plugins.subproj/npruntime.h',
 );
 
 my $JavaScriptCorePath = '';
