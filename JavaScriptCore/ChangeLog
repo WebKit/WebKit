@@ -1,3 +1,8 @@
+2002-11-20  Darin Adler  <darin@apple.com>
+
+        * kjs/types.cpp: Keep ref count for the whole lists of nodes.
+	Doesn't speed things up much, less than 1%.
+
 2002-11-20  Maciej Stachowiak  <mjs@apple.com>
 
         * kjs/collector.cpp:

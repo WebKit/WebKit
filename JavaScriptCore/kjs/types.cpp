@@ -36,30 +36,23 @@
 #include "error_object.h"
 #include "nodes.h"
 
-using namespace KJS;
-
 namespace KJS {
 
-  class ListNode {
-    friend class List;
-    friend class ListIterator;
-  protected:
+  struct ListNode {
     ListNode(const Value &val, ListNode *p, ListNode *n)
-      : member(val.imp()), prev(p), next(n) {};
+      : member(val.imp()), prev(p), next(n) { }
     ListNode(ValueImp *val, ListNode *p, ListNode *n)
-      : member(val), prev(p), next(n) {};
+      : member(val), prev(p), next(n) { }
     ValueImp *member;
     ListNode *prev, *next;
   };
 
-  class ListHookNode : public ListNode {
-    friend class List;
-    
-    ListHookNode() : ListNode(Value(), NULL, NULL), refcount(1) { prev = this; next = this; }
-    int refcount;
+  struct ListHookNode : public ListNode {
+    ListHookNode(bool needsMarking) : ListNode(Value(), this, this),
+        listRefCount(1), nodesRefCount(needsMarking ? 0 : 1) { }
+    int listRefCount;
+    int nodesRefCount;
   };
-  }
-
 
 // ------------------------------ ListIterator ---------------------------------
 
@@ -101,43 +94,31 @@ Value ListIterator::operator--(int)
 
 // ------------------------------ List -----------------------------------------
 
-List::List(bool needsMarking)
-  : hook(new ListHookNode()),
-    m_needsMarking(needsMarking)
+List::List(bool needsMarking) : hook(new ListHookNode(needsMarking)), m_needsMarking(needsMarking)
 {
-  if (!m_needsMarking) {
-    refAll();
-  }
 }
 
-
-List::List(const List& l)
-  : hook(l.hook),
-    m_needsMarking(false)
-{  
-  hook->refcount++;
-  if (!m_needsMarking) {
+List::List(const List& l) : hook(l.hook), m_needsMarking(false)
+{
+  ++hook->listRefCount;
+  if (hook->nodesRefCount++ == 0)
     refAll();
-  }
 }
 
 List& List::operator=(const List& l)
 {
-  List tmp(l);
-
-  tmp.swap(*this);
-
+  List(l).swap(*this);
   return *this;
 }
-      
+
 List::~List()
 {
-  if (!m_needsMarking) {
-    derefAll();
-  }
+  if (!m_needsMarking)
+    if (--hook->nodesRefCount == 0)
+      derefAll();
   
-  hook->refcount--;
-  if (hook->refcount == 0) {
+  if (--hook->listRefCount == 0) {
+    assert(hook->nodesRefCount == 0);
     clearInternal();
     delete hook;
   }
@@ -156,9 +137,8 @@ void List::mark()
 void List::append(const Value& val)
 {
   ListNode *n = new ListNode(val, hook->prev, hook);
-  if (!m_needsMarking) {
+  if (hook->nodesRefCount)
     n->member->ref();
-  }
   hook->prev->next = n;
   hook->prev = n;
 }
@@ -166,9 +146,8 @@ void List::append(const Value& val)
 void List::append(ValueImp *val)
 {
   ListNode *n = new ListNode(val, hook->prev, hook);
-  if (!m_needsMarking) {
+  if (hook->nodesRefCount)
     val->ref();
-  }
   hook->prev->next = n;
   hook->prev = n;
 }
@@ -176,9 +155,8 @@ void List::append(ValueImp *val)
 void List::prepend(const Value& val)
 {
   ListNode *n = new ListNode(val, hook, hook->next);
-  if (!m_needsMarking) {
+  if (hook->nodesRefCount)
     n->member->ref();
-  }
   hook->next->prev = n;
   hook->next = n;
 }
@@ -186,9 +164,8 @@ void List::prepend(const Value& val)
 void List::prepend(ValueImp *val)
 {
   ListNode *n = new ListNode(val, hook, hook->next);
-  if (!m_needsMarking) {
+  if (hook->nodesRefCount)
     val->ref();
-  }
   hook->next->prev = n;
   hook->next = n;
 }
@@ -217,21 +194,17 @@ void List::remove(const Value &val)
 {
   if (val.isNull())
     return;
-  ListNode *n = hook->next;
-  while (n != hook) {
+  for (ListNode *n = hook->next; n != hook; n = n->next)
     if (n->member == val.imp()) {
       erase(n);
       return;
     }
-    n = n->next;
-  }
 }
 
 void List::clear()
 {
-  if (!m_needsMarking) {
+  if (hook->nodesRefCount)
     derefAll();
-  }
   clearInternal();
 }
 
@@ -266,16 +239,14 @@ ListIterator List::end() const
 
 bool List::isEmpty() const
 {
-  return (hook->prev == hook);
+  return hook->prev == hook;
 }
 
 int List::size() const
 {
   int s = 0;
-  ListNode *node = hook;
-  while ((node = node->next) != hook)
+  for (ListNode *n = hook->next; n != hook; n = n->next)
     s++;
-
   return s;
 }
 
@@ -306,9 +277,8 @@ const List &List::empty()
 void List::erase(ListNode *n)
 {
   if (n != hook) {
-    if (!m_needsMarking) {
+    if (hook->nodesRefCount)
       n->member->deref();
-    }
     n->next->prev = n->prev;
     n->prev->next = n->next;
     delete n;
@@ -317,33 +287,31 @@ void List::erase(ListNode *n)
 
 void List::refAll()
 {
-  ListNode *n = hook->next;
-
-  while (n != hook) {
+  for (ListNode *n = hook->next; n != hook; n = n->next)
     n->member->ref();
-    n = n->next;
-  }
 }
 
 void List::derefAll()
 {
-  ListNode *n = hook->next;
-
-  while (n != hook) {
+  for (ListNode *n = hook->next; n != hook; n = n->next)
     n->member->deref();
-    n = n->next;
-  }
 }
 
 void List::swap(List &other)
 {
-  if (m_needsMarking && !other.m_needsMarking) {
-    refAll();
-    other.derefAll();
-  } else if (!m_needsMarking && other.m_needsMarking) {
-    other.refAll();
-    derefAll();
-  }
+  if (!m_needsMarking)
+    if (other.hook->nodesRefCount++ == 0)
+      other.refAll();
+  if (!other.m_needsMarking)
+    if (hook->nodesRefCount++ == 0)
+      refAll();
+
+  if (!m_needsMarking)
+    if (--hook->nodesRefCount == 0)
+      derefAll();
+  if (!other.m_needsMarking)
+    if (--other.hook->nodesRefCount == 0)
+      other.derefAll();
 
   ListHookNode *tmp = hook;
   hook = other.hook;
@@ -352,20 +320,22 @@ void List::swap(List &other)
 
 void List::replaceFirst(ValueImp *v)
 {
-    ListNode *n = hook->next;
-    if (!m_needsMarking) {
-      v->ref();
-      n->member->deref();
-    }
-    n->member = v;
+  ListNode *n = hook->next;
+  if (hook->nodesRefCount) {
+    v->ref();
+    n->member->deref();
+  }
+  n->member = v;
 }
 
 void List::replaceLast(ValueImp *v)
 {
-    ListNode *n = hook->prev;
-    if (!m_needsMarking) {
-      v->ref();
-      n->member->deref();
-    }
-    n->member = v;
+  ListNode *n = hook->prev;
+  if (hook->nodesRefCount) {
+    v->ref();
+    n->member->deref();
+  }
+  n->member = v;
 }
+
+} // namespace KJS
