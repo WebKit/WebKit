@@ -51,6 +51,8 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 */
 + (WebIconDatabase *)sharedIconDatabase;
 
+- (BOOL)iconsAreSaved;
+
 /*!
     @method iconForURL:withSize:
     @discussion Calls iconForURL:withSize:cache: with YES for cache.

@@ -608,7 +608,9 @@
 
 - (void)_loadIcon
 {
-    if([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader){
+    // Don't load an icon if 1) this is not the main frame 2) we ended in error 3) we already did 4) they aren't save by the DB.
+    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader ||
+       ![[WebIconDatabase sharedIconDatabase] iconsAreSaved]) {
         return;
     }
                 

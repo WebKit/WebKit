@@ -1,3 +1,16 @@
+2003-05-27  Chris Blumenberg  <cblu@apple.com>
+
+		Don't load and save icons if the icon DB directory default is not set.
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]): don't create the DB if the default is not set
+        (-[WebIconDatabase _loadIconDictionaries]): don't load the dictionaries if the DB doesn't exist
+        (-[WebIconDatabase _updateFileDatabase]): don't update the DB if it doesn't exist
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]): don't load icons if the icon DB directory default is not set
+
 2003-05-27  Maciej Stachowiak  <mjs@apple.com>
 
 	Rolled in fix from Safari-80~1-branch

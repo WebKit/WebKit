@@ -37,7 +37,6 @@ NSSize WebIconLargeSize = {128, 128};
 @end
 
 @interface WebIconDatabase (WebInternal)
-
 - (void)_createFileDatabase;
 - (void)_loadIconDictionaries;
 - (void)_updateFileDatabase;
@@ -55,7 +54,6 @@ NSSize WebIconLargeSize = {128, 128};
 - (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
 - (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
-
 @end
 
 
@@ -76,7 +74,7 @@ NSSize WebIconLargeSize = {128, 128};
     [super init];
     
     _private = [[WebIconDatabasePrivate alloc] init];
-    
+
     [self _createFileDatabase];
     [self _loadIconDictionaries];
 
@@ -99,6 +97,11 @@ NSSize WebIconLargeSize = {128, 128};
     [self performSelector:@selector(_releaseOriginalIconsOnDisk) withObject:nil afterDelay:0];
     
     return self;
+}
+
+- (BOOL)iconsAreSaved
+{
+    return (_private->fileDatabase != nil);
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache
@@ -221,8 +224,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
     if (!databaseDirectory) {
-        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-        databaseDirectory = [NSString stringWithFormat:@"%@/Library/Caches/WebKitIcons/%@", NSHomeDirectory(), bundleIdentifier];
+        return;
     }
 
     _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
@@ -274,7 +276,10 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_loadIconDictionaries
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
-
+    if (!fileDB) {
+        return;
+    }
+    
     NSNumber *version = [fileDB objectForKey:WebIconDatabaseVersionKey];
     int v = 0;
     // no version means first version
@@ -309,6 +314,9 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     WebFileDatabase *fileDB = _private->fileDatabase;
+    if (!fileDB) {
+        return;
+    }
 
     [fileDB setObject:[NSNumber numberWithInt:WebIconDatabaseCurrentVersion] forKey:WebIconDatabaseVersionKey];
 
