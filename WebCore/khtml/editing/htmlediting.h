@@ -925,6 +925,7 @@ public:
     void closeTyping() { m_openForMoreTyping = false; }
 
     void insertText(const DOM::DOMString &text, bool selectInsertedText);
+    void insertTextRunWithoutNewlines(const DOM::DOMString &text, bool selectInsertedText);
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();

@@ -3583,6 +3583,8 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
 
 void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 {
+    assert(text.find('\n') == -1);
+
     Selection selection = endingSelection();
     bool adjustDownstream = isFirstVisiblePositionOnLine(VisiblePosition(selection.start().downstream(StayInBlock), DOWNSTREAM));
 
@@ -5485,6 +5487,32 @@ void TypingCommand::typingAddedToOpenCommand()
 }
 
 void TypingCommand::insertText(const DOMString &text, bool selectInsertedText)
+{
+    // FIXME: Need to implement selectInsertedText for cases where more than one insert is involved.
+    // This requires support from insertTextRunWithoutNewlines and insertParagraphSeparator for extending
+    // an existing selection; at the moment they can either put the caret after what's inserted or
+    // select what's inserted, but there's no way to "extend selection" to include both an old selection
+    // that ends just before where we want to insert text and the newly inserted text.
+    int offset = 0;
+    int newline;
+    while ((newline = text.find('\n', offset)) != -1) {
+        if (newline != offset) {
+            insertTextRunWithoutNewlines(text.substring(offset, newline - offset), false);
+        }
+        insertParagraphSeparator();
+        offset = newline + 1;
+    }
+    if (offset == 0) {
+        insertTextRunWithoutNewlines(text, selectInsertedText);
+    } else {
+        int length = text.length();
+        if (length != offset) {
+            insertTextRunWithoutNewlines(text.substring(offset, length - offset), selectInsertedText);
+        }
+    }
+}
+
+void TypingCommand::insertTextRunWithoutNewlines(const DOMString &text, bool selectInsertedText)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement

@@ -2,6 +2,26 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4036817> REGRESSION: ctrl-y broken when a line + carriage return cut
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:]): Merged _handleKillRing behavior
+        into this function, since there's now a more-complicated way the startNewKillRingSequence boolean needs to
+        be handled. Set the startNewKillRingSequence boolean after the entire process so changing the selection before
+        and during the editing dosn't clear it. Also change "isTypingAction" parameter to "deletionAction" so we can
+        handle forward delete with this method.
+        (-[WebHTMLView _deleteSelection]): Pass deleteSelectionAction for action rather than NO for isTypingAction,
+        which is the way to say the same thing using the new parameter.
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]): Refactor to use the _deleteRange
+        method above. Also calls _shouldDeleteRange: for the pre-existing selection case; not doing that before was
+        a bug.
+        (-[WebHTMLView deleteToMark:]): Pass deleteSelectionAction for action rather than NO for isTypingAction,
+        which is the way to say the same thing using the new parameter.
+
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/4020413> REGRESSION (Mail): can't use fonts with names that start with "#" in Mail (Korean fonts)
 
         * WebView.subproj/WebHTMLView.m:

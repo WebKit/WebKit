@@ -137,6 +137,12 @@ void _NSResetKillRingOperationFlag(void);
 // FIXME: This constant is copied from AppKit's _NXSmartPaste constant.
 #define WebSmartPastePboardType @"NeXT smart paste pasteboard type"
 
+typedef enum {
+    deleteSelectionAction,
+    deleteKeyAction,
+    forwardDeleteKeyAction
+} WebDeletionAction;
+
 static BOOL forceRealHitTest = NO;
 
 // Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
@@ -159,12 +165,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)_updateTextSizeMultiplier;
 - (DOMRange *)_selectedRange;
 - (BOOL)_shouldDeleteRange:(DOMRange *)range;
-- (void)_handleKillRing:(BOOL)hasKillRing prepend:(BOOL)prepend;
 - (void)_deleteRange:(DOMRange *)range 
             killRing:(BOOL)killRing 
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK
-       isTypingAction:(BOOL)isTypingAction;
+      deletionAction:(WebDeletionAction)deletionAction;
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
@@ -479,42 +484,48 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
 }
 
-- (void)_handleKillRing:(BOOL)hasKillRing prepend:(BOOL)prepend
-{
-    if (!hasKillRing)
-        return;
-
-    WebBridge *bridge = [self _bridge];
-    if (_private->startNewKillRingSequence) {
-        _NSNewKillRingSequence();
-    }
-    if (prepend) {
-        _NSPrependToKillRing([bridge selectedString]);
-    } else {
-        _NSAppendToKillRing([bridge selectedString]);
-    }
-    _private->startNewKillRingSequence = NO;
-}
-
 - (void)_deleteRange:(DOMRange *)range 
             killRing:(BOOL)killRing 
              prepend:(BOOL)prepend 
        smartDeleteOK:(BOOL)smartDeleteOK 
-       isTypingAction:(BOOL)isTypingAction
+      deletionAction:(WebDeletionAction)deletionAction
 {
     if (![self _shouldDeleteRange:range]) {
         return;
     }
+
     WebBridge *bridge = [self _bridge];
-    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
-    [self _handleKillRing:killRing prepend:prepend];
     BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
-    if (isTypingAction) {
-        [bridge deleteKeyPressedWithSmartDelete:smartDelete];
+
+    BOOL startNewKillRingSequence = _private->startNewKillRingSequence;
+
+    if (killRing) {
+        if (startNewKillRingSequence) {
+            _NSNewKillRingSequence();
+        }
+        NSString *string = [bridge stringForRange:range];
+        if (prepend) {
+            _NSPrependToKillRing(string);
+        } else {
+            _NSAppendToKillRing(string);
+        }
+        startNewKillRingSequence = NO;
     }
-    else {
-        [bridge deleteSelectionWithSmartDelete:smartDelete];
+
+    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
+    switch (deletionAction) {
+        case deleteSelectionAction:
+            [bridge deleteSelectionWithSmartDelete:smartDelete];
+            break;
+        case deleteKeyAction:
+            [bridge deleteKeyPressedWithSmartDelete:smartDelete];
+            break;
+        case forwardDeleteKeyAction:
+            [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete];
+            break;
     }
+
+    _private->startNewKillRingSequence = startNewKillRingSequence;
 }
 
 - (void)_deleteSelection
@@ -523,7 +534,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
               killRing:YES 
                prepend:NO
          smartDeleteOK:YES
-         isTypingAction:NO];
+        deletionAction:deleteSelectionAction];
 }
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
@@ -4147,33 +4158,33 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     // Delete the selection, if there is one.
     // If not, make a selection using the passed-in direction and granularity.
+
     if (![self _canEdit])
         return NO;
-        
+
     DOMRange *range;
+    WebDeletionAction deletionAction = deleteSelectionAction;
+
     if ([self _hasSelection]) {
         range = [self _selectedRange];
-        [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:YES isTypingAction:isTypingAction];
+        deletionAction = isTypingAction ? deleteSelectionAction : deleteKeyAction;
     } else {
-        WebBridge *bridge = [self _bridge];
-        range = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
-        if (range == nil || [range collapsed] || ![self _shouldDeleteRange:range])
-            return NO;
+        range = [[self _bridge] rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
         switch (direction) {
             case WebSelectForward:
             case WebSelectRight:
-                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
-                [self _handleKillRing:killRing prepend:NO];
-                [bridge forwardDeleteKeyPressedWithSmartDelete:NO];
+                deletionAction = forwardDeleteKeyAction;
                 break;
             case WebSelectBackward:
             case WebSelectLeft:
-                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
-                [self _handleKillRing:killRing prepend:YES];
-                [bridge deleteKeyPressedWithSmartDelete:NO];
+                deletionAction = deleteKeyAction;
                 break;
         }
     }
+
+    if (range == nil || [range collapsed] || ![self _shouldDeleteRange:range])
+        return NO;
+    [self _deleteRange:range killRing:killRing prepend:NO smartDeleteOK:YES deletionAction:deletionAction];
     return YES;
 }
 
@@ -4428,7 +4439,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         } @catch (NSException *exception) {
             r = selection;
         }
-        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO isTypingAction:NO];
+        [self _deleteRange:r killRing:YES prepend:YES smartDeleteOK:NO deletionAction:deleteSelectionAction];
     }
     [self setMark:sender];
 }

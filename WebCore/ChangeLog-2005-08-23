@@ -2,6 +2,23 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4036817> REGRESSION: ctrl-y broken when a line + carriage return cut
+
+        * khtml/editing/htmlediting.h: Added insertTextRunWithoutNewlines.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertTextCommand::input): Added assertion to make sure strings with newlines don't get
+        down to this level.
+        (khtml::TypingCommand::insertText): Added. Takes the name of the old function, but is a new
+        level that breaks runs into lines and inserts each one separately.
+        (khtml::TypingCommand::insertTextRunWithoutNewlines): Renamed old insertText to this. 
+
+        * khtml/dom/dom_string.h: Made substring be a const member function.
+        * khtml/dom/dom_string.cpp: (DOM::DOMString::substring): Made this const.
+
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/4020413> REGRESSION (Mail): can't use fonts with names that start with "#" in Mail (Korean fonts)
 
         * khtml/css/css_valueimpl.cpp:
