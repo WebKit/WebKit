@@ -1,3 +1,5 @@
+=== Safari-412 ===
+
 2005-03-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4052683> After adding/removing stocks from Stocks Widget, stock areas went blank
