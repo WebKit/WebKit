@@ -1,3 +1,9 @@
+2002-07-16  Richard Williamson (Local)  <rjw@apple.com>
+
+        Fixed field length test.  We were testing >= instead of >.
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextFieldFormatter isPartialStringValid:newEditingString:errorDescription:]):
+
 2002-07-16  Darin Adler  <darin@apple.com>
 
 	- fixed 2997244 -- crash when visiting cnn.com followed by another page

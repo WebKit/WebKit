@@ -218,7 +218,7 @@
 
 - (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error
 {
-    if ((int)[partialString length] >= maxLength){
+    if ((int)[partialString length] > maxLength){
         *newString = nil;
         return NO;
     }
