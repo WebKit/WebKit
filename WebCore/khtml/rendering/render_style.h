@@ -522,7 +522,7 @@ class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>
 {
 public:
     StyleCSS3InheritedData();
-    ~StyleCSS3InheritedData() {}
+    ~StyleCSS3InheritedData();
     StyleCSS3InheritedData(const StyleCSS3InheritedData& o);
 
     bool operator==(const StyleCSS3InheritedData& o) const;
@@ -532,6 +532,9 @@ public:
     bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
+
+private:
+    StyleCSS3InheritedData &operator=(const StyleCSS3InheritedData &);
 };
 
 //------------------------------------------------

@@ -1,3 +1,21 @@
+2003-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed a storage leak
+
+        * khtml/rendering/render_style.h: Added a destructor and a private unimplemented assignment
+        operator to StyleCSS3InheritedData, since the textShadow field that needs to be allocated
+        and deallocated and the default destructor and assignment operator don't do that.
+        * khtml/rendering/render_style.cpp: (StyleCSS3InheritedData::~StyleCSS3InheritedData):
+        Added destructor that deletes the textShadow object.
+
+        - fixed locking for JavaScript debugging tools in Caches window
+
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript rootObjectClasses]): Lock and unlock around call to JavaScriptCore.
+        (+[WebCoreJavaScript garbageCollect]): Ditto.
+
 2003-12-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3483130, repaint doesn't occur when font is decreased dynamically when at the bottom of

@@ -55,12 +55,17 @@ using KJS::Interpreter;
 
 + (NSSet *)rootObjectClasses
 {
-    return [(NSSet *)Collector::rootObjectClasses() autorelease];
+    Interpreter::lock();
+    NSSet *classes = (NSSet *)Collector::rootObjectClasses();
+    Interpreter::unlock();
+    return [classes autorelease];
 }
 
 + (void)garbageCollect
 {
+    Interpreter::lock();
     while (Collector::collect()) { }
+    Interpreter::unlock();
 }
 
 + (BOOL)shouldPrintExceptions

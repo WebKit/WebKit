@@ -206,6 +206,11 @@ StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     textShadow = o.textShadow ? new ShadowData(*o.textShadow) : 0;
 }
 
+StyleCSS3InheritedData::~StyleCSS3InheritedData()
+{
+    delete textShadow;
+}
+
 bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
     return shadowDataEquivalent(o);
