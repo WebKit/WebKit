@@ -306,8 +306,10 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, m_firstLine);
     }
 
-    // AppKit uses a two-pixel offset from the baseline for the misspelling underline.
-    int underlineOffset = m_baseline + 2;
+    // AppKit uses a more complicated formula to figure the offset from the baseline for the misspelling
+    // underline.  Using "+2" made the marker draw outside the selection rect in Times-16, using "+1"
+    // leaves it a pixel too high with Times-24.  The former is the lesser evil.
+    int underlineOffset = m_baseline + 1;
     pt->drawLineForMisspelling(_tx + start, _ty + underlineOffset, width);
 }
 

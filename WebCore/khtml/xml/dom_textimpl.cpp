@@ -156,6 +156,7 @@ void CharacterDataImpl::deleteData( const unsigned long offset, const unsigned l
     oldStr->deref();
 
     // update the markers for spell checking and grammar checking
+    getDocument()->removeAllMarkers(this, offset, count);
     getDocument()->shiftMarkers(this, offset + count, -count);
 }
 
@@ -185,6 +186,7 @@ void CharacterDataImpl::replaceData( const unsigned long offset, const unsigned 
     
     // update the markers for spell checking and grammar checking
     int diff = arg.length() - count;
+    getDocument()->removeAllMarkers(this, offset, count);
     getDocument()->shiftMarkers(this, offset + count, diff);
 }
 

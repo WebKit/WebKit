@@ -1,3 +1,31 @@
+2004-08-09  Trey Matteson  <trey@apple.com>
+
+	3756195 - spell checking leaves misspelling marker behind after bad word is deleted
+	... and other follow-on spell check fixes
+
+        Reviewed by Ken
+
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarker):  Close inspection shows we were drawing the 
+	misspelling marker one pixel lower than AK, and one pixel outside the selection
+	rect we draw, in the case of Times-16.  So move it up one.  Still not an exact
+	match for AK, but less bad.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::removeMarker):  Track whether we make any changes, so we only
+	repaint if something actually changed.
+        (DocumentImpl::removeAllMarkers):  New utility.
+        (DocumentImpl::removeAllMarkers):  Use clear() instead of (errant)
+	hand-rolled loop to empty array.
+        (DocumentImpl::shiftMarkers):  Track whether we make any changes, so we only
+	repaint if something actually changed.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::deleteData):  Along with shifting existing markers around,
+	remove any markers in the deleted range.  Fixes 3756195.
+        (CharacterDataImpl::replaceData):  Ditto for the replaced range.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::updateSpellChecking): comment
+
 2004-08-08  Trey Matteson  <trey@apple.com>
 
 	3745023 - Safari crashes trying to access anchor while downloading

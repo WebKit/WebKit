@@ -3729,8 +3729,8 @@ void KWQKHTMLPart::updateSpellChecking()
 {
     if (xmlDocImpl()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
-            // When continuous spell checking is on, no markers appear in words that
-            // intersect the current selection.
+            // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
+            // matches AppKit.
             Position start(selection().start().previousWordBoundary());
             Position end(selection().start().nextWordBoundary());
             if (end == selection().start())

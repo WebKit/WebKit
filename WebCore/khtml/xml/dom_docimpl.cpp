@@ -2946,6 +2946,7 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
         return;
     }
     
+    bool docDirty = false;
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ) {
         DocumentMarker marker = *it;
@@ -2958,7 +2959,8 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
             it++;
         } else {
             // at this point we know that marker and target intersect in some way
-            
+            docDirty = true;
+
             // pitch the old marker
             it = markers->remove(it);
             // it now points to the next node
@@ -2978,20 +2980,22 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
     }
 
     // repaint the affected node
-    if (node->renderer())
+    if (docDirty && node->renderer())
         node->renderer()->repaint();
+}
+
+void DocumentImpl::removeAllMarkers(NodeImpl *node, ulong startOffset, long length)
+{
+    // FIXME - yet another cheat that relies on us only having one marker type
+    DocumentMarker marker = {DocumentMarker::Spelling, startOffset, startOffset+length};
+    removeMarker(node, marker);
 }
 
 void DocumentImpl::removeAllMarkers(NodeImpl *node)
 {
     QValueList <DocumentMarker> *markers = m_markers.find(node);
-    if (!markers)
-        return;
-
-    QValueListIterator<DocumentMarker> it;
-    for (it = markers->begin(); it != markers->end(); ++it) {
-        markers->remove(it);
-    }
+    if (markers)
+        markers->clear();
 }
 
 void DocumentImpl::removeAllMarkers()
@@ -3008,6 +3012,7 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
     if (!markers)
         return;
 
+    bool docDirty = false;
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ++it) {
         DocumentMarker &marker = *it;
@@ -3015,11 +3020,12 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
             ASSERT(marker.startOffset + delta > 0);
             marker.startOffset += delta;
             marker.endOffset += delta;
+            docDirty = true;
         }
     }
     
     // repaint the affected node
-    if (node->renderer())
+    if (docDirty && node->renderer())
         node->renderer()->repaint();
 }
 
