@@ -1,3 +1,21 @@
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/3784835> REGRESSION (Mail): crash in DOM::ElementImpl::tagName inside delete text command code while editing a Mail message
+        <rdar://problem/3788015> REGRESSION (Mail): Crash deleting before a blockquote
+        <rdar://problem/3796366> REGRESSION (Mail): Crash Mail by deleting the right line from pasted HTML
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::doApply): All of these bugs are due to the same problem. When I
+        made the delete command run even when the text is a caret (to make block merges work right when the
+        caret is at the start of a block), I failed to handle one case when there might be no text to 
+        delete. This resulted in a call to the DeleteTextCommand with a zero-length deletion request.
+        This is not supported. Now, I have added an additional test in this one place in the code that
+        was causing all these failures.
+
 2004-09-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
