@@ -95,10 +95,8 @@ using khtml::RemoveNodeAndPruneCommandImpl;
 using khtml::RenderObject;
 using khtml::RenderStyle;
 using khtml::RenderText;
-using khtml::PasteHTMLCommand;
-using khtml::PasteHTMLCommandImpl;
-using khtml::PasteImageCommand;
-using khtml::PasteImageCommandImpl;
+using khtml::PasteMarkupCommand;
+using khtml::PasteMarkupCommandImpl;
 using khtml::SplitTextNodeCommand;
 using khtml::SplitTextNodeCommandImpl;
 using khtml::TypingCommand;
@@ -1392,26 +1390,26 @@ void JoinTextNodesCommandImpl::doUnapply()
 }
 
 //------------------------------------------------------------------------------------------
-// PasteHTMLCommandImpl
+// PasteMarkupCommandImpl
 
-PasteHTMLCommandImpl::PasteHTMLCommandImpl(DocumentImpl *document, const DOMString &HTMLString) 
-    : CompositeEditCommandImpl(document), m_HTMLString(HTMLString)
+PasteMarkupCommandImpl::PasteMarkupCommandImpl(DocumentImpl *document, const DOMString &markupString) 
+    : CompositeEditCommandImpl(document), m_markupString(markupString)
 {
-    ASSERT(!m_HTMLString.isEmpty());
+    ASSERT(!m_markupString.isEmpty());
 }
 
-PasteHTMLCommandImpl::~PasteHTMLCommandImpl()
+PasteMarkupCommandImpl::~PasteMarkupCommandImpl()
 {
 }
 
-int PasteHTMLCommandImpl::commandID() const
+int PasteMarkupCommandImpl::commandID() const
 {
-    return PasteHTMLCommandID;
+    return PasteMarkupCommandID;
 }
 
-void PasteHTMLCommandImpl::doApply()
+void PasteMarkupCommandImpl::doApply()
 {
-    DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_HTMLString);
+    DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_markupString);
     ASSERT(root);
     
     NodeImpl *firstChild = root->firstChild();
@@ -1461,44 +1459,6 @@ void PasteHTMLCommandImpl::doApply()
         
         setEndingSelection(DOMPosition(leaf, leaf->caretMaxOffset()));
     }
-}
-
-//------------------------------------------------------------------------------------------
-// PasteImageCommandImpl
-
-PasteImageCommandImpl::PasteImageCommandImpl(DocumentImpl *document, const DOMString &src) 
-: CompositeEditCommandImpl(document)
-{
-    ASSERT(!src.isEmpty());
-    m_src = src; 
-}
-
-PasteImageCommandImpl::~PasteImageCommandImpl()
-{
-}
-
-int PasteImageCommandImpl::commandID() const
-{
-    return PasteImageCommandID;
-}
-
-void PasteImageCommandImpl::doApply()
-{
-    deleteSelection();
-    
-    KHTMLPart *part = document()->part();
-    ASSERT(part);
-    
-    KHTMLSelection selection = part->selection();
-    ASSERT(!selection.isEmpty());
-    
-    DOM::NodeImpl *startNode = selection.startNode();
-    HTMLImageElementImpl *imageNode = new HTMLImageElementImpl(startNode->docPtr());
-    imageNode->setAttribute(ATTR_SRC, m_src);
-    
-    insertNodeAt(imageNode, startNode, selection.startOffset());
-    selection = KHTMLSelection(imageNode, imageNode->caretMaxOffset());
-    setEndingSelection(selection);
 }
 
 //------------------------------------------------------------------------------------------
