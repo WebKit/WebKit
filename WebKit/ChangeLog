@@ -1,3 +1,20 @@
+2003-07-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3161102>: Avoid retain cycles by destroying plug-ins in the page cache before dealloc
+	Fixed: <rdar://problem/3320624>: WebElementImageAltStringKey is not exported :-(
+	Unspoof freebsd since we now handle gzip'd content.
+
+        Reviewed by rjw.
+
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem _destroyAllPluginsInPendingPageCaches]): new, destroys all plug-ins
+        (+[WebHistoryItem _releaseAllPendingPageCaches]): call _destroyAllPluginsInPendingPageCaches
+        * WebKit.exp: export WebElementImageAltStringKey
+        * WebView.subproj/WebUserAgentSpoofTable.c: unspoof freebsd
+        (hash):
+        (_web_findSpoofTableEntry):
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: unspoof freebsd
+
 2003-07-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris

@@ -6,9 +6,11 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebPluginController.h>
 
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
@@ -613,10 +615,27 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     }
 }
 
++ (void)_destroyAllPluginsInPendingPageCaches
+{
+    NSEnumerator *pageCaches = [_pendingPageCacheToRelease objectEnumerator];
+    NSMutableDictionary *pageCache;
+    
+    while ((pageCache = [pageCaches nextObject]) != nil) {
+        WebHTMLView *HTMLView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
+        if ([HTMLView isKindOfClass:[WebHTMLView class]]) {
+            [[HTMLView _pluginController] destroyAllPlugins];
+        }
+    }
+}
+
 + (void)_releaseAllPendingPageCaches
 {
     LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
     [WebHistoryItem _invalidateReleaseTimer];
+    // Plug-ins could retain anything including the WebHTMLView or the window.
+    // To avoid any possible retain cycle, call destroyPlugin on all the plug-ins
+    // instead of completely relying on dealloc of WebHTMLView.
+    [self _destroyAllPluginsInPendingPageCaches];
     [_pendingPageCacheToRelease removeAllObjects];
 }
 

@@ -32,6 +32,7 @@ _WebActionNavigationTypeKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
 _WebElementFrameKey
+_WebElementImageAltStringKey
 _WebElementImageKey
 _WebElementImageRectKey
 _WebElementImageURLKey
