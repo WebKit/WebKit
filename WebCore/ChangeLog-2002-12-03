@@ -1,5 +1,14 @@
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
+	Fix for slashdot table mispositioning in the upper right.
+	Now that we fixed <td> to set to -konq-center when align="center"
+	is specified, the style rules are no longer necessary in
+	html4.css (and are in fact harmful).
+	
+        * khtml/css/html4.css:
+
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3038168.  Duh.  Remember to be case-insensitive when
 	checking the type of the <style> attribute.
 	
