@@ -23,12 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQButton.h"
 #import "KWQLineEdit.h"
 
+#import "KWQButton.h"
 #import "KWQExceptions.h"
+#import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
 #import "KWQTextField.h"
+#import "WebCoreBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
@@ -154,9 +156,14 @@ int QLineEdit::maxLength() const
 
 void QLineEdit::selectAll()
 {
-    NSTextField *textField = (NSTextField *)getView();
     KWQ_BLOCK_EXCEPTIONS;
+
+    // Do the makeFirstResponder ourselves so WebHTMLView will know it's programmatic, and not the user clicking.
+    NSTextField *textField = (NSTextField *)getView();
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+    [bridge makeFirstResponder:textField];
     [textField selectText:nil];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

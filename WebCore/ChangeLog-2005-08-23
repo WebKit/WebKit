@@ -2,6 +2,18 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3740485> Repro crash involving replacing content that includes form field
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::selectAll): Since this function calls selectText: which has a side
+        effect of making the text field be first responder, call to bridge first to make it first responder.
+        The bridge version lets WebHTMLView know we are changing the responder, avoiding some unpleasantness
+        because it sets the "changing focus programmatically" flag. Without that flag set, we were getting
+        an additional setFocusNode(0) call, which is unnecessary and incorrect.
+
+2004-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3758756> copying text selected with down arrow results in all text to end of document
 
         * khtml/xml/dom2_rangeimpl.h: Make startNode and pastEndNode public.
