@@ -13,8 +13,6 @@
 
 #import <WebKit/WebKitDebug.h>
 
-#include <WCLoadProgress.h>
-
 
 // IFObjectHolder holds objects as keys in dictionaries without
 // copying.
@@ -71,26 +69,6 @@
 }
 
 @end
-
-@implementation IFLoadProgress
-
-static id IFLoadProgressMake() 
-{
-    return [[[IFLoadProgress alloc] init] autorelease];
-}
-
-+(void) load
-{
-    WCSetIFLoadProgressMakeFunc(IFLoadProgressMake);
-}
-
-- init
-{
-    return [super init];
-}
-
-@end
-
 
 @implementation IFBaseWebController
 

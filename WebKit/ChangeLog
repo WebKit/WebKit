@@ -1,3 +1,22 @@
+2002-03-25  John Sullivan  <sullivan@apple.com>
+
+	Broke IFLoadProgress out into its own file, and added
+	an init method and getters, without which this class
+	is useless in Objective-C files (but strangely usable
+	in Objective-C++ files, see radar 2887253).
+
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFBaseWebController.mm:
+	Took IFLoadProgress declaration and implementation out of here.
+
+	* WebView.subproj/IFLoadProgress.h,
+	* WebView.subproj/IFLoadProgress.mm:
+	Moved IFLoadProgress declaration and implementation to here;
+	added -[IFLoadProgress initWithBytesSoFar:totalToLoad:type:]
+	and getters for each field.
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files
+
 2002-03-25  Richard Williamson  <rjw@apple.com>
 
         Tweaks to force layout of frames and iframes.

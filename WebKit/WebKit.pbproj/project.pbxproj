@@ -197,6 +197,7 @@
 				F5D538EA02441F2601A80181,
 				F5F084BB024BDC8E01CA1520,
 				F5F084BF024BDCA701CA1520,
+				F58BAB3B025036CA01C1A526,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -236,6 +237,7 @@
 				F5AEBB3E024A527601C1A526,
 				F5F084BC024BDC8E01CA1520,
 				F5F084C0024BDCA701CA1520,
+				F58BAB390250363E01C1A526,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -949,6 +951,8 @@
 				3944606B020F50ED0ECA1767,
 				3944606C020F50ED0ECA1767,
 				3944606D020F50ED0ECA1767,
+				F58BAB3A025036CA01C1A526,
+				F58BAB380250363E01C1A526,
 				3944606E020F50ED0ECA1767,
 				F5AEBB3D024A527601C1A526,
 				3944606F020F50ED0ECA1767,
@@ -1059,6 +1063,30 @@
 		};
 		F520FB1C0221DEFD01C1A525 = {
 			fileRef = F520FB1A0221DEFD01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58BAB380250363E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFLoadProgress.mm;
+			path = WebView.subproj/IFLoadProgress.mm;
+			refType = 4;
+		};
+		F58BAB390250363E01C1A526 = {
+			fileRef = F58BAB380250363E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58BAB3A025036CA01C1A526 = {
+			isa = PBXFileReference;
+			name = IFLoadProgress.h;
+			path = WebView.subproj/IFLoadProgress.h;
+			refType = 4;
+		};
+		F58BAB3B025036CA01C1A526 = {
+			fileRef = F58BAB3A025036CA01C1A526;
 			isa = PBXBuildFile;
 			settings = {
 			};

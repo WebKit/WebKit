@@ -6,6 +6,8 @@
 */
 #import <Cocoa/Cocoa.h>
 
+#import <WebKit/IFLoadProgress.h>
+
 
 /*
    ============================================================================= 
@@ -112,30 +114,6 @@
 
 - (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource;
 
-@end
-
-
-/*
-   ============================================================================= 
-
-    A IFLoadProgress capture the state associated with a load progress
-    indication.  Should we use a struct?
-*/
-typedef enum {
-    IF_LOAD_TYPE_CSS    = 1,
-    IF_LOAD_TYPE_IMAGE  = 2,
-    IF_LOAD_TYPE_SCRIPT = 3,
-    IF_LOAD_TYPE_HTML = 4
-} IF_LOAD_TYPE;
-
-
-@interface IFLoadProgress : NSObject
-{
-    int bytesSoFar;	// 0 if this is the start of load
-    int totalToLoad;	// -1 if this is not known.
-                        // bytesSoFar == totalLoaded when complete
-    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
-}
 @end
 
 
