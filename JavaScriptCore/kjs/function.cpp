@@ -526,7 +526,7 @@ static int parseDigit(unsigned short c, int radix)
         digit = c - '0';
     } else if (c >= 'A' && c <= 'Z') {
         digit = c - 'A' + 10;
-    } else if (c >= 'a' && c <= 'Z') {
+    } else if (c >= 'a' && c <= 'z') {
         digit = c - 'a' + 10;
     }
 
@@ -554,14 +554,15 @@ static double parseInt(const UString &s, int radix)
         }
     }
 
-    if (length - p >= 2 && s[p] == '0' && (s[p + 1] == 'x' || s[p + 1] == 'X')) {
-        if (radix == 0)
-            radix = 16;
-        if (radix == 16)
-            p += 2;
+    if ((radix == 0 || radix == 16) && length - p >= 2 && s[p] == '0' && (s[p + 1] == 'x' || s[p + 1] == 'X')) {
+        radix = 16;
+        p += 2;
+    } else if (radix == 0) {
+        if (p < length && s[p] == '0')
+            radix = 8;
+        else
+            radix = 10;
     }
-    if (radix == 0)
-        radix = 10;
 
     if (radix < 2 || radix > 36)
         return NaN;
@@ -586,20 +587,21 @@ static double parseInt(const UString &s, int radix)
 
 static double parseFloat(const UString &s)
 {
+    // Check for 0x prefix here, because toDouble allows it, but we must treat it as 0.
+    // Need to skip any whitespace and then one + or - sign.
     int length = s.size();
     int p = 0;
-
-    // Skip whitespace.
     while (p < length && isStrWhiteSpace(s[p].uc)) {
         ++p;
     }
-
-    // Check for 0x numbers here, because toDouble allows them, but we must not.
+    if (p < length && (s[p] == '+' || s[p] == '-')) {
+        ++p;
+    }
     if (length - p >= 2 && s[p] == '0' && (s[p + 1] == 'x' || s[p + 1] == 'X')) {
-        return NaN;
+        return 0;
     }
 
-    return s.substr(p).toDouble( true /*tolerant*/, false /* NaN for empty string */ );
+    return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
 }
 
 Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)

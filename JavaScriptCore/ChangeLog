@@ -1,3 +1,15 @@
+2004-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed 3 problems with parse functions that I just wrote, fixing 3 more Mozilla JavaScript tests
+
+        * kjs/function.cpp:
+        (KJS::parseDigit): Fix typo, 'Z' instead of 'z', that prevented lowercase hex digits from working.
+        (KJS::parseInt): Add octal support. Specification says it's optional, but I guess not.
+        (KJS::parseFloat): Fix check for "0x" in parseFloat to return 0 rather than NaN. Also add code
+        to skip leading "+" or "-".
+
 === Safari-156 ===
 
 2004-08-12  Darin Adler  <darin@apple.com>
