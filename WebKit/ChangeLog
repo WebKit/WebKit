@@ -1,3 +1,13 @@
+2003-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3417486 - after logging off from secure Etrade website, going back returns you to secure page
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]): Don't request stale data
+	for https pages, as this could be a security risk.
+
 2003-09-11  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3406671.  Added a private method for Mail to get selection

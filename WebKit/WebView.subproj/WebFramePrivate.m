@@ -1261,7 +1261,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeIndexedBackForward:
-                        [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+			if (![[itemURL scheme] isEqual:@"https"]) {
+			    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+			}
                         break;
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
