@@ -29,21 +29,22 @@
 // includes added to help in compilation of khtml/khtmlview.h
 #include "qobjectdefs.h"
 #include "qevent.h"
+#include "qvariant.h"
 
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
-#define SLOT(x) x
+#define SLOT(x) "x"
 #define signals protected
-#define SIGNAL(x) x
+#define SIGNAL(x) "x"
 #define emit
 #define Q_OBJECT
-//#define connect(arg1, arg2, arg3, arg4)
 
 class QObject {
 public:
     QObject(QObject *parent=0, const char *name=0);
     const char *name() const;
     virtual void setName(const char *);
+    QVariant property(const char *name) const;
     bool inherits(const char *) const;
     static bool connect(const QObject *, const char *, const QObject *, const
             char *);
