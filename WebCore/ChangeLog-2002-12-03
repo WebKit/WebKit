@@ -1,3 +1,11 @@
+2002-11-18  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3103004.  REGRESSION: word-spacing/letter-spacing applied when they shouldn't be
+        This was actually NOT a regression.  khtml wasn't recognizing the 'normal' value for the
+        word and letter spacing properties.  So it incorrectly substituted a -1 spacing.
+
+        * khtml/css/cssstyleselector.cpp:
+
 2002-11-18  David Hyatt  <hyatt@apple.com>
 
 	Fix render_body's repaint method.
