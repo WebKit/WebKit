@@ -123,20 +123,23 @@
         return;
     }
     
-    [self setStringValue:@""];
     if (!flag) {
+        // Don't use [self setStringValue:] because there are unwanted side effects,
+        // like sending out a text changed signal.
+        [super setStringValue:[secureField stringValue]];
         [secureField removeFromSuperview];
     } else {
         if (secureField == nil) {
             secureField = [[KWQSecureTextField alloc] initWithQLineEdit:widget];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
+            [secureField setEditable:[self isEditable]];
             [self setUpTextField:secureField];
             [self updateSecureFieldFrame];
         }
+        [secureField setStringValue:[super stringValue]];
         [self addSubview:secureField];
     }
-    [self setStringValue:@""];
 }
 
 - (void)setEditable:(BOOL)flag

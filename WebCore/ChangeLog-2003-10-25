@@ -1,3 +1,15 @@
+2003-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3202542 -- REGRESSION: preinitialized password inputs do not show dots (affects mac.com)
+
+        * kwq/KWQTextField.mm: (-[KWQTextField setPasswordMode:]): Remove code that sets the string
+        value to "". This is not needed, and because a text changed signal is sent out it makes the
+        caller think the text was deleted intentionally. Added code to move the string from the current
+        field in use to the other field, so changing the password mode does not make the string go away.
+        The old code was fragile and depended on the order of operations.
+
 2003-03-31  Darin Adler  <darin@apple.com>
 
         * English.lproj/InfoPlist.strings: Changed "1.0 Beta" to "1.0 Beta 2".
