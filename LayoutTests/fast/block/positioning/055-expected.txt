@@ -369,4 +369,3 @@ layer at (8,8) size 16x2160
     RenderText {TEXT} at (0,2142) size 16x18
       text run at (0,2142) width 16: "20"
     RenderBR {BR} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
