@@ -538,7 +538,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPa
     switch(type)
     {
     case CSSPrimitiveValue::CSS_EMS:
-        factor = style->font().pixelSize();
+        factor = style->htmlFont().getFontDef().floatSize();
         break;
     case CSSPrimitiveValue::CSS_EXS:
 	{

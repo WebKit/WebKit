@@ -2625,12 +2625,12 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_FONT_SIZE:
     {
         FontDef fontDef = style->htmlFont().fontDef;
-        int oldSize;
+        float oldSize;
         float size = 0;
         int minFontSize = settings->minFontSize();
 
         if(parentNode) {
-            oldSize = parentStyle->font().pixelSize();
+            oldSize = parentStyle->htmlFont().fontDef.floatSize();
         } else
             oldSize = m_fontSizes[3];
 
@@ -2687,7 +2687,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                     size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
             } else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 size = (primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)
-                        * parentStyle->font().pixelSize()) / 100;
+                        * oldSize) / 100;
             else
                 return;
         }
@@ -2699,7 +2699,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 
         //kdDebug( 6080 ) << "computed raw font size: " << size << endl;
 
-        fontDef.size = int(size);
+        fontDef.setSize(size);
         if (style->setFontDef( fontDef ))
 	    fontDirty = true;
         return;
@@ -3159,7 +3159,7 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderSt
     size = minFontSize;
   
   FontDef newFontDef(childFont);
-  newFontDef.size = size;
+  newFontDef.setSize(size);
   aStyle->setFontDef(newFontDef);
 }
 

@@ -1,5 +1,31 @@
 2003-05-21  David Hyatt  <hyatt@apple.com>
 
+	This patch deals with the main cause of regressions from
+	the minimum font size removal.  Because we stored font sizes
+	as integers, we ended up flooring font sizes, and when percentages
+	were nested, the magnitude of error increased dramatically.
+
+	This patch changes FontDef to store a float size instead of an
+	integer size.  The style system thus always computes a precise
+	floating point value for a font, with no error introduced and
+	only once it has that final computed value does it round to the
+	nearest pixel for the QFont.
+
+	This fixes 3265628, www.anandtech.com.
+	
+        Reviewed by rjw
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/font.cpp:
+        (Font::update):
+        * khtml/rendering/font.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+
+2003-05-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3257990, attributes in HTML should always be case-insensitive
 	when matching CSS attribute selectors.  Instead of relying on 
 	the strict mode check, I patched the code to use an isXMLDoc

@@ -925,7 +925,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
                 fontDef.family.setFamily(stdfont);
                 fontDef.family.appendFamily(0);
             }
-            fontDef.size = m_styleSelector->fontSizes()[3];
+            fontDef.setSize(m_styleSelector->fontSizes()[3]);
         }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
