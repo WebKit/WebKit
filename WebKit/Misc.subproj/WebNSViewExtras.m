@@ -56,7 +56,7 @@
     
     if(!bestURL || ![scheme isEqualToString:@"http"] || ![scheme isEqualToString:@"https"]){
 
-        NSString *URLString = [draggingPasteboard stringForType:NSStringPboardType];
+        NSString *URLString = [[draggingPasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
         if(URLString && [URLString _web_looksLikeAbsoluteURL]){
             bestURL = [NSURL _web_URLWithString:URLString];
         }

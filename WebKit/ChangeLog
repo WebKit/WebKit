@@ -1,3 +1,10 @@
+2002-07-22  Chris Blumenberg  <cblu@apple.com>
+
+	Strip white space before and after URL string 2998696
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_bestURLForDraggingInfo:]):
+
 2002-07-22  Ken Kocienda  <kocienda@apple.com>
 
         * WebView.subproj/WebHTMLView.m: import of removed WebFrame bridge header was
