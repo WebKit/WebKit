@@ -1,3 +1,7 @@
+2002-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Turn on -Werror.
+
 2002-03-05  Richard Williamson  <rjw@apple.com>
 
         Streamlined layout and drawing.  We now do the minimum amount of drawing and
