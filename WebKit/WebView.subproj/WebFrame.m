@@ -213,16 +213,6 @@
 }
 
 
-- (void)reset
-{
-    [_private setDataSource:nil];
-    [_private setWebView:nil];
-
-    [_private->scheduledLayoutTimer invalidate];
-    [_private->scheduledLayoutTimer release];
-    _private->scheduledLayoutTimer = nil;
-}
-
 + _frameNamed:(NSString *)name fromFrame: (WebFrame *)aFrame
 {
     int i, count;

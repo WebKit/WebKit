@@ -114,6 +114,17 @@ static const char * const stateNames[] = {
 
 @implementation WebFrame (WebPrivate)
 
+- (void)reset
+{
+    [_private setDataSource:nil];
+    [_private setWebView:nil];
+
+    [_private->scheduledLayoutTimer invalidate];
+    [_private->scheduledLayoutTimer release];
+    _private->scheduledLayoutTimer = nil;
+}
+
+
 - (void)_parentDataSourceWillBeDeallocated
 {
     [_private setController:nil];

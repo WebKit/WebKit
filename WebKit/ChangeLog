@@ -1,4 +1,16 @@
 2002-09-18  Richard Williamson  <rjw@apple.com>
+
+        Added documentation keywords to headers.
+        Made reset a private method.
+        
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame reset]):
+
+2002-09-18  Richard Williamson  <rjw@apple.com>
     
         Added documentation keywords to headers.
     

@@ -74,6 +74,14 @@ typedef enum {
 
 @interface WebFrame (WebPrivate)
 
+/*!
+    @method reset
+    @discussioin This method removes references the underlying resources.
+    FIXME:  I think this should be private.
+*/
+- (void)reset;
+
+
 - (void)_parentDataSourceWillBeDeallocated;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
