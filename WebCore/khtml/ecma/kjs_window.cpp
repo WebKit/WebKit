@@ -1046,7 +1046,7 @@ Value Window::getListener(ExecState *exec, int eventId) const
     return Undefined();
 
   DOM::EventListener *listener = doc->getHTMLWindowEventListener(eventId);
-  if (listener)
+  if (listener && static_cast<JSEventListener*>(listener)->listenerObjImp())
     return static_cast<JSEventListener*>(listener)->listenerObj();
   else
     return Null();

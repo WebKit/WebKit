@@ -1,3 +1,15 @@
+2004-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- fixed <rdar://problem/3567047>: REGRESSION: repro crash inside KJS (dispatchToBoolean) at www.thedonnas.com
+	- fixed <rdar://problem/3550461>: REGRESSION: repro crash in JavaScript at www.alaska.com
+        
+	* khtml/ecma/kjs_window.cpp:
+        (Window::getListener): Return Null() when the listener object is
+	null, indicating the code failed to parse. Otherwise we return a
+	bad value which can later crash the JS interpreter.
+
 2004-03-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
