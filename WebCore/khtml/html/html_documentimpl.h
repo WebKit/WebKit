@@ -65,6 +65,9 @@ public:
     void setPolicyBaseURL(const DOMString &s) { m_policyBaseURL = s; }
 #endif
 
+    DOMString designMode() const;
+    void setDesignMode(const DOMString &);
+
     HTMLElementImpl *body();
     void setBody(HTMLElementImpl *_body, int& exceptioncode);
 

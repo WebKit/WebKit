@@ -53,7 +53,8 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
-    : ElementImpl(doc)
+    : ElementImpl(doc),
+      m_contentEditable(FlagNone)
 {
 }
 
@@ -129,6 +130,12 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
         setHasClass(attr->val());
         setChanged();
         break;
+    case ATTR_CONTENTEDITABLE:
+    {
+        setContentEditable(attr->value());
+        setChanged();
+        break;
+    }
     case ATTR_STYLE:
         // ### we need to remove old style info in case there was any!
         // ### the inline sheet ay contain more than 1 property!
@@ -564,6 +571,43 @@ void HTMLElementImpl::addHTMLAlignment( DOMString alignment )
 	addCSSProperty( CSS_PROP_VERTICAL_ALIGN, propvalign );
 }
 
+bool HTMLElementImpl::isContentEditable() const {
+    if (m_contentEditable == FlagEnabled)
+        return true;
+    if (m_contentEditable == FlagDisabled)
+        return false;
+
+    NodeImpl *node = parentNode();
+    while (node && node->isHTMLElement()) {
+        HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+        if (element->m_contentEditable == FlagEnabled)
+            return true;
+        if (element->m_contentEditable == FlagDisabled)
+            return false;
+        node = node->parentNode();
+    }
+    return false;
+}
+
+DOMString HTMLElementImpl::contentEditable() const {
+    if (m_contentEditable == FlagEnabled)
+        return "true";
+    if (m_contentEditable == FlagDisabled)
+        return "false";
+    return "inherit";
+}
+
+void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
+    if ( strcasecmp ( enabled, "true" ) == 0 )
+        m_contentEditable = FlagEnabled;
+    else if ( enabled.isEmpty() ) // we want the "true" attribute
+        setAttribute(ATTR_CONTENTEDITABLE, "true");
+    else if ( strcasecmp ( enabled, "false" ) == 0 )
+        m_contentEditable = FlagDisabled;
+    else if ( strcasecmp ( enabled, "inherit" ) == 0 ) {
+        m_contentEditable = FlagNone;
+    }
+}
 
 // -------------------------------------------------------------------------
 HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)

@@ -3,66 +3,77 @@
 namespace KJS {
 
 const struct HashEntry HTMLDocumentTableEntries[] = {
-   { "open", HTMLDocument::Open, DontDelete|Function, 0, 0 },
-   { "scripts", HTMLDocument::Scripts, DontDelete|ReadOnly, 0, 0 },
-   { "releaseEvents", HTMLDocument::ReleaseEvents, DontDelete|Function, 0, 0 },
-   { "all", HTMLDocument::All, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[32] },
-   { 0, 0, 0, 0, 0 },
-   { "vlinkColor", HTMLDocument::VlinkColor, DontDelete, 0, 0 },
-   { "anchors", HTMLDocument::Anchors, DontDelete|ReadOnly, 0, 0 },
-   { "close", HTMLDocument::Close, DontDelete|Function, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { "dir", HTMLDocument::Dir, DontDelete, 0, 0 },
-   { "images", HTMLDocument::Images, DontDelete|ReadOnly, 0, 0 },
-   { "linkColor", HTMLDocument::LinkColor, DontDelete, 0, 0 },
-   { "domain", HTMLDocument::Domain, DontDelete, 0, 0 },
-   { "height", HTMLDocument::Height, DontDelete|ReadOnly, 0, 0 },
-   { "cookie", HTMLDocument::Cookie, DontDelete, 0, 0 },
-   { "alinkColor", HTMLDocument::AlinkColor, DontDelete, 0, 0 },
-   { "getElementsByName", HTMLDocument::GetElementsByName, DontDelete|Function, 1, 0 },
-   { "applets", HTMLDocument::Applets, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[34] },
+   { "width", HTMLDocument::Width, DontDelete|ReadOnly, 0, 0 },
    { "links", HTMLDocument::Links, DontDelete|ReadOnly, 0, 0 },
    { "title", HTMLDocument::Title, DontDelete, 0, 0 },
-   { "location", HTMLDocument::Location, DontDelete, 0, 0 },
+   { "vlinkColor", HTMLDocument::VlinkColor, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "writeln", HTMLDocument::WriteLn, DontDelete|Function, 1, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "forms", HTMLDocument::Forms, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[35] },
+   { "scripts", HTMLDocument::Scripts, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[39] },
    { "captureEvents", HTMLDocument::CaptureEvents, DontDelete|Function, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "clear", HTMLDocument::Clear, DontDelete|Function, 0, 0 },
-   { "referrer", HTMLDocument::Referrer, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[31] },
-   { 0, 0, 0, 0, 0 },
-   { "URL", HTMLDocument::URL, DontDelete|ReadOnly, 0, 0 },
-   { "body", HTMLDocument::Body, DontDelete, 0, 0 },
-   { "write", HTMLDocument::Write, DontDelete|Function, 1, &HTMLDocumentTableEntries[33] },
-   { "writeln", HTMLDocument::WriteLn, DontDelete|Function, 1, 0 },
-   { "bgColor", HTMLDocument::BgColor, DontDelete, 0, 0 },
-   { "forms", HTMLDocument::Forms, DontDelete|ReadOnly, 0, 0 },
+   { "write", HTMLDocument::Write, DontDelete|Function, 1, 0 },
    { "fgColor", HTMLDocument::FgColor, DontDelete, 0, 0 },
+   { "linkColor", HTMLDocument::LinkColor, DontDelete, 0, 0 },
+   { "body", HTMLDocument::Body, DontDelete, 0, &HTMLDocumentTableEntries[33] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "open", HTMLDocument::Open, DontDelete|Function, 0, 0 },
+   { "URL", HTMLDocument::URL, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
    { "lastModified", HTMLDocument::LastModified, DontDelete|ReadOnly, 0, 0 },
-   { "width", HTMLDocument::Width, DontDelete|ReadOnly, 0, 0 }
+   { "images", HTMLDocument::Images, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[36] },
+   { 0, 0, 0, 0, 0 },
+   { "domain", HTMLDocument::Domain, DontDelete, 0, 0 },
+   { "location", HTMLDocument::Location, DontDelete, 0, &HTMLDocumentTableEntries[32] },
+   { "cookie", HTMLDocument::Cookie, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "referrer", HTMLDocument::Referrer, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "dir", HTMLDocument::Dir, DontDelete, 0, &HTMLDocumentTableEntries[42] },
+   { "applets", HTMLDocument::Applets, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[34] },
+   { "anchors", HTMLDocument::Anchors, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[40] },
+   { "all", HTMLDocument::All, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[37] },
+   { "clear", HTMLDocument::Clear, DontDelete|Function, 0, 0 },
+   { "close", HTMLDocument::Close, DontDelete|Function, 0, &HTMLDocumentTableEntries[38] },
+   { "getElementsByName", HTMLDocument::GetElementsByName, DontDelete|Function, 1, &HTMLDocumentTableEntries[41] },
+   { "releaseEvents", HTMLDocument::ReleaseEvents, DontDelete|Function, 0, 0 },
+   { "bgColor", HTMLDocument::BgColor, DontDelete, 0, 0 },
+   { "alinkColor", HTMLDocument::AlinkColor, DontDelete, 0, 0 },
+   { "height", HTMLDocument::Height, DontDelete|ReadOnly, 0, 0 },
+   { "designMode", HTMLDocument::DesignMode, DontDelete, 0, 0 }
 };
 
-const struct HashTable HTMLDocumentTable = { 2, 35, HTMLDocumentTableEntries, 31 };
+const struct HashTable HTMLDocumentTable = { 2, 43, HTMLDocumentTableEntries, 32 };
 
 } // namespace
 
 namespace KJS {
 
 const struct HashEntry HTMLElementTableEntries[] = {
+   { "lang", KJS::HTMLElement::ElementLang, DontDelete, 0, &HTMLElementTableEntries[12] },
    { 0, 0, 0, 0, 0 },
-   { "innerHTML", KJS::HTMLElement::ElementInnerHTML, DontDelete, 0, &HTMLElementTableEntries[10] },
-   { "title", KJS::HTMLElement::ElementTitle, DontDelete, 0, &HTMLElementTableEntries[8] },
+   { "innerHTML", KJS::HTMLElement::ElementInnerHTML, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "innerText", KJS::HTMLElement::ElementInnerText, DontDelete, 0, 0 },
+   { "document", KJS::HTMLElement::ElementDocument, DontDelete|ReadOnly, 0, &HTMLElementTableEntries[13] },
+   { "className", KJS::HTMLElement::ElementClassName, DontDelete, 0, &HTMLElementTableEntries[14] },
+   { "id", KJS::HTMLElement::ElementId, DontDelete, 0, &HTMLElementTableEntries[11] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "id", KJS::HTMLElement::ElementId, DontDelete, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "dir", KJS::HTMLElement::ElementDir, DontDelete, 0, &HTMLElementTableEntries[9] },
-   { "lang", KJS::HTMLElement::ElementLang, DontDelete, 0, 0 },
-   { "className", KJS::HTMLElement::ElementClassName, DontDelete, 0, &HTMLElementTableEntries[11] },
-   { "innerText", KJS::HTMLElement::ElementInnerText, DontDelete, 0, &HTMLElementTableEntries[12] },
-   { "document", KJS::HTMLElement::ElementDocument, DontDelete|ReadOnly, 0, 0 },
-   { "children", KJS::HTMLElement::ElementChildren, DontDelete|ReadOnly, 0, 0 }
+   { "title", KJS::HTMLElement::ElementTitle, DontDelete, 0, &HTMLElementTableEntries[15] },
+   { "dir", KJS::HTMLElement::ElementDir, DontDelete, 0, 0 },
+   { "children", KJS::HTMLElement::ElementChildren, DontDelete|ReadOnly, 0, 0 },
+   { "contentEditable", KJS::HTMLElement::ElementContentEditable, DontDelete, 0, 0 },
+   { "isContentEditable", KJS::HTMLElement::ElementIsContentEditable, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable HTMLElementTable = { 2, 13, HTMLElementTableEntries, 8 };
+const struct HashTable HTMLElementTable = { 2, 16, HTMLElementTableEntries, 11 };
 
 } // namespace
 

@@ -175,3 +175,26 @@ void HTMLElement::assignOther( const Node &other, int elementId )
 	Node::operator = (other);
     }   
 }
+
+bool HTMLElement::isContentEditable() const
+{
+    if(!impl) return false;
+    return static_cast<HTMLElementImpl *>(impl)->isContentEditable();
+}
+
+DOMString HTMLElement::contentEditable() const {
+    if(!impl) return "inherit";
+    return static_cast<HTMLElementImpl *>(impl)->contentEditable();
+}
+
+void HTMLElement::setContentEditable(const DOMString &enabled) {
+    if(!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+    if (enabled == "inherit") {
+        int exceptionCode;
+        static_cast<HTMLElementImpl *>(impl)->removeAttribute(ATTR_CONTENTEDITABLE, exceptionCode);
+    }
+    else
+        static_cast<HTMLElementImpl *>(impl)->setAttribute(ATTR_CONTENTEDITABLE, enabled.isEmpty() ? "true" : enabled);
+}
+

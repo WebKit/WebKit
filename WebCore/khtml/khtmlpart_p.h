@@ -42,6 +42,7 @@
 #include "misc/decoder.h"
 #include "java/kjavaappletcontext.h"
 #include "ecma/kjs_proxy.h"
+#include "dom/dom_misc.h"
 
 namespace KIO
 {
@@ -151,6 +152,8 @@ public:
     m_bPluginsOverride = false;
     m_onlyLocalReferences = false;
 
+    m_inEditMode = DOM::FlagNone;
+
     m_metaRefreshEnabled = true;
     m_bHTTPRefresh = false;
 
@@ -181,6 +184,7 @@ public:
             m_ssl_in_use = part->d->m_ssl_in_use;
 #endif
             m_onlyLocalReferences = part->d->m_onlyLocalReferences;
+            m_inEditMode = part->d->m_inEditMode;
             m_zoomFactor = part->d->m_zoomFactor;
         }
     }
@@ -359,6 +363,8 @@ public:
   bool m_bCleared:1;
   bool m_bSecurityInQuestion:1;
   bool m_focusNodeRestored:1;
+
+  TristateFlag m_inEditMode;
 
   int m_focusNodeNumber;
 

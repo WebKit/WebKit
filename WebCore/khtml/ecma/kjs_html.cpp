@@ -122,7 +122,7 @@ Value KJS::HTMLDocFunction::tryCall(ExecState *exec, Object &thisObj, const List
 const ClassInfo KJS::HTMLDocument::info =
   { "HTMLDocument", &DOMDocument::info, &HTMLDocumentTable, 0 };
 /* Source for HTMLDocumentTable. Use "make hashtables" to regenerate.
-@begin HTMLDocumentTable 31
+@begin HTMLDocumentTable 32
   title			HTMLDocument::Title		DontDelete
   referrer		HTMLDocument::Referrer		DontDelete|ReadOnly
   domain		HTMLDocument::Domain		DontDelete
@@ -154,6 +154,7 @@ const ClassInfo KJS::HTMLDocument::info =
   height		HTMLDocument::Height		DontDelete|ReadOnly
   width			HTMLDocument::Width		DontDelete|ReadOnly
   dir			HTMLDocument::Dir		DontDelete
+  designMode            HTMLDocument::DesignMode        DontDelete
 #potentially obsolete array properties
 # layers
 # plugins
@@ -244,6 +245,8 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     case CaptureEvents:
     case ReleaseEvents:
       return lookupOrCreateFunction<HTMLDocFunction>( exec, propertyName, this, entry->value, entry->params, entry->attr );
+    case DesignMode:
+        return String(doc.designMode());
     }
   }
   // Look for overrides
@@ -413,6 +416,9 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     break;
   case Dir:
     body.setDir(value.toString(exec).string());
+    break;
+  case DesignMode:
+    doc.setDesignMode(value.toString(exec).string());
     break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
@@ -603,7 +609,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   }
 }
 /*
-@begin HTMLElementTable 8
+@begin HTMLElementTable 11
   id		KJS::HTMLElement::ElementId	DontDelete
   title		KJS::HTMLElement::ElementTitle	DontDelete
   lang		KJS::HTMLElement::ElementLang	DontDelete
@@ -615,6 +621,8 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   document	KJS::HTMLElement::ElementDocument  DontDelete|ReadOnly
 # IE extension
   children	KJS::HTMLElement::ElementChildren  DontDelete|ReadOnly
+  contentEditable   KJS::HTMLElement::ElementContentEditable  DontDelete
+  isContentEditable KJS::HTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
 @end
 @begin HTMLHtmlElementTable 1
   version	KJS::HTMLElement::HtmlVersion	DontDelete
@@ -1794,6 +1802,10 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     return getDOMNode(exec,element.ownerDocument());
   case ElementChildren:
     return getHTMLCollection(exec,element.children());
+  case ElementContentEditable:
+    return String(element.contentEditable());
+  case ElementIsContentEditable:
+    return Boolean(element.isContentEditable());
   // ### what about style? or is this used instead for DOM2 stylesheets?
   }
   kdWarning() << "HTMLElement::getValueProperty unhandled token " << token << endl;
@@ -2806,6 +2818,9 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
     return;
   case ElementInnerText:
     element.setInnerText(str);
+    return;
+  case ElementContentEditable:
+    element.setContentEditable(str);
     return;
   default:
     kdWarning() << "KJS::HTMLElement::putValue unhandled token " << token << " thisTag=" << element.tagName().string() << " str=" << str.string() << endl;

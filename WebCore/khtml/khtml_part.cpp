@@ -2092,6 +2092,30 @@ void KHTMLPart::setOnlyLocalReferences(bool enable)
   d->m_onlyLocalReferences = enable;
 }
 
+void KHTMLPart::setEditMode(TristateFlag flag)
+{
+    d->m_inEditMode = flag;
+}
+
+TristateFlag KHTMLPart::editMode() const
+{ 
+    if (d->m_inEditMode != FlagNone)
+        return d->m_inEditMode == FlagEnabled ? FlagEnabled : FlagDisabled;
+    
+    KHTMLPart *part = parentPart();
+    while (part) {
+        if (part->d->m_inEditMode != FlagNone)
+            return part->d->m_inEditMode == FlagEnabled ? FlagEnabled : FlagDisabled;
+        part = part->parentPart();
+    }
+    return FlagNone;
+}
+
+bool KHTMLPart::inEditMode() const
+{
+    return editMode() == FlagEnabled;
+}
+
 void KHTMLPart::findTextBegin(NodeImpl *startNode, int startPos)
 {
     d->m_findPos = startPos;
@@ -3708,7 +3732,7 @@ bool KHTMLPart::frameExists( const QString &frameName )
   return (!(*it).m_frame.isNull());
 }
 
-KHTMLPart *KHTMLPart::parentPart()
+KHTMLPart *KHTMLPart::parentPart() const
 {
   if ( !parent() || !parent()->inherits( "KHTMLPart" ) )
     return 0L;

@@ -53,6 +53,8 @@ protected:
     unsigned int _ref;
 };
 
+enum TristateFlag { FlagNone, FlagEnabled, FlagDisabled };
+
 }; // namespace
 
 #endif

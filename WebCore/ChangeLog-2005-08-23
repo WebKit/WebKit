@@ -1,3 +1,51 @@
+2003-10-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/dom/dom_misc.h: Declared TristateFlag enum used to implement
+	inheritance behavior for inheritable attributes like designMode.
+        * khtml/dom/html_document.cpp:
+        (HTMLDocument::designMode): Added getter.
+        (HTMLDocument::setDesignMode): Added setter.
+        * khtml/dom/html_document.h: Added declarations for designMode getter and setter.
+        * khtml/dom/html_element.cpp:
+        (HTMLElement::isContentEditable): Added convenience.
+        (HTMLElement::contentEditable): Added getter.
+        (HTMLElement::setContentEditable): Added setter.
+        * khtml/dom/html_element.h: Added declarations for contentEditable accessors.
+        * khtml/ecma/kjs_html.cpp: Added js support for contentEditable and designMode.
+        (KJS::HTMLDocument::tryGet)
+        (KJS::HTMLDocument::putValue)
+        (KJS::HTMLElement::getValueProperty)
+        (KJS::HTMLElement::putValue)
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLDocument::): Added DesignMode to attribuute enum.
+        (KJS::HTMLElement::): Added ContentEditable to attribute enum.
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::designMode): Added getter.
+        (HTMLDocumentImpl::setDesignMode): Added setter.
+        * khtml/html/html_documentimpl.h: Declared designMode accessors.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::parseAttribute): Added support for contentEditable.
+        (HTMLElementImpl::isContentEditable): Added. Implements inheritance feature
+	for this attribute.
+        (HTMLElementImpl::contentEditable): Getter for contentEditable attribute.
+        (HTMLElementImpl::setContentEditable): Setter for contentEditable attribute.
+        * khtml/html/html_elementimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setEditMode): Added.
+        (KHTMLPart::editMode): Added. Implements inheritance behavior for
+	attribute.
+        (KHTMLPart::inEditMode): Helper that calls on editMode function.
+        (KHTMLPart::parentPart): Made const.
+        * khtml/khtml_part.h: Rolled in a couple of typo fixes. Added
+	declarations for the changes made in the implementation file.
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate): Declared editMode flag.
+	Also added support for editMode flag in initializers and copy function.
+        * khtml/misc/htmlattrs.in: Added contentEditable as an attribute name.
+
 2003-10-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for a small-caps rendering error when used in conjunction with ::first-line.  Always update

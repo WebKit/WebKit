@@ -49,7 +49,7 @@ namespace KJS {
     enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
            Images, Applets, Links, Forms, Anchors, Scripts, All, Clear, Open, Close,
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
-           BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir };
+           BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };
     DOM::Document toDocument() const { return static_cast<DOM::Document>( node ); }
   };
 
@@ -146,7 +146,8 @@ namespace KJS {
            IFrameFrameBorder, IFrameSrc, IFrameName, IFrameHeight,
            IFrameMarginHeight, IFrameMarginWidth, IFrameScrolling, IFrameWidth, IFrameContentDocument,
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,
-           ElementClassName, ElementInnerText, ElementDocument, ElementChildren };
+           ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
+           ElementIsContentEditable};
 
     DOM::HTMLElement toElement() const { return static_cast<DOM::HTMLElement>(node); }
   };

@@ -262,6 +262,34 @@ Tokenizer *HTMLDocumentImpl::createTokenizer()
 // not part of the DOM
 // --------------------------------------------------------------------------
 
+DOMString HTMLDocumentImpl::designMode() const
+{
+    TristateFlag editMode = KWQ(view()->part())->editMode();
+    // Note: case for return values intentionally matches WinIE
+    switch (editMode) {
+        default:
+        case FlagNone:
+            return "Inherit";
+        case FlagEnabled:
+            return "On";
+        case FlagDisabled:
+            return "Off";
+    }
+}
+
+void HTMLDocumentImpl::setDesignMode(const DOMString &s)
+{
+    if ( strcasecmp( s, "on" ) == 0 ) {
+        KWQ(view()->part())->setEditMode(FlagEnabled);
+    }
+    else if (strcasecmp(s, "off") == 0) {
+        KWQ(view()->part())->setEditMode(FlagDisabled);
+    }
+    else if (strcasecmp(s, "inherit") == 0 || s.isNull()) {
+        KWQ(view()->part())->setEditMode(FlagNone);
+    }
+}
+
 bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 {
     // ### support comments. etc as a child
