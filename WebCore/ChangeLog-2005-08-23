@@ -1,3 +1,5 @@
+=== Safari-95 ===
+
 2003-08-27  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3359408.  DON'T treat unicode whitespace as whitespace when collapsing spaces.
