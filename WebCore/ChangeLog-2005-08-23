@@ -1,5 +1,22 @@
 2003-05-01  David Hyatt  <hyatt@apple.com>
 
+	Table rows don't know their precise dimensions, so repainting
+	them fails.  For now, just make an invalidation of a table
+	row due to CSS changes invalidate the whole table.
+
+	This is what the old Safari table code used to do prior to the
+	new table code landing.
+
+	Fixes bug #3205092.
+	
+        Reviewed by darin/john
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableRow::repaint):
+        * khtml/rendering/render_table.h:
+
+2003-05-01  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3232637, don't let generated parentless image content
 	try to do width/height/layout calculations.  It will do this
 	all anyway, when it finally gets inserted into the rendering

@@ -1391,6 +1391,15 @@ void RenderTableRow::layout()
     setLayouted();
 }
 
+void RenderTableRow::repaint(bool immediate)
+{
+    // For now, just repaint the whole table.
+    // FIXME: Find a better way to do this.
+    RenderTable* parentTable = table();
+    if (parentTable)
+        parentTable->repaint(immediate);
+}
+
 // -------------------------------------------------------------------------
 
 RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
