@@ -104,7 +104,9 @@ static BOOL forceRealHitTest = NO;
 
 - (WebView *)_webView
 {
-    return (WebView *)[self _web_superviewOfClass:[WebView class]];
+    // We used to use the view hierarchy exclusively here, but that won't work
+    // right when the first viewDidMoveToSuperview call is done, and this wil.
+    return [[self _frame] webView];
 }
 
 - (WebFrame *)_frame

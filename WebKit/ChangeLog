@@ -1,3 +1,11 @@
+2003-10-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _webView]):
+        Fixed problem where we'd get a nil WebView and pass crazy values for subframe
+        text multipliers.
+
 2003-10-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3440804, broken scrollbars in downloads window.  Make Auto be the default
