@@ -1,3 +1,16 @@
+2005-02-19  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Chris.
+
+	Fixed <rdar://problem/4010765> Flash player can be used to arbitrarily open popup windows without user permission
+	
+	Our window.open() policy is to refuse the <script>window.open(...)</script> case and allow the inline the <a href="javascript:window.open('foo')> case.  Clever advertisers at some point realized that by executing their Javascript through the Flash plugin, Safari would always treat their code as the inline case, and thus, they were able to work around our popup blocker.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:]): Changed this to invoke the new stringByEvaluatingJavaScriptFromString:forceUserGesture method below.
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]): Let the WebKit make the determination if this was a user originated gesture or not; we must no longer assume this is always the case.
+
 2005-02-18  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/3951196> REGRESSION (Mail): too many levels of reply quotes after certain steps

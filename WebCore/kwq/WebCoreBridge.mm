@@ -1191,8 +1191,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
+    return [self stringByEvaluatingJavaScriptFromString:string forceUserGesture:true];
+}
+
+// 
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
+{
     _part->createEmptyDocument();
-    return _part->executeScript(QString::fromNSString(string), true).asString().getNSString();
+    return _part->executeScript(QString::fromNSString(string), forceUserGesture).asString().getNSString();
 }
 
 - (WebScriptObject *)windowScriptObject
