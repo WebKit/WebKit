@@ -1,3 +1,15 @@
+2002-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3103691 -- assertion in WebHTMLView addMouseMovedObserver at versiontracker
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addMouseMovedObserver]): Instead of asserting, do the checks here to
+	determine if the observer should be installed.
+        (-[WebHTMLView viewDidMoveToWindow]): Remove checks, since addMouseMovedObserver now checks.
+        (-[WebHTMLView windowDidBecomeMain:]): Remove checks, since addMouseMovedObserver now checks.
+
 2002-12-05  Richard Williamson   <rjw@apple.com>
 
         Don't ceil spaces if not a fixed pitch font.  This make sites

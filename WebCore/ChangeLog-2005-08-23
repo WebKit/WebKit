@@ -1,3 +1,13 @@
+2002-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3111903 -- crash in DOM::HTMLDocumentImpl::close
+
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::close):
+	Check for the case where view() is 0 so we don't do a null-dereference.
+	Also, remove some of the unneeded redundant isNull/isEmpty checking here.
+
 2002-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

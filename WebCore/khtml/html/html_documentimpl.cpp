@@ -298,23 +298,25 @@ void HTMLDocumentImpl::close()
 {
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer;
-    bool notRedirecting = view()->part()->d->m_redirectURL.isNull() ||
-                          view()->part()->d->m_redirectURL.isEmpty();
+    
+    bool wasNotRedirecting = !view() || view()->part()->d->m_redirectURL.isEmpty();
     
     if (body() && doload)
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
         
     // Make sure both the initial layout and reflow happen after the onload
-    // fires.  This will improve onload scores, and other browsers do it.
+    // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
-    if (doload && notRedirecting && !view()->part()->d->m_redirectURL.isNull() &&
-        !view()->part()->d->m_redirectURL.isEmpty() && 
-        view()->part()->d->m_delayRedirect == 0 &&
-        m_startTime.elapsed() < 1000) {
-        delete m_tokenizer; m_tokenizer = 0;
+    if (doload && wasNotRedirecting
+            && view() && !view()->part()->d->m_redirectURL.isEmpty() && view()->part()->d->m_delayRedirect == 0
+            && m_startTime.elapsed() < 1000) {
+
+        // Just bail out. During the onload we were shifted to another page.
+        // i-Bench does this. When this happens don't bother painting or laying out.        
+        delete m_tokenizer;
+        m_tokenizer = 0;
         view()->unscheduleRelayout();
-        return; // Just bail out. During the onload we were shifted to another page.
-                // i-Bench does this.  When this happens don't bother painting or laying out.
+        return;
     }
                 
     // The initial layout happens here.

@@ -151,11 +151,11 @@
 
 - (void)addMouseMovedObserver
 {
-    ASSERT([[self window] isMainWindow]);
-    ASSERT(![self _insideAnotherHTMLView]);
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
-        name:NSMouseMovedNotification object:nil];
-    [self _frameOrBoundsChanged];
+    if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
+            name:NSMouseMovedNotification object:nil];
+        [self _frameOrBoundsChanged];
+    }
 }
 
 - (void)removeMouseMovedObserver
@@ -238,9 +238,7 @@
     if ([self window]) {
         [self addWindowObservers];
         [self addSuperviewObservers];
-        if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
-            [self addMouseMovedObserver];
-        }
+        [self addMouseMovedObserver];
         _private->inWindow = YES;
     } else {
         // Reset when we are moved out of a window after being moved into one.
@@ -576,9 +574,7 @@
 - (void)windowDidBecomeMain:(NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
-    if (![self _insideAnotherHTMLView]) {
-        [self addMouseMovedObserver];
-    }
+    [self addMouseMovedObserver];
 }
 
 - (void)windowDidResignMain: (NSNotification *)notification
