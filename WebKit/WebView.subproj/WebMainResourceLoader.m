@@ -105,6 +105,16 @@
     // Must call receivedError before _clearProvisionalDataSource because
     // if we remove the data source from the frame, we can't get back to the frame any more.
     [self receivedError:interruptError complete:!keepLoading];
+
+    // Deliver the error to the location change delegate.
+    // We have to do this explicitly because since we are still loading, WebFrame
+    // won't do it for us. There's probably a better way to do this, but this should
+    // do for now.
+    if (keepLoading) {
+        [[[dataSource controller] locationChangeDelegate]
+            locationChangeDone:interruptError forDataSource:dataSource];
+    }
+	
     [[dataSource webFrame] _clearProvisionalDataSource];
     
     [self notifyDelegatesOfInterruptionByPolicyChange];
@@ -180,8 +190,8 @@
 	
 	if ([dataSource downloadPath] == nil) {
             // FIXME: Should this be the filename or path?
-	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r
-                                                                                            andRequest:req];
+	    NSString *saveFilename = [[[dataSource controller] policyDelegate]
+                saveFilenameForResponse:r andRequest:req];
             // FIXME: Maybe there a cleaner way handle the bad filename case?
             if(!saveFilename || [saveFilename length] == 0){
                 saveFilename = NSHomeDirectory();
@@ -190,7 +200,7 @@
 	}
 
         [self interruptForPolicyChangeAndKeepLoading:YES];
-	
+        
 	// Hand off the dataSource to the download handler.  This will cause the remaining
 	// handle delegate callbacks to go to the controller's download delegate.
 	downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];

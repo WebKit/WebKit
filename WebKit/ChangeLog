@@ -1,3 +1,14 @@
+2002-12-10  Darin Adler  <darin@apple.com>
+
+	- fixed 3124081 -- REGRESSION: partial progress is left in address field after download
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]):
+	Put in code to call the locationChangeDone: method on the location change delegate if
+	keepLoading is YES. Since the data source is not finished loading WebFrame won't do it.
+
 2002-12-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3124079 - REGRESSION: Downloads never complete
