@@ -214,7 +214,7 @@
 	    }
 	} else {
 	    if(![[NSWorkspace sharedWorkspace] openURL:[req URL]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotNotFindApplicationForURL forURL:[req URL]];
+		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotFindApplicationForURL forURL:[req URL]];
 	    }
 	}
 

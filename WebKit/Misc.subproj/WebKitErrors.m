@@ -16,23 +16,23 @@
 
 NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 
-#define WebErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebErrorCannotCreateFile description")
-#define WebErrorDescriptionCannotOpenFile UI_STRING("Cannot open file", "WebErrorCannotOpenFile description")
+#define WebErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebKitErrorCannotCreateFile description")
+#define WebErrorDescriptionCannotOpenFile UI_STRING("Cannot open file", "WebKitErrorCannotOpenFile description")
 #define WebErrorDescriptionCannotCloseFile UI_STRING("Failure occurred while closing file", "WebKitErrorCannotCloseFile description")
-#define WebErrorDescriptionCannotWriteToFile UI_STRING("Cannot write file", "WebErrorCannotWriteToFile description")
-#define WebErrorDescriptionCannotRemoveFile UI_STRING("Cannot remove file", "WebErrorCannotRemoveFile description")
+#define WebErrorDescriptionCannotWriteToFile UI_STRING("Cannot write file", "WebKitErrorCannotWriteToFile description")
+#define WebErrorDescriptionCannotRemoveFile UI_STRING("Cannot remove file", "WebKitErrorCannotRemoveFile description")
 #define WebErrorDescriptionCannotMoveFile UI_STRING("Cannot move file", "WebKitErrorCannotMoveFile description")
-#define WebErrorDescriptionCannotFindApplicationForFile UI_STRING("Cannot find application for file", "WebErrorCannotFindApplicationForFile description")
-#define WebErrorDescriptionFinderCannotOpenDirectory UI_STRING("Finder cannot open directory", "WebErrorFinderCannotOpenDirectory description")
-#define WebErrorDescriptionCannotShowDirectory UI_STRING("Cannot show a file directory", "WebErrorCannotShowDirectory description")
-#define WebErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebErrorCannotShowMIMEType description")
-#define WebErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebErrorCannotShowURL description")
-#define WebErrorDescriptionCannotFindApplicationForURL UI_STRING("Cannot find application for URL", "WebErrorCannotNotFindApplicationForURL description")
-#define WebErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebErrorCannotFindPlugin description")
-#define WebErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebErrorCannotLoadPlugin description")
-#define WebErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebErrorJavaUnavailable description")
-#define WebErrorDescriptionDownloadDecodingFailedToComplete UI_STRING_KEY("Download decoding failed", "Download decoding failed (at end)", "WebErrorDownloadDecodingFailedToComplete description")
-#define WebErrorDescriptionDownloadDecodingFailedMidStream UI_STRING_KEY("Download decoding failed", "Download decoding failed (midstream)", "WebErrorDownloadDecodingFailedMidStream description")
+#define WebErrorDescriptionCannotFindApplicationForFile UI_STRING("Cannot find application for file", "WebKitErrorCannotFindApplicationForFile description")
+#define WebErrorDescriptionCannotFindApplicationForURL UI_STRING("Cannot find application for URL", "WebKitErrorCannotFindApplicationForURL description")
+#define WebErrorDescriptionFinderCannotOpenDirectory UI_STRING("Finder cannot open directory", "WebKitErrorFinderCannotOpenDirectory description")
+#define WebErrorDescriptionCannotShowDirectory UI_STRING("Cannot show a file directory", "WebKitErrorCannotShowDirectory description")
+#define WebErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebKitErrorCannotShowMIMEType description")
+#define WebErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebKitErrorCannotShowURL description")
+#define WebErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebKitErrorCannotFindPlugin description")
+#define WebErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebKitErrorCannotLoadPlugin description")
+#define WebErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
+#define WebErrorDescriptionDownloadDecodingFailedToComplete UI_STRING_KEY("Download decoding failed", "Download decoding failed (at end)", "WebKitErrorDownloadDecodingFailedToComplete description")
+#define WebErrorDescriptionDownloadDecodingFailedMidStream UI_STRING_KEY("Download decoding failed", "Download decoding failed (midstream)", "WebKitErrorDownloadDecodingFailedMidStream description")
 
 static pthread_once_t categoryInitializeControl = PTHREAD_ONCE_INIT;
 static void categoryInitialize(void);
@@ -63,11 +63,11 @@ static void categoryInitialize()
         WebErrorDescriptionCannotRemoveFile, 			[NSNumber numberWithInt: WebKitErrorCannotRemoveFile],
         WebErrorDescriptionCannotMoveFile, 			[NSNumber numberWithInt: WebKitErrorCannotMoveFile],
         WebErrorDescriptionCannotFindApplicationForFile, 	[NSNumber numberWithInt: WebKitErrorCannotFindApplicationForFile],
+        WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebKitErrorCannotFindApplicationForURL],
         WebErrorDescriptionFinderCannotOpenDirectory, 		[NSNumber numberWithInt: WebKitErrorFinderCannotOpenDirectory],
         WebErrorDescriptionCannotShowDirectory, 		[NSNumber numberWithInt: WebKitErrorCannotShowDirectory],
         WebErrorDescriptionCannotShowMIMEType, 			[NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
         WebErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebKitErrorCannotShowURL],
-        WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebKitErrorCannotNotFindApplicationForURL],
         WebErrorDescriptionWebErrorCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],
         WebErrorDescriptionWebErrorCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugin],
         WebErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],

@@ -196,7 +196,7 @@
     return frame;
 }
 
-- (WebFrame *)findOrCreateFramedNamed:(NSString *)name
+- (WebFrame *)findOrCreateFrameNamed:(NSString *)name
 {
     WebFrame *frame = [self findFrameNamed:name];
 

@@ -1,3 +1,13 @@
+2003-02-13  Chris Blumenberg  <cblu@apple.com>
+
+        Fixed WebKit typos found by Peter Wilson.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bridgeForFrameName): call findOrCreateFrameNamed
+        * kwq/WebCoreBridge.h: fixed method name for findOrCreateFrameNamed
+
 2003-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -74,15 +74,15 @@ enum {
 
 - (void)setAllowsScrolling: (BOOL)flag
 {
-    [[self frameScrollView] setAllowsScrolling: flag];
+    [(WebDynamicScrollBarsView *)[self frameScrollView] setAllowsScrolling: flag];
 }
 
 - (BOOL)allowsScrolling
 {
-    return [[self frameScrollView] allowsScrolling];
+    return [(WebDynamicScrollBarsView *)[self frameScrollView] allowsScrolling];
 }
 
-- frameScrollView
+- (NSScrollView *)frameScrollView
 {
     return _private->frameScrollView;
 }   

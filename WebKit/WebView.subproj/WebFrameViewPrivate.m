@@ -66,7 +66,7 @@
 
 - (void)_setDocumentView:(NSView *)view
 {
-    WebDynamicScrollBarsView *sv = [self frameScrollView];
+    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self frameScrollView];
     
     [sv setSuppressLayout: YES];
     

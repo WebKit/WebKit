@@ -1064,7 +1064,7 @@ typedef struct {
     } else {
         // Find the frame given the target string.
         NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-        WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+        WebFrame *frame = [[self webFrame] findOrCreateFrameNamed:target];
         [target release];
 
         // Make a request, but don't do it right away because it could make the plugin view go away.

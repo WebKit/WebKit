@@ -16,11 +16,11 @@ extern NSString *WebErrorDomainWebKit;
     @constant WebKitErrorCannotRemoveFile
     @constant WebKitErrorCannotMoveFile
     @constant WebKitErrorCannotFindApplicationForFile
+    @constant WebKitErrorCannotFindApplicationForURL
     @constant WebKitErrorFinderCannotOpenDirectory
     @constant WebKitErrorCannotShowDirectory
     @constant WebKitErrorCannotShowMIMEType
     @constant WebKitErrorCannotShowURL
-    @constant WebKitErrorCannotNotFindApplicationForURL
     @constant WebKitErrorLocationChangeInterruptedByPolicyChange
     @constant WebKitErrorDownloadDecodingFailedMidStream
     @constant WebKitErrorDownloadDecodingFailedToComplete
@@ -33,11 +33,11 @@ enum {
     WebKitErrorCannotRemoveFile,
     WebKitErrorCannotMoveFile,
     WebKitErrorCannotFindApplicationForFile,
+    WebKitErrorCannotFindApplicationForURL,
     WebKitErrorFinderCannotOpenDirectory,
     WebKitErrorCannotShowDirectory,
     WebKitErrorCannotShowMIMEType,
     WebKitErrorCannotShowURL,
-    WebKitErrorCannotNotFindApplicationForURL,
     WebKitErrorLocationChangeInterruptedByPolicyChange,
     WebKitErrorResourceLoadInterruptedByPolicyChange,
     WebKitErrorCannotFindPlugin,

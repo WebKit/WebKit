@@ -94,10 +94,10 @@
     return [[frame findFrameNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)findOrCreateFramedNamed:(NSString *)name
+- (WebCoreBridge *)findOrCreateFrameNamed:(NSString *)name
 {
     ASSERT(frame != nil);
-    return [[frame findOrCreateFramedNamed:name] _bridge];
+    return [[frame findOrCreateFrameNamed:name] _bridge];
 }
 
 - (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name

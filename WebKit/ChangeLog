@@ -1,3 +1,33 @@
+2003-02-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed WebKit typos found by Peter Wilson.
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (categoryInitialize): Error should be WebErrorDescriptionCannotFindApplicationForURL not WebErrorDescriptionCannotNotFindApplicationForURL
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): call findOrCreateFrameNamed
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]): call findOrCreateFrameNamed
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge findOrCreateFrameNamed:]): call findOrCreateFrameNamed
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame findOrCreateFrameNamed:]): fixed name
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]): use WebErrorDescriptionCannotFindApplicationForURL
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): use WebErrorDescriptionCannotFindApplicationForURL
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView setAllowsScrolling:]): cast to WebDynamicScrollBarsView
+        (-[WebView allowsScrolling]): cast to WebDynamicScrollBarsView
+        (-[WebView frameScrollView]): return NSScrollView
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _setDocumentView:]): cast to WebDynamicScrollBarsView
+
 2003-02-12  Chris Blumenberg  <cblu@apple.com>
 
 	- Moved the WebKit error registration out of WebView because apps that use WebKit but not WebView might need to use WebKit errors (like my test app for WebDownload).

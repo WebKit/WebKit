@@ -107,7 +107,7 @@
         ERROR("could not load URL %@", URL);
         return;
     }
-    [[frame findOrCreateFramedNamed:target] loadRequest:request];
+    [[frame findOrCreateFrameNamed:target] loadRequest:request];
 }
 
 - (void)showStatus:(NSString *)message

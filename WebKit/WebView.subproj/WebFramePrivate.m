@@ -1303,7 +1303,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             }
         } else {
             if (![[NSWorkspace sharedWorkspace] openURL:[request URL]]) {
-                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotNotFindApplicationForURL forURL:[request URL]];
+                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotFindApplicationForURL forURL:[request URL]];
             }
         }
         break;
