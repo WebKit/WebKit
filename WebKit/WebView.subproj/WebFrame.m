@@ -128,7 +128,7 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self webView] != nil);
 
-    urlPolicy = [[self controller] URLPolicyForURL:[newDataSource inputURL]];
+    urlPolicy = [[[self controller] policyHandler] URLPolicyForURL:[newDataSource inputURL]];
 
     if(urlPolicy == IFURLPolicyUseContentPolicy){
             
@@ -136,7 +136,7 @@
             [self stopLoading];
         }
         
-        locationChangeHandler = [[self controller] provideLocationChangeHandlerForFrame: self];
+        locationChangeHandler = [[[self controller] policyHandler] provideLocationChangeHandlerForFrame: self];
     
         [newDataSource _setLocationChangeHandler: locationChangeHandler];
     

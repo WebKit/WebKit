@@ -3,8 +3,9 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFImageView.h"
+#import <WebKit/IFDocument.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
+#import <WebKit/IFImageView.h>
 #import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFImageRepresentation.h>
 #import <WebKit/IFNSViewExtras.h>
@@ -30,10 +31,12 @@
     [super dealloc];
 }
 
+
 - (BOOL)isFlipped 
 {
     return YES;
 }
+
 
 - (void)drawRect:(NSRect)rect {
     IFImageRenderer *image;
@@ -44,25 +47,24 @@
     }
 }
 
+
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
 {
 
 }
+
 
 - (void)provisionalDataSourceCommitted:(IFWebDataSource *)dataSource
 {
     representation = [[dataSource representation] retain];
 }
 
+
 - (void)dataSourceUpdated:(IFWebDataSource *)dataSource
 {
 
 }
 
-- (void)setFrame:(NSRect)frameRect
-{
-    [super setFrame:frameRect];
-}
 
 - (void)layout
 {
@@ -77,6 +79,7 @@
 
 }
 
+
 - (void)setCanDragFrom: (BOOL)flag
 {
     canDragFrom = flag;
@@ -87,10 +90,12 @@
     return canDragFrom;
 }
 
+
 - (void)setCanDragTo: (BOOL)flag
 {
     canDragTo = flag;
 }
+
 
 - (BOOL)canDragTo
 {

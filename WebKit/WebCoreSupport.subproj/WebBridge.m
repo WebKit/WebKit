@@ -6,15 +6,16 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFWebCoreBridge.h>
-
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
+
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
+
 #import <KWQKHTMLPartImpl.h>
 
 #import <WebKit/WebKitDebug.h>
@@ -31,7 +32,7 @@
 
 - (IFWebCoreBridge *)_bridge
 {
-    return [[self representation] _bridge];
+    return [(IFHTMLRepresentation *)[self representation] _bridge];
 }
 
 @end
@@ -117,7 +118,7 @@
     withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
-    IFWebFrame *frame = [[self controller] createFrameNamed:frameName for:nil inParent:dataSource inScrollView:allowsScrolling];
+    IFWebFrame *frame = [[self controller] createFrameNamed:frameName for:nil inParent:dataSource allowsScrolling:allowsScrolling];
     if (frame == nil) {
         return NO;
     }

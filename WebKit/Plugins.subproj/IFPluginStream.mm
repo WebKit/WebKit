@@ -138,8 +138,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[view webController] receivedProgress: (IFLoadProgress *)loadProgress
-        forResource: [[sender url] absoluteString] fromDataSource: [view webDataSource]];
+    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress
+        forResourceHandle: sender fromDataSource: [view webDataSource]];
     [loadProgress release];
 }
 
@@ -174,8 +174,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
     loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[view webController] receivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: [view webDataSource]];
+    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress 
+        forResourceHandle: sender fromDataSource: [view webDataSource]];
     [loadProgress release];
     
     [self stop];
@@ -188,8 +188,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
     loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[view webController] receivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: [view webDataSource]];
+    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress 
+        forResourceHandle: sender fromDataSource: [view webDataSource]];
     [loadProgress release];
     
     [self stop];
@@ -203,7 +203,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     loadProgress->type = IF_LOAD_TYPE_PLUGIN;
     
-    [[view webController] receivedError: result forResource: [[sender url] absoluteString] 
+    [[[view webController] resourceProgressHandler] receivedError: result forResourceHandle: sender 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     

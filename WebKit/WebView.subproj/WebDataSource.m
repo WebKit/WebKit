@@ -3,19 +3,15 @@
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/WebKitDebug.h>
+
 #import <WebFoundation/WebFoundation.h>
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFImageView.h>
-#import <WebKit/IFTextView.h>
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFImageRepresentation.h>
-#import <WebKit/IFTextRepresentation.h>
 
 #import <xml/dom_docimpl.h>
 
@@ -63,7 +59,7 @@
     }
 }
 
-- (id) representation
+- (id <IFDocumentRepresentation>) representation
 {
     return _private->representation;
 }
@@ -241,7 +237,7 @@
 
 - (BOOL)isDocumentHTML
 {
-    return [[[self representation] className] isEqualToString:@"IFHTMLRepresentation"];
+    return [[self representation] isKindOfClass: [IFHTMLRepresentation class]];
 }
 
 // Get the actual source of the docment.
@@ -261,7 +257,7 @@
     if([self isDocumentHTML]){
         DOM::DocumentImpl *doc;
         NSString *string = nil;
-        KHTMLPart *part = [[self representation] part];
+        KHTMLPart *part = [(IFHTMLRepresentation *)[self representation] part];
         
         if (part != 0){
             doc = part->xmlDocImpl();

@@ -2,21 +2,23 @@
     IFWebController.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
+#import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFPreferencesPrivate.h>
+#import <WebKit/IFStandardPanelsPrivate.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFPreferencesPrivate.h>
-#import <WebKit/IFLoadProgress.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFStandardPanelsPrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
+
+#import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
+#import <WebFoundation/IFURLHandle.h>
+
 #import <khtml_part.h>
 #import <rendering/render_frames.h>
 
-#import <WebKit/WebKitDebug.h>
 
 @implementation IFWebControllerPrivate
 
@@ -51,6 +53,7 @@
 
     [mainFrame reset];
     [mainFrame autorelease];
+    [resourceProgressHandler autorelease];
 
     [super dealloc];
 }
@@ -60,7 +63,7 @@
 
 @implementation IFWebController (IFPrivate)
 
-- (void)_receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
+- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource
 {
     IFWebFrame *frame = [dataSource webFrame];
     
@@ -70,15 +73,15 @@
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         if (frame != nil) {
             IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
-            [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
-            [dataSource _addError: error forResource: resourceDescription];
+            [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
+            [dataSource _addError: error forResource: [[resourceHandle url] absoluteString]];
             [error release];
             [frame _checkLoadComplete];
         }
         return;
     }
 
-    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
 
     // This resouce has completed, so check if the load is complete for all frames.
     if (progress->bytesSoFar == progress->totalToLoad){
@@ -89,7 +92,7 @@
     }
 }
 
-- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
+- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource
 {
     IFWebFrame *frame = [dataSource webFrame];
     IFContentPolicy contentPolicy = [dataSource contentPolicy];
@@ -100,14 +103,14 @@
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
         IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
-        [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
+        [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
         [dataSource _setMainDocumentError: error];
         [error release];
         [frame _checkLoadComplete];
         return;
     }
 
-    [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
 
     if(progress->bytesSoFar == progress->totalToLoad){
         if(contentPolicy == IFContentPolicyOpenExternally || contentPolicy == IFContentPolicySave)
@@ -145,28 +148,28 @@
 
 
 
-- (void)_receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
+- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
     IFWebFrame *frame = [dataSource webFrame];
 
-    [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
     if ([dataSource _isStopping])
         return;
     
     WEBKIT_ASSERT (frame != nil);
 
-    [dataSource _addError: error forResource: resourceDescription];
+    [dataSource _addError: error forResource: [[resourceHandle url] absoluteString]];
     
     [frame _checkLoadComplete];
 }
 
 
-- (void)_mainReceivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
+- (void)_mainReceivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
     IFWebFrame *frame = [dataSource webFrame];
 
-    [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
     if ([dataSource _isStopping])
         return;

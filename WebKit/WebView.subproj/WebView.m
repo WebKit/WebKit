@@ -53,7 +53,7 @@
     return NO;
 }
 
-- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource inScrollView: (BOOL)inScrollView
+- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource allowsScrolling: (BOOL)allowsScrolling
 {
     IFWebView *childView;
     IFWebFrame *newFrame;
@@ -67,7 +67,7 @@
     [childView _setController: self];
     [childDataSource _setController: self];
 
-    [childView setAllowsScrolling: inScrollView];
+    [childView setAllowsScrolling: allowsScrolling];
         
     return newFrame;
 }
@@ -96,38 +96,30 @@
 }
 
 
-// ---------------------------------------------------------------------
-// IFLoadHandler
-// ---------------------------------------------------------------------
-- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
+- (void)setResourceProgressHandler: (id<IFResourceProgressHandler>)handler
 {
-    // Do nothing.  Subclasses typically override this method.
-}
-
-- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
-{
-    // Do nothing.  Subclasses typically override this method.
-}
-
-// ---------------------------------------------------------------------
-// IFLocationChangeHandler
-// ---------------------------------------------------------------------
-- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame
-{
-    return nil;
+    [_private->resourceProgressHandler autorelease];
+    _private->resourceProgressHandler = [handler retain];
 }
 
 
-- (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource
+- (id<IFResourceProgressHandler>)resourceProgressHandler
 {
-    // Do nothing.  Subclasses typically override this method.
+    return _private->resourceProgressHandler;
 }
 
 
-- (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource
+- (void)setPolicyHandler: (id<IFWebControllerPolicyHandler>)handler
 {
-    // Do nothing.  Subclasses typically override this method.
+    [_private->policyHandler autorelease];
+    _private->policyHandler = [handler retain];
 }
+
+- (id<IFWebControllerPolicyHandler>)policyHandler
+{
+    return _private->policyHandler;
+}
+
 
 - (IFWebFrame *)_frameForDataSource: (IFWebDataSource *)dataSource fromFrame: (IFWebFrame *)frame
 {
@@ -220,27 +212,14 @@
     return _private->mainFrame;
 }
 
-- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url
-{
-    // Do nothing.  Subclasses typically override this method.
-}
 
-- (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame andURL: (NSURL *)url
-{
-    return nil;
-}
-
-- (IFURLPolicy)URLPolicyForURL: (NSURL *)url
++ (IFURLPolicy)defaultURLPolicyForURL: (NSURL *)url
 {
     if([IFURLHandle canInitWithURL:url]){
         return IFURLPolicyUseContentPolicy;
     }else{
         return IFURLPolicyOpenExternally;
     }
-}
-
-- (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (IFError *)error
-{
 }
 
 

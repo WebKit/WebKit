@@ -6,7 +6,7 @@
 
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFDownloadHandler.h>
-#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFMainURLHandleClient.h>
@@ -68,7 +68,7 @@
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
     [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
+        forResourceHandle: sender fromDataSource: dataSource];
     [loadProgress release];
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
     [url release];
@@ -99,12 +99,17 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
-    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
+    [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        forResourceHandle: sender fromDataSource: dataSource];
     [loadProgress release];
-    [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
+    
+    IFError *nonTerminalError = [sender error];
+    if (nonTerminalError){
+        [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:loadProgress fromDataSource:dataSource];
+    }
     
     [downloadHandler finishedLoading];
     [downloadHandler release];
@@ -186,8 +191,8 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = contentLength;
     loadProgress->bytesSoFar = contentLengthReceived;
-    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResource: [[sender url] absoluteString] fromDataSource: dataSource];
+    [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        forResourceHandle: sender fromDataSource: dataSource];
     [loadProgress release];
     
     isFirstChunk = NO;
@@ -204,8 +209,8 @@
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
-    [(IFWebController *)[dataSource controller] _mainReceivedError:result forResource:[[sender url] absoluteString] partialProgress:loadProgress fromDataSource:dataSource];
-    [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [[dataSource controller] _mainReceivedError:result forResourceHandle:sender partialProgress:loadProgress fromDataSource:dataSource];
+    [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
     
@@ -221,14 +226,14 @@
     
     WEBKIT_ASSERT(url != nil);
     
-    [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [[dataSource controller] _didStopLoading:url];
     [newURL retain];
     [url release];
     url = newURL;
-    [(IFWebController *)[dataSource controller] _didStartLoading:url];
+    [[dataSource controller] _didStartLoading:url];
 
-    if([dataSource isDocumentHTML]) 
-        [[dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
+    if([dataSource _isDocumentHTML]) 
+        [(IFHTMLRepresentation *)[dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
     [dataSource _setFinalURL:url];
     
     [[dataSource _locationChangeHandler] serverRedirectTo:url forDataSource:dataSource];

@@ -2,19 +2,16 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFWebView.h>
-#import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebController.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
-#import <WebKit/WebKitDebug.h>
-#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFNSViewExtras.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebViewPrivate.h>
+#import <WebKit/WebKitDebug.h>
 
 // Needed for the mouse move notification.
 #import <AppKit/NSResponder_Private.h>
@@ -102,7 +99,7 @@
     
     // Nasty!  Setup the cross references between the KHTMLView and
     // the KHTMLPart.
-    KHTMLPart *part = [[dataSource representation] part];
+    KHTMLPart *part = [(IFHTMLRepresentation *)[dataSource representation] part];
 
     _private->provisionalWidget = new KHTMLView (part, 0);
     part->impl->setView (_private->provisionalWidget);
@@ -411,23 +408,23 @@
 
 - (void)viewWillStartLiveResize
 {
-    //id scrollView = [[self superview] superview];
-    //_private->liveAllowsScrolling = [scrollView allowsScrolling];
-    //[scrollView setAllowsScrolling: NO];
+    [super viewWillStartLiveResize];
 }
 
 - (void)viewDidEndLiveResize
 {
     id scrollView = [[self superview] superview];
 
-    //[scrollView setAllowsScrolling: _private->liveAllowsScrolling];
-
-    [scrollView updateScrollers];
-    [scrollView tile];
+    [super viewDidEndLiveResize];
+    
+    if ([scrollView isKindOfClass: [NSScrollView class]]){
+        [scrollView updateScrollers];
+        [scrollView tile];
+        [scrollView setNeedsDisplay: YES];
+    }
 
     [self setNeedsLayout: YES];
     [self setNeedsDisplay: YES];
-    [scrollView setNeedsDisplay: YES];
 }
 
 

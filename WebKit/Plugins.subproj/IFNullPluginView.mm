@@ -62,7 +62,7 @@ static NSImage *image = nil;
         errorSent = YES;
         webView = [self _IF_superviewWithName:@"IFWebView"];
         webController = [webView controller];
-        [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
+        [[webController policyHandler] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }
 }
 

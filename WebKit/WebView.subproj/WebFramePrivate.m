@@ -4,7 +4,7 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/IFLocationChangeHandler.h>
@@ -348,8 +348,8 @@ static const char * const stateNames[6] = {
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
-                if([ds isDocumentHTML])
-                    [[ds representation] part]->end();
+                if([ds _isDocumentHTML])
+                    [(IFHTMLRepresentation *)[ds representation] part]->end();
                 
                 // We have to layout the main document as
                 // it may change the size of frames.
@@ -366,8 +366,8 @@ static const char * const stateNames[6] = {
                 [[thisView documentView] layout];
 
                 // Jump to anchor point, if necessary.
-                if ([ds isDocumentHTML])
-                    [[ds representation] part]->impl->gotoBaseAnchor();
+                if ([ds _isDocumentHTML])
+                    [(IFHTMLRepresentation *)[ds representation] part]->impl->gotoBaseAnchor();
                                    
                 // FIXME:  We have to draw the whole document hierarchy.  We should be 
                 // able to just draw the document associated with this

@@ -6,20 +6,23 @@
         NSWebPageDataSource.
 */
 
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFMainURLHandleClient.h>
-#import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
+#import <WebKit/IFHTMLRepresentationPrivate.h>
+#import <WebKit/IFImageRepresentation.h>
+#import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFMainURLHandleClient.h>
+#import <WebKit/IFTextRepresentation.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/WebKitDebug.h>
-#import <WebFoundation/IFURLHandle.h>
+
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
-#import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFImageRepresentation.h>
-#import <WebKit/IFTextRepresentation.h>
+#import <WebFoundation/IFURLHandle.h>
+
 #import <KWQKHTMLPartImpl.h>
-#import "IFWebController.h"
 
 #import <kurl.h>
 
@@ -67,7 +70,6 @@ static NSMutableDictionary *_repTypes=nil;
     [errors release];
     [mainDocumentError release];
 
-
     [super dealloc];
 }
 
@@ -81,7 +83,7 @@ static NSMutableDictionary *_repTypes=nil;
     _private->resourceData = [data retain];
 }
 
-- (void)_setRepresentation:(id) representation
+- (void)_setRepresentation:(id <IFDocumentRepresentation>) representation
 {
     [_private->representation release];
     _private->representation = [representation retain];
@@ -209,8 +211,8 @@ static NSMutableDictionary *_repTypes=nil;
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    if ([self isDocumentHTML])
-        [[self representation] part]->closeURL();        
+    if ([self _isDocumentHTML])
+        [(IFHTMLRepresentation *)[self representation] part]->closeURL();        
 }
 
 - (void)_recursiveStopLoading
@@ -348,6 +350,7 @@ static NSMutableDictionary *_repTypes=nil;
     _private->mainDocumentError = nil;
 }
 
+
 - (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription
 {
     if (_private->errors == 0)
@@ -355,6 +358,13 @@ static NSMutableDictionary *_repTypes=nil;
         
     [_private->errors setObject: error forKey: resourceDescription];
 }
+
+
+- (BOOL)_isDocumentHTML
+{
+    return [[self representation] isKindOfClass: [IFHTMLRepresentation class]];
+}
+
 
 + (NSMutableDictionary *)_repTypes
 {
