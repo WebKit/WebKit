@@ -4899,20 +4899,27 @@ static NSArray *validAttributes = nil;
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    if (![self hasMarkedText]) {
-        return NSMakeRect(0,0,0,0);
+    NSRect resultRect = NSMakeRect(0,0,0,0);
+    WebBridge *bridge = [self _bridge];
+    DOMRange *rectRange = nil;
+    
+    if ([self hasMarkedText]) {
+        rectRange = [[bridge DOMDocument] createRange];
+        DOMRange *markedRange = [bridge markedTextDOMRange];
+        [rectRange setStart:[markedRange startContainer] :theRange.location];
+        [rectRange setEnd:[markedRange startContainer] :(theRange.location + theRange.length)];
+    } else {
+        // no marked text, so use current selection instead
+        // this helps for text input methods that unmark and delete the typed characters,
+        // then put up a word selector at the current insertion point
+        rectRange = [self _selectedRange];
     }
 
-    WebBridge *bridge = [self _bridge];
-
-    DOMRange *rectRange = [[bridge DOMDocument] createRange];
-    DOMRange *markedRange = [bridge markedTextDOMRange];
-    [rectRange setStart:[markedRange startContainer] :theRange.location];
-    [rectRange setEnd:[markedRange startContainer] :(theRange.location + theRange.length)];
-
-    NSRect resultRect = [self convertRect:[bridge firstRectForDOMRange:rectRange] toView:nil];
-    resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
-
+    if ([rectRange startContainer]) {
+        resultRect = [self convertRect:[bridge firstRectForDOMRange:rectRange] toView:nil];
+        resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
+    }
+    
     return resultRect;
 }
 
