@@ -508,7 +508,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
-    return inputElement ? [WebCoreDOMElement elementWithImpl:inputElement->form()] : nil;
+    if (inputElement) {
+        HTMLFormElementImpl *formElement = inputElement->form();
+        if (formElement) {
+            return [WebCoreDOMElement elementWithImpl:formElement];
+        }
+    }
+    return nil;
 }
 
 - (id <WebDOMElement>)currentForm

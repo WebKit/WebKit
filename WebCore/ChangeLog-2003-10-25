@@ -1,3 +1,12 @@
+2003-03-12  Trey Matteson  <trey@apple.com>
+
+	3190784 REGRESSION: crash in KWQListIteratorImpl in form completion code at sonyericsson.com page
+
+	Don't crash on an input element with no enclosing form.
+
+        * kwq/WebCoreBrid
+       (-[WebCoreBridge formForElement:]):  Gracefully bail on !form.
+
 2003-03-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for tantek's slides, this is an issue on diveintomark's
