@@ -91,15 +91,15 @@ NodeImpl::Id HTMLFormElementImpl::id() const
 }
 
 #if APPLE_CHANGES
-bool HTMLFormElementImpl::formWouldHaveSecureSubmission(DOMString url)
+
+bool HTMLFormElementImpl::formWouldHaveSecureSubmission(const DOMString &url)
 {
     if (url.isNull()) {
         return false;
-    } else {
-        QString fullUrl = getDocument()->completeURL( url.string() );
-        return strncmp(fullUrl.latin1(), "https:", 6) == 0;
     }
+    return getDocument()->completeURL(url.string()).startsWith("https:", false);
 }
+
 #endif
 
 void HTMLFormElementImpl::attach()

@@ -1,3 +1,15 @@
+2003-11-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3485572 -- secure form check in KHTML uses case-sensitive comparison with "https"
+
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::formWouldHaveSecureSubmission):
+        Changed to take a DOMString reference for slightly better efficiency, and to use startsWith
+        so the prefix check is not case sensitive and for slightly better efficiency and clarity
+        than calling latin1() and using strncmp.
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
 	- commit updated .lut.h file that I forgot to commit before

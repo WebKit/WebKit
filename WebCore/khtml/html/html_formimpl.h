@@ -123,7 +123,7 @@ public:
     QString oldIdAttr;
     QString oldNameAttr;
 #if APPLE_CHANGES
-    bool formWouldHaveSecureSubmission(DOMString url);
+    bool formWouldHaveSecureSubmission(const DOMString &url);
 #endif
 };
 
