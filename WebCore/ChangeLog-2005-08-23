@@ -1,6 +1,14 @@
 2004-11-17  David Harrison  <harrison@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Ken Kocienda.
+        
+        Make sure previousLineStart is non-null before calling compareBoundaryPoints.
+        Treat null case as meaning no post-move merge is needed.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+
+2004-11-17  David Harrison  <harrison@apple.com>
         
         Added displayNode and displayTree methods for debugging.  Fixed comment typo in dispatchChildRemovalEvents.
         * khtml/xml/dom_nodeimpl.cpp:
