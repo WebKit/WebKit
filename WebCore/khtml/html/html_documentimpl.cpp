@@ -122,9 +122,6 @@ HTMLDocumentImpl::HTMLDocumentImpl(DOMImplementationImpl *_implementation, KHTML
 */
     connect( KHTMLFactory::vLinks(), SIGNAL( cleared()),
              SLOT( slotHistoryChanged() ));
-    m_startTime.restart();
-
-    processingLoadEvent = false;
 }
 
 HTMLDocumentImpl::~HTMLDocumentImpl()
@@ -220,26 +217,6 @@ void HTMLDocumentImpl::setCookie( const DOMString & value )
 #endif
 }
 
-
-
-HTMLElementImpl *HTMLDocumentImpl::body()
-{
-    NodeImpl *de = documentElement();
-    if (!de)
-        return 0;
-
-    // try to prefer a FRAMESET element over BODY
-    NodeImpl* body = 0;
-    for (NodeImpl* i = de->firstChild(); i; i = i->nextSibling()) {
-        if (i->id() == ID_FRAMESET)
-            return static_cast<HTMLElementImpl*>(i);
-
-        if (i->id() == ID_BODY)
-            body = i;
-    }
-    return static_cast<HTMLElementImpl *>(body);
-}
-
 void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)
 {
     HTMLElementImpl *b = body();
@@ -328,57 +305,6 @@ HTMLMapElementImpl* HTMLDocumentImpl::getMap(const DOMString& _url)
         return *it;
     else
         return 0;
-}
-
-void HTMLDocumentImpl::close()
-{
-    // First fire the onload.
-    bool doload = !parsing() && m_tokenizer && !processingLoadEvent;
-    
-    bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled || view()->part()->d->m_scheduledRedirection == historyNavigationScheduled;
-
-    processingLoadEvent = true;
-    if (body() && doload) {
-	// We have to clear the tokenizer, in case someone document.write()s from the
-	// onLoad event handler, as in Radar 3206524
-	delete m_tokenizer;
-	m_tokenizer = 0;
-        dispatchImageLoadEventsNow();
-        body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
-    }
-    processingLoadEvent = false;
-        
-    // Make sure both the initial layout and reflow happen after the onload
-    // fires. This will improve onload scores, and other browsers do it.
-    // If they wanna cheat, we can too. -dwh
-    
-    bool isRedirectingSoon = view() && view()->part()->d->m_scheduledRedirection != noRedirectionScheduled && view()->part()->d->m_scheduledRedirection != historyNavigationScheduled && view()->part()->d->m_delayRedirect == 0;
-
-    if (doload && wasNotRedirecting && isRedirectingSoon && m_startTime.elapsed() < 1000) {
-        static int redirectCount = 0;
-        if (redirectCount++ % 4) {
-            // When redirecting over and over (e.g., i-bench), to avoid the appearance of complete inactivity,
-            // paint every fourth page.
-            // Just bail out. During the onload we were shifted to another page.
-            // i-Bench does this. When this happens don't bother painting or laying out.        
-            delete m_tokenizer;
-            m_tokenizer = 0;
-            view()->unscheduleRelayout();
-            return;
-        }
-    }
-                
-    // The initial layout happens here.
-    DocumentImpl::closeInternal(!doload);
-
-    // Now do our painting
-    if (body() && doload) {
-        updateRendering();
-        
-        // Always do a layout after loading if needed.
-        if (renderer() && renderer()->needsLayout())
-            view()->layout();
-    }
 }
 
 void HTMLDocumentImpl::addNamedImageOrForm(const QString &name)

@@ -34,6 +34,7 @@
 #include <qobject.h>
 #include <qdict.h>
 #include <qmap.h>
+#include <qdatetime.h>
 
 #include <kurl.h>
 
@@ -254,8 +255,8 @@ public:
     void setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep);
     void clearSelection();
 
-    void open (  );
-    virtual void close (  );
+    void open();
+    void close();
     void closeInternal ( bool checkTokenizer );
     void write ( const DOMString &text );
     void write ( const QString &text );
@@ -465,6 +466,8 @@ public:
     void addElementById(const DOMString &elementId, ElementImpl *element);
     void removeElementById(const DOMString &elementId, ElementImpl *element);
 
+    HTMLElementImpl* body();
+    
 signals:
     void finishedParsing();
 
@@ -556,6 +559,9 @@ protected:
 
     NodeImpl* m_cssTarget;
     
+    bool m_processingLoadEvent;
+    QTime m_startTime;
+
 #if APPLE_CHANGES
 public:
     KWQSignal m_finishedParsing;

@@ -68,8 +68,6 @@ RenderCanvas::RenderCanvas(DOM::NodeImpl* node, KHTMLView *view)
 
     // Create a new root layer for our layer hierarchy.
     m_layer = new (node->getDocument()->renderArena()) RenderLayer(this);
-    
-    m_view->scheduleRelayout();
 }
 
 RenderCanvas::~RenderCanvas()
@@ -178,8 +176,8 @@ void RenderCanvas::layout()
     kdDebug() << "RenderCanvas::end time used=" << qt.elapsed() << endl;
 #endif
 
-    layer()->setHeight(QMAX(doch, m_height));
-    layer()->setWidth(QMAX(docw, m_width));
+    layer()->setHeight(kMax(doch, m_height));
+    layer()->setWidth(kMax((short)docw, m_width));
     
     setNeedsLayout(false);
 }

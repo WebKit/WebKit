@@ -1,3 +1,22 @@
+2003-11-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3488888, about:blank in iframes doesn't repaint properly.  Fix for 3485478, refreshing a remote
+	page often causes a white flash.  Fix for 3488827, XML/XHTML documents don't fire load events on bodies/framesets.
+	
+        Reviewed by darin
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::HTMLDocumentImpl):
+        * khtml/html/html_documentimpl.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::RenderCanvas):
+        (RenderCanvas::layout):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::body):
+        (DocumentImpl::close):
+        * khtml/xml/dom_docimpl.h:
+
 2003-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
