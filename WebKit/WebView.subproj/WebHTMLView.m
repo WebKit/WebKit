@@ -631,7 +631,8 @@
 
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-    return NSDragOperationCopy;
+    NSLog(@"draggingSourceOperationMaskForLocal");
+    return (NSDragOperationGeneric|NSDragOperationCopy);
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
