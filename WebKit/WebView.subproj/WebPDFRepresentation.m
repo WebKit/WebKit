@@ -5,15 +5,28 @@
 
 #ifndef OMIT_TIGER_FEATURES
 
-#import <Quartz/Quartz.h>
-
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPDFRepresentation.h>
 #import <WebKit/WebPDFView.h>
 
+#import <Quartz/Quartz.h>
+
 @implementation WebPDFRepresentation
+
++ (Class)PDFDocumentClass
+{
+    static Class PDFDocumentClass = nil;
+    if (PDFDocumentClass == nil) {
+        PDFDocumentClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFDocument"];
+        if (PDFDocumentClass == nil) {
+            ERROR("Couldn't find PDFDocument class in PDFKit.framework");
+        }
+    }
+    return PDFDocumentClass;
+}
 
 - (void)setDataSource:(WebDataSource *)dataSource;
 {
@@ -30,8 +43,8 @@
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
-    PDFDocument *doc = [[PDFDocument alloc] initWithData:[dataSource data]];
-    [view setDocument:doc];
+    PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]];
+    [[view PDFSubview] setDocument:doc];
     [doc release];
 }
 

@@ -7,27 +7,69 @@
 
 #import <Foundation/NSString_NSURLExtras.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebPDFView.h>
 
+#import <Quartz/Quartz.h>
+
+NSString *_NSPathForSystemFramework(NSString *framework);
 
 @implementation WebPDFView
+
++ (NSBundle *)PDFKitBundle
+{
+    static NSBundle *PDFKitBundle = nil;
+    if (PDFKitBundle == nil) {
+        NSString *PDFKitPath = [_NSPathForSystemFramework(@"Quartz.framework") stringByAppendingString:@"/Frameworks/PDFKit.framework"];
+        if (PDFKitPath == nil) {
+            ERROR("Couldn't find PDFKit.framework");
+            return nil;
+        }
+        PDFKitBundle = [NSBundle bundleWithPath:PDFKitPath];
+        if (![PDFKitBundle load]) {
+            ERROR("Couldn't load PDFKit.framework");
+        }
+    }
+    return PDFKitBundle;
+}
+
++ (Class)PDFViewClass
+{
+    static Class PDFViewClass = nil;
+    if (PDFViewClass == nil) {
+        PDFViewClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFView"];
+        if (PDFViewClass == nil) {
+            ERROR("Couldn't find PDFView class in PDFKit.framework");
+        }
+    }
+    return PDFViewClass;
+}
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         [self setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-            written = NO;
+        PDFSubview = [[[[self class] PDFViewClass] alloc] initWithFrame:frame];
+        [PDFSubview setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+        [self addSubview:PDFSubview];
+        written = NO;
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [PDFSubview release];
     [path release];
     [super dealloc];
+}
+
+- (PDFView *)PDFSubview
+{
+    return PDFSubview;
 }
 
 #define TEMP_PREFIX "/tmp/XXXXXX-"

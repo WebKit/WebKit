@@ -148,7 +148,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /usr/local/SecurityPieces/Frameworks /System/Library/Frameworks/Quartz.framework/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /usr/local/SecurityPieces/Frameworks";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -164,7 +164,7 @@
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/WebKit.order";
-				TIGER_FRAMEWORKS_LDFLAGS = "-framework \"`if [ -f /System/Library/Frameworks/Quartz.framework/Frameworks/PDFKit.framework/PDFKit ]; then echo \\\"PDFKit\\\"; else echo \\\"System\\\"; fi`\" -framework \"`if [ -f /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils ]; then echo \\\"security_cdsa_utils\\\"; else echo \\\"System\\\"; fi`\"";
+				TIGER_FRAMEWORKS_LDFLAGS = "-framework \"`if [ -f /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils ]; then echo \\\"security_cdsa_utils\\\"; else echo \\\"System\\\"; fi`\"";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wbad-function-cast -Wmissing-declarations -Wnested-externs";
 				WARNING_CPLUSPLUSFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";

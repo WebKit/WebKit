@@ -1,5 +1,23 @@
 2004-11-15  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3880410> save 5 dirty pages by soft-linking against PDFKit framework
+
+        Reviewed by john.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebPDFRepresentation.m:
+        (+[WebPDFRepresentation PDFDocumentClass]): new
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]): use PDFDocumentClass
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (+[WebPDFView PDFKitBundle]): new
+        (+[WebPDFView PDFViewClass]): new
+        (-[WebPDFView initWithFrame:]): create a PDFView subview
+        (-[WebPDFView dealloc]): release the PDFView subview
+        (-[WebPDFView PDFSubview]): new
+
+2004-11-15  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3879891> WebKit should link against PDFKit instead of Quartz
 
         Reviewed by darin.
