@@ -58,6 +58,12 @@ public:
 
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args);
 
+    virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
+    virtual void setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue);
+    
+    virtual Value ObjcInstance::getValueOfField (KJS::ExecState *exec, const Field *aField) const;
+    virtual KJS::Value getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const;
+
     ObjectStructPtr getObject() const { return _instance; }
     
     KJS::Value stringValue() const;

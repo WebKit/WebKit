@@ -100,7 +100,7 @@ public:
     
     virtual MethodList methodsNamed(const char *name) const;
     
-    virtual Field *fieldNamed(const char *name) const;
+    virtual Field *fieldNamed(const char *name, Instance *instance) const;
     
     virtual Constructor *constructorAt(long i) const {
         return &_constructors[i]; 

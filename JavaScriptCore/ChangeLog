@@ -1,3 +1,68 @@
+2004-08-10  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3674747> Need to implement invokeUndefinedMethodFromWebScript:withArguments:
+
+	The following WebScripting methods are now supported on bound
+	objects:
+
+	- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
+        - (void)setValue:(id)value forUndefinedKey:(NSString *)key
+        - (id)valueForUndefinedKey:(NSString *)key
+
+        Reviewed by Chris.
+
+        * bindings/c/c_class.cpp:
+        (CClass::fieldNamed):
+        * bindings/c/c_class.h:
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/objc/objc_class.h:
+        (KJS::Bindings::ObjcClass::isa):
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        (ObjcClass::fieldNamed):
+        (ObjcClass::fallbackObject):
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::setValueOfField):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcField::~ObjcField):
+        (KJS::Bindings::ObjcField::ObjcField):
+        (KJS::Bindings::ObjcField::operator=):
+        (KJS::Bindings::FallbackObjectImp::classInfo):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::ObjcField):
+        (ObjcField::name):
+        (ObjcField::type):
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        (FallbackObjectImp::FallbackObjectImp):
+        (FallbackObjectImp::get):
+        (FallbackObjectImp::put):
+        (FallbackObjectImp::canPut):
+        (FallbackObjectImp::implementsCall):
+        (FallbackObjectImp::call):
+        (FallbackObjectImp::hasProperty):
+        (FallbackObjectImp::deleteProperty):
+        (FallbackObjectImp::defaultValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Class::fallbackObject):
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::setValueOfUndefinedField):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+        * bindings/testbindings.mm:
+        (-[MyFirstInterface valueForUndefinedKey:]):
+        (-[MyFirstInterface setValue:forUndefinedKey:]):
+
 2004-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

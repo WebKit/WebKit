@@ -106,7 +106,7 @@ MethodList CClass::methodsNamed(const char *_name) const
 }
 
 
-Field *CClass::fieldNamed(const char *name) const
+Field *CClass::fieldNamed(const char *name, Instance *instance) const
 {
     CFStringRef fieldName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     Field *aField = (Field *)CFDictionaryGetValue (_fields, fieldName);

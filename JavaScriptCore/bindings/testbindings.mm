@@ -102,6 +102,17 @@
 	return @"success";
 }
 
+- (id)valueForUndefinedKey:(NSString *)key
+{
+	NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
+	return @"aValue";
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key
+{
+	NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
+}
+
 - init
 {
     LOG ("\n");

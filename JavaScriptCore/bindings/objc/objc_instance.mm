@@ -36,6 +36,8 @@
 }
 #endif
 
+#include <JavaScriptCore/objc_runtime.h>
+
 using namespace KJS::Bindings;
 using namespace KJS;
 
@@ -233,11 +235,6 @@ NS_DURING
         resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
     }
 
-    // Fallback methods are created for one-shot use.  They are created in 
-    // ObjcClass::methodsNamed() and deleted here.
-    if (method->isFallbackMethod())
-        delete method;
-    
 NS_HANDLER
     
     resultValue = Undefined();
@@ -247,6 +244,65 @@ NS_ENDHANDLER
     return resultValue;
 }
 
+void ObjcInstance::setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const
+{
+    aField->setValueToInstance (exec, this, aValue);
+}
+
+void ObjcInstance::setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue)
+{
+    id targetObject = getObject();
+    
+    // This check is not really necessary because NSObject implements
+    // setValue:forUndefinedKey:, and unfortnately the default implementation
+    // throws an exception.
+    if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
+        
+        NS_DURING
+        
+            ObjcValue objcValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
+            [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:property.ascii()]];
+        
+        NS_HANDLER
+            
+            // Do nothing.  Class did not override valueForUndefinedKey:.
+            
+        NS_ENDHANDLER
+        
+    }
+}
+
+Value ObjcInstance::getValueOfField (KJS::ExecState *exec, const Field *aField) const {  
+    return aField->valueFromInstance (exec, this);
+}
+
+KJS::Value ObjcInstance::getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const
+{
+    Value result = Undefined();
+    
+    id targetObject = getObject();
+    
+    // This check is not really necessary because NSObject implements
+    // valueForUndefinedKey:, and unfortnately the default implementation
+    // throws an exception.
+    if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
+        id objcValue;
+        
+        NS_DURING
+        
+            objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii()]];
+            result = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
+        
+        NS_HANDLER
+            
+            // Do nothing.  Class did not override valueForUndefinedKey:.
+            
+        NS_ENDHANDLER
+        
+    }
+    
+    return result;
+}
 
 KJS::Value ObjcInstance::defaultValue (KJS::Type hint) const
 {

@@ -115,8 +115,10 @@ public:
     virtual Constructor *constructorAt(long i) const = 0;
     virtual long numConstructors() const = 0;
     
-    virtual Field *fieldNamed(const char *name) const = 0;
+    virtual Field *fieldNamed(const char *name, Instance *instance) const = 0;
 
+    virtual Value fallbackObject(KJS::ExecState *exec, Bindings::Instance *instance, const KJS::Identifier &propertyName) { return Undefined(); }
+    
     virtual ~Class() {};
 };
 
@@ -147,7 +149,9 @@ public:
     virtual Class *getClass() const = 0;
     
     virtual KJS::Value getValueOfField (KJS::ExecState *exec, const Field *aField) const;
+    virtual KJS::Value getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const { return Undefined(); };
     virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
+    virtual void setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue) {};
     
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args) = 0;
     

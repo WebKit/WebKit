@@ -77,16 +77,29 @@ void ObjcMethod::setJavaScriptName (CFStringRef n)
 ObjcField::ObjcField(Ivar ivar) 
 {
     _ivar = ivar;    // Assume ObjectiveC runtime will keep this alive forever
+    _name = 0;
+}
+
+ObjcField::ObjcField(CFStringRef name) 
+{
+    _ivar = 0;
+    _name = (CFStringRef)CFRetain(name);
 }
 
 const char *ObjcField::name() const 
 {
-    return _ivar->ivar_name;
+    if (_ivar)
+        return _ivar->ivar_name;
+    return [(NSString *)_name UTF8String];
 }
 
 RuntimeType ObjcField::type() const 
-{
-    return _ivar->ivar_type;
+{ 
+    if (_ivar)
+        return _ivar->ivar_type;
+    
+    // Type is irrelevant if we use KV to set/get the value.
+    return "";
 }
 
 Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instance) const
@@ -97,7 +110,7 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
 
     NS_DURING
     
-        NSString *key = [NSString stringWithCString:_ivar->ivar_name];
+        NSString *key = [NSString stringWithCString:name()];
         objcValue = [targetObject valueForKey:key];
         
     NS_HANDLER
@@ -134,9 +147,9 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
     
     NS_DURING
     
-        NSString *key = [NSString stringWithCString:_ivar->ivar_name];
+        NSString *key = [NSString stringWithCString:name()];
         [targetObject setValue:value forKey:key];
-        
+
     NS_HANDLER
         
         Value aValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
@@ -238,3 +251,86 @@ unsigned int ObjcArray::getLength() const
 {
     return [_array count];
 }
+
+
+const ClassInfo FallbackObjectImp::info = {"FallbackObject", 0, 0, 0};
+
+FallbackObjectImp::FallbackObjectImp(ObjectImp *proto)
+  : ObjectImp(proto)
+{
+    _instance = 0;
+}
+
+FallbackObjectImp::FallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName) : ObjectImp ((ObjectImp *)0)
+{
+    _instance = i;
+    _item = propertyName;
+}
+
+Value FallbackObjectImp::get(ExecState *exec, const Identifier &propertyName) const
+{
+    return Undefined();
+}
+
+void FallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
+                 const Value &value, int attr)
+{
+}
+
+bool FallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
+{
+    return false;
+}
+
+
+bool FallbackObjectImp::implementsCall() const
+{
+    return true;
+}
+
+Value FallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
+{
+    Value result = Undefined();
+    
+    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
+    if (imp) {
+        Instance *instance = imp->getInternalInstance();
+        
+        instance->begin();
+
+        ObjcInstance *objcInstance = static_cast<ObjcInstance*>(instance);
+        id targetObject = objcInstance->getObject();
+        
+        if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
+            MethodList methodList;
+            ObjcClass *objcClass = static_cast<ObjcClass*>(instance->getClass());
+            ObjcMethod *fallbackMethod = new ObjcMethod (objcClass->isa(), (const char *)@selector(invokeUndefinedMethodFromWebScript:withArguments:));
+            fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii()]);
+            methodList.addMethod ((Method *)fallbackMethod);
+            result = instance->invokeMethod(exec, methodList, args);
+            delete fallbackMethod;
+        }
+                
+        instance->end();
+    }
+
+    return result;
+}
+
+bool FallbackObjectImp::hasProperty(ExecState *exec,
+                         const Identifier &propertyName) const
+{
+    return false;
+}
+
+bool FallbackObjectImp::deleteProperty(ExecState *exec,
+                            const Identifier &propertyName)
+{
+    return false;
+}
+
+Value FallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
+{
+    return _instance->getValueOfUndefinedField(exec, _item, hint);
+}
+

@@ -75,14 +75,18 @@ public:
     
     virtual MethodList methodsNamed(const char *name) const;
     
-    virtual Field *fieldNamed(const char *name) const;
+    virtual Field *fieldNamed(const char *name, Instance *instance) const;
+
+    virtual Value fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
     
     virtual Constructor *constructorAt(long i) const {
         return 0;
     };
     
     virtual long numConstructors() const { return 0; };
-        
+    
+    ClassStructPtr isa() { return _isa; }
+    
 private:
     ClassStructPtr _isa;
     CFDictionaryRef _methods;
