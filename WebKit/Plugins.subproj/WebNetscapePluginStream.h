@@ -9,7 +9,7 @@
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
 @class WebNetscapePluginEmbeddedView;
-@class WebResource;
+@class NSURLConnection;
 @class NSURLRequest;
 
 

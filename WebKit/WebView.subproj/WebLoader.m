@@ -8,7 +8,7 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
@@ -72,7 +72,7 @@
 {
     ASSERT(resource == nil);
     
-    resource = [[WebResource alloc] initWithRequest:r];
+    resource = [[NSURLConnection alloc] initWithRequest:r];
     if (!resource) {
         return NO;
     }
@@ -130,7 +130,7 @@
     return downloadDelegate;
 }
 
--(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
+-(NSURLRequest *)resource:(NSURLConnection *)h willSendRequest:(NSURLRequest *)newRequest
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
@@ -179,7 +179,7 @@
     return request;
 }
 
--(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
+-(void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
@@ -192,7 +192,7 @@
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
-- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
+- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
@@ -200,7 +200,7 @@
     [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
-- (void)resourceDidFinishLoading:(WebResource *)h
+- (void)resourceDidFinishLoading:(NSURLConnection *)h
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
@@ -213,7 +213,7 @@
     [self _releaseResources];
 }
 
-- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)result
+- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)result
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);

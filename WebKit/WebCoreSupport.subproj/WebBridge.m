@@ -48,7 +48,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/WebFileTypeMappings.h>

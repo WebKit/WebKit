@@ -33,7 +33,7 @@
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>

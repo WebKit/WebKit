@@ -10,7 +10,7 @@
 @class WebDataSourcePrivate;
 @class WebError;
 @class WebFrame;
-@class WebResource;
+@class NSURLConnection;
 @class NSURLRequest;
 @class NSMutableURLRequest;
 @class NSURLResponse;

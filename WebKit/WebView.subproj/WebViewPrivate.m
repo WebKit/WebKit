@@ -29,7 +29,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 
 #import <WebCore/WebCoreSettings.h>

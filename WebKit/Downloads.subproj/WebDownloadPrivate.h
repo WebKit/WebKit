@@ -8,12 +8,12 @@
 #import <WebKit/WebDownload.h>
 
 @class NSURLRequest;
-@class WebResource;
+@class NSURLConnection;
 @class NSURLResponse;
 @class WebResourceDelegateProxy;
 
 @interface WebDownload (WebPrivate)
-+ _downloadWithLoadingResource:(WebResource *)resource
++ _downloadWithLoadingResource:(NSURLConnection *)resource
                        request:(NSURLRequest *)request
                       response:(NSURLResponse *)response
                       delegate:(id)delegate

@@ -1,3 +1,81 @@
+2003-03-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed WebResource to NSURLConnection. Some other "supporting" names
+        changed as well. Note that there are no functional modifications,
+        only name changes.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload initWithRequest:]):
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (+[WebDownload _downloadWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload loadWithDelegate:]):
+        (-[WebDownload resource:willSendRequest:]):
+        (-[WebDownload resource:didReceiveResponse:]):
+        (-[WebDownload resource:didReceiveData:]):
+        (-[WebDownload resourceDidFinishLoading:]):
+        (-[WebDownload resource:didFailLoadingWithError:]):
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader resourceDidFinishLoading:]):
+        (-[WebIconLoader resource:willSendRequest:]):
+        (-[WebIconLoader resource:didReceiveResponse:]):
+        (-[WebIconLoader resource:didReceiveData:]):
+        (-[WebIconLoader resource:didFailLoadingWithError:]):
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        (-[WebNetscapePluginStream resource:didReceiveResponse:]):
+        (-[WebNetscapePluginStream resource:didReceiveData:]):
+        (-[WebNetscapePluginStream resourceDidFinishLoading:]):
+        (-[WebNetscapePluginStream resource:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient resource:willSendRequest:]):
+        (-[WebSubresourceClient resource:didReceiveResponse:]):
+        (-[WebSubresourceClient resource:didReceiveData:]):
+        (-[WebSubresourceClient resourceDidFinishLoading:]):
+        (-[WebSubresourceClient resource:didFailLoadingWithError:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]):
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate resource:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate resourceDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate resource:didFailLoadingWithError:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient resource:willSendRequest:]):
+        (-[WebMainResourceClient resource:didReceiveResponse:]):
+        (-[WebMainResourceClient resource:didReceiveData:]):
+        (-[WebMainResourceClient resourceDidFinishLoading:]):
+        (-[WebMainResourceClient resource:didFailLoadingWithError:]):
+        (-[WebResourceDelegateProxy setDelegate:]):
+        (-[WebResourceDelegateProxy resource:willSendRequest:]):
+        (-[WebResourceDelegateProxy resource:didReceiveResponse:]):
+        (-[WebResourceDelegateProxy resource:didReceiveData:]):
+        (-[WebResourceDelegateProxy resourceDidFinishLoading:]):
+        (-[WebResourceDelegateProxy resource:didFailLoadingWithError:]):
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m:
+
 2003-03-27  Richard Williamson   <rjw@apple.com>
 
         API change: WebHistory initWithFile: -> initWithContentsOfURL:

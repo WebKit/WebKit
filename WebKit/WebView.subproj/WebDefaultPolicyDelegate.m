@@ -8,7 +8,7 @@
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebView.h>
 
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebAssertions.h>
@@ -62,7 +62,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 				inFrame:(WebFrame *)frame
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
-    if ([WebResource canInitWithRequest:request]) {
+    if ([NSURLConnection canInitWithRequest:request]) {
 	[listener use];
     } else {
 	// A file URL shouldn't fall through to here, but if it did,

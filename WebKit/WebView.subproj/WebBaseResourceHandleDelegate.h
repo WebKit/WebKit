@@ -8,17 +8,17 @@
 @class WebView;
 @class WebDataSource;
 @class WebError;
-@class WebResource;
+@class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
 
-@protocol WebResourceDelegate;
+@protocol NSURLConnectionDelegate;
 
-@interface WebBaseResourceHandleDelegate : NSObject <WebResourceDelegate>
+@interface WebBaseResourceHandleDelegate : NSObject <NSURLConnectionDelegate>
 {
 @protected
     WebDataSource *dataSource;
-    WebResource *resource;
+    NSURLConnection *resource;
     NSURLRequest *request;
 @private
     WebView *controller;

@@ -11,7 +11,7 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 
 @implementation WebNetscapePluginStream
 
@@ -21,7 +21,7 @@
 {
     [super init];
 
-    if(!theRequest || !thePluginPointer || ![WebResource canInitWithRequest:theRequest]){
+    if(!theRequest || !thePluginPointer || ![NSURLConnection canInitWithRequest:theRequest]){
         return nil;
     }
 
@@ -74,13 +74,13 @@
     }
 }
 
-- (void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)theResponse
+- (void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)theResponse
 {
     [self setResponse:theResponse];
     [super resource:h didReceiveResponse:theResponse];    
 }
 
-- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
+- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
 {
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         [resourceData appendData:data];
@@ -91,7 +91,7 @@
     [super resource:h didReceiveData:data];
 }
 
-- (void)resourceDidFinishLoading:(WebResource *)h
+- (void)resourceDidFinishLoading:(NSURLConnection *)h
 {
     [[view controller] _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
@@ -102,7 +102,7 @@
     [super resourceDidFinishLoading: h];
 }
 
-- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)result
+- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)result
 {
     [[view controller] _receivedError:result fromDataSource:[view dataSource]];
 

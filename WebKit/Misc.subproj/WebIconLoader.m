@@ -12,7 +12,7 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 
@@ -22,7 +22,7 @@
 @interface WebIconLoaderPrivate : NSObject
 {
 @public
-    WebResource *handle;
+    NSURLConnection *handle;
     id delegate;
     NSURL *URL;
     NSMutableData *resourceData;
@@ -87,7 +87,7 @@
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->URL];
     [request HTTPSetPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
-    _private->handle = [[WebResource alloc] initWithRequest:request];
+    _private->handle = [[NSURLConnection alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
     [request release];
 }
@@ -99,7 +99,7 @@
     _private->handle = nil;
 }
 
-- (void)resourceDidFinishLoading:(WebResource *)sender
+- (void)resourceDidFinishLoading:(NSURLConnection *)sender
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
@@ -109,22 +109,22 @@
     }
 }
 
--(NSURLRequest *)resource:(WebResource *)resource willSendRequest:(NSURLRequest *)request
+-(NSURLRequest *)resource:(NSURLConnection *)resource willSendRequest:(NSURLRequest *)request
 {
     return request;
 }
 
--(void)resource:(WebResource *)resource didReceiveResponse:(NSURLResponse *)theResponse
+-(void)resource:(NSURLConnection *)resource didReceiveResponse:(NSURLResponse *)theResponse
 {
     // no-op
 }
 
-- (void)resource:(WebResource *)sender didReceiveData:(NSData *)data
+- (void)resource:(NSURLConnection *)sender didReceiveData:(NSData *)data
 {
     [_private->resourceData appendData:data];
 }
 
-- (void)resource:(WebResource *)sender didFailLoadingWithError:(WebError *)result
+- (void)resource:(NSURLConnection *)sender didFailLoadingWithError:(WebError *)result
 {
 }
 

@@ -30,7 +30,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
@@ -1430,7 +1430,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
-        if (![WebResource canInitWithRequest:request]) {
+        if (![NSURLConnection canInitWithRequest:request]) {
             [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
             shouldContinue = YES;
@@ -1649,7 +1649,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
 {
-    // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
+    // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];

@@ -14,7 +14,7 @@
 @class WebDownload;
 @class WebError;
 @class WebFrame;
-@class WebResource;
+@class NSURLConnection;
 @class WebPreferences;
 @class WebFrameView;
 

@@ -12,7 +12,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebResourceDelegate.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 
@@ -78,7 +78,7 @@
     [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
 
--(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
+-(NSURLRequest *)resource:(NSURLConnection *)h willSendRequest:(NSURLRequest *)newRequest
 {
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
@@ -91,20 +91,20 @@
     return [super resource: h willSendRequest: newRequest];
 }
 
--(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
+-(void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
     [loader receivedResponse:r];
     [super resource:h didReceiveResponse:r];
 }
 
-- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
+- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
 {
     [loader addData:data];
     [super resource:h didReceiveData:data];
 }
 
-- (void)resourceDidFinishLoading:(WebResource *)h
+- (void)resourceDidFinishLoading:(NSURLConnection *)h
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -120,7 +120,7 @@
     [super resourceDidFinishLoading:h];
 }
 
-- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)error
+- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];

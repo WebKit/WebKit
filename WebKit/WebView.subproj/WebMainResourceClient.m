@@ -10,7 +10,7 @@
 
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
@@ -101,7 +101,7 @@
     }
 }
 
--(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
+-(NSURLRequest *)resource:(NSURLConnection *)h willSendRequest:(NSURLRequest *)newRequest
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
@@ -202,7 +202,7 @@
 }
 
 
--(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
+-(void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
@@ -217,7 +217,7 @@
     [self checkContentPolicyForResponse:r];
 }
 
-- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
+- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
 {
     ASSERT(data);
     ASSERT([data length] != 0);
@@ -238,7 +238,7 @@
     LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
 }
 
-- (void)resourceDidFinishLoading:(WebResource *)h
+- (void)resourceDidFinishLoading:(NSURLConnection *)h
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
@@ -258,7 +258,7 @@
     [self release];
 }
 
-- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)error
+- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)error
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
@@ -297,36 +297,36 @@
 
 @implementation WebResourceDelegateProxy
 
-- (void)setDelegate:(id <WebResourceDelegate>)theDelegate
+- (void)setDelegate:(id <NSURLConnectionDelegate>)theDelegate
 {
     delegate = theDelegate;
 }
 
-- (NSURLRequest *)resource:(WebResource *)resource willSendRequest:(NSURLRequest *)request
+- (NSURLRequest *)resource:(NSURLConnection *)resource willSendRequest:(NSURLRequest *)request
 {
     ASSERT(delegate);
     return [delegate resource:resource willSendRequest:request];
 }
 
--(void)resource:(WebResource *)resource didReceiveResponse:(NSURLResponse *)response
+-(void)resource:(NSURLConnection *)resource didReceiveResponse:(NSURLResponse *)response
 {
     ASSERT(delegate);
     [delegate resource:resource didReceiveResponse:response];
 }
 
--(void)resource:(WebResource *)resource didReceiveData:(NSData *)data
+-(void)resource:(NSURLConnection *)resource didReceiveData:(NSData *)data
 {
     ASSERT(delegate);
     [delegate resource:resource didReceiveData:data];
 }
 
--(void)resourceDidFinishLoading:(WebResource *)resource
+-(void)resourceDidFinishLoading:(NSURLConnection *)resource
 {
     ASSERT(delegate);
     [delegate resourceDidFinishLoading:resource];
 }
 
--(void)resource:(WebResource *)resource didFailLoadingWithError:(WebError *)error
+-(void)resource:(NSURLConnection *)resource didFailLoadingWithError:(WebError *)error
 {
     ASSERT(delegate);
     [delegate resource:resource didFailLoadingWithError:error];

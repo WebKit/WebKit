@@ -5,7 +5,7 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebResource.h>
+#import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
 
 #import <WebKit/WebDataSource.h>
