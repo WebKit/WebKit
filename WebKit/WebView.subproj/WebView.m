@@ -2230,7 +2230,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     // FIXME: calling [DOMCSSStyleDeclaration fontSize] doesn't work yet, returns nil.
     // FIXME: is there SPI/API for converting a fontSize string into a numeric value?
     // FIXME: calling [DOMCSSStyleDeclaration font] doesn't work yet, fails WebCore assertion
-    ERROR("unimplemented");
+    //ERROR("unimplemented");
     return nil;
 }
 
@@ -2369,7 +2369,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (DOMCSSStyleDeclaration *)typingStyle
 {
-    ERROR("unimplemented");
+    //ERROR("unimplemented");
     return nil;
 }
 

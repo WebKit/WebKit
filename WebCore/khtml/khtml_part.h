@@ -629,6 +629,11 @@ public:
   void selectAll();
 
   /**
+   * Returns the contentEditable "override" value for the part
+   */
+  bool isContentEditable() const;
+
+  /**
    * Returns the most recent edit command applied.
    */
   khtml::EditCommand lastEditCommand();

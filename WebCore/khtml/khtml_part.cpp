@@ -4889,6 +4889,15 @@ void KHTMLPart::selectAll()
   setSelection(selection);
 }
 
+bool KHTMLPart::isContentEditable() const 
+{
+#if APPLE_CHANGES
+    return KWQ(this)->isContentEditable();
+#else
+    return false;
+#endif
+}
+
 EditCommand KHTMLPart::lastEditCommand()
 {
     return d->m_lastEditCommand;

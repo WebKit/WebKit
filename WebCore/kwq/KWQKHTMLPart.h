@@ -283,6 +283,7 @@ public:
     void issuePasteCommand();
     void postDidChangeSelectionNotification();
     void postDidChangeNotification();
+    bool isContentEditable() const;
 
     WebScriptObject *windowScriptObject();
     void bindObject(void *object, QString name);

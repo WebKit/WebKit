@@ -2976,3 +2976,8 @@ void KWQKHTMLPart::postDidChangeNotification()
 {
     [_bridge postDidChangeNotification];
 }
+
+bool KWQKHTMLPart::isContentEditable() const
+{
+    return [_bridge isEditable];
+}

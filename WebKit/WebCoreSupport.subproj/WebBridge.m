@@ -1279,6 +1279,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] mediaStyle];
 }
 
+- (BOOL)isEditable
+{
+    return [[_frame webView] isEditable];
+}
+
 - (void)windowObjectCleared
 {
     WebView *wv = [_frame webView];

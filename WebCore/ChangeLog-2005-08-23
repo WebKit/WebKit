@@ -1,3 +1,19 @@
+2004-05-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isContentEditable): Ask if the part is contenteditable.
+        True value is treated as an "override" and will short-circuit, returning true.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isContentEditable): Call over bridge. Has the effect of checking the
+        isEditable method on the WebView which contains this part.
+        * khtml/khtml_part.h: Declare isContentEditable.
+        * kwq/KWQKHTMLPart.h: Declare isContentEditable.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::isContentEditable): Call over bridge, as described above.
+        * kwq/WebCoreBridge.h: Declare isEditable.
+
 2004-05-19  Darin Adler  <darin@apple.com>
 
         - fixed headers with licenses mangled by Xcode auto-indenting
