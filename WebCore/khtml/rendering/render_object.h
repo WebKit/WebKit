@@ -728,7 +728,7 @@ public:
     virtual bool containsFloats() { return false; }
     virtual bool containsFloat(RenderObject* o) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
-    virtual QRect floatRect() { return borderBox(); }
+    virtual QRect floatRect() const { return borderBox(); }
 
     bool avoidsFloats() const;
     bool usesLineWidth() const;

@@ -1216,8 +1216,8 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
             // Check floats next.
             QRect floatBox = floatRect();
             floatBox.inflate(maximalOutlineSize(i.phase));
-            floatBox.setX(overflowBox.x() + _tx);
-            floatBox.setY(overflowBox.y() + _ty);
+            floatBox.setX(floatBox.x() + _tx);
+            floatBox.setY(floatBox.y() + _ty);
             if (!floatBox.intersects(i.r))
                 return;
         }
@@ -2407,8 +2407,8 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
         if (!insideOverflowBox) {
             // Check floats next.
             QRect floatBox = floatRect();
-            floatBox.setX(overflowBox.x() + tx);
-            floatBox.setY(overflowBox.y() + ty);
+            floatBox.setX(floatBox.x() + tx);
+            floatBox.setY(floatBox.y() + ty);
             if (!floatBox.contains(_x, _y))
                 return false;
         }

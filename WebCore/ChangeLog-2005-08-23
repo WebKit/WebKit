@@ -1,3 +1,20 @@
+2004-12-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3915787, macobserver doesn't paint.  floatRect() needed to be const in the base class.  Also hit-testing
+	and painting was using the wrong rect when setting up the x/y of the rect.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::floatRect):
+
+2004-12-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
 2004-12-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
