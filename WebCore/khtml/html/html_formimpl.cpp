@@ -145,11 +145,13 @@ long HTMLFormElementImpl::length() const
 #if APPLE_CHANGES
 void HTMLFormElementImpl::performSubmitClick()
 {
+    bool submitFound = false;
     QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
     for (; it.current(); ++it) {
         if (it.current()->id() == ID_INPUT) {
             HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
+                submitFound = true;
                 if (element->inputType() == HTMLInputElementImpl::IMAGE) {
                     // have to send simulated clicks differently for image types
                     // since they do not have a widget
@@ -166,6 +168,8 @@ void HTMLFormElementImpl::performSubmitClick()
             }
         }
     }
+    if (!submitFound) // submit the form without a submit or image input
+        prepareSubmit();
 }
 #endif
 

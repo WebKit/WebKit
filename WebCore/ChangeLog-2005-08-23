@@ -1,3 +1,22 @@
+2003-11-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+	Fix for this bug:
+
+	<rdar://problem/3477795>: REGRESSION: can't submit form without 
+	submit button by hitting return (cocoadev.com)
+
+	When I changed submitting forms using the return key in a text field
+	to go through a search for the correct submit or image input 
+	element to use when submitting, I neglected to cover the case of
+	forms which have neither a submit or image input element. When
+	I encounter a form such as this now, I submit it anyway after
+	performing the submit or image input element and failing to find one.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::performSubmitClick)
+
 2003-11-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3478765.  Use ICU to access unicode properties.
