@@ -826,32 +826,39 @@ void RectImpl::setLeft( CSSPrimitiveValueImpl *left )
 // -----------------------------------------------------------------
 
 CSSImageValueImpl::CSSImageValueImpl(const DOMString &url, StyleBaseImpl *style)
-    : CSSPrimitiveValueImpl(url, CSSPrimitiveValue::CSS_URI)
+    : CSSPrimitiveValueImpl(url, CSSPrimitiveValue::CSS_URI), m_loader(0), m_image(0), m_accessedImage(false)
 {
-    khtml::DocLoader *docLoader = 0;
     StyleBaseImpl *root = style;
     while (root->parent())
-	root = root->parent();
+        root = root->parent();
     if (root->isCSSStyleSheet())
-	docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
-
-    if (docLoader)
-	m_image = docLoader->requestImage(url);
-    else
-	m_image = khtml::Cache::requestImage(0, url);
-
-    if(m_image) m_image->ref(this);
+        m_loader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
 }
 
 CSSImageValueImpl::CSSImageValueImpl()
-    : CSSPrimitiveValueImpl(CSS_VAL_NONE)
+    : CSSPrimitiveValueImpl(CSS_VAL_NONE), m_loader(0), m_image(0), m_accessedImage(true)
 {
-    m_image = 0;
 }
 
 CSSImageValueImpl::~CSSImageValueImpl()
 {
     if(m_image) m_image->deref(this);
+}
+
+khtml::CachedImage* CSSImageValueImpl::image()
+{
+    if (!m_accessedImage) {
+        m_accessedImage = true;
+
+        if (m_loader)
+            m_image = m_loader->requestImage(getStringValue());
+        else
+            m_image = khtml::Cache::requestImage(0, getStringValue());
+        
+        if(m_image) m_image->ref(this);
+    }
+    
+    return m_image;
 }
 
 // ------------------------------------------------------------------------

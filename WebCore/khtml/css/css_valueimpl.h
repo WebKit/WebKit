@@ -35,6 +35,7 @@
 namespace khtml {
     class RenderStyle;
     class CachedImage;
+    class DocLoader;
 }
 
 namespace DOM {
@@ -289,9 +290,12 @@ public:
     CSSImageValueImpl();
     virtual ~CSSImageValueImpl();
 
-    khtml::CachedImage *image() { return m_image; }
+    khtml::CachedImage *image();
+
 protected:
-    khtml::CachedImage *m_image;
+    khtml::DocLoader* m_loader;
+    khtml::CachedImage* m_image;
+    bool m_accessedImage;
 };
 
 class FontFamilyValueImpl : public CSSPrimitiveValueImpl

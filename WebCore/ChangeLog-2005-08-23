@@ -1,3 +1,42 @@
+2003-12-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3254534, CSS background-image style should be loaded lazily only when used.
+	
+        Reviewed by rjw
+
+        * ChangeLog:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSImageValueImpl::CSSImageValueImpl):
+        (CSSImageValueImpl::~CSSImageValueImpl):
+        (CSSImageValueImpl::image):
+        * khtml/css/css_valueimpl.h:
+        
+2003-12-11  David Hyatt  <hyatt@apple.com>
+
+	WebCore part of 3453214.  This ensures that all outline styles except for auto (which has a CG bug) will
+	be displayed properly during the PaintActionOutline phase.
+	
+        Reviewed by john and darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paint):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::RenderCanvas):
+        * khtml/rendering/render_canvas.h:
+        (khtml::RenderCanvas::setMaximalOutlineSize):
+        (khtml::RenderCanvas::maximalOutlineSize):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::maximalOutlineSize):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::paint):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::paint):
+        (RenderTableSection::paint):
+        (RenderTableCell::paint):
+
 2003-12-12  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3508825>: REGRESSION (100-116): crash in 

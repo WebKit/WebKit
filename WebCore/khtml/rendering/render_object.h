@@ -639,6 +639,9 @@ public:
     // positioning of inline children (bidi)
     virtual void position(InlineBox*, int, int, bool) {}
 
+    // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
+    int maximalOutlineSize(PaintAction p) const;
+
     enum SelectionState {
         SelectionNone,
         SelectionStart,

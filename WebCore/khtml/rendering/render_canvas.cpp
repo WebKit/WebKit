@@ -61,6 +61,8 @@ RenderCanvas::RenderCanvas(DOM::NodeImpl* node, KHTMLView *view)
     m_printingMode = false;
     m_printImages = true;
 
+    m_maximalOutlineSize = 0;
+    
     m_selectionStart = 0;
     m_selectionEnd = 0;
     m_selectionStartPos = -1;

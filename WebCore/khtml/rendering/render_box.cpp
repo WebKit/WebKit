@@ -107,6 +107,9 @@ void RenderBox::setStyle(RenderStyle *_style)
     // Set the text color if we're the body.
     if (isBody())
         element()->getDocument()->setTextColor(_style->color());
+    
+    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintActionOutline))
+        static_cast<RenderCanvas*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
 }
 
 RenderBox::~RenderBox()
