@@ -1,3 +1,10 @@
+2002-08-01  Ken Kocienda  <kocienda@apple.com>
+
+	Tweaked WebCore cache settings. The WebCore cache will now grow
+	to 1 MB (was 512k). The maximum cacheable item is 16k instead of 40k.
+
+        * khtml/misc/loader.cpp
+
 === Alexander-15 ===
 
 2002-08-01  Maciej Stachowiak  <mjs@apple.com>
