@@ -1,3 +1,5 @@
+=== Safari-138 ===
+
 2004-04-22  Richard Williamson   <rjw@apple.com>
 
 	Fixed build snafu (re-declaration of NPBool in npruntime.h and
