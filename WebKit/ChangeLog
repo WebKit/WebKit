@@ -1,3 +1,11 @@
+2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+
+        Removed vestigal locationChangeHandler ivar.
+        
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]):
+
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
 	Call [self _locationChangeHandler] instead of _private-locationChangeHandler

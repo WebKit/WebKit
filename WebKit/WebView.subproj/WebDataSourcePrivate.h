@@ -62,9 +62,6 @@
     // Error associated with main document.
     WebError *mainDocumentError;
 
-    // The location change handler for this data source.
-    id <WebLocationChangeHandler>locationChangeHandler;
-
     WebContentPolicy contentPolicy;
 
     BOOL loading; // self and controller are retained while loading

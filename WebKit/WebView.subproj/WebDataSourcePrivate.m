@@ -484,7 +484,7 @@
     
             if([dataSourceURL isFileURL]){
                 NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:[dataSourceURL path]];
-                [_private->locationChangeHandler receivedPageIcon:icon forDataSource:self];
+                [[self _locationChangeHandler] receivedPageIcon:icon forDataSource:self];
             } else {
                 _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
             }
