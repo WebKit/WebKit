@@ -155,8 +155,8 @@ namespace khtml
 	void buildLists();
 	void clearLists();
 
-	unsigned int addInlineDeclarations(DOM::CSSStyleDeclarationImpl *decl,
-				   unsigned int numProps );
+        unsigned int addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
+				   unsigned int numProps);
 
 	static DOM::CSSStyleSheetImpl *defaultSheet;
 	static CSSStyleSelectorList *defaultStyle;

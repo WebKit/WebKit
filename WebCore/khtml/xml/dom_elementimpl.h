@@ -205,7 +205,9 @@ public:
       if (!m_styleDecls) createDecl();
       return m_styleDecls;
     }
-
+    // used by table cells to share style decls created by the enclosing table.
+    virtual DOM::CSSStyleDeclarationImpl* getAdditionalStyleDecls() { return 0; }
+    
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
 

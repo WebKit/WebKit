@@ -45,6 +45,7 @@ class HTMLTableCaptionElementImpl;
 class HTMLTableCaptionElement;
 class HTMLElement;
 class HTMLCollection;
+class CSSStyleDeclarationImpl;
 
 class HTMLTableElementImpl : public HTMLElementImpl
 {
@@ -99,6 +100,8 @@ public:
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void attach();
 
+    DOM::CSSStyleDeclarationImpl* createSharedCellDecls();
+    
 protected:
     HTMLTableSectionElementImpl *head;
     HTMLTableSectionElementImpl *foot;
@@ -110,6 +113,8 @@ protected:
     Rules rules;
 #endif
 
+    DOM::CSSStyleDeclarationImpl *m_sharedCellDecls;
+    
     bool m_noBorder     : 1;
     bool m_solid        : 1;
     uint unused		: 14;
@@ -197,6 +202,9 @@ public:
     virtual void parseAttribute(AttributeImpl *attr);
     virtual void attach();
 
+    // used by table cells to share style decls created by the enclosing table.
+    virtual DOM::CSSStyleDeclarationImpl* getAdditionalStyleDecls();
+    
 protected:
     int _row;
     int _col;

@@ -1,3 +1,22 @@
+2003-02-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3% improvement on cached cvs-base.  Make cells share the
+	declarations set up by the table (add these decls to the table
+	once instead of to every cell).
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::~HTMLTableElementImpl):
+        (HTMLTableElementImpl::createSharedCellDecls):
+        (HTMLTableCellElementImpl::getAdditionalStyleDecls):
+        (HTMLTableCellElementImpl::attach):
+        * khtml/html/html_tableimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+
 2003-02-17  Trey Matteson  <trey@apple.com>
 
 	2938062 Mouse cursor does not change to link cursor over non-button form submission controls

@@ -377,9 +377,8 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
     // inline style declarations, after all others. non css hints
     // count as author rules, and come before all other style sheets, see hack in append()
-    if(e->m_styleDecls)
-	numPropsToApply = addInlineDeclarations( e->m_styleDecls, numPropsToApply );
-
+    numPropsToApply = addInlineDeclarations( e, e->m_styleDecls, numPropsToApply );
+            
     bubbleSort( propsToApply, propsToApply+numPropsToApply-1 );
     bubbleSort( pseudoProps, pseudoProps+numPseudoProps-1 );
 
@@ -459,23 +458,39 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     return style;
 }
 
-unsigned int CSSStyleSelector::addInlineDeclarations(DOM::CSSStyleDeclarationImpl *decl,
-					    unsigned int numProps )
+unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
+                                                     unsigned int numProps)
 {
-    QPtrList<CSSProperty> *values = decl->values();
-    if(!values) return numProps;
-    int len = values->count();
+    CSSStyleDeclarationImpl* addDecls = 0;
+    if (e->id() == ID_TD) // For now only TD Implements the virtual function for shared cell rules.
+        addDecls = e->getAdditionalStyleDecls();
 
-    if ( inlineProps.size() < (uint)len )
-	inlineProps.resize( len+1 );
-    if (numProps + len >= propsToApplySize ) {
+    if (!decl && !addDecls)
+        return numProps;
+
+    QPtrList<CSSProperty>* values = decl ? decl->values() : 0;
+    QPtrList<CSSProperty>* addValues = addDecls ? addDecls->values() : 0;
+    if (!values && !addValues)
+        return numProps;
+    
+    int firstLen = values ? values->count() : 0;
+    int secondLen = addValues ? addValues->count() : 0;
+    int totalLen = firstLen + secondLen;
+
+    if (inlineProps.size() < (uint)totalLen)
+        inlineProps.resize(totalLen + 1);
+    
+    if (numProps + totalLen >= propsToApplySize ) {
         propsToApplySize += propsToApplySize;
         propsToApply = (CSSOrderedProperty **)realloc( propsToApply, propsToApplySize*sizeof( CSSOrderedProperty * ) );
     }
 
     CSSOrderedProperty *array = (CSSOrderedProperty *)inlineProps.data();
-    for(int i = 0; i < len; i++)
+    for(int i = 0; i < totalLen; i++)
     {
+        if (i == firstLen)
+            values = addValues;
+        
         CSSProperty *prop = values->at(i);
 	Source source = Inline;
 
@@ -506,7 +521,7 @@ unsigned int CSSStyleSelector::addInlineDeclarations(DOM::CSSStyleDeclarationImp
 	array->prop = prop;
 	array->pseudoId = RenderStyle::NOPSEUDO;
 	array->selector = 0;
-	array->position = i;
+        array->position = i;
 	array->priority = (!first << 30) | (source << 24);
 	propsToApply[numProps++] = array++;
     }
