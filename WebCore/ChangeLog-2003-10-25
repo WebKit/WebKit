@@ -1,3 +1,19 @@
+2002-08-31  Darin Adler  <darin@apple.com>
+
+	- fixed 3038336 -- repro crash in QTextDecoder trying to display UTF-16 file
+
+        * kwq/mac-encodings.txt: Hook up the UTF-16 encoding to the name iso-10646-ucs-2.
+	We have a long way to go to get this right. There are almost certainly going to
+	be other bugs with 16-bit character pages.
+
+        * kwq/KWQKHTMLSettings.mm: (KHTMLSettings::encoding): Just return "latin1",
+	not "NSISOLatin1StringEncoding".
+
+        * kwq/KWQString.mm: (QString::fromStringWithEncoding): Pass true for the
+	"pay attention to BOM" flag.
+
+        * khtml/rendering/render_object.cpp: Take out unneeded APPLE_CHANGES.
+
 2002-08-30  Ken Kocienda  <kocienda@apple.com>
 
 	Fixed a problem in this function where broken UTF-8 would cause a crash.

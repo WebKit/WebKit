@@ -734,7 +734,7 @@ QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncodi
     QString qs;
     
     if (chs && len > 0) {
-        CFStringRef s = CFStringCreateWithBytes (kCFAllocatorDefault, (const UInt8 *)chs, len, encoding, false);
+        CFStringRef s = CFStringCreateWithBytes(kCFAllocatorDefault, (const UInt8 *)chs, len, encoding, true);
         if (s) {
             qs.setBufferFromCFString(s);
             CFRelease(s);

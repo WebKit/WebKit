@@ -8,7 +8,7 @@ WindowsLatin1: windows-1252, x-ansi
 ISOLatin1: iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
 ASCII: iso-ir-6us, us-ascii
-Unicode # utf-16be, unicodeFFFE, unicode? (would this help us?)
+Unicode: iso-10646-ucs-2 # utf-16be, unicodeFFFE, unicode? (would this help us?)
   # Note the bogus entry to make UTF-16 mean UTF-8.
   # We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
   # See bug 2969378 and http://zingermans.com/ for a concrete example.

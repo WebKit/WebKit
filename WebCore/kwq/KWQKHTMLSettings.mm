@@ -58,16 +58,13 @@ QString KHTMLSettings::fantasyFontName() const
 
 QString KHTMLSettings::settingsToCSS() const
 {
-    _logNotYetImplemented();
-    return QString();
+    return QString::null;
 }
 
 const QString &KHTMLSettings::encoding() const
 {
-    // FIXME: remove this hack
-    _logNotYetImplemented();
-    static const QString e(QString::fromNSString(@"NSISOLatin1StringEncoding"));
-    return e;
+    static QString latin1("latin1");
+    return latin1;
 }
 
 int KHTMLSettings::minFontSize() const

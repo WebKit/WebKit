@@ -241,12 +241,11 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
             case BSBottom:
             case BSTop:
                 p->drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
-#ifdef APPLE_CHANGES
                 break;
-#endif
             case BSRight:
             case BSLeft:
                 p->drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);
+                break;
             }
         }
         break;
@@ -1003,12 +1002,8 @@ void RenderObject::recalcMinMaxWidths()
         // gcc sucks. if anybody knows a trick to get rid of the
         // warning without adding an extra (unneeded) initialisation,
         // go ahead
-#ifdef APPLE_CHANGES
 	int cmin = 0;
 	int cmax = 0;
-#else /* not APPLE_CHANGES */
-	int cmin, cmax;
-#endif /* not APPLE_CHANGES */
 	bool test = false;
 	if ( ( m_minMaxKnown && child->m_recalcMinMax ) || !child->m_minMaxKnown ) {
 	    cmin = child->minWidth();
