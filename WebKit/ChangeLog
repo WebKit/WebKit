@@ -1,3 +1,12 @@
+2004-04-27  John Sullivan  <sullivan@apple.com>
+
+        Fixed broken development build.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToLayoutAcceptable]):
+        updated bad variable name used only in LOG statement to match
+        recent change.
+
 2004-04-27  Richard Williamson   <rjw@apple.com>
 
 	Fixes for:

@@ -650,7 +650,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             // ahead and schedule a layout.
             timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
             if (timeSinceStart > timedLayoutDelay) {
-                LOG(Timing, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, defaultTimedDelay);
+                LOG(Timing, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, timedLayoutDelay);
                 [self _timedLayout: nil];
             }
             else {
