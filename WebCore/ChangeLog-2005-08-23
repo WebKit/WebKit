@@ -1,3 +1,17 @@
+2004-12-06  John Sullivan  <sullivan@apple.com>
+
+        Darin found what appears to be the real leak that we were falsely blaming
+        on the 'leaks' tool (3880245). I made the change, and ran layout tests and PLT to make
+        sure nothing barfed.
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        call clearProperties() instead of just setting numParsedProperties to 0
+        (CSSParser::parseDeclaration):
+        ditto
+        (CSSParser::createStyleDeclaration):
+        ditto
+
 2004-12-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
