@@ -1,3 +1,14 @@
+2004-04-30  Richard Williamson   <rjw@apple.com>
+
+	Asking an NSInvocation for it's return value when return type
+	is void throws an exception.  Added check for void return types
+	to avoid this exception.
+
+        Reviewed by Ken.
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+
 2004-04-29  Richard Williamson   <rjw@apple.com>
 
 	Fixed several bad problems with the ObjC bindings.  In particular, conversion

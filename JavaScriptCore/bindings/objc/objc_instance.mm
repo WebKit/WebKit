@@ -181,8 +181,14 @@ NS_DURING
     // or a pointer.
     char buffer[1024];
     assert ([signature methodReturnLength] < 1024);
-    [invocation getReturnValue:buffer];
-    resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
+    
+    if (*type == 'v') {
+        resultValue = Undefined();
+    }
+    else {
+        [invocation getReturnValue:buffer];
+        resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
+    }
     
 NS_HANDLER
     
