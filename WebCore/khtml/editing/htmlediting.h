@@ -195,8 +195,10 @@ protected:
     void splitTextNode(DOM::TextImpl *text, long offset);
 
     DOM::NodeImpl *applyTypingStyle(DOM::NodeImpl *) const;
-    void deleteUnrenderedText(DOM::NodeImpl *);
-    void deleteUnrenderedText(const DOM::Position &pos);
+
+    void deleteInsignificantText(DOM::TextImpl *, int start, int end);
+    void deleteInsignificantText(const DOM::Position &start, const DOM::Position &end);
+    void deleteInsignificantTextDownstream(const DOM::Position &);
 
     void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
     void removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);

@@ -759,49 +759,93 @@ NodeImpl *CompositeEditCommand::applyTypingStyle(NodeImpl *child) const
     return childToAppend;
 }
 
-void CompositeEditCommand::deleteUnrenderedText(NodeImpl *node)
+void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start, int end)
 {
-    if (!node)
+    if (!textNode || !textNode->renderer() || start >= end)
         return;
 
-    if (node->isTextNode()) {
-        if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
-            removeNode(node);
-        else {
-            TextImpl *text = static_cast<TextImpl *>(node);
-            if (text->caretMinOffset() > 0)
-                deleteText(text, 0, text->caretMinOffset());
-            if ((int)text->length() > text->caretMaxOffset())
-                deleteText(text, text->caretMaxOffset(), text->length() - text->caretMaxOffset());
+    RenderText *textRenderer = static_cast<RenderText *>(textNode->renderer());
+    InlineTextBox *box = textRenderer->firstTextBox();
+    if (!box) {
+        // whole text node is empty
+        removeNode(textNode);
+        return;    
+    }
+    
+    long length = textNode->length();
+    if (start >= length || end > length)
+        return;
+
+    int removed = 0;
+    InlineTextBox *prevBox = 0;
+    DOMStringImpl *str = 0;
+
+    // This loop structure works to process all gaps preceding a box,
+    // and also will look at the gap after the last box.
+    while (prevBox || box) {
+        int gapStart = prevBox ? prevBox->m_start + prevBox->m_len : 0;
+        if (end < gapStart)
+            // No more chance for any intersections
+            break;
+
+        int gapEnd = box ? box->m_start : length;
+        bool indicesIntersect = start <= gapEnd && end >= gapStart;
+        int gapLen = gapEnd - gapStart;
+        if (indicesIntersect && gapLen > 0) {
+            gapStart = kMax(gapStart, start);
+            gapEnd = kMin(gapEnd, end);
+            if (!str) {
+                str = textNode->string()->substring(start, end - start);
+                str->ref();
+            }    
+            // remove text in the gap
+            str->remove(gapStart - start - removed, gapLen);
+            removed += gapLen;
         }
+        
+        prevBox = box;
+        if (box)
+            box = box->nextTextBox();
+    }
+
+    if (str) {
+        // Replace the text between start and end with our pruned version.
+        replaceText(textNode, start, end - start, str);
+        str->deref();
     }
 }
 
-void CompositeEditCommand::deleteUnrenderedText(const Position &pos)
+void CompositeEditCommand::deleteInsignificantText(const Position &start, const Position &end)
 {
-    if (pos.isNull())
+    if (start.isNull() || end.isNull())
         return;
 
-    Position upstream = pos.upstream(StayInBlock);
-    Position downstream = pos.downstream(StayInBlock);
-    Position block = Position(pos.node()->enclosingBlockFlowElement(), 0);
-    
-    NodeImpl *node = upstream.node();
-    while (node && node != downstream.node()) {
+    if (RangeImpl::compareBoundaryPoints(start.node(), start.offset(), end.node(), end.offset()) >= 0)
+        return;
+
+    NodeImpl *node = start.node();
+    while (node) {
         NodeImpl *next = node->traverseNextNode();
-        deleteUnrenderedText(node);
+    
+        if (node->isTextNode()) {
+            TextImpl *textNode = static_cast<TextImpl *>(node);
+            bool isStartNode = node == start.node();
+            bool isEndNode = node == end.node();
+            int startOffset = isStartNode ? start.offset() : 0;
+            int endOffset = isEndNode ? end.offset() : textNode->length();
+            deleteInsignificantText(textNode, startOffset, endOffset);
+        }
+            
+        if (node == end.node())
+            break;
         node = next;
     }
-    deleteUnrenderedText(downstream.node());
-    
-    if (pos.node()->inDocument())
-        setEndingSelection(pos);
-    else if (upstream.node()->inDocument())
-        setEndingSelection(upstream);
-    else if (downstream.node()->inDocument())
-        setEndingSelection(downstream);
-    else
-        setEndingSelection(block);
+}
+
+void CompositeEditCommand::deleteInsignificantTextDownstream(const DOM::Position &pos)
+{
+    Position end = VisiblePosition(pos).next().deepEquivalent().downstream(StayInBlock);
+    deleteInsignificantText(pos, end);
 }
 
 void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
@@ -1284,6 +1328,9 @@ void DeleteSelectionCommand::doApply()
     Position leading = upstreamStart.leadingWhitespacePosition();
     Position trailing = downstreamEnd.trailingWhitespacePosition();
     bool trailingValid = true;
+
+    // Delete any text that may hinder our ability to fixup whitespace after the detele
+    deleteInsignificantTextDownstream(trailing);    
     
     debugPosition("upstreamStart    ", upstreamStart);
     debugPosition("downstreamStart  ", downstreamStart);
@@ -1310,25 +1357,16 @@ void DeleteSelectionCommand::doApply()
     CSSStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
     style->ref();
     computedStyle->deref();
-    
-    if (startBlock != endBlock) {
-        // Delete some unrendered whitespace. This prepares the startBlock to
-        // receive content that will be merged from endBlock. Do this before 
-        // deleting, since deleting content can alter the notion of what 
-        // should collapse away.
-        // stay in this block and delete unrenderered text from the upstreamStart location
-        deleteUnrenderedText(upstreamStart);
-        Position upstreamInPreviousBlock(upstreamStart.upstream()); // Note no StayInBlock on upstream call.
-        if (upstreamInPreviousBlock != upstreamStart)
-            // cross blocks and delete unrenderered text from the upstream
-            // position in startBlock. 
-            deleteUnrenderedText(upstreamInPreviousBlock);
-    }
 
     NodeImpl *startNode = upstreamStart.node();
     int startOffset = upstreamStart.offset();
     if (startOffset >= startNode->caretMaxOffset()) {
-        // None of the first node is to be deleted, so move to next.
+        if (startNode->isTextNode()) {
+            // Delete any insignificant text from this node.
+            TextImpl *text = static_cast<TextImpl *>(startNode);
+            if (text->length() > (unsigned)startNode->caretMaxOffset())
+                deleteText(text, startNode->caretMaxOffset(), text->length() - startNode->caretMaxOffset());
+        }
         startNode = startNode->traverseNextNode();
         startOffset = 0;
     }
@@ -1430,18 +1468,13 @@ void DeleteSelectionCommand::doApply()
     // Perform whitespace fixup
     FixupWhitespace:
 
-    if (leading.isNotNull() || trailing.isNotNull())
-        document()->updateLayout();
-
-    debugPosition("endingPosition   ", endingPosition);
-    
-    if (leading.isNotNull() && !leading.isRenderedCharacter()) {
+    document()->updateLayout();
+    if (leading.isNotNull() && (trailing.isNotNull() || !leading.isRenderedCharacter())) {
         LOG(Editing, "replace leading");
         TextImpl *textNode = static_cast<TextImpl *>(leading.node());
         replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
     }
-
-    if (trailing.isNotNull()) {
+    else if (trailing.isNotNull()) {
         if (trailingValid) {
             if (!trailing.isRenderedCharacter()) {
                 LOG(Editing, "replace trailing [valid]");
@@ -1460,6 +1493,8 @@ void DeleteSelectionCommand::doApply()
             }
         }
     }
+
+    debugPosition("endingPosition   ", endingPosition);
 
     // If the delete emptied a block, add in a placeholder so the block does not
     // seem to disappear.
@@ -1573,8 +1608,6 @@ void InputNewlineCommand::insertNodeBeforePosition(NodeImpl *node, const Positio
 void InputNewlineCommand::doApply()
 {
     deleteSelection();
-    deleteUnrenderedText(endingSelection().start());
-    
     Selection selection = endingSelection();
 
     int exceptionCode = 0;
@@ -1641,10 +1674,6 @@ void InputNewlineCommand::doApply()
         LOG(Editing, "input newline case 4");
         ASSERT(pos.node()->isTextNode());
         
-        // See if there is trailing whitespace we need to consider
-        // Note: leading whitespace just works. Blame the web.
-        Position trailing = pos.downstream(StayInBlock).trailingWhitespacePosition();
-
         // Do the split
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
@@ -1655,9 +1684,9 @@ void InputNewlineCommand::doApply()
         
         // Handle whitespace that occurs after the split
         document()->updateLayout();
-        if (trailing.isNotNull() && !endingPosition.isRenderedCharacter()) {
+        if (!endingPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
-            deleteUnrenderedText(endingPosition);
+            deleteInsignificantTextDownstream(endingPosition);
             insertText(textNode, 0, nonBreakingSpaceString());
         }
         
@@ -1776,7 +1805,9 @@ void InputTextCommand::input(const DOMString &text, bool selectInsertedText)
     if (selection.isRange())
         deleteSelection();
     
-    deleteUnrenderedText(endingSelection().start());
+    // Delete any insignificant text that could get in the way of whitespace turning
+    // out correctly after the insertion.
+    deleteInsignificantTextDownstream(endingSelection().end().trailingWhitespacePosition());
     
     // Make sure the document is set up to receive text
     Position pos = prepareForTextInsertion(adjustDownstream);
