@@ -74,10 +74,10 @@ static QString toRoman( int number, bool upper )
 
 static QString toLetter( int number, int base ) {
     number--;
-    QString letter = (QChar) (base + (number % 24));
-    // Add a "'" at the end of the alphabet
-    for (int i = 0; i < (number / 24); i++) {
-       letter += QString::fromLatin1("'");
+    QString letter = (QChar) (base + (number % 26));
+    // Add a single quote at the end of the alphabet.
+    for (int i = 0; i < (number / 26); i++) {
+       letter += '\'';
     }
     return letter;
 }

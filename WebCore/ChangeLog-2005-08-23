@@ -1,3 +1,11 @@
+2003-12-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3493939: ordered lists with type="A" roll over to A' after X rather than after Z
+
+        * khtml/rendering/render_list.cpp: (toLetter): Change 24 to 26.
+
 === Safari-115 ===
 
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
