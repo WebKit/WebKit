@@ -1,3 +1,13 @@
+2004-01-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3531229.  Another place that needs the  Push/PopLocalFrame
+	protection implemented for 3530401.
+
+        Reviewed by John.
+
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::call):
+
 2004-01-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3530401.  JNI doesn't cleanup local refs created on the
