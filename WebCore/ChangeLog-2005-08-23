@@ -1,3 +1,14 @@
+2004-12-16  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Chris.
+
+        Fix for: <rdar://problem/3534824> VIP: some navigation links on safeway.com don't work due to a JavaScript quirk
+
+        Added a call to ObjectImp::get before Window::get just returns Undefined.  
+        This was preventing us from getting the toString function from a Window object.
+
+        * khtml/ecma/kjs_window.cpp: (Window::get):
+
 2004-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

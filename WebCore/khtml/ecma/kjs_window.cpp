@@ -835,6 +835,10 @@ Value Window::get(ExecState *exec, const Identifier &p) const
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "WARNING: Window::get property not found: " << p.qstring() << endl;
 #endif
+
+  if (isSafeScript(exec))
+    return ObjectImp::get(exec, p);
+
   return Undefined();
 }
 
