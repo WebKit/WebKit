@@ -1,3 +1,20 @@
+2005-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/3990484> cursor changes to I-beam when moving over text in widgets, even when selection off via CSS
+
+        * khtml/khtmlview.cpp: (KHTMLView::viewportMouseMoveEvent): Changed code to check canSelect when deciding
+        whether to show an I-beam cursor.
+
+        * khtml/rendering/render_object.h: Added canSelect.
+        * khtml/rendering/render_object.cpp:
+        (selectStartNode): Added. Helper function with the guts of shouldSelect.
+        (RenderObject::canSelect): Added. Like shouldSelect, but does not call the "start selecting" event handler.
+        (RenderObject::shouldSelect): Refactored to use selectStartNode.
+
+        * khtml/css/cssvalues.c: Regnerated with newer gperf.
+
 2005-02-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3867759, .mac regression where scrollers don't show up.  Make sure you can set the .width and

@@ -1380,26 +1380,37 @@ void RenderObject::dump(QTextStream *stream, QString ind) const
 }
 #endif
 
-bool RenderObject::shouldSelect() const
+static NodeImpl *selectStartNode(const RenderObject *object)
 {
-    const RenderObject* curr = this;
     DOM::NodeImpl *node = 0;
     bool forcedOn = false;
 
-    while (curr) {
+    for (const RenderObject *curr = object; curr; curr = curr->parent()) {
         if (curr->style()->userSelect() == SELECT_TEXT)
 	    forcedOn = true;
         if (!forcedOn && curr->style()->userSelect() == SELECT_NONE)
-            return false;
+            return 0;
 
 	if (!node)
 	    node = curr->element();
-        curr = curr->parent();
     }
 
     // somewhere up the render tree there must be an element!
     assert(node);
 
+    return node;
+}
+
+bool RenderObject::canSelect() const
+{
+    return selectStartNode(this) != 0;
+}
+
+bool RenderObject::shouldSelect() const
+{
+    NodeImpl *node = selectStartNode(this);
+    if (!node)
+        return false;
     return node->dispatchHTMLEvent(DOM::EventImpl::SELECTSTART_EVENT, true, true);
 }
 

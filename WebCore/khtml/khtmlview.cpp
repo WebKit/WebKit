@@ -914,8 +914,10 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
     m_part->executeScheduledScript();
 
-    khtml::RenderStyle* style = (mev.innerNode.handle() && mev.innerNode.handle()->renderer() &&
-                                 mev.innerNode.handle()->renderer()->style()) ? mev.innerNode.handle()->renderer()->style() : 0;
+    NodeImpl *node = mev.innerNode.handle();
+    RenderObject *renderer = node ? node->renderer() : 0;
+    RenderStyle *style = renderer ? renderer->style() : 0;
+
     QCursor c;
     if (style && style->cursor() == CURSOR_AUTO && style->cursorImage()
         && !(style->cursorImage()->pixmap().isNull())) {
@@ -929,18 +931,14 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         c = QCursor(p);
     }
 
-    switch ( style ? style->cursor() : CURSOR_AUTO) {
+    switch ( style ? style->cursor() : CURSOR_AUTO ) {
     case CURSOR_AUTO:
         if ( d->mousePressed && m_part->hasSelection() )
 	    // during selection, use an IBeam no matter what we're over
 	    c = KCursor::ibeamCursor();
-        else if ( (!mev.url.isNull() || isSubmitImage(mev.innerNode.handle()))
-                  && m_part->settings()->changeCursor() )
+        else if ( (!mev.url.isNull() || isSubmitImage(node)) && m_part->settings()->changeCursor() )
             c = m_part->urlCursor();
-        else if ( !mev.innerNode.isNull()
-                  && (mev.innerNode.nodeType() == Node::TEXT_NODE
-                      || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE
-                      || (mev.innerNode.isContentEditable())))
+        else if ( (node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()) )
             c = KCursor::ibeamCursor();
         break;
     case CURSOR_CROSS:
