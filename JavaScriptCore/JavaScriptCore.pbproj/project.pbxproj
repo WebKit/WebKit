@@ -150,15 +150,13 @@
 	<key>CFBundleExecutable</key>
 	<string>JavaScriptCore</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0 Beta, Copyright 2001-2002 Apple Compupter, Inc</string>
+	<string>1.0 Beta, Copyright 2001-2002 Apple Computer, Inc</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.JavaScriptCore</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleLongVersionString</key>
-	<string>JavaScriptCore 0.1, Copyright 2001-2002 Apple Compupter</string>
 	<key>CFBundleName</key>
 	<string>JavaScriptCore</string>
 	<key>CFBundlePackageType</key>

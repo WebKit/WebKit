@@ -1,3 +1,7 @@
+2003-01-05  Darin Adler  <darin@apple.com>
+
+        * Resources/Info.plist: Fix "Apple Compupter" typo.
+
 2003-01-04  Trey Matteson  <trey@apple.com>
 
 	3098388 - Pressing the back button goes back two levels at allmusic.com	

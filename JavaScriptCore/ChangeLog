@@ -1,3 +1,8 @@
+2003-01-05  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj: Fix "Apple Compupter" typo.
+	Remove unneeded CFBundleLongVersionString we don't use anywhere else.
+
 2003-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
