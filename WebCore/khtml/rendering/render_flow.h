@@ -59,6 +59,8 @@ public:
     void deleteLineBoxes();
     virtual void detach();
 
+    virtual short lineHeight(bool firstLine, bool isRootLineBox=false) const;
+    
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
 
@@ -89,6 +91,8 @@ protected:
     // For inline flows, each box represents a portion of that inline.
     InlineFlowBox* m_firstLineBox;
     InlineFlowBox* m_lastLineBox;
+    
+    mutable short m_lineHeight;
 };
 
     

@@ -733,7 +733,7 @@ private:
     RenderObject *m_previous;
     RenderObject *m_next;
 
-    short m_verticalPosition;
+    mutable short m_verticalPosition;
 
     bool m_needsLayout               : 1;
     bool m_normalChildNeedsLayout    : 1;

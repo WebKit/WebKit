@@ -151,6 +151,26 @@ void RenderFlow::detach()
     RenderBox::detach();
 }
 
+short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
+{
+    if (firstLine) {
+        RenderStyle* s = style(firstLine);
+        Length lh = s->lineHeight();
+        if (lh.value < 0) {
+	    if (m_lineHeight == -1)
+	      m_lineHeight = RenderObject::lineHeight(false);
+	    return m_lineHeight;
+	}
+        if (lh.isPercent())
+            return lh.minWidth(s->font().pixelSize());
+        return lh.value;
+    }
+
+    if (m_lineHeight == -1)
+        m_lineHeight = RenderObject::lineHeight(false);
+    return m_lineHeight;
+}
+
 InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox)
 {
     if (!isRootLineBox &&

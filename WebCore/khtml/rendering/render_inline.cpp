@@ -59,6 +59,8 @@ void RenderInline::setStyle(RenderStyle* _style)
         currCont = currCont->continuation();
     }
 
+    m_lineHeight = -1;
+    
     // Update pseudos for :before and :after now.
     updatePseudoChild(RenderStyle::BEFORE, firstChild());
     updatePseudoChild(RenderStyle::AFTER, lastChild());

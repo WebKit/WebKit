@@ -1844,7 +1844,7 @@ short RenderObject::verticalPositionHint( bool firstLine ) const
     if ( m_verticalPosition == PositionUndefined || firstLine ) {
 	vpos = getVerticalPosition( firstLine );
 	if ( !firstLine )
-	    const_cast<RenderObject *>(this)->m_verticalPosition = vpos;
+	    m_verticalPosition = vpos;
     }
     return vpos;
 
@@ -1909,14 +1909,16 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 
 short RenderObject::lineHeight( bool firstLine, bool ) const
 {
-    Length lh = style(firstLine)->lineHeight();
+    RenderStyle* s = style(firstLine);
+    
+    Length lh = s->lineHeight();
 
     // its "unset", choose nice default
-    if ( lh.value < 0 )
-        return style(firstLine)->fontMetrics().lineSpacing();
+    if (lh.value < 0)
+        return s->fontMetrics().lineSpacing();
 
-    if ( lh.isPercent() )
-        return lh.minWidth( style(firstLine)->font().pixelSize() );
+    if (lh.isPercent())
+        return lh.minWidth(s->font().pixelSize());
 
     // its fixed
     return lh.value;

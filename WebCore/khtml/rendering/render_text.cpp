@@ -275,7 +275,6 @@ void RenderText::setStyle(RenderStyle *_style)
                                    (style() && style()->textTransform() != _style->textTransform());
 
         RenderObject::setStyle( _style );
-        m_lineHeight = RenderObject::lineHeight(false);
 
         if (needToTransformText) {
             DOM::DOMStringImpl* textToTransform = originalString();
@@ -403,7 +402,7 @@ FindSelectionResult RenderText::checkSelectionPointIgnoringContinuations(int _x,
     for (InlineTextBox* s = firstTextBox(); s; s = s->nextTextBox()) {
         int result;
         const Font *f = htmlFont(s == firstTextBox());
-        result = s->checkSelectionPoint(_x, _y, _tx, _ty, f, this, offset, m_lineHeight);
+        result = s->checkSelectionPoint(_x, _y, _tx, _ty, f, this, offset, lineHeight(false));
 
 //         kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
         if ( result == SelectionPointInside ) // x,y is inside the InlineTextBox
@@ -1171,16 +1170,13 @@ int RenderText::height() const
     // FIXME: Why use line-height? Shouldn't we be adding in the height of the last text box? -dwh
     int retval = 0;
     if (firstTextBox())
-        retval = lastTextBox()->m_y + m_lineHeight - firstTextBox()->m_y;
+        retval = lastTextBox()->m_y + lineHeight(false) - firstTextBox()->m_y;
     return retval;
 }
 
-short RenderText::lineHeight( bool firstLine, bool ) const
+short RenderText::lineHeight( bool firstLine, bool isRootLineBox) const
 {
-    if ( firstLine )
- 	return RenderObject::lineHeight( firstLine );
-
-    return m_lineHeight;
+    return parent()->lineHeight(firstLine, isRootLineBox);
 }
 
 short RenderText::baselinePosition( bool firstLine, bool ) const

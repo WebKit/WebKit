@@ -90,6 +90,8 @@ void RenderBlock::setStyle(RenderStyle* _style)
         child = child->nextSibling();
     }
 
+    m_lineHeight = -1;
+
     // Update pseudos for :before and :after now.
     updatePseudoChild(RenderStyle::BEFORE, firstChild());
     updatePseudoChild(RenderStyle::AFTER, lastChild());

@@ -1,5 +1,32 @@
 2004-01-30  David Hyatt  <hyatt@apple.com>
 
+	Make m_lineHeight be cached on RenderFlow instead of RenderText and avoid recomputing it so much when it
+	is not set by CSS (since calls to fontMetrics().lineSpacing() are expensive).
+
+	Yields ~1.5% performance improvement.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::lineHeight):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::verticalPositionHint):
+        (RenderObject::lineHeight):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        (RenderText::checkSelectionPointIgnoringContinuations):
+        (RenderText::height):
+        (RenderText::lineHeight):
+        * khtml/rendering/render_text.h:
+
+2004-01-30  David Hyatt  <hyatt@apple.com>
+
 	Disable XBL.  The loadBindings call was taking 0.1-0.25%.  While I know how to get rid of this overhead,
 	it's easier for now to just disable all of XBL.
 
