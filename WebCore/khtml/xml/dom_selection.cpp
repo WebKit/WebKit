@@ -461,7 +461,7 @@ Range Selection::toRange() const
         // If the selection is a caret, move the range start upstream. This helps us match
         // the conventions of text editors tested, which make style determinations based
         // on the character before the caret, if any. 
-        s = start().upstream().equivalentRangeCompliantPosition();
+        s = start().upstream(StayInBlock).equivalentRangeCompliantPosition();
         e = s;
     }
     else {

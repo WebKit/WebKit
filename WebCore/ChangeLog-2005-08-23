@@ -1,3 +1,16 @@
+2004-09-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3805594> REGRESSION (Mail): Second return key stroke does not work when first was in blockquote
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::toRange): Code to convert caret positions moved the position upstream
+        before making a range-compliant position, but erroneously would allow the position
+        to cross blocks. Now it will no longer do so.
+
 2004-09-16  Richard Williamson   <rjw@apple.com>
 
         Part 1 of the feature requested in
@@ -14,6 +27,7 @@
                 dashboard-region-circle(control 80 0 0 0); 
         }
         </style>
+
 
 	Part 2 will determine the appropriate regions.
 
