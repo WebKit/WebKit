@@ -118,7 +118,7 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The nodeAtPoint method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(QPainter *p, int x, int y, int w, int h);
+    void paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly=false);
     bool nodeAtPoint(RenderObject::NodeInfo& info, int x, int y);
     
     void clearOtherLayersHoverActiveState();

@@ -22,6 +22,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -34,14 +35,13 @@
 
 // These are a little larger than typical because dragging links is a fairly
 // advanced feature that can confuse non-power-users
-#define DragStartXHysteresis  		10.0
-#define DragStartYHysteresis  		10.0
-
-#define TextDragDelay			0.2
+#define DragHysteresis  		10.0
+#define TextDragHysteresis  		3.0
+#define TextDragDelay			0.15
 
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
-#define DRAG_LABEL_RADIUS	5
+#define DRAG_LABEL_RADIUS		5.0
 
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
 
@@ -474,65 +474,68 @@ static BOOL forceRealHitTest = NO;
 	return;
     }
 
-    NSPoint mouseDownPoint = [_private->mouseDownEvent locationInWindow];
-    float deltaX = ABS([event locationInWindow].x - mouseDownPoint.x);
-    float deltaY = ABS([event locationInWindow].y - mouseDownPoint.y);
-
     NSDictionary *element = _private->dragElement;
 
-    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
-    NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
+    NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
+    NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
+    BOOL isSelectedText = [[element objectForKey:WebElementIsSelectedTextKey] boolValue];
 
     [_private->draggingImageURL release];
     _private->draggingImageURL = nil;
 
     // We must have started over something draggable:
     ASSERT((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
-           (!imageURL && linkURL) ||
-           [[element objectForKey:WebElementIsSelectedTextKey] boolValue]); 
+           (!imageURL && linkURL) || isSelectedText); 
 
-    // drag hysteresis hasn't ben met yet but we don't want to do
-    // other drag actions like selection.
-    if (deltaX < DragStartXHysteresis && deltaY < DragStartYHysteresis) {
+    NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
+    NSPoint mouseDraggedPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+    float deltaX = ABS(mouseDraggedPoint.x - mouseDownPoint.x);
+    float deltaY = ABS(mouseDraggedPoint.y - mouseDownPoint.y);
+    
+    // Drag hysteresis hasn't been met yet but we don't want to do other drag actions like selection.
+    if (((imageURL || linkURL) && deltaX < DragHysteresis && deltaY < DragHysteresis) ||
+        (isSelectedText && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
 	return;
     }
     
     if (imageURL) {
 	_private->draggingImageURL = [imageURL retain];
-	
-	[self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
-	      origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
-	      URL:linkURL ? linkURL : imageURL
-	      fileType:[[imageURL path] pathExtension]
-	      title:[element objectForKey:WebElementImageAltStringKey]
-	      event:_private->mouseDownEvent];
-    } else if (linkURL || [[element objectForKey:WebElementIsSelectedTextKey] boolValue]) {
-        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        NSSize centerOffset;
-        NSImage *dragImage;
+        [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
+                              origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
+                                 URL:linkURL ? linkURL : imageURL
+                            fileType:[[imageURL path] pathExtension]
+                               title:[element objectForKey:WebElementImageAltStringKey]
+                               event:_private->mouseDownEvent];
         
-        if (linkURL) {
-            dragImage = [self _dragImageForElement:element];
-            NSString *label = [element objectForKey: WebElementLinkLabelKey];
-            centerOffset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
-            [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
-        } else {
-            NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"text_clipping" ofType:@"tiff"];
-            dragImage = [[[NSImage alloc] initByReferencingFile:path] autorelease];
-            centerOffset = NSMakeSize([dragImage size].width / 2, -([dragImage size].width/4));
-            [self _writeSelectionToPasteboard:pasteboard];
-        }
-	
-	NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
-	NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
-	
-	[self dragImage:dragImage
-	      at:imagePoint
-	      offset:centerOffset
-	      event:event
-	      pasteboard:pasteboard
-	      source:self
-	      slideBack:NO];
+    } else if (linkURL) {
+        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+        NSString *label = [element objectForKey:WebElementLinkLabelKey];
+        [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
+        NSImage *dragImage = [self _dragImageForElement:element];
+        NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
+        [self dragImage:dragImage
+                     at:NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height)
+                 offset:offset
+                  event:event
+             pasteboard:pasteboard
+                 source:self
+              slideBack:NO];
+        
+    } else if (isSelectedText) {
+        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+        [self _writeSelectionToPasteboard:pasteboard];
+        NSImage *selectionImage = [[self _bridge] selectionImage];
+        [selectionImage _web_dissolveToFraction:WebDragImageAlpha];
+        NSRect selectionRect = [[self _bridge] selectionRect];
+        [self dragImage:selectionImage
+                     at:NSMakePoint(NSMinX(selectionRect), NSMaxY(selectionRect))
+                 offset:NSMakeSize(mouseDownPoint.x, mouseDownPoint.y)
+                  event:_private->mouseDownEvent
+             pasteboard:pasteboard
+                 source:self
+              slideBack:YES];
+    } else {
+        ERROR("Attempt to drag unknown element");
     }
 }
 

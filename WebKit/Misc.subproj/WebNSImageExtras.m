@@ -61,15 +61,17 @@ static BOOL AKBugIsFixed = NO;
     NSImage *dissolvedImage = [[NSImage alloc] initWithSize:[self size]];
 
     if (AKBugIsFixed) {
+        NSPoint point = [self isFlipped] ? NSMakePoint(0, [self size].height) : NSZeroPoint;
+        
         // In this case the dragging image is always correct.
         [dissolvedImage setFlipped:[self isFlipped]];
 
         [dissolvedImage lockFocus];
-        [self dissolveToPoint:NSMakePoint(0, [self size].height) fraction: delta];
+        [self dissolveToPoint:point fraction: delta];
         [dissolvedImage unlockFocus];
 
         [self lockFocus];
-        [dissolvedImage compositeToPoint:NSMakePoint(0, [self size].height)   operation:NSCompositeCopy];
+        [dissolvedImage compositeToPoint:point operation:NSCompositeCopy];
         [self unlockFocus];
     } else {
         // In this case Thousands mode will have an inverted drag image.  Millions is OK.

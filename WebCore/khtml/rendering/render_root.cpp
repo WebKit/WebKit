@@ -276,7 +276,6 @@ void RenderRoot::close()
     //printTree();
 }
 
-#if APPLE_CHANGES
 static QRect enclosingPositionedRect (RenderObject *n)
 {
     RenderObject *enclosingParent = (RenderObject*)n;
@@ -296,7 +295,34 @@ static QRect enclosingPositionedRect (RenderObject *n)
     }
     return rect;
 }
-#endif
+
+QRect RenderRoot::selectionRect() const
+{
+    RenderObject *r = m_selectionStart;
+    QRect selectionRect = enclosingPositionedRect(r);
+
+    while (r && r != m_selectionEnd)
+    {
+        if (r->selectionState() == SelectionInside && r != m_selectionStart) {
+            selectionRect = selectionRect.unite(enclosingPositionedRect(r));
+        }
+        
+        RenderObject* n;
+        if ( !(n = r->firstChild()) ){
+            if ( !(n = r->nextSibling()) )
+            {
+                n = r->parent();
+                while (n && !n->nextSibling())
+                    n = n->parent();
+                if (n)
+                    n = n->nextSibling();
+            }
+        }
+        r = n;
+    }
+
+    return selectionRect;
+}
 
 void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
 {

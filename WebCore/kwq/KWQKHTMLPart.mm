@@ -361,9 +361,18 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 #endif
 
     if (renderer()) {
-        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height());
+        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height(), false);
     } else {
         ERROR("called KWQKHTMLPart::paint with nil renderer");
+    }
+}
+
+void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
+{
+    if (renderer()) {
+        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height(), true);
+    } else {
+        ERROR("called KWQKHTMLPart::paintSelectionOnly with nil renderer");
     }
 }
 
@@ -1339,3 +1348,19 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
 
     return result;
 }
+
+QRect KWQKHTMLPart::selectionRect() const
+{
+    if(!xmlDocImpl()){
+        return QRect();
+    }
+
+    khtml::RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    if (!root) {
+        return QRect();
+
+    }
+
+    return root->selectionRect();
+}
+

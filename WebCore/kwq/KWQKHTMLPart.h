@@ -132,6 +132,7 @@ public:
     khtml::RenderObject *renderer();
     void forceLayout();
     void paint(QPainter *, const QRect &);
+    void paintSelectionOnly(QPainter *p, const QRect &rect);
 
     void createEmptyDocument();
 
@@ -147,6 +148,8 @@ public:
     int selectionStartOffset() const;
     DOM::NodeImpl *selectionEnd() const;
     int selectionEndOffset() const;
+
+    QRect selectionRect() const;
 
     static NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);
 

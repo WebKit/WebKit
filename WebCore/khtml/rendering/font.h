@@ -99,7 +99,7 @@ public:
 
 #if APPLE_CHANGES
     void drawLineForText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len, int toAdd, int yOffset,
-                          QPainter::TextDirection d) const;
+                          QPainter::TextDirection d, int from=-1, int to=-1) const;
     float floatWidth( QChar *str, int slen, int pos, int len ) const;
     void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const;
     bool isFixedPitch() const;

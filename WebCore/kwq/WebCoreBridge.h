@@ -88,6 +88,7 @@ enum FrameBorderStyle {
     KWQKHTMLPart *_part;
     KHTMLRenderPart *_renderPart;
     RenderArena *_renderPartArena;
+    BOOL _drawSelectionOnly;
 }
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;
@@ -168,6 +169,9 @@ enum FrameBorderStyle {
 
 - (void)selectAll;
 - (void)deselectAll;
+
+- (NSRect)selectionRect;
+- (NSImage *)selectionImage;
 
 - (id <WebDOMNode>)selectionStart;
 - (int)selectionStartOffset;

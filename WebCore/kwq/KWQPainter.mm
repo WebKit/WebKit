@@ -417,7 +417,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         fontFamilies: families];
 }
 
-void QPainter::drawLineForText(int x, int y, const QChar *str, int length, int toAdd, int yOffset, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
+void QPainter::drawLineForText(int x, int y, const QChar *str, int length, int from, int to, int toAdd, int yOffset, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
 {
     if (data->state.paintingDisabled)
         return;
@@ -428,8 +428,8 @@ void QPainter::drawLineForText(int x, int y, const QChar *str, int length, int t
 
     [data->lastTextRenderer
         drawLineForCharacters:(const UniChar *)str stringLength:length
- fromCharacterPosition:0
-   toCharacterPosition:length
+ fromCharacterPosition:from
+   toCharacterPosition:to
                atPoint:NSMakePoint(x, y)
                yOffset:(float)yOffset
            withPadding: toAdd

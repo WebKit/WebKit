@@ -1,3 +1,36 @@
+2003-01-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3153605 - Drag image when dragging text should be the actual text
+
+        Reviewed by darin.
+
+        * khtml/rendering/font.cpp:
+        (Font::drawLineForText): take a "from" and "to" so only selected portions of text draw lines
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint): handle the selection-only case
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::selectionRect): new, computes bounding box of the selection
+        * khtml/rendering/render_root.h:
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::paintDecoration): take a "from" and "to" so only selected portions of text draw lines
+        (RenderText::paintObject): when only drawing the selection, only draw selected text and no selection background
+        (RenderText::paint): handle the selection-only case
+        * khtml/rendering/render_text.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint): handle the selection-only case
+        (KWQKHTMLPart::selectionRect): new, returns the bounding box of the selection
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLineForText): take a "from" and "to" so only selected portions of text draw lines
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:withPainter:]): handle the selection-only case
+        (-[WebCoreBridge selectionRect]): new, returns the bounding box of the selection clipped to visible 
+        (-[WebCoreBridge selectionImage]): new, returns the image of the selection
+
 2003-01-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3153260, tables used as height spacers don't get the

@@ -5,8 +5,7 @@
 
 #import <AppKit/AppKit.h>
 
-#define WebDragStartHysteresisX			5.0
-#define WebDragStartHysteresisY			5.0
+#define WebDragImageAlpha    0.75
 
 @class WebView;
 

@@ -1,3 +1,18 @@
+2003-01-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3153605 - Drag image when dragging text should be the actual text
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSImageExtras.m:
+        (-[NSImage _web_dissolveToFraction:]): handle non-flipped images
+        * Misc.subproj/WebNSViewExtras.h: moved some constants around
+        * Misc.subproj/WebNSViewExtras.m:
+        * Resources/text_clipping.tiff: Removed.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]): cleaned-up, get text drag image from WebCore
+
 2003-01-25  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebBaseNetscapePluginView.m: Replace some tabs with spaces.

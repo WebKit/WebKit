@@ -4648,7 +4648,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 #if APPLE_CHANGES
   // Clear the selection if the mouse didn't move after the last mouse press.
   // We do this so when clicking on the selection, the selection goes away.
-  if (!d->m_mouseMovedSinceLastMousePress &&
+  if (d->m_dragStartPos.x() == event->qmouseEvent()->x() &&
+      d->m_dragStartPos.y() == event->qmouseEvent()->y() &&
       !d->m_selectionInitiatedWithDoubleClick &&
       !d->m_selectionInitiatedWithTripleClick) {
       d->m_selectionStart = 0;

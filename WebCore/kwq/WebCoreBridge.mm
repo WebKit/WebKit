@@ -308,7 +308,11 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    _part->paint(p, QRect(rect));
+    if (_drawSelectionOnly) {
+        _part->paintSelectionOnly(p, QRect(rect));
+    } else {
+        _part->paint(p, QRect(rect));
+    }
 }
 
 - (void)drawRect:(NSRect)rect
@@ -601,6 +605,43 @@ static bool initializedObjectCacheSize = FALSE;
 - (int)selectionEndOffset
 {
     return _part->selectionEndOffset();
+}
+
+- (NSRect)selectionRect
+{
+    NSView *view = _part->view()->getDocumentView();
+    if (!view) {
+        return NSZeroRect;
+    }
+
+    return NSIntersectionRect(NSRect(_part->selectionRect()), [view visibleRect]); 
+}
+
+- (NSImage *)selectionImage
+{
+    NSView *view = _part->view()->getDocumentView();
+    if (!view) {
+        return nil;
+    }
+
+    NSRect rect = [self selectionRect];  
+    NSImage *selectionImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
+    [selectionImage setFlipped:YES];
+    [selectionImage lockFocus];
+
+    [NSGraphicsContext saveGraphicsState];
+    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort], -NSMinX(rect), -NSMinY(rect));
+
+    _drawSelectionOnly = YES;
+    [view drawRect:[view bounds]];
+    _drawSelectionOnly = NO;
+
+    [NSGraphicsContext restoreGraphicsState];
+        
+    [selectionImage unlockFocus];
+    [selectionImage setFlipped:NO];
+
+    return selectionImage;
 }
 
 - (void)setName:(NSString *)name

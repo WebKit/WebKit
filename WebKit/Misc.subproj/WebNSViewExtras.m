@@ -11,7 +11,8 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
-#define WebDragImageAlpha    			0.75
+#define WebDragStartHysteresisX			5.0
+#define WebDragStartHysteresisY			5.0
 #define WebMaxDragImageSize 			NSMakeSize(400, 400)
 
 #ifdef DEBUG_VIEWS

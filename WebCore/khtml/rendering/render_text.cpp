@@ -97,7 +97,29 @@ void TextSlave::paintSelection(const Font *f, RenderText *text, QPainter *p, Ren
     p->restore();
 }
 
-void TextSlave::paintDecoration( QPainter *pt, const Font *f, RenderText* p, int _tx, int _ty, int deco, bool begin, bool end)
+#ifdef APPLE_CHANGES
+void TextSlave::paintDecoration( QPainter *pt, const Font *f, RenderText* p,
+                                 int _tx, int _ty, int deco, bool begin, bool end, int from, int to)
+{
+    _tx += m_x;
+    _ty += m_y;
+    
+    // Use a special function for underlines to get the positioning exactly right.
+    if (deco & UNDERLINE) {
+        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
+                           m_toAdd, m_baseline, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+    }
+    if (deco & OVERLINE) {
+        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
+                           m_toAdd, 0, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+    }
+    if (deco & LINE_THROUGH) {
+        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
+                           m_toAdd, 2*m_baseline/3, m_reversed ? QPainter::RTL : QPainter::LTR, from, to);
+    }
+}
+#else
+void TextSlave::paintDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, int decoration, bool begin, bool end);
 {
     _tx += m_x;
     _ty += m_y;
@@ -110,19 +132,6 @@ void TextSlave::paintDecoration( QPainter *pt, const Font *f, RenderText* p, int
     if ( end )
         width -= p->paddingRight() + p->borderRight();
 
-#if APPLE_CHANGES
-    // Use a special function for underlines to get the positioning exactly right.
-    if(deco & UNDERLINE){
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                    m_toAdd, m_baseline, m_reversed ? QPainter::RTL : QPainter::LTR);
-    }
-    if(deco & OVERLINE)
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                              m_toAdd, 0, m_reversed ? QPainter::RTL : QPainter::LTR);
-    if(deco & LINE_THROUGH)
-        f->drawLineForText(pt, _tx, _ty, p->str->s, p->str->l, m_start, m_len,
-                              m_toAdd, 2*m_baseline/3, m_reversed ? QPainter::RTL : QPainter::LTR);
-#else
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;
 
@@ -133,10 +142,11 @@ void TextSlave::paintDecoration( QPainter *pt, const Font *f, RenderText* p, int
         pt->drawLine(_tx, _ty, _tx + width, _ty );
     if(deco & LINE_THROUGH)
         pt->drawLine(_tx, _ty + 2*m_baseline/3, _tx + width, _ty + 2*m_baseline/3 );
-#endif
     // NO! Do NOT add BLINK! It is the most annouing feature of Netscape, and IE has a reason not to
     // support it. Lars
 }
+#endif
+
 
 void TextSlave::paintBoxDecorations(QPainter *pt, RenderStyle* style, RenderText *p, int _tx, int _ty, bool begin, bool end)
 {
@@ -654,12 +664,16 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 #if APPLE_CHANGES
         // Do one pass for the selection, then another for the rest.
         bool haveSelection = startPos != endPos && !isPrinting && selectionState() != SelectionNone;
+        if (!haveSelection && paintAction == PaintActionSelection) {
+            // When only painting the selection, don't bother to paint if there is none.
+            return;
+        }
         int startLine = si;
         for (int pass = 0; pass < (haveSelection ? 2 : 1); pass++) {
             si = startLine;
             
             bool drawDecorations = !haveSelection || pass == 0;
-            bool drawSelectionBackground = haveSelection && pass == 0;
+            bool drawSelectionBackground = haveSelection && pass == 0 && paintAction != PaintActionSelection;
             bool drawText = !haveSelection || pass == 1;
 #endif
 
@@ -710,14 +724,35 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
             if(_style->color() != p->pen().color())
                 p->setPen(_style->color());
 
-	    if (s->m_len > 0)
-		font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
-			       s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
+            if (s->m_len > 0) {
+                if (paintAction == PaintActionSelection) {
+                    int offset = s->m_start;
+                    int sPos = QMAX( startPos - offset, 0 );
+                    int ePos = QMIN( endPos - offset, s->m_len );
+                    if ( sPos < ePos ){
+                        font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
+                                   s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos);
+                    }
+                } else {
+                    font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
+                                   s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
+                }
+            }
 
             if(d != TDNONE)
             {
                 p->setPen(_style->textDecorationColor());
-                s->paintDecoration(p, font, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1);
+                if (paintAction == PaintActionSelection) {
+                    int offset = s->m_start;
+                    int sPos = QMAX( startPos - offset, 0 );
+                    int ePos = QMIN( endPos - offset, s->m_len );
+                    if ( sPos < ePos ){
+                        s->paintDecoration(p, font, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1, sPos, ePos);
+                    }
+                } else {
+                    s->paintDecoration(p, font, this, tx, ty, d,si == 0, si == ( int ) m_lines.count()-1,
+                                       s->m_start, s->m_start+s->m_len);
+                }
             }
 
 #if APPLE_CHANGES
@@ -790,8 +825,12 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 void RenderText::paint(QPainter *p, int x, int y, int w, int h,
                        int tx, int ty, PaintAction paintAction)
 {
-    if (paintAction != PaintActionForeground || style()->visibility() != VISIBLE) 
+    if (paintAction != PaintActionForeground && paintAction != PaintActionSelection) {
         return;
+    }
+    if (style()->visibility() != VISIBLE) {
+        return;
+    }
 
     int s = m_lines.count() - 1;
     if ( s < 0 ) return;

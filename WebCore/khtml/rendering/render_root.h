@@ -76,6 +76,8 @@ public:
 
     int viewportWidth() const { return m_viewportWidth; }
     int viewportHeight() const { return m_viewportHeight; }
+
+    QRect selectionRect() const;
     
 protected:
 
