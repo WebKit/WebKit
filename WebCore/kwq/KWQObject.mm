@@ -229,7 +229,7 @@ void QObject::resumeTimers (const void *key, QObject *_target)
 int QObject::startTimer(int milliseconds)
 {
     if (timerDictionaries == NULL) {
-        // The global timers dictionary itself leaks, but the contents are removed
+        // The global timers dictionary itself lives forever, but the contents are removed
         // when each timer fires or is killed.
         timerDictionaries = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     }

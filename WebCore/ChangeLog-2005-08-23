@@ -1,3 +1,19 @@
+2004-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3857395> clicking on calendar in Apple Travel site crashes Safari in invalidateClick (getthere.net)
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent): Use a SharedPtr<KHTMLView> to make sure the KHTMLView is not
+        deleted before this function finishes running.
+        (KHTMLView::viewportMouseDoubleClickEvent): Ditto.
+        (KHTMLView::viewportMouseReleaseEvent): Ditto.
+        (KHTMLView::dispatchMouseEvent): Removed ref/deref pairs that aren't needed since dispatchEvent
+        is guaranteed to do ref/deref as needed.
+
+        * kwq/KWQObject.mm: (QObject::startTimer): Fixed a comment.
+
 2004-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Enabled XSLT on Panther. See intrigue mail for compiling instructions.

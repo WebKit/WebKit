@@ -748,6 +748,8 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
     if(!m_part->xmlDocImpl()) return;
 
+    SharedPtr<KHTMLView> protector(this);
+
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
 
@@ -805,6 +807,8 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
     if(!m_part->xmlDocImpl()) return;
+
+    SharedPtr<KHTMLView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -1037,6 +1041,8 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
     if ( !m_part->xmlDocImpl() ) return;
 
+    SharedPtr<KHTMLView> protector(this);
+
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
 
@@ -1046,6 +1052,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseRelease );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+
 #if APPLE_CHANGES
     if (KWQ(m_part)->passSubframeEventToSubframe(mev))
         return;
@@ -1834,9 +1841,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 							0,screenX,screenY,clientX,clientY,
 							ctrlKey,altKey,shiftKey,metaKey,
 							button,targetNode);
-		me->ref();
 		oldUnder->dispatchEvent(me,exceptioncode,true);
-		me->deref();
 	    }
 
 	    // send mouseover event to the new node
@@ -1846,10 +1851,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 							0,screenX,screenY,clientX,clientY,
 							ctrlKey,altKey,shiftKey,metaKey,
 							button,oldUnder);
-
-		me->ref();
 		targetNode->dispatchEvent(me,exceptioncode,true);
-		me->deref();
 	    }
 
             if (oldUnder)
