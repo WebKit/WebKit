@@ -1,3 +1,16 @@
+2005-02-11  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        * layout-tests/apple-only/base/www.excite.com/index-expected.txt: updates tests because of custom tag change.
+        * layout-tests/apple-only/base/www.msnbc.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.time.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.travelocity.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.zdnet.com/index-expected.txt:
+        * layout-tests/fast/overflow/003-expected.txt:
+
+        * layout-tests/fast/js/window-object-cross-frame-calls-expected.txt: updated test because of added Body (see rdar://problem/3758785)
+
 === Safari-186 ===
 
 2005-02-11  Darin Adler  <darin@apple.com>
