@@ -134,24 +134,39 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     CFStringEncoding encoding = effectiveEncoding(_encoding);
 
     QString copy;
+    bool usingCopy = false;
     bool doingTildeWorkaround = false;
 
     // This is a hack to work around bug 3254512 -- tilde does not make the round trip when encoding/decoding Shift-JIS.
     // We change decoded tilde characters into U+0001 because that will survive the decoding process (turn into ASCII 0x01)
     // and we don't care about preserving U+0001 characters; they should never occur.
+
+    // The other hack is to make \ character turn into 5C instead of 815F when converting to Shift-JIS.
+    // Although 815F is correct, strictly speaking, if we end up with a 5C, we almost always want to send
+    // it back as a 5C; there's no way to type a \ on a Japanese keyboard.
+
     switch (encoding) {
         case kCFStringEncodingShiftJIS_X0213_00:
         case kCFStringEncodingEUC_JP: {
             const QChar decodedTilde(0x203E);
             if (qcs.find(decodedTilde) != -1) {
                 doingTildeWorkaround = true;
+                usingCopy = true;
                 copy = qcs;
                 copy.replace(decodedTilde, 0x0001);
+            }
+            if (qcs.find('\\') != -1) {
+                if (!usingCopy) {
+                    usingCopy = true;
+                    copy = qcs;
+                }
+                const QChar decodedBackslash(0x00A5);
+                copy.replace('\\', decodedBackslash);
             }
         }
     }
 
-    CFStringRef cfs = doingTildeWorkaround ? copy.getCFString() : qcs.getCFString();
+    CFStringRef cfs = usingCopy ? copy.getCFString() : qcs.getCFString();
 
     CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
     CFIndex bufferLength;

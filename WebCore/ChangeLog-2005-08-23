@@ -1,3 +1,15 @@
+2003-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3256787 -- HOMEPAGE:\000 characters being added by Safarin in Form submission,
+        causing an exception in property list parsing
+
+        * kwq/KWQTextCodec.mm: (QTextCodec::fromUnicode): Encode \ as 5C instead of 815F
+        when encoding Shift-JIS. This should make the Apple Store work again. The only thing
+        we lose is the ability to send an actual Shift-JIS backslash (815F), but I think that
+        is almost never needed. In other browsers you can't even type a backslash in Shift-JIS.
+
 2003-06-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by NOBODY (OOPS!).
@@ -24,8 +36,7 @@
 
 	- fixed 3169067 - PEOPLESOFT: left frame missing; frame RenderRoot height and width are both zero
 
-        * khtml/khtml_part.cpp:
-        (KHTMLPart::gotoAnchor):
+        * khtml/khtml_part.cpp: (KHTMLPart::gotoAnchor): Update layout before scrolling.
 
 2003-05-30  Maciej Stachowiak  <mjs@apple.com>
 
