@@ -12,6 +12,7 @@
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDOMOperations.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebFrameView.h>
@@ -29,8 +30,7 @@
 
 - (NSMenuItem *)menuItemWithTag:(int)tag
 {
-    NSMenuItem *menuItem = [[NSMenuItem alloc] init];
-    [menuItem setTarget:self];
+    NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
     [menuItem setTag:tag];
     
     NSString *title;
@@ -40,68 +40,93 @@
         case WebMenuItemTagOpenLinkInNewWindow:
             title = UI_STRING("Open Link in New Window", "Open in New Window context menu item");
             action = @selector(openLinkInNewWindow:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagDownloadLinkToDisk:
             title = UI_STRING("Download Linked File", "Download Linked File context menu item");
             action = @selector(downloadLinkToDisk:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagCopyLinkToClipboard:
             title = UI_STRING("Copy Link", "Copy Link context menu item");
             action = @selector(copyLinkToClipboard:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagOpenImageInNewWindow:
             title = UI_STRING("Open Image in New Window", "Open Image in New Window context menu item");
             action = @selector(openImageInNewWindow:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagDownloadImageToDisk:
             title = UI_STRING("Download Image", "Download Image context menu item");
             action = @selector(downloadImageToDisk:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagCopyImageToClipboard:
             title = UI_STRING("Copy Image", "Copy Image context menu item");
             action = @selector(copyImageToClipboard:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagOpenFrameInNewWindow:
             title = UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item");
             action = @selector(openFrameInNewWindow:);
+            [menuItem setTarget:self];
             break;
         case WebMenuItemTagCopy:
             title = UI_STRING("Copy", "Copy context menu item");
             action = @selector(copy:);
-            [menuItem setTarget:nil];
             break;
         case WebMenuItemTagGoBack:
             title = UI_STRING("Back", "Back context menu item");
             action = @selector(goBack:);
-            [menuItem setTarget:nil];
             break;
         case WebMenuItemTagGoForward:
             title = UI_STRING("Forward", "Forward context menu item");
             action = @selector(goForward:);
-            [menuItem setTarget:nil];
             break;
         case WebMenuItemTagStop:
             title = UI_STRING("Stop", "Stop context menu item");
             action = @selector(stopLoading:);
-            [menuItem setTarget:nil];
             break;
         case WebMenuItemTagReload:
             title = UI_STRING("Reload", "Reload context menu item");
             action = @selector(reload:);
-            [menuItem setTarget:nil];
+            break;
+        case WebMenuItemTagCut:
+            title = UI_STRING("Cut", "Cut context menu item");
+            action = @selector(cut:);
+            break;
+        case WebMenuItemTagPaste:
+            title = UI_STRING("Paste", "Paste context menu item");
+            action = @selector(paste:);
+            break;
+        case WebMenuItemTagSpellingGuess:
+            action = @selector(_changeSpellingFromMenu:);
+            break;
+        case WebMenuItemTagNoGuessesFound:
+            title = UI_STRING("No Guesses Found", "No Guesses Found context menu item");
+            break;
+        case WebMenuItemTagIgnoreSpelling:
+            title = UI_STRING("Ignore Spelling", "Ignore Spelling context menu item");
+            action = @selector(_ignoreSpellingFromMenu:);
+            break;
+        case WebMenuItemTagLearnSpelling:
+            title = UI_STRING("Learn Spelling", "Learn Spelling context menu item");
+            action = @selector(_learnSpellingFromMenu:);
             break;
         default:
-            [menuItem release];
             return nil;
     }
 
-    [menuItem setTitle:title];
+    if (title != nil) {
+        [menuItem setTitle:title];
+    }
     [menuItem setAction:action];
     
-    return [menuItem autorelease];
+    return menuItem;
 }
 
-- (NSArray *)webView: (WebView *)wv contextMenuItemsForElement: (NSDictionary *)element  defaultMenuItems: (NSArray *)defaultMenuItems
+- (NSArray *)contextMenuItemsForElement:(NSDictionary *)element
 {
     NSMutableArray *menuItems = [NSMutableArray array];
     
@@ -131,6 +156,8 @@
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
         } else {
+            WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+            WebView *wv = [webFrame webView];
             if ([wv canGoBack]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack]];
             }
@@ -143,7 +170,6 @@
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload]];
             }
             
-            WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
             if (webFrame != [wv mainFrame]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow]];
             }
@@ -154,6 +180,76 @@
     [menuItems makeObjectsPerformSelector:@selector(setRepresentedObject:) withObject:element];
     
     return menuItems;
+}
+
+- (NSArray *)editingContextMenuItemsForElement:(NSDictionary *)element
+{
+    NSMenuItem *item;
+    NSMutableArray *menuItems = [NSMutableArray array];
+    WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
+    ASSERT([HTMLView isKindOfClass:[WebHTMLView class]]);
+    
+    // Add spelling related context menu items.
+    if ([HTMLView _isSelectionMisspelled]) {
+        NSArray *guesses = [HTMLView _guessesForMisspelledSelection];
+        unsigned count = [guesses count];
+        if (count > 0) {
+            NSEnumerator *enumerator = [guesses objectEnumerator];
+            NSString *guess;
+            while ((guess = [enumerator nextObject]) != nil) {
+                item = [self menuItemWithTag:WebMenuItemTagSpellingGuess];
+                [item setTitle:guess];
+                [menuItems addObject:item];
+            }
+        } else {
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound]];
+        }
+        [menuItems addObject:[NSMenuItem separatorItem]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreSpelling]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling]];
+        [menuItems addObject:[NSMenuItem separatorItem]];
+    }
+    
+    // Load the standard NSTextView context menu nib.
+    if (defaultMenu == nil) {
+        static NSNib *textViewMenuNib = nil;
+        if (textViewMenuNib == nil) {
+            textViewMenuNib = [[NSNib alloc] initWithNibNamed:@"NSTextViewContextMenu" bundle:[NSBundle bundleForClass:[NSTextView class]]];
+        }
+        [textViewMenuNib instantiateNibWithOwner:self topLevelObjects:nil];
+    }
+    
+    // Add tags to the menu items because this is what the WebUIDelegate expects.
+    NSEnumerator *enumerator = [[defaultMenu itemArray] objectEnumerator];
+    while ((item = [enumerator nextObject]) != nil) {
+        item = [item copy];
+        SEL action = [item action];
+        int tag;
+        if (action == @selector(cut:)) {
+            tag = WebMenuItemTagCut;
+        } else if (action == @selector(copy:)) {
+            tag = WebMenuItemTagCopy;
+        } else if (action == @selector(paste:)) {
+            tag = WebMenuItemTagPaste;
+        } else {
+            tag = WebMenuItemTagOther;
+        }
+        [item setTag:tag];
+        [menuItems addObject:item];
+        [item release];
+    }
+    
+    return menuItems;
+}
+
+- (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
+{
+    WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
+    if ([HTMLView isKindOfClass:[WebHTMLView class]] && [HTMLView _isEditable]) {
+        return [self editingContextMenuItemsForElement:element];
+    } else {
+        return [self contextMenuItemsForElement:element];
+    }
 }
 
 - (void)openNewWindowWithURL:(NSURL *)URL element:(NSDictionary *)element

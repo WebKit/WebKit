@@ -27,7 +27,14 @@ enum {
     WebMenuItemTagGoBack,
     WebMenuItemTagGoForward,
     WebMenuItemTagStop,
-    WebMenuItemTagReload
+    WebMenuItemTagReload,
+    WebMenuItemTagCut,
+    WebMenuItemTagPaste,
+    WebMenuItemTagSpellingGuess,
+    WebMenuItemTagNoGuessesFound,
+    WebMenuItemTagIgnoreSpelling,
+    WebMenuItemTagLearnSpelling,
+    WebMenuItemTagOther
 };
 
 /*!

@@ -148,6 +148,10 @@ static BOOL forceRealHitTest = NO;
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
 
+@interface NSSpellChecker(CurrentlyPrivateForTextView)
+- (void)learnWord:(NSString *)word;
+@end
+
 static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 // Handles the complete: text command
@@ -1121,6 +1125,46 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isEditable
 {
     return [[self _webView] isEditable] || [[self _bridge] isSelectionEditable];
+}
+
+- (BOOL)_isSelectionMisspelled
+{
+    NSString *selectedString = [self selectedString];
+    unsigned length = [selectedString length];
+    if (length == 0) {
+        return NO;
+    }
+    NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:selectedString
+                                                                    startingAt:0
+                                                                      language:@""
+                                                                          wrap:NO
+                                                        inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]
+                                                                     wordCount:NULL];
+    return range.length == length;
+}
+
+- (NSArray *)_guessesForMisspelledSelection
+{
+    ASSERT([[self selectedString] length] != 0);
+    return [[NSSpellChecker sharedSpellChecker] guessesForWord:[self selectedString]];
+}
+
+- (void)_changeSpellingFromMenu:(id)sender
+{
+    ASSERT([[self selectedString] length] != 0);
+    [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES];
+}
+
+- (void)_ignoreSpellingFromMenu:(id)sender
+{
+    ASSERT([[self selectedString] length] != 0);
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:[self selectedString] inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
+}
+
+- (void)_learnSpellingFromMenu:(id)sender
+{
+    ASSERT([[self selectedString] length] != 0);
+    [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
 }
 
 @end

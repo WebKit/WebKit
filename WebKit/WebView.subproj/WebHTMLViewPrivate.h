@@ -62,4 +62,7 @@
 - (BOOL)_hasSelectionOrInsertionPoint;
 - (BOOL)_isEditable;
 
+- (BOOL)_isSelectionMisspelled;
+- (NSArray *)_guessesForMisspelledSelection;
+
 @end

@@ -1,3 +1,27 @@
+2004-08-31  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 
+	<rdar://problem/3699498> Context menu for editable WebViews should provide items like Cut and Paste
+	<rdar://problem/3781535> REGRESSION (Mail): no context menu after ctrl-clicking a misspelled word
+
+        Reviewed by kocienda.
+
+        * English.lproj/Localizable.strings:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]): updated to handle new menu items
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:]): renamed from webView:contextMenuItemsForElement:defaultMenuItems:
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:]): new
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]): moved, now call contextMenuItemsForElement: or editingContextMenuItemsForElement:
+        * WebView.subproj/WebDefaultUIDelegate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionMisspelled]): new
+        (-[WebHTMLView _guessesForMisspelledSelection]): new
+        (-[WebHTMLView _changeSpellingFromMenu:]): new
+        (-[WebHTMLView _ignoreSpellingFromMenu:]): new
+        (-[WebHTMLView _learnSpellingFromMenu:]): new
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebUIDelegate.h:
+
 2004-08-31  Darin Adler  <darin@apple.com>
 
         - fixed B&I build failure
