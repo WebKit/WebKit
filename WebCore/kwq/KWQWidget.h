@@ -132,8 +132,6 @@ public:
     void setAcceptDrops(bool) { }
     
     virtual void paint(void *);
-
-    void _displayRect(QRect rect);
     
     NSView *getView() const;
     void setView(NSView *aView);

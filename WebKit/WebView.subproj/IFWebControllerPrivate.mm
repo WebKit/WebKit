@@ -63,7 +63,7 @@
 
 @implementation IFWebController (IFPrivate)
 
-- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource
+- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete
 {
     IFWebFrame *frame = [dataSource webFrame];
     
@@ -84,7 +84,7 @@
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
 
     // This resouce has completed, so check if the load is complete for all frames.
-    if (progress->bytesSoFar == progress->totalToLoad){
+    if (isComplete){
         if (frame != nil){
             [frame _transitionProvisionalToLayoutAcceptable];
             [frame _checkLoadComplete];

@@ -242,7 +242,12 @@ void QScrollView::resizeContents(int w, int h)
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
+    NSView *view = getView();
+
+    if ([view _IF_isScrollView])
+        view = [view _IF_getDocumentView];
+
+    [view displayRect: NSMakeRect (x, y, w, h)];
 }
 
 void QScrollView::updateContents(const QRect &rect)

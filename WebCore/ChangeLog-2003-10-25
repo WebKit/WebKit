@@ -1,3 +1,17 @@
+2002-06-17  Richard Williamson  <rjw@apple.com>
+
+    Fixed www.2cpu.com regression.  QWidget::_displayRect was displaying the wrong
+    view.  This was a regression that would impact all DHTML.
+
+	* khtml/khtmlview.cpp:
+	(KHTMLView::timerEvent):
+	* kwq/KWQScrollView.mm:
+	(QScrollView::updateContents):
+	* kwq/KWQWidget.mm:
+	(QWidget::QWidget):
+	(QWidget::endEditing):
+	* kwq/qt/qwidget.h:
+
 2002-06-17  Darin Adler  <darin@apple.com>
 
 	Fixed bug where some images would get left behind when scrolling. Turned out it

@@ -1491,11 +1491,7 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
 //        kdDebug() << "scheduled repaint "<< d->repaintTimerId  << endl;
     killTimer(d->repaintTimerId);
 
-#ifdef APPLE_CHANGES
-    _displayRect (d->updateRect);
-#else
     updateContents( d->updateRect );
-#endif	
 
     d->repaintTimerId = 0;
 }

@@ -47,7 +47,6 @@ public:
     QCursor cursor;
     QPalette pal;
     NSView *view;
-    int lockCount;
 };
 
 QWidget::QWidget(QWidget *parent, const char *name, int f) 
@@ -55,7 +54,6 @@ QWidget::QWidget(QWidget *parent, const char *name, int f)
     static QStyle defaultStyle;
     
     data = new QWidgetPrivate;
-    data->lockCount = 0;
     data->view = [[KWQView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
     data->style = &defaultStyle;
 }
@@ -379,9 +377,4 @@ void QWidget::endEditing()
     firstResponder = [window firstResponder];
     if ([firstResponder isKindOfClass: [NSText class]])
         [window makeFirstResponder: nil];
-}
-
-void QWidget::_displayRect(QRect rect)
-{
-    [getView() displayRect: NSMakeRect (rect.x(), rect.y(), rect.width(), rect.height())];
 }
