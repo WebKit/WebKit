@@ -680,7 +680,8 @@ static BOOL inNSTextViewDrawRect;
     NSView *possibleContainingField = [self delegate];
 
     if (become && [possibleContainingField respondsToSelector:@selector(fieldEditorWillBecomeFirstResponder)]) {
-	[possibleContainingField fieldEditorWillBecomeFirstResponder];
+        //FIXME:  Note due to 3178518, this code is never executed.  Delegate==nil at this point.
+        [possibleContainingField fieldEditorWillBecomeFirstResponder];
     }
 
     return become;
