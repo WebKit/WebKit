@@ -1,3 +1,24 @@
+2002-03-17  Richard Williamson  <rjw@apple.com>
+
+        Implementation of replacement code for NSLayoutManager.  Huge
+        performance gains.
+        
+	* src/kdelibs/khtml/rendering/render_text.cpp: (RenderText::calcMinMaxWidth),
+	(RenderText::width):
+	* src/kwq/KWQFontMetrics.mm: (ROUND_TO_INT), (__IFInitATSGlyphVector),
+	(__IFResetATSGlyphVector), (__IFFillStyleWithAttributes), (-[KWQLayoutInfo
+	drawString:atPoint:withFont:color:]), (+[KWQLayoutInfo
+	drawString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (+[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	initWithFont:]), (-[KWQLayoutInfo _initializeCaches]), (_rectForString),
+	(-[KWQLayoutInfo rectForString:]), (-[KWQLayoutInfo attributes]),
+	(-[KWQLayoutInfo lineHeight]), (-[KWQLayoutInfo font]), (-[KWQLayoutInfo
+	dealloc]), (QFontMetrics::_width):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/Makefile.am:
+	* src/kwq/qt/qfontmetrics.h:
+
 2002-03-16  Richard Williamson  <rjw@apple.com>
 
         Fixed error handling.  Removed ObjC code for url handle client from KHTMLPart.

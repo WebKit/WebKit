@@ -29,11 +29,57 @@
 
 @class KWQTextStorage;
 
+
+#ifdef DIRECT_TO_CG
+
+#define LOCAL_GLYPH_BUFFER_SIZE 1024
+#define GLYPH_CACHE_MAX 1024
+
+#define FIRST_ASCII_CHAR ((int)' ')
+#define LAST_ASCII_CHAR ((int)'}')
+
+#define Boolean MacBoolean
+#define Fixed MacFixed
+#define Rect MacRect
+
+#import <ApplicationServices/ApplicationServices.h>
+#import <ATSUnicodePriv.h>
+
+#undef Fixed
+#undef Rect
+#undef Boolean
+
+@interface NSFont (IFPrivate)
+- (ATSUFontID)_atsFontID;
+- (CGFontRef) _backingCGSFont;
+@end
+
+extern "C" {
+
+CG_EXTERN int CGFontGetGlyphScaledAdvances(CGFontRef font, const CGGlyph glyph[], size_t count, float advance[], float scale);
+CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
+
+}
+
+#endif
+
 @interface KWQLayoutInfo : NSObject
 {
     NSMutableDictionary *attributes;
     NSLayoutManager *layoutManager;
     KWQTextStorage *textStorage;
+    NSFont *font;
+    int lineHeight;
+#ifdef DIRECT_TO_CG
+    ATSStyleGroupPtr _styleGroup;
+    ATSUStyle _style;
+    ATSGlyphVector _glyphVector;
+    ATSStyleGroupPtr _asciiStyleGroup;
+    ATSUStyle _asciiStyle;
+    ATSGlyphVector _asciiCacheGlyphVector;
+    int widthCacheSize;
+    float *widthCache;
+#endif
 }
 
 + (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color;
@@ -45,8 +91,9 @@
 - (NSLayoutManager *)layoutManager;
 - (KWQTextStorage *)textStorage;
 - (void)setColor: (NSColor *)color;
-- (void)setFont: (NSFont *)aFont;
 - (NSDictionary *)attributes;
+- (int)lineHeight;
+- (NSFont *)font;
 @end
 
 @protocol KWQLayoutFragment
