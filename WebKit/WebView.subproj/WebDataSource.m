@@ -223,7 +223,7 @@
     [self _replaceSelectionWithMarkupString:[NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]] baseURL:nil];
 }
 
-- (BOOL)_replaceSelectionWithWebArchive:(WebArchive *)archive
+- (BOOL)_replaceSelectionWithArchive:(WebArchive *)archive
 {
     ASSERT(archive);
     WebResource *mainResource = [archive mainResource];

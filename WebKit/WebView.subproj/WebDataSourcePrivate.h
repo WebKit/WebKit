@@ -132,7 +132,7 @@
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
-- (BOOL)_replaceSelectionWithWebArchive:(WebArchive *)archive;
+- (BOOL)_replaceSelectionWithArchive:(WebArchive *)archive;
 - (void)_replaceSelectionWithImageResource:(WebResource *)resource;
 
 - (NSError *)_mainDocumentError;

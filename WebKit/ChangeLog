@@ -1,5 +1,32 @@
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        More work to bring code up to date with the latest API proposal. Note that
+        all of the replaceXXX methods below now operate on the current selection, so
+        the method implementations have been simplifed accordingly.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _replaceSelectionWithArchive:]): New name for _replaceSelectionWithWebArchive.
+        * WebView.subproj/WebDataSourcePrivate.h: Ditto.
+        * WebView.subproj/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webViewShouldBeginEditing:inDOMRange:]): Added inDOMRange: parameter.
+        (-[WebDefaultEditingDelegate webViewShouldEndEditing:inDOMRange:]): Ditto.
+        (-[WebDefaultEditingDelegate webView shouldChangeSelectedDOMRange:toDOMRange:proposedRange affinity:stillSelecting:]):
+        Missed adding affinity in last patch.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteFromPasteboard:]): Call old method with new name: _replaceSelectionWithArchive
+        * WebView.subproj/WebView.m:
+        (-[WebView replaceSelectionWithNode:]): New version of insertNode:replacingDOMRange:
+        (-[WebView replaceSelectionWithText:]): New version of insertText:replacingDOMRange:
+        (-[WebView replaceSelectionWithMarkupString:]): New version of insertMarkupString:replacingDOMRange:
+        (-[WebView replaceSelectionWithArchive:]): New version of insertWebArchive:replacingDOMRange:
+        (-[WebView deleteSelection]): New version of deleteDOMRange:
+        (-[WebView applyStyle:]): New version of applyStyle:toElementsInDOMRange:
+        * WebView.subproj/WebViewPrivate.h:
+
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Adds the notion of selection affinity to the editing API, bringing it up to

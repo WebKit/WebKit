@@ -2181,64 +2181,35 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @implementation WebView (WebViewUndoableEditing)
 
-- (void)insertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range
+- (void)replaceSelectionWithNode:(DOMNode *)node
 {
-    if (!range)
-        return;
-        
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [bridge replaceSelectionWithNode:node];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node];
 }    
 
-- (void)insertText:(NSString *)text replacingDOMRange:(DOMRange *)range
+- (void)replaceSelectionWithText:(NSString *)text
 {
-    if (!range)
-        return;
-
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [bridge replaceSelectionWithText:text];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
 }
 
-- (void)insertMarkupString:(NSString *)markupString replacingDOMRange:(DOMRange *)range
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    if (!range)
-        return;
-
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [bridge replaceSelectionWithMarkupString:markupString baseURLString:nil];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil];
 }
 
-- (void)insertWebArchive:(WebArchive *)archive replacingDOMRange:(DOMRange *)range
+- (void)replaceSelectionWithArchive:(WebArchive *)archive
 {
-    if (!range)
-        return;
-
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [[[bridge webFrame] dataSource] _replaceSelectionWithWebArchive:archive];
+    [[[bridge webFrame] dataSource] _replaceSelectionWithArchive:archive];
 }
 
-- (void)deleteDOMRange:(DOMRange *)range
+- (void)deleteSelection
 {
-    if (!range)
-        return;
-
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [bridge deleteSelection];
+    [[self _bridgeForCurrentSelection] deleteSelection];
 }
     
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style
 {
-    if (!range)
-        return;
-
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
-    [bridge applyStyle:style toElementsInDOMRange:range];
+    [[self _bridgeForCurrentSelection] applyStyle:style];
 }
 
 @end

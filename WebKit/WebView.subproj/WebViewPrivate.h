@@ -341,12 +341,12 @@ typedef enum {
 @end
 
 @interface WebView (WebViewUndoableEditing)
-- (void)insertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range;    
-- (void)insertText:(NSString *)text replacingDOMRange:(DOMRange *)range;    
-- (void)insertMarkupString:(NSString *)markupString replacingDOMRange:(DOMRange *)range;
-- (void)insertWebArchive:(WebArchive *)webArchive replacingDOMRange:(DOMRange *)range;
-- (void)deleteDOMRange:(DOMRange *)range;    
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
+- (void)replaceSelectionWithNode:(DOMNode *)node; 
+- (void)replaceSelectionWithText:(NSString *)text;    
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString;
+- (void)replaceSelectionWithArchive:(WebArchive *)archive;
+- (void)deleteSelection;    
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style;
 @end
 
 extern NSString * const WebViewDidBeginEditingNotification;
@@ -356,8 +356,8 @@ extern NSString * const WebViewDidChangeTypingStyleNotification;
 extern NSString * const WebViewDidChangeSelectionNotification;
 
 @interface NSObject (WebViewEditingDelegate)
-- (BOOL)webViewShouldBeginEditing:(WebView *)webView;
-- (BOOL)webViewShouldEndEditing:(WebView *)webView;
+- (BOOL)webViewShouldBeginEditing:(WebView *)webView inDOMRange:(DOMRange *)range;
+- (BOOL)webViewShouldEndEditing:(WebView *)webView inDOMRange:(DOMRange *)range;
 - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range;

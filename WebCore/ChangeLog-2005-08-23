@@ -1,5 +1,16 @@
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        More work to bring code up to date with the latest API proposal.
+
+        * khtml/xml/dom_selection.h: Fix typo in comment.
+        * kwq/WebCoreBridge.h: -applyStyle:toElementsInDOMRange: is now applyStyle:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyStyle:]): Ditto.
+
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Adds the notion of selection affinity to the editing API, bringing it up to

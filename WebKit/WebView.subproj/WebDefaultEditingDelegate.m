@@ -22,12 +22,12 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (BOOL)webViewShouldBeginEditing:(WebView *)webView
+- (BOOL)webViewShouldBeginEditing:(WebView *)webView inDOMRange:(DOMRange *)range
 {
     return YES;
 }
 
-- (BOOL)webViewShouldEndEditing:(WebView *)webView
+- (BOOL)webViewShouldEndEditing:(WebView *)webView inDOMRange:(DOMRange *)range
 {
     return YES;
 }
@@ -47,7 +47,7 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange stillSelecting:(BOOL)flag
+- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
     return YES;
 }

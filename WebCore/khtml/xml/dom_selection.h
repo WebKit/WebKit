@@ -53,7 +53,7 @@ public:
     // These match the AppKit values for these concepts.
     // From NSTextView.h:
     // NSSelectionAffinityUpstream = 0
-    // NSSelectionAffinityUpstream = 1
+    // NSSelectionAffinityDownstream = 1
     enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
     Selection();

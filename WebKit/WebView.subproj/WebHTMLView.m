@@ -591,7 +591,7 @@ static WebHTMLView *lastHitView = nil;
     if ([types containsObject:WebArchivePboardType]) {
         WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
         if (archive) {
-            BOOL didPaste = [[self _dataSource] _replaceSelectionWithWebArchive:archive];
+            BOOL didPaste = [[self _dataSource] _replaceSelectionWithArchive:archive];
             [archive release];
             if (didPaste) {
                 return;

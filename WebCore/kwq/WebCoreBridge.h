@@ -290,7 +290,7 @@ typedef enum {
 - (void)replaceSelectionWithNewline;
 - (void)deleteSelection;
 - (void)deleteKeyPressed;
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style;
 - (void)ensureCaretVisible;
 
 - (void)bindObject:(id)object withName:(NSString *)name;

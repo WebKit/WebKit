@@ -1433,7 +1433,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
 }
 
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style
 {
     ERROR("unimplemented");
 }
