@@ -26,4 +26,7 @@
 #ifndef QREGION_H_
 #define QREGION_H_
 
+class QRegion {
+};
+
 #endif

@@ -26,8 +26,7 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
-class QCString;
-class QByteArray;
+#include <qcstring.h>
 
 // KApplication needs this
 class DCOPClient {

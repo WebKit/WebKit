@@ -26,4 +26,7 @@
 #ifndef QIMAGE_H_
 #define QIMAGE_H_
 
+class QImage {
+};
+
 #endif

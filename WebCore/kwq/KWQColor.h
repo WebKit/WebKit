@@ -26,6 +26,9 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
+// Forward declaration for khtml/html/html_imageimpl.h:58
+class QImage;
+
 class QColor {
 public:
     int red() const;

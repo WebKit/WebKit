@@ -70,6 +70,8 @@ public:
 
     static const QString null;
 
+    static QString number(long n, int base=10);
+
     // FIXME: bogus constructor hack for "conversion from int to non-scalar
     // type" error in "Node::toHTML()" function in "dom/dom_node.cpp"
     QString(int);
