@@ -1469,7 +1469,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             bool ok = false;
 
 	    DOMStringImpl* s = content.implementation()->substring(0, pos);
-	    delay = QConstString(s->s, s->l).string().toDouble(&ok);
+	    delay = QConstString(s->s, s->l).string().stripWhiteSpace().toDouble(&ok);
 	    delete s;
 
             pos++;
