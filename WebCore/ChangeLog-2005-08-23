@@ -1,5 +1,19 @@
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Regarding the bug below, removing some tests since we have removed the execCommand("paste") 
+        feature, at least for now.
+
+        <rdar://problem/3684792>: (JavaScript execCommand("paste") presents security issues)
+
+        * layout-tests/editing/pasteboard/copy-paste-text-001-expected.txt: Removed.
+        * layout-tests/editing/pasteboard/copy-paste-text-001.html: Removed.
+        * layout-tests/editing/pasteboard/cut-paste-text-002-expected.txt: Removed.
+        * layout-tests/editing/pasteboard/cut-paste-text-002.html: Removed.
+
+2004-06-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Fix for this bug:
