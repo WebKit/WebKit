@@ -39,18 +39,34 @@ function extendSelectionForwardByCharacterCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
-function execExtendSelectionForwardByLineCommand() {
-    selection.modify("extend", "forward", "line");
+function execMoveSelectionForwardByLineCommand() {
+    selection.modify("move", "forward", "line");
 }
-function extendSelectionForwardByCharacterCommand() {
+function moveSelectionForwardByLineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardByCharacterCommand, commandCount * commandDelay);
+        window.setTimeout(execMoveSelectionForwardByLineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
-        execExtendSelectionForwardByCharacterCommand();
+        execMoveSelectionForwardByLineCommand();
     }
 }
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionForwardByLineCommand() {
+    selection.modify("extend", "forward", "line");
+}
+function extendSelectionForwardByLineCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionForwardByLineCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionForwardByLineCommand();
+    }
+}
+
 //-------------------------------------------------------------------------------------------------------
 
 function execMoveSelectionBackwardByCharacterCommand() {
@@ -78,6 +94,36 @@ function extendSelectionBackwardByCharacterCommand() {
     }
     else {
         execExtendSelectionBackwardByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execMoveSelectionBackwardByLineCommand() {
+    selection.modify("move", "backward", "line");
+}
+function moveSelectionBackwardByLineCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionBackwardByLineCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionBackwardByLineCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionBackwardByLineCommand() {
+    selection.modify("extend", "backward", "line");
+}
+function extendSelectionBackwardByLineCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionBackwardByLineCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionBackwardByLineCommand();
     }
 }
 

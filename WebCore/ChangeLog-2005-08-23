@@ -2,6 +2,24 @@
 
         Reviewed by me
         
+        Added more editing layout tests.
+
+        * layout-tests/editing/deleting/collapse-whitespace-3587601-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/collapse-whitespace-3587601-fix.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-001.html: Added.
+        * layout-tests/editing/editing.js: Added some more navigation commands.
+        * layout-tests/editing/inserting/insert-3778059-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3778059-fix.html: Added.
+        * layout-tests/editing/selection/move-by-line-001-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-line-001.html: Added.
+        * layout-tests/editing/style/typing-style-003-expected.txt: Added.
+        * layout-tests/editing/style/typing-style-003.html: Added.
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
         Added more editing layout tests. Renamed some others.
 
         * layout-tests/editing/inserting/insert-br-001-expected.txt: Added.

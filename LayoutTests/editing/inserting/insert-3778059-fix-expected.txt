@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x208 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x132
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
+            RenderText {TEXT} at (0,0) size 42x28
+              text run at (0,0) width 42: "Test"
+          RenderBlock (anonymous) at (0,52) size 756x28
+            RenderText {TEXT} at (0,0) size 12x28
+              text run at (0,0) width 12: "x"
+            RenderBR {BR} at (0,0) size 0x28
+            RenderText {TEXT} at (0,0) size 0x0
+          RenderBlock {BLOCKQUOTE} at (40,104) size 676x28
+            RenderText {TEXT} at (0,0) size 42x28
+              text run at (0,0) width 42: "Test"
+selection is CARET:
+start:      position 1 of child 2 {TEXT} of child 2 {DIV} of root {DIV}
+upstream:   position 1 of child 2 {TEXT} of child 2 {DIV} of root {DIV}
+downstream: position 0 of child 3 {BR} of child 2 {DIV} of root {DIV}
