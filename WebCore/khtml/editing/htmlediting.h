@@ -825,6 +825,7 @@ class TypingCommand : public CompositeEditCommand
 public:
     enum ETypingCommand { 
         DeleteKey, 
+        ForwardDeleteKey, 
         InsertText, 
         InsertLineBreak, 
         InsertParagraphSeparator,
@@ -833,7 +834,8 @@ public:
 
     TypingCommand(DOM::DocumentImpl *document, ETypingCommand, const DOM::DOMString &text = "", bool selectInsertedText = false);
 
-    static void deleteKeyPressed(DOM::DocumentImpl *);
+    static void deleteKeyPressed(DOM::DocumentImpl *, bool smartDelete = false);
+    static void forwardDeleteKeyPressed(DOM::DocumentImpl *, bool smartDelete = false);
     static void insertText(DOM::DocumentImpl *, const DOM::DOMString &, bool selectInsertedText = false);
     static void insertLineBreak(DOM::DocumentImpl *);
     static void insertParagraphSeparator(DOM::DocumentImpl *);
@@ -852,13 +854,15 @@ public:
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
     void deleteKeyPressed();
+    void forwardDeleteKeyPressed();
+
+    bool smartDelete() { return m_smartDelete; }
+    void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
 
 private:
     virtual bool isTypingCommand() const;
     virtual bool preservesTypingStyle() const;
 
-    void issueCommandForDeleteKey();
-    void removeCommand(const EditCommandPtr &);
     void markMisspellingsAfterTyping();
     void typingAddedToOpenCommand();
     
@@ -867,6 +871,7 @@ private:
     bool m_openForMoreTyping;
     bool m_applyEditing;
     bool m_selectInsertedText;
+    bool m_smartDelete;
 };
 
 //------------------------------------------------------------------------------------------

@@ -484,6 +484,21 @@ function deleteCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execForwardDeleteCommand() {
+    document.execCommand("ForwardDelete");
+}
+function forwardDeleteCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execForwardDeleteCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execForwardDeleteCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function runEditingTest() {
     var elem = document.getElementById("test");
     var selection = window.getSelection();

@@ -3121,27 +3121,6 @@ void InsertTextCommand::doApply()
 {
 }
 
-void InsertTextCommand::deleteCharacter()
-{
-    ASSERT(state() == Applied);
-
-    Selection selection = endingSelection();
-
-    if (!selection.start().node()->isTextNode())
-        return;
-
-    int exceptionCode = 0;
-    int offset = selection.start().offset() - 1;
-    if (offset >= selection.start().node()->caretMinOffset()) {
-        TextImpl *textNode = static_cast<TextImpl *>(selection.start().node());
-        textNode->deleteData(offset, 1, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        selection = Selection(Position(textNode, offset));
-        setEndingSelection(selection);
-        m_charactersAdded--;
-    }
-}
-
 Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
 {
     // Prepare for text input by looking at the current position.
@@ -4203,6 +4182,11 @@ void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserte
     rebalanceWhitespace();
 }
 
+EditAction ReplaceSelectionCommand::editingAction() const
+{
+    return EditActionPaste;
+}
+
 //------------------------------------------------------------------------------------------
 // SetNodeAttributeCommand
 
@@ -4540,11 +4524,17 @@ void SplitTextNodeContainingElementCommand::doApply()
 // TypingCommand
 
 TypingCommand::TypingCommand(DocumentImpl *document, ETypingCommand commandType, const DOMString &textToInsert, bool selectInsertedText)
-    : CompositeEditCommand(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true), m_applyEditing(false), m_selectInsertedText(selectInsertedText)
+    : CompositeEditCommand(document), 
+      m_commandType(commandType), 
+      m_textToInsert(textToInsert), 
+      m_openForMoreTyping(true), 
+      m_applyEditing(false), 
+      m_selectInsertedText(selectInsertedText),
+      m_smartDelete(false)
 {
 }
 
-void TypingCommand::deleteKeyPressed(DocumentImpl *document)
+void TypingCommand::deleteKeyPressed(DocumentImpl *document, bool smartDelete)
 {
     ASSERT(document);
     
@@ -4561,7 +4551,34 @@ void TypingCommand::deleteKeyPressed(DocumentImpl *document)
             // do nothing for a delete key at the start of an editable element.
         }
         else {
-            EditCommandPtr cmd(new TypingCommand(document, DeleteKey));
+            TypingCommand *typingCommand = new TypingCommand(document, DeleteKey);
+            typingCommand->setSmartDelete(smartDelete);
+            EditCommandPtr cmd(typingCommand);
+            cmd.apply();
+        }
+    }
+}
+
+void TypingCommand::forwardDeleteKeyPressed(DocumentImpl *document, bool smartDelete)
+{
+    ASSERT(document);
+    
+    KHTMLPart *part = document->part();
+    ASSERT(part);
+    
+    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    if (isOpenForMoreTypingCommand(lastEditCommand)) {
+        static_cast<TypingCommand *>(lastEditCommand.get())->forwardDeleteKeyPressed();
+    }
+    else {
+        Selection selection = part->selection();
+        if (selection.isCaret() && VisiblePosition(selection.start()).next().isNull()) {
+            // do nothing for a delete key at the start of an editable element.
+        }
+        else {
+            TypingCommand *typingCommand = new TypingCommand(document, ForwardDeleteKey);
+            typingCommand->setSmartDelete(smartDelete);
+            EditCommandPtr cmd(typingCommand);
             cmd.apply();
         }
     }
@@ -4655,6 +4672,9 @@ void TypingCommand::doApply()
     switch (m_commandType) {
         case DeleteKey:
             deleteKeyPressed();
+            return;
+        case ForwardDeleteKey:
+            forwardDeleteKeyPressed();
             return;
         case InsertLineBreak:
             insertLineBreak();
@@ -4755,7 +4775,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     typingAddedToOpenCommand();
 }
 
-void TypingCommand::issueCommandForDeleteKey()
+void TypingCommand::deleteKeyPressed()
 {
     Selection selectionToDelete;
     
@@ -4780,69 +4800,48 @@ void TypingCommand::issueCommandForDeleteKey()
     }
     
     if (selectionToDelete.isCaretOrRange()) {
-        deleteSelection(selectionToDelete);
+        deleteSelection(selectionToDelete, m_smartDelete);
+        setSmartDelete(false);
         typingAddedToOpenCommand();
     }
 }
 
-void TypingCommand::deleteKeyPressed()
+void TypingCommand::forwardDeleteKeyPressed()
 {
-// EDIT FIXME: The ifdef'ed out code below should be re-enabled.
-// In order for this to happen, the deleteCharacter case
-// needs work. Specifically, the caret-positioning code
-// and whitespace-handling code in DeleteSelectionCommand::doApply()
-// needs to be factored out so it can be used again here.
-// Until that work is done, issueCommandForDeleteKey() does the
-// right thing, but less efficiently and with the cost of more
-// objects.
-    issueCommandForDeleteKey();
-#if 0    
-    if (m_cmds.count() == 0) {
-        issueCommandForDeleteKey();
+    Selection selectionToDelete;
+    
+    switch (endingSelection().state()) {
+        case Selection::RANGE:
+            selectionToDelete = endingSelection();
+            break;
+        case Selection::CARET: {
+            // Handle delete at beginning-of-block case.
+            // Do nothing in the case that the caret is at the start of a
+            // root editable element or at the start of a document.
+            Position pos(endingSelection().start());
+            Position start = VisiblePosition(pos).next().deepEquivalent();
+            Position end = VisiblePosition(pos).deepEquivalent();
+            if (start.isNotNull() && end.isNotNull() && start.node()->rootEditableElement() == end.node()->rootEditableElement())
+                selectionToDelete = Selection(start, end);
+            break;
+        }
+        case Selection::NONE:
+            ASSERT_NOT_REACHED();
+            break;
     }
-    else {
-        EditCommandPtr lastCommand = m_cmds.last();
-        if (lastCommand.isInsertTextCommand()) {
-            InsertTextCommand &cmd = static_cast<InsertTextCommand &>(lastCommand);
-            cmd.deleteCharacter();
-            if (cmd.charactersAdded() == 0) {
-                removeCommand(lastCommand);
-            }
-        }
-        else if (lastCommand.isInsertLineBreakCommand()) {
-            lastCommand.unapply();
-            removeCommand(lastCommand);
-        }
-        else {
-            issueCommandForDeleteKey();
-        }
+    
+    if (selectionToDelete.isCaretOrRange()) {
+        deleteSelection(selectionToDelete, m_smartDelete);
+        setSmartDelete(false);
+        typingAddedToOpenCommand();
     }
-#endif
-}
-
-void TypingCommand::removeCommand(const EditCommandPtr &cmd)
-{
-    // NOTE: If the passed-in command is the last command in the
-    // composite, we could remove all traces of this typing command
-    // from the system, including the undo chain. Other editors do
-    // not do this, but we could.
-
-    m_cmds.remove(cmd);
-    if (m_cmds.count() == 0)
-        setEndingSelection(startingSelection());
-    else
-        setEndingSelection(m_cmds.last().endingSelection());
-}
-
-EditAction ReplaceSelectionCommand::editingAction() const
-{
-    return EditActionPaste;
 }
 
 bool TypingCommand::preservesTypingStyle() const
 {
     switch (m_commandType) {
         case DeleteKey:
+        case ForwardDeleteKey:
         case InsertParagraphSeparator:
         case InsertLineBreak:
             return true;

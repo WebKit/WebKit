@@ -1711,12 +1711,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     EditCommandPtr(new DeleteSelectionCommand(_part->xmlDocImpl(), smartDelete)).apply();
 }
 
-- (void)deleteKeyPressed
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete
 {
     if (!_part || !_part->xmlDocImpl())
         return;
     
-    TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
+    TypingCommand::deleteKeyPressed(_part->xmlDocImpl(), smartDelete);
+    [self ensureSelectionVisible];
+}
+
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    TypingCommand::forwardDeleteKeyPressed(_part->xmlDocImpl(), smartDelete);
     [self ensureSelectionVisible];
 }
 

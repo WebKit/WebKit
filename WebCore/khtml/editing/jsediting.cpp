@@ -214,6 +214,12 @@ bool execDelete(KHTMLPart *part, bool userInterface, const DOMString &value)
     return true;
 }
 
+bool execForwardDelete(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    TypingCommand::forwardDeleteKeyPressed(part->xmlDocImpl());
+    return true;
+}
+
 bool execFontName(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     return execStyleChange(part, CSS_PROP_FONT_FAMILY, value);
@@ -481,6 +487,7 @@ QDict<CommandImp> createCommandDictionary()
         { "FontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
         { "FontSizeDelta", { execFontSizeDelta, enabledAnySelection, stateNone, valueFontSizeDelta } },
         { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
+        { "ForwardDelete", { execForwardDelete, enabledAnySelection, stateNone, valueNull } },
         { "Indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
         { "InsertLineBreak", { execInsertLineBreak, enabledAnySelection, stateNone, valueNull } },
         { "InsertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },

@@ -383,7 +383,8 @@ typedef enum {
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete;
-- (void)deleteKeyPressed;
+- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete;
+- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete;
 
 - (DOMCSSStyleDeclaration *)typingStyle;
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction;

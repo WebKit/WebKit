@@ -1,3 +1,37 @@
+2005-01-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for this bug:
+        
+        <rdar://problem/3973254> Deletions of ranges does not coalesce correctly with subsequent typing
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertTextCommand::deleteCharacter): Remove this dead code.
+        (khtml::ReplaceSelectionCommand::editingAction): Moved this code to a better place in the file. 
+        It was in with unrelated functions.
+        (khtml::TypingCommand::TypingCommand): Reorganize initialization list so it is easier to read.
+        (khtml::TypingCommand::issueCommandForDeleteKey): Remove dead code. Roll in remaining code into deleteKeyPressed.
+        (khtml::TypingCommand::deleteKeyPressed): Add in support for carrying along smart delete flag.
+        (khtml::TypingCommand::forwardDeleteKeyPressed): New function. Makes forward delete work like
+        "regular" delete in terms of coalescing typing.
+        (khtml::TypingCommand::doApply): Add case for ForwardDeleteKey.
+        (khtml::TypingCommand::preservesTypingStyle): Ditto.
+        * khtml/editing/htmlediting.h:
+        (khtml::TypingCommand::): Add ForwardDeleteKey constant. Remove a couple declarations for now-dead code.
+        (khtml::TypingCommand::smartDelete): New accessor.
+        (khtml::TypingCommand::setSmartDelete): Ditto.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge deleteKeyPressedWithSmartDelete:]): Add smart delete flag.
+        (-[WebCoreBridge forwardDeleteKeyPressedWithSmartDelete:]): New method.
+        * khtml/editing/jsediting.cpp: Add supprt for ForwardDelete command
+        * layout-tests/editing/editing.js: Ditto.
+        * layout-tests/editing/deleting/delete-and-undo-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-and-undo.html: Added.
+        * layout-tests/editing/deleting/forward-delete-expected.txt: Added.
+        * layout-tests/editing/deleting/forward-delete.html: Added.
+
 === Safari-181 ===
 
 2005-01-27  David Harrison  <harrison@apple.com>

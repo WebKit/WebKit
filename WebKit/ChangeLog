@@ -1,3 +1,27 @@
+2005-01-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleKillRing:prepend:]): New helper function. Code factored out from 
+         _deleteRange:killRing:prepend:smartDeleteOK:isTypingAction:.
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:isTypingAction:]): No longer takes 
+        unused preflight argument. Now takes new isTypingAction argument. Uses isTypingAction to
+        determine which flavor of delete command to call.
+        (-[WebHTMLView _deleteSelection]): No longer passes unused preflight argument. Now passes new isTypingAction argument.
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]): Rearranged code to call
+        correct flavor of delete command, based on whether typing should be preserved. Some other cleanups.
+        (-[WebHTMLView deleteForward:]): Add _isEditable check.
+        (-[WebHTMLView deleteBackward:]): Now calls _deleteWithDirection instead of having unique behavior different 
+        from forward delete.
+        (-[WebHTMLView deleteWordForward:]): Add new isTypingAction flag to _deleteWithDirection call.
+        (-[WebHTMLView deleteWordBackward:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfLine:]): Ditto.
+        (-[WebHTMLView deleteToEndOfLine:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfParagraph:]): Ditto.
+        (-[WebHTMLView deleteToEndOfParagraph:]): Ditto.
+        (-[WebHTMLView deleteToMark:]): Ditto.
+
 === Safari-181 ===
 
 2005-01-27  Chris Blumenberg  <cblu@apple.com>
