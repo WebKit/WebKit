@@ -30,13 +30,15 @@
 #include <config.h>
 #endif
 
+// FIXME: this clever hack may need to be moved into KWQDef.h or elsewhere
 #define Fixed MacFixed
 #define Rect MacRect
 #define Boolean MacBoolean
-#include <CoreFoundation/CFString.h>
+#include <CoreFoundation/CoreFoundation.h>
 #undef Fixed
 #undef Rect
 #undef Boolean
+
 #include "qcstring.h"
 
 class QString;
@@ -255,16 +257,21 @@ public:
 
     // static member functions -------------------------------------------------
 
-    const QString string() const;
-
     // constructors, copy constructors, and destructors ------------------------
 
     QConstString(QChar *, uint);
-    QConstString(const QConstString &);
+#ifdef _KWQ_PEDANTIC_
+    // NOTE: copy constructor not needed
+    // QConstString(const QConstString &);
+#endif
 
-    ~QConstString();
+    // NOTE: destructor not needed
+    //~QConstString();
 
     // member functions --------------------------------------------------------
+
+    const QString &string() const;
+
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
@@ -275,7 +282,8 @@ private:
 // add assignment operator 
 // this private declaration prevents assignment
 #ifdef _KWQ_PEDANTIC_
-    QConstString &operator=(const QConstString &);
+    // NOTE: assignment operator not needed
+    // QConstString &operator=(const QConstString &);
 #endif
 
 }; // class QConstString =======================================================

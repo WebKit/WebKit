@@ -61,3 +61,18 @@ QString::~QString()
 {
     CFRelease(s);
 }
+
+QConstString::QConstString(QChar *qc, uint len)
+{
+    if (qc || len) {
+        // FIXME: do we ever need to worry about deallocating the contents?
+        s = const_cast<CFMutableStringRef>(CFStringCreateWithCharactersNoCopy(NULL, &qc->c, len, kCFAllocatorNull));
+    } else {
+        s = NULL;
+    }
+}
+
+const QString &QConstString::string() const
+{
+    return *this;
+}
