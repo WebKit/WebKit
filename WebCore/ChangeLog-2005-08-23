@@ -1,3 +1,22 @@
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
+	Revert floats so that they don't use layers any more.
+	Floats have to be able to paint in between the background
+	and foreground of inlines, so they can't have layers.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::printObject):
+        (RenderFlow::paintFloats):
+        (RenderFlow::addOverHangingFloats):
+        (RenderFlow::nodeAtPoint):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::printObject):
+
 2002-11-12  Darin Adler  <darin@apple.com>
 
         * kwq/KWQCursor.mm: (QCursor::QCursor): Use nil instead of [NSCursor arrowCursor].

@@ -64,7 +64,9 @@ public:
                         int tx, int ty);
     virtual void printObject( QPainter *, int x, int y, int w, int h,
                         int tx, int ty);
-    
+    void paintFloats(QPainter *p, int _x, int _y,
+                     int _w, int _h, int _tx, int _ty);
+                                       
     virtual void layout( );
 
     virtual void close();
@@ -161,15 +163,16 @@ protected:
         };
 
         SpecialObject(Type _type) {
-	    node = 0;
-	    startY = 0;
-	    endY = 0;
-	    type = _type;
-	    left = 0;
-	    width = 0;
+            node = 0;
+            startY = 0;
+            endY = 0;
+            type = _type;
+            left = 0;
+            width = 0;
             count = 0;
-
+            noPaint = false;
         }
+        
         RenderObject* node;
         int startY;
         int endY;
@@ -177,6 +180,7 @@ protected:
         short width;
         short count;
         Type type : 2; // left or right aligned
+        bool noPaint: 1;
         
         bool operator==(const SpecialObject& ) const
         {

@@ -154,6 +154,9 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
         child = child->nextSibling();
     }
 
+    // 3. paint floats.
+    paintFloats(p, _x, _y, _w, _h, _tx, _ty);
+    
     if(!isInline() && !childrenInline() && style()->outlineWidth())
         printOutline(p, _tx, _ty, width(), height(), style());
 
@@ -168,6 +171,24 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
     }
 #endif
 
+}
+
+void RenderFlow::paintFloats(QPainter *p, int _x, int _y,
+                             int _w, int _h, int _tx, int _ty)
+{
+    if (!specialObjects)
+        return;
+        
+    SpecialObject* r;
+    QPtrListIterator<SpecialObject> it(*specialObjects);
+    for ( ; (r = it.current()); ++it) {
+        // Only paint the object if our noPaint flag isn't set.
+        if (r->node->isFloating() && !r->noPaint) {
+            r->node->print(p, _x, _y, _w, _h, 
+                           _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
+                           _ty + r->startY - r->node->yPos() + r->node->marginTop());
+        }
+    }
 }
 
 void RenderFlow::layout()
@@ -1160,47 +1181,52 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 
     // we have overhanging floats
     if(!specialObjects) {
-	specialObjects = new QSortedList<SpecialObject>;
-	specialObjects->setAutoDelete(true);
+        specialObjects = new QSortedList<SpecialObject>;
+        specialObjects->setAutoDelete(true);
     }
 
     QPtrListIterator<SpecialObject> it(*flow->specialObjects);
     SpecialObject *r;
     for ( ; (r = it.current()); ++it ) {
-	if ( (int)r->type <= (int)SpecialObject::FloatRight &&
-	     ( ( !child && r->endY > offset ) ||
-	       ( child && flow->yPos() + r->endY > height() ) ) ) {
-	    SpecialObject* f = 0;
-	    // don't insert it twice!
-	    QPtrListIterator<SpecialObject> it(*specialObjects);
-	    while ( (f = it.current()) ) {
-		if (f->node == r->node) break;
-		++it;
-	    }
-	    if ( !f ) {
-		SpecialObject *special = new SpecialObject(r->type);
-		special->count = specialObjects->count();
-		special->startY = r->startY - offset;
-		special->endY = r->endY - offset;
-		special->left = r->left - xoff;
-		// Applying the child's margin makes no sense in the case where the child was passed in. 
+        if ( (int)r->type <= (int)SpecialObject::FloatRight &&
+            ( ( !child && r->endY > offset ) ||
+            ( child && flow->yPos() + r->endY > height() ) ) ) {
+            
+            if ( child )
+                r->noPaint = true;
+                
+            SpecialObject* f = 0;
+            // don't insert it twice!
+            QPtrListIterator<SpecialObject> it(*specialObjects);
+            while ( (f = it.current()) ) {
+            if (f->node == r->node) break;
+            ++it;
+            }
+            if ( !f ) {
+                SpecialObject *special = new SpecialObject(r->type);
+                special->count = specialObjects->count();
+                special->startY = r->startY - offset;
+                special->endY = r->endY - offset;
+                special->left = r->left - xoff;
+                // Applying the child's margin makes no sense in the case where the child was passed in. 
                 // since his own margin was added already through the subtraction of the |xoff| variable
                 // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
                 // into account.  Only apply this code if |child| is false, since otherwise the left margin 
                 // will get applied twice. -dwh 
                 if (!child && flow != parent())
-		    special->left += flow->marginLeft();
-		if ( !child ) {
-		    special->left -= marginLeft();
-		}
-		special->width = r->width;
-		special->node = r->node;
-		specialObjects->append(special);
+                    special->left += flow->marginLeft();
+                if ( !child ) {
+                    special->left -= marginLeft();
+                    special->noPaint = true;
+                }
+                special->width = r->width;
+                special->node = r->node;
+                specialObjects->append(special);
 #ifdef DEBUG_LAYOUT
-	kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << special->left << "/" << special->startY << "-" << special->width << "/" << special->endY - special->startY << ")" << endl;
+                kdDebug( 6040 ) << "addOverHangingFloats x/y= (" << special->left << "/" << special->startY << "-" << special->width << "/" << special->endY - special->startY << ")" << endl;
 #endif
-	    }
-	}
+            }
+        }
     }
 }
 
@@ -1859,13 +1885,19 @@ bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
     bool inBox = false;
     if (specialObjects) {
-        int stx = _tx;
-        int sty = _ty;
+        int stx = _tx + xPos();
+        int sty = _ty + yPos();
+        if (isRoot()) {
+            stx += static_cast<RenderRoot*>(this)->view()->contentsX();
+            sty += static_cast<RenderRoot*>(this)->view()->contentsY();
+        }
         SpecialObject* o;
         QPtrListIterator<SpecialObject> it(*specialObjects);
         for (it.toLast(); (o = it.current()); --it)
-            if (!o->node->layer() && o->node->containingBlock() == this)
-                inBox |= o->node->nodeAtPoint(info, _x, _y, stx+xPos(), sty+yPos());
+            if (o->node->isFloating() && !o->noPaint)
+                inBox |= o->node->nodeAtPoint(info, _x, _y, 
+                    stx+o->left + o->node->marginLeft() - o->node->xPos(), 
+                    sty+o->startY + o->node->marginTop() - o->node->yPos());
     }
 
     inBox |= RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty);
