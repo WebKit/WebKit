@@ -1,3 +1,18 @@
+2002-12-24  Richard Williamson   <rjw@apple.com>
+
+        Fix for 3134543 (and widely reported dupes).  Don't use render_text
+        widths cache except for whitespace == PRE.  The problem was that additional
+        spaces in the RenderText's string were being inappropiately measured.
+        An alternate, more complex and risky, fix would account for the whitespace
+        properties during scanning of the RenderText width buffer.  Considering 
+        the scenario for which this optimization was added (3133261), this
+        simpler fix is adequate.
+        
+        Reviewed by Darin and Don.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::computeWidths):
+
 2002-12-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

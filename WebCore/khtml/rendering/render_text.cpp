@@ -794,12 +794,15 @@ void RenderText::computeWidths()
             m_widths = 0;
         }
 
-        if (str->l > MIN_STRING_LENGTH_FOR_WIDTH_CACHE){
+        // Only cache widths array if style()->whiteSpace() == PRE.  This prevents
+        // inappropriate mismeasurement of extra whitespace embedded in the string.
+        if (str->l >= MIN_STRING_LENGTH_FOR_WIDTH_CACHE && style()->whiteSpace() == PRE){
             m_widths = (float *)malloc(str->l * sizeof(float));
             f->floatCharacterWidths( str->s, str->l, 0, str->l, 0, m_widths);
         }
     }
 }
+
 
 inline int RenderText::widthFromBuffer(const Font *f, int start, int len) const
 {
