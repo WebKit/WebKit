@@ -360,9 +360,14 @@ static NSMutableArray *activeImageRenderers;
     oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, size.width) - size.width, size.width);
     oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, size.height) - size.height, size.height);
     oneTileRect.size = size;
+
+    // Compute the appropriate phase relative to the top level view in the window.
+    // Conveniently, the oneTileRect we computed above has the appropriate origin.
+    NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
+    CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
     
     // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, rect)) {
+    if (NSContainsRect(oneTileRect, rect) && phase.width == 0 && phase.height == 0) {
         NSRect fromRect;
         fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
         fromRect.origin.y = (oneTileRect.origin.y + oneTileRect.size.height) - (rect.origin.y + rect.size.height);
@@ -388,12 +393,7 @@ static NSMutableArray *activeImageRenderers;
         patternColor = [[NSColor colorWithPatternImage:self] retain];
         patternColorLoadStatus = loadStatus;
     }
-    
-    // Compute the appropriate phase relative to the top level view in the window.
-    // Conveniently, the oneTileRect we computed above has the appropriate origin.
-    NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
-    CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
-    
+        
     [NSGraphicsContext saveGraphicsState];
     
     CGContextSetPatternPhase((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], phase);    

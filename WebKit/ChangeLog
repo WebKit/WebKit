@@ -1,3 +1,14 @@
+2003-01-09  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3143361.  This was a regression introduced with some image
+        rendering optimizations.  Don't bypass the tiling code path if
+        the image needs to be rendered out-of-phase.
+        
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer tileInRect:fromPoint:]):
+
 2003-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
