@@ -31,6 +31,7 @@
     NSURL *draggingImageURL;
     
     NSSize lastLayoutSize;
+    NSSize lastLayoutFrameSize;
     BOOL laidOutAtLeastOnce;
     
     WebPluginController *pluginController;

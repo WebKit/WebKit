@@ -1,3 +1,15 @@
+2003-06-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3291319, scrolling is much worse since 79.  The problem
+	was a fix for resize events that needed to use the scrollview size
+	and not the document view size inside the scrollview.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2003-06-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed previous " Reviewed by" string.

@@ -333,12 +333,13 @@
 	// get size of the containing dynamic scrollview, so
 	// appearance and disappearance of scrollbars will not show up
 	// as a size change
-	NSSize newLayoutSize = [[[self superview] superview] frame].size;
-	if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutSize, newLayoutSize)) {
+	NSSize newLayoutFrameSize = [[[self superview] superview] frame].size;
+	if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutFrameSize, newLayoutFrameSize)) {
 	    [[self _bridge] sendResizeEvent];
 	}
 	_private->laidOutAtLeastOnce = YES;
-	_private->lastLayoutSize = newLayoutSize;
+	_private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
+        _private->lastLayoutFrameSize = newLayoutFrameSize;
     }
     
     [self setNeedsDisplay:YES];
