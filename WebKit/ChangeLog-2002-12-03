@@ -1,3 +1,13 @@
+2001-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+	After discussion with Don, Removed all methods relating to
+	resolved URLs, since browsers don't actually treat aliases
+	specially.
+	
+	* WebView.subproj/WKWebController.h: removed inputURLresolvedTo: methods.
+	* WebView.subproj/WKWebDataSource.h: remove resolvedURL method,
+	and mentions of it in comments.
+
 2001-12-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Warning fixes and support to pass the http headers along with

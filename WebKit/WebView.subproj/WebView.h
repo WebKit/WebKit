@@ -87,6 +87,11 @@
         
         Changed WKLocationChangeHandler to add a parameter specifying the data source
         that sent the message.
+
+  2001-12-14
+
+        Removed inputURL:resolvedTo: methods, per discussion with Don.
+
 */
 
 
@@ -168,7 +173,6 @@
 
 - (void)receivedPageTitle: (NSString *)title;
 
-- (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
 - (void)serverRedirectTo: (NSURL *)url;
 
 @end
@@ -196,7 +200,6 @@
 
 - (void)receivedPageTitle: (NSString *)title byDataSource: (WKWebDataSource *)dataSource;
 
-- (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL byDataSource: (WKWebDataSource *)dataSource;
 - (void)serverRedirectTo: (NSURL *)url byDataSource: (WKWebDataSource *)dataSource;
 
 @end

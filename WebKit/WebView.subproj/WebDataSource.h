@@ -51,9 +51,13 @@
             - (BOOL)frameExists: (NSString *)name;
             - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
             - (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
+
+  2001-12-14
+
+        Removed all mentions of resolved URLs, because browsers don't
+        actuall treat DNS aliases specially.
                     
-   ============================================================================= 
-*/
+   ============================================================================= */
    
 #ifdef READY_FOR_PRIMETIME
 
@@ -120,22 +124,15 @@
 - (NSURL *)inputURL;
 
 
-// The inputURL may resolve to a different URL as a result of
-// a DNS redirect.  May return nil if the URL has not yet been
-// resolved.  <WKLocationChangedHandler> includes a message
-// that is sent after the URL has been resolved.
-- (NSURL *)resolvedURL;
-
-
 // finalURL returns the URL that was actually used.  The final URL
-// may be different than the resolvedURL if the server redirects.
-// <WKLocationChangedHandler> includes a message that is sent after
-// the URL has been resolved.
+// may be different than the inputURL if the server redirects.
+// <WKLocationChangedHandler> includes a message that is sent when
+// a redirect is processed
 - (NSURL *)finalURL;
 
 
-// Returns true if the resolvedURL has been redirected by the server,
-// i.e. resolvedURL != finalURL.
+// Returns true if the inputURL has been redirected by the server,
+// i.e. inputURL != finalURL.
 - (BOOL)isRedirected;
 
 // Start actually getting (if initialized with a URL) and parsing data. If the data source
