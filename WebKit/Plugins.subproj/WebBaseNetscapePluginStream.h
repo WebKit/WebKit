@@ -41,7 +41,7 @@
                   MIMEType:(NSString *)MIMEType;
 - (void)startStreamWithResponse:(NSURLResponse *)r;
 - (void)receivedData:(NSData *)data;
-- (void)receivedError:(NPReason)reason;
+- (void)cancelWithReason:(NPReason)theReason;
 - (void)finishedLoadingWithData:(NSData *)data;
 - (uint16)transferMode;
 

@@ -65,14 +65,15 @@
     _startingRequest = nil;
 }
 
-- (void)stop
+- (void)cancelWithReason:(NPReason)cancelWithReason
 {
     [_loader cancel];
-    // Since the plug-in is notified of the stream when the response is received,
-    // only report an error if the response has been received.
-    if ([_loader response]) {
-        [self receivedError:NPRES_USER_BREAK];
-    }
+    [super cancelWithReason:cancelWithReason];
+}
+
+- (void)stop
+{
+    [self cancelWithReason:NPRES_USER_BREAK];
 }
 
 @end
@@ -108,7 +109,7 @@
     [super connection:con didReceiveResponse:theResponse];
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
         [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
-        [stream receivedError:NPRES_NETWORK_ERR];
+        [stream cancelWithReason:NPRES_NETWORK_ERR];
         NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                     code:NSURLErrorFileDoesNotExist
                                                      URL:[theResponse URL]];
@@ -144,7 +145,7 @@
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [[view webView] _receivedError:result fromDataSource:[view dataSource]];
-    [stream receivedError:NPRES_NETWORK_ERR];
+    [stream cancelWithReason:NPRES_NETWORK_ERR];
     [super connection:con didFailWithError:result];
     [self release];
 }

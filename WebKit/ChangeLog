@@ -1,3 +1,23 @@
+2003-09-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3422739>: Plug-in streams not cancelled when plug-in returns error from NPP_NewStream
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: renamed receivedError to cancelWithReason
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): call cancelWithReason if NPP_NewStream returns an error
+        (-[WebBaseNetscapePluginStream cancelWithReason:]): renamed
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): tweak
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]): call renamed cancelWithReason
+	(-[WebNetscapePluginRepresentation cancelWithReason:]): new override, stop load then call super
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream cancelWithReason:]): new override, stop load then call super
+        (-[WebNetscapePluginStream stop]): call cancelWithReason
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): call renamed cancelWithReason
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]): call renamed cancelWithReason
+
 2003-09-25  Maciej Stachowiak  <mjs@apple.com>
 
 	Roll out build system change since it did not actually work. :-(
