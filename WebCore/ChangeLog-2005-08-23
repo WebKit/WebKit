@@ -1,5 +1,17 @@
 2003-02-25  David Hyatt  <hyatt@apple.com>
 
+	Revert one of my optimizations.  It was bogus.  You can't use
+	the parsed value of "inherit." 
+
+	Fixes versiontracker.  Bug #3178204
+	
+        Reviewed by mjs
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::createSharedCellDecls):
+
+2003-02-25  David Hyatt  <hyatt@apple.com>
+
 	reverseRuns was buggy and crashing.  3182658.
 	
         Reviewed by mjs
