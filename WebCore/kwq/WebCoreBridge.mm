@@ -1017,6 +1017,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {
         ElementImpl *e = static_cast<ElementImpl *>(URLNode);
+        DocumentImpl *doc = e->getDocument();
+        ASSERT(doc);
         
         const AtomicString& title = e->getAttribute(ATTR_TITLE);
         if (!title.isEmpty()) {
@@ -1028,7 +1030,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         const AtomicString& link = e->getAttribute(ATTR_HREF);
         if (!link.isNull()) {
             if (e->firstChild()) {
-                Range r(_part->document());
+                Range r(doc);
                 r.setStartBefore(e->firstChild());
                 r.setEndAfter(e->lastChild());
                 QString t = _part->text(r);
@@ -1037,12 +1039,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                 }
             }
             QString URLString = parseURL(link).string();
-            [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
+            [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
         DOMString target = e->getAttribute(ATTR_TARGET);
-        if (target.isEmpty() && _part->xmlDocImpl()) {
-            target = _part->xmlDocImpl()->baseTarget();
+        if (target.isEmpty() && doc) { // FIXME: Take out this doc check when we're not just before a release.
+            target = doc->baseTarget();
         }
         if (!target.isEmpty()) {
             [element setObject:target.string().getNSString() forKey:WebCoreElementLinkTargetFrameKey];
@@ -1078,7 +1080,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             }
             if (!attr.isEmpty()) {
                 QString URLString = parseURL(attr).string();
-                [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
+                [element setObject:i->getDocument()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
             }
             
             // FIXME: Code copied from RenderImage::updateFromElement; should share.

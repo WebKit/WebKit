@@ -1,5 +1,14 @@
 2005-01-31  Darin Adler  <darin@apple.com>
 
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/3935275> unexpected quit scrolling over link; last.fm (works in IE and Firefox)
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): By using the correct document, fix the crash reported here.
+        The page still crashes when you close the browser window, but it's not trivial to fix so I'll file a new bug after that.
+
+2005-01-31  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken and Harrison.
 
         - fixed <rdar://problem/3947901> REGRESSION (Mail): Pasting paragraph of rich text leaves insertion point before pasted text
