@@ -1,5 +1,12 @@
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * layout-tests/editing/style/style-3690704-fix-expected.txt: Fewer styling spans added
+        on this test as a result of the previously-checked-in fix.
+
+2004-08-25  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
