@@ -648,17 +648,7 @@
         SetPortVisibleRegion(nPort.port, savedVisibleRegion);
         DisposeRgn(savedVisibleRegion);
     }else{
-        // Printing
-
-        PixMapHandle srcMap, dstMap;
-        Rect rect;
-
-        dstMap = NewPixMap();
-        srcMap = GetPortPixMap(nPort.port);
-        SetRect(&rect, window.x, window.y, window.x + window.width, window.y + window.height);
-        CopyBits((BitMap *)srcMap, (BitMap *)dstMap, &rect, &rect, srcCopy, NULL);
-
-        NSLog(@"%d", QDError());
+        // Printing 2862383
     }
 }
 

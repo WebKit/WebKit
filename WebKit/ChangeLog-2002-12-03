@@ -1,5 +1,12 @@
 2002-11-20  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3074926 - crash in BitsToPix() trying to print cnet page
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView drawRect:]): disable experimental plug-in printing code.
+
+2002-11-20  Chris Blumenberg  <cblu@apple.com>
+
 	Minor clean-up, logging and more error checking in plug-in code.
 
         * Plugins.subproj/WebBaseNetscapePluginStream.m:
