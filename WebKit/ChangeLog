@@ -1,5 +1,17 @@
 2005-02-02  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3986546> Cut, delete, and paste menu items are active when a image is opened in window
+
+        Reviewed by john.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _responderValidateUserInterfaceItem:]): new, has the responder validate the item 
+        (-[WebView validateUserInterfaceItem:]): call VALIDATE for each repsonder selector using FOR_EACH_RESPONDER_SELECTOR macro
+        (-[WebView _performResponderOperation:with:]): call factored out method _responderForResponderOperations
+        (-[WebView _responderForResponderOperations]): new, code from _performResponderOperation:with:
+
+2005-02-02  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3983628> control-click on WebView is not selecting the word under the cursor (Mail, non-editable WebView)
 
         Reviewed by rjw.

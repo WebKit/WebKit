@@ -66,6 +66,99 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
+#define FOR_EACH_RESPONDER_SELECTOR(macro) \
+macro(alignCenter) \
+macro(alignJustified) \
+macro(alignLeft) \
+macro(alignRight) \
+macro(capitalizeWord) \
+macro(centerSelectionInVisibleArea) \
+macro(changeAttributes) \
+macro(changeColor) \
+macro(changeDocumentBackgroundColor) \
+macro(changeFont) \
+macro(checkSpelling) \
+macro(complete) \
+macro(copy) \
+macro(copyFont) \
+macro(cut) \
+macro(delete) \
+macro(deleteBackward) \
+macro(deleteBackwardByDecomposingPreviousCharacter) \
+macro(deleteForward) \
+macro(deleteToBeginningOfLine) \
+macro(deleteToBeginningOfParagraph) \
+macro(deleteToEndOfLine) \
+macro(deleteToEndOfParagraph) \
+macro(deleteWordBackward) \
+macro(deleteWordForward) \
+macro(ignoreSpelling) \
+macro(indent) \
+macro(insertBacktab) \
+macro(insertNewline) \
+macro(insertNewlineIgnoringFieldEditor) \
+macro(insertParagraphSeparator) \
+macro(insertTab) \
+macro(insertTabIgnoringFieldEditor) \
+macro(lowercaseWord) \
+macro(moveBackward) \
+macro(moveBackwardAndModifySelection) \
+macro(moveDown) \
+macro(moveDownAndModifySelection) \
+macro(moveForward) \
+macro(moveForwardAndModifySelection) \
+macro(moveLeft) \
+macro(moveLeftAndModifySelection) \
+macro(moveRight) \
+macro(moveRightAndModifySelection) \
+macro(moveToBeginningOfDocument) \
+macro(moveToBeginningOfDocumentAndModifySelection) \
+macro(moveToBeginningOfLine) \
+macro(moveToBeginningOfLineAndModifySelection) \
+macro(moveToBeginningOfParagraph) \
+macro(moveToBeginningOfParagraphAndModifySelection) \
+macro(moveToEndOfDocument) \
+macro(moveToEndOfDocumentAndModifySelection) \
+macro(moveToEndOfLine) \
+macro(moveToEndOfLineAndModifySelection) \
+macro(moveToEndOfParagraph) \
+macro(moveToEndOfParagraphAndModifySelection) \
+macro(moveUp) \
+macro(moveUpAndModifySelection) \
+macro(moveWordBackward) \
+macro(moveWordBackwardAndModifySelection) \
+macro(moveWordForward) \
+macro(moveWordForwardAndModifySelection) \
+macro(moveWordLeft) \
+macro(moveWordLeftAndModifySelection) \
+macro(moveWordRight) \
+macro(moveWordRightAndModifySelection) \
+macro(pageDown) \
+macro(pageUp) \
+macro(paste) \
+macro(pasteAsPlainText) \
+macro(pasteAsRichText) \
+macro(pasteFont) \
+macro(performFindPanelAction) \
+macro(scrollLineDown) \
+macro(scrollLineUp) \
+macro(scrollPageDown) \
+macro(scrollPageUp) \
+macro(selectAll) \
+macro(selectLine) \
+macro(selectParagraph) \
+macro(selectWord) \
+macro(showGuessPanel) \
+macro(startSpeaking) \
+macro(stopSpeaking) \
+macro(subscript) \
+macro(superscript) \
+macro(underline) \
+macro(unscript) \
+macro(uppercaseWord) \
+macro(yank) \
+macro(yankAndSelect) \
+
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
 @end
@@ -79,6 +172,7 @@
 @interface WebView (WebFileInternal)
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
+- (NSResponder *)_responderForResponderOperations;
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -2250,6 +2344,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self setTextSizeMultiplier:[self textSizeMultiplier]*TextSizeMultiplierRatio];
 }
 
+- (BOOL)_responderValidateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    id responder = [self _responderForResponderOperations];
+    if ([responder respondsToSelector:[item action]]) {
+        if ([responder respondsToSelector:@selector(validateUserInterfaceItem:)]) {
+            return [responder validateUserInterfaceItem:item];
+        }
+        return YES;
+    }
+    return NO;
+}
+
+#define VALIDATE(name) \
+else if (action == @selector(name:)) { return [self _responderValidateUserInterfaceItem:item]; }
+
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
@@ -2279,6 +2388,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         }
         return retVal;
     }
+    FOR_EACH_RESPONDER_SELECTOR(VALIDATE)
 
     return YES;
 }
@@ -2762,13 +2872,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // responder chain as usual.
 
     // Pass this selector down to the first responder.
-    NSResponder *responder = [[self window] firstResponder];
-    if (![self _web_firstResponderIsSelfOrDescendantView]) {
-        responder = [[[self mainFrame] frameView] documentView];
-        if (!responder) {
-            responder = [[self mainFrame] frameView];
-        }
-    }
+    NSResponder *responder = [self _responderForResponderOperations];
     reentered = YES;
     [responder tryToPerform:selector with:parameter];
     reentered = NO;
@@ -2777,97 +2881,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 #define FORWARD(name) \
     - (void)name:(id)sender { [self _performResponderOperation:_cmd with:sender]; }
 
-FORWARD(alignCenter)
-FORWARD(alignJustified)
-FORWARD(alignLeft)
-FORWARD(alignRight)
-FORWARD(capitalizeWord)
-FORWARD(centerSelectionInVisibleArea)
-FORWARD(changeAttributes)
-FORWARD(changeColor)
-FORWARD(changeDocumentBackgroundColor)
-FORWARD(changeFont)
-FORWARD(checkSpelling)
-FORWARD(complete)
-FORWARD(copy)
-FORWARD(copyFont)
-FORWARD(cut)
-FORWARD(delete)
-FORWARD(deleteBackward)
-FORWARD(deleteBackwardByDecomposingPreviousCharacter)
-FORWARD(deleteForward)
-FORWARD(deleteToBeginningOfLine)
-FORWARD(deleteToBeginningOfParagraph)
-FORWARD(deleteToEndOfLine)
-FORWARD(deleteToEndOfParagraph)
-FORWARD(deleteWordBackward)
-FORWARD(deleteWordForward)
-FORWARD(ignoreSpelling)
-FORWARD(indent)
-FORWARD(insertBacktab)
-FORWARD(insertNewline)
-FORWARD(insertNewlineIgnoringFieldEditor)
-FORWARD(insertParagraphSeparator)
-FORWARD(insertTab)
-FORWARD(insertTabIgnoringFieldEditor)
-FORWARD(lowercaseWord)
-FORWARD(moveBackward)
-FORWARD(moveBackwardAndModifySelection)
-FORWARD(moveDown)
-FORWARD(moveDownAndModifySelection)
-FORWARD(moveForward)
-FORWARD(moveForwardAndModifySelection)
-FORWARD(moveLeft)
-FORWARD(moveLeftAndModifySelection)
-FORWARD(moveRight)
-FORWARD(moveRightAndModifySelection)
-FORWARD(moveToBeginningOfDocument)
-FORWARD(moveToBeginningOfDocumentAndModifySelection)
-FORWARD(moveToBeginningOfLine)
-FORWARD(moveToBeginningOfLineAndModifySelection)
-FORWARD(moveToBeginningOfParagraph)
-FORWARD(moveToBeginningOfParagraphAndModifySelection)
-FORWARD(moveToEndOfDocument)
-FORWARD(moveToEndOfDocumentAndModifySelection)
-FORWARD(moveToEndOfLine)
-FORWARD(moveToEndOfLineAndModifySelection)
-FORWARD(moveToEndOfParagraph)
-FORWARD(moveToEndOfParagraphAndModifySelection)
-FORWARD(moveUp)
-FORWARD(moveUpAndModifySelection)
-FORWARD(moveWordBackward)
-FORWARD(moveWordBackwardAndModifySelection)
-FORWARD(moveWordForward)
-FORWARD(moveWordForwardAndModifySelection)
-FORWARD(moveWordLeft)
-FORWARD(moveWordLeftAndModifySelection)
-FORWARD(moveWordRight)
-FORWARD(moveWordRightAndModifySelection)
-FORWARD(pageDown)
-FORWARD(pageUp)
-FORWARD(paste)
-FORWARD(pasteAsPlainText)
-FORWARD(pasteAsRichText)
-FORWARD(pasteFont)
-FORWARD(performFindPanelAction)
-FORWARD(scrollLineDown)
-FORWARD(scrollLineUp)
-FORWARD(scrollPageDown)
-FORWARD(scrollPageUp)
-FORWARD(selectAll)
-FORWARD(selectLine)
-FORWARD(selectParagraph)
-FORWARD(selectWord)
-FORWARD(showGuessPanel)
-FORWARD(startSpeaking)
-FORWARD(stopSpeaking)
-FORWARD(subscript)
-FORWARD(superscript)
-FORWARD(underline)
-FORWARD(unscript)
-FORWARD(uppercaseWord)
-FORWARD(yank)
-FORWARD(yankAndSelect)
+FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 - (void)insertText:(NSString *)text
 {
@@ -2923,6 +2937,18 @@ FORWARD(yankAndSelect)
         readAllowContinuousSpellCheckingDefault = YES;
     }
     return allowContinuousSpellChecking;
+}
+
+- (NSResponder *)_responderForResponderOperations
+{
+    NSResponder *responder = [[self window] firstResponder];
+    if (![self _web_firstResponderIsSelfOrDescendantView]) {
+        responder = [[[self mainFrame] frameView] documentView];
+        if (!responder) {
+            responder = [[self mainFrame] frameView];
+        }
+    }
+    return responder;
 }
 
 @end
