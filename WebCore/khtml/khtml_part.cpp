@@ -1772,8 +1772,14 @@ void KHTMLPart::slotLoaderRequestDone( khtml::DocLoader* dl, khtml::CachedObject
     }
   }
 #endif
-
-  checkCompleted();
+  // We really only need to call checkCompleted when our own resources are done loading.
+  // So we should check that d->m_doc->docLoader() == dl here.
+  // That might help with performance by skipping some unnecessary work, but it's too
+  // risky to make that change right now (2005-02-07), because we might be accidentally
+  // depending on the extra checkCompleted calls.
+  if (d->m_doc) {
+    checkCompleted();
+  }
 }
 
 #if !APPLE_CHANGES

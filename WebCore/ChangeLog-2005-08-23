@@ -1,3 +1,18 @@
+2005-02-07  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/3993628> REGRESSION (180-181): Logitelnet bank's website doesn't work
+
+        This fixes an oversight in the fix for <rdar://problem/3964286>.  
+        We're now making sure there is a document before calling checkCompleted in slotLoaderRequestDone.
+       	That function is called even when other parts finish loads of their subresources, so we could end
+	up calling checkCompleted before we had a document. We also looked over all the other calls to
+	checkCompleted to convince ourselves no other call sites had a similar issue.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::slotLoaderRequestDone): Check if doc is nil before calling
+	checkCompleted.
+
 2005-02-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
