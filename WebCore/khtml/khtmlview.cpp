@@ -1850,10 +1850,12 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
             // from form fields before the button click is processed.
 	    DOM::NodeImpl* nodeImpl = targetNode;
 	    for ( ; nodeImpl && !nodeImpl->isFocusable(); nodeImpl = nodeImpl->parentNode());
+            // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
+            // if the page already set it (e.g., by canceling default behavior).
             if (nodeImpl && nodeImpl->isMouseFocusable())
-                swallowEvent = !m_part->xmlDocImpl()->setFocusNode(nodeImpl);
+                swallowEvent |= !m_part->xmlDocImpl()->setFocusNode(nodeImpl);
             else if (!nodeImpl || !nodeImpl->focused())
-                swallowEvent = !m_part->xmlDocImpl()->setFocusNode(0);
+                swallowEvent |= !m_part->xmlDocImpl()->setFocusNode(0);
         }
     }
 

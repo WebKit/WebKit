@@ -1,3 +1,22 @@
+2004-07-20  Trey Matteson  <trey@apple.com>
+
+	3705624	REGRESSION: can't rearrange photos on homepage.mac.com album
+
+	A subtle problem stemming from some interaction between focus handing and
+	event propagation.  We previously made it so when a focus shift fails we
+	don't propagate the event to KHTML.  The fix is to get rid of the inverse
+	effect, so now even if a focus shift succeeds, we don't propagate to KHTML if
+	the page already canceled default behavior.
+
+	In this specific case, the page is cancelling default behavior since it
+	does its own dragging, and the bug was our new system dragging was
+	kicking in.
+
+        Reviewed by Ken.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent):  What he said.
+
 2004-07-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
