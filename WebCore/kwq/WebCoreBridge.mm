@@ -1091,14 +1091,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->windowScriptObject();
 }
 
-- (void)bindObject:(id)object withName:(NSString *)name
-{
-    // Create an empty document, if necessary.  
-    _part->createEmptyDocument();
-    
-    _part->bindObject((void *)object, QString::fromNSString(name));
-}
-
 - (DOMDocument *)DOMDocument
 {
     return [DOMDocument _documentWithImpl:_part->xmlDocImpl()];

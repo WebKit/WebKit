@@ -316,17 +316,3 @@ Could be worth adding to the API.
 - (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range;
 @end
 
-
-@interface WebView (JavaScriptBinding)
-/*!
-    @method _bindObject:withName:toDocumentInFrame:
-    @discussion Expose the methods and instance variables of object to JavaScript.
-    @param object The object to be bound to JavaScript.
-    @param name The name of the property in JavaScript that is used to access the bound object.
-    @param frame If the frame is nil the object is bound to the main frame of the WebView.  The object
-    is added as a property of the window (which is the global object).
-*/
-- (void)_bindObject:(id)object withName:(NSString *)name toFrame:(WebFrame *)frame;
-@end
-
-

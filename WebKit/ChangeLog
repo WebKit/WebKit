@@ -1,3 +1,12 @@
+2004-05-21  Richard Williamson   <rjw@apple.com>
+
+        Removed _bindObject:forFrame: SPI.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
 === Safari-141 ===
 
 2004-05-21  Darin Adler  <darin@apple.com>

@@ -3312,14 +3312,3 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 }
 
 @end
-
-@implementation WebView (JavaScriptBinding)
-- (void)_bindObject:(id)object withName:(NSString *)name toFrame:(WebFrame *)frame
-{
-    if (!frame)
-        [[[self mainFrame] _bridge] bindObject:object withName:name];
-    else {
-        [[frame _bridge] bindObject:object withName:name];
-    }
-}
-@end

@@ -1158,14 +1158,6 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
     return _windowScriptObject;
 }
 
-void KWQKHTMLPart::bindObject(void *object, QString name)
-{
-    if (d->m_doc && jScript()) {
-        Window *w = Window::retrieveWindow(this);
-        w->put(jScript()->interpreter()->globalExec(), KJS::Identifier(name), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)object));
-    }
-}
-
 void KWQKHTMLPart::partClearedInBegin()
 {
     [_bridge windowObjectCleared];
