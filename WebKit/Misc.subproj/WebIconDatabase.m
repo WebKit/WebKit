@@ -420,7 +420,8 @@ NSSize WebIconLargeSize = {128, 128};
     NSString *siteURLString = [siteURL absoluteString];
     NSString *iconURLString = [iconURL absoluteString];
 
-    if([[_private->siteURLToIconURL objectForKey:siteURLString] isEqualToString:iconURLString]){
+    if([[_private->siteURLToIconURL objectForKey:siteURLString] isEqualToString:iconURLString] &&
+       [_private->iconsOnDiskWithURLs containsObject:iconURLString]){
         // Don't do any work if the icon URL is already bound to the site URL
         return;
     }

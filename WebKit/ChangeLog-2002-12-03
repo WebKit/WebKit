@@ -1,3 +1,10 @@
+2002-11-25  Chris Blumenberg  <cblu@apple.com>
+
+	- Allow missing icons to be restored when going to the page of the missing icon.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _setIconURL:forSiteURL:]):
+
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
         Changes for back/forward.  Currently disabled.
