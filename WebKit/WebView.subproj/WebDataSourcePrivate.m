@@ -66,7 +66,7 @@
     [frames release];
     [mainHandle release];
     [mainResourceHandleClient release];
-    [urlHandles release];
+    [resourceHandles release];
     [pageTitle release];
     [encoding release];
     [contentType release];
@@ -120,7 +120,7 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading: _private->mainHandle || [_private->urlHandles count]];
+    [self _setLoading: _private->mainHandle || [_private->resourceHandles count]];
 }
 
 - (void)_setController: (WebController *)controller
@@ -183,15 +183,15 @@
 
 - (void)_addResourceHandle: (WebResourceHandle *)handle
 {
-    if (_private->urlHandles == nil)
-        _private->urlHandles = [[NSMutableArray alloc] init];
-    [_private->urlHandles addObject: handle];
+    if (_private->resourceHandles == nil)
+        _private->resourceHandles = [[NSMutableArray alloc] init];
+    [_private->resourceHandles addObject: handle];
     [self _setLoading:YES];
 }
 
 - (void)_removeResourceHandle: (WebResourceHandle *)handle
 {
-    [_private->urlHandles removeObject: handle];
+    [_private->resourceHandles removeObject: handle];
     [self _updateLoading];
 }
 
@@ -216,7 +216,7 @@
     
     [_private->mainHandle cancelLoadInBackground];
     
-    handles = [_private->urlHandles copy];
+    handles = [_private->resourceHandles copy];
     [handles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
     [handles release];
 
@@ -264,7 +264,7 @@
         [[_private->controller locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
-- (void)_setFinalURL:(NSURL *)URL
+- (void)_setURL:(NSURL *)URL
 {
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
@@ -376,7 +376,7 @@
 -(void)_commitIfReady
 {
     if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self originalURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];

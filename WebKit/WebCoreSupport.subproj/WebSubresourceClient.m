@@ -99,13 +99,13 @@
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {
-    [self didStartLoadingWithURL:[handle url]];
+    [self didStartLoadingWithURL:[handle URL]];
     [self receivedProgressWithHandle:handle complete: NO];
 }
 
 - (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
 {
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
 
     [self receivedProgressWithHandle:handle complete: NO];
     [loader addData:data];
@@ -120,7 +120,7 @@
     [dataSource _removeResourceHandle:handle];
         
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource inputURL] absoluteString]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
 
@@ -129,7 +129,7 @@
 
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data:(NSData *)data
 {    
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
     WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
@@ -149,7 +149,7 @@
 
 - (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)error
 {
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
 
     [loader cancel];
     
@@ -163,7 +163,7 @@
 - (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)URL
 {
     WEBKIT_ASSERT(currentURL != nil);
-    WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
+    WEBKIT_ASSERT([URL isEqual:[handle URL]]);
 
     // FIXME: We do want to tell the client about redirects.
     // But the current API doesn't give any way to tell redirects on

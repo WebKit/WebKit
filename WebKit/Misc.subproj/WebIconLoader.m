@@ -16,7 +16,7 @@
 @public
     WebResourceHandle *resourceHandle;
     id delegate;
-    NSURL *url;
+    NSURL *URL;
 }
 
 @end;
@@ -25,7 +25,7 @@
 
 - (void)dealloc
 {
-    [url release];
+    [URL release];
     [resourceHandle release];
     [super dealloc];
 }
@@ -57,7 +57,7 @@
 {
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
-    _private->url = [iconURL retain];
+    _private->URL = [iconURL retain];
     return self;
 }
 
@@ -74,7 +74,7 @@
 
 - (void)startLoading
 {
-    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->url];
+    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL];
     [_private->resourceHandle addClient:self];
     [_private->resourceHandle loadInBackground];
 }
@@ -108,20 +108,16 @@
     }
 }
 
-
 - (void)WebResourceHandle:(WebResourceHandle *)sender dataDidBecomeAvailable:(NSData *)data
 {
-
 }
 
 - (void)WebResourceHandle:(WebResourceHandle *)sender didFailLoadingWithResult:(WebError *)result
 {
-
 }
 
-- (void)WebResourceHandle:(WebResourceHandle *)sender didRedirectToURL:(NSURL *)url
+- (void)WebResourceHandle:(WebResourceHandle *)sender didRedirectToURL:(NSURL *)URL
 {
-
 }
 
 @end

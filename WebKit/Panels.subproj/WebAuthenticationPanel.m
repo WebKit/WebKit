@@ -82,7 +82,7 @@
     // failure count (if the user tried and failed, the dialog should
     // explain possible reasons)
     // FIXME Radar 2876446: need to automatically adjust height of main label
-    [mainLabel setStringValue:[NSString stringWithFormat:@"To view this page, you need to log in to area \"%@\" on %@.", [req realm], [[req url] host]]];
+    [mainLabel setStringValue:[NSString stringWithFormat:@"To view this page, you need to log in to area \"%@\" on %@.", [req realm], [[req URL] host]]];
     if ([req willPasswordBeSentInClear]) {
         [smallLabel setStringValue:@"Your password will be sent in the clear."];
     } else {

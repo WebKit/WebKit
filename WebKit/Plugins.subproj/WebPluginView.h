@@ -53,7 +53,7 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
+- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin URL:(NSURL *)URL baseURL:(NSURL *)baseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments;
 -(void)stop;
 - (WebDataSource *)webDataSource;
 - (WebController *)webController;

@@ -132,7 +132,7 @@
         WebHistoryItem *entry;
     
         entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
-        if ([[[entry url] _web_URLWithoutFragment] isEqual: [[[self dataSource] inputURL] _web_URLWithoutFragment]]){
+        if ([[[entry URL] _web_URLWithoutFragment] isEqual: [[[self dataSource] originalURL] _web_URLWithoutFragment]]) {
             NSPoint point = [[[[self webView] documentView] superview] bounds].origin;
             [entry setScrollPoint: point];
         }
@@ -178,7 +178,7 @@
 - (void)startLoading
 {
     if (self == [[self controller] mainFrame])
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] inputURL] absoluteString] cString]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
 
     // Force refresh is irrelevant, as this will always be the first load.
     // The controller will transition the provisional data source to the

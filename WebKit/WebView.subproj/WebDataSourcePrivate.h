@@ -43,7 +43,7 @@
     
     // Active WebResourceHandles for resources associated with the
     // datasource.
-    NSMutableArray *urlHandles;
+    NSMutableArray *resourceHandles;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
@@ -92,7 +92,7 @@
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle: (NSString *)title;
-- (void)_setFinalURL: (NSURL *)url;
+- (void)_setURL: (NSURL *)URL;
 - (void)_setContentPolicy:(WebContentPolicy *)policy;
 - (void)_setContentType:(NSString *)type;
 - (void)_setEncoding:(NSString *)encoding;
@@ -103,8 +103,8 @@
 + (NSMutableDictionary *)_repTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 - (void)_loadIcon;
-- (void)_setIconURL:(NSURL *)url;
-- (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType;
+- (void)_setIconURL:(NSURL *)URL;
+- (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (WebResourceHandle*)_mainHandle;
 
 // Convenience interface for getting here from an WebDataSource.

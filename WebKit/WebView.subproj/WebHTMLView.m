@@ -375,7 +375,7 @@
 
 #ifdef _KWQ_TIMING
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
 }
 

@@ -67,7 +67,7 @@
     Someday we might have preferences on a per-URL basis.
 */
 
-+ getPreferencesForURL: (NSURL *)url;
++ getPreferencesForURL: (NSURL *);
 
 // Encoding that will be used in none specified on page? or in header?
 + setEncoding: (NSString *)encoding;

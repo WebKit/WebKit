@@ -286,7 +286,7 @@ static const char * const stateNames[] = {
     
                 case WebFrameLoadTypeStandard:
                     parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] parent: [parentFrame name] title:[[self dataSource] pageTitle] image: nil];
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] originalURL] target: [self name] parent: [parentFrame name] title:[[self dataSource] pageTitle] image: nil];
                     [[[self controller] backForwardList] addEntry: backForwardItem];
                     [backForwardItem release];
                     // Scroll to top.
@@ -335,7 +335,7 @@ static const char * const stateNames[] = {
         WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] inputURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] originalURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -558,17 +558,17 @@ static const char * const stateNames[] = {
     id <WebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSURL *url = [dataSource inputURL];
+    NSURL *URL = [dataSource originalURL];
     WebFileURLPolicy *fileURLPolicy;
-    NSString *path = [url path], *urlString = [url absoluteString];
+    NSString *path = [URL path], *URLString = [URL absoluteString];
     BOOL isDirectory, fileExists;
     WebError *error;
     
-    WebURLPolicy *urlPolicy = [policyHandler URLPolicyForURL:url];
+    WebURLPolicy *URLPolicy = [policyHandler URLPolicyForURL:URL];
     
-    if([urlPolicy policyAction] == WebURLPolicyUseContentPolicy){
+    if([URLPolicy policyAction] == WebURLPolicyUseContentPolicy){
                     
-        if([url isFileURL]){
+        if([URL isFileURL]){
         
             fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
             
@@ -584,26 +584,26 @@ static const char * const stateNames[] = {
                 return NO;
             
             if(!fileExists){
-                error = [WebError errorWithCode:WebErrorFileDoesNotExist inDomain:WebErrorDomainWebKit failingURL:urlString];
+                error = [WebError errorWithCode:WebErrorFileDoesNotExist inDomain:WebErrorDomainWebKit failingURL:URLString];
                 [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
                 return NO;
             }
             
             if(![fileManager isReadableFileAtPath:path]){
-                error = [WebError errorWithCode:WebErrorFileNotReadable  inDomain:WebErrorDomainWebKit failingURL:urlString];
+                error = [WebError errorWithCode:WebErrorFileNotReadable  inDomain:WebErrorDomainWebKit failingURL:URLString];
                 [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
                 return NO;
             }
             
             if([fileURLPolicy policyAction] == WebFileURLPolicyUseContentPolicy){
                 if(isDirectory){
-                    error = [WebError errorWithCode:WebErrorCannotShowDirectory  inDomain:WebErrorDomainWebKit failingURL:urlString];
+                    error = [WebError errorWithCode:WebErrorCannotShowDirectory  inDomain:WebErrorDomainWebKit failingURL:URLString];
                     [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
 
                     return NO;
                 }
                 else if(![WebController canShowMIMEType: type]){
-                    error = [WebError errorWithCode:WebErrorCannotShowMIMEType  inDomain:WebErrorDomainWebKit failingURL:urlString];
+                    error = [WebError errorWithCode:WebErrorCannotShowMIMEType  inDomain:WebErrorDomainWebKit failingURL:URLString];
                     [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
                     return NO;
                 }else{
@@ -612,13 +612,13 @@ static const char * const stateNames[] = {
                 }
             }else if([fileURLPolicy policyAction] == WebFileURLPolicyOpenExternally){
                 if(![workspace openFile:path]){
-                    error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForFile  inDomain:WebErrorDomainWebKit failingURL:urlString];
+                    error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForFile  inDomain:WebErrorDomainWebKit failingURL:URLString];
                     [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
                 }
                 return NO;
             }else if([fileURLPolicy policyAction] == WebFileURLPolicyRevealInFinder){
                 if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
-                        error = [WebError errorWithCode:WebErrorFinderCouldNotOpenDirectory  inDomain:WebErrorDomainWebKit failingURL:urlString];
+                        error = [WebError errorWithCode:WebErrorFinderCouldNotOpenDirectory  inDomain:WebErrorDomainWebKit failingURL:URLString];
                         [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
                     }
                 return NO;
@@ -628,23 +628,23 @@ static const char * const stateNames[] = {
                 return NO;
             }
         }else{
-            if(![WebResourceHandle canInitWithURL:url]){
-            	error = [WebError errorWithCode:WebErrorCannotShowURL inDomain:WebErrorDomainWebKit failingURL:urlString];
-                [policyHandler unableToImplementURLPolicy: urlPolicy error: error forURL: url];
+            if(![WebResourceHandle canInitWithURL:URL]){
+            	error = [WebError errorWithCode:WebErrorCannotShowURL inDomain:WebErrorDomainWebKit failingURL:URLString];
+                [policyHandler unableToImplementURLPolicy: URLPolicy error: error forURL: URL];
                 return NO;
             }
             // we can handle this URL
             return YES;
         }
     }
-    else if([urlPolicy policyAction] == WebURLPolicyOpenExternally){
-        if(![workspace openURL:url]){
-            error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForURL inDomain:WebErrorDomainWebKit failingURL:urlString];
-            [policyHandler unableToImplementURLPolicy: urlPolicy error: error forURL: url];
+    else if([URLPolicy policyAction] == WebURLPolicyOpenExternally){
+        if(![workspace openURL:URL]){
+            error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForURL inDomain:WebErrorDomainWebKit failingURL:URLString];
+            [policyHandler unableToImplementURLPolicy: URLPolicy error: error forURL: URL];
         }
         return NO;
     }
-    else if([urlPolicy policyAction] == WebURLPolicyIgnore){
+    else if([URLPolicy policyAction] == WebURLPolicyIgnore){
         return NO;
     }
     else{
@@ -661,11 +661,11 @@ static const char * const stateNames[] = {
 
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
 {
-    NSURL *itemURL = [item url];
+    NSURL *itemURL = [item URL];
     WebDataSource *dataSource;
-    NSURL *inputURL = [[self dataSource] inputURL];
+    NSURL *originalURL = [[self dataSource] originalURL];
     
-    if ([item anchor] && [[itemURL _web_URLWithoutFragment] isEqual: [inputURL _web_URLWithoutFragment]]){
+    if ([item anchor] && [[itemURL _web_URLWithoutFragment] isEqual: [originalURL _web_URLWithoutFragment]]){
         WebBackForwardList *backForwardList = [[self controller] backForwardList];
 
         if (type == WebFrameLoadTypeForward)

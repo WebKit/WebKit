@@ -132,8 +132,7 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
-    [dataSource _addError: error forResource:
-        (resourceHandle != nil ? [[resourceHandle url] absoluteString] : [[resourceHandle url] absoluteString])];
+    [dataSource _addError: error forResource:[[resourceHandle originalURL] absoluteString]];
     
     [frame _checkLoadComplete];
 }
@@ -151,14 +150,14 @@
     [frame _checkLoadComplete];
 }
 
-- (void)_didStartLoading: (NSURL *)url
+- (void)_didStartLoading: (NSURL *)URL
 {
-    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:url inController:self];
+    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:URL inController:self];
 }
 
-- (void)_didStopLoading: (NSURL *)url
+- (void)_didStopLoading: (NSURL *)URL
 {
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:url inController:self];
+    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:URL inController:self];
 }
 
 + (NSString *)_MIMETypeForFile: (NSString *)path

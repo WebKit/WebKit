@@ -18,9 +18,9 @@
     return self;
 }
 
-- (WebURLPolicy *)URLPolicyForURL: (NSURL *)url
+- (WebURLPolicy *)URLPolicyForURL: (NSURL *)URL
 {
-    return [WebController defaultURLPolicyForURL: url];
+    return [WebController defaultURLPolicyForURL: URL];
 }
 
 - (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory:(BOOL)isDirectory
@@ -47,9 +47,9 @@
     }
 }
 
-- (void)unableToImplementURLPolicy: (WebPolicy *)policy error: (WebError *)error forURL: (NSURL *)url
+- (void)unableToImplementURLPolicy: (WebPolicy *)policy error: (WebError *)error forURL: (NSURL *)URL
 {
-    NSLog (@"unableToImplementURLPolicyForURL:error: - URL %@, error %@\n", url, error);
+    NSLog (@"unableToImplementURLPolicyForURL:error: - URL %@, error %@\n", URL, error);
 }
 
 
@@ -58,9 +58,9 @@
     NSLog (@"unableToImplementContentPolicy:forDataSource: - error %@\n", error);
 }
 
-- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url
+- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)URL
 {
-    NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL \n", mime, url);
+    NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL \n", mime, URL);
 }
 
 - (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask

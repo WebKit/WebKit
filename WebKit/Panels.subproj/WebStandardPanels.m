@@ -20,7 +20,7 @@
 @public
     WebPanelAuthenticationHandler *panelAuthenticationHandler;
     WebPanelCookieAcceptHandler *panelCookieAcceptHandler;
-    NSMutableDictionary *urlContainers;
+    NSMutableDictionary *URLContainers;
 }
 @end
 
@@ -30,14 +30,14 @@
 {
     self = [super init];
     if (self != nil) {
-	urlContainers = [[NSMutableDictionary alloc] init];
+	URLContainers = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
     
 -(void)dealloc
 {
-    [urlContainers release];
+    [URLContainers release];
     [panelAuthenticationHandler release];
     [super dealloc];
 }
@@ -125,21 +125,21 @@ static void initSharedStandardPanels(void)
     return _privatePanels->panelCookieAcceptHandler != nil;
 }
 
--(void)didStartLoadingURL:(NSURL *)url inWindow:(NSWindow *)window
+-(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window
 {
-    NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
 	set = [NSCountedSet set];
-	[_privatePanels->urlContainers setObject:set forKey:url];
+	[_privatePanels->URLContainers setObject:set forKey:URL];
     }
 
     [set addObject:window];
 }
 
--(void)didStopLoadingURL:(NSURL *)url inWindow:(NSWindow *)window
+-(void)didStopLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window
 {
-    NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
 	return;
@@ -148,25 +148,25 @@ static void initSharedStandardPanels(void)
     [set removeObject:window];
     
     if ([set count] == 0) {
-	[_privatePanels->urlContainers removeObjectForKey:url];
+	[_privatePanels->URLContainers removeObjectForKey:URL];
     }
 }
 
--(void)_didStartLoadingURL:(NSURL *)url inController:(WebController *)controller
+-(void)_didStartLoadingURL:(NSURL *)URL inController:(WebController *)controller
 {
-    NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
 	set = [NSCountedSet set];
-	[_privatePanels->urlContainers setObject:set forKey:url];
+	[_privatePanels->URLContainers setObject:set forKey:URL];
     }
 
     [set addObject:controller];
 }
 
--(void)_didStopLoadingURL:(NSURL *)url inController:(WebController *)controller
+-(void)_didStopLoadingURL:(NSURL *)URL inController:(WebController *)controller
 {
-    NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
 	return;
@@ -175,7 +175,7 @@ static void initSharedStandardPanels(void)
     [set removeObject:controller];
     
     if ([set count] == 0) {
-	[_privatePanels->urlContainers removeObjectForKey:url];
+	[_privatePanels->URLContainers removeObjectForKey:URL];
     }
 }
 
@@ -193,9 +193,9 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
     // void NSWindowListForContext(int context, int size, int list[])
 }
 
--(NSWindow *)frontmostWindowLoadingURL:(NSURL *)url
+-(NSWindow *)frontmostWindowLoadingURL:(NSURL *)URL
 {
-    NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
 	return nil;

@@ -85,11 +85,11 @@
     return YES;
 }
 
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)url
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL
 {
     WEBKIT_ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:url];
+    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL];
     WebFrame *newFrame = [newController mainFrame];
 
     return [newFrame _bridge];
@@ -256,14 +256,14 @@
     return [WebHTMLView _modifierTrackingEnabled];
 }
 
-- (void)setIconURL:(NSURL *)url
+- (void)setIconURL:(NSURL *)URL
 {
-    [[self dataSource] _setIconURL:url];
+    [[self dataSource] _setIconURL:URL];
 }
 
-- (void)setIconURL:(NSURL *)url withType:(NSString *)type
+- (void)setIconURL:(NSURL *)URL withType:(NSString *)type
 {
-    [[self dataSource] _setIconURL:url withType:type];
+    [[self dataSource] _setIconURL:URL withType:type];
 }
 
 - (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(WebDataSource *)parent
@@ -303,12 +303,12 @@
                         fromDataSource:[self dataSource]];
 }
 
-- (void)addBackForwardItemWithURL:(NSURL *)url anchor:(NSString *)anchor;
+- (void)addBackForwardItemWithURL:(NSURL *)URL anchor:(NSString *)anchor;
 {
     WebHistoryItem *backForwardItem;
     WebFrame *parentFrame = [[frame controller] frameForDataSource:[[frame dataSource] parent]]; 
 
-    backForwardItem = [[WebHistoryItem alloc] initWithURL:url target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle] image:nil];
+    backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle] image:nil];
     [backForwardItem setAnchor:anchor];
     [[[frame controller] backForwardList] addEntry:backForwardItem];
     [backForwardItem release];

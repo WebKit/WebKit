@@ -247,9 +247,9 @@
 }
 
 
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)url
++ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL
 {
-    if([WebResourceHandle canInitWithURL:url]){
+    if([WebResourceHandle canInitWithURL:URL]){
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
     }else{
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];

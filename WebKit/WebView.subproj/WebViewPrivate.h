@@ -33,8 +33,8 @@
 - (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
 - (void)_mainReceivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;
 - (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle partialProgress: (WebLoadProgress *)progress fromDataSource: (WebDataSource *)dataSource;
-- (void)_didStartLoading: (NSURL *)url;
-- (void)_didStopLoading: (NSURL *)url;
+- (void)_didStartLoading: (NSURL *)URL;
+- (void)_didStopLoading: (NSURL *)URL;
 + (NSString *)_MIMETypeForFile: (NSString *)path;
 - (BOOL)_openedByScript;
 - (void)_setOpenedByScript:(BOOL)openedByScript;

@@ -58,7 +58,7 @@
 
 /*
     A new chunk of data has been received.  This could be a partial load
-    of a url.  It may be useful to do incremental layout, although
+    of a URL.  It may be useful to do incremental layout, although
     typically for non-base URLs this should be done after a URL (i.e. image)
     has been completely downloaded.
 */
@@ -158,7 +158,7 @@
 - (void)setPolicyHandler: (id<WebControllerPolicyHandler>)handler;
 - (id<WebControllerPolicyHandler>)policyHandler;
 
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)url;
++ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL;
 
 // FIXME:  Should this method be private?
 // Called when a data source needs to create a frame.  This method encapsulates the

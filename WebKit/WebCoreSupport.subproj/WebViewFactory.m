@@ -58,7 +58,7 @@
     if (plugin == nil) {
         return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[WebPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
+    return [[[WebPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin URL:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
@@ -75,7 +75,7 @@
         return nil;
     }
     
-    return [[[WebPluginView alloc] initWithFrame:frame plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
+    return [[[WebPluginView alloc] initWithFrame:frame plugin:plugin URL:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
 }
 
 @end

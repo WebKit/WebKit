@@ -34,7 +34,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 // WebCookieAcceptHandler methods
 -(BOOL)readyToStartCookieAcceptCheck:(WebCookieAcceptRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
@@ -45,7 +45,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 -(void)startCookieAcceptCheck:(WebCookieAcceptRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
@@ -63,12 +63,12 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 	    panel = NSGetAlertPanel(@"Accept cookie?",
 				    @"Server \"%@\" has sent 1 cookie.",
 				    @"Accept", @"Reject", nil,
-				    [[request url] host]);
+				    [[request URL] host]);
 	} else {
 	    panel = NSGetAlertPanel(@"Accept cookies?",
 				    @"Server \"%@\" has sent %d cookies.",
 				    @"Accept", @"Reject", nil,
-				    [[request url] host], [[request cookies] count]);
+				    [[request URL] host], [[request cookies] count]);
 	}
 	
 	[requestToWindow _web_setObject:window forUncopiedKey:request];
@@ -78,9 +78,9 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
         [self doneWithCheck:panel returnCode:[NSApp runModalForWindow:panel] contextInfo:request];
     } else {
 	if ([[request cookies] count] == 1) {
-	    NSBeginAlertSheet(@"Accept cookie?", @"Accept", @"Reject", nil, window, self, @selector(doneWithCheck:returnCode:contextInfo:), nil, request, @"Server \"%@\" has sent 1 cookie.", [[request url] host]);
+	    NSBeginAlertSheet(@"Accept cookie?", @"Accept", @"Reject", nil, window, self, @selector(doneWithCheck:returnCode:contextInfo:), nil, request, @"Server \"%@\" has sent 1 cookie.", [[request URL] host]);
 	} else {
-	    NSBeginAlertSheet(@"Accept cookies?", @"Accept", @"Reject", nil, window, self, @selector(doneWithCheck:returnCode:contextInfo:), nil, request, @"Server \"%@\" has sent %d cookies.", [[request url] host], [[request cookies] count]);
+	    NSBeginAlertSheet(@"Accept cookies?", @"Accept", @"Reject", nil, window, self, @selector(doneWithCheck:returnCode:contextInfo:), nil, request, @"Server \"%@\" has sent %d cookies.", [[request URL] host], [[request cookies] count]);
 	}
 	panel = [window attachedSheet];
 	[requestToWindow _web_setObject:window forUncopiedKey:request];

@@ -27,10 +27,10 @@
 #import "WebKitDebug.h"
 
 @interface WebPluginView : NSObject
--(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData;
--(NPError)getURL:(const char *)url target:(const char *)target;
--(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData;
--(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file;
+-(NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
+-(NPError)getURL:(const char *)URL target:(const char *)target;
+-(NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData;
+-(NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file;
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream;
 -(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer;
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason;
@@ -84,28 +84,28 @@ NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 
 // instance-specific functions
 
-NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
+NPError NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData)
 {
     WebPluginView *plugin = (WebPluginView *)instance->ndata;
-    return [plugin getURLNotify:url target:target notifyData:notifyData];
+    return [plugin getURLNotify:URL target:target notifyData:notifyData];
 }
 
-NPError NPN_GetURL(NPP instance, const char* url, const char* target)
+NPError NPN_GetURL(NPP instance, const char* URL, const char* target)
 {
     WebPluginView *plugin = (WebPluginView *)instance->ndata;
-    return [plugin getURL:url target:target];
+    return [plugin getURL:URL target:target];
 }
 
-NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
+NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
 {
     WebPluginView *plugin = (WebPluginView *)instance->ndata;
-    return [plugin postURLNotify:url target:target len:len buf:buf file:file notifyData:notifyData];
+    return [plugin postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
-NPError NPN_PostURL(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file)
+NPError NPN_PostURL(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file)
 {
     WebPluginView *plugin = (WebPluginView *)instance->ndata;
-    return [plugin postURL:url target:target len:len buf:buf file:file];
+    return [plugin postURL:URL target:target len:len buf:buf file:file];
 }
 
 NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)

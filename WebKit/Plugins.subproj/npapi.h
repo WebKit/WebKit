@@ -88,7 +88,7 @@ typedef struct _NPStream
 {
     void*		pdata;		/* plug-in private data */
     void*		ndata;		/* netscape private data */
-    const char* 	url;
+    const char* 	URL;
     uint32		end;
     uint32		lastmodified;
     void*		notifyData;
@@ -201,8 +201,8 @@ typedef struct _NPPrint
 } NPPrint;
 
 
-typedef NPError	(*NPN_GetURLNotifyProcPtr)(NPP instance, const char* url, const char* window, void* notifyData);
-typedef NPError (*NPN_PostURLNotifyProcPtr)(NPP instance, const char* url, const char* window, uint32 len, const char* buf, NPBool file, void* notifyData);
+typedef NPError	(*NPN_GetURLNotifyProcPtr)(NPP instance, const char* URL, const char* window, void* notifyData);
+typedef NPError (*NPN_PostURLNotifyProcPtr)(NPP instance, const char* URL, const char* window, uint32 len, const char* buf, NPBool file, void* notifyData);
 typedef NPError	(*NPN_RequestReadProcPtr)(NPStream* stream, NPByteRange* rangeList);
 typedef NPError	(*NPN_NewStreamProcPtr)(NPP instance, NPMIMEType type, const char* window, NPStream** stream);
 typedef int32 (*NPN_WriteProcPtr)(NPP instance, NPStream* stream, int32 len, void* buffer);
@@ -218,8 +218,8 @@ typedef NPError	(*NPN_SetValueProcPtr)(NPP instance, NPPVariable variable, void 
 typedef void (*NPN_InvalidateRectProcPtr)(NPP instance, NPRect *rect);
 typedef void (*NPN_InvalidateRegionProcPtr)(NPP instance, NPRegion region);
 typedef void (*NPN_ForceRedrawProcPtr)(NPP instance);
-typedef NPError	(*NPN_GetURLProcPtr)(NPP instance, const char* url, const char* window);
-typedef NPError (*NPN_PostURLProcPtr)(NPP instance, const char* url, const char* window, uint32 len, const char* buf, NPBool file);
+typedef NPError	(*NPN_GetURLProcPtr)(NPP instance, const char* URL, const char* window);
+typedef NPError (*NPN_PostURLProcPtr)(NPP instance, const char* URL, const char* window, uint32 len, const char* buf, NPBool file);
 typedef void* (*NPN_GetJavaEnvProcPtr)(void);
 typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
 
@@ -233,7 +233,7 @@ typedef int16 (*NPP_WriteReadyProcPtr)(NPP instance, NPStream* stream);
 typedef int16 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
 typedef void (*NPP_PrintProcPtr)(NPP instance, NPPrint* platformPrint);
 typedef int16 (*NPP_HandleEventProcPtr)(NPP instance, void* event);
-typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* url, NPReason reason, void* notifyData);
+typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason reason, void* notifyData);
 typedef NPError	(*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_alue);
 typedef NPError	(*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *ret_alue);
 typedef void (*NPP_ShutdownProcPtr)(void);
@@ -346,10 +346,10 @@ typedef NPError (* getEntryPointsFuncPtr)(NPPluginFuncs*);
  */
 
 void		NPN_Version(int* plugin_major, int* plugin_minor, int* netscape_major, int* netscape_minor);
-NPError 	NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData);
-NPError 	NPN_GetURL(NPP instance, const char* url, const char* target);
-NPError 	NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData);
-NPError 	NPN_PostURL(NPP instance, const char* url, const char* target, uint32 len, const char* buf, NPBool file);
+NPError 	NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData);
+NPError 	NPN_GetURL(NPP instance, const char* URL, const char* target);
+NPError 	NPN_PostURLNotify(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData);
+NPError 	NPN_PostURL(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file);
 NPError 	NPN_RequestRead(NPStream* stream, NPByteRange* rangeList);
 NPError 	NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream);
 int32		NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer);
@@ -387,7 +387,7 @@ int32		NPP_Write(NPP instance, NPStream* stream, int32 offset, int32 len, void* 
 void		NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname);
 void		NPP_Print(NPP instance, NPPrint* platformPrint);
 int16		NPP_HandleEvent(NPP instance, void* event);
-void		NPP_URLNotify(NPP instance, const char* url, NPReason reason, void* notifyData);
+void		NPP_URLNotify(NPP instance, const char* URL, NPReason reason, void* notifyData);
 NPError		NPP_GetValue(void *instance, NPPVariable variable, void *value);
 NPError		NPP_SetValue(void *instance, NPNVariable variable, void *value);
 */

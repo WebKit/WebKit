@@ -146,7 +146,7 @@
 }
 
 
-- (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName
+- (void)openURL: (NSURL *)URL inFrameNamed: (NSString *)frameName
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::openURL:inFrameNamed: is not implemented"];
 }
@@ -171,7 +171,7 @@
 
 
 // May return nil if not initialized with a URL.
-- (NSURL *)inputURL
+- (NSURL *)originalURL
 {
     return _private->inputURL;
 }
@@ -213,7 +213,7 @@
     if (!_private->primaryLoadComplete && _private->loading) {
         return YES;
     }
-    if ([_private->urlHandles count]) {
+    if ([_private->resourceHandles count]) {
 	return YES;
     }
      
@@ -266,7 +266,7 @@
 }
 
 // Style sheet
-- (void)setUserStyleSheetFromURL:(NSURL *)url
+- (void)setUserStyleSheetFromURL:(NSURL *)URL
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromURL: is not implemented"];
 }

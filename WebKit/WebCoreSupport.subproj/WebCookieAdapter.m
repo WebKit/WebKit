@@ -41,14 +41,14 @@
     return result;
 }
 
-- (NSString *)cookiesForURL:(NSURL *)url
+- (NSString *)cookiesForURL:(NSURL *)URL
 {
-    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:url] objectForKey:@"Cookie"];
+    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:URL] objectForKey:@"Cookie"];
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSURL *)url
+- (void)setCookies:(NSString *)cookies forURL:(NSURL *)URL
 {
-    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:url];    
+    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:URL];    
 }
 
 @end

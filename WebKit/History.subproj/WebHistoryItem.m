@@ -11,9 +11,9 @@
 
 @implementation WebHistoryItem
 
-+(WebHistoryItem *)entryWithURL:(NSURL *)url
++(WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
-    return [[[self alloc] initWithURL:url title:nil] autorelease];
+    return [[[self alloc] initWithURL:URL title:nil] autorelease];
 }
 
 -(id)init
@@ -21,24 +21,24 @@
     return [self initWithURL:nil title:nil image:nil];
 }
 
--(id)initWithURL:(NSURL *)url title:(NSString *)title
+-(id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURL:url target: nil parent: nil title:title image:nil];
+    return [self initWithURL:URL target: nil parent: nil title:title image:nil];
 }
 
--(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image
+-(id)initWithURL:(NSURL *)URL title:(NSString *)title image:(NSImage *)image
 {
-    return [self initWithURL:url target: nil parent: nil title:title image:image];
+    return [self initWithURL:URL target: nil parent: nil title:title image:image];
 }
 
--(id)initWithURL:(NSURL *)url target: (NSString *)target parent: (NSString *)parent title:(NSString *)title image:(NSImage *)image
+-(id)initWithURL:(NSURL *)URL target: (NSString *)target parent: (NSString *)parent title:(NSString *)title image:(NSImage *)image
 {
     if (self != [super init])
     {
         return nil;
     }
     
-    _url = [url retain];
+    _URL = [URL retain];
     _target = [target retain];
     _parent = [parent retain];
     _title = [title retain];
@@ -50,7 +50,7 @@
 
 - (void)dealloc
 {
-    [_url release];
+    [_URL release];
     [_target release];
     [_parent release];
     [_title release];
@@ -61,9 +61,9 @@
     [super dealloc];
 }
 
--(NSURL *)url
+-(NSURL *)URL
 {
-    return _url;
+    return _URL;
 }
 
 -(NSString *)target
@@ -100,11 +100,11 @@
     return _lastVisitedDate;
 }
 
--(void)setURL:(NSURL *)url
+-(void)setURL:(NSURL *)URL
 {
-    if (url != _url) {
-        [_url release];
-        _url = [url retain];
+    if (URL != _URL) {
+        [_URL release];
+        _URL = [URL retain];
     }
 }
 
@@ -168,7 +168,7 @@
 
 -(unsigned)hash
 {
-    return [_url hash];
+    return [_URL hash];
 }
 
 - (NSString *)anchor
@@ -191,7 +191,7 @@
     result = NO;
 
     if ([anObject isMemberOfClass:[WebHistoryItem class]]) {
-        result = [_url isEqual:[anObject url]];
+        result = [_URL isEqual:[anObject URL]];
     }
     
     return result;
@@ -199,7 +199,7 @@
 
 -(NSString *)description
 {
-    return [NSString stringWithFormat:@"WebHistoryItem %@", _url];
+    return [NSString stringWithFormat:@"WebHistoryItem %@", _URL];
 }
 
 
@@ -208,8 +208,8 @@
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity: 6];
 
     // FIXME: doesn't save/restore images yet
-    if (_url != nil) {
-        [dict setObject: [_url absoluteString] forKey: @"url"];
+    if (_URL != nil) {
+        [dict setObject: [_URL absoluteString] forKey: @""];
     }
     if (_title != nil) {
         [dict setObject: _title forKey: @"title"];
@@ -232,9 +232,9 @@
     [super init];
     
     // FIXME: doesn't save/restore images yet
-    storedURLString = [dict objectForKey: @"url"];
+    storedURLString = [dict objectForKey: @""];
     if (storedURLString != nil) {
-        _url = [[NSURL _web_URLWithString:storedURLString] retain];
+        _URL = [[NSURL _web_URLWithString:storedURLString] retain];
     }
     _title = [[dict objectForKey: @"title"] copy];
     _displayTitle = [[dict objectForKey: @"displayTitle"] copy];

@@ -102,11 +102,11 @@ static void freeNode(WebHistoryListNode *node)
 
 
 
--(WebHistoryItem *)addURL:(NSURL *)url withTitle:(NSString *)title;
+-(WebHistoryItem *)addURL:(NSURL *)URL withTitle:(NSString *)title;
 {
     WebHistoryItem *result;
     
-    result = [[WebHistoryItem alloc] initWithURL:url title:title];
+    result = [[WebHistoryItem alloc] initWithURL:URL title:title];
     [self addEntry:result];
     
     return result;
@@ -120,7 +120,7 @@ static void freeNode(WebHistoryListNode *node)
     if (!_allowsDuplicates) {
         // search the list first and remove any entry with the same URL
         // having the same title does not count
-        // use the hash codes of the urls to speed up the linear search
+        // use the hash codes of the URLs to speed up the linear search
         hash = [entry hash];
         for (node = _head; node != nil; node = node->next) {
             if (hash == node->hash && [entry isEqual:node->entry]) {
@@ -166,17 +166,17 @@ static void freeNode(WebHistoryListNode *node)
     }
 }
 
--(WebHistoryItem *)removeURL:(NSURL *)url
+-(WebHistoryItem *)removeURL:(NSURL *)URL
 {
     WebHistoryItem *removedEntry;
     WebHistoryListNode *node;
     unsigned hash;
     
     removedEntry = nil;
-    hash = [url hash];
+    hash = [URL hash];
 
     for (node = _head; node != nil; node = node->next) {
-        if (hash == node->hash && [url isEqual:[node->entry url]]) {
+        if (hash == node->hash && [URL isEqual:[node->entry URL]]) {
             _count--;
             removedEntry = node->entry;
             if (node == _head) {
@@ -240,17 +240,17 @@ static void freeNode(WebHistoryListNode *node)
     return removed;
 }
 
--(WebHistoryItem *)entryForURL:(NSURL *)url
+-(WebHistoryItem *)entryForURL:(NSURL *)URL
 {
     WebHistoryItem *foundEntry;
     WebHistoryListNode *node;
     unsigned hash;
     
     foundEntry = nil;
-    hash = [url hash];
+    hash = [URL hash];
 
     for (node = _head; node != nil; node = node->next) {
-        if (hash == node->hash && [url isEqual:[node->entry url]]) {
+        if (hash == node->hash && [URL isEqual:[node->entry URL]]) {
             foundEntry = node->entry;
             break;
         }

@@ -337,7 +337,7 @@
 
 #pragma mark WEB_PLUGIN_VIEW
 
-- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
+- (id)initWithFrame:(NSRect)r plugin:(WebPlugin *)plugin URL:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
     [super initWithFrame:r];
     
@@ -745,11 +745,11 @@
     WebFrameState frameState;
     NSValue *notifyDataValue;
     void *notifyData;
-    NSURL *url;
+    NSURL *URL;
     
     frame = [notification object];
-    url = [[frame dataSource] inputURL];
-    notifyDataValue = [notificationData objectForKey:url];
+    URL = [[frame dataSource] originalURL];
+    notifyDataValue = [notificationData objectForKey:URL];
     
     if(!notifyDataValue)
         return;
@@ -757,7 +757,7 @@
     notifyData = [notifyDataValue pointerValue];
     frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
     if (frameState == WebFrameStateComplete) {
-        NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
+        NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
     }
     //FIXME: Need to send other NPReasons
 }
@@ -769,18 +769,18 @@
     WebPluginStream *stream;
     WebDataSource *dataSource;
     WebFrame *frame;
-    NSURL *url;
+    NSURL *URL;
     
     if([URLString _web_looksLikeAbsoluteURL])
-        url = [NSURL _web_URLWithString:URLString];
+        URL = [NSURL _web_URLWithString:URLString];
     else
-        url = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
+        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
     
-    if(!url)
+    if(!URL)
         return NPERR_INVALID_URL;
     
     if(!target){
-        stream = [[WebPluginStream alloc] initWithURL:url pluginPointer:instance notifyData:notifyData attributes:attributes];
+        stream = [[WebPluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData attributes:attributes];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -791,17 +791,17 @@
     }else{
         frame = [webFrame frameNamed:target];
         if(!frame){
-            [[webController windowContext] openNewWindowWithURL:url];
+            [[webController windowContext] openNewWindowWithURL:URL];
             // FIXME: Need to send NPP_URLNotify at the right time.
             // FIXME: Need to name new frame
             if(notifyData)
-                NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
+                NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
         }else{
             if(notifyData){
                 if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
                     ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
     
-                    [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
+                    [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
                     [[NSNotificationCenter defaultCenter] addObserver:self 
                         selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
                 }
@@ -809,7 +809,7 @@
                 // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
                 // so we have to allow this as well. Needed for iTools.
             }
-            dataSource = [[WebDataSource alloc] initWithURL:url attributes:attributes];
+            dataSource = [[WebDataSource alloc] initWithURL:URL attributes:attributes];
             if ([frame setProvisionalDataSource:dataSource]) {
                 [frame startLoading];
             }
@@ -819,46 +819,46 @@
     return NPERR_NO_ERROR;
 }
 
--(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
+-(NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData
 {
     NSString *theTarget = nil;
         
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", URL, target);
         
-    if(!url)
+    if(!URL)
         return NPERR_INVALID_URL;
         
     if(target)
         theTarget = [NSString stringWithCString:target];
     
-    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:notifyData andHandleAttributes:nil];
+    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget withNotifyData:notifyData andHandleAttributes:nil];
 }
 
--(NPError)getURL:(const char *)url target:(const char *)target
+-(NPError)getURL:(const char *)URL target:(const char *)target
 {
     NSString *theTarget = nil;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s\n", url, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s\n", URL, target);
     
-    if(!url)
+    if(!URL)
         return NPERR_INVALID_URL;
         
     if(target)
         theTarget = [NSString stringWithCString:target];
     
-    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:NULL andHandleAttributes:nil];
+    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget withNotifyData:NULL andHandleAttributes:nil];
 }
 
--(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
+-(NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
     NSDictionary *attributes=nil;
     NSData *postData;
     NSURL *tempURL;
     NSString *path, *theTarget = nil;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify: %s\n", url);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify: %s\n", URL);
  
-    if(!url)
+    if(!URL)
         return NPERR_INVALID_URL;
         
     if(target)
@@ -866,7 +866,7 @@
  
     if(file){
         if([[NSString stringWithCString:buf] _web_looksLikeAbsoluteURL]){
-            tempURL = [NSURL fileURLWithPath:[NSString stringWithCString:url]];
+            tempURL = [NSURL fileURLWithPath:[NSString stringWithCString:URL]];
             path = [tempURL path];
         }else{
             path = [NSString stringWithCString:buf];
@@ -880,23 +880,23 @@
         postData,	WebHTTPResourceHandleRequestData,
         @"POST", 	WebHTTPResourceHandleRequestMethod, nil];
                 
-    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget 
+    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget 
                 withNotifyData:notifyData andHandleAttributes:attributes];
 }
 
--(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
+-(NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
     NSString *theTarget = nil;
         
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL: %s\n", url);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL: %s\n", URL);
     
-    if(!url)
+    if(!URL)
         return NPERR_INVALID_URL;
         
     if(target)
         theTarget = [NSString stringWithCString:target];
         
-    return [self postURLNotify:url target:target len:len buf:buf file:file notifyData:NULL];
+    return [self postURLNotify:URL target:target len:len buf:buf file:file notifyData:NULL];
 }
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream

@@ -12,7 +12,7 @@
 
 @interface WebHistoryPrivate : NSObject {
 @private
-    NSMutableDictionary *_urlDictionary;
+    NSMutableDictionary *_entriesByURL;
     NSMutableArray *_datesWithEntries;
     NSMutableArray *_entriesByDate;
     NSString *_file;
@@ -34,7 +34,7 @@
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
 - (NSArray *)entriesWithAddressContainingString: (NSString *)string;
 - (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
-- (BOOL)containsURL: (NSURL *)url;
+- (BOOL)containsURL: (NSURL *)URL;
 
 - (NSString *)file;
 - (BOOL)loadHistory;

@@ -34,7 +34,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 // WebAuthenticationHandler methods
 -(BOOL)readyToStartAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
@@ -45,7 +45,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 -(void)startAuthentication:(WebAuthenticationRequest *)request
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request url]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[request URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;

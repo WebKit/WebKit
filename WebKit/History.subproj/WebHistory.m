@@ -111,9 +111,9 @@
 
 #pragma mark URL MATCHING
 
-- (BOOL)containsURL: (NSURL *)url
+- (BOOL)containsURL: (NSURL *)URL
 {
-    return [_historyPrivate containsURL: url];
+    return [_historyPrivate containsURL: URL];
 }
 
 #pragma mark SAVING TO DISK

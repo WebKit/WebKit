@@ -18,7 +18,7 @@
     [super init];
     
     dataSource = [dSource retain];
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download started for: %s", [[[dSource inputURL] absoluteString] cString]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download started for: %s", [[[dSource originalURL] absoluteString] cString]);
     return self;
 }
 

@@ -14,7 +14,7 @@
 #import "WebHistoryItem.h"
 
 @interface WebHistoryPrivate (Private)
--(WebHistoryItem *)_entryForURLString:(NSString *)urlString;
+-(WebHistoryItem *)_entryForURLString:(NSString *)URLString;
 @end
 
 @implementation WebHistoryPrivate
@@ -36,7 +36,7 @@
         return nil;
     }
     
-    _urlDictionary = [[NSMutableDictionary alloc] init];
+    _entriesByURL = [[NSMutableDictionary alloc] init];
     _datesWithEntries = [[NSMutableArray alloc] init];
     _entriesByDate = [[NSMutableArray alloc] init];
     _file = [file retain];
@@ -49,7 +49,7 @@
 
 - (void)dealloc
 {
-    [_urlDictionary release];
+    [_entriesByURL release];
     [_datesWithEntries release];
     [_entriesByDate release];
     [_file release];
@@ -104,19 +104,19 @@
     [entriesForDate insertObject: entry atIndex: index];
 }
 
-- (BOOL)removeEntryForURLString: (NSString *)urlString
+- (BOOL)removeEntryForURLString: (NSString *)URLString
 {
     NSMutableArray *entriesForDate;
     WebHistoryItem *entry;
     int dateIndex;
     BOOL foundDate;
 
-    entry = [_urlDictionary objectForKey: urlString];
+    entry = [_entriesByURL objectForKey: URLString];
     if (entry == nil) {
         return NO;
     }
 
-    [_urlDictionary removeObjectForKey: urlString];
+    [_entriesByURL removeObjectForKey: URLString];
 
     foundDate = [self findIndex: &dateIndex forDay: [entry lastVisitedDate]];
 
@@ -138,12 +138,12 @@
 - (void)addEntry: (WebHistoryItem *)entry
 {
     int dateIndex;
-    NSString *urlString;
+    NSString *URLString;
 
     WEBKIT_ASSERT_VALID_ARG (entry, [entry lastVisitedDate] != nil);
 
-    urlString = [[entry url] absoluteString];
-    [self removeEntryForURLString: urlString];
+    URLString = [[entry URL] absoluteString];
+    [self removeEntryForURLString: URLString];
 
     if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
         // other entries already exist for this date
@@ -154,25 +154,25 @@
         [_entriesByDate insertObject: [NSMutableArray arrayWithObject:entry] atIndex: dateIndex];
     }
 
-    [_urlDictionary setObject: entry forKey: urlString];
+    [_entriesByURL setObject: entry forKey: URLString];
 }
 
 - (BOOL)removeEntry: (WebHistoryItem *)entry
 {
     WebHistoryItem *matchingEntry;
-    NSString *urlString;
+    NSString *URLString;
 
-    urlString = [[entry url] absoluteString];
+    URLString = [[entry URL] absoluteString];
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
     // Maybe need to change the API to make something like removeEntryForURLString public instead.
-    matchingEntry = [_urlDictionary objectForKey: urlString];
+    matchingEntry = [_entriesByURL objectForKey: URLString];
     if (matchingEntry != entry) {
         return NO;
     }
 
-    [self removeEntryForURLString: urlString];
+    [self removeEntryForURLString: URLString];
 
     return YES;
 }
@@ -195,13 +195,13 @@
 
 - (BOOL)removeAllEntries
 {
-    if ([_urlDictionary count] == 0) {
+    if ([_entriesByURL count] == 0) {
         return NO;
     }
 
     [_entriesByDate removeAllObjects];
     [_datesWithEntries removeAllObjects];
-    [_urlDictionary removeAllObjects];
+    [_entriesByURL removeAllObjects];
 
     return YES;
 }
@@ -285,14 +285,14 @@
 
 #pragma mark URL MATCHING
 
--(WebHistoryItem *)_entryForURLString:(NSString *)urlString
+-(WebHistoryItem *)_entryForURLString:(NSString *)URLString
 {
-    return [_urlDictionary objectForKey: urlString];
+    return [_entriesByURL objectForKey: URLString];
 }
 
-- (BOOL)containsURL: (NSURL *)url
+- (BOOL)containsURL: (NSURL *)URL
 {
-    return [self _entryForURLString:[url absoluteString]] != nil;
+    return [self _entryForURLString:[URL absoluteString]] != nil;
 }
 
 #pragma mark ARCHIVING/UNARCHIVING
@@ -397,8 +397,8 @@
 
         entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation: dictionary] autorelease];
 
-        if ([entry url] == nil) {
-            // entry without url is useless; data on disk must have been bad; ignore this one
+        if ([entry URL] == nil) {
+            // entry without URL is useless; data on disk must have been bad; ignore this one
             continue;
         }
 

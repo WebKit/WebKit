@@ -83,7 +83,7 @@ static NSString *getCarbonPath(NSString *posixPath);
         [fileManager removeFileAtPath:path handler:nil];
         [path release];
     }
-    free((void *)npStream.url);
+    free((void *)npStream.URL);
     [URL release];
     [attributes release];
     [super dealloc];
@@ -117,12 +117,12 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle
 {
-    NSString *URLString = [[handle url] absoluteString];
+    NSString *URLString = [[handle URL] absoluteString];
     char *cURL = (char *)malloc([URLString cStringLength]+1);
     [URLString getCString:cURL];
 
     npStream.ndata = self;
-    npStream.url = cURL;
+    npStream.URL = cURL;
     npStream.end = 0;
     npStream.lastmodified = 0;
     npStream.notifyData = notifyData;

@@ -103,20 +103,20 @@
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
-    [self didStartLoadingWithURL:[handle url]];
+    [self didStartLoadingWithURL:[handle URL]];
 }
 
 - (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)handle
 {
     WebError *error;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource inputURL] absoluteString]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
     
@@ -128,9 +128,9 @@
 
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)handle data: (NSData *)data
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
     WEBKIT_ASSERT((int)[data length] == [handle contentLengthReceived]);
 
@@ -168,9 +168,9 @@
     WebFrame *frame = [dataSource webFrame];
     WebContentPolicy *contentPolicy;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([handle url]), data, [data length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, data = %p, length %d\n", DEBUG_OBJECT([handle URL]), data, [data length]);
     
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
@@ -228,9 +228,9 @@
 
 - (void)WebResourceHandle:(WebResourceHandle *)handle didFailLoadingWithResult:(WebError *)result
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, result = %s\n", DEBUG_OBJECT([handle url]), DEBUG_OBJECT([result errorDescription]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, result = %s\n", DEBUG_OBJECT([handle URL]), DEBUG_OBJECT([result errorDescription]));
 
-    WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
+    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
 
     [self receivedError:result forHandle:handle];
     
@@ -244,12 +244,12 @@
 
 - (void)WebResourceHandle:(WebResourceHandle *)handle didRedirectToURL:(NSURL *)URL
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "url = %s\n", DEBUG_OBJECT(URL));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "URL = %s\n", DEBUG_OBJECT(URL));
 
     WEBKIT_ASSERT(currentURL != nil);
-    WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
+    WEBKIT_ASSERT([URL isEqual:[handle URL]]);
     
-    [dataSource _setFinalURL:URL];
+    [dataSource _setURL:URL];
 
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];

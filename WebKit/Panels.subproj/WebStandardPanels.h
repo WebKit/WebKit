@@ -21,9 +21,9 @@
 -(void)setUseStandardCookieAcceptPanel:(BOOL)use;
 -(BOOL)useStandardCookieAcceptPanel;
 
--(void)didStartLoadingURL:(NSURL *)url inWindow:(NSWindow *)window;
--(void)didStopLoadingURL:(NSURL *)url inWindow:(NSWindow *)window;
+-(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
+-(void)didStopLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
 
--(NSWindow *)frontmostWindowLoadingURL:(NSURL *)url;
+-(NSWindow *)frontmostWindowLoadingURL:(NSURL *)URL;
 
 @end
