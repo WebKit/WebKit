@@ -1,3 +1,14 @@
+2002-07-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 2953423, viamichelin.com lays out incorrectly.
+	Remove a completely bogus optimization in the KHTML code that
+	attempted to bail when the specified width was 0.  This was
+	a very basic problem, and it should fix other pages that were
+	laying out incorrectly as well.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout):
+
 2002-07-24  Darin Adler  <darin@apple.com>
 
         * khtml/khtml_part.cpp: (KHTMLPart::clear): Remove code that reset m_frameNameId,

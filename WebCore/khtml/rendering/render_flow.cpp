@@ -252,12 +252,24 @@ void RenderFlow::layout()
         kdDebug( 6040 ) << renderName() << ": containingBlock == this" << endl;
 #endif
 
-    if(m_width<=0 && !isPositioned() && !overhangingContents()) {
+    // This is an incorrect optimization.  You cannot know at this point whether or not a child will overhang
+    // in the horizontal direction without laying out your children.  The following test case illustrates this
+    // point, as it will fail with this code commented back in.
+    // <html>
+    // <body style="width:0px">
+    // Hello world!
+    // </body>
+    // </html>
+    //
+    // In the real world, this affects (as of 7/24/2002) http://viamichelin.com/. -- dwh
+    // 
+    /*   if(m_width<=0 && !isPositioned() && !overhangingContents()) {
         if(m_y < 0) m_y = 0;
         setLayouted();
         return;
     }
-
+    */
+    
     clearFloats();
 
     m_height = 0;
