@@ -1,5 +1,31 @@
 2002-08-16  Darin Adler  <darin@apple.com>
 
+	- fixed 3023851 -- screen garbage created by scrolling text
+
+	Our implementation of clipRegion didn't reflect the clip that was
+	already set for the view, so we drew outside the view. To fix it,
+	I eliminated the clipRegion call and changed clients to use a new
+	addClip call instead that doesn't require getting the clip in the
+	form of a region (which is not really possible with CoreGraphics).
+
+        * khtml/rendering/render_box.cpp: (RenderBox::calcClip):
+	Call addClip instead of clipRegion(), intersect(), setClipRegion().
+
+        * kwq/qt/qpainter.h: Added addClip(), removed clipRegion(), setClipRegion().
+        * kwq/KWQPainter.mm: (QPainter::addClip): Calls [NSBezierPath clipRect:].
+
+        * kwq/qt/qregion.h: Went back to a single-path implementation, since
+	we don't need intersect() any more. Also removed isNull() and setClip().
+        * kwq/KWQRegion.mm:
+        (QRegion::QRegion): New simpler versions.
+        (QRegion::~QRegion): Release the path.
+        (QRegion::operator=): Copy the other path.
+        (QRegion::contains): Call [containsPoint:].
+        (QRegion::translate): Call [transformUsingAffineTransform:].
+        (QRegion::boundingRect): Call [bounds].
+
+2002-08-16  Darin Adler  <darin@apple.com>
+
 	- fixed 3026042 -- hide frames button at developer documentation doesn't work
 
 	This regression was introduced by the anchor changes we made just after

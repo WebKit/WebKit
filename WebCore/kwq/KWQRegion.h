@@ -31,37 +31,31 @@
 #include <qrect.h>
 
 #ifdef __OBJC__
-@class NSArray;
+@class NSBezierPath;
 #else
-class NSArray;
+class NSBezierPath;
 #endif
 
 class QRegion {
 public:
     enum RegionType { Ellipse, Rectangle };
 
-    QRegion();
+    QRegion() : path(0) { }
     QRegion(const QRect &);
-    QRegion(int, int, int, int, RegionType=Rectangle);
+    QRegion(int, int, int, int, RegionType = Rectangle);
     QRegion(const QPointArray &);
     ~QRegion();
 
     QRegion(const QRegion &);
     QRegion &operator=(const QRegion &);
 
-    bool isNull() const;
     bool contains(const QPoint &) const;
     QRect boundingRect() const;
 
     void translate(int deltaX, int deltaY);
-    QRegion intersect(const QRegion &) const;
-
-    void setClip() const;
 
 private:
-    QRegion(NSArray *);
-    
-    NSArray *paths;    
+    NSBezierPath *path;    
 };
 
 #endif

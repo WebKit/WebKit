@@ -27,135 +27,63 @@
 
 #import <kwqdebug.h>
 
-QRegion::QRegion()
-    : paths([[NSArray alloc] init])
-{
-}
-
 QRegion::QRegion(const QRect &rect)
-    : paths([[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:rect]] retain])
+    : path([[NSBezierPath bezierPathWithRect:rect] retain])
 {
 }
 
 QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 {
     if (t == Rectangle) {
-        paths = [[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)]] retain];
+        path = [[NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)] retain];
     } else { // Ellipse
-        paths = [[NSArray arrayWithObject:[NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)]] retain];
+        path = [[NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)] retain];
     }
 }
 
 QRegion::QRegion(const QPointArray &arr)
 {
-    NSBezierPath *path = [[NSBezierPath alloc] init];
+    path = [[NSBezierPath alloc] init];
     [path moveToPoint:arr[0]];
     for (uint i = 1; i < arr.count(); ++i) {
         [path lineToPoint:arr[i]];
     }
-    paths = [[NSArray arrayWithObject:path] retain];
-    [path release];
-}
-
-QRegion::QRegion(NSArray *array)
-    : paths([[NSArray alloc] initWithArray:array copyItems:true])
-{
 }
 
 QRegion::~QRegion()
 {
-    [paths release];
+    [path release];
 }
 
 QRegion::QRegion(const QRegion &other)
-    : paths([[NSArray alloc] initWithArray:other.paths copyItems:true])
+    : path([other.path copy])
 {
 }
 
 QRegion &QRegion::operator=(const QRegion &other)
 {
-    if (this == &other)
+    if (path == other.path) {
         return *this;
-    [paths release];
-    paths = [[NSArray alloc] initWithArray:other.paths copyItems:true];
+    }
+    [path release];
+    path = [other.path copy];
     return *this;
-}
-
-QRegion QRegion::intersect(const QRegion &other) const
-{
-    return [paths arrayByAddingObjectsFromArray:other.paths];
 }
 
 bool QRegion::contains(const QPoint &point) const
 {
-    if ([paths count] == 0) {
-        return false;
-    }
-    NSEnumerator *e = [paths objectEnumerator];
-    NSBezierPath *path;
-    while ((path = [e nextObject])) {
-        if (![path containsPoint:point]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool QRegion::isNull() const
-{
-    // FIXME: Note that intersection can lead to an empty QRegion that
-    // still won't return true for isNull. But this doesn't matter since
-    // intersection is hardly used in KHTML, and never with isNull.
-    if ([paths count] == 0) {
-        return true;
-    }
-    NSEnumerator *e = [paths objectEnumerator];
-    NSBezierPath *path;
-    while ((path = [e nextObject])) {
-        if ([path isEmpty]) {
-            return true;
-        }
-    }
-    return false;
+    return [path containsPoint:point];
 }
 
 void QRegion::translate(int deltaX, int deltaY)
 {
     NSAffineTransform *translation = [[NSAffineTransform alloc] init];
     [translation translateXBy:deltaX yBy:deltaY];
-    [paths makeObjectsPerformSelector:@selector(transformUsingAffineTransform:) withObject:translation];    
+    [path transformUsingAffineTransform:translation];    
     [translation release];
 }
 
 QRect QRegion::boundingRect() const
 {
-    // Note that this returns the intersection of the bounds of all the paths.
-    // That's not quite the same as the bounds of the intersection of all the
-    // paths, but that doesn't matter because intersection is hardly used at all.
-    
-    NSEnumerator *e = [paths objectEnumerator];
-    NSBezierPath *path = [e nextObject];
-    if (path == nil) {
-	return QRect();
-    }
-    NSRect bounds = [path bounds];
-    while ((path = [e nextObject])) {
-        bounds = NSIntersectionRect(bounds, [path bounds]);
-    }
-    return QRect(bounds);
-}
-
-void QRegion::setClip() const
-{
-    NSEnumerator *e = [paths objectEnumerator];
-    NSBezierPath *path = [e nextObject];
-    if (path == nil) {
-        [[NSBezierPath bezierPath] setClip];
-        return;
-    }
-    [path setClip];
-    NSRect bounds = [path bounds];
-    while ((path = [e nextObject])) {
-        [path addClip];
-    }
+    return path ? QRect() : QRect([path bounds]);
 }

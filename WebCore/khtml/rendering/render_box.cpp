@@ -316,6 +316,10 @@ void RenderBox::calcClip(QPainter* p, int tx, int ty)
 
     QRect cr(clipx,clipy,clipw,cliph);
     cr = p->xForm(cr);
+#if APPLE_CHANGES
+    p->save();
+    p->addClip(cr);
+#else
     QRegion creg(cr);
     QRegion old = p->clipRegion();
     if (!old.isNull())
@@ -323,6 +327,7 @@ void RenderBox::calcClip(QPainter* p, int tx, int ty)
 
     p->save();
     p->setClipRegion(creg);
+#endif
 }
 
 void RenderBox::close()

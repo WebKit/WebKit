@@ -399,15 +399,9 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
     }
 }
 
-void QPainter::setClipRegion(const QRegion &region)
+void QPainter::addClip(const QRect &rect)
 {
-    data->state.clip = region;
-    region.setClip();
-}
-
-const QRegion &QPainter::clipRegion() const
-{
-    return data->state.clip;
+    [NSBezierPath clipRect:rect];
 }
 
 Qt::RasterOp QPainter::rasterOp() const

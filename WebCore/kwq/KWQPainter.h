@@ -85,8 +85,7 @@ public:
 			    int sx=0, int sy=0, int sw=-1, int sh=-1 );
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0);
 
-    void setClipRegion(const QRegion &);
-    const QRegion &clipRegion() const;
+    void addClip(const QRect &);
 
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
