@@ -1,3 +1,12 @@
+2002-08-23  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame reset]): Remove unneeded call to _reset.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _setDataSource:]): Add code that
+	removes the KHTML stuff from the frame when switching to another type of view.
+	It would be better to do this at some other level, but without this code, we end
+	up leaving the entire KHTMLView behind when we switch to a non-HTML page.
+
 2002-08-22  Richard Williamson (Local)  <rjw@apple.com>
 
         Changed public string from #define to extern NSString.

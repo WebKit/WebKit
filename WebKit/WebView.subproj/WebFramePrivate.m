@@ -128,6 +128,10 @@ static const char * const stateNames[] = {
 
 - (void)_setDataSource: (WebDataSource *)ds
 {
+    if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
+        [[self _bridge] removeFromFrame];
+    }
+
     [_private setDataSource: ds];
     [ds _setController: [self controller]];
 }
@@ -408,7 +412,7 @@ static const char * const stateNames[] = {
 		// non-HTML content.
 
                 if ([ds isDocumentHTML]) {
-		    [[ds _bridge] end];
+		    [[self _bridge] end];
 		}
 
                 // Unfortunately we have to get our parent to adjust the frames in this

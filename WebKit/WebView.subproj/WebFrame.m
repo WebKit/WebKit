@@ -217,10 +217,6 @@
 - (void)reset
 {
     [_private setDataSource: nil];
-    if ([[self webView] isDocumentHTML]) {
-	WebHTMLView *htmlView = (WebHTMLView *)[[self webView] documentView];
-	[htmlView _reset];
-    }
     [_private setWebView: nil];
     
     [_private->scheduledLayoutTimer invalidate];
