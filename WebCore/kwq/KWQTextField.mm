@@ -176,6 +176,12 @@
     if (KWQKHTMLPart::handleKeyboardOptionTabInView(field))
         return;
     
+    // If someone puts a CR or LF in, truncate up to that character.
+    NSString *string = [field stringValue];
+    NSRange newline = [string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
+    if (newline.location != NSNotFound)
+        [field setStringValue:[string substringToIndex:newline.location]];
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidChange:notification];
     

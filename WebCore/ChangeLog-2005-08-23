@@ -1,5 +1,14 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed <rdar://problem/3528538> can paste a Return character into the Search field at amazon.com, other browsers won't
+
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController controlTextDidChange:]):
+        Truncate text before the first line break.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertOneChunkUsingTEC):
         Added some more assertions I used to track down what looks like a TEC bug.
 
