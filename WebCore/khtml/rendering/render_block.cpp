@@ -210,18 +210,10 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             }
 
             // no suitable existing anonymous box - create a new one
-            RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(style());
-            newStyle->setDisplay(BLOCK);
-
-            RenderBlock *newBox = new (renderArena()) RenderBlock(0 /* anonymous box */);
-            newBox->setStyle(newStyle);
-            newBox->setIsAnonymousBox(true);
-
+            RenderBlock* newBox = createAnonymousBlock();
             RenderBox::addChild(newBox,beforeChild);
             newBox->addChild(newChild);
             newBox->setPos(newBox->xPos(), -500000);
-
             newChild->setNeedsLayoutAndMinMaxRecalc();
             return;
         }
@@ -303,14 +295,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 
         child = inlineRunEnd->nextSibling();
 
-        RenderStyle *newStyle = new RenderStyle();
-        newStyle->inheritFrom(style());
-        newStyle->setDisplay(BLOCK);
-
-        RenderBlock *box = new (renderArena()) RenderBlock(0 /* anonymous box */);
-        box->setStyle(newStyle);
-        box->setIsAnonymousBox(true);
-
+        RenderBlock* box = createAnonymousBlock();
         insertChildNode(box, inlineRunStart);
         RenderObject* o = inlineRunStart;
         while(o != inlineRunEnd)

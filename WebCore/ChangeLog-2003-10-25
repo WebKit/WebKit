@@ -1,5 +1,28 @@
 2003-05-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3248176, failed assertion on blizzard's world of warcraft
+	page.  They dynamically changed the position of an element from
+	absolute to relative, and this element was inside an inline.
+	The setStyle() code has to be smart enough to split the inline
+	flow when the element is no longer absolute positioned.
+
+	This patch makes a splitFlow occur like it should and it also
+	cleans up anonymous block creation with a new helper function
+	on RenderObject, createAnonymousBlock.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::splitFlow):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createAnonymousBlock):
+        (RenderObject::handleDynamicFloatPositionChange):
+        (RenderObject::setStyle):
+        * khtml/rendering/render_object.h:
+
+2003-05-22  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3259947.  Can't add clippings on iht.com.  The fix is
 	to make sure all DOM properties that relate to attributes return ""
 	and not "null" when the attribute isn't present or when the 

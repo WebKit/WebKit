@@ -910,6 +910,51 @@ void RenderObject::selectionStartEnd(int& spos, int& epos)
         parent()->selectionStartEnd(spos, epos);
 }
 
+RenderBlock* RenderObject::createAnonymousBlock()
+{
+    RenderStyle *newStyle = new RenderStyle();
+    newStyle->inheritFrom(m_style);
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock *newBox = new (renderArena()) RenderBlock(0 /* anonymous box */);
+    newBox->setStyle(newStyle);
+    newBox->setIsAnonymousBox(true);
+    return newBox;
+}
+
+void RenderObject::handleDynamicFloatPositionChange()
+{
+    // We have gone from not affecting the inline status of the parent flow to suddenly
+    // having an impact.  See if there is a mismatch between the parent flow's
+    // childrenInline() state and our state.
+    setInline(m_style->display() == INLINE || // m_style->display() == INLINE_BLOCK ||
+              m_style->display() == INLINE_TABLE);
+    if (isInline() != parent()->childrenInline()) {
+        if (!isInline()) {
+            if (parent()->isRenderInline()) {
+                // We have to split the parent flow.
+                RenderInline* parentInline = static_cast<RenderInline*>(parent());
+                RenderBlock* newBox = parentInline->createAnonymousBlock();
+                
+                RenderFlow* oldContinuation = parent()->continuation();
+                parentInline->setContinuation(newBox);
+
+                RenderObject* beforeChild = nextSibling();
+                parent()->removeChildNode(this);
+                parentInline->splitFlow(beforeChild, newBox, this, oldContinuation);
+            }
+            else if (parent()->isRenderBlock())
+                static_cast<RenderBlock*>(parent())->makeChildrenNonInline();
+        }
+        else {
+            // An anonymous block must be made to wrap this inline.
+            RenderBlock* box = createAnonymousBlock();
+            parent()->insertChildNode(box, this);
+            box->appendChildNode(parent()->removeChildNode(this));
+        }
+    }
+}
+
 void RenderObject::setStyle(RenderStyle *style)
 {
     if (m_style == style)
@@ -931,9 +976,9 @@ void RenderObject::setStyle(RenderStyle *style)
         // from the positioned objects list.
         removeFromObjectLists();
 
-    bool affectsParentBlock = (m_style && isFloatingOrPositioned() &&
+    bool affectsParentBlock = m_style && isFloatingOrPositioned() &&
         (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
-        && parent() && parent()->isBlockFlow());
+        && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
     
     //qDebug("new style, diff=%d", d);
     // reset style flags
@@ -971,30 +1016,9 @@ void RenderObject::setStyle(RenderStyle *style)
                                      m_style->hasBorder() || nb );
     m_hasFirstLine = (style->getPseudoStyle(RenderStyle::FIRST_LINE) != 0);
 
-    if (affectsParentBlock) {
-        // We have gone from not affecting the inline status of the parent block to suddenly
-        // having an impact.  See if there is a mismatch between the parent block's
-        // childrenInline() state and our state.
-        setInline(style->display() == INLINE || // style->display() == INLINE_BLOCK ||
-                  style->display() == INLINE_TABLE);
-        if (isInline() != parent()->childrenInline()) {
-            if (!isInline())
-                static_cast<RenderBlock*>(parent())->makeChildrenNonInline();
-            else {
-                // An anonymous block must be made to wrap this inline.
-                RenderStyle *newStyle = new RenderStyle();
-                newStyle->inheritFrom(m_style);
-                newStyle->setDisplay(BLOCK);
-
-                RenderBlock *box = new (renderArena()) RenderBlock(0 /* anonymous box */);
-                box->setStyle(newStyle);
-                box->setIsAnonymousBox(true);
-                parent()->insertChildNode(box, this);
-                box->appendChildNode(parent()->removeChildNode(this));
-            }
-        }
-    }
-        
+    if (affectsParentBlock)
+        handleDynamicFloatPositionChange();
+            
     if ( d >= RenderStyle::Position && m_parent ) {
         //qDebug("triggering relayout");
         setNeedsLayoutAndMinMaxRecalc();

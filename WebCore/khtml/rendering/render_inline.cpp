@@ -172,8 +172,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                              RenderObject* newChild, RenderFlow* oldCont)
 {
-    RenderBlock *pre = 0;
-    RenderStyle* newStyle = 0;
+    RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
     bool madeNewBeforeBlock = false;
     if (block->isAnonymousBox()) {
@@ -183,24 +182,12 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     }
     else {
         // No anonymous block available for use.  Make one.
-        newStyle = new RenderStyle();
-        newStyle->inheritFrom(block->style());
-        newStyle->setDisplay(BLOCK);
-        pre = new (renderArena()) RenderBlock(0 /* anonymous box */);
-        pre->setStyle(newStyle);
-        pre->setIsAnonymousBox(true);
-        pre->setChildrenInline(true);
+        pre = block->createAnonymousBlock();
         madeNewBeforeBlock = true;
     }
 
-    newStyle = new RenderStyle();
-    newStyle->inheritFrom(block->style());
-    newStyle->setDisplay(BLOCK);
-    RenderBlock *post = new (renderArena()) RenderBlock(0 /* anonymous box */);
-    post->setStyle(newStyle);
-    post->setIsAnonymousBox(true);
-    post->setChildrenInline(true);
-
+    RenderBlock* post = block->createAnonymousBlock();
+    
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)
         block->insertChildNode(pre, boxFirst);

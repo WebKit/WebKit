@@ -129,6 +129,15 @@ public:
     virtual int getBaselineOfFirstLineBox() { return -1; } // Tables and blocks implement this.
     virtual InlineFlowBox* getFirstLineBox() { return 0; } // Tables and blocks implement this.
 
+    // Called when an object that was floating or positioned becomes a normal flow object
+    // again.  We have to make sure the render tree updates as needed to accommodate the new
+    // normal flow object.
+    void handleDynamicFloatPositionChange();
+
+    // This function is a convenience helper for creating an anonymous block that inherits its
+    // style from this RenderObject.
+    RenderBlock* createAnonymousBlock();
+    
     // Whether or not a positioned element requires normal flow x/y to be computed
     // to determine its position.
     bool hasStaticX() const;
