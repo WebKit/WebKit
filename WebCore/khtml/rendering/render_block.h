@@ -29,6 +29,11 @@
 
 #include "render_flow.h"
 
+typedef enum {
+    CursorCaret,
+    DragCaret,
+} CaretType;
+
 namespace DOM {
     class Position;
 }
@@ -139,6 +144,7 @@ public:
     void paintChildren(PaintInfo& i, int _tx, int _ty);
     void paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty);
     void paintSelection(PaintInfo& i, int _tx, int _ty);
+    void paintCaret(PaintInfo& i, CaretType);
     
     void insertFloatingObject(RenderObject *o);
     void removeFloatingObject(RenderObject *o);

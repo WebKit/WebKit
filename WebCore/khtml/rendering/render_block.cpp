@@ -1257,6 +1257,20 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
     }
 }
 
+void RenderBlock::paintCaret(PaintInfo& i, CaretType type)
+{
+    const Selection &s = type == CursorCaret ? document()->part()->selection() : document()->part()->dragCaret();
+    NodeImpl *caretNode = s.start().node();
+    RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
+    if (renderer && (renderer == this || renderer->containingBlock() == this) && caretNode && caretNode->isContentEditable()) {
+        if (type == CursorCaret) {
+            document()->part()->paintCaret(i.p, i.r);
+        } else {
+            document()->part()->paintDragCaret(i.p, i.r);
+        }
+    }
+}
+
 void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
 {
     PaintAction paintAction = i.phase;
@@ -1303,14 +1317,9 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
     // 6. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintActionForeground,
     // then paint the caret.
-    if (!inlineFlow && paintAction == PaintActionForeground) {
-        const Selection &s = document()->part()->selection();
-        NodeImpl *caretNode = s.start().node();
-        RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
-        if (renderer && (renderer == this || renderer->containingBlock() == this) && caretNode && caretNode->isContentEditable()) {
-            document()->part()->paintCaret(i.p, i.r);
-            document()->part()->paintDragCaret(i.p, i.r);
-        }
+    if (!inlineFlow && paintAction == PaintActionForeground) {        
+        paintCaret(i, CursorCaret);
+        paintCaret(i, DragCaret);
     }
 
 #ifdef BOX_DEBUG

@@ -1,3 +1,14 @@
+2005-02-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3985211> Seed: Mail: Drag-and-drop destination indicator / insertion point disappears
+
+        Reviewed by kocienda.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintCaret): new
+        (khtml::RenderBlock::paintObject): call paintCaret for the cursor caret and the drag caret
+        * khtml/rendering/render_block.h:
+
 === Safari-185 ===
 
 2005-02-08  Ken Kocienda  <kocienda@apple.com>
