@@ -487,15 +487,19 @@ unsigned long UString::toULong(bool *ok) const
 
 int UString::find(const UString &f, int pos) const
 {
-  if (size() < f.size())
+  int sz = size();
+  int fsz = f.size();
+  if (sz < fsz)
     return -1;
+  if (fsz == 0)
+    return 0;
   if (pos < 0)
     pos = 0;
-  const UChar *end = data() + size() - f.size();
-  long fsize = f.size() * sizeof(UChar);
-  const void *fdata = f.data();
+  const UChar *end = data() + sz - fsz;
+  long fsizeminusone = (fsz - 1) * sizeof(UChar);
+  const UChar *fdata = f.data();
   for (const UChar *c = data() + pos; c <= end; c++)
-    if (!memcmp(c, fdata, fsize))
+    if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))
       return (c-data());
 
   return -1;
@@ -515,14 +519,18 @@ int UString::find(UChar ch, int pos) const
 
 int UString::rfind(const UString &f, int pos) const
 {
-  if (size() < f.size())
+  int sz = size();
+  int fsz = f.size();
+  if (sz < fsz)
     return -1;
-  if (pos + f.size() >= size())
-    pos = size() - f.size();
-  long fsize = f.size() * sizeof(UChar);
-  const void *fdata = f.data();
+  if (fsz == 0)
+    return 0;
+  if (pos < 0)
+    pos = 0;
+  long fsizeminusone = (fsz - 1) * sizeof(UChar);
+  const UChar *fdata = f.data();
   for (const UChar *c = data() + pos; c >= data(); c--) {
-    if (!memcmp(c, fdata, fsize))
+    if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))
       return (c-data());
   }
 
@@ -602,18 +610,16 @@ bool KJS::operator==(const UString& s1, const char *s2)
     return s1.isEmpty();
   }
 
-  if (s1.size() != (int)strlen(s2))
-    return false;
-
   const UChar *u = s1.data();
-  while (*s2) {
+  const UChar *uend = u + s1.size();
+  while (u != uend && *s2) {
     if (u->uc != (unsigned char)*s2)
       return false;
     s2++;
     u++;
   }
 
-  return true;
+  return u == uend && *s2 == 0;
 }
 
 bool KJS::operator<(const UString& s1, const UString& s2)

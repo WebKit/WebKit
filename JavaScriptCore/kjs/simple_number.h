@@ -40,7 +40,7 @@ namespace KJS {
 	static inline bool fits(unsigned i) { return i <= (unsigned)max; }
 	static inline bool fits(long i) { return i <= max && i >= min; }
 	static inline bool fits(unsigned long i) { return i <= (unsigned)max; }
-	static inline bool fits(double d) { return d <= max && d >= min && remainder(d, 1) == 0; }
+	static inline bool fits(double d) { return d <= max && d >= min && d == (double)(int)d; }
 	static inline ValueImp *make(int i) { return (ValueImp *)((i << shift) | tag); }
     };
 }
