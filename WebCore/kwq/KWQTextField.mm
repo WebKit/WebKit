@@ -28,6 +28,7 @@
 #import "KWQLineEdit.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
+#import "WebCoreFirstResponderChanges.h"
 
 // KWQTextFieldFormatter enforces a maximum length.
 
@@ -243,9 +244,26 @@
 
 - (BOOL)becomeFirstResponder
 {
-    KWQKHTMLPart::setDocumentFocus(widget);
-    [self _KWQ_scrollFrameToVisible];
-    return [super becomeFirstResponder];
+    BOOL become = [super becomeFirstResponder];
+
+    if (become) {
+	KWQKHTMLPart::setDocumentFocus(widget);
+	[self _KWQ_scrollFrameToVisible];
+    }
+       
+    return become;
+}
+
+- (void)fieldWillBecomeFirstResponder
+{
+    QFocusEvent event(QEvent::FocusIn);
+    (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
+}
+
+- (void)fieldWillResignFirstResponder
+{
+    QFocusEvent event(QEvent::FocusOut);
+    (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
 }
 
 - (void)display

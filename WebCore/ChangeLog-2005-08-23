@@ -1,3 +1,31 @@
+2003-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3132120 - onchange handler not firing on mac.com webmail
+
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::handleFocusOut): Moved empty virtual method here from render_form.
+        (RenderWidget::eventFilter): Uncomment call to handleFocusOut - we
+	need it to send onChange properly.
+	* khtml/rendering/render_replaced.h:
+        * kwq/KWQObject.h: Add empty eventFilter virtual method.
+        * kwq/KWQComboBox.h: Remove no longer needed empty eventFilter.
+        * kwq/KWQEvent.h: Implement a bit more of QFocusEvent.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Tell the text view its widget.
+        (-[KWQTextAreaTextView setWidget:]): New method to set widget.
+        (-[KWQTextAreaTextView becomeFirstResponder]): In addition to the usual stuff,
+	call the widget's event filter with a focus in event.
+        (-[KWQTextAreaTextView resignFirstResponder]): In addition to the usual stuff,
+	call the widget's event filter with a focus out event.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField becomeFirstResponder]): Cleaned up a bit.
+        (-[KWQTextField fieldWillBecomeFirstResponder]): Call the widget's event filter with a focus in event.
+        (-[KWQTextField fieldWillResignFirstResponder]): Call the widget's event filter with a focus out event.
+        * kwq/KWQView.mm:
+
 2003-01-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3147213.  <nobr> is treated like other inlines now,

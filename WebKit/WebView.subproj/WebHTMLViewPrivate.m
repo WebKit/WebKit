@@ -11,6 +11,8 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#import <WebCore/WebCoreFirstResponderChanges.h>
+
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
@@ -625,6 +627,40 @@ static BOOL inNSTextViewDrawRect;
     inNSTextViewDrawRect = YES;
     [super _drawRect:rect clip:clip];
     inNSTextViewDrawRect = NO;
+}
+
+- (BOOL)resignFirstResponder
+{
+    bool resign = [super resignFirstResponder];
+
+    if (![self _web_inHTMLView]) {
+	return resign;
+    }
+
+    NSView *possibleContainingField = [self delegate];
+
+    if (resign && [possibleContainingField respondsToSelector:@selector(fieldEditorWillResignFirstResponder)]) {
+	[possibleContainingField fieldEditorWillResignFirstResponder];
+    }
+
+    return resign;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    bool become = [super becomeFirstResponder];
+
+    if (![self _web_inHTMLView]) {
+	return become;
+    }
+
+    NSView *possibleContainingField = [self delegate];
+
+    if (become && [possibleContainingField respondsToSelector:@selector(fieldEditorWillBecomeFirstResponder)]) {
+	[possibleContainingField fieldEditorWillBecomeFirstResponder];
+    }
+
+    return become;
 }
 
 @end

@@ -291,6 +291,10 @@ void RenderWidget::paintObject(QPainter* /*p*/, int, int, int, int, int _tx, int
 #endif
 }
 
+void RenderWidget::handleFocusOut()
+{
+}
+
 bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 {
     if ( !element() ) return true;
@@ -315,7 +319,7 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 //                 KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>( element()->view->part()->browserExtension() );
 //                 if ( ext )  ext->editableWidgetBlurred( m_widget );
 //             }
-//             handleFocusOut();
+	    handleFocusOut();
         }
         break;
     case QEvent::FocusIn:

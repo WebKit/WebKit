@@ -119,10 +119,11 @@ public:
     bool _isAccepted;
 };
 
-class QFocusEvent {
+class QFocusEvent : public QEvent {
 public:
     enum Reason { Popup, Other };
     static Reason reason() { return Other; }
+    QFocusEvent (Type type) : QEvent (type) {}
 };
 
 class QHideEvent;

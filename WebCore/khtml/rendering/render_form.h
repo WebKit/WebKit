@@ -100,8 +100,6 @@ protected:
     virtual bool isRenderButton() const { return false; }
     virtual bool isEditable() const { return false; }
 
-    virtual void handleFocusOut() {};
-
     QPoint m_mousePos;
     int m_state;
     int m_button;

@@ -1,3 +1,15 @@
+2003-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3132120 - onchange handler not firing on mac.com webmail
+	
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebNSTextView resignFirstResponder]): If we really resign first responder, and
+	our delegate responds to filedWillBecomeFirstResponder, then call that method.
+        (-[WebNSTextView becomeFirstResponder]): If we really become first responder, and
+	our delegate responds to filedWillBecomeFirstResponder, then call that method.
+
 2003-01-20  Trey Matteson  <trey@apple.com>
 
 	Nit fix to remove a dead "cursor" ivar found while grepping.

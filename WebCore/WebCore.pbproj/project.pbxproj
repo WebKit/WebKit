@@ -175,7 +175,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -484,6 +483,7 @@
 				931BFCD403D4AEE5008635CE,
 				931BFCD803D4AEFD008635CE,
 				93955A4303D72932008635CE,
+				6504A7BF03DCE19800000124,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -876,6 +876,21 @@
 //652
 //653
 //654
+		6504A7BE03DCE19800000124 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreFirstResponderChanges.h;
+			refType = 4;
+		};
+		6504A7BF03DCE19800000124 = {
+			fileRef = 6504A7BE03DCE19800000124;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		6573C63B03A0BE5700FCA39F = {
 			buildActionMask = 8;
 			files = (
@@ -6283,6 +6298,7 @@
 		F58785E902DE378A01EA4122 = {
 			children = (
 				F587854702DE375901EA4122,
+				6504A7BE03DCE19800000124,
 				F587854802DE375901EA4122,
 				F5B2A4FC02E2220F018635CB,
 				F5B2A4FD02E2220F018635CB,

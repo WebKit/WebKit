@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002, 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOMBOBOX_H_
-#define QCOMBOBOX_H_
+#import <Foundation/Foundation.h>
 
-#include "KWQListBox.h"
-#include "KWQWidget.h"
+// The WebCore client must arrange to call these methods when a text
+// field's field editor becomes or resigns first responder.
 
-#ifdef __OBJC__
-@class KWQComboBoxAdapter;
-#else
-class KWQComboBoxAdapter;
-#endif
-
-class QComboBox : public QWidget {
-public:
-    QComboBox();
-    ~QComboBox();
-    
-    void clear();
-    void insertItem(const QString &text, int index=-1);
-
-    int currentItem() const;
-    void setCurrentItem(int);
-
-    QListBox *listBox() const { return 0; }
-    void popup() { }
-    
-    QSize sizeHint() const;
-    QRect frameGeometry() const;
-    void setFrameGeometry(const QRect &);
-    int baselinePosition() const;
-
-    void activated() { _activated.call(currentItem()); }
-
-private:
-    KWQComboBoxAdapter *_adapter;
-    mutable float _width;
-    mutable bool _widthGood;
-
-    KWQSignal _activated;
-};
-
-#endif
+@interface NSObject (WebCoreFirstResponderChanges)
+- (void)fieldEditorWillBecomeFirstResponder;
+- (void)fieldEditorWillResignFirstResponder;
+@end

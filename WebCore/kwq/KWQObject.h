@@ -88,6 +88,8 @@ public:
     void removeEventFilter(const QObject *) { _eventFilterObject = 0; }
     const QObject *eventFilterObject() const { return _eventFilterObject; }
 
+    virtual bool eventFilter(QObject *object, QEvent *event) { return false; }
+
     void blockSignals(bool b) { _signalsBlocked = b; }
 
     virtual bool event(QEvent *);
