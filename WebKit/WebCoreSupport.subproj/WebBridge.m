@@ -587,6 +587,8 @@
         nil];
 
     LOG(Plugins, "arguments:\n%@", arguments);
+
+    [pluginPackage load];
     
     return [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
 }

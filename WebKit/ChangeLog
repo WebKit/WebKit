@@ -1,3 +1,19 @@
+2003-04-14  Chris Blumenberg  <cblu@apple.com>
+
+	Log time spent loading each plug-in.
+
+        Reviewed by mjs.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconsForIconURLString:]): fixed logging code
+        (-[WebIconDatabase _scaleIcon:toSize:]): fixed logging code
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]): log time spent loading a plug-in
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController startAllPlugins]): only log if there are plug-ins to start
+        (-[WebPluginController stopAllPlugins]): only log if there are plug-ins to stop
+        (-[WebPluginController destroyAllPlugins]): only log if there are plug-ins to destroy
+
 2003-04-13  Trey Matteson  <trey@apple.com>
 
 	3150693 - open new window on "same page" doesn't give me the same frame content

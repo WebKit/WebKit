@@ -392,7 +392,7 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     
-#if LOG_ENABLED         
+#if !LOG_DISABLED         
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     NSData *iconData = [_private->fileDatabase objectForKey:iconURLString];
@@ -407,7 +407,7 @@ NSSize WebIconLargeSize = {128, 128};
 	icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
 	
 	if(icons){
-#if LOG_ENABLED 
+#if !LOG_DISABLED 
 	    double duration = CFAbsoluteTimeGetCurrent() - start;
 	    LOG(Timing, "loading and creating icon %@ took %f seconds", iconURLString, duration);
 #endif
@@ -725,14 +725,14 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.width);
     ASSERT(size.height);
     
-#if LOG_ENABLED        
+#if !LOG_DISABLED        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
     [icon setScalesWhenResized:YES];
     [icon setSize:size];
     
-#if LOG_ENABLED
+#if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "scaling icon took %f seconds.", duration);
 #endif

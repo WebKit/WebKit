@@ -37,8 +37,10 @@
         return;
     }
     
-    LOG(Plugins, "starting all plugins");
-
+    if ([_views count] > 0) {
+        LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
+    }
+    
     [_views makeObjectsPerformSelector:@selector(pluginStart)];
     _started = YES;
 }
@@ -48,9 +50,11 @@
     if (!_started) {
         return;
     }
-    
-    LOG(Plugins, "stopping all plugins");
 
+    if ([_views count] > 0) {
+        LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
+    }
+    
     [_views makeObjectsPerformSelector:@selector(pluginStop)];
     _started = NO;
 }
@@ -76,10 +80,13 @@
 }
 
 - (void)destroyAllPlugins
-{
-    LOG(Plugins, "destroying all plug-ins");
-    
+{    
     [self stopAllPlugins];
+
+    if ([_views count] > 0) {
+        LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
+    }
+    
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views makeObjectsPerformSelector:@selector(pluginDestroy)];
     [_views release];

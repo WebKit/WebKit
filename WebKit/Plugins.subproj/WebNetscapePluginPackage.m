@@ -321,16 +321,25 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NPError npErr;
     OSErr err;
 
+#if !LOG_DISABLED
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+#endif
+    LOG(Plugins, "%f Load timing started for: %@", start, [self name]);
+
     if (isLoaded) {
         return YES;
     }
-    
+
     if (isBundle) {
         CFBundleRef cfBundle = [bundle _cfBundle];
         if (!CFBundleLoadExecutable(cfBundle)) {
             goto abort;
         }
-        
+#if !LOG_DISABLED
+        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+        CFAbsoluteTime duration = currentTime - start;
+#endif
+        LOG(Plugins, "%f CFBundleLoadExecutable took %f seconds", currentTime, duration);
         isLoaded = YES;
         
         if (isCFM) {
@@ -367,7 +376,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             ERROR("GetDiskFragment failed. Error=%d", err);
             goto abort;
         }
-        
+#if !LOG_DISABLED
+        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+        CFAbsoluteTime duration = currentTime - start;
+#endif
+        LOG(Plugins, "%f GetDiskFragment took %f seconds", currentTime, duration);
         isLoaded = YES;
         
         pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
@@ -410,11 +423,20 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
 
+#if !LOG_DISABLED
+        CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
+#endif
+        LOG(Plugins, "%f main timing started", mainStart);
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
         if (npErr != NPERR_NO_ERROR) {
             [self unload];
             return NO;
         }
+#if !LOG_DISABLED
+        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+        CFAbsoluteTime duration = currentTime - mainStart;
+#endif
+        LOG(Plugins, "%f main took %f seconds", currentTime, duration);
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
@@ -459,11 +481,21 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
 
+#if !LOG_DISABLED
+        CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();
+#endif
+        LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
         npErr = NP_Initialize(&browserFuncs);
         if (npErr != NPERR_NO_ERROR) {
             [self unload];
             return NO;
         }
+#if !LOG_DISABLED
+        CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+        CFAbsoluteTime duration = currentTime - initializeStart;
+#endif
+        LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
+
         npErr = NP_GetEntryPoints(&pluginFuncs);
         if (npErr != NPERR_NO_ERROR) {
             [self unload];
@@ -487,8 +519,13 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_GetValue = pluginFuncs.getvalue;
         NPP_SetValue = pluginFuncs.setvalue;
     }
-    
-    LOG(Plugins, "Plugin Loaded");
+
+#if !LOG_DISABLED
+    CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+    CFAbsoluteTime duration = currentTime - start;
+#endif
+    LOG(Plugins, "%f Total load time: %f seconds", currentTime, duration);
+
     return YES;
 
 abort:

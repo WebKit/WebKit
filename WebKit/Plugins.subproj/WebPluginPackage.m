@@ -8,6 +8,8 @@
 
 #import <WebKit/WebPluginPackage.h>
 
+#import <WebKit/WebKitLogging.h>
+
 #import <Foundation/NSBundle_Private.h>
 
 @implementation WebPluginPackage
@@ -44,7 +46,20 @@
 
 - (BOOL)load
 {
+#if !LOG_DISABLED
+    BOOL wasLoaded = [self isLoaded];
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+#endif
+    
     [bundle principalClass];
+
+#if !LOG_DISABLED
+    if (!wasLoaded) {
+        CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - start;
+        LOG(Plugins, "principalClass took %f seconds for: %@", duration, [self name]);
+    }
+#endif
+   
     return YES;
 }
 
