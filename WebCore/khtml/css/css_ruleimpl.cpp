@@ -235,12 +235,22 @@ CSSMediaRuleImpl::~CSSMediaRuleImpl()
 	m_lstMedia->setParent( 0 );
         m_lstMedia->deref();
     }
+
+    int length = m_lstCSSRules->length();
+    for (int i = 0; i < length; i++) {
+	m_lstCSSRules->item( i )->setParent( 0 );
+    }
     m_lstCSSRules->deref();
 }
 
 unsigned long CSSMediaRuleImpl::append( CSSRuleImpl *rule )
 {
-    return rule ? m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() ) : 0;
+    if (!rule) {
+	return 0;
+    }
+
+    rule->setParent(this);
+    return m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() );
 }
 
 unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
@@ -249,7 +259,12 @@ unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
     CSSParser p( strictParsing );
     CSSRuleImpl *newRule = p.parseRule( parentStyleSheet(), rule );
 
-    return newRule ? m_lstCSSRules->insertRule( newRule, index ) : 0;
+    if (!newRule) {
+	return 0;
+    }
+
+    newRule->setParent(this);
+    return m_lstCSSRules->insertRule( newRule, index );
 }
 
 CSSRuleListImpl::~CSSRuleListImpl()
@@ -350,6 +365,11 @@ void CSSRuleListImpl::deleteRule ( unsigned long index )
         rule->deref();
     else
         ; // ### Throw INDEX_SIZE_ERR exception here (TODO)
+}
+
+void CSSRuleListImpl::append( CSSRuleImpl *rule )
+{
+    insertRule( rule, m_lstCSSRules.count() ) ;
 }
 
 unsigned long CSSRuleListImpl::insertRule( CSSRuleImpl *rule,

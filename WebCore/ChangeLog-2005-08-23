@@ -1,3 +1,18 @@
+2003-08-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3397775 21 leaks from CSS parser running PLT
+	
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSMediaRuleImpl::~CSSMediaRuleImpl): Clear the parent for all contained
+	rules.
+        (CSSMediaRuleImpl::append): Call insertRule.
+        (CSSMediaRuleImpl::insertRule): set parent of the rule to this media rule.
+        (CSSRuleListImpl::append): Call insertRule to cover all the relevant
+	additional handling, instead of adding straight to the list.
+        * khtml/css/css_ruleimpl.h:
+
 2003-08-29  John Sullivan  <sullivan@apple.com>
 	
 	- fixed 3399880 -- Repro crash when filling out a form to 

@@ -143,7 +143,7 @@ public:
     unsigned long insertRule ( CSSRuleImpl *rule, unsigned long index );
     void deleteRule ( unsigned long index );
 
-    void append( CSSRuleImpl *rule ) { m_lstCSSRules.append( rule ); }
+    void append( CSSRuleImpl *rule );
 protected:
     QPtrList<CSSRuleImpl> m_lstCSSRules;
 };
