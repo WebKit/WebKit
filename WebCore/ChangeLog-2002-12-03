@@ -1,5 +1,11 @@
 2002-09-28  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3058119, doctype of HTML docs should be null.
+	
+        * khtml/dom/dom_doc.cpp:
+
+2002-09-28  David Hyatt  <hyatt@apple.com>
+
 	DOM compliance. Fix for 3058100, hasFeature of HTML returns
 	false. Oops.
 	

@@ -209,7 +209,13 @@ Document::~Document()
 
 DocumentType Document::doctype() const
 {
-    if (impl) return ((DocumentImpl *)impl)->doctype();
+    if (impl) {
+      // Doctype is null for HTML documents.
+      if (((DocumentImpl*)impl)->isHTMLDocument())
+	return 0;
+      else
+	return ((DocumentImpl *)impl)->doctype();
+    }
     return 0;
 }
 
