@@ -1,3 +1,18 @@
+2003-12-16  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/3482852>: oft-seen, non-repro, nil-deref in 
+        HTMLTokenizer::notifyFinished (snapfish.com, etc.)
+        
+        At least one of the dupes of this bug is a separate (still reproducible) issue;
+        I'll clone it back to life and test the others.
+
+        Reviewed by Darin.
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::notifyFinished):
+        Move check of cachedScript.isEmpty() until after scriptExecution()
+        call, because cachedScript.isEmpty() value can be changed by that call.
+
 2003-12-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3508807, positions/sizes wrong for text elts and multi-line elts for accessibility.

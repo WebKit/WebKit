@@ -1809,8 +1809,6 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         kdDebug( 6036 ) << "Finished loading an external script" << endl;
 #endif
         CachedScript* cs = cachedScript.dequeue();
-        finished = cachedScript.isEmpty();
-        if (finished) loadingExtScript = false;
         DOMString scriptSource = cs->script();
 #ifdef TOKEN_DEBUG
         kdDebug( 6036 ) << "External script is:" << endl << scriptSource.string() << endl;
@@ -1823,6 +1821,10 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         cs->deref(this);
 
 	scriptExecution( scriptSource.string(), cachedScriptUrl );
+        // cachedScript.isEmpty() can change inside the scriptExecution() call above,
+        // so don't test it until afterwards.
+        finished = cachedScript.isEmpty();
+        if (finished) loadingExtScript = false;
 
         // 'script' is true when we are called synchronously from
         // parseScript(). In that case parseScript() will take care
