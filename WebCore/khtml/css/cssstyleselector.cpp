@@ -2014,74 +2014,11 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         style->setOverflow(o);
         return;
     }
-
-    case CSS_PROP_PAGE_BREAK_BEFORE:
-    {
-        if(value->cssValueType() == CSSValue::CSS_INHERIT)
-        {
-            if(!parentNode) return;
-            style->setPageBreakBefore(parentStyle->pageBreakBefore());
-            return;
-        }
-        if(!primitiveValue) return;
-        switch (primitiveValue->getIdent()) {
-            case CSS_VAL_AUTO:
-                style->setPageBreakBefore(PBAUTO);
-                break;
-            case CSS_VAL_LEFT:
-            case CSS_VAL_RIGHT:
-            case CSS_VAL_ALWAYS:
-                style->setPageBreakBefore(PBALWAYS); // CSS2.1: "Conforming user agents may map left/right to always."
-                break;
-            case CSS_VAL_AVOID:
-                style->setPageBreakInside(PBAVOID);
-                break;
-        }
-        break;
-    }
-
-    case CSS_PROP_PAGE_BREAK_AFTER:
-    {
-        if(value->cssValueType() == CSSValue::CSS_INHERIT)
-        {
-            if(!parentNode) return;
-            style->setPageBreakAfter(parentStyle->pageBreakAfter());
-            return;
-        }
-        if(!primitiveValue) return;
-        switch (primitiveValue->getIdent()) {
-            case CSS_VAL_AUTO:
-                style->setPageBreakAfter(PBAUTO);
-                break;
-            case CSS_VAL_LEFT:
-            case CSS_VAL_RIGHT:
-            case CSS_VAL_ALWAYS:
-                style->setPageBreakAfter(PBALWAYS); // CSS2.1: "Conforming user agents may map left/right to always."
-                break;
-            case CSS_VAL_AVOID:
-                style->setPageBreakAfter(PBAVOID);
-                break;
-        }
-        break;
-    }
-
-    case CSS_PROP_PAGE_BREAK_INSIDE: {
-        if(value->cssValueType() == CSSValue::CSS_INHERIT)
-        {
-            if(!parentNode) return;
-            style->setPageBreakInside(parentStyle->pageBreakInside());
-            return;
-        }
-        if(!primitiveValue) return;
-        if (primitiveValue->getIdent() == CSS_VAL_AUTO)
-            style->setPageBreakInside(PBAUTO);
-        else if (primitiveValue->getIdent() == CSS_VAL_AVOID)
-            style->setPageBreakInside(PBAVOID);
-        return;
-    }
-        
+    break;
     case CSS_PROP_PAGE:
-
+    case CSS_PROP_PAGE_BREAK_AFTER:
+    case CSS_PROP_PAGE_BREAK_BEFORE:
+    case CSS_PROP_PAGE_BREAK_INSIDE:
 //    case CSS_PROP_PAUSE_AFTER:
 //    case CSS_PROP_PAUSE_BEFORE:
         break;
@@ -2908,32 +2845,6 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         style->setZIndex(z_index);
         return;
     }
-        
-    case CSS_PROP_WIDOWS:
-    {
-        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
-            if(!parentNode) return;
-            style->setWidows(parentStyle->widows());
-        } else {
-            if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-                return;
-            style->setWidows((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER));
-        }
-        break;
-    }
-        
-    case CSS_PROP_ORPHANS:
-    {
-        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
-            if(!parentNode) return;
-            style->setOrphans(parentStyle->orphans());
-        } else {
-            if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-                return;
-            style->setOrphans((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER));
-        }
-        break;
-    }        
 
 // length, percent, number
     case CSS_PROP_LINE_HEIGHT:

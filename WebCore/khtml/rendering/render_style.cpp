@@ -38,6 +38,13 @@ StyleSurroundData::StyleSurroundData()
 {
 }
 
+StyleSurroundData::StyleSurroundData(const StyleSurroundData& o )
+    : Shared<StyleSurroundData>(),
+      offset( o.offset ), margin( o.margin ), padding( o.padding ),
+      border( o.border )
+{
+}
+
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 {
     return offset==o.offset && margin==o.margin &&
@@ -58,6 +65,15 @@ StyleBoxData::StyleBoxData()
     max_height.value = UNDEFINED;
 }
 
+StyleBoxData::StyleBoxData(const StyleBoxData& o )
+    : Shared<StyleBoxData>(),
+      width( o.width ), height( o.height ),
+      min_width( o.min_width ), max_width( o.max_width ),
+      min_height ( o.min_height ), max_height( o.max_height ),
+      z_index( o.z_index ), z_auto( o.z_auto )
+{
+}
+
 bool StyleBoxData::operator==(const StyleBoxData& o) const
 {
     return
@@ -68,7 +84,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 	    min_height == o.min_height &&
 	    max_height == o.max_height &&
 	    z_index == o.z_index &&
-            z_auto == o.z_auto;
+        z_auto == o.z_auto;
 }
 
 StyleVisualData::StyleVisualData()
@@ -77,8 +93,29 @@ StyleVisualData::StyleVisualData()
 {
 }
 
+StyleVisualData::~StyleVisualData() {
+}
+
+StyleVisualData::StyleVisualData(const StyleVisualData& o )
+    : Shared<StyleVisualData>(),
+      clip( o.clip ), hasClip( o.hasClip ), textDecoration(o.textDecoration), colspan( o.colspan ),
+      counter_increment( o.counter_increment ), counter_reset( o.counter_reset ),
+      palette( o.palette )
+{
+}
+
+
+
 StyleBackgroundData::StyleBackgroundData()
     : image( 0 )
+{
+}
+
+StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o )
+    : Shared<StyleBackgroundData>(),
+      color( o.color ), image( o.image ),
+      x_position( o.x_position ), y_position( o.y_position ),
+      outline( o.outline )
 {
 }
 
@@ -109,6 +146,7 @@ bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
+: Shared<StyleFlexibleBoxData>()
 {
     flex = 0.0f;
     flex_group = 1;
@@ -120,6 +158,19 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     flexed_height = -1;
 }
 
+StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
+: Shared<StyleFlexibleBoxData>()
+{
+    flex = o.flex;
+    flex_group = o.flex_group;
+    ordinal_group = o.ordinal_group;
+    align = o.align;
+    pack = o.pack;
+    orient = o.orient;
+    lines = o.lines;
+    flexed_height = o.flexed_height;
+}
+
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 {
     return flex == o.flex && flex_group == o.flex_group &&
@@ -129,7 +180,7 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
-:opacity(1.0f)
+:Shared<StyleCSS3NonInheritedData>(), opacity(1.0f)
 {
 }
 
@@ -144,8 +195,10 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
-:textShadow(0)
-{}
+:Shared<StyleCSS3InheritedData>(), textShadow(0)
+{
+
+}
 
 StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
 :Shared<StyleCSS3InheritedData>()
@@ -170,8 +223,21 @@ bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& 
 StyleInheritedData::StyleInheritedData()
     : indent( Fixed ), line_height( -100, Percent ), style_image( 0 ),
       cursor_image( 0 ), font(), color( Qt::black ), 
-      horizontal_border_spacing( 0 ), vertical_border_spacing( 0 ), widows( 2 ), orphans( 2 ),
-      pageBreakInside( PBAUTO )
+      horizontal_border_spacing( 0 ), vertical_border_spacing( 0 )
+{
+}
+
+StyleInheritedData::~StyleInheritedData()
+{
+}
+
+StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
+    : Shared<StyleInheritedData>(),
+      indent( o.indent ), line_height( o.line_height ), style_image( o.style_image ),
+      cursor_image( o.cursor_image ), font( o.font ),
+      color( o.color ),
+      horizontal_border_spacing( o.horizontal_border_spacing ),
+      vertical_border_spacing( o.vertical_border_spacing )
 {
 }
 
@@ -185,10 +251,10 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 	font == o.font &&
 	color == o.color &&
         horizontal_border_spacing == o.horizontal_border_spacing &&
-        vertical_border_spacing == o.vertical_border_spacing && 
-        widows == o.widows &&
-        orphans == o.orphans &&
-        pageBreakInside == o.pageBreakInside;
+        vertical_border_spacing == o.vertical_border_spacing;
+
+    // doesn't work because structs are not packed
+    //return memcmp(this, &o, sizeof(*this))==0;
 }
 
 RenderStyle::RenderStyle()

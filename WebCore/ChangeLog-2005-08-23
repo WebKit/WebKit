@@ -1,3 +1,37 @@
+2003-10-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+	Rolling out this code since it caused a big performance 
+	regression.
+
+	2003-10-29  David Hyatt  <hyatt@apple.com>
+
+		Add the paged media properties to RenderStyle.  
+		They aren't used yet, but they should now be
+		parsed and interpreted correctly.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/rendering/render_style.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        (StyleBoxData::StyleBoxData):
+        (StyleBoxData::operator==):
+        (StyleVisualData::~StyleVisualData):
+        (StyleVisualData::StyleVisualData):
+        (StyleBackgroundData::StyleBackgroundData):
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (opacity):
+        (textShadow):
+        (StyleInheritedData::StyleInheritedData):
+        (StyleInheritedData::~StyleInheritedData):
+        (StyleInheritedData::operator==):
+        * khtml/rendering/render_style.h:
+        (khtml::StyleBackgroundData::~StyleBackgroundData):
+        (khtml::StyleFlexibleBoxData::~StyleFlexibleBoxData):
+        (khtml::RenderStyle::NonInheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+
 2003-10-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3466628, widgets in overflow blocks don't move when the overflow block is scrolled.  This
