@@ -606,7 +606,7 @@ int RenderText::rightmostPosition() const
 }
 
 void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
-                             int tx, int ty, int paintPhase)
+                             int tx, int ty, PaintAction paintAction)
 {
     int ow = style()->outlineWidth();
     RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::FIRST_LINE);
@@ -788,9 +788,9 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 }
 
 void RenderText::paint(QPainter *p, int x, int y, int w, int h,
-                       int tx, int ty, int paintPhase)
+                       int tx, int ty, PaintAction paintAction)
 {
-    if (paintPhase != FOREGROUND_PHASE || style()->visibility() != VISIBLE) 
+    if (paintAction != PaintActionForeground || style()->visibility() != VISIBLE) 
         return;
 
     int s = m_lines.count() - 1;
@@ -800,7 +800,7 @@ void RenderText::paint(QPainter *p, int x, int y, int w, int h,
     if ( ty + m_lines[0]->m_y > y + h + 64 ) return;
     if ( ty + m_lines[s]->m_y + m_lines[s]->m_baseline + m_lineHeight + 64 < y ) return;
 
-    paintObject(p, x, y, w, h, tx, ty, paintPhase);
+    paintObject(p, x, y, w, h, tx, ty, paintAction);
 }
 
 #ifdef APPLE_CHANGES

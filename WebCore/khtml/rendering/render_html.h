@@ -43,7 +43,7 @@ namespace khtml {
 
 	virtual bool isHtml() const { return true; }
 	virtual void setStyle(RenderStyle *style);
-	virtual void paint(QPainter *, int x, int y, int w, int h, int tx, int ty, int paintPhase);
+	virtual void paint(QPainter *, int x, int y, int w, int h, int tx, int ty, PaintAction paintAction);
 	virtual void repaint(bool immediate=false);
 	virtual void layout();
     virtual short containingBlockWidth() const;

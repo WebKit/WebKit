@@ -378,7 +378,7 @@ void RenderTable::setCellWidths()
 }
 
 void RenderTable::paint( QPainter *p, int _x, int _y,
-                                  int _w, int _h, int _tx, int _ty, int paintPhase)
+                                  int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
     if (!layouted())
         return;
@@ -399,13 +399,13 @@ void RenderTable::paint( QPainter *p, int _x, int _y,
     kdDebug( 6040 ) << "RenderTable::paint(2) " << _tx << "/" << _ty << " (" << _y << "/" << _h << ")" << endl;
 #endif
 
-    if(paintPhase == BACKGROUND_PHASE && style()->visibility() == VISIBLE)
+    if(paintAction == PaintActionBackground && style()->visibility() == VISIBLE)
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
     RenderObject *child = firstChild();
     while( child ) {
 	if ( child->isTableSection() || child == tCaption )
-	    child->paint( p, _x, _y, _w, _h, _tx, _ty, paintPhase );
+	    child->paint( p, _x, _y, _w, _h, _tx, _ty, paintAction );
 	child = child->nextSibling();
     }
 
@@ -1140,7 +1140,7 @@ int RenderTableSection::layoutRows( int toAdd )
 
 
 void RenderTableSection::paint( QPainter *p, int x, int y, int w, int h,
-				int tx, int ty, int paintPhase)
+				int tx, int ty, PaintAction paintAction)
 {
     unsigned int totalRows = grid.size();
     unsigned int totalCols = table()->columns.size();
@@ -1189,7 +1189,7 @@ void RenderTableSection::paint( QPainter *p, int x, int y, int w, int h,
 #ifdef TABLE_PRINT
 		kdDebug( 6040 ) << "painting cell " << r << "/" << c << endl;
 #endif
-		cell->paint( p, x, y, w, h, tx, ty, paintPhase);
+		cell->paint( p, x, y, w, h, tx, ty, paintAction);
 	    }
 	}
     }
@@ -1487,7 +1487,7 @@ static void outlineBox(QPainter *p, int _tx, int _ty, int w, int h)
 #endif
 
 void RenderTableCell::paint(QPainter *p, int _x, int _y,
-                                       int _w, int _h, int _tx, int _ty, int paintPhase)
+                                       int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
 
 #ifdef TABLE_PRINT
@@ -1503,7 +1503,7 @@ void RenderTableCell::paint(QPainter *p, int _x, int _y,
     if(!overhangingContents() && ((_ty-_topExtra > _y + _h)
         || (_ty + m_height+_topExtra+_bottomExtra < _y))) return;
 
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 
 #ifdef BOX_DEBUG
     ::outlineBox( p, _tx, _ty - _topExtra, width(), height() + borderTopExtra() + borderBottomExtra());

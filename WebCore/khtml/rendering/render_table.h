@@ -98,7 +98,7 @@ public:
     virtual int overflowWidth() const { return width(); }
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
     virtual void paint( QPainter *, int x, int y, int w, int h,
-                        int tx, int ty, int paintPhase);
+                        int tx, int ty, PaintAction paintAction);
     virtual void layout();
     virtual void calcMinMaxWidth();
     virtual void close();
@@ -233,7 +233,7 @@ public:
     }
 
     virtual void paint( QPainter *, int x, int y, int w, int h,
-                        int tx, int ty, int paintPhase);
+                        int tx, int ty, PaintAction paintAction);
 
     int numRows() const { return grid.size(); }
     int getBaseline(int row) {return grid[row].baseLine;}
@@ -333,7 +333,7 @@ public:
     void setCellPercentageHeight(int h);
     
     virtual void paint( QPainter* p, int x, int y,
-                        int w, int h, int tx, int ty, int paintPhase);
+                        int w, int h, int tx, int ty, PaintAction paintAction);
 
     virtual void close();
 

@@ -253,7 +253,7 @@ void RenderListItem::layout( )
 }
 
 void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                           int _tx, int _ty, int paintPhase)
+                           int _tx, int _ty, PaintAction paintAction)
 {
     if ( !m_height )
         return;
@@ -261,15 +261,15 @@ void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << nodeName().string() << "(LI)::paint()" << endl;
 #endif
-    RenderFlow::paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    RenderFlow::paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderListItem::paintObject(QPainter *p, int _x, int _y,
-                                    int _w, int _h, int _tx, int _ty, int paintPhase)
+                                    int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
     // ### this should scale with the font size in the body... possible?
     //m_marker->printIcon(p, _tx, _ty);
-    RenderFlow::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    RenderFlow::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 // -----------------------------------------------------------
@@ -307,9 +307,9 @@ void RenderListMarker::setStyle(RenderStyle *s)
 
 
 void RenderListMarker::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                             int _tx, int _ty, int paintPhase)
+                             int _tx, int _ty, PaintAction paintAction)
 {
-    if (paintPhase != FOREGROUND_PHASE)
+    if (paintAction != PaintActionForeground)
         return;
     
     if (style()->visibility() != VISIBLE)  return;
@@ -323,11 +323,11 @@ void RenderListMarker::paint(QPainter *p, int _x, int _y, int _w, int _h,
     if(shouldPaintBackgroundOrBorder()) 
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderListMarker::paintObject(QPainter *p, int, int _y,
-                                    int, int _h, int _tx, int _ty, int paintPhase)
+                                    int, int _h, int _tx, int _ty, PaintAction paintAction)
 {
     if (style()->visibility() != VISIBLE) return;
 

@@ -91,9 +91,9 @@ public:
     // overrides RenderObject
 
     virtual void paint(QPainter *, int x, int y, int w, int h,
-                       int tx, int ty, int paintPhase);
+                       int tx, int ty, PaintAction paintAction);
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
-                             int tx, int ty, int paintPhase);
+                             int tx, int ty, PaintAction paintAction);
     void paintFloats(QPainter *p, int _x, int _y,
                      int _w, int _h, int _tx, int _ty);
             

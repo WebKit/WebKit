@@ -49,9 +49,9 @@ public:
     // list-style-position: inside
 
     virtual void paint(QPainter *p, int x, int y, int w, int h,
-                       int xoff, int yoff, int paintPhase);
+                       int xoff, int yoff, PaintAction paintAction);
     virtual void paintObject(QPainter *p, int x, int y, int w, int h,
-                             int xoff, int yoff, int paintPhase);
+                             int xoff, int yoff, PaintAction paintAction);
     virtual void layout( );
     virtual void calcMinMaxWidth();
 
@@ -95,9 +95,9 @@ public:
     void calcListValue();
     
     virtual void paint(QPainter *p, int x, int y, int w, int h,
-                       int xoff, int yoff, int paintPhase);
+                       int xoff, int yoff, PaintAction paintAction);
     virtual void paintObject(QPainter *p, int x, int y, int w, int h,
-                       int xoff, int yoff, int paintPhase);
+                       int xoff, int yoff, PaintAction paintAction);
 
     virtual void layout( );
     virtual void calcMinMaxWidth();

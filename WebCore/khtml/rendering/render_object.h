@@ -52,20 +52,21 @@ class RenderArena;
 #define KHTMLAssert( x )
 #endif
 
-// The painting of a layer occurs in three distinct phases.  Each phase involves
-// a recursive descent into the layer's render objects.
+/*
+ *	The painting of a layer occurs in three distinct phases.  Each phase involves
+ *	a recursive descent into the layer's render objects. The first phase is the background phase.
+ *	The backgrounds and borders of all blocks are painted.  Inlines are not painted at all.
+ *	Floats must paint above block backgrounds but entirely below inline content that can overlap them.
+ *	In the foreground phase, all inlines are fully painted.  Inline replaced elements will get all
+ *	three phases invoked on them during this phase.
+ */
 
-// The first phase is the background phase.  The backgrounds and borders of all blocks
-// are painted.  Inlines are not painted at all.
-#define BACKGROUND_PHASE			0 
-
-// Floats must paint above block backgrounds but entirely below inline content that can
-// overlap them.  
-#define FLOAT_PHASE					1
-
-// In the foreground phase, all inlines are fully painted.  Inline replaced elements will
-// get all three phases invoked on them during this phase.
-#define FOREGROUND_PHASE			2
+typedef enum {
+    PaintActionBackground = 0,
+    PaintActionFloat,
+    PaintActionForeground,
+    PaintActionSelection
+} PaintAction;
 
 namespace DOM {
     class HTMLAreaElementImpl;
@@ -256,11 +257,11 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     virtual void paint(QPainter *p, int x, int y, int w, int h, int tx, int ty, 
-                       int paintPhase);
+                       PaintAction paintAction);
 
     virtual void paintObject( QPainter */*p*/, int /*x*/, int /*y*/,
                               int /*w*/, int /*h*/, int /*tx*/, int /*ty*/,
-                              int paintPhase /*paintPhase*/) {}
+                              PaintAction paintAction /*paintAction*/) {}
     void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
     void paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
 

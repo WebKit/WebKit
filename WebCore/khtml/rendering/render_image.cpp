@@ -180,9 +180,9 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
     }
 }
 
-void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, int /*_h*/, int _tx, int _ty, int paintPhase)
+void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, int /*_h*/, int _tx, int _ty, PaintAction paintAction)
 {
-    if (paintPhase != FOREGROUND_PHASE)
+    if (paintAction != PaintActionForeground)
         return;
         
     int cWidth = contentWidth();

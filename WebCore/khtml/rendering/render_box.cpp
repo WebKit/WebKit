@@ -153,7 +153,7 @@ int RenderBox::height() const
 // --------------------- painting stuff -------------------------------
 
 void RenderBox::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                      int _tx, int _ty, int paintPhase)
+                      int _tx, int _ty, PaintAction paintAction)
 {
     _tx += m_x;
     _ty += m_y;
@@ -162,7 +162,7 @@ void RenderBox::paint(QPainter *p, int _x, int _y, int _w, int _h,
     RenderObject *child = firstChild();
     while(child != 0)
     {
-        child->paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+        child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
         child = child->nextSibling();
     }
 }

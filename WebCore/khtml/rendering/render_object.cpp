@@ -723,9 +723,9 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
 }
 
 void RenderObject::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty,
-                         int paintPhase)
+                         PaintAction paintAction)
 {
-    paintObject(p, x, y, w, h, tx, ty, paintPhase);
+    paintObject(p, x, y, w, h, tx, ty, paintAction);
 }
 
 void RenderObject::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)

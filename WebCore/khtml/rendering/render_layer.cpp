@@ -340,15 +340,15 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
         elt->layer->renderer()->paint(p, x, y, w, h,
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                       elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                      BACKGROUND_PHASE);
+                                      PaintActionBackground);
         elt->layer->renderer()->paint(p, x, y, w, h,
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                       elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                      FLOAT_PHASE);
+                                      PaintActionFloat);
         elt->layer->renderer()->paint(p, x, y, w, h,
                                       elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                       elt->absBounds.y() - elt->layer->renderer()->yPos(),
-                                      FOREGROUND_PHASE);
+                                      PaintActionForeground);
     }
     
     if (currRect != paintRect)

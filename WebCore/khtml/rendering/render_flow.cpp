@@ -125,7 +125,7 @@ RenderFlow::~RenderFlow()
 }
 
 void RenderFlow::paint(QPainter *p, int _x, int _y, int _w, int _h,
-                       int _tx, int _ty, int paintPhase)
+                       int _tx, int _ty, PaintAction paintAction)
 {
 
 #ifdef DEBUG_LAYOUT
@@ -150,11 +150,11 @@ void RenderFlow::paint(QPainter *p, int _x, int _y, int _w, int _h,
         }
     }
 
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderFlow::paintObject(QPainter *p, int _x, int _y,
-                             int _w, int _h, int _tx, int _ty, int paintPhase)
+                             int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
 
 #ifdef DEBUG_LAYOUT
@@ -162,7 +162,7 @@ void RenderFlow::paintObject(QPainter *p, int _x, int _y,
 #endif
     
     // 1. paint background, borders etc
-    if (paintPhase == BACKGROUND_PHASE && 
+    if (paintAction == PaintActionBackground && 
         shouldPaintBackgroundOrBorder() && !isInline() && style()->visibility() == VISIBLE )
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
@@ -171,15 +171,15 @@ void RenderFlow::paintObject(QPainter *p, int _x, int _y,
     while(child != 0)
     {
         if(!child->layer() && !child->isFloating())
-            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
         child = child->nextSibling();
     }
 
     // 3. paint floats.
-    if (paintPhase == FLOAT_PHASE)
+    if (paintAction == PaintActionFloat)
         paintFloats(p, _x, _y, _w, _h, _tx, _ty);
     
-    if (paintPhase == BACKGROUND_PHASE &&
+    if (paintAction == PaintActionBackground &&
         !isInline() && !childrenInline() && style()->outlineWidth())
         paintOutline(p, _tx, _ty, width(), height(), style());
 
@@ -210,15 +210,15 @@ void RenderFlow::paintFloats(QPainter *p, int _x, int _y,
             r->node->paint(p, _x, _y, _w, _h, 
                            _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
                            _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                           BACKGROUND_PHASE);
+                           PaintActionBackground);
             r->node->paint(p, _x, _y, _w, _h, 
                            _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
                            _ty + r->startY - r->node->yPos() + r->node->marginTop(),
-                           FLOAT_PHASE);
+                           PaintActionFloat);
             r->node->paint(p, _x, _y, _w, _h, 
                            _tx + r->left - r->node->xPos() + r->node->marginLeft(), 
                            _ty + r->startY - r->node->yPos() + r->node->marginTop(), 
-                           FOREGROUND_PHASE);
+                           PaintActionForeground);
         }
     }
 }

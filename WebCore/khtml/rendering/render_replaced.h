@@ -44,9 +44,9 @@ public:
     virtual void calcMinMaxWidth();
 
     virtual void paint(QPainter *, int x, int y, int w, int h,
-                       int tx, int ty, int paintPhase);
+                       int tx, int ty, PaintAction paintAction);
     virtual void paintObject(QPainter *p, int x, int y, int w, int h, int tx, int ty,
-                             int paintPhase) = 0;
+                             PaintAction paintAction) = 0;
 
     virtual short intrinsicWidth() const { return m_intrinsicWidth; }
     virtual int intrinsicHeight() const { return m_intrinsicHeight; }
@@ -74,7 +74,7 @@ public:
     virtual void setStyle(RenderStyle *style);
 
     virtual void paintObject(QPainter *p, int x, int y, int w, int h, int tx, int ty,
-                             int paintPhase);
+                             PaintAction paintAction);
 
     virtual bool isWidget() const { return true; };
 

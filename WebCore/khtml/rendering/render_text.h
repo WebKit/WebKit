@@ -139,9 +139,9 @@ public:
     virtual bool isRendered() const { return true; }
 
     virtual void paint(QPainter *, int x, int y, int w, int h,
-                       int tx, int ty, int paintPhase);
+                       int tx, int ty, PaintAction paintAction);
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
-                             int tx, int ty, int paintPhase);
+                             int tx, int ty, PaintAction paintAction);
 
     void deleteSlaves(RenderArena *renderArena = 0);
     virtual void detach(RenderArena* renderArena);

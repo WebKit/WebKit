@@ -187,26 +187,26 @@ bool RenderRoot::absolutePosition(int &xPos, int &yPos, bool f)
 }
 
 void RenderRoot::paint(QPainter *p, int _x, int _y, int _w, int _h, int _tx, int _ty,
-                       int paintPhase)
+                       PaintAction paintAction)
 {
-    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+    paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
 void RenderRoot::paintObject(QPainter *p, int _x, int _y,
-                             int _w, int _h, int _tx, int _ty, int paintPhase)
+                             int _w, int _h, int _tx, int _ty, PaintAction paintAction)
 {
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     // 1. paint background, borders etc
-    if (paintPhase == BACKGROUND_PHASE && shouldPaintBackgroundOrBorder() && !isInline())
+    if (paintAction == PaintActionBackground && shouldPaintBackgroundOrBorder() && !isInline())
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
     // 2. paint contents
     RenderObject *child = firstChild();
     while(child != 0) {
         if(!child->layer() && !child->isFloating()) {
-            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintPhase);
+            child->paint(p, _x, _y, _w, _h, _tx, _ty, paintAction);
         }
         child = child->nextSibling();
     }
@@ -218,7 +218,7 @@ void RenderRoot::paintObject(QPainter *p, int _x, int _y,
     }
     
     // 3. paint floats.
-    if (paintPhase == FLOAT_PHASE)
+    if (paintAction == PaintActionFloat)
         paintFloats(p, _x, _y, _w, _h, _tx, _ty);
         
 #ifdef BOX_DEBUG
