@@ -275,7 +275,11 @@
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     ASSERT(!_private->committed);
-    ASSERT (_private->request != request);
+
+    // This happens once at the start.
+    if (_private->request == request) {
+        return;
+    }
     
     WebResourceRequest *oldRequest = _private->request;
     

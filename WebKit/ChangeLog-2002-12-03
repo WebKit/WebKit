@@ -1,3 +1,9 @@
+2002-11-08  Darin Adler  <darin@apple.com>
+
+	- fixed an assert I am seeing a lot
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setRequest:]): Oops.
+
 2002-11-08  Richard Williamson   <rjw@apple.com>
 
         Solved missing glyph problem, but it's very slow, so
