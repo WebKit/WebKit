@@ -43,6 +43,7 @@ using khtml::RenderFileButton;
 using khtml::RenderFormElement;
 using khtml::RenderLineEdit;
 using khtml::RenderSelect;
+using khtml::RenderSlider;
 using khtml::RenderTextArea;
 using khtml::RenderWidget;
 using khtml::RenderScrollMediator;
@@ -67,6 +68,7 @@ enum FunctionNumber {
     slotReturnPressed,
     slotSelected,
     slotSelectionChanged,
+    slotSliderValueChanged,
     slotStateChanged,
     slotSubmitFormAgain,
     slotTextChanged,
@@ -105,6 +107,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotReturnPressed, (), RenderLineEdit)
     CASE(slotSelected, (int), RenderSelect)
     CASE(slotSelectionChanged, (), RenderSelect)
+    CASE(slotSliderValueChanged, (), RenderSlider)
     CASE(slotStateChanged, (int), RenderCheckBox)
     CASE(slotTextChanged, (), RenderTextArea)
     CASE(slotValueChanged, (int), RenderScrollMediator)
@@ -188,6 +191,7 @@ void KWQSlot::call() const
         CASE(slotRedirect, KHTMLPart, slotRedirect)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)
+        CASE(slotSliderValueChanged, RenderSlider, slotSliderValueChanged)
         CASE(slotSubmitFormAgain, KHTMLPart, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)

@@ -44,6 +44,9 @@ namespace khtml
     class RenderLineEdit;
     class RenderRadioButton;
     class RenderFileButton;
+#if APPLE_CHANGES
+    class RenderSlider;
+#endif
 
     typedef QValueList<QCString> encodingList;
 }
@@ -261,6 +264,7 @@ class HTMLInputElementImpl : public HTMLGenericFormElementImpl
 
 #if APPLE_CHANGES
     friend class HTMLSelectElementImpl;
+    friend class khtml::RenderSlider;
 #endif
 
 public:
@@ -276,8 +280,11 @@ public:
         FILE,
         HIDDEN,
         IMAGE,
-        BUTTON,
-        SEARCH
+        BUTTON
+#if APPLE_CHANGES
+        ,SEARCH,
+        RANGE
+#endif
     };
 
     HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);

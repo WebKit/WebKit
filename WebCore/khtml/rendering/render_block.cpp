@@ -457,7 +457,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     // Expand our intrinsic height to encompass floats.
     int toAdd = borderBottom() + paddingBottom();
-    if (style()->hidesOverflow() && m_layer)
+    if (style()->includeScrollbarSize() && m_layer)
         toAdd += m_layer->horizontalScrollbarHeight();
     if ( hasOverhangingFloats() && (isInlineBlockOrInlineTable() || isFloatingOrPositioned() || style()->hidesOverflow() ||
                                     (parent() && parent()->isFlexibleBox())) )
@@ -533,7 +533,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         xPos = m_width - paddingRight() - borderRight();
 
     int toAdd = borderBottom() + paddingBottom();
-    if (style()->hidesOverflow() && m_layer)
+    if (style()->includeScrollbarSize() && m_layer)
         toAdd += m_layer->horizontalScrollbarHeight();
     
     m_height = borderTop() + paddingTop();
@@ -1590,7 +1590,7 @@ int
 RenderBlock::rightOffset() const
 {
     int right = m_width - borderRight() - paddingRight();
-    if (style()->scrollsOverflow() && m_layer)
+    if (style()->includeScrollbarSize() && m_layer)
         right -= m_layer->verticalScrollbarWidth();
     return right;
 }

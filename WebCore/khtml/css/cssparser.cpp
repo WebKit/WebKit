@@ -513,9 +513,9 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
-    case CSS_PROP_OVERFLOW:             // visible | hidden | scroll | auto | inherit
+    case CSS_PROP_OVERFLOW:             // visible | hidden | scroll | auto | marquee | overlay | inherit
 	if (id == CSS_VAL_VISIBLE || id == CSS_VAL_HIDDEN || id == CSS_VAL_SCROLL || id == CSS_VAL_AUTO ||
-            id == CSS_VAL_MARQUEE)
+            id == CSS_VAL_MARQUEE || id == CSS_VAL_OVERLAY)
 	    valid_primitive = true;
 	break;
 

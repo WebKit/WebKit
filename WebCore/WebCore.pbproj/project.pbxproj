@@ -531,7 +531,7 @@
 				BE91FC8D06133666005E3790,
 				BE91FC9206133697005E3790,
 				832556E5061DF155007B8054,
-				832557C4061E3172007B8054,
+				BC86FB8F061F5C23006BB822,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -812,6 +812,7 @@
 				BE91FC8E06133666005E3790,
 				BE91FC9106133697005E3790,
 				832556E7061DF161007B8054,
+				BC86FB90061F5C23006BB822,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2365,6 +2366,34 @@
 		};
 		BC80A6960468B78100DBCC9C = {
 			fileRef = BC80A6940468B78100DBCC9C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC86FB8D061F5C23006BB822 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = KWQSlider.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC86FB8E061F5C23006BB822 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = KWQSlider.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC86FB8F061F5C23006BB822 = {
+			fileRef = BC86FB8D061F5C23006BB822;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC86FB90061F5C23006BB822 = {
+			fileRef = BC86FB8E061F5C23006BB822;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10175,6 +10204,8 @@
 				F58786B602DE3B8601EA4122,
 				F587853002DE375901EA4122,
 				F58786B702DE3B8601EA4122,
+				BC86FB8D061F5C23006BB822,
+				BC86FB8E061F5C23006BB822,
 				F58786B802DE3B8601EA4122,
 				F58786B902DE3B8601EA4122,
 				F58784CA02DE375901EA4122,

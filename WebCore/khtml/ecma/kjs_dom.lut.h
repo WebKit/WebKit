@@ -82,7 +82,7 @@ const struct HashEntry DOMNodeTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "onchange", DOMNode::OnChange, DontDelete, 0, &DOMNodeTableEntries[61] },
    { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "oninput", DOMNode::OnInput, DontDelete, 0, 0 },
    { "onmouseout", DOMNode::OnMouseOut, DontDelete, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "onblur", DOMNode::OnBlur, DontDelete, 0, &DOMNodeTableEntries[64] },

@@ -340,7 +340,7 @@ public:
 // Random visual rendering model attributes. Not inherited.
 
 enum EOverflow {
-    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OMARQUEE
+    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OMARQUEE, OOVERLAY
 };
 
 enum EVerticalAlign {
@@ -976,7 +976,9 @@ public:
 
     EOverflow overflow() const { return  noninherited_flags._overflow; }
     bool hidesOverflow() const { return overflow() != OVISIBLE; }
-    bool scrollsOverflow() const { return overflow() == OSCROLL || overflow() == OAUTO; }
+    bool hasAutoScrollbars() const { return overflow() == OAUTO || overflow() == OOVERLAY; }
+    bool scrollsOverflow() const { return overflow() == OSCROLL || hasAutoScrollbars(); }
+    bool includeScrollbarSize() const { return overflow() == OSCROLL || overflow() == OAUTO; }
 
     EVisibility visibility() const { return inherited_flags._visibility; }
     EVerticalAlign verticalAlign() const { return  noninherited_flags._vertical_align; }

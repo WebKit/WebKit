@@ -492,6 +492,25 @@ protected:
 
 // -------------------------------------------------------------------------
 
+#if APPLE_CHANGES
+class RenderSlider : public RenderFormElement
+{
+public:
+    RenderSlider(DOM::HTMLInputElementImpl *element);
+    
+    DOM::HTMLInputElementImpl* element() const
+    { return static_cast<DOM::HTMLInputElementImpl*>(RenderObject::element()); }
+
+    virtual const char *renderName() const { return "RenderSlider"; }
+    virtual bool canHaveIntrinsicMargins() const { return true; }
+    virtual void calcMinMaxWidth();
+    virtual void updateFromElement();
+
+protected slots:
+    void slotSliderValueChanged();
+};
+#endif
+
 }; //namespace
 
 #endif

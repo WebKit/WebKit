@@ -82,6 +82,7 @@ public:
 #if APPLE_CHANGES
         SEARCH_EVENT,
 #endif
+        INPUT_EVENT,
         // Keyboard events
 	KEYDOWN_EVENT,
 	KEYUP_EVENT,

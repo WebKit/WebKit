@@ -231,6 +231,8 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
     else if (type == "search")
 	return SEARCH_EVENT;
 #endif
+    else if (type == "input")
+        return INPUT_EVENT;
     else if (type == "textInput")
 	return TEXTINPUT_EVENT;
     else if (type == "readystatechange")
@@ -313,6 +315,8 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
         case SEARCH_EVENT:
             return "search";
 #endif
+        case INPUT_EVENT:
+            return "input";
 	// khtml extensions
 	case KHTML_DBLCLICK_EVENT:
             return "dblclick";

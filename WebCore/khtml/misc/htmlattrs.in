@@ -72,10 +72,12 @@ longdesc
 loop
 marginheight
 marginwidth
+max
 maxlength
 mayscript
 media
 method
+min
 multiple
 name
 nohref
@@ -92,6 +94,7 @@ oncontextmenu
 ondblclick
 onerror
 onfocus
+oninput
 onkeydown
 onkeypress
 onkeyup
@@ -116,6 +119,7 @@ plain
 pluginpage
 pluginspage
 pluginurl
+precision
 profile
 prompt
 readonly

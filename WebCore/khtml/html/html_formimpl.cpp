@@ -1218,8 +1218,12 @@ void HTMLInputElementImpl::setType(const DOMString& t)
         newType = BUTTON;
     else if ( strcasecmp( t, "khtml_isindex" ) == 0 )
         newType = ISINDEX;
+#if APPLE_CHANGES
     else if ( strcasecmp( t, "search" ) == 0 )
         newType = SEARCH;
+    else if ( strcasecmp( t, "range" ) == 0 )
+        newType = RANGE;
+#endif
     else
         newType = TEXT;
 
@@ -1252,7 +1256,10 @@ DOMString HTMLInputElementImpl::type() const
     case HIDDEN: return "hidden";
     case IMAGE: return "image";
     case BUTTON: return "button";
+#if APPLE_CHANGES
     case SEARCH: return "search";
+    case RANGE: return "range";
+#endif
     default: return "";
     }
 }
@@ -1334,7 +1341,10 @@ void HTMLInputElementImpl::click()
         case IMAGE:
         case ISINDEX:
         case PASSWORD:
+#if APPLE_CHANGES
         case SEARCH:
+        case RANGE:
+#endif
         case TEXT:
             HTMLGenericFormElementImpl::click();
             break;
@@ -1349,7 +1359,9 @@ void HTMLInputElementImpl::accessKeyAction()
             break;
         case TEXT:
         case PASSWORD:
+#if APPLE_CHANGES
         case SEARCH:
+#endif
         case ISINDEX:
             focus();
             break;
@@ -1360,6 +1372,9 @@ void HTMLInputElementImpl::accessKeyAction()
         case IMAGE:
         case BUTTON:
         case FILE:
+#if APPLE_CHANGES
+        case RANGE:
+#endif
             // focus and click
             focus();
             click();
@@ -1453,8 +1468,12 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+    case ATTR_ONINPUT:
+        setHTMLEventListener(EventImpl::INPUT_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
 #if APPLE_CHANGES
-    // Search field attributes all just cause updateFromElement to be called through style
+    // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     case ATTR_ONSEARCH:
         setHTMLEventListener(EventImpl::SEARCH_EVENT,
@@ -1466,6 +1485,9 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_AUTOSAVE:
     case ATTR_INCREMENTAL:
     case ATTR_PLACEHOLDER:
+    case ATTR_MIN:
+    case ATTR_MAX:
+    case ATTR_PRECISION:
         setChanged();
         break;
 #endif
@@ -1480,7 +1502,10 @@ bool HTMLInputElementImpl::rendererIsNeeded(RenderStyle *style)
     {
     case TEXT:
     case PASSWORD:
+#if APPLE_CHANGES
     case SEARCH:
+    case RANGE:
+#endif
     case ISINDEX:
     case CHECKBOX:
     case RADIO:
@@ -1501,7 +1526,9 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     {
     case TEXT:
     case PASSWORD:
+#if APPLE_CHANGES
     case SEARCH:
+#endif
     case ISINDEX:  return new (arena) RenderLineEdit(this);
     case CHECKBOX: return new (arena) RenderCheckBox(this);
     case RADIO:    return new (arena) RenderRadioButton(this);
@@ -1510,6 +1537,9 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case RESET:    return new (arena) RenderResetButton(this);
     case FILE:     return new (arena) RenderFileButton(this);
     case BUTTON:   return new (arena) RenderPushButton(this);
+#if APPLE_CHANGES
+    case RANGE:    return new (arena) RenderSlider(this);
+#endif
     case HIDDEN:   break;
     }
     assert(false);
@@ -1614,7 +1644,10 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
     switch (m_type) {
         case HIDDEN:
         case TEXT:
+#if APPLE_CHANGES
         case SEARCH:
+        case RANGE:
+#endif
         case PASSWORD:
             // always successful
             encoding += fixUpfromUnicode(codec, value().string());

@@ -47,6 +47,7 @@
 
 #if APPLE_CHANGES
 #include "KWQFileButton.h"
+#include "KWQSlider.h"
 #endif
 
 using namespace khtml;
@@ -711,6 +712,9 @@ void RenderLineEdit::slotTextChanged(const QString &string)
     QString newText = string.isNull() ? "" : string;
     newText.replace(backslashAsCurrencySymbol(), '\\');
     element()->m_value = newText;
+    
+    // Fire the "input" DOM event.
+    element()->dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);
 }
 
 void RenderLineEdit::select()
@@ -1624,5 +1628,79 @@ void RenderTextArea::select()
 }
 
 // ---------------------------------------------------------------------------
+
+#if APPLE_CHANGES
+RenderSlider::RenderSlider(HTMLInputElementImpl* element)
+:RenderFormElement(element)
+{
+    QSlider* slider = new QSlider();
+    setQWidget(slider);
+    connect(slider, SIGNAL(sliderValueChanged()), this, SLOT(slotSliderValueChanged()));
+}
+
+void RenderSlider::calcMinMaxWidth()
+{
+    KHTMLAssert(!minMaxKnown());
+    
+    // Let the widget tell us how big it wants to be.
+    QSize s(widget()->sizeHint());
+    bool widthSet = !style()->width().isVariable();
+    bool heightSet = !style()->height().isVariable();
+    if (heightSet && !widthSet) {
+        // Flip the intrinsic dimensions.
+        int barLength = s.width();
+        s = QSize(s.height(), barLength);
+    }
+    setIntrinsicWidth(s.width());
+    setIntrinsicHeight(s.height());
+    
+    RenderFormElement::calcMinMaxWidth();
+}
+
+void RenderSlider::updateFromElement()
+{
+    const DOMString& value = element()->value();
+    const DOMString& min = element()->getAttribute(ATTR_MIN);
+    const DOMString& max = element()->getAttribute(ATTR_MAX);
+    const DOMString& precision = element()->getAttribute(ATTR_PRECISION);
+    
+    double minVal = min.isNull() ? 0.0 : min.string().toDouble();
+    double maxVal = max.isNull() ? 100.0 : max.string().toDouble();
+    minVal = kMin(minVal, maxVal); // Make sure the range is sane.
+    
+    double val = value.isNull() ? (maxVal + minVal)/2.0 : value.string().toDouble();
+    val = kMax(minVal, kMin(val, maxVal)); // Make sure val is within min/max.
+    
+    if (strcasecmp(precision, "float"))
+        // Force integer value.
+        element()->m_value = DOMString(QString::number((int)(val+0.5)));
+    else
+        element()->m_value = DOMString(QString::number(val));
+
+    QSlider* slider = (QSlider*)widget();
+     
+    slider->setMinValue(minVal);
+    slider->setMaxValue(maxVal);
+    slider->setValue(val);
+
+    RenderFormElement::updateFromElement();
+}
+
+void RenderSlider::slotSliderValueChanged()
+{
+    QSlider* slider = (QSlider*)widget();
+    double val = slider->value();
+    const DOMString& precision = element()->getAttribute(ATTR_PRECISION);
+    if (strcasecmp(precision, "float"))
+        // Force integer value.
+        element()->m_value = DOMString(QString::number((int)(val+0.5)));
+    else
+        element()->m_value = DOMString(QString::number(val));
+    
+    // Fire the "input" DOM event.
+    element()->dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);
+}
+
+#endif
 
 #include "render_form.moc"

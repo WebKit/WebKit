@@ -640,17 +640,20 @@ RenderLayer::updateScrollInfoAfterLayout()
     }
 
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (m_object->style()->overflow() == OAUTO) &&
+    bool scrollbarsChanged = (m_object->style()->hasAutoScrollbars()) &&
         (haveHorizontalBar != needHorizontalBar || haveVerticalBar != needVerticalBar);    
     if (scrollbarsChanged) {
         setHasHorizontalScrollbar(needHorizontalBar);
         setHasVerticalScrollbar(needVerticalBar);
        
-        m_object->setNeedsLayout(true);
-	if (m_object->isRenderBlock())
-            static_cast<RenderBlock*>(m_object)->layoutBlock(true);
-        else
-            m_object->layout();
+        if (m_object->style()->overflow() == OAUTO) {
+            // Our proprietary overflow: overlay value doesn't trigger a layout.
+            m_object->setNeedsLayout(true);
+            if (m_object->isRenderBlock())
+                static_cast<RenderBlock*>(m_object)->layoutBlock(true);
+            else
+                m_object->layout();
+        }
 	return;
     }
 
