@@ -1,5 +1,14 @@
 2003-05-08  Richard Williamson  <rjw@apple.com>
 
+	Fixed 3146161.  Use the AppKit to render complex
+        text in the simple string drawing method.
+
+        Reviewed by John.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+
+2003-05-08  Richard Williamson  <rjw@apple.com>
+
         Make representations without intrinsic titles return nil.
         
         Reviewed by John.
