@@ -531,6 +531,7 @@
 				9321275D0606724900B62302,
 				BE91FC8D06133666005E3790,
 				BE91FC9206133697005E3790,
+				832556E5061DF155007B8054,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -808,9 +809,9 @@
 				BE9CB64E05F942CB00514D9C,
 				BE9CB65A05F9546800514D9C,
 				BEF7EEA305FF8F0D009717EE,
-				845563E606014A9800609194,
 				BE91FC8E06133666005E3790,
 				BE91FC9106133697005E3790,
+				832556E7061DF161007B8054,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1184,25 +1185,49 @@
 //702
 //703
 //704
+//830
+//831
+//832
+//833
+//834
+		832556E4061DF155007B8054 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = DOMExtensions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		832556E5061DF155007B8054 = {
+			fileRef = 832556E4061DF155007B8054;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		832556E6061DF161007B8054 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = DOMHTML.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		832556E7061DF161007B8054 = {
+			fileRef = 832556E6061DF161007B8054;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//830
+//831
+//832
+//833
+//834
 //840
 //841
 //842
 //843
 //844
-		845563E406014A9800609194 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = HTMLDOM.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		845563E606014A9800609194 = {
-			fileRef = 845563E406014A9800609194;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		848A320F057E688B001A2362 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -6458,20 +6483,21 @@
 		F565A2700352410501A80180 = {
 			children = (
 				BE94EB6305EFFE6B0032DCB5,
+				BE94EB6505EFFE6B0032DCB5,
 				932127520606724900B62302,
 				932127550606724900B62302,
+				BE9CB65805F9546800514D9C,
 				932127500606724900B62302,
+				832556E4061DF155007B8054,
 				9321274E0606724900B62302,
+				832556E6061DF161007B8054,
+				BE94EB6405EFFE6B0032DCB5,
+				BE9CB64D05F942CB00514D9C,
 				9321274F0606724900B62302,
 				932127510606724900B62302,
 				932127530606724900B62302,
 				932127540606724900B62302,
-				BE94EB6505EFFE6B0032DCB5,
 				BE16801805EDB91A00B87935,
-				BE9CB65805F9546800514D9C,
-				BE94EB6405EFFE6B0032DCB5,
-				BE9CB64D05F942CB00514D9C,
-				845563E406014A9800609194,
 			);
 			isa = PBXGroup;
 			name = DOM;

@@ -1,3 +1,14 @@
+2004-04-02  Chris Blumenberg  <cblu@apple.com>
+
+	Moved the DOM extensions to their own headers
+
+        Reviewed by kocienda.
+
+        * DOM.subproj/DOM.h: changed from WebCore
+        * DOM.subproj/DOMHTML.h: ditto
+        * WebKit.pbproj/project.pbxproj: added DOMExtensions.h
+        * copy-webcore-files-to-webkit: copy DOMExtensions.h
+
 === Safari-135 ===
 
 2004-04-01  Richard Williamson   <rjw@apple.com>

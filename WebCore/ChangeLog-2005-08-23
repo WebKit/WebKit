@@ -1,3 +1,15 @@
+2004-04-02  Chris Blumenberg  <cblu@apple.com>
+
+	Moved the DOM extensions to their own headers
+
+        Reviewed by kocienda.
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/DOM.h: include DOMExtensions.h
+        * kwq/DOMExtensions.h: Added.
+        * kwq/DOMHTML.h: moved extensions to DOMExtensions.h
+        * kwq/DOMHTML.mm: Renamed to match header
+
 2004-04-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3610662, rendering sometimes doesn't update in response to mouse events that change style.

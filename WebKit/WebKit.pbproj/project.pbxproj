@@ -347,6 +347,7 @@
 				9321290D06068E3100B62302,
 				51C16E090613868100A1657B,
 				51C16E4106138EB400A1657B,
+				83255720061DF71E007B8054,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2008,6 +2009,24 @@
 			path = /System/Library/PrivateFrameworks/SecurityNssAsn1.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
+		};
+		8325571F061DF71E007B8054 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DOMExtensions.h;
+			path = DOM.subproj/DOMExtensions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		83255720061DF71E007B8054 = {
+			fileRef = 8325571F061DF71E007B8054;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
 		};
 		833987810543012D00EE146E = {
 			fileEncoding = 4;
@@ -3768,6 +3787,7 @@
 				932128FE06068E3100B62302,
 				932128FF06068E3100B62302,
 				9321290006068E3100B62302,
+				8325571F061DF71E007B8054,
 				9321290106068E3100B62302,
 				9321290206068E3100B62302,
 				9321290306068E3100B62302,

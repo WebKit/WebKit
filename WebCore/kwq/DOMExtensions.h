@@ -16,32 +16,26 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+                                        * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+                                        * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-// Important Note:
-// Though this file appears as an exported header from WebKit, the
-// version you should edit is in WebCore. The WebKit version is copied
-// to WebKit during the build process.
-
-//=========================================================================
-//=========================================================================
-//=========================================================================
-
-#import "DOMCore.h"
-#import "DOMViews.h"
-#import "DOMEvents.h"
-#import "DOMStylesheets.h"
-#import "DOMCSS.h"
-#import "DOMTraversal.h"
-#import "DOMRange.h"
 #import "DOMHTML.h"
-#import "DOMExtensions.h"
+
+@interface DOMNode (DOMHTMLExtensions)
+- (NSString *)HTMLString; // FIXME: Should this be renamed innerHTML or outerHTML? Is this the same as innerHTML?
+@end
+
+@interface DOMElement (DOMHTMLExtensions)
+- (NSString *)innerHTML;
+- (void)setInnerHTML:(NSString *)innerHTML;
+- (NSString *)innerText;
+- (void)setInnerText:(NSString *)innerText;
+- (DOMHTMLCollection *)children;
+- (NSString *)contentEditable;
+- (void)setContentEditable:(NSString *)contentEditable;
+- (BOOL)isContentEditable;
+@end

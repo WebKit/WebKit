@@ -17,6 +17,7 @@ my %WebCoreFiles = (
     'kwq/DOMRange.h' => 'DOM.subproj/DOMRange.h',
     'kwq/DOMHTML.h' => 'DOM.subproj/DOMHTML.h',
     'kwq/DOM-compat.h' => 'DOM.subproj/DOM-compat.h',
+    'kwq/DOMExtensions.h' => 'DOM.subproj/DOMExtensions.h',
 );
 
 my %JavaScriptCoreFiles = (
