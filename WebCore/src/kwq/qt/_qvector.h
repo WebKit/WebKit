@@ -115,7 +115,7 @@ inline ostream &operator<<(ostream &o, const QVector<T> &p)
     o << "]";
 
     return o;
-    }
+}
 #endif
 
 

@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -72,9 +73,34 @@ public:
     type *top()	    const		{ return (type *)QGList::cfirst(); }
 	  operator type *() const	{ return (type *)QGList::cfirst(); }
     type *current() const		{ return (type *)QGList::cfirst(); }
+    
 private:
     void  deleteItem( Item d ) { if ( del_item ) delete (type *)d; }
 };
+
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &o, const QStack<T> &p)
+{
+    QStack<T> copy = QStack<T>(p);
+    int count = p.count();
+
+    o << "QStack: [size: " << 
+    count <<
+    "; items: ";
+
+    for (int i = 0; i < count; i++) {
+        o << *(copy.pop());
+        if (i < count - 1) {
+            o << ", ";
+        }
+    }
+
+    o << "]";
+
+    return o;
+}
+#endif
 
 
 #endif // QSTACK_H

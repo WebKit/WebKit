@@ -5,8 +5,14 @@ qt/qcstring-test
 qt/qrect-test
 qt/qarray-test
 qt/qmap-test
+qt/qdict-test
+qt/qptrdict-test
+qt/qstack-test
 qt/qvaluelist-test
 qt/qstringlist-test
 qt/qlist-test
 qt/qregexp-test
 qt/qchar-test
+qt/qdate-test
+qt/qtime-test
+qt/qdatetime-test
