@@ -99,10 +99,10 @@ void RenderLayer::updateLayerPosition()
         static_cast<RenderBox*>(m_object)->relativePositionOffset(x, y);
     
     setPos(x,y);
-    
-    if (m_object->overflowWidth() > m_object->width())
+
+    if (m_object->overflowWidth() > m_width)
         setWidth(m_object->overflowWidth());
-    if (m_object->overflowHeight() > m_object->height())
+    if (m_object->overflowHeight() > m_height)
         setHeight(m_object->overflowHeight());
 }
 

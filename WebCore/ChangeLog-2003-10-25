@@ -1,5 +1,19 @@
 2003-02-19  David Hyatt  <hyatt@apple.com>
 
+	Update layers to not fix their positions during setLayouted.
+	Inline container() within render_object.cpp so setLayouted can
+	use it inline.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        (RenderObject::container):
+
+2003-02-19  David Hyatt  <hyatt@apple.com>
+
 	Just chain BidiRuns using an internal next ptr and dump the
 	use of QPtrList (which has to malloc internal nodes to wrap
 	each run).
