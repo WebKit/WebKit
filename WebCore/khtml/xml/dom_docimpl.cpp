@@ -1882,7 +1882,6 @@ void DocumentImpl::recalcStyleSelector()
 
             // Get the current preferred styleset.  This is the
             // set of sheets that will be enabled.
-            QString sheetUsed = view()->part()->d->m_sheetUsed;
             if ( n->id() == ID_LINK )
                 sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
             else
@@ -1894,22 +1893,20 @@ void DocumentImpl::recalcStyleSelector()
             // PERSISTENT).
             if (!enabledViaScript && !title.isEmpty()) {
                 // Yes, we have a title.
-                if (sheetUsed.isEmpty()) {
+                if (m_preferredStylesheetSet.isEmpty()) {
                     // No preferred set has been established.  If
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
                     QString rel = e->getAttribute( ATTR_REL ).string();
-                    if (n->id() == ID_STYLE || !rel.contains("alternate")) {
-                        sheetUsed = view()->part()->d->m_sheetUsed = title;
-                        m_preferredStylesheetSet = sheetUsed;
-                    }
+                    if (n->id() == ID_STYLE || !rel.contains("alternate"))
+                        m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
                 }
                       
                 if (!m_availableSheets.contains( title ) )
                     m_availableSheets.append( title );
                 
-                if (title != sheetUsed)
+                if (title != m_preferredStylesheetSet)
                     sheet = 0;
             }
         }

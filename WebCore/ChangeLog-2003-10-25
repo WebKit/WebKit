@@ -1,3 +1,13 @@
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3086321, stylesheets not loading if titles are
+	specified.  Note that 4 of the pages on the PLT were
+	affected by this, so I fully expect a slight performance
+	degradation (the boost from the regression was artificial).
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyleSelector):
+
 2002-11-12  Richard Williamson  <rjw@apple.com>
 
         Oops, removed debugging.
