@@ -56,13 +56,13 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 - (WebDataRequestParameters *)_webDataRequestParametersForReading
 {
     Class theClass = [WebDataRequestParameters class];
-    return [WebProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:NO];
+    return [NSURLProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:NO];
 }
 
 - (WebDataRequestParameters *)_webDataRequestParametersForWriting
 {
     Class theClass = [WebDataRequestParameters class];
-    return [WebProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:YES];
+    return [NSURLProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:YES];
 }
 
 - (NSData *)_webDataRequestData
@@ -129,7 +129,7 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 
 + (void)load
 {
-    [WebProtocol registerClass: [self class]];
+    [NSURLProtocol registerClass: [self class]];
 }
 
 + (BOOL)canHandleURL:(NSURL *)theURL

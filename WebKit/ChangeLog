@@ -1,3 +1,17 @@
+2003-04-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Name change from WebProtocol to NSURLProtocol.
+        No functional changes.
+
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (-[NSURLRequest _webDataRequestParametersForReading]):
+        (-[NSURLRequest _webDataRequestParametersForWriting]):
+        (+[WebDataProtocol load]):
+        * WebView.subproj/WebFrame.m:
+
 2003-04-14  Trey Matteson  <trey@apple.com>
 
 	3009051 - Find on Page stops (once) at end of page, should wrap automatically	WebKit

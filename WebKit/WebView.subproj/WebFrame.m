@@ -24,7 +24,6 @@
 
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebProtocol.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
 
