@@ -1,3 +1,29 @@
+2004-08-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+	Rolled in changes from the latest KJS sources that support additional 
+	Number.prototype functions. 
+
+	Specifically this patch covers the follow parts of the ECMA 3 spec:
+  	15.7.4.5, 15.7.4.6, and 15.7.4.7 
+	
+	Fixes:
+	<rdar://problem/3663716> missing Number.toFixed (and toPrecision, toExponential)
+	<rdar://problem/3749492> missing Number.toPrecision prototype implementation
+	<rdar://problem/3749591> missing Number.toExponential prototype implementation
+
+        * kjs/identifier.h: Added toFixed, toPrecision, and toExponential to the
+	list of supported identifiers (a macro).
+        * kjs/number_object.cpp: Implemented support for toFixed(), toPrecision(),
+	and toExponential(). 
+        (NumberPrototypeImp::NumberPrototypeImp):
+        (NumberProtoFuncImp::call):
+        * kjs/number_object.h: Added property names for toFixed, toPrecision,
+	and toExponential. 
+        (KJS::NumberProtoFuncImp::):
+        * tests/mozilla/expected.html: Update results.
+
 2004-08-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

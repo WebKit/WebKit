@@ -62,7 +62,7 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
-    enum { ToString, ToLocaleString, ValueOf };
+    enum { ToString, ToLocaleString, ValueOf, ToFixed, ToExponential, ToPrecision };
   private:
     int id;
   };

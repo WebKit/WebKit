@@ -114,6 +114,9 @@ namespace KJS {
         macro(prototype) \
         macro(toLocaleString) \
         macro(toString) \
+        macro(toFixed) \
+        macro(toExponential) \
+        macro(toPrecision) \
         macro(valueOf)
 
     // Define external global variables for all property names above (and one more).
