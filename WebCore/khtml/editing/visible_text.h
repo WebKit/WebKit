@@ -81,8 +81,9 @@ private:
     bool m_handledChildren;
     
     // End of the range.
-    DOM::NodeImpl *m_endNode;
+    DOM::NodeImpl *m_endContainer;
     long m_endOffset;
+    DOM::NodeImpl *m_pastEndNode;
     
     // The current text and its position, in the form to be returned from the iterator.
     DOM::NodeImpl *m_positionNode;

@@ -1151,22 +1151,13 @@ void RangeImpl::surroundContents( NodeImpl *newParent, int &exceptioncode )
     // ### check if node would end up with a child node of a type not allowed by the type of node
 
     // BAD_BOUNDARYPOINTS_ERR: Raised if the Range partially selects a non-text node.
-    if (m_startContainer->nodeType() != Node::TEXT_NODE &&
-        m_startContainer->nodeType() != Node::COMMENT_NODE &&
-        m_startContainer->nodeType() != Node::CDATA_SECTION_NODE &&
-        m_startContainer->nodeType() != Node::PROCESSING_INSTRUCTION_NODE) {
-
+    if (!offsetInCharacters(m_startContainer->nodeType())) {
         if (m_startOffset > 0 && m_startOffset < m_startContainer->childNodeCount()) {
             exceptioncode = RangeException::BAD_BOUNDARYPOINTS_ERR + RangeException::_EXCEPTION_OFFSET;
             return;
         }
     }
-
-    if (m_endContainer->nodeType() != Node::TEXT_NODE &&
-        m_endContainer->nodeType() != Node::COMMENT_NODE &&
-        m_endContainer->nodeType() != Node::CDATA_SECTION_NODE &&
-        m_endContainer->nodeType() != Node::PROCESSING_INSTRUCTION_NODE) {
-
+    if (!offsetInCharacters(m_endContainer->nodeType())) {
         if (m_endOffset > 0 && m_endOffset < m_endContainer->childNodeCount()) {
             exceptioncode = RangeException::BAD_BOUNDARYPOINTS_ERR + RangeException::_EXCEPTION_OFFSET;
             return;
@@ -1274,13 +1265,10 @@ bool RangeImpl::containedByReadOnly() const
 
 NodeImpl *RangeImpl::startNode() const
 {
-    switch (m_startContainer->nodeType()) {
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-            return m_startContainer;
-    }
+    if (!m_startContainer)
+        return 0;
+    if (offsetInCharacters(m_startContainer->nodeType()))
+        return m_startContainer;
     NodeImpl *child = m_startContainer->childNode(m_startOffset);
     if (child)
         return child;
@@ -1289,13 +1277,10 @@ NodeImpl *RangeImpl::startNode() const
 
 NodeImpl *RangeImpl::pastEndNode() const
 {
-    switch (m_endContainer->nodeType()) {
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-            return m_endContainer->traverseNextSibling();
-    }
+    if (!m_endContainer)
+        return 0;
+    if (offsetInCharacters(m_endContainer->nodeType()))
+        return m_endContainer->traverseNextSibling();
     NodeImpl *child = m_endContainer->childNode(m_endOffset);
     if (child)
         return child;

@@ -1,3 +1,24 @@
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3808073> find is broken
+
+        * khtml/misc/khtml_text_operations.h: Add m_pastEndNode and change name of m_endNode to
+        m_endContainer to more accurately reflect its purpose.
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::TextIterator): Use pastEnd() for end of iteration, and change to
+        handle bad ranges better: just return an empty iterator instead of raising an exception.
+        (khtml::TextIterator::advance): Change to use m_pastEndNode to detect the end of iteration.
+        (khtml::TextIterator::handleTextNode): Update for name change.
+        (khtml::TextIterator::handleTextBox): Ditto.
+        (khtml::TextIterator::range): Handle case where m_endContainer is nil.
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::surroundContents): Use offsetInCharacters.
+        (DOM::RangeImpl::startNode): Added check for nil start container and use offsetInCharacters.
+        (DOM::RangeImpl::pastEndNode): Ditto.
+
 2004-09-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3781290> REGRESSION (Mail): Crash in ReplaceSelectionCommandImpl attaching file to new message

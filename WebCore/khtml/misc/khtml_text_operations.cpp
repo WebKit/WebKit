@@ -37,6 +37,7 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::offsetInCharacters;
 using DOM::Range;
+using DOM::RangeImpl;
 
 namespace khtml {
 
@@ -70,42 +71,38 @@ private:
     CircularSearchBuffer &operator=(const CircularSearchBuffer&);
 };
 
-TextIterator::TextIterator() : m_positionNode(0)
+TextIterator::TextIterator() : m_endContainer(0), m_endOffset(0), m_positionNode(0)
 {
 }
 
-TextIterator::TextIterator(const Range &r)
+TextIterator::TextIterator(const Range &r) : m_endContainer(0), m_endOffset(0), m_positionNode(0)
 {
-    if (r.isNull()) {
-        m_positionNode = 0;
+    const RangeImpl *ri = r.handle();
+    if (!ri)
         return;
-    }
 
-    NodeImpl *startNode = r.startContainer().handle();
-    NodeImpl *endNode = r.endContainer().handle();
-    long startOffset = r.startOffset();
-    long endOffset = r.endOffset();
+    int exceptionCode = 0;
 
-    if (!offsetInCharacters(startNode->nodeType())) {
-        if (startOffset >= 0 && startOffset < static_cast<long>(startNode->childNodeCount())) {
-            startNode = startNode->childNode(startOffset);
-            startOffset = 0;
-        }
-    }
-    if (!offsetInCharacters(endNode->nodeType())) {
-        if (endOffset > 0 && endOffset <= static_cast<long>(endNode->childNodeCount())) {
-            endNode = endNode->childNode(endOffset - 1);
-            endOffset = endNode->hasChildNodes() ? endNode->childNodeCount() : endNode->maxOffset();
-        }
-    }
+    NodeImpl *startContainer = ri->startContainer(exceptionCode);
+    long startOffset = ri->startOffset(exceptionCode);
+    NodeImpl *endContainer = ri->endContainer(exceptionCode);
+    long endOffset = ri->endOffset(exceptionCode);
 
-    m_node = startNode;
-    m_offset = startOffset;
+    if (exceptionCode != 0)
+        return;
+
+    m_endContainer = endContainer;
+    m_endOffset = endOffset;
+
+    m_node = ri->startNode();
+    if (m_node == 0)
+        return;
+
+    m_offset = m_node == startContainer ? startOffset : 0;
     m_handledNode = false;
     m_handledChildren = false;
 
-    m_endNode = endNode;
-    m_endOffset = endOffset;
+    m_pastEndNode = ri->pastEndNode();
 
     m_needAnotherNewline = false;
     m_textBox = 0;
@@ -116,7 +113,7 @@ TextIterator::TextIterator(const Range &r)
 
 #ifndef NDEBUG
     // Need this just because of the assert.
-    m_positionNode = startNode;
+    m_positionNode = m_node;
 #endif
 
     advance();
@@ -144,7 +141,7 @@ void TextIterator::advance()
         }
     }
 
-    while (m_node) {
+    while (m_node && m_node != m_pastEndNode) {
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
@@ -164,10 +161,6 @@ void TextIterator::advance()
             }
         }
 
-        if (m_node == m_endNode) {
-            return;
-        }
-
         NodeImpl *next = m_handledChildren ? 0 : m_node->firstChild();
         m_offset = 0;
         if (!next) {
@@ -178,9 +171,6 @@ void TextIterator::advance()
                 if (m_positionNode) {
                     m_handledNode = true;
                     m_handledChildren = true;
-                    return;
-                }
-                if (m_node == m_endNode) {
                     return;
                 }
                 next = m_node->nextSibling();
@@ -211,7 +201,7 @@ bool TextIterator::handleTextNode()
             return false;
         }
         long strLength = str.length();
-        long end = (m_node == m_endNode) ? m_endOffset : LONG_MAX;
+        long end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
         long runEnd = kMin(strLength, end);
 
         m_positionNode = m_node;
@@ -240,7 +230,7 @@ void TextIterator::handleTextBox()
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
     DOMString str = m_node->nodeValue();
     long start = m_offset;
-    long end = (m_node == m_endNode) ? m_endOffset : LONG_MAX;
+    long end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
     for (; m_textBox; m_textBox = m_textBox->nextTextBox()) {
         long textBoxStart = m_textBox->m_start;
         long runStart = kMax(textBoxStart, start);
@@ -423,11 +413,11 @@ void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, long textStartOffs
 
 Range TextIterator::range() const
 {
-    if (m_positionNode) {
+    if (m_positionNode)
         return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
-    } else {
-        return Range(m_endNode, m_endOffset, m_endNode, m_endOffset);
-    }
+    if (m_endContainer)
+        return Range(m_endContainer, m_endOffset, m_endContainer, m_endOffset);
+    return Range();
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
