@@ -1,3 +1,21 @@
+2003-11-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for this bug:
+
+	<rdar://problem/3480023>: Links don't work if there's a colon in the URL
+
+	The colon in the URL was confusing KURL. I modified some checks in
+	KURL so that its search for schemes stops when a non-scheme 
+	character is found rather than when a path end segment character
+	is found.
+
+        * kwq/KWQKURL.mm: Added a new Colon class to the table of characters.
+        (isSchemeCharOrColon): New helper.
+        (KURL::KURL): Call on new helper when looking for a scheme.
+        (KURL::findHostnameInHierarchicalURL): Ditto.
+
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 2931829, lines with hyphens should break on the hyphens.  Match WinIE's behavior of
