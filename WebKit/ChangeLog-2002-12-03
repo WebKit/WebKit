@@ -1,3 +1,11 @@
+2002-12-03  Darin Adler  <darin@apple.com>
+
+	Reviewed by Maciej.
+
+        * WebView.subproj/WebView.m: Fixed a pair of strings that conflict.
+        * English.lproj/Localizable.strings: Regenerated.
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2002-12-02  Trey Matteson  <trey@apple.com>
 
 	Refined bookmark notifications to be more detailed.  We now have added, removed,

@@ -52,8 +52,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 #define WebErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebErrorCannotFindPlugin description")
 #define WebErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebErrorCannotLoadPlugin description")
 #define WebErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebErrorJavaUnavailable description")
-#define WebErrorDescriptionDownloadDecodingFailedToComplete UI_STRING("Download decoding failed", "WebErrorDownloadDecodingFailedToComplete description")
-#define WebErrorDescriptionDownloadDecodingFailedMidStream UI_STRING("Download decoding failed", "WebErrorDownloadDecodingFailedMidStream description")
+#define WebErrorDescriptionDownloadDecodingFailedToComplete UI_STRING_KEY("Download decoding failed", "Download decoding failed (at end)", "WebErrorDownloadDecodingFailedToComplete description")
+#define WebErrorDescriptionDownloadDecodingFailedMidStream UI_STRING_KEY("Download decoding failed", "Download decoding failed (midstream)", "WebErrorDownloadDecodingFailedMidStream description")
 
 + (void)initialize
 {
