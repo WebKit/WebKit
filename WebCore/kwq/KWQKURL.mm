@@ -232,6 +232,23 @@ KURL::KURL(const QString &url) :
     }
 }
 
+KURL::KURL(NSURL *url)
+{
+    if (url) {
+        // FIXME: Use new CF API to access URL bytes when that API is available
+        const char *bytes = [[url absoluteString] cString];
+        if (bytes[0] == '/') {
+            QString fileUrl = QString("file:") + bytes;
+            parse(fileUrl.ascii(), &fileUrl);
+        } else {
+            parse(bytes, NULL);
+        }
+    }
+    else {
+        parse("", NULL);
+    }
+}
+
 KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 {
     // Allow at lest absolute URLs to resolve against an empty URL.

@@ -112,7 +112,7 @@ enum FrameBorderStyle {
 
 - (void)setParent:(WebCoreBridge *)parent;
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload
+- (void)openURL:(NSURL *)URL reload:(BOOL)reload
     contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified
     pageCache:(NSDictionary *)pageCache;
 - (void)setEncoding:(NSString *)encoding userChosen:(BOOL)userChosen;
@@ -234,10 +234,10 @@ enum FrameBorderStyle {
 - (NSString *)generateFrameName;
 - (void)frameDetached;
 
-- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
-- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values;
 
-- (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name;
+- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
 - (void)showWindow;
 
 - (NSString *)userAgentForURL:(NSString *)URL;

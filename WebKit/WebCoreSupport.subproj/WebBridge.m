@@ -27,6 +27,7 @@
 #import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
@@ -113,14 +114,14 @@
     return [[_frame findFrameNamed:name] _bridge];
 }
 
-- (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name
+- (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
 {
     ASSERT(_frame != nil);
 
     NSMutableURLRequest *request = nil;
 
-    if (URL != nil && [URL length] > 0) {
-	request = [NSMutableURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+    if (URL != nil && [URL _web_URLStringLength] > 0) {
+	request = [NSMutableURLRequest requestWithURL:URL];
 	[request setHTTPReferrer:[self referrer]];
     }
 
@@ -427,7 +428,7 @@
     [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
@@ -435,14 +436,14 @@
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
 
-    [_frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
+    [_frame _loadURL:URL referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];
     }
 }
 
-- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
@@ -450,7 +451,7 @@
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
 
-    [_frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
+    [_frame _postWithURL:URL referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];

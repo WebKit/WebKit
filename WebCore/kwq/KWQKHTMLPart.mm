@@ -182,7 +182,7 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.url().getNSString()
+    [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:NO
               target:nil
@@ -194,7 +194,7 @@ bool KWQKHTMLPart::openURL(const KURL &url)
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    [_bridge loadURL:url.url().getNSString()
+    [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
               target:args.frameName.getNSString()
@@ -203,10 +203,10 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
           formValues:nil];
 }
 
-void KWQKHTMLPart::didNotOpenURL(const QString &URL)
+void KWQKHTMLPart::didNotOpenURL(const KURL &URL)
 {
     if (_submittedFormURL == URL) {
-        _submittedFormURL = QString::null;
+        _submittedFormURL = KURL();
     }
 }
 
@@ -501,8 +501,6 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
-    QString URLString = url.url();    
-    
     // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
     // Eventually when we find a better fix we can remove this altogether.
     WebCoreBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
@@ -520,14 +518,14 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         // This flag prevents these from happening.
         // Note that the flag is reset in setView()
         // since this part may get reused if it is pulled from the b/f cache.
-        if (_submittedFormURL == URLString) {
+        if (_submittedFormURL == url) {
             return;
         }
-        _submittedFormURL = URLString;
+        _submittedFormURL = url;
     }
 
     if (!args.doPost()) {
-        [_bridge loadURL:URLString.getNSString()
+        [_bridge loadURL:url.getNSURL()
 	        referrer:[_bridge referrer] 
                   reload:args.reload
   	          target:args.frameName.getNSString()
@@ -536,7 +534,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
               formValues:_formValuesAboutToBeSubmitted];
     } else {
         ASSERT(args.contentType().startsWith("Content-Type: "));
-        [_bridge postWithURL:URLString.getNSString()
+        [_bridge postWithURL:url.getNSURL()
 	            referrer:[_bridge referrer] 
                       target:args.frameName.getNSString()
                         data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
@@ -582,7 +580,7 @@ void KHTMLPart::frameDetached()
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [_bridge loadURL:url.url().getNSString()
+    [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
               target:args.frameName.getNSString()
@@ -654,7 +652,7 @@ void KWQKHTMLPart::setView(KHTMLView *view)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    _submittedFormURL = QString::null;
+    _submittedFormURL = KURL();
 }
 
 KHTMLView *KWQKHTMLPart::view() const

@@ -1,3 +1,25 @@
+2003-07-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * kwq/KWQKHTMLPart.h: _submittedFormURL is now a KURL, not a QString
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL): Now uses NSURL in API instead of NSString
+        (KWQKHTMLPart::openURLRequest): Ditto
+        (KWQKHTMLPart::didNotOpenURL): Ditto
+        (KWQKHTMLPart::submitForm): Ditto. Plus update _submittedFormURL usages.
+        (KWQKHTMLPart::urlSelected): Ditto
+        (KWQKHTMLPart::setView): Ditto
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Now uses NSURL in API instead of NSString
+        * kwq/KWQKURL.h: Added constructor that takes an NSURL
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Ditto.
+        * kwq/WebCoreBridge.h: Updated bridge APIs to use NSURL instead of NSString
+	in several places.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]): Ditto
+
 2003-07-16  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

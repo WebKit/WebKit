@@ -86,7 +86,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	bridge = [_part->bridge() findFrameNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
-		[bridge loadURL:url.url().getNSString() referrer:[_part->bridge() referrer] reload:urlArgs.reload target:nil triggeringEvent:nil form:nil formValues:nil];
+		[bridge loadURL:url.getNSURL() referrer:[_part->bridge() referrer] reload:urlArgs.reload target:nil triggeringEvent:nil form:nil formValues:nil];
 	    }
 	    [bridge focusWindow];
 	    *partResult = [bridge part];
@@ -94,7 +94,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	}
     }
 
-    bridge = [_part->bridge() createWindowWithURL:url.url().getNSString() frameName:frameName];
+    bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];

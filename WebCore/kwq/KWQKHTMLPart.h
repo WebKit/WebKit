@@ -89,7 +89,7 @@ public:
 
     virtual bool openURL(const KURL &);
     virtual bool closeURL();
-    void didNotOpenURL(const QString &);
+    void didNotOpenURL(const KURL &);
     
     void openURLRequest(const KURL &, const KParts::URLArgs &);
     void submitForm(const KURL &, const KParts::URLArgs &);
@@ -251,7 +251,7 @@ private:
     static NSEvent *_currentEvent;
     static NSResponder *_firstResponderAtMouseDownTime;
 
-    QString _submittedFormURL;
+    KURL _submittedFormURL;
 
     NSMutableDictionary *_formValuesAboutToBeSubmitted;
     WebCoreDOMElement *_formAboutToBeSubmitted;

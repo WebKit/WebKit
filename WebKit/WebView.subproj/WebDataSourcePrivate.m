@@ -24,6 +24,7 @@
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
@@ -523,18 +524,19 @@
         [frame _transitionToCommitted: pageCache];
 
         NSURL *baseURL = [[self request] _webDataRequestBaseURL];        
-        NSString *urlString;
+        NSURL *URL = nil;
         
         if (baseURL)
-            urlString = [baseURL absoluteString];
+            URL = baseURL;
         else
-            urlString = [[_private->response URL] absoluteString];
+            URL = [_private->response URL];
             
         // WebCore will crash if given an empty URL here.
-        if ([urlString length] == 0)
-            urlString = @"about:blank";
+        // FIXME: could use CFURL, when available, range API to save an allocation here
+        if (!URL || [URL _web_URLStringLength] == 0)
+            URL = [NSURL URLWithString:@"about:blank"];
 
-        [[self _bridge] openURL:urlString
+        [[self _bridge] openURL:URL
                          reload:reload 
                     contentType:[_private->response MIMEType]
                         refresh:[headers objectForKey:@"Refresh"]

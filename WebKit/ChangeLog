@@ -1,3 +1,15 @@
+2003-07-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): Now uses NSURL in API instead of NSString
+        (-[WebBridge loadURL:referrer:reload:target:triggeringEvent:form:formValues:]): Ditto
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): Ditto
+        * WebKit.pbproj/project.pbxproj: Added WebNSURLExtras file
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady:]): Now uses NSURL in API instead of NSString
+
 2003-07-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3315952:  Add support for <IMG> in attributed string conversion.

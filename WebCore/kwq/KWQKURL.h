@@ -46,6 +46,7 @@ public:
     KURL(const char *);
     KURL(const KURL &, const QString &, const QTextCodec * = 0);
     KURL(const QString &);
+    KURL(NSURL *);
     
     bool isEmpty() const { return urlString.isEmpty(); } 
     bool isMalformed() const { return !m_isValid; }
