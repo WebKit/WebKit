@@ -14,16 +14,16 @@ layer at (0,0) size 800x600
             RenderText {TEXT} at (0,0) size 39x18
               text run at (0,0) width 39: "there"
       RenderBlock {P} at (0,68) size 784x18
-        RenderInline {FONT} at (0,0) size 37x18
-          RenderInline {B} at (0,0) size 37x18
-            RenderText {TEXT} at (0,0) size 37x18
-              text run at (0,0) width 37: "hello"
+        RenderInline {B} at (0,0) size 37x18
+          RenderText {TEXT} at (0,0) size 37x18
+            text run at (0,0) width 37: "hello"
       RenderBlock {P} at (0,102) size 784x18
-        RenderInline {FONT} at (0,0) size 39x18
-          RenderInline {B} at (0,0) size 39x18
-            RenderText {TEXT} at (0,0) size 39x18
-              text run at (0,0) width 39: "there"
+        RenderInline {B} at (0,0) size 39x18
+          RenderText {TEXT} at (0,0) size 39x18
+            text run at (0,0) width 39: "there"
+          RenderInline {SPAN} at (0,0) size 0x18
+            RenderInline {B} at (0,0) size 0x18
 selection is CARET:
-start:      position 5 of child 1 {TEXT} of child 1 {B} of child 1 {FONT} of child 5 {P} of root {BODY}
-upstream:   position 5 of child 1 {TEXT} of child 1 {B} of child 1 {FONT} of child 5 {P} of root {BODY}
-downstream: position 5 of child 1 {TEXT} of child 1 {B} of child 1 {FONT} of child 5 {P} of root {BODY}
+start:      position 5 of child 1 {TEXT} of child 1 {B} of child 5 {P} of root {BODY}
+upstream:   position 5 of child 1 {TEXT} of child 1 {B} of child 5 {P} of root {BODY}
+downstream: position 1 of child 1 {B} of child 2 {SPAN} of child 1 {B} of child 5 {P} of root {BODY}

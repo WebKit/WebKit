@@ -1,4 +1,37 @@
+2005-02-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/3951178> REGRESSION (Mail): blank line lost after pasting as quotation
+        
+        Problem was that the blank line after the selection was getting deleted incorrectly since the
+        paste code thought this was an unneeded placeholder rather than a placeholder outside of the
+        selection.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Now calls findBlockPlaceholder.
+        (khtml::CompositeEditCommand::findBlockPlaceholder): Moved finding code formerly in 
+        removeBlockPlaceholderIfNeeded to this new helper.
+        (khtml::ReplaceSelectionCommand::doApply): Do not delete placeholder up front. Call 
+        findBlockPlaceholder, and delete it later if needed in the already-existing cleanup step.
+        * khtml/editing/htmlediting.h: Add new function.
+
+        New layout test.
+
+        * layout-tests/editing/pasteboard/paste-text-017-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-017.html: Added.
+
+        Result changed for the better.
+
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt
+
 2005-02-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4004305> REGRESSION (Mail): Command-right-arrow on wrapped text goes to end of previous line
 
         Reviewed by Darin.
 
