@@ -1,3 +1,13 @@
+2004-09-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3647229> Safari does not play inline Windows Media Content on some sites (miggy.net and ministryofsound.com)
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:MIMEType:attributeKeys:attributeValues:]): set the plug-in before calling setting the attributes, so we can avoid passing certain attributes to the WMP plug-in that cause it to crash
+
 2004-09-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3781290> REGRESSION (Mail): Crash in ReplaceSelectionCommandImpl attaching file to new message

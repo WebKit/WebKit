@@ -26,19 +26,19 @@
 {
     [super initWithFrame:frame];
 
+    // load the plug-in if it is not already loaded
+    if (![thePlugin load]) {
+        [self release];
+        return nil;
+    }
+    [self setPlugin:thePlugin];    
+    
     URL = [theURL retain];
     
     [self setMIMEType:MIME];
     [self setBaseURL:theBaseURL];
     [self setAttributeKeys:keys andValues:values];
     [self setMode:NP_EMBED];
-    
-    // load the plug-in if it is not already loaded
-    if (![thePlugin load]){
-        return nil;
-    }
-
-    [self setPlugin:thePlugin];
 
     return self;
 }

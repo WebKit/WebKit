@@ -1041,6 +1041,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         cValues = (char **)malloc([values count] * sizeof(char *));
     }
 
+    BOOL isWMP = [[[plugin bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
+    
     unsigned i;
     unsigned count = [keys count];
     for (i = 0; i < count; i++) {
@@ -1050,6 +1052,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             specifiedHeight = [value intValue];
         } else if ([key _web_isCaseInsensitiveEqualToString:@"width"]) {
             specifiedWidth = [value intValue];
+        }
+        // Avoid Window Media Player crash when these attributes are present.
+        if (isWMP && ([key _web_isCaseInsensitiveEqualToString:@"SAMIStyle"] || [key _web_isCaseInsensitiveEqualToString:@"SAMILang"])) {
+            continue;
         }
         cAttributes[argsCount] = strdup([key UTF8String]);
         cValues[argsCount] = strdup([value UTF8String]);

@@ -734,7 +734,7 @@ void RenderPartObject::updateWidget()
           if (child->id() == ID_PARAM) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
               QString name = p->name().lower();
-              if (url.isEmpty() && (name == "src" || name == "movie"|| name == "code")) {
+              if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
                   url = p->value();
               }
               if (serviceType.isEmpty() && name == "type") {
@@ -779,6 +779,8 @@ void RenderPartObject::updateWidget()
               serviceType = "video/quicktime";
           } else if (o->classId.contains("166B1BCA-3F9C-11CF-8075-444553540000")) {
               serviceType = "application/x-director";
+          } else if (o->classId.contains("6BF52A52-394A-11d3-B153-00C04F79FAA6")) {
+              serviceType = "application/x-mplayer2";
           } else {
               // We have a clsid, means this is activex (Niko)
               serviceType = "application/x-activex-handler";
