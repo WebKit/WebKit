@@ -96,6 +96,9 @@ using namespace DOM;
 #include <CoreServices/CoreServices.h>
 #endif
 
+using khtml::RenderText;
+using khtml::TextSlaveArray;
+
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
     {
@@ -3969,64 +3972,64 @@ void KHTMLPart::customEvent( QCustomEvent *event )
 }
 
 #if APPLE_CHANGES
-static bool firstSlaveAt (khtml::RenderObject *renderNode, int y, DOM::NodeImpl*&startNode, long &startOffset)
+
+static bool firstSlaveAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
 {
-    bool found = false;
-    
-    if (renderNode == 0)
-        return false;
-        
-    if (renderNode->isText()){
-        khtml::RenderText *textRenderer =  static_cast<khtml::RenderText *>(renderNode);
-        khtml::TextSlaveArray slaves = textRenderer->textSlaves();
-        for (int i = 0; i < (int)slaves.count(); i++){
-            if (slaves[i]->m_y == y){
-                startNode = textRenderer->element();
-                startOffset = slaves[i]->m_start;
-                return true;
+    for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
+        if (n->isText()) {
+            RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
+            TextSlaveArray slaves = textRenderer->textSlaves();
+            for (unsigned i = 0; i != slaves.count(); i++) {
+                if (slaves[i]->m_y == y) {
+                    startNode = textRenderer->element();
+                    startOffset = slaves[i]->m_start;
+                    return true;
+                }
             }
         }
+        
+        if (firstSlaveAt(n->firstChild(), y, startNode, startOffset)) {
+            return true;
+        }
     }
-    
-    found =  firstSlaveAt(renderNode->firstChild(), y, startNode, startOffset);
-    if (found)
-        return found;
-
-    found = firstSlaveAt(renderNode->nextSibling(), y, startNode, startOffset);
-    if (found)
-        return found;
     
     return false;
 }
 
-static bool lastSlaveAt (khtml::RenderObject *renderNode, int y, DOM::NodeImpl*&endNode, long &endOffset)
+static bool lastSlaveAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset)
 {
-    bool found = false;
-    
-    if (renderNode == 0)
+    RenderObject *n = renderNode;
+    if (!n) {
         return false;
-        
-    found = lastSlaveAt(renderNode->nextSibling(), y, endNode, endOffset);
-    if (found)
-        return found;
-    
-    found =  lastSlaveAt(renderNode->firstChild(), y, endNode, endOffset);
-    if (found)
-        return found;
-
-    if (renderNode->isText()){
-        khtml::RenderText *textRenderer =  static_cast<khtml::RenderText *>(renderNode);
-        khtml::TextSlaveArray slaves = textRenderer->textSlaves();
-        for (int i = (int)slaves.count()-1; i >= 0; i--){
-            if (slaves[i]->m_y == y){
-                endNode = textRenderer->element();
-                endOffset = slaves[i]->m_start + slaves[i]->m_len;
-                return true;
-            }
-        }
+    }
+    RenderObject *next;
+    while ((next = n->nextSibling())) {
+        n = next;
     }
     
-    return false;
+    while (1) {
+        if (lastSlaveAt(n->firstChild(), y, endNode, endOffset)) {
+            return true;
+        }
+    
+        if (n->isText()) {
+            RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
+            TextSlaveArray slaves = textRenderer->textSlaves();
+            for (int i = (int)slaves.count()-1; i >= 0; i--) {
+                if (slaves[i]->m_y == y) {
+                    endNode = textRenderer->element();
+                    endOffset = slaves[i]->m_start + slaves[i]->m_len;
+                    return true;
+                }
+            }
+        }
+        
+        if (n == renderNode) {
+            return false;
+        }
+        
+        n = n->previousSibling();
+    }
 }
 
 static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, DOM::Node &_startNode, long &startOffset, DOM::Node &_endNode, long &endOffset)
