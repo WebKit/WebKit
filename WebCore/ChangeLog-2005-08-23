@@ -1,5 +1,25 @@
 2003-02-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed 3166693 -- REGRESSION: infinite recursion in makeFirstResponder while tabbing as page loaded
+
+        Because we now deliver blur events, we are triggering a handler on this page that changes focus.
+        It triggered an infinite loop because setFocus kept setting the focus back to a text field, which
+        then changed the focus to its editor. The fix was to make QWidget::setFocus smarter about editors.
+
+        * kwq/KWQTextField.mm: (-[KWQTextField becomeFirstResponder]): Don't do any changes in responder until
+        after calling KWQKHTMLPart::setDocumentFocus, since that can change focus away. If it does, return NO.
+
+        * kwq/KWQWidget.h: Add hasFocus, remove virtual from setFocus and clearFocus.
+        * kwq/KWQWidget.mm:
+        (QWidget::hasFocus): Added. Moved code to check if a particular view is first responder here.
+        Here's the bug fix too, check if the first responder is this widget's view's editor, and if so return true.
+        (QWidget::setFocus): Do nothing if this widget already has focus.
+        (QWidget::clearFocus): Do nothing if this widget does not have focus.
+
+2003-02-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed 3161953 -- crash in KWQListImpl, DOM::CSSStyleSheetImpl::isLoading on XML page

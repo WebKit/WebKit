@@ -186,8 +186,32 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
     }
 }
 
+bool QWidget::hasFocus() const
+{
+    NSView *view = getView();
+    NSWindow *window = [view window];
+    NSView *firstResponder = [window firstResponder];
+    if (!firstResponder) {
+        return false;
+    }
+    if (firstResponder == view) {
+        return true;
+    }
+    if ([view isKindOfClass:[NSControl class]]) {
+        NSControl *control = view;
+        if (firstResponder == [control currentEditor]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void QWidget::setFocus()
 {
+    if (hasFocus()) {
+        return;
+    }
+    
     // KHTML will call setFocus on us without first putting us in our
     // superview and positioning us. This works around that issue.
     RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(eventFilterObject()));
@@ -197,14 +221,17 @@ void QWidget::setFocus()
     }
     
     NSView *view = getView();
-    NSWindow *window = [view window];
-    if ([window firstResponder] != view && [view acceptsFirstResponder]) {
-        [window makeFirstResponder:view];
+    if ([view acceptsFirstResponder]) {
+        [[view window] makeFirstResponder:view];
     }
 }
 
 void QWidget::clearFocus()
 {
+    if (!hasFocus()) {
+        return;
+    }
+    
     KWQKHTMLPart::clearDocumentFocus(this);
 }
 

@@ -295,14 +295,12 @@
 
 - (BOOL)becomeFirstResponder
 {
-    BOOL become = [super becomeFirstResponder];
-
-    if (become) {
-	KWQKHTMLPart::setDocumentFocus(widget);
-	[self _KWQ_scrollFrameToVisible];
+    KWQKHTMLPart::setDocumentFocus(widget);
+    if (!widget->hasFocus()) {
+        return NO;
     }
-       
-    return become;
+    [self _KWQ_scrollFrameToVisible];
+    return [super becomeFirstResponder];
 }
 
 - (void)fieldEditorWillBecomeFirstResponder
