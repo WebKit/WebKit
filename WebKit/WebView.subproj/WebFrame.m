@@ -63,6 +63,7 @@
     // data source won't be hooked up to its frame yet. Fortunately,
     // this is only needed temporarily...
 
+    [[dummyDataSource _bridge] setFrame:self];
     [self _transitionToCommitted];
 
     [dummyDataSource release];

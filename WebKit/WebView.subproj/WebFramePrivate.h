@@ -8,6 +8,7 @@
 
 #import <WebKit/WebFrame.h>
 
+@class WebBridge;
 @class WebFrameBridge;
 @class WebView;
 @protocol WebDocumentLoading;
@@ -71,6 +72,7 @@ typedef enum {
 - (void)_isLoadComplete;
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
+- (WebBridge *)_bridge;
 - (WebFrameBridge *)_frameBridge;
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;

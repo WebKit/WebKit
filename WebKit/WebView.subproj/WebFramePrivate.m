@@ -443,6 +443,11 @@ static const char * const stateNames[6] = {
     [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
+- (WebBridge *)_bridge
+{
+    return [[self dataSource] _bridge];
+}
+
 - (WebFrameBridge *)_frameBridge
 {
     return _private->frameBridge;

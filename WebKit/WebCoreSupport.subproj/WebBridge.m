@@ -41,13 +41,13 @@
 
 - (WebCoreFrameBridge *)frame
 {
-    return [[[self dataSource] webFrame] _frameBridge];
+    WEBKIT_ASSERT(frame != nil);
+    return [frame _frameBridge];
 }
 
 - (WebCoreBridge *)parent
 {
-    WEBKIT_ASSERT(dataSource);
-    return [[dataSource parent] _bridge];
+    return [[[self dataSource] parent] _bridge];
 }
 
 - (NSArray *)childFrames
@@ -55,9 +55,9 @@
     NSArray *frames = [[self dataSource] children];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
-    WebFrame *frame;
-    while ((frame = [e nextObject])) {
-        id frameBridge = [frame _frameBridge];
+    WebFrame *childFrame;
+    while ((childFrame = [e nextObject])) {
+        id frameBridge = [childFrame _frameBridge];
         if (frameBridge)
             [frameBridges addObject:frameBridge];
     }
@@ -66,78 +66,86 @@
 
 - (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name
 {
-    return [[[[self dataSource] webFrame] frameNamed:name] _frameBridge];
+    WEBKIT_ASSERT(frame != nil);
+    return [[frame frameNamed:name] _frameBridge];
 }
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
-    WebFrame *frame = [[[self dataSource] controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
-    if (frame == nil) {
+    WEBKIT_ASSERT(frame != nil);
+    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
+    if (newFrame == nil) {
         return NO;
     }
     
-    [[frame _frameBridge] setRenderPart:renderPart];
+    [[newFrame _frameBridge] setRenderPart:renderPart];
     
-    [[frame webView] _setMarginWidth:width];
-    [[frame webView] _setMarginHeight:height];
+    [[newFrame webView] _setMarginWidth:width];
+    [[newFrame webView] _setMarginHeight:height];
 
-    [[frame _frameBridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
+    [[newFrame _frameBridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
     
     return YES;
 }
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)url
 {
-    WebController *newController = [[[[self dataSource] controller] windowContext] openNewWindowWithURL:url];
-    WebDataSource *newDataSource;
-    
-    newDataSource = [[newController mainFrame] dataSource];
-    if ([newDataSource isDocumentHTML])
-        return [(WebHTMLRepresentation *)[newDataSource representation] _bridge];
-        
-    return nil;
+    WEBKIT_ASSERT(frame != nil);
+
+    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:url];
+    WebFrame *newFrame = [newController mainFrame];
+
+    return [newFrame _bridge];
 }
 
 - (BOOL)areToolbarsVisible
 {
-    return [[[[self dataSource] controller] windowContext] areToolbarsVisible];
+    WEBKIT_ASSERT(frame != nil);
+    return [[[frame controller] windowContext] areToolbarsVisible];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
-    [[[[self dataSource] controller] windowContext] setToolbarsVisible:visible];
+    WEBKIT_ASSERT(frame != nil);
+    [[[frame controller] windowContext] setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
 {
-    return [[[[self dataSource] webFrame] webView] allowsScrolling];
+    WEBKIT_ASSERT(frame != nil);
+    return [[frame webView] allowsScrolling];
 }
 
 - (void)setScrollbarsVisible:(BOOL)visible
 {
-    return [[[[self dataSource] webFrame] webView] setAllowsScrolling:visible];
+    WEBKIT_ASSERT(frame != nil);
+    return [[frame webView] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
 {
-    return [[[[self dataSource] controller] windowContext] isStatusBarVisible];
+    WEBKIT_ASSERT(frame != nil);
+    return [[[frame controller] windowContext] isStatusBarVisible];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
-    [[[[self dataSource] controller] windowContext] setStatusBarVisible:visible];
+    WEBKIT_ASSERT(frame != nil);
+    [[[frame controller] windowContext] setStatusBarVisible:visible];
 }
 
-- (void)setWindowFrame:(NSRect)frame
+- (void)setWindowFrame:(NSRect)frameRect
 {
-    [[[[self dataSource] controller] windowContext] setFrame:frame];
+    WEBKIT_ASSERT(frame != nil);
+    [[[frame controller] windowContext] setFrame:frameRect];
 }
 
 - (NSWindow *)window
 {
-    return [[[[self dataSource] controller] windowContext] window];
+    WEBKIT_ASSERT(frame != nil);
+    return [[[frame controller] windowContext] window];
 }
 
 - (void)setTitle:(NSString *)title
@@ -147,24 +155,27 @@
 
 - (void)setStatusText:(NSString *)status
 {
-    [[[[self dataSource] controller] windowContext] setStatusText:status];
+    WEBKIT_ASSERT(frame != nil);
+    [[[frame controller] windowContext] setStatusText:status];
 }
 
 - (WebCoreFrameBridge *)mainFrame
 {
-    return [[[[self dataSource] controller] mainFrame] _frameBridge];
+    WEBKIT_ASSERT(frame != nil);
+    return [[[frame controller] mainFrame] _frameBridge];
 }
 
 - (WebCoreFrameBridge *)frameNamed:(NSString *)name
 {
-    return [[[[self dataSource] controller] frameNamed:name] _frameBridge];
+    WEBKIT_ASSERT(frame != nil);
+    return [[[frame controller] frameNamed:name] _frameBridge];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
 {
-    WEBKIT_ASSERT(dataSource == withDataSource);
+    WEBKIT_ASSERT([self dataSource] == withDataSource);
 
-    [self addData:data withEncoding:[dataSource encoding]];
+    [self addData:data withEncoding:[withDataSource encoding]];
 }
 
 - (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
@@ -174,36 +185,53 @@
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
 {
-    WebResourceHandle *handle;
-    WebLoadProgress *loadProgress;
-    
-    handle = [[WebResourceHandle alloc] initWithURL:URL];
-    loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
-    [[[self dataSource] controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource: [self dataSource] complete:YES];
+    WEBKIT_ASSERT(frame != nil);
+
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:URL];
+
+    WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
+    [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource: [self dataSource] complete:YES];
     [loadProgress release];
     [handle release];
 }
 
-- (void)setDataSource: (WebDataSource *)ds
+- (void)setFrame: (WebFrame *)webFrame
 {
-    WEBKIT_ASSERT(ds != nil);
-    WEBKIT_ASSERT([ds _isCommitted]);
-
-    if (dataSource == nil) {
-	// FIXME: non-retained because data source owns representation owns bridge
-	dataSource = ds;
-        [self openURL:[dataSource inputURL]];
-        if ([dataSource redirectedURL]) {
-            [self setURL:[dataSource redirectedURL]];
-        }
-    } else {
-        WEBKIT_ASSERT(dataSource == ds);
+    // FIXME: needed temporarily while we still use the dummy data
+    // source hack
+    if (webFrame == nil) {
+	return;
     }
 
+    WEBKIT_ASSERT(webFrame != nil);
+
+    if (frame == nil) {
+	// FIXME: non-retained because data source owns representation owns bridge
+	frame = webFrame;
+    } else {
+	WEBKIT_ASSERT(frame == webFrame);
+    }
+}
+
+- (void)dataSourceChanged
+{
+    // FIXME: needed temporarily while we still use the dummy data
+    // source hack
+    if ([frame dataSource] == nil) {
+	[self openURL:nil];
+    } else {
+	[self openURL:[[self dataSource] inputURL]];
+	if ([[self dataSource] redirectedURL]) {
+	    [self setURL:[[self dataSource] redirectedURL]];
+	}
+    }
 }
 
 - (WebDataSource *)dataSource
 {
+    WEBKIT_ASSERT(frame != nil);
+    WebDataSource *dataSource = [frame dataSource];
+
     WEBKIT_ASSERT(dataSource != nil);
     WEBKIT_ASSERT([dataSource _isCommitted]);
 
@@ -213,12 +241,14 @@
 
 - (BOOL)openedByScript
 {
-    return [[[self dataSource] controller] _openedByScript];
+    WEBKIT_ASSERT(frame != nil);
+    return [[frame controller] _openedByScript];
 }
 
 - (void)setOpenedByScript:(BOOL)openedByScript
 {
-    [[[self dataSource] controller] _setOpenedByScript:openedByScript];
+    WEBKIT_ASSERT(frame != nil);
+    [[frame controller] _setOpenedByScript:openedByScript];
 }
 
 - (void)unfocusWindow

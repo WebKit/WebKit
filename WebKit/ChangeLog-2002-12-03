@@ -1,3 +1,49 @@
+2002-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Change WebBridge to hold on to a WebFrame instead of a
+	WebDataSource. Since we will no longer ever have a bridge for a
+	provisional data source, we'll just bind the bridge to a
+	frame. Which means we can merge the bridge and the frame bridge
+	next.
+	
+        * WebCoreSupport.subproj/WebBridge.h: 
+	* WebCoreSupport.subproj/WebBridge.m: Changed below methods to work
+	with direct knowledge of the frame but not the bridge (mostly a
+	simplification).
+        (-[WebBridge frame]): 
+        (-[WebBridge parent]):
+        (-[WebBridge childFrames]):
+        (-[WebBridge descendantFrameNamed:]):
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge openNewWindowWithURL:]):
+        (-[WebBridge areToolbarsVisible]):
+        (-[WebBridge setToolbarsVisible:]):
+        (-[WebBridge areScrollbarsVisible]):
+        (-[WebBridge setScrollbarsVisible:]):
+        (-[WebBridge isStatusBarVisible]):
+        (-[WebBridge setStatusBarVisible:]):
+        (-[WebBridge setWindowFrame:]):
+        (-[WebBridge window]):
+        (-[WebBridge setStatusText:]):
+        (-[WebBridge mainFrame]):
+        (-[WebBridge frameNamed:]):
+        (-[WebBridge receivedData:withDataSource:]):
+        (-[WebBridge objectLoadedFromCache:size:]):
+        (-[WebBridge setFrame:]):
+        (-[WebBridge dataSourceChanged]):
+        (-[WebBridge dataSource]):
+        (-[WebBridge openedByScript]):
+        (-[WebBridge setOpenedByScript:]):
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]): Set bridge's frame and notify
+	that the data source changed.
+	* WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]): Set
+	bridge's frame.
+        * WebView.subproj/WebFramePrivate.h, WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _bridge]): Method to get the bridge.
+
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         Removed provisional/committed distinction from WebCore and the

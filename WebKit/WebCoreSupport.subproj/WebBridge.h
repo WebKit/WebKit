@@ -12,11 +12,13 @@
 
 @interface WebBridge : WebCoreBridge <WebCoreBridge>
 {
-    WebDataSource *dataSource;
+    WebFrame *frame;
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
-- (void)setDataSource:(WebDataSource *)ds;
+- (void)setFrame:(WebFrame *)webFrame;
+
+- (void)dataSourceChanged;
 
 - (WebDataSource *)dataSource;
 
