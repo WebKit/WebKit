@@ -375,10 +375,9 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     // Other browsers treat an omitted parameter as 0 rather than NaN.
     // That doesn't match the ECMA standard, but is needed for site compatibility.
     dpos = a0.isA(UndefinedType) ? 0 : a0.toInteger(exec);
-    if (dpos >= 0 && dpos < len) { // false for NaN
-      UChar c = s[static_cast<int>(dpos)];
-      d = (c.high() << 8) + c.low();
-    } else
+    if (dpos >= 0 && dpos < len) // false for NaN
+      d = s[static_cast<int>(dpos)].unicode();
+    else
       d = NaN;
     result = Number(d);
     break;

@@ -1,5 +1,10 @@
 2004-09-26  Darin Adler  <darin@apple.com>
 
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Remove strange use of high() and
+        low() to get Unicode value of character, and just use unicode().
+
+2004-09-26  Darin Adler  <darin@apple.com>
+
         - refine charAt/charCodeAt fix slightly
 
         * kjs/string_object.cpp: (StringProtoFuncImp::call): Treat undefined the same was as an
