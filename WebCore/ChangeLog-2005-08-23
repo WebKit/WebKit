@@ -1,3 +1,34 @@
+2005-01-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3926142> REGRESSION (Mail): Deleting text decreases quote level
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): Change test that will prevent block
+        merging. End-of-line test was just wrong. Call new start-of and end-of paragraph functions
+        added to visible_position files.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Add tests for BR elements, which makes
+        tests to determine when to stop moving nodes more complete and correct. Also improved comments.
+        * khtml/editing/visible_position.cpp:
+        (khtml::isFirstVisiblePositionInParagraph): New function.
+        (khtml::isLastVisiblePositionInParagraph): New function.
+        * khtml/editing/visible_position.h: Update header accordingly.
+        * layout-tests/editing/deleting/delete-block-merge-contents-002-expected.txt: New results, slightly different from former
+        results but still correct.
+        * layout-tests/editing/deleting/delete-block-merge-contents-007-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-block-merge-contents-018-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-018.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-019-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-019.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-020-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-020.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-021-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-021.html: Added.
+        * layout-tests/editing/deleting/delete-line-014-expected.txt: These new results are actually better, and fix a bug.
+
 2005-01-11  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3922875.  Fall back to DOM object is EMBED element
