@@ -63,22 +63,22 @@
 
 }
 
-- (void)setCanDragFrom: (BOOL)flag
+- (void)setAcceptsDrags: (BOOL)flag
 {
     canDragFrom = flag;
 }
 
-- (BOOL)canDragFrom
+- (BOOL)acceptsDrags
 {
     return canDragFrom;
 }
 
-- (void)setCanDragTo: (BOOL)flag
+- (void)setAcceptsDrops: (BOOL)flag
 {
     canDragTo = flag;
 }
 
-- (BOOL)canDragTo
+- (BOOL)acceptsDrops
 {
     return canDragTo;
 }

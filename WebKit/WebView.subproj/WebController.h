@@ -98,13 +98,6 @@ extern NSString *WebElementFrameKey;
 */    
 + (BOOL)canShowFile:(NSString *)path;
 
-/*! 
-    @method init
-    @abstract Calls designated initializer with nil arguments.
-    @result returns an initialized WebController.
-*/
-- init;
-
 /*!
     @method initWithView:provisionalDataSource:controllerSetName:
     @abstract The designated initializer for WebController.

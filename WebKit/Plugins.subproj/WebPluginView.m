@@ -792,7 +792,7 @@
     NSURL *URL;
     
     frame = [notification object];
-    URL = [[frame dataSource] originalURL];
+    URL = [[[frame dataSource] request] URL];
     notifyDataValue = [notificationData objectForKey:URL];
     
     if(!notifyDataValue)

@@ -80,15 +80,15 @@ static void initSharedStandardPanels(void)
     return sharedStandardPanels;
 }
 
--(void)setUseStandardAuthenticationPanel:(BOOL)use
+-(void)setUsesStandardAuthenticationPanel:(BOOL)use
 {
     if (use) {
-        if (![self useStandardAuthenticationPanel]) {
+        if (![self usesStandardAuthenticationPanel]) {
             _privatePanels->panelAuthenticationHandler = [[WebPanelAuthenticationHandler alloc] init];
             [[WebAuthenticationManager sharedAuthenticationManager] addAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
         }
     } else {
-        if ([self useStandardAuthenticationPanel]) {
+        if ([self usesStandardAuthenticationPanel]) {
             [[WebAuthenticationManager sharedAuthenticationManager] removeAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
             [_privatePanels->panelAuthenticationHandler release];
             _privatePanels->panelAuthenticationHandler = nil;
@@ -96,7 +96,7 @@ static void initSharedStandardPanels(void)
     }
 }
 
--(BOOL)useStandardAuthenticationPanel
+-(BOOL)usesStandardAuthenticationPanel
 {
     return _privatePanels->panelAuthenticationHandler != nil;
 }

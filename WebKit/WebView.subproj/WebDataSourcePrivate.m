@@ -408,7 +408,7 @@
 -(void)_commitIfReady
 {
     if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
-        LOG(Loading, "committed resource = %s", [[[self originalURL] absoluteString] cString]);
+        LOG(Loading, "committed resource = %s", [[[[self request] URL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];

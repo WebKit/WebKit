@@ -51,30 +51,30 @@
 */
 @protocol WebDocumentDragSettings <NSObject>
 /*!
-    @method setCanDragFrom:
+    @method setAcceptsDrags:
     @abstract Sets whether one can drag from the document view or not.
     @param flag YES allows drags from the document view, NO disallows drags from the document view.
 */
-- (void)setCanDragFrom: (BOOL)flag;
+- (void)setAcceptsDrags: (BOOL)flag;
 
 /*!
-    @method canDragFrom
+    @method acceptsDrags
     @result Whether one can drag from the document view or not.
 */
-- (BOOL)canDragFrom;
+- (BOOL)acceptsDrags;
 
 /*!
-    @method setCanDragTo:
+    @method setAcceptsDrags:
     @abstract Sets whether one can drag to the document view or not.
     @param flag YES allows drags to the document view, NO disallows drags to the document view.
 */
-- (void)setCanDragTo: (BOOL)flag;
+- (void)setAcceptsDrags: (BOOL)flag;
 
 /*!
-    @method canDragTo
+    @method acceptsDrops
     @result Whether one can drag to the document view or not.
 */
-- (BOOL)canDragTo;
+- (BOOL)acceptsDrops;
 @end
 
 

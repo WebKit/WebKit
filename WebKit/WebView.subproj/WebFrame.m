@@ -127,7 +127,7 @@
         WebHistoryItem *entry;
     
         entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
-        if ([[[entry URL] _web_URLByRemovingFragment] isEqual: [[[self dataSource] originalURL] _web_URLByRemovingFragment]]) {
+        if ([[[entry URL] _web_URLByRemovingFragment] isEqual: [[[[self dataSource] request] URL] _web_URLByRemovingFragment]]) {
             NSPoint point = [[[[self webView] documentView] superview] bounds].origin;
             [entry setScrollPoint: point];
         }
@@ -175,7 +175,7 @@
 - (void)startLoading
 {
     if (self == [[self controller] mainFrame])
-        LOG(DocumentLoad, "loading %s", [[[[self provisionalDataSource] originalURL] absoluteString] cString]);
+        LOG(DocumentLoad, "loading %s", [[[[[self provisionalDataSource] request] URL] absoluteString] cString]);
 
     [_private->provisionalDataSource startLoading];
 }

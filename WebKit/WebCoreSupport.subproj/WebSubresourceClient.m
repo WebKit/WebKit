@@ -202,7 +202,7 @@
     [dataSource _removeSubresourceClient:self];
         
     WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[[dataSource request] URL] absoluteString]];
     [self receivedError:error];
     [error release];
 

@@ -22,6 +22,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebCookieConstants.h>
 
@@ -134,7 +135,7 @@
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                  inDomain:WebErrorDomainWebFoundation
-                                               failingURL:[[dataSource originalURL] absoluteString]];
+                                               failingURL:[[[dataSource request] URL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
 

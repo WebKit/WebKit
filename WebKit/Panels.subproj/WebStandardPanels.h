@@ -29,18 +29,18 @@
 +(WebStandardPanels *)sharedStandardPanels;
 
 /*!
-    @method setUseStandardAuthenticationPanel:
+    @method setUsesStandardAuthenticationPanel:
     @abstract Request that the standard authentication panel be used or not used.
     @param use YES if the standard authentication panel should be used, NO otherwise
 */
--(void)setUseStandardAuthenticationPanel:(BOOL)use;
+-(void)setUsesStandardAuthenticationPanel:(BOOL)use;
 
 /*!
-    @method useStandardAuthenticationPanel
+    @method usesStandardAuthenticationPanel
     @abstract Determine whether the standard authentication panelwill  be used or not used.
     @result YES if the standard authentication panel should be used, NO otherwise
 */
--(BOOL)useStandardAuthenticationPanel;
+-(BOOL)usesStandardAuthenticationPanel;
 
 /*!
     @method didStartLoadingURL:inWindow:

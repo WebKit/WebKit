@@ -46,11 +46,12 @@
 
 /*!
     @method isDocumentHTML
+    @result Returns TRUE is the document represented in the view is HTML.
 */
 - (BOOL)isDocumentHTML;
 
 /*!
-    @method setAllowsScroling:
+    @method setAllowsScrolling:
     @param flag
 */
 - (void)setAllowsScrolling: (BOOL)flag;
@@ -62,8 +63,12 @@
 
 /*!
     @method registerViewClass:forMIMEType:
-    @discussion Extends the views that WebKit supports
+    @discussion Extends the views that WebKit supports.
     The view must conform to the WebDocumentView protocol
+    A view may register for a primary MIME type by excluding
+    a subtype, i.e. "video/" will match the view with
+    all video types.  More specific matching takes precedence
+    over general matching.
     @param viewClass
     @param MIMEType
 */

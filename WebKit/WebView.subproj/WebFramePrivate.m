@@ -303,7 +303,7 @@ static const char * const stateNames[] = {
     
                 case WebFrameLoadTypeStandard:
                     parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] originalURL]
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[[self dataSource] request] URL]
                                                                    target:[self name]
                                                                    parent:[parentFrame name]
                                                                     title:[[self dataSource] pageTitle]];
@@ -355,7 +355,7 @@ static const char * const stateNames[] = {
         LOG(Timing, "%s:  transition from %s to %s, %f seconds since start of document load", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
-        LOG(DocumentLoad, "completed %s (%f seconds)", [[[[self dataSource] originalURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        LOG(DocumentLoad, "completed %s (%f seconds)", [[[[[self dataSource] request] URL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -655,7 +655,7 @@ static const char * const stateNames[] = {
     NSURL *itemURL = [item URL];
     WebResourceRequest *request;
     WebDataSource *dataSource;
-    NSURL *originalURL = [[self dataSource] originalURL];
+    NSURL *originalURL = [[[self dataSource] request] URL];
     
     if ([item anchor] && [[itemURL _web_URLByRemovingFragment] isEqual: [originalURL _web_URLByRemovingFragment]]) {
         WebBackForwardList *backForwardList = [[self controller] backForwardList];

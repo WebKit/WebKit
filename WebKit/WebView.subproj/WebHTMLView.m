@@ -212,22 +212,22 @@
 
 
 // Drag and drop links and images.  Others?
-- (void)setCanDragFrom: (BOOL)flag
+- (void)setAcceptsDrags: (BOOL)flag
 {
     _private->canDragFrom = flag;
 }
 
-- (BOOL)canDragFrom
+- (BOOL)acceptsDrags
 {
     return _private->canDragFrom;
 }
 
-- (void)setCanDragTo: (BOOL)flag
+- (void)setAcceptsDrops: (BOOL)flag
 {
     _private->canDragTo = flag;
 }
 
-- (BOOL)canDragTo
+- (BOOL)acceptsDrops
 {
     return _private->canDragTo;
 }

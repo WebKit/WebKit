@@ -13,8 +13,6 @@
     int state;
 }
 
--(id)init;
-
 // add to the list
 -(void)addEntry:(WebHistoryItem *)entry;
 

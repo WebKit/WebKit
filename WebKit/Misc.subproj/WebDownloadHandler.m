@@ -21,7 +21,7 @@
     [super init];
     
     dataSource = [dSource retain];
-    LOG(Download, "Download started for: %s", [[[dSource originalURL] absoluteString] cString]);
+    LOG(Download, "Download started for: %s", [[[[dSource request] URL] absoluteString] cString]);
     return self;
 }
 

@@ -1,3 +1,50 @@
+2002-09-25  Richard Williamson   <rjw@apple.com>
+
+        API and documentation tweaks.
+        
+        WebDocumentDragSettings:  canDrag -> acceptsDrag
+        WebDataSource:  removed originalURL
+        WebStandardPanels:  use -> uses
+        
+        * History.subproj/WebBackForwardList.h:
+        * Misc.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler initWithDataSource:]):
+        * Panels.subproj/WebStandardPanels.h:
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels setUsesStandardAuthenticationPanel:]):
+        (-[WebStandardPanels usesStandardAuthenticationPanel]):
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView frameStateChanged:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient cancel]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        (-[WebFrame startLoading]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setAcceptsDrags:]):
+        (-[WebHTMLView acceptsDrags]):
+        (-[WebHTMLView setAcceptsDrops:]):
+        (-[WebHTMLView acceptsDrops]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView setAcceptsDrags:]):
+        (-[WebImageView acceptsDrags]):
+        (-[WebImageView setAcceptsDrops:]):
+        (-[WebImageView acceptsDrops]):
+        * WebView.subproj/WebLoadProgress.h:
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didCancelWithHandle:]):
+        * WebView.subproj/WebView.h:
+
 2002-09-25  Ken Kocienda  <kocienda@apple.com>
 
         Changes to move the WebResourceHandle API closer to the

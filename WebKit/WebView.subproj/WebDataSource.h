@@ -150,13 +150,6 @@
 - (NSURL *)URL;
 
 /*!
-    @method originalURL
-    @discussion Starts out same as URL, but doesn't change if a redirect occurs.
-    @results Returns the original URL passed in at initialization time.
-*/
-- (NSURL *)originalURL;
-
-/*!
     @method startLoading
     @discussion Start actually getting and parsing data. If the data source
     is still performing a previous load it will be stopped.
@@ -234,8 +227,12 @@
 
 /*!
     @method registerRepresentationClass:forMIMEType:
-    @discussion A subclass of NSView that implements WebDocumentView may be registered 
+    @discussion A class that implements WebDocumentRepresentation may be registered 
     with this method.
+    A document class may register for a primary MIME type by excluding
+    a subtype, i.e. "video/" will match the document class with
+    all video types.  More specific matching takes precedence
+    over general matching.
     @param repClass
     @param MIMEType
 */
