@@ -1,5 +1,9 @@
 2002-09-18  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebController.h: Fix typo.
+
+2002-09-18  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebController.h: Add getters.
         * WebView.subproj/WebController.m:
         (-[WebController applicationNameForUserAgent]): Added.
