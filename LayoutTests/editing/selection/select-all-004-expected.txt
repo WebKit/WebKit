@@ -1,0 +1,25 @@
+layer at (0,0) size 812x585
+  RenderCanvas at (0,0) size 800x585
+layer at (0,0) size 812x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (64,64) size 748x457 [border: (50px solid #FF0000)]
+      RenderBlock {DIV} at (74,74) size 600x0
+      RenderBlock (anonymous) at (74,74) size 600x48
+        RenderText {TEXT} at (0,10) size 54x48
+          text run at (0,10) width 54: "Hello"
+      RenderTable {TABLE} at (74,122) size 6x6
+        RenderTableSection {TBODY} at (0,0) size 0x6
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (74,128) size 600x48
+        RenderBR {BR} at (0,10) size 0x28
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+selection is RANGE:
+start:      position 1 of child 2 {TEXT} of root {BODY}
+upstream:   position 0 of child 2 {TEXT} of root {BODY}
+downstream: position 1 of child 2 {TEXT} of root {BODY}
+end:        position 0 of child 4 {TEXT} of root {BODY}
+upstream:   position 0 of child 4 {TEXT} of root {BODY}
+downstream: position 0 of child 5 {BR} of root {BODY}

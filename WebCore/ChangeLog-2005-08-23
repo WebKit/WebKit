@@ -1,3 +1,17 @@
+2004-09-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3814660> REGRESSION (8A200-8A259): Select All has no effect on livepage.apple.com
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection): Move the selection start and end to rendered positions
+        before passing off to the RenderCanvas for drawing.
+        * layout-tests/editing/selection/select-all-004-expected.txt: Added.
+        * layout-tests/editing/selection/select-all-004.html: Added.
+
 2004-09-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

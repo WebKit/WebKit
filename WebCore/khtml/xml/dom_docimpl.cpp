@@ -1270,8 +1270,8 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        Position startPos(s.start());
-        Position endPos(s.end());
+        Position startPos = Position(s.start()).closestRenderedPosition(UPSTREAM);
+        Position endPos = Position(s.end()).closestRenderedPosition(DOWNSTREAM);
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
