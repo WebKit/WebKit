@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2002 Apple Computer, Inc.
@@ -77,40 +76,44 @@ PropertyMap::PropertyMap() : _table(0)
 
 PropertyMap::~PropertyMap()
 {
+    if (!_table) {
 #if USE_SINGLE_ENTRY
-    UString::Rep *key = _singleEntry.key;
-    if (key)
-        key->deref();
+        UString::Rep *key = _singleEntry.key;
+        if (key)
+            key->deref();
 #endif
-    if (_table) {
-      for (int i = 0; i < _table->size; i++) {
+        return;
+    }
+    
+    for (int i = 0; i < _table->size; i++) {
         UString::Rep *key = _table->entries[i].key;
         if (key)
 	  key->deref();
-      }
-      free(_table);
     }
+    free(_table);
 }
 
 void PropertyMap::clear()
 {
+    if (!_table) {
 #if USE_SINGLE_ENTRY
-    UString::Rep *key = _singleEntry.key;
-    if (key) {
-        key->deref();
-        _singleEntry.key = 0;
-    }
+        UString::Rep *key = _singleEntry.key;
+        if (key) {
+            key->deref();
+            _singleEntry.key = 0;
+        }
 #endif
-    if (_table) {
-      for (int i = 0; i < _table->size; i++) {
+        return;
+    }
+
+    for (int i = 0; i < _table->size; i++) {
         UString::Rep *key = _table->entries[i].key;
         if (key) {
-	  key->deref();
-	  _table->entries[i].key = 0;
+            key->deref();
+            _table->entries[i].key = 0;
         }
-      }
-      _table->keyCount = 0;
     }
+    _table->keyCount = 0;
 }
 
 inline int PropertyMap::hash(const UString::Rep *s) const
@@ -123,7 +126,7 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
     UString::Rep *rep = name._ustring.rep;
     
     if (!_table) {
- #if USE_SINGLE_ENTRY
+#if USE_SINGLE_ENTRY
         UString::Rep *key = _singleEntry.key;
         if (rep == key) {
             attributes = _singleEntry.attributes;
@@ -330,16 +333,15 @@ void PropertyMap::remove(const Identifier &name)
 
 void PropertyMap::mark() const
 {
-#if USE_SINGLE_ENTRY
-    if (_singleEntry.key) {
-        ValueImp *v = _singleEntry.value;
-        if (!v->marked())
-            v->mark();
-    }
-#endif
-
     if (!_table) {
-      return;
+#if USE_SINGLE_ENTRY
+        if (_singleEntry.key) {
+            ValueImp *v = _singleEntry.value;
+            if (!v->marked())
+                v->mark();
+        }
+#endif
+        return;
     }
 
     for (int i = 0; i != _table->size; ++i) {
@@ -353,13 +355,13 @@ void PropertyMap::mark() const
 
 void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Object &base) const
 {
-#if USE_SINGLE_ENTRY
-    UString::Rep *key = _singleEntry.key;
-    if (key && !(_singleEntry.attributes & DontEnum))
-        list.append(Reference(base, Identifier(key)));
-#endif
     if (!_table) {
-      return;
+#if USE_SINGLE_ENTRY
+        UString::Rep *key = _singleEntry.key;
+        if (key && !(_singleEntry.attributes & DontEnum))
+            list.append(Reference(base, Identifier(key)));
+#endif
+        return;
     }
 
     for (int i = 0; i != _table->size; ++i) {
@@ -371,31 +373,29 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
 
 void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, const Object &base) const
 {
-#if USE_SINGLE_ENTRY
-    UString::Rep *key = _singleEntry.key;
-    if (key) {
-      UString k(key);
-      bool fitsInUInt32;
-      k.toUInt32(&fitsInUInt32);
-      if (fitsInUInt32) {
-        list.append(Reference(base, Identifier(key)));
-      }
-    }
-#endif
     if (!_table) {
-      return;
+#if USE_SINGLE_ENTRY
+        UString::Rep *key = _singleEntry.key;
+        if (key) {
+            UString k(key);
+            bool fitsInUInt32;
+            k.toUInt32(&fitsInUInt32);
+            if (fitsInUInt32)
+                list.append(Reference(base, Identifier(key)));
+        }
+#endif
+        return;
     }
 
     for (int i = 0; i != _table->size; ++i) {
-      UString::Rep *key = _table->entries[i].key;
-      if (key) {
-	UString k(key);
-	bool fitsInUInt32;
-	k.toUInt32(&fitsInUInt32);
-	if (fitsInUInt32) {
-	  list.append(Reference(base, Identifier(key)));
-	}
-      }
+        UString::Rep *key = _table->entries[i].key;
+        if (key) {
+            UString k(key);
+            bool fitsInUInt32;
+            k.toUInt32(&fitsInUInt32);
+            if (fitsInUInt32)
+                list.append(Reference(base, Identifier(key)));
+        }
     }
 }
 
@@ -403,14 +403,15 @@ void PropertyMap::save(SavedProperties &p) const
 {
     int count = 0;
 
+    if (!_table) {
 #if USE_SINGLE_ENTRY
-    if (_singleEntry.key)
-        ++count;
+        if (_singleEntry.key)
+            ++count;
 #endif
-    if (_table) {
-      for (int i = 0; i != _table->size; ++i)
-        if (_table->entries[i].key && _table->entries[i].attributes == 0)
-	  ++count;
+    } else {
+        for (int i = 0; i != _table->size; ++i)
+            if (_table->entries[i].key && _table->entries[i].attributes == 0)
+                ++count;
     }
 
     delete [] p._properties;
@@ -422,20 +423,21 @@ void PropertyMap::save(SavedProperties &p) const
     
     SavedProperty *prop = p._properties;
     
+    if (!_table) {
 #if USE_SINGLE_ENTRY
-    if (_singleEntry.key) {
-        prop->key = Identifier(_singleEntry.key);
-        prop->value = Value(_singleEntry.value);
-        ++prop;
-    }
-#endif
-    if (_table) {
-      for (int i = 0; i != _table->size; ++i) {
-        if (_table->entries[i].key && _table->entries[i].attributes == 0) {
-	  prop->key = Identifier(_table->entries[i].key);
-	  prop->value = Value(_table->entries[i].value);
+        if (_singleEntry.key) {
+            prop->key = Identifier(_singleEntry.key);
+            prop->value = Value(_singleEntry.value);
+            ++prop;
         }
-      }
+#endif
+    } else {
+        for (int i = 0; i != _table->size; ++i) {
+            if (_table->entries[i].key && _table->entries[i].attributes == 0) {
+                prop->key = Identifier(_table->entries[i].key);
+                prop->value = Value(_table->entries[i].value);
+            }
+        }
     }
 }
 
@@ -449,33 +451,27 @@ void PropertyMap::restore(const SavedProperties &p)
 
 void PropertyMap::checkConsistency()
 {
+    if (!_table)
+        return;
+
     int count = 0;
-    if (_table) {
-      for (int j = 0; j != _table->size; ++j) {
+    for (int j = 0; j != _table->size; ++j) {
         UString::Rep *rep = _table->entries[j].key;
         if (!rep)
-	  continue;
+            continue;
         int i = hash(rep);
         while (UString::Rep *key = _table->entries[i].key) {
-	  if (rep == key)
-	    break;
-	  i = (i + 1) & _tableSizeMask;
+            if (rep == key)
+                break;
+            i = (i + 1) & _tableSizeMask;
         }
         assert(i == j);
         count++;
-      }
     }
-
-#if USE_SINGLE_ENTRY
-    if (_singleEntry.key)
-      count++;
-#endif
-    if (_table) {
-      assert(count == _table->keyCount);
-      assert(_table->size >= 16);
-      assert(_table->sizeMask);
-      assert(_table->size == _table->sizeMask + 1);
-    }
+    assert(count == _table->keyCount);
+    assert(_table->size >= 16);
+    assert(_table->sizeMask);
+    assert(_table->size == _table->sizeMask + 1);
 }
 
 #endif // DO_CONSISTENCY_CHECK

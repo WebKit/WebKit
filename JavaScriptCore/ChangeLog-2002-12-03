@@ -1,3 +1,9 @@
+2002-11-25  Darin Adler  <darin@apple.com>
+
+        * kjs/property_map.cpp: Rearrange code a little bit and tweak indentation.
+	This might provide a tiny speedup because we don't look at the single entry
+	any more in cases where the _table pointer is non-0.
+
 2002-11-24  Darin Adler  <darin@apple.com>
 
 	- changed ScopeChain to not ref each item in the chain, and use

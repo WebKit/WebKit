@@ -195,10 +195,10 @@
 - (void)removeChild:(WebBookmark *)bookmark
 {
     ASSERT_ARG(bookmark, [bookmark parent] == self);
-    ASSERT_ARG(bookmark, [_list containsObject:bookmark]);
+    ASSERT_ARG(bookmark, [_list indexOfObjectIdenticalTo:bookmark] != NSNotFound);
     
     [bookmark retain];
-    [_list removeObject:bookmark];
+    [_list removeObjectIdenticalTo:bookmark];
     [bookmark _setParent:nil];
     [bookmark release];
 
@@ -209,7 +209,7 @@
 - (void)insertChild:(WebBookmark *)bookmark atIndex:(unsigned)index
 {
     ASSERT_ARG(bookmark, [bookmark parent] == nil);
-    ASSERT_ARG(bookmark, ![_list containsObject:bookmark]);
+    ASSERT_ARG(bookmark, [_list indexOfObjectIdenticalTo:bookmark] == NSNotFound);
 
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];

@@ -1,3 +1,13 @@
+2002-11-25  Darin Adler  <darin@apple.com>
+
+	- fixed a problem I discovered in testing where multiple identical bookmarks confuse us
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList removeChild:]): Use indexOfObjectIdenticalTo: and removeObjectIdenticalTo:
+	instead of containsObject: and removeObject:.
+        (-[WebBookmarkList insertChild:atIndex:]): Use indexOfObjectIdenticalTo: instead of
+	containsObject: in the assertion.
+
 2002-11-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3084350 - No URL flavors provided for images
