@@ -54,6 +54,14 @@ namespace KJS {
         ValueImp *value;
         int attributes;
     };
+
+    struct PropertyMapHashTable
+    {
+        int sizeMask;
+        int size;
+        int keyCount;
+        PropertyMapHashTableEntry entries[1];
+    };
     
     class PropertyMap {
     public:
@@ -83,11 +91,9 @@ namespace KJS {
         void checkConsistency();
         
         typedef PropertyMapHashTableEntry Entry;
-        
-        int _tableSizeMask;
-        int _tableSize;
-        Entry *_table;
-        int _keyCount;
+        typedef PropertyMapHashTable Table;
+
+        Table *_table;
         
         Entry _singleEntry;
     };

@@ -44,7 +44,7 @@ public:
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.
 
-PropertyMap::PropertyMap() : _tableSize(0), _table(0), _keyCount(0)
+PropertyMap::PropertyMap() : _table(0)
 {
 }
 
@@ -55,12 +55,14 @@ PropertyMap::~PropertyMap()
     if (key)
         key->deref();
 #endif
-    for (int i = 0; i < _tableSize; i++) {
-        UString::Rep *key = _table[i].key;
+    if (_table) {
+      for (int i = 0; i < _table->size; i++) {
+        UString::Rep *key = _table->entries[i].key;
         if (key)
-            key->deref();
+	  key->deref();
+      }
+      free(_table);
     }
-    free(_table);
 }
 
 void PropertyMap::clear()
@@ -72,19 +74,21 @@ void PropertyMap::clear()
         _singleEntry.key = 0;
     }
 #endif
-    for (int i = 0; i < _tableSize; i++) {
-        UString::Rep *key = _table[i].key;
+    if (_table) {
+      for (int i = 0; i < _table->size; i++) {
+        UString::Rep *key = _table->entries[i].key;
         if (key) {
-            key->deref();
-            _table[i].key = 0;
+	  key->deref();
+	  _table->entries[i].key = 0;
         }
+      }
+      _table->keyCount = 0;
     }
-    _keyCount = 0;
 }
 
 inline int PropertyMap::hash(const UString::Rep *s) const
 {
-    return s->hash() & _tableSizeMask;
+    return s->hash() & _table->sizeMask;
 }
 
 ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
@@ -103,12 +107,12 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
     }
     
     int i = hash(rep);
-    while (UString::Rep *key = _table[i].key) {
+    while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key) {
-            attributes = _table[i].attributes;
-            return _table[i].value;
+            attributes = _table->entries[i].attributes;
+            return _table->entries[i].value;
         }
-        i = (i + 1) & _tableSizeMask;
+        i = (i + 1) & _table->sizeMask;
     }
     return 0;
 }
@@ -127,10 +131,10 @@ ValueImp *PropertyMap::get(const Identifier &name) const
     }
     
     int i = hash(rep);
-    while (UString::Rep *key = _table[i].key) {
+    while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key)
-            return _table[i].value;
-        i = (i + 1) & _tableSizeMask;
+            return _table->entries[i].value;
+        i = (i + 1) & _table->sizeMask;
     }
     return 0;
 }
@@ -154,58 +158,60 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
             _singleEntry.key = rep;
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
-            _keyCount = 1;
             checkConsistency();
             return;
         }
     }
 #endif
 
-    if (_keyCount * 2 >= _tableSize)
+    if (!_table || _table->keyCount * 2 >= _table->size)
         expand();
     
     int i = hash(rep);
-    while (UString::Rep *key = _table[i].key) {
+    while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key) {
             // Put a new value in an existing hash table entry.
-            _table[i].value = value;
+            _table->entries[i].value = value;
             // Attributes are intentionally not updated.
             return;
         }
-        i = (i + 1) & _tableSizeMask;
+        i = (i + 1) & _table->sizeMask;
     }
     
     // Create a new hash table entry.
     rep->ref();
-    _table[i].key = rep;
-    _table[i].value = value;
-    _table[i].attributes = attributes;
-    ++_keyCount;
+    _table->entries[i].key = rep;
+    _table->entries[i].value = value;
+    _table->entries[i].attributes = attributes;
+    ++_table->keyCount;
 
     checkConsistency();
 }
 
 inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes)
 {
-    int i = hash(key);
-    while (_table[i].key)
-        i = (i + 1) & _tableSizeMask;
+  assert(_table);
+
+  int i = hash(key);
+  while (_table->entries[i].key)
+    i = (i + 1) & _table->sizeMask;
     
-    _table[i].key = key;
-    _table[i].value = value;
-    _table[i].attributes = attributes;
+  _table->entries[i].key = key;
+  _table->entries[i].value = value;
+  _table->entries[i].attributes = attributes;
 }
 
 void PropertyMap::expand()
 {
     checkConsistency();
     
-    int oldTableSize = _tableSize;
-    Entry *oldTable = _table;
+    Table *oldTable = _table;
+    int oldTableSize = oldTable ? _table->size : 0;
 
-    _tableSize = oldTableSize ? oldTableSize * 2 : 16;
-    _tableSizeMask = _tableSize - 1;
-    _table = (Entry *)calloc(_tableSize, sizeof(Entry));
+    int newTableSize = oldTableSize ? oldTableSize * 2 : 16;
+    _table = (Table *)calloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry) );
+    _table->size = newTableSize;
+    _table->sizeMask = _table->size - 1;
 
 #if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
@@ -216,9 +222,9 @@ void PropertyMap::expand()
 #endif
     
     for (int i = 0; i != oldTableSize; ++i) {
-        UString::Rep *key = oldTable[i].key;
+        UString::Rep *key = oldTable->entries[i].key;
         if (key)
-            insert(key, oldTable[i].value, oldTable[i].attributes);
+            insert(key, oldTable->entries[i].value, oldTable->entries[i].attributes);
     }
 
     free(oldTable);
@@ -240,7 +246,6 @@ void PropertyMap::remove(const Identifier &name)
         if (rep == key) {
             key->deref();
             _singleEntry.key = 0;
-            _keyCount = 0;
             checkConsistency();
         }
 #endif
@@ -249,28 +254,28 @@ void PropertyMap::remove(const Identifier &name)
 
     // Find the thing to remove.
     int i = hash(rep);
-    while ((key = _table[i].key)) {
+    while ((key = _table->entries[i].key)) {
         if (rep == key)
             break;
-        i = (i + 1) & _tableSizeMask;
+        i = (i + 1) & _table->sizeMask;
     }
     if (!key)
         return;
     
     // Remove the one key.
     key->deref();
-    _table[i].key = 0;
-    assert(_keyCount >= 1);
-    --_keyCount;
+    _table->entries[i].key = 0;
+    assert(_table->keyCount >= 1);
+    --_table->keyCount;
     
     // Reinsert all the items to the right in the same cluster.
     while (1) {
-        i = (i + 1) & _tableSizeMask;
-        key = _table[i].key;
+        i = (i + 1) & _table->sizeMask;
+        key = _table->entries[i].key;
         if (!key)
             break;
-        _table[i].key = 0;
-        insert(key, _table[i].value, _table[i].attributes);
+        _table->entries[i].key = 0;
+        insert(key, _table->entries[i].value, _table->entries[i].attributes);
     }
 
     checkConsistency();
@@ -285,9 +290,14 @@ void PropertyMap::mark() const
             v->mark();
     }
 #endif
-    for (int i = 0; i != _tableSize; ++i) {
-        if (_table[i].key) {
-            ValueImp *v = _table[i].value;
+
+    if (!_table) {
+      return;
+    }
+
+    for (int i = 0; i != _table->size; ++i) {
+        if (_table->entries[i].key) {
+            ValueImp *v = _table->entries[i].value;
             if (!v->marked())
                 v->mark();
         }
@@ -301,9 +311,13 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
     if (key && !(_singleEntry.attributes & DontEnum))
         list.append(Reference(base, Identifier(key)));
 #endif
-    for (int i = 0; i != _tableSize; ++i) {
-        UString::Rep *key = _table[i].key;
-        if (key && !(_table[i].attributes & DontEnum))
+    if (!_table) {
+      return;
+    }
+
+    for (int i = 0; i != _table->size; ++i) {
+        UString::Rep *key = _table->entries[i].key;
+        if (key && !(_table->entries[i].attributes & DontEnum))
             list.append(Reference(base, Identifier(key)));
     }
 }
@@ -316,9 +330,11 @@ void PropertyMap::save(SavedProperties &p) const
     if (_singleEntry.key)
         ++count;
 #endif
-    for (int i = 0; i != _tableSize; ++i)
-        if (_table[i].key && _table[i].attributes == 0)
-            ++count;
+    if (_table) {
+      for (int i = 0; i != _table->size; ++i)
+        if (_table->entries[i].key && _table->entries[i].attributes == 0)
+	  ++count;
+    }
 
     delete [] p._properties;
     if (count == 0) {
@@ -336,11 +352,14 @@ void PropertyMap::save(SavedProperties &p) const
         ++prop;
     }
 #endif
-    for (int i = 0; i != _tableSize; ++i)
-        if (_table[i].key && _table[i].attributes == 0) {
-            prop->key = Identifier(_table[i].key);
-            prop->value = Value(_table[i].value);
+    if (_table) {
+      for (int i = 0; i != _table->size; ++i) {
+        if (_table->entries[i].key && _table->entries[i].attributes == 0) {
+	  prop->key = Identifier(_table->entries[i].key);
+	  prop->value = Value(_table->entries[i].value);
         }
+      }
+    }
 }
 
 void PropertyMap::restore(const SavedProperties &p)
@@ -354,28 +373,31 @@ void PropertyMap::restore(const SavedProperties &p)
 void PropertyMap::checkConsistency()
 {
     int count = 0;
-    for (int j = 0; j != _tableSize; ++j) {
-        UString::Rep *rep = _table[j].key;
+    if (_table) {
+      for (int j = 0; j != _table->size; ++j) {
+        UString::Rep *rep = _table->entries[j].key;
         if (!rep)
-            continue;
+	  continue;
         int i = hash(rep);
-        while (UString::Rep *key = _table[i].key) {
-            if (rep == key)
-                break;
-            i = (i + 1) & _tableSizeMask;
+        while (UString::Rep *key = _table->entries[i].key) {
+	  if (rep == key)
+	    break;
+	  i = (i + 1) & _tableSizeMask;
         }
         assert(i == j);
         count++;
+      }
     }
+
 #if USE_SINGLE_ENTRY
     if (_singleEntry.key)
-        count++;
+      count++;
 #endif
-    assert(count == _keyCount);
     if (_table) {
-        assert(_tableSize >= 16);
-        assert(_tableSizeMask);
-        assert(_tableSize == _tableSizeMask + 1);
+      assert(count == _table->keyCount);
+      assert(_table->size >= 16);
+      assert(_table->sizeMask);
+      assert(_table->size == _table->sizeMask + 1);
     }
 }
 

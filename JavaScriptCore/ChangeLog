@@ -1,5 +1,14 @@
 2002-11-21  Maciej Stachowiak  <mjs@apple.com>
 
+	- reduced the size of PropertyMap by storing sizes and such in the
+	dynamically allocated part of the object to reduce the size of
+	ObjectImp - .5% speed improvement on JS iBench.
+	
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+
+2002-11-21  Maciej Stachowiak  <mjs@apple.com>
+
         * Makefile.am: Pass symroots for this tree to pbxbuild.
 
 === Alexander-33 ===
