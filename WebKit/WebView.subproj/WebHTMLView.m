@@ -1650,8 +1650,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSDictionary *element = [self _elementAtPoint:[self convertPoint:[sender draggingLocation] fromView:nil]];
-    if ([[element objectForKey:WebElementIsEditableKey] boolValue]) {
+    NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
+    if ([[[self _elementAtPoint:point] objectForKey:WebElementIsEditableKey] boolValue] && [[self _bridge] moveCaretToPoint:point]) {
         // FIXME: We should delete the original selection if we're doing a move.
         [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
     } else {

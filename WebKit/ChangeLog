@@ -1,5 +1,12 @@
 2004-03-03  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed a typo.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView concludeDragOperation:]):
+
+2004-03-03  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3576070>: REGRESSION: web view won't accept drag of webloc file
 
         Reviewed by rjw.
