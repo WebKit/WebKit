@@ -1,3 +1,15 @@
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Added calls to ensure caret visibility after the editing action is done.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _alterCurrentSelection:direction:granularity:]):
+        (-[WebView insertNewline:]):
+        (-[WebView deleteBackward:]):
+        (-[WebView insertText:]):
+
 2004-04-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3605209>: "HITLIST: REGRESSION (131-132): iframes/frames no longer dump on layout tests"

@@ -1,3 +1,18 @@
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Ensures caret visibility after making an editing action.
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::getRepaintRect): Expose this as public.
+        * khtml/xml/dom_selection.h: Ditto.
+        * kwq/WebCoreBridge.h: Add ensureCaretVisible method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:]):
+        Unrelated crash fix. Null-check baseURLString.
+        (-[WebCoreBridge ensureCaretVisible]): Added.
+
 2004-04-21  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3245627, nested tables don't expand vertically.  I actually fixed the basic problem in the

@@ -80,6 +80,7 @@ public:
     Position start() const { return m_start; }
     Position end() const { return m_end; }
 
+    QRect getRepaintRect() const;
     void setNeedsLayout(bool flag=true);
     void clearModifyBias() { m_modifyBiasSet = false; }
     
@@ -111,7 +112,6 @@ private:
 
     void layoutCaret();
     void needsCaretRepaint();
-    QRect getRepaintRect();
     void paintCaret(QPainter *p, const QRect &rect);
 
     bool nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2);

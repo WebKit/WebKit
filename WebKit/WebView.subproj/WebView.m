@@ -2049,6 +2049,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
     if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange stillSelecting:NO]) {
         [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
+        [bridge ensureCaretVisible];
     }
 }
 
@@ -2768,7 +2769,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)insertNewline:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        [[self _bridgeForCurrentSelection] replaceSelectionWithNewline];
+        WebBridge *bridge = [self _bridgeForCurrentSelection];
+        [bridge replaceSelectionWithNewline];
+        [bridge ensureCaretVisible];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(insertNewline:) with:sender];
@@ -2837,7 +2840,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)deleteBackward:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        [[self _bridgeForCurrentSelection] deleteKeyPressed];
+        WebBridge *bridge = [self _bridgeForCurrentSelection];
+        [bridge deleteKeyPressed];
+        [bridge ensureCaretVisible];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(deleteBackward:) with:sender];
@@ -2977,7 +2982,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)insertText:(NSString *)text
 {
     if ([self _currentSelectionIsEditable]) {
-        [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
+        WebBridge *bridge = [self _bridgeForCurrentSelection];
+        [bridge replaceSelectionWithText:text];
+        [bridge ensureCaretVisible];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(insertText:) with:text];

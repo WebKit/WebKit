@@ -1394,7 +1394,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !markupString)
         return;
     
-    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString, baseURLString);
+    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString, baseURLString ? baseURLString : @"");
     cmd.apply();
 }
 
@@ -1430,6 +1430,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
     ERROR("unimplemented");
+}
+
+- (void)ensureCaretVisible
+{
+    if (!_part)
+        return;
+    
+    KHTMLView *v = _part->view();
+    if (!v)
+        return;
+
+    QRect r(_part->selection().getRepaintRect());
+    v->ensureVisible(r.right(), r.bottom());
+    v->ensureVisible(r.left(), r.top());
 }
 
 @end
