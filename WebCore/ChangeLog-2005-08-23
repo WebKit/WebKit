@@ -1,3 +1,16 @@
+2004-06-14  Trey Matteson  <trey@apple.com>
+
+	3692690 - REGRESSION: canceling drag from WebView cause link to load
+	Just need to take extra care to cancel any click handling in
+	all cases once we're committed to doing the drag.
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Call invalidateClick once
+	we're past the hysteresis point, and definitely going to try
+	to start a drag and drop.
+
 2004-06-14  Darin Adler  <darin@apple.com>
 
         - fixed crash on boot

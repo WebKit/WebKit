@@ -1974,6 +1974,10 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             
             NSPoint dragLocation = [_currentEvent locationInWindow];
             if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {
+                
+                // Once we're past the hysteresis point, we don't want to treat this gesture as a click
+                d->m_view->invalidateClick();
+
                 NSImage *dragImage = nil;       // we use these values if WC is out of the loop
                 NSPoint dragLoc = NSZeroPoint;
                 NSDragOperation srcOp = NSDragOperationNone;                
@@ -2021,10 +2025,8 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                 }
                 
                 if (_mouseDownMayStartDrag) {
-                    if ([_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard]) {
-                        // Prevent click handling from taking place once we start dragging.
-                        d->m_view->invalidateClick();
-                    } else if (_dragSrcMayBeDHTML) {
+                    BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
+                    if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
                         dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation));
                         _mouseDownMayStartDrag = false;
