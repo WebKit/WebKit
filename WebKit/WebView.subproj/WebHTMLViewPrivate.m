@@ -62,12 +62,14 @@
 
 @implementation WebHTMLView (WebPrivate)
 
-// Danger Will Robinson.  We have to poseAsClass: as early as possible
+// Danger Will Robinson. We have to poseAsClass: as early as possible
 // so that any NSViews will be created with the appropriate poser.
 + (void)load
 {
-    [[WebNSTextView class] poseAsClass:[NSTextView class]];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [[WebNSView class] poseAsClass:[NSView class]];
+    [[WebNSTextView class] poseAsClass:[NSTextView class]];
+    [pool release];
 }
 
 
