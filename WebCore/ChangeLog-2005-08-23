@@ -1,3 +1,12 @@
+2003-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3366542 -- filename with non-ASCII name left out of Content-Disposition for <input type=file>
+
+        * khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::formData):
+        Do the &-encoding thing on the filename. This is what Gecko does.
+
 2003-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed by Darin, reviewed by me (and originally figured out by John).

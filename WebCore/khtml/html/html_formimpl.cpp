@@ -346,7 +346,21 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
                     {
                         QString path = static_cast<HTMLInputElementImpl*>(current)->value().string();
                         if (path.length()) fileUploads << path;
-                        QString onlyfilename = path.mid(path.findRev('/')+1);
+
+                        // Turn non-ASCII characters into &-escaped form.
+                        // This doesn't work perfectly, because it doesn't escape &, for example.
+                        // But it seems to be what Gecko does.
+                        QString onlyfilename;
+                        for (uint i = path.findRev('/') + 1; i < path.length(); ++i) {
+                            QChar c = path.at(i).unicode();
+                            if (c.unicode() >= 0x20 && c.unicode() <= 0x7F) {
+                                onlyfilename.append(&c, 1);
+                            } else {
+                                QString ampersandEscape;
+                                ampersandEscape.sprintf("&%hu;", c.unicode());
+                                onlyfilename.append(ampersandEscape);
+                            }
+                        }
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF.
