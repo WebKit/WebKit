@@ -1,3 +1,16 @@
+2004-10-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3829705> Need to remove filling w/ transparency when not drawing backgroundy.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _transparentBackground]):
+        (-[WebHTMLView _setTransparentBackground:]):
+        (-[WebHTMLView drawRect:]):
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-10-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3802039> 8A259: Can't use Grab services to grab selection from screen

@@ -51,6 +51,8 @@
     BOOL nextResponderDisabledOnce;
     
     WebTextCompleteController *compController;
+    
+    BOOL transparentBackground;
 }
 @end
 

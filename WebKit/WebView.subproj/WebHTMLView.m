@@ -1268,6 +1268,16 @@ static WebHTMLView *lastHitView = nil;
 
 #endif
 
+- (BOOL)_transparentBackground
+{
+    return _private->transparentBackground;
+}
+
+- (void)_setTransparentBackground:(BOOL)f
+{
+    _private->transparentBackground = f;
+}
+
 @end
 
 @implementation NSView (WebHTMLViewFileInternal)
@@ -1973,7 +1983,7 @@ static WebHTMLView *lastHitView = nil;
             [textRendererFactoryIfCoalescing startCoalesceTextDrawing];
         }
 
-        if (![[self _webView] drawsBackground]) {
+        if (![self _transparentBackground]) {
             [[NSColor clearColor] set];
             NSRectFill (rect);
         }

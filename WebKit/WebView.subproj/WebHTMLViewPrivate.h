@@ -60,4 +60,7 @@
 - (BOOL)_isSelectionMisspelled;
 - (NSArray *)_guessesForMisspelledSelection;
 
+- (BOOL)_transparentBackground;
+- (void)_setTransparentBackground:(BOOL)f;
+
 @end
