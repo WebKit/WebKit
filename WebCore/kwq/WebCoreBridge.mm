@@ -905,7 +905,11 @@ static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
-    if (node && idFromNode(node) == ID_FORM) {
+    // This should not be necessary, but an XSL file on
+    // maps.google.com crashes otherwise because it is an xslt file
+    // that contains <form> elements that aren't in any namespace, so
+    // they come out as generic CML elements
+    if (node && node->isHTMLElement() && idFromNode(node) == ID_FORM) {
         return static_cast<HTMLFormElementImpl *>(node);
     }
     return nil;

@@ -1,3 +1,14 @@
+2005-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Dave a while ago.
+
+	<rdar://problem/3996685> REGRESSION: Crash in KWQVectorImpl::at loading http://maps.google.com/mapfiles/homepanel.xsl
+        
+	* kwq/WebCoreBridge.mm:
+        (formElementFromDOMElement): Check for isHTMLElement() as well as
+	id() == ID_FORM. This seems like an impossible situation, but
+	papering over it seems more expedient for the time being.
+
 2005-02-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
