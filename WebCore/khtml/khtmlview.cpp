@@ -39,6 +39,7 @@
 #include "rendering/render_replaced.h"
 #include "rendering/render_line.h"
 #include "rendering/render_text.h"
+#include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"
@@ -832,7 +833,8 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
             c = m_part->urlCursor();
         else if ( !mev.innerNode.isNull()
                   && (mev.innerNode.nodeType() == Node::TEXT_NODE
-                      || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE) )
+                      || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE
+                      || (mev.innerNode.isContentEditable())))
             c = KCursor::ibeamCursor();
         break;
     case CURSOR_CROSS:

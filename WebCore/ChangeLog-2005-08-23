@@ -2,6 +2,18 @@
 
         Reviewed by Dave
 
+        * khtml/dom/dom_node.cpp:
+        (Node::isContentEditable): Added. Calls through to impl function of same name.
+        * khtml/dom/dom_node.h: Added isContentEditable declaration.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent): Now, the cursor will change
+        to an i-beam whenever it is over a node that is contenteditable, and nothing, 
+        like a link, takes precedence.
+
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+
         * khtml/css/html4.css: Refine focus rules so that HTML and BODY
         elements do not draw a focus ring around themselves when focused.
         This prevents a silly-looking focus ring from drawing around a 

@@ -874,6 +874,12 @@ public:
      */
     QRect getRect();
 
+    /**
+     * not part of the DOM.
+     * @returns whether this node is contenteditable.
+     */
+    bool isContentEditable() const;
+
 protected:
     NodeImpl *impl;
 };
