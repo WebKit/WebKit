@@ -237,8 +237,14 @@
 - (void)_clearPageCache
 {
     int i;
+    WebHistoryItem *currentItem = [self currentItem];
+    
     for (i = 0; i < (int)[_private->entries count]; i++) {
-        [[_private->entries objectAtIndex:i] setHasPageCache:NO];
+        WebHistoryItem *item;
+        // Don't clear the current item.  Objects are still in use.
+        item = [_private->entries objectAtIndex:i];
+        if (item != currentItem)
+            [item setHasPageCache:NO];
     }
     [WebHistoryItem _releaseAllPendingPageCaches];
 }

@@ -1,3 +1,12 @@
+2003-08-29  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3400807.  Don't release state associated with the current b/f item.  We shouldn't normally have page cache state associated with the current item (3401376).  This fix guarantees that we won't prematurely release the page cache state for the current item.
+
+        Reviewed byJohn Sullivan.
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList _clearPageCache]):
+
 2003-08-28  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3399736.  Fixed several problems with WebView/WebPreferences
