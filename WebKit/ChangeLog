@@ -1,5 +1,11 @@
 2004-08-23  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed build.
+
+        * WebKit.pbproj/project.pbxproj: make sure we're doing -f on a file, not a directory
+
+2004-08-23  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3674867> use new Security framework SPI's to reenable cert acquisition
 
         Reviewed by john.
