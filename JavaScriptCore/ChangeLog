@@ -1,5 +1,12 @@
 2003-09-25  Maciej Stachowiak  <mjs@apple.com>
 
+	Roll out build system change since it did not actually work. :-(
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         * JavaScriptCore.pbproj/project.pbxproj: Don't hack install name. Instead

@@ -1,3 +1,9 @@
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+	Roll out build system change since it did not actually work. :-(
+	
+        * WebKit.pbproj/project.pbxproj:
+
 2003-09-25  David Hyatt  <hyatt@apple.com>
 
 	Change layout so that it is called from the private _recursive functions instead of

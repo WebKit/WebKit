@@ -15,6 +15,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				ZERO_LINK = YES;
@@ -29,6 +30,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				ZERO_LINK = NO;
 			};
@@ -118,7 +120,7 @@
 				0867D69EFE84028FC02AAC07,
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
-				654F50BD05226B8E00EF888C,
+				F692A8D8025563E401FF60F7,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -582,15 +584,6 @@
 			settings = {
 			};
 		};
-		654F50BD05226B8E00EF888C = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ -f ../Tools/Scripts/embed-into-webkit ]; then\n    ../Tools/Scripts/embed-into-webkit;\nfi";
-		};
 		6560A4CF04B3B3E7008AE952 = {
 			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
@@ -891,6 +884,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
@@ -1873,6 +1867,15 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F692A8D8025563E401FF60F7 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 	};
 	rootObject = 0867D690FE84028FC02AAC07;

@@ -1,3 +1,9 @@
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+	Roll out build system change since it did not actually work. :-(
+	
+        * WebCore.pbproj/project.pbxproj:
+
 2003-09-25  David Hyatt  <hyatt@apple.com>
 
 	Landing the new repainting code.  This code eliminates many redundant layouts, makes
