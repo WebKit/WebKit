@@ -29,4 +29,21 @@
 // FIXME: grotesque hack to get khtml/html/html_formimpl.cpp:198 to compile
 #include <kdecore/kglobal.h>
 
+#include <kdecore/kurl.h>
+#include <sys/types.h>
+#include <qstring.h>
+
+template<class T> class KSharedPtr
+{
+public:
+    T *operator->();
+};
+
+class KMimeType {
+public:
+    typedef KSharedPtr<KMimeType> Ptr;
+    static Ptr findByURL(const KURL &, mode_t = 0, bool = false, bool = false);
+    QString name() const;
+};
+
 #endif
