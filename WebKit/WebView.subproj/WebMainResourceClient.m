@@ -22,7 +22,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>
@@ -51,7 +51,7 @@
 
 - (void)dealloc
 {
-    ASSERT(downloadHandler == nil);
+    ASSERT(download == nil);
     
     [resourceData release];
     
@@ -63,23 +63,23 @@
     return resourceData;
 }
 
-- (WebDownloadHandler *)downloadHandler
+- (WebDownload *)download
 {
-    return downloadHandler;
+    return download;
 }
 
 - (BOOL)isDownload
 {
-    return downloadHandler != nil;
+    return download != nil;
 }
 
 - (void)receivedError:(WebError *)error complete:(BOOL)isComplete
 {
-    if (downloadHandler) {
+    if (download) {
         ASSERT(isComplete);
-        [downloadHandler cancel];
-        [downloadHandler release];
-        downloadHandler = nil;
+        [download cancel];
+        [download release];
+        download = nil;
         [dataSource _setPrimaryLoadComplete:YES];
     } else {
         [[dataSource controller] _mainReceivedError:error
@@ -207,7 +207,7 @@
         
 	// Hand off the dataSource to the download handler.  This will cause the remaining
 	// handle delegate callbacks to go to the controller's download delegate.
-	downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
+	download = [[WebDownload alloc] initWithDataSource:dataSource];
         break;
 
     case WebPolicyOpenURL:
@@ -296,8 +296,8 @@
 
     WebError *downloadError= nil;
     
-    if (downloadHandler) {
-        downloadError = [downloadHandler receivedData:data];
+    if (download) {
+        downloadError = [download receivedData:data];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
@@ -329,8 +329,8 @@
 
     WebError *downloadError = nil;
     
-    if (downloadHandler) {
-        downloadError = [downloadHandler finishedLoading];
+    if (download) {
+        downloadError = [download finishedLoading];
         [dataSource _setPrimaryLoadComplete:YES];
     } else {
         [dataSource _setResourceData:resourceData];
@@ -346,8 +346,8 @@
         [super handleDidFinishLoading:h];
     }
 
-    [downloadHandler release];
-    downloadHandler = nil;
+    [download release];
+    download = nil;
     
     [self release];
 }

@@ -12,7 +12,7 @@
 @class WebController;
 @class WebControllerPrivate;
 @class WebDataSource;
-@class WebDownloadHandler;
+@class WebDownload;
 @class WebError;
 @class WebFrame;
 @class WebResourceHandle;

@@ -11,7 +11,7 @@
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
 
-@class WebDownloadHandler;
+@class WebDownload;
 @class WebDataSource;
 @class WebResourceHandle;
 @class WebResourceRequest;
@@ -22,14 +22,14 @@
 
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {
-    WebDownloadHandler *downloadHandler;
+    WebDownload *download;
     NSMutableData *resourceData;
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;
-- (WebDownloadHandler *)downloadHandler;
+- (WebDownload *)download;
 - (NSData *)resourceData;
 
 @end

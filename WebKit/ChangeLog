@@ -1,5 +1,61 @@
 2003-02-06  Chris Blumenberg  <cblu@apple.com>
 
+	Renamed WebDownloadHandler to WebDownload.
+	Made ivars of WebDownload private.
+
+        Reviewed by kocienda.
+
+        * Downloads.subproj/WebDownload.h: Added.
+        * Downloads.subproj/WebDownload.m: Added.
+        (-[WebDownloadPrivate init]):
+        (-[WebDownloadPrivate dealloc]):
+        (-[WebDownload initWithDataSource:]):
+        (-[WebDownload dealloc]):
+        (-[WebDownload decodeHeaderData:dataForkData:resourceForkData:]):
+        (-[WebDownload decodeData:dataForkData:resourceForkData:]):
+        (-[WebDownload closeFork:deleteFile:]):
+        (-[WebDownload closeFileAndDelete:]):
+        (-[WebDownload closeFile]):
+        (-[WebDownload cleanUpAfterFailure]):
+        (-[WebDownload createFileIfNecessary]):
+        (-[WebDownload writeDataForkData:resourceForkData:]):
+        (-[WebDownload dataIfDoneBufferingData:]):
+        (-[WebDownload decodeData:]):
+        (-[WebDownload receivedData:]):
+        (-[WebDownload finishDecoding]):
+        (-[WebDownload finishedLoading]):
+        (-[WebDownload cancel]):
+        (-[WebDownload path]):
+        (-[WebDownload writeForkData:isDataFork:]):
+        (-[WebDownload errorWithCode:]):
+        (-[WebDownload cancelWithError:]):
+        (-[WebDownload dataForkReferenceNumber]):
+        (-[WebDownload setDataForkReferenceNumber:]):
+        (-[WebDownload resourceForkReferenceNumber]):
+        (-[WebDownload setResourceForkReferenceNumber:]):
+        (-[WebDownload areWritesCancelled]):
+        (-[WebDownload setWritesCancelled:]):
+        (WriteCompletionCallback):
+        (CloseCompletionCallback):
+        (DeleteCompletionCallback):
+        * Downloads.subproj/WebDownloadHandler.h: Removed.
+        * Downloads.subproj/WebDownloadHandler.m: Removed.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient download]):
+        (-[WebMainResourceClient isDownload]):
+        (-[WebMainResourceClient receivedError:complete:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+
+2003-02-06  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3125067 - Investigate performance implications of writing download file data
 	
         Reviewed by trey, rjw, darin.

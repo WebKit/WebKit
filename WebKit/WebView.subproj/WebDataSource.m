@@ -4,7 +4,7 @@
 */
 
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebMainResourceClient.h>

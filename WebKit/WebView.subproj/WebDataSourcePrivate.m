@@ -9,7 +9,7 @@
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistory.h>
