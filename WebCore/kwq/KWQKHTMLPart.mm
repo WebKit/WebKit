@@ -2001,7 +2001,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                         _dragClipboard->setDragImageElement(_dragSrc, QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation));
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownX, _mouseDownY));
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(KWQClipboard::ImageWritable);

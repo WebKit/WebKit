@@ -1,3 +1,15 @@
+2004-06-15  Trey Matteson  <trey@apple.com>
+
+	Dragging tweak:  We pass the mouse down coords instead of the
+	latest mouse drag coords to the ondragstart event.  This makes it
+	easy for the client to figure the correct drag image offset,
+	whereas the mouse drag location is next to useless for that.
+
+        Reviewed by Louch
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+
 2004-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
