@@ -1,3 +1,15 @@
+2003-04-30  Chris Blumenberg  <cblu@apple.com>
+
+        FIXED: Clients of WebKit should have separate icon DB's
+
+        Reviewed by rjw.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]): If the icon db hasn't been set using the defaults, create o directory using the bundle id. 
+        * WebKit.exp:
+
 2003-04-30  Richard Williamson   <rjw@apple.com>
 
         API changes from final review meeting.

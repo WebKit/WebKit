@@ -15,21 +15,18 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
-#define WebIconDatabaseOldContainingDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/com.apple.WebKit"])
-#define WebIconDatabaseNewContainingDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/WebKit"])
-
-#define WebIconDatabaseDefaultDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/WebKit/Icons"])
-
-NSString * const WebIconDatabaseVersionKey = @"WebIconDatabaseVersion";
-NSString * const WebIconsOnDiskKey = @"WebIconsOnDisk";
-NSString * const WebURLToIconURLKey = @"WebSiteURLToIconURLKey";
-NSString * const WebIconURLToURLsKey = @"WebIconURLToSiteURLs";
-NSString * const WebHostToURLsKey = @"WebHostToSiteURLs";
+NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
+NSString * const WebIconsOnDiskKey = 		@"WebIconsOnDisk";
+NSString * const WebURLToIconURLKey = 		@"WebSiteURLToIconURLKey";
+NSString * const WebIconURLToURLsKey = 		@"WebIconURLToSiteURLs";
+NSString * const WebHostToURLsKey = 		@"WebHostToSiteURLs";
 
 static const int WebIconDatabaseCurrentVersion = 1;
 
 NSString *WebIconDatabaseDidAddIconNotification = @"WebIconDatabaseDidAddIconNotification";
-NSString *WebIconNotificationUserInfoURLKey = @"WebIconNotificationUserInfoURLKey";
+NSString *WebIconNotificationUserInfoURLKey =     @"WebIconNotificationUserInfoURLKey";
+
+NSString *WebIconDatabaseDirectoryDefaultsKey =   @"WebIconDatabaseDirectoryDefaultsKey";
 
 NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
@@ -220,16 +217,12 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_createFileDatabase
 {
-    // Move over the old database, if we have one. If the new database
-    // already exists, this call will fail with ENOTEMPTY, so we don't
-    // need to worry about overwriting it.
-    rename([WebIconDatabaseOldContainingDirectory fileSystemRepresentation], [WebIconDatabaseNewContainingDirectory fileSystemRepresentation]);
-
     // FIXME: Make defaults key public somehow
-    NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebIconDatabaseDirectory"];
+    NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
     if (!databaseDirectory) {
-        databaseDirectory = WebIconDatabaseDefaultDirectory;
+        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        databaseDirectory = [NSString stringWithFormat:@"%@/Library/Caches/WebKitIcons/%@", NSHomeDirectory(), bundleIdentifier];
     }
 
     _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
