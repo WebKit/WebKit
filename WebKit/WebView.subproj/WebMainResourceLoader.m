@@ -11,7 +11,6 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 #import <WebKit/WebBridge.h>

@@ -8,7 +8,7 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -18,15 +18,6 @@
 #import <WebKit/WebStandardPanelsPrivate.h>
 
 @implementation WebBaseResourceHandleDelegate
-
-- init
-{
-    self = [super init];
-    
-    [self setIsDownload: NO];
-    
-    return self;
-}
 
 - (void)_releaseResources
 {
@@ -64,6 +55,23 @@
     [response release];
     [currentURL release];
     [super dealloc];
+}
+
+- (void)loadWithRequest:(WebResourceRequest *)r
+{
+    ASSERT(handle == nil);
+    
+    handle = [[WebResourceHandle alloc] initWithRequest:r];
+    if (defersCallbacks) {
+        [handle _setDefersCallbacks:YES];
+    }
+    [handle loadWithDelegate:self];
+}
+
+- (void)setDefersCallbacks:(BOOL)defers
+{
+    defersCallbacks = defers;
+    [handle _setDefersCallbacks:defers];
 }
 
 - (void)setDataSource: (WebDataSource *)d
@@ -111,14 +119,9 @@
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
-    ASSERT (!reachedTerminalState);
+    ASSERT(handle == h);
+    ASSERT(!reachedTerminalState);
 
-    if (!handle){
-        // Retained so we can cancel if necessary.  Released when we
-        // reach a terminal state.
-        handle = [h retain];
-    }
-        
     [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
     // No need to retain here, will be copied after delegate callback.
@@ -151,8 +154,8 @@
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
-    ASSERT (handle == h);
-    ASSERT (!reachedTerminalState);
+    ASSERT(handle == h);
+    ASSERT(!reachedTerminalState);
 
     [r retain];
     [response release];
@@ -166,8 +169,8 @@
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    ASSERT (handle == h);
-    ASSERT (!reachedTerminalState);
+    ASSERT(handle == h);
+    ASSERT(!reachedTerminalState);
 
     if ([self isDownload])
         [downloadDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource: dataSource];
@@ -177,8 +180,8 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    ASSERT (handle == h);
-    ASSERT (!reachedTerminalState);
+    ASSERT(handle == h);
+    ASSERT(!reachedTerminalState);
 
     if ([self isDownload])
         [downloadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
@@ -192,8 +195,8 @@
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
 {
-    ASSERT (handle == h);
-    ASSERT (!reachedTerminalState);
+    ASSERT(handle == h);
+    ASSERT(!reachedTerminalState);
     
     if ([self isDownload])
         [downloadDelegate resource: identifier didFailLoadingWithError: result fromDataSource: dataSource];

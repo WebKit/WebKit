@@ -24,7 +24,6 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebControllerPrivate

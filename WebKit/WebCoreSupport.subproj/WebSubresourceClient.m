@@ -13,7 +13,6 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -36,10 +35,7 @@
 
 - (void)dealloc
 {
-    ASSERT(currentURL == nil);
-    
     [loader release];
-    
     [super dealloc];
 }
 
@@ -66,9 +62,8 @@
         return nil;
     }
     
-    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:newRequest];
     [source _addSubresourceClient:client];
-    [h loadWithDelegate:client];
+    [client loadWithRequest:newRequest];
     [newRequest release];
         
     return [client autorelease];

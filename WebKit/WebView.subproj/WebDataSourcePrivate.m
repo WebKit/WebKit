@@ -32,7 +32,6 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
@@ -50,7 +49,6 @@
     [request release];
     [originalRequest release];
     [mainClient release];
-    [mainHandle release];
     [subresourceClients release];
     [pageTitle release];
     [response release];
@@ -132,8 +130,6 @@
 
         [_private->mainClient release];
         _private->mainClient = 0; 
-        [_private->mainHandle release];
-        _private->mainHandle = 0;
         [self _updateLoading];
     }
 }
@@ -165,8 +161,7 @@
 	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
 	}
 
-        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request];
-        [_private->mainHandle loadWithDelegate:_private->mainClient];
+        [_private->mainClient loadWithRequest:_private->request];
     }
 }
 
@@ -176,7 +171,7 @@
         _private->subresourceClients = [[NSMutableArray alloc] init];
     }
     if ([_private->controller _defersCallbacks]) {
-        [[client handle] _setDefersCallbacks:YES];
+        [client setDefersCallbacks:YES];
     }
     [_private->subresourceClients addObject:client];
     [self _setLoading:YES];
@@ -535,11 +530,11 @@
     }
 
     _private->defersCallbacks = defers;
-    [_private->mainHandle _setDefersCallbacks:defers];
+    [_private->mainClient setDefersCallbacks:defers];
     NSEnumerator *e = [_private->subresourceClients objectEnumerator];
     WebSubresourceClient *client;
     while ((client = [e nextObject])) {
-        [[client handle] _setDefersCallbacks:defers];
+        [client setDefersCallbacks:defers];
     }
 
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];

@@ -1,3 +1,36 @@
+2002-10-28  Darin Adler  <darin@apple.com>
+
+	- fixed bug that caused us to leak all WebResourceHandles used for subresources
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient dealloc]): Remove bogus "currentURL == nil" assert.
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+	Use the new loadWithRequest: call instead of making handle and doing loadWithDelegate:.
+	This is where the leak was, because no one ever released the handle, but releasing it
+	right away would be too soon.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Added defersCallbacks field,
+	loadWithRequest: method, and setDefersCallbacks: method. Removed handle method.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): New method. Sets up the handle,
+	set the defersCallbacks state on it, and calls loadWithDelegate:.
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]): Stores defersCallbacks state,
+	and also sets it on the handle, if any.
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]): Remove code to set up
+	the handle, since we now do that at loadWithRequest: time.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Remove mainHandle field.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Don't release mainHandle.
+        (-[WebDataSource _setPrimaryLoadComplete:]): Ditto.
+        (-[WebDataSource _startLoading]): Use loadWithRequest: on the client, no need to deal
+	with the handle directly at all.
+        (-[WebDataSource _addSubresourceClient:]): Call setDefersCallbacks: on the client.
+        (-[WebDataSource _defersCallbacksChanged]): Ditto.
+
+        * WebView.subproj/WebControllerPrivate.m: Remove unneeded include.
+        * WebView.subproj/WebMainResourceClient.m: Ditto.
+
 2002-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3056726 - View Source window always displays the source in current system encoding
