@@ -28,7 +28,6 @@
     id <WebResourceLoadDelegate>resourceLoadDelegate;
     id <WebResourceLoadDelegate>downloadDelegate;
     NSURL *currentURL;
-    BOOL isDownload;
     BOOL reachedTerminalState;
     BOOL defersCallbacks;
 }
@@ -40,7 +39,7 @@
 
 - (id <WebResourceLoadDelegate>)resourceLoadDelegate;
 - (id <WebResourceLoadDelegate>)downloadDelegate;
-- (void)setIsDownload:(BOOL)f;
+- (BOOL)isDownload;
 
 - (void)cancel;
 - (void)cancelQuietly;

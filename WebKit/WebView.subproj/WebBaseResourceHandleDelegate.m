@@ -113,14 +113,9 @@
     return downloadDelegate;
 }
 
-- (void)setIsDownload:(BOOL)f
-{
-    isDownload = f;
-}
-
 - (BOOL)isDownload
 {
-    return isDownload;
+    return NO;
 }
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
@@ -163,7 +158,7 @@
     [response release];
     response = r;
 
-    if (isDownload)
+    if ([self isDownload])
         [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else
         [resourceLoadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];

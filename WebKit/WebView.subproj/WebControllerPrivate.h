@@ -49,7 +49,7 @@
 - (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
 - (void)_receivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
-- (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
+- (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 + (NSArray *)_supportedImageMIMETypes;
 - (void)_downloadURL:(NSURL *)URL;

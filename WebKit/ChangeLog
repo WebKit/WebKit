@@ -1,3 +1,35 @@
+2002-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3122608 -- Downloads can't be cancelled
+
+	When I fixed the leak for other categories of policy interruption, I messed
+	things up for downloads. Added new parameters to handle this right.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Remove isDownload flag.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate isDownload]): Return NO, override in subclass.
+        (-[WebBaseResourceHandleDelegate handle:didReceiveResponse:]): Call isDownload
+	method instead of looking at flag directly.
+
+        * WebView.subproj/WebControllerPrivate.h: Add complete: parameter to _mainReceivedError:.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:fromDataSource:complete:]): If complete is NO, then
+	don't mark the primary load as complete.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient isDownload]): Added. Returns YES if downloadHandler is non-nil.
+        (-[WebMainResourceClient receivedError:complete:]): Added complete parameter. Call the
+	_setPrimaryLoadComplete: method in the download case (fixes a possible leak), and pass
+	the complete parameter through to the controller.
+        (-[WebMainResourceClient cancel]): Pass complete:YES.
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]): Added the keepLoading
+	flag, and pass complete:!keepLoading.
+        (-[WebMainResourceClient stopLoadingForPolicyChange]): Pass keepLoading:NO.
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Pass keepLoading:YES,
+	and remove the call to the now-obsolete setIsDownload:.
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): Pass complete:YES.
+
 2002-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Don and Dave.

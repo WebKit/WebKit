@@ -150,18 +150,18 @@
 }
 
 
-- (void)_mainReceivedError: (WebError *)error fromDataSource: (WebDataSource *)dataSource
+- (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
     ASSERT(error);
     ASSERT(dataSource);
-    
-    WebFrame *frame = [dataSource webFrame];
-    ASSERT(frame);
-    
-    [dataSource _setMainDocumentError: error];
-    [dataSource _setPrimaryLoadComplete: YES];
+    ASSERT([dataSource webFrame]);
 
-    [frame _checkLoadComplete];
+    [dataSource _setMainDocumentError: error];
+
+    if (isComplete) {
+        [dataSource _setPrimaryLoadComplete:YES];
+        [[dataSource webFrame] _checkLoadComplete];
+    }
 }
 
 + (NSString *)_MIMETypeForFile: (NSString *)path

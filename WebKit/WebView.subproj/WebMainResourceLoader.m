@@ -64,15 +64,23 @@
     return downloadHandler;
 }
 
-- (void)receivedError:(WebError *)error
+- (BOOL)isDownload
+{
+    return downloadHandler != nil;
+}
+
+- (void)receivedError:(WebError *)error complete:(BOOL)isComplete
 {
     if (downloadHandler) {
+        ASSERT(isComplete);
         [downloadHandler cancel];
         [downloadHandler release];
         downloadHandler = nil;
+        [dataSource _setPrimaryLoadComplete:YES];
     } else {
         [[dataSource controller] _mainReceivedError:error
-                                     fromDataSource:dataSource];
+                                     fromDataSource:dataSource
+                                           complete:isComplete];
     }
 }
 
@@ -83,21 +91,20 @@
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
-    [self receivedError:[self cancelledError]];
-        
+    [self receivedError:[self cancelledError] complete:YES];
     [super cancel];
 
     [self release];
 }
 
-- (void)interruptForPolicyChange
+- (void)interruptForPolicyChangeAndKeepLoading:(BOOL)keepLoading
 {
     // Terminate the locationChangeDelegate correctly.
     WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
 
     // Must call receivedError before _clearProvisionalDataSource because
     // if we remove the data source from the frame, we can't get back to the frame any more.
-    [self receivedError:interruptError];
+    [self receivedError:interruptError complete:!keepLoading];
     [[dataSource webFrame] _clearProvisionalDataSource];
     
     [self notifyDelegatesOfInterruptionByPolicyChange];
@@ -105,7 +112,7 @@
 
 -(void)stopLoadingForPolicyChange
 {
-    [self interruptForPolicyChange];
+    [self interruptForPolicyChangeAndKeepLoading:NO];
     [self cancelQuietly];
 }
 
@@ -182,12 +189,11 @@
 	    [dataSource _setDownloadPath:saveFilename];
 	}
 
-        [self interruptForPolicyChange];
+        [self interruptForPolicyChangeAndKeepLoading:YES];
 	
 	// Hand off the dataSource to the download handler.  This will cause the remaining
 	// handle delegate callbacks to go to the controller's download delegate.
 	downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-	[self setIsDownload:YES];
         break;
 
     case WebPolicyOpenURL:
@@ -328,8 +334,7 @@
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
-    [self receivedError:error];
-    
+    [self receivedError:error complete:YES];
     [super handle:h didFailLoadingWithError:error];
 
     [self release];
