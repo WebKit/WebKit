@@ -3,3 +3,4 @@
 Makefile
 Makefile.dep
 export-objects
+export-headers

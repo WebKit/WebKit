@@ -15,17 +15,19 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-CLEAN_FILES = kentities.c
+HEADERS = $(wildcard *.h)
+
+EXPORT_HEADERS = $(HEADERS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+
+CLEAN_FILES = \
+    $(NULL)
 
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: kentities.c
-
-depend:
-
-kentities.c: kentities.gperf
-	$(GPERF) -a -L "ANSI-C" -C -G -c -o -t -k '*' -NfindEntity -D -s 2 $< > $@
+all: export-headers
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

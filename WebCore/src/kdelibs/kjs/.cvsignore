@@ -11,3 +11,4 @@ grammar.h
 *.kde
 *.dep
 export-objects
+export-headers

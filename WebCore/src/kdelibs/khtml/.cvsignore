@@ -9,3 +9,4 @@ ir.out
 testkhtml_static
 *.moc
 export-objects
+export-headers

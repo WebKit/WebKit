@@ -5,3 +5,4 @@ Makefile.in
 *.dep
 *.moc
 export-objects
+export-headers

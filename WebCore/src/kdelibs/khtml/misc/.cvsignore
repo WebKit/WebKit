@@ -11,3 +11,4 @@ htmlattrs.c
 htmlattrs.h
 htmlattrs.gperf
 export-objects
+export-headers

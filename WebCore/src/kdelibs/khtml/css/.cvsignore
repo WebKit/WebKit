@@ -12,3 +12,4 @@ cssproperties.c
 cssproperties.strip
 cssproperties.h
 export-objects
+export-headers

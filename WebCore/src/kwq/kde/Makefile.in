@@ -9,17 +9,23 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../..
+TOPSRCDIR = ../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
 # Set variables for this directory
 
+HEADERS = $(wildcard *.h)
 SOURCES = $(wildcard *.cpp)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(CXXOBJECTS)
 EXPORT_OBJECTS = $(CXXOBJECTS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = lib_kde.a
 
@@ -43,7 +49,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) export-objects
+all: $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

@@ -12,7 +12,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../..
+TOPSRCDIR = ../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -127,8 +127,13 @@ MMOBJECTS = \
 MOBJECTS = \
 	$(NULL)
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(MMOBJECTS) $(MOBJECTS)
 EXPORT_OBJECTS = $(OBJECTS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkwq.a
 
@@ -142,23 +147,23 @@ CLEAN_FILES = $(OBJECTS) \
 CMMFLAGS = $(BASECMMFLAGS) \
     -g \
     -I$(TOPSRCDIR) \
-    -I$(TOPSRCDIR)/include \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml/dom \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml/html \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml/misc \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml/xml \
-    -I$(TOPSRCDIR)/src/kwq \
-    -I$(TOPSRCDIR)/src/kwq/dcop \
-    -I$(TOPSRCDIR)/src/kwq/qt \
-    -I$(TOPSRCDIR)/src/kwq/kde \
-    -I$(TOPSRCDIR)/src/kwq/kdecore \
-    -I$(TOPSRCDIR)/src/kwq/kdeui \
-    -I$(TOPSRCDIR)/src/kwq/kfile \
-    -I$(TOPSRCDIR)/src/kwq/khtml \
-    -I$(TOPSRCDIR)/src/kwq/khtml/java \
-    -I$(TOPSRCDIR)/src/kwq/kio \
-    -I$(TOPSRCDIR)/src/kwq/kparts \
+    -I$(TOPSRCDIR)/WebCore/include \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/dom \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/html \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/misc \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/xml \
+    -I$(TOPSRCDIR)/WebCore/src/kwq \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/dcop \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/qt \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdeui \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kfile \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/khtml \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/khtml/java \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kio \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kparts \
     -I. \
     $(NULL)
 
@@ -166,11 +171,11 @@ DEPFLAGS = $(CMMFLAGS)
 
 CMFLAGS = $(BASECMFLAGS) \
     -I$(TOPSRCDIR) \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml \
-    -I$(TOPSRCDIR)/src/kwq \
-    -I$(TOPSRCDIR)/src/kwq/qt \
-    -I$(TOPSRCDIR)/src/kwq/kde \
-    -I$(TOPSRCDIR)/src/kwq/kdecore \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml \
+    -I$(TOPSRCDIR)/WebCore/src/kwq \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/qt \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
     -I. \
     $(NULL)
 
@@ -179,7 +184,7 @@ DEPFLAGS = $(CMFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) export-objects
+all: $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJECTS)

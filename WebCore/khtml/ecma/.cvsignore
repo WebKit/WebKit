@@ -6,3 +6,4 @@ Makefile.in
 *.moc
 *.gperf
 export-objects
+export-headers

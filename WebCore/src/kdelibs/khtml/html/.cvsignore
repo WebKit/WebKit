@@ -4,3 +4,4 @@ Makefile.in
 *.moc
 *.kde
 export-objects
+export-headers

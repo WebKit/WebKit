@@ -35,7 +35,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../..
+TOPSRCDIR = ../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -73,9 +73,13 @@ CXXOBJECTS = \
 
 PROGRAM = testkjs
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(CXXOBJECTS) 
 EXPORT_OBJECTS = $(CXXOBJECTS) 
-EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/lib/kjs
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkjs.a
 
@@ -96,7 +100,7 @@ YACCFLAGS = -d --output-file=grammar.cpp --name-prefix=kjsyy
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CXXYACCOBJECTS) $(OBJECTS) $(LIBRARY) $(PROGRAM) export-objects
+all: $(CXXYACCOBJECTS) $(OBJECTS) $(LIBRARY) $(PROGRAM) export-headers export-objects 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

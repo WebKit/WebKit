@@ -12,7 +12,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../../..
+TOPSRCDIR = ../../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -35,8 +35,13 @@ CXXOBJECTS = \
 	xml_tokenizer.o \
 	$(NULL)
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(CXXOBJECTS) 
 EXPORT_OBJECTS = $(CXXOBJECTS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkhtmlxml.a
 
@@ -54,12 +59,12 @@ CLEAN_FILES = $(OBJECTS) \
 CXXFLAGS = $(BASECXXFLAGS) \
     -DNEED_BOGUS_TEXTSTREAMS \
     -I$(TOPSRCDIR) \
-    -I$(TOPSRCDIR)/src/kwq \
-    -I$(TOPSRCDIR)/src/kwq/kde \
-    -I$(TOPSRCDIR)/src/kwq/kdecore \
-    -I$(TOPSRCDIR)/src/kwq/kdeui \
-    -I$(TOPSRCDIR)/src/kwq/khtml \
-    -I$(TOPSRCDIR)/src/kwq/qt \
+    -I$(TOPSRCDIR)/WebCore/src/kwq \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdeui \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/khtml \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/qt \
     -I../css \
     -I../dom \
     -I../html \
@@ -73,7 +78,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) export-objects
+all: $(OBJECTS) export-headers export-objects 
 
 dom_docimpl.cpp: dom_docimpl.moc
 dom_docimpl.moc:

@@ -12,7 +12,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../../..
+TOPSRCDIR = ../../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -22,8 +22,13 @@ SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(CXXOBJECTS) 
 EXPORT_OBJECTS = $(CXXOBJECTS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkhtmldom.a
 
@@ -36,14 +41,14 @@ CLEAN_FILES = $(OBJECTS) \
 
 CXXFLAGS = $(BASECXXFLAGS) \
 	-I$(TOPSRCDIR) \
-	-I$(TOPSRCDIR)/src/kwq \
-	-I$(TOPSRCDIR)/src/kwq/kde \
-	-I$(TOPSRCDIR)/src/kwq/qt \
-	-I$(TOPSRCDIR)/src/kwq/dcop \
-	-I$(TOPSRCDIR)/src/kwq/kdecore \
-	-I$(TOPSRCDIR)/src/kwq/kdeui \
-	-I$(TOPSRCDIR)/src/kwq/kio \
-	-I$(TOPSRCDIR)/src/kwq/kparts \
+	-I$(TOPSRCDIR)/WebCore/src/kwq \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/qt \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/dcop \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/kdeui \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/kio \
+	-I$(TOPSRCDIR)/WebCore/src/kwq/kparts \
 	-I../css \
 	-I../html \
 	-I../misc \
@@ -57,7 +62,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) export-objects
+all: $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

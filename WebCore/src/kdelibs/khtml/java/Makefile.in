@@ -12,7 +12,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../../..
+TOPSRCDIR = ../../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -24,8 +24,13 @@ ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 SKIPOBJECTS = javaembed.o
 CXXOBJECTS = $(filter-out $(SKIPOBJECTS),$(ALLOBJECTS))
 
+EXPORT_HEADERS = $(HEADERS)
+
 OBJECTS = $(CXXOBJECTS) 
 EXPORT_OBJECTS = $(CXXOBJECTS)
+
+EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/WebCore/lib
 
 LIBRARY = libkhtmljava.a
 
@@ -43,10 +48,10 @@ CLEAN_FILES = $(OBJECTS) \
 CXXFLAGS = $(BASECXXFLAGS) \
 	-DNEED_BOGUS_TEXTSTREAMS \
 	-DNEED_BOGUS_X_DEFINES \
-	-I$(TOPSRCDIR)/src/kwq \
-        -I$(TOPSRCDIR)/src/kwq/kde \
-        -I$(TOPSRCDIR)/src/kwq/qt \
-        -I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/WebCore/src/kwq \
+        -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+        -I$(TOPSRCDIR)/WebCore/src/kwq/qt \
+        -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
         -I.. \
         -I. \
         $(NULL)
@@ -56,7 +61,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) export-objects
+all: $(OBJECTS) export-headers export-objects 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

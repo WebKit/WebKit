@@ -10,7 +10,7 @@
 #======================================================================
 # Include header
 
-TOPSRCDIR = .
+TOPSRCDIR = ..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -29,17 +29,17 @@ SUBDIRS = \
 	src/kdelibs/khtml/rendering \
 	src/kdelibs/khtml \
 	src/kwq/ \
+	src/kwq/kde \
+	src/kwq/kdecore \
 	src/kwq/qt \
 	src/kwq/kde \
 	lib \
-	src/kwq/tests \
-	src/kwq/tests/qt \
 	$(NULL)
 
 #----------------------------------------------------------------------
 # Standard targets
 
-all depend setup install clean distclean maintainer-clean:		
+all depend setup install clean distclean maintainer-clean:
 	@target=$@; \
 	list='$(SUBDIRS)'; \
 	for subdir in $$list; do \
@@ -51,39 +51,7 @@ all depend setup install clean distclean maintainer-clean:
 			*) exit 1;; \
 		esac; \
 	done; \
-	echo ">>> Making local-$$target in `pwd`"; \
-	$(MAKE) local-$$target; \
 	$(NULL)	
-
-#----------------------------------------------------------------------
-# Custom targets
-
-test:
-	cd src/kwq/tests && \
-	$(MAKE) && \
-	./harness
-
-local-all:
-local-dep:
-local-install:
-local-setup:
-local-depend:
-local-clean:
-	
-local-distclean:
-	${MAKE} local-clean
-	rm -rf Makefile \
-	Makefile.rules \
-	Makefile.vars \
-	config.h \
-	config.cache \
-	config.log \
-	config.status \
-	$(NULL)
-	
-local-maintainer-clean:
-	rm -f configure;
-	${MAKE} local-distclean
 
 #======================================================================
 # end

@@ -14,7 +14,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ..
+TOPSRCDIR = ../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
