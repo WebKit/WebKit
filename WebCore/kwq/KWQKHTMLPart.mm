@@ -1218,7 +1218,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
         }
         else {
             doc->setFocusNode(node);
-            if (view()) {
+            if (view() && node->renderer() && !node->renderer()->isRoot()) {
                 view()->ensureRectVisibleCentered(node->getRect());
             }
             [_bridge makeFirstResponder:[_bridge documentView]];

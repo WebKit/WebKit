@@ -1,3 +1,17 @@
+2005-01-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3848412> for forwarded message, tabbing to message view scrolls to bottom of view
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Don't scroll the focus node to visible if it is not
+        in the document, or if it is not a descendent of the document element. In the case of the bug,
+        since the selection has not yet been set up, the focus node passed here is the HTML element, and
+        that does not yield a rect that is useful to us here. So now, in the case the bug mentions, we do nothing.
+
 2005-01-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs.
