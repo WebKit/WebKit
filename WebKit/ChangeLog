@@ -1,3 +1,21 @@
+2002-02-21  Richard Williamson  <rjw@apple.com>
+
+    Sop mostly working.
+    
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	_frameForDataSource:fromFrame:]), (-[IFBaseWebController frameForDataSource:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource frame]),
+	(-[IFWebDataSource frameName]), (-[IFWebDataSource stopLoading]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _addURLHandle:]), (-[IFWebDataSource _removeURLHandle:]),
+	(-[IFWebDataSource _stopLoading]), (-[IFWebDataSource
+	_recursiveStopLoadingfromDataSource:]):
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame setDataSource:]):
+
 2002-02-20  Richard Williamson  <rjw@apple.com>
 
     Some groundwork to bring WebFoundation callbacks up to 

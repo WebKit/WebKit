@@ -7,6 +7,8 @@
 */
 #import <Cocoa/Cocoa.h>
 
+#import <WebFoundation/IFURLHandle.h>
+
 #import <WebKit/IFWebDataSource.h>
 
 // includes from kde
@@ -19,9 +21,12 @@
     id <IFWebController>controller;
     NSURL *inputURL;
     KHTMLPart *part;
-    IFWebFrame *frame;
+    
     // Child frames of this frame.
     NSMutableDictionary *frames;
+    
+    // Active IFURLHandles.
+    NSMutableArray *urlHandles;
 }
 
 - init;
@@ -34,4 +39,9 @@
 - (KHTMLPart *)_part;
 - (void)_setParent: (IFWebDataSource *)p;
 - (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)flag;
+
+- (void)_stopLoading;
+- (void)_recursiveStopLoading;
+- (void)_addURLHandle: (IFURLHandle *)handle;
+- (void)_removeURLHandle: (IFURLHandle *)handle;
 @end

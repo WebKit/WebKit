@@ -4,7 +4,6 @@
 */
 
 #import <AppKit/AppKit.h>
-#import <IFCarbonWindowView.h>
 #import <WCPlugin.h>
 #include <qwidget.h>
 #include <npapi.h>

@@ -100,7 +100,7 @@
 
 
 // Set the frame that represents this data source.
-- (void)setFrame: (IFWebFrame *)f;
+//- (void)setFrame: (IFWebFrame *)f;
 
 
 // Return the frame that represents this data source.

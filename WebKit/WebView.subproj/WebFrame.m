@@ -73,7 +73,7 @@
         return;
         
     [data setDataSource: ds];
-    [[data dataSource] setFrame: self];
+    //[[data dataSource] setFrame: self];
 }
 
 // Required to break retain cycle between frame and data source,

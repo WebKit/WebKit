@@ -61,28 +61,10 @@
 - initWithLoader: (IFLoader *)loader;
 #endif
 
-
-- (void)setFrame: (IFWebFrame *)f
-{
-    // FIXME!  Remove.  This back pointer isn't necessary and introduces a
-    // messy cycle between IFWebFrame and IFWebDataSource.
-    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame == f)
-        return;
-        
-    [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame autorelease];
-    
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame = [f retain];
-    
-    [f setDataSource: self];
-}
-
-
 - (IFWebFrame *)frame
 {
-    // FIXME!  Implement traversing the frame tree, starting with
-    // the main frame.  That will remove messy frame<->datasource
-    // cycle.
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame;    
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    return [data->controller frameForDataSource: self];
 }
 
 
@@ -90,7 +72,7 @@
 // if the data source is not in a frame set.
 - (NSString *)frameName 
 {
-    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame name];    
+    return [[self frame] name];    
 }
 
 
@@ -227,11 +209,12 @@
 
 // Cancels any pending loads.  A data source is conceptually only ever loading
 // one document at a time, although one document may have many related
-// resources.  stopLoading will stop all loads related to the data source.
+// resources.  stopLoading will stop all loads related to the data source.  This
+// method will also stop loads that may be loading in child frames.
 // Returns NO if the data source is not currently loading.
 - (void)stopLoading
 {
-    [self _part]->closeURL ();
+    [self _recursiveStopLoading];
 }
 
 

@@ -44,6 +44,4 @@
 - (IFWebDataSource *)mainDataSource;
 
 
-- (IFWebFrame *)mainFrame;
-
 @end

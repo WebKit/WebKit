@@ -7,6 +7,7 @@
 */
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFException.h>
+#import <WebKit/WebKitDebug.h>
 
 
 
@@ -31,8 +32,8 @@
     // a reference to their view and main data source.
     [parent release];
     [frames release];
-    [frame release];
     [inputURL release];
+    [urlHandles release];
     
     delete part;
 
@@ -69,5 +70,61 @@
     
     [[self controller] locationChangeStartedForFrame: [self frame] initiatedByUserEvent: byUserEvent];
 }
+
+
+- (void)_addURLHandle: (IFURLHandle *)handle
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    
+    if (data->urlHandles == nil)
+        data->urlHandles = [[NSMutableArray alloc] init];
+    [data->urlHandles addObject: handle];
+}
+
+- (void)_removeURLHandle: (IFURLHandle *)handle
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+
+    [data->urlHandles removeObject: handle];
+}
+
+- (void)_stopLoading
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    int i, count;
+    IFURLHandle *handle;
+        
+    // Tell all handles to stop loading.
+    count = [data->urlHandles count];
+    for (i = 0; i < count; i++) {
+        handle = [data->urlHandles objectAtIndex: i];
+        WEBKITDEBUGLEVEL1 (0x2000, "canceling %s\n", [[[handle url] absoluteString] cString] );
+        [[data->urlHandles objectAtIndex: i] cancelLoadInBackground];
+    }
+
+    [self _part]->closeURL ();
+}
+
+
+- (void)_recursiveStopLoading
+{
+    NSArray *frames;
+    IFWebFrame *nextFrame;
+    int i, count;
+    IFWebDataSource *childDataSource, *childProvisionalDataSource;
+    
+    [self _stopLoading];
+    
+    frames = [self children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        nextFrame = [frames objectAtIndex: i];
+        childDataSource = [nextFrame dataSource];
+        [childDataSource _recursiveStopLoading];
+        childProvisionalDataSource = [nextFrame provisionalDataSource];
+        [childProvisionalDataSource _recursiveStopLoading];
+    }
+}
+
 
 @end

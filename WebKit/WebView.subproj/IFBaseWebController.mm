@@ -322,5 +322,34 @@
     [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::serverRedirectTo:forDataSource: is not implemented"];
 }
 
+- (IFWebFrame *)_frameForDataSource: (IFWebDataSource *)dataSource fromFrame: (IFWebFrame *)frame
+{
+    NSArray *frames;
+    int i, count;
+    IFWebFrame *result;
+    
+    if ([frame dataSource] == dataSource)
+        return frame;
+        
+    frames = [[frame dataSource] children];
+    count = [frames count];
+    for (i = 0; i < count; i++){
+        frame = [frames objectAtIndex: i];
+        result = [self _frameForDataSource: dataSource fromFrame: frame];
+        if (result)
+            return result;
+    }
+    return nil;       
+}
+
+
+- (IFWebFrame *)frameForDataSource: (IFWebDataSource *)dataSource
+{
+    IFWebFrame *frame = [self mainFrame];
+    
+    return [self _frameForDataSource: dataSource fromFrame: frame];
+}
+
+
 
 @end
