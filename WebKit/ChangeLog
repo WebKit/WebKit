@@ -1,3 +1,16 @@
+2004-08-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3778314> REGRESSION: Can't proceed to survey questions on Lominger's Apple website
+        
+	Because we will stop parsing when there is a pending redirection,
+	avoid setting one if no navigation would actually take place
+	because the number of steps is out of range.
+
+	* WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canGoBackOrForward:]):
+
 2004-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
