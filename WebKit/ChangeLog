@@ -2,7 +2,7 @@
 
 	WebKit part of fix for:
 
-	Radar 2982043 - Link mouseover status messages are not localizable
+	Radar 2982043 - Link mouse-over status should change in response to modifier keys
 	
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge modifierTrackingEnabled]): Implemented by checking
