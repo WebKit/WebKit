@@ -8,6 +8,7 @@
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 #import <WebKit/npapi.h>
 
+@class WebNetscapePluginPackage;
 @class WebResourceResponse;
 
 @interface WebBaseNetscapePluginStream : WebBaseResourceHandleDelegate
@@ -19,6 +20,7 @@
     NPStream stream;
     NSString *path;
     void *notifyData;
+    WebNetscapePluginPackage *plugin;
         
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;

@@ -67,6 +67,8 @@
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
     if (![thePlugin load]){
+        // FIXME: It would be nice to stop the load here.
+        
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebErrorCannotLoadPlugin
                                                                 URL:[theDataSource URL]
                                                       pluginPageURL:nil
@@ -74,6 +76,7 @@
                                                            MIMEType:MIME];
         
         [[[theDataSource controller] resourceLoadDelegate] pluginFailedWithError:error dataSource:theDataSource];
+        
         return;
     }
 

@@ -24,7 +24,8 @@
     [URL release];
     free((void *)stream.URL);
     [path release];
-
+    [plugin release];
+    
     [super dealloc];
 }
 
@@ -32,7 +33,7 @@
 {
     instance = pluginPointer;
     
-    WebNetscapePluginPackage *plugin = [(WebBaseNetscapePluginView *)instance->ndata plugin];
+    plugin = [[(WebBaseNetscapePluginView *)instance->ndata plugin] retain];
 
     NPP_NewStream = 	[plugin NPP_NewStream];
     NPP_WriteReady = 	[plugin NPP_WriteReady];
@@ -44,6 +45,10 @@
 
 - (void)setResponse:(WebResourceResponse *)r
 {
+    if(![plugin isLoaded]){
+        return;
+    }
+    
     [URL release];
     URL = [[r URL] retain];
     
@@ -102,7 +107,11 @@
 }
 
 - (void)receivedData:(NSData *)data
-{   
+{
+    if(![plugin isLoaded]){
+        return;
+    }
+    
     if (transferMode != NP_ASFILEONLY) {
         int32 numBytes;
         
@@ -118,9 +127,10 @@
 
 - (void)destroyStreamWithReason:(NPReason)reason
 {
-    if (!stream.ndata) {
+    if(![plugin isLoaded] || !stream.ndata) {
         return;
     }
+    
     NPError npErr;
     npErr = NPP_DestroyStream(instance, &stream, reason);
     LOG(Plugins, "NPP_DestroyStream: %d", npErr);
@@ -134,6 +144,10 @@
 
 - (void)finishedLoadingWithData:(NSData *)data
 {
+    if(![plugin isLoaded]){
+        return;
+    }
+    
     NSString *filename = [[URL path] lastPathComponent];
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         // FIXME: Need to use something like mkstemp?

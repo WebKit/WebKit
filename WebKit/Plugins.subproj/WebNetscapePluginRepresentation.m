@@ -20,10 +20,15 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)ds
 {
     if(!instance){
-        [self setPluginPointer:[(WebNetscapePluginDocumentView *)[[[ds webFrame] webView] documentView] pluginPointer]];
-        [self setResponse:[ds response]];
+        NSView *view = [[[ds webFrame] webView] documentView];
+        if([[view class] isKindOfClass:[WebNetscapePluginDocumentView class]]){
+            [self setPluginPointer:[(WebNetscapePluginDocumentView *)view pluginPointer]];
+            [self setResponse:[ds response]];
+        }
     }
-    [self receivedData:data];
+    if(instance){
+        [self receivedData:data];
+    }
 }
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)ds

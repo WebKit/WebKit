@@ -31,6 +31,11 @@
     return self;
 }
 
+- (BOOL)isLoaded
+{
+    return NO;
+}
+
 - (BOOL)load
 {
     return NO;

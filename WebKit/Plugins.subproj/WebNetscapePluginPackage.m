@@ -225,6 +225,11 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 }
 
+- (BOOL)isLoaded
+{
+    return isLoaded;
+}
+
 - (BOOL)load
 {    
     getEntryPointsFuncPtr NP_GetEntryPoints = NULL;

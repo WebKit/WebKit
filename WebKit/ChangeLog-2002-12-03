@@ -1,5 +1,27 @@
 2002-11-01  Chris Blumenberg  <cblu@apple.com>
 
+	Check that the plug-in is loaded before calling it.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream setPluginPointer:]):
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+        (-[WebBaseNetscapePluginStream destroyStreamWithReason:]):
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage isLoaded]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage isLoaded]):
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+
+2002-11-01  Chris Blumenberg  <cblu@apple.com>
+
 	- Moved plug-in error handling to WebResourceLoadDelegate
 	- Report plug-in load failure, java load failure, and plug-in not found errors.
 	- Added WebPluginError, subclass of WebError.
