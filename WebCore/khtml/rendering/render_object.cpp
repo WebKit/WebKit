@@ -824,6 +824,12 @@ void RenderObject::setStyle(RenderStyle *style)
         return;
 
     RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
+
+    if (m_style && m_parent && d >= RenderStyle::Visible)
+        // Do a repaint with the old style first, e.g., for example if we go from
+        // having an outline to not having an outline.
+        repaint();
+        
     if (isFloating() || isPositioned()) {
         // For changes in float or position, we need to conceivably remove ourselves
         // from the special objects list.

@@ -261,7 +261,7 @@ void RenderTable::layout()
 
     RenderObject *child = firstChild();
     while( child ) {
-	if ( !child->layouted() )
+	if ( !child->layouted() && !(child->element() && child->element()->id() == ID_FORM))
 	    child->layout();
 	if ( child->isTableSection() ) {
 	    static_cast<RenderTableSection *>(child)->calcRowHeight();
