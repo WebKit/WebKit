@@ -1,3 +1,13 @@
+2004-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- fixed another bug in the last checkin, isCacheValid was unitialized, resulting in
+	sometimes using a huge bogus length value.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeListImpl::NodeListImpl): Initialize isCacheValid.
+
 2004-11-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
