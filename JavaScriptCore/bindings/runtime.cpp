@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <value.h>
+#include <interpreter.h>
 
 #include <runtime_object.h>
 #include <jni_instance.h>
@@ -107,5 +108,10 @@ Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, 
 Object Instance::createRuntimeObject (BindingLanguage language, void *myInterface)
 {
     Instance *interfaceObject = Instance::createBindingForLanguageInstance (language, (void *)myInterface);
-    return Object(new RuntimeObjectImp(interfaceObject,true));
+    
+    Interpreter::lock();
+    Object theObject(new RuntimeObjectImp(interfaceObject,true));
+    Interpreter::unlock();
+    
+    return theObject;
 }

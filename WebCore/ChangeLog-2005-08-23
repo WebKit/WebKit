@@ -1,3 +1,18 @@
+2004-04-16  Richard Williamson   <rjw@apple.com>
+
+	Added an SPI to allow ObjC instances to be easily bound to 
+	JS.  This is needed by the dashboard guys for their prototyping.
+	Eventually they will use new API.
+
+        Reviewed by Chris.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bindObject):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge bindObject:withName:]):
+
 2004-04-16  Chris Blumenberg  <cblu@apple.com>
 
 	Added DOMHTMLEmbedElement as a DOM extension since EMBED is represented in our DOM even though its not part of the spec.

@@ -57,7 +57,9 @@
 #import "render_text.h"
 #import "xml/dom2_eventsimpl.h"
 #import "xml/dom2_rangeimpl.h"
+#import <JavaScriptCore/identifier.h>
 #import <JavaScriptCore/property_map.h>
+#import <JavaScriptCore/runtime.h>
 #import <JavaScriptCore/runtime_root.h>
 
 #undef _KWQ_TIMING
@@ -107,6 +109,8 @@ using KJS::SavedBuiltins;
 using KJS::SavedProperties;
 using KJS::ScheduledAction;
 using KJS::Window;
+
+using KJS::Bindings::Instance;
 
 using KParts::ReadOnlyPart;
 using KParts::URLArgs;
@@ -1120,6 +1124,15 @@ bool KWQKHTMLPart::tabsToAllControls() const
     else
         return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
 }
+
+void KWQKHTMLPart::bindObject(void *object, QString name)
+{
+    if (d->m_doc && jScript()) {
+        Window *w = Window::retrieveWindow(this);
+        w->put(jScript()->interpreter()->globalExec(), KJS::Identifier(name), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)object));
+    }
+}
+
 
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 {

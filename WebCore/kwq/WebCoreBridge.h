@@ -289,6 +289,8 @@ typedef enum {
 - (void)deleteKeyPressed;
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
 
+- (void)bindObject:(id)object withName:(NSString *)name;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

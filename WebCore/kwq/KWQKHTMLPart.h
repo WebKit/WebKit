@@ -277,6 +277,8 @@ public:
     void issueCutCommand();
     void issueCopyCommand();
     void issuePasteCommand();
+
+    void bindObject(void *object, QString name);
     
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

@@ -1,3 +1,15 @@
+2004-04-16  Richard Williamson   <rjw@apple.com>
+
+	Added an SPI to allow ObjC instances to be easily bound to 
+	JS.  This is needed by the dashboard guys for their prototyping.
+	Eventually they will use new API.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _bindObject:withName:toFrame:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-04-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3587599>: Mail Page, Web Archives don't preserve subframes

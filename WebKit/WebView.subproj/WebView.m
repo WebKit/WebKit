@@ -2985,3 +2985,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
+@implementation WebView (JavaScriptBinding)
+- (void)_bindObject:(id)object withName:(NSString *)name toFrame:(WebFrame *)frame
+{
+    if (!frame)
+        [[[self mainFrame] _bridge] bindObject:object withName:name];
+    else {
+        [[frame _bridge] bindObject:object withName:name];
+    }
+}
+@end
