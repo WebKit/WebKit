@@ -2,6 +2,19 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3812758> 8S266: attaching mutation events to an editable div crashes Safari
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchEvent): Added ref/deref so this works if passed a "floating" event object.
+        (NodeImpl::dispatchGenericEvent): Ditto.
+        (NodeImpl::dispatchHTMLEvent): Removed unneeded ref/deref now that dispatchEvent takes care of it.
+        (NodeImpl::dispatchMouseEvent): Ditto.
+        (NodeImpl::dispatchUIEvent): Ditto.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed some minor mistakes discovered by code inspection
 
         * khtml/khtml_part.cpp:
