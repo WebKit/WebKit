@@ -28,6 +28,7 @@
 #include "misc/loader_client.h"
 
 #include <qmap.h>
+#include <qdatetime.h>
 
 class KHTMLView;
 class QString;
@@ -91,6 +92,8 @@ protected slots:
     void slotHistoryChanged();
 private:
     mutable DOMString m_domain;
+    QTime m_startTime;
+    
 #if APPLE_CHANGES
     DOMString m_policyBaseURL;
 #endif

@@ -591,6 +591,10 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_SUB:
     case ID_SUP:
     case ID_BDO:
+    case ID_Q:
+    case ID_LEGEND:
+        // _0 *
+        return check_array(childID, tag_list_0);
     case ID_P:
     case ID_H1:
     case ID_H2:
@@ -598,9 +602,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_H4:
     case ID_H5:
     case ID_H6:
-    case ID_Q:
-    case ID_LEGEND:
-        // _0 *
+        if (childID == ID_TABLE) return true;
         return check_array(childID, tag_list_0);
     case ID_BASEFONT:
     case ID_BR:

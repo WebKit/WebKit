@@ -350,10 +350,6 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 #endif
         }
 
-#if SPEED_DEBUG < 1
-        if(tagPriority[id] == 0 && n->renderer())
-            n->renderer()->calcMinMaxWidth();
-#endif
         return true;
     } else {
 #ifdef PARSER_DEBUG

@@ -1,3 +1,22 @@
+2002-11-14  David Hyatt  <hyatt@apple.com>
+
+	Move text measurement and layout beyond onload.  This
+	shoudl speed up i-bench substantially and morrison's
+	PLT test slightly.
+
+	Also allow <table>s as children of <p> and <h1>-<h6>.
+	This fixes floats on slashdot.org (the left side) and
+	the floating tables in articles on wired.com.
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::HTMLDocumentImpl):
+        (HTMLDocumentImpl::close):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+
 2002-11-14  Richard Williamson  <rjw@apple.com>
 
         Fixed 3099505.  With the recent white space changes, multiple slaves may
