@@ -2825,6 +2825,15 @@ static WebHTMLView *lastHitView = nil;
     return [super accessibilityAttributeValue:attributeName];
 }
 
+- (id)accessibilityFocusedUIElement
+{
+    id accTree = [[self _bridge] accessibilityTree];
+    if (accTree)
+        return [accTree accessibilityFocusedUIElement];
+    else
+        return self;
+}
+
 - (id)accessibilityHitTest:(NSPoint)point
 {
     id accTree = [[self _bridge] accessibilityTree];

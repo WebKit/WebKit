@@ -1,3 +1,13 @@
+2005-01-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        <rdar://problem/3588548> AX: tabbing does not work correctly with the screen reader and a focused link; need AXFocusedUIElement to work.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView accessibilityFocusedUIElement]):
+        Implement this so that AppKit can use it from NSAccessibilityHandleFocusChanged.
+
 2005-01-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3936865> REGRESSION: canvas.drawImage no longer scales properly
