@@ -1,3 +1,19 @@
+2004-10-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3842030> WebKit needs to pass the mode (NP_FULL, NP_EMBED, etc) when calling plugInViewWithArguments
+	<rdar://problem/3792852> Safari is loading the new QuickTime Cocoa plugin on Panther
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView setDataSource:]): pass "full" as the mode
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]): load plug-in with the "webplugin" extension
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:]): pass "embed" as the mode
+        * WebKit.pbproj/project.pbxproj:
+
 2004-10-19  Vicki Murley <vicki@apple.com>
 
 	- bump WebKit version to 167.1, so that we can do a quick dot submission for <rdar://problem/3843951> 

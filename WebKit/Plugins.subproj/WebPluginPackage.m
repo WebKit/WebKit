@@ -11,10 +11,12 @@
 #import <WebKit/WebKitLogging.h>
 
 #import <Foundation/NSPrivateDecls.h>
+#import <Foundation/NSString_NSURLExtras.h>
 
-NSString *WebPlugInBaseURLKey = @"WebPlugInBaseURLKey";
-NSString *WebPlugInAttributesKey = @"WebPlugInAttributesKey";
-NSString *WebPlugInContainerKey = @"WebPlugInContainerKey";
+NSString *WebPlugInBaseURLKey =     @"WebPlugInBaseURLKey";
+NSString *WebPlugInAttributesKey =  @"WebPlugInAttributesKey";
+NSString *WebPlugInContainerKey =   @"WebPlugInContainerKey";
+NSString *WebPlugInModeKey =        @"WebPlugInModeKey";
 
 /*!
 	@constant WebPlugInContainingElementKey The DOMElement that was used to specify
@@ -28,17 +30,18 @@ extern NSString *WebPlugInContainingElementKey;
 {
     [super initWithPath:pluginPath];
 
-    if (!bundle) {
+    if (bundle == nil) {
         [self release];
         return nil;
     }
     
-    UInt32 type = 0;
-    CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
-    
-    if (type != FOUR_CHAR_CODE('WBPL')) {
-        [self release];
-        return nil;
+    if (![[pluginPath pathExtension] _web_isCaseInsensitiveEqualToString:@"webplugin"]) {
+        UInt32 type = 0;
+        CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
+        if (type != FOUR_CHAR_CODE('WBPL')) {
+            [self release];
+            return nil;
+        }
     }
 
     if (![self getPluginInfoFromBundleAndMIMEDictionary:nil]) {

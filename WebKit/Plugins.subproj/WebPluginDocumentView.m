@@ -14,7 +14,7 @@
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebPluginViewFactory.h>
+#import <WebKit/WebPluginViewFactoryPrivate.h>
 #import <WebKit/WebView.h>
 
 @implementation WebPluginDocumentView
@@ -64,6 +64,7 @@
         URL,                WebPlugInBaseURLKey,
         attributes,         WebPlugInAttributesKey,
         pluginController,   WebPlugInContainerKey,
+        [NSNumber numberWithInt:WebPlugInModeFull], WebPlugInModeKey,
         nil];
     [attributes release];
     NSView *view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:plugin];

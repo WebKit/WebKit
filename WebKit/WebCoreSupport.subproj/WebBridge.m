@@ -38,7 +38,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebPluginViewFactory.h>
+#import <WebKit/WebPluginViewFactoryPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -813,6 +813,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             baseURL, WebPlugInBaseURLKey,
             attributes, WebPlugInAttributesKey,
             pluginController, WebPlugInContainerKey,
+            [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {

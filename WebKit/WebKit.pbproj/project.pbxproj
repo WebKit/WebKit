@@ -362,6 +362,7 @@
 				51C6513806EFCD9300969825,
 				9305892B070868B300E79D96,
 				832D7E050709D8FB00F49B61,
+				83E679790726D7CF006C7A36,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2396,6 +2397,24 @@
 			settings = {
 			};
 		};
+		83E679780726D7CF006C7A36 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WebPluginViewFactoryPrivate.h;
+			path = Plugins.subproj/WebPluginViewFactoryPrivate.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		83E679790726D7CF006C7A36 = {
+			fileRef = 83E679780726D7CF006C7A36;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 //830
 //831
 //832
@@ -2613,6 +2632,7 @@
 				83E4AF4B036659440000E506,
 				83E4AF4C036659440000E506,
 				848DFF860365FE6A00CA2ACA,
+				83E679780726D7CF006C7A36,
 				51863EFC065419EB00E9E8DD,
 			);
 			isa = PBXGroup;
