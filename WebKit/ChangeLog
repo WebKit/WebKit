@@ -1,3 +1,20 @@
+2003-05-01  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3245793 -- Launching Safari-75 after tip of tree 
+	erases all history
+
+        Reviewed by Chris, Don
+
+        * History.subproj/WebHistoryItem.m:
+	keep using "lastVisitedDate" as the dictionary key, since old
+	Safaris otherwise can't read the History file.
+        (-[WebHistoryItem dictionaryRepresentation]):
+	keep storing the time interval as a string, since old Safaris
+	otherwise can't read the History file
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+	read the stored date as a string and convert to a double,
+	as we did before.
+
 2003-05-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

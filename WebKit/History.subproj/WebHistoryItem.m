@@ -17,9 +17,9 @@
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
-static NSString *WebLastVisitedTimeIntervalKey = @"lastVisitedTimeInterval";
+// see 3245793 for explanation of "lastVisitedDate"
+static NSString *WebLastVisitedTimeIntervalKey = @"lastVisitedDate";
 static NSString *WebVisitCountKey = @"visitCount";
-static NSString *WebOBSOLETELastVisitedDateKey = @"lastVisitedDate";
 static NSString *WebTitleKey = @"title";
 static NSString *WebChildrenKey = @"children";
 static NSString *WebDisplayTitleKey = @"displayTitle";
@@ -491,7 +491,9 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
         [dict setObject:_private->displayTitle forKey:WebDisplayTitleKey];
     }
     if (_private->lastVisitedTimeInterval != 0.0) {
-        [dict _web_setDouble:_private->lastVisitedTimeInterval forKey:WebLastVisitedTimeIntervalKey];
+        // store as a string to maintain backward compatibility (see 3245793)
+        [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->lastVisitedTimeInterval]
+                 forKey:WebLastVisitedTimeIntervalKey];
     }
     if (_private->visitCount) {
         [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:WebVisitCountKey];
@@ -517,15 +519,7 @@ static NSString *WebDisplayTitleKey = @"displayTitle";
 
     [self setAlternateTitle:[dict _web_stringForKey:WebDisplayTitleKey]];
 
-    // We used to store a string representation of the date.  If we can't
-    // find a time interval check for the presence of that old string.
-    _private->lastVisitedTimeInterval = [dict _web_doubleForKey:WebLastVisitedTimeIntervalKey];
-    if (_private->lastVisitedTimeInterval == 0.0){
-        NSString *date = [dict _web_stringForKey:WebOBSOLETELastVisitedDateKey];
-        if (date)
-            _private->lastVisitedTimeInterval = [date doubleValue];
-    }
-
+    _private->lastVisitedTimeInterval = [[dict _web_stringForKey:WebLastVisitedTimeIntervalKey] doubleValue];
     _private->visitCount = [dict _web_intForKey:WebVisitCountKey];
 
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];
