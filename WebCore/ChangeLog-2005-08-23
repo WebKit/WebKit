@@ -1,3 +1,32 @@
+2003-11-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3470342>: focus rings are shown for links in
+        web pages even in non-frontmost windows
+
+        * kwq/KWQKHTMLPart.h: Add setShowsFirstResponder, showsFirstResponder functions and
+        _showsFirstResponder member variable.
+        (KWQKHTMLPart::showsFirstResponder): Added.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Initialize _showsFirstResponder to true
+        (KWQKHTMLPart::setShowsFirstResponder): Sets whether the painter draws focus rings.
+        * kwq/KWQPainter.h: Add _drawsFocusRing member variable.
+        (QPainter::setDrawsFocusRing): Sets whether the painter draws focus rings.
+        * kwq/KWQPainter.mm:
+        (QPainter::QPainter): Initialize _drawsFocusRing to true.
+        (QPainter::initFocusRing): Check _drawsFocusRing flag. Return if set to false.
+        (QPainter::addFocusRingRect): Ditto.
+        (QPainter::drawFocusRing): Ditto.
+        * kwq/WebCoreBridge.h: Add setShowsFirstResponder method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:]): Sets the value for _drawsFocusRing on the
+	painter using _showsFirstResponder value from the part.
+        (-[WebCoreBridge setShowsFirstResponder:]): Set passed in value on the part.
+	Redraw the focus ring if flag has changed.
+
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
 	Remove unneeded style property additions for form controls.  In the KHTML trunk these moved into the UA

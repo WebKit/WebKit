@@ -150,6 +150,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
     , _usesInactiveTextBackgroundColor(false)
+    , _showsFirstResponder(true)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -2624,6 +2625,19 @@ void KWQKHTMLPart::setMediaType(const QString &type)
 {
     if (d->m_view) {
         d->m_view->setMediaType(type);
+    }
+}
+
+void KWQKHTMLPart::setShowsFirstResponder(bool flag)
+{
+    if (flag != _showsFirstResponder) {
+        _showsFirstResponder = flag;
+        DocumentImpl *doc = xmlDocImpl();
+        if (doc) {
+            NodeImpl *node = doc->focusNode();
+            if (node && node->renderer())
+                node->renderer()->repaint();
+        }
     }
 }
 

@@ -1,3 +1,18 @@
+2003-11-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/3470342>: focus rings are shown for links in         
+        web pages even in non-frontmost windows
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateFocusRing]): New method. Uses the "keyness"
+	of the view's window to toggle focus ring drawing.
+        (-[WebHTMLView windowDidBecomeKey:]): Calls updateFocusRing.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+
 2003-11-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

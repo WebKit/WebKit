@@ -989,6 +989,11 @@ static WebHTMLView *lastHitView = nil;
         name:NSMouseMovedNotification object:nil];
 }
 
+- (void)updateFocusRing
+{
+    [[self _bridge] setShowsFirstResponder:[[self window] isKeyWindow]];
+}
+
 - (void)addSuperviewObservers
 {
     // We watch the bounds of our superview, so that we can do a layout when the size
@@ -1384,6 +1389,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
     [self updateTextBackgroundColor];
+    [self updateFocusRing];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
@@ -1391,6 +1397,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
     [self updateTextBackgroundColor];
+    [self updateFocusRing];
 }
 
 - (void)windowWillClose:(NSNotification *)notification

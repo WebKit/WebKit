@@ -437,6 +437,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 {
     QPainter painter(nowPrinting(self));
     painter.setUsesInactiveTextBackgroundColor(_part->usesInactiveTextBackgroundColor());
+    painter.setDrawsFocusRing(_part->showsFirstResponder());
     [self drawRect:rect withPainter:&painter];
 }
 
@@ -1004,6 +1005,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (BOOL)usesInactiveTextBackgroundColor
 {
     return _part->usesInactiveTextBackgroundColor();
+}
+
+- (void)setShowsFirstResponder:(BOOL)flag
+{
+    _part->setShowsFirstResponder(flag);
 }
 
 - (void)setShouldCreateRenderers:(BOOL)f

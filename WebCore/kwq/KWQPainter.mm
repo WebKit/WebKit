@@ -68,11 +68,11 @@ struct QPainterPrivate {
     QColor focusRingColor;
 };
 
-QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false)
+QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _drawsFocusRing(true)
 {
 }
 
-QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate), _isForPrinting(forPrinting), _usesInactiveTextBackgroundColor(false)
+QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate), _isForPrinting(forPrinting), _usesInactiveTextBackgroundColor(false), _drawsFocusRing(true)
 {
 }
 
@@ -678,6 +678,9 @@ void QPainter::clearShadow()
 
 void QPainter::initFocusRing(int width, int offset)
 {
+    if (!_drawsFocusRing)
+        return;
+
     clearFocusRing();
     data->focusRingWidth = width;
     data->hasFocusRingColor = false;
@@ -688,6 +691,9 @@ void QPainter::initFocusRing(int width, int offset)
 
 void QPainter::initFocusRing(int width, int offset, const QColor &color)
 {
+    if (!_drawsFocusRing)
+        return;
+
     initFocusRing(width, offset);
     data->hasFocusRingColor = true;
     data->focusRingColor = color;
@@ -695,6 +701,9 @@ void QPainter::initFocusRing(int width, int offset, const QColor &color)
 
 void QPainter::addFocusRingRect(int x, int y, int width, int height)
 {
+    if (!_drawsFocusRing)
+        return;
+
     ASSERT(data->focusRingPath);
     NSRect rect = NSMakeRect(x, y, width, height);
     int offset = (data->focusRingWidth-1)/2 + data->focusRingOffset;
@@ -704,6 +713,9 @@ void QPainter::addFocusRingRect(int x, int y, int width, int height)
 
 void QPainter::drawFocusRing()
 {
+    if (!_drawsFocusRing)
+        return;
+    
     ASSERT(data->focusRingPath);
     if (data->state.paintingDisabled)
         return;

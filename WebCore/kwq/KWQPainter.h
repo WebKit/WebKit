@@ -119,6 +119,7 @@ public:
     void addFocusRingRect(int x, int y, int width, int height);
     void drawFocusRing();
     void clearFocusRing();
+    void setDrawsFocusRing(bool flag) { _drawsFocusRing = flag; }
     
 private:
     // no copying or assignment
@@ -138,6 +139,7 @@ private:
     QPainterPrivate *data;
     bool _isForPrinting;
     bool _usesInactiveTextBackgroundColor;
+    bool _drawsFocusRing;
 };
 
 #endif
