@@ -1,5 +1,22 @@
 2004-08-19  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- fixed <rdar://problem/3549369> Crash at www.e1.ru in HTMLTokenizer::notifyFinished
+
+	Probably also fixed the following likely duplicates:
+
+	<rdar://problem/3503938> Safari crashed opening many tabs (HTMLTokenizer::notifyFinished(khtml::CachedObject*))
+	<rdar://problem/3566332> CrashTracer: ..405 crashes at com.apple.WebCore: QString::QString[unified] + 0x5c
+	<rdar://problem/3703964> CrashTracer: ...86 crashes at com.apple.WebCore: QString::QString[unified] + 0x5c
+	<rdar://problem/3703969> CrashTracer: ..234 crashes at com.apple.WebCore: HTMLTokenizer::notifyFinished + 0x1c8
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::open): call setParsing(true), because we need to know we are once again
+	parsing when we re-open a document that has previously completed loading.
+
+2004-08-19  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave and Darin.
 
         * khtml/rendering/render_text.cpp:
