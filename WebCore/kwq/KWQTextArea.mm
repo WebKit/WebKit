@@ -270,7 +270,12 @@ const float LargeNumberForText = 1.0e7;
 - (void)tile
 {
     [super tile];
+#if !BUILDING_ON_PANTHER
     [self _updateTextViewWidth];
+#else
+    // Pre-Tiger, if we change the width here we re-enter in a way that makes NSText unhappy.
+    [self performSelector:@selector(_updateTextViewWidth) withObject:nil afterDelay:0];
+#endif
 }
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph

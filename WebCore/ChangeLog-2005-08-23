@@ -1,3 +1,13 @@
+2005-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed <rdar://problem/3890352> REGRESSION (125-170, Panther-only): pasted textarea contents disappear (exception in NSText)
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea tile]): Don't resize the text view immediately here.
+        Use performWithDelay to defer it to avoid the re-entrancy that bothers the Panther version
+        of NSTextView. On Tiger, leave the code alone.
+
 2005-02-07  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.
