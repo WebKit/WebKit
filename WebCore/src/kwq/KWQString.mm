@@ -755,12 +755,12 @@ QString QString::right(uint width) const
     return leftRight(width, FALSE);
 }
 
-QString QString::mid(int index, int width) const
+QString QString::mid(uint index, uint width) const
 {
     QString qs;
     if (s) {
         CFIndex len = CFStringGetLength(s);
-        if (len && (index >= 0) && (index < len) && width) {
+        if (len && (index < len) && width) {
             if (!((index == 0) && (width >= len))) {
                 if (width > (len - index)) {
                     width = len - index;

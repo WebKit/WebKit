@@ -277,7 +277,7 @@ public:
 
     QString left(uint) const;
     QString right(uint) const;
-    QString mid(int, int len=0xffffffff) const;
+    QString mid(uint, uint len=0xffffffff) const;
 
     // NOTE: copy is simple enough to keep for completeness
 //#ifdef USING_BORROWED_KURL
