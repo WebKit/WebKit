@@ -110,6 +110,9 @@ enum FrameBorderStyle {
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding;
 - (void)closeURL;
+
+- (void)didNotOpenURL:(NSString *)URL;
+
 - (void)saveDocumentState;
 - (void)restoreDocumentState;
 

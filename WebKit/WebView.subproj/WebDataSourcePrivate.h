@@ -152,6 +152,7 @@
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
+- (void)_receivedError:(WebError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;
 - (WebResourceRequest *)_originalRequest;
 - (NSDictionary *)_triggeringAction;

@@ -188,6 +188,11 @@ static bool initializedObjectCacheSize = FALSE;
     _part->closeURL();
 }
 
+- (void)didNotOpenURL:(NSString *)URL
+{
+    _part->didNotOpenURL(QString::fromNSString(URL));
+}
+
 - (void)saveDocumentState
 {
     DocumentImpl *doc = _part->xmlDocImpl();

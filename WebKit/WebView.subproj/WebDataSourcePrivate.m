@@ -530,6 +530,16 @@
     [[self representation] finishedLoadingWithDataSource:self];
 }
 
+- (void)_receivedError:(WebError *)error complete:(BOOL)isComplete
+{
+    if (!_private->committed) {
+        [[[self webFrame] _bridge] didNotOpenURL:[[_private->originalRequestCopy URL] absoluteString]];
+    }
+    [[self controller] _mainReceivedError:error
+                           fromDataSource:self
+                                 complete:isComplete];
+}
+
 - (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
 {
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];

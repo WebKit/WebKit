@@ -16,7 +16,6 @@
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebResourceResponsePrivate.h>
 
-#import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
@@ -82,9 +81,7 @@
         download = nil;
         [dataSource _setPrimaryLoadComplete:YES];
     } else {
-        [[dataSource controller] _mainReceivedError:error
-                                     fromDataSource:dataSource
-                                           complete:isComplete];
+        [dataSource _receivedError:error complete:isComplete];
     }
 }
 

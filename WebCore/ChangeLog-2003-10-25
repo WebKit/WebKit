@@ -1,5 +1,23 @@
 2003-02-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed 3158484 -- after submission failure, submitting a second time doesn't work
+
+        * kwq/KWQKHTMLPart.h: Added didNotOpenURL method. Changed _formSubmittedFlag bool
+        into _submittedFormURL string.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): No need to initialize string.
+        (KWQKHTMLPart::didNotOpenURL): If the form we submitted failed, then forget about it.
+        (KWQKHTMLPart::submitForm): Only do the protection against multiple submissions if
+        the URL is the same.
+        (KWQKHTMLPart::setView): Nuke the submitted URL here where we used to nuke the flag.
+
+        * kwq/WebCoreBridge.h: Added didNotOpenURL: method to be called by WebKit.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge didNotOpenURL:]): Forward the call to the part.
+
+2003-02-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
         - fixed 3162786 -- hang with large amounts of text in textarea

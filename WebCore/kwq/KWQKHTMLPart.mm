@@ -126,7 +126,6 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
-    , _formSubmittedFlag(false)
     , _formValues(nil)
 {
     // Must init the cache before connecting to any signals
@@ -189,6 +188,13 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:nil formValues:nil];
 }
 
+void KWQKHTMLPart::didNotOpenURL(const QString &URL)
+{
+    if (_submittedFormURL == URL) {
+        _submittedFormURL = QString::null;
+    }
+}
+
 void KWQKHTMLPart::clearRecordedFormValues()
 {
     [_formValues release];
@@ -205,6 +211,7 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value)
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
+    QString URLString = url.url();    
     WebCoreBridge *target = bridgeForFrameName(args.frameName);
     KHTMLPart *targetPart = [target part];
     
@@ -223,25 +230,25 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         // This flag prevents these from happening.
         // Note that the flag is reset in setView()
         // since this part may get reused if it is pulled from the b/f cache.
-        if (_formSubmittedFlag) {
+        if (_submittedFormURL == URLString) {
             return;
         }
-        _formSubmittedFlag = true;
+        _submittedFormURL = URLString;
     }
 
     if (!args.doPost()) {
-        [target loadURL:url.url().getNSString()
+        [target loadURL:URLString.getNSString()
                  reload:args.reload
         triggeringEvent:_currentEvent
             formValues:_formValues];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
-        [target postWithURL:url.url().getNSString()
+        [target postWithURL:URLString.getNSString()
                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
                 contentType:contentType.mid(14).getNSString()
             triggeringEvent:_currentEvent
-                formValues:_formValues];
+                 formValues:_formValues];
     }
     clearRecordedFormValues();
 }
@@ -331,7 +338,7 @@ void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    _formSubmittedFlag = false;
+    _submittedFormURL = QString::null;
 }
 
 KHTMLView *KWQKHTMLPart::view() const

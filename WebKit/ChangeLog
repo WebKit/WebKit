@@ -1,3 +1,20 @@
+2003-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3158484 -- after submission failure, submitting a second time doesn't work
+
+        * WebView.subproj/WebDataSourcePrivate.h: Added _receivedError:complete: method.
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _receivedError:complete:]):
+	Added, parallel to _receivedData and _finishedLoading. Calls the new bridge method
+        didNotOpenURL: for cases where we fail before committing (which calls openURL).
+        Note that we can't use our own _bridge method because it asserts that we have committed
+        to prevent accidental misuse. Also make the call on the controller that used to be done
+        directly by the client.
+
+        * WebView.subproj/WebMainResourceClient.m: (-[WebMainResourceClient receivedError:complete:]):
+        Call the new -[WebDataSource _receivedError:complete:] rather than calling the controller directly.
+
 2003-02-11  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
