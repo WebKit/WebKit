@@ -130,3 +130,9 @@ QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
     NSSize size = [textArea sizeWithColumns:numColumns rows:numRows];
     return QSize((int)ceil(size.width), (int)ceil(size.height));
 }
+
+bool QTextEdit::checksDescendantsForFocus() const
+{
+    return true;
+}
+

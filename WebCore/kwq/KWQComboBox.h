@@ -57,6 +57,8 @@ public:
     void setFont(const QFont &);
 
     void itemSelected();
+    
+    virtual FocusPolicy focusPolicy() const;
 
 private:
     bool updateCurrentItem() const;

@@ -1800,33 +1800,53 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
 /*
  A hack for the benefit of AK's PopUpButton, which uses the Carbon menu manager, which thus
  eats all subsequent events after it is starts its modal tracking loop.  After the interaction
- is done, this routine is used to fix things up.  We post a fake mouse up to balance the
- mouse down we started with.  In addition, we post a fake mouseMoved to get the cursor in sync
- with whatever we happen to be over after the tracking is done.
+ is done, this routine is used to fix things up.  When a mouse down started us tracking in
+ the widget, we post a fake mouse up to balance the mouse down we started with. When a 
+ key down started us tracking in the widget, we post a fake key up to balance things out.
+ In addition, we post a fake mouseMoved to get the cursor in sync with whatever we happen to 
+ be over after the tracking is done.
  */
-void KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent)
+void KWQKHTMLPart::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
     _sendingEventToSubview = false;
-    ASSERT([downEvent type] == NSLeftMouseDown);
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                            location:[downEvent locationInWindow]
-                                       modifierFlags:[downEvent modifierFlags]
-                                           timestamp:[downEvent timestamp]
-                                        windowNumber:[downEvent windowNumber]
-                                             context:[downEvent context]
-                                         eventNumber:[downEvent eventNumber]
-                                          clickCount:[downEvent clickCount]
-                                            pressure:[downEvent pressure]];
-    mouseUp(fakeEvent);
+    int eventType = [initiatingEvent type];
+    ASSERT(eventType == NSLeftMouseDown || eventType == NSKeyDown);
+    NSEvent *fakeEvent = nil;
+    if (eventType == NSLeftMouseDown) {
+        fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+                                location:[initiatingEvent locationInWindow]
+                            modifierFlags:[initiatingEvent modifierFlags]
+                                timestamp:[initiatingEvent timestamp]
+                            windowNumber:[initiatingEvent windowNumber]
+                                    context:[initiatingEvent context]
+                                eventNumber:[initiatingEvent eventNumber]
+                                clickCount:[initiatingEvent clickCount]
+                                pressure:[initiatingEvent pressure]];
+    
+        mouseUp(fakeEvent);
+    }
+    else { // eventType == NSKeyDown
+        fakeEvent = [NSEvent keyEventWithType:NSKeyUp
+                                location:[initiatingEvent locationInWindow]
+                           modifierFlags:[initiatingEvent modifierFlags]
+                               timestamp:[initiatingEvent timestamp]
+                            windowNumber:[initiatingEvent windowNumber]
+                                 context:[initiatingEvent context]
+                              characters:[initiatingEvent characters] 
+             charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
+                               isARepeat:[initiatingEvent isARepeat] 
+                                 keyCode:[initiatingEvent keyCode]];
+        keyEvent(fakeEvent);
+    }
     // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
     // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
     // no up-to-date cache of them anywhere.
     fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
                                    location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
-                              modifierFlags:[downEvent modifierFlags]
-                                  timestamp:[downEvent timestamp]
-                               windowNumber:[downEvent windowNumber]
-                                    context:[downEvent context]
+                              modifierFlags:[initiatingEvent modifierFlags]
+                                  timestamp:[initiatingEvent timestamp]
+                               windowNumber:[initiatingEvent windowNumber]
+                                    context:[initiatingEvent context]
                                 eventNumber:0
                                  clickCount:0
                                    pressure:0];

@@ -186,7 +186,7 @@ public:
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
     void mouseUp(NSEvent *);
-    void doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent);
+    void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
     bool lastEventIsMouseUp();

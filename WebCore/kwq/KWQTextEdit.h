@@ -73,6 +73,8 @@ class QTextEdit : public QScrollView
 
     void clicked();
 
+    virtual bool checksDescendantsForFocus() const;
+
   private:
     KWQSignal _clicked;
     KWQSignal _textChanged;

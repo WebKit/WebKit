@@ -248,6 +248,10 @@ class HTMLInputElementImpl : public HTMLGenericFormElementImpl
     friend class khtml::RenderRadioButton;
     friend class khtml::RenderFileButton;
 
+#if APPLE_CHANGES
+    friend class HTMLSelectElementImpl;
+#endif
+
 public:
     // do not change the order!
     enum typeEnum {
@@ -441,6 +445,10 @@ public:
      }
     virtual void reset();
     void notifyOptionSelected(HTMLOptionElementImpl *selectedOption, bool selected);
+
+#if APPLE_CHANGES
+    virtual void defaultEventHandler(EventImpl *evt);
+#endif
 
 private:
     void recalcListItems();

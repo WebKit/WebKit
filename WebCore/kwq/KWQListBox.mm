@@ -27,6 +27,7 @@
 
 #import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 #import "WebCoreScrollView.h"
@@ -34,8 +35,6 @@
 #define MIN_LINES 4 /* ensures we have a scroll bar */
 
 @interface KWQListBoxScrollView : WebCoreScrollView
-{
-}
 @end
 
 @interface KWQTableView : NSTableView <KWQWidgetHolder>
@@ -44,8 +43,11 @@
     NSArray *_items;
     BOOL processingMouseEvent;
     BOOL clickedDuringMouseEvent;
+    BOOL inNextValidKeyView;
 }
 - initWithListBox:(QListBox *)b items:(NSArray *)items;
+-(void)_KWQ_setKeyboardFocusRingNeedsDisplay;
+- (QWidget *)widget;
 @end
 
 QListBox::QListBox(QWidget *parent)
@@ -238,6 +240,22 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     return QSize(size);
 }
 
+QWidget::FocusPolicy QListBox::focusPolicy() const
+{
+    // Add an additional check here.
+    // For now, selects are only focused when full
+    // keyboard access is turned on.
+    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
+        return NoFocus;
+
+    return QScrollView::focusPolicy();
+}
+
+bool QListBox::checksDescendantsForFocus() const
+{
+    return true;
+}
+
 @implementation KWQListBoxScrollView
 
 - (void)setFrameSize:(NSSize)size
@@ -247,6 +265,14 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     [column setWidth:[self contentSize].width];
     [column setMinWidth:[self contentSize].width];
     [column setMaxWidth:[self contentSize].width];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    KWQTableView *documentView = [self documentView];
+    QWidget *widget = [documentView widget];
+    [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:documentView];
+    return YES;
 }
 
 @end
@@ -311,13 +337,57 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 - (BOOL)becomeFirstResponder
 {
     BOOL become = [super becomeFirstResponder];
-
+    
     if (become) {
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
+            [self _KWQ_scrollFrameToVisible];
+        }        
+	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
 	const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
     }
 
     return become;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign) {
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
+    }
+    return resign;
+}
+
+-(NSView *)nextKeyView
+{
+    return _box && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(_box, KWQSelectingNext)
+        : [super nextKeyView];
+}
+
+-(NSView *)previousKeyView
+{
+    return _box && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(_box, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+-(NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+-(NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 - (int)numberOfRowsInTableView:(NSTableView *)tableView
@@ -356,6 +426,11 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     ASSERT([cell isKindOfClass:[NSCell class]]);
     [(NSCell *)cell setEnabled:_box->isEnabled()];
+}
+
+- (void)_KWQ_setKeyboardFocusRingNeedsDisplay
+{
+    [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
 }
 
 - (QWidget *)widget

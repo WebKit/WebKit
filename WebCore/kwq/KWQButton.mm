@@ -85,11 +85,11 @@
 {
     BOOL become = [super becomeFirstResponder];
     if (become) {
-        QFocusEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(button)) {
             [self _KWQ_scrollFrameToVisible];
         }
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
     }
     return become;
 }

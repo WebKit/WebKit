@@ -28,6 +28,7 @@
 #import "KWQButton.h"
 #import "KWQView.h"
 #import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 #import "WebCoreBridge.h"
 
 #import "khtmlview.h"
@@ -61,6 +62,9 @@ enum {
 @end
 
 @interface KWQPopUpButton : NSPopUpButton <KWQWidgetHolder>
+{
+    BOOL inNextValidKeyView;
+}
 @end
 
 QComboBox::QComboBox()
@@ -222,6 +226,17 @@ const int *QComboBox::dimensions() const
     return w[[[button cell] controlSize]];
 }
 
+QWidget::FocusPolicy QComboBox::focusPolicy() const
+{
+    // Add an additional check here.
+    // For now, selects are only focused when full
+    // keyboard access is turned on.
+    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
+        return NoFocus;
+
+    return QWidget::focusPolicy();
+}
+
 @implementation KWQComboBoxAdapter
 
 - initWithQComboBox:(QComboBox *)b
@@ -274,7 +289,7 @@ const int *QComboBox::dimensions() const
         // Give khtml a chance to fix up its event state, since the popup eats all the
         // events during tracking.  [NSApp currentEvent] is still the original mouseDown
         // at this point!
-        [bridge part]->doFakeMouseUpAfterWidgetTracking(event);
+        [bridge part]->sendFakeEventsAfterWidgetTracking(event);
     }
     [bridge release];
     return result;
@@ -292,6 +307,63 @@ const int *QComboBox::dimensions() const
 - (QWidget *)widget
 {
     return [(KWQPopUpButtonCell *)[self cell] widget];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL become = [super becomeFirstResponder];
+    if (become) {
+        QWidget *widget = [self widget];
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+            [self _KWQ_scrollFrameToVisible];
+        }
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+    }
+    return become;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign) {
+        QWidget *widget = [self widget];
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+    }
+    return resign;
+}
+
+-(NSView *)nextKeyView
+{
+    QWidget *widget = [self widget];
+    return widget && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
+        : [super nextKeyView];
+}
+
+-(NSView *)previousKeyView
+{
+    QWidget *widget = [self widget];
+    return widget && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+-(NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+-(NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 @end

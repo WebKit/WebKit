@@ -182,14 +182,19 @@ bool QWidget::hasFocus() const
     if (firstResponder == view) {
         return true;
     }
-    // The following check handles both text field editors and the secure text field
-    // that goes inside the KWQTextField (and its editor). We have to check the class
-    // of the view because we don't want to be fooled by subviews of NSScrollView, for example.
-    if ([view isKindOfClass:[NSTextField class]]
-            && [firstResponder isKindOfClass:[NSView class]]
-            && [firstResponder isDescendantOf:view]) {
+
+    // Some widgets, like text fields, secure text fields, text areas, and selects
+    // (when displayed using a list box) may have a descendent widget that is
+    // first responder. This checksDescendantsForFocus() check, turned on for the 
+    // four widget types listed, enables the additional check which makes this 
+    // function work correctly for the above-mentioned widget types.
+    if (checksDescendantsForFocus() && 
+        [firstResponder isKindOfClass:[NSView class]] && 
+        [(NSView *)firstResponder isDescendantOf:view]) {
+        // Return true when the first responder is a subview of this widget's view
         return true;
     }
+
     return false;
 }
 
@@ -226,6 +231,11 @@ void QWidget::clearFocus()
     }
     
     KWQKHTMLPart::clearDocumentFocus(this);
+}
+
+bool QWidget::checksDescendantsForFocus() const
+{
+    return false;
 }
 
 QWidget::FocusPolicy QWidget::focusPolicy() const

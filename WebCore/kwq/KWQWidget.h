@@ -100,6 +100,7 @@ public:
     bool hasFocus() const;
     void setFocus();
     void clearFocus();
+    virtual bool checksDescendantsForFocus() const;
     
     virtual FocusPolicy focusPolicy() const;
     void setFocusPolicy(FocusPolicy) {};

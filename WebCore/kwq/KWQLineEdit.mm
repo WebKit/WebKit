@@ -176,3 +176,8 @@ void QLineEdit::setAlignment(AlignmentFlags alignment)
     KWQTextField *textField = getView();
     [textField setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
 }
+
+bool QLineEdit::checksDescendantsForFocus() const
+{
+    return true;
+}

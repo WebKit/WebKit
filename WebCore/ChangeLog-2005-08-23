@@ -1,3 +1,84 @@
+2003-10-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for these bugs:
+
+	<rdar://problem/3443296>: REGRESSION: pop-up menu gets focus, but once it has 	
+	focus doesn't work right
+	<rdar://problem/3444873>: Select widgets that use list views do not take part in tab order
+	<rdar://problem/3446306>: Text area form widgets do not accept DOM focus correctly
+	<rdar://problem/3446323>: Using keyboard to work popup button select form 
+	widget causes a crash
+
+	The intention of this patch is to add keyboard navigation support for
+	HTML form select widgets. This includes the two visual representations
+	for these widgets: popup buttons and lists. Many keyboard, focus, and
+	tabbing fixes are included in this work, as indicated below.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::defaultEventHandler): Added. Submit form when
+	return or enter key is pressed when focused on a select widget.
+        * khtml/html/html_formimpl.h: Make HTMLSelectElementImpl a friend class
+	of HTMLInputElementImpl. This is done so that an HTMLSelectElementImpl
+	can call the private method which simulates a form submit.
+	Also add declaration of defaultEventHandler function.
+        * kwq/KWQButton.h: Clean up focusPolicy declaration.
+        * kwq/KWQComboBox.h: Add focusPolicy declaration.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::focusPolicy): Added. Widget will focus if full keyboard
+	access is on.
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]): Now
+	calls sendFakeEventsAfterWidgetTracking instead of 
+	doFakeMouseUpAfterWidgetTracking now that name has changed.
+        (-[KWQPopUpButton becomeFirstResponder]): Added. Needed for setting
+	focus correctly.
+        (-[KWQPopUpButton resignFirstResponder]): Ditto.
+        (-[KWQPopUpButton nextKeyView]): Added. Makes tabbing work correctly
+	for this widget.
+        (-[KWQPopUpButton previousKeyView]): Ditto.
+        (-[KWQPopUpButton nextValidKeyView]): Ditto.
+        (-[KWQPopUpButton previousValidKeyView]): Ditto.
+        * kwq/KWQKHTMLPart.h: Change name of doFakeMouseUpAfterWidgetTracking
+	to sendFakeEventsAfterWidgetTracking now that it handles key events
+	as well.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendFakeEventsAfterWidgetTracking): Name change as
+	noted above. Also handles sending simulated key up events.
+        * kwq/KWQLineEdit.h:
+        (QLineEdit::checksDescendantsForFocus): Added. This is a big
+	part of the fiz for <rdar://problem/3446306>.
+        * kwq/KWQListBox.h:
+        (QListBox::checksDescendantsForFocus): Ditto. Yes for this widget.
+        * kwq/KWQListBox.mm:
+        (QListBox::focusPolicy): Added. Widget will focus if full keyboard
+        access is on.
+        (-[KWQListBoxScrollView becomeFirstResponder]): Added. Needed for setting
+        focus correctly. This sets the focus to its document view.
+        (-[KWQTableView becomeFirstResponder]): Added. Needed for setting
+        focus correctly.
+        (-[KWQTableView resignFirstResponder]): Added. Needed for setting
+        focus correctly.
+        (-[KWQTableView nextKeyView]): Added. Makes tabbing work correctly
+        for this widget.
+        (-[KWQTableView previousKeyView]): Ditto.
+        (-[KWQTableView nextValidKeyView]): Ditto.
+        (-[KWQTableView previousValidKeyView]): Ditto.
+        (-[KWQTableView _KWQ_setKeyboardFocusRingNeedsDisplay]): Added.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]): Other part of fix for
+	<rdar://problem/3446306>. The recursion guards were bad and wrong.
+	The checksDescendantsForFocus improvement prevents the erroneous
+	recursion from happening.
+        * kwq/KWQTextEdit.h:
+        (QTextEdit::checksDescendantsForFocus): Added. Yes for this widget.
+        * kwq/KWQWidget.h:
+        (QWidget::checksDescendantsForFocus): Added. No by default.
+        * kwq/KWQWidget.mm:
+        (QWidget::hasFocus): Now uses checksDescendantsForFocus to perform
+	proper checks for views that may have a subview which is first
+	responder.
+
 2003-10-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3363421, event handlers could be triggered for content outside an overflow:hidden

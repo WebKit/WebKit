@@ -2269,6 +2269,35 @@ void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selected
     setChanged(true);
 }
 
+#if APPLE_CHANGES
+void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
+{
+    // Use key press event here since sending simulated mouse events
+    // on key down blocks the proper sending of the key press event.
+    if (evt->id() == EventImpl::KHTML_KEYPRESS_EVENT) {
+    
+        if (!m_form || !m_render || !evt->isKeyboardEvent())
+            return;
+        
+        unsigned long keyVal = static_cast<KeyEventImpl *>(evt)->keyVal();
+        
+        if (keyVal == '\r' || keyVal == 0x3) {
+            QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
+            for (; it.current(); ++it) {
+                if (it.current()->id() == ID_INPUT) {
+                    HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
+                    if (element->isSuccessfulSubmitButton()) {
+                        element->simulateButtonClickForEvent(evt);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    HTMLGenericFormElementImpl::defaultEventHandler(evt);
+}
+#endif
+
 // -------------------------------------------------------------------------
 
 HTMLKeygenElementImpl::HTMLKeygenElementImpl(DocumentPtr* doc, HTMLFormElementImpl* f)
