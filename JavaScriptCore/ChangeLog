@@ -1,3 +1,37 @@
+2002-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and John.
+
+	- fixed 3134449 -- Date.UTC returns NaN (invalid date)
+
+	Did more testing of the date functions and made them behave like the other browsers.
+	There were three problems:
+
+            1) We did a validity check that other browsers don't do (hence the NaN).
+            2) We treated passed-in dates as local time even in Date.UTC (hence a wrong result
+               once I fixed the NaN).
+            3) The results of ToUTCString (and ToGMTString) weren't formatted quite the same
+	       as other browsers.
+
+	Also found a couple of silly but unrelated coding mistakes.
+
+        * kjs/date_object.cpp:
+        (timetUsingCF): Added. Has the guts of mktimeUsingCF, but without the CFGregorianDateIsValid
+        check. Other browsers accept invalid dates. Also takes a time zone parameter.
+        (mktimeUsingCF): Calls timetUsingCF with the current time zone.
+        (timegmUsingCF): Calls timetUsingCF with the UTC time zone.
+        (formatDate): Remove the includeComma flag.
+        (formatDateUTCVariant): Added. For use instead of formatDate with the includeComma flag.
+	Puts the day before the month name.
+        (DateProtoFuncImp::call): Use the new formatDateUTCVariant for ToGMTString and ToUTCString.
+	Without this change the date didn't match other browsers.
+        (DateObjectImp::DateObjectImp): Use UTCPropertyName. Somehow I declared this and didn't use
+	it before.
+        (DateObjectImp::construct): Pass -1 for is_dst literally instead of using invalidDate.
+	Changing this to invalidDate was just a mistake (although no real difference in compiled
+	code since invalidDate is just -1).
+        (DateObjectFuncImp::call): Call timegm for the UTC case instead of mktime.
+
 === Alexander-44 ===
 
 === Alexander-43 ===

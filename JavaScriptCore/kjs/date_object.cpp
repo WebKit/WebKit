@@ -73,6 +73,7 @@ using KJS::UString;
 #define gmtime(x) gmtimeUsingCF(x)
 #define localtime(x) localtimeUsingCF(x)
 #define mktime(x) mktimeUsingCF(x)
+#define timegm(x) timegmUsingCF(x)
 #define time(x) timeUsingCF(x)
 
 #define ctime(x) NotAllowedToCallThis()
@@ -122,7 +123,7 @@ static struct tm *localtimeUsingCF(const time_t *clock)
     return result;
 }
 
-static time_t mktimeUsingCF(struct tm *tm)
+static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
 {
     CFGregorianDate date;
     date.second = tm->tm_sec;
@@ -134,15 +135,27 @@ static time_t mktimeUsingCF(struct tm *tm)
 
     // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large,
     // so we pick an arbitrary cutoff.
-    if (!CFGregorianDateIsValid(date, kCFGregorianAllUnits) || date.year > 2500) {
+    if (date.year > 2500) {
         return invalidDate;
     }
 
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
     CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
-    CFRelease(timeZone);
 
     return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
+}
+
+static time_t mktimeUsingCF(struct tm *tm)
+{
+    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    time_t result = timetUsingCF(tm, timeZone);
+    CFRelease(timeZone);
+    return result;
+}
+
+static time_t timegmUsingCF(struct tm *tm)
+{
+    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
+    return timetUsingCF(tm, timeZoneUTC);
 }
 
 static time_t timeUsingCF(time_t *clock)
@@ -154,12 +167,21 @@ static time_t timeUsingCF(time_t *clock)
     return result;
 }
 
-static UString formatDate(struct tm &tm, bool includeComma = false)
+static UString formatDate(struct tm &tm)
 {
     char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%s%s %s %02d %04d",
-        weekdayName[(tm.tm_wday + 6) % 7], includeComma ? "," : "",
+    snprintf(buffer, sizeof(buffer), "%s %s %02d %04d",
+        weekdayName[(tm.tm_wday + 6) % 7],
         monthName[tm.tm_mon], tm.tm_mday, tm.tm_year + 1900);
+    return buffer;
+}
+
+static UString formatDateUTCVariant(struct tm &tm)
+{
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%s, %02d %s %04d",
+        weekdayName[(tm.tm_wday + 6) % 7],
+        tm.tm_mday, monthName[tm.tm_mon], tm.tm_year + 1900);
     return buffer;
 }
 
@@ -376,7 +398,7 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     break;
   case ToGMTString:
   case ToUTCString:
-    result = String(formatDate(*t, true) + " " + formatTime(*t));
+    result = String(formatDateUTCVariant(*t) + " " + formatTime(*t));
     break;
   case ToLocaleString:
     result = String(formatLocaleDate(tv) + " " + formatLocaleTime(tv));
@@ -531,7 +553,7 @@ DateObjectImp::DateObjectImp(ExecState *exec,
   static const Identifier parsePropertyName("parse");
   putDirect(parsePropertyName, new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::Parse, 1), DontEnum);
   static const Identifier UTCPropertyName("UTC");
-  putDirect("UTC",   new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::UTC,   7),   DontEnum);
+  putDirect(UTCPropertyName,   new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::UTC,   7),   DontEnum);
 
   // no. of arguments for constructor
   putDirect(lengthPropertyName, 7, ReadOnly|DontDelete|DontEnum);
@@ -594,7 +616,7 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
       t.tm_hour = (numArgs >= 4) ? args[3].toInt32(exec) : 0;
       t.tm_min = (numArgs >= 5) ? args[4].toInt32(exec) : 0;
       t.tm_sec = (numArgs >= 6) ? args[5].toInt32(exec) : 0;
-      t.tm_isdst = invalidDate;
+      t.tm_isdst = -1;
       int ms = (numArgs >= 7) ? args[6].toInt32(exec) : 0;
       time_t mktimeResult = mktime(&t);
       if (mktimeResult == invalidDate)
@@ -678,7 +700,7 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
     t.tm_min = (n >= 5) ? args[4].toInt32(exec) : 0;
     t.tm_sec = (n >= 6) ? args[5].toInt32(exec) : 0;
     int ms = (n >= 7) ? args[6].toInt32(exec) : 0;
-    time_t mktimeResult = mktime(&t);
+    time_t mktimeResult = timegm(&t);
     if (mktimeResult == invalidDate)
       return Number(NaN);
     return Number(mktimeResult * 1000.0 + ms);
