@@ -1,3 +1,21 @@
+2003-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3209091 -- REGRESSION: WebFrameView leak (world leak)
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitialization:frameName:groupName:]): Use copy, not retain,
+        on an incoming NSString parameter.
+        (-[WebView initWithFrame:frameName:groupName:]): Release the WebFrameView after
+        setting it up.
+
+        - other changes
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        Put the bug workaround here inside an ifdef so we don't compile it in on Panther.
+
 2003-03-26  Chris Blumenberg  <cblu@apple.com>
 
 	Use the private _cfBundle method on NSBundle so we only create 1 bundle per plug-in package class.

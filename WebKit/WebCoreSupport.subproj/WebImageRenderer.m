@@ -29,6 +29,8 @@ static NSMutableArray *activeImageRenderers;
     }
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
+
 // Part of the workaround for bug 3090341.
 - (BOOL)blockHasGIFExtensionSignature:(const char *)block length:(int)length
 {
@@ -94,6 +96,8 @@ static NSMutableArray *activeImageRenderers;
     return [super initWithData:data];
 }
 
+#endif
+
 - copyWithZone:(NSZone *)zone
 {
     WebImageRenderer *copy = [super copyWithZone:zone];
@@ -113,8 +117,10 @@ static NSMutableArray *activeImageRenderers;
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
     NSSize size;
     
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     // Part of the workaround for bug 3090341.
     [self checkDataForGIFExtensionSignature:data];
+#endif
     
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];

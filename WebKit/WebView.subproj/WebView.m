@@ -84,7 +84,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     _private = [[WebViewPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
-    _private->controllerSetName = [groupName retain];
+    _private->controllerSetName = [groupName copy];
     if (_private->controllerSetName != nil) {
         [WebControllerSets addController:self toSetNamed:_private->controllerSetName];
     }
@@ -117,6 +117,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: wv];
     [self _commonInitialization: wv frameName:frameName groupName:groupName];
+    [wv release];
     return self;
 }
 
