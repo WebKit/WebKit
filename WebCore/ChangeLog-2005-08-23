@@ -1,3 +1,19 @@
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+    
+        Fix for this bug:
+        
+        <rdar://problem/3781572> can't paste text in replied message view
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): Copying text placed in an anonymous block was failing
+        since the code in here depending on the text node's containing block having an
+        element, which it won't. In fact, using containing block is wrong anyway, since
+        positioned elements can have containing blocks far from where they live in the
+        tree. This "move up to block check" should use the more DOM-wise enclosingBlockFlowElement()
+        in NodeImpl.
+
 2004-08-30  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3742585, sony dhtml menus wrong size.  The percentage table height algorithm was wrong.  This patch

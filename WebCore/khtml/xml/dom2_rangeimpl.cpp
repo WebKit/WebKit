@@ -835,22 +835,12 @@ DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes)
 {
     int exceptionCode;
     NodeImpl *commonAncestor = commonAncestorContainer(exceptionCode);
-    if (commonAncestor == 0) {
+    NodeImpl *commonAncestorBlock = commonAncestor ? commonAncestor->enclosingBlockFlowElement() : 0;
+    if (commonAncestorBlock == 0)
         return "";
-    }
-    RenderObject *renderer = commonAncestor->renderer();
-    if (renderer && !renderer->isRenderBlock()) {
-        RenderBlock *block = renderer->containingBlock();
-        if (block) {
-            NodeImpl *blockElement = block->element();
-            if (blockElement) {
-                commonAncestor = blockElement;
-            }
-        }
-    }
-    NodeImpl::Id id = commonAncestor->id();
+    NodeImpl::Id id = commonAncestorBlock->id();
     bool onlyIncludeChildren = (id != ID_TABLE && id != ID_OL && id != ID_UL);
-    return commonAncestor->recursive_toHTML(onlyIncludeChildren, true, this, nodes);
+    return commonAncestorBlock->recursive_toHTML(onlyIncludeChildren, true, this, nodes);
 }
 
 DOMString RangeImpl::text() const
