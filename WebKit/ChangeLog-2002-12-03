@@ -1,5 +1,11 @@
 2002-08-20  John Sullivan  <sullivan@apple.com>
 
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidReceiveData:data:]):
+	Fixed uninitialized variable that Maciej's deployment build found.
+
+2002-08-20  John Sullivan  <sullivan@apple.com>
+
 	Fixed problem with previous checkin that was causing
 	drag-and-drop for files to fail (at least).
 

@@ -171,7 +171,6 @@
     WebController *controller = [dataSource controller];
     NSString *contentType = [handle contentType];
     WebFrame *frame = [dataSource webFrame];
-    WebContentPolicy *contentPolicy;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, data = %p, length %d\n", DEBUG_OBJECT([handle URL]), data, [data length]);
     
@@ -193,7 +192,8 @@
         // This happens in the cases mentioned in 2981866 and 2965312.
         downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
 
-        if(![dataSource contentPolicy]){
+        WebContentPolicy *contentPolicy = [dataSource contentPolicy];
+        if(contentPolicy == nil){
             contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType URL:currentURL inFrame:frame];
             [dataSource _setContentPolicy:contentPolicy];
         }
