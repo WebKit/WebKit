@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderBlock (anonymous) at (0,0) size 784x56
+        RenderText {TEXT} at (0,0) size 748x56
+          text run at (0,0) width 748: "Test inserting paragraphs: should see an empty blue box above an empty line"
+          text run at (0,28) width 237: "between \"foo\" and \"bar\""
+      RenderBlock {DIV} at (0,56) size 784x12
+      RenderBlock {P} at (0,92) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {TEXT} at (14,14) size 32x28
+          text run at (14,14) width 32: "foo"
+      RenderBlock {P} at (0,172) size 784x28 [border: (2px solid #0000FF)]
+      RenderBlock (anonymous) at (0,200) size 784x28
+        RenderBR {BR} at (0,0) size 0x28
+      RenderBlock {P} at (0,252) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {TEXT} at (14,14) size 31x28
+          text run at (14,14) width 31: "bar"
+selection is CARET:
+start:      position 0 of child 6 {BR} of root {BODY}
+upstream:   position 0 of child 6 {BR} of root {BODY}
+downstream: position 0 of child 6 {BR} of root {BODY}

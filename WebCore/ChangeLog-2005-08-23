@@ -1,6 +1,21 @@
 2004-12-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
+        
+        Added new layout tests covering cases from recent bug fixes.
+
+        * layout-tests/editing/inserting/insert-div-018-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-018.html: Added.
+        * layout-tests/editing/inserting/insert-div-019-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-019.html: Added.
+        * layout-tests/editing/inserting/insert-div-020-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-020.html: Added.
+        * layout-tests/editing/inserting/insert-div-021-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-021.html: Added.
+
+2004-12-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
 
         Changes in layout resulting from giving <p> elements no margin rather than 0.1em margin.
 
