@@ -101,4 +101,12 @@
 */
 - (NSString *)pageTitle;
 
+/*!
+    @method unreachableURL
+    @discussion This will be non-nil only for dataSources created by calls to the 
+    WebFrame method loadAlternateHTMLString:baseURL:forUnreachableURL:.
+    @result returns the unreachableURL for which this dataSource is showing alternate content, or nil
+*/
+- (NSURL *)unreachableURL;
+
 @end

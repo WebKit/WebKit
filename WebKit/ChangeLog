@@ -1,3 +1,36 @@
+2004-03-31  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3577917>: API: mechanism for displaying error 
+        page for failed page load
+        
+        This was not commented on for a week in macosx-api-reviewers, so it
+        has the silent rubber stamp of approval.
+        
+        Note that it isn't guarded by "Tiger only" availability macros because
+        we (probably) want to use it in Panther for Safari. Maybe what we should
+        do is guard the API with "Tiger only" macros but add an SPI version
+        that Safari uses?
+
+        Reviewed by Dave.
+
+        * WebView.subproj/WebDataSource.h:
+        moved unreachableURL to here
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource unreachableURL]):
+        moved this from private category to main section
+        
+        * WebView.subproj/WebDataSourcePrivate.h:
+        removed unreachableURL from here
+        
+        * WebView.subproj/WebFrame.h:
+        moved loadAlternateHTMLString... to here
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        moved this from private category to main section
+        
+        * WebView.subproj/WebFramePrivate.h:
+        removed unreachableURL from here
+
 2004-03-31  Richard Williamson   <rjw@apple.com>
 
 	Changed to reflect NP_runtime.h to npruntime.h.

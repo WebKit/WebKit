@@ -254,11 +254,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL
-{
-    [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
-}
-
 - (void)loadWebArchive:(WebArchive *)webArchive
 {
     WebResource *mainResource = [webArchive mainResource];
@@ -2616,6 +2611,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
 {
     [self _loadHTMLString:string baseURL:URL unreachableURL:nil];
+}
+
+- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL
+{
+    [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
 }
 
 - (void)stopLoading

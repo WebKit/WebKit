@@ -106,11 +106,6 @@
     return _private->subresources;
 }
 
-- (NSURL *)unreachableURL
-{
-    return [_private->originalRequest _webDataRequestUnreachableURL];
-}
-
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL]) {
@@ -1015,6 +1010,11 @@
 - (NSString *)pageTitle
 {
     return [[self representation] title];
+}
+
+- (NSURL *)unreachableURL
+{
+    return [_private->originalRequest _webDataRequestUnreachableURL];
 }
 
 @end

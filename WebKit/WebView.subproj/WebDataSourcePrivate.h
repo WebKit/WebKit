@@ -121,14 +121,6 @@
 - (void)addSubresource:(WebResource *)subresource;
 - (void)addSubresources:(NSArray *)subresources;
 
-/*!
-    @method unreachableURL
-    @discussion This will be non-nil only for dataSources created by calls to the 
-    WebFrame method loadAlternateHTMLString:baseURL:forUnreachableURL:.
-    @result returns the unreachableURL for which this dataSource is showing alternate content, or nil
- */
-- (NSURL *)unreachableURL;
-
 // Other private methods
 - (NSDictionary *)_subresourcesDictionary;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
