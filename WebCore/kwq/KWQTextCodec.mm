@@ -47,7 +47,7 @@ private:
     OSStatus createTECConverter();
     OSStatus convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
         void *outputBuffer, int outputBufferLength, int &outputLength);
-    static void appendOmittingBOMs(QString &s, const UniChar *characters, int byteCount);
+    static void appendOmittingNullsAndBOMs(QString &s, const UniChar *characters, int byteCount);
     
     KWQTextDecoder(const KWQTextDecoder &);
     KWQTextDecoder &operator=(const KWQTextDecoder &);
@@ -254,7 +254,9 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
         } else {
             c = (_bufferedBytes[0] << 8) | p[0];
         }
-        result.append(reinterpret_cast<QChar *>(&c), 1);
+        if (c) {
+            result.append(reinterpret_cast<QChar *>(&c), 1);
+        }
         _numBufferedBytes = 0;
         p += 1;
         len -= 1;
@@ -268,7 +270,7 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
             for (int i = 0; i < runLength; ++i) {
                 UniChar c = p[0] | (p[1] << 8);
                 p += 2;
-                if (c != BOM) {
+                if (c && c != BOM) {
                     buffer[bufferLength++] = c;
                 }
             }
@@ -276,7 +278,7 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
             for (int i = 0; i < runLength; ++i) {
                 UniChar c = (p[0] << 8) | p[1];
                 p += 2;
-                if (c != BOM) {
+                if (c && c != BOM) {
                     buffer[bufferLength++] = c;
                 }
             }
@@ -317,13 +319,14 @@ OSStatus KWQTextDecoder::createTECConverter()
     return noErr;
 }
 
-void KWQTextDecoder::appendOmittingBOMs(QString &s, const UniChar *characters, int byteCount)
+void KWQTextDecoder::appendOmittingNullsAndBOMs(QString &s, const UniChar *characters, int byteCount)
 {
     ASSERT(byteCount % sizeof(UniChar) == 0);
     int start = 0;
     int characterCount = byteCount / sizeof(UniChar);
     for (int i = 0; i != characterCount; ++i) {
-        if (characters[i] == BOM) {
+        UniChar c = characters[i];
+        if (c == 0 || c == BOM) {
             if (start != i) {
                 s.append(reinterpret_cast<const QChar *>(&characters[start]), i - start);
             }
@@ -442,13 +445,13 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
                 return QString();
         }
 
-        appendOmittingBOMs(result, buffer, bytesWritten);
+        appendOmittingNullsAndBOMs(result, buffer, bytesWritten);
     }
     
     if (flush) {
         unsigned long bytesWritten = 0;
         TECFlushText(_converter, reinterpret_cast<unsigned char *>(buffer), sizeof(buffer), &bytesWritten);
-        appendOmittingBOMs(result, buffer, bytesWritten);
+        appendOmittingNullsAndBOMs(result, buffer, bytesWritten);
     }
 
     // Workaround for a bug in the Text Encoding Converter (see bug 3225472).

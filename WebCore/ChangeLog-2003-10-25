@@ -1,3 +1,14 @@
+2003-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Fixed by Darin, reviewed by me (and originally figured out by John).
+
+	- fixed 3375592 - New Yahoo Maps doesn't work right
+	
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::convertUTF16): Don't pass through null characters.
+        (KWQTextDecoder::appendOmittingNullsAndBOMs): Ditto.
+        (KWQTextDecoder::convertUsingTEC): Ditto.
+
 2003-08-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John. 
