@@ -61,63 +61,47 @@ namespace DOM {
 
 static Selection selectionForLine(const Position &position);
 
-static inline Position &emptyPosition()
-{
-    static Position EmptyPosition = Position();
-    return EmptyPosition;
-}
-
 Selection::Selection()
 {
     init();
 }
 
 Selection::Selection(const Position &pos)
+    : m_base(pos), m_extent(pos)
 {
     init();
-    assignBaseAndExtent(pos, pos);
     validate();
 }
 
 Selection::Selection(const Range &r)
+    : m_base(startPosition(r)), m_extent(endPosition(r))
 {
-    const Position start(r.startContainer().handle(), r.startOffset());
-    const Position end(r.endContainer().handle(), r.endOffset());
-
     init();
-    assignBaseAndExtent(start, end);
     validate();
 }
 
 Selection::Selection(const Position &base, const Position &extent)
+    : m_base(base), m_extent(extent)
 {
     init();
-    assignBaseAndExtent(base, extent);
     validate();
 }
 
 Selection::Selection(const CaretPosition &base, const CaretPosition &extent)
+    : m_base(base.position()), m_extent(extent.position())
 {
     init();
-    m_base = base.position();
-    m_extent = extent.position();
     validate();
 }
 
 Selection::Selection(const Selection &o)
+    : m_base(o.m_base), m_extent(o.m_extent)
+    , m_start(o.m_start), m_end(o.m_end)
+    , m_state(o.m_state), m_affinity(o.m_affinity)
+    , m_baseIsStart(o.m_baseIsStart)
+    , m_needsCaretLayout(o.m_needsCaretLayout)
+    , m_modifyBiasSet(o.m_modifyBiasSet)
 {
-    init();
-    
-    assignBaseAndExtent(o.base(), o.extent());
-    assignStartAndEnd(o.start(), o.end());
-
-    m_state = o.m_state;
-    m_affinity = o.m_affinity;
-
-    m_baseIsStart = o.m_baseIsStart;
-    m_needsCaretLayout = o.m_needsCaretLayout;
-    m_modifyBiasSet = o.m_modifyBiasSet;
-    
     // Only copy the coordinates over if the other object
     // has had a layout, otherwise keep the current
     // coordinates. This prevents drawing artifacts from
@@ -130,18 +114,19 @@ Selection::Selection(const Selection &o)
 
 void Selection::init()
 {
-    m_base = m_extent = m_start = m_end = emptyPosition();
     m_state = NONE; 
+    m_affinity = DOWNSTREAM;
     m_baseIsStart = true;
     m_needsCaretLayout = true;
     m_modifyBiasSet = false;
-    m_affinity = DOWNSTREAM;
 }
 
 Selection &Selection::operator=(const Selection &o)
 {
-    assignBaseAndExtent(o.base(), o.extent());
-    assignStartAndEnd(o.start(), o.end());
+    m_base = o.m_base;
+    m_extent = o.m_extent;
+    m_start = o.m_start;
+    m_end = o.m_end;
 
     m_state = o.m_state;
     m_affinity = o.m_affinity;
@@ -173,24 +158,29 @@ void Selection::setAffinity(EAffinity affinity)
 
 void Selection::moveTo(const Range &r)
 {
-    Position start(r.startContainer().handle(), r.startOffset());
-    Position end(r.endContainer().handle(), r.endOffset());
-    moveTo(start, end);
+    m_base = startPosition(r);
+    m_extent = endPosition(r);
+    validate();
 }
 
 void Selection::moveTo(const Selection &o)
 {
-    moveTo(o.start(), o.end());
+    m_base = o.m_start;
+    m_extent = o.m_end;
+    validate();
 }
 
 void Selection::moveTo(const Position &pos)
 {
-    moveTo(pos, pos);
+    m_base = pos;
+    m_extent = pos;
+    validate();
 }
 
 void Selection::moveTo(const Position &base, const Position &extent)
 {
-    assignBaseAndExtent(base, extent);
+    m_base = base;
+    m_extent = extent;
     validate();
 }
 
@@ -207,11 +197,13 @@ void Selection::setModifyBias(EAlter alter, EDirection direction)
                     // FIXME: right for bidi?
                     case RIGHT:
                     case FORWARD:
-                        assignBaseAndExtent(start(), end());
+                        m_base = m_start;
+                        m_extent = m_end;
                         break;
                     case LEFT:
                     case BACKWARD:
-                        assignBaseAndExtent(end(), start());
+                        m_base = m_end;
+                        m_extent = m_start;
                         break;
                 }
             }
@@ -221,7 +213,7 @@ void Selection::setModifyBias(EAlter alter, EDirection direction)
 
 CaretPosition Selection::modifyExtendingRightForward(ETextGranularity granularity)
 {
-    CaretPosition pos = extent();
+    CaretPosition pos = m_extent;
     switch (granularity) {
         case CHARACTER:
             pos = pos.next();
@@ -236,13 +228,13 @@ CaretPosition Selection::modifyExtendingRightForward(ETextGranularity granularit
             pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(end()).end();
+            pos = selectionForLine(m_end).end();
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(end());
+            pos = endOfParagraph(m_end);
             break;
         case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = start().node()->getDocument()->documentElement();
+            NodeImpl *de = m_start.node()->getDocument()->documentElement();
             pos = Position(de, de ? de->childNodeCount() : 0);
             break;
         }
@@ -256,27 +248,27 @@ CaretPosition Selection::modifyMovingRightForward(ETextGranularity granularity)
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = end();
+                pos = m_end;
             else
-                pos = CaretPosition(extent()).next();
+                pos = CaretPosition(m_extent).next();
             break;
         case WORD:
-            pos = nextWordPosition(extent());
+            pos = nextWordPosition(m_extent);
             break;
         case PARAGRAPH:
-            pos = nextParagraphPosition(end(), xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextParagraphPosition(m_end, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE:
-            pos = nextLinePosition(end(), xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextLinePosition(m_end, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(end()).end();
+            pos = selectionForLine(m_end).end();
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(end());
+            pos = endOfParagraph(m_end);
             break;
         case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = start().node()->getDocument()->documentElement();
+            NodeImpl *de = m_start.node()->getDocument()->documentElement();
             pos = Position(de, de ? de->childNodeCount() : 0);
             break;
         }
@@ -286,7 +278,7 @@ CaretPosition Selection::modifyMovingRightForward(ETextGranularity granularity)
 
 CaretPosition Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
 {
-    CaretPosition pos = extent();
+    CaretPosition pos = m_extent;
     switch (granularity) {
         case CHARACTER:
             pos = pos.previous();
@@ -301,13 +293,13 @@ CaretPosition Selection::modifyExtendingLeftBackward(ETextGranularity granularit
             pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(start()).start();
+            pos = selectionForLine(m_start).start();
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(start());
+            pos = startOfParagraph(m_start);
             break;
         case DOCUMENT_BOUNDARY:
-            pos = CaretPosition(start().node()->getDocument()->documentElement(), 0);
+            pos = CaretPosition(m_start.node()->getDocument()->documentElement(), 0);
             break;
     }
     return pos;
@@ -319,27 +311,27 @@ CaretPosition Selection::modifyMovingLeftBackward(ETextGranularity granularity)
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = start();
+                pos = m_start;
             else
-                pos = CaretPosition(extent()).previous();
+                pos = CaretPosition(m_extent).previous();
             break;
         case WORD:
-            pos = previousWordPosition(extent());
+            pos = previousWordPosition(m_extent);
             break;
         case PARAGRAPH:
-            pos = previousParagraphPosition(start(), xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousParagraphPosition(m_start, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE:
-            pos = previousLinePosition(start(), xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousLinePosition(m_start, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(start()).start();
+            pos = selectionForLine(m_start).start();
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(start()).deepEquivalent();
+            pos = startOfParagraph(m_start).deepEquivalent();
             break;
         case DOCUMENT_BOUNDARY:
-            pos = CaretPosition(start().node()->getDocument()->documentElement(), 0);
+            pos = CaretPosition(m_start.node()->getDocument()->documentElement(), 0);
             break;
     }
     return pos;
@@ -414,11 +406,11 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     int xPos;
     switch (alter) {
         case MOVE:
-            pos = verticalDistance > 0 ? end() : start();
+            pos = verticalDistance > 0 ? m_end : m_start;
             xPos = xPosForVerticalArrowNavigation(verticalDistance > 0 ? END : START, isRange());
             break;
         case EXTEND:
-            pos = extent();
+            pos = m_extent;
             xPos = xPosForVerticalArrowNavigation(EXTENT);
             break;
     }
@@ -485,16 +477,16 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
     Position pos;
     switch (type) {
         case START:
-            pos = start();
+            pos = m_start;
             break;
         case END:
-            pos = end();
+            pos = m_end;
             break;
         case BASE:
-            pos = base();
+            pos = m_base;
             break;
         case EXTENT:
-            pos = extent();
+            pos = m_extent;
             break;
     }
 
@@ -515,43 +507,27 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
 
 void Selection::clear()
 {
-    assignBaseAndExtent(emptyPosition(), emptyPosition());
+    m_base.clear();
+    m_extent.clear();
     validate();
 }
 
 void Selection::setBase(const Position &pos)
 {
-    assignBase(pos);
+    m_base = pos;
     validate();
 }
 
 void Selection::setExtent(const Position &pos)
 {
-    assignExtent(pos);
+    m_extent = pos;
     validate();
 }
 
 void Selection::setBaseAndExtent(const Position &base, const Position &extent)
 {
-    assignBaseAndExtent(base, extent);
-    validate();
-}
-
-void Selection::setStart(const Position &pos)
-{
-    assignStart(pos);
-    validate();
-}
-
-void Selection::setEnd(const Position &pos)
-{
-    assignEnd(pos);
-    validate();
-}
-
-void Selection::setStartAndEnd(const Position &start, const Position &end)
-{
-    assignStartAndEnd(start, end);
+    m_base = base;
+    m_extent = extent;
     validate();
 }
 
@@ -569,14 +545,14 @@ Range Selection::toRange() const
     // in the course of running edit commands which modify the DOM.
     // Failing to call this can result in equivalentXXXPosition calls returning
     // incorrect results.
-    start().node()->getDocument()->updateLayout();
+    m_start.node()->getDocument()->updateLayout();
 
     Position s, e;
     if (isCaret()) {
         // If the selection is a caret, move the range start upstream. This helps us match
         // the conventions of text editors tested, which make style determinations based
         // on the character before the caret, if any. 
-        s = start().upstream(StayInBlock).equivalentRangeCompliantPosition();
+        s = m_start.upstream(StayInBlock).equivalentRangeCompliantPosition();
         e = s;
     }
     else {
@@ -592,8 +568,8 @@ Range Selection::toRange() const
         //                       ^ selected
         //
         ASSERT(isRange());
-        s = start().downstream();
-        e = end().upstream();
+        s = m_start.downstream();
+        e = m_end.upstream();
         if (RangeImpl::compareBoundaryPoints(s.node(), s.offset(), e.node(), e.offset()) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
@@ -610,14 +586,14 @@ Range Selection::toRange() const
 
 void Selection::layoutCaret()
 {
-    if (!isCaret() || !start().node()->inDocument()) {
+    if (!isCaret() || !m_start.node()->inDocument()) {
         m_caretRect = QRect();
         return;
     }
     
     // EDIT FIXME: Enhance call to pass along selection 
     // upstream/downstream affinity to get the right position.
-    m_caretRect = start().node()->renderer()->caretRect(start().offset(), false);
+    m_caretRect = m_start.node()->renderer()->caretRect(m_start.offset(), false);
 
     m_needsCaretLayout = false;
 }
@@ -645,10 +621,10 @@ void Selection::needsCaretRepaint()
     if (!isCaret())
         return;
 
-    if (!start().node()->getDocument())
+    if (!m_start.node()->getDocument())
         return;
 
-    KHTMLView *v = start().node()->getDocument()->view();
+    KHTMLView *v = m_start.node()->getDocument()->view();
     if (!v)
         return;
 
@@ -688,121 +664,129 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
 void Selection::validate(ETextGranularity granularity)
 {
     // Move the selection to rendered positions, if possible.
-    Position originalBase(base());
-    bool baseAndExtentEqual = base() == extent();
+    Position originalBase(m_base);
+    bool baseAndExtentEqual = m_base == m_extent;
     bool updatedLayout = false;
-    if (base().isNotNull()) {
-        base().node()->getDocument()->updateLayout();
+    if (m_base.isNotNull()) {
+        m_base.node()->getDocument()->updateLayout();
         updatedLayout = true;
-        assignBase(base().equivalentDeepPosition().closestRenderedPosition(affinity()));
+        m_base = m_base.equivalentDeepPosition().closestRenderedPosition(affinity());
         if (baseAndExtentEqual)
-            assignExtent(base());
+            m_extent = m_base;
     }
-    if (extent().isNotNull() && !baseAndExtentEqual) {
+    if (m_extent.isNotNull() && !baseAndExtentEqual) {
         if (!updatedLayout)
-            extent().node()->getDocument()->updateLayout();
-        assignExtent(extent().equivalentDeepPosition().closestRenderedPosition(affinity()));
+            m_extent.node()->getDocument()->updateLayout();
+        m_extent = m_extent.equivalentDeepPosition().closestRenderedPosition(affinity());
     }
 
     // Make sure we do not have a dangling start or end
-    if (base().isNull() && extent().isNull()) {
+    if (m_base.isNull() && m_extent.isNull()) {
         // Move the position to the enclosingBlockFlowElement of the original base, if possible.
         // This has the effect of flashing the caret somewhere when a rendered position for
         // the base and extent cannot be found.
         if (originalBase.isNotNull()) {
             Position pos(originalBase.node()->enclosingBlockFlowElement(), 0);
-            assignBaseAndExtent(pos, pos);
-            assignStartAndEnd(pos, pos);
+            m_base = pos;
+            m_extent = pos;
         }
         else {
             // We have no position to work with. See if the BODY element of the page
             // is contentEditable. If it is, put the caret there.
             //NodeImpl *node = document()
-            assignStartAndEnd(emptyPosition(), emptyPosition());
+            m_start.clear();
+            m_end.clear();
         }
         m_baseIsStart = true;
     }
-    else if (base().isNull()) {
-        assignBase(extent());
+    else if (m_base.isNull()) {
+        m_base = m_extent;
         m_baseIsStart = true;
     }
-    else if (extent().isNull()) {
-        assignExtent(base());
+    else if (m_extent.isNull()) {
+        m_extent = m_base;
         m_baseIsStart = true;
     }
     else {
         m_baseIsStart = RangeImpl::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
     }
 
+    m_start.clear();
+    m_end.clear();
+
     // calculate the correct start and end positions
     switch (granularity) {
         case CHARACTER:
-            if (m_baseIsStart)
-                assignStartAndEnd(base(), extent());
-            else
-                assignStartAndEnd(extent(), base());
+            if (m_baseIsStart) {
+                m_start = m_base;
+                m_end = m_extent;
+            } else {
+                m_start = m_extent;
+                m_end = m_base;
+            }
             break;
         case WORD:
             if (m_baseIsStart) {
-                assignStart(startOfWord(base()).deepEquivalent());
-                assignEnd(endOfWord(extent()).deepEquivalent());
+                m_start = startOfWord(m_base).deepEquivalent();
+                m_end = endOfWord(m_extent).deepEquivalent();
             } else {
-                assignStart(startOfWord(extent()).deepEquivalent());
-                assignEnd(endOfWord(base()).deepEquivalent());
+                m_start = startOfWord(m_extent).deepEquivalent();
+                m_end = endOfWord(m_base).deepEquivalent();
             }
             break;
         case LINE:
         case LINE_BOUNDARY: {
             Selection baseSelection = *this;
             Selection extentSelection = *this;
-            Selection baseLine = selectionForLine(base());
+            Selection baseLine = selectionForLine(m_base);
             if (baseLine.isCaretOrRange()) {
                 baseSelection = baseLine;
             }
-            Selection extentLine = selectionForLine(extent());
+            Selection extentLine = selectionForLine(m_extent);
             if (extentLine.isCaretOrRange()) {
                 extentSelection = extentLine;
             }
             if (m_baseIsStart) {
-                assignStart(baseSelection.start());
-                assignEnd(extentSelection.end());
+                m_start = baseSelection.m_start;
+                m_end = extentSelection.m_end;
             } else {
-                assignStart(extentSelection.start());
-                assignEnd(baseSelection.end());
+                m_start = extentSelection.m_start;
+                m_end = baseSelection.m_end;
             }
             break;
         }
         case PARAGRAPH:
             if (m_baseIsStart) {
-                assignStart(startOfParagraph(base()).deepEquivalent());
-                assignEnd(endOfParagraph(extent(), IncludeLineBreak).deepEquivalent());
+                m_start = startOfParagraph(m_base).deepEquivalent();
+                m_end = endOfParagraph(m_extent, IncludeLineBreak).deepEquivalent();
             } else {
-                assignStart(startOfParagraph(extent()).deepEquivalent());
-                assignEnd(endOfParagraph(base(), IncludeLineBreak).deepEquivalent());
+                m_start = startOfParagraph(m_extent).deepEquivalent();
+                m_end = endOfParagraph(m_base, IncludeLineBreak).deepEquivalent();
             }
             break;
         case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = start().node()->getDocument()->documentElement();
-            assignStart(CaretPosition(de, 0).deepEquivalent());
-            assignEnd(CaretPosition(de, de ? de->childNodeCount() : 0).deepEquivalent());
+            NodeImpl *de = m_start.node()->getDocument()->documentElement();
+            m_start = CaretPosition(de, 0).deepEquivalent();
+            m_end = CaretPosition(de, de ? de->childNodeCount() : 0).deepEquivalent();
             break;
         }
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
-                assignStart(startOfParagraph(base()).deepEquivalent());
-                assignEnd(endOfParagraph(extent()).deepEquivalent());
+                m_start = startOfParagraph(m_base).deepEquivalent();
+                m_end = endOfParagraph(m_extent).deepEquivalent();
             } else {
-                assignStart(startOfParagraph(extent()).deepEquivalent());
-                assignEnd(endOfParagraph(base()).deepEquivalent());
+                m_start = startOfParagraph(m_extent).deepEquivalent();
+                m_end = endOfParagraph(m_base).deepEquivalent();
             }
             break;
     }
 
     // adjust the state
-    if (start().isNull() && end().isNull()) {
+    if (m_start.isNull()) {
+        ASSERT(m_end.isNull());
         m_state = NONE;
     }
-    else if (start() == end() || start().upstream(StayInBlock) == end().upstream(StayInBlock)) {
+    else if (m_start == m_end || m_start.upstream(StayInBlock) == m_end.upstream(StayInBlock)) {
         m_state = CARET;
     }
     else {
@@ -813,8 +797,8 @@ void Selection::validate(ETextGranularity granularity)
         // purposes of comparing selections). This is an ideal point of the code
         // to do this operation, since all selection changes that result in a RANGE 
         // come through here before anyone uses it.
-        assignStart(start().downstream(StayInBlock));
-        assignEnd(end().upstream(StayInBlock));
+        m_start = m_start.downstream(StayInBlock);
+        m_end = m_end.upstream(StayInBlock);
     }
 
     m_needsCaretLayout = true;
@@ -932,10 +916,10 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
         int textLength = text.length();
         if (selected) {
             int offset = 0;
-            if (r->node() == start().node())
-                offset = start().offset();
-            else if (r->node() == end().node())
-                offset = end().offset();
+            if (r->node() == m_start.node())
+                offset = m_start.offset();
+            else if (r->node() == m_end.node())
+                offset = m_end.offset();
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
@@ -989,7 +973,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
 
 void Selection::debugPosition() const
 {
-    if (!start().node())
+    if (!m_start.node())
         return;
 
     //static int context = 5;
@@ -998,8 +982,8 @@ void Selection::debugPosition() const
 
     fprintf(stderr, "Selection =================\n");
 
-    if (start() == end()) {
-        Position pos = start();
+    if (m_start == m_end) {
+        Position pos = m_start;
         Position upstream = pos.upstream();
         Position downstream = pos.downstream();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
@@ -1007,14 +991,14 @@ void Selection::debugPosition() const
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
     }
     else {
-        Position pos = start();
+        Position pos = m_start;
         Position upstream = pos.upstream();
         Position downstream = pos.downstream();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
         fprintf(stderr, "start:      %s %p:%d\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
         fprintf(stderr, "-----------------------------------\n");
-        pos = end();
+        pos = m_end;
         upstream = pos.upstream();
         downstream = pos.downstream();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
@@ -1025,7 +1009,7 @@ void Selection::debugPosition() const
           
 #if 0
     int back = 0;
-    r = start().node()->renderer();
+    r = m_start.node()->renderer();
     for (int i = 0; i < context; i++, back++) {
         if (r->previousRenderer())
             r = r->previousRenderer();
@@ -1040,15 +1024,15 @@ void Selection::debugPosition() const
 
     fprintf(stderr, "\n");
 
-    if (start().node() == end().node())
-        debugRenderer(start().node()->renderer(), true);
+    if (m_start.node() == m_end.node())
+        debugRenderer(m_start.node()->renderer(), true);
     else
-        for (r = start().node()->renderer(); r && r != end().node()->renderer(); r = r->nextRenderer())
+        for (r = m_start.node()->renderer(); r && r != m_end.node()->renderer(); r = r->nextRenderer())
             debugRenderer(r, true);
     
     fprintf(stderr, "\n");
     
-    r = end().node()->renderer();
+    r = m_end.node()->renderer();
     for (int i = 0; i < context; i++) {
         if (r->nextRenderer()) {
             r = r->nextRenderer();

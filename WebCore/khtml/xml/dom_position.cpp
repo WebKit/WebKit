@@ -124,14 +124,23 @@ Position &Position::operator=(const Position &o)
     if (m_node) {
         m_node->deref();
     }
-    m_node = o.node();
+    m_node = o.m_node;
     if (m_node) {
         m_node->ref();
     }
 
-    m_offset = o.offset();
+    m_offset = o.m_offset;
     
     return *this;
+}
+
+void Position::clear()
+{
+    if (m_node) {
+        m_node->deref();
+        m_node = 0;
+    }
+    m_offset = 0;
 }
 
 ElementImpl *Position::element() const
@@ -900,5 +909,16 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
 }
 #undef FormatBufferSize
 #endif
+
+
+Position startPosition(const Range &r)
+{
+    return Position(r.startContainer().handle(), r.startOffset());
+}
+
+Position endPosition(const Range &r)
+{
+    return Position(r.endContainer().handle(), r.endOffset());
+}
 
 } // namespace DOM

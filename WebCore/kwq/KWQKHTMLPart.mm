@@ -929,7 +929,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
-        CaretPosition oneBeforeStart= start(searchRange).previous();
+        CaretPosition oneBeforeStart = start(searchRange).previous();
         if (oneBeforeStart.isNotNull()) {
             setStart(searchRange, endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node

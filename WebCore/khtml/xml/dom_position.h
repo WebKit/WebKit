@@ -31,6 +31,8 @@ namespace DOM {
 class CSSComputedStyleDeclarationImpl;
 class ElementImpl;
 class NodeImpl;
+class Range;
+class RangeImpl;
 
 // These match the AppKit values for these concepts.
 // From NSTextView.h:
@@ -50,15 +52,17 @@ public:
 
     Position &operator=(const Position &o);
 
+    void clear();
+
     NodeImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
+
+    bool isNull() const { return m_node == 0; }
+    bool isNotNull() const { return m_node != 0; }
 
     ElementImpl *element() const;
     CSSComputedStyleDeclarationImpl *computedStyle() const;
 
-    bool isNull() const { return m_node == 0; }
-    bool isNotNull() const { return m_node != 0; }
-    
     Position previousLinePosition(int x) const;
     Position nextLinePosition(int x) const;
 
@@ -116,6 +120,11 @@ inline bool operator!=(const Position &a, const Position &b)
 {
     return !(a == b);
 }
+
+Position startPosition(const Range &);
+Position startPosition(const RangeImpl *);
+Position endPosition(const Range &);
+Position endPosition(const RangeImpl *);
 
 } // namespace DOM
 

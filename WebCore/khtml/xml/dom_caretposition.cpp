@@ -71,23 +71,23 @@ void CaretPosition::init(const Position &pos)
     Position deepPos = deepEquivalent(pos);
     
     if (isCandidate(deepPos)) {
-        m_position = deepPos;
+        m_deepPosition = deepPos;
         Position previous = previousCaretPosition(deepPos);
         if (previous.isNotNull()) {
             Position next = nextCaretPosition(previous);
             if (next.isNotNull())
-                m_position = next;
+                m_deepPosition = next;
         }
     }
     else {
         Position next = nextCaretPosition(deepPos);
         if (next.isNotNull()) {
-            m_position = next;
+            m_deepPosition = next;
         }
         else {
             Position previous = previousCaretPosition(deepPos);
             if (previous.isNotNull())
-                m_position = previous;
+                m_deepPosition = previous;
         }
     }
 }
@@ -98,20 +98,20 @@ bool CaretPosition::isLastInBlock() const
         return false;
         
     CaretPosition n = next();
-    return n.isNull() || (n.deepEquivalent().node()->enclosingBlockFlowElement() != node()->enclosingBlockFlowElement());
+    return n.isNull() || (n.deepEquivalent().node()->enclosingBlockFlowElement() != m_deepPosition.node()->enclosingBlockFlowElement());
 }
 
 CaretPosition CaretPosition::next() const
 {
     CaretPosition result;
-    result.m_position = nextCaretPosition(m_position);
+    result.m_deepPosition = nextCaretPosition(m_deepPosition);
     return result;
 }
 
 CaretPosition CaretPosition::previous() const
 {
     CaretPosition result;
-    result.m_position = previousCaretPosition(m_position);
+    result.m_deepPosition = previousCaretPosition(m_deepPosition);
     return result;
 }
 
@@ -314,15 +314,15 @@ bool CaretPosition::isAtomicNode(const NodeImpl *node)
 void CaretPosition::debugPosition(const char *msg) const
 {
     if (isNull())
-        fprintf(stderr, "Position [%s]: empty\n", msg);
+        fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(node()->id()).string().latin1(), node(), offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(m_deepPosition.node()->id()).string().latin1(), m_deepPosition.node(), m_deepPosition.offset());
 }
 
 #ifndef NDEBUG
 void CaretPosition::formatForDebugger(char *buffer, unsigned length) const
 {
-    m_position.formatForDebugger(buffer, length);
+    m_deepPosition.formatForDebugger(buffer, length);
 }
 #endif
 

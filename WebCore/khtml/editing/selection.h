@@ -82,24 +82,15 @@ public:
     void setBase(const CaretPosition &);
     void setExtent(const CaretPosition &);
     void setBaseAndExtent(const CaretPosition &base, const CaretPosition &extent);
-    void setStart(const CaretPosition &);
-    void setEnd(const CaretPosition &);
-    void setStartAndEnd(const CaretPosition &start, const CaretPosition &end);
 
     void setBase(const Position &pos);
     void setExtent(const Position &pos);
     void setBaseAndExtent(const Position &base, const Position &extent);
-    void setStart(const Position &pos);
-    void setEnd(const Position &pos);
-    void setStartAndEnd(const Position &start, const Position &end);
 
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
     Position end() const { return m_end; }
-    // These values are suitable for use in a DOM::Range.  The previous ones may not be.
-    Position rangeStart() const { return m_start.equivalentRangeCompliantPosition(); }
-    Position rangeEnd() const { return m_end.equivalentRangeCompliantPosition(); }
 
     QRect caretRect() const;
     void setNeedsLayout(bool flag = true);
@@ -127,13 +118,7 @@ private:
     enum EPositionType { START, END, BASE, EXTENT };
 
     void init();
-    void validate(ETextGranularity granularity=CHARACTER);
-    void assignBase(const Position &pos) { m_base = pos; }
-    void assignExtent(const Position &pos) { m_extent = pos; }
-    void assignBaseAndExtent(const Position &base, const Position &extent) { m_base = base; m_extent = extent; }
-    void assignStart(const Position &pos) { m_start = pos; }
-    void assignEnd(const Position &pos) { m_end = pos; }
-    void assignStartAndEnd(const Position &start, const Position &end) { m_start = start; m_end = end; }
+    void validate(ETextGranularity granularity = CHARACTER);
 
     CaretPosition modifyExtendingRightForward(ETextGranularity);
     CaretPosition modifyMovingRightForward(ETextGranularity);
@@ -145,7 +130,7 @@ private:
     void paintCaret(QPainter *p, const QRect &rect);
     QRect caretRepaintRect() const;
 
-    int xPosForVerticalArrowNavigation(EPositionType, bool recalc=false) const;
+    int xPosForVerticalArrowNavigation(EPositionType, bool recalc = false) const;
 
     Position m_base;              // base position for the selection
     Position m_extent;            // extent position for the selection
@@ -162,7 +147,6 @@ private:
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
 };
-
 
 inline bool operator==(const Selection &a, const Selection &b)
 {

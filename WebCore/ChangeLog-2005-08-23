@@ -1,3 +1,53 @@
+2004-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - some small mechanical improvements to the position and selection classes
+
+        * khtml/xml/dom_position.h: Added clear(), startPosition(), and endPosition().
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::clear): Added.
+        (DOM::startPosition): Added.
+        (DOM::endPosition): Added.
+
+        * khtml/xml/dom_caretposition.h: Changed m_position to m_deepPosition. Added clear(),
+        removed node() and offset().
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::CaretPosition::init): Updated for name change of m_position to m_deepPosition.
+        (DOM::CaretPosition::isLastInBlock): Ditto.
+        (DOM::CaretPosition::next): Ditto.
+        (DOM::CaretPosition::previous): Ditto.
+        (DOM::CaretPosition::debugPosition): Ditto.
+        (DOM::CaretPosition::formatForDebugger): Ditto.
+
+        * khtml/xml/dom_selection.h: Remove setStart, setEnd, setStartAndEnd, rangeStart, rangeEnd,
+        and all the assignXXX functions.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): Wean from assign functions, get and set data members directly.
+        (DOM::Selection::init): Don't clear base, extent, start, and end, since they have constructors.
+        (DOM::Selection::operator=): Wean from assign functions, get and set data members directly.
+        (DOM::Selection::moveTo): Ditto.
+        (DOM::Selection::setModifyBias): Ditto.
+        (DOM::Selection::modifyExtendingRightForward): Ditto.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::modify): Ditto.
+        (DOM::Selection::xPosForVerticalArrowNavigation): Ditto.
+        (DOM::Selection::clear): Ditto.
+        (DOM::Selection::setBase): Ditto.
+        (DOM::Selection::setExtent): Ditto.
+        (DOM::Selection::setBaseAndExtent): Ditto.
+        (DOM::Selection::toRange): Ditto.
+        (DOM::Selection::layoutCaret): Ditto.
+        (DOM::Selection::needsCaretRepaint): Ditto.
+        (DOM::Selection::validate): Ditto.
+        (DOM::Selection::debugRenderer): Ditto.
+        (DOM::Selection::debugPosition): Ditto.
+        (DOM::Selection::end):
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::advanceToNextMisspelling): Tweaked whitespace.
+
 2004-09-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3647229> Safari does not play inline Windows Media Content on some sites (miggy.net and ministryofsound.com)
