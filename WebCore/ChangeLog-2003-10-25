@@ -8917,10 +8917,7 @@ akenly ignore the positioned object when building up bidi runs.
 
 	Fixed: 3162338 - Embedding SVG with <object type="image/svg+xml"> doesn't work
 
-	Whenever we encounter an OBJECT tag with a type that starts with "image/" we create a render image object instead of a render part object. The behavior is nice because this allows the render object to resize to the size of the image if no WIDTH and HEIGH
-
-
-T are supplied. For example, the image at the bottom of this page:
+	Whenever we encounter an OBJECT tag with a type that starts with "image/" we create a render image object instead of a render part object. The behavior is nice because this allows the render object to resize to the size of the image if no WIDTH and HEIGHT are supplied. For example, the image at the bottom of this page:
 
 	http://tantek.com/CSS/Examples/boxmodelhack.html
 
