@@ -1,4 +1,13 @@
 2003-10-24  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/3424039>: standalone plug-in content occasionaly redirects to blank page
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): don't honor JS requests from standalone plug-ins to workaround 3462628 which is a deeper issue.
+
+2003-10-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3462256>: REGRESSION: Plain text is downloaded
 

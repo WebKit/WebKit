@@ -1312,6 +1312,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    if (JSString != nil && cTarget == NULL && mode == NP_FULL) {
+        // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
+        // because this can cause the user to be redirected to a blank page (3424039).
+        return NPERR_INVALID_URL;
+    }
     
     if (cTarget || JSString) {
         // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
