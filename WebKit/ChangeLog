@@ -4,7 +4,7 @@
         disabled for now.  Requires at least Tiger 300.  Testing does
         show a 3% improvement in PLT tests!  That's huge!
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by John.
 
         * WebCoreSupport.subproj/WebImageData.m:
         (-[WebImageData imageAtIndex:]):
