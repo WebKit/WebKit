@@ -1,3 +1,22 @@
+2002-11-04  Maciej Stachowiak  <mjs@apple.com>
+
+	Changes to send NSEvents all the way through WebCore and then pass
+	them back out to WebKit, so that click policy can have a
+	WebResourceRequest added.
+	
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::openURL):
+        (KWQKHTMLPart::openURLRequest):
+        (KWQKHTMLPart::urlSelected):
+        (KWQKHTMLPart::submitForm):
+        (KWQKHTMLPart::createDummyDocument):
+        (KWQKHTMLPart::setCurrentEvent):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseUp:]):
+
 2002-11-03  Darin Adler  <darin@apple.com>
 
 	- fixed 3091300 -- "prelighting" on local page is still slow, despite recent bug fix

@@ -54,9 +54,11 @@ namespace khtml {
 #ifdef __OBJC__
 @class NSView;
 @class WebCoreBridge;
+@class NSEvent;
 #else
 class NSView;
 class WebCoreBridge;
+class NSEvent;
 #endif
 
 enum KWQSelectionDirection {
@@ -142,7 +144,8 @@ public:
     int selectionEndOffset() const;
     DOM::NodeImpl *selectionStart() const;
     DOM::NodeImpl *selectionEnd() const;
-    
+
+    void setCurrentEvent(NSEvent *event);
 private:
     void setPolicyBaseURL(const DOM::DOMString &);
 
@@ -162,6 +165,8 @@ private:
     KWQSignal _completedWithBool;
     
     bool _needsToSetWidgetsAside;
+
+    NSEvent *_currentEvent;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 

@@ -367,11 +367,15 @@ using khtml::RenderPart;
         // viewportMouseDoubleClickEvent.
         if (clickCount > 0 && clickCount % 2 == 0) {
             QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
+	    part->kwq->setCurrentEvent(event);
             part->kwq->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
+	    part->kwq->setCurrentEvent(nil);
         }
         else {
             QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
+	    part->kwq->setCurrentEvent(event);
             part->kwq->view()->viewportMouseReleaseEvent(&releaseEvent);
+	    part->kwq->setCurrentEvent(nil);
         }
     }
 }

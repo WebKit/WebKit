@@ -93,6 +93,8 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     , _completed(p, SIGNAL(completed()))
     , _completedWithBool(p, SIGNAL(completed(bool)))
     , _needsToSetWidgetsAside(false)
+    , _currentEvent(NULL)
+
 {
     Cache::init();
     mutableInstances().prepend(this);
@@ -130,7 +132,7 @@ void KWQKHTMLPart::openURL(const KURL &url)
         // FIXME: The lack of args here to get the reload flag from
         // indicates a problem in KHTMLPart::processObjectRequest,
         // where we are opening the URL before the args are set up.
-        [_bridge loadURL:cocoaURL reload:NO];
+        [_bridge loadURL:cocoaURL reload:NO triggeringEvent:nil];
     }
 }
 
@@ -140,7 +142,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     if (cocoaURL == nil) {
         // FIXME: We need to report this error to someone.
     } else {
-        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload];
+        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:nil];
     }
 }
 
@@ -170,7 +172,8 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
         return;
     }
     
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload];
+
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:_currentEvent];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -212,7 +215,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
 void KWQKHTMLPart::submitForm(const KURL &u, const URLArgs &args)
 {
     if (!args.doPost()) {
-	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() reload:args.reload];
+	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() reload:args.reload triggeringEvent:nil];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
@@ -525,4 +528,11 @@ void KWQKHTMLPart::createDummyDocument()
     }
     d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view);
     d->m_doc->ref();
+}
+
+void KWQKHTMLPart::setCurrentEvent(NSEvent *event)
+{
+    [event retain];
+    [_currentEvent release];
+    _currentEvent = event;
 }
