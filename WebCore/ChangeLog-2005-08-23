@@ -1,3 +1,14 @@
+2004-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - minor cleanup
+
+        * khtml/editing/jsediting.cpp: Capitalize command names to match Windows.
+        The dictionary lookup is case insensitive.
+
+        * kwq/KWQFoundationExtras.h: Remove inaccurate comment.
+
 2004-08-10  Trey Matteson  <trey@apple.com>
 
 	3757094 - crash spell checking after a paste

@@ -447,35 +447,35 @@ QDict<CommandImp> createCommandDictionary()
 
     static const EditorCommand commands[] = {
 
-        { "backColor", { execBackColor, enabled, stateNone, valueBackColor } },
-        { "bold", { execBold, enabledAnySelection, stateBold, valueNull } },
-        { "copy", { execCopy, enabledRangeSelection, stateNone, valueNull } },
-        { "cut", { execCut, enabledRangeSelection, stateNone, valueNull } },
-        { "delete", { execDelete, enabledAnySelection, stateNone, valueNull } },
-        { "fontName", { execFontName, enabledAnySelection, stateNone, valueFontName } },
-        { "fontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
-        { "foreColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
-        { "indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
-        { "insertNewline", { execInsertNewline, enabledAnySelection, stateNone, valueNull } },
-        { "insertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },
-        { "insertText", { execInsertText, enabledAnySelection, stateNone, valueNull } },
-        { "italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },
-        { "justifyCenter", { execJustifyCenter, enabledAnySelection, stateNone, valueNull } },
-        { "justifyFull", { execJustifyFull, enabledAnySelection, stateNone, valueNull } },
-        { "justifyLeft", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
-        { "justifyNone", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
-        { "justifyRight", { execJustifyRight, enabledAnySelection, stateNone, valueNull } },
-        { "outdent", { execOutdent, enabledAnySelection, stateNone, valueNull } },
+        { "BackColor", { execBackColor, enabled, stateNone, valueBackColor } },
+        { "Bold", { execBold, enabledAnySelection, stateBold, valueNull } },
+        { "Copy", { execCopy, enabledRangeSelection, stateNone, valueNull } },
+        { "Cut", { execCut, enabledRangeSelection, stateNone, valueNull } },
+        { "Delete", { execDelete, enabledAnySelection, stateNone, valueNull } },
+        { "FontName", { execFontName, enabledAnySelection, stateNone, valueFontName } },
+        { "FontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
+        { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
+        { "Indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
+        { "InsertNewline", { execInsertNewline, enabledAnySelection, stateNone, valueNull } },
+        { "InsertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },
+        { "InsertText", { execInsertText, enabledAnySelection, stateNone, valueNull } },
+        { "Italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },
+        { "JustifyCenter", { execJustifyCenter, enabledAnySelection, stateNone, valueNull } },
+        { "JustifyFull", { execJustifyFull, enabledAnySelection, stateNone, valueNull } },
+        { "JustifyLeft", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
+        { "JustifyNone", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
+        { "JustifyRight", { execJustifyRight, enabledAnySelection, stateNone, valueNull } },
+        { "Outdent", { execOutdent, enabledAnySelection, stateNone, valueNull } },
 #if SUPPORT_PASTE
-        { "paste", { execPaste, enabledPaste, stateNone, valueNull } },
+        { "Paste", { execPaste, enabledPaste, stateNone, valueNull } },
 #endif
-        { "print", { execPrint, enabled, stateNone, valueNull } },
-        { "redo", { execRedo, enabledRedo, stateNone, valueNull } },
-        { "selectAll", { execSelectAll, enabled, stateNone, valueNull } },
-        { "subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
-        { "superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
-        { "undo", { execUndo, enabledUndo, stateNone, valueNull } },
-        { "unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
+        { "Print", { execPrint, enabled, stateNone, valueNull } },
+        { "Redo", { execRedo, enabledRedo, stateNone, valueNull } },
+        { "SelectAll", { execSelectAll, enabled, stateNone, valueNull } },
+        { "Subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
+        { "Superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
+        { "Undo", { execUndo, enabledUndo, stateNone, valueNull } },
+        { "Unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
 
         //
         // The "unsupported" commands are listed here since they appear in the Microsoft
@@ -483,58 +483,58 @@ QDict<CommandImp> createCommandDictionary()
         //
 
         // 2d-position (not supported)
-        // absolutePosition (not supported)
-        // blockDirLTR (not supported)
-        // blockDirRTL (not supported)
-        // browseMode (not supported)
-        // clearAuthenticationCache (not supported)
-        // createBookmark (not supported)
-        // createLink (not supported)
-        // dirLTR (not supported)
-        // dirRTL (not supported)
-        // editMode (not supported)
-        // formatBlock (not supported)
-        // inlineDirLTR (not supported)
-        // inlineDirRTL (not supported)
-        // insertButton (not supported)
-        // insertFieldSet (not supported)
-        // insertHorizontalRule (not supported)
-        // insertIFrame (not supported)
-        // insertImage (not supported)
-        // insertInputButton (not supported)
-        // insertInputCheckbox (not supported)
-        // insertInputFileUpload (not supported)
-        // insertInputHidden (not supported)
-        // insertInputImage (not supported)
-        // insertInputPassword (not supported)
-        // insertInputRadio (not supported)
-        // insertInputReset (not supported)
-        // insertInputSubmit (not supported)
-        // insertInputText (not supported)
-        // insertMarquee (not supported)
-        // insertOrderedList (not supported)
-        // insertSelectDropDown (not supported)
-        // insertSelectListBox (not supported)
-        // insertTextArea (not supported)
-        // insertUnorderedList (not supported)
-        // liveResize (not supported)
-        // multipleSelection (not supported)
-        // open (not supported)
-        // overwrite (not supported)
-        // playImage (not supported)
-        // refresh (not supported)
-        // removeFormat (not supported)
-        // removeParaFormat (not supported)
-        // saveAs (not supported)
-        // sizeToControl (not supported)
-        // sizeToControlHeight (not supported)
-        // sizeToControlWidth (not supported)
-        // stop (not supported)
-        // stopimage (not supported)
-        // strikethrough (not supported)
-        // unbookmark (not supported)
-        // underline (not supported)
-        // unlink (not supported)
+        // AbsolutePosition (not supported)
+        // BlockDirLTR (not supported)
+        // BlockDirRTL (not supported)
+        // BrowseMode (not supported)
+        // ClearAuthenticationCache (not supported)
+        // CreateBookmark (not supported)
+        // CreateLink (not supported)
+        // DirLTR (not supported)
+        // DirRTL (not supported)
+        // EditMode (not supported)
+        // FormatBlock (not supported)
+        // InlineDirLTR (not supported)
+        // InlineDirRTL (not supported)
+        // InsertButton (not supported)
+        // InsertFieldSet (not supported)
+        // InsertHorizontalRule (not supported)
+        // InsertIFrame (not supported)
+        // InsertImage (not supported)
+        // InsertInputButton (not supported)
+        // InsertInputCheckbox (not supported)
+        // InsertInputFileUpload (not supported)
+        // InsertInputHidden (not supported)
+        // InsertInputImage (not supported)
+        // InsertInputPassword (not supported)
+        // InsertInputRadio (not supported)
+        // InsertInputReset (not supported)
+        // InsertInputSubmit (not supported)
+        // InsertInputText (not supported)
+        // InsertMarquee (not supported)
+        // InsertOrderedList (not supported)
+        // InsertSelectDropDown (not supported)
+        // InsertSelectListBox (not supported)
+        // InsertTextArea (not supported)
+        // InsertUnorderedList (not supported)
+        // LiveResize (not supported)
+        // MultipleSelection (not supported)
+        // Open (not supported)
+        // Overwrite (not supported)
+        // PlayImage (not supported)
+        // Refresh (not supported)
+        // RemoveFormat (not supported)
+        // RemoveParaFormat (not supported)
+        // SaveAs (not supported)
+        // SizeToControl (not supported)
+        // SizeToControlHeight (not supported)
+        // SizeToControlWidth (not supported)
+        // Stop (not supported)
+        // Stopimage (not supported)
+        // Strikethrough (not supported)
+        // Unbookmark (not supported)
+        // Underline (not supported)
+        // Unlink (not supported)
     };
 
     const int numCommands = sizeof(commands) / sizeof(commands[0]);

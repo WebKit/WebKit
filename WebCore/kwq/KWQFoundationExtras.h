@@ -62,7 +62,6 @@ static inline id KWQRetainNSRelease(id obj)
 
 // Definitions for GC-specific methods for Panther.
 // The finalize method simply won't be called.
-// The drain method is implemented (as a simple call to release).
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
 
