@@ -1,5 +1,15 @@
 2002-11-17  Trey Matteson  <trey@apple.com>
 
+	Code cleanup to make some internal methods return autoreleased objects.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _createItem]):
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted]):
+
+2002-11-17  Trey Matteson  <trey@apple.com>
+
 	Fixed 3102076 - REGRESSION: infinite recursion involving bridge end
 	Fixed 3100929 - REGRESSION: serverRedirectedForDataSource: not sent on server redirects
 	Fixed 3103381 - REGRESSION: Going back from anchor doesn't restore scroll position

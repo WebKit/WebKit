@@ -160,11 +160,9 @@ static const char * const stateNames[] = {
 {
     WebHistoryItem *bfItem = [[[self controller] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
     [[[self controller] backForwardList] addEntry:bfItem];
-    [bfItem release];
     return bfItem;
 }
 
-// NB: this returns an object with retain count of 1
 - (WebHistoryItem *)_createItem
 {
     WebDataSource *dataSrc = [self dataSource];
@@ -177,13 +175,12 @@ static const char * const stateNames[] = {
     [_private setPreviousItem:[_private currentItem]];
     [_private setCurrentItem:bfItem];
 
-    return bfItem;
+    return [bfItem autorelease];
 }
 
 /*
     In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  The item that was the target of the user's navigation is designated as the "targetItem".  When this method is called with doClip=YES we're able to create the whole tree except for the target's children, which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
 */
-// NB: this returns an object with retain count of 1
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
     WebHistoryItem *bfItem = [self _createItem];
@@ -199,7 +196,6 @@ static const char * const stateNames[] = {
                 WebFrame *child = [_private->children objectAtIndex:i];
                 WebHistoryItem *childItem = [child _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip];
                 [bfItem addChildItem:childItem];
-                [childItem release];
             }
         }
     }
@@ -478,7 +474,6 @@ static const char * const stateNames[] = {
                     WebHistoryItem *item = [self _createItem];
                     ASSERT([[self parent]->_private currentItem]);
                     [[[self parent]->_private currentItem] addChildItem:item];
-                    [item release];
                     [[self webView] _makeDocumentViewForDataSource:ds];
                     }
                     break;
