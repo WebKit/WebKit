@@ -2,6 +2,14 @@
 
         Reviewed by John.
 
+	- fixed 3144560 -- non-reproducible nil-dereference in HTMLFrameElementImpl::updateForNewURL at macfixit
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::updateForNewURL): Add check for nil view.
+
+2003-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
 	- fixed 3154647 -- Triple clicked on a line of text (to select entire line), crashola
 
         * khtml/khtml_part.cpp:

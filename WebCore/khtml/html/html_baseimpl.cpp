@@ -263,13 +263,18 @@ void HTMLFrameElementImpl::updateForNewURL()
         return;
     }
 
-    // load the frame contents
     KHTMLView *w = getDocument()->view();
-    KHTMLPart *part = w->part()->findFrame( name.string() );
-    if (part) {
-        part->openURL(getDocument()->completeURL(url.string()));
+    if (!w) {
+        return;
+    }
+    
+    // Load the frame contents.
+    KHTMLPart *part = w->part();
+    KHTMLPart *framePart = part->findFrame(name.string());
+    if (framePart) {
+        framePart->openURL(getDocument()->completeURL(url.string()));
     } else {
-        w->part()->requestFrame(static_cast<RenderFrame*>(m_render), url.string(), name.string());
+        part->requestFrame(static_cast<RenderFrame *>(m_render), url.string(), name.string());
     }
 }
 
