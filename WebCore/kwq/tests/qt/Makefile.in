@@ -29,6 +29,7 @@ PROGRAMS = \
     qstringlist-test \
     qlist-test \
     qregexp-test \
+    qchar-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -87,6 +88,9 @@ qlist-test: qlist-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qregexp-test: qregexp-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qchar-test: qchar-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 
