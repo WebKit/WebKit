@@ -1,3 +1,14 @@
+2003-10-01  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3441372: REGRESSION (107+): Plain text document is 
+	initially drawn with proportional font
+
+        Reviewed by Hyatt
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView setDataSource:]):
+	Changed a != to an ==
+
 2003-10-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3438441.  If a load is triggered by a onload handling, don't add an entry for it into the b/f or history.  The new Google ads use this technique.

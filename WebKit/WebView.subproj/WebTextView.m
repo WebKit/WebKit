@@ -123,7 +123,7 @@
     [self _updateTextSizeMultiplier];
     // If the multiplier didn't change, we still need to update the fixed-width font.
     // If the multiplier did change, this was already handled.
-    if (_textSizeMultiplier != oldMultiplier && ![self isRichText]) {
+    if (_textSizeMultiplier == oldMultiplier && ![self isRichText]) {
         [self setFixedWidthFont];
     }
 
