@@ -1026,25 +1026,6 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
         return;
     }
 
-    // check node allowed
-    if (newChild->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
-        // newChild is a DocumentFragment... check all it's children instead of newChild itself
-        NodeImpl *child;
-        for (child = newChild->firstChild(); child; child = child->nextSibling()) {
-            if (!childAllowed(child)) {
-                exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-                return;
-            }
-        }
-    }
-    else {
-        // newChild is not a DocumentFragment... check if it's allowed directly
-        if(!childAllowed(newChild)) {
-            exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-            return;
-        }
-    }
-
     // only do this once we know there won't be an exception
     if (shouldAdoptChild) {
 	KJS::ScriptInterpreter::updateDOMObjectDocument(newChild, newChild->getDocument(), getDocument());

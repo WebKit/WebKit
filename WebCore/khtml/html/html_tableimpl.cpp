@@ -316,6 +316,18 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
         return this;
     }
     
+    // check node allowed
+    if (child->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
+        // child is a DocumentFragment... check all its children instead of child itself
+        for (NodeImpl *c = child->firstChild(); c; c = c->nextSibling())
+            if (!childAllowed(c))
+                return 0;
+    }
+    else if (!childAllowed(child)) {
+        // child is not a DocumentFragment... check if it's allowed directly
+        return 0;
+    }
+
     int exceptioncode = 0;
     NodeImpl *retval = appendChild( child, exceptioncode );
     if ( retval ) {

@@ -1,5 +1,27 @@
 2004-07-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3672377> assertion failure in AppendNodeCommandImpl::doApply 
+        due to non-0 exception code trying to insert a DIV markup string
+        
+        The solution was to revert to the code that was rolled out, and removing
+        the child checks from NodeImpl::checkAddChild. However, this time, I added
+        code very similar to this check into the code that runs while HTML is 
+        being parsed to build up tables. This code relies on child-add failure
+        to ensure the proper construction of well-formed tables (as gross as that
+        sounds), so the check needs to be retained there. No other code seems to
+        be so affected. Layout tests are unchanged by this patch.
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::addChild):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::checkAddChild):
+
+2004-07-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
         
         Simple change. I switched the arguments of the appendNode helper function
