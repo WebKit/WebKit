@@ -1,3 +1,19 @@
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/3924486> REGRESSION (Mail): Hitting return key does not insert visible newline
+        <rdar://problem/3924579> REGRESSION (Mail): After deleting, hitting return key does not insert visible newline
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): For the first bug, detect when inserting a <p> will
+        make a visible <br> collapse. For the second bug, move the code that inserts the new <p> after
+        a check which may move the node used as the reference node for the insertion. Also change this code to
+        insert the <p> after the last sibling of the starting position, to move it past the nodes we're going
+        to want to shift into the new <p>.
+
 2004-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

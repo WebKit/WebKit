@@ -2273,8 +2273,26 @@ void InsertParagraphSeparatorCommand::doApply()
 
     LOG(Editing, "insert paragraph separator: general case");
 
-    // Put the added block in the tree.
-    insertNodeAfter(blockToInsert, startBlockIsRoot ? pos.node() : startBlock);
+    // Check if pos.node() is a <br>. If it is, and the document is in quirks mode, 
+    // then this <br> will collapse away when we add a block after it. Add an extra <br>.
+    if (!document()->inStrictMode()) {
+        int exceptionCode = 0;
+        if (pos.node()->id() == ID_BR) {
+            NodeImpl *extraBreak = document()->createHTMLElement("br", exceptionCode);
+            ASSERT(exceptionCode == 0);
+            insertNodeAfter(extraBreak, pos.node());
+            pos = Position(extraBreak, 0);
+        }
+        else {
+            Position upstreamPos = pos.upstream(StayInBlock);
+            if (upstreamPos.node()->id() == ID_BR) {
+                NodeImpl *extraBreak = document()->createHTMLElement("br", exceptionCode);
+                ASSERT(exceptionCode == 0);
+                insertNodeAfter(extraBreak, upstreamPos.node());
+            }
+            // leave pos where it is
+        }
+    }
 
     // Build up list of ancestors in between the start node and the start block.
     if (startNode != startBlock) {
@@ -2301,6 +2319,17 @@ void InsertParagraphSeparatorCommand::doApply()
     else if (pos.offset() > 0) {
         startNode = startNode->traverseNextNode();
         ASSERT(startNode);
+    }
+
+    // Put the added block in the tree.
+    if (startBlockIsRoot) {
+        NodeImpl *lastSibling = pos.node();
+        while (lastSibling->nextSibling())
+            lastSibling = lastSibling->nextSibling();
+        insertNodeAfter(blockToInsert, lastSibling);
+    }
+    else {
+        insertNodeAfter(blockToInsert, startBlock);
     }
 
     // Make clones of ancestors in between the start node and the start block.
