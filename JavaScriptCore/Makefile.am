@@ -13,8 +13,7 @@ BUILT_SOURCES = JavaScriptCore-stamp
 CLEANFILES = $(BUILT_SOURCES)
 
 JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
-	pbxbuild -buildstyle $(BUILDSTYLE)
-	touch JavaScriptCore-stamp
+	pbxbuild -buildstyle $(BUILDSTYLE) && touch $@
 
 FRAMEWORK_NAME = JavaScriptCore
 FRAMEWORK_DIR = $(SYMROOTS)/$(FRAMEWORK_NAME).framework
@@ -44,4 +43,3 @@ embed:
 
 clean-am:
 	pbxbuild clean
-

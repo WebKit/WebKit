@@ -1,3 +1,9 @@
+2002-05-31  Darin Adler  <darin@apple.com>
+
+	* Makefile.am:
+	* kjs/Makefile.am:
+	Slight improvements to rules that touch stamp files.
+
 2002-05-28  Maciej Stachowiak  <mjs@apple.com>
 
 	* THANKS: Demangled.
