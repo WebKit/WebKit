@@ -262,43 +262,42 @@ bool CaretPosition::isCandidate(const Position &pos)
 
 Position CaretPosition::deepEquivalent(const Position &pos)
 {
-    if (pos.isEmpty())
-        return pos;
+    NodeImpl *node = pos.node();
+    long offset = pos.offset();
+
+    if (!node)
+        return Position();
     
-    if (isAtomicNode(pos.node())) {
+    if (isAtomicNode(node)) {
         // This is part of the strategy to wean the code off Positions with BRs and replaced elements
         // as the nodes and offsets > 0.
-        if (pos.offset() > 0 && (pos.node()->id() == ID_BR || pos.node()->renderer() && pos.node()->renderer()->isReplaced())) {
-            NodeImpl *next = pos.node()->traverseNextNode();
-            if (next && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement())
+        if (offset > 0 && (node->id() == ID_BR || node->renderer() && node->renderer()->isReplaced())) {
+            NodeImpl *next = node->traverseNextNode();
+            if (next && node->enclosingBlockFlowElement() == next->enclosingBlockFlowElement())
                 return deepEquivalent(Position(next, 0));
         }
         return pos;
     }
 
-    NodeImpl *child = 0;
-    Position result = pos;
-    if (pos.offset() >= (long)pos.node()->childNodeCount()) {
-        child = pos.node()->lastChild();
-        result = Position(child, maxOffset(child));
-        ASSERT(child);
-        while (!isAtomicNode(child) && result.node()->hasChildNodes()) {
-            child = result.node()->lastChild();
-            ASSERT(child);
-            result = Position(child, maxOffset(child));
-        }
+    if (offset >= (long)node->childNodeCount()) {
+        do {
+            NodeImpl *child = node->lastChild();
+            if (!child)
+                break;
+            node = child;
+        } while (!isAtomicNode(node));
+        return Position(node, node->caretMaxOffset());
     }
-    else {
-        child = pos.node()->childNode(pos.offset());
-        ASSERT(child);
-        result = Position(child, 0);
-        while (!isAtomicNode(child) && result.node()->hasChildNodes()) {
-            child = result.node()->firstChild();
-            ASSERT(child);
-            result = Position(child, 0);
-        }
+    
+    node = node->childNode(offset);
+    ASSERT(node);
+    while (!isAtomicNode(node)) {
+        NodeImpl *child = node->firstChild();
+        if (!child)
+            break;
+        node = child;
     }
-    return result;
+    return Position(node, 0);
 }
 
 Position CaretPosition::rangeCompliantEquivalent(const Position &pos)

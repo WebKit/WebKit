@@ -1,3 +1,13 @@
+2004-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3479392> REGRESSION (Mail): select all does not select all at some pages
+
+        * khtml/xml/dom_caretposition.cpp: (DOM::CaretPosition::deepEquivalent):
+        Use caretMaxOffset instead of maxOffset when descending to the last node.
+        Also change around the function a bit.
+
 2004-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
