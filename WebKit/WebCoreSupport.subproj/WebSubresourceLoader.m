@@ -133,6 +133,8 @@
     // essentially an infinite load and therefore a memory leak. Both this code and code in 
     // WebMainRecoureClient must be removed once multipart/x-mixed-replace is fully implemented. 
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
+        [dataSource _removeSubresourceClient:self];
+        [[[dataSource _webView] mainFrame] _checkLoadComplete];
         [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                          code:NSURLErrorUnsupportedURL
                                                           URL:[r URL]]];

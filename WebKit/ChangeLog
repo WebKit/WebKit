@@ -1,3 +1,20 @@
+2005-03-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+	Fixed: <rdar://problem/4038529> Infinite progress bar loading webcams and other sites that use multipart/x-mixed-replace
+
+	The previous patch I landed prevented us from loading multipart/x-mixed-replace but did not always update the progress bar accordingly.  
+        This stops websites from having seemingly infinite progress in the browser UI.  
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient didReceiveResponse:]): If this is "multipart/x-mixed-replace", remove the WebBaseResourceHandleDelegate client from 
+        the datasource's subresource array, otherwise -[WebDataSource isLoading] incorrectly returns YES.   Also it's possible at this point in
+         time we're done loading now (loaded everything else except for the multipart/x-mixed-replace content) so go ahead and check to see if 
+         in fact we're complete. 
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:didReceiveResponse:]): ditto
+
 2005-03-05  Richard Williamson   <rjw@apple.com>
 
 	Fixed panther build problem.  Shouldn't include
