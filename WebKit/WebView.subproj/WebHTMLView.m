@@ -1897,6 +1897,13 @@ static WebHTMLView *lastHitView = nil;
     return [self _scaleFactorForPrintOperation:printOperation];
 }
 
+- (void)_setPageWidthForPrinting:(float)pageWidth
+{
+    [self _setPrinting:NO minimumPageWidth:0. maximumPageWidth:0. adjustViewSize:NO];
+    [self _setPrinting:YES minimumPageWidth:pageWidth maximumPageWidth:pageWidth adjustViewSize:YES];
+}
+
+
 // Return the number of pages available for printing
 - (BOOL)knowsPageRange:(NSRangePointer)range {
     // Must do this explicit display here, because otherwise the view might redisplay while the print
