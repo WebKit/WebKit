@@ -1,2 +1,2 @@
-./jsDriver.pl -e kjs -L ecma/Date -f actual.html
+perl jsDriver.pl -e kjs -L ecma/Date -f actual.html
 jst expected.html actual.html

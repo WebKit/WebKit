@@ -1,3 +1,23 @@
+2004-07-26  Kevin Decker  <kdecker@apple.com>
+
+        Changes done by Darin, reviewed by Kevin.
+
+        - changed testkjs to build in Xcode rather than from Makefile
+
+        * .cvsignore: Removed obsolete files from this list.
+        * Makefile.am: Removed code to build testkjs; we do this in Xcode now.
+        Changed to build target "All" rather than default target. This makes us
+        build the testkjs test tool.
+        * dummy.cpp: Removed.
+        * kjs/.cvsignore: Removed obsolete files from this list, including
+        the testkjs tool, which is now built in the symroots directory.
+        * kjs/testkjs.cpp: Added copyright notice that was missing, since we have
+        changed this file. Also this has the nice side effect of causing the tool
+        to be rebuilt in the new location even if there are no other changes in
+        your tree when you check this out.
+        * tests/mozilla/run-mozilla-tests: Invoke perl explicitly so this works
+        without setting the execute bit on jsDriver.pl.
+
 2004-07-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin
