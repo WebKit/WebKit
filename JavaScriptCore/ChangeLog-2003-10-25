@@ -1,5 +1,7 @@
 2002-04-15  Darin Adler  <darin@apple.com>
 
+	Reviwed by: Maciej Stachowiak  <mjs@apple.com>
+
 	* kjs/internal.cpp:
 	* kjs/property_map.cpp:
 	* kjs/ustring.h:
@@ -7,6 +9,8 @@
 	to the real KDE sources.
 
 2002-04-15  Darin Adler  <darin@apple.com>
+
+	Reviwed by: Maciej Stachowiak  <mjs@apple.com>
 
 	Merged changes from KDE 3.0 final and did some build fixes.
 
