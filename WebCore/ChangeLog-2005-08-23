@@ -1,5 +1,20 @@
 2004-12-09  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3892686, left/top overflow was not being propagated properly up to containing blocks because of a math
+	error.
+
+	Also fix a bug I noticed on the same page where relative position offsets were not being added in properly for
+	all inlines when repainting.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect):
+
+2004-12-09  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3867545, finance.yahoo.com lays out incorrectly.  Add a quirk that will prevent tables from moving
 	down below floats when there is insufficient space.  Instead we will match Gecko and just spill out of the
 	containing block to the right.  This appears to be the more common desired behavior, despite being wrong.

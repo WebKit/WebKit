@@ -1078,7 +1078,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         determineHorizontalPosition(child);
 
         // Update our top overflow in case the child spills out the top of the block.
-        m_overflowTop = kMin(m_overflowTop, child->yPos() - child->overflowTop(false));
+        m_overflowTop = kMin(m_overflowTop, child->yPos() + child->overflowTop(false));
         
         // Update our height now that the child has been placed in the correct position.
         m_height += child->height();
@@ -1098,7 +1098,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         // See if this child has made our overflow need to grow.
         int rightChildPos = child->xPos() + kMax(child->overflowWidth(false), child->width());
         m_overflowWidth = kMax(rightChildPos, m_overflowWidth);
-        m_overflowLeft = kMin(child->xPos() - child->overflowLeft(false), m_overflowLeft);
+        m_overflowLeft = kMin(child->xPos() + child->overflowLeft(false), m_overflowLeft);
         
         // Insert our compact into the block margin if we have one.
         insertCompactIfNeeded(child, compactInfo);

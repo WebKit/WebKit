@@ -455,11 +455,17 @@ QRect RenderFlow::getAbsoluteRepaintRect()
         int ow = style() ? style()->outlineSize() : 0;
         if (isCompact())
             left -= m_x;
-        if (style()->position() == RELATIVE && m_layer)
-            m_layer->relativePositionOffset(left, top);
+        
+        // We need to add in the relative position offsets of any inlines (including us) up to our
+        // containing block.
+        RenderBlock* cb = containingBlock();
+        for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isInlineFlow() && inlineFlow != cb; 
+             inlineFlow = inlineFlow->parent()) {
+             if (inlineFlow->style()->position() == RELATIVE && inlineFlow->layer())
+                inlineFlow->layer()->relativePositionOffset(left, top);
+        }
 
         QRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
-        RenderBlock* cb = containingBlock();
         if (cb->hasOverflowClip()) {
             // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
@@ -471,7 +477,6 @@ QRect RenderFlow::getAbsoluteRepaintRect()
             QRect repaintRect(x, y, r.width(), r.height());
             r = repaintRect.intersect(boxRect);
         }
-
         cb->computeAbsoluteRepaintRect(r);
         
         if (ow) {
