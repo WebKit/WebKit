@@ -1,3 +1,14 @@
+2003-12-02  Maciej Stachowiak  <mjs@apple.com>
+
+	Merged the following patch from David Faure to fix:
+
+	<rdar://problem/3497663>: Can't look up frames by number using windw[i] notation
+
+    2003-11-25  David Faure  <faure@kde.org>
+
+        * ecma/kjs_window.cpp: Implement hasProperty and get for frames by number in Window,
+        to fix window[0] and parent[1] etc. (#56983)
+
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

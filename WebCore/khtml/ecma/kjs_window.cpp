@@ -698,6 +698,21 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   if (kp)
     return Value(retrieve(kp));
 
+  // allow window[1] or parent[1] etc. (#56983)
+  bool ok;
+  unsigned int i = p.toArrayIndex(&ok);
+  if (ok) {
+    QPtrList<KParts::ReadOnlyPart> frames = m_part->frames();
+    unsigned int len = frames.count();
+    if (i < len) {
+      KParts::ReadOnlyPart* frame = frames.at(i);
+      if (frame && frame->inherits("KHTMLPart")) {
+	KHTMLPart *khtml = static_cast<KHTMLPart*>(frame);
+	return Window::retrieve(khtml);
+      }
+    }
+  }
+
   // allow shortcuts like 'Image1' instead of document.images.Image1
   if (isSafeScript(exec) &&
       m_part->document().isHTMLDocument()) { // might be XML
@@ -1757,7 +1772,7 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
     return Undefined();
 
   QPtrList<KParts::ReadOnlyPart> frames = part->frames();
-  int len = frames.count();
+  unsigned int len = frames.count();
   if (p == lengthPropertyName)
     return Number(len);
   else if (p== "location") // non-standard property, but works in NS and IE
@@ -1771,10 +1786,10 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
   // check for the name or number
   KParts::ReadOnlyPart *frame = part->findFrame(p.qstring());
   if (!frame) {
-    int i = (int)p.toDouble();
-    if (i >= 0 && i < len){
+    bool ok;
+    unsigned int i = p.toArrayIndex(&ok);
+    if (ok && i < len)
       frame = frames.at(i);
-    }
   }
 
   // we are potentially fetching a reference to a another Window object here.
