@@ -1416,7 +1416,7 @@ void KWQKHTMLPart::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 {
     // Figure out which view to send the event to.
-    RenderObject *target = event->innerNode().handle()->renderer();
+    RenderObject *target = event->innerNode().handle() ? event->innerNode().handle()->renderer() : 0;
     if (!target)
         return false;
 

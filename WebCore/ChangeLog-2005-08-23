@@ -1,3 +1,87 @@
+2003-10-06  David Hyatt  <hyatt@apple.com>
+
+	Several fixes preparing for the incremental repainting patch to be enabled.
+
+	(1) Make layers update their positions after layout instead of during layout or
+	during painting.
+
+	(2) Fix a regression from the overflow:hidden body quirk landing.  Make sure repaint()
+	understands that quirk exists and avoids clipping when it shouldn't.
+
+	(3) Fix a regression from the scrollbar improvements.  The vertical scrollbar repainted
+	on every layout.
+
+	(4) Make sure outside list bullets are repainted when a list item needs to repaint.
+	
+	(5) A whole bunch of INCREMENTAL_REPAINTING code that isn't turned on yet.
+	
+        Reviewed by kocienda
+
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate):
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::resetScrollBars):
+        (KHTMLView::needsFullRepaint):
+        * khtml/khtmlview.h:
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::getAbsoluteRepaintRectIncludingFloats):
+        (khtml::RenderBlock::repaintFloatingDescendants):
+        (khtml::RenderBlock::repaintObjectsBeforeLayout):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::computeAbsoluteRepaintRect):
+        (RenderBox::repaintDuringLayoutIfMoved):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::layout):
+        * khtml/rendering/render_canvas.h:
+        (khtml::RenderCanvas::hasOverhangingFloats):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock):
+        (khtml::RenderFlexibleBox::layoutHorizontalBox):
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        (khtml::RenderFlexibleBox::placeChild):
+        * khtml/rendering/render_flexbox.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setPixmap):
+        (RenderImage::layout):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::computeRepaintRects):
+        (RenderLayer::updateLayerPositions):
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::checkScrollbarsAfterLayout):
+        (RenderLayer::paintLayer):
+        (RenderLayer::calculateClipRects):
+        (RenderLayer::calculateRects):
+        * khtml/rendering/render_layer.h:
+        (khtml::RenderLayer::relativePositionOffset):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        * khtml/rendering/render_list.h:
+        (khtml::RenderListMarker::listImage):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaint):
+        (RenderObject::repaintRectangle):
+        (RenderObject::repaintAfterLayoutIfNeeded):
+        (RenderObject::repaintDuringLayoutIfMoved):
+        (RenderObject::repaintFloatingDescendants):
+        (RenderObject::checkForRepaintDuringLayout):
+        (RenderObject::repaintObjectsBeforeLayout):
+        (RenderObject::getAbsoluteRepaintRectIncludingFloats):
+        (RenderObject::container):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+
 2003-10-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

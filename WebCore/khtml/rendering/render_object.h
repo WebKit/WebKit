@@ -585,10 +585,15 @@ public:
     virtual void repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds);
 
     // Repaint only if the object moved.
-    virtual void repaintIfMoved(int oldX, int oldY);
+    virtual void repaintDuringLayoutIfMoved(int oldX, int oldY);
 
-    // Called to repaint a block's positioned objects and floats.
-    virtual void repaintPositionedAndFloatingDescendants();
+    // Called to repaint a block's floats.
+    virtual void repaintFloatingDescendants();
+
+    // Called before layout to repaint all dirty children (with selfNeedsLayout() set).
+    virtual void repaintObjectsBeforeLayout();
+
+    bool checkForRepaintDuringLayout() const;
 #endif
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
@@ -596,7 +601,7 @@ public:
     virtual QRect getAbsoluteRepaintRect();
 
 #ifdef INCREMENTAL_REPAINTING
-    virtual void getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& boundsWithChildren);
+    virtual void getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& boundsWithChildren);
 #endif
 
     // Given a rect in the object's coordinate space, this method converts the rectangle to the view's

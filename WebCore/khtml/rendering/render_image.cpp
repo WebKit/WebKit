@@ -164,6 +164,13 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
             setMinMaxKnown(false);
     }
     else {
+#if APPLE_CHANGES
+        // FIXME: We always just do a complete repaint, since we always pass in the full pixmap
+        // rect at the moment anyway.
+        resizeCache = QPixmap();
+        repaintRectangle(QRect(borderLeft()+paddingLeft(), borderTop()+paddingTop(), contentWidth(), contentHeight()));
+#else
+        // FIXME: This code doesn't handle scaling properly, since it doesn't scale |r|.
         bool completeRepaint = !resizeCache.isNull();
         int cHeight = contentHeight();
         int scaledHeight = intrinsicHeight() ? ((o->valid_rect().height()*cHeight)/intrinsicHeight()) : 0;
@@ -181,6 +188,7 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
             repaintRectangle(QRect(r.x() + borderLeft() + paddingLeft(), r.y() + borderTop() + paddingTop(),
                              r.width(), r.height()));
         }
+#endif
     }
 }
 
@@ -351,8 +359,11 @@ void RenderImage::layout()
     KHTMLAssert(needsLayout());
     KHTMLAssert( minMaxKnown() );
 
-#ifdef INCREMENTAL_PAINTING
-    QRect oldBounds(getAbsoluteRepaintRect());
+#ifdef INCREMENTAL_REPAINTING
+    QRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = getAbsoluteRepaintRect();
 #endif
     
     short oldwidth = m_width;
@@ -386,8 +397,9 @@ void RenderImage::layout()
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();
 
-#ifdef INCREMENTAL_PAINTING
-    repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+#ifdef INCREMENTAL_REPAINTING
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
 #endif
     
     setNeedsLayout(false);

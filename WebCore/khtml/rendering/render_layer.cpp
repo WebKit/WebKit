@@ -45,7 +45,7 @@
 #include <kdebug.h>
 #include <assert.h>
 #include "khtmlview.h"
-#include "render_block.h"
+#include "render_canvas.h"
 #include "render_arena.h"
 #include "xml/dom_docimpl.h"
 
@@ -76,6 +76,10 @@ m_previous( 0 ),
 m_next( 0 ),
 m_first( 0 ),
 m_last( 0 ),
+#ifdef INCREMENTAL_REPAINTING
+m_relX( 0 ),
+m_relY( 0 ),
+#endif
 m_x( 0 ),
 m_y( 0 ),
 m_width( 0 ),
@@ -105,6 +109,57 @@ RenderLayer::~RenderLayer()
     delete m_negZOrderList;
 }
 
+#ifdef INCREMENTAL_REPAINTING
+void RenderLayer::computeRepaintRects()
+{
+    // FIXME: Child object could override visibility.
+    if (m_object->style()->visibility() == VISIBLE)
+        m_object->getAbsoluteRepaintRectIncludingFloats(m_repaintRect, m_fullRepaintRect);
+    for	(RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        child->computeRepaintRects();
+}
+#endif
+
+#ifdef INCREMENTAL_REPAINTING
+void RenderLayer::updateLayerPositions(RenderLayer* rootLayer, bool doFullRepaint, bool checkForRepaint)
+#else
+void RenderLayer::updateLayerPositions()
+#endif
+{
+#ifdef INCREMENTAL_REPAINTING
+    if (doFullRepaint) {
+        m_object->repaint();
+        checkForRepaint = doFullRepaint = false;
+    }
+#endif
+    
+    updateLayerPosition(); // For relpositioned layers or non-positioned layers,
+                           // we need to keep in sync, since we may have shifted relative
+                           // to our parent layer.
+
+#ifdef INCREMENTAL_REPAINTING
+    if (m_hBar || m_vBar) {
+        // Need to position the scrollbars.
+        int x = 0;
+        int y = 0;
+        convertToLayerCoords(rootLayer, x, y);
+        QRect layerBounds = QRect(x,y,width(),height());
+        positionScrollbars(layerBounds);
+    }
+    
+    // FIXME: Child object could override visibility.
+    if (checkForRepaint && (m_object->style()->visibility() == VISIBLE))
+        m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
+#endif
+    
+    for	(RenderLayer* child = firstChild(); child; child = child->nextSibling())
+#ifdef INCREMENTAL_REPAINTING
+        child->updateLayerPositions(rootLayer, doFullRepaint, checkForRepaint);
+#else
+        child->updateLayerPositions();
+#endif
+}
+
 void RenderLayer::updateLayerPosition()
 {
     // The canvas is sized to the docWidth/Height over in RenderCanvas::layout, so we
@@ -126,9 +181,17 @@ void RenderLayer::updateLayerPosition()
         }
     }
 
+#ifdef INCREMENTAL_REPAINTING
+    m_relX = m_relY = 0;
+    if (m_object->isRelPositioned()) {
+        static_cast<RenderBox*>(m_object)->relativePositionOffset(m_relX, m_relY);
+        x += m_relX; y += m_relY;
+    }
+#else
     if (m_object->isRelPositioned())
         static_cast<RenderBox*>(m_object)->relativePositionOffset(x, y);
-
+#endif
+    
     // Subtract our parent's scroll offset.
     if (parent())
         parent()->subtractScrollOffset(x, y);
@@ -501,8 +564,6 @@ RenderLayer::positionScrollbars(const QRect& absBounds)
 void
 RenderLayer::checkScrollbarsAfterLayout()
 {
-    updateLayerPosition();
-    
     int rightPos = m_object->rightmostPosition();
     int bottomPos = m_object->lowestPosition();
 
@@ -516,8 +577,8 @@ RenderLayer::checkScrollbarsAfterLayout()
     if (bottomPos - m_object->borderTop() > m_scrollHeight)
         m_scrollHeight = bottomPos - m_object->borderTop();
     
-    bool needHorizontalBar = rightPos > width();
-    bool needVerticalBar = bottomPos > height();
+    bool needHorizontalBar = rightPos > m_object->overflowWidth(false);
+    bool needVerticalBar = bottomPos > m_object->overflowHeight(false);
 
     bool haveHorizontalBar = m_hBar;
     bool haveVerticalBar = m_vBar;
@@ -643,9 +704,11 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
                               x - renderer()->xPos(), y - renderer()->yPos(),
                               PaintActionElementBackground);
 
+#ifndef INCREMENTAL_REPAINTING
             // Position our scrollbars.
             positionScrollbars(layerBounds);
-
+#endif
+            
 #if APPLE_CHANGES
             // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
             // z-index.  We paint after we painted the background/border, so that the scrollbars will
@@ -797,10 +860,6 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, QRect& overfl
 {
     if (parent())
         parent()->calculateClipRects(rootLayer, overflowClipRect, posClipRect, fixedClipRect);
-        
-    updateLayerPosition(); // For relpositioned layers or non-positioned layers,
-                           // we need to keep in sync, since we may have shifted relative
-                           // to our parent layer.
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
@@ -842,8 +901,6 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
     if (parent())
         parent()->calculateClipRects(rootLayer, overflowClipRect, posClipRect, fixedClipRect);
 
-    updateLayerPosition();
-    
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);

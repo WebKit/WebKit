@@ -909,7 +909,12 @@ void RenderObject::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty
 
 void RenderObject::repaint(bool immediate)
 {
-    RenderCanvas* c = canvas();
+    // Can't use canvas(), since we might be unrooted.
+    RenderObject* o = this;
+    while ( o->parent() ) o = o->parent();
+    if (!o->isCanvas())
+        return;
+    RenderCanvas* c = static_cast<RenderCanvas*>(o);
     if (c->printingMode())
         return; // Don't repaint if we're printing.
     c->repaintViewRectangle(getAbsoluteRepaintRect(), immediate);    
@@ -917,7 +922,12 @@ void RenderObject::repaint(bool immediate)
 
 void RenderObject::repaintRectangle(const QRect& r, bool immediate)
 {
-    RenderCanvas* c = canvas();
+    // Can't use canvas(), since we might be unrooted.
+    RenderObject* o = this;
+    while ( o->parent() ) o = o->parent();
+    if (!o->isCanvas())
+        return;
+    RenderCanvas* c = static_cast<RenderCanvas*>(o);
     if (c->printingMode())
         return; // Don't repaint if we're printing.
     QRect absRect(r);
@@ -928,11 +938,8 @@ void RenderObject::repaintRectangle(const QRect& r, bool immediate)
 #ifdef INCREMENTAL_REPAINTING
 void RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
 {
-    if (!isFloatingOrPositioned() && parent() && parent()->selfNeedsLayout())
-        return;
-    
     QRect newBounds, newFullBounds;
-    getAbsoluteRepaintRectIncludingDescendants(newBounds, newFullBounds);
+    getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
     if (newBounds != oldBounds || selfNeedsLayout()) {
         RenderObject* c = canvas();
         if (!c || !c->isCanvas())
@@ -946,13 +953,35 @@ void RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRec
     }
 }
 
-void RenderObject::repaintIfMoved(int x, int y)
+void RenderObject::repaintDuringLayoutIfMoved(int x, int y)
 {
 }
 
-void RenderObject::repaintPositionedAndFloatingDescendants()
+void RenderObject::repaintFloatingDescendants()
 {
 }
+
+bool RenderObject::checkForRepaintDuringLayout() const
+{
+    return !document()->view()->needsFullRepaint() && !layer();
+}
+
+void RenderObject::repaintObjectsBeforeLayout()
+{
+    if (!needsLayout())
+        return;
+    
+    // FIXME: For now we just always repaint blocks with inline children, regardless of whether
+    // they're really dirty or not.
+    if (selfNeedsLayout() || (isRenderBlock() && !isTable() && normalChildNeedsLayout() && childrenInline()))
+        repaint();
+
+    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
+        if (!current->isPositioned()) // RenderBlock subclass method handles walking the positioned objects.
+            current->repaintObjectsBeforeLayout();
+    }
+}
+
 #endif
 
 QRect RenderObject::getAbsoluteRepaintRect()
@@ -963,7 +992,7 @@ QRect RenderObject::getAbsoluteRepaintRect()
 }
 
 #ifdef INCREMENTAL_REPAINTING
-void RenderObject::getAbsoluteRepaintRectIncludingDescendants(QRect& bounds, QRect& fullBounds)
+void RenderObject::getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds)
 {
     bounds = fullBounds = getAbsoluteRepaintRect();
 }
@@ -1341,16 +1370,6 @@ RenderObject *RenderObject::container() const
 	o = parent();
     return o;
 }
-
-#if 0  /// this method is unused
-void RenderObject::invalidateLayout()
-{
-    kdDebug() << "RenderObject::invalidateLayout " << renderName() << endl;
-    setNeedsLayout(true);
-    if (m_parent && !m_parent->needsLayout())
-        m_parent->invalidateLayout();
-}
-#endif
 
 void RenderObject::removeFromObjectLists()
 {

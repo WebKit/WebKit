@@ -63,6 +63,8 @@ public:
     virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
     
     virtual bool isListMarker() const { return true; }
+
+    CachedImage* listImage() const { return m_listImage; }
     
     RenderListItem* listItem() { return m_listItem; }
     void setListItem(RenderListItem* listItem) { m_listItem = listItem; }
@@ -103,6 +105,8 @@ public:
 
     virtual void layout( );
     virtual void calcMinMaxWidth();
+
+    virtual QRect getAbsoluteRepaintRect();
     
     void updateMarkerLocation();
     

@@ -43,6 +43,8 @@
 #include <kdebug.h>
 #include <assert.h>
 
+#include "khtmlview.h"
+
 using namespace khtml;
 using namespace DOM;
 
@@ -220,14 +222,15 @@ void RenderTable::layout()
         setNeedsLayout(false);
         return;
     }
-    
-    //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", needsLayout=" << needsLayout() << endl;
 
 #ifdef INCREMENTAL_REPAINTING
-    // FIXME: We should be smarter about this, but for now just always repaint a table whenever it
-    // does a layout.
-    repaint();
+    QRect oldBounds, oldFullBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
 #endif
+    
+    //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", needsLayout=" << needsLayout() << endl;
     
     m_height = 0;
     initMaxMarginValues();
@@ -367,9 +370,9 @@ void RenderTable::layout()
     layoutPositionedObjects( true );
 
 #ifdef INCREMENTAL_REPAINTING
-    // FIXME: We should be smarter about this, but for now just always repaint a table whenever it
-    // does a layout.
-    repaint();
+    // Repaint with our new bounds if they are different from our old bounds.
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
 #endif
     
     setNeedsLayout(false);

@@ -587,19 +587,25 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
     // is translated, but the render box isn't, so we need to do this to get the
     // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
     // flag on the RenderObject has been cleared, so use the one on the style().
+#ifdef INCREMENTAL_REPAINTING
+    if (style()->position() == RELATIVE && m_layer)
+        m_layer->relativePositionOffset(x,y);
+#else
     if (style()->position() == RELATIVE)
         relativePositionOffset(x,y);
+#endif
     
     if (style()->position()==FIXED)
         f = true;
 
     RenderObject* o = container();
     if (o) {
-        if (o->style()->hidesOverflow()) {
+        // <body> may not have a layer, since it might be applying its overflow value to the
+        // scrollbars.
+        if (o->style()->hidesOverflow() && o->layer()) {
             int ow = o->style() ? o->style()->outlineWidth() : 0;
             QRect boxRect(-ow, -ow, o->width()+ow*2, o->height()+ow*2);
-            if (o->layer())
-                o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
+            o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
             QRect repaintRect(x, y, r.width(), r.height());
             if (!repaintRect.intersects(boxRect)) {
                 r = QRect();
@@ -616,11 +622,8 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
 }
 
 #ifdef INCREMENTAL_REPAINTING
-void RenderBox::repaintIfMoved(int oldX, int oldY)
+void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
 {
-    if (isCanvas())
-        return;
-    
     int newX = m_x;
     int newY = m_y;
     if (oldX != newX || oldY != newY) {
@@ -628,10 +631,10 @@ void RenderBox::repaintIfMoved(int oldX, int oldY)
         // since the object may not have gotten a layout.
         m_x = oldX; m_y = oldY;
         repaint();
-        repaintPositionedAndFloatingDescendants();
+        repaintFloatingDescendants();
         m_x = newX; m_y = newY;
         repaint();
-        repaintPositionedAndFloatingDescendants();
+        repaintFloatingDescendants();
     }
 }
 #endif

@@ -242,6 +242,13 @@ QRect RenderFlow::getAbsoluteRepaintRect()
         int ow = style() ? style()->outlineWidth() : 0;
         if (isCompact())
             left -= m_x;
+#ifdef INCREMENTAL_REPAINTING
+        if (style()->position() == RELATIVE && m_layer)
+            m_layer->relativePositionOffset(left, top);
+#else
+        if (style()->position() == RELATIVE)
+            relativePositionOffset(left, top);
+#endif
         QRect r(-ow+left, -ow+top, width()+ow*2, height()+ow*2);
         containingBlock()->computeAbsoluteRepaintRect(r);
         return r;

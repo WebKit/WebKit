@@ -289,6 +289,41 @@ void RenderListItem::paintObject(QPainter *p, int _x, int _y,
     RenderBlock::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 }
 
+QRect RenderListItem::getAbsoluteRepaintRect()
+{
+    QRect result = RenderBlock::getAbsoluteRepaintRect();
+    if (m_marker && !m_marker->isInside()) {
+        // This can be a sloppy and imprecise offset as long as it's always too big.
+        int pixHeight = style()->htmlFont().getFontDef().computedPixelSize();
+        int offset = pixHeight*2/3;
+        int xoff = 0;
+        if (style()->direction() == LTR)
+            xoff = -7 - offset;
+        else
+            xoff = offset;
+
+        if (m_marker->listImage() && !m_marker->listImage()->isErrorImage()) {
+            // For OUTSIDE bullets shrink back to only a 0.3em margin. 0.67 em is too
+            // much.  This brings the margin back to MacIE/Gecko/WinIE levels.
+            // For LTR don't forget to add in the width of the image to the offset as
+            // well (you are moving the image left, so you have to also add in the width
+            // of the image's border box as well). -dwh
+            if (style()->direction() == LTR)
+                xoff -= m_marker->listImage()->pixmap().width() - pixHeight*1/3;
+            else
+                xoff -= pixHeight*1/3;
+        }
+
+        if (xoff < 0) {
+            result.setX(result.x() + xoff);
+            result.setWidth(result.width() - xoff);
+        }
+        else
+            result.setWidth(result.width() + xoff);
+    }
+    return result;
+}
+
 // -----------------------------------------------------------
 
 RenderListMarker::RenderListMarker(DocumentImpl* document)

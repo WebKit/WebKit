@@ -90,7 +90,7 @@ public:
     virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
 
 #ifdef INCREMENTAL_REPAINTING
-    virtual void repaintIfMoved(int oldX, int oldY);
+    virtual void repaintDuringLayoutIfMoved(int oldX, int oldY);
 #endif
     
     virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);

@@ -50,6 +50,8 @@ public:
 
     KHTMLView *view() const { return m_view; }
 
+    virtual bool hasOverhangingFloats() { return false; }
+    
     virtual QRect getAbsoluteRepaintRect();
     virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
     virtual void repaintViewRectangle(const QRect& r, bool immediate = false);

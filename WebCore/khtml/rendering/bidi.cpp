@@ -1301,10 +1301,18 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 else
                     o->layoutIfNeeded();
             }
-            else if(o->isText()) // FIXME: Should be able to combine deleteLineBoxes/Runs
+            else if(o->isText()) { // FIXME: Should be able to combine deleteLineBoxes/Runs
                 static_cast<RenderText *>(o)->deleteRuns();
-            else if (o->isInlineFlow() && !endOfInline)
+#ifdef INCREMENTAL_REPAINTING
+                o->setNeedsLayout(false);
+#endif
+            }
+            else if (o->isInlineFlow() && !endOfInline) {
                 static_cast<RenderFlow*>(o)->deleteLineBoxes();
+#ifdef INCREMENTAL_REPAINTING
+                o->setNeedsLayout(false);
+#endif
+            }
             o = Bidinext( this, o, bidi, false, &endOfInline);
         }
 

@@ -99,6 +99,9 @@ public:
         complete = false;
         mousePressed = false;
 	tooltip = 0;
+#ifdef INCREMENTAL_REPAINTING
+        doFullRepaint = true;
+#endif
 #if APPLE_CHANGES
         vmode = hmode = QScrollView::Auto;
         firstLayout = true;
@@ -149,6 +152,9 @@ public:
 	layoutTimerId = 0;
         complete = false;
         mousePressed = false;
+#ifdef INCREMENTAL_REPAINTING
+        doFullRepaint = true;
+#endif        
         layoutSchedulingEnabled = true;
         layoutSuppressed = false;
 #if APPLE_CHANGES
@@ -166,7 +172,10 @@ public:
     bool borderTouched:1;
     bool borderStart:1;
     bool scrollBarMoved:1;
-
+#ifdef INCREMENTAL_REPAINTING
+    bool doFullRepaint:1;
+#endif
+    
     QScrollView::ScrollBarMode vmode;
     QScrollView::ScrollBarMode hmode;
 #if !APPLE_CHANGES
@@ -292,6 +301,7 @@ void KHTMLView::clearPart()
 void KHTMLView::resetScrollBars()
 {
     // Reset the document's scrollbars back to our defaults before we yield the floor.
+    d->firstLayout = true;
     suppressScrollBars(true);
     QScrollView::setVScrollBarMode(d->vmode);
     QScrollView::setHScrollBarMode(d->hmode);
@@ -487,6 +497,13 @@ bool KHTMLView::inLayout() const
     return d->layoutSuppressed;
 }
 
+#ifdef INCREMENTAL_REPAINTING
+bool KHTMLView::needsFullRepaint() const
+{
+    return d->doFullRepaint;
+}
+#endif
+
 void KHTMLView::layout()
 {
     if (d->layoutSuppressed)
@@ -495,7 +512,7 @@ void KHTMLView::layout()
     d->layoutSchedulingEnabled=false;
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
-    
+
     DOM::DocumentImpl* document = m_part->xmlDocImpl();
     if (!document) {
         _width = visibleWidth();
@@ -505,11 +522,6 @@ void KHTMLView::layout()
     khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas*>(document->renderer());
     if (!root)
         return;
-
-#if APPLE_CHANGES
-    // Now set up our scrollbar state for the layout.
-    suppressScrollBars(true);
-#endif
 
     ScrollBarMode hMode = d->hmode;
     ScrollBarMode vMode = d->vmode;
@@ -527,33 +539,63 @@ void KHTMLView::layout()
         }
     }
 
-#if APPLE_CHANGES
-    if (d->firstLayout) {
-        d->firstLayout = false;
-        
-        // Set the initial vMode to AlwaysOn if we're auto.
-        if (vMode == Auto)
-            QScrollView::setVScrollBarMode(AlwaysOn); // This causes a vertical scrollbar to appear.
-        // Set the initial hMode to AlwaysOff if we're auto.
-        if (hMode == Auto)
-            QScrollView::setHScrollBarMode(AlwaysOff); // This causes a horizontal scrollbar to disappear.
-    }
-    
-    if (hMode == vMode)
-        QScrollView::setScrollBarsMode(hMode);
-    else {
-        QScrollView::setHScrollBarMode(hMode);
-        QScrollView::setVScrollBarMode(vMode);
-    }
+#if INCREMENTAL_REPAINTING
+    d->doFullRepaint = d->firstLayout || root->printingMode();
+#endif
 
-    suppressScrollBars(false, true);
+#if APPLE_CHANGES
+    // Now set our scrollbar state for the layout.
+    ScrollBarMode currentHMode = hScrollBarMode();
+    ScrollBarMode currentVMode = vScrollBarMode();
+
+    if (d->firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
+        suppressScrollBars(true);
+        if (d->firstLayout) {
+            d->firstLayout = false;
+            
+            // Set the initial vMode to AlwaysOn if we're auto.
+            if (vMode == Auto)
+                QScrollView::setVScrollBarMode(AlwaysOn); // This causes a vertical scrollbar to appear.
+            // Set the initial hMode to AlwaysOff if we're auto.
+            if (hMode == Auto)
+                QScrollView::setHScrollBarMode(AlwaysOff); // This causes a horizontal scrollbar to disappear.
+        }
+        
+        if (hMode == vMode)
+            QScrollView::setScrollBarsMode(hMode);
+        else {
+            QScrollView::setHScrollBarMode(hMode);
+            QScrollView::setVScrollBarMode(vMode);
+        }
+
+        suppressScrollBars(false, true);
+    }
 #else
     QScrollView::setHScrollBarMode(hMode);
     QScrollView::setVScrollBarMode(vMode);
 #endif
-            
+
+#ifdef INCREMENTAL_REPAINTING
+    int oldHeight = _height;
+    int oldWidth = _width;
+#endif
+    
     _height = visibleHeight();
     _width = visibleWidth();
+
+#ifdef INCREMENTAL_REPAINTING
+    if (oldHeight != _height || oldWidth != _width)
+        d->doFullRepaint = true;
+#endif
+    
+    RenderLayer* layer = root->layer();
+     
+#ifdef INCREMENTAL_REPAINTING
+    if (!d->doFullRepaint) {
+        layer->computeRepaintRects();
+        root->repaintObjectsBeforeLayout();
+    }
+#endif
 
     root->layout();
 
@@ -562,8 +604,15 @@ void KHTMLView::layout()
     d->layoutSchedulingEnabled=true;
     d->layoutSuppressed = false;
 
-    resizeContents(root->docWidth(), root->docHeight());
-    
+    resizeContents(layer->width(), layer->height());
+
+    // Now update the positions of all layers.
+#ifdef INCREMENTAL_REPAINTING
+    layer->updateLayerPositions(layer, d->doFullRepaint);
+#else
+    layer->updateLayerPositions();
+#endif
+
 #ifdef INCREMENTAL_REPAINTING
     if (root->needsLayout()) {
 #else
