@@ -72,11 +72,11 @@ using khtml::RenderImage;
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
 
 @implementation KWQAccObject
+
 -(id)initWithRenderer:(RenderObject*)renderer
 {
     [super init];
     m_renderer = renderer;
-    m_areaElement = 0;
     return self;
 }
 
@@ -260,6 +260,12 @@ using khtml::RenderImage;
 
 -(NSString*)roleDescription
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+    // We don't need role descriptions on Panther and we don't have the call
+    // to get at localized ones anyway. At some point we may want to conditionally
+    // compile this entire file instead, but this is OK too.
+    return nil;
+#else
     if (!m_renderer)
         return nil;
     
@@ -269,16 +275,16 @@ using khtml::RenderImage;
     
     NSString *role = [self role];
     if ([role isEqualToString:NSAccessibilityButtonRole])
-        return UI_STRING("button", "accessibility role description for button");
+        return NSAccessibilityRoleDescription(NSAccessibilityButtonRole, nil);
     
     if ([role isEqualToString:NSAccessibilityStaticTextRole])
-        return UI_STRING("text", "accessibility role description for static text");
+        return NSAccessibilityRoleDescription(NSAccessibilityStaticTextRole, nil);
 
     if ([role isEqualToString:NSAccessibilityImageRole])
-        return UI_STRING("image", "accessibility role description for image");
+        return NSAccessibilityRoleDescription(NSAccessibilityImageRole, nil);
     
     if ([role isEqualToString:NSAccessibilityGroupRole])
-        return UI_STRING("group", "accessibility role description for group");
+        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
     
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
@@ -291,8 +297,9 @@ using khtml::RenderImage;
     
     if ([role isEqualToString:@"AXImageMap"])
         return UI_STRING("image map", "accessibility role description for image map");
-        
-    return UI_STRING("unknown", "accessibility role description for unknown role");
+    
+    return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
+#endif
 }
 
 -(NSString*)helpText
@@ -525,8 +532,15 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (NSString *)accessibilityActionDescription:(NSString *)action
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+    // We don't need action descriptions on Panther and we don't have the call
+    // to get at localized ones anyway. At some point we may want to conditionally
+    // compile this entire file instead, but this is OK too.
+    return nil;
+#else
     // We only have the one action (press).
-    return UI_STRING("press link", "accessibility action description");
+    return NSAccessibilityActionDescription(NSAccessibilityPressAction);
+#endif
 }
 
 - (void)accessibilityPerformAction:(NSString *)action

@@ -2,6 +2,18 @@
 
         Reviewed by John.
 
+        - get rid of some of the localizable strings in here; we still have to figure out
+          how we're going to localize the last few role descriptions
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject roleDescription]): Use NSAccessibilityRoleDescription for most
+        descriptions instead of a hard-coded string (inside the UI_STRING placeholder).
+        (-[KWQAccObject accessibilityActionDescription:]): Same thing, with NSAccessibilityActionDescription.
+
+2004-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - did some QRect-related changes to facilitate later bug fixing
 
         * kwq/KWQPainter.h: Added fillRect overload that takes QRect to match the real Qt one.
