@@ -1,3 +1,10 @@
+2002-10-22  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+	Send the new error whenever a policy change happens. The old code was
+	sending a successful completion in the download and ignore cases.
+
 2002-10-22  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3080873 -- Error in console when no bookmark file 

@@ -271,7 +271,7 @@
     case WebContentPolicySave:
     case WebContentPolicySaveAndOpenExternally:
         [[dataSource webFrame] _setProvisionalDataSource:nil];
-        [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
+	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByURLPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
         downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         WebError *downloadError = [downloadHandler receivedResponse:response];
         [downloadProgressDelegate resource: identifier didReceiveResponse: response fromDataSource: dataSource];
@@ -285,7 +285,7 @@
         [handle cancel];
         [self didCancelWithHandle:handle];
         [[dataSource webFrame] _setProvisionalDataSource:nil];
-	[[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
+	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByURLPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
         break;
     default:
         ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
