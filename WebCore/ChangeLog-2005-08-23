@@ -1,9 +1,5 @@
 2002-04-22  Darin Adler  <darin@apple.com>
 
-	* khtml/ecma/Makefile.am: Don't build kjs_debugwin any more.
-	* khtml/ecma/kjs_debugwin.cpp: Removed.
-	* khtml/ecma/kjs_debugwin.h: Removed.
-
 	* kwq/qt/qpixmap.h:
 	* kwq/KWQPixmap.mm:
 	(QPixmap::QPixmap): Clear needsCopyOnWrite flag in all the
@@ -18,6 +14,10 @@
 	(QPixmap::xForm): Only copy the pixmap once.
 	(QPixmap::operator=): Set the needsCopyOnWrite flag. Also change the retain/release
 	idiom around so we don't need to check for self-assignment.
+
+	* khtml/ecma/Makefile.am: Don't build kjs_debugwin any more.
+	* khtml/ecma/kjs_debugwin.cpp: Removed.
+	* khtml/ecma/kjs_debugwin.h: Removed.
 
 2002-04-22  Chris Blumenberg  <cblu@apple.com>
 
