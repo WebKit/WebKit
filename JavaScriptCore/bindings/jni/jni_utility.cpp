@@ -134,6 +134,64 @@ static jvalue callJNIMethod (JNIType type, jobject obj, const char *name, const 
     return result;
 }
 
+static jvalue callJNIStaticMethod (JNIType type, jclass cls, const char *name, const char *sig, va_list args)
+{
+    JavaVM *jvm = getJavaVM();
+    JNIEnv *env = getJNIEnv();
+    jvalue result;
+
+    bzero (&result, sizeof(jvalue));
+    if ( cls != NULL && jvm != NULL && env != NULL) {
+        jmethodID mid = env->GetStaticMethodID(cls, name, sig);
+        if ( mid != NULL )
+        {
+            switch (type) {
+            case void_type:
+                env->functions->CallStaticVoidMethodV(env, cls, mid, args);
+                break;
+            case object_type:
+                result.l = env->functions->CallStaticObjectMethodV(env, cls, mid, args);
+                break;
+            case boolean_type:
+                result.z = env->functions->CallStaticBooleanMethodV(env, cls, mid, args);
+                break;
+            case byte_type:
+                result.b = env->functions->CallStaticByteMethodV(env, cls, mid, args);
+                break;
+            case char_type:
+                result.c = env->functions->CallStaticCharMethodV(env, cls, mid, args);
+                break;
+            case short_type:
+                result.s = env->functions->CallStaticShortMethodV(env, cls, mid, args);
+                break;
+            case int_type:
+                result.i = env->functions->CallStaticIntMethodV(env, cls, mid, args);
+                break;
+            case long_type:
+                result.j = env->functions->CallStaticLongMethodV(env, cls, mid, args);
+                break;
+            case float_type:
+                result.f = env->functions->CallStaticFloatMethodV(env, cls, mid, args);
+                break;
+            case double_type:
+                result.d = env->functions->CallStaticDoubleMethodV(env, cls, mid, args);
+                break;
+            default:
+                fprintf(stderr, "%s: invalid function type (%d)\n", __PRETTY_FUNCTION__, (int)type);
+            }
+        }
+        else
+        {
+            fprintf(stderr, "%s: Could not find method: %s for %p\n", __PRETTY_FUNCTION__, name, cls);
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            fprintf (stderr, "\n");
+        }
+    }
+
+    return result;
+}
+
 static jvalue callJNIMethodIDA (JNIType type, jobject obj, jmethodID mid, jvalue *args)
 {
     JNIEnv *env = getJNIEnv();
@@ -236,6 +294,14 @@ jmethodID KJS::Bindings::getMethodID (jobject obj, const char *name, const char 
     \
     va_end (args);
 
+#define CALL_JNI_STATIC_METHOD(function_type,cls,name,sig) \
+    va_list args;\
+    va_start (args, sig);\
+    \
+    jvalue result = callJNIStaticMethod(function_type, cls, name, sig, args);\
+    \
+    va_end (args);
+
 void KJS::Bindings::callJNIVoidMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (void_type, obj, name, sig);
@@ -250,6 +316,12 @@ jobject KJS::Bindings::callJNIObjectMethod (jobject obj, const char *name, const
 jboolean KJS::Bindings::callJNIBooleanMethod( jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (boolean_type, obj, name, sig);
+    return result.z;
+}
+
+jboolean KJS::Bindings::callJNIStaticBooleanMethod (jclass cls, const char *name, const char *sig, ... )
+{
+    CALL_JNI_STATIC_METHOD (boolean_type, cls, name, sig);
     return result.z;
 }
 

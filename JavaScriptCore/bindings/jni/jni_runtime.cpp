@@ -221,6 +221,10 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
     // Created lazily.
     _signature = 0;
     _methodID = 0;
+    
+    jclass modifierClass = env->FindClass("java/lang/reflect/Modifier");
+    long modifiers = callJNIIntMethod (aMethod, "getModifiers", "()I");
+    _isStatic = (bool)callJNIStaticBooleanMethod (modifierClass, "isStatic", "(I)Z", modifiers);
 }
 
 // JNI method signatures use '/' between components of a class name, but

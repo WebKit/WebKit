@@ -1,5 +1,25 @@
 2004-12-13  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3827799> repro. crash with IBM Rational ClearCase Web under Safari (Java/LiveConnect-related)
+
+	Add support for calling static Java methods from JavaScript.
+
+        Reviewed by Maciej.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaMethod::isStatic):
+        * bindings/jni/jni_utility.cpp:
+        (callJNIStaticMethod):
+        (KJS::Bindings::callJNIBooleanMethod):
+        (KJS::Bindings::callJNIStaticBooleanMethod):
+        * bindings/jni/jni_utility.h:
+
+2004-12-13  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3887767> LiveConnect doesn't propagate Java exceptions back to JavaScript (prevents security suite from running)
 
         Reviewed by John.

@@ -251,6 +251,8 @@ public:
     JNIType JNIReturnType() const;
 
     jmethodID methodID (jobject obj) const;
+    
+    bool isStatic() const { return _isStatic; }
 	
 private:
     JavaParameter *_parameters;
@@ -260,6 +262,7 @@ private:
     JavaString _returnType;
     JNIType _JNIReturnType;
     mutable jmethodID _methodID;
+    bool _isStatic;
 };
 
 class JavaArray : public Array
