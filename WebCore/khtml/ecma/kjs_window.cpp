@@ -1125,7 +1125,7 @@ bool Window::isSafeScript(ExecState *exec) const
     }
     
     if (ancestorPart)
-      thisDomain = ancestorPart->docImpl()->domain();
+      thisDomain = ancestorPart->xmlDocImpl()->domain();
   }
 
   //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
@@ -1478,23 +1478,20 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         khtmlpart->setOpenedByJS(true);
         
         if (khtmlpart->document().isNull()) {
-            if (part->docImpl() && part->docImpl()->baseURL() != 0) {
-                khtmlpart->begin(part->docImpl()->baseURL());
-            }
-            else {
+            DocumentImpl *oldDoc = part->xmlDocImpl();
+            if (oldDoc && oldDoc->baseURL() != 0)
+                khtmlpart->begin(oldDoc->baseURL());
+            else
                 khtmlpart->begin();
-            }
             
             khtmlpart->write("<HTML><BODY>");
             khtmlpart->end();
 
-          if (part->xmlDocImpl()) {
-              kdDebug(6070) << "Setting domain to " << part->xmlDocImpl()->domain().string() << endl;
-              khtmlpart->xmlDocImpl()->setDomain( part->xmlDocImpl()->domain(), true );
-          }
-          
-          if ( part->docImpl() )
-              khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
+            if (oldDoc) {
+              kdDebug(6070) << "Setting domain to " << oldDoc->domain().string() << endl;
+              khtmlpart->xmlDocImpl()->setDomain( oldDoc->domain(), true );
+              khtmlpart->xmlDocImpl()->setBaseURL( oldDoc->baseURL() );
+            }
         }
 #if APPLE_CHANGES
         if (!url.isEmpty()) {
