@@ -110,7 +110,7 @@ namespace KJS {
            AnchorAccessKey, AnchorCoords, AnchorHref, AnchorProtocol, AnchorHost,
            AnchorCharset, AnchorHrefLang, AnchorHostname, AnchorType, AnchorFocus,
            AnchorPort, AnchorPathName, AnchorHash, AnchorSearch, AnchorName,
-           AnchorRev, AnchorTabIndex, AnchorTarget, AnchorText, AnchorBlur,
+           AnchorRev, AnchorTabIndex, AnchorTarget, AnchorText, AnchorBlur, AnchorToString, 
            ImageName, ImageAlign, ImageHspace, ImageVspace, ImageUseMap, ImageAlt,
            ImageLowSrc, ImageWidth, ImageIsMap, ImageBorder, ImageHeight,
            ImageLongDesc, ImageSrc, ImageX, ImageY, ObjectHspace, ObjectHeight, ObjectAlign,

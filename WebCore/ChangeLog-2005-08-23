@@ -1,3 +1,15 @@
+2003-04-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3081926 - bookmarklet to count and display mailto links fails
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall): Implement custom toString JavaScript method
+	which calls the existing toString C++ custom method.
+        * khtml/ecma/kjs_html.h: Added AnchorToString.
+        * khtml/ecma/kjs_html.lut.h: Regenerated.
+
 2003-04-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3172389 - Safari doesn't parse attributes within the OBJECT tag

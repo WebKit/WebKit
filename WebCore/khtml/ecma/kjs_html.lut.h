@@ -582,40 +582,43 @@ const struct HashTable HTMLModElementTable = { 2, 3, HTMLModElementTableEntries,
 namespace KJS {
 
 const struct HashEntry HTMLAnchorElementTableEntries[] = {
-   { "shape", KJS::HTMLElement::AnchorShape, DontDelete, 0, &HTMLAnchorElementTableEntries[30] },
-   { "rel", KJS::HTMLElement::AnchorRel, DontDelete, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "accessKey", KJS::HTMLElement::AnchorAccessKey, DontDelete, 0, &HTMLAnchorElementTableEntries[24] },
+   { "shape", KJS::HTMLElement::AnchorShape, DontDelete, 0, 0 },
+   { "charset", KJS::HTMLElement::AnchorCharset, DontDelete, 0, &HTMLAnchorElementTableEntries[24] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "coords", KJS::HTMLElement::AnchorCoords, DontDelete, 0, &HTMLAnchorElementTableEntries[23] },
+   { "blur", KJS::HTMLElement::AnchorBlur, DontDelete|Function, 0, 0 },
+   { "pathname", KJS::HTMLElement::AnchorPathName, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[28] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "name", KJS::HTMLElement::AnchorName, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "accessKey", KJS::HTMLElement::AnchorAccessKey, DontDelete, 0, &HTMLAnchorElementTableEntries[26] },
+   { "hash", KJS::HTMLElement::AnchorHash, DontDelete|ReadOnly, 0, 0 },
    { "href", KJS::HTMLElement::AnchorHref, DontDelete, 0, 0 },
-   { "protocol", KJS::HTMLElement::AnchorProtocol, DontDelete|ReadOnly, 0, 0 },
-   { "host", KJS::HTMLElement::AnchorHost, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[26] },
-   { "charset", KJS::HTMLElement::AnchorCharset, DontDelete, 0, &HTMLAnchorElementTableEntries[27] },
-   { "hreflang", KJS::HTMLElement::AnchorHrefLang, DontDelete, 0, &HTMLAnchorElementTableEntries[25] },
-   { "hostname", KJS::HTMLElement::AnchorHostname, DontDelete|ReadOnly, 0, 0 },
-   { "type", KJS::HTMLElement::AnchorType, DontDelete, 0, 0 },
+   { "host", KJS::HTMLElement::AnchorHost, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "focus", KJS::HTMLElement::AnchorFocus, DontDelete|Function, 0, 0 },
-   { "port", KJS::HTMLElement::AnchorPort, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[29] },
    { 0, 0, 0, 0, 0 },
-   { "pathname", KJS::HTMLElement::AnchorPathName, DontDelete|ReadOnly, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "protocol", KJS::HTMLElement::AnchorProtocol, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[32] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
+   { "port", KJS::HTMLElement::AnchorPort, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[27] },
    { 0, 0, 0, 0, 0 },
-   { "hash", KJS::HTMLElement::AnchorHash, DontDelete|ReadOnly, 0, 0 },
-   { "name", KJS::HTMLElement::AnchorName, DontDelete, 0, &HTMLAnchorElementTableEntries[28] },
-   { "rev", KJS::HTMLElement::AnchorRev, DontDelete, 0, 0 },
+   { "hreflang", KJS::HTMLElement::AnchorHrefLang, DontDelete, 0, &HTMLAnchorElementTableEntries[25] },
+   { "coords", KJS::HTMLElement::AnchorCoords, DontDelete, 0, 0 },
+   { "hostname", KJS::HTMLElement::AnchorHostname, DontDelete|ReadOnly, 0, &HTMLAnchorElementTableEntries[29] },
+   { "rel", KJS::HTMLElement::AnchorRel, DontDelete, 0, 0 },
+   { "rev", KJS::HTMLElement::AnchorRev, DontDelete, 0, &HTMLAnchorElementTableEntries[31] },
    { "search", KJS::HTMLElement::AnchorSearch, DontDelete|ReadOnly, 0, 0 },
-   { "tabIndex", KJS::HTMLElement::AnchorTabIndex, DontDelete, 0, 0 },
+   { "tabIndex", KJS::HTMLElement::AnchorTabIndex, DontDelete, 0, &HTMLAnchorElementTableEntries[30] },
    { "target", KJS::HTMLElement::AnchorTarget, DontDelete, 0, 0 },
    { "text", KJS::HTMLElement::AnchorText, DontDelete|ReadOnly, 0, 0 },
-   { "blur", KJS::HTMLElement::AnchorBlur, DontDelete|Function, 0, 0 }
+   { "type", KJS::HTMLElement::AnchorType, DontDelete, 0, &HTMLAnchorElementTableEntries[33] },
+   { "toString", KJS::HTMLElement::AnchorToString, DontDelete|Function, 0, 0 }
 };
 
-const struct HashTable HTMLAnchorElementTable = { 2, 31, HTMLAnchorElementTableEntries, 23 };
+const struct HashTable HTMLAnchorElementTable = { 2, 34, HTMLAnchorElementTableEntries, 24 };
 
 }; // namespace
 
