@@ -1,3 +1,9 @@
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQKloader.mm: (-[KWQURLLoadClient initWithLoader:bridge:]):
+        Fix bridge/m_bridge typo that was responsible for at least some of the breakage
+        I caused.
+
 2002-06-15  Richard Williamson  <rjw@apple.com>
 
     Fixed factoring problem.
