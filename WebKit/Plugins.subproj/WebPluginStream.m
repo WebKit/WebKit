@@ -141,7 +141,7 @@
         
         npStream.ndata = self;
         npStream.URL = cURL;
-        npStream.end = [handle contentLength];
+        npStream.end = [[handle response] contentLength];
         npStream.lastmodified = lastModified;
         npStream.notifyData = notifyData;
         

@@ -1,5 +1,13 @@
 2002-09-09  ken  <kocienda@apple.com>
 
+	Missed one call through asking WebResourceHandle for contentLength
+	instead of WebResourceResponse.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:withHandle:]):
+
+2002-09-09  ken  <kocienda@apple.com>
+
 	Content length information now accessible via WebResourceResponse object,
         rather than from WebResourceHandle.
 
