@@ -749,6 +749,9 @@ static void databaseInit()
         tmp = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:sizeFilePathString];
         sizeFilePath = strdup(tmp);
         usage = [self readSizeFile];
+
+        // remove any leftover turds
+        [manager _IF_deleteBackgroundRemoveLeftoverFiles:path];
     }
     
     return isOpen;
