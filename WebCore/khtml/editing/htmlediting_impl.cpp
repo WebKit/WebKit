@@ -1282,6 +1282,7 @@ void InputNewlineCommandImpl::doApply()
     
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
+    bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
     bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
     
     if (atEndOfBlock) {
@@ -1302,11 +1303,19 @@ void InputNewlineCommandImpl::doApply()
         // position. This will make the caret appear after the break, and as we know
         // there is content at that location, this is OK.
         insertNodeBeforePosition(nodeToInsert, pos);
-        setEndingSelection(Position(pos.node(), 0));
+        setEndingSelection(Position(pos.node(), pos.node()->caretMinOffset()));
+    }
+    else if (atEnd) {
+        LOG(Editing, "input newline case 3");
+        // Insert BR after this node. Place caret in the position that is downstream
+        // of the current position, reckoned before inserting the BR in between.
+        Position endingPosition = pos.downstream(StayInBlock);
+        insertNodeAfterPosition(nodeToInsert, pos);
+        setEndingSelection(endingPosition);
     }
     else {
         // Split a text node
-        LOG(Editing, "input newline case 3");
+        LOG(Editing, "input newline case 4");
         ASSERT(pos.node()->isTextNode());
         
         // See if there is trailing whitespace we need to consider

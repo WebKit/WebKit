@@ -1,3 +1,21 @@
+2004-08-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+        Fix for this bug:
+        
+        <rdar://problem/3768378> crash typing newline in Blot
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply): Adding an assert in a recent change
+        showed up that inserting newlines that was not being handled correctly for the 
+        case described in the bug. I added a new case to handle inserting BR's when
+        at the caret max offset for a node, and this new code runs instead of the
+        fall-through case that should not have been running and triggered the assert.
+        * layout-tests/editing/inserting/insert-br-case2-expected.txt: Regenerated results.
+        * layout-tests/editing/inserting/insert-br-case6-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-case6.html: Added.
+
 2004-08-20  Trey Matteson  <trey@apple.com>
 
         Fixing: Spellchecker called once or twice for every char typed.
