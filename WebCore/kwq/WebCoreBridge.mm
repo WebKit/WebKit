@@ -400,6 +400,11 @@ static bool initializedKJS = FALSE;
     _part->pasteHTMLString(QString::fromNSString(HTMLString));
 }
 
+- (void)pasteImageWithURL:(NSURL *)URL
+{
+    _part->pasteImage(QString::fromNSString([URL absoluteString]));
+}
+
 - (void)deleteSelection
 {
     _part->deleteSelection();

@@ -105,6 +105,7 @@ using khtml::EditCommand;
 using khtml::EditCommand;
 using khtml::InlineTextBox;
 using khtml::PasteHTMLCommand;
+using khtml::PasteImageCommand;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::Tokenizer;
@@ -5149,6 +5150,12 @@ void KHTMLPart::redoEditing()
 void KHTMLPart::pasteHTMLString(const QString &HTMLString)
 {
     EditCommand cmd(PasteHTMLCommand(d->m_doc, DOMString(HTMLString)));
+    applyCommand(cmd);
+}
+
+void KHTMLPart::pasteImage(const QString &src)
+{
+    EditCommand cmd(PasteImageCommand(d->m_doc, DOMString(src)));
     applyCommand(cmd);
 }
 

@@ -72,6 +72,8 @@ using khtml::MoveSelectionToCommand;
 using khtml::MoveSelectionToCommandImpl;
 using khtml::PasteHTMLCommand;
 using khtml::PasteHTMLCommandImpl;
+using khtml::PasteImageCommand;
+using khtml::PasteImageCommandImpl;
 using khtml::SplitTextNodeCommand;
 using khtml::SplitTextNodeCommandImpl;
 
@@ -542,4 +544,22 @@ DOMString PasteHTMLCommand::HTMLString() const
     IF_IMPL_NULL_RETURN_ARG(DOMString());
     return impl()->HTMLString();
 }
+
+//------------------------------------------------------------------------------------------
+// PasteImageCommand
+
+PasteImageCommand::PasteImageCommand(DocumentImpl *document, const DOMString &src) 
+    : CompositeEditCommand(new PasteImageCommandImpl(document, src))
+{
+}
+
+PasteImageCommand::~PasteImageCommand() 
+{
+}
+
+PasteImageCommandImpl *PasteImageCommand::impl() const
+{
+    return static_cast<PasteImageCommandImpl *>(get());
+}
+
 

@@ -644,6 +644,11 @@ public:
    * Pastes an HTML string at the current caret position.
    */
   void pasteHTMLString(const QString &HTMLString);
+  
+  /**
+   * Pastes a new image node at the current caret position.
+   */
+  void pasteImage(const QString &src);
 
   /**
    * Convenience method to show the document's view.

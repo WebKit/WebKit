@@ -117,6 +117,7 @@ protected:
     void applyCommand(EditCommand &);
     void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
     void appendNode(DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
     void removeNode(DOM::NodeImpl *removeChild);
     void splitTextNode(DOM::TextImpl *text, long offset);
@@ -347,6 +348,19 @@ public:
 private:
     DOM::DOMString m_HTMLString;
 };
+
+class PasteImageCommandImpl : public CompositeEditCommandImpl
+{
+public:
+    PasteImageCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &src);
+    virtual ~PasteImageCommandImpl();
+    
+    virtual void apply();
+    
+private:
+    DOM::DOMString m_src;
+};
+
 
 }; // end namespace khtml
 

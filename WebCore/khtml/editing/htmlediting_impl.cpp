@@ -35,6 +35,8 @@
 #include "khtml_selection.h"
 #include "dom/dom_position.h"
 #include "html/html_elementimpl.h"
+#include "html/html_imageimpl.h"
+#include "htmlattrs.h"
 #include "rendering/render_object.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
@@ -48,6 +50,7 @@ using DOM::DOMPosition;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
+using DOM::HTMLImageElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
@@ -83,6 +86,8 @@ using khtml::MoveSelectionToCommand;
 using khtml::MoveSelectionToCommandImpl;
 using khtml::PasteHTMLCommand;
 using khtml::PasteHTMLCommandImpl;
+using khtml::PasteImageCommand;
+using khtml::PasteImageCommandImpl;
 using khtml::SplitTextNodeCommand;
 using khtml::SplitTextNodeCommandImpl;
 
@@ -240,6 +245,9 @@ QString EditCommandImpl::name() const
         case PasteHTMLCommandID:
             return "PasteHTMLCommandImpl";
             break;
+        case PasteImageCommandID:
+            return "PasteImageCommandImpl";
+            break;
         case SplitTextNodeCommandID:
             return "SplitTextNodeCommandImpl";
             break;
@@ -312,6 +320,20 @@ void CompositeEditCommandImpl::insertNodeAfter(DOM::NodeImpl *insertChild, DOM::
     else {
         ASSERT(refChild->nextSibling());
         insertNodeBefore(insertChild, refChild->nextSibling());
+    }
+}
+
+void CompositeEditCommandImpl::insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset)
+{
+    if (refChild->caretMinOffset() >= offset) {
+        insertNodeBefore(insertChild, refChild);
+    } 
+    else if (refChild->isTextNode() && refChild->caretMaxOffset() > offset) {
+        splitTextNode(static_cast<TextImpl *>(refChild), offset);
+        insertNodeBefore(insertChild, refChild);
+    } 
+    else {
+        insertNodeAfter(insertChild, refChild);
     }
 }
 
@@ -1198,26 +1220,10 @@ void PasteHTMLCommandImpl::apply()
     } 
     else {
         // HTML tree paste.
-        DOM::NodeImpl *child = firstChild;
-        DOM::NodeImpl *beforeNode = NULL;
-        if (startNode->caretMinOffset() == startOffset) {
-            // Caret is at the beginning of the node. Insert before it.
-            DOM::NodeImpl *nextSibling = child->nextSibling();
-            insertNodeBefore(child, startNode);
-            beforeNode = child;
-            child = nextSibling;
-        } 
-        else if (textNode && textNode->caretMaxOffset() != startOffset) {
-            // Caret is in middle of a text node. Split the text node and insert in between.
-            splitTextNode(textNode, startOffset);
-            beforeNode = textNode->previousSibling();
-        } 
-        else {
-            // Caret is at the end of the node. Insert after it.
-            beforeNode = startNode;
-        }
+        insertNodeAt(firstChild, startNode, startOffset);
         
-        ASSERT(beforeNode);
+        DOM::NodeImpl *child = startNode->nextSibling();
+        DOM::NodeImpl *beforeNode = startNode;
 		
         // Insert the nodes from the clipping.
         while (child) {
@@ -1240,5 +1246,39 @@ void PasteHTMLCommandImpl::apply()
         setEndingSelection(selection);
     }
 
+    endApply();
+}
+
+PasteImageCommandImpl::PasteImageCommandImpl(DocumentImpl *document, const DOMString &src) 
+: CompositeEditCommandImpl(document)
+{
+    ASSERT(!src.isEmpty());
+    m_src = src; 
+}
+
+PasteImageCommandImpl::~PasteImageCommandImpl()
+{
+}
+
+void PasteImageCommandImpl::apply()
+{
+    beginApply();
+    
+    deleteSelection();
+    
+    KHTMLPart *part = document()->part();
+    ASSERT(part);
+    
+    KHTMLSelection selection = part->selection();
+    ASSERT(!selection.isEmpty());
+    
+    DOM::NodeImpl *startNode = selection.startNode();
+    HTMLImageElementImpl *imageNode = new HTMLImageElementImpl(startNode->docPtr());
+    imageNode->setAttribute(ATTR_SRC, m_src);
+    
+    insertNodeAt(imageNode, startNode, selection.startOffset());
+    selection = KHTMLSelection(imageNode, imageNode->caretMaxOffset());
+    setEndingSelection(selection);
+    
     endApply();
 }

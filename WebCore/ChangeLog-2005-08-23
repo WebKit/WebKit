@@ -1,3 +1,31 @@
+2004-02-16  Chris Blumenberg  <cblu@apple.com>
+
+	WebCore side of pasting image data.
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (PasteImageCommand::PasteImageCommand): new
+        (PasteImageCommand::~PasteImageCommand): new
+        (PasteImageCommand::impl): new
+        * khtml/editing/htmlediting.h:
+        (khtml::):
+        * khtml/editing/htmlediting_impl.cpp:
+        (EditCommandImpl::name): added support for PasteImageCommandID
+        (CompositeEditCommandImpl::insertNodeAt): new, factored out from PasteHTMLCommandImpl::apply
+        (PasteHTMLCommandImpl::apply): call insertNodeAt
+        (PasteImageCommandImpl::PasteImageCommandImpl): new
+        (PasteImageCommandImpl::~PasteImageCommandImpl): new
+        (PasteImageCommandImpl::apply): new
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::pasteHTMLString): unchanged
+        (KHTMLPart::pasteImage): new
+        * khtml/khtml_part.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge pasteImageWithURL:]): new
+
 2004-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -58,6 +58,7 @@ class ModifyTextNodeCommandImpl;
 class RemoveNodeCommandImpl;
 class MoveSelectionToCommandImpl;
 class PasteHTMLCommandImpl;
+class PasteImageCommandImpl;
 class SplitTextNodeCommandImpl;
 
 //------------------------------------------------------------------------------------------
@@ -78,6 +79,7 @@ enum ECommandID {
     RemoveNodeCommandID,
     MoveSelectionToCommandID,
     PasteHTMLCommandID,
+    PasteImageCommandID,
     SplitTextNodeCommandID,
 };
 
@@ -302,6 +304,16 @@ public:
 
 private:
     inline PasteHTMLCommandImpl *impl() const;
+};
+
+class PasteImageCommand : public CompositeEditCommand
+{
+public:
+    PasteImageCommand(DOM::DocumentImpl *document, const DOM::DOMString &src);
+    virtual ~PasteImageCommand();
+        
+private:
+    inline PasteImageCommandImpl *impl() const;
 };
 
 }; // end namespace khtml
