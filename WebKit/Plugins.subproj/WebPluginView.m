@@ -713,10 +713,6 @@
         [self layout];
     }
 
-    if(!isStarted){
-        [self start];
-    }
-
     if(isStarted){
         [self sendUpdateEvent];
     }
@@ -737,10 +733,13 @@
 
 - (void)viewDidMoveToWindow
 {
-    if (![self window])
+    if (![self window]){
         [self stop];
+    }else{
+        [self start];
+    }
+    
     [self resetTrackingRect];
-    [super viewDidMoveToWindow];
 }
 
 #pragma mark NOTIFICATIONS

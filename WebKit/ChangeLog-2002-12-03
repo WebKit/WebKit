@@ -1,3 +1,23 @@
+2002-09-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 2978258 - quake3arena.com sends me to the flash=false site
+	The page has a flash plugin that once loaded, requests the flash=true page. If the plugin doesn't load, the meta refresh tag to the flash=false page fires after 3 seconds. This is how this site's flash detection works.
+
+	The reason this doesn't work for us is because the flash movie is at the bottom of the page. Plugins don't start until the initial drawRect. Since the movie is at the bottom of the page and out of site, the plugin never gets the drawRect and thus, never starts. We now start plug-ins when they are added to the window.
+
+	Fixed: 3062224 - context menu includes "Download Item to Disk" for mailto links
+
+	- Fixed click then click and drag causes crash.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView drawRect:]): don't start plug-in here
+        (-[WebNetscapePluginView viewDidMoveToWindow]): start it here
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate contextMenuItemsForElement:defaultMenuItems:]): don't provide "Download Link To Disk" and "Open Link In New Window" items for URLs we cant handle.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): clean-up
+        (-[WebHTMLView mouseDragged:]): Don't allow drag if the frame has a provisional data source because this view may be released and the drag callbacks might reference this released view.
+
 2002-09-28  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebDataSource.m: (-[WebDataSource initWithRequest:]):

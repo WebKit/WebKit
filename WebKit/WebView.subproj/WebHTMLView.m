@@ -40,7 +40,7 @@
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
 
 #define DragImageAlpha    		0.75
-#define MaxDragSize 			NSMakeSize(400, 400)
+#define MaxDragImageSize 		NSMakeSize(400, 400)
 
 #import <CoreGraphics/CGStyle.h>
 #import <CoreGraphics/CGSTypes.h>
@@ -469,7 +469,7 @@
         anImage = [[originalImage copy] autorelease];
         
         NSSize originalSize = [anImage size];
-        [anImage _web_scaleToMaxSize:MaxDragSize];
+        [anImage _web_scaleToMaxSize:MaxDragImageSize];
         NSSize newSize = [anImage size];
 
         [anImage _web_dissolveToFraction:DragImageAlpha];
@@ -477,7 +477,7 @@
         NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
         NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
 
-        // Properly orient the drag image if it's smaller than the original
+        // Properly orient the drag image and orient it differently if it's smaller than the original
         imageLoc = [[_private->draggingImageElement objectForKey:WebElementImageLocationKey] pointValue];
         imageLoc.x = mouseDownPoint.x - (((mouseDownPoint.x - imageLoc.x) / originalSize.width) * newSize.width);
         imageLoc.y = imageLoc.y + originalSize.height;
@@ -500,6 +500,12 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    // If the frame has a provisional data source, this view may be released.
+    // Don't allow drag because drag callbacks will reference this released view.
+    if([[self _frame] provisionalDataSource]){
+        return;
+    }
+    
     // Ensure that we're visible wrt the event location.
     BOOL didScroll = [self autoscroll:event];
     
@@ -526,7 +532,7 @@
             if (imageURL){
                 _private->draggingImageElement = [element retain];
 
-                // FIXME: This getting the file type this way doesn't always work
+                // FIXME: Getting the file type this way doesn't always work
                 [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:[[imageURL path] pathExtension]]
                                       fromRect:NSZeroRect
                                         source:self
