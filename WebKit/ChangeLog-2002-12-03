@@ -1,5 +1,10 @@
 2002-07-19  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Forgot to export WebKitStatistics.h so it can
+	be used by WebBrowser.
+
+2002-07-19  Darin Adler  <darin@apple.com>
+
 	Added some stats that we can use to sniff out "leak the world" problems.
 
         * Misc.subproj/WebKitStatistics.h: Added.
