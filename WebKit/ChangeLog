@@ -1,3 +1,39 @@
+2002-02-18  John Sullivan  <sullivan@apple.com>
+
+	First piece of implementing IFWebHistory. None of the mutators do anything,
+	and the accessors return canned data. But at least all the temporary hackery
+	is hiding behind legitimate API.
+
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistory.m: 
+
+	(+[IFWebHistory sharedWebHistory]):
+	Implemented sensibly.
+
+	(-[IFWebHistory createTestEntryWithURLString:title:date:]), 
+	(-[IFWebHistory	testDataDates]), (-[IFWebHistory testData]), 
+	Private temporary hackery to return fake data.	
+
+	(-[IFWebHistory orderedLastVisitedDays]), 
+	(-[IFWebHistory	orderedEntriesLastVisitedOnDay:]):
+	Implemented using temporary hackery.
+
+	(-[IFWebHistory addEntry:]),
+	(-[IFWebHistory removeEntry:]), 
+	(-[IFWebHistory removeAllEntries]):
+	Unimplemented mutator methods.
+
+	(-[IFWebHistory	entriesWithAddressContainingString:]), 
+	(-[IFWebHistory	entriesWithTitleOrAddressContainingString:]), 
+	(-[IFWebHistory containsURL:]):
+	Methods that we'll need eventually, currently unimplemented. We may flesh out
+	the API a little more before we actually implement any of these.
+
+	(-[NSCalendarDate daysSinceDate:]): Convenience method in category; will
+	probably move to another file soon.
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files
+
 2002-02-18  Kenneth Kocienda  <kocienda@apple.com>
 
 	Fixed breakge that came up when project file merged.
