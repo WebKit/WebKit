@@ -970,12 +970,19 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 static BOOL loggedObjectCacheSize = NO;
 #endif
 
+- (WebPreferences *)_preferences
+{
+    WebPreferences *prefs = [[_frame webView] preferences];
+    if (prefs == nil) {
+        prefs = [WebPreferences standardPreferences];
+    }
+    return prefs;
+}
 
 -(int)getObjectCacheSize
 {
     vm_size_t memSize = WebSystemMainMemory();
-    ASSERT([_frame webView]);
-    int cacheSize = [[[_frame webView] preferences] _objectCacheSize];
+    int cacheSize = [[self _preferences] _objectCacheSize];
     int multiplier = 1;
     if (memSize >= 1024 * 1024 * 1024)
         multiplier = 4;
@@ -1215,8 +1222,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
     
     // check for tabbing to links
-    ASSERT([_frame webView]);
-    if ([[[_frame webView] preferences] tabsToLinks]) {
+    if ([[self _preferences] tabsToLinks]) {
         _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
     }
 }
