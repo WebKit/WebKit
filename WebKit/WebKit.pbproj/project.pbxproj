@@ -1081,27 +1081,23 @@
 		};
 		9CE1F8A002A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = WebImageRenderer.h;
-			path = WebCoreSupport.subproj/WebImageRenderer.h;
-			refType = 2;
+			path = WebImageRenderer.h;
+			refType = 4;
 		};
 		9CE1F8A102A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = WebImageRenderer.m;
-			path = WebCoreSupport.subproj/WebImageRenderer.m;
-			refType = 2;
+			path = WebImageRenderer.m;
+			refType = 4;
 		};
 		9CE1F8A202A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = WebImageRendererFactory.h;
-			path = WebCoreSupport.subproj/WebImageRendererFactory.h;
-			refType = 2;
+			path = WebImageRendererFactory.h;
+			refType = 4;
 		};
 		9CE1F8A302A5C6F30ECA2ACD = {
 			isa = PBXFileReference;
-			name = WebImageRendererFactory.m;
-			path = WebCoreSupport.subproj/WebImageRendererFactory.m;
-			refType = 2;
+			path = WebImageRendererFactory.m;
+			refType = 4;
 		};
 		9CE1F8A402A5C6F30ECA2ACD = {
 			fileRef = 9CE1F8A002A5C6F30ECA2ACD;
@@ -1479,15 +1475,13 @@
 		};
 		F5488CF402CB04EE01FF6274 = {
 			isa = PBXFileReference;
-			name = WebCookieAdapter.h;
-			path = WebCoreSupport.subproj/WebCookieAdapter.h;
-			refType = 2;
+			path = WebCookieAdapter.h;
+			refType = 4;
 		};
 		F5488CF502CB04EE01FF6274 = {
 			isa = PBXFileReference;
-			name = WebCookieAdapter.m;
-			path = WebCoreSupport.subproj/WebCookieAdapter.m;
-			refType = 2;
+			path = WebCookieAdapter.m;
+			refType = 4;
 		};
 		F5488CF602CB04EE01FF6274 = {
 			fileRef = F5488CF402CB04EE01FF6274;
@@ -1774,15 +1768,13 @@
 		};
 		F5AFB45E02B94DC8018635CA = {
 			isa = PBXFileReference;
-			name = WebBridge.h;
-			path = WebCoreSupport.subproj/WebBridge.h;
-			refType = 2;
+			path = WebBridge.h;
+			refType = 4;
 		};
 		F5AFB45F02B94DC8018635CA = {
 			isa = PBXFileReference;
-			name = WebBridge.m;
-			path = WebCoreSupport.subproj/WebBridge.m;
-			refType = 2;
+			path = WebBridge.m;
+			refType = 4;
 		};
 		F5AFB46002B94DC8018635CA = {
 			fileRef = F5AFB45E02B94DC8018635CA;
@@ -1822,15 +1814,13 @@
 		};
 		F5B36B410281DF55018635CB = {
 			isa = PBXFileReference;
-			name = WebTextRenderer.h;
-			path = WebCoreSupport.subproj/WebTextRenderer.h;
-			refType = 2;
+			path = WebTextRenderer.h;
+			refType = 4;
 		};
 		F5B36B420281DF55018635CB = {
 			isa = PBXFileReference;
-			name = WebTextRenderer.m;
-			path = WebCoreSupport.subproj/WebTextRenderer.m;
-			refType = 2;
+			path = WebTextRenderer.m;
+			refType = 4;
 		};
 		F5B36B430281DF55018635CB = {
 			fileRef = F5B36B410281DF55018635CB;
@@ -1848,15 +1838,13 @@
 		};
 		F5B36B450281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = WebTextRendererFactory.h;
-			path = WebCoreSupport.subproj/WebTextRendererFactory.h;
-			refType = 2;
+			path = WebTextRendererFactory.h;
+			refType = 4;
 		};
 		F5B36B460281DF9C018635CB = {
 			isa = PBXFileReference;
-			name = WebTextRendererFactory.m;
-			path = WebCoreSupport.subproj/WebTextRendererFactory.m;
-			refType = 2;
+			path = WebTextRendererFactory.m;
+			refType = 4;
 		};
 		F5B36B480281DF9C018635CB = {
 			fileRef = F5B36B460281DF9C018635CB;
@@ -2017,15 +2005,13 @@
 		};
 		F5E0E10802BC45F8018635CA = {
 			isa = PBXFileReference;
-			name = WebSubresourceClient.h;
-			path = WebCoreSupport.subproj/WebSubresourceClient.h;
-			refType = 2;
+			path = WebSubresourceClient.h;
+			refType = 4;
 		};
 		F5E0E10902BC45F8018635CA = {
 			isa = PBXFileReference;
-			name = WebSubresourceClient.m;
-			path = WebCoreSupport.subproj/WebSubresourceClient.m;
-			refType = 2;
+			path = WebSubresourceClient.m;
+			refType = 4;
 		};
 		F5E0E10A02BC45F8018635CA = {
 			fileRef = F5E0E10802BC45F8018635CA;
@@ -2159,15 +2145,13 @@
 		};
 		F5F7174C02885C5B018635CA = {
 			isa = PBXFileReference;
-			name = WebViewFactory.h;
-			path = WebCoreSupport.subproj/WebViewFactory.h;
-			refType = 2;
+			path = WebViewFactory.h;
+			refType = 4;
 		};
 		F5F7174D02885C5B018635CA = {
 			isa = PBXFileReference;
-			name = WebViewFactory.m;
-			path = WebCoreSupport.subproj/WebViewFactory.m;
-			refType = 2;
+			path = WebViewFactory.m;
+			refType = 4;
 		};
 		F5F7174E02885C5B018635CA = {
 			fileRef = F5F7174C02885C5B018635CA;

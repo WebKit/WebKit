@@ -843,7 +843,7 @@
 			);
 			isa = PBXGroup;
 			name = private;
-			path = "";
+			path = ..;
 			refType = 4;
 		};
 		F523D15002DE4271018635CA = {
@@ -3577,9 +3577,8 @@
 				F523D30B02DE4476018635CA,
 			);
 			isa = PBXGroup;
-			name = xml;
-			path = khtml/xml;
-			refType = 2;
+			path = xml;
+			refType = 4;
 		};
 		F54A61D302E3523B01A80180 = {
 			isa = PBXFileReference;
@@ -3599,7 +3598,8 @@
 		};
 		F550D70A02E13281018635CA = {
 			isa = PBXFileReference;
-			path = KWQPushButton.mm;
+			name = KWQPushButton.mm;
+			path = ../KWQPushButton.mm;
 			refType = 4;
 		};
 		F550D70B02E13281018635CA = {
@@ -3650,7 +3650,8 @@
 		};
 		F57B0EE002EBC78B018635CA = {
 			isa = PBXFileReference;
-			path = KWQStyle.mm;
+			name = KWQStyle.mm;
+			path = ../KWQStyle.mm;
 			refType = 4;
 		};
 		F57B0EE102EBC78B018635CA = {
@@ -3666,12 +3667,14 @@
 		};
 		F58784C502DE375801EA4122 = {
 			isa = PBXFileReference;
-			path = KWQArrayImpl.h;
+			name = KWQArrayImpl.h;
+			path = ../KWQArrayImpl.h;
 			refType = 4;
 		};
 		F58784C602DE375801EA4122 = {
 			isa = PBXFileReference;
-			path = KWQArrayImpl.mm;
+			name = KWQArrayImpl.mm;
+			path = ../KWQArrayImpl.mm;
 			refType = 4;
 		};
 		F58784C702DE375801EA4122 = {
@@ -3681,17 +3684,20 @@
 		};
 		F58784C802DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQBuffer.mm;
+			name = KWQBuffer.mm;
+			path = ../KWQBuffer.mm;
 			refType = 4;
 		};
 		F58784C902DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQButton.mm;
+			name = KWQButton.mm;
+			path = ../KWQButton.mm;
 			refType = 4;
 		};
 		F58784CA02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQChar.mm;
+			name = KWQChar.mm;
+			path = ../KWQChar.mm;
 			refType = 4;
 		};
 		F58784CC02DE375901EA4122 = {
@@ -3706,27 +3712,32 @@
 		};
 		F58784CE02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQCheckBox.mm;
+			name = KWQCheckBox.mm;
+			path = ../KWQCheckBox.mm;
 			refType = 4;
 		};
 		F58784CF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQCollection.mm;
+			name = KWQCollection.mm;
+			path = ../KWQCollection.mm;
 			refType = 4;
 		};
 		F58784D002DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQColor.mm;
+			name = KWQColor.mm;
+			path = ../KWQColor.mm;
 			refType = 4;
 		};
 		F58784D102DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQColorGroup.mm;
+			name = KWQColorGroup.mm;
+			path = ../KWQColorGroup.mm;
 			refType = 4;
 		};
 		F58784D202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQComboBox.mm;
+			name = KWQComboBox.mm;
+			path = ../KWQComboBox.mm;
 			refType = 4;
 		};
 		F58784D302DE375901EA4122 = {
@@ -3741,17 +3752,20 @@
 		};
 		F58784D502DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQCString.mm;
+			name = KWQCString.mm;
+			path = ../KWQCString.mm;
 			refType = 4;
 		};
 		F58784D602DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQCursor.mm;
+			name = KWQCursor.mm;
+			path = ../KWQCursor.mm;
 			refType = 4;
 		};
 		F58784D702DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQDateTime.mm;
+			name = KWQDateTime.mm;
+			path = ../KWQDateTime.mm;
 			refType = 4;
 		};
 		F58784D802DE375901EA4122 = {
@@ -3771,52 +3785,62 @@
 		};
 		F58784DB02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQDictImpl.h;
+			name = KWQDictImpl.h;
+			path = ../KWQDictImpl.h;
 			refType = 4;
 		};
 		F58784DC02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQDictImpl.mm;
+			name = KWQDictImpl.mm;
+			path = ../KWQDictImpl.mm;
 			refType = 4;
 		};
 		F58784DD02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQDrawUtil.mm;
+			name = KWQDrawUtil.mm;
+			path = ../KWQDrawUtil.mm;
 			refType = 4;
 		};
 		F58784DE02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQEvent.mm;
+			name = KWQEvent.mm;
+			path = ../KWQEvent.mm;
 			refType = 4;
 		};
 		F58784DF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFile.mm;
+			name = KWQFile.mm;
+			path = ../KWQFile.mm;
 			refType = 4;
 		};
 		F58784E002DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFont.mm;
+			name = KWQFont.mm;
+			path = ../KWQFont.mm;
 			refType = 4;
 		};
 		F58784E102DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFontInfo.mm;
+			name = KWQFontInfo.mm;
+			path = ../KWQFontInfo.mm;
 			refType = 4;
 		};
 		F58784E202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFontMetrics.mm;
+			name = KWQFontMetrics.mm;
+			path = ../KWQFontMetrics.mm;
 			refType = 4;
 		};
 		F58784E302DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFrame.h;
+			name = KWQFrame.h;
+			path = ../KWQFrame.h;
 			refType = 4;
 		};
 		F58784E402DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQFrame.mm;
+			name = KWQFrame.mm;
+			path = ../KWQFrame.mm;
 			refType = 4;
 		};
 		F58784E502DE375901EA4122 = {
@@ -3826,17 +3850,20 @@
 		};
 		F58784E602DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQGuardedPtr.mm;
+			name = KWQGuardedPtr.mm;
+			path = ../KWQGuardedPtr.mm;
 			refType = 4;
 		};
 		F58784E702DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQHBox.mm;
+			name = KWQHBox.mm;
+			path = ../KWQHBox.mm;
 			refType = 4;
 		};
 		F58784E802DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQInputDialog.mm;
+			name = KWQInputDialog.mm;
+			path = ../KWQInputDialog.mm;
 			refType = 4;
 		};
 		F58784E902DE375901EA4122 = {
@@ -4026,32 +4053,38 @@
 		};
 		F587851102DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQLabel.mm;
+			name = KWQLabel.mm;
+			path = ../KWQLabel.mm;
 			refType = 4;
 		};
 		F587851202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQLineEdit.mm;
+			name = KWQLineEdit.mm;
+			path = ../KWQLineEdit.mm;
 			refType = 4;
 		};
 		F587851302DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQListBox.h;
+			name = KWQListBox.h;
+			path = ../KWQListBox.h;
 			refType = 4;
 		};
 		F587851402DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQListBox.mm;
+			name = KWQListBox.mm;
+			path = ../KWQListBox.mm;
 			refType = 4;
 		};
 		F587851502DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQListImpl.h;
+			name = KWQListImpl.h;
+			path = ../KWQListImpl.h;
 			refType = 4;
 		};
 		F587851602DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQListImpl.mm;
+			name = KWQListImpl.mm;
+			path = ../KWQListImpl.mm;
 			refType = 4;
 		};
 		F587851702DE375901EA4122 = {
@@ -4061,17 +4094,20 @@
 		};
 		F587851802DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQMapImpl.h;
+			name = KWQMapImpl.h;
+			path = ../KWQMapImpl.h;
 			refType = 4;
 		};
 		F587851902DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQMapImpl.mm;
+			name = KWQMapImpl.mm;
+			path = ../KWQMapImpl.mm;
 			refType = 4;
 		};
 		F587851A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQMovie.mm;
+			name = KWQMovie.mm;
+			path = ../KWQMovie.mm;
 			refType = 4;
 		};
 		F587851B02DE375901EA4122 = {
@@ -4086,62 +4122,74 @@
 		};
 		F587851D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQObject.mm;
+			name = KWQObject.mm;
+			path = ../KWQObject.mm;
 			refType = 4;
 		};
 		F587851E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPaintDeviceMetrics.mm;
+			name = KWQPaintDeviceMetrics.mm;
+			path = ../KWQPaintDeviceMetrics.mm;
 			refType = 4;
 		};
 		F587851F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPainter.mm;
+			name = KWQPainter.mm;
+			path = ../KWQPainter.mm;
 			refType = 4;
 		};
 		F587852002DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPalette.mm;
+			name = KWQPalette.mm;
+			path = ../KWQPalette.mm;
 			refType = 4;
 		};
 		F587852102DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPen.mm;
+			name = KWQPen.mm;
+			path = ../KWQPen.mm;
 			refType = 4;
 		};
 		F587852202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPixmap.mm;
+			name = KWQPixmap.mm;
+			path = ../KWQPixmap.mm;
 			refType = 4;
 		};
 		F587852302DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPoint.mm;
+			name = KWQPoint.mm;
+			path = ../KWQPoint.mm;
 			refType = 4;
 		};
 		F587852402DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPointArray.mm;
+			name = KWQPointArray.mm;
+			path = ../KWQPointArray.mm;
 			refType = 4;
 		};
 		F587852502DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPtrDictImpl.h;
+			name = KWQPtrDictImpl.h;
+			path = ../KWQPtrDictImpl.h;
 			refType = 4;
 		};
 		F587852602DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQPtrDictImpl.mm;
+			name = KWQPtrDictImpl.mm;
+			path = ../KWQPtrDictImpl.mm;
 			refType = 4;
 		};
 		F587852802DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQRadioButton.mm;
+			name = KWQRadioButton.mm;
+			path = ../KWQRadioButton.mm;
 			refType = 4;
 		};
 		F587852902DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQRect.mm;
+			name = KWQRect.mm;
+			path = ../KWQRect.mm;
 			refType = 4;
 		};
 		F587852A02DE375901EA4122 = {
@@ -4151,22 +4199,26 @@
 		};
 		F587852B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQRegExp.mm;
+			name = KWQRegExp.mm;
+			path = ../KWQRegExp.mm;
 			refType = 4;
 		};
 		F587852C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQRegion.mm;
+			name = KWQRegion.mm;
+			path = ../KWQRegion.mm;
 			refType = 4;
 		};
 		F587852D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQScrollBar.h;
+			name = KWQScrollBar.h;
+			path = ../KWQScrollBar.h;
 			refType = 4;
 		};
 		F587852E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQScrollView.mm;
+			name = KWQScrollView.mm;
+			path = ../KWQScrollView.mm;
 			refType = 4;
 		};
 		F587852F02DE375901EA4122 = {
@@ -4176,22 +4228,26 @@
 		};
 		F587853002DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQSize.mm;
+			name = KWQSize.mm;
+			path = ../KWQSize.mm;
 			refType = 4;
 		};
 		F587853102DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQString.mm;
+			name = KWQString.mm;
+			path = ../KWQString.mm;
 			refType = 4;
 		};
 		F587853202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQStringList.mm;
+			name = KWQStringList.mm;
+			path = ../KWQStringList.mm;
 			refType = 4;
 		};
 		F587853402DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQStyleSheet.mm;
+			name = KWQStyleSheet.mm;
+			path = ../KWQStyleSheet.mm;
 			refType = 4;
 		};
 		F587853502DE375901EA4122 = {
@@ -4206,47 +4262,56 @@
 		};
 		F587853702DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQtextcodec.mm;
+			name = KWQtextcodec.mm;
+			path = ../KWQtextcodec.mm;
 			refType = 4;
 		};
 		F587853802DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQTextEdit.mm;
+			name = KWQTextEdit.mm;
+			path = ../KWQTextEdit.mm;
 			refType = 4;
 		};
 		F587853902DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQtextstream.mm;
+			name = KWQtextstream.mm;
+			path = ../KWQtextstream.mm;
 			refType = 4;
 		};
 		F587853A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQTimer.mm;
+			name = KWQTimer.mm;
+			path = ../KWQTimer.mm;
 			refType = 4;
 		};
 		F587853B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQValueListImpl.h;
+			name = KWQValueListImpl.h;
+			path = ../KWQValueListImpl.h;
 			refType = 4;
 		};
 		F587853C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQValueListImpl.mm;
+			name = KWQValueListImpl.mm;
+			path = ../KWQValueListImpl.mm;
 			refType = 4;
 		};
 		F587853D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQVariant.mm;
+			name = KWQVariant.mm;
+			path = ../KWQVariant.mm;
 			refType = 4;
 		};
 		F587853E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQVectorImpl.h;
+			name = KWQVectorImpl.h;
+			path = ../KWQVectorImpl.h;
 			refType = 4;
 		};
 		F587853F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQVectorImpl.mm;
+			name = KWQVectorImpl.mm;
+			path = ../KWQVectorImpl.mm;
 			refType = 4;
 		};
 		F587854002DE375901EA4122 = {
@@ -4261,7 +4326,8 @@
 		};
 		F587854202DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQWidget.mm;
+			name = KWQWidget.mm;
+			path = ../KWQWidget.mm;
 			refType = 4;
 		};
 		F587854302DE375901EA4122 = {
@@ -4276,7 +4342,8 @@
 		};
 		F587854602DE375901EA4122 = {
 			isa = PBXFileReference;
-			path = KWQxml.mm;
+			name = KWQxml.mm;
+			path = ../KWQxml.mm;
 			refType = 4;
 		};
 		F587854702DE375901EA4122 = {
@@ -6206,482 +6273,402 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lineEnding = 0;
-			name = qapplication.h;
-			path = qt/qapplication.h;
+			path = qapplication.h;
 			refType = 4;
 		};
 		F587867702DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qarray.h;
-			path = qt/qarray.h;
+			path = qarray.h;
 			refType = 4;
 		};
 		F587867802DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qasyncimageio.h;
-			path = qt/qasyncimageio.h;
+			path = qasyncimageio.h;
 			refType = 4;
 		};
 		F587867902DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qasyncio.h;
-			path = qt/qasyncio.h;
+			path = qasyncio.h;
 			refType = 4;
 		};
 		F587867A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qbitmap.h;
-			path = qt/qbitmap.h;
+			path = qbitmap.h;
 			refType = 4;
 		};
 		F587867B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qbrush.h;
-			path = qt/qbrush.h;
+			path = qbrush.h;
 			refType = 4;
 		};
 		F587867C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qbuffer.h;
-			path = qt/qbuffer.h;
+			path = qbuffer.h;
 			refType = 4;
 		};
 		F587867D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qbutton.h;
-			path = qt/qbutton.h;
+			path = qbutton.h;
 			refType = 4;
 		};
 		F587867E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcheckbox.h;
-			path = qt/qcheckbox.h;
+			path = qcheckbox.h;
 			refType = 4;
 		};
 		F587867F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qclipboard.h;
-			path = qt/qclipboard.h;
+			path = qclipboard.h;
 			refType = 4;
 		};
 		F587868002DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcollection.h;
-			path = qt/qcollection.h;
+			path = qcollection.h;
 			refType = 4;
 		};
 		F587868102DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcolor.h;
-			path = qt/qcolor.h;
+			path = qcolor.h;
 			refType = 4;
 		};
 		F587868202DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcombobox.h;
-			path = qt/qcombobox.h;
+			path = qcombobox.h;
 			refType = 4;
 		};
 		F587868302DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcstring.h;
-			path = qt/qcstring.h;
+			path = qcstring.h;
 			refType = 4;
 		};
 		F587868402DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qcursor.h;
-			path = qt/qcursor.h;
+			path = qcursor.h;
 			refType = 4;
 		};
 		F587868502DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qdatetime.h;
-			path = qt/qdatetime.h;
+			path = qdatetime.h;
 			refType = 4;
 		};
 		F587868602DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qdict.h;
-			path = qt/qdict.h;
+			path = qdict.h;
 			refType = 4;
 		};
 		F587868702DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qdrawutil.h;
-			path = qt/qdrawutil.h;
+			path = qdrawutil.h;
 			refType = 4;
 		};
 		F587868802DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qevent.h;
-			path = qt/qevent.h;
+			path = qevent.h;
 			refType = 4;
 		};
 		F587868902DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qfile.h;
-			path = qt/qfile.h;
+			path = qfile.h;
 			refType = 4;
 		};
 		F587868A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qfont.h;
-			path = qt/qfont.h;
+			path = qfont.h;
 			refType = 4;
 		};
 		F587868B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qfontdatabase.h;
-			path = qt/qfontdatabase.h;
+			path = qfontdatabase.h;
 			refType = 4;
 		};
 		F587868C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qfontinfo.h;
-			path = qt/qfontinfo.h;
+			path = qfontinfo.h;
 			refType = 4;
 		};
 		F587868D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qfontmetrics.h;
-			path = qt/qfontmetrics.h;
+			path = qfontmetrics.h;
 			refType = 4;
 		};
 		F587868E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qframe.h;
-			path = qt/qframe.h;
+			path = qframe.h;
 			refType = 4;
 		};
 		F587868F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qglobal.h;
-			path = qt/qglobal.h;
+			path = qglobal.h;
 			refType = 4;
 		};
 		F587869002DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qguardedptr.h;
-			path = qt/qguardedptr.h;
+			path = qguardedptr.h;
 			refType = 4;
 		};
 		F587869102DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qhbox.h;
-			path = qt/qhbox.h;
+			path = qhbox.h;
 			refType = 4;
 		};
 		F587869202DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qimage.h;
-			path = qt/qimage.h;
+			path = qimage.h;
 			refType = 4;
 		};
 		F587869302DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qinputdialog.h;
-			path = qt/qinputdialog.h;
+			path = qinputdialog.h;
 			refType = 4;
 		};
 		F587869402DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qintcache.h;
-			path = qt/qintcache.h;
+			path = qintcache.h;
 			refType = 4;
 		};
 		F587869502DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qintdict.h;
-			path = qt/qintdict.h;
+			path = qintdict.h;
 			refType = 4;
 		};
 		F587869602DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qiodevice.h;
-			path = qt/qiodevice.h;
+			path = qiodevice.h;
 			refType = 4;
 		};
 		F587869702DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qlabel.h;
-			path = qt/qlabel.h;
+			path = qlabel.h;
 			refType = 4;
 		};
 		F587869802DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qlineedit.h;
-			path = qt/qlineedit.h;
+			path = qlineedit.h;
 			refType = 4;
 		};
 		F587869902DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qlist.h;
-			path = qt/qlist.h;
+			path = qlist.h;
 			refType = 4;
 		};
 		F587869A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qmap.h;
-			path = qt/qmap.h;
+			path = qmap.h;
 			refType = 4;
 		};
 		F587869B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qmemarray.h;
-			path = qt/qmemarray.h;
+			path = qmemarray.h;
 			refType = 4;
 		};
 		F587869C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qmetaobject.h;
-			path = qt/qmetaobject.h;
+			path = qmetaobject.h;
 			refType = 4;
 		};
 		F587869D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qmovie.h;
-			path = qt/qmovie.h;
+			path = qmovie.h;
 			refType = 4;
 		};
 		F587869E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qnamespace.h;
-			path = qt/qnamespace.h;
+			path = qnamespace.h;
 			refType = 4;
 		};
 		F587869F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qobject.h;
-			path = qt/qobject.h;
+			path = qobject.h;
 			refType = 4;
 		};
 		F58786A002DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qobjectlist.h;
-			path = qt/qobjectlist.h;
+			path = qobjectlist.h;
 			refType = 4;
 		};
 		F58786A102DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpaintdevice.h;
-			path = qt/qpaintdevice.h;
+			path = qpaintdevice.h;
 			refType = 4;
 		};
 		F58786A202DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpaintdevicemetrics.h;
-			path = qt/qpaintdevicemetrics.h;
+			path = qpaintdevicemetrics.h;
 			refType = 4;
 		};
 		F58786A302DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpainter.h;
-			path = qt/qpainter.h;
+			path = qpainter.h;
 			refType = 4;
 		};
 		F58786A402DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpalette.h;
-			path = qt/qpalette.h;
+			path = qpalette.h;
 			refType = 4;
 		};
 		F58786A502DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpen.h;
-			path = qt/qpen.h;
+			path = qpen.h;
 			refType = 4;
 		};
 		F58786A602DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpixmap.h;
-			path = qt/qpixmap.h;
+			path = qpixmap.h;
 			refType = 4;
 		};
 		F58786A702DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpoint.h;
-			path = qt/qpoint.h;
+			path = qpoint.h;
 			refType = 4;
 		};
 		F58786A802DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpointarray.h;
-			path = qt/qpointarray.h;
+			path = qpointarray.h;
 			refType = 4;
 		};
 		F58786AA02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qprinter.h;
-			path = qt/qprinter.h;
+			path = qprinter.h;
 			refType = 4;
 		};
 		F58786AB02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qptrdict.h;
-			path = qt/qptrdict.h;
+			path = qptrdict.h;
 			refType = 4;
 		};
 		F58786AC02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qptrlist.h;
-			path = qt/qptrlist.h;
+			path = qptrlist.h;
 			refType = 4;
 		};
 		F58786AD02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qptrqueue.h;
-			path = qt/qptrqueue.h;
+			path = qptrqueue.h;
 			refType = 4;
 		};
 		F58786AE02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qptrstack.h;
-			path = qt/qptrstack.h;
+			path = qptrstack.h;
 			refType = 4;
 		};
 		F58786AF02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qptrvector.h;
-			path = qt/qptrvector.h;
+			path = qptrvector.h;
 			refType = 4;
 		};
 		F58786B002DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qpushbutton.h;
-			path = qt/qpushbutton.h;
+			path = qpushbutton.h;
 			refType = 4;
 		};
 		F58786B102DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qradiobutton.h;
-			path = qt/qradiobutton.h;
+			path = qradiobutton.h;
 			refType = 4;
 		};
 		F58786B202DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qrect.h;
-			path = qt/qrect.h;
+			path = qrect.h;
 			refType = 4;
 		};
 		F58786B302DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qregexp.h;
-			path = qt/qregexp.h;
+			path = qregexp.h;
 			refType = 4;
 		};
 		F58786B402DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qregion.h;
-			path = qt/qregion.h;
+			path = qregion.h;
 			refType = 4;
 		};
 		F58786B502DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qscrollview.h;
-			path = qt/qscrollview.h;
+			path = qscrollview.h;
 			refType = 4;
 		};
 		F58786B602DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qsize.h;
-			path = qt/qsize.h;
+			path = qsize.h;
 			refType = 4;
 		};
 		F58786B702DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qsortedlist.h;
-			path = qt/qsortedlist.h;
+			path = qsortedlist.h;
 			refType = 4;
 		};
 		F58786B802DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qstack.h;
-			path = qt/qstack.h;
+			path = qstack.h;
 			refType = 4;
 		};
 		F58786B902DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qstring.h;
-			path = qt/qstring.h;
+			path = qstring.h;
 			refType = 4;
 		};
 		F58786BA02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qstringlist.h;
-			path = qt/qstringlist.h;
+			path = qstringlist.h;
 			refType = 4;
 		};
 		F58786BB02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qstyle.h;
-			path = qt/qstyle.h;
+			path = qstyle.h;
 			refType = 4;
 		};
 		F58786BC02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qstylesheet.h;
-			path = qt/qstylesheet.h;
+			path = qstylesheet.h;
 			refType = 4;
 		};
 		F58786BD02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qtextcodec.h;
-			path = qt/qtextcodec.h;
+			path = qtextcodec.h;
 			refType = 4;
 		};
 		F58786BE02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qtextedit.h;
-			path = qt/qtextedit.h;
+			path = qtextedit.h;
 			refType = 4;
 		};
 		F58786BF02DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qtextstream.h;
-			path = qt/qtextstream.h;
+			path = qtextstream.h;
 			refType = 4;
 		};
 		F58786C002DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qtimer.h;
-			path = qt/qtimer.h;
+			path = qtimer.h;
 			refType = 4;
 		};
 		F58786C102DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qtooltip.h;
-			path = qt/qtooltip.h;
+			path = qtooltip.h;
 			refType = 4;
 		};
 		F58786C202DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qvaluelist.h;
-			path = qt/qvaluelist.h;
+			path = qvaluelist.h;
 			refType = 4;
 		};
 		F58786C302DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qvariant.h;
-			path = qt/qvariant.h;
+			path = qvariant.h;
 			refType = 4;
 		};
 		F58786C402DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qvector.h;
-			path = qt/qvector.h;
+			path = qvector.h;
 			refType = 4;
 		};
 		F58786C502DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qwidget.h;
-			path = qt/qwidget.h;
+			path = qwidget.h;
 			refType = 4;
 		};
 		F58786C602DE3B8601EA4122 = {
 			isa = PBXFileReference;
-			name = qxml.h;
-			path = qt/qxml.h;
+			path = qxml.h;
 			refType = 4;
 		};
 		F58786C702DE3B8601EA4122 = {
@@ -7317,9 +7304,8 @@
 				F587854602DE375901EA4122,
 			);
 			isa = PBXGroup;
-			name = qt;
-			path = kwq;
-			refType = 2;
+			path = qt;
+			refType = 4;
 		};
 		F58C8A07025BD3BC018635CA = {
 			buildRules = (

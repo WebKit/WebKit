@@ -774,18 +774,18 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         comment = true;
                         tag = NoTag;
 
-			// Fix bug 34302 at kde.bugs.org.  Go ahead and treat
-			// <!--> as a valid comment, since both mozilla and IE on windows
-			// can handle this case.  Only do this in quirks mode. -dwh
-			if (*src == '>' && parser->doc()->parseMode() != DocumentImpl::Strict) {
-			  comment = false;
-			  ++src;
-			  cBuffer[cBufferPos++] = src->cell();
-			}
+                        // Fix bug 34302 at kde.bugs.org.  Go ahead and treat
+                        // <!--> as a valid comment, since both mozilla and IE on windows
+                        // can handle this case.  Only do this in quirks mode. -dwh
+                        if (*src == '>' && parser->doc()->parseMode() != DocumentImpl::Strict) {
+                          comment = false;
+                          ++src;
+                          cBuffer[cBufferPos++] = src->cell();
+                        }
 		        else
-			  parseComment(src);
-			  
-			return; // Finished parsing tag!
+                          parseComment(src);
+
+                        return; // Finished parsing tag!
                     }
                     // cuts of high part, is okay
                     cBuffer[cBufferPos++] = src->cell();
@@ -1492,9 +1492,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
 void HTMLTokenizer::end()
 {
     if ( buffer == 0 ) {
-#ifndef APPLE_CHANGES
         emit finishedParsing();
-#endif
         return;
     }
 
@@ -1511,9 +1509,7 @@ void HTMLTokenizer::end()
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     buffer = 0;
-#ifndef APPLE_CHANGES
     emit finishedParsing();
-#endif
 }
 
 void HTMLTokenizer::finish()
