@@ -1,5 +1,15 @@
 2004-04-21  David Hyatt  <hyatt@apple.com>
 
+	Make sure cells that get flexed vertically in tables don't check text children when looking for 
+	percentage height children.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
+2004-04-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for hiermenus bug.  Absolutely positioned images should not contribute to their containing block's
 	max width.  Make sure to disregard positioned elements when computing min/max width.
 	

@@ -1291,7 +1291,7 @@ int RenderTableSection::layoutRows( int toAdd )
             bool cellChildrenFlex = false;
             RenderObject* o = cell->firstChild();
             while (o) {
-                if (o->style()->height().isPercent()) {
+                if (!o->isText() && o->style()->height().isPercent()) {
                     o->setNeedsLayout(true, false);
                     cell->setChildNeedsLayout(true, false);
                     cellChildrenFlex = true;
