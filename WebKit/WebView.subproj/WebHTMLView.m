@@ -1710,7 +1710,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)keyDown:(NSEvent *)event
 {
     BOOL intercepted = [[self _bridge] interceptKeyEvent:event toView:self];
-    if (!intercepted || [event _isTabKeyEvent]) {
+    if (!intercepted || [event _web_isTabKeyEvent]) {
 	[super keyDown:event];
     }
 }

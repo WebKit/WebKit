@@ -1,5 +1,19 @@
 2003-11-20  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+	John and I decided to apply the _web_ prefix to the tab key 
+	event method in the extras file, but I neglected to do this
+	before checking in. Fixed now.
+
+        * Misc.subproj/WebNSEventExtras.h:
+        * Misc.subproj/WebNSEventExtras.m:
+        (-[NSEvent _web_isTabKeyEvent])
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView keyDown:])
+
+2003-11-20  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
 	Fix for this bug:

@@ -7,7 +7,7 @@
 
 @implementation NSEvent (WebExtras)
 
--(BOOL)_isTabKeyEvent
+-(BOOL)_web_isTabKeyEvent
 {
     if ([self type] != NSKeyDown) {
         return NO;

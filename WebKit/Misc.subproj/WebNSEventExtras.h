@@ -7,6 +7,6 @@
 
 @interface NSEvent (WebExtras)
 
--(BOOL)_isTabKeyEvent;
+-(BOOL)_web_isTabKeyEvent;
 
 @end
