@@ -384,7 +384,7 @@ void TextIterator::handleTextBox()
 
             // If we are doing a subrun that doesn't go to the end of the text box,
             // come back again to finish handling this text box; don't advance to the next one.
-            if (m_positionEndOffset < runEnd) {
+            if (m_positionEndOffset < textBoxEnd) {
                 return;
             }
 

@@ -1,3 +1,19 @@
+2004-07-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3705500> REGRESSION (125.8-146): Cmd-E on an 
+        HTML page puts a trailing space on Find pasteboard
+
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::handleTextBox):
+        In the case where a subrun doesn't extend to the end of the text box,
+        the well-commented code was supposed to return from this routine, but
+        the wrong variable was being compared. This would send us through another
+        pass of the loop, which would end up worrying about collapsed space at the
+        end of the current box, even though we only cared about the beginning of the
+        current box.
+
 2004-07-12  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3717982.  Implemented navigator.language!
