@@ -689,7 +689,7 @@ void ContextImp::popScope()
 ProgramNode *Parser::progNode = 0;
 int Parser::sid = 0;
 #ifdef APPLE_CHANGES
-static pthread_mutex_t parserLock = {_PTHREAD_MUTEX_SIG_init, {}};
+static pthread_mutex_t parserLock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId,

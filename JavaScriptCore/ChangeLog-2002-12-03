@@ -1,3 +1,15 @@
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	* JavaScriptCore.pbproj/project.pbxproj: Removed explicit PFE_FILE_C_DIALECTS now that
+	Project Builder handles this automatically. Removed explicit USE_GCC3 since that's implicit
+	now. Also, since this project is all C++, only use WARNING_CFLAGS with flags that are appropriate
+	for C++; don't bother breaking out C vs. C++.
+
+	* kjs/collector.cpp: Now that the system warning is fixed, use PTHREAD_MUTEX_INITIALIZER and
+	PTHREAD_COND_INITIALIZER.
+	* kjs/internal.cpp: Use PTHREAD_MUTEX_INITIALIZER.
+	* kjs/ustring.cpp: Use PTHREAD_ONCE_INIT.
+
 2002-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Made Development build mode mean what Unoptimized used to mean. Removed Unoptimized build mode. 

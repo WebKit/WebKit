@@ -126,9 +126,8 @@ UString::Rep UString::Rep::null = { 0, 0, 1 };
 #endif
 UString UString::null;
 #ifdef APPLE_CHANGES
-// FIXME: fix this once static initializers for pthread_once_t
-pthread_once_t statBufferKeyOnce = {_PTHREAD_ONCE_SIG_init, {}};
-pthread_key_t statBufferKey;
+static pthread_once_t statBufferKeyOnce = PTHREAD_ONCE_INIT;
+static pthread_key_t statBufferKey;
 #else
 static char *statBuffer = 0L;
 #endif

@@ -67,10 +67,8 @@ CollectorBlock::~CollectorBlock()
 }
 
 #ifdef APPLE_CHANGES
-// FIXME: fix these once static initializers for pthread_cond_t and
-// pthread_mutex_t are fixed not to warn.
-static pthread_mutex_t collectorLock = {_PTHREAD_MUTEX_SIG_init, {}};
-static pthread_cond_t collectorCondition = {_PTHREAD_COND_SIG_init, {}};
+static pthread_mutex_t collectorLock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t collectorCondition = PTHREAD_COND_INITIALIZER;
 static unsigned collectorLockCount = 0;
 static pthread_t collectorLockThread;
 #endif
