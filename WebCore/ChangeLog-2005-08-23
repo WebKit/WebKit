@@ -1,3 +1,14 @@
+2003-05-26  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3262849 -- jump to nil in KWQKHTMLPart::searchForLabelsAboveCell 
+	at techbargains.com
+
+        Reviewed by Dave
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::searchForLabelsAboveCell):
+	check for nil result of cellAboveRenderer->element()
+
 2003-05-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3229799, images missing on geocities page.  Residual style

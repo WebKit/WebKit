@@ -317,16 +317,18 @@ NSString *KWQKHTMLPart::searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellE
         HTMLTableCellElementImpl *aboveCell =
             static_cast<HTMLTableCellElementImpl *>(cellAboveRenderer->element());
 
-        // search within the above cell we found for a match
-        for (NodeImpl *n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
-            if (idFromNode(n) == ID_TEXT
-                && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
-            {
-                // For each text chunk, run the regexp
-                QString nodeString = n->nodeValue().string();
-                int pos = regExp->searchRev(nodeString);
-                if (pos >= 0) {
-                    return nodeString.mid(pos, regExp->matchedLength()).getNSString();
+        if (aboveCell) {
+            // search within the above cell we found for a match
+            for (NodeImpl *n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
+                if (idFromNode(n) == ID_TEXT
+                    && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
+                {
+                    // For each text chunk, run the regexp
+                    QString nodeString = n->nodeValue().string();
+                    int pos = regExp->searchRev(nodeString);
+                    if (pos >= 0) {
+                        return nodeString.mid(pos, regExp->matchedLength()).getNSString();
+                    }
                 }
             }
         }
