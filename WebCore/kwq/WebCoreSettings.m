@@ -140,6 +140,16 @@
     return defaultFontSize;
 }
 
+- (void)setFixedFontSize:(float)size
+{
+  fixedFontSize = size;
+}
+
+- (float)fixedFontSize
+{
+  return fixedFontSize;
+}
+
 - (void)setJavaEnabled:(BOOL)enabled
 {
     JavaEnabled = enabled;

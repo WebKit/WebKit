@@ -126,6 +126,7 @@ namespace khtml
 	RenderStyle *styleForElement(DOM::ElementImpl *e, int state = None );
 
         QValueList<int> fontSizes() const { return m_fontSizes; }
+	QValueList<int> fixedFontSizes() const { return m_fixedFontSizes; }
 
 	bool strictParsing;
 	struct Encodedurl {
@@ -135,6 +136,8 @@ namespace khtml
 	} encodedurl;
 
         void computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor);
+	void computeFontSizesFor(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor, QValueList<int>& fontSizes, bool isFixed);
+
     protected:
 
 	/* checks if the complete selector (which can be build up from a few CSSSelector's
@@ -142,6 +145,10 @@ namespace khtml
 	void checkSelector(int selector, DOM::ElementImpl *e);
 	/* checks if the selector matches the given Element */
 	bool checkOneSelector(DOM::CSSSelector *selector, DOM::ElementImpl *e);
+
+	/* This function fixes up the default font size if it detects that the
+	   current generic font family has changed. -dwh */
+	void checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle);
 
 	/* builds up the selectors and properties lists from the CSSStyleSelectorList's */
 	void buildLists();
@@ -216,8 +223,10 @@ namespace khtml
 	const KHTMLSettings *settings;
 	QPaintDeviceMetrics *paintDeviceMetrics;
         QValueList<int>     m_fontSizes;
+	QValueList<int>     m_fixedFontSizes;
 
 	bool fontDirty;
+	bool m_fontSizeSpecified;
 
 	void applyRule(DOM::CSSProperty *prop);
     };

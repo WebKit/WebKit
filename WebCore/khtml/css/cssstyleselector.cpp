@@ -231,6 +231,12 @@ void CSSStyleSelector::clear()
 
 void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,  int zoomFactor)
 {
+    computeFontSizesFor(paintDeviceMetrics, zoomFactor, m_fontSizes, false);
+    computeFontSizesFor(paintDeviceMetrics, zoomFactor, m_fixedFontSizes, true);
+}
+
+void CSSStyleSelector::computeFontSizesFor(QPaintDeviceMetrics* paintDeviceMetrics, int zoomFactor, QValueList<int>& fontSizes, bool isFixed)
+{
 #ifdef APPLE_CHANGES
     // We don't want to scale the settings by the dpi.
     const float toPix = 1;
@@ -240,14 +246,17 @@ void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,
     if (toPix  < 96./72.) toPix = 96./72.;
 #endif
 
-    m_fontSizes.clear();
+    fontSizes.clear();
     const float factor = 1.2;
     float scale = 1.0 / (factor*factor*factor);
     float mediumFontSize;
     float minFontSize;
     if (!khtml::printpainter) {
         scale *= zoomFactor / 100.0;
-        mediumFontSize = settings->mediumFontSize() * toPix;
+	if (isFixed)
+	    mediumFontSize = settings->mediumFixedFontSize() * toPix;
+	else
+	    mediumFontSize = settings->mediumFontSize() * toPix;
         minFontSize = settings->minFontSize() * toPix;
     }
     else {
@@ -257,7 +266,7 @@ void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,
     }
 
     for ( int i = 0; i < MAXFONTSIZES; i++ ) {
-        m_fontSizes << int(KMAX( mediumFontSize * scale + 0.5f, minFontSize));
+        fontSizes << int(KMAX( mediumFontSize * scale + 0.5f, minFontSize));
         scale *= factor;
     }
 }
@@ -373,6 +382,11 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
     else
 	parentStyle = style;
 
+    // This member will be set to true if a rule specifies a font size
+    // explicitly.  If they do this, then we don't need to check for a shift
+    // in default size caused by a change in generic family. -dwh
+    m_fontSizeSpecified = false;
+
     //qDebug("applying properties, count=%d", propsToApply->count() );
 
     // we can't apply style rules without a view() and a part. This
@@ -386,13 +400,16 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 		if ( fontDirty && propsToApply[i]->priority >= (1 << 30) ) {
 		    // we are past the font properties, time to update to the
 		    // correct font
+		    checkForGenericFamilyChange(style, parentStyle);
 		    CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
 		    fontDirty = false;
 		}
                 applyRule( propsToApply[i]->prop );
 	    }
-	    if ( fontDirty )
+	    if ( fontDirty ) {
+	        checkForGenericFamilyChange(style, parentStyle);
 		CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
+	    }
         }
 
         if ( numPseudoProps ) {
@@ -2236,6 +2253,10 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         float size = 0;
         int minFontSize = settings->minFontSize();
 
+	// Set this boolean flag to indicate that the font size was specified
+	// during the course of rule application for this element. -dwh
+	m_fontSizeSpecified = true;
+
         if(parentNode) {
             oldSize = parentStyle->font().pixelSize();
         } else
@@ -2244,6 +2265,11 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             size = oldSize;
         } else if(primitiveValue->getIdent()) {
+	    // keywords are being used.  Pick the correct default
+	    // based off the font family.
+	    QValueList<int>* fontSizes = (fontDef.genericFamily == FontDef::eMonospace) ?
+					 &m_fixedFontSizes : &m_fontSizes;
+	   
             switch(primitiveValue->getIdent())
             {
             case CSS_VAL_XX_SMALL: size = m_fontSizes[0]; break;
@@ -2288,7 +2314,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
 	fontDef.size = int(size);
         if (style->setFontDef( fontDef ))
-	fontDirty = true;
+	    fontDirty = true;
         return;
     }
 
@@ -2457,28 +2483,39 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             if(!val->primitiveType() == CSSPrimitiveValue::CSS_STRING) return;
             QString face = static_cast<FontFamilyValueImpl *>(val)->fontName();
 	    if ( !face.isEmpty() ) {
-		if(face == "serif") {
+	        if(face == "serif") {
 		    face = settings->serifFontName();
+		    fontDef.setGenericFamily(FontDef::eSerif);
 		}
 		else if(face == "sans-serif") {
 		    face = settings->sansSerifFontName();
+		    fontDef.setGenericFamily(FontDef::eSansSerif);
 		}
 		else if( face == "cursive") {
 		    face = settings->cursiveFontName();
+		    fontDef.setGenericFamily(FontDef::eCursive);
 		}
 		else if( face == "fantasy") {
 		    face = settings->fantasyFontName();
+		    fontDef.setGenericFamily(FontDef::eFantasy);
 		}
 		else if( face == "monospace") {
 		    face = settings->fixedFontName();
+		    fontDef.setGenericFamily(FontDef::eMonospace);
 		}
 		else if( face == "konq_default") {
+		    // Treat this as though it's a generic family, since we will want
+		    // to reset to default sizes when we encounter this (and inherit
+		    // from an enclosing different family like monospace.
 		    face = settings->stdFontName();
+		    fontDef.setGenericFamily(FontDef::eStandard);
 		}
+
 		if ( !face.isEmpty() ) {
 		    fontDef.family = face;
-		    if (style->setFontDef( fontDef ))
-			fontDirty = true;
+		    if (style->setFontDef( fontDef )) {
+		      fontDirty = true;
+		    }
 		}
                 return;
 	    }
@@ -2646,6 +2683,40 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     default:
         return;
     }
+}
+
+
+void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
+{
+  if (m_fontSizeSpecified || !aParentStyle) {
+    m_fontSizeSpecified = false;
+    return;
+  }
+
+  const FontDef& childFont = aStyle->htmlFont().fontDef;
+  const FontDef& parentFont = aParentStyle->htmlFont().fontDef;
+
+  if (childFont.genericFamily == parentFont.genericFamily)
+    return;
+
+  // For now, lump all families but monospace together.
+  if (childFont.genericFamily != FontDef::eMonospace &&
+      parentFont.genericFamily != FontDef::eMonospace)
+    return;
+
+  // We know the parent is monospace or the child is monospace, and that font
+  // size was unspecified.  We want to alter our font size to use the correct
+  // "medium" font for our family.
+  float size = 0;
+  int minFontSize = settings->minFontSize();
+  size = (childFont.genericFamily == FontDef::eMonospace) ? m_fixedFontSizes[3] : m_fontSizes[3];
+  int isize = (int)size;
+  if (isize < minFontSize)
+    isize = minFontSize;
+  
+  FontDef newFontDef(childFont);
+  newFontDef.size = isize;
+  aStyle->setFontDef(newFontDef);
 }
 
 } // namespace khtml
