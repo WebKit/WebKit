@@ -57,6 +57,7 @@ class HTMLFormElement;
 class DOMString;
 class HTMLGenericFormElementImpl;
 class HTMLOptionElementImpl;
+class HTMLImageLoader;
 
 // -------------------------------------------------------------------------
 
@@ -359,6 +360,8 @@ protected:
 #if APPLE_CHANGES
     short     m_maxResults;
 #endif
+
+    HTMLImageLoader* m_imageLoader;
 
     typeEnum m_type : 4;
     bool m_checked : 1;

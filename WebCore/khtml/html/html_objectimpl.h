@@ -129,7 +129,7 @@ public:
     QString url;
     QString classId;
     bool needWidgetUpdate;
-    HTMLImageLoader m_imageLoader;
+    HTMLImageLoader* m_imageLoader;
 };
 
 // -------------------------------------------------------------------------
