@@ -1,5 +1,18 @@
 2004-10-21  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by darin
+	
+	Clean up the inline run function so that it doesn't return incorrect answers when making children non-inline.
+	
+	<rdar://problem/3848724> REGRESSION (166-168u): RenderText::layout called, firing assertion that kills Mail
+	<rdar://problem/3848357> RenderText::layout called, firing assertion that kills Safari (www.apple.com/downloads/macosx)
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::getInlineRun):
+        (khtml::RenderBlock::makeChildrenNonInline):
+
+2004-10-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3810389, crash because of continuation() craziness.  Revert back to the old behavior of
 	making sure that all line boxes get deleted and recreated when inlines are split because of a block.
 	

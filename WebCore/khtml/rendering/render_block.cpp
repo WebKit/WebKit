@@ -213,7 +213,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
         removeLeftoverAnonymousBoxes();
 }
 
-static void getInlineRun(RenderObject* start, RenderObject* stop,
+static void getInlineRun(RenderObject* start, RenderObject* boundary,
                          RenderObject*& inlineRunStart,
                          RenderObject*& inlineRunEnd)
 {
@@ -225,22 +225,36 @@ static void getInlineRun(RenderObject* start, RenderObject* stop,
     // We skip any non-inlines we encounter as long as we haven't found any
     // inlines yet.
     //
-    // |stop| indicates a non-inclusive stop point.  Regardless of whether |stop|
-    // is inline or not, we will not include it.  It's as though we encountered
+    // |boundary| indicates a non-inclusive boundary point.  Regardless of whether |boundary|
+    // is inline or not, we will not include it in a run with inlines before it.  It's as though we encountered
     // a non-inline.
-    inlineRunStart = inlineRunEnd = 0;
-    for (RenderObject* curr = start;
-         curr && curr != stop && (!inlineRunStart || curr->isInline() || curr->isFloatingOrPositioned());
-         curr = curr->nextSibling()) {
-        if (inlineRunStart)
+    
+    // Start by skipping as many non-inlines as we can.
+    RenderObject * curr = start;
+    bool sawInline;
+    do {
+        while (curr && !(curr->isInline() || curr->isFloatingOrPositioned()))
+            curr = curr->nextSibling();
+        
+        inlineRunStart = inlineRunEnd = curr;
+        
+        if (!curr)
+            return; // No more inline children to be found.
+        
+        sawInline = curr->isInline();
+        
+        curr = curr->nextSibling();
+        while (curr && (curr->isInline() || curr->isFloatingOrPositioned()) && (curr != boundary)) {
             inlineRunEnd = curr;
-        else if (curr->isInline())
-            inlineRunStart = inlineRunEnd = curr;
-    }
+            if (curr->isInline())
+                sawInline = true;
+            curr = curr->nextSibling();
+        }
+    } while (!sawInline);
 }
 
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
-{
+{    
     // makeChildrenNonInline takes a block whose children are *all* inline and it
     // makes sure that inline children are coalesced under anonymous
     // blocks.  If |insertionPoint| is defined, then it represents the insertion point for
@@ -275,6 +289,11 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
         }
         box->appendChildNode(removeChildNode(inlineRunEnd));
     }
+
+#ifndef NDEBUG
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling())
+        KHTMLAssert(!c->isInline());
+#endif
 }
 
 void RenderBlock::removeChild(RenderObject *oldChild)
