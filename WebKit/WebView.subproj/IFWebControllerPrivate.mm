@@ -1,7 +1,8 @@
 /*	
     IFWebControllerPrivate.mm
-	Copyright 2001, 2002, Apple, Inc. All rights reserved.
+	Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
+
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFStandardPanelsPrivate.h>

@@ -1,4 +1,5 @@
-/*	IFHTMLView.mm
+/*	
+    IFHTMLView.mm
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
@@ -112,7 +113,7 @@
 - (void)provisionalDataSourceCommitted: (IFWebDataSource *)dataSource 
 {
     IFHTMLViewPrivate *data = _private;
-    IFWebView *webView = (IFWebView *)[self _IF_superviewWithName:@"IFWebView"];
+    IFWebView *webView = [self _IF_parentWebView];
     id frameScrollView = [webView frameScrollView];
     
     data->provisionalWidget->setView (frameScrollView);

@@ -1,3 +1,34 @@
+2002-06-15  Richard Williamson  <rjw@apple.com>
+
+	* Misc.subproj/IFNSViewExtras.h:
+	* Misc.subproj/IFNSViewExtras.m:
+	(-[NSView _IF_superviewWithName:]):
+	(-[NSView _IF_parentWebView]):
+	    Replaced use of _IF_superviewWithName w/ safer _IF_parentWebView.
+	* Plugins.subproj/IFNullPluginView.mm:
+	(-[IFNullPluginView drawRect:]):
+	    Replaced use of _IF_superviewWithName w/ safer _IF_parentWebView.
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]):
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]):
+        Call _receiveProgress instead of directly calling handler.	    
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView start]):
+	    Replaced use of _IF_superviewWithName w/ safer _IF_parentWebView.
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge loadURL:attributes:flags:inFrame:withParent:]):
+	    Handle changing top frame correctly.  Parent may be nil.
+	(-[IFWebCoreBridge didFinishLoadingWithHandle:]):
+	    Added non-terminal error case.
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView provisionalDataSourceCommitted:]):
+	    Replaced use of _IF_superviewWithName w/ safer _IF_parentWebView.
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	* WebView.subproj/IFWebControllerPrivate.mm:
+        Comment changes.
+        
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFWebCoreBridge.mm:

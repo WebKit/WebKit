@@ -1,10 +1,7 @@
-//
-//  IFWebCoreBridge.mm
-//  WebKit
-//
-//  Created by Darin Adler on Thu Jun 13 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    IFWebCoreBridge.mm
+	Copyright (c) 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebKit/IFWebCoreBridge.h>
 
@@ -97,7 +94,11 @@
 {
     IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
     IFWebCoreBridge *parentPrivate = (IFWebCoreBridge *)parent;
-    [newDataSource _setParent:parentPrivate->dataSource];
+    // Might be loading top frame.  Parent may be nil.
+    if (parentPrivate)
+        [newDataSource _setParent:parentPrivate->dataSource];
+    else
+        [newDataSource _setParent:nil];
     [frame setProvisionalDataSource:newDataSource];
     [newDataSource release];
     [frame startLoading];
@@ -214,6 +215,12 @@
 - (void)didFinishLoadingWithHandle:(IFURLHandle *)handle
 {
     [self receivedProgressWithHandle:handle];
+
+    IFError *nonTerminalError = [handle error];
+    if (nonTerminalError){
+        [self didFailToLoadWithHandle:handle error:nonTerminalError];
+    }
+
     [[self controller] _didStopLoading:[handle url]];
 }
 

@@ -1,16 +1,15 @@
-//
-//  NSViewExtras.h
-//  WebKit
-//
-//  Created by Chris Blumenberg on Tue Jun 11 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*
+    IFNSViewExtras.h
+	Copyright (c) 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <AppKit/AppKit.h>
 
+@class IFWebView;
 
 @interface NSView (IFExtensions)
 
 - (NSView *) _IF_superviewWithName:(NSString *)viewName;
+- (IFWebView *)_IF_parentWebView;
 
 @end

@@ -443,7 +443,7 @@ static char *newCString(NSString *string)
     [eventSender sendNullEvents];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     
-    id webView = [self _IF_superviewWithName:@"IFWebView"];
+    id webView = [self _IF_parentWebView];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];

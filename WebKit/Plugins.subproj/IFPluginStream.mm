@@ -1,14 +1,15 @@
 /*	
     IFPluginStream.m
-	Copyright 2002, Apple, Inc. All rights reserved.
+	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFPluginStream.h"
-#import <WebFoundation/WebFoundation.h>
-#import <WebKitDebug.h>
 #import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFPluginStream.h>
 #import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebController.h>
+#import <WebKitDebug.h>
+
+#import <WebFoundation/WebFoundation.h>
+
 
 static NSString *getCarbonPath(NSString *posixPath);
 
@@ -134,7 +135,7 @@ static NSString *getCarbonPath(NSString *posixPath);
         offset += [data length];
     }
      
-    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
 }
 
@@ -165,7 +166,7 @@ static NSString *getCarbonPath(NSString *posixPath);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify\n");
     }
     
-    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+    [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
     
     [self stop];
@@ -174,7 +175,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progress]
+    [[view webController] _receivedProgress:[IFLoadProgress progress]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
     
     [self stop];
@@ -187,7 +188,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     
-    [[[view webController] resourceProgressHandler] receivedError: result forResourceHandle: sender 
+    [[view webController] _receivedError: result forResourceHandle: sender 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     

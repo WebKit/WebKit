@@ -1,7 +1,6 @@
 /*	
     IFMainURLHandleClient.mm
-	    
-    Copyright 2001, Apple, Inc. All rights reserved.
+    Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/IFDocument.h>

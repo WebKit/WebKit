@@ -1,12 +1,10 @@
-//
-//  NSViewExtras.m
-//  WebKit
-//
-//  Created by Chris Blumenberg on Tue Jun 11 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*
+    IFNSViewExtras.mm
+	Copyright (c) 2002, Apple, Inc. All rights reserved.
+*/
 
-#import "IFNSViewExtras.h"
+#import <WebKit/IFNSViewExtras.h>
+#import <WebKit/IFWebView.h>
 
 
 @implementation NSView (IFExtensions)
@@ -22,6 +20,15 @@
             return view;
         }
     }
+    return nil;
+}
+
+- (IFWebView *)_IF_parentWebView
+{
+    IFWebView *view = (IFWebView *)[[[self superview] superview] superview];
+    
+    if ([view isKindOfClass: [IFWebView class]])
+        return view;
     return nil;
 }
 
