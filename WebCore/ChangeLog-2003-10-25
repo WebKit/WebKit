@@ -1,5 +1,9 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQTextEdit.mm: (QTextEdit::sizeWithColumnsAndRows): Made it compile.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3306041 -- Airborne tracking number field too narrow, tracking doesn't work (textare col property)

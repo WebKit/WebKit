@@ -132,5 +132,6 @@ void QTextEdit::setAlignment(AlignmentFlags alignment)
 QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
 {
     KWQTextArea *textArea = getView();
-    return [textArea sizeWithColumns:numColumns rows:numRows];
+    NSSize size = [textArea sizeWithColumns:numColumns rows:numRows];
+    return QSize((int)ceil(size.width), (int)ceil(size.height));
 }
