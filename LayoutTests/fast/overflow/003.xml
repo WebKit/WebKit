@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="resources/rss.css" type="text/css"?>
-<rssfake version="0.91" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<fake version="0.91" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <channel>
     <title>scottandrew.com</title>
     <link>http://www.scottandrew.com</link>
@@ -86,4 +86,4 @@
     </item>
     <xhtml:script src="rss.js" type="text/javascript"/>
   </channel>
-</rssfake>
+</fake>
