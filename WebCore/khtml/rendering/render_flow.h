@@ -43,8 +43,8 @@ class RenderFlow : public RenderBox
 {
 public:
     RenderFlow(DOM::NodeImpl* node)
-      : RenderBox(node)
-    { m_continuation = 0; m_firstLineBox = 0; m_lastLineBox = 0; }
+      : RenderBox(node), m_lineHeight(-1)
+    { m_continuation = 0; m_firstLineBox = 0; m_lastLineBox = 0;}
 
     virtual RenderFlow* continuation() const { return m_continuation; }
     void setContinuation(RenderFlow* c) { m_continuation = c; }

@@ -45,6 +45,9 @@ public:
     virtual unsigned int width(unsigned int, unsigned int, const Font *) const { return 0; }
     virtual unsigned int width( unsigned int, unsigned int, bool) const { return 0; }
 
+    virtual short lineHeight(bool firstLine, bool isRootLineBox=false) const;
+    virtual void setStyle(RenderStyle* _style);
+
     // overrides
     virtual void calcMinMaxWidth() {}
     virtual short minWidth() const { return 0; }
@@ -67,6 +70,8 @@ private:
     int m_x;
     int m_y;
     int m_height;
+    mutable short m_lineHeight;
+
 };
 
 }

@@ -25,7 +25,8 @@ using namespace khtml;
 
 
 RenderBR::RenderBR(DOM::NodeImpl* node)
-    : RenderText(node, new DOM::DOMStringImpl(QChar('\n'))), m_x(0), m_y(0), m_height(0)
+    : RenderText(node, new DOM::DOMStringImpl(QChar('\n'))), m_x(0), m_y(0), m_height(0),
+      m_lineHeight(-1)
 {
 }
 
@@ -45,6 +46,35 @@ void RenderBR::position(InlineBox* box, int from, int len, bool reverse)
     s->remove();
     s->detach(renderArena());
     m_firstTextBox = m_lastTextBox = 0;
+}
+
+short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
+{
+    if (firstLine) {
+        RenderStyle* s = style(firstLine);
+        Length lh = s->lineHeight();
+        if (lh.value < 0) {
+            if (s == style()) {
+                if (m_lineHeight == -1)
+                    m_lineHeight = RenderObject::lineHeight(false);
+                return m_lineHeight;
+            }
+            return s->fontMetrics().lineSpacing();
+	}
+        if (lh.isPercent())
+            return lh.minWidth(s->font().pixelSize());
+        return lh.value;
+    }
+    
+    if (m_lineHeight == -1)
+        m_lineHeight = RenderObject::lineHeight(false);
+    return m_lineHeight;
+}
+
+void RenderBR::setStyle(RenderStyle* _style)
+{
+    RenderText::setStyle(_style);
+    m_lineHeight = -1;
 }
 
 FindSelectionResult RenderBR::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
