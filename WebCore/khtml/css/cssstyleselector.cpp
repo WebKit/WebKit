@@ -476,7 +476,11 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     if ((style->display() == INLINE || style->display() == COMPACT || style->display() == RUN_IN) &&
         (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE))
         style->setDisplay(BLOCK);
-    
+
+    // Finally update our text decorations in effect.
+    style->addToTextDecorationsInEffect(style->textDecoration());
+
+    // Now return the style.
     return style;
 }
 
@@ -2831,8 +2835,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!parentNode) return;
-            style->addToTextDecorationsInEffect(parentStyle->textDecorationsInEffect());
-            style->setTextDecoration(parentStyle->textDecorationsInEffect());
+            style->setTextDecoration(parentStyle->textDecoration());
             return;
         }
         int t = TDNONE;
@@ -2865,8 +2868,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 	    }
         }
 
-	style->addToTextDecorationsInEffect(t);
-        style->setTextDecoration(t);
+	style->setTextDecoration(t);
 	break;
     }
     case CSS_PROP__KONQ_FLOW_MODE:

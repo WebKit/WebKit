@@ -105,7 +105,7 @@ void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
 
     // Get the text decoration colors.
     QColor underline, overline, linethrough;
-    object()->getTextDecorationColors(deco, underline, overline, linethrough);
+    object()->getTextDecorationColors(deco, underline, overline, linethrough, true);
     
     // Use a special function for underlines to get the positioning exactly right.
     if (deco & UNDERLINE) {
@@ -130,7 +130,7 @@ void TextRun::paintDecoration( QPainter *pt, int _tx, int _ty, int decoration)
     int width = m_width - 1;
 
     QColor underline, overline, linethrough;
-    object()->getTextDecorationColors(decoration, underline, overline, linethrough);
+    object()->getTextDecorationColors(decoration, underline, overline, linethrough, true);
     
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;

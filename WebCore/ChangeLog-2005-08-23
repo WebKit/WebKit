@@ -1,5 +1,20 @@
 2003-02-26  David Hyatt  <hyatt@apple.com>
 
+	Fix numerous regressions with text-decoration in quirks mode and
+	also fixed a bug where text-decoration:none is not being honored
+	on links.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getTextDecorationColors):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (TextRun::paintDecoration):
+
+2003-02-26  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3179109. containingBlock() had a big old bug in it.
 	For ABSOLUTE positioned elements, it would return inline relative
 	positioned parents (when it should only be returning blocks).

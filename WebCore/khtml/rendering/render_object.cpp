@@ -1407,7 +1407,7 @@ InlineBox* RenderObject::createInlineBox()
 }
 
 void RenderObject::getTextDecorationColors(int& decorations, QColor& underline, QColor& overline,
-                                           QColor& linethrough)
+                                           QColor& linethrough, bool quirksMode)
 {
     int newDecorations = decorations;
     RenderObject* curr = this;
@@ -1430,9 +1430,16 @@ void RenderObject::getTextDecorationColors(int& decorations, QColor& underline, 
         curr = curr->parent();
         if (curr && curr->isRenderBlock() && curr->continuation())
             curr = curr->continuation();
-    } while (curr && newDecorations);
+    } while (curr && newDecorations && (!quirksMode || !curr->element() ||
+                                        (curr->element()->id() != ID_A && curr->element()->id() != ID_FONT)));
 
-    if (newDecorations)
-        // Null out everything that's left.
-        decorations &= ~newDecorations;
+    // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
+    if (newDecorations && curr) {
+        if (newDecorations & UNDERLINE)
+            underline = curr->style()->color();
+        if (newDecorations & OVERLINE)
+            overline = curr->style()->color();
+        if (newDecorations & LINE_THROUGH)
+            linethrough = curr->style()->color();
+    }        
 }
