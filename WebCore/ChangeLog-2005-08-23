@@ -1,3 +1,17 @@
+2005-02-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3949790> hitting return after pasted styled line results in extra content getting the style
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): In the case
+	where the start block is the root, insert the newly created DIV at
+	the end of the root block instead of after the last sibling in the
+	start node, since the start node could be inside other
+	style-affecting nodes and we don't want to reparent its cousins
+	into that.
+
 2005-02-23  David Harrison  <harrison@apple.com>
 
         Reviewed by Vicki.

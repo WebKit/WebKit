@@ -3286,12 +3286,8 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Put the added block in the tree.
     if (startBlockIsRoot) {
-        NodeImpl *lastSibling = pos.node();
-        while (lastSibling->nextSibling())
-            lastSibling = lastSibling->nextSibling();
-        insertNodeAfter(blockToInsert, lastSibling);
-    }
-    else {
+        appendNode(blockToInsert, startBlock);
+    } else {
         insertNodeAfter(blockToInsert, startBlock);
     }
 
@@ -3321,7 +3317,7 @@ void InsertParagraphSeparatorCommand::doApply()
     while (leftParent && leftParent != startBlock) {
         parent = parent->parentNode();
         NodeImpl *n = leftParent->nextSibling();
-        while (n) {
+        while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);
             appendNode(n, parent);
