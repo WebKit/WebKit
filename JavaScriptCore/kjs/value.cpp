@@ -76,8 +76,8 @@ void ValueImp::mark()
   if (conservativeMark) {
     _flags |= VI_CONSERVATIVE_MARKED;
   } else {
-    if (!(_flags | VI_CONSERVATIVE_MARKED)) {
-      printf("Conservative collector missed ValueImp 0x%x.\n", (int)this);
+    if (!(_flags & VI_CONSERVATIVE_MARKED)) {
+      printf("Conservative collector missed ValueImp 0x%x. refcount %d, protect count %d\n", (int)this, refcount, ProtectedValues::getProtectCount(this));
     }
     _flags |= VI_MARKED;
   }

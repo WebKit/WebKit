@@ -59,8 +59,17 @@ namespace KJS {
     public:
       ProtectedValue() : Value() {}
       ProtectedValue(const Value&v)  : Value(v) { gcProtectNullTolerant(v.imp()); };
+      ProtectedValue(const ProtectedValue&v)  : Value(v) { gcProtectNullTolerant(v.imp()); };
       ~ProtectedValue() { gcUnprotectNullTolerant(imp());}
       ProtectedValue& operator=(const Value &v)
+	{ 
+	  ValueImp *old = imp();
+	  Value::operator=(v); 
+	  gcProtectNullTolerant(v.imp());
+	  gcUnprotectNullTolerant(old); 
+	  return *this;
+	}
+      ProtectedValue& operator=(const ProtectedValue &v)
 	{ 
 	  ValueImp *old = imp();
 	  Value::operator=(v); 
@@ -76,9 +85,18 @@ namespace KJS {
     class ProtectedObject : public Object {
     public:
       ProtectedObject() : Object() {}
-      ProtectedObject(const Object&o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
+      ProtectedObject(const Object &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
+      ProtectedObject(const ProtectedObject &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
       ~ProtectedObject() { gcUnprotectNullTolerant(imp());}
       ProtectedObject& operator=(const Object &o)
+	{ 
+	  ValueImp *old = imp();
+	  Object::operator=(o); 
+	  gcProtectNullTolerant(o.imp());
+	  gcUnprotectNullTolerant(old); 
+	  return *this;
+	}
+      ProtectedObject& operator=(const ProtectedObject &o)
 	{ 
 	  ValueImp *old = imp();
 	  Object::operator=(o); 

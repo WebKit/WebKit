@@ -1,3 +1,25 @@
+2004-12-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3908017> REGRESSION (172-173): assertion in ObjectImp::construct trying to create JS error (24hourfitness.com)
+
+	The fix was to implement copy constructor and assignment operator,
+	the ones that worked on the base class did not replace the
+	defaults apparently!
+	
+        * kjs/protect.h:
+        (KJS::ProtectedValue::ProtectedValue):
+        (KJS::ProtectedValue::operator=):
+        (KJS::ProtectedObject::ProtectedObject):
+        (KJS::ProtectedObject::operator=):
+        
+	Also fixed a bug in the GC test mode that compares the results of
+	the old collector and the new collector.
+
+	* kjs/value.cpp:
+        (ValueImp::mark):
+
 === Safari-173 ===
 
 2004-11-23  Richard Williamson   <rjw@apple.com>
