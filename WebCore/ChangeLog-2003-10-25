@@ -1,3 +1,11 @@
+2003-09-01  John Sullivan  <sullivan@apple.com>
+
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLine):
+	Removed the ERROR that warns of the CG memory trashing bug, now
+	that we are enough builds away from it that it is (almost?) never
+	reported anymore.
+
 === Safari-96 ===
 
 2003-08-29  Maciej Stachowiak  <mjs@apple.com>

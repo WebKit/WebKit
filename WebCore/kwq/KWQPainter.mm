@@ -255,8 +255,6 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     [graphicsContext setShouldAntialias: NO];
     
     if (patWidth) {
-	ERROR("Drawing a dashed line. This may trigger a CoreGraphics memory trasher.");
-
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
         if (x1 == x2) {
