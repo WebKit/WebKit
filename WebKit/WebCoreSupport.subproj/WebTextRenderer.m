@@ -639,6 +639,12 @@ static BOOL alwaysUseATSU = NO;
     return 4;
 }
 
+// the number of transparent pixels after the dot
+- (int)misspellingLinePatternGapWidth
+{
+    return 1;
+}
+
 - (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width
 {
     // Constants for pattern color
@@ -659,13 +665,18 @@ static BOOL alwaysUseATSU = NO;
         spellingPatternColor = [color retain];
     }
 
-    // Make sure to draw only complete dots
+    // Make sure to draw only complete dots.
     // NOTE: Code here used to shift the underline to the left and increase the width
     // to make sure everything gets underlined, but that results in drawing out of
-    // bounds, e.g. when at the edge of a view.
-    if (usingDot)
-        width -= (width % patternWidth);
-
+    // bounds (e.g. when at the edge of a view) and could make it appear that the
+    // space between adjacent misspelled words was underlined.
+    if (usingDot) {
+        // allow slightly more considering that the pattern ends with a transparent pixel
+        int widthMod = width % patternWidth;
+        if (patternWidth - widthMod > [self misspellingLinePatternGapWidth])
+            width -= widthMod;
+    }
+    
     // Compute the appropriate phase relative to the top level view in the window.
     NSPoint originInWindow = [[NSView focusView] convertPoint:point toView:nil];
     // WebCore may translate the focus, and thus need an extra phase correction
