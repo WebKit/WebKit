@@ -1,3 +1,21 @@
+2003-11-10  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3478765.  Use ICU to access unicode properties.
+	Fixed 3478831.  Unicode property/conversion functions should be 32 bit savvy.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/KWQChar.mm:
+        (QChar::lower):
+        (QChar::upper):
+        (QChar::mirroredChar):
+        * kwq/KWQString.h:
+        (QChar::direction):
+        * kwq/WebCoreUnicode.cpp:
+        * kwq/WebCoreUnicode.h:
+
 2003-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3478781>: drag image of selected text and images doesn't include images

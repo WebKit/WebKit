@@ -60,12 +60,12 @@ bool QChar::isPunct() const
 
 QChar QChar::lower() const
 {
-    return WebCoreUnicodeLowerFunction(c);
+    return (UniChar)WebCoreUnicodeLowerFunction(c);
 }
 
 QChar QChar::upper() const
 {
-    return WebCoreUnicodeUpperFunction(c);
+    return (UniChar)WebCoreUnicodeUpperFunction(c);
 }
 
 bool QChar::mirrored() const
@@ -75,7 +75,7 @@ bool QChar::mirrored() const
 
 QChar QChar::mirroredChar() const
 {
-    return QChar(WebCoreUnicodeMirroredCharFunction(c));
+    return QChar((UniChar)WebCoreUnicodeMirroredCharFunction(c));
 }
 
 int QChar::digitValue() const

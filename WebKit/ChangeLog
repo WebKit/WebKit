@@ -1,3 +1,27 @@
+2003-11-10  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3478765.  Use ICU to access unicode properties.
+	Fixed 3478831.  Unicode property/conversion functions should be 32 bit savvy.
+	Fixed 3478885.  Remove dead arabic shaping code
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeDigitValue):
+        (_unicodeDirection):
+        (_unicodeMirrored):
+        (_unicodeMirroredChar):
+        (_unicodeLower):
+        (_unicodeUpper):
+        (WebKitInitializeUnicode):
+        (shapeForNextCharacter):
+        (initializeCharacterShapeIterator):
+        * Misc.subproj/WebUnicodeTables.m:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForNextCharacter):
+        (fontContainsString):
+
 2003-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3478351>: Safari: URL Alias on Dock failed to open the 2byte URL

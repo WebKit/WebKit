@@ -22,6 +22,8 @@
 
 #import <float.h>
 
+#import <unicode/uchar.h>
+
 // Macros
 #define SPACE 0x0020
 
@@ -173,8 +175,6 @@ struct CharacterWidthIterator
 static inline BOOL isControlCharacter(UniChar c);
 static inline BOOL isAlternateSpace(UniChar c);
 static inline BOOL isSpace(UniChar c);
-static inline UniChar toUpper(UniChar c);
-static inline BOOL isUpper(UniChar c);
 
 static inline BOOL isControlCharacter(UniChar c)
 {
@@ -1849,10 +1849,10 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
 
     // If small-caps convert lowercase to upper.
     if (renderer->isSmallCapsRenderer) {
-        if (!isUpper(c)) {
+        if (!u_isUUppercase(c)) {
             // Only use small cap font if the the uppercase version of the character
             // is different than the lowercase.
-            UniChar newC = toUpper(c);
+            UniChar newC = u_toupper(c);
             if (newC != c) {
                 useSmallCapsFont = YES;
                 c = newC;
@@ -2089,14 +2089,4 @@ static inline BOOL fontContainsString (NSFont *font, NSString *string)
         return YES;
     }
     return NO;
-}
-
-static inline UniChar toUpper(UniChar c)
-{
-    return WebCoreUnicodeUpperFunction(c);
-}
-
-static inline BOOL isUpper(UniChar c)
-{
-    return (WebCoreUnicodeCategoryFunction(c) == Letter_Uppercase);
 }

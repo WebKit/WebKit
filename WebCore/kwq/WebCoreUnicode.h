@@ -24,51 +24,19 @@
  */
 #include <CoreFoundation/CoreFoundation.h>
 
+#define HAVE_ICU_LIBRARY 1
+
+#if HAVE_ICU_LIBRARY
+#include <unicode/utf.h>
+#endif
+
+#if !HAVE_ICU_LIBRARY
+typedef UInt32 UChar32;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-    typedef enum
-    {
-        NoCategory,
-
-        Mark_NonSpacing,          //   Mn
-        Mark_SpacingCombining,    //   Mc
-        Mark_Enclosing,           //   Me
-
-        Number_DecimalDigit,      //   Nd
-        Number_Letter,            //   Nl
-        Number_Other,             //   No
-
-        Separator_Space,          //   Zs
-        Separator_Line,           //   Zl
-        Separator_Paragraph,      //   Zp
-
-        Other_Control,            //   Cc
-        Other_Format,             //   Cf
-        Other_Surrogate,          //   Cs
-        Other_PrivateUse,         //   Co
-        Other_NotAssigned,        //   Cn
-
-        Letter_Uppercase,         //   Lu
-        Letter_Lowercase,         //   Ll
-        Letter_Titlecase,         //   Lt
-        Letter_Modifier,          //   Lm
-        Letter_Other,             //   Lo
-
-        Punctuation_Connector,    //   Pc
-        Punctuation_Dash,         //   Pd
-        Punctuation_Open,         //   Ps
-        Punctuation_Close,        //   Pe
-        Punctuation_InitialQuote, //   Pi
-        Punctuation_FinalQuote,   //   Pf
-        Punctuation_Other,        //   Po
-
-        Symbol_Math,              //   Sm
-        Symbol_Currency,          //   Sc
-        Symbol_Modifier,          //   Sk
-        Symbol_Other              //   So
-    } WebCoreUnicodeCategory;
 
     typedef enum
     {
@@ -98,72 +66,13 @@ extern "C" {
         DirectionBN	// Boundary neutral (type of RLE etc after explicit levels)
     } WebCoreUnicodeDirection;
 
-    typedef enum 
-    {
-        DecompositionSingle,
-        DecompositionCanonical,
-        DecompositionFont,
-        DecompositionNoBreak,
-        DecompositionInitial,
-        DecompositionMedial,
-        DecompositionFinal,
-        DecompositionIsolated,
-        DecompositionCircle,
-        DecompositionSuper,
-        DecompositionSub,
-        DecompositionVertical,
-        DecompositionWide,
-        DecompositionNarrow,
-        DecompositionSmall,
-        DecompositionSquare,
-        DecompositionCompat,
-        DecompositionFraction
-    } WebCoreUnicodeDecomposition;
 
-    typedef enum
-    {
-        JoiningOther,
-        JoiningDual,
-        JoiningRight,
-        JoiningCausing
-    } WebCoreUnicodeJoining;
-
-    typedef enum
-    {
-        Combining_BelowLeftAttached       = 200,
-        Combining_BelowAttached           = 202,
-        Combining_BelowRightAttached      = 204,
-        Combining_LeftAttached            = 208,
-        Combining_RightAttached           = 210,
-        Combining_AboveLeftAttached       = 212,
-        Combining_AboveAttached           = 214,
-        Combining_AboveRightAttached      = 216,
-
-        Combining_BelowLeft               = 218,
-        Combining_Below                   = 220,
-        Combining_BelowRight              = 222,
-        Combining_Left                    = 224,
-        Combining_Right                   = 226,
-        Combining_AboveLeft               = 228,
-        Combining_Above                   = 230,
-        Combining_AboveRight              = 232,
-
-        Combining_DoubleBelow             = 233,
-        Combining_DoubleAbove             = 234,
-        Combining_IotaSubscript           = 240
-    } WebCoreUnicodeCombiningClass;
-
-    extern int (*WebCoreUnicodeDigitValueFunction)(UniChar c);
-    extern WebCoreUnicodeCategory (*WebCoreUnicodeCategoryFunction)(UniChar c);
-    extern WebCoreUnicodeDirection (*WebCoreUnicodeDirectionFunction)(UniChar c);
-    extern WebCoreUnicodeJoining (*WebCoreUnicodeJoiningFunction)(UniChar c);
-    extern WebCoreUnicodeDecomposition (*WebCoreUnicodeDecompositionTagFunction)(UniChar c);
-    extern bool (*WebCoreUnicodeMirroredFunction)(UniChar c);
-    extern UniChar (*WebCoreUnicodeMirroredCharFunction)(UniChar c);
-    extern WebCoreUnicodeCombiningClass (*WebCoreUnicodeCombiningClassFunction)(UniChar c);
-    extern UniChar (*WebCoreUnicodeLowerFunction)(UniChar c);
-    extern UniChar (*WebCoreUnicodeUpperFunction)(UniChar c);
-    extern const unsigned char * const *WebCoreDirectionInfo;
+    extern int (*WebCoreUnicodeDigitValueFunction)(UChar32 c);
+    extern WebCoreUnicodeDirection (*WebCoreUnicodeDirectionFunction)(UChar32 c);
+    extern bool (*WebCoreUnicodeMirroredFunction)(UChar32 c);
+    extern UChar32 (*WebCoreUnicodeMirroredCharFunction)(UChar32 c);
+    extern UChar32 (*WebCoreUnicodeLowerFunction)(UChar32 c);
+    extern UChar32 (*WebCoreUnicodeUpperFunction)(UChar32 c);
 
 #ifdef __cplusplus
 }

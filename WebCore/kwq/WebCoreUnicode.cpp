@@ -24,14 +24,9 @@
  */
 #include "WebCoreUnicode.h"
 
-int (*WebCoreUnicodeDigitValueFunction)(UniChar c);
-WebCoreUnicodeCategory (*WebCoreUnicodeCategoryFunction)(UniChar c);
-WebCoreUnicodeDirection (*WebCoreUnicodeDirectionFunction)(UniChar c);
-WebCoreUnicodeJoining (*WebCoreUnicodeJoiningFunction)(UniChar c);
-WebCoreUnicodeDecomposition (*WebCoreUnicodeDecompositionTagFunction)(UniChar c);
-bool (*WebCoreUnicodeMirroredFunction)(UniChar c);
-UniChar (*WebCoreUnicodeMirroredCharFunction)(UniChar c);
-WebCoreUnicodeCombiningClass (*WebCoreUnicodeCombiningClassFunction)(UniChar c);
-UniChar (*WebCoreUnicodeLowerFunction)(UniChar c);
-UniChar (*WebCoreUnicodeUpperFunction)(UniChar c);
-const unsigned char * const *WebCoreDirectionInfo;
+int (*WebCoreUnicodeDigitValueFunction)(UChar32 c);
+WebCoreUnicodeDirection (*WebCoreUnicodeDirectionFunction)(UChar32 c);
+bool (*WebCoreUnicodeMirroredFunction)(UChar32 c);
+UChar32 (*WebCoreUnicodeMirroredCharFunction)(UChar32 c);
+UChar32 (*WebCoreUnicodeLowerFunction)(UChar32 c);
+UChar32 (*WebCoreUnicodeUpperFunction)(UChar32 c);
