@@ -2272,6 +2272,30 @@ NodeImpl *NodeListImpl::recursiveItem ( unsigned long &offset, NodeImpl *start )
     return 0; // no matching node in this subtree
 }
 
+NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
+{
+    if (rootNode->isDocumentNode()) {
+        DOM::NodeImpl *node = static_cast<DocumentImpl *>(rootNode)->getElementById(elementId);
+        if (nodeMatches(node))
+            return node;
+
+        return 0;
+    }
+
+    unsigned long l = length();
+
+    for ( unsigned long i = 0; i < l; i++ ) {
+        DOM::NodeImpl *node = item(i);
+        
+        if ( static_cast<ElementImpl *>(node)->getIDAttribute() == elementId ) {
+            return node;
+        }
+    }
+
+    return 0;
+}
+
+
 void NodeListImpl::rootNodeSubtreeModified()
 {
     isCacheValid = false;     
@@ -2307,13 +2331,15 @@ NodeImpl *ChildNodeListImpl::item ( unsigned long index ) const
     return n;
 }
 
-bool ChildNodeListImpl::nodeMatches( NodeImpl */*testNode*/ ) const
+bool ChildNodeListImpl::nodeMatches(NodeImpl *testNode) const
 {
-    return true;
+    return testNode->parentNode() == rootNode;
 }
 
 TagNodeListImpl::TagNodeListImpl(NodeImpl *n, NodeImpl::Id _id, NodeImpl::Id _idMask )
-    : NodeListImpl(n), m_id(_id & _idMask), m_idMask(_idMask)
+    : NodeListImpl(n), 
+      m_id(_id & _idMask), 
+      m_idMask(_idMask)
 {
 }
 

@@ -1,3 +1,23 @@
+2004-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/3878766> VIP: Program listings pages at directv.com takes 75% of time traversing NodeLists
+
+        * khtml/dom/dom_node.cpp:
+        (NodeList::itemById): New method, just forward to impl.
+        * khtml/dom/dom_node.h: Prototype it.
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNodeList::tryGet): Instead of looping over the whole list to do by-id access,
+	let the NodeList do it. The NodeList might be able to do it more efficiently.
+        * khtml/xml/dom_nodeimpl.cpp:
+	(NodeListImpl::itemById): Optimize for the case where the NodeList
+	covers the whole document. In this case, just use getElementById,
+	then check that the element satisfies the list criteria.
+        (ChildNodeListImpl::nodeMatches): Return true only if the node is our child.
+        (TagNodeListImpl::TagNodeListImpl): Irrelevant change to reformat initializers.
+        * khtml/xml/dom_nodeimpl.h:
+
 2004-11-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gramps.
