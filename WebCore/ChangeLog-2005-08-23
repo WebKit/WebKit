@@ -1,3 +1,17 @@
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
+
+        Reviewed by rjw.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): pass true for treatNBSPAsWhiteSpace to leadingWhitespacePosition and trailingWhitespacePosition when testing whether or not we have to delete those characters as well.
+        * khtml/editing/jsediting.cpp: pass true for smartDelete when the selection granularity is WORD. This allows us to write smart delete layout tests.
+        * layout-tests/editing/deleting/smart-delete-001-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-001.html: Added.
+        * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-002.html: Added.
+
 2005-03-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
