@@ -1,3 +1,14 @@
+2004-06-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fix for this bug:
+        
+        <rdar://problem/3690115> Crash deleting text out of iChat's profile (an editable Webview)
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isFocusable): Added null-check of parent node before deref'ing it.
+
 2004-06-14  Trey Matteson  <trey@apple.com>
 
 	Two tweaks to recently added "drag" pseudo-class, as suggested by
