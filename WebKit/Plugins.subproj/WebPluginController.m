@@ -83,6 +83,10 @@
     [views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [views makeObjectsPerformSelector:@selector(pluginDestroy)];
     [views removeAllObjects];
+
+    // after this point, do not try to do anything with the frame, even if we get some
+    // late arriving messages from the plugin
+    frame = nil;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -94,7 +98,7 @@
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target
 {
-    if ( !URL ){
+    if ( !URL || !frame ){
         return;
     }
 
@@ -105,7 +109,7 @@
 
 - (void)showStatus:(NSString *)message
 {
-    if(!message){
+    if(!message || !frame){
         return;
     }
 

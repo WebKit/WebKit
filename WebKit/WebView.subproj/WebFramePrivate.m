@@ -335,7 +335,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 {
     WebBridge *bridge = _private->bridge;
     _private->bridge = nil;
-    
+
+    // Destroy plug-ins before blowing away the view.
+    [_private->pluginController destroyAllPlugins];
+
     [self stopLoading];
     [self _saveScrollPositionToItem:[_private currentItem]];
 

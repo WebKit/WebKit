@@ -1,3 +1,21 @@
+2002-12-20  Trey Matteson  <trey@apple.com>
+
+	3133829 - crash leaving page with a running applet
+
+	This fixes some holes in how we teardown plugins.  An additional fix is expected
+	from Mike Hay to finish the issue. (3133981)
+
+        Reviewed by Richard
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController destroyAllPlugins]):  frame=nil, so we don't do any more
+	messaging back to WK after this step.
+        (-[WebPluginController showURL:inFrame:]):  bail if !frame
+        (-[WebPluginController showStatus:]):  bail if !frame
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _detachFromParent]):  destroy plugins here.  We were only doing it
+	in the non-frame case.
+
 === Alexander-43 ===
 
 2002-12-20  Trey Matteson  <trey@apple.com>
