@@ -1,3 +1,67 @@
+2003-10-23  David Hyatt  <hyatt@apple.com>
+
+	This patch fixes the pseudo-elements ::first-line and ::first-letter to inherit styles properly.  More
+	specifically it does the following:
+
+	(1) Implements caching of pseudo-styles once computed off the style() which originated the pseudo-style.
+	The old code did this, and this was a regression from my previous patch.
+
+	(2) Fixes first-letter checking so that it happens at layout time rather than during render object
+	construction time, since that makes first-letter more dynamic and causes it to be discovered in cases
+	where it was being missed before.  This fixes the front page of meyerweb.com.
+
+	(3) Make first-letter inherit from first-line like it's supposed to, and also make first-line styles
+	cross blocks and inherit properly from enclosing containers.
+
+	(4) Make first-letter changes cause a detach/attach to fire just as when the display changes.  I generalized
+	the notion of needing to detach on a style change by making it a new kind of hint in dom_nodeimpl's style
+	diff function.
+
+	(5) Fixed isBlockFlow to return true for inline-blocks.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::getFirstLineBox):
+        (khtml::RenderBlock::firstLineBlock):
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::isBlockFlow):
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::paintBackgroundAndBorder):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::firstLineBlock):
+        (RenderObject::updateFirstLetter):
+        (RenderObject::dump):
+        (RenderObject::setStyle):
+        (RenderObject::recalcMinMaxWidths):
+        (RenderObject::style):
+        (RenderObject::getPseudoStyle):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::overhangingContents):
+        * khtml/rendering/render_style.cpp:
+        (pseudoBit):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::firstLineBlock):
+        (RenderTable::updateFirstLetter):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        (RenderText::htmlFont):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::diff):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::):
+
 2003-10-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David

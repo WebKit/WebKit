@@ -929,7 +929,13 @@ NodeImpl::StyleChange NodeImpl::diff( khtml::RenderStyle *s1, khtml::RenderStyle
     // explicit inheritance of non-inherited properties and so you end up not re-resolving
     // style in cases where you need to.
     StyleChange ch = NoInherit;
-    if ( !s1 || !s2 )
+    EDisplay display1 = s1 ? s1->display() : NONE;
+    bool fl1 = s1 ? s1->hasPseudoStyle(RenderStyle::FIRST_LETTER) : false;
+    EDisplay display2 = s2 ? s2->display() : NONE;
+    bool fl2 = s2 ? s2->hasPseudoStyle(RenderStyle::FIRST_LETTER) : false;
+    if (display1 != display2 || fl1 != fl2)
+        ch = Detach;
+    else if ( !s1 || !s2 )
 	ch = Inherit;
     else if ( *s1 == *s2 )
  	ch = NoChange;

@@ -817,6 +817,14 @@ RenderTableCell* RenderTable::cellRight(const RenderTableCell* cell) const
     return (result == (RenderTableCell*)-1) ? 0 : result;
 }
 
+RenderBlock* RenderTable::firstLineBlock() const
+{
+    return 0;
+}
+
+void RenderTable::updateFirstLetter()
+{}
+
 #ifndef NDEBUG
 void RenderTable::dump(QTextStream *stream, QString ind) const
 {

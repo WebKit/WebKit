@@ -138,7 +138,9 @@ void RenderListItem::setStyle(RenderStyle *_style)
         (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
         RenderStyle *newStyle = new RenderStyle();
         newStyle->ref();
-        newStyle->inheritFrom(style());
+        // The marker always inherits from the list item, regardless of where it might end
+        // up (e.g., in some deeply nested line box).  See CSS3 spec.
+        newStyle->inheritFrom(style()); 
         if (!m_marker) {
             m_marker = new (renderArena()) RenderListMarker(document());
             m_marker->setStyle(newStyle);

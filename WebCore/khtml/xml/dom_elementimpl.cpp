@@ -357,22 +357,20 @@ void ElementImpl::recalcStyle( StyleChange change )
     qDebug("recalcStyle(%d: %s)[%p: %s]", change, debug, this, tagName().string().latin1());
 #endif
     if ( hasParentRenderer && (change >= Inherit || changed()) ) {
-        EDisplay oldDisplay = _style ? _style->display() : NONE;
-
         RenderStyle *newStyle = getDocument()->styleSelector()->styleForElement(this);
         newStyle->ref();
         StyleChange ch = diff( _style, newStyle );
-        if ( ch != NoChange ) {
-            if (oldDisplay != newStyle->display()) {
-                if (attached()) detach();
-                // ### Suboptimal. Style gets calculated again.
-                attach();
-                // attach recalulates the style for all children. No need to do it twice.
-                setChanged( false );
-                setHasChangedChild( false );
-                newStyle->deref();
-                return;
-            }
+        if (ch == Detach) {
+            if (attached()) detach();
+            // ### Suboptimal. Style gets calculated again.
+            attach();
+            // attach recalulates the style for all children. No need to do it twice.
+            setChanged( false );
+            setHasChangedChild( false );
+            newStyle->deref();
+            return;
+        }
+        else if (ch != NoChange) {
             if( m_render && newStyle ) {
                 //qDebug("--> setting style on render element bgcolor=%s", newStyle->backgroundColor().name().latin1());
                 m_render->setStyle(newStyle);

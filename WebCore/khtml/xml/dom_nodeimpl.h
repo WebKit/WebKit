@@ -213,7 +213,7 @@ public:
     virtual void getCursor(int offset, int &_x, int &_y, int &height);
     virtual QRect getRect() const;
 
-    enum StyleChange { NoChange, NoInherit, Inherit, Force };
+    enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };
     virtual void recalcStyle( StyleChange = NoChange ) {}
     StyleChange diff( khtml::RenderStyle *s1, khtml::RenderStyle *s2 ) const;
 

@@ -44,7 +44,7 @@ public:
     virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
     
     virtual bool isRenderBlock() const { return true; }
-    virtual bool isBlockFlow() const { return !isInline() && !isTable(); }
+    virtual bool isBlockFlow() const { return (!isInline() || isReplaced()) && !isTable(); }
     virtual bool isInlineFlow() const { return isInline() && !isReplaced(); }
     virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
     
@@ -179,6 +179,11 @@ public:
     // overrides RenderObject
     virtual bool requiresLayer();
     
+    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
+    // children.
+    virtual RenderBlock* firstLineBlock() const;
+    virtual void updateFirstLetter();
+    
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
@@ -186,7 +191,7 @@ public:
     
 protected:
     void newLine();
-    
+
 protected:
     struct FloatingObject {
         enum Type {

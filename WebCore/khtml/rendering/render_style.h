@@ -618,7 +618,7 @@ public:
     static void cleanup();
 
     // static pseudo styles. Dynamic ones are produced on the fly.
-    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION };
+    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED };
 
 protected:
 
@@ -708,7 +708,7 @@ protected:
         PseudoId _styleType : 3;
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
-        int _pseudoBits : 5;
+        int _pseudoBits : 6;
         EUnicodeBidi _unicodeBidi : 2;
     } noninherited_flags;
 

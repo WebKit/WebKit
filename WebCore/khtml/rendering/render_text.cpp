@@ -577,7 +577,8 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                              int tx, int ty, PaintAction paintAction)
 {
     int ow = style()->outlineWidth();
-    RenderStyle* pseudoStyle = hasFirstLine() ? getPseudoStyle(RenderStyle::FIRST_LINE) : 0;
+    RenderStyle* pseudoStyle = style(true);
+    if (pseudoStyle == style()) pseudoStyle = 0;
     int d = style()->textDecorationsInEffect();
     InlineTextBox f(0, y-ty);
     int si = m_lines.findFirstMatching(&f);
@@ -1335,15 +1336,7 @@ const QFontMetrics &RenderText::metrics(bool firstLine) const
 
 const Font *RenderText::htmlFont(bool firstLine) const
 {
-    const Font *f = 0;
-    if( firstLine && hasFirstLine() ) {
-        RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::FIRST_LINE);
-	if ( pseudoStyle )
-	    f = &pseudoStyle->htmlFont();
-    } else {
-	f = &style()->htmlFont();
-    }
-    return f;
+    return &style(firstLine)->htmlFont();
 }
 
 void RenderText::paintTextOutline(QPainter *p, int tx, int ty, const QRect &lastline, const QRect &thisline, const QRect &nextline)

@@ -499,7 +499,8 @@ void InlineFlowBox::paintBackgroundAndBorder(QPainter *p, int _x, int _y,
     // You can use p::first-line to specify a background. If so, the root line boxes for
     // a line may actually have to paint a background.
     RenderStyle* styleToUse = object()->style(m_firstLine);
-    if (object()->hasFirstLine() || (parent() && object()->shouldPaintBackgroundOrBorder())) {
+    if ((!parent() && m_firstLine && styleToUse != object()->style()) || 
+        (parent() && object()->shouldPaintBackgroundOrBorder())) {
         CachedImage* bg = styleToUse->backgroundImage();
         bool hasBackgroundImage = bg && (bg->pixmap_size() == bg->valid_rect().size()) &&
                                   !bg->isTransparent() && !bg->isErrorImage();
