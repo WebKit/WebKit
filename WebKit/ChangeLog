@@ -1,3 +1,13 @@
+2003-04-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3160751 - Can't use non-'.txt' file extension for text files?
+
+        Reviewed by mjs.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebNSURLResponseExtras.m:
+        (-[NSURL _web_suggestedFilenameForSavingWithMIMEType:]): don't correct the file extension for plain text files
+
 2003-04-17  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3232332 -- History file should be versioned since 

@@ -73,7 +73,7 @@
     }
 
     // If the type is known, check the extension and correct it if necessary.
-    if (MIMEType && ![MIMEType isEqualToString:@"application/octet-stream"]) {
+    if (MIMEType && ![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
         WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
         NSArray *extensions = [mappings extensionsForMIMEType:MIMEType];
 
