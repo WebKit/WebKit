@@ -283,9 +283,24 @@ bool ObjcFallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyNa
 }
 
 
+Type ObjcFallbackObjectImp::type() const
+{
+    id targetObject = _instance->getObject();
+    
+    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+	return ObjectType;
+    
+    return UndefinedType;
+}
+
 bool ObjcFallbackObjectImp::implementsCall() const
 {
-    return true;
+    id targetObject = _instance->getObject();
+    
+    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+	return true;
+    
+    return false;
 }
 
 Value ObjcFallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
@@ -334,3 +349,12 @@ Value ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }
 
+bool ObjcFallbackObjectImp::toBoolean(ExecState *exec) const
+{
+    id targetObject = _instance->getObject();
+    
+    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+	return true;
+    
+    return false;
+}

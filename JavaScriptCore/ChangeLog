@@ -1,3 +1,23 @@
+2005-01-20  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3964634> undefined property value from binding seems to evaluate to true in an if statement
+
+	The comprehensive fix for this problem requires new API, as described in 3965326.  However,
+	given that we can't add new API at this point, the 'ObjcFallbackObjectImp' will behave
+	like and Undefined object if  invokeUndefinedMethodFromWebScript:withArguments: isn't
+	implemented on the bound object.
+
+        Reviewed by Chris.
+
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::type):
+        (ObjcFallbackObjectImp::implementsCall):
+        (ObjcFallbackObjectImp::toBoolean):
+        * bindings/testbindings.mm:
+        (+[MyFirstInterface isSelectorExcludedFromWebScript:]):
+        (+[MyFirstInterface isKeyExcludedFromWebScript:]):
+
 === Safari-180 ===
 
 2005-01-19  Richard Williamson   <rjw@apple.com>

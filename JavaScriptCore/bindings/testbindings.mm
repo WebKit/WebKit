@@ -91,6 +91,17 @@
     return nil;
 }
 
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
+{
+    return NO;
+}
+
++ (BOOL)isKeyExcludedFromWebScript:(const char *)name
+{
+    return NO;
+}
+
+/*
 - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
 {
 	NSLog (@"Call to undefined method %@", name);
@@ -101,12 +112,15 @@
 	}
 	return @"success";
 }
+*/
 
+/*
 - (id)valueForUndefinedKey:(NSString *)key
 {
 	NSLog (@"%s:  key = %@", __PRETTY_FUNCTION__, key);
 	return @"aValue";
 }
+*/
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
