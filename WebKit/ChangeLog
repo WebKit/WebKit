@@ -1,3 +1,18 @@
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed elementInfoAtPoint to elementAtPoint
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultContextMenuHandler.h:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (+[WebDefaultContextMenuHandler addMenuItemWithTitle:action:target:toArray:]): renamed
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
 	tiny change

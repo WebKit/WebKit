@@ -115,7 +115,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 
-- (NSDictionary *)elementInfoAtPoint:(NSPoint)point;
+- (NSDictionary *)elementAtPoint:(NSPoint)point;
 
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
 

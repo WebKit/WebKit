@@ -18,10 +18,10 @@
     [super dealloc];
 }
 
-- (void)addMenuItemWithTitle:(NSString *)title action:(SEL)selector toArray:(NSMutableArray *)menuItems
++ (void)addMenuItemWithTitle:(NSString *)title action:(SEL)selector target:(id)target toArray:(NSMutableArray *)menuItems
 {
     NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:title action:selector keyEquivalent:@""];
-    [menuItem setTarget:self];
+    [menuItem setTarget:target];
     [menuItems addObject:menuItem];
     [menuItem release];
 }
@@ -31,69 +31,65 @@
     NSMutableArray *menuItems = [NSMutableArray array];
     NSURL *linkURL, *imageURL;
     
+    [element release];
     element = [theElement retain];
 
     linkURL = [element objectForKey:WebContextLinkURL];
 
     if(linkURL){
     
-        [self addMenuItemWithTitle:NSLocalizedString(@"Open Link in New Window", @"Open in New Window context menu item") 				            action:@selector(openLinkInNewWindow:)
-                           toArray:menuItems];
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Link in New Window", @"Open in New Window context menu item") 				                    action:@selector(openLinkInNewWindow:)
+                                    target:self
+                                   toArray:menuItems];
         
-        [self addMenuItemWithTitle:NSLocalizedString(@"Download Link to Disk", @"Download Link to Disk context menu item") 				    action:@selector(downloadLinkToDisk:)
-                           toArray:menuItems];
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Download Link to Disk", @"Download Link to Disk context menu item") 				                    action:@selector(downloadLinkToDisk:)
+                                    target:self
+                                   toArray:menuItems];
 
-        [self addMenuItemWithTitle:NSLocalizedString(@"Copy Link to Clipboard", @"Copy Link to Clipboard context menu item") 				    action:@selector(copyLinkToClipboard:)
-                           toArray:menuItems];
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Copy Link to Clipboard", @"Copy Link to Clipboard context menu item") 				                    action:@selector(copyLinkToClipboard:)
+                                    target:self
+                                   toArray:menuItems];
     }
 
     imageURL = [element objectForKey:WebContextImageURL];
 
     if(imageURL){
-    
+        
         if(linkURL){
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
-        
-        [self addMenuItemWithTitle:NSLocalizedString(@"Open Image in New Window", @"Open Image in New Window context menu item") 		             
-                            action:@selector(openImageInNewWindow:)
-                           toArray:menuItems];
-        
-        [self addMenuItemWithTitle:NSLocalizedString(@"Download Image To Disk", @"Download Image To Disk context menu item") 				    action:@selector(downloadImageToDisk:)
-                           toArray:menuItems];
-        
-        [self addMenuItemWithTitle:NSLocalizedString(@"Copy Image to Clipboard", @"Copy Image to Clipboard context menu item") 				    action:@selector(copyImageToClipboard:)
-                           toArray:menuItems];
-        
-        [self addMenuItemWithTitle:NSLocalizedString(@"Reload Image", @"Reload Image context menu item") 				                    
-                            action:@selector(reloadImage:)
-                           toArray:menuItems];
+
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Image in New Window", @"Open Image in New Window context menu item")
+                                    action:@selector(openImageInNewWindow:)
+                                    target:self
+                                   toArray:menuItems];
+
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Download Image To Disk", @"Download Image To Disk context menu item") 				                    action:@selector(downloadImageToDisk:)
+                                    target:self
+                                   toArray:menuItems];
+
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Copy Image to Clipboard", @"Copy Image to Clipboard context menu item") 				                    action:@selector(copyImageToClipboard:)
+                                    target:self
+                                   toArray:menuItems];
+
+        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Reload Image", @"Reload Image context menu item")
+                                    action:@selector(reloadImage:)
+                                    target:self
+                                   toArray:menuItems];
     }
 
     if(!imageURL && !linkURL){
     
         WebFrame *webFrame = [element objectForKey:WebContextFrame];
 
-        if([[webFrame dataSource] isMainDocument]){
-            [self addMenuItemWithTitle:NSLocalizedString(@"View Source", @"View Source context menu item") 				                        
-                                action:@selector(viewSource:)
-                               toArray:menuItems];
-        }else{
-            [self addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				action:@selector(openFrameInNewWindow:)
-                               toArray:menuItems];
-            
-            [self addMenuItemWithTitle:NSLocalizedString(@"View Frame Source", @"View Frame Source context menu item") 				                
-                                action:@selector(viewSource:)
-                               toArray:menuItems];
+        if(![[webFrame dataSource] isMainDocument]){
+            [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				                action:@selector(openFrameInNewWindow:)
+                                        target:self
+                                       toArray:menuItems];
         }
     }
 
     return menuItems;
-}
-
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
-{
-    return YES;
 }
 
 - (void)openNewWindowWithURL:(NSURL *)URL

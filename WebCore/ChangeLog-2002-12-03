@@ -1,3 +1,9 @@
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): renamed
+
 2002-07-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 2992158, the calendar on www.blog.org in the upper

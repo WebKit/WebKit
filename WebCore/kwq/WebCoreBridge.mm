@@ -393,7 +393,7 @@ using namespace khtml;
     return [NSURL _web_URLWithString:URLString];
 }
 
-- (NSDictionary *)elementInfoAtPoint:(NSPoint)point
+- (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
     RenderObject::NodeInfo nodeInfo(true, true);

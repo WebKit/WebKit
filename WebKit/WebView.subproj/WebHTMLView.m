@@ -214,11 +214,12 @@
     id <WebContextMenuHandler> contextMenuHandler, defaultContextMenuHandler;
     NSArray *menuItems, *defaultMenuItems;
     NSDictionary *elementInfo;
+    NSMenu *menu = nil;
     NSPoint point;
     unsigned i;
     
     point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    elementInfo = [self _elementInfoAtPoint:point];
+    elementInfo = [self _elementAtPoint:point];
 
     defaultContextMenuHandler = [[self _controller] _defaultContextMenuHandler];
     defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElement: elementInfo  defaultMenuItems: nil];
@@ -230,12 +231,14 @@
         menuItems = defaultMenuItems;
     }
     
-    NSMenu *menu = [[[NSMenu alloc] init] autorelease];
-
-    for(i=0; i<[menuItems count]; i++){
-        [menu addItem:[menuItems objectAtIndex:i]];
+    if([menuItems count] > 0){
+        menu = [[[NSMenu alloc] init] autorelease];
+    
+        for(i=0; i<[menuItems count]; i++){
+            [menu addItem:[menuItems objectAtIndex:i]];
+        }
     }
-        
+    
     return menu;
 }
 

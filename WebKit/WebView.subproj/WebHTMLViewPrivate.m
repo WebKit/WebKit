@@ -105,9 +105,9 @@ BOOL _modifierTrackingEnabled = FALSE;
     [[NSNotificationCenter defaultCenter] postNotificationName:NSMouseMovedNotification object:self userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
-- (NSDictionary *)_elementInfoAtPoint:(NSPoint)point
+- (NSDictionary *)_elementAtPoint:(NSPoint)point
 {
-    NSDictionary *elementInfoWC = [[self _bridge] elementInfoAtPoint:point];
+    NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
     NSURL *linkURL =   [elementInfoWC objectForKey:WebCoreContextLinkURL];
