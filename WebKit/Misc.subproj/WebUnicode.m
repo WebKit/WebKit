@@ -513,12 +513,11 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
     // Early out.
     int i;
     for (i = from; i < from+len; i++){
-        if (uc[i] < 0x7f)
-            return 0;
-        if (IsHighSurrogatePair(uc[i]))
-            return 0;
+        if (uc[i] > 0x7f)
+            break;
     }
-    
+    if (i == from+len)
+        return 0;
     
     // we have to ignore NSMs at the beginning and add at the end.
     int num = stringLength - from - len;

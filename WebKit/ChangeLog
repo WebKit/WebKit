@@ -1,3 +1,31 @@
+2002-12-10  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3115427.  Page now draws instantly instead of 20 seconds.
+        I added the substitution font we get from the appkit to the character to glyph
+        cache.
+        
+        Fixed early return optimization from letter forming function.  It was too
+        eager to return!
+        
+        Reviewed by mjs.
+
+        * Misc.subproj/WebUnicode.m:
+        (shapedString):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (glyphForCharacter):
+        (glyphForUnicodeCharacter):
+        (widthForGlyph):
+        (widthForCharacter):
+        (_fontContainsString):
+        (-[WebTextRenderer substituteFontForString:families:]):
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:fontFamilies:]):
+        (-[WebTextRenderer extendUnicodeCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer updateGlyphEntryForCharacter:glyphID:font:]):
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer extendGlyphToWidthMapToInclude:]):
+
 2002-12-10  John Sullivan  <sullivan@apple.com>
 
 	- tweaked the API of WebBookmarkImporter while implementing
