@@ -37,8 +37,9 @@
 #include "khtmlview.h"
 #include "htmltags.h"
 
-using namespace khtml;
 using namespace DOM;
+
+namespace khtml {
 
 RenderBlock::RenderBlock(DOM::NodeImpl* node)
 :RenderFlow(node)
@@ -1819,6 +1820,28 @@ RenderObject* InlineMinMaxIterator::next()
     return current;
 }
 
+static int getBPMWidth(int childValue, Length cssUnit)
+{
+    if (cssUnit.type != Variable)
+        return (cssUnit.type == Fixed ? cssUnit.value : childValue);
+    return 0;
+}
+
+static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
+{
+    RenderStyle* cstyle = child->style();
+    int result = 0;
+    bool leftSide = (cstyle->direction() == LTR) ? !endOfInline : endOfInline;
+    result += getBPMWidth((leftSide ? child->marginLeft() : child->marginRight()),
+                          (leftSide ? cstyle->marginLeft() :
+                                      cstyle->marginRight()));
+    result += getBPMWidth((leftSide ? child->paddingLeft() : child->paddingRight()),
+                          (leftSide ? cstyle->paddingLeft() :
+                                      cstyle->paddingRight()));
+    result += leftSide ? child->borderLeft() : child->borderRight();
+    return result;
+}
+
 void RenderBlock::calcInlineMinMaxWidth()
 {
     int inlineMax=0;
@@ -1849,11 +1872,7 @@ void RenderBlock::calcInlineMinMaxWidth()
             // Children fall into three categories:
             // (1) An inline flow object.  These objects always have a min/max of 0,
             // and are included in the iteration solely so that their margins can
-            // be added in.  XXXdwh Just adding in the margins is totally bogus, since
-            // a <span> could wrap to multiple lines.  Technically the left margin should
-            // be considered part of the first descendant's start, and the right margin
-            // should be considered part of the last descendant's end.  Leave this alone
-            // for now, but fix later.
+            // be added in.
             //
             // (2) An inline non-text non-flow object, e.g., an inline replaced element.
             // These objects can always be on a line by themselves, so in this situation
@@ -1884,34 +1903,29 @@ void RenderBlock::calcInlineMinMaxWidth()
             short childMin = 0;
             short childMax = 0;
 
-            if (!child->isText() && !childIterator.endOfInline) {
-                // Case (1) and (2).  Inline replaced and inline flow elements.  Both
-                // add in their margins to their min/max values.
-                int margins = 0;
-                LengthType type = cstyle->marginLeft().type;
-                if ( type != Variable )
-                    margins += (type == Fixed ? cstyle->marginLeft().value : child->marginLeft());
-                type = cstyle->marginRight().type;
-                if ( type != Variable )
-                    margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
-                childMin += margins;
-                childMax += margins;
-
+            if (!child->isText()) {
+                // Case (1) and (2).  Inline replaced and inline flow elements.
                 if (child->isRenderInline() || child->isRunIn()) {
-                    // Add in padding for inline flow elements.  This is wrong in the
-                    // same way the margin addition is wrong. XXXdwh fixme.
-                    int padding = 0;
-                    type = cstyle->paddingLeft().type;
-                    if ( type != Variable )
-                        padding += (type == Fixed ? cstyle->paddingLeft().value : child->paddingLeft());
-                    type = cstyle->paddingRight().type;
-                    if ( type != Variable )
-                        padding += (type == Fixed ? cstyle->paddingRight().value : child->paddingRight());
-                    childMin += padding;
-                    childMax += padding;
+                    // Add in padding/border/margin from the appropriate side of
+                    // the element.
+                    int bpm = getBorderPaddingMargin(child, childIterator.endOfInline);
+                    childMin += bpm;
+                    childMax += bpm;
 
                     inlineMin += childMin;
                     inlineMax += childMax;
+                }
+                else {
+                    // Inline replaced elts add in their margins to their min/max values.
+                    int margins = 0;
+                    LengthType type = cstyle->marginLeft().type;
+                    if ( type != Variable )
+                        margins += (type == Fixed ? cstyle->marginLeft().value : child->marginLeft());
+                    type = cstyle->marginRight().type;
+                    if ( type != Variable )
+                        margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
+                    childMin += margins;
+                    childMax += margins;
                 }
             }
 
@@ -2185,4 +2199,5 @@ void RenderBlock::dump(QTextStream *stream, QString ind) const
 #undef DEBUG_LAYOUT
 #undef BOX_DEBUG
 
+} // namespace khtml
 

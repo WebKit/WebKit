@@ -1,3 +1,13 @@
+2003-02-04  David Hyatt  <hyatt@apple.com>
+
+	Patch calcInlineMaxWidth to add in left/right margins/borders/padding
+	separately (since the inline could break across multiple lines).
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::calcInlineMinMaxWidth):
+
 2003-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
