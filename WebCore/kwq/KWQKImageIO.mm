@@ -35,4 +35,8 @@ void KImageIO::registerFormats()
 
 QStringList KImageIO::mimeTypes(Mode mode=Writing)
 {
+    // FIXME: need real implementation
+    QStringList mimeList;
+    mimeList.append ( "image/gif" );
+    return mimeList;
 }

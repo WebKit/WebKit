@@ -66,6 +66,7 @@ namespace khtml
 {
     class CachedObject;
     class Request;
+    class LoaderPrivate;
 
     /**
      * @internal
@@ -366,9 +367,15 @@ namespace khtml
 	void requestDone( const DOM::DOMString &baseURL, khtml::CachedObject *obj );
 	void requestFailed( const DOM::DOMString &baseURL, khtml::CachedObject *obj );
 
+#ifdef _KWQ_
+    public:
+	void slotFinished( KIO::Job * );
+	void slotData( KIO::Job *, const char *data, int size );
+#else
     protected slots:
 	void slotFinished( KIO::Job * );
 	void slotData( KIO::Job *, const QByteArray & );
+#endif
 
     private:
 	void servePendingRequests();
@@ -378,6 +385,13 @@ namespace khtml
 #ifdef HAVE_LIBJPEG
         KJPEGFormatType m_jpegloader;
 #endif
+#ifdef _KWQ_
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    LoaderPrivate *d;
+#else
+    void *d;    
+#endif // __APPLE__, __OBJC__, __cplusplus
+#endif // _KWQ_
     };
 
         /**

@@ -205,10 +205,8 @@ bool KHTMLPart::openURL( const KURL &url )
     cache = WCGetDefaultURICache();
     nsurl = [NSString stringWithCString:url.url().latin1()];
     
-    id jobID = [cache requestWithString:nsurl requestor:d->m_recv];
+    id jobID = [cache requestWithString:nsurl requestor:d->m_recv userData:nil];
     
-    NSLog(@"part: %@", jobID);
-
     return true;
 }
 
@@ -457,9 +455,10 @@ void KHTMLPart::setBaseURL( const KURL &url )
 
 KURL KHTMLPart::baseURL() const
 {
-    // FIXME!
-    _logPartiallyImplemented();
-    return KURL();
+    if (d->m_workingURL.isEmpty()) {
+        return KURL();
+    }
+    return d->m_workingURL;
 }
 
 

@@ -38,6 +38,15 @@ KHTMLSettings::KHTMLSettings()
     m_fontSizes << 16;
     m_fontSizes << 18;
     m_fontSizes << 20;
+    
+    // set available font families...ask the system
+    
+    NSFontManager *sharedFontManager;
+    NSArray *array;
+    
+    sharedFontManager = [NSFontManager sharedFontManager];
+    array = [sharedFontManager availableFontFamilies];
+    m_fontFamilies = NSSTRING_TO_QSTRING([array componentsJoinedByString:@","]);
 }
 
 QString KHTMLSettings::stdFontName() const
@@ -108,7 +117,7 @@ int KHTMLSettings::minFontSize() const
 
 QString KHTMLSettings::availableFamilies() const
 {
-    _logNotYetImplemented();
+    return m_fontFamilies;
 }
 
 

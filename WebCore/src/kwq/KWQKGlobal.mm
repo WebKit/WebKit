@@ -27,6 +27,8 @@
 #include <kconfig.h>
 #include <kglobal.h>
 
+#include <qdict.h>
+
 #define Fixed MacFixed
 #define Rect MacRect
 #define Boolean MacBoolean
@@ -34,6 +36,14 @@
 #undef Fixed
 #undef Rect
 #undef Boolean
+
+class KWQStaticStringDict : public QDict<QString>
+{
+public:
+    KWQStaticStringDict() : QDict<QString>() { };
+};
+
+KWQStaticStringDict *KGlobal::staticStringDict = 0;
 
 KInstance *KGlobal::instance()
 {
@@ -65,11 +75,16 @@ KConfig *KGlobal::config()
     return new KConfig("foo");
 }
 
-
-
-const QString &KGlobal::staticQString(const QString &)
+const QString &KGlobal::staticQString(const QString &str)
 {
-    _logNotYetImplemented();
+    if (!staticStringDict) {
+        staticStringDict = new KWQStaticStringDict;
+    }
+    QString *result = staticStringDict->find(str);
+    if (!result)
+    {
+        result = new QString(str);
+        staticStringDict->insert(str, result);
+    }
+    return *result;
 }
-
-

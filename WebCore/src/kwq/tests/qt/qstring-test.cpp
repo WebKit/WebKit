@@ -219,7 +219,5 @@ int main() {
     //cout << (c4 >= s33) << endl;
     cout << (s33 >= s34) << endl;
     
-    
-        
     return 0;
 }

@@ -4,16 +4,14 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WCURICacheJobID.h>
-
 @protocol WCURICacheData
 
--(id <WCURICacheJobID>)jobID;
+-(id)jobID;
 -(id)status;
 -(id)error;
 -(NSURL *)url;
 -(unsigned char *)cacheData;
 -(int)cacheDataSize;
--(void *)userInfo;
+-(void *)userData;
 
 @end

@@ -73,6 +73,7 @@ public:
 
 private:
     QValueList<int>     m_fontSizes;
+    QString m_fontFamilies;
 };
 
 #endif

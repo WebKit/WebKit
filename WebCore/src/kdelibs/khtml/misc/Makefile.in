@@ -76,10 +76,6 @@ $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
-loader.cpp: loader.moc
-loader.moc:
-	touch loader.moc
-
 khtmldata.h:
 	touch $@
 

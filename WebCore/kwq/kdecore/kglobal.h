@@ -37,6 +37,7 @@ class KCharsets;
 class KLocale;
 class KStandardDirs;
 class KConfig;
+class KWQStaticStringDict;
 
 #define kMin(a, b) ((a) < (b) ? (a) : (b))
 #define kMax(a, b) ((a) > (b) ? (a) : (b))
@@ -50,6 +51,8 @@ public:
     // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
+
+    static KWQStaticStringDict *staticStringDict;
 
     // static member functions -------------------------------------------------
 

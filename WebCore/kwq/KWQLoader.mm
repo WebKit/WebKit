@@ -26,7 +26,7 @@
 #undef CACHE_DEBUG
 //#define CACHE_DEBUG
 
-#include "loader.h"
+#include <loader.h>
 
 // up to which size is a picture for sure cacheable
 #define MAXCACHEABLE 40*1024
@@ -527,7 +527,16 @@ const QPixmap &CachedImage::pixmap( ) const
 
 QSize CachedImage::pixmap_size() const
 {
-    return (m ? m->framePixmap().size() : ( p ? p->size() : QSize()));
+    //return (m ? m->framePixmap().size() : ( p ? p->size() : QSize()));
+    if (m) {
+        return m->framePixmap().size();
+    }
+    else if (p) {
+        return p->size();
+    }
+    else {
+        return QSize();
+    }
 }
 
 
@@ -631,9 +640,9 @@ void CachedImage::movieStatus(int status)
     }
 }
 
-void CachedImage::movieResize(const QSize& /*s*/)
+void CachedImage::movieResize(const QSize &s)
 {
-//    do_notify(m->framePixmap(), QRect());
+//    do_notify(m->framePixmap(), s);
 }
 
 void CachedImage::setShowAnimations( bool enable )
@@ -671,6 +680,9 @@ void CachedImage::clear()
 
 void CachedImage::data ( QBuffer &_buffer, bool eof )
 {
+    // FIXME!!!
+    bool UseQPixmapForImageLoading = TRUE;
+
 #ifdef CACHE_DEBUG
     kdDebug( 6060 ) << this << "in CachedImage::data(buffersize " << _buffer.buffer().size() <<", eof=" << eof << endl;
 #endif
@@ -679,7 +691,7 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
         formatType = QImageDecoder::formatName( (const uchar*)_buffer.buffer().data(), _buffer.size());
         typeChecked = true;
 
-        if ( formatType )  // movie format exists
+        if ( !UseQPixmapForImageLoading && formatType )  // movie format exists
         {
             imgSource = new ImageSource( _buffer.buffer());
             m = new QMovie( imgSource, 8192 );
@@ -700,7 +712,10 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
         // QMovie currently doesn't support all kinds of image formats
         // so we need to use a QPixmap here when we finished loading the complete
         // picture and display it then all at once.
-        if(typeChecked && !formatType)
+        
+        
+        // FIXME: this is a hack put in place until the QMovie stuff works right
+        if(UseQPixmapForImageLoading || (typeChecked && !formatType))
         {
 #ifdef CACHE_DEBUG
             kdDebug(6060) << "CachedImage::data(): reloading as pixmap:" << endl;
@@ -881,14 +896,76 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 // ------------------------------------------------------------------------------------------
 
+// Class LoaderNotificationReceiver ==============================================================
+
+@interface LoaderNotificationReceiver : NSObject
+{
+    @public
+    Loader *m_loader;
+}
+
+-(id)initWithLoader:(Loader *)loader;
+
+@end
+
+@implementation LoaderNotificationReceiver
+
+-(id)initWithLoader:(Loader *)loader
+{
+    m_loader = loader;
+}
+
+-(void)cacheDataAvailable:(NSNotification *)notification
+{
+    id <WCURICacheData> data = [notification object];
+    KIO::Job *job = static_cast<KIO::Job *>([data userData]);
+    m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
+}
+
+-(void)cacheFinished:(NSNotification *)notification
+{
+    // FIXME: need an implementation for this
+    id <WCURICacheData> data = [notification object];
+    KIO::Job *job = static_cast<KIO::Job *>([data userData]);
+    m_loader->slotFinished(job);
+}
+
+@end
+
+namespace khtml {
+
+class LoaderPrivate
+{
+friend class Loader;
+public:
+    LoaderPrivate(Loader *parent)
+    {
+        _parent = parent;
+        m_recv = [[LoaderNotificationReceiver alloc] initWithLoader:parent];
+    } 
+    
+    ~LoaderPrivate()
+    {
+        [m_recv release];
+    }       
+
+private:
+    Loader *_parent;
+    LoaderNotificationReceiver *m_recv;
+};
+
+} // namespace khtml
+
 Loader::Loader() : QObject()
 {
     m_requestsPending.setAutoDelete( true );
     m_requestsLoading.setAutoDelete( true );
+    d = new LoaderPrivate(this);
 }
 
 Loader::~Loader()
 {
+    delete d;
 }
 
 void Loader::load(CachedObject *object, const DOMString &baseURL, bool incremental)
@@ -911,6 +988,11 @@ void Loader::servePendingRequests()
   kdDebug( 6060 ) << "starting Loader url=" << req->object->url().string() << endl;
 #endif
 
+#ifdef _KWQ_
+    KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
+    m_requestsLoading.insert(job, req);
+    job->begin(d->m_recv, job);
+#else
   KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
 
   if (!req->object->accept().isEmpty())
@@ -924,6 +1006,8 @@ void Loader::servePendingRequests()
   KIO::Scheduler::scheduleJob( job );
 
   m_requestsLoading.insert(job, req);
+#endif
+
 }
 
 void Loader::slotFinished( KIO::Job* job )
@@ -955,6 +1039,26 @@ void Loader::slotFinished( KIO::Job* job )
   servePendingRequests();
 }
 
+#ifdef _KWQ_
+void Loader::slotData( KIO::Job*job, const char *data, int size )
+{
+    Request *r = m_requestsLoading[job];
+    if(!r) {
+        kdDebug( 6060 ) << "got data for unknown request!" << endl;
+        return;
+    }
+
+    if ( !r->m_buffer.isOpen() )
+        r->m_buffer.open( IO_WriteOnly );
+
+    r->m_buffer.writeBlock( data, size );
+
+    if(r->incremental)
+        r->object->data( r->m_buffer, false );
+}
+
+
+#else
 void Loader::slotData( KIO::Job*job, const QByteArray &data )
 {
     Request *r = m_requestsLoading[job];
@@ -971,6 +1075,7 @@ void Loader::slotData( KIO::Job*job, const QByteArray &data )
     if(r->incremental)
         r->object->data( r->m_buffer, false );
 }
+#endif
 
 int Loader::numRequests( const DOMString &baseURL ) const
 {
@@ -1031,6 +1136,10 @@ void Loader::cancelRequests( const DOMString &baseURL )
         if ( lIt.current()->m_baseURL == baseURL )
         {
             //kdDebug( 6060 ) << "cancelling loading request for " << lIt.current()->object->url().string() << endl;
+            //KIO::Job *job = static_cast<KIO::Job *>( lIt.currentKey() );
+            //Cache::removeCacheEntry( lIt.current()->object );
+            //m_requestsLoading.remove( lIt.currentKey() );
+            //job->kill();
             KIO::Job *job = static_cast<KIO::Job *>( lIt.currentKey() );
             Cache::removeCacheEntry( lIt.current()->object );
             m_requestsLoading.remove( lIt.currentKey() );
@@ -1109,8 +1218,13 @@ void Cache::clear()
 
 CachedImage *Cache::requestImage( const DocLoader* dl, const DOMString & url, const DOMString &baseUrl, bool reload, int _expireDate )
 {
+
+    fprintf(stderr, "!!! Cache::requestImage: url = %s\n", url.string().latin1());
+    fprintf(stderr, "!!! Cache::requestImage: baseUrl = %s\n", baseUrl.string().latin1());
+
     // this brings the _url to a standard form...
     KURL kurl = completeURL( url, baseUrl );
+    fprintf(stderr, "!!! Cache::requestImage: complete url = %s\n", kurl.url().latin1());
     if( kurl.isMalformed() )
     {
 #ifdef CACHE_DEBUG
@@ -1128,6 +1242,7 @@ CachedImage *Cache::requestImage( const DocLoader* dl, const DOMString & url, co
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
         CachedImage *im = new CachedImage(kurl.url(), baseUrl, reload, _expireDate);
+        fprintf(stderr, "!!! Cache::requestImage: im->baseURL() = %s\n", im->baseURL().string().latin1());
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(im, im->baseURL(), true);
         cache->insert( kurl.url(), im );
         lru->append( kurl.url() );
@@ -1279,7 +1394,7 @@ void Cache::flush(bool force)
         --it; // Update iterator, we might delete the current entry later on.
         CachedObject *o = cache->find( url );
 
-        if( !o->canDelete() || o->status() == CachedObject::Persistent ) {
+        if( !o || !o->canDelete() || o->status() == CachedObject::Persistent ) {
                continue; // image is still used or cached permanently
                // in this case don't count it for the size of the cache.
         }
@@ -1378,6 +1493,3 @@ void Cache::removeCacheEntry( CachedObject *object )
   if ( object->canDelete() )
      delete object;
 }
-
-
-#include "loader.moc"

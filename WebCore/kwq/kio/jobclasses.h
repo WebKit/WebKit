@@ -158,20 +158,27 @@ public:
     void addMetaData(const QString &key, const QString &value);
     void kill(bool quietly=TRUE);
 
-    // this is special sauce for our implementation
-    void begin();
+#ifdef _KWQ_
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    void begin(id requestor, void *userData);
+#else
+    void begin(void *requestor, void *userData);
+#endif
+#endif
 
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
+#ifdef _KWQ_
 private:
     KURL _url;
     bool _reload;
     bool _showProgressInfo;
     int _status;
     TransferJobPrivate *d;
+#endif
 
 // add copy constructor
 // this private declaration prevents copying

@@ -35,7 +35,10 @@ $(filter %.o,$(CMOBJECTS)): %.o: %.m
 $(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@
 
-.SUFFIXES: .cpp .h .c .mm .m
+.SUFFIXES: .cpp .h .c .mm .m .p
+
+.h.p:
+	$(CC) -precomp $(CCPRECOMPFLAGS) -I$(TOPSRCDIR) $*.h -o $*.p  
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -I$(TOPSRCDIR) -c $< -o $@

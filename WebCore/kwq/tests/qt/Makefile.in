@@ -62,6 +62,8 @@ CMMFLAGS = $(BASECMMFLAGS)
 
 LIBS = objc-dummy.o \
     -framework Cocoa \
+    -F/symroots \
+    -framework WebKit \
     -lwebcore \
     $(NULL)
 

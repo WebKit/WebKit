@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
+
 #include <qstring.h>
 #include <jobclasses.h>
 
@@ -40,6 +42,8 @@ Job::~Job()
 
 int Job::error()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
@@ -73,7 +77,7 @@ friend class TransferJob;
 public:
 
     TransferJobPrivate(TransferJob *parent, KURL &kurl) {
-        metaData = [[NSMutableDictionary alloc] initWithCapacity:37];
+        metaData = [[NSMutableDictionary alloc] initWithCapacity:17];
 
         // FIXME: create NSURL for now, later KURL and NSURL should play better together
         NSString *string = [NSString stringWithCString:kurl.url().latin1()];
@@ -83,14 +87,13 @@ public:
     ~TransferJobPrivate() {
         [metaData autorelease];
         [url autorelease];
-        [jobID autorelease];
     }
 
 private:
     TransferJob *parent;
     NSMutableDictionary *metaData;
     NSURL *url;
-    id <WCURICacheJobID> jobID;
+    id requestor;
 };
 
 // class TransferJob ===========================================================
@@ -145,17 +148,17 @@ void TransferJob::kill(bool quietly=TRUE)
     id <WCURICache> uriCache;
 
     uriCache = WCGetDefaultURICache();
-    [uriCache cancelRequest:d->jobID];
+    [uriCache cancelRequestWithURL:d->url requestor:d->requestor];
 }
 
-void TransferJob::begin()
+void TransferJob::begin(id requestor, void *userData)
 {
     id <WCURICache> uriCache;
 
     uriCache = WCGetDefaultURICache();
     //FIXME: load uri
-    //[uriCache requestWithURL:d->url requestor:];
+    d->requestor = requestor;
+    [uriCache requestWithURL:d->url requestor:requestor userData:userData];
 }
 
 } // namespace KIO
-

@@ -36,7 +36,6 @@ TransferJob *get(const KURL &url, bool reload=false, bool showProgressInfo=true)
     TransferJob *result;
     
     result = new TransferJob(url, reload, showProgressInfo);
-    result->begin();
 
     return result;
 }

@@ -121,6 +121,7 @@ MMOBJECTS = \
 	KWQCString.o \
 	KWQRegion.o \
         KWQDateTime.o \
+        KWQKloader.o \
 	$(NULL)
 
 MOBJECTS = \

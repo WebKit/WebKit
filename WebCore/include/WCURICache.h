@@ -4,14 +4,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WCURICacheJobID.h>
-
 @protocol WCURICache 
 
--(NSString *)requestWithURL:(NSURL *)url requestor:(id)requestor;
--(NSString *)requestWithString:(NSString *)uriString requestor:(id)requestor;
+-(NSString *)requestWithURL:(NSURL *)url requestor:(id)requestor userData:(void *)userData;
+-(NSString *)requestWithString:(NSString *)uriString requestor:(id)requestor userData:(void *)userData;
 
--(void)cancelRequest:(id <WCURICacheJobID>)jobID;
+-(void)cancelRequestWithURL:(NSURL *)url requestor:(id)requestor;
+-(void)cancelRequestWithString:(NSString *)uriString requestor:(id)requestor;
 -(void)cancelAllRequestsWithURL:(NSURL *)url;
 -(void)cancelAllRequestsWithString:(NSString *)uriString;
 
