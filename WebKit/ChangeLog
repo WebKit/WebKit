@@ -1,5 +1,14 @@
 2004-12-20  Richard Williamson   <rjw@apple.com>
 
+	Don't call Tiger SPI on Panther.
+
+        Reviewed by Vicki.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (+[WebTextRendererFactory createSharedFactory]):
+
+2004-12-20  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3884448> WebKit should turn on CG local font cache
 
 	Enable mutli-tier font caching.  We should see a performance boost with this

@@ -215,9 +215,11 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
 
+#if !defined(BUILDING_ON_PANTHER)
 	// Turn on local font cache, in addition to the system cache.
 	// See 3835148
 	CGFontSetShouldUseMulticache(true);
+#endif
 	
         CGFontCache *fontCache;
         fontCache = CGFontCacheGetLocalCache();
