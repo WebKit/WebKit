@@ -1,3 +1,12 @@
+2004-07-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3665211 (again).  Make sure not to leave child line boxes pointing to deleted ancestor line boxes.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild):
+
 2004-07-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: WebView scrolls to the top after making an editing change via drag & drop

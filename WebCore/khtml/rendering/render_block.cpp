@@ -312,6 +312,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // The remerge has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
+        static_cast<RenderBlock*>(prev)->removeChildrenFromLineBoxes();
         RenderObject* anonBlock = removeChildNode(prev);
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
