@@ -1,6 +1,35 @@
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
+        
+        Added more editing layout tests. Renamed some others.
+
+        * layout-tests/editing/inserting/insert-br-001-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-001.html: Added.
+        * layout-tests/editing/inserting/insert-br-002-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-002.html: Added.
+        * layout-tests/editing/inserting/insert-br-003-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-003.html: Added.
+        * layout-tests/editing/inserting/insert-br-004-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-004.html: Added.
+        * layout-tests/editing/inserting/insert-br-005-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-005.html: Added.
+        * layout-tests/editing/inserting/insert-br-006-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-006.html: Added.
+        * layout-tests/editing/inserting/insert-br-case1-expected.txt: Removed.
+        * layout-tests/editing/inserting/insert-br-case1.html: Removed.
+        * layout-tests/editing/inserting/insert-br-case2-expected.txt: Removed.
+        * layout-tests/editing/inserting/insert-br-case2.html: Removed.
+        * layout-tests/editing/inserting/insert-br-case3-expected.txt: Removed.
+        * layout-tests/editing/inserting/insert-br-case3.html: Removed.
+        * layout-tests/editing/inserting/insert-br-case6-expected.txt: Removed.
+        * layout-tests/editing/inserting/insert-br-case6.html: Removed.
+        * layout-tests/editing/inserting/insert-text-with-newlines-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-text-with-newlines.html: Added.
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
 
         * layout-tests/editing/editing.js: Modified typeCharacterCommand so it can accept a character
         as an argument.
