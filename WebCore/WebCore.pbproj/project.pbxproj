@@ -9164,7 +9164,7 @@
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
-			name = Mixed;
+			name = OptimizedWithSymbols;
 		};
 		F58EF58D02DFDFB7018635CA = {
 			expectedFileType = sourcecode.exports;

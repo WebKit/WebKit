@@ -1,5 +1,9 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        * JavaScriptCore.pbproj/project.pbxproj: Rename Mixed build style to OptimizedWithSymbols.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         * kjs/config.h: Added HAVE_SYS_PARAM_H, since KJS does look for this header, and we do

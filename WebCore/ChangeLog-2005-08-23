@@ -1,5 +1,9 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        * WebCore.pbproj/project.pbxproj: Rename Mixed build style to OptimizedWithSymbols.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - research determined we were using nothing defined in config.h, so I got rid of it

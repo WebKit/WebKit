@@ -888,7 +888,7 @@
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
-			name = Mixed;
+			name = OptimizedWithSymbols;
 		};
 		F5BB2BC5030F772101FCFE1D = {
 			expectedFileType = sourcecode.c.h;
