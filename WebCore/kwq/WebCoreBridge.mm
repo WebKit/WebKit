@@ -56,6 +56,7 @@
 #import "KWQRenderTreeDebug.h"
 #import "KWQView.h"
 #import "KWQPrinter.h"
+#import "KWQAccObjectCache.h"
 
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
@@ -1034,4 +1035,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         view->adjustViewSize();
 }
 
+-(id)accessibilityTree
+{
+    if (!_part || !_part->xmlDocImpl()) return nil;
+    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
+    if (!root) return nil;
+    return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
+}
 @end

@@ -40,16 +40,22 @@ KWQAccObjectCache::~KWQAccObjectCache()
 KWQAccObject* KWQAccObjectCache::accObject(khtml::RenderObject* renderer)
 {
     if (!accCache)
-        return NULL;
+        // No need to retain/free either impl key, or id value.
+        accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
-    return (KWQAccObject*)CFDictionaryGetValue(accCache, renderer);
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, renderer);
+    if (!obj) {
+        obj = [[KWQAccObject alloc] initWithRenderer: renderer]; // Initial ref happens here.
+        setAccObject(renderer, obj);
+    }
+
+    return obj;
 }
 
 void KWQAccObjectCache::setAccObject(khtml::RenderObject* impl, KWQAccObject* accObject)
 {
     if (!accCache)
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in the object's dealloc method.
+        // No need to retain/free either impl key, or id value.
         accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     
     CFDictionarySetValue(accCache, (const void *)impl, accObject);
@@ -57,8 +63,15 @@ void KWQAccObjectCache::setAccObject(khtml::RenderObject* impl, KWQAccObject* ac
 
 void KWQAccObjectCache::removeAccObject(khtml::RenderObject* impl)
 {
-    [accObject(impl) detach];
-    CFDictionaryRemoveValue(accCache, impl);
+    if (!accCache)
+        return;
+
+    KWQAccObject* obj = (KWQAccObject*)CFDictionaryGetValue(accCache, impl);
+    if (obj) {
+        [obj detach];
+        [obj release];
+        CFDictionaryRemoveValue(accCache, impl);
+    }
 }
 
 void KWQAccObjectCache::detach(khtml::RenderObject* renderer)
