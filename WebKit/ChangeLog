@@ -1,5 +1,45 @@
 2003-07-23  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3311725:  Added support for key/value binding. 
+	(As a side effect also made icon loading work!  In 1.0
+	it doesn't work unless a secret preference value is set.)
+
+        Reviewed by Ken.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebView.m:
+        (-[WebView setMainFrameURL:]):
+        (-[WebView mainFrameURL]):
+        (-[WebView isLoading]):
+        (-[WebView mainFrameTitle]):
+        (-[WebView mainFrameIcon]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _progressStarted]):
+        (-[WebView _progressCompleted]):
+        (-[WebView _incrementProgressForConnection:data:]):
+        (-[WebView _completeProgressForConnection:]):
+        (-[WebView _declaredKeys]):
+        (-[WebView setObservationInfo:]):
+        (-[WebView observationInfo]):
+        (-[WebView _willChangeBackForwardKeys]):
+        (-[WebView _didChangeBackForwardKeys]):
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+        (-[WebView _didCommitLoadForFrame:]):
+        (-[WebView _didFinishLoadForFrame:]):
+        (-[WebView _didFailLoadWithError:forFrame:]):
+        (-[WebView _didFailProvisionalLoadWithError:forFrame:]):
+
+2003-07-23  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3341119:  Crash when content contains nil (0x0) characters.
 
         Reviewed by Ken.

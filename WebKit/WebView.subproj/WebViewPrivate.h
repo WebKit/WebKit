@@ -28,6 +28,14 @@ typedef struct _WebResourceDelegateImplementationCache {
     uint delegateImplementsIdentifierForRequest:1;
 } WebResourceDelegateImplementationCache;
 
+extern NSString *_WebCanGoBackKey;
+extern NSString *_WebCanGoForwardKey;
+extern NSString *_WebEstimatedProgressKey;
+extern NSString *_WebIsLoadingKey;
+extern NSString *_WebMainFrameIconKey;
+extern NSString *_WebMainFrameTitleKey;
+extern NSString *_WebMainFrameURLKey;
+
 @interface WebViewPrivate : NSObject
 {
 @public
@@ -76,7 +84,19 @@ typedef struct _WebResourceDelegateImplementationCache {
     
     int numProgressTrackedFrames;
     NSMutableDictionary *progressItems;
+    
+    void *observationInfo;
 }
+@end
+
+@interface WebView (WebPendingPublic)
+
+- (void)setMainFrameURL:(NSString *)URLString;
+- (NSString *)mainFrameURL;
+- (BOOL)isLoading;
+- (NSString *)mainFrameTitle;
+- (NSImage *)mainFrameIcon;
+
 @end
 
 @interface WebView (WebPrivate)
@@ -216,6 +236,12 @@ Could be worth adding to the API.
 - (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
 - (void)_incrementProgressForConnection:(NSURLConnection *)con data:(NSData *)dataSource;
 - (void)_completeProgressForConnection:(NSURLConnection *)con;
+
+- (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
+- (void)_didCommitLoadForFrame:(WebFrame *)frame;
+- (void)_didFinishLoadForFrame:(WebFrame *)frame;
+- (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
+- (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 
 @end
 

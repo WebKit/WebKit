@@ -39,6 +39,14 @@
 
 static NSMutableSet *schemesWithRepresentationsSet;
 
+NSString *_WebCanGoBackKey = @"canGoBack";
+NSString *_WebCanGoForwardKey = @"canGoForward";
+NSString *_WebEstimatedProgressKey = @"estimatedProgress";
+NSString *_WebIsLoadingKey = @"isLoading";
+NSString *_WebMainFrameIconKey = @"mainFrameIcon";
+NSString *_WebMainFrameTitleKey = @"mainFrameTitle";
+NSString *_WebMainFrameURLKey = @"mainFrameURL";
+
 @interface WebProgressItem : NSObject
 {
 @public
@@ -639,6 +647,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
 
 - (void)_progressStarted
 {
+    [self willChangeValueForKey: @"estimatedProgress"];
     if (_private->numProgressTrackedFrames == 0){
         _private->totalPageAndResourceBytesToLoad = 0;
         _private->totalBytesReceived = 0;
@@ -647,10 +656,12 @@ static NSMutableSet *schemesWithRepresentationsSet;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
+    [self didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_progressCompleted
 {
+    [self willChangeValueForKey: @"estimatedProgress"];
     if (![[[self mainFrame] dataSource] isLoading])
         _private->numProgressTrackedFrames = 0;
         
@@ -660,6 +671,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
         _private->progressValue = 1;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
     }
+    [self didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_incrementProgressForConnection:(NSURLConnection *)con response:(NSURLResponse *)response;
@@ -696,6 +708,8 @@ static NSMutableSet *schemesWithRepresentationsSet;
     if (!item)
         return;
 
+    [self willChangeValueForKey: @"estimatedProgress"];
+
     unsigned bytesReceived = [data length];
     double increment = 0, percentOfRemainingBytes;
     long long remainingBytes, estimatedBytesForPendingRequests;
@@ -727,6 +741,8 @@ static NSMutableSet *schemesWithRepresentationsSet;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
         _private->lastNotifiedProgressValue = _private->progressValue;
     }
+
+    [self didChangeValueForKey: @"estimatedProgress"];
 }
 
 - (void)_completeProgressForConnection:(NSURLConnection *)con
@@ -740,6 +756,76 @@ static NSMutableSet *schemesWithRepresentationsSet;
     long long delta = item->bytesReceived - item->estimatedLength;
     _private->totalPageAndResourceBytesToLoad += delta;
     item->estimatedLength = item->bytesReceived;
+}
+
+- (NSArray *)_declaredKeys {
+    static NSArray *declaredKeys = nil;
+    
+    if (!declaredKeys) {
+        declaredKeys = [NSArray arrayWithObjects:_WebMainFrameURLKey, _WebIsLoadingKey, _WebEstimatedProgressKey, _WebCanGoBackKey, _WebCanGoForwardKey, _WebMainFrameTitleKey, _WebMainFrameIconKey, nil];
+    }
+
+    return declaredKeys;
+}
+
+- (void)setObservationInfo:(void *)info
+{
+    _private->observationInfo = info;
+}
+
+- (void *)observationInfo
+{
+    return _private->observationInfo;
+}
+
+- (void)_willChangeBackForwardKeys
+{
+    [self willChangeValueForKey: _WebCanGoBackKey];
+    [self willChangeValueForKey: _WebCanGoForwardKey];
+}
+
+- (void)_didChangeBackForwardKeys
+{
+    [self didChangeValueForKey: _WebCanGoBackKey];
+    [self didChangeValueForKey: _WebCanGoForwardKey];
+}
+
+- (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame
+{
+    [self _willChangeBackForwardKeys];
+    if (frame == [self mainFrame]){
+        [self willChangeValueForKey: _WebIsLoadingKey];
+        [self willChangeValueForKey: _WebMainFrameURLKey];
+    }
+}
+
+- (void)_didCommitLoadForFrame:(WebFrame *)frame
+{
+    if (frame == [self mainFrame])
+        [self didChangeValueForKey: _WebMainFrameURLKey];
+}
+
+- (void)_didFinishLoadForFrame:(WebFrame *)frame
+{
+    [self _didChangeBackForwardKeys];
+    if (frame == [self mainFrame])
+        [self didChangeValueForKey: _WebIsLoadingKey];
+}
+
+- (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+    [self _didChangeBackForwardKeys];
+    if (frame == [self mainFrame])
+        [self didChangeValueForKey: _WebIsLoadingKey];
+}
+
+- (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+    [self _didChangeBackForwardKeys];
+    if (frame == [self mainFrame]){
+        [self didChangeValueForKey: _WebIsLoadingKey];
+        [self didChangeValueForKey: _WebMainFrameURLKey];
+    }
 }
 
 @end

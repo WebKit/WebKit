@@ -713,6 +713,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
             
             // Tell the client we've committed this URL.
             ASSERT([[self frameView] documentView] != nil);
+            [[self webView] _didCommitLoadForFrame: self];
             [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didCommitLoadForFrame:self];
             
             // If we have a title let the WebView know about it.
@@ -919,6 +920,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
+                    [[self webView] _didFailProvisionalLoadWithError:[pd _mainDocumentError] forFrame:self];
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                           didFailProvisionalLoadWithError:[pd _mainDocumentError]
                                                                  forFrame:self];
@@ -1003,10 +1005,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 [[self webView] _progressCompleted];
                 
                 if ([ds _mainDocumentError]) {
+                    [[self webView] _didFailLoadWithError:[ds _mainDocumentError] forFrame:self];
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                      didFailLoadWithError:[ds _mainDocumentError]
                                                                  forFrame:self];
                 } else {
+                    [[self webView] _didFinishLoadForFrame:self];
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                     didFinishLoadForFrame:self];
                 }

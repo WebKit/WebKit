@@ -16,6 +16,7 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLView.h>
+#import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -781,5 +782,40 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return YES;
 }
 
+
+@end
+
+
+@implementation WebView (WebPendingPublic)
+
+- (void)setMainFrameURL:(NSString *)URLString
+{
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
+}
+
+- (NSString *)mainFrameURL
+{
+    WebDataSource *ds;
+    ds = [[self mainFrame] provisionalDataSource];
+    if (!ds)
+        ds = [[self mainFrame] dataSource];
+    return [[[ds request] URL] absoluteString];
+}
+
+- (BOOL)isLoading
+{
+    return [[[self mainFrame] dataSource] isLoading];
+}
+
+- (NSString *)mainFrameTitle
+{
+    NSString *mainFrameTitle = [[[self mainFrame] dataSource] pageTitle];
+    return (mainFrameTitle != nil) ? mainFrameTitle : @"";
+}
+
+- (NSImage *)mainFrameIcon
+{
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] absoluteString] withSize:WebIconSmallSize];
+}
 
 @end
