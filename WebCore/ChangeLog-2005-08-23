@@ -2,6 +2,15 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3790595> "ERROR: unimplemented propertyID: 97" logged to console when copying selection (table-layout)
+
+        * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        Added CSS_PROP_TABLE_LAYOUT case.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3809600> REGRESSION: text in search field doesn't disappear when clicked at developer.apple.com
 
         Reversing the order of scope caused us to get and set too many properties in the window

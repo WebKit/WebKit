@@ -606,8 +606,14 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP_TABLE_LAYOUT:
-        // FIXME: unimplemented
-        break;
+        switch (style->tableLayout()) {
+            case khtml::TAUTO:
+                return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
+            case khtml::TFIXED:
+                return new CSSPrimitiveValueImpl(CSS_VAL_FIXED);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_TEXT_ALIGN:
         return valueForTextAlign(style->textAlign());
     case CSS_PROP_TEXT_DECORATION:
