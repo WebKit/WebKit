@@ -1,3 +1,22 @@
+2004-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/3889696> Enable conservative garbage collection for JavaScript
+        
+	* kjs/collector.cpp:
+        (KJS::Collector::Thread::Thread):
+        (KJS::destroyRegisteredThread):
+        (KJS::initializeRegisteredThreadKey):
+        (KJS::Collector::registerThread):
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::markCurrentThreadConservatively):
+        (KJS::Collector::markOtherThreadConservatively):
+        * kjs/collector.h:
+        * kjs/internal.cpp:
+        (lockInterpreter):
+        * kjs/value.h:
+
 === Safari-172 ===
 
 2004-11-15  Richard Williamson   <rjw@apple.com>

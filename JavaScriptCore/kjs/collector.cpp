@@ -33,6 +33,13 @@
 #include <value.h>
 #include <internal.h>
 
+#if APPLE_CHANGES
+#include <pthread.h>
+#include <mach/mach_port.h>
+#include <mach/task.h>
+#include <mach/thread_act.h>
+#endif
+
 namespace KJS {
 
 // tunable parameters
@@ -168,11 +175,67 @@ void* Collector::allocate(size_t s)
 
 #if TEST_CONSERVATIVE_GC || USE_CONSERVATIVE_GC
 
+struct Collector::Thread {
+  Thread(pthread_t pthread, mach_port_t mthread) : posixThread(pthread), machThread(mthread) {}
+  Thread *next;
+  pthread_t posixThread;
+  mach_port_t machThread;
+};
+
+pthread_key_t registeredThreadKey;
+pthread_once_t registeredThreadKeyOnce = PTHREAD_ONCE_INIT;
+Collector::Thread *registeredThreads;
+  
+static void destroyRegisteredThread(void *data) 
+{
+  Collector::Thread *thread = (Collector::Thread *)data;
+
+  if (registeredThreads == thread) {
+    registeredThreads = registeredThreads->next;
+  } else {
+    Collector::Thread *last = registeredThreads;
+    for (Collector::Thread *t = registeredThreads->next; t != NULL; t = t->next) {
+      if (t == thread) {
+        last->next = t->next;
+          break;
+      }
+      last = t;
+    }
+  }
+
+  delete thread;
+}
+
+static void initializeRegisteredThreadKey()
+{
+  pthread_key_create(&registeredThreadKey, destroyRegisteredThread);
+}
+
+void Collector::registerThread()
+{
+  pthread_once(&registeredThreadKeyOnce, initializeRegisteredThreadKey);
+
+  if (!pthread_getspecific(registeredThreadKey)) {
+    pthread_t pthread = pthread_self();
+    Collector::Thread *thread = new Collector::Thread(pthread, pthread_mach_thread_np(pthread));
+    thread->next = registeredThreads;
+    registeredThreads = thread;
+    pthread_setspecific(registeredThreadKey, thread);
+  }
+}
+
+
 // cells are 8-byte aligned 
 #define IS_POINTER_ALIGNED(p) (((int)(p) & 7) == 0)
 
 void Collector::markStackObjectsConservatively(void *start, void *end)
 {
+  if (start > end) {
+    void *tmp = start;
+    start = end;
+    end = tmp;
+  }
+
   assert(((char *)end - (char *)start) < 0x1000000);
   assert(IS_POINTER_ALIGNED(start));
   assert(IS_POINTER_ALIGNED(end));
@@ -212,16 +275,66 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   }
 }
 
-void Collector::markStackObjectsConservatively()
+void Collector::markCurrentThreadConservatively()
 {
   jmp_buf registers;
   setjmp(registers);
 
   pthread_t thread = pthread_self();
   void *stackBase = pthread_get_stackaddr_np(thread);
-  void *stackPointer;
-  asm("mr %0,r1" : "=r" (stackPointer));
+  int dummy;
+  void *stackPointer = &dummy;
   markStackObjectsConservatively(stackPointer, stackBase);
+}
+
+typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
+
+void Collector::markOtherThreadConservatively(Thread *thread)
+{
+  thread_suspend(thread->machThread);
+
+#if defined(__i386__)
+  i386_thread_state_t regs;
+  unsigned user_count = sizeof(regs)/sizeof(int);
+  thread_state_flavor_t flavor = i386_THREAD_STATE;
+#elif defined(__ppc__)
+  ppc_thread_state_t  regs;
+  unsigned user_count = PPC_THREAD_STATE_COUNT;
+  thread_state_flavor_t flavor = PPC_THREAD_STATE;
+#elif defined(__ppc64__)
+  ppc_thread_state64_t  regs;
+  unsigned user_count = PPC_THREAD_STATE64_COUNT;
+  thread_state_flavor_t flavor = PPC_THREAD_STATE64;
+#else
+#error Unknown Architecture
+#endif
+  // get the thread register state
+  thread_get_state(thread->machThread, flavor, (thread_state_t)&regs, &user_count);
+  
+  // scan the registers
+  markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
+  
+  // scan the stack
+#if defined(__i386__)
+  markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
+#elif defined(__ppc__) || defined(__ppc64__)
+  markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));
+#else
+#error Unknown Architecture
+#endif
+
+  thread_resume(thread->machThread);
+}
+
+void Collector::markStackObjectsConservatively()
+{
+  markCurrentThreadConservatively();
+
+  for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
+    if (thread->posixThread != pthread_self()) {
+      markOtherThreadConservatively(thread);
+    }
+  }
 }
 
 void Collector::markProtectedObjects()

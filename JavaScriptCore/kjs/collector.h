@@ -69,10 +69,17 @@ namespace KJS {
     static int numReferencedObjects();
     static const void *rootObjectClasses(); // actually returns CFSetRef
 #endif
+#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
+    class Thread;
+
+    static void registerThread();
+#endif
   private:
 
 #if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
     static void markProtectedObjects();
+    static void markCurrentThreadConservatively();
+    static void markOtherThreadConservatively(Thread *thread);
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void *start, void *end);
 #endif

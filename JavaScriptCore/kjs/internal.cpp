@@ -94,6 +94,7 @@ static inline void lockInterpreter()
   pthread_once(&interpreterLockOnce, initializeInterpreterLock);
   pthread_mutex_lock(&interpreterLock);
   interpreterLockCount++;
+  Collector::registerThread();
 }
 
 static inline void unlockInterpreter()
