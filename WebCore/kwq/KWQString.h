@@ -128,7 +128,6 @@ public:
 
 class QString {
 public:
-    static QString fromLatin1(const char *, int len=-1);
 
     // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
@@ -139,6 +138,7 @@ public:
     // static member functions -------------------------------------------------
 
     static QString number(long, int base=10);
+    static QString fromLatin1(const char *, int len=-1);
 
     // constructors, copy constructors, and destructors ------------------------
 
@@ -195,13 +195,13 @@ public:
 
     QString arg (int &);
     QString arg(int a, int fieldwidth=0, int base=10) const;
-    QString arg(const QString &, int fieldwidth = 0) const;
+    QString arg(const QString &, int fieldwidth=0) const;
 
     QString left(uint) const;
     QString right(uint) const;
     QString mid(int, int len=0xffffffff) const;
 
-    const char* latin1() const;
+    const char *latin1() const;
     const char *ascii() const;
     const QChar *unicode() const;
     QCString utf8() const;

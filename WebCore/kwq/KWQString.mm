@@ -31,6 +31,8 @@
 
 const QString QString::null;
 
+// constructors, copy constructors, and destructors ------------------------
+
 QString::QString()
 {
     s = NULL;
@@ -96,100 +98,7 @@ QString::~QString()
     CFRelease(s);
 }
 
-QString QString::lower() const
-{
-    QString result(*this);
-
-    CFStringLowercase(result.s, NULL);
-
-    return result;
-}
-
-bool QString::isNull() const
-{
-    return (s == NULL);
-}
-
-bool QString::isEmpty() const
-{
-    return (s == NULL || CFStringGetLength(s) == 0);
-}
-
-uint QString::length() const
-{
-    return CFStringGetLength(s);
-}
-
-int QString::find(char, int index=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-int QString::find(const char *, int index=0, bool b=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-int QString::find(const QString &, int index=0, bool b=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-int QString::find(const QRegExp &, int index=0, bool b=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-int QString::findRev(char, int index=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-int QString::findRev(const char *, int index=0) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-QString QString::fromLatin1(const char *s, int len=-1)
-{
-    // FIXME: awaiting real implementation
-    return NULL;
-}
-
-const char *QString::latin1() const
-{
-    // FIXME: awaiting real implementation
-    return (const char *)CFStringGetCStringPtr(s, kCFStringEncodingISOLatin1); 
-}
-
-const QChar *QString::unicode() const
-{
-    // FIXME: awaiting real implementation
-    return (QChar *)CFStringGetCharactersPtr(s); 
-}
-
-int QString::contains(const char *s, bool cs=TRUE) const
-{
-    // FIXME: awaiting real implementation
-    return 0;
-}
-
-QString QString::mid(int, int len=0xffffffff) const
-{
-    // FIXME: awaiting real implementation
-    return NULL;
-}
-
-QString::operator const char *() const
-{
-    return latin1();
-}
+// assignment operators ----------------------------------------------------
 
 QString &QString::operator=(const QString &qs)
 {
@@ -220,15 +129,308 @@ QString &QString::operator=(char ch)
     return *this = QString(QChar(ch));
 }
 
+// member functions --------------------------------------------------------
+
+bool QString::isNull() const
+{
+    return (s == NULL);
+}
+
+bool QString::isEmpty() const
+{
+    return (s == NULL || CFStringGetLength(s) == 0);
+}
+
+uint QString::length() const
+{
+    return CFStringGetLength(s);
+}
+
+bool QString::startsWith(const QString &s) const
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
+int QString::toInt() const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::toInt(bool *b, int base=10) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+uint QString::toUInt(bool *ok=0, int base=10) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+long QString::toLong(bool *ok=0, int base=10) const
+{
+    // FIXME: awaiting real implementation
+    return 0L;
+}
+
+float QString::toFloat(bool *b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0.0f;
+}
+
+QString &QString::prepend(const QString &s)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::append(const char *s)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::append(const QString &s)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+int QString::contains(const char *c, bool cs=TRUE) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::contains(char c) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(char c, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const char *s, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const QString &s, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::find(const QRegExp &r, int index=0, bool b=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::findRev(char c, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+int QString::findRev(const char *s, int index=0) const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QString &QString::remove(uint u1, uint u2)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::replace(const QRegExp &, const QString &)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::insert(uint i, char c)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+void QString::truncate(uint pos)
+{
+    // FIXME: awaiting real implementation
+}
+
+void QString::fill(QChar c, int len=-1)
+{
+    // FIXME: awaiting real implementation
+}
+
+QString QString::arg(int &a)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::arg(int a, int fieldwidth=0, int base=10) const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::arg(const QString &s, int fieldwidth=0) const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::left(uint pos) const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::right(uint pos) const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::mid(int pos, int len=0xffffffff) const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::fromLatin1(const char *s, int len=-1)
+{
+    // FIXME: awaiting real implementation
+    return NULL;
+}
+
+const char *QString::latin1() const
+{
+    // FIXME: awaiting real implementation
+    return (const char *)CFStringGetCStringPtr(s, kCFStringEncodingISOLatin1); 
+}
+
+const char *QString::ascii() const
+{
+    // FIXME: awaiting real implementation
+    return NULL;
+}
+
+const QChar *QString::unicode() const
+{
+    // FIXME: awaiting real implementation
+    return (QChar *)CFStringGetCharactersPtr(s); 
+}
+
+QCString QString::utf8() const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QCString QString::local8Bit() const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+QString &QString::setUnicode(const QChar *s, uint i)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::setNum(int i, int base=10)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::sprintf(const char *s, ...)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::lower() const
+{
+    // FIXME: awaiting real implementation
+    QString result(*this);
+
+    CFStringLowercase(result.s, NULL);
+
+    return result;
+}
+
+QString QString::stripWhiteSpace() const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString QString::simplifyWhiteSpace() const
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+void QString::compose()
+{
+    // FIXME: awaiting real implementation
+}
+
+QString QString::visual(int index=0, int len=-1)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
 bool QString::operator!() const
 { 
     return isNull(); 
+}
+
+QString::operator const char *() const
+{
+    return latin1();
 }
 
 QChar QString::operator[](int i) const
 {
     // FIXME: awaiting real implementation
     return 0;
+}
+
+QString &QString::operator+(char c)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::operator+(QChar c)
+{
+    // FIXME: awaiting real implementation
+    return *this;
+}
+
+QString &QString::operator+(const QString &s)
+{
+    // FIXME: awaiting real implementation
+    return *this;
 }
 
 QString &QString::operator+=(char c)
@@ -249,8 +451,33 @@ QString &QString::operator+=(const QString &s)
     return *this;
 }
 
+QString::operator QChar() const
+{
+    // FIXME: awaiting real implementation
+    return 0;
+}
+
+/*
+QString &operator+(const char *s1, const QString &s2)
+{
+    // FIXME: awaiting real implementation
+}
+
+QString &operator+(QChar c, const QString &s)
+{
+    // FIXME: awaiting real implementation
+}
+*/
+
+bool operator==(const QString &s, QChar c)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
 bool operator==(const QString &s1, const QString &s2)
 {
+    // FIXME: awaiting real implementation
     CFComparisonResult cmp;
     int flags;
 
@@ -261,8 +488,27 @@ bool operator==(const QString &s1, const QString &s2)
     return (cmp == kCFCompareEqualTo);
 }
 
+bool operator==(const QString &s1, const char *s2)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
+bool operator==(const char *s1, const QString &s2)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
+bool operator!=(const QString &s, QChar c)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
 bool operator!=(const QString &s1, const QString &s2)
 {
+    // FIXME: awaiting real implementation
     CFComparisonResult cmp;
     int flags;
 
@@ -271,6 +517,24 @@ bool operator!=(const QString &s1, const QString &s2)
     cmp = CFStringCompare(s1.s, s2.s, flags);
     
     return (cmp != kCFCompareEqualTo);
+}
+
+bool operator!=(const QString &s1, const char *s2)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
+bool operator!=(const char *s1, const QString &s2)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
+}
+
+QString operator+(char c, const QString &s)
+{
+    // FIXME: awaiting real implementation
+    return FALSE;
 }
 
 QConstString::QConstString(QChar *qcs, uint len)

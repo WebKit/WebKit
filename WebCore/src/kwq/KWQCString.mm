@@ -206,6 +206,55 @@ QCString QCString::lower() const
     return result;
 }
 
+QCString QCString::upper() const
+{
+    QCString result(data());
+
+    char *p = result.data();
+    if (p) {
+        while(*p) {
+            *p = toupper((uchar)*p);
+            p++;
+        }
+    }
+
+    return result;
+}
+
+QCString QCString::left(uint len) const
+{
+    if (isEmpty()) {
+        QCString empty;
+        return empty;
+    } 
+    else if (len >= size()) {
+        QCString same(data());
+        return same;
+    } 
+    else {
+        QCString s(len + 1);
+        strncpy(s.data(), data(), len);
+        *(s.data() + len) = '\0';
+        return s;
+    }
+}
+
+QCString QCString::right(uint len) const
+{
+    if (isEmpty()) {
+        QCString empty;
+        return empty;
+    } 
+    else {
+        uint l = length();
+        if (len > l) {
+            len = l;
+        }
+        char *p = data() + (l - len);
+        return QCString(p);
+    }
+}
+
 QCString QCString::mid(uint index, uint len) const
 {
     uint slen;
