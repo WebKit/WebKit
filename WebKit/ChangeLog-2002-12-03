@@ -1,5 +1,14 @@
 2002-06-26  Darin Adler  <darin@apple.com>
 
+	- fixed 2969280 -- if trailing / not specified for site, relative URLs are
+	incorrectly expanded
+
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge receivedData:withDataSource:]): Update the URL for the
+	case where we've already been redirected before we receive any data.
+
+2002-06-26  Darin Adler  <darin@apple.com>
+
 	- fixed 2971532 -- crash with null KHTMLView at gramicci.com
 
         * WebView.subproj/IFHTMLView.mm:

@@ -120,6 +120,9 @@
     if (dataSource == nil) {
         [self setDataSource: withDataSource];
         [self openURL:[dataSource inputURL]];
+        if ([dataSource redirectedURL]) {
+            [self setURL:[dataSource redirectedURL]];
+        }
     } else {
         WEBKIT_ASSERT(dataSource == withDataSource);
     }
