@@ -11,7 +11,16 @@
 #include <WCURLHandle.h>
 
 
-typedef NPStream* NPS;
+
+typedef struct _StreamData{
+    uint16 transferMode;
+    int32 offset;
+    NPStream *stream;
+    char *mimeType;
+    NSString *filename;
+    NSMutableData *data;
+} StreamData;
+
 
 @interface IFPluginViewNullEventSender : NSObject{
     NPP instance;
@@ -29,20 +38,15 @@ typedef NPStream* NPS;
     IFPluginViewNullEventSender *eventSender;
     
     NPP instance;
-    NPP_t instanceStruct;
-    NPStream streamStruct;
-    NPS stream;
     NPWindow window;
     NP_Port nPort;
     
-    int32 streamOffset;
-    uint16 transferMode;
     char **cAttributes, **cValues;
     bool isFlipped, transferred, hidden, stopped;
             
-    NSString *url, *mime, *filename;
+    NSString *url, *mime;
     NSTrackingRectTag trackingTag;
-    NSFileHandle *file;
+    NSMutableArray *filesToErase;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -63,6 +67,7 @@ typedef NPStream* NPS;
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;
 -(void)drawRect:(NSRect)rect;
 -(void)setWindow:(NSRect)rect;
+- (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData;
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;

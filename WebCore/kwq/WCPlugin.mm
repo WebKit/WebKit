@@ -243,6 +243,22 @@
     return NPP_HandleEvent;
 }
 
+-(NPP_URLNotifyProcPtr)NPP_URLNotify{
+    return NPP_URLNotify;
+}
+
+-(NPP_GetValueProcPtr)NPP_GetValue{
+    return NPP_GetValue;
+}
+
+-(NPP_SetValueProcPtr)NPP_SetValue{
+    return NPP_SetValue;
+}
+
+-(NPP_PrintProcPtr)NPP_Print{
+    return NPP_Print;
+}
+
 - (NSArray *)mimeTypes{
     return mimeTypes;
 }

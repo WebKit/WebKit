@@ -74,6 +74,10 @@
 - (NPP_StreamAsFileProcPtr)NPP_StreamAsFile;
 - (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
 - (NPP_HandleEventProcPtr)NPP_HandleEvent;
+- (NPP_URLNotifyProcPtr)NPP_URLNotify;
+- (NPP_GetValueProcPtr)NPP_GetValue;
+- (NPP_SetValueProcPtr)NPP_SetValue;
+- (NPP_PrintProcPtr)NPP_Print;
 
 @end
 

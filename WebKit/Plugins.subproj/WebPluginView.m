@@ -42,23 +42,23 @@
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType  arguments:(NSDictionary *)arguments
 {
     NPError npErr;
-    char cMime[200], *s;
+    char *cMime, *s;
     NPSavedData saved;
     NSArray *attributes, *values;
     NSString *attributeString;
-    
     uint i;
         
     [super initWithFrame: r];
-
-    instance = &instanceStruct;
+    instance = malloc(sizeof(NPP_t));
     instance->ndata = self;
-    stream = &streamStruct;
-    streamOffset = 0;
 
     mime = mimeType;
     url = location;
     plugin = plug;
+    [mime retain];
+    [url retain];
+    [plugin retain];
+    
     NPP_New = 		[plugin NPP_New]; // copy function pointers
     NPP_Destroy = 	[plugin NPP_Destroy];
     NPP_SetWindow = 	[plugin NPP_SetWindow];
@@ -68,6 +68,7 @@
     NPP_StreamAsFile = 	[plugin NPP_StreamAsFile];
     NPP_DestroyStream = [plugin NPP_DestroyStream];
     NPP_HandleEvent = 	[plugin NPP_HandleEvent];
+    NPP_URLNotify = 	[plugin NPP_URLNotify];
     
     attributes = [arguments allKeys];
     values = [arguments allValues];
@@ -85,6 +86,7 @@
         [attributeString getCString:s];
         cValues[i] = s;
     }
+    cMime = malloc([mime length]+1);
     [mime getCString:cMime];
     npErr = NPP_New(cMime, instance, NP_EMBED, [arguments count], cAttributes, cValues, &saved);
     KWQDebug("NPP_New: %d\n", npErr);
@@ -96,7 +98,9 @@
     }
     transferred = FALSE;
     stopped = FALSE;
-    trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
+    filesToErase = [NSMutableArray arrayWithCapacity:2];
+    [filesToErase retain];
+    //trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
     eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
     [eventSender sendNullEvents];
     return self;
@@ -104,41 +108,12 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    NPError npErr;
-    char cMime[200], cURL[800];
-    NSFileManager *fileManager;
-    
     //MoveTo(0,0); // diagnol line test
     //LineTo((short)rect.size.width, (short)rect.size.height);
-    
     [self setWindow:rect];
     if(!transferred){
         [self sendActivateEvent];
-        [url getCString:cURL];
-        stream->url = cURL;
-        stream->end = 0;
-        stream->lastmodified = 0;
-        stream->notifyData = NULL;
-        [mime getCString:cMime];
-        
-        npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
-        KWQDebug("NPP_NewStream: %d\n", npErr);
-        
-        if(transferMode == NP_NORMAL){
-            KWQDebug("Stream type: NP_NORMAL\n");
-            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
-        }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
-            KWQDebug("Stream type: NP_ASFILEONLY or NP_ASFILE\n");
-            fileManager = [NSFileManager defaultManager];
-            filename = [NSString stringWithString:[@"/symroots" stringByAppendingPathComponent:[url lastPathComponent]]];
-            [fileManager createFileAtPath:filename contents:nil attributes:nil];
-            file = [NSFileHandle fileHandleForWritingAtPath:filename];
-            [file retain];
-            [filename retain];
-            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
-        }else if(transferMode == NP_SEEK){
-            KWQDebug("Stream type: NP_SEEK not yet supported\n");
-        }
+        [self newStream:url mimeType:mime notifyData:NULL];
         transferred = TRUE;
     }
     [self sendUpdateEvent];
@@ -176,40 +151,105 @@
     KWQDebug("frameInWindow.size.height=%d frameInWindow.size.width=%d frameInWindow.origin.x=%f frameInWindow.origin.y=%f\n", (int)frameInWindow.size.height, (int)frameInWindow.size.width, frameInWindow.origin.x, frameInWindow.origin.y);
 }
 
+- (void) newStream:(NSString *)streamURL mimeType:(NSString *)mimeType notifyData:(void *)notifyData
+{
+    char *cURL, *cMime;
+    StreamData *streamData;
+    NPStream *stream;
+    NPError npErr;    
+    uint16 transferMode;
+    
+    stream = malloc(sizeof(NPStream));
+    cURL   = malloc([streamURL length]+1);
+    cMime  = malloc([mime length]+1);
+    [streamURL getCString:cURL];
+    [mime getCString:cMime];
+    stream->url = cURL;
+    stream->end = 0;
+    stream->lastmodified = 0;
+    stream->notifyData = notifyData;
+    
+    streamData = malloc(sizeof(StreamData));
+    streamData->stream = stream;
+    streamData->offset = 0;
+    streamData->mimeType = cMime;
+    
+    npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
+    KWQDebug("NPP_NewStream: %d\n", npErr);
+    streamData->transferMode = transferMode;
+    
+    if(transferMode == NP_NORMAL){
+        KWQDebug("Stream type: NP_NORMAL\n");
+        [WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData) loadInBackground];
+    }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
+        if(transferMode == NP_ASFILEONLY) KWQDebug("Stream type: NP_ASFILEONLY\n");
+        if(transferMode == NP_ASFILE) KWQDebug("Stream type: NP_ASFILE\n");
+        streamData->filename  = [NSString stringWithString:[streamURL lastPathComponent]];
+        [streamData->filename retain];
+        streamData->data = [NSMutableData dataWithCapacity:0];
+        [streamData->data retain];
+        [WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData) loadInBackground];
+    }else if(transferMode == NP_SEEK){
+        KWQDebug("Stream type: NP_SEEK not yet supported\n");
+    }
+}
+
 // cache methods
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
 {
     int32 bytes;
+    StreamData *streamData;
     
-    if(transferMode != NP_ASFILEONLY){
-        bytes = NPP_WriteReady(instance, stream);
-        KWQDebug("NPP_WriteReady bytes=%d\n", (int)bytes);
-        bytes = NPP_Write(instance, stream, streamOffset, [data length], (void *)[data bytes]);
-        KWQDebug("NPP_Write bytes=%d\n", (int)bytes);
-        streamOffset += [data length];
+    streamData = userData;
+    if(streamData->transferMode != NP_ASFILEONLY){
+        bytes = NPP_WriteReady(instance, streamData->stream);
+        //KWQDebug("NPP_WriteReady bytes=%u\n", bytes);
+        bytes = NPP_Write(instance, streamData->stream, streamData->offset, [data length], (void *)[data bytes]);
+        //KWQDebug("NPP_Write bytes=%u\n", bytes);
+        streamData->offset += [data length];
     }
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-        if(file != nil)
-            [file writeData:data];
+    if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
+        [streamData->data appendData:data];
     }
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
 {
     NPError npErr;
-    char filenameC[400];
-    
-    streamOffset = 0;
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-        [file closeFile];
-        strcpy(filenameC, [startupVolumeName() cString]);
-        strcat(filenameC, ":symroots:"); //FIXME: This should be the user's cache directory or somewhere else
-        strcat(filenameC, [[url lastPathComponent] cString]);
-        NPP_StreamAsFile(instance, stream, filenameC);
+    char *cFilename;
+    NSMutableString *filenameClassic, *filename;
+    StreamData *streamData;
+    NSFileManager *fileManager;
+        
+    streamData = userData;
+    if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
+        filenameClassic = [NSMutableString stringWithCapacity:200];
+        filename = [NSMutableString stringWithCapacity:200];
+        [filenameClassic appendString:startupVolumeName()];
+        [filenameClassic appendString:@":private:tmp:"];  //FIXME: This should be the user's cache directory or somewhere else
+        [filenameClassic appendString:streamData->filename];
+        [filename appendString:@"/tmp/"];
+        [filename appendString:streamData->filename];
+        [filesToErase addObject:filename];
+        fileManager = [NSFileManager defaultManager];
+        KWQDebug("Writing plugin file out to: %s %s size: %u\n", [filenameClassic cString], [filename cString], [streamData->data length]);
+        [fileManager removeFileAtPath:filename handler:nil];
+        [fileManager createFileAtPath:filename contents:streamData->data attributes:nil];
+        cFilename = malloc([filenameClassic length]+1);
+        [filenameClassic getCString:cFilename];
+        NPP_StreamAsFile(instance, streamData->stream, cFilename);
+        [streamData->data release];
+        [streamData->filename release];
     }
-    npErr = NPP_DestroyStream(instance, stream, NPRES_DONE);
+    npErr = NPP_DestroyStream(instance, streamData->stream, NPRES_DONE);
     KWQDebug("NPP_DestroyStream: %d\n", npErr);
+    if(streamData->stream->notifyData){
+        NPP_URLNotify(instance, streamData->stream->url, NPRES_DONE, streamData->stream->notifyData);
+        KWQDebug("NPP_URLNotify\n");
+    }
+    [self setNeedsDisplay:YES];
+    free(streamData);
 }
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
@@ -405,8 +445,12 @@
 
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
 {
-    KWQDebug("getURLNotify\n");
-    return NPERR_GENERIC_ERROR;
+    KWQDebug("NPN_GetURLNotify: %s\n", url);
+    if(target == NULL){ // send data to plug-in if target is null
+        [self newStream:[NSString stringWithCString:url] mimeType:nil notifyData:(void *)notifyData];
+    }
+    
+    return NPERR_NO_ERROR;
 }
 
 -(NPError)getURL:(const char *)url target:(const char *)target
@@ -475,17 +519,12 @@
 - (void)stop
 {
     NPError npErr;
-    NSFileManager *fileManager;
     
     if (!stopped){
         [eventSender stop];
         [eventSender release];
         npErr = NPP_Destroy(instance, NULL);
         KWQDebug("NPP_Destroy: %d\n", npErr);
-        if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-            fileManager = [NSFileManager defaultManager];
-            [fileManager removeFileAtPath:filename handler:nil];
-        }
         stopped = TRUE;
     }
 }
@@ -497,7 +536,15 @@
 
 -(void)dealloc
 {
+    unsigned i;
+    NSFileManager *fileManager;
+    
     [self stop];
+    fileManager = [NSFileManager defaultManager];
+    for(i=0; i<[filesToErase count]; i++){
+        [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil];
+    }
+    [filesToErase release];
     [super dealloc];
 }
 
