@@ -442,8 +442,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LOG(Plugins, "%f main timing started", mainStart);
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
         if (npErr != NPERR_NO_ERROR) {
-            [self unload];
-            return NO;
+            goto abort;
         }
 #if !LOG_DISABLED
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
@@ -500,8 +499,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
         npErr = NP_Initialize(&browserFuncs);
         if (npErr != NPERR_NO_ERROR) {
-            [self unload];
-            return NO;
+            goto abort;
         }
 #if !LOG_DISABLED
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
@@ -511,8 +509,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
         npErr = NP_GetEntryPoints(&pluginFuncs);
         if (npErr != NPERR_NO_ERROR) {
-            [self unload];
-            return NO;
+            goto abort;
         }
         
         pluginSize = pluginFuncs.size;

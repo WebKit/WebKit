@@ -1,5 +1,14 @@
 2003-05-27  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3233442 - Crash in -[WebNetscapePluginPackage load] at http://www.adultswim.com/
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]): don't call NPP_Shutdown if the plug-in fails to load
+
+2003-05-27  Chris Blumenberg  <cblu@apple.com>
+
 		Don't load and save icons if the icon DB directory default is not set.
 
         Reviewed by darin.
