@@ -2360,13 +2360,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
         if (!isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
             // Delete all the children of the block, but not the block itself.
             setStartNode(m_startBlock->firstChild());
+            startOffset = 0;
         }
-        else {
-            // The whole block can be deleted.
-            setStartNode(m_startBlock->traverseNextSibling());
-            removeFullySelectedNode(m_startBlock);
-        }
-        startOffset = 0;
     }
     else if (startOffset >= m_startNode->caretMaxOffset()) {
         // Move the start node to the next node in the tree since the startOffset is equal to

@@ -1,3 +1,19 @@
+2005-02-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3996344> Entire document content is deleted when only the first paragraph was supposed to be
+
+        Problem stems from my attempt to fix this bug: <rdar://problem/3986155> Insertion point goes 
+        to beginning of doc after deleting.
+        
+        I added an "optimization" that proved to do more harm than good. So, basically, the fix is to remove code.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete)
+
 2005-02-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.
