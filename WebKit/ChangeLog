@@ -1,3 +1,17 @@
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3814237> REGRESSION (Mail): Copy/paste style does not set color in Mail compose window
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]): Changed to call new bridge method
+        named fontAttributesForSelectionStart, deleted the method this used to use, and renamed
+        this to have the word "start" in it.
+        (-[WebHTMLView copyFont:]): Updated for name change.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2004-10-04  Chris Blumenberg  <cblu@apple.com>
 
         * WebView.subproj/WebFrameInternal.h: removed constant declarations that I committed by mistake

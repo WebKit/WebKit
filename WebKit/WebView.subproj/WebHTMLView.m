@@ -2980,18 +2980,10 @@ static WebHTMLView *lastHitView = nil;
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
 }
 
-- (NSDictionary *)_selectionFontAttributes
+- (NSData *)_selectionStartFontAttributesAsRTF
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    NSFont *font = [[self _bridge] fontForSelection:NULL];
-    if (font != nil)
-        [dictionary setObject:font forKey:NSFontAttributeName];
-    return dictionary;
-}
-
-- (NSData *)_selectionFontAttributesAsRTF
-{
-    NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x" attributes:[self _selectionFontAttributes]];
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
+        attributes:[[self _bridge] fontAttributesForSelectionStart]];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [string release];
     return data;
@@ -3172,7 +3164,7 @@ static WebHTMLView *lastHitView = nil;
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
     [fontPasteboard declareTypes:[NSArray arrayWithObject:NSFontPboardType] owner:nil];
-    [fontPasteboard setData:[self _selectionFontAttributesAsRTF] forType:NSFontPboardType];
+    [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:NSFontPboardType];
 }
 
 - (void)pasteFont:(id)sender
