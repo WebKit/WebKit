@@ -1,3 +1,21 @@
+2004-11-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3864151> REGRESSION (125-167): Chrysler.com never stops loading
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::close): Don't fire the onload handler if there is a
+	redirect pending. This is a very long-standing bug that was masked
+	by our previously incorrect redirect logic. It used to be that an
+	older redirect would always win. Recently we changed things so
+	that a newer redirect would win, but a script that causes a
+	redirect would stop parsing once complete (so if there are two
+	redirects in the same script, the latter wins). However, we should
+	have also prevented onload in this case. Testing with other
+	browsers shows that onload handlers do not run at all when there
+	is a pending redirect.
+
 2004-11-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

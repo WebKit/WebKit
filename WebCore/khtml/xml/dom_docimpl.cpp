@@ -1350,9 +1350,9 @@ HTMLElementImpl* DocumentImpl::body()
 void DocumentImpl::close()
 {
     // First fire the onload.
-    bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent;
     
     bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
+    bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent && !wasLocationChangePending;
     
     if (body() && doload) {
         m_processingLoadEvent = true;
@@ -1376,8 +1376,8 @@ void DocumentImpl::close()
     
     bool isLocationChangePending = part() && part()->isScheduledLocationChangePending();
     
-    if (doload && !wasLocationChangePending && isLocationChangePending && m_startTime.elapsed() < cLayoutScheduleThreshold) {
-	// Just bail out. During the onload we were shifted to another page.
+    if (doload && isLocationChangePending && m_startTime.elapsed() < cLayoutScheduleThreshold) {
+	// Just bail out. Before or during the onload we were shifted to another page.
 	// The old i-Bench suite does this. When this happens don't bother painting or laying out.        
 	delete m_tokenizer;
 	m_tokenizer = 0;
