@@ -280,8 +280,10 @@ typedef enum {
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
 - (void)jumpToSelection;
+
 - (NSString *)advanceToNextMisspelling;
 - (NSString *)advanceToNextMisspellingStartingJustBeforeSelection;
+- (void)unmarkAllMisspellings;
 
 - (void)setTextSizeMultiplier:(float)multiplier;
 

@@ -1161,6 +1161,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->advanceToNextMisspelling(true).getNSString();
 }
 
+- (void)unmarkAllMisspellings
+{
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return;
+    }
+    doc->removeAllMarkers();
+}
+
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     int newZoomFactor = (int)rint(multiplier * 100);

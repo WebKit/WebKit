@@ -362,6 +362,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_overMinimumLayoutThreshold = false;
     
     m_jsEditor = 0;
+
+    m_markers.setAutoDelete(true);
 }
 
 DocumentImpl::~DocumentImpl()
@@ -3072,7 +3074,7 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
     
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (!markers) {
-        markers = new QValueList <DocumentMarker>();
+        markers = new QValueList <DocumentMarker>;
         markers->append(newMarker);
         m_markers.insert(node, markers);
     } else {
@@ -3153,6 +3155,9 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
         }
     }
 
+    if (markers->isEmpty())
+        m_markers.remove(node);
+
     // repaint the affected node
     if (docDirty && node->renderer())
         node->renderer()->repaint();
@@ -3177,21 +3182,28 @@ void DocumentImpl::removeAllMarkers(NodeImpl *node, ulong startOffset, long leng
 
 void DocumentImpl::removeAllMarkers(NodeImpl *node)
 {
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
-    if (markers)
-        markers->clear();
+    QValueList<DocumentMarker> *markers = m_markers.take(node);
+    if (markers) {
+        RenderObject *renderer = node->renderer();
+        if (renderer)
+            renderer->repaint();
+        delete markers;
+    }
 }
 
 void DocumentImpl::removeAllMarkers()
 {
+    QPtrDictIterator< QValueList<DocumentMarker> > it(m_markers);
+    for (; NodeImpl *node = static_cast<NodeImpl *>(it.currentKey()); ++it) {
+        RenderObject *renderer = node->renderer();
+        if (renderer)
+            renderer->repaint();
+    }
     m_markers.clear();
 }
 
 void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
 {
-    if (m_markers.isEmpty())
-        return;
-
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (!markers)
         return;

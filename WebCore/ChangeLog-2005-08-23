@@ -1,3 +1,20 @@
+2005-03-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/4049776> Seed: Mail: Disable spellcheck leaves red artifacts
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): Set markers list to be "auto-delete" so they don't all leak.
+        (DocumentImpl::removeMarker): Remove markers list for a node when the last marker is removed
+        for that node. Otherwise, we can have empty marker lists for each node forever until the
+        document goes away.
+        (DocumentImpl::removeAllMarkers): Added code to dirty the markers.
+        (DocumentImpl::shiftMarkers): Remove unneeded empty check.
+
+        * kwq/WebCoreBridge.h: Added unmarkAllMisspellings for WebKit.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge unmarkAllMisspellings]): Added. Calls removeAllMarkers.
+
 2005-03-14  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
@@ -13127,7 +13144,7 @@
         (khtml::EditCommand::EditCommand): Blow away the selection when starting an edit command.
         (khtml::EditCommand::apply): Remove code to mark misspellings because that's now done as part
         of blowing away the selection.
-        (khtml::EditCommand::unapply): Blow away the selection instead of marking mispellings.
+        (khtml::EditCommand::unapply): Blow away the selection instead of marking misspellings.
         (khtml::EditCommand::reapply): Ditto.
         (khtml::ReplaceSelectionCommand::doApply): Removed incorrect code that does spell checking
         on inserted text; this doesn't match NSText behavior.
@@ -13153,7 +13170,7 @@
         (KWQKHTMLPart::markMisspellings): New name for markMisspellingsInSelection. Simplified logic a
         bit and made it the caller's responsibility to expand the selection passed in to word boundaries.
         (KWQKHTMLPart::respondToChangedSelection): Added parameter that identifies the old selection,
-        and changed logic so it won't mark mispellings in a word if the selection still starts in that word.
+        and changed logic so it won't mark misspellings in a word if the selection still starts in that word.
 
         - implemented empty-cells property in computed style
 
