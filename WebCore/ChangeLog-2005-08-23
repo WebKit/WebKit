@@ -1,5 +1,14 @@
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
+	Merged patch that fixes clear:both for floats.  This patch comes from the KHTML tree.
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionNewFloats):
+        * layout-tests/fast/block/float/029-expected.txt: Added.
+        * layout-tests/fast/block/float/029.html: Added.
+
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
 	Fix crasher in list code caused by incorrect style deallocation.  Regression from the
 	arena changes for RenderStyles.
 	
