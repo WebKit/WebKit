@@ -109,7 +109,6 @@
 				51F0EB6105C86C6B00E6DF1B,
 				6560A4CF04B3B3E7008AE952,
 				6560A63D04B3B69F008AE952,
-				51856D980562F158008B9D83,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -342,6 +341,7 @@
 				650B68DA0639033F009D42DE,
 				51863FC506542D3100E9E8DD,
 				517EF37406D695930007C1BA,
+				8442A378074175C2000AE2ED,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,7 +351,6 @@
 			files = (
 				6560A4D004B3B3E7008AE952,
 				6560A63E04B3B69F008AE952,
-				51856D990562F158008B9D83,
 				51F0EB6205C86C6B00E6DF1B,
 				51F0EC0805C86C9A00E6DF1B,
 				9322A00406C341D3009067BB,
@@ -1013,25 +1012,12 @@
 				518CF93805C72271003CF905,
 				51F0EC9605C88DC700E6DF1B,
 				51F0EC9705C88DC700E6DF1B,
+				8442A376074175C2000AE2ED,
 			);
 			isa = PBXGroup;
 			name = bindings;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		51856D980562F158008B9D83 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = JavaVM.framework;
-			path = /System/Library/Frameworks/JavaVM.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		51856D990562F158008B9D83 = {
-			fileRef = 51856D980562F158008B9D83;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		51863F6F065420E800E9E8DD = {
 			fileEncoding = 30;
@@ -1783,6 +1769,21 @@
 //842
 //843
 //844
+		8442A376074175C2000AE2ED = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = softlinking.c;
+			path = bindings/softlinking.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8442A378074175C2000AE2ED = {
+			fileRef = 8442A376074175C2000AE2ED;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		84ABF1DE070B628C00A3AC05 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;

@@ -1,3 +1,16 @@
+2004-11-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3872724> soft link against JavaVM to save ~2MB RSHRD
+
+        Reviewed by rjw.
+
+        * ChangeLog:
+        * JavaScriptCore.pbproj/project.pbxproj: don't link against JavaVM
+        * bindings/softlinking.c: Added.
+        (loadFramework): new
+        (getFunctionPointer): new
+        (JNI_GetCreatedJavaVMs): load JavaVM if not already loaded, get _JNI_GetCreatedJavaVMs symbol if we don't already have it, call JNI_GetCreatedJavaVMs
+
 === Safari-170 ===
 
 2004-11-04  Darin Adler  <darin@apple.com>
