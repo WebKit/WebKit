@@ -1,3 +1,18 @@
+2002-10-27  Darin Adler  <darin@apple.com>
+
+	- fixed 3037369 -- Status text not cleared after start of drag from page
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+	Find the highest-level enclosing WebHTMLView, and call _updateMouseoverWithEvent:
+	with the mouseUp event after the drag is done.
+        (-[WebHTMLView mouseMovedNotification:]): Just call _updateMouseoverWithEvent:,
+	the code from here was moved into there.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Declare _updateMouseoverWithEvent.
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _updateMouseoverWithEvent:]):
+	Moved all the code from mouseMovedNotification: in here so it could be used twice.
+
 2002-10-27  Don Melton  <gramps@apple.com>
 
         * WebView.subproj/WebController.m:

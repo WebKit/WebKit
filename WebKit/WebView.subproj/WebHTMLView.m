@@ -608,6 +608,17 @@
           pasteboard:pboard
               source:sourceObject
            slideBack:slideBack];
+    
+    // During a drag, we don't get any mouseMoved or flagsChanged events.
+    // So after the drag we need to explicity update the mouseover state.
+    WebHTMLView *viewForMouseover = self;
+    NSView *view = self;
+    while ((view = [view superview])) {
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            viewForMouseover = (WebHTMLView *)view;
+        }
+    }
+    [viewForMouseover _updateMouseoverWithEvent:[NSApp currentEvent]];
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -801,29 +812,7 @@
 
 - (void)mouseMovedNotification:(NSNotification *)notification
 {
-    ASSERT(![self _insideAnotherHTMLView]);
-    
-    NSEvent *event = [[notification userInfo] objectForKey:@"NSEvent"];
-
-    WebHTMLView *view = nil;
-    if ([event window] == [self window]) {
-        NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
-        while (hitView) {
-            if ([hitView isKindOfClass:[WebHTMLView class]]) {
-                view = (WebHTMLView *)hitView;
-                break;
-            }
-            hitView = [hitView superview];
-        }
-    }
-    
-    if (view == nil) {
-        [self _mouseOverElement:nil modifierFlags:0];
-    } else {
-        [[view _bridge] mouseMoved:event];
-        NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        [self _mouseOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
-    }
+    [self _updateMouseoverWithEvent:[[notification userInfo] objectForKey:@"NSEvent"]];
 }
 
 #if 0

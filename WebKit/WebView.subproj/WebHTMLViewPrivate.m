@@ -282,6 +282,31 @@ BOOL _modifierTrackingEnabled = FALSE;
     [super scrollPoint:point];
 }
 
+- (void)_updateMouseoverWithEvent:(NSEvent *)event
+{
+    ASSERT(![self _insideAnotherHTMLView]);
+
+    WebHTMLView *view = nil;
+    if ([event window] == [self window]) {
+        NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+        while (hitView) {
+            if ([hitView isKindOfClass:[WebHTMLView class]]) {
+                view = (WebHTMLView *)hitView;
+                break;
+            }
+            hitView = [hitView superview];
+        }
+    }
+    
+    if (view == nil) {
+        [self _mouseOverElement:nil modifierFlags:0];
+    } else {
+        [[view _bridge] mouseMoved:event];
+        NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
+        [self _mouseOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
+    }
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
