@@ -106,10 +106,10 @@
 {
     ASSERT(frame != nil);
 
-    NSURLRequest *request = nil;
+    NSMutableURLRequest *request = nil;
 
     if (URL != nil && [URL length] > 0) {
-	request = [NSURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+	request = [NSMutableURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
 	[request HTTPSetReferrer:[self referrer]];
     }
 

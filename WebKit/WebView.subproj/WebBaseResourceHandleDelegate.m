@@ -135,8 +135,11 @@
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
     
-    [newRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
-
+    NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
+    [mutableRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
+    newRequest = [mutableRequest autorelease];
+    
+    
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.

@@ -1,3 +1,26 @@
+2003-03-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Finished conversion to NSMutableURLRequest. HTTP-specific
+        mutator methods are now properly placed on an HTTP
+        category of NSMutableURLRequest. All client code has
+        been updated to use NSMutableURLRequest where appropriate.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient resource:willSendRequest:]):
+
 2003-03-25  Richard Williamson   <rjw@apple.com>
 
         Changed use of plugin to plugIn in our public API

@@ -143,7 +143,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebView *controller = [webFrame webView];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
 	[request HTTPSetReferrer:referrer];

@@ -1481,7 +1481,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:dataSrc];
 }
 
-- (void)_addExtraFieldsToRequest:(NSURLRequest *)request alwaysFromRequest: (BOOL)f
+- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f
 {
     [request HTTPSetUserAgent:[[self webView] userAgentForURL:[request URL]]];
     

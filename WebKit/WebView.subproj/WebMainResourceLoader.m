@@ -115,7 +115,9 @@
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
-        [newRequest HTTPSetCookiePolicyBaseURL:URL];
+        NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
+        [mutableRequest HTTPSetCookiePolicyBaseURL:URL];
+        newRequest = [mutableRequest autorelease];
     }
 
     // note super will make a copy for us, so reassigning newRequest is important

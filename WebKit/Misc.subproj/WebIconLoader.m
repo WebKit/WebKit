@@ -85,7 +85,7 @@
         return;
     }
     
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:_private->URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->URL];
     [request HTTPSetPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
     _private->handle = [[WebResource alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
