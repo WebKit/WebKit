@@ -1,3 +1,22 @@
+2004-12-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        Roll out some recent changes by Chris that caused a performance regression.
+        Fix is in hand, but it is a little risky this close to a submission. So,
+        we have decided to roll back the change with the regression and roll in
+        the new code after we submit.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient didFinishLoading]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _internalLoadDelegate]):
+        * WebView.subproj/WebFrameInternal.h:
+
 2004-12-02  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3841332> REGRESSION (125.9-167u): repro crash in -[KWQPageState invalidate] involving .Mac images

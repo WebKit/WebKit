@@ -82,7 +82,7 @@ using KIO::TransferJob;
     [handle release];
 }
 
-- (void)finishJobAndHandle:(NSData *)data
+- (void)finishJobAndHandle
 {
     TransferJob *job = _job;
     id <WebCoreResourceHandle> handle = _handle;
@@ -90,7 +90,7 @@ using KIO::TransferJob;
     _handle = nil;
 
     if (job) {
-        job->emitResult(data);
+        job->emitResult();
     }
     delete job;
     [handle release];
@@ -101,21 +101,21 @@ using KIO::TransferJob;
     if (_job) {
         _job->setError(1);
     }
-    [self finishJobAndHandle:nil];
+    [self finishJobAndHandle];
 }
 
 - (void)reportError
 {
     ASSERT(_job);
     _job->setError(1);
-    [self finishJobAndHandle:nil];
+    [self finishJobAndHandle];
 }
 
-- (void)finishWithData:(NSData *)data
+- (void)finish
 {
     ASSERT(_job);
     ASSERT(_handle);
-    [self finishJobAndHandle:data];
+    [self finishJobAndHandle];
 }
 
 @end

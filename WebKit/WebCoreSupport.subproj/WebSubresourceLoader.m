@@ -153,7 +153,7 @@
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
-    [loader finishWithData:[self resourceData]];
+    [loader finish];
     
     [dataSource _removeSubresourceClient:self];
     

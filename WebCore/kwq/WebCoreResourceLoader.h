@@ -32,9 +32,9 @@
 
 - (void)addData:(NSData *)data;
 
-// Either finishWithData:, reportError, or cancel must be called before the
+// Either finish, reportError, or cancel must be called before the
 // loader is released, but never more than one.
-- (void)finishWithData:(NSData *)data;
+- (void)finish;
 - (void)reportError;
 - (void)cancel;
 

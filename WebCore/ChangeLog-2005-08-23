@@ -1,3 +1,76 @@
+2004-12-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        Roll out some recent changes by Chris that caused a performance regression.
+        Fix is in hand, but it is a little risky this close to a submission. So,
+        we have decided to roll back the change with the regression and roll in
+        the new code after we submit.
+
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmltags.c:
+        (hash_tag):
+        (findTag):
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject):
+        (CachedObject::setResponse):
+        (CachedCSSStyleSheet::checkNotify):
+        (Loader::servePendingRequests):
+        (Loader::slotFinished):
+        (Loader::slotReceivedResponse):
+        (Cache::requestImage):
+        (Cache::requestScript):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::CachedObject):
+        (khtml::CachedObject::response):
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate):
+        (KIO::TransferJobPrivate::~TransferJobPrivate):
+        (KIO::TransferJob::TransferJob):
+        (KIO::TransferJob::assembleResponseHeaders):
+        (KIO::TransferJob::retrieveCharset):
+        (KIO::TransferJob::emitResult):
+        (KIO::TransferJob::emitReceivedResponse):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQHeaderStringFromDictionary):
+        (KWQCheckCacheObjectStatus):
+        (KWQRetainResponse):
+        (KWQReleaseResponse):
+        (KWQIsResponseURLEqualToURL):
+        (KWQResponseURL):
+        (KWQResponseMIMEType):
+        (KWQResponseTextEncodingName):
+        (KWQResponseHeaderString):
+        (KWQCacheObjectExpiresTime):
+        (KWQLoader::KWQLoader):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishJobAndHandle]):
+        (-[KWQResourceLoader cancel]):
+        (-[KWQResourceLoader reportError]):
+        (-[KWQResourceLoader finish]):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::call):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreResourceLoader.h:
+
 2004-12-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

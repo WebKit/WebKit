@@ -3,7 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
-    Copyright (C) 2004 Apple Computer, Inc.
+    Copyright (C) 2003 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -68,17 +68,7 @@ namespace DOM
 };
 
 #if APPLE_CHANGES
-
 class KWQLoader;
-
-#if __OBJC__
-@class NSData;
-@class NSURLResponse;
-#else
-class NSData;
-class NSURLResponse;
-#endif
-
 #endif
 
 namespace khtml
@@ -141,7 +131,6 @@ namespace khtml
 	    m_request = 0;
 #if APPLE_CHANGES
         m_response = 0;
-        m_allData = 0;
 #endif            
 	    m_expireDate = _expireDate;
         m_deleted = false;
@@ -191,12 +180,9 @@ namespace khtml
         void setRequest(Request *_request);
 
 #if APPLE_CHANGES
-        NSURLResponse *response() const { return m_response; }
-        void setResponse(NSURLResponse *response);
-        NSData *allData() const { return m_allData; }
-        void setAllData (NSData *data);
+        void *response() { return m_response; }
+        void setResponse (void *response);
 #endif
-
         bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
 
 	void setExpireDate(time_t _expireDate, bool changeHttpCache);
@@ -221,8 +207,7 @@ namespace khtml
         QString m_accept;
         Request *m_request;
 #if APPLE_CHANGES
-        NSURLResponse *m_response;
-        NSData *m_allData;
+        void *m_response;
 #endif
 	Type m_type;
 	Status m_status;
@@ -523,12 +508,11 @@ protected:
 	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
 
     protected slots:
+	void slotFinished( KIO::Job * );
 #if APPLE_CHANGES
-        void slotFinished( KIO::Job * , NSData *allData);
 	void slotData( KIO::Job *, const char *data, int size );
-        void slotReceivedResponse ( KIO::Job *, NSURLResponse *response );
+        void slotReceivedResponse ( KIO::Job *, void *response );
 #else
-        void slotFinished( KIO::Job * );
 	void slotData( KIO::Job *, const QByteArray & );
 #endif
 
@@ -557,7 +541,7 @@ protected:
 	 * before using it.
 	 */
 	static void init();
-        
+
 	/**
 	 * Ask the cache for some url. Will return a cachedObject, and
 	 * load the requested data in case it's not cahced
