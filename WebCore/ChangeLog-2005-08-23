@@ -1,3 +1,12 @@
+2003-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3464759 -- REGRESSION (100-107): Pressing on link loses mouse-down feedback almost instantly
+
+        * khtml/khtmlview.cpp: (KHTMLView::viewportMouseMoveEvent): Pass true for the "read-only"
+        flag in prepareMoveEvent to prevent us from updating :hover and :active while the mouse is down.
+
 2003-10-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David

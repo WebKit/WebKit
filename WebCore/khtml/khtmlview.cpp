@@ -619,11 +619,12 @@ void KHTMLView::layout()
 #endif
     
 #ifdef INCREMENTAL_REPAINTING
-    if (root->needsLayout()) {
+    if (root->needsLayout())
 #else
     // Do not allow a full layout if we had a clip object set.
-    if ( root->needsLayout() && !m_layoutObject) {
+    if ( root->needsLayout() && !m_layoutObject)
 #endif
+    {
         //qDebug("needs layout, delaying repaint");
         scheduleRelayout();
         return;
@@ -770,8 +771,11 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
 
+    // Treat mouse move events while the mouse is pressed as "read-only" in prepareMouseEvent.
+    // This means that :hover and :active freeze in the state they were in when the mouse
+    // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseMove );
-    m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_part->xmlDocImpl()->prepareMouseEvent( d->mousePressed, xm, ym, &mev );
 #if APPLE_CHANGES
     if (KWQ(m_part)->passSubframeEventToSubframe(mev))
         return;
