@@ -305,15 +305,8 @@ void RenderListMarker::printObject(QPainter *p, int, int _y,
 #endif
     p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();
-#ifdef APPLE_CHANGES
-    // Why does khtml draw such large dots, squares, circle, etc for list items?
-    // These seem much bigger than competing browsers. This change reduces the size.
-    // FIXME: Does this change cause positioning problems?
-    int offset = fm.ascent()/3;
-#else
     int offset = fm.ascent()*2/3;
-#endif
-
+    
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
     if (isPrinting)
     {
@@ -372,7 +365,12 @@ void RenderListMarker::printObject(QPainter *p, int, int _y,
         return;
     default:
         if (m_item != QString::null) {
-       	    //_ty += fm.ascent() - fm.height()/2 + 1;
+#ifdef APPLE_CHANGES
+            // Text should be drawn on the baseline, so we add in the ascent of the font. 
+            // For some inexplicable reason, this works in Konqueror.  I'm not sure why.
+            // - dwh
+       	    _ty += fm.ascent();
+#endif
             if(style()->listStylePosition() == INSIDE) {
             	if(style()->direction() == LTR)
         	    p->drawText(_tx, _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);

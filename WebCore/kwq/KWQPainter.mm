@@ -352,9 +352,15 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     if (data->state.paintingDisabled)
         return;
         
-    [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
-    	drawCharacters:(const UniChar *)qstring.unicode() stringLength:qstring.length()
+    id<WebCoreTextRenderer> renderer = 
+      [[WebCoreTextRendererFactory sharedFactory]
+          rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()];
+
+    const UniChar* str = (const UniChar*)qstring.unicode();
+    if (alignmentFlags & Qt::AlignRight)
+	x -= [renderer widthForCharacters: str length: qstring.length()];
+     
+    [renderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 toCharacterPosition:qstring.length() atPoint:NSMakePoint(x, y)
         withTextColor:data->state.pen.color().getNSColor() backgroundColor:nil];
 }
