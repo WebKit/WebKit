@@ -79,6 +79,11 @@
     // so we can avoid asking again needlessly.
     WebResourceRequest *lastCheckedRequest;
 
+    // We retain all the received responses so we can play back the
+    // WebResourceLoadDelegate messages if the item is loaded from the
+    // page cache.
+    NSMutableArray *responses;
+    
     BOOL isDownloading;
     NSString *downloadPath;
 
@@ -146,5 +151,8 @@
 - (void)_setStoredInPageCache:(BOOL)f;
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
+
+- (void)_addResponse: (WebResourceResponse *)r;
+- (NSArray *)_responses;
 
 @end

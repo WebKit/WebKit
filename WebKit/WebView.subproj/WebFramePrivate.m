@@ -32,6 +32,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebSynchronousResult.h>
 
@@ -758,6 +759,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[[self webView] documentView] setNeedsLayout: YES];
         [[[self webView] documentView] layout];
         [self _restoreScrollPosition];
+        
+        NSArray *responses = [[self dataSource] _responses];
+        WebResourceResponse *response;
+        int i, count = [responses count];
+        for (i = 0; i < count; i++){
+            response = [responses objectAtIndex: i];
+            [_private->bridge objectLoadedFromCacheWithURL: [[response URL] absoluteString]
+                    response: response
+                    size: [response contentLength]];
+        }
         
         // Release the resources kept in the page cache.  They will be
         // reset when we leave this page.  The core side of the page cache

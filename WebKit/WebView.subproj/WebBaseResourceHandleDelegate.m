@@ -13,7 +13,7 @@
 #import <WebFoundation/WebResourceResponse.h>
 
 #import <WebKit/WebController.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
@@ -179,8 +179,10 @@
 
     if ([self isDownload])
         [downloadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
-    else
+    else {
+        [dataSource _addResponse: r];
         [resourceLoadDelegate resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+    }
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data

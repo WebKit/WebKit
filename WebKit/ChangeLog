@@ -1,3 +1,20 @@
+2003-01-27  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3139909.  Fake the resource load delegate messages (minus willSendRequest)
+        when a page is loaded from a the page cache.
+        
+        Reviewed by john.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:didReceiveResponse:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _addResponse:]):
+        (-[WebDataSource _responses]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]):
+
 2003-01-27  Trey Matteson  <trey@apple.com>
 
 	3157104 - reproducible assert in _continueFragmentScrollAfterNavigationPolicy

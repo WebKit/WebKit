@@ -64,6 +64,7 @@
     [triggeringAction release];
     [lastCheckedRequest release];
     [downloadPath release];
+    [responses release];
 
     [super dealloc];
 }
@@ -670,5 +671,19 @@
 {
     return _private->loadingFromPageCache;
 }
+
+- (void)_addResponse: (WebResourceResponse *)r
+{
+    if (!_private->responses)
+        _private->responses = [[NSMutableArray alloc] init];
+    [_private->responses addObject: r];
+}
+
+- (NSArray *)_responses
+{
+    return _private->responses;
+}
+
+
 
 @end
