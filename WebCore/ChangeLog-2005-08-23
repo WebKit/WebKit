@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+	<rdar://problem/3771426> assertion failed due to reentering dispatchImageLoadEventsNow
+        
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::dispatchImageLoadEventsNow): Avoid re-entering this
+	function, since it uses a data member for the copy of the list of events
+	to be dispatched.
+
+2004-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	<rdar://problem/3770306> XMLHttpRequest does not honor character set encoding
 
         * khtml/ecma/xmlhttprequest.cpp:

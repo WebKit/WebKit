@@ -2614,6 +2614,13 @@ void DocumentImpl::removeImage(HTMLImageLoader* image)
 
 void DocumentImpl::dispatchImageLoadEventsNow()
 {
+    // need to avoid re-entering this function; if new dispatches are
+    // scheduled before the parent finishes processing the list, they
+    // will set a timer and eventually be processed
+    if (!m_imageLoadEventDispatchingList.isEmpty()) {
+        return;
+    }
+
     if (m_imageLoadEventTimer) {
         killTimer(m_imageLoadEventTimer);
         m_imageLoadEventTimer = 0;
