@@ -1,5 +1,15 @@
 2002-11-26  David Hyatt  <hyatt@apple.com>
 
+	Fix a collapsing margin regression on aintitcool caused by
+	my support of blocks inside inlines.  A block could be wrapped
+	by an inline, e.g., <font><p>foo</p></font>, and in this case,
+	you do not apply the collapsing margin quirk.  The margin stays.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
+2002-11-26  David Hyatt  <hyatt@apple.com>
+
 	Fix the font family stuff to be refcounted, so copying
 	fonts stays cheap.  Re-enabling it.
 
