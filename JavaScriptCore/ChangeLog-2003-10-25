@@ -1,3 +1,19 @@
+2002-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3059637 - all articles missing at excite.com sports page
+	- fixed 3065903 - most of content missing at excite.com news page
+
+	These bugs both came up because a JavaScript function has a var
+	declaration that collides with a function parameter name.
+	
+        * kjs/nodes.cpp:
+        (VarDeclNode::processVarDecls): Don't set the property to
+	undefined if a property with that name is already set on the
+	global object. Otherwise we may clobber function parameters with
+	undefined even before hitting a possible var initializer.
+
 2002-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by: Darin Adler

@@ -1657,7 +1657,12 @@ Value VarDeclNode::evaluate(ExecState *exec)
 void VarDeclNode::processVarDecls(ExecState *exec)
 {
   Object variable = exec->context().imp()->variableObject();
-  variable.put(exec,ident, Undefined(), DontDelete);
+
+  // If a variable by this name already exists, don't clobber it -
+  // it might be a function parameter
+  if (!variable.hasProperty(exec, ident)) {
+    variable.put(exec,ident, Undefined(), DontDelete);
+  }
 }
 
 // ------------------------------ VarDeclListNode ------------------------------
