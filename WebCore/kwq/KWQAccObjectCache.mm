@@ -26,6 +26,8 @@
 #include "KWQAccObjectCache.h"
 #include "KWQAccObject.h"
 
+// The simple Cocoa calls in this file can't throw.
+
 KWQAccObjectCache::KWQAccObjectCache()
 {
     accCache = NULL;

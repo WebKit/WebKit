@@ -26,11 +26,12 @@
 #import "KWQComboBox.h"
 
 #import "KWQButton.h"
+#import "KWQExceptions.h"
+#import "KWQKHTMLPart.h"
 #import "KWQView.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "WebCoreBridge.h"
-
 #import "khtmlview.h"
 #import "render_replaced.h"
 
@@ -68,11 +69,16 @@ enum {
 @end
 
 QComboBox::QComboBox()
-    : _adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
+    : _adapter(0)
     , _widthGood(false)
     , _activated(this, SIGNAL(activated(int)))
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
+    _adapter = [[KWQComboBoxAdapter alloc] initWithQComboBox:this];
     KWQPopUpButton *button = [[KWQPopUpButton alloc] init];
+    setView(button);
+    [button release];
     
     KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] initWithWidget:this];
     [button setCell:cell];
@@ -84,22 +90,28 @@ QComboBox::QComboBox()
     [[button cell] setControlSize:NSSmallControlSize];
     [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
 
-    setView(button);
-
-    [button release];
-
     updateCurrentItem();
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QComboBox::~QComboBox()
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
     [_adapter release];
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
-void QComboBox::insertItem(const QString &text, int index)
+void QComboBox::insertItem(const QString &text, int i)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
+    int index = i;
+
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     int numItems = [button numberOfItems];
     if (index < 0) {
@@ -116,10 +128,16 @@ void QComboBox::insertItem(const QString &text, int index)
     _widthGood = false;
 
     updateCurrentItem();
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 QSize QComboBox::sizeHint() const 
 {
+    NSSize size = {0,0};
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     
     float width;
@@ -141,8 +159,12 @@ QSize QComboBox::sizeHint() const
         _widthGood = true;
     }
     
+    size = [[button cell] cellSize];
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     return QSize((int)_width + dimensions()[widthNotIncludingText],
-        (int)[[button cell] cellSize].height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
+        (int)size.height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
 QRect QComboBox::frameGeometry() const
@@ -177,15 +199,26 @@ void QComboBox::clear()
 
 void QComboBox::setCurrentItem(int index)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button selectItemAtIndex:index];
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     updateCurrentItem();
 }
 
 bool QComboBox::updateCurrentItem() const
 {
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
-    int i = [button indexOfSelectedItem];
+
+    volatile int i = 0;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    i = [button indexOfSelectedItem];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
     if (_currentItem == i) {
         return false;
     }
@@ -206,11 +239,16 @@ void QComboBox::setFont(const QFont &f)
 
     const NSControlSize size = KWQNSControlSizeForFont(f);
     NSControl * const button = static_cast<NSControl *>(getView());
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     if (size != [[button cell] controlSize]) {
         [[button cell] setControlSize:size];
         [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
         _widthGood = false;
     }
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 const int *QComboBox::dimensions() const
@@ -223,7 +261,13 @@ const int *QComboBox::dimensions() const
         { 0, 0, 1, 1, 2, 32, 0 }
     };
     NSControl * const button = static_cast<NSControl *>(getView());
-    return w[[[button cell] controlSize]];
+
+    volatile NSControlSize size = NSSmallControlSize;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    size = [[button cell] controlSize];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return w[size];
 }
 
 QWidget::FocusPolicy QComboBox::focusPolicy() const

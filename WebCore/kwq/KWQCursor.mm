@@ -26,6 +26,8 @@
 #import "KWQCursor.h"
 #import "KWQLogging.h"
 
+// The NSCursor cocoa calls here can't fail, so no need to block Cocoa exceptions
+
 QCursor::QCursor()
     : cursor(nil)
 {

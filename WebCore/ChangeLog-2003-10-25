@@ -1,3 +1,75 @@
+2003-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	Start on blocking Cocoa exceptions when calling ObjC from C++ to
+	avoid unreproducible crashes when this happens.
+
+        * kwq/KWQExceptions.h: Added. Helper macros for exception blocking.
+        * WebCore.pbproj/project.pbxproj: Add new header
+
+	In all these files, block exceptions when calling ObjC from C++,
+	or explain why not.
+	
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQApplication.mm:
+        * kwq/KWQButton.mm:
+        (QButton::QButton):
+        (QButton::~QButton):
+        (QButton::setText):
+        (QButton::text):
+        (QButton::clicked):
+        (QButton::simulateClick):
+        (QButton::setFont):
+        (QButton::focusPolicy):
+        * kwq/KWQCheckBox.mm:
+        (QCheckBox::QCheckBox):
+        (QCheckBox::setChecked):
+        (QCheckBox::isChecked):
+        (QCheckBox::dimensions):
+        * kwq/KWQColor.mm:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox):
+        (QComboBox::~QComboBox):
+        (QComboBox::insertItem):
+        (QComboBox::sizeHint):
+        (QComboBox::setCurrentItem):
+        (QComboBox::updateCurrentItem):
+        (QComboBox::setFont):
+        (QComboBox::dimensions):
+        * kwq/KWQCursor.mm:
+        * kwq/KWQFile.mm:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton):
+        (KWQFileButton::~KWQFileButton):
+        (KWQFileButton::setFilename):
+        (KWQFileButton::sizeForCharacterWidth):
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::setFrameGeometry):
+        (KWQFileButton::baselinePosition):
+        (KWQFileButton::filenameChanged):
+        * kwq/KWQKCookieJar.mm:
+        (KWQKCookieJar::cookie):
+        (KWQKCookieJar::setCookie):
+        (KWQKCookieJar::cookieEnabled):
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+        (KHTMLPartBrowserExtension::setIconURL):
+        (KHTMLPartBrowserExtension::setTypedIconURL):
+        * kwq/KWQKHistoryProvider.mm:
+        (KParts::HistoryProvider::contains):
+        * kwq/KWQKPartsBrowserInterface.mm:
+        (KParts::BrowserInterface::callMethod):
+        * kwq/KWQKStandardDirs.mm:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQKWinModule.mm:
+        (KWinModule::workArea):
+        * kwq/KWQObject.mm:
+        * kwq/KWQString.mm:
+        (QString::getNSString):
+        * kwq/KWQTimer.mm:
+        * kwq/KWQWindowWidget.mm:
+
 2003-10-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for link dragging regression in the titles of links.  More accessibility 

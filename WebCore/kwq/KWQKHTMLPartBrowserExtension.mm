@@ -24,8 +24,10 @@
  */
 
 #import "KWQKHTMLPartBrowserExtension.h"
-#import "khtml_part.h"
+
+#import "KWQExceptions.h"
 #import "WebCoreBridge.h"
+#import "khtml_part.h"
 
 KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(KHTMLPart *part)
     : _part(KWQ(part)), _browserInterface(_part)
@@ -78,10 +80,12 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						const KParts::WindowArgs &winArgs, 
 						KParts::ReadOnlyPart **partResult)
 { 
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
-
+    
     WebCoreBridge *bridge;
-
+    
     if (frameName != nil) {
 	bridge = [_part->bridge() findFrameNamed:frameName];
 	if (bridge != nil) {
@@ -89,11 +93,13 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 		[bridge loadURL:url.getNSURL() referrer:[_part->bridge() referrer] reload:urlArgs.reload onLoadEvent:false target:nil triggeringEvent:nil form:nil formValues:nil];
 	    }
 	    [bridge focusWindow];
-	    *partResult = [bridge part];
-	    return;
+	    if (partResult) {
+		*partResult = [bridge part];
+	    }
+	    KWQ_UNBLOCK_RETURN;
 	}
     }
-
+    
     bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
     
     if (!winArgs.toolBarsVisible) {
@@ -115,7 +121,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
 	NSRect frame = [bridge windowFrame];
 	NSRect contentRect = [bridge windowContentRect];
-
+	
 	if (winArgs.xSet) {
 	    frame.origin.x = winArgs.x;
 	}
@@ -140,15 +146,28 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     
     [bridge showWindow];
     
-    *partResult = [bridge part];
+    if (partResult) {
+	*partResult = [bridge part];
+    }
+    KWQ_UNBLOCK_RETURN;
+
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    if (partResult) {
+	*partResult = NULL;
+    }
 }
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [_part->bridge() setIconURL:url.getNSURL()];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [_part->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }

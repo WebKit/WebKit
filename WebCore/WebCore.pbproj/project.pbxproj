@@ -511,6 +511,7 @@
 				BE983D96052A2E0A00892D85,
 				55998A5E052B59CC0017A6C1,
 				55998A60052B59CC0017A6C1,
+				65A640F10533BB1F0085E777,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1003,6 +1004,30 @@
 //552
 //553
 //554
+//650
+//651
+//652
+//653
+//654
+		65A640F00533BB1F0085E777 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQExceptions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65A640F10533BB1F0085E777 = {
+			fileRef = 65A640F00533BB1F0085E777;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//650
+//651
+//652
+//653
+//654
 //840
 //841
 //842
@@ -2269,6 +2294,7 @@
 				354F248A02EE28590ACA2ACA,
 				931C8A160380288B008635CE,
 				931C8A170380288B008635CE,
+				65A640F00533BB1F0085E777,
 				93CCF7D4033BD43C008635CE,
 				93CCF7D5033BD43C008635CE,
 				9394E0A903AA60FB008635CE,

@@ -28,6 +28,10 @@
 #import "KWQVariant.h"
 #import "KWQAssertions.h"
 
+// The Foundation-level Cocoa calls here (NSTimer, NSDate, NSArray,
+// NSDictionary) should be exception-free, so no need to block
+// exceptions.
+
 const QObject *QObject::_sender;
 bool QObject::_defersTimers;
 

@@ -23,64 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQFile.h"
+#import <Foundation/NSException.h>
+#import "KWQAssertions.h"
 
-// This NSString call can't throw so no need to block exceptions
-QFile::QFile(const QString &n) : name(strdup(n.isEmpty() ? "" : [n.getNSString() fileSystemRepresentation])), fd(-1)
-{
-}
+#define KWQ_BLOCK_NS_EXCEPTIONS NS_DURING
 
-QFile::~QFile()
-{
-    free(name);
-}
+#define KWQ_UNBLOCK_NS_EXCEPTIONS NS_HANDLER \
+     if (ASSERT_DISABLED) { \
+     NSLog(@"Uncaught exception - %@\n", localException); \
+     } else { \
+     ASSERT_WITH_MESSAGE(@"Uncaught exception - %@", localException); \
+     } \
+NS_ENDHANDLER
 
-bool QFile::exists() const
-{
-    return access(name, F_OK) == 0;
-}
+#define KWQ_UNBLOCK_RETURN_VALUE(val,type) NS_VALUERETURN(val,type)
 
-bool QFile::open(int mode)
-{
-    close();
-
-    if (mode == IO_ReadOnly) {
-	fd = ::open(name, O_RDONLY);
-    }
-
-    return fd != -1;
-}
-
-void QFile::close()
-{
-    if (fd != -1) {
-	::close(fd);
-    }
-
-    fd = -1;
-}
-
-int QFile::readBlock(char *data, uint bytesToRead)
-{
-    if (fd == -1) {
-	return -1;
-    } else {
-	return read(fd, data, bytesToRead);
-    }
-}
-
-uint QFile::size() const
-{
-    struct stat statbuf;
-
-    if (stat(name, &statbuf) == 0) {
-	return statbuf.st_size;
-    } else {
-	return 0;
-    }
-}
-
-bool QFile::exists(const QString &path)
-{
-    return QFile(path).exists();
-}
+#define KWQ_UNBLOCK_RETURN NS_VOIDRETURN

@@ -27,6 +27,10 @@
 
 #import "KWQAssertions.h"
 
+// We know the Cocoa calls in this file are safe because they are all
+// to the simple ObjC class defined here, or simple NSTimer calls that
+// can't throw.
+
 @interface KWQTimerTarget : NSObject
 {
     QTimer *timer;

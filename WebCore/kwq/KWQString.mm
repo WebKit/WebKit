@@ -680,6 +680,9 @@ QString QString::fromNSString(NSString *nss)
 
 NSString *QString::getNSString() const
 {
+    // The Cocoa calls in this method don't need exceptions blocked
+    // because they are simple NSString calls that can't throw.
+
     if (dataHandle[0]->_isUnicodeValid) {
         return [NSString stringWithCharacters:(const unichar *)unicode() length:dataHandle[0]->_length];
     }

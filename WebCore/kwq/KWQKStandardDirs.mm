@@ -25,6 +25,9 @@
 
 #import "KWQKStandardDirs.h"
 
+// The NSBundle calls in this file can't throw, so no need to block
+// Cocoa exceptions.
+
 @interface KWQKStandardDirsBundleDummy : NSObject { }
 @end
 @implementation KWQKStandardDirsBundleDummy

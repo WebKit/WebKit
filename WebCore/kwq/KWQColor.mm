@@ -29,6 +29,8 @@
 #import "KWQString.h"
 #import "KWQAssertions.h"
 
+// NSColor calls don't throw, so no need to block Cocoa exceptions in this file
+
 // Turn off inlining to avoid warning with newer gcc.
 #undef __inline
 #define __inline
