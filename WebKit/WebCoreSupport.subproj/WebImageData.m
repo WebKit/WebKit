@@ -18,6 +18,8 @@
 
 #ifdef USE_CGIMAGEREF
 
+#import <ImageIO/CGImageSourcePrivate.h>
+
 static CFDictionaryRef imageSourceOptions;
 
 // Forward declarations of internal methods.
@@ -163,9 +165,9 @@ static CFDictionaryRef imageSourceOptions;
 - (CFDictionaryRef)_imageSourceOptions
 {
     if (!imageSourceOptions) {
-        const void * keys[1] = { kCGImageSourceShouldCache };
-        const void * values[1] = { kCFBooleanTrue };
-        imageSourceOptions = CFDictionaryCreate (NULL, keys, values, 1, 
+        const void * keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
+        const void * values[2] = { kCFBooleanTrue, kCFBooleanTrue };
+        imageSourceOptions = CFDictionaryCreate (NULL, keys, values, 2, 
                 &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     return imageSourceOptions;

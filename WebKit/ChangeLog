@@ -1,3 +1,14 @@
+2005-02-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3977727> WebKit should use new SPI to support faster GIF rendering
+
+	Note:  This REQUIRES build >= 3A362 when building on Tiger.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _imageSourceOptions]):
+
 === Safari-182 ===
 
 2005-02-01  Richard Williamson   <rjw@apple.com>
