@@ -466,7 +466,8 @@ void HTMLTokenizer::scriptHandler()
     // We are inside a <script>
     bool doScriptExec = false;
     CachedScript* cs = 0;
-    if (!scriptSrc.isEmpty()) {
+    // don't load external scripts for standalone documents (for now)
+    if (!scriptSrc.isEmpty() && parser->doc()->part()) {
         // forget what we just got; load from src url instead
         if ( !parser->skipMode() ) {
             if ( (cs = parser->doc()->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))

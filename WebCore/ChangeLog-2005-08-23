@@ -1,5 +1,21 @@
 2003-12-11  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	<rdar://problem/3507862>: XMLHttpRequest documents that reference external resources (e.g. stylesheets) cause crash
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::scriptHandler):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::processingInstruction):
+        (XMLTokenizer::executeScripts):
+
+2003-12-11  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Chris.
 
 	<rdar://problem/3507859>: Status text should only include "OK", not full "HTTP/1.0 200 OK" status line

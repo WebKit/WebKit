@@ -420,12 +420,14 @@ void ProcessingInstructionImpl::checkStyleSheet()
             {
                 // ### some validation on the URL?
                 // ### FIXME charset
-                m_loading = true;
-                getDocument()->addPendingSheet();
-                if (m_cachedSheet) m_cachedSheet->deref(this);
-                m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href.string()), QString::null);
-                if (m_cachedSheet)
-                    m_cachedSheet->ref( this );
+		if (getDocument()->part()) {
+		    m_loading = true;
+		    getDocument()->addPendingSheet();
+		    if (m_cachedSheet) m_cachedSheet->deref(this);
+		    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href.string()), QString::null);
+		    if (m_cachedSheet)
+			m_cachedSheet->ref( this );
+		}
             }
 
         }

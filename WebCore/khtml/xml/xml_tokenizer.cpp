@@ -201,7 +201,10 @@ bool XMLHandler::processingInstruction(const QString &target, const QString &dat
     // ### handle exceptions
     ProcessingInstructionImpl *pi = m_doc->document()->createProcessingInstruction(target,data);
     m_currentNode->addChild(pi);
-    pi->checkStyleSheet();
+    // don't load stylesheets for standalone documents
+    if (m_doc->document()->part()) {
+	pi->checkStyleSheet();
+    }
     return true;
 }
 
@@ -459,7 +462,8 @@ void XMLTokenizer::executeScripts()
         DOMString scriptSrc = m_scriptsIt->current()->getAttribute(ATTR_SRC);
         QString charset = m_scriptsIt->current()->getAttribute(ATTR_CHARSET).string();
 
-        if (scriptSrc != "") {
+	// don't load external scripts for standalone documents (for now)
+        if (scriptSrc != "" && m_doc->document()->part()) {
             // we have a src attribute
             m_cachedScript = m_doc->document()->docLoader()->requestScript(scriptSrc, charset);
             ++(*m_scriptsIt);
