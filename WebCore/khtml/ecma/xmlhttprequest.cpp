@@ -263,10 +263,27 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
 
 void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
 {
+  abort();
+  aborted = false;
+
+  // clear stuff from possible previous load
+  requestHeaders = QString();
+  responseHeaders = QString();
+  response = QString();
+  createdDocument = false;
+  responseXML = DOM::Document();
+
+  changeState(Uninitialized);
+
+  if (aborted) {
+    return;
+  }
+
   if (!urlMatchesDocumentDomain(_url)) {
     return;
   }
 
+  
   method = _method;
   url = _url;
   async = _async;
@@ -333,6 +350,10 @@ void XMLHttpRequest::abort()
   if (job) {
     job->kill();
     job = 0;
+  }
+  if (decoder) {
+    decoder->deref();
+    decoder = 0;
   }
   aborted = true;
 }
@@ -548,10 +569,6 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
 	return Undefined();
       }
     
-      if (request->state != Uninitialized) {
-	return Undefined();
-      }
-
       QString method = args[0].toString(exec).qstring();
       KURL url = KURL(Window::retrieveActive(exec)->part()->htmlDocument().completeURL(args[1].toString(exec).qstring()).string());
 

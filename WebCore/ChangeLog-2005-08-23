@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+	<rdar://problem/3504156>: XMLHttpRequest reuse test fails
+	<rdar://problem/3505158>: XMLHttpRequest "abort with open" test fails
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::open):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+
+2003-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	<rdar://problem/3507175>: Setting timeout function can allocate JS objects without lock
 
         * khtml/ecma/kjs_window.cpp:
