@@ -1,3 +1,9 @@
+2004-10-19  Vicki Murley <vicki@apple.com>
+
+	- bump WebKit version to 167.1, so that we can do a quick dot submission for <rdar://problem/3843951> 
+
+        * WebKit.pbproj/project.pbxproj:
+
 2004-10-19  Darin Adler  <darin@apple.com>
 
         Change suggested by Maciej during code review.
