@@ -2,6 +2,18 @@
 
         Reviewed by Hyatt
 
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isContentEditable): Call getDocument()->updateRendering() to make sure 
+        outstanding changes for this attribute are applied.
+        (HTMLElementImpl::contentEditable): Call getDocument()->updateRendering() to make sure 
+        outstanding changes for this attribute are applied.
+        (HTMLElementImpl::setContentEditable): Call enabled.isEmpty() before strcasecmp(enabled, "true").
+        It's cheaper.
+
+2004-04-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         * khtml/editing/htmlediting_impl.cpp: New helper.
         (DeleteSelectionCommandImpl::containsOnlyWhitespace): Fix deleting collapsed whitespace 
         at the end of a line where text has flowed to the next line and the caret is at the 

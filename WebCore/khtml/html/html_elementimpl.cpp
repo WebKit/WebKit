@@ -821,6 +821,8 @@ bool HTMLElementImpl::isFocusable() const
 
 bool HTMLElementImpl::isContentEditable() const 
 {
+    getDocument()->updateRendering();
+
     if (!renderer()) {
         if (parentNode())
             return parentNode()->isContentEditable();
@@ -831,7 +833,10 @@ bool HTMLElementImpl::isContentEditable() const
     return renderer()->style()->userModify() == READ_WRITE;
 }
 
-DOMString HTMLElementImpl::contentEditable() const {
+DOMString HTMLElementImpl::contentEditable() const 
+{
+    getDocument()->updateRendering();
+
     if (!renderer())
         return "false";
     
@@ -849,7 +854,7 @@ DOMString HTMLElementImpl::contentEditable() const {
 void HTMLElementImpl::setContentEditable(HTMLAttributeImpl* attr) 
 {
     const AtomicString& enabled = attr->value();
-    if (strcasecmp(enabled, "true") == 0 || enabled.isEmpty())
+    if (enabled.isEmpty() || strcasecmp(enabled, "true") == 0)
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
     else if (strcasecmp(enabled, "false") == 0)
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
