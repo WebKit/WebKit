@@ -16,6 +16,8 @@ struct WKURIListNode
 static WKURIListNode *newURIListNode(WKURIEntry *entry)
 {
     WKURIListNode *node;
+
+    [entry retain];
     
     node = malloc(sizeof(WKURIListNode));
     node->hash = [entry hash];
