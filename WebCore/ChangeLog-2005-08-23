@@ -1,3 +1,17 @@
+2005-03-08  Richard Williamson   <rjw@apple.com>
+
+	Fixed by Tom Madden.
+
+	Fixed <rdar://problem/4038586> 8A402: Osaka-Mono text overlaps when typing with input method
+
+	We weren't clearing the "all ascii" flag when setting text on
+	RenderText.
+
+        Reviewed by Richard Williamson.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setText):
+
 2005-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken and Maciej.

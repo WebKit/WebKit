@@ -1545,6 +1545,10 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     if (str)
         str->deref();
 
+#ifdef APPLE_CHANGES
+    m_allAsciiChecked = false;
+#endif
+
     str = text;
     if (str) {
         str = str->replace('\\', backslashAsCurrencySymbol());
