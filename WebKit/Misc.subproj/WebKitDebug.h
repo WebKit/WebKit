@@ -17,6 +17,10 @@
 #define WEBKIT_LOG_NONE			0
 #define WEBKIT_LOG_ALL			0xffffffff
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void WebKitSetLogLevel(int mask);
 unsigned int WebKitGetLogLevel(void);
 void WebKitDebug(const char *format, ...);
@@ -100,3 +104,7 @@ void WebKitLogAtLevel(unsigned int level, NSString *format, ...);
             [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
         } \
     } while (0)
+    
+#ifdef __cplusplus
+}
+#endif

@@ -1,9 +1,30 @@
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
+    First pass at frame code.  Still needs lots of cleanup.
+    
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/WKDefaultWebController.h:
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController init]):
+	* WebView.subproj/WKWebDataSource.h:
+	* WebView.subproj/WKWebDataSource.mm: (-[WKWebDataSource dealloc]),
+	(-[WKWebDataSource frameName]), (-[WKWebDataSource parent]), (-[WKWebDataSource
+	children]), (-[WKWebDataSource addFrame:]), (-[WKWebDataSource frameNamed:]):
+	* WebView.subproj/WKWebDataSourcePrivate.h:
+	* WebView.subproj/WKWebDataSourcePrivate.mm: (-[WKWebDataSourcePrivate init]),
+	(-[WKWebDataSourcePrivate dealloc]), (-[WKWebDataSource _setController:]),
+	(-[WKWebDataSource _setFrameName:]):
+	* WebView.subproj/WKWebView.mm: (-[WKWebView mouseUp:]):
+	* WebView.subproj/WKWebViewPrivate.h:
+	* WebView.subproj/WKWebViewPrivate.mm: (-[WKWebViewPrivate dealloc]),
+	(-[WKWebView _setController:]), (-[WKWebView _widget]):
+
 2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
 
         WebKit now links with WebFoundation
         
 	* WebKit.pbproj/kocienda.pbxuser:
 	* WebKit.pbproj/project.pbxproj:
+
 
 2002-01-23  Ken Kocienda  <kocienda@apple.com>
 

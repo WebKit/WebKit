@@ -9,7 +9,7 @@
 #import <WebKit/WKException.h>
 
 
-// Used so we can use objects as keys in dictionaries without
+// WKObjectHolder holds objects as keys in dictionaries without
 // copying.
 @interface WKObjectHolder : NSObject
 {
@@ -67,6 +67,13 @@
 
 @implementation WKDefaultWebController
 
+- init
+{
+    [super init];
+    _controllerPrivate = [[WKDefaultWebControllerPrivate alloc] init];
+    return self;
+}
+
 
 - initWithView: (WKWebView *)view dataSource: (WKWebDataSource *)dataSource
 {
@@ -113,23 +120,41 @@
     data->mainDataSource = [dataSource retain];
     [dataSource _setController: self];
 
-    [data->viewMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
-    [data->dataSourceMap setObject: view forKey: [WKObjectHolder holderWithObject:dataSource]];
+    [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:dataSource]];
+    [data->dataSourceMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
     
     [view dataSourceChanged];
 }
 
+
+- (void)addFrame: (WKWebFrame *)childFrame toParent: (WKWebDataSource *)parent;
+{
+    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    id view = [childFrame view];
+    WKWebDataSource *child = [childFrame dataSource];
+
+    [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:child]];
+    [view _setController: self];
+    [data->dataSourceMap setObject: child forKey: [WKObjectHolder holderWithObject:view]];
+    [child _setController: self];
+
+    [view dataSourceChanged];
+    
+    [child startLoading: YES];
+}
+
+
 - (WKWebView *)viewForDataSource: (WKWebDataSource *)dataSource
 {
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    return [data->viewMap objectForKey: dataSource];
+    return [data->viewMap objectForKey: [WKObjectHolder holderWithObject:dataSource]];
 }
 
 
 - (WKWebDataSource *)dataSourceForView: (WKWebView *)view
 {
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    return [data->dataSourceMap objectForKey: view];
+    return [data->dataSourceMap objectForKey: [WKObjectHolder holderWithObject:view]];
 }
 
 
@@ -153,16 +178,6 @@
 }
 
 
-- (void)createViewForDataSource: (WKWebDataSource *)dataSource inFrameNamed: (NSString *)name
-{
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::createViewForDataSource:inFrameNamed: is not implemented"];
-}
-
-
-- (void)createViewForDataSource: (WKWebDataSource *)dataSource inIFrame: (id)iFrameIdentifier
-{
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::createViewForDataSource:inIFrame: is not implemented"];
-}
 
 
 

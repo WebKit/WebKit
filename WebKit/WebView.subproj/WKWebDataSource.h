@@ -7,7 +7,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/WKWebController.h>
-#import <WebKit/WKWebCache.h>
+#import <WebKit/WKWebFrame.h>
 
 /* 
    =============================================================================
@@ -71,6 +71,8 @@
 @class WKLoader;
 #endif
 
+
+
 @interface WKWebDataSource : NSObject
 {
 @private
@@ -87,20 +89,28 @@
 - initWithLoader: (WKLoader *)loader;
 #endif
 
+// Returns YES if this is the main document.  The main document is the 'top'
+// document, typically either a frameset or a normal HTML document.
+- (BOOL)isMainDocument;
+
+
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
 - (WKWebDataSource *)parent;
 
 
-// Returns YES if this is the main document.  The main document is the 'top'
-// document, typically either a frameset or a normal HTML document.
-- (BOOL)isMainDocument;
+// Add a child frame.  [Should this be private?  Only called when a 
+// data source is created automatically in a frame set.
+- (void)addFrame: (WKWebFrame *)frame;
 
-// Returns an array of WKWebDataSource.  The data sources in the array are
+
+// Returns an array of WKWebFrame.  The data sources in the array are
 // the data source assoicated with a frame set or iframe.  If the main document
 // is not a frameset, or has not iframes children will return nil.
 - (NSArray *)children;
 
+
+- (WKWebFrame *)frameNamed: (NSString *)frameName;
 
 // Returns an array of NSStrings or nil.  The NSStrings corresponds to
 // frame names.  If this data source is the main document and has no
@@ -166,7 +176,11 @@
 - (WKDOMDocument *)document;
 #endif
 
-// Get the actual source of the docment.
+// Get the source of the document by reconstructing it from the DOM.
+- (NSString *)documentTextFromDOM;
+
+
+// Get the actual source of the document.
 - (NSString *)documentText;
 
 
@@ -195,6 +209,8 @@
 
 // Returns nil or the page title.
 - (NSString *)pageTitle;
+
+- (NSString *)frameName;
 
 @end
 

@@ -5,6 +5,9 @@
 #import <WebKit/WKWebDataSource.h>
 #import <WebKit/WKWebDataSourcePrivate.h>
 #import <WebKit/WKException.h>
+#import <WebKit/WebKitDebug.h>
+
+#include <xml/dom_docimpl.h>
 
 @implementation WKWebDataSource
 
@@ -46,6 +49,10 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [_dataSourcePrivate release];
+}
 
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data 
@@ -54,13 +61,12 @@
 #endif
 
 
-// Returns nil if this data source represents the main document.  Otherwise
-// returns the parent data source.
-- (WKWebDataSource *)parent 
+// Returns the name of the frame containing this data source, or nil
+// if the data source is not in a frame set.
+- (NSString *)frameName 
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent;
+    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->frameName;    
 }
-
 
 
 // Returns YES if this is the main document.  The main document is the 'top'
@@ -73,13 +79,39 @@
 }
 
 
+// Returns nil if this data source represents the main document.  Otherwise
+// returns the parent data source.
+- (WKWebDataSource *)parent 
+{
+    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent;
+}
+
+
 // Returns an array of WKWebDataSource.  The data sources in the array are
 // the data source assoicated with a frame set or iframe.  If the main document
 // is not a frameset, or has not iframes children will return nil.
 - (NSArray *)children
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->children;
+    return [((WKWebDataSourcePrivate *)_dataSourcePrivate)->frames allValues];
 }
+
+- (void)addFrame: (WKWebFrame *)frame
+{
+    WKWebDataSourcePrivate *data = (WKWebDataSourcePrivate *)_dataSourcePrivate;
+
+    if (data->frames == nil)
+        data->frames = [[NSMutableDictionary alloc] init];
+    [data->frames setObject: frame forKey: [frame name]];    
+}
+
+ 
+- (WKWebFrame *)frameNamed: (NSString *)frameName
+{
+    WKWebDataSourcePrivate *data = (WKWebDataSourcePrivate *)_dataSourcePrivate;
+
+    return (WKWebFrame *)[data->frames objectForKey: frameName];
+}
+
 
 
 // Returns an array of NSStrings or nil.  The NSStrings corresponds to
@@ -164,6 +196,7 @@
 {
     KURL url = [[[self inputURL] absoluteString] cString];
     
+    WEBKITDEBUG1 ("url = %s\n", [[[self inputURL] absoluteString] cString]);
     [self _part]->openURL (url);
 }
 
@@ -196,6 +229,26 @@
 {
     [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::documentText is not implemented"];
     return nil;
+}
+
+
+- (NSString *)documentTextFromDOM
+{
+    DOM::DocumentImpl *doc;
+    NSString *string = nil;
+    KHTMLPart *part = [self _part];
+    
+    if (part != 0){
+        doc = (DOM::DocumentImpl *)[self _part]->xmlDocImpl();
+        if (doc != 0){
+            QString str = doc->recursive_toHTML(1);
+            string = QSTRING_TO_NSSTRING(str);
+        }
+    }
+    if (string == nil) {
+        string = @"";
+    }
+    return string;
 }
 
 

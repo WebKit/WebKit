@@ -15,10 +15,12 @@
 @interface WKWebDataSourcePrivate : NSObject
 {
     WKWebDataSource *parent;
-    NSArray *children;
+    NSMutableArray *children;
     id <WKWebController>controller;
     NSURL *inputURL;
     KHTMLPart *part;
+    NSString *frameName;
+    NSMutableDictionary *frames;
 }
 
 - init;
@@ -29,4 +31,5 @@
 @interface WKWebDataSource (WKPrivate)
 - (void)_setController: (id <WKWebController>)controller;
 - (KHTMLPart *)_part;
+- (void)_setFrameName: (NSString *)fName;
 @end

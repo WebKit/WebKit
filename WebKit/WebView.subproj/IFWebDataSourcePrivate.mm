@@ -16,7 +16,7 @@
 - init
 {
     parent = nil;
-    children = nil;
+    frames = nil;
     controller = nil;
     inputURL = nil;
 
@@ -30,9 +30,9 @@
     // controller is not retained!  WKWebControllers maintain
     // a reference to their view and main data source.
     [parent release];
-    [children release];
+    [frames release];
     
-    //delete part;
+    delete part;
 }
 
 @end
@@ -43,6 +43,7 @@
     if (((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
         [NSException raise:WKRuntimeError format:@"WKWebDataSource::_setController: called not called on main data source."];
     ((WKWebDataSourcePrivate *)_dataSourcePrivate)->controller = controller;
+    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->part->setDataSource (self);
 }
 
 
@@ -51,5 +52,9 @@
     return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->part;
 }
 
+- (void)_setFrameName: (NSString *)fname
+{
+    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->frameName = [fname retain];
+}
 
 @end

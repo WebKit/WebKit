@@ -59,7 +59,7 @@
 
     // Nasty!  Setup the cross references between the KHTMLView and
     // the KHTMLPart.
-    KHTMLPart *part = [[[self controller] mainDataSource] _part];
+    KHTMLPart *part = [[[self controller] dataSourceForView: self] _part];
 
     data->widget = new KHTMLView (part, 0);
     part->setView (data->widget);
@@ -264,6 +264,25 @@
                     (int)rect.size.width, 
                     (int)rect.size.height );
         //WebKitDebugAtLevel (0x200, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+
+#ifdef DEBUG_LAYOUT       
+        NSRect vframe = [self frame]; 
+        [[NSColor blackColor] set];
+        NSBezierPath *path;
+        path = [NSBezierPath bezierPath];
+        [path setLineWidth:(float)0.1];
+        [path moveToPoint:NSMakePoint(0, 0)];
+        [path lineToPoint:NSMakePoint(vframe.size.width, vframe.size.height)];
+        [path closePath];
+        [path stroke];
+        path = [NSBezierPath bezierPath];
+        [path setLineWidth:(float)0.1];
+        [path moveToPoint:NSMakePoint(0, vframe.size.height)];
+        [path lineToPoint:NSMakePoint(vframe.size.width, 0)];
+        [path closePath];
+        [path stroke];
+#endif
+        
         [self unlockFocus];
     }
 }
@@ -293,15 +312,15 @@
 {
     int button, state;
      
-    if ([event type] == NSLeftMouseDown){
+    if ([event type] == NSLeftMouseUp){
         button = Qt::LeftButton;
         state = Qt::LeftButton;
     }
-    else if ([event type] == NSRightMouseDown){
+    else if ([event type] == NSRightMouseUp){
         button = Qt::RightButton;
         state = Qt::RightButton;
     }
-    else if ([event type] == NSOtherMouseDown){
+    else if ([event type] == NSOtherMouseUp){
         button = Qt::MidButton;
         state = Qt::MidButton;
     }

@@ -28,8 +28,8 @@
     // controller is not retained!  WKWebControllers maintain
     // a reference to their view and main data source.
 
-    //if (widget)
-    //    delete widget;
+    if (widget)
+        delete widget;
 }
 
 
@@ -57,6 +57,11 @@
 {
     // Not retained.
     ((WKWebViewPrivate *)_viewPrivate)->controller = controller;    
+}
+
+- (KHTMLView *)_widget
+{
+    return ((WKWebViewPrivate *)_viewPrivate)->widget;    
 }
 
 @end

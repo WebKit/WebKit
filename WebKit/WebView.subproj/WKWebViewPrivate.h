@@ -27,4 +27,5 @@ class KHTMLView;
 @interface WKWebView (WKPrivate)
 - (void)_setController: (id <WKWebController>)controller;
 - (void)_resetView;
+- (KHTMLView *)_widget;
 @end
