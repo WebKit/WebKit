@@ -1,3 +1,15 @@
+2004-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed remaining bit of <rdar://problem/3814237> REGRESSION (Mail): Copy/paste style does not set color in Mail compose window
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _styleFromFontAttributes:]): When translating from
+        an attribute dictionary to a CSS declaration, treat missing values according to the defaults defined
+        in <AppKit/NSAttributedString.h>. Before the code was treating them as "no change", which is incorrect.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Add a string from the above change.
+
 === Safari-173 ===
 
 2004-12-03  Ken Kocienda  <kocienda@apple.com>

@@ -3160,12 +3160,15 @@ static WebHTMLView *lastHitView = nil;
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
 
     NSColor *color = [dictionary objectForKey:NSBackgroundColorAttributeName];
-    if (color != nil) {
-        [style setBackgroundColor:[self _colorAsString:color]];
-    }
+    [style setBackgroundColor:[self _colorAsString:color]];
 
     NSFont *font = [dictionary objectForKey:NSFontAttributeName];
-    if (font != nil) {
+    if (font == nil) {
+        [style setFontFamily:@"Helvetica"];
+        [style setFontSize:@"12px"];
+        [style setFontWeight:@"normal"];
+        [style setFontStyle:@"normal"];
+    } else {
         NSFontManager *fm = [NSFontManager sharedFontManager];
         [style setFontFamily:[font familyName]];
         [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
@@ -3182,17 +3185,21 @@ static WebHTMLView *lastHitView = nil;
     }
 
     color = [dictionary objectForKey:NSForegroundColorAttributeName];
-    if (color != nil) {
-        [style setColor:[self _colorAsString:color]];
-    }
+    [style setColor:color ? [self _colorAsString:color] : @"black"];
 
     NSShadow *shadow = [dictionary objectForKey:NSShadowAttributeName];
-    if (shadow) {
-        [style setTextShadow:[self _shadowAsString:shadow]];
-    }
+    [style setTextShadow:[self _shadowAsString:shadow]];
 
     // FIXME: NSStrikethroughStyleAttributeName
-    // FIXME: NSSuperscriptAttributeName
+
+    int superscriptInt = [[dictionary objectForKey:NSSuperscriptAttributeName] intValue];
+    if (superscriptInt > 0)
+        [style setVerticalAlign:@"super"];
+    else if (superscriptInt < 0)
+        [style setVerticalAlign:@"sub"];
+    else
+        [style setVerticalAlign:@"baseline"];
+
     // FIXME: NSUnderlineStyleAttributeName
 
     return style;
