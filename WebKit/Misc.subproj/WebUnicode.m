@@ -586,7 +586,7 @@ bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const W
 
     int i;
     for (i = from; i < from+len; i++){
-        if (uc[i] > 0x7f)
+        if (uc[i] >= 0x591 && uc[i] <= 0x700)
             break;
     }
     if (i == from+len)
@@ -616,6 +616,7 @@ bool initializeCharacterShapeIterator (CharacterShapeIterator *iterator, const W
         shapeBufSize = len;
     }
     
+    iterator->currentCharacter = uc + run->from;
     iterator->run = run;
     
     return true;

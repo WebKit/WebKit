@@ -1,3 +1,81 @@
+2003-10-13  Richard Williamson  <rjw@apple.com>
+
+	Added support for small-caps.
+
+	Reworked drawing and measuring to use new iterators.  Position checking was already using
+	the new iterator code, but I was reluctant to switch the mainline drawing and measuring
+	code over to the new approach until now.
+
+	Lots of other code cleanup.
+
+        Reviewed by John.
+
+        * Misc.subproj/WebUnicode.m:
+        (initializeCharacterShapeIterator):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (+[WebTextRenderer shouldBufferTextDrawing]):
+        (+[WebTextRenderer initialize]):
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        (-[WebTextRenderer dealloc]):
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer widthForString:]):
+        (-[WebTextRenderer ascent]):
+        (-[WebTextRenderer descent]):
+        (-[WebTextRenderer lineSpacing]):
+        (-[WebTextRenderer xHeight]):
+        (-[WebTextRenderer drawRun:style:atPoint:]):
+        (-[WebTextRenderer floatWidthForRun:style:widths:]):
+        (-[WebTextRenderer drawLineForCharacters:yOffset:withWidth:withColor:]):
+        (-[WebTextRenderer drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer pointToOffset:style:position:reversed:]):
+        (-[WebTextRenderer _setIsSmallCapsRenderer:]):
+        (-[WebTextRenderer _isSmallCapsRenderer]):
+        (-[WebTextRenderer _smallCapsRenderer]):
+        (-[WebTextRenderer _smallCapsFont]):
+        (-[WebTextRenderer _substituteFontForString:families:]):
+        (-[WebTextRenderer _substituteFontForCharacters:length:families:]):
+        (-[WebTextRenderer _convertCharacters:length:toGlyphs:skipControlCharacters:]):
+        (-[WebTextRenderer _convertUnicodeCharacters:length:toGlyphs:]):
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (-[WebTextRenderer _setupFont]):
+        (_drawGlyphs):
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+        (-[WebTextRenderer _floatWidthForRun:style:widths:fonts:glyphs:startPosition:numGlyphs:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startPosition:numGlyphs:]):
+        (-[WebTextRenderer _extendUnicodeCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _updateGlyphEntryForCharacter:glyphID:font:]):
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _extendGlyphToWidthMapToInclude:font:]):
+        (-[WebTextRenderer _trapezoidForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_floatWidthForRun:style:]):
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:]):
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:]):
+        (freeWidthMap):
+        (freeGlyphMap):
+        (glyphForCharacter):
+        (glyphForUnicodeCharacter):
+        (mapForSubstituteFont):
+        (widthFromMap):
+        (widthForGlyph):
+        (initializeCharacterWidthIterator):
+        (widthAndGlyphForSurrogate):
+        (ceilCurrentWidth):
+        (widthForNextCharacter):
+        (fillStyleWithAttributes):
+        (findLengthOfCharacterCluster):
+        (shouldUseATSU):
+        (isControlCharacter):
+        (isAlternateSpace):
+        (isSpace):
+        (fontContainsString):
+        (GetScratchUniCharString):
+        (toUpper):
+        (isUpper):
+
 2003-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Fixed for Private
