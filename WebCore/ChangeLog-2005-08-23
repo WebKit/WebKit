@@ -1,3 +1,11 @@
+2004-09-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3685234 and 3548444, the x-offset for frame borders was off by 1 pixel, causing mojibake to occur when
+	repainting happened.
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::repaintViewRectangle):
+
 2004-09-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3813271> dashboard-region-circle and dashboard-region-rectangle should be collapsed into dashboard-region
