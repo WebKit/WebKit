@@ -40,9 +40,10 @@ __ZN12KWQArrayImplC1ERKS_
 __ZN12KWQArrayImplC1Emm
 __ZN12KWQArrayImplD1Ev
 __ZN12KWQArrayImplaSERKS_
+__ZN13KWQStringData9makeAsciiEv
 __ZN13KWQVectorImpl5clearEb
-__ZN13KWQVectorImpl6removeEjb
 __ZN13KWQVectorImpl6insertEjPvb
+__ZN13KWQVectorImpl6removeEjb
 __ZN13KWQVectorImpl6resizeEjb
 __ZN13KWQVectorImplC1EPFvPvE
 __ZN13KWQVectorImplC1ERKS_
@@ -230,6 +231,7 @@ __ZNK5QTime4msecEv
 __ZNK6QPoint15manhattanLengthEv
 __ZNK7QRegExp5matchERK7QStringiPib
 __ZNK7QRegExp7patternEv
+__ZNK7QString10startsWithERKS_
 __ZNK7QString15stripWhiteSpaceEv
 __ZNK7QString18simplifyWhiteSpaceEv
 __ZNK7QString3argERKS_i
@@ -252,6 +254,7 @@ __ZNK7QString6isNullEv
 __ZNK7QString6latin1Ev
 __ZNK7QString6toLongEPbi
 __ZNK7QString6toUIntEPbi
+__ZNK7QString7compareERKS_
 __ZNK7QString7findRevEPKci
 __ZNK7QString7findRevEci
 __ZNK7QString8containsEPKcb
@@ -285,5 +288,3 @@ __ZplPKcRK7QString
 __ZplRK5QSizeS1_
 __ZplRK6QPointS1_
 __ZplcRK7QString
-__ZNK7QString7compareERKS_
-__ZNK7QString10startsWithERKS_

@@ -45,12 +45,6 @@ class QChar {
 public:
 
     enum Direction {
-        // NOTE: alphabetical order
-        //DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,
-        //DirLRO, DirNSM, DirON, DirPDF, DirR, DirRLE, DirRLO, DirS, DirWS
-        //
-        // Until we understand the implications better, I say we go with the qt
-        // ordering here
         DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
@@ -272,24 +266,24 @@ inline bool operator<(char ch, QChar qc)
 #define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
 #define QS_INTERNAL_BUFFER_UCHARS QS_INTERNAL_BUFFER_SIZE/2
 
-struct QStringData {
+struct KWQStringData {
     // Uses shared null data.
-    QStringData();
+    KWQStringData();
     void initialize();
     
     // No copy.
-    QStringData(QChar *u, uint l, uint m);
+    KWQStringData(QChar *u, uint l, uint m);
     void initialize(QChar *u, uint l, uint m);
     
     // Copy bytes;
-    QStringData(const QChar *u, uint l);
+    KWQStringData(const QChar *u, uint l);
     void initialize(const QChar *u, uint l);
 
     // Copy bytes;
-    QStringData(const char *u, uint l);
+    KWQStringData(const char *u, uint l);
     void initialize(const char *u, uint l);
 
-    ~QStringData();
+    ~KWQStringData();
 
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     void* operator new(size_t s);
@@ -306,19 +300,20 @@ struct QStringData {
     QChar *unicode();
     QChar *makeUnicode();    
     void increaseUnicodeSize(uint size);
-        
+    
+    bool isUnicodeInternal() const { return (char *)_unicode == _internalBuffer; }
+    bool isAsciiInternal() const { return _ascii == _internalBuffer; }
+    
     uint refCount;
     uint _length;
     mutable QChar *_unicode;
     mutable char *_ascii;
-    uint _maxUnicode:29;
-    uint _isUnicodeInternal:1;
+    uint _maxUnicode:30;
     uint _isUnicodeValid:1;
-    uint _isHeapAllocated:1;	// Fragile, but the only way we can be sure the instance was
-                                // created with 'new'.
-    uint _maxAscii:30;
-    uint _isAsciiInternal:1;
+    uint _isHeapAllocated:1;	// Fragile, but the only way we can be sure the instance was created with 'new'.
+    uint _maxAscii:31;
     uint _isAsciiValid:1;
+    
     char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
 };
 
@@ -474,31 +469,30 @@ public:
     
 private:
     // Used by QConstString.
-    QString(QStringData *constData, bool /*dummy*/);
+    QString(KWQStringData *constData, bool /*dummy*/);
     void detach();
+    void detachIfInternal();
     void detachInternal();
     void deref();
     QChar *forceUnicode();
     void setLength(uint);
 
-    QStringData *data() const;
-    
     QCString convertToQCString(CFStringEncoding) const;
 
-    QStringData **dataHandle;
-    QStringData internalData;
+    KWQStringData **dataHandle;
+    KWQStringData internalData;
     
-    static QStringData* shared_null;
-    static QStringData* makeSharedNull();
-    static QStringData**shared_null_handle;
-    static QStringData**makeSharedNullHandle();
+    static KWQStringData *shared_null;
+    static KWQStringData *makeSharedNull();
+    static KWQStringData **shared_null_handle;
+    static KWQStringData **makeSharedNullHandle();
 
     friend bool operator==(const QString &, const QString &);
     friend bool operator==(const QString &, const char *);
 
     friend class QConstString;
     friend class QGDict;
-    friend struct QStringData;
+    friend struct KWQStringData;
 };
 
 QString operator+(const QString &, const QString &);
@@ -509,16 +503,39 @@ QString operator+(const char *, const QString &);
 QString operator+(QChar, const QString &);
 QString operator+(char, const QString &);
 
-inline QStringData *QString::data() const { return *dataHandle; }
+inline char *KWQStringData::ascii()
+{
+    return _isAsciiValid ? _ascii : makeAscii();
+}
+
+inline QChar *KWQStringData::unicode()
+{
+    return _isUnicodeValid ? _unicode : makeUnicode();
+}
 
 inline uint QString::length() const
 {
-    return data()->_length;
+    return dataHandle[0]->_length;
 }
 
 inline bool QString::isEmpty() const
 {
-    return length() == 0;
+    return dataHandle[0]->_length == 0;
+}
+
+inline const char *QString::latin1() const
+{
+    return dataHandle[0]->ascii();
+}
+
+inline const QChar *QString::unicode() const
+{
+    return dataHandle[0]->unicode();
+}
+
+inline CFStringRef QString::getCFString() const
+{
+    return (CFStringRef)getNSString();
 }
 
 inline QString QString::fromLatin1(const char *chs)

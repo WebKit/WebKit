@@ -966,13 +966,33 @@ void KURL::parse(const char *url, const QString *originalString)
     schemeEndPos = p - buffer;
 
     // Check if we're http or https.
-    bool isHTTPorHTTPS = strncasecmp ("http", url, schemeEnd) == 0 ||
-        strncasecmp ("https", url, schemeEnd) == 0;
+    bool isHTTPorHTTPS = tolower(url[0]) == 'h'
+        && tolower(url[1]) == 't'
+        && tolower(url[2]) == 't'
+        && tolower(url[3]) == 'p'
+        && (url[4] == ':'
+            || (tolower(url[4]) == 's' && url[5] == ':'));
     
-    bool isFILENeedsHostPart = strncasecmp("file", url, schemeEnd) == 0 && pathStart != pathEnd
-        && !(pathStart + 2 == pathEnd && strncmp("//", url + pathStart, 2) == 0);
+    bool isFILENeedsHostPart = pathStart != pathEnd
+        && tolower(url[0]) == 'f'
+        && tolower(url[1]) == 'i'
+        && tolower(url[2]) == 'l'
+        && tolower(url[3]) == 'e'
+        && url[4] == ':'
+        && !(pathStart + 2 == pathEnd
+             && url[pathStart] == '/'
+             && url[pathStart+1] == '/');
     
-    bool hostIsLocalHost = portEnd - userStart == 9 && strncmp(url + userStart, "localhost", 9) == 0;
+    bool hostIsLocalHost = portEnd - userStart == 9
+        && tolower(url[userStart]) == 'l'
+        && tolower(url[userStart+1]) == 'o'
+        && tolower(url[userStart+2]) == 'c'
+        && tolower(url[userStart+3]) == 'a'
+        && tolower(url[userStart+4]) == 'l'
+        && tolower(url[userStart+5]) == 'h'
+        && tolower(url[userStart+6]) == 'o'
+        && tolower(url[userStart+7]) == 's'
+        && tolower(url[userStart+8]) == 't';
     
     bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
     

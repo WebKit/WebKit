@@ -291,8 +291,13 @@ class FontFamilyValueImpl : public CSSPrimitiveValueImpl
 public:
     FontFamilyValueImpl( const QString &string);
     const QString &fontName() const { return parsedFontName; }
+    int genericFamilyType() const { return _genericFamilyType; }
+    bool isKonqBody() const { return _isKonqBody; }
 protected:
     QString parsedFontName;
+private:
+    int _genericFamilyType;
+    bool _isKonqBody;
 };
 
 // ------------------------------------------------------------------------------

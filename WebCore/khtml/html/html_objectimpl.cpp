@@ -181,7 +181,8 @@ NodeImpl::Id HTMLEmbedElementImpl::id() const
 void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
 {
   DOM::DOMStringImpl *stringImpl = attr->val();
-  QString val = QConstString( stringImpl->s, stringImpl->l ).string();
+  QConstString cval(stringImpl->s, stringImpl->l);
+  QString val = cval.string();
 
   int pos;
   switch ( attr->id() )

@@ -50,19 +50,18 @@ namespace DOM {
 class CSSSelector
 {
 public:
-    CSSSelector(void)
+    CSSSelector()
 	: tagHistory(0), attr(0), tag(0), relation( Descendant ),
-    match( None ), nonCSSHint( false ), pseudoId( 0 ) {}
+    match( None ), nonCSSHint( false ), pseudoId( 0 ), _pseudoType(PseudoNotParsed) {}
 
-    ~CSSSelector(void) {
-	if (tagHistory)
-	    delete tagHistory;
+    ~CSSSelector() {
+	delete tagHistory;
     }
 
     /**
      * Print debug output for this selector
      */
-    void print(void);
+    void print();
 
     /**
      * Re-create selector text from selector's data
@@ -97,8 +96,32 @@ public:
 	Sibling,
 	SubSelector
     };
+    
+    enum PseudoType
+    {
+        PseudoNotParsed = 0,
+        PseudoOther,
+	PseudoEmpty,
+        PseudoFirstChild,
+        PseudoFirstLine,
+        PseudoFirstLetter,
+        PseudoLink,
+        PseudoVisited,
+        PseudoHover,
+        PseudoFocus,
+        PseudoActive,
+        PseudoBefore,
+        PseudoAfter
+    };
 
-    DOM::DOMString value;
+    inline PseudoType pseudoType() const
+    {
+        if (_pseudoType == PseudoNotParsed)
+            extractPseudoType();
+        return _pseudoType;
+    }
+
+    mutable DOM::DOMString value;
     CSSSelector *tagHistory;
     int          attr;
     int          tag;
@@ -107,8 +130,11 @@ public:
     Match 	 match         : 4;
     bool	nonCSSHint : 1;
     unsigned int pseudoId : 3;
-
-
+    
+    mutable PseudoType _pseudoType;
+    
+private:
+    void extractPseudoType() const;
 };
 
     // a style class which has a parent (almost all have)
@@ -133,7 +159,7 @@ public:
 	virtual bool isCharetRule() { return false; }
 	virtual bool isImportRule() { return false; }
 	virtual bool isMediaRule() { return false; }
-    virtual bool isQuirksRule() { return false; }
+	virtual bool isQuirksRule() { return false; }
 	virtual bool isFontFaceRule() { return false; }
 	virtual bool isPageRule() { return false; }
 	virtual bool isUnknownRule() { return false; }
@@ -167,7 +193,7 @@ public:
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue);
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue,
 			    bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
-    bool isHexadecimal( const QChar &c );
+	bool isHexadecimal( const QChar &c );
 	QPtrList<QChar> splitShorthandProperties(const QChar *curP, const QChar *endP);
 	bool parseBackgroundPosition(const QChar *curP, const QChar *&nextP, const QChar *endP);
 

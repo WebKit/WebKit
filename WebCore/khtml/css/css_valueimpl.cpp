@@ -34,6 +34,7 @@
 
 #include "misc/loader.h"
 
+#include "rendering/font.h"
 #include "rendering/render_style.h"
 
 #include <kdebug.h>
@@ -43,6 +44,8 @@
 
 // Hack for debugging purposes
 extern DOM::DOMString getPropertyName(unsigned short id);
+
+using khtml::FontDef;
 
 using namespace DOM;
 
@@ -757,4 +760,44 @@ FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
 	}
     }
 #endif // !APPLE_CHANGES
+
+    _genericFamilyType = FontDef::eNone;
+    _isKonqBody = false;
+
+    if (parsedFontName.isEmpty()) {
+        return;
+    }
+    
+    // Check font names here instead of every time through the CSSStyleSelector.
+    switch (parsedFontName[0]) {
+        case 'c':
+            if (parsedFontName == "cursive") {
+                _genericFamilyType = FontDef::eCursive;
+            }
+            break;
+        case 'f':
+            if (parsedFontName == "fantasy") {
+                _genericFamilyType = FontDef::eFantasy;
+            }
+            break;
+        case 'k':
+            if (parsedFontName == "konq_default") {
+                _genericFamilyType = FontDef::eStandard;
+            } else if (parsedFontName == "konq_body") {
+                _isKonqBody = true;
+            }
+            break;
+        case 'm':
+            if (parsedFontName == "monospace") {
+                _genericFamilyType = FontDef::eMonospace;
+            }
+            break;
+        case 's':
+            if (parsedFontName == "serif") {
+                _genericFamilyType = FontDef::eSerif;
+            } else if (parsedFontName == "sans-serif") {
+                _genericFamilyType = FontDef::eSansSerif;
+            }
+            break;
+    }
 }

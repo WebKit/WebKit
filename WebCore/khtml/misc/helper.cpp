@@ -273,7 +273,11 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
             color = tc;
         else {
             color.setNamedColor(name);
+#if !APPLE_CHANGES
+            // The KWQ version of QColor::setNamedColor already has to lowercase the string.
+            // So this is wasted work, and it even shows up in profiles.
             if ( !color.isValid() )  color.setNamedColor( name.lower() );
+#endif
             if(!color.isValid()) {
                 bool hasalpha = false;
                 for(unsigned int i = 0; i < name.length(); i++)

@@ -87,7 +87,7 @@ public:
     mutable KWQListIteratorImpl *iterators;
 
     friend class KWQListIteratorImpl;
-}; 
+};
 
 
 class KWQListIteratorImpl {

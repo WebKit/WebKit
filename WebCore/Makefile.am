@@ -8,10 +8,10 @@ clean-am:
 	rm -rf $(SYMROOTS)/WebCore.framework
 	rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebCore.framework
 
-WebCore-combined.exp: WebCore.exp WebCore-tests.exp
+WebCore-combined.exp: WebCore.exp WebCore-tests.exp previous-clean-timestamp
 	cat $^ > $@
 
-config.h: ../config.h
+config.h: ../config.h previous-clean-timestamp
 	grep -v NO_LICENSE ../config.h > new-config.h
 	if cmp -s config.h new-config.h; then \
 		rm -f new-config.h; \

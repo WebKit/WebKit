@@ -45,13 +45,13 @@ public:
     /**
      * default constructor. Gives an empty DOMString
      */
-    DOMString();
+    DOMString() : impl(0) { }
 
     DOMString(const QChar *str, uint len);
     DOMString(const QString &);
     DOMString(const char *str);
     DOMString(DOMStringImpl *i);
-    virtual ~DOMString();
+    ~DOMString();
 
     // assign and copy
     DOMString(const DOMString &str);

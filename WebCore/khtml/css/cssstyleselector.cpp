@@ -628,8 +628,13 @@ static void cleanpath(QString &path)
     pos = 0;
 
     // Don't remove "//" from an anchor identifier. -rjw
-    int refPos = path.find("#", 0);
+    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
+    // We don't want to waste a function call on the search for the the anchor
+    // in the vast majority of cases where there is no "//" in the path.
+    int refPos = -2;
     while ( (pos = path.find( "//", pos )) != -1) {
+        if (refPos == -2)
+            refPos = path.find("#", 0);
         if (refPos > 0 && pos >= refPos)
             break;
             
@@ -645,12 +650,17 @@ static void cleanpath(QString &path)
 
 static void checkPseudoState( DOM::ElementImpl *e )
 {
-    DOMString attr;
-    if( e->id() != ID_A || (attr = e->getAttribute(ATTR_HREF)).isNull() ) {
+    if( e->id() != ID_A ) {
+	pseudoState = PseudoNone;
+        return;
+    }
+    DOMString attr = e->getAttribute(ATTR_HREF);
+    if( attr.isNull() ) {
 	pseudoState = PseudoNone;
 	return;
     }
-    QString u = attr.string();
+    QConstString cu(attr.unicode(), attr.length());
+    QString u = cu.string();
     if ( !u.contains("://") ) {
 	if ( u[0] == '/' )
 	    u = encodedurl->host + u;
@@ -760,57 +770,72 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     {
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
-	const QString& value = sel->value.string();
 //	kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
-	if (value == "empty") {
-        if (!e->firstChild())
-            return true;
-	}
-	else if(value == "first-child") {
-	    // first-child matches the first child that is an element!
-	    DOM::NodeImpl *n = e->parentNode()->firstChild();
-	    while( n && !n->isElementNode() )
-		n = n->nextSibling();
-	    if( n == e )
-		return true;
-	} else if ( value == "first-line" && subject ) {
-	    dynamicPseudo=RenderStyle::FIRST_LINE;
-	    return true;
-	} else if ( value == "first-letter" && subject ) {
-	    dynamicPseudo=RenderStyle::FIRST_LETTER;
-	    return true;
-	} else if( value == "link") {
-	    if ( pseudoState == PseudoUnknown )
-		checkPseudoState( e );
-	    if ( pseudoState == PseudoLink ) {
-		return true;
-	    }
-	} else if ( value == "visited" ) {
-	    if ( pseudoState == PseudoUnknown )
-		checkPseudoState( e );
-	    if ( pseudoState == PseudoVisited )
-		return true;
-	} else if ( value == "hover" ) {
-	    selectorDynamicState |= StyleSelector::Hover;
-	    // dynamic pseudos have to be sorted out in checkSelector, so we if it could in some state apply
-	    // to the element.
-	    return true;
-	} else if ( value == "focus" ) {
-	    selectorDynamicState |= StyleSelector::Focus;
-	    return true;
-	} else if ( value == "active" ) {
-	    if ( pseudoState == PseudoUnknown )
-		checkPseudoState( e );
-	    if ( pseudoState != PseudoNone ) {
-		selectorDynamicState |= StyleSelector::Active;
-		return true;
-	    }
-	} else if ( value == "before" ) {
-            dynamicPseudo = RenderStyle::BEFORE;
-            return true;
-        } else if ( value == "after" ) {
-            dynamicPseudo = RenderStyle::AFTER;
-            return true;
+	switch (sel->pseudoType()) {
+            case CSSSelector::PseudoEmpty:
+                if (!e->firstChild())
+                    return true;
+                break;
+            case CSSSelector::PseudoFirstChild: {
+                // first-child matches the first child that is an element!
+                DOM::NodeImpl *n = e->parentNode()->firstChild();
+                while ( n && !n->isElementNode() )
+                    n = n->nextSibling();
+                if ( n == e )
+                    return true;
+                break;
+            }
+            case CSSSelector::PseudoFirstLine:
+                if ( subject ) {
+                    dynamicPseudo=RenderStyle::FIRST_LINE;
+                    return true;
+                }
+                break;
+            case CSSSelector::PseudoFirstLetter:
+                if ( subject ) {
+                    dynamicPseudo=RenderStyle::FIRST_LETTER;
+                    return true;
+                }
+                break;
+            case CSSSelector::PseudoLink:
+                if ( pseudoState == PseudoUnknown )
+                    checkPseudoState( e );
+                if ( pseudoState == PseudoLink )
+                    return true;
+                break;
+            case CSSSelector::PseudoVisited:
+                if ( pseudoState == PseudoUnknown )
+                    checkPseudoState( e );
+                if ( pseudoState == PseudoVisited )
+                    return true;
+                break;
+            case CSSSelector::PseudoHover:
+                selectorDynamicState |= StyleSelector::Hover;
+                // dynamic pseudos have to be sorted out in checkSelector, so we if it could in some state apply
+                // to the element.
+                return true;
+            case CSSSelector::PseudoFocus:
+                selectorDynamicState |= StyleSelector::Focus;
+                return true;
+            case CSSSelector::PseudoActive:
+                if ( pseudoState == PseudoUnknown )
+                    checkPseudoState( e );
+                if ( pseudoState != PseudoNone ) {
+                    selectorDynamicState |= StyleSelector::Active;
+                    return true;
+                }
+                break;
+            case CSSSelector::PseudoBefore:
+                dynamicPseudo = RenderStyle::BEFORE;
+                return true;
+            case CSSSelector::PseudoAfter:
+                dynamicPseudo = RenderStyle::AFTER;
+                return true;
+            case CSSSelector::PseudoNotParsed:
+                assert(false);
+                break;
+            case CSSSelector::PseudoOther:
+                break;
         }
 	return false;
     }
@@ -2333,21 +2358,17 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
         } else {
             int type = primitiveValue->primitiveType();
-#ifndef APPLE_CHANGES
             if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
+#if !APPLE_CHANGES
                 size = primitiveValue->computeLengthFloat(parentStyle, paintDeviceMetrics);
+#else
+                // OS X will always provide device independent font size, so we don't want to adjust
+                // the device independent sizes.
+                size = primitiveValue->computePointFloat(parentStyle, paintDeviceMetrics);
+#endif
                 if (!khtml::printpainter && element && element->getDocument()->view())
                     size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
             } 
-#else
-            // OS X will always provide device independent font size, so we don't want to adjust
-            // the device indepent sizes.
-            if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
-                size = primitiveValue->computePointFloat(parentStyle, paintDeviceMetrics);
-                if (!khtml::printpainter && element && element->getDocument()->view())
-                    size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
-            }
-#endif
             else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 size = (primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)
                         * parentStyle->font().pixelSize()) / 100;
@@ -2540,75 +2561,80 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             CSSValueImpl *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
-            if(!val->primitiveType() == CSSPrimitiveValue::CSS_STRING) return;
-            QString face = static_cast<FontFamilyValueImpl *>(val)->fontName();
-            if ( !face.isEmpty() ) {
-                if(face == "serif") {
-                    face = settings->serifFontName();
-                    fontDef.setGenericFamily(FontDef::eSerif);
-                }
-                else if(face == "sans-serif") {
-                    face = settings->sansSerifFontName();
-                    fontDef.setGenericFamily(FontDef::eSansSerif);
-                }
-                else if( face == "cursive") {
-                    face = settings->cursiveFontName();
-                    fontDef.setGenericFamily(FontDef::eCursive);
-                }
-                else if( face == "fantasy") {
-                    face = settings->fantasyFontName();
-                    fontDef.setGenericFamily(FontDef::eFantasy);
-                }
-                else if( face == "monospace") {
-                    face = settings->fixedFontName();
-                    fontDef.setGenericFamily(FontDef::eMonospace);
-                }
-                else if( face == "konq_default") {
-                    // Treat this as though it's a generic family, since we will want
-                    // to reset to default sizes when we encounter this (and inherit
-                    // from an enclosing different family like monospace.
-                    face = settings->stdFontName();
-                    fontDef.setGenericFamily(FontDef::eStandard);
-                }
-                else if (face == "konq_body") {
-                    // Obtain the <body> element's font information,
-                    // and use its family list.
-                    DOM::DocumentImpl* doc = element->getDocument();
-                    if (doc && doc->isHTMLDocument()) {
-                        DOM::HTMLDocumentImpl* htmldoc = 
-                          static_cast<DOM::HTMLDocumentImpl*>(doc);
-                        DOM::HTMLElementImpl* body = htmldoc->body();
-                        if (body && body->renderer()) {
-                            FontDef& bodyFontDef = 
-                              (FontDef&)(body->renderer()->style()->htmlFont().fontDef);
-                            fontDef.family = bodyFontDef.firstFamily();
-                            fontDef.genericFamily = bodyFontDef.genericFamily;
-                            if (style->setFontDef( fontDef )) {
-                                fontDirty = true;
-                            }
-                            break;
+            if(val->primitiveType() != CSSPrimitiveValue::CSS_STRING) return;
+            QString face;
+            FontFamilyValueImpl *familyVal = static_cast<FontFamilyValueImpl *>(val);
+            if (familyVal->isKonqBody()) {
+                // Obtain the <body> element's font information,
+                // and use its family list.
+                DOM::DocumentImpl* doc = element->getDocument();
+                if (doc && doc->isHTMLDocument()) {
+                    DOM::HTMLDocumentImpl* htmldoc = static_cast<DOM::HTMLDocumentImpl*>(doc);
+                    DOM::HTMLElementImpl* body = htmldoc->body();
+                    if (body && body->renderer()) {
+                        FontDef& bodyFontDef = const_cast<FontDef &>(body->renderer()->style()->htmlFont().fontDef);
+                        fontDef.family = bodyFontDef.firstFamily();
+                        fontDef.genericFamily = bodyFontDef.genericFamily;
+                        if (style->setFontDef( fontDef )) {
+                            fontDirty = true;
                         }
+                        break;
                     }
-                    
-                    face = settings->stdFontName();
                 }
+                
+                face = settings->stdFontName();
+            } else {
+            	FontDef::GenericFamilyType type = static_cast<FontDef::GenericFamilyType>(familyVal->genericFamilyType());
+                switch (type) {
+                    case FontDef::eNone:
+                        face = familyVal->fontName();
+                        break;
+                    case FontDef::eSerif:
+                        face = settings->serifFontName();
+                        fontDef.setGenericFamily(FontDef::eSerif);
+                        break;
+                    case FontDef::eSansSerif:
+                        face = settings->serifFontName();
+                        fontDef.setGenericFamily(FontDef::eSansSerif);
+                        break;
+                    case FontDef::eCursive:
+                        face = settings->cursiveFontName();
+                        fontDef.setGenericFamily(FontDef::eCursive);
+                        break;
+                    case FontDef::eFantasy:
+                        face = settings->fantasyFontName();
+                        fontDef.setGenericFamily(FontDef::eFantasy);
+                        break;
+                    case FontDef::eMonospace:
+                        face = settings->fixedFontName();
+                        fontDef.setGenericFamily(FontDef::eMonospace);
+                        break;
+                    case FontDef::eStandard:
+                        // Actually "konq_default".
+                        // Treat this as though it's a generic family, since we will want
+                        // to reset to default sizes when we encounter this (and inherit
+                        // from an enclosing different family like monospace).
+                        face = settings->stdFontName();
+                        fontDef.setGenericFamily(FontDef::eStandard);
+                        break;
+                }
+            }
     
-                if ( !face.isEmpty() ) {
-                    if (!currFamily) {
-                        // Filling in the first family.
-                        firstFamily.setFamily(face);
-                        currFamily = &firstFamily;
-                    }
-                    else {
-                        KWQFontFamily *newFamily = new KWQFontFamily;
-                        newFamily->setFamily(face);
-                        currFamily->appendFamily(newFamily);
-                        currFamily = newFamily;
-                    }
-                    
-                    if (style->setFontDef( fontDef )) {
-                        fontDirty = true;
-                    }
+            if ( !face.isEmpty() ) {
+                if (!currFamily) {
+                    // Filling in the first family.
+                    firstFamily.setFamily(face);
+                    currFamily = &firstFamily;
+                }
+                else {
+                    KWQFontFamily *newFamily = new KWQFontFamily;
+                    newFamily->setFamily(face);
+                    currFamily->appendFamily(newFamily);
+                    currFamily = newFamily;
+                }
+                
+                if (style->setFontDef( fontDef )) {
+                    fontDirty = true;
                 }
             }
         }

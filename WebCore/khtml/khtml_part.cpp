@@ -1356,7 +1356,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 #endif
 
   // ### not sure if XHTML documents served as text/xml should use DocumentImpl or HTMLDocumentImpl
-#ifndef APPLE_CHANGES
+#if !APPLE_CHANGES
   // We can't deal with XML yet, so just give it an HTML document for now. -dwh
   if (args.serviceType == "text/xml")
     d->m_doc = DOMImplementationImpl::instance()->createDocument( d->m_view );
@@ -1407,22 +1407,44 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
 void KHTMLPart::write( const char *str, int len )
 {
-    if ( !d->m_decoder ) {
-        d->m_decoder = new khtml::Decoder();
-        if(d->m_encoding != QString::null)
-            d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
-        else
-            d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+  bool allASCII = !d->m_decoder;
+  const char *p = str;
+  if ( len == -1 ) {
+    len = 0;
+    unsigned char c;
+    while ( (c = *p++) ) {
+      ++len;
+      if (c > 0x7F)
+        allASCII = false;
     }
+  } else {
+    int l = len;
+    while ( allASCII && l-- ) {
+      unsigned char c = *p++;
+      if (c > 0x7F)
+        allASCII = false;
+    }
+  }
+
   if ( len == 0 )
     return;
 
-  if ( len == -1 )
-    len = strlen( str );
-
-  QString decoded = d->m_decoder->decode( str, len );
-
-  if(decoded.isEmpty()) return;
+  QString decoded;
+  if (allASCII)
+    decoded = QString(str, len);
+  else {
+    if ( !d->m_decoder ) {
+      d->m_decoder = new khtml::Decoder;
+      if (!d->m_encoding.isNull())
+        d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
+      else
+        d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+      // ### this is still quite hacky, but should work a lot better than the old solution
+      if(d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
+    }
+    decoded = d->m_decoder->decode( str, len );
+    if(decoded.isEmpty()) return;
+  }
 
   if(d->m_bFirstData) {
       // determine the parse mode
@@ -1430,8 +1452,6 @@ void KHTMLPart::write( const char *str, int len )
       d->m_bFirstData = false;
 
   //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
-      // ### this is still quite hacky, but should work a lot better than the old solution
-      if(d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
       d->m_doc->recalcStyle( NodeImpl::Force );
   }
 

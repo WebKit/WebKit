@@ -118,8 +118,8 @@ public:
 
     virtual void parseAttribute(AttributeImpl *token);
 
-    QString name() const { if(!m_name) return QString::null; return QConstString(m_name->s, m_name->l).string(); }
-    QString value() const { if(!m_value) return QString::null; return QConstString(m_value->s, m_value->l).string(); }
+    QString name() const { if(!m_name) return QString::null; return QString(m_name->s, m_name->l); }
+    QString value() const { if(!m_value) return QString::null; return QString(m_value->s, m_value->l); }
 
  protected:
     DOMStringImpl *m_name;

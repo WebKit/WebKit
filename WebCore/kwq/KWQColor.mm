@@ -29,6 +29,8 @@
 #import "KWQString.h"
 #import "KWQAssertions.h"
 
+#import "KWQColorData.c"
+
 const QColor Qt::black    (0x00, 0x00, 0x00);
 const QColor Qt::white    (0xFF, 0xFF, 0xFF);
 const QColor Qt::darkGray (0x80, 0x80, 0x80);
@@ -40,168 +42,6 @@ const QColor Qt::blue     (0x00, 0x00, 0xFF);
 const QColor Qt::cyan     (0x00, 0xFF, 0xFF);
 const QColor Qt::magenta  (0xFF, 0x00, 0xFF);
 const QColor Qt::yellow   (0xFF, 0xFF, 0x00);
-
-static NSDictionary *getNamedColors()
-{
-    static NSDictionary *namedColors;
-    
-    if (namedColors)
-        return namedColors;
-    
-    namedColors = [[NSDictionary alloc] initWithObjectsAndKeys:
-        @"#f0f8ff", @"aliceblue",
-        @"#faebd7", @"antiquewhite",
-        @"#00ffff", @"aqua",
-        @"#7fffd4", @"aquamarine",
-        @"#f0ffff", @"azure",
-        @"#f5f5dc", @"beige",
-        @"#ffe4c4", @"bisque",
-        @"#000000", @"black",
-        @"#ffebcd", @"blanchedalmond",
-        @"#0000ff", @"blue",
-        @"#8a2be2", @"blueviolet",
-        @"#a52a2a", @"brown",
-        @"#deb887", @"burlywood",
-        @"#5f9ea0", @"cadetblue",
-        @"#7fff00", @"chartreuse",
-        @"#d2691e", @"chocolate",
-        @"#ff7f50", @"coral",
-        @"#6495ed", @"cornflowerblue",
-        @"#fff8dc", @"cornsilk",
-        @"#dc143c", @"crimson",
-        @"#00ffff", @"cyan",
-        @"#00008b", @"darkblue",
-        @"#008b8b", @"darkcyan",
-        @"#b8860b", @"darkgoldenrod",
-        @"#a9a9a9", @"darkgray",
-        @"#a9a9a9", @"darkgrey",
-        @"#006400", @"darkgreen",
-        @"#bdb76b", @"darkkhaki",
-        @"#8b008b", @"darkmagenta",
-        @"#556b2f", @"darkolivegreen",
-        @"#ff8c00", @"darkorange",
-        @"#9932cc", @"darkorchid",
-        @"#8b0000", @"darkred",
-        @"#e9967a", @"darksalmon",
-        @"#8fbc8f", @"darkseagreen",
-        @"#483d8b", @"darkslateblue",
-        @"#2f4f4f", @"darkslategray",
-        @"#2f4f4f", @"darkslategrey",
-        @"#00ced1", @"darkturquoise",
-        @"#9400d3", @"darkviolet",
-        @"#ff1493", @"deeppink",
-        @"#00bfff", @"deepskyblue",
-        @"#696969", @"dimgray",
-        @"#696969", @"dimgrey",
-        @"#1e90ff", @"dodgerblue",
-        @"#b22222", @"firebrick",
-        @"#fffaf0", @"floralwhite",
-        @"#228b22", @"forestgreen",
-        @"#ff00ff", @"fuchsia",
-        @"#dcdcdc", @"gainsboro",
-        @"#f8f8ff", @"ghostwhite",
-        @"#ffd700", @"gold",
-        @"#daa520", @"goldenrod",
-        @"#808080", @"gray",
-        @"#808080", @"grey",
-        @"#008000", @"green",
-        @"#adff2f", @"greenyellow",
-        @"#f0fff0", @"honeydew",
-        @"#ff69b4", @"hotpink",
-        @"#cd5c5c", @"indianred",
-        @"#4b0082", @"indigo",
-        @"#fffff0", @"ivory",
-        @"#f0e68c", @"khaki",
-        @"#e6e6fa", @"lavender",
-        @"#fff0f5", @"lavenderblush",
-        @"#7cfc00", @"lawngreen",
-        @"#fffacd", @"lemonchiffon",
-        @"#add8e6", @"lightblue",
-        @"#f08080", @"lightcoral",
-        @"#e0ffff", @"lightcyan",
-        @"#fafad2", @"lightgoldenrodyellow",
-        @"#d3d3d3", @"lightgray",
-        @"#d3d3d3", @"lightgrey",
-        @"#90ee90", @"lightgreen",
-        @"#ffb6c1", @"lightpink",
-        @"#ffa07a", @"lightsalmon",
-        @"#20b2aa", @"lightseagreen",
-        @"#87cefa", @"lightskyblue",
-        @"#8470ff", @"lightslateblue",
-        @"#778899", @"lightslategray",
-        @"#778899", @"lightslategrey",
-        @"#b0c4de", @"lightsteelblue",
-        @"#ffffe0", @"lightyellow",
-        @"#00ff00", @"lime",
-        @"#32cd32", @"limegreen",
-        @"#faf0e6", @"linen",
-        @"#ff00ff", @"magenta",
-        @"#800000", @"maroon",
-        @"#66cdaa", @"mediumaquamarine",
-        @"#0000cd", @"mediumblue",
-        @"#ba55d3", @"mediumorchid",
-        @"#9370d8", @"mediumpurple",
-        @"#3cb371", @"mediumseagreen",
-        @"#7b68ee", @"mediumslateblue",
-        @"#00fa9a", @"mediumspringgreen",
-        @"#48d1cc", @"mediumturquoise",
-        @"#c71585", @"mediumvioletred",
-        @"#191970", @"midnightblue",
-        @"#f5fffa", @"mintcream",
-        @"#ffe4e1", @"mistyrose",
-        @"#ffe4b5", @"moccasin",
-        @"#ffdead", @"navajowhite",
-        @"#000080", @"navy",
-        @"#fdf5e6", @"oldlace",
-        @"#808000", @"olive",
-        @"#6b8e23", @"olivedrab",
-        @"#ffa500", @"orange",
-        @"#ff4500", @"orangered",
-        @"#da70d6", @"orchid",
-        @"#eee8aa", @"palegoldenrod",
-        @"#98fb98", @"palegreen",
-        @"#afeeee", @"paleturquoise",
-        @"#d87093", @"palevioletred",
-        @"#ffefd5", @"papayawhip",
-        @"#ffdab9", @"peachpuff",
-        @"#cd853f", @"peru",
-        @"#ffc0cb", @"pink",
-        @"#dda0dd", @"plum",
-        @"#b0e0e6", @"powderblue",
-        @"#800080", @"purple",
-        @"#ff0000", @"red",
-        @"#bc8f8f", @"rosybrown",
-        @"#4169e1", @"royalblue",
-        @"#8b4513", @"saddlebrown",
-        @"#fa8072", @"salmon",
-        @"#f4a460", @"sandybrown",
-        @"#2e8b57", @"seagreen",
-        @"#fff5ee", @"seashell",
-        @"#a0522d", @"sienna",
-        @"#c0c0c0", @"silver",
-        @"#87ceeb", @"skyblue",
-        @"#6a5acd", @"slateblue",
-        @"#708090", @"slategray",
-        @"#708090", @"slategrey",
-        @"#fffafa", @"snow",
-        @"#00ff7f", @"springgreen",
-        @"#4682b4", @"steelblue",
-        @"#d2b48c", @"tan",
-        @"#008080", @"teal",
-        @"#d8bfd8", @"thistle",
-        @"#ff6347", @"tomato",
-        @"#40e0d0", @"turquoise",
-        @"#ee82ee", @"violet",
-        @"#d02090", @"violetred",
-        @"#f5deb3", @"wheat",
-        @"#ffffff", @"white",
-        @"#f5f5f5", @"whitesmoke",
-        @"#ffff00", @"yellow",
-        @"#9acd32", @"yellowgreen",
-    nil];
-    
-    return namedColors;
-}
 
 QRgb qRgb(int r, int g, int b)
 {
@@ -237,8 +77,6 @@ static int hex2int(QChar hexchar)
     
     if (hexchar.isDigit())
 	v = hexchar.digitValue();
-    else if (hexchar >= 'A' && hexchar <= 'F')
-	v = hexchar.cell() - 'A' + 10;
     else if (hexchar >= 'a' && hexchar <= 'f')
 	v = hexchar.cell() - 'a' + 10;
     else
@@ -326,16 +164,18 @@ void QColor::setNamedColor(const QString &name)
     } 
     
     int r, g, b;
-    NSString *hexString = [getNamedColors() objectForKey:[name.getNSString() lowercaseString]];
-    if (hexString && decodeColorFromHexColorString(QString::fromNSString(hexString), &r, &g, &b)) {
-        setRgb(r, g, b);
+    QString lowerName = name.lower();
+    const Color *foundColor = findColor(name.latin1(), name.length());
+    if (foundColor) {
+        int RGBValue = foundColor->RGBValue;
+        setRgb((RGBValue >> 16) & 0xFF, (RGBValue >> 8) & 0xFF, RGBValue & 0xFF);
         return;
     }
 
-    if (decodeColorFromHexColorString(name, &r, &g, &b)) {
+    if (decodeColorFromHexColorString(lowerName, &r, &g, &b)) {
         setRgb(r, g, b);
         return;
-    } 
+    }
 
     ERROR("couldn't create color using name %s", name.ascii());
     color = KWQInvalidColor;

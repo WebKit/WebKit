@@ -23,6 +23,7 @@
  */
 
 #include "font.h"
+
 #include "khtml_factory.h"
 #include "khtml_settings.h"
 
@@ -37,7 +38,7 @@
 
 using namespace khtml;
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
 void Font::drawLineForText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
                      int toAdd, int yOffset, QPainter::TextDirection d) const
 {
@@ -189,15 +190,16 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
 	f.setFamily(KHTMLFactory::defaultHTMLSettings()->stdFontName());
     else
 	f.setFirstFamily(fontDef.family);
+    f.setItalic(fontDef.italic);
+    f.setWeight(fontDef.weight);
+    f.setPixelSize(fontDef.size);
+
+    fm.setFont(f);
 #else
     f.setFamily( fontDef.family.isEmpty() ? KHTMLFactory::defaultHTMLSettings()->stdFontName() : fontDef.family );
-#endif
     f.setItalic( fontDef.italic );
     f.setWeight( fontDef.weight );
 
-#if APPLE_CHANGES
-    f.setPixelSize(fontDef.size);
-#else
     QFontDatabase db;
 
     int size = fontDef.size;
@@ -239,11 +241,9 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
 
 
     f.setPixelSize( size );
-#endif
 
     fm = QFontMetrics( f );
 
-#if !APPLE_CHANGES
     fontDef.hasNbsp = fm.inFont( 0xa0 );
 #endif
 }
