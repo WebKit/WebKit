@@ -1,5 +1,15 @@
 2003-02-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed 3165171 -- REGRESSION: images overlap text
+
+        * khtml/rendering/table_layout.cpp: (AutoTableLayout::calcEffectiveWidth):
+        Change to distribute space to the fixed columns first so the code to distribute to non-fixed columns does not
+        assume it can distribute more to the fixed columns than it really can.
+
+2003-02-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed 3167025 -- REGRESSION: http://www.buypcdirect.com doesn't wrap correctly b/c of huge cell width value
