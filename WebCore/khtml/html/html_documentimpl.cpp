@@ -299,8 +299,12 @@ static bool isTransitional(const QString &spec, int start)
 
 void HTMLDocumentImpl::close()
 {
+    if (parsing() || loading()) {
+	return;
+    }
+
     // First fire the onload.
-    bool doload = !parsing() && m_tokenizer;
+    bool doload = !parsing() && !loading() && m_tokenizer;
     
     bool wasNotRedirecting = !view() || view()->part()->d->m_redirectURL.isEmpty();
     

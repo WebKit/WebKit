@@ -1,3 +1,17 @@
+2003-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3151982 - missing content at debka.com after iframe is written using document.write
+	- fixed 3000234 - javascript problem writing iframe at cycleworld.com
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::scriptHandler): If we come out of the script with
+	the parser in skip mode, don't throw away the whole rest of the
+	document - instead, parse it as usual. The parser's skip mode will
+	take care of skipping stuff as needed and will detect close tags
+	for special tags like <iframe>.
+
 2003-01-20  David Hyatt  <hyatt@apple.com>
 
 	Fix :hover performance regression on wsj.com.  Moving my

@@ -533,19 +533,17 @@ void HTMLTokenizer::scriptHandler()
     script = false;
     scriptCodeSize = scriptCodeResync = 0;
 
-    if ( !parser->skipMode() ) {
-        if ( !m_executingScript && !loadingExtScript ) {
-            // kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
+    if ( !m_executingScript && !loadingExtScript ) {
+	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
 #if APPLE_CHANGES
-            pendingSrc.prepend(src.current(), src.length());
+	pendingSrc.prepend(src.current(), src.length());
 #else
-            pendingSrc.prepend(QString(src.current(), src.length());
+	pendingSrc.prepend(QString(src.current(), src.length()));
 #endif
-            setSrc(pendingSrc);
-            pendingSrc = QString::null;
-        }
-        else if ( !prependingSrc.isEmpty() )
-            write( prependingSrc, false );
+	setSrc(pendingSrc);
+	pendingSrc = QString::null;
+    } else if ( !prependingSrc.isEmpty() ) {
+	write( prependingSrc, false );
     }
 }
 
