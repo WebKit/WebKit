@@ -950,7 +950,10 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
-	if (_mouseDownMayStartDrag && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
+	if (_mouseDownMayStartDrag &&
+            !d->m_selectionInitiatedWithDoubleClick &&
+            !d->m_selectionInitiatedWithTripleClick &&
+            [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
 	    [_bridge handleMouseDragged:_currentEvent];
 	    return;
 	} else if (_mouseDownMayStartSelect) {

@@ -4118,6 +4118,10 @@ static void findWordBoundary(QChar *chars, int len, int position, int *start, in
 
 bool KHTMLPart::isPointInsideSelection(int x, int y)
 {
+    // Treat an empty selection like no selection.
+    if (d->m_selectionStart == d->m_selectionEnd && d->m_startOffset == d->m_endOffset) {
+        return false;
+    }
     if (!xmlDocImpl()->renderer()) {
         return false;
     }
