@@ -177,6 +177,7 @@ void QListBox::setSelected(int index, bool selectIt)
     _changingSelection = true;
     if (selectIt) {
         [tableView selectRow:index byExtendingSelection:[tableView allowsMultipleSelection]];
+        [tableView scrollRowToVisible:index];
     } else {
         [tableView deselectRow:index];
     }
