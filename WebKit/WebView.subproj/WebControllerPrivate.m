@@ -21,6 +21,7 @@
 #import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
@@ -197,8 +198,15 @@
     }
     else {
         result = [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
-        if (result == nil) {
-            result = @"application/octet-stream";
+        if (!result || [result isEqualToString:@"application/octet-stream"]) {
+            NSString *contents = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:path]
+                                                       encoding:NSASCIIStringEncoding];
+            if([contents _web_looksLikeHTMLDocument]){
+                result = @"text/html";
+            }else{
+                result = @"application/octet-stream";
+            }
+            [contents release];
         }
     }
     

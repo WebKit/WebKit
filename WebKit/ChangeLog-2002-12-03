@@ -1,3 +1,10 @@
+2002-10-08  Chris Blumenberg  <cblu@apple.com>
+
+	Partial fix for 2967073 - should open all TEXT type files, at least
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (+[WebController _MIMETypeForFile:]): Sniff for HTML in the fail case.
+
 2002-10-07  Darin Adler  <darin@apple.com>
 
 	WebKit part of implementation of multipart forms posting.
