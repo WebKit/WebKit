@@ -135,7 +135,8 @@ public:
     void paintObject(PaintInfo& i, int tx, int ty);
     void paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelection = false);
     void paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty);
-
+    void paintSelection(PaintInfo& i, int _tx, int _ty);
+    
     void insertFloatingObject(RenderObject *o);
     void removeFloatingObject(RenderObject *o);
 
@@ -201,6 +202,47 @@ public:
     void setHasMarkupTruncation(bool b=true) { m_hasMarkupTruncation = b; }
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
 
+    virtual bool hasSelectedChildren() const { return m_selectionState != SelectionNone; }
+    virtual SelectionState selectionState() const { return m_selectionState; }
+    virtual void setSelectionState(SelectionState s);
+
+    struct BlockSelectionInfo {
+        RenderBlock* m_block;
+        GapRects m_rects;
+        SelectionState m_state;
+
+        BlockSelectionInfo() { m_block = 0; m_state = SelectionNone; }
+        BlockSelectionInfo(RenderBlock* b) { 
+            m_block = b;
+            m_state = m_block->selectionState();
+            m_rects = m_block->selectionGapRects();
+        }
+        
+        GapRects rects() const { return m_rects; }
+        SelectionState state() const { return m_state; }
+        RenderBlock* block() const { return m_block; }
+    };
+    
+    virtual QRect selectionRect() { return selectionGapRects(); }
+    GapRects selectionGapRects();
+    virtual bool shouldPaintSelectionGaps() const;
+    bool isSelectionRoot() const;
+    GapRects fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, 
+                               int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* i = 0);
+    GapRects fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
+                                     int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* i);
+    GapRects fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
+                                    int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* i);
+    QRect fillVerticalSelectionGap(int lastTop, int lastLeft, int lastRight,
+                                   int bottomY, RenderBlock* rootBlock, int blockX, int blockY, const PaintInfo* i);
+    QRect fillLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
+    QRect fillRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* i);
+    QRect fillHorizontalSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo* i);
+
+    void getHorizontalSelectionGapInfo(SelectionState state, bool& leftGap, bool& rightGap);
+    int leftSelectionOffset(RenderBlock* rootBlock, int y);
+    int rightSelectionOffset(RenderBlock* rootBlock, int y);
+
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
@@ -257,6 +299,7 @@ protected:
     bool m_bottomMarginQuirk : 1;
     bool m_linesAppended : 1; // Whether or not a block with inline children has had lines appended.
     bool m_hasMarkupTruncation : 1;
+    SelectionState m_selectionState : 3;
 
     short m_maxTopPosMargin;
     short m_maxTopNegMargin;

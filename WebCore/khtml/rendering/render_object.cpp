@@ -1390,6 +1390,20 @@ bool RenderObject::shouldSelect() const
     return node->dispatchHTMLEvent(DOM::EventImpl::SELECTSTART_EVENT, true, true);
 }
 
+QColor RenderObject::selectionColor(QPainter *p) const
+{
+    QColor color;
+    if (style()->userSelect() != SELECT_NONE) {
+        RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
+        if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
+            color = pseudoStyle->backgroundColor();
+        else
+            color = p->selectedTextBackgroundColor();
+    }
+
+    return color;
+}
+
 DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const
 {
     if (!dhtmlOK && !uaOK)

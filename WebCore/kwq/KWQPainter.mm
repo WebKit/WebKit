@@ -662,7 +662,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     [data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawHighlightForText(int x, int minX, int maxX, int y, int h, 
+void QPainter::drawHighlightForText(int x, int y, int h, 
     const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, 
     QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
@@ -698,8 +698,6 @@ void QPainter::drawHighlightForText(int x, int minX, int maxX, int y, int h,
     geometry.point = NSMakePoint(x, y);
     geometry.selectionY = y;
     geometry.selectionHeight = h;
-    geometry.selectionMinX = minX;
-    geometry.selectionMaxX = maxX;
     geometry.useFontMetricsForSelectionYAndHeight = false;
     [data->textRenderer drawHighlightForRun:&run style:&style geometry:&geometry];
 }

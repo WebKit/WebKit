@@ -192,6 +192,16 @@ InlineBox* InlineBox::lastLeafChild()
     return this;
 }
 
+InlineBox* InlineBox::nextLeafChild()
+{
+    return parent() ? parent()->firstLeafChildAfterBox(this) : 0;
+}
+
+InlineBox* InlineBox::prevLeafChild()
+{
+    return parent() ? parent()->lastLeafChildBeforeBox(this) : 0;
+}
+
 InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
 {
     if (!isInlineFlowBox())
@@ -206,6 +216,11 @@ InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
         return this;
     
     return box->closestLeafChildForXPos(_x, _tx);
+}
+
+RenderObject::SelectionState InlineBox::selectionState()
+{
+    return object()->selectionState();
 }
 
 bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth)
@@ -267,6 +282,22 @@ int InlineFlowBox::getFlowSpacingWidth()
             totWidth += static_cast<InlineFlowBox*>(curr)->getFlowSpacingWidth();
     }
     return totWidth;
+}
+
+void InlineFlowBox::addToLine(InlineBox* child) {
+    if (!m_firstChild)
+        m_firstChild = m_lastChild = child;
+    else {
+        m_lastChild->m_next = child;
+        child->m_prev = m_lastChild;
+        m_lastChild = child;
+    }
+    child->setFirstLineStyleBit(m_firstLine);
+    child->setParent(this);
+    if (child->isText())
+        m_hasTextChildren = true;
+    if (child->object()->selectionState() != RenderObject::SelectionNone)
+        root()->setHasSelectedChildren(true);
 }
 
 void InlineFlowBox::removeChild(InlineBox* child)
@@ -817,32 +848,32 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
 
 InlineBox* InlineFlowBox::firstLeafChild()
 {
-    InlineBox *box = firstChild();
-    while (box) {
-        InlineBox* next = 0;
-        if (!box->isInlineFlowBox())
-            break;
-        next = static_cast<InlineFlowBox*>(box)->firstChild();
-        if (!next)
-            break;
-        box = next;
-    }
-    return box;
+    return firstLeafChildAfterBox();
 }
 
 InlineBox* InlineFlowBox::lastLeafChild()
 {
-    InlineBox *box = lastChild();
-    while (box) {
-        InlineBox* next = 0;
-        if (!box->isInlineFlowBox())
-            break;
-        next = static_cast<InlineFlowBox*>(box)->lastChild();
-        if (!next)
-            break;
-        box = next;
-    }
-    return box;
+    return lastLeafChildBeforeBox();
+}
+
+InlineBox* InlineFlowBox::firstLeafChildAfterBox(InlineBox* start)
+{
+    InlineBox* leaf = 0;
+    for (InlineBox* box = start ? start->nextOnLine() : firstChild(); box && !leaf; box = box->nextOnLine())
+        leaf = box->firstLeafChild();
+    if (start && !leaf && parent())
+        return parent()->firstLeafChildAfterBox(this);
+    return leaf;
+}
+
+InlineBox* InlineFlowBox::lastLeafChildBeforeBox(InlineBox* start)
+{
+    InlineBox* leaf = 0;
+    for (InlineBox* box = start ? start->prevOnLine() : lastChild(); box && !leaf; box = box->prevOnLine())
+        leaf = box->lastLeafChild();
+    if (start && !leaf && parent())
+        return parent()->lastLeafChildBeforeBox(this);
+    return leaf;
 }
 
 InlineBox* InlineFlowBox::closestChildForXPos(int _x, int _tx)
@@ -862,6 +893,11 @@ InlineBox* InlineFlowBox::closestChildForXPos(int _x, int _tx)
                 return box;
 
     return 0;
+}
+
+RenderObject::SelectionState InlineFlowBox::selectionState()
+{
+    return RenderObject::SelectionNone;
 }
 
 bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth)
@@ -1036,4 +1072,112 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
+GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, 
+                                             const RenderObject::PaintInfo* i)
+{
+    GapRects result;
+    RenderObject::SelectionState lineState = selectionState();
+
+    bool leftGap, rightGap;
+    block()->getHorizontalSelectionGapInfo(lineState, leftGap, rightGap);
+
+    InlineBox* firstBox = firstSelectedBox();
+    InlineBox* lastBox = lastSelectedBox();
+    if (leftGap)
+        result.uniteLeft(block()->fillLeftSelectionGap(firstBox->parent()->object(), 
+                                                       firstBox->xPos(), selTop, selHeight, 
+                                                       rootBlock, blockX, blockY, tx, ty, i));
+    if (rightGap)
+        result.uniteRight(block()->fillRightSelectionGap(lastBox->parent()->object(), 
+                                                         lastBox->xPos() + lastBox->width(), selTop, selHeight, 
+                                                         rootBlock, blockX, blockY, tx, ty, i));
+
+    if (firstBox && firstBox != lastBox) {
+        // Now fill in any gaps on the line that occurred between two selected elements.
+        int lastX = firstBox->xPos() + firstBox->width();
+        for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
+            if (box->selectionState() != RenderObject::SelectionNone) {
+                result.uniteCenter(block()->fillHorizontalSelectionGap(box->parent()->object(),
+                                                                       lastX + tx, selTop + ty,
+                                                                       box->xPos() - lastX, selHeight, i));
+                lastX = box->xPos() + box->width();
+            }
+            if (box == lastBox)
+                break;
+        }
+    }
+      
+    return result;
 }
+
+void RootInlineBox::setHasSelectedChildren(bool b)
+{
+    if (m_hasSelectedChildren == b)
+        return;
+    m_hasSelectedChildren = b;
+}
+
+RenderObject::SelectionState RootInlineBox::selectionState()
+{
+    // Walk over all of the selected boxes.
+    RenderObject::SelectionState state = RenderObject::SelectionNone;
+    for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild()) {
+        RenderObject::SelectionState boxState = box->selectionState();
+        if ((boxState == RenderObject::SelectionStart && state == RenderObject::SelectionEnd) ||
+            (boxState == RenderObject::SelectionEnd && state == RenderObject::SelectionStart))
+            state = RenderObject::SelectionBoth;
+        else if (state == RenderObject::SelectionNone ||
+                 ((boxState == RenderObject::SelectionStart || boxState == RenderObject::SelectionEnd) &&
+                  (state == RenderObject::SelectionNone || state == RenderObject::SelectionInside)))
+            state = boxState;
+        if (state == RenderObject::SelectionBoth)
+            break;
+    }
+    
+    return state;
+}
+
+InlineBox* RootInlineBox::firstSelectedBox()
+{
+    for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild())
+        if (box->selectionState() != RenderObject::SelectionNone)
+            return box;
+    return 0;
+}
+
+InlineBox* RootInlineBox::lastSelectedBox()
+{
+    for (InlineBox* box = lastLeafChild(); box; box = box->prevLeafChild())
+        if (box->selectionState() != RenderObject::SelectionNone)
+            return box;
+    return 0;
+}
+
+int RootInlineBox::selectionTop()
+{
+    if (!prevRootBox())
+        return topOverflow();
+    
+    int prevBottom = prevRootBox()->bottomOverflow();
+    if (prevBottom < m_topOverflow && block()->containsFloats()) {
+        // This line has actually been moved further down, probably from a large line-height, but possibly because the
+        // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous
+        // line's bottom overflow if the offsets are greater on both sides.
+        int prevLeft = block()->leftOffset(prevBottom);
+        int prevRight = block()->rightOffset(prevBottom);
+        int newLeft = block()->leftOffset(m_topOverflow);
+        int newRight = block()->rightOffset(m_topOverflow);
+        if (prevLeft > newLeft || prevRight < newRight)
+            return m_topOverflow;
+    }
+    
+    return prevBottom;
+}
+ 
+RenderBlock* RootInlineBox::block() const
+{
+    return static_cast<RenderBlock*>(m_object);
+}
+
+}
+

@@ -305,42 +305,46 @@ void RenderCanvas::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
 
 QRect RenderCanvas::selectionRect() const
 {
-    QRect selectionRect(0,0,0,0);
-    RenderObject *r = m_selectionStart;
-    while (r) {
-        RenderObject* n = 0;
-        if (!(n = r->firstChild())) {
-            if (!(n = r->nextSibling())) {
-                n = r->parent();
-                while (n && !n->nextSibling())
-                    n = n->parent();
-                if (n)
-                    n = n->nextSibling();
+    QValueList<SelectionInfo> selectedObjects;
+    RenderObject* os = m_selectionStart;
+    while (os) {
+        RenderObject* no = 0;
+        if (os != m_selectionEnd) {
+            if (!(no = os->firstChild())) {
+                if (!(no = os->nextSibling())) {
+                    no = os->parent();
+                    while (no && no != m_selectionEnd && !no->nextSibling())
+                        no = no->parent();
+                    if (no && no != m_selectionEnd)
+                        no = no->nextSibling();
+                }
             }
         }
-        if (r) {
-            QRect selRect(r->selectionRect());
-            if (!selRect.isEmpty()) {
-                if (selectionRect.isEmpty())
-                    selectionRect = selRect;
-                else
-                    selectionRect = selectionRect.unite(selRect);
+        
+        if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) &&
+            os->selectionState() != SelectionNone) {
+            // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
+            selectedObjects.append(SelectionInfo(os));
+            RenderBlock* cb = os->containingBlock();
+            while (cb && !cb->hasDirtySelectionState() && cb->hasSelectedChildren()) {
+                selectedObjects.append(SelectionInfo(cb));
+                cb->setHasDirtySelectionState(true);
+                cb = cb->containingBlock();
             }
         }
-        r = n;
+
+        os = no;
     }
 
-    return selectionRect;
-}
-
-static RenderObject::SelectionInfo getSelectionInfo(const QValueList<RenderObject::SelectionInfo>& l, RenderObject* o)
-{
-    QValueListConstIterator<RenderObject::SelectionInfo> it;
-    for (it = l.begin(); it != l.end(); ++it) {
-        if ((*it).object() == o)
-            return *it;
+    // Now create a single bounding box rect that encloses the whole selection.
+    QRect selRect;
+    QValueListConstIterator<SelectionInfo> it;
+    for (it = selectedObjects.begin(); it != selectedObjects.end(); ++it) {
+        (*it).object()->setHasDirtySelectionState(false);
+        selRect = selRect.unite((*it).rect());
     }
-    return RenderObject::SelectionInfo();
+
+    return selRect;
 }
 
 void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
@@ -360,10 +364,21 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     int oldStartPos = m_selectionStartPos;
     int oldEndPos = m_selectionEndPos;
 
-    QValueList<SelectionInfo> oldSelectedObjects;
-    QValueList<SelectionInfo> newSelectedObjects;
-    
-    RenderObject *os = m_selectionStart;
+    // Objects each have a single selection rect to examine.
+    QPtrDict<SelectionInfo> oldSelectedObjects;
+    QPtrDict<SelectionInfo> newSelectedObjects;
+    oldSelectedObjects.setAutoDelete(true);
+    newSelectedObjects.setAutoDelete(true);
+
+    // Blocks contain selected objects and fill gaps between them, either on the left, right, or in between lines and blocks.
+    // In order to get the repaint rect right, we have to examine left, middle, and right rects individually, since otherwise
+    // the union of those rects might remain the same even when changes have occurred.
+    QPtrDict<BlockSelectionInfo> oldSelectedBlocks;
+    QPtrDict<BlockSelectionInfo> newSelectedBlocks;
+    oldSelectedBlocks.setAutoDelete(true);
+    newSelectedBlocks.setAutoDelete(true);
+
+    RenderObject* os = m_selectionStart;
     while (os) {
         RenderObject* no = 0;
         if (os != m_selectionEnd) {
@@ -377,18 +392,29 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
                 }
             }
         }
-        
-        if (os->selectionState() != SelectionNone)
-            oldSelectedObjects.append(SelectionInfo(os));
+
+        if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
+            // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
+            oldSelectedObjects.insert(os, new SelectionInfo(os));
+            RenderBlock* cb = os->containingBlock();
+            while (cb && !cb->isCanvas()) {
+                BlockSelectionInfo* blockInfo = oldSelectedBlocks.find(cb);
+                if (blockInfo) break;
+                oldSelectedBlocks.insert(cb, new BlockSelectionInfo(cb));
+                cb = cb->containingBlock();
+            }
+        }
 
         os = no;
     }
 
     // Now clear the selection.
-    QValueListConstIterator<SelectionInfo> it;
-    for (it = oldSelectedObjects.begin(); it != oldSelectedObjects.end(); ++it)
-        (*it).object()->setSelectionState(SelectionNone);
-    
+    QPtrDictIterator<SelectionInfo> oldLeaves(oldSelectedObjects);
+    for (oldLeaves.toFirst(); oldLeaves.current(); ++oldLeaves) {
+        RenderObject* obj = static_cast<RenderObject*>(oldLeaves.currentKey());
+        obj->setSelectionState(SelectionNone);
+    }
+
     // set selection start and end
     m_selectionStart = s;
     m_selectionStartPos = sp;
@@ -396,17 +422,19 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     m_selectionEndPos = ep;
 
     // Update the selection status of all objects between m_selectionStart and m_selectionEnd
-    if (s && s->style()->userSelect() != SELECT_NONE)
-        s->setSelectionState(SelectionStart);
-    if (e && e->style()->userSelect() != SELECT_NONE)
-        e->setSelectionState(SelectionEnd);
-    if (s && s == e && s->style()->userSelect() != SELECT_NONE)
+    if (s && s == e)
         s->setSelectionState(SelectionBoth);
+    else {
+        if (s)
+            s->setSelectionState(SelectionStart);
+        if (e)
+            e->setSelectionState(SelectionEnd);
+    }
 
     RenderObject* o = s;
     while (o) {
         RenderObject* no = 0;
-        if (o != s && o != e && o->style()->userSelect() != SELECT_NONE)
+        if (o != s && o != e && o->canBeSelectionLeaf())
             o->setSelectionState(SelectionInside);
         
         if (o != e) {
@@ -441,31 +469,64 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
             }
         }
         
-        if (o->selectionState() != SelectionNone)
-            newSelectedObjects.append(SelectionInfo(o));
-        
+        if ((o->canBeSelectionLeaf() || o == s || o == e) && o->selectionState() != SelectionNone) {
+            newSelectedObjects.insert(o, new SelectionInfo(o));
+            RenderBlock* cb = o->containingBlock();
+            while (cb && !cb->isCanvas()) {
+                BlockSelectionInfo* blockInfo = newSelectedBlocks.find(cb);
+                if (blockInfo) break;
+                newSelectedBlocks.insert(cb, new BlockSelectionInfo(cb));
+                cb = cb->containingBlock();
+            }
+        }
+
         o=no;
     }
-    
+
     if (!m_view)
         return;
-  
-    // Are any of the old fully selected objects not in the new selection?
-    for (it = oldSelectedObjects.begin(); it != oldSelectedObjects.end(); ++it) {
-        SelectionInfo info = getSelectionInfo(newSelectedObjects, (*it).object());
-        //printf("Old Rect: %d %d %d %d\n", (*it).rect().x(), (*it).rect().y(), (*it).rect().width(), (*it).rect().height());
-        if (!info.object() || info.rect() != (*it).rect() || info.state() != (*it).state() ||
-            (info.object() == m_selectionStart && oldStartPos != m_selectionStartPos) ||
-            (info.object() == m_selectionEnd && oldEndPos != m_selectionEndPos))
-            m_view->updateContents((*it).rect());
+
+    // Have any of the old selected objects changed compared to the new selection?
+    for (oldLeaves.toFirst(); oldLeaves.current(); ++oldLeaves) {
+        SelectionInfo* newInfo = newSelectedObjects.find(oldLeaves.currentKey());
+        SelectionInfo* oldInfo = oldLeaves.current();
+        if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state() ||
+            (m_selectionStart == oldLeaves.currentKey() && oldStartPos != m_selectionStartPos) ||
+            (m_selectionEnd == oldLeaves.currentKey() && oldEndPos != m_selectionEndPos)) {
+            m_view->updateContents(oldInfo->rect());
+            if (newInfo) {
+                m_view->updateContents(newInfo->rect());
+                newSelectedObjects.remove(oldLeaves.currentKey());
+            }
+        }
     }
     
-    // Are any of the new fully selected objects not in the previous selection?
-    for (it = newSelectedObjects.begin(); it != newSelectedObjects.end(); ++it) {
-        SelectionInfo info = getSelectionInfo(oldSelectedObjects, (*it).object());
-        //printf("New Rect: %d %d %d %d\n", (*it).rect().x(), (*it).rect().y(), (*it).rect().width(), (*it).rect().height());
-        if (!info.object() || info.rect() != (*it).rect() || info.state() != (*it).state())
-            m_view->updateContents((*it).rect());
+    // Any new objects that remain were not found in the old objects dict, and so they need to be updated.
+    QPtrDictIterator<SelectionInfo> newLeaves(newSelectedObjects);
+    for (newLeaves.toFirst(); newLeaves.current(); ++newLeaves) {
+        SelectionInfo* newInfo = newLeaves.current();
+        m_view->updateContents(newInfo->rect());
+    }
+
+    // Have any of the old blocks changed?
+    QPtrDictIterator<BlockSelectionInfo> oldBlocks(oldSelectedBlocks);
+    for (oldBlocks.toFirst(); oldBlocks.current(); ++oldBlocks) {
+        BlockSelectionInfo* newInfo = newSelectedBlocks.find(oldBlocks.currentKey());
+        BlockSelectionInfo* oldInfo = oldBlocks.current();
+        if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
+            m_view->updateContents(oldInfo->rects());
+            if (newInfo) {
+                m_view->updateContents(newInfo->rects());
+                newSelectedBlocks.remove(oldBlocks.currentKey());
+            }
+        }
+    }
+    
+    // Any new blocks that remain were not found in the old blocks dict, and so they need to be updated.
+    QPtrDictIterator<BlockSelectionInfo> newBlocks(newSelectedBlocks);
+    for (newBlocks.toFirst(); newBlocks.current(); ++newBlocks) {
+        BlockSelectionInfo* newInfo = newBlocks.current();
+        m_view->updateContents(newInfo->rects());
     }
 }
 

@@ -33,6 +33,7 @@ namespace khtml {
 class EllipsisBox;
 class InlineFlowBox;
 class RootInlineBox;
+class RenderBlock;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
@@ -99,6 +100,8 @@ public:
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
+    InlineBox* nextLeafChild();
+    InlineBox* prevLeafChild();
     InlineBox* closestLeafChildForXPos(int _x, int _tx);
         
     RenderObject* object() const { return m_object; }
@@ -139,6 +142,8 @@ public:
 
     void dirtyLineBoxes();
     
+    virtual RenderObject::SelectionState selectionState();
+
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
@@ -208,6 +213,8 @@ public:
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
+    InlineBox* firstLeafChildAfterBox(InlineBox* start=0);
+    InlineBox* lastLeafChildBeforeBox(InlineBox* start=0);
     InlineBox* closestChildForXPos(int _x, int _tx);
         
     virtual void setConstructed() {
@@ -215,19 +222,7 @@ public:
         if (m_firstChild)
             m_firstChild->setConstructed();
     }
-    void addToLine(InlineBox* child) {
-        if (!m_firstChild)
-            m_firstChild = m_lastChild = child;
-        else {
-            m_lastChild->m_next = child;
-            child->m_prev = m_lastChild;
-            m_lastChild = child;
-        }
-        child->setFirstLineStyleBit(m_firstLine);
-        child->setParent(this);
-        if (child->isText())
-            m_hasTextChildren = true;
-    }
+    void addToLine(InlineBox* child);
 
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
@@ -274,6 +269,8 @@ public:
     
     void removeChild(InlineBox* child);
     
+    virtual RenderObject::SelectionState selectionState();
+
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
@@ -290,7 +287,7 @@ class RootInlineBox : public InlineFlowBox
 public:
     RootInlineBox(RenderObject* obj)
     : InlineFlowBox(obj), m_topOverflow(0), m_bottomOverflow(0), m_lineBreakObj(0), m_lineBreakPos(0), 
-      m_blockHeight(0), m_endsWithBreak(false), m_ellipsisBox(0)
+      m_blockHeight(0), m_endsWithBreak(false), m_hasSelectedChildren(false), m_ellipsisBox(0)
     {}
     
     virtual void detach(RenderArena* renderArena);
@@ -331,6 +328,21 @@ public:
     
     virtual void clearTruncation();
 
+    bool hasSelectedChildren() const { return m_hasSelectedChildren; }
+    void setHasSelectedChildren(bool b);
+    
+    virtual RenderObject::SelectionState selectionState();
+    InlineBox* firstSelectedBox();
+    InlineBox* lastSelectedBox();
+    
+    GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, 
+                                  int tx, int ty, const RenderObject::PaintInfo* i);
+    
+    RenderBlock* block() const;
+
+    int selectionTop();
+    int selectionHeight() { return kMax(0, m_bottomOverflow - selectionTop()); }
+    
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further
@@ -347,8 +359,12 @@ protected:
     int m_blockHeight;
     
     // Whether the line ends with a <br>.
-    bool m_endsWithBreak;
+    bool m_endsWithBreak : 1;
     
+    // Whether we have any children selected (this bit will also be set if the <br> that terminates our
+    // line is selected).
+    bool m_hasSelectedChildren : 1;
+
     // An inline text box that represents our text truncation string.
     EllipsisBox* m_ellipsisBox;
 };

@@ -77,13 +77,16 @@ public:
 
     void detach(RenderArena* arena);
     
-    QRect selectionRect(int absx, int absy, int startPos, int endPos, bool computeLeftRightEdges = true);
+    QRect selectionRect(int absx, int absy, int startPos, int endPos);
+    bool isSelected(int startPos, int endPos) const;
     
     RenderText* textObject();
     
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
     virtual void attachLine();
+
+    virtual RenderObject::SelectionState selectionState();
 
     virtual void clearTruncation() { m_truncation = cNoTruncation; }
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox);
@@ -125,8 +128,7 @@ public:
      * of a view, would the @ref _y -coordinate be inside the vertical range
      * of this object's representation?
      */
-    bool checkVerticalPoint(int _y, int _ty, int _h)
-    { if((_ty + m_y > _y + _h) || (_ty + m_y + m_baseline + height() < _y)) return false; return true; }
+    bool checkVerticalPoint(int _y, int _ty, int _h);
 
     int m_start;
     unsigned short m_len;
@@ -219,8 +221,9 @@ public:
     void setText(DOM::DOMStringImpl *text, bool force=false);
     void setTextWithOffset(DOM::DOMStringImpl *text, uint offset, uint len, bool force=false);
 
+    virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const {return m_selectionState;}
-    virtual void setSelectionState(SelectionState s) {m_selectionState = s; }
+    virtual void setSelectionState(SelectionState s);
     virtual QRect selectionRect();
     virtual QRect caretRect(int offset, bool override);
     void posOfChar(int ch, int &x, int &y);

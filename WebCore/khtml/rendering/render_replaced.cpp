@@ -53,6 +53,7 @@ RenderReplaced::RenderReplaced(DOM::NodeImpl* node)
 
     m_intrinsicWidth = 200;
     m_intrinsicHeight = 150;
+    m_selectionState = SelectionNone;
 }
 
 bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
@@ -70,10 +71,19 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
     int ty = _ty + m_y;
 
     // Early exit if the element touches the edges.
+    int top = ty;
+    int bottom = ty + m_height;
+    if (m_selectionState != SelectionNone && m_inlineBoxWrapper) {
+        int selTop = _ty + m_inlineBoxWrapper->root()->selectionTop();
+        int selBottom = _ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
+        top = kMin(selTop, top);
+        bottom = kMax(selBottom, bottom);
+    }
+    
     int os = 2*maximalOutlineSize(i.phase);
     if ((tx >= i.r.x() + i.r.width() + os) || (tx + m_width <= i.r.x() - os))
         return false;
-    if ((ty >= i.r.y() + i.r.height() + os) || (ty + m_height <= i.r.y() - os))
+    if ((top >= i.r.y() + i.r.height() + os) || (bottom <= i.r.y() - os))
         return false;
 
     return true;
@@ -152,6 +162,54 @@ Position RenderReplaced::positionForCoordinates(int _x, int _y)
     }
 
     return RenderBox::positionForCoordinates(_x, _y);
+}
+
+QRect RenderReplaced::selectionRect()
+{
+    if (selectionState() == SelectionNone)
+        return QRect();
+    if (!m_inlineBoxWrapper)
+        // We're a block-level replaced element.  Just return our own dimensions.
+        return absoluteBoundingBoxRect();
+
+    RenderBlock* cb =  containingBlock();
+    if (!cb)
+        return QRect();
+    
+    RootInlineBox* root = m_inlineBoxWrapper->root();
+    int selectionTop = root->selectionTop();
+    int selectionHeight = root->selectionHeight();
+    int selectionLeft = xPos();
+    int selectionRight = xPos() + width();
+    
+    int absx, absy;
+    cb->absolutePosition(absx, absy);
+
+    return QRect(selectionLeft + absx, selectionTop + absy, selectionRight - selectionLeft, selectionHeight);
+}
+
+void RenderReplaced::setSelectionState(SelectionState s)
+{
+    m_selectionState = s;
+    if (m_inlineBoxWrapper) {
+        RootInlineBox* line = m_inlineBoxWrapper->root();
+        if (line)
+            line->setHasSelectedChildren(s != SelectionNone);
+    }
+    
+    containingBlock()->setSelectionState(s);
+}
+
+
+QColor RenderReplaced::selectionColor(QPainter *p) const
+{
+    QColor color = RenderBox::selectionColor(p);
+         
+    // Force a 60% alpha so that no user-specified selection color can obscure selected images.
+    if (qAlpha(color.rgb()) > 153)
+        color = QColor(qRgba(color.red(), color.green(), color.blue(), 153));
+
+    return color;
 }
 
 // -----------------------------------------------------------------------------
@@ -333,6 +391,13 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     // Tell the widget to paint now.  This is the only time the widget is allowed
     // to paint itself.  That way it will composite properly with z-indexed layers.
     m_widget->paint(i.p, i.r);
+    
+    // Paint a partially transparent wash over selected widgets.
+    if (m_selectionState != SelectionNone) {
+        QBrush brush(selectionColor(i.p));
+        QRect selRect(selectionRect());
+        i.p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
+    }
     
 #else
     if (!m_widget || !m_view || i.phase != PaintActionForeground)
@@ -538,10 +603,10 @@ void RenderWidget::updateWidgetPositions()
 void RenderWidget::setSelectionState(SelectionState s) 
 {
     if (m_selectionState != s) {
+        RenderReplaced::setSelectionState(s);
         m_selectionState = s;
-        if (m_widget) {
+        if (m_widget)
             m_widget->setIsSelected(m_selectionState != SelectionNone);
-        }
     }
 }
 

@@ -60,8 +60,6 @@ void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
     geometry->point = NSMakePoint(0,0);
     geometry->selectionY = 0;
     geometry->selectionHeight = 0;
-    geometry->selectionMinX = 0;
-    geometry->selectionMaxX = 0;
     geometry->useFontMetricsForSelectionYAndHeight = true;
 }
 

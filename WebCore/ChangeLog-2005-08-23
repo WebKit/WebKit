@@ -1,3 +1,138 @@
+2004-10-05  David Hyatt  <hyatt@apple.com>
+
+	New selection gap-filling architecture.  Makes the gap-filling much more like NSTextView and puts the responsibility
+	for gap-filling in the block.  Fixes numerous bugs with selection drawing including bidi issues, incorrect old
+	horizontal gap filling, and selection performance issues.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::notifyFinished):
+        * khtml/misc/khtmllayout.h:
+        (khtml::GapRects::left):
+        (khtml::GapRects::center):
+        (khtml::GapRects::right):
+        (khtml::GapRects::uniteLeft):
+        (khtml::GapRects::uniteCenter):
+        (khtml::GapRects::uniteRight):
+        (khtml::GapRects::unite):
+        (khtml::GapRects::operator QRect):
+        (khtml::GapRects::operator==):
+        (khtml::GapRects::operator!=):
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::removeChild):
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::paintEllipsisBoxes):
+        (khtml::RenderBlock::setSelectionState):
+        (khtml::RenderBlock::shouldPaintSelectionGaps):
+        (khtml::RenderBlock::isSelectionRoot):
+        (khtml::RenderBlock::selectionGapRects):
+        (khtml::RenderBlock::paintSelection):
+        (khtml::RenderBlock::fillSelectionGaps):
+        (khtml::RenderBlock::fillInlineSelectionGaps):
+        (khtml::RenderBlock::fillBlockSelectionGaps):
+        (khtml::RenderBlock::fillHorizontalSelectionGap):
+        (khtml::RenderBlock::fillVerticalSelectionGap):
+        (khtml::RenderBlock::fillLeftSelectionGap):
+        (khtml::RenderBlock::fillRightSelectionGap):
+        (khtml::RenderBlock::getHorizontalSelectionGapInfo):
+        (khtml::RenderBlock::leftSelectionOffset):
+        (khtml::RenderBlock::rightSelectionOffset):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::hasSelectedChildren):
+        (khtml::RenderBlock::selectionState):
+        (khtml::RenderBlock::BlockSelectionInfo::BlockSelectionInfo):
+        (khtml::RenderBlock::BlockSelectionInfo::rects):
+        (khtml::RenderBlock::BlockSelectionInfo::state):
+        (khtml::RenderBlock::BlockSelectionInfo::block):
+        (khtml::RenderBlock::selectionRect):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::position):
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::inlineBox):
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::selectionRect):
+        (khtml::RenderBR::paint):
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect):
+        (RenderCanvas::setSelection):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::nextLeafChild):
+        (khtml::InlineBox::prevLeafChild):
+        (khtml::InlineBox::selectionState):
+        (khtml::InlineFlowBox::addToLine):
+        (khtml::InlineFlowBox::firstLeafChild):
+        (khtml::InlineFlowBox::lastLeafChild):
+        (khtml::InlineFlowBox::firstLeafChildAfterBox):
+        (khtml::InlineFlowBox::lastLeafChildBeforeBox):
+        (khtml::InlineFlowBox::selectionState):
+        (khtml::RootInlineBox::fillLineSelectionGap):
+        (khtml::RootInlineBox::setHasSelectedChildren):
+        (khtml::RootInlineBox::selectionState):
+        (khtml::RootInlineBox::firstSelectedBox):
+        (khtml::RootInlineBox::lastSelectedBox):
+        (khtml::RootInlineBox::selectionTop):
+        (khtml::RootInlineBox::block):
+        * khtml/rendering/render_line.h:
+        (khtml::RootInlineBox::RootInlineBox):
+        (khtml::RootInlineBox::hasSelectedChildren):
+        (khtml::RootInlineBox::selectionHeight):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::selectionColor):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::):
+        (khtml::RenderObject::selectionState):
+        (khtml::RenderObject::setSelectionState):
+        (khtml::RenderObject::selectionRect):
+        (khtml::RenderObject::canBeSelectionLeaf):
+        (khtml::RenderObject::hasSelectedChildren):
+        (khtml::RenderObject::hasDirtySelectionState):
+        (khtml::RenderObject::setHasDirtySelectionState):
+        (khtml::RenderObject::shouldPaintSelectionGaps):
+        (khtml::RenderObject::SelectionInfo::SelectionInfo):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::RenderReplaced):
+        (RenderReplaced::shouldPaint):
+        (RenderReplaced::selectionRect):
+        (RenderReplaced::setSelectionState):
+        (RenderReplaced::selectionColor):
+        (RenderWidget::paint):
+        (RenderWidget::setSelectionState):
+        * khtml/rendering/render_replaced.h:
+        (khtml::RenderReplaced::canBeSelectionLeaf):
+        (khtml::RenderReplaced::selectionState):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::checkVerticalPoint):
+        (InlineTextBox::isSelected):
+        (InlineTextBox::selectionState):
+        (InlineTextBox::selectionRect):
+        (InlineTextBox::paintSelection):
+        (InlineTextBox::paintMarkedTextBackground):
+        (RenderText::paint):
+        (RenderText::setSelectionState):
+        (RenderText::selectionRect):
+        * khtml/rendering/render_text.h:
+        (khtml::RenderText::canBeSelectionLeaf):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawHighlightForText):
+        * kwq/KWQPtrDict.h:
+        (QPtrDictIterator::toFirst):
+        * kwq/KWQRect.mm:
+        (QRect::unite):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.mm:
+        (WebCoreInitializeEmptyTextGeometry):
+
 2004-10-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

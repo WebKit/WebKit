@@ -709,18 +709,45 @@ public:
     int maximalOutlineSize(PaintAction p) const;
 
     enum SelectionState {
-        SelectionNone,
-        SelectionStart,
-        SelectionInside,
-        SelectionEnd,
-        SelectionBoth
+        SelectionNone, // The object is not selected.
+        SelectionStart, // The object either contains the start of a selection run or is the start of a run
+        SelectionInside, // The object is fully encompassed by a selection run
+        SelectionEnd, // The object either contains the end of a selection run or is the end of a run
+        SelectionBoth // The object contains an entire run or is the sole selected object in that run
     };
 
-    virtual SelectionState selectionState() const { return SelectionNone;}
-    virtual void setSelectionState(SelectionState) {}
-    virtual QRect selectionRect() { return QRect(0,0,0,0); }
-    bool shouldSelect() const;
+    // The current selection state for an object.  For blocks, the state refers to the state of the leaf
+    // descendants (as described above in the SelectionState enum declaration).
+    virtual SelectionState selectionState() const { return SelectionNone; }
+    
+    // Sets the selection state for an object.
+    virtual void setSelectionState(SelectionState s) { if (parent()) parent()->setSelectionState(s); }
 
+    // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
+    // possible bounding box for the selection.
+    virtual QRect selectionRect() { return QRect(); }
+    
+    // Whether or not an object can be part of the leaf elements of the selection.
+    virtual bool canBeSelectionLeaf() const { return false; }
+
+    // Whether or not a block has selected children.
+    virtual bool hasSelectedChildren() const { return false; }
+    
+    // A dirty bit used when determining the correct selection state of blocks.  Used to avoid repeatedly examining the same blocks.
+    virtual bool hasDirtySelectionState() const { return false; }
+    virtual void setHasDirtySelectionState(bool b) {}
+
+    // Whether or not a selection can be attempted on this object.  Should only be called right before actually beginning a selection,
+    // since it fires the selectstart DOM event.
+    bool shouldSelect() const;
+    
+    // Obtains the selection background color that should be used when painting a selection.
+    virtual QColor selectionColor(QPainter *p) const;
+    
+    // Whether or not a given block needs to paint selection gaps.
+    virtual bool shouldPaintSelectionGaps() const { return false; }
+
+    // This struct is used when the selection changes to cache the old and new state of the selection for each RenderObject.
     struct SelectionInfo {
         RenderObject* m_object;
         QRect m_rect;
@@ -730,7 +757,7 @@ public:
         QRect rect() const { return m_rect; }
         SelectionState state() const { return m_state; }
         
-        SelectionInfo() { m_object = 0; m_rect = QRect(0,0,0,0); m_state = RenderObject::SelectionNone; }
+        SelectionInfo() { m_object = 0; m_state = SelectionNone; }
         SelectionInfo(RenderObject* o) :m_object(o), m_rect(o->selectionRect()), m_state(o->selectionState()) {}
     };
 

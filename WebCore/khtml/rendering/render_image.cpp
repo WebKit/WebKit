@@ -75,36 +75,6 @@ void RenderImage::setStyle(RenderStyle* _style)
     setShouldPaintBackgroundOrBorder(true);
 }
 
-QRect RenderImage::selectionRect()
-{
-    if (selectionState() == SelectionNone)
-        return QRect();
-    if (!m_inlineBoxWrapper)
-        // We're a block-level replaced element.  Just return our own dimensions.
-        return absoluteBoundingBoxRect();
-
-    RenderBlock* cb =  containingBlock();
-    if (!cb)
-        return QRect();
-    
-    RootInlineBox* root = m_inlineBoxWrapper->root();
-    int selectionTop = root->prevRootBox() ? root->prevRootBox()->bottomOverflow() : root->topOverflow();
-    int selectionHeight = root->bottomOverflow() - selectionTop;
-    int selectionLeft = xPos();
-    int selectionRight = xPos() + width();
-    
-    // FIXME: Move the line extension code into the block instead of doing it here.
-    if (selectionState() == SelectionInside && root->firstLeafChild() == m_inlineBoxWrapper)
-        selectionLeft = kMin(selectionLeft, cb->leftOffset(selectionTop));
-    if (selectionState() == SelectionInside && root->lastLeafChild() == m_inlineBoxWrapper)
-        selectionRight = kMax(selectionRight, containingBlock()->rightOffset(selectionTop));
-
-    int absx, absy;
-    cb->absolutePosition(absx, absy);
-
-    return QRect(selectionLeft + absx, selectionTop + absy, selectionRight - selectionLeft, selectionHeight);
-}
-
 void RenderImage::setContentObject(CachedObject* co)
 {
     if (co && image != co) {
@@ -237,25 +207,6 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 #endif
     }
 }
-
-#if APPLE_CHANGES
-// FIXME: Move this to render_object so all elements can use it.
-QColor RenderImage::selectionTintColor(QPainter *p) const
-{
-    QColor color;
-    RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
-    if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
-        color = pseudoStyle->backgroundColor();
-    else
-        color = p->selectedTextBackgroundColor();
-        
-    // Force a 60% alpha so that no user-specified selection color can obscure selected images.
-    if (qAlpha(color.rgb()) > 153)
-        color = QColor(qRgba(color.red(), color.green(), color.blue(), 153));
-
-    return color;
-}
-#endif
 
 void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 {
@@ -427,7 +378,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             }
 #if APPLE_CHANGES
             if (drawSelectionTint) {
-                QBrush brush(selectionTintColor(p));
+                QBrush brush(selectionColor(p));
                 QRect selRect(selectionRect());
                 p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
             }
@@ -463,7 +414,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
              }
 #if APPLE_CHANGES
              if (drawSelectionTint) {
-                 QBrush brush(selectionTintColor(p));
+                 QBrush brush(selectionColor(p));
                  QRect selRect(selectionRect());
                  p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
              }

@@ -50,6 +50,8 @@
 using namespace DOM;
 using namespace khtml;
 
+//#define INSTRUMENT_LAYOUT_SCHEDULING 1
+
 HTMLImageLoader::HTMLImageLoader(ElementImpl* elt)
 :m_element(elt), m_image(0), m_firedLoad(true), m_imageComplete(true)
 {
@@ -108,8 +110,13 @@ void HTMLImageLoader::notifyFinished(CachedObject* image)
 {
     m_imageComplete = true;
     DocumentImpl* document = element()->getDocument();
-    if (document)
+    if (document) {
         document->dispatchImageLoadEventSoon(this);
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (!document->ownerElement())
+            printf("Image loaded at %d\n", element()->getDocument()->elapsedTime());
+#endif
+    }
     if (element()->renderer()) {
         RenderImage* imageObj = static_cast<RenderImage*>(element()->renderer());
         imageObj->setImage(m_image);

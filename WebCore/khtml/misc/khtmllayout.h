@@ -24,6 +24,7 @@
 #ifndef HTML_LAYOUT_H
 #define HTML_LAYOUT_H
 
+#include <qrect.h>
 
 /*
  * this namespace contains definitions for various types needed for
@@ -31,7 +32,6 @@
  */
 namespace khtml
 {
-
     const int UNDEFINED = -1;
 
     // alignment
@@ -104,6 +104,30 @@ namespace khtml
         bool quirk : 1;
     };
 
+    struct GapRects {
+        QRect m_left;
+        QRect m_center;
+        QRect m_right;
+        
+        QRect left() const { return m_left; }
+        QRect center() const { return m_center; }
+        QRect right() const { return m_right; }
+        
+        void uniteLeft(const QRect& r) { m_left = m_left.unite(r); }
+        void uniteCenter(const QRect& r) { m_center = m_center.unite(r); }
+        void uniteRight(const QRect& r) { m_right = m_right.unite(r); }
+        void unite(const GapRects& o) { uniteLeft(o.left()); uniteCenter(o.center()); uniteRight(o.right()); }
+
+        operator QRect() const {
+            QRect result = m_left.unite(m_center);
+            result = result.unite(m_right);
+            return result;
+        }
+        bool operator==(const GapRects& other) {
+            return m_left == other.left() && m_center == other.center() && m_right == other.right();
+        }
+        bool operator!=(const GapRects& other) { return !(*this == other); }
+    };
 };
 
 #endif

@@ -199,60 +199,9 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     }
 
     if (drawSelectionTint) {
-        QSize tintSize(cWidth, cHeight);
-
-
-        // Do the calculations to draw selections as tall as the line.
-        // Ignore the passed-in value for _ty.
-        // Use the bottom of the line above as the y position (if there is one, 
-        // otherwise use the top of this renderer's line) and the height of the line as the height. 
-        // This mimics Cocoa.
-        int selectionTop = -1;
-        int selectionHeight = -1;
-        int selectionLeft = -1;
-        int selectionRight = -1;
-        bool extendSelectionToLeft = false;
-        bool extendSelectionToRight = false;
-        if (drawSelectionTint) {
-            InlineBox *box = inlineBox();
-            if (box) {
-                // Get a value for selectionTop that is relative to the containing block.
-                // This value is used for determining left and right offset for the selection, if necessary,
-                // and for calculating the selection height.
-                if (box->root()->prevRootBox())
-                    selectionTop = box->root()->prevRootBox()->bottomOverflow();
-                else
-                    selectionTop = box->root()->topOverflow();
-
-                selectionHeight = box->root()->bottomOverflow() - selectionTop;
-
-                int absx, absy;
-                containingBlock()->absolutePosition(absx, absy);
-
-                if (selectionState() == SelectionInside && box->root()->firstLeafChild() == box) {
-                    extendSelectionToLeft = true;
-                    selectionLeft = absx + containingBlock()->leftOffset(selectionTop);
-                }
-                if (selectionState() == SelectionInside && box->root()->lastLeafChild() == box) {
-                    extendSelectionToRight = true;
-                    selectionRight = absx + containingBlock()->rightOffset(selectionTop);
-                }
-        
-                // Now make the selectionTop an absolute coordinate.
-                selectionTop += absy;
-            }
-        }
-
-        int left = x;
-        int width = tintSize.width();
-        int top = selectionTop >= 0 ? selectionTop : y;
-        int height = selectionHeight >= 0 ? selectionHeight : tintSize.height();
-        QBrush brush(selectionTintColor(p));
-        p->fillRect(left, top, width, height, brush);
-        if (extendSelectionToLeft)
-            p->fillRect(selectionLeft, selectionTop, left - selectionLeft, selectionHeight, brush);
-        if (extendSelectionToRight)
-            p->fillRect(left + width, selectionTop, selectionRight - (left + width), selectionHeight, brush);
+        QBrush brush(selectionColor(p));
+        QRect selRect(selectionRect());
+        p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
     }
 }
 

@@ -88,6 +88,12 @@ QSize QRect::size() const
 
 QRect QRect::unite(const QRect &r) const
 {
+    if (r.isEmpty())
+        return *this;
+    
+    if (isEmpty())
+        return r;
+
     int nx, ny, nw, nh;
 
     nx = min(xp, r.xp);

@@ -58,8 +58,6 @@ struct WebCoreTextGeometry
     NSPoint point;
     float selectionY;
     float selectionHeight;
-    float selectionMinX;
-    float selectionMaxX;
     bool useFontMetricsForSelectionYAndHeight : 1;
 };
 
