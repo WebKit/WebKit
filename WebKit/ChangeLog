@@ -1,5 +1,16 @@
 2003-04-02  Richard Williamson  <rjw@apple.com>
 
+        Raise exceptions when these methods are called inappropriately.
+        
+        Reviewed by Trey.
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList goBack]):
+        (-[WebBackForwardList goForward]):
+        (-[WebBackForwardList goToItem:]):
+
+2003-04-02  Richard Williamson  <rjw@apple.com>
+
         Added new API on WebFrame, loadData: and loadString:
         
         Reviewed by Maciej.

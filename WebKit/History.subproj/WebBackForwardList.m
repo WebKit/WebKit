@@ -95,21 +95,27 @@
 
 - (void)goBack
 {
-    ASSERT(_private->current > 0);
-    _private->current--;
+    if(_private->current > 0)
+        _private->current--;
+    else
+        [NSException raise:NSInternalInconsistencyException format:@"%@: goBack called with empty back list", self];
 }
 
 - (void)goForward
 {
-    ASSERT(_private->current < (int)[_private->entries count]-1);
-    _private->current++;
+    if(_private->current < (int)[_private->entries count]-1)
+        _private->current++;
+    else
+        [NSException raise:NSInternalInconsistencyException format:@"%@: goForward called with empty forward list", self];
 }
 
-- (void)goToItem:(WebHistoryItem *)entry
+- (void)goToItem:(WebHistoryItem *)item
 {
-    int index = [_private->entries indexOfObjectIdenticalTo:entry];
-    ASSERT(index != NSNotFound);
-    _private->current = index;
+    int index = [_private->entries indexOfObjectIdenticalTo:item];
+    if (index != NSNotFound)
+        _private->current = index;
+    else
+        [NSException raise:NSInvalidArgumentException format:@"%@: %s:  invalid item", self, __FUNCTION__];
 }
 
 - (WebHistoryItem *)backItem
