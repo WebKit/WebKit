@@ -1,3 +1,5 @@
+=== JavaScriptCore-143.2 ===
+
 2004-06-07  Darin Adler  <darin@apple.com>
 
         - fixed <rdar://problem/3682489>: (JavaScriptGlue no longer compiles because Interpreter::evaluate parameters changed)
