@@ -9,11 +9,21 @@
 #import "WebHistory.h"
 #import "WebHistoryPrivate.h"
 
+#import "WebKitDebug.h"
+
 @implementation WebHistory
 
 + (WebHistory *)webHistoryWithFile: (NSString*)file
 {
-    return [[[self alloc] initWithFile:file] autorelease];
+    // Should only be called once.  Need to rationalize usage
+    // of history.
+    WEBKIT_ASSERT ([[self class] sharedHistory] == nil);
+    
+    WebHistory *h = [[self alloc] initWithFile:file];
+    [[self class] setSharedHistory: h];
+    [h release];
+    
+    return h;
 }
 
 - (id)initWithFile: (NSString *)file;

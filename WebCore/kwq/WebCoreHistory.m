@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,28 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <Foundation/Foundation.h>
 
-#import <historyprovider.h>
+#import <Foundation/Foundation.h>
 
 #import <WebCoreHistory.h>
 
-namespace KParts {
+#import <kwqdebug.h>
 
-HistoryProvider *HistoryProvider::self()
+@implementation WebCoreHistory
+
+static WebCoreHistory *_sharedHistory = nil;
+
++ (void)setSharedHistory: (WebCoreHistory *)h
 {
-    static HistoryProvider instance;
-    return &instance;
+    if (_sharedHistory != h && _sharedHistory != nil)
+        [_sharedHistory release];
+    _sharedHistory = [h retain];
 }
 
-void HistoryProvider::insert(const QString &s)
++ (WebCoreHistory *)sharedHistory
 {
-    // Currently handled at the browser level.
+    return _sharedHistory;
 }
 
-bool HistoryProvider::contains(const QString &s) const
+
+- (BOOL)containsURL: (NSURL *)url
 {
-    return [[WebCoreHistory sharedHistory] containsURL: [NSURL URLWithString: [NSString stringWithCString: s.ascii()]]];
+    return false;
 }
 
-} // namespace KParts
+
+@end

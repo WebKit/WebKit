@@ -8,13 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebCore/WebCoreHistory.h>
+
 @class WebHistoryItem;
 @class WebHistoryPrivate;
 
 // notification sent when history is modified
 #define WebHistoryEntriesChangedNotification		@"WebHistoryEntriesChangedNotification"
 
-@interface WebHistory : NSObject {
+@interface WebHistory : WebCoreHistory {
 @private
     WebHistoryPrivate *_historyPrivate;
 }

@@ -998,6 +998,8 @@ const QChar *QString::unicode() const
 
 int QString::compare( const QString& s ) const
 {
+    if (dataHandle[0]->_isAsciiValid && s.dataHandle[0]->_isAsciiValid)
+        return strcmp (ascii(), s.ascii());
     return ucstrcmp(*this,s);
 }
 
