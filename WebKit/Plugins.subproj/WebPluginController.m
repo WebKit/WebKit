@@ -179,6 +179,18 @@ static NSMutableSet *pluginViews = nil;
     _documentView = nil;
 }
 
+- (id)_webPluginContainerCheckIfAllowedToLoadRequest:(NSURLRequest *)Request inFrame:(NSString *)target resultObject:(id)obj selector:(SEL)selector
+{
+    // FIXME: really implement this
+    [obj performSelector:selector withObject:(id)YES];
+    return nil;
+}
+
+- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
+{
+    // FIXME: really implement this
+}
+
 - (void)webPlugInContainerLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target
 {
     if (!request) {

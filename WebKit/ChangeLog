@@ -1,3 +1,15 @@
+2005-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4060020> Add stub version of security SPI for QuickTime plug-in so QuickTime team has something to compile and link against
+        
+	* Plugins.subproj/WebPluginContainerPrivate.h: Added.
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController _webPluginContainerCheckIfAllowedToLoadRequest:inFrame:resultObject:selector:]):
+        (-[WebPluginController _webPluginContainerCancelCheckIfAllowedToLoadRequest:]):
+        * WebKit.pbproj/project.pbxproj:
+
 2005-03-19  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

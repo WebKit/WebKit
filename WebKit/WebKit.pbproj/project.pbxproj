@@ -368,6 +368,7 @@
 				514C4C2E075E7DE500B89CAD,
 				514C4C30075E7DE500B89CAD,
 				93C6F14607920B93002449CD,
+				65836F5F07EE425900682F95,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1995,6 +1996,23 @@
 			settings = {
 			};
 		};
+		65836F5E07EE425900682F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebPluginContainerPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65836F5F07EE425900682F95 = {
+			fileRef = 65836F5E07EE425900682F95;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		65A7D44A0568AB2600E70EF6 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2688,6 +2706,7 @@
 		};
 		848DFF430365F71500CA2ACA = {
 			children = (
+				65836F5E07EE425900682F95,
 				848DFF840365FE6A00CA2ACA,
 				848DFF850365FE6A00CA2ACA,
 				8467275C0367158500CA2ACA,
