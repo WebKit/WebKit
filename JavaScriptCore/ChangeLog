@@ -1,3 +1,12 @@
+2003-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3222621 - Cryptic "anonymous function hack" messages in console (10.2.4)
+	
+        * kjs/lexer.cpp:
+        (Lexer::lex): Remove useless debug spew.
+
 === Safari-91 ===
 
 2003-07-30  Darin Adler  <darin@apple.com>

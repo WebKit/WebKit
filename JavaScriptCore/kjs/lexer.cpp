@@ -499,7 +499,6 @@ int Lexer::lex()
       // Apply anonymous-function hack below (eat the identifier)
       if (eatNextIdentifier) {
         eatNextIdentifier = false;
-        UString debugstr(buffer16, pos16); fprintf(stderr,"Anonymous function hack: eating identifier %s\n",debugstr.ascii());
         token = lex();
         break;
       }
