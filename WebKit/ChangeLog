@@ -1,3 +1,9 @@
+2004-04-02  Chris Blumenberg  <cblu@apple.com>
+
+	Forgot to add the WebKit copy of DOMExtensions.h.
+
+        * DOM.subproj/DOMExtensions.h: Added.
+
 2004-04-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave.
