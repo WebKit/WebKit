@@ -1122,7 +1122,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     NSURL *currentURL = [[[self dataSource] request] URL];
 
-    if (![[item URL] isEqual: currentURL])
+    if (![[[item URL] _web_URLByRemovingFragment] isEqual:[currentURL _web_URLByRemovingFragment]])
         return NO;
     
     NSArray *childItems = [item children];

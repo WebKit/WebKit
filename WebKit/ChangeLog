@@ -1,3 +1,12 @@
+2003-06-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3288097>: REGRESSION: assertion failure after hitting back while loading page after fragment scroll
+
+        Fixed by darin, reviewed by me.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _URLsMatchItem:]): ignore the URL fragment so we scroll back at the current page instead of attempt to load the current page 
+        
 2003-06-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
