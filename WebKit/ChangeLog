@@ -1,9 +1,13 @@
+
+=======
 2002-05-30  Richard Williamson  <rjw@apple.com>
 
     Added 'canDraw' check to ensure that we can render
     an image frame.
     
 	* WebCoreSupport.subproj/IFImageRenderer.m:
+
+=== Alexander-7 ===
 
 2002-05-29  Richard Williamson  <rjw@apple.com>
 
