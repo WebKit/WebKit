@@ -446,8 +446,26 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
         if(style()->direction() == LTR) {
             // html blocks flow around floats
-            if ( ( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats() )
-              chPos = leftOffset(m_height) + child->marginLeft();
+            if ( ( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats() ) {
+                int leftOff = leftOffset(m_height);
+                if (leftOff != xPos) {
+                    // The object is shifting right. The object might be centered, so we need to 
+                    // recalculate our horizontal margins. Note that the containing block content
+                    // width computation will take into account the delta between |leftOff| and |xPos| 
+                    // so that we can just pass the content width in directly to the |calcHorizontalMargins| 
+                    // function. 
+                    // -dwh
+                    int cw;
+                    RenderObject *cb = child->containingBlock();
+                    if ( cb->isFlow() )
+                        cw = static_cast<RenderFlow *>(cb)->lineWidth( child->yPos() );
+                    else
+                        cw = cb->contentWidth();
+                    static_cast<RenderBox*>(child)->calcHorizontalMargins(child->style()->marginLeft(), 				                                          child->style()->marginRight(), 
+                                                                          cw);
+                    chPos = leftOff + child->marginLeft();
+                }
+            }
         } else {
             chPos -= child->width() + child->marginLeft() + child->marginRight();
             if ( ( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats() )
@@ -1010,7 +1028,12 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 		special->startY = r->startY - offset;
 		special->endY = r->endY - offset;
 		special->left = r->left - xoff;
-		if (flow != parent())
+		// Applying the child's margin makes no sense in the case where the child was passed in. 
+                // since his own margin was added already through the subtraction of the |xoff| variable
+                // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
+                // into account.  Only apply this code if |child| is false, since otherwise the left margin 
+                // will get applied twice. -dwh 
+                if (!child && flow != parent())
 		    special->left += flow->marginLeft();
 		if ( !child ) {
 		    special->left -= marginLeft();

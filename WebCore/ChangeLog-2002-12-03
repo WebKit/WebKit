@@ -1,3 +1,16 @@
+2002-07-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 2992158, the calendar on www.blog.org in the upper
+	right was shoved offscreen (and causing a horizontal scrollbar
+	to be necessary).  KHTML was not recomputing the margins for
+	the table when it became displaced by the float.  It was also
+	mispositioning the float itself.  
+	
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::addOverHangingFloats):
+	
 2002-07-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 2953423, viamichelin.com lays out incorrectly.
