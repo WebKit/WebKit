@@ -1208,7 +1208,7 @@ case 27:
 	kdDebug( 6080 ) << "@import: " << qString(yyvsp[-3].string) << endl;
 #endif
 	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( p->styleElement && p->styleElement->isCSSStyleSheet() )
+	if ( yyvsp[-1].mediaList && p->styleElement && p->styleElement->isCSSStyleSheet() )
 	    yyval.rule = new CSSImportRuleImpl( p->styleElement, domString(yyvsp[-3].string), yyvsp[-1].mediaList );
 	else {
 	    yyval.rule = 0;
@@ -1231,7 +1231,7 @@ case 29:
 case 32:
 #line 358 "parser.y"
 {
-        yyval.mediaList = 0;
+        yyval.mediaList = new MediaListImpl();
      ;
     break;}
 case 34:
@@ -1244,7 +1244,7 @@ case 35:
 #line 369 "parser.y"
 {
 	yyval.mediaList = new MediaListImpl();
-	yyval.mediaList->appendMedium( domString(yyvsp[0].string) );
+	yyval.mediaList->appendMedium( domString(yyvsp[0].string).lower() );
     ;
     break;}
 case 36:

@@ -334,7 +334,7 @@ import:
 	kdDebug( 6080 ) << "@import: " << qString($3) << endl;
 #endif
 	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( p->styleElement && p->styleElement->isCSSStyleSheet() )
+	if ( $5 && p->styleElement && p->styleElement->isCSSStyleSheet() )
 	    $$ = new CSSImportRuleImpl( p->styleElement, domString($3), $5 );
 	else {
 	    $$ = 0;
@@ -356,7 +356,7 @@ string_or_uri:
 
 maybe_media_list:
      /* empty */ {
-        $$ = 0;
+        $$ = new MediaListImpl();
      }
      | media_list
 ;
@@ -368,7 +368,7 @@ media_list:
     }
     | medium {
 	$$ = new MediaListImpl();
-	$$->appendMedium( domString($1) );
+	$$->appendMedium( domString($1).lower() );
     }
     | media_list ',' maybe_space medium {
 	$$ = $1;

@@ -1,5 +1,13 @@
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
+	Fix 3472200, media tests fail to parse correctly.  Merging a patch to handle exotic media types
+	from the KHTML trunk.
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
+2003-11-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3471314, make sure to check the outline phase before painting backgrounds of iframes.
 	
         Reviewed by mjs
