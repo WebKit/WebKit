@@ -136,16 +136,20 @@ public:
     struct RenderLayerElement {
       RenderLayer* layer;
       QRect absBounds; // Our bounds in absolute coordinates relative to the root.
-      QRect clipRect; // Our clip rect.
+      QRect backgroundClipRect; // Clip rect used for our background/borders. 
+      QRect clipRect; // Clip rect used for our children.
       int zindex; // Temporary z-index used for processing and sorting.
-      bool zauto; // Whether or not we are using auto z-indexing.
+      bool zauto : 1; // Whether or not we are using auto z-indexing.
+      bool clipOriginator : 1; // Whether or not we established a clip.
       int x; // The coords relative to the layer that will be using this list
              // to paint.
       int y;
 
-      RenderLayerElement(RenderLayer* l, const QRect& rect, const QRect& clip, int xpos, int ypos)
-          :layer(l), absBounds(rect), clipRect(clip), zindex(l->zIndex()), zauto(l->hasAutoZIndex()),
-          x(xpos), y(ypos) {}
+      RenderLayerElement(RenderLayer* l, const QRect& rect, const QRect& bgclip, 
+                         const QRect& clip, bool clipOrig, int xpos, int ypos)
+          :layer(l), absBounds(rect), backgroundClipRect(bgclip), clipRect(clip), 
+           zindex(l->zIndex()), zauto(l->hasAutoZIndex()), clipOriginator(clipOrig),
+           x(xpos), y(ypos) {}
           
       void detach(RenderArena* renderArena);
     

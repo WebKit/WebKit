@@ -102,7 +102,9 @@ public:
     virtual RenderObject *lastChild() const { return 0; }
 
     virtual RenderLayer* layer() const { return 0; }
-    virtual RenderLayer* enclosingLayer() { return 0; }
+    RenderLayer* enclosingLayer();
+    void appendLayers(RenderLayer* parentLayer);
+    void removeLayers(RenderLayer* parentLayer);
     virtual void setHasChildLayers(bool hasLayers) { }
     virtual void positionChildLayers() { }
     

@@ -170,6 +170,44 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
+void RenderObject::appendLayers(RenderLayer* parentLayer)
+{
+    if (!parentLayer)
+        return;
+    
+    if (layer()) {
+        parentLayer->addChild(layer());
+        return;
+    }
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->appendLayers(parentLayer);
+}
+
+void RenderObject::removeLayers(RenderLayer* parentLayer)
+{
+    if (!parentLayer)
+        return;
+    
+    if (layer()) {
+        parentLayer->removeChild(layer());
+        return;
+    }
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->removeLayers(parentLayer);
+}
+
+RenderLayer* RenderObject::enclosingLayer()
+{
+    RenderObject* curr = this;
+    while (curr) {
+        if (curr->layer()) return curr->layer();
+        curr = curr->parent();
+    }
+    return 0;
+}
+
 int RenderObject::offsetLeft() const
 {
     int x = xPos();

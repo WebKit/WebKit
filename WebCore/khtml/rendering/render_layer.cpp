@@ -196,19 +196,47 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
         // position after you call into it). -dwh
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
     
+        if (elt->clipOriginator) {
+            // We originated a clip (we're either positioned or an element with
+            // overflow: hidden).  We need to paint our background and border, subject
+            // to clip regions established by our parent layers.
+            if (elt->backgroundClipRect != currRect) {
+                if (currRect != paintRect)
+                    p->restore(); // Pop the clip.
+                    
+                currRect = elt->backgroundClipRect;
+                
+                // Now apply the clip rect.
+                QRect clippedRect = p->xForm(currRect);
+#if APPLE_CHANGES
+                p->save();
+                p->addClip(clippedRect);
+#else
+                QRegion creg(cr);
+                QRegion old = p->clipRegion();
+                if (!old.isNull())
+                    creg = old.intersect(creg);
+            
+                p->save();
+                p->setClipRegion(creg);
+#endif
+            }
+            
+            // A clip is in effect.  The clip is never allowed to clip our render object's
+            // background or borders.  Go ahead and draw those now without our clip (that will
+            // be used for our children) in effect.
+            elt->layer->renderer()->paintBoxDecorations(p, x, y, w, h,
+                                elt->absBounds.x(),
+                                elt->absBounds.y());
+        }
+        
         if (elt->clipRect != currRect) {
             if (currRect != paintRect)
                 p->restore(); // Pop the clip.
-                
+            
             currRect = elt->clipRect;
             if (currRect != paintRect) {
-                // A clip is in effect.  The clip is never allowed to clip our render object's
-                // background or borders.  Go ahead and draw those now without the clip in
-                // effect.
-                elt->layer->renderer()->paintBoxDecorations(p, x, y, w, h,
-                                      elt->absBounds.x(),
-                                      elt->absBounds.y());
-                
+                                
                 // Now apply the clip rect.
                 QRect clippedRect = p->xForm(currRect);
 #if APPLE_CHANGES
@@ -315,15 +343,21 @@ RenderLayer::constructZTree(QRect damageRect,
 
     // If we establish a clip rect, then we want to intersect that rect
     // with the damage rect to form a new damage rect.
+    bool clipOriginator = false;
+    QRect clipRect = damageRect;
     if (m_object->style()->overflow() == OHIDDEN || m_object->style()->hasClip()) {
-        QRect clipRect = m_object->getClipRect(x, y);
-        if ((eventProcessing && !clipRect.contains(damageRect.x(),
-                                                  damageRect.y())) ||
-            (!eventProcessing && !clipRect.intersects(damageRect)))
+        clipOriginator = true;
+        QRect backgroundRect(x,y,m_object->width(), m_object->height());
+        clipRect = m_object->getClipRect(x, y);
+        if ((eventProcessing && !backgroundRect.contains(damageRect.x(),
+                                                         damageRect.y())) ||
+            (!eventProcessing && !backgroundRect.intersects(damageRect)))
             return 0; // We don't overlap at all.
 
-	if (!eventProcessing)
-	  damageRect = damageRect.intersect(clipRect);
+        if (!eventProcessing) {
+            damageRect = damageRect.intersect(backgroundRect);
+            clipRect = damageRect.intersect(clipRect);
+        }
     }
     
     // Walk our list of child layers looking only for those layers that have a 
@@ -333,7 +367,7 @@ RenderLayer::constructZTree(QRect damageRect,
         if (child->zIndex() < 0)
             continue; // Ignore negative z-indices in this first pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, eventProcessing);
+        RenderZTreeNode* childNode = child->constructZTree(clipRect, rootLayer, eventProcessing);
         if (childNode) {
             // Put the new node into the tree at the front of the parent's list.
             if (lastChildNode)
@@ -356,7 +390,7 @@ RenderLayer::constructZTree(QRect damageRect,
 						 damageRect.y())) ||
         (!eventProcessing && layerBounds.intersects(damageRect))) {
         RenderLayerElement* layerElt = new (renderArena) RenderLayerElement(this, layerBounds, 
-                                                              damageRect, x, y);
+                                                              damageRect, clipRect, clipOriginator, x, y);
         if (returnNode->child) {
             RenderZTreeNode* leaf = new (renderArena) RenderZTreeNode(layerElt);
             leaf->next = returnNode->child;
@@ -377,7 +411,7 @@ RenderLayer::constructZTree(QRect damageRect,
         if (child->zIndex() >= 0)
             continue; // Ignore non-negative z-indices in this second pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, eventProcessing);
+        RenderZTreeNode* childNode = child->constructZTree(clipRect, rootLayer, eventProcessing);
         if (childNode) {
             // Deal with the case where all our children views had negative z-indices.
             // Demote our leaf node and make a new interior node that can hold these

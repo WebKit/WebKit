@@ -53,15 +53,6 @@ public:
     virtual void calcMinMaxWidth() { setMinMaxKnown( true ); }
 
     virtual void removeLeftoverAnonymousBoxes();
-
-    virtual RenderLayer* enclosingLayer() {
-        RenderObject* curr = this;
-        while (curr) {
-            if (curr->layer()) return curr->layer();
-            curr = curr->parent();
-        }
-        return 0;
-    }
     
 private:
 
