@@ -4401,7 +4401,8 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
 
         if (!innerNode.isNull() && innerNode.handle()->renderer() &&
             innerNode.handle()->renderer()->shouldSelect()) {
-            bool extendSelection = mouse->state() & ShiftButton;
+            // Extend the selection if the Shift key is down, unless the click is in a link.
+            bool extendSelection = (mouse->state() & ShiftButton) && (!event->url().isNull());
 
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.

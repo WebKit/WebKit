@@ -1,3 +1,14 @@
+2004-07-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3691569> REGRESSION (142): cmd-shift-clicking on a link 
+        now also extends selection (even if there wasn't one before)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventSingleClick):
+        if there's a URL associated with the event, don't extend the selection
+
 2004-07-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki
