@@ -1482,22 +1482,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
 {
-    DOMDocument *document = [self DOMDocument];
-    DOMDocumentFragment *fragment = [document createDocumentFragment];
-    NSMutableString *string = [text mutableCopy];
-    [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
-    [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
-    NSArray *array = [string componentsSeparatedByString:@"\n"];
-    int count = [array count];
-    int i;
-    for (i = 0; i < count; i++) {
-        if (i != 0)
-            [fragment appendChild:[document createElement:@"BR"]];
-        NSString *component = (NSString *)[array objectAtIndex:i];
-        if ([component length] > 0)
-            [fragment appendChild:[document createTextNode:component]];
-    }
-    return fragment;
+    if (!_part || !_part->xmlDocImpl() || !text)
+        return 0;
+
+    return [DOMDocumentFragment _documentFragmentWithImpl:_part->documentFragmentWithText(text)];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement

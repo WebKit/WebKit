@@ -1,3 +1,19 @@
+2004-08-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3779706> plain text on pasteboard loses indentation when pasted into Blot
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::documentFragmentWithText): New function that takes over the code from
+        KWQKHTMLPart and improves it to handle converting tabs and spaces for suitable
+        display in HTML.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithText:]): Move smarts from here to KWQKHTMLPart.
+
 2004-08-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -73,6 +73,7 @@
 
 using DOM::AtomicString;
 using DOM::ClipboardEventImpl;
+using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentMarker;
 using DOM::DOMString;
@@ -3589,6 +3590,86 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
         root->removeAllNativeReferences ();
         rootObjects.removeLast();
     }
+}
+
+static NSString *nbspSpaceString = 0;
+static NSString *nbspNBSPSpaceString = 0;
+
+DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
+{
+    if (!xmlDocImpl())
+        return 0;
+
+    DocumentFragmentImpl *fragment = xmlDocImpl()->createDocumentFragment();
+    NSMutableString *string = [text mutableCopy];
+
+    // Replace tabs with four plain spaces.
+    // These spaces will get converted along with the other existing spaces below.
+    [string replaceOccurrencesOfString:@"\t" withString:@"    " options:0 range:NSMakeRange(0, [string length])];
+
+    if (!nbspSpaceString) {
+        unichar nbspSpace[] = { 0xa0, ' ' };
+        nbspSpaceString = [[NSString alloc] initWithCharacters:nbspSpace length:2];
+    }
+    
+    if (!nbspNBSPSpaceString) {
+        unichar nbspNBSPSpace[] = { 0xa0, 0xa0, ' ' };
+        nbspNBSPSpaceString = [[NSString alloc] initWithCharacters:nbspNBSPSpace length:3];
+    }
+
+    unsigned stringLength = [string length];
+    NSRange range = NSMakeRange(0, stringLength);
+    while (1) {
+        // FIXME: This only converts plain old spaces, and does not
+        // deal with more exotic whitespace. Note that we want to 
+        // leave newlines and returns alone at this point anyway, 
+        // since those are handled specially later.
+        NSRange replaceRange = [string rangeOfString:@"  " options:NSLiteralSearch range:range];
+        if (replaceRange.location == NSNotFound)
+            break;
+            
+        // Found two adjoining spaces.
+        // Now, lookahead to see if these two spaces are followed by:
+        //   1. another space and then a non-space
+        //   2. another space and then the end of the string
+        // If either 1 or 2 is true, replace the three spaces found with nbsp+nbsp+space, 
+        // otherwise, replace the first two spaces with nbsp+space.
+        unsigned lookahead = replaceRange.location + 2;
+        if ((lookahead + 2 < stringLength && [string characterAtIndex:lookahead] == ' ' && [string characterAtIndex:lookahead + 1] != ' ') ||
+            (lookahead + 1 == stringLength && [string characterAtIndex:lookahead] == ' ')) {
+            replaceRange.length = 3;
+            [string replaceCharactersInRange:replaceRange withString:nbspNBSPSpaceString];
+        }
+        else {
+            [string replaceCharactersInRange:replaceRange withString:nbspSpaceString];
+        }
+        range.location = replaceRange.location + 2;
+        range.length = stringLength - range.location;
+    }
+    
+    // Handle line endings, replacing them with BR elements.
+    [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
+    [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
+    NSArray *array = [string componentsSeparatedByString:@"\n"];
+    int count = [array count];
+    int i;
+    for (i = 0; i < count; i++) {
+        int exceptionCode = 0;
+        if (i != 0) {
+            ElementImpl *breakNode = xmlDocImpl()->createHTMLElement("BR", exceptionCode);
+            ASSERT(exceptionCode == 0);
+            fragment->appendChild(breakNode, exceptionCode);
+            ASSERT(exceptionCode == 0);
+        }
+        NSString *component = (NSString *)[array objectAtIndex:i];
+        if ([component length] > 0) {
+            NodeImpl *textNode = xmlDocImpl()->createTextNode(component);
+            fragment->appendChild(textNode, exceptionCode);
+        }
+    }
+    
+
+    return fragment;
 }
 
 void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
