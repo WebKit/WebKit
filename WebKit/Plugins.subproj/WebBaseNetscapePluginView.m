@@ -449,8 +449,13 @@
     
     NSWindow *theWindow = [self window];
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
-        name:NSViewFocusDidChangeNotification object:self];
+    NSView *view;
+    for (view = self; view; view = [view superview]) {
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+            name:NSViewFrameDidChangeNotification object:view];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+            name:NSViewBoundsDidChangeNotification object:view];
+    }
     [notificationCenter addObserver:self selector:@selector(windowWillClose:)
         name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 

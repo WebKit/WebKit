@@ -1,3 +1,14 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	Fixed anomalies with plugin positioning caused by my switch to
+	NSViewFocusDidChangeNotification. Turns out that is not sent during
+	live resize, but we need things to work during live resize.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]): Register for changes in the
+	bounds and frame of all superviews again, instead of using
+	NSViewFocusDidChangeNotification.
+
 2002-10-16  Richard Williamson  <rjw@apple.com>
 
         Fixed 2969367.  Ensure layout happens before doing check
