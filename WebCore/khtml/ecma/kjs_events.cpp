@@ -28,12 +28,14 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "rendering/render_object.h"
+#include "misc/loader.h"
 
 #include <kdebug.h>
 
 using namespace KJS;
 
 using DOM::KeyboardEvent;
+using DOM::EventImpl;
 
 // -------------------------------------------------------------------------
 
@@ -647,11 +649,21 @@ Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   case RelatedTarget:
     return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
   case DataTransfer:
-    if (!clipboard) {
-      DOM::MouseEventImpl *impl = static_cast<DOM::MouseEventImpl *>(event.handle());
-      clipboard = new Clipboard(exec, impl->clipboard());
+  {
+    DOM::MouseEventImpl *impl = static_cast<DOM::MouseEventImpl *>(event.handle());
+    EventImpl::EventId eventId = impl->id();
+    if (eventId == EventImpl::DRAGENTER_EVENT || eventId == EventImpl::DRAGOVER_EVENT
+        || eventId == EventImpl::DRAGLEAVE_EVENT || eventId == EventImpl::DROP_EVENT 
+        || eventId == EventImpl::DRAGSTART_EVENT || eventId == EventImpl::DRAG_EVENT
+        || eventId == EventImpl::DRAGEND_EVENT) {
+      if (!clipboard) {
+        clipboard = new Clipboard(exec, impl->clipboard());
+      }
+      return Object(clipboard);
+    } else {
+      return Undefined();
     }
-    return Object(clipboard);
+  }
   default:
     kdWarning() << "Unhandled token in DOMMouseEvent::getValueProperty : " << token << endl;
     return Value();
@@ -881,10 +893,11 @@ const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
   dropEffect	Clipboard::DropEffect	DontDelete
   dropAllowed	Clipboard::DropAllowed	DontDelete
 @end
-@begin ClipboardProtoTable 3
+@begin ClipboardProtoTable 4
   clearData	Clipboard::ClearData	DontDelete|Function 0
   getData	Clipboard::GetData	DontDelete|Function 1
   setData	Clipboard::SetData	DontDelete|Function 2
+  setDragImage	Clipboard::SetDragImage	DontDelete|Function 3
 @end
 */
 
@@ -990,6 +1003,29 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
                 exec->setException(err);
                 return err;
             }
+        case Clipboard::SetDragImage:
+        {
+            if (args.size() != 3) {
+                Object err = Error::create(exec,SyntaxError,"setData: Invalid number of arguments");
+                exec->setException(err);
+                return err;
+            }
+            
+            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
+            if (!o->inherits(&Image::info)) {
+                Object err = Error::create(exec,TypeError);
+                exec->setException(err);
+                return err;
+            }
+
+            Image *JSImage = static_cast<Image*>(o);
+            int x = (int)args[1].toNumber(exec);
+            int y = (int)args[2].toNumber(exec);
+            cb->clipboard->setDragImage(JSImage->image()->pixmap());
+            cb->clipboard->setDragLocation(QPoint(x,y));
+
+            return Undefined();
+        }
     }
     return Undefined();
 }

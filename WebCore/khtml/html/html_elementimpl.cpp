@@ -463,7 +463,19 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::DROP_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string()));
         break;
-    // other misc attributes
+    case ATTR_ONDRAGSTART:
+        setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONDRAG:
+        setHTMLEventListener(EventImpl::DRAG_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONDRAGEND:
+        setHTMLEventListener(EventImpl::DRAGEND_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+        // other misc attributes
     default:
 #ifdef UNSUPPORTED_ATTR
 	kdDebug(6030) << "UATTR: <" << this->nodeName().string() << "> ["

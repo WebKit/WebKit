@@ -225,12 +225,14 @@ const struct HashTable ClipboardTable = { 2, 2, ClipboardTableEntries, 2 };
 namespace KJS {
 
 const struct HashEntry ClipboardProtoTableEntries[] = {
-   { "clearData", Clipboard::ClearData, DontDelete|Function, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "getData", Clipboard::GetData, DontDelete|Function, 1, &ClipboardProtoTableEntries[3] },
-   { "setData", Clipboard::SetData, DontDelete|Function, 2, 0 }
+   { "clearData", Clipboard::ClearData, DontDelete|Function, 0, &ClipboardProtoTableEntries[5] },
+   { "getData", Clipboard::GetData, DontDelete|Function, 1, &ClipboardProtoTableEntries[4] },
+   { 0, 0, 0, 0, 0 },
+   { "setData", Clipboard::SetData, DontDelete|Function, 2, 0 },
+   { "setDragImage", Clipboard::SetDragImage, DontDelete|Function, 3, 0 }
 };
 
-const struct HashTable ClipboardProtoTable = { 2, 4, ClipboardProtoTableEntries, 3 };
+const struct HashTable ClipboardProtoTable = { 2, 6, ClipboardProtoTableEntries, 4 };
 
 } // namespace

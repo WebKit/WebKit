@@ -24,6 +24,7 @@
  */
 
 #import "KWQClipboard.h"
+#import "KWQStringList.h"
 
 using DOM::DOMString;
 
@@ -94,12 +95,23 @@ static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
     }
 }
 
+/*
+static QString MIMETypeFromCocoaType(NSString type) {
+    return QString("");
+}
+*/
+
 void KWQClipboard::clearData(const DOMString &type)
-{    
+{
+    NSString *cocoaType = cocoaTypeFromMIMEType(type);
+    if (cocoaType) {
+        [m_pasteboard setString:@"" forType:cocoaType];
+    }
 }
 
 void KWQClipboard::clearAllData()
 {
+    [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
 DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
@@ -145,7 +157,7 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
         } else {
             cocoaValue = nil;
         }
-    } else if (!cocoaValue) {        
+    } else if (cocoaType && !cocoaValue) {        
         cocoaValue = [m_pasteboard stringForType:cocoaType];
     }
 
@@ -159,5 +171,67 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
 
 bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 {
-    return true;
+    NSString *cocoaType = cocoaTypeFromMIMEType(type);
+    NSString *cocoaData = data.string().getNSString();
+    if (cocoaType == NSURLPboardType) {
+        [m_pasteboard addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+        NSURL *url = [[NSURL alloc] initWithString:cocoaData];
+        [url writeToPasteboard:m_pasteboard];
+        
+        if ([url isFileURL]) {
+            [m_pasteboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+            NSArray *fileList = [NSArray arrayWithObject:[url path]];
+            [m_pasteboard setPropertyList:fileList forType:NSFilenamesPboardType];
+        }
+
+        [url release];
+        return true;
+    } else if (cocoaType) {
+        // everything else we know of goes on the pboard as a string
+        [m_pasteboard addTypes:[NSArray arrayWithObject:cocoaType] owner:nil];
+        return [m_pasteboard setString:cocoaData forType:cocoaType];
+    } else {
+        return false;
+    }
+}
+
+QStringList KWQClipboard::types() const
+{
+#if 0
+    NSArray *types = [m_pasteboard types];
+    QStringList result;
+    if (types) {
+        unsigned count = [types count];
+        unsigned i;
+        for (i = 0; i < count; i++) {
+            NSString *nsstr = [types objectAtIndex:i];
+        }
+    }
+#endif
+    return QStringList();
+}
+
+QPoint KWQClipboard::dragLocation() const
+{
+    return m_dragLoc;
+}
+
+void KWQClipboard::setDragLocation(const QPoint &p)
+{
+    m_dragLoc = p;
+}
+
+QPixmap KWQClipboard::dragImage() const
+{
+    return m_dragImage;
+}
+
+void KWQClipboard::setDragImage(const QPixmap &pm)
+{
+    m_dragImage = pm;
+}
+
+NSImage *KWQClipboard::dragNSImage()
+{
+    return m_dragImage.image();
 }

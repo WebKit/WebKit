@@ -1618,7 +1618,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
 }
 
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info {
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info
+{
     if (_part) {
         KHTMLView *v = _part->view();
         if (v) {
@@ -1637,6 +1638,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         }
     }
     return NO;
+}
+
+- (void)dragSourceMovedTo:(NSPoint)windowLoc
+{
+    if (_part) {
+        _part->dragSourceMovedTo(QPoint(windowLoc));
+    }
+}
+
+- (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
+{
+    if (_part) {
+        // FIXME must handle operation
+        _part->dragSourceEndedAt(QPoint(windowLoc));
+    }
 }
 
 @end

@@ -37,6 +37,7 @@
 #include <kdebug.h>
 #include <qpainter.h>
 #include "khtmlview.h"
+#include "khtml_part.h"
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"
@@ -1331,6 +1332,32 @@ bool RenderObject::shouldSelect() const
         curr = curr->parent();
     }
     return true;
+}
+
+DOM::NodeImpl* RenderObject::draggableNode() const
+{
+    const RenderObject* curr = this;
+    while (curr) {
+        if (curr->element()->nodeType() == Node::TEXT_NODE) {
+            // Since there's no way for the author to address the -khtml-user-drag style for a text node,
+            // we use our own judgement.
+            if (canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+                return curr->node();
+            else if (curr->shouldSelect())
+                // In this case we have a click in the unselected portion of text.  If this text is
+                // selectable, we want to start the selection process instead of looking for a parent
+                // to try to drag.
+                return 0;
+        } else {
+            EUserDrag dragMode = curr->style()->userDrag();
+            if (dragMode == DRAG_ELEMENT)
+                return curr->node();
+            else if (dragMode == DRAG_AUTO && canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+                return curr->node();
+        }
+        curr = curr->parent();
+    }
+    return 0;
 }
 
 void RenderObject::selectionStartEnd(int& spos, int& epos)

@@ -48,11 +48,25 @@ public:
     void clearAllData();
     DOM::DOMString getData(const DOM::DOMString &type, bool &success) const;
     bool setData(const DOM::DOMString &type, const DOM::DOMString &data);
+    
+    //FIXME: need invalidate method for security
+    
+    // extensions beyond IE's API
+    virtual QStringList types() const;
+
+    QPoint dragLocation() const;
+    void setDragLocation(const QPoint &);
+    QPixmap dragImage() const;
+    void setDragImage(const QPixmap &);
+    NSImage *dragNSImage();
+
 private:
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
     DOM::DOMString m_dropEffect;
     DOM::DOMString m_dropAllowed;
+    QPoint m_dragLoc;
+    QPixmap m_dragImage;
 };
 
 

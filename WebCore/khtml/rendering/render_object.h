@@ -688,6 +688,8 @@ public:
     virtual void setSelectionState(SelectionState) {}
     bool shouldSelect() const;
 
+    DOM::NodeImpl* draggableNode() const;
+
     /**
      * Returns the content coordinates of the caret within this render object.
      * @param offset zero-based offset determining position within the render object.

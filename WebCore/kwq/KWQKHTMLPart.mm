@@ -26,6 +26,7 @@
 #import "KWQKHTMLPart.h"
 
 #import "DOMInternal.h"
+#import "KWQClipboard.h"
 #import "KWQDOMNode.h"
 #import "KWQDummyView.h"
 #import "KWQEditCommand.h"
@@ -182,6 +183,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _showsFirstResponder(true)
     , _bindingRoot(0)
     , _windowScriptObject(0)
+    , _dragSrc(0)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -1875,6 +1877,63 @@ NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
     return mouseDownView;
 }
 
+// The link drag hysteresis is much larger than the others because there
+// needs to be enough space to cancel the link press without starting a link drag,
+// and because dragging links is rare.
+#define LinkDragHysteresis              40.0
+#define ImageDragHysteresis              5.0
+#define TextDragHysteresis               3.0
+#define GeneralDragHysterisis            3.0
+
+bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
+{
+    int dragX, dragY;
+    d->m_view->viewportToContents((int)dragLocationX, (int)dragLocationY, dragX, dragY);
+    float deltaX = QABS(dragX - _mouseDownX);
+    float deltaY = QABS(dragY - _mouseDownY);
+
+    float threshold = GeneralDragHysterisis;
+    if (_dragSrcIsImage) {
+        threshold = ImageDragHysteresis;
+    } else if (_dragSrcIsLink) {
+        threshold = LinkDragHysteresis;
+    } else if (_dragSrcInSelection) {
+        threshold = TextDragHysteresis;
+    }
+    return deltaX >= threshold || deltaY >= threshold;
+}
+
+// returns if we should continue "default processing", i.e., whether eventhandler canceled
+bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc) const
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    if (declareTypes) {
+        // Must be done before ondragstart adds types and data to the pboard,
+        // also done for security, as it erases data from the last drag
+        [pasteboard declareTypes:[NSArray array] owner:nil];
+    }
+    KWQClipboard *clipboard = new KWQClipboard(true, pasteboard);
+    clipboard->ref();
+    bool DHTMLBailed = d->m_view->dispatchDragEvent(eventId, _dragSrc.handle(), loc, clipboard);
+    // FIXME - invalidate clipboard here for security
+
+    if (dragImage) {
+        *dragImage = clipboard->dragNSImage();
+        if (*dragImage) {
+            [[*dragImage retain] autorelease];   // just in case clipboard takes the image with it
+            // should be set in clipboard iff dragImage is set
+            if (dragLoc) {
+                *dragLoc = NSPoint(clipboard->dragLocation());
+                // Web way is upper left, AppKit way is lower left
+                dragLoc->y = [*dragImage size].height - dragLoc->y;
+            }
+        }
+    }
+
+    clipboard->deref();
+    return !DHTMLBailed;
+}
+
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -1889,15 +1948,47 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
-	if (_mouseDownMayStartDrag && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
+	if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
+            // try to find an element that wants to be dragged
+            RenderObject::NodeInfo nodeInfo(true, false);
+            renderer()->layer()->nodeAtPoint(nodeInfo, _mouseDownX, _mouseDownY);
+            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode();
+            if (_dragSrc.isNull()) {
+                _mouseDownMayStartDrag = false;     // no element is draggable
+            } else {
+                // remember some facts about this source, while we have a NodeInfo handy
+                NodeImpl *node = nodeInfo.URLElement();
+                _dragSrcIsLink = node ? node->hasAnchor() : false;
 
+                node = nodeInfo.innerNonSharedNode();
+                _dragSrcIsImage = (node && node->renderer() && node->renderer()->isImage());
+
+                _dragSrcInSelection = isPointInsideSelection(_mouseDownX, _mouseDownY);
+            }                
+        }
+
+        if (_mouseDownMayStartDrag) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->resetCursor();
-
-            if ([_bridge handleMouseDragged:_currentEvent]) {
-                // Prevent click handling from taking place once we start dragging.
-                d->m_view->invalidateClick();
+            
+            NSPoint dragLocation = [_currentEvent locationInWindow];
+            if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {
+                NSImage *dragImage = nil;
+                NSPoint dragLoc = NSZeroPoint;
+                if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), true, &dragImage, &dragLoc)) {
+                    if ([_bridge startDraggingImage:dragImage at:dragLoc event:_currentEvent]) {
+                        // Prevent click handling from taking place once we start dragging.
+                        d->m_view->invalidateClick();
+                    } else {
+                        // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
+                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation), false, NULL, NULL);
+                    }
+                } else {
+                    _mouseDownMayStartDrag = false;
+                }
             }
+
+            // No more default handling (like selection), whether we're past the hysteresis bounds or not
             return;
 	}
         if (!_mouseDownMayStartSelect) {
@@ -1921,6 +2012,18 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
     KHTMLPart::khtmlMouseMoveEvent(event);
 
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
+{
+    // for now we don't care if event handler cancels default behavior, since there is none
+    dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, NULL, NULL);
+}
+
+void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
+{
+    // for now we don't care if event handler cancels default behavior, since there is none
+    dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc, false, NULL, NULL);
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
@@ -2021,10 +2124,13 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     KWQ_BLOCK_EXCEPTIONS;
 
     _mouseDownView = nil;
-
+    _dragSrc = 0;
+    
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
-    
+    NSPoint loc = [event locationInWindow];
+    d->m_view->viewportToContents((int)loc.x, (int)loc.y, _mouseDownX, _mouseDownY);
+
     NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
     // Unlike other places in WebCore where we get the first
     // responder, in this case we must be talking about the real first
@@ -2205,6 +2311,20 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     _currentEvent = oldCurrentEvent;
 
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+// Called as we walk up the element chain for nodes with CSS property -khtml-user-drag == auto
+bool KWQKHTMLPart::shouldDragAutoNode(DOM::NodeImpl* node) const
+{
+    // We assume that WebKit only cares about dragging things that can be leaf nodes (text, images, urls).
+    // This saves a bunch of expensive calls (creating WC and WK element dicts) as we walk farther up
+    // the node hierarchy, and we also don't have to cook up a way to ask WK about non-leaf nodes
+    // (since right now WK just hit-tests using a cached lastMouseDown).
+    if (!node->hasChildNodes()) {
+        return [_bridge mayStartDragWithMouseDragged:_currentEvent];
+    } else {
+        return NO;
+    }
 }
 
 bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)

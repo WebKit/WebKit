@@ -1,3 +1,23 @@
+2004-06-01  Trey Matteson  <trey@apple.com>
+
+	First cut at source side of DHTML dragging.  Most of the work is in WebCore.
+
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startDraggingImage:at:event:]):  Added image and loc args for
+	when WC tells WK to start a drag.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:event:]):  New image and loc args coming
+	from WebCore.  Hysteresis is moved to WC.
+        (-[WebHTMLView mouseDragged:]):  Call new _startDragging method.
+        (-[WebHTMLView draggedImage:movedTo:]):  Pass event to WC.
+        (-[WebHTMLView draggedImage:endedAt:operation:]):  Pass event to WC.
+        (-[WebHTMLView mouseUp:]):  Reset firstMouseDownEvent.  Fixes bug where
+	we would occasionally short-circuit WC event handling due to aliasing
+	problem with this event.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-06-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

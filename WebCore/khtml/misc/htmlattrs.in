@@ -93,9 +93,12 @@ onchange
 onclick
 oncontextmenu
 ondblclick
+ondrag
+ondragend
 ondragenter
 ondragleave
 ondragover
+ondragstart
 ondrop
 onerror
 onfocus

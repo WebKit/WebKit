@@ -191,6 +191,12 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return DRAGLEAVE_EVENT;
     else if (type == "drop")
 	return DROP_EVENT;
+    else if (type == "dragstart")
+	return DRAGSTART_EVENT;
+    else if (type == "drag")
+	return DRAG_EVENT;
+    else if (type == "dragend")
+	return DRAGEND_EVENT;
     else if (type == "DOMSubtreeModified")
 	return DOMSUBTREEMODIFIED_EVENT;
     else if (type == "DOMNodeInserted")
@@ -279,6 +285,12 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
             return "dragleave";
 	case DROP_EVENT:
 	    return "drop";
+	case DRAGSTART_EVENT:
+	    return "dragstart";
+	case DRAG_EVENT:
+	    return "drag";
+	case DRAGEND_EVENT:
+	    return "dragend";
 	case DOMSUBTREEMODIFIED_EVENT:
 	    return "DOMSubtreeModified";
 	case DOMNODEINSERTED_EVENT:

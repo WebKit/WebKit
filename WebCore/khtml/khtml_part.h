@@ -300,6 +300,11 @@ public:
   bool dndEnabled() const;
 
   /**
+   * Implementation of CSS property -khtml-user-drag == auto
+   */
+  virtual bool shouldDragAutoNode(DOM::NodeImpl*) const;
+  
+  /**
    * Enables/disables Java applet support. Note that calling this function
    * will permanently override the User settings about Java applet support.
    * Not calling this function is the only way to let the default settings

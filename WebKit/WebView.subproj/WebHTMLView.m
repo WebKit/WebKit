@@ -49,13 +49,7 @@
 
 #import <CoreGraphics/CGContextGState.h>
 
-// The link drag hysteresis is much larger than the others because there
-// needs to be enough space to cancel the link press without starting a link drag,
-// and because dragging links is rare.
-#define LinkDragHysteresis              40.0
-#define ImageDragHysteresis             5.0
-#define TextDragHysteresis              3.0
-#define TextDragDelay                   0.15
+#define TextDragDelay                    0.15
 
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
@@ -724,8 +718,11 @@ static WebHTMLView *lastHitView = nil;
     return dragImage;
 }
 
-- (BOOL)_handleMouseDragged:(NSEvent *)mouseDraggedEvent
+- (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc event:(NSEvent *)mouseDraggedEvent
 {
+    // Once we start a drag session we may not get a mouseup, so clear this out here as well as mouseUp:
+    _private->firstMouseDownEvent = nil;
+
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:mouseDownPoint];
 
@@ -736,21 +733,7 @@ static WebHTMLView *lastHitView = nil;
     [_private->draggingImageURL release];
     _private->draggingImageURL = nil;
 
-    // We must have started over something draggable:
-    ASSERT((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
-           (!imageURL && linkURL) || isSelected); 
-
     NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
-    float deltaX = ABS(mouseDraggedPoint.x - mouseDownPoint.x);
-    float deltaY = ABS(mouseDraggedPoint.y - mouseDownPoint.y);
-    
-    // Drag hysteresis hasn't been met yet but we don't want to do other drag actions like selection.
-    if ((imageURL && deltaX < ImageDragHysteresis && deltaY < ImageDragHysteresis) ||
-        (linkURL && deltaX < LinkDragHysteresis && deltaY < LinkDragHysteresis) ||
-        (isSelected && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
-        return NO;
-    }
-    
     NSImage *dragImage = nil;
     
     if (imageURL) {
@@ -762,7 +745,13 @@ static WebHTMLView *lastHitView = nil;
         dragImage = [[self _bridge] selectionImage];
         [dragImage _web_dissolveToFraction:WebDragImageAlpha];
     } else {
-        ASSERT_NOT_REACHED();
+        //FIXME - for which of these types should WC control the image?
+        if (wcDragImage) {
+            dragImage = wcDragImage;
+        } else {
+            NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
+            dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+        }
     }
     
     ASSERT(dragImage != nil);
@@ -776,6 +765,7 @@ static WebHTMLView *lastHitView = nil;
         return YES;   
     }
     
+    // note per kwebster, the offset arg below is always ignored in positioning the image
     if (imageURL) {
         _private->draggingImageURL = [imageURL retain];
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
@@ -813,7 +803,24 @@ static WebHTMLView *lastHitView = nil;
                  source:self
               slideBack:YES];
     } else {
-        ASSERT_NOT_REACHED();
+        // FIXME - need slideback control for WC
+        // FIXME - is offset totally ignored by the CG-based system? seems like it to me
+        NSPoint dragLoc;
+        if (wcDragImage) {
+            // wcDragLoc is the cursor position relative to the lower-left corner of the image.
+            // We add in the Y dimension because we are a flipped view, so adding moves the image down.
+            dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
+        } else {
+            NSSize imageSize = [dragImage size];
+            dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
+        }
+        [self dragImage:dragImage
+                     at:dragLoc
+                 offset:NSMakeSize(mouseDraggedPoint.x - mouseDownPoint.x, mouseDraggedPoint.y - mouseDownPoint.y)
+                  event:_private->mouseDownEvent
+             pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
+                 source:self
+              slideBack:YES];
     }
     return YES;
 }
@@ -1664,8 +1671,9 @@ static WebHTMLView *lastHitView = nil;
     // If this drag started from a mouse down in an inactive window, we only allow it to drag out an existing selection, so don't tell WebCore about it.
     if (_private->mouseDownEvent == _private->firstMouseDownEvent) {
         // Handle the drag directly instead of getting callbacks from WebCore.
+        // FIXME - how does this play with DHTML dragging?
         if ([self _mayStartDragWithMouseDragged:event]) {
-            [self _handleMouseDragged:event];
+            [self _startDraggingImage:nil at:NSZeroPoint event:event];
         }
     } else if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
@@ -1677,8 +1685,17 @@ static WebHTMLView *lastHitView = nil;
     return (NSDragOperationGeneric | NSDragOperationCopy);
 }
 
+- (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
+{
+    NSPoint windowLoc = [[self window] convertScreenToBase:screenLoc];
+    [[self _bridge] dragSourceMovedTo:windowLoc];
+}
+
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
+    NSPoint windowLoc = [[self window] convertScreenToBase:aPoint];
+    [[self _bridge] dragSourceEndedAt:windowLoc operation:operation];
+
     _private->initiatedDrag = NO;
     [[self _webView] _setInitiatedDrag:NO];
     
@@ -1688,7 +1705,7 @@ static WebHTMLView *lastHitView = nil;
     // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
     // khtml expects to get balanced down/up's, so we must fake up a mouseup.
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                            location:[[self window] convertScreenToBase:aPoint]
+                                            location:windowLoc
                                        modifierFlags:[[NSApp currentEvent] modifierFlags]
                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
                                         windowNumber:[[self window] windowNumber]
@@ -1812,6 +1829,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseUp:(NSEvent *)event
 {
+    _private->firstMouseDownEvent = nil;
     [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];

@@ -94,7 +94,7 @@ bool DOMNode::toBoolean(ExecState *) const
 }
 
 /* Source for DOMNodeTable. Use "make hashtables" to regenerate.
-@begin DOMNodeTable 56
+@begin DOMNodeTable 60
   nodeName	DOMNode::NodeName	DontDelete|ReadOnly
   nodeValue	DOMNode::NodeValue	DontDelete
   nodeType	DOMNode::NodeType	DontDelete|ReadOnly
@@ -118,10 +118,13 @@ bool DOMNode::toBoolean(ExecState *) const
   onclick	DOMNode::OnClick		DontDelete
   oncontextmenu	DOMNode::OnContextMenu		DontDelete
   ondblclick	DOMNode::OnDblClick		DontDelete
+  ondrag	DOMNode::OnDrag			DontDelete
   ondragdrop	DOMNode::OnDragDrop		DontDelete
+  ondragend	DOMNode::OnDragEnd		DontDelete
   ondragenter	DOMNode::OnDragEnter		DontDelete
   ondragleave	DOMNode::OnDragLeave		DontDelete
   ondragover	DOMNode::OnDragOver		DontDelete
+  ondragstart	DOMNode::OnDragStart		DontDelete
   ondrop	DOMNode::OnDrop                 DontDelete
   onerror	DOMNode::OnError		DontDelete
   onfocus	DOMNode::OnFocus       		DontDelete
@@ -244,6 +247,12 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(DOM::EventImpl::DRAGLEAVE_EVENT);
   case OnDrop:
     return getListener(DOM::EventImpl::DROP_EVENT);
+  case OnDragStart:
+    return getListener(DOM::EventImpl::DRAGSTART_EVENT);
+  case OnDrag:
+    return getListener(DOM::EventImpl::DRAG_EVENT);
+  case OnDragEnd:
+    return getListener(DOM::EventImpl::DRAGEND_EVENT);
   case OnMove:
     return getListener(DOM::EventImpl::KHTML_MOVE_EVENT);
   case OnReset:
@@ -393,6 +402,15 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     break;
   case OnDrop:
     setListener(exec,DOM::EventImpl::DROP_EVENT,value);
+    break;
+  case OnDragStart:
+    setListener(exec,DOM::EventImpl::DRAGSTART_EVENT,value);
+    break;
+  case OnDrag:
+    setListener(exec,DOM::EventImpl::DRAG_EVENT,value);
+    break;
+  case OnDragEnd:
+    setListener(exec,DOM::EventImpl::DRAGEND_EVENT,value);
     break;
   case OnMove:
     setListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT,value);

@@ -1,3 +1,71 @@
+2004-06-01  Trey Matteson  <trey@apple.com>
+
+	First cut at the source side of DHTML dragging.  Following IE, new events are added:
+	ondragstart, ondrag, ondragend.  The recently added CSS property -khtml-user-drag can
+	be used to make an element draggable.  event.dataTransfer.setDragImage(ImageObject,x,y)
+	can be used from ondragstart to set a static image for the dragImage.  x,y is the location
+	of the mouse within the image from the upper right corner.  clipboard methods setdata
+	and cleardata are implemented.
+
+        Reviewed by hyatt.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):  Boilerplate for new events
+        (DOMNode::putValue):  Boilerplate for new events
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):   Boilerplate for new events
+        * khtml/ecma/kjs_dom.lut.h:
+        * khtml/ecma/kjs_events.cpp:
+        (DOMMouseEvent::getValueProperty):  Return undefined for clipboard when its not a drag event.
+        (ClipboardProtoFunc::tryCall):  setDragImage glue to clipboard routine.
+        * khtml/ecma/kjs_events.h:
+        (KJS::Clipboard::):
+        * khtml/ecma/kjs_events.lut.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):  Boilerplate for new events
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::shouldDragAutoNode):  Empty impl of new method, where UA determines
+	draggability for events with -khtml-user-drag=auto
+        * khtml/khtml_part.h:
+        * khtml/misc/htmlattrs.c:
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:  Boilerplate for new events
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::draggableNode):  Find the node or parent node which might be dragged.
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId):  Boilerplate for new events
+        (EventImpl::idToType):  Boilerplate for new events
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::):  Boilerplate for new events
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::clearData):  Implemented to call NSPasteboard
+        (KWQClipboard::clearAllData): ditto
+        (KWQClipboard::getData):  fix corner case that came up testing
+        (KWQClipboard::setData):  Implemented to call NSPasteboard
+        (KWQClipboard::dragLocation):  Simple setter/getters
+        (KWQClipboard::setDragLocation):
+        (KWQClipboard::dragImage):
+        (KWQClipboard::setDragImage):
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): init new member var
+        (KWQKHTMLPart::dragHysteresisExceeded):  Hysteresis moved here from WebKit
+        (KWQKHTMLPart::dispatchDragSrcEvent):  Send a dragging event to the current dragSource
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Initiate dragging, now including consulting DHTML,
+	hysteresis and sending ondragstart.
+        (KWQKHTMLPart::dragSourceMovedTo):  simple passthrough
+        (KWQKHTMLPart::dragSourceEndedAt):  simple passthrough
+        (KWQKHTMLPart::mouseDown):  salt away _mouseDownX, _mouseDownY
+        (KWQKHTMLPart::shouldDragAutoNode):  Called for -khtml-user-drag=auto.  We just call
+	out to WebKit.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragSourceMovedTo:]):  New glue to drive new dragging events.
+        (-[WebCoreBridge dragSourceEndedAt:operation:]):
+
 2004-06-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
