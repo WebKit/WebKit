@@ -340,11 +340,11 @@ RenderText::~RenderText()
 
 void RenderText::detach(RenderArena* renderArena)
 {
-    deleteSlaves();
+    deleteSlaves(renderArena);
     RenderObject::detach(renderArena);
 }
 
-void RenderText::deleteSlaves()
+void RenderText::deleteSlaves(RenderArena *arena)
 {
     // this is a slight variant of QArray::clear().
     // We don't delete the array itself here because its
@@ -352,7 +352,8 @@ void RenderText::deleteSlaves()
     // us resize() calls
     unsigned int len = m_lines.size();
     if (len) {
-        RenderArena* arena = renderArena();
+        if (!arena)
+            arena = renderArena();
         for(unsigned int i=0; i < len; i++) {
             TextSlave* s = m_lines.at(i);
             if (s)

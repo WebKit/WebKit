@@ -138,7 +138,7 @@ public:
     virtual void printObject( QPainter *, int x, int y, int w, int h,
                         int tx, int ty);
 
-    void deleteSlaves();
+    void deleteSlaves(RenderArena *renderArena = 0);
     virtual void detach(RenderArena* renderArena);
     
     DOM::DOMString data() const { return str; }

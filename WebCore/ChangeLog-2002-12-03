@@ -1,5 +1,14 @@
 2002-11-13  Darin Adler  <darin@apple.com>
 
+	- fixed 3100895 -- REGRESSION: Crash (was assertion) on http://www.w3.org/Style/CSS/
+
+        * khtml/rendering/render_text.h: Add an optional arena parameter to deleteSlaves.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::detach): Pass the render arena in to deleteSlaves.
+        (RenderText::deleteSlaves): Use the passed-in arena.
+
+2002-11-13  Darin Adler  <darin@apple.com>
+
 	- fixed another crash on http://www.w3.org/Style/CSS/, but still not done
 
         * khtml/rendering/render_box.cpp: (RenderBox::setStyle): Call renderArena()
