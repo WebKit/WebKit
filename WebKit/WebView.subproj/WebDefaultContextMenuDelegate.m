@@ -14,6 +14,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
+#import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 
@@ -45,16 +46,16 @@
 
     if(linkURL){
         if([WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:linkURL]]){
-            [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Link in New Window", @"Open in New Window context menu item") 				                	    action:@selector(openLinkInNewWindow:)
+            [[self class] addMenuItemWithTitle:UI_STRING("Open Link in New Window", "Open in New Window context menu item") 				                	    action:@selector(openLinkInNewWindow:)
                                         target:self
                                        toArray:menuItems];
 
-            [[self class] addMenuItemWithTitle:NSLocalizedString(@"Download Link to Disk", @"Download Link to Disk context menu item") 				                	    action:@selector(downloadLinkToDisk:)
+            [[self class] addMenuItemWithTitle:UI_STRING("Download Link to Disk", "Download Link to Disk context menu item") 				                	    action:@selector(downloadLinkToDisk:)
                                         target:self
                                        toArray:menuItems];
         }
 
-        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Copy Link to Clipboard", @"Copy Link to Clipboard context menu item") 				                 	   action:@selector(copyLinkToClipboard:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Copy Link to Clipboard", "Copy Link to Clipboard context menu item") 				                 	   action:@selector(copyLinkToClipboard:)
                                     target:self
                                    toArray:menuItems];
     }
@@ -67,16 +68,16 @@
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
 
-        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Image in New Window", @"Open Image in New Window context menu item")
+        [[self class] addMenuItemWithTitle:UI_STRING("Open Image in New Window", "Open Image in New Window context menu item")
                                     action:@selector(openImageInNewWindow:)
                                     target:self
                                    toArray:menuItems];
 
-        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Download Image To Disk", @"Download Image To Disk context menu item") 				                 	   action:@selector(downloadImageToDisk:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Download Image To Disk", "Download Image To Disk context menu item") 				                 	   action:@selector(downloadImageToDisk:)
                                     target:self
                                    toArray:menuItems];
 
-        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Copy Image to Clipboard", @"Copy Image to Clipboard context menu item") 				              	      action:@selector(copyImageToClipboard:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Copy Image to Clipboard", "Copy Image to Clipboard context menu item") 				              	      action:@selector(copyImageToClipboard:)
                                     target:self
                                    toArray:menuItems];
     }
@@ -86,7 +87,7 @@
         WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
 
         if(webFrame != [[webFrame controller] mainFrame]){
-            [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				            	    action:@selector(openFrameInNewWindow:)
+            [[self class] addMenuItemWithTitle:UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item") 				            	    action:@selector(openFrameInNewWindow:)
                                         target:self
                                        toArray:menuItems];
         }
