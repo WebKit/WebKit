@@ -1,3 +1,22 @@
+2002-12-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3121814.  Forms inside table elements (tbody and table
+	etc.) can be inline.  Just remove the assert and replace it
+	with a bailout.
+	
+	Fix for 3036479.  Tables with specified heights but cells
+	with no height (or no cells at all) were not honoring
+	the specified height.
+	
+        Reviewed by: gramps
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::startRow):
+        (RenderTable::layoutRows):
+        (RenderTable::paint):
+        (RenderTable::recalcCells):
+
 2002-12-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
@@ -59,6 +78,7 @@
 
         * WebCore.pbproj/project.pbxproj: Electron is doing his thing.
 
+>>>>>>> 1.1071
 2002-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for image bullets.  They were neglecting to offset

@@ -226,8 +226,9 @@ void RenderFlow::layout()
 
     KHTMLAssert( !layouted() );
     KHTMLAssert( minMaxKnown() );
-    KHTMLAssert(!isInline());
-        
+    if (isInline()) // Inline <form>s inside various table elements can cause us to
+        return;		// come in here.  Just bail. -dwh
+    
     int oldWidth = m_width;
 
     calcWidth();
