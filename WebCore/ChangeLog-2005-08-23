@@ -1,3 +1,12 @@
+2003-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLine): Print a warning in debug builds when drawing
+	a dashed line. Also, revert accidental commenting of lines that
+	set the dash style.
+
 2003-08-04  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3127909, copied text matched the document source instead of the
