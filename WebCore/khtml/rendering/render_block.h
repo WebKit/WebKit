@@ -102,7 +102,7 @@ public:
     virtual void layout();
     virtual void layoutBlock( bool relayoutChildren );
     void layoutBlockChildren( bool relayoutChildren );
-    void layoutInlineChildren( bool relayoutChildren );
+    QRect layoutInlineChildren( bool relayoutChildren );
 
     void layoutPositionedObjects( bool relayoutChildren );
     void insertPositionedObject(RenderObject *o);
@@ -113,11 +113,15 @@ public:
     
     // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end, BidiState &bidi );
+    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator &start, BidiState &bidi);
+    RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart, int& yPos);
+    bool matchedEndLine(const BidiIterator& start, const BidiIterator& endLineStart, 
+                        RootInlineBox*& endLine, int& endYPos);
     BidiIterator findNextLineBreak(BidiIterator &start, BidiState &info );
-    InlineFlowBox* constructLine(const BidiIterator& start, const BidiIterator& end);
+    RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);
-    void computeHorizontalPositionsForLine(InlineFlowBox* lineBox, BidiState &bidi);
-    void computeVerticalPositionsForLine(InlineFlowBox* lineBox);
+    void computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi);
+    void computeVerticalPositionsForLine(RootInlineBox* lineBox);
     // end bidi.cpp functions
     
     virtual void paint(PaintInfo& i, int tx, int ty);
@@ -171,6 +175,9 @@ public:
     virtual int getBaselineOfFirstLineBox();
     virtual InlineFlowBox* getFirstLineBox();
     
+    RootInlineBox* firstRootBox() { return static_cast<RootInlineBox*>(m_firstLineBox); }
+    RootInlineBox* lastRootBox() { return static_cast<RootInlineBox*>(m_lastLineBox); }
+
     // overrides RenderObject
     virtual bool requiresLayer();
     
@@ -181,6 +188,9 @@ public:
     
     bool inRootBlockContext() const;
     
+    void setLinesAppended(bool b=true) { m_linesAppended = b; }
+    bool linesAppended() const { return m_linesAppended; }
+
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
@@ -225,6 +235,7 @@ protected:
     EClear m_clearStatus  : 2; // used during layuting of paragraphs
     bool m_topMarginQuirk : 1;
     bool m_bottomMarginQuirk : 1;
+    bool m_linesAppended : 1; // Whether or not a block with inline children has had lines appended.
 
     short m_maxTopPosMargin;
     short m_maxTopNegMargin;

@@ -234,7 +234,7 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     
     ts << o << "\n";
     
-    if (o.isText()) {
+    if (o.isText() && !o.isBR()) {
         const RenderText &text = static_cast<const RenderText &>(o);
         for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent+1);

@@ -125,6 +125,46 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     return addChildToFlow(newChild, beforeChild);
 }
 
+void RenderFlow::extractLineBox(InlineFlowBox* box)
+{
+    m_lastLineBox = box->prevFlowBox();
+    if (box == m_firstLineBox)
+        m_firstLineBox = 0;
+    if (box->prevLineBox())
+        box->prevLineBox()->setNextLineBox(0);
+    box->setPreviousLineBox(0);
+    for (InlineRunBox* curr = box; curr; curr = curr->nextLineBox())
+        curr->setExtracted();
+}
+
+void RenderFlow::attachLineBox(InlineFlowBox* box)
+{
+    if (m_lastLineBox) {
+        m_lastLineBox->setNextLineBox(box);
+        box->setPreviousLineBox(m_lastLineBox);
+    }
+    else
+        m_firstLineBox = box;
+    InlineFlowBox* last = box;
+    for (InlineFlowBox* curr = box; curr; curr = curr->nextFlowBox()) {
+        curr->setExtracted(false);
+        last = curr;
+    }
+    m_lastLineBox = last;
+}
+
+void RenderFlow::removeLineBox(InlineFlowBox* box)
+{
+    if (box == m_firstLineBox)
+        m_firstLineBox = box->nextFlowBox();
+    if (box == m_lastLineBox)
+        m_lastLineBox = box->prevFlowBox();
+    if (box->nextLineBox())
+        box->nextLineBox()->setPreviousLineBox(box->prevLineBox());
+    if (box->prevLineBox())
+        box->prevLineBox()->setNextLineBox(box->nextLineBox());
+}
+
 void RenderFlow::deleteLineBoxes()
 {
     if (m_firstLineBox) {
@@ -151,6 +191,63 @@ void RenderFlow::detach()
     RenderBox::detach();
 }
 
+void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
+{
+    if (!parent() || selfNeedsLayout() || isTable())
+        return;
+    
+    if (!isInline() && (!child->nextSibling() || !firstLineBox())) {
+        // An append onto the end of a block or we don't have any lines anyway.  
+        // In this case we don't have to dirty any specific lines.
+        static_cast<RenderBlock*>(this)->setLinesAppended();
+        return;
+    }
+    
+    // For an empty inline, go ahead and propagate the check up to our parent.
+    if (isInline() && !firstLineBox())
+        return parent()->dirtyLinesFromChangedChild(this);
+    
+    // Try to figure out which line box we belong in.  First try to find a previous
+    // line box by examining our siblings.  If we didn't find a line box, then use our 
+    // parent's first line box.
+    RootInlineBox* box = 0;
+    for (RenderObject* curr = child->previousSibling(); curr; curr = curr->previousSibling()) {
+        if (curr->isFloatingOrPositioned())
+            continue;
+        
+        if (curr->isReplaced()) {
+            InlineBox* wrapper = curr->inlineBoxWrapper();
+            if (wrapper)
+                box = wrapper->root();
+        }
+        else if (curr->isText()) {
+            InlineTextBox* textBox = static_cast<RenderText*>(curr)->lastTextBox();
+            if (textBox)
+                box = textBox->root();
+        }
+        else if (curr->isInlineFlow()) {
+            InlineRunBox* runBox = static_cast<RenderFlow*>(curr)->lastLineBox();
+            if (runBox)
+                box = runBox->root();
+        }
+        
+        if (box)
+            break;
+    }
+    if (!box)
+        box = lastLineBox()->root();
+
+    // If we found a line box, then dirty it.
+    if (box) {
+        box->markDirty();
+        if (child->isBR()) {
+            RootInlineBox* next = box->nextRootBox();
+            if (next)
+                next->markDirty();
+        }
+    }
+}
+
 short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
 {
     if (firstLine) {
@@ -174,7 +271,20 @@ short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
     return m_lineHeight;
 }
 
-InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox)
+void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
+{
+    if (!isRootLineBox && isReplaced())
+        return RenderBox::dirtyLineBoxes(isRootLineBox);
+    
+    if (fullLayout)
+        deleteLineBoxes();
+    else {
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+            curr->dirtyLineBoxes();
+    }
+}
+
+InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
 {
     if (!isRootLineBox &&
 	(isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks

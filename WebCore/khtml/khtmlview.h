@@ -158,6 +158,8 @@ public:
 
     bool needsFullRepaint() const;
     
+    void addRepaintInfo(khtml::RenderObject* o, const QRect& r);
+
 #if APPLE_CHANGES
     void resetScrollBars();
 #endif

@@ -71,6 +71,28 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
+void InlineTextBox::deleteLine(RenderArena* arena)
+{
+    static_cast<RenderText*>(m_object)->removeTextBox(this);
+    detach(arena);
+}
+
+void InlineTextBox::extractLine()
+{
+    if (m_extracted)
+        return;
+
+    static_cast<RenderText*>(m_object)->extractTextBox(this);
+}
+
+void InlineTextBox::attachLine()
+{
+    if (!m_extracted)
+        return;
+    
+    static_cast<RenderText*>(m_object)->attachTextBox(this);
+}
+
 void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
 {
     if(startPos > m_len) return;
@@ -237,7 +259,7 @@ FindSelectionResult InlineTextBox::checkSelectionPoint(int _x, int _y, int _tx, 
 // -------------------------------------------------------------------------------------
 
 RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
-    : RenderObject(node)
+    : RenderObject(node), m_linesDirty(false)
 {
     // init RenderObject attributes
     setRenderText();   // our object inherits from RenderText
@@ -297,11 +319,54 @@ RenderText::~RenderText()
 void RenderText::detach()
 {
     if (!documentBeingDestroyed()) {
-        for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-            box->remove();
+        if (firstTextBox())
+            for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+                box->remove();
+        else if (parent() && isBR())
+            parent()->dirtyLinesFromChangedChild(this);
     }
     deleteTextBoxes();
     RenderObject::detach();
+}
+
+void RenderText::extractTextBox(InlineTextBox* box)
+{
+    m_lastTextBox = box->prevTextBox();
+    if (box == m_firstTextBox)
+        m_firstTextBox = 0;
+    if (box->prevTextBox())
+        box->prevTextBox()->setNextLineBox(0);
+    box->setPreviousLineBox(0);
+    for (InlineRunBox* curr = box; curr; curr = curr->nextLineBox())
+        curr->setExtracted();
+}
+
+void RenderText::attachTextBox(InlineTextBox* box)
+{
+    if (m_lastTextBox) {
+        m_lastTextBox->setNextLineBox(box);
+        box->setPreviousLineBox(m_lastTextBox);
+    }
+    else
+        m_firstTextBox = box;
+    InlineTextBox* last = box;
+    for (InlineTextBox* curr = box; curr; curr = curr->nextTextBox()) {
+        curr->setExtracted(false);
+        last = curr;
+    }
+    m_lastTextBox = last;
+}
+
+void RenderText::removeTextBox(InlineTextBox* box)
+{
+    if (box == m_firstTextBox)
+        m_firstTextBox = box->nextTextBox();
+    if (box == m_lastTextBox)
+        m_lastTextBox = box->prevTextBox();
+    if (box->nextTextBox())
+        box->nextTextBox()->setPreviousLineBox(box->prevTextBox());
+    if (box->prevTextBox())
+        box->prevTextBox()->setNextLineBox(box->nextTextBox());
 }
 
 void RenderText::deleteTextBoxes()
@@ -1116,14 +1181,64 @@ const QFont &RenderText::font()
     return style()->font();
 }
 
+void RenderText::setTextWithOffset(DOMStringImpl *text, uint offset, uint len, bool force)
+{
+    uint oldLen = str ? str->l : 0;
+    uint newLen = text ? text->l : 0;
+    uint delta = newLen - oldLen;
+    uint end = len ? offset+len-1 : offset;
+
+    RootInlineBox* firstRootBox = 0;
+    RootInlineBox* lastRootBox = 0;
+    
+    // Dirty all text boxes that include characters in between offset and offset+len.
+    for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
+        // Text run is entirely before the affected range.
+        if (curr->end() < offset)
+            continue;
+        
+        // Text run is entirely after the affected range.
+        if (curr->start() > end) {
+            curr->offsetRun(delta);
+            RootInlineBox* root = curr->root();
+            if (!firstRootBox)
+                firstRootBox = root;
+            lastRootBox = root;
+        }
+        else if (curr->end() >= offset && curr->end() <= end)
+            curr->dirtyLineBoxes(); // Text run overlaps with the left end of the affected range.
+        else if (curr->start() <= offset && curr->end() >= end)
+            curr->dirtyLineBoxes(); // Text run subsumes the affected range.
+        else if (curr->start() <= end && curr->end() >= end)
+            curr->dirtyLineBoxes(); // Text run overlaps with right end of the affected range.
+    }
+    
+    // Now we have to walk all of the clean lines and adjust their cached line break information
+    // to reflect our updated offsets.
+    if (lastRootBox)
+        lastRootBox = lastRootBox->nextRootBox();
+    if (firstRootBox) {
+        RootInlineBox* prev = firstRootBox->prevRootBox();
+        if (prev)
+            firstRootBox = prev;
+    }
+    for (RootInlineBox* curr = firstRootBox; curr && curr != lastRootBox; curr = curr->nextRootBox()) {
+        if (curr->lineBreakObj() == this && curr->lineBreakPos() >= end)
+            curr->setLineBreakPos(curr->lineBreakPos()+delta);
+    }
+    
+    m_linesDirty = true;
+    setText(text, force);
+}
+
 void RenderText::setText(DOMStringImpl *text, bool force)
 {
-#if APPLE_CHANGES
     if (!text)
         return;
-#endif
-    if( !force && str == text ) return;
-    if(str) str->deref();
+    if (!force && str == text)
+        return;
+    if (str)
+        str->deref();
 
     str = text;
     if (str) {
@@ -1143,6 +1258,7 @@ void RenderText::setText(DOMStringImpl *text, bool force)
 #if APPLE_CHANGES
     cacheWidths();
 #endif
+
     // ### what should happen if we change the text of a
     // RenderBR object ?
     KHTMLAssert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
@@ -1178,7 +1294,18 @@ short RenderText::baselinePosition( bool firstLine, bool ) const
         ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
-InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox)
+void RenderText::dirtyLineBoxes(bool fullLayout, bool)
+{
+    if (fullLayout)
+        deleteTextBoxes();
+    else if (!m_linesDirty) {
+        for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+            box->dirtyLineBoxes();
+    }
+    m_linesDirty = false;
+}
+
+InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox, bool)
 {
     KHTMLAssert(!isRootLineBox);
     InlineTextBox* textBox = new (renderArena()) InlineTextBox(this);

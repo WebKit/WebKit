@@ -1586,6 +1586,8 @@ void NodeBaseImpl::removeChildren()
         next = n->nextSibling();
         if (n->attached())
 	    n->detach();
+        if (n->inDocument())
+            n->removedFromDocument();
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
@@ -1769,6 +1771,20 @@ void NodeBaseImpl::detach()
         prev->detach();
     }
     NodeImpl::detach();
+}
+
+void NodeBaseImpl::insertedIntoDocument()
+{
+    NodeImpl::insertedIntoDocument();
+    for (NodeImpl *child = _first; child; child = child->nextSibling())
+        child->insertedIntoDocument();
+}
+
+void NodeBaseImpl::removedFromDocument()
+{
+    NodeImpl::removedFromDocument();
+    for (NodeImpl *child = _first; child; child = child->nextSibling())
+        child->removedFromDocument();
 }
 
 void NodeBaseImpl::cloneChildNodes(NodeImpl *clone)

@@ -56,16 +56,22 @@ public:
 
     static RenderFlow* createAnonymousFlow(DOM::DocumentImpl* doc, RenderStyle* style);
 
+    void extractLineBox(InlineFlowBox* lineBox);
+    void attachLineBox(InlineFlowBox* lineBox);
+    void removeLineBox(InlineFlowBox* lineBox);
     void deleteLineBoxes();
     virtual void detach();
 
+    virtual void dirtyLinesFromChangedChild(RenderObject* child);
+    
     virtual short lineHeight(bool firstLine, bool isRootLineBox=false) const;
     
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
 
-    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox);
-
+    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);
+    virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
+    
     void paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty);
     void paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty);
 

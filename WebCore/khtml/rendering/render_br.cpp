@@ -34,6 +34,15 @@ RenderBR::~RenderBR()
 {
 }
 
+InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, bool isOnlyRun)
+{
+    // We only make a box for a <br> if we are on a line by ourself or in strict mode
+    // (Note the use of strict mode.  In "almost strict" mode, we don't make a box for <br>.)
+    if (isOnlyRun || document()->inStrictMode())
+        return RenderText::createInlineBox(makePlaceholder, isRootLineBox, isOnlyRun);
+    return 0;
+}
+
 void RenderBR::position(InlineBox* box, int from, int len, bool reverse)
 {
     InlineTextBox *s = static_cast<InlineTextBox*>(box);
@@ -42,10 +51,6 @@ void RenderBR::position(InlineBox* box, int from, int len, bool reverse)
     m_x = s->xPos();
     m_y = s->yPos();
     m_height = s->height();
-    
-    s->remove();
-    s->detach(renderArena());
-    m_firstTextBox = m_lastTextBox = 0;
 }
 
 short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const

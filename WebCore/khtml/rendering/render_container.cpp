@@ -346,6 +346,9 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     newChild->setNeedsLayoutAndMinMaxRecalc(); // Goes up the containing block hierarchy.
     if (!normalChildNeedsLayout())
         setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+    
+    if (!newChild->isFloatingOrPositioned() && childrenInline())
+        dirtyLinesFromChangedChild(newChild);
 }
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
@@ -378,6 +381,9 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     child->setNeedsLayoutAndMinMaxRecalc();
     if (!normalChildNeedsLayout())
         setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+    
+    if (!child->isFloatingOrPositioned() && childrenInline())
+        dirtyLinesFromChangedChild(child);
 }
 
 

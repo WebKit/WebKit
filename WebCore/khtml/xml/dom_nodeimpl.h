@@ -481,6 +481,9 @@ public:
     virtual unsigned long childNodeCount();
     virtual NodeImpl *childNode(unsigned long index);
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    
     // check for being (grand-..)father:
     bool checkNoOwner( NodeImpl *other, int &exceptioncode );
 

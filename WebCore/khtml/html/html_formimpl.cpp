@@ -780,6 +780,15 @@ void HTMLGenericFormElementImpl::attach()
     }
 }
 
+void HTMLGenericFormElementImpl::removedFromDocument()
+{
+    if (m_form)
+        m_form->removeFormElement(this);
+    m_form = 0;
+   
+    HTMLElementImpl::removedFromDocument();
+}
+
 HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
 {
     NodeImpl *p = parentNode();

@@ -83,10 +83,13 @@ public:
 
     virtual void position(InlineBox* box, int from, int len, bool reverse);
     
+    virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox=false);
+
     // For inline replaced elements, this function returns the inline box that owns us.  Enables
     // the replaced RenderObject to quickly determine what line it is contained on and to easily
     // iterate over structures on the line.
     virtual InlineBox* inlineBoxWrapper() const;
+    virtual void setInlineBoxWrapper(InlineBox* b);
     void deleteLineBoxWrapper();
     
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;

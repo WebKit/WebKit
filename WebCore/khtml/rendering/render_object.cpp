@@ -1154,21 +1154,23 @@ void RenderObject::repaintRectangle(const QRect& r, bool immediate)
     c->repaintViewRectangle(absRect, immediate);
 }
 
-void RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
+bool RenderObject::repaintAfterLayoutIfNeeded(const QRect& oldBounds, const QRect& oldFullBounds)
 {
     QRect newBounds, newFullBounds;
     getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
     if (newBounds != oldBounds || selfNeedsLayout()) {
         RenderObject* c = canvas();
         if (!c || !c->isCanvas())
-            return;
+            return false;
         RenderCanvas* canvasObj = static_cast<RenderCanvas*>(c);
         if (canvasObj->printingMode())
-            return; // Don't repaint if we're printing.
+            return false; // Don't repaint if we're printing.
         canvasObj->repaintViewRectangle(oldFullBounds);
         if (newBounds != oldBounds)
             canvasObj->repaintViewRectangle(newFullBounds);
+        return true;
     }
+    return false;
 }
 
 void RenderObject::repaintDuringLayoutIfMoved(int x, int y)
@@ -1189,10 +1191,8 @@ void RenderObject::repaintObjectsBeforeLayout()
     if (!needsLayout() || isText())
         return;
     
-    // FIXME: For now we just always repaint blocks with inline children, regardless of whether
-    // they're really dirty or not.
     bool blockWithInlineChildren = (isRenderBlock() && !isTable() && normalChildNeedsLayout() && childrenInline());
-    if (selfNeedsLayout() || blockWithInlineChildren) {
+    if (selfNeedsLayout()) {
         repaint();
         if (blockWithInlineChildren)
             return;
@@ -1240,6 +1240,10 @@ void RenderObject::computeAbsoluteRepaintRect(QRect& r, bool f)
 {
     if (parent())
         return parent()->computeAbsoluteRepaintRect(r, f);
+}
+
+void RenderObject::dirtyLinesFromChangedChild(RenderObject* child)
+{
 }
 
 #ifndef NDEBUG
@@ -1995,10 +1999,14 @@ void RenderObject::removeLeftoverAnonymousBoxes()
 {
 }
 
-InlineBox* RenderObject::createInlineBox(bool,bool isRootLineBox)
+InlineBox* RenderObject::createInlineBox(bool, bool isRootLineBox, bool)
 {
     KHTMLAssert(!isRootLineBox);
     return new (renderArena()) InlineBox(this);
+}
+
+void RenderObject::dirtyLineBoxes(bool, bool)
+{
 }
 
 InlineBox* RenderObject::inlineBoxWrapper() const
@@ -2006,8 +2014,13 @@ InlineBox* RenderObject::inlineBoxWrapper() const
     return 0;
 }
 
+void RenderObject::setInlineBoxWrapper(InlineBox* b)
+{
+}
+
 void RenderObject::deleteLineBoxWrapper()
-{}
+{
+}
 
 RenderStyle* RenderObject::style(bool firstLine) const {
     RenderStyle *s = m_style;

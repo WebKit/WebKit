@@ -48,6 +48,7 @@ public:
     virtual void setStyle(RenderStyle* _style);
 
     // overrides
+    virtual InlineBox* createInlineBox(bool, bool, bool isOnlyRun = false);
     virtual void calcMinMaxWidth() {}
     virtual short minWidth() const { return 0; }
     virtual short maxWidth() const { return 0; }

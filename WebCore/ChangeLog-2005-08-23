@@ -1,3 +1,163 @@
+2004-02-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3558717, make sure that form elements that are removed from a document also remove themselves
+	from the form.
+
+	Reviewed by darin.
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::removedFromDocument):
+        * khtml/html/html_formimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_nodeimpl.h:
+
+	Implement smarter line layout for faster typing and repainting when individual lines change.
+
+	Reviewed by kocienda.
+	
+	* khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate):
+        (KHTMLViewPrivate::~KHTMLViewPrivate):
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::addRepaintInfo):
+        (KHTMLView::layout):
+        * khtml/khtmlview.h:
+        * khtml/rendering/bidi.cpp:
+        (khtml::Bidinext):
+        (khtml::appendRun):
+        (khtml::embed):
+        (khtml::RenderBlock::constructLine):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::computeVerticalPositionsForLine):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::buildCompactRuns):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::determineStartPosition):
+        (khtml::RenderBlock::determineEndPosition):
+        (khtml::RenderBlock::matchedEndLine):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::positionNewFloats):
+        (khtml::RenderBlock::lowestPosition):
+        (khtml::RenderBlock::rightmostPosition):
+        (khtml::RenderBlock::leftmostPosition):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::firstRootBox):
+        (khtml::RenderBlock::lastRootBox):
+        (khtml::RenderBlock::setLinesAppended):
+        (khtml::RenderBlock::linesAppended):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::dirtyLineBoxes):
+        (RenderBox::deleteLineBoxWrapper):
+        (RenderBox::setInlineBoxWrapper):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::createInlineBox):
+        (RenderBR::position):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::placeChild):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::extractLineBox):
+        (RenderFlow::attachLineBox):
+        (RenderFlow::removeLineBox):
+        (RenderFlow::dirtyLinesFromChangedChild):
+        (RenderFlow::dirtyLineBoxes):
+        (RenderFlow::createInlineBox):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineBox::dirtyLineBoxes):
+        (InlineBox::deleteLine):
+        (InlineBox::extractLine):
+        (InlineBox::attachLine):
+        (InlineBox::adjustVerticalPosition):
+        (InlineBox::root):
+        (InlineBox::nextOnLineExists):
+        (InlineBox::prevOnLineExists):
+        (InlineFlowBox::removeChild):
+        (InlineFlowBox::deleteLine):
+        (InlineFlowBox::extractLine):
+        (InlineFlowBox::attachLine):
+        (InlineFlowBox::adjustVerticalPosition):
+        (InlineFlowBox::verticallyAlignBoxes):
+        (InlineFlowBox::adjustMaxAscentAndDescent):
+        (RootInlineBox::adjustVerticalPosition):
+        (RootInlineBox::childRemoved):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::m_extracted):
+        (khtml::InlineBox::setExtracted):
+        (khtml::InlineBox::object):
+        (khtml::InlineBox::parent):
+        (khtml::InlineBox::isDirty):
+        (khtml::InlineBox::markDirty):
+        (khtml::InlineFlowBox::prevFlowBox):
+        (khtml::InlineFlowBox::nextFlowBox):
+        (khtml::RootInlineBox::RootInlineBox):
+        (khtml::RootInlineBox::nextRootBox):
+        (khtml::RootInlineBox::prevRootBox):
+        (khtml::RootInlineBox::setLineBreakInfo):
+        (khtml::RootInlineBox::setLineBreakPos):
+        (khtml::RootInlineBox::setBlockHeight):
+        (khtml::RootInlineBox::setEndsWithBreak):
+        (khtml::RootInlineBox::blockHeight):
+        (khtml::RootInlineBox::endsWithBreak):
+        (khtml::RootInlineBox::lineBreakObj):
+        (khtml::RootInlineBox::lineBreakPos):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaintAfterLayoutIfNeeded):
+        (RenderObject::repaintObjectsBeforeLayout):
+        (RenderObject::dirtyLinesFromChangedChild):
+        (RenderObject::createInlineBox):
+        (RenderObject::dirtyLineBoxes):
+        (RenderObject::setInlineBoxWrapper):
+        (RenderObject::deleteLineBoxWrapper):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::RepaintInfo::m_repaintRect):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::deleteLine):
+        (InlineTextBox::extractLine):
+        (InlineTextBox::attachLine):
+        (RenderText::RenderText):
+        (RenderText::detach):
+        (RenderText::extractTextBox):
+        (RenderText::attachTextBox):
+        (RenderText::removeTextBox):
+        (RenderText::setTextWithOffset):
+        (RenderText::setText):
+        (RenderText::dirtyLineBoxes):
+        (RenderText::createInlineBox):
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox::start):
+        (khtml::InlineTextBox::end):
+        (khtml::InlineTextBox::offsetRun):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::setData):
+        (CharacterDataImpl::appendData):
+        (CharacterDataImpl::insertData):
+        (CharacterDataImpl::deleteData):
+        (CharacterDataImpl::replaceData):
+        (TextImpl::splitText):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+
+	RenderBlock contains two other fixes.  The first is a fix to rightmost/lowestPosition to properly add in
+	margins to floats.
+
+	Reviewed by mjs
+
+	The second fix is to repair a bug in block-level replaced elements with margins.  If the floats they moved to
+	dodge can fit in their margins, then they don't technically have to move at all.
+
+	Reviewed by john
+
 2004-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
