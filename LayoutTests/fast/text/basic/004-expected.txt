@@ -3,11 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderBlock (floating) {P} at (0,16) size 649x22 [border: (2px solid #008000)]
-          RenderText {TEXT} at (2,2) size 645x18
-            text run at (2,2) width 212: "There should be 30"
-            text run at (214,2) width 433: "px of word spacing between each word."
+      RenderBlock (floating) {P} at (0,16) size 649x22 [border: (2px solid #008000)]
+        RenderText {TEXT} at (2,2) size 645x18
+          text run at (2,2) width 212: "There should be 30"
+          text run at (214,2) width 433: "px of word spacing between each word."
       RenderBlock {DIV} at (0,0) size 784x100
       RenderTable {TABLE} at (0,100) size 100x130
         RenderTableSection {TBODY} at (0,0) size 0x130

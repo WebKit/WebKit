@@ -139,9 +139,9 @@ layer at (0,0) size 800x4035
           text run at (0,0) width 688: "This blockquote should be black, because, according to CSS1, the selector is invalid, and according to CSS2,"
           text run at (0,18) width 184: "the selector should not apply."
       RenderBlock {P} at (0,1641) size 784x36
-        RenderInline {ACRONYM} at (0,0) size 752x36
-          RenderText {TEXT} at (0,0) size 752x36
-            text run at (0,0) width 752: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+        RenderInline {ACRONYM} at (0,0) size 748x36
+          RenderText {TEXT} at (0,0) size 748x36
+            text run at (0,0) width 748: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
             text run at (0,18) width 109: "should not apply."
       RenderBlock {ADDRESS} at (0,1693) size 784x36
         RenderText {TEXT} at (0,0) size 745x36
@@ -357,9 +357,9 @@ layer at (0,0) size 800x4035
                   text run at (0,0) width 643: "This blockquote should be black, because, according to CSS1, the selector is invalid, and according to"
                   text run at (0,18) width 229: "CSS2, the selector should not apply."
               RenderBlock {P} at (4,770) size 762x36
-                RenderInline {ACRONYM} at (0,0) size 752x36
-                  RenderText {TEXT} at (0,0) size 752x36
-                    text run at (0,0) width 752: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+                RenderInline {ACRONYM} at (0,0) size 748x36
+                  RenderText {TEXT} at (0,0) size 748x36
+                    text run at (0,0) width 748: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
                     text run at (0,18) width 109: "should not apply."
               RenderBlock {ADDRESS} at (4,822) size 762x36
                 RenderText {TEXT} at (0,0) size 745x36
