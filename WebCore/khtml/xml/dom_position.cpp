@@ -534,7 +534,10 @@ Position Position::previousLinePosition(int x) const
         return renderer->positionForCoordinates(x, absy + root->topOverflow());
     }
     
-    return *this;
+    // Could not find a previous line. This means we must already be on the first line.
+    // Move to the start of the content in this block, which effectively moves us
+    // to the start of the line we're on.
+    return Position(node()->rootEditableElement(), 0);
 }
 
 Position Position::nextLinePosition(int x) const
@@ -588,9 +591,13 @@ Position Position::nextLinePosition(int x) const
         containingBlock->absolutePosition(absx, absy);
         RenderObject *renderer = root->closestLeafChildForXPos(x, absx)->object();
         return renderer->positionForCoordinates(x, absy + root->topOverflow());
-    }
+    }    
 
-    return *this;
+    // Could not find a next line. This means we must already be on the last line.
+    // Move to the end of the content in this block, which effectively moves us
+    // to the end of the line we're on.
+    ElementImpl *rootElement = node()->rootEditableElement();
+    return Position(rootElement, rootElement->childNodeCount());
 }
 
 Position Position::equivalentUpstreamPosition() const

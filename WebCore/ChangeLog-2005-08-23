@@ -1,3 +1,18 @@
+2004-08-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+        Fix for this bug:
+        
+        <rdar://problem/3695446> shift-down-arrow on last line of editable text should select to end of document
+        
+        Detect when current position is on first or last line and move to the
+        start or end of that line, respectively.
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousLinePosition)
+        (DOM::Position::nextLinePosition)
+
 === Safari-156 ===
 
 2004-08-12  Ken Kocienda  <kocienda@apple.com>
