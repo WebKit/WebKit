@@ -34,8 +34,8 @@ static NSMutableArray *activeImageRenderers;
 {
     int i;
     for (i = 0; i < length - 10; i++) {
-        if (block[i + 8] == '1' && block[i + 9] == '.' && block[i + 10] == '0') {
-            if (memcmp(block + i, "NETSCAPE", 8) == 0 || memcmp(block + i, "ANIMEXTS", 8) == 0) {
+        if (block[i + 9] == '.' && block[i + 10] == '0') {
+            if (memcmp(block + i, "NETSCAPE2", 9) == 0 || memcmp(block + i, "ANIMEXTS1", 9) == 0) {
                 return YES;
             }
         }
@@ -278,12 +278,6 @@ static NSMutableArray *activeImageRenderers;
     if (currentFrame >= [self frameCount]) {
         repetitionsComplete += 1;
         if ([self repetitionCount] && repetitionsComplete >= [self repetitionCount]) {
-            animationFinished = YES;
-            return;
-        }
-	// Don't repeat if the last frame has a duration of 0.  
-        // IE doesn't repeat, so we don't.
-        if ([self unadjustedFrameDuration] == 0) {
             animationFinished = YES;
             return;
         }

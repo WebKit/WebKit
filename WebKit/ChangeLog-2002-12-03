@@ -1,5 +1,15 @@
 2002-11-08  Darin Adler  <darin@apple.com>
 
+	- fixed 3095078 -- image loop counts still not handled right
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer blockHasGIFExtensionSignature:length:]): Look for the tag
+	"NETSCAPE2.0", not "NETSCAPE1.0".
+        (-[WebImageRenderer nextFrame:]): Remove special handling for last frames with
+	a duration of 0. That was just a misunderstanding.
+
+2002-11-08  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setRequest:]):
 	Slightly better fix. Essentially just take out the assert.
 
