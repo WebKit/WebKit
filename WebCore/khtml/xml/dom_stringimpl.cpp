@@ -31,6 +31,11 @@
 using namespace DOM;
 using namespace khtml;
 
+#ifdef APPLE_CHANGES
+namespace DOM {
+using khtml::Fixed;
+#endif
+
 #define QT_ALLOC_QCHAR_VEC( N ) (QChar*) new char[ sizeof(QChar)*( N ) ]
 #define QT_DELETE_QCHAR_VEC( P ) delete[] ((char*)( P ))
 
@@ -306,5 +311,6 @@ DOMStringImpl *DOMStringImpl::capitalize()
     return c;
 }
 
-
-
+#ifdef APPLE_CHANGES
+} // namespace DOM
+#endif

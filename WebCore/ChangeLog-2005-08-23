@@ -1,5 +1,13 @@
 2002-05-03  Darin Adler  <darin@apple.com>
 
+	* khtml/css/cssstyleselector.cpp:
+	* khtml/dom/css_value.cpp:
+	* khtml/xml/dom_stringimpl.cpp:
+	Put in some namespace-related statements to more-elegantly work around the
+	conflicts between Macintosh and khtml identifiers.
+
+2002-05-03  Darin Adler  <darin@apple.com>
+
 	* kwq/IFTextRenderer.h: Added.
 	* kwq/IFTextRendererFactory.h: Added.
 	* kwq/IFTextRendererFactory.m: Added.
