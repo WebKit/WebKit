@@ -244,14 +244,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return nil;
     }
 
-    // Reject RealPlayer because we know it doesn't work.
-    // The Real folks can workaround this by not using the same creator code as Flash.
-    if ([[self filename] rangeOfString:@"RealPlayer"].location != NSNotFound &&
-        [fileInfo fileHFSCreatorCode] == 'MOSS') {
-        [self release];
-        return nil;
-    }
-
     return self;
 }
 

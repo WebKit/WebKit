@@ -100,7 +100,7 @@
 
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self setUpWindowAndPort];
+    [self setWindow];
 
     needsLayout = NO;
 }

@@ -1,3 +1,19 @@
+2002-12-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Gramps and Ken
+	Checked in by Ken
+
+	- fixed 3133207 -- crash in HTMLFrameElementImpl updateForNewURL at home.real.com
+
+	My previous attempt to fix this dealt with the case where a RenderFrame object was
+	not yet created, but not with the case where a RenderFrame object was created without
+	a corresponding part. Somehow I overlooked this last time when I was doing testing.
+	Testing this time confirms this takes care of the remaining problem at movies.real.com.
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::updateForNewURL):
+	Use the same kind of requestFrame call here as in attach when there's a RenderFrame,
+	but no corresponding part. Maybe we can fix this an even more elegant way later.
+
 2002-12-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

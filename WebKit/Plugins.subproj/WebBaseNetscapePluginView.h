@@ -64,13 +64,9 @@
 - (WebDataSource *)dataSource;
 - (WebController *)controller;
 
-+ (void)getCarbonEvent:(EventRecord *)carbonEvent;
-- (BOOL)sendEvent:(EventRecord *)event;
-- (BOOL)sendUpdateEvent;
-
 - (NPP)pluginPointer;
 
-- (void)setUpWindowAndPort;
+- (void)setWindow;
 
 - (WebNetscapePluginPackage *)plugin;
 - (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;

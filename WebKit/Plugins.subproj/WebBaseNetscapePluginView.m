@@ -33,6 +33,15 @@
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
 
+typedef struct {
+    GrafPtr oldPort;
+    Point oldOrigin;
+    RgnHandle oldClipRegion;
+    RgnHandle oldVisibleRegion;
+    RgnHandle clipRegion;
+    BOOL forUpdate;
+} PortState;
+
 @interface WebPluginRequest : NSObject
 {
     WebResourceRequest *_request;
@@ -125,6 +134,121 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     return keyCode << 8 | characterCode;
 }
 
+- (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
+{
+    WindowRef windowRef = [[self window] windowRef];
+    CGrafPtr port = GetWindowPort(windowRef);
+
+    NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
+    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    
+    // flip Y coordinates to convert NSWindow coordinates to Carbon window coordinates
+    float contentViewHeight = [[[self window] contentView] frame].size.height;
+    boundsInWindow.origin.y = contentViewHeight - boundsInWindow.origin.y - boundsInWindow.size.height; 
+    visibleRectInWindow.origin.y = contentViewHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
+    
+    // Set up NS_Port.
+    
+    nPort.port = port;
+    nPort.portx = (int32)-boundsInWindow.origin.x;
+    nPort.porty = (int32)-boundsInWindow.origin.y;
+    
+    // Set up NPWindow.
+    
+    window.window = &nPort;
+    
+    window.x = (int32)boundsInWindow.origin.x; 
+    window.y = (int32)boundsInWindow.origin.y;
+    window.width = (uint32)boundsInWindow.size.width;
+    window.height = (uint32)boundsInWindow.size.height;
+
+    window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
+    window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
+    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
+    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
+    
+    window.type = NPWindowTypeWindow;
+    
+    // Save the port state.
+
+    PortState portState;
+    
+    GetPort(&portState.oldPort);    
+
+    Rect portBounds;
+    GetPortBounds(port, &portBounds);
+    portState.oldOrigin.h = portBounds.left;
+    portState.oldOrigin.v = portBounds.top;
+
+    portState.oldClipRegion = NewRgn();
+    GetPortClipRegion(port, portState.oldClipRegion);
+    
+    portState.oldVisibleRegion = NewRgn();
+    GetPortVisibleRegion(port, portState.oldVisibleRegion);
+    
+    RgnHandle clipRegion = NewRgn();
+    portState.clipRegion = clipRegion;
+    
+    MacSetRectRgn(clipRegion,
+        window.clipRect.left + nPort.portx, window.clipRect.top + nPort.porty,
+        window.clipRect.right + nPort.portx, window.clipRect.bottom + nPort.porty);
+    
+    portState.forUpdate = forUpdate;
+    
+    // Switch to the port and set it up.
+
+    SetPort(port);
+
+    PenNormal();
+    ForeColor(blackColor);
+    BackColor(whiteColor);
+    
+    SetOrigin(nPort.portx, nPort.porty);
+
+    SetPortClipRegion(nPort.port, clipRegion);
+
+    if (forUpdate) {
+        // AppKit may have tried to help us by doing a BeginUpdate.
+        // But the invalid region at that level didn't include AppKit's notion of what was not valid.
+        // We reset the port's visible region to counteract what BeginUpdate did.
+        SetPortVisibleRegion(nPort.port, clipRegion);
+
+        // Some plugins do their own BeginUpdate/EndUpdate.
+        // For those, we must make sure that the update region contains the area we want to draw.
+        InvalWindowRgn(windowRef, clipRegion);
+    }
+    
+    return portState;
+}
+
+- (PortState)saveAndSetPortState
+{
+    return [self saveAndSetPortStateForUpdate:NO];
+}
+
+- (void)restorePortState:(PortState)portState
+{
+    WindowRef windowRef = [[self window] windowRef];
+    CGrafPtr port = GetWindowPort(windowRef);
+
+    if (portState.forUpdate) {
+        ValidWindowRgn(windowRef, portState.clipRegion);
+    }
+    
+    SetOrigin(portState.oldOrigin.h, portState.oldOrigin.v);
+
+    SetPortClipRegion(port, portState.oldClipRegion);
+    if (portState.forUpdate) {
+        SetPortVisibleRegion(port, portState.oldVisibleRegion);
+    }
+
+    DisposeRgn(portState.oldClipRegion);
+    DisposeRgn(portState.oldVisibleRegion);
+    DisposeRgn(portState.clipRegion);
+
+    SetPort(portState.oldPort);
+}
+
 - (BOOL)sendEvent:(EventRecord *)event
 {
     ASSERT(isStarted);
@@ -134,10 +258,25 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
         [[self controller] _setDefersCallbacks:YES];
     }
 
+    PortState portState = [self saveAndSetPortStateForUpdate:event->what == updateEvt];
+
+#ifndef NDEBUG
+    // Draw green to help debug.
+    // If we see any green we know something's wrong.
+    if (event->what == updateEvt) {
+        ForeColor(greenColor);
+        const Rect bigRect = { -10000, -10000, 10000, 10000 };
+        PaintRect(&bigRect);
+        ForeColor(blackColor);
+    }
+#endif
+
     BOOL acceptedEvent = NO;
     if (NPP_HandleEvent) {
         acceptedEvent = NPP_HandleEvent(instance, event);
     }
+
+    [self restorePortState:portState];
 
     if (!defers) {
         [[self controller] _setDefersCallbacks:NO];
@@ -189,8 +328,8 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     MenuTrackingData trackingData;
     OSStatus error = GetMenuTrackingData(NULL, &trackingData);
     
-    if (![_window isKeyWindow] || (error == noErr && trackingData.menu)){
-        // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?
+    if (![_window isKeyWindow] || (error == noErr && trackingData.menu)) {
+        // FIXME: Does passing a v and h of -1 really prevent it from reacting to the cursor position?
         event.where.v = -1;
         event.where.h = -1;
     }
@@ -414,58 +553,18 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 #pragma mark WEB_NETSCAPE_PLUGIN
 
-- (void)setUpWindowAndPort
-{
-    CGrafPtr port = GetWindowPort([[self window] windowRef]);
-    NSRect contentViewFrame = [[[self window] contentView] frame];
-    NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
-    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
-    
-    // flip Y coordinates
-    boundsInWindow.origin.y = contentViewFrame.size.height - boundsInWindow.origin.y - boundsInWindow.size.height; 
-    visibleRectInWindow.origin.y = contentViewFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
-    
-    nPort.port = port;
-    
-    // FIXME: Are these values correct? Without them, Flash freaks.
-    nPort.portx = (int32)-boundsInWindow.origin.x;
-    nPort.porty = (int32)-boundsInWindow.origin.y;
-    
-    window.window = &nPort;
-    
-    window.x = (int32)boundsInWindow.origin.x; 
-    window.y = (int32)boundsInWindow.origin.y;
-
-    window.width = (uint32)boundsInWindow.size.width;
-    window.height = (uint32)boundsInWindow.size.height;
-
-    window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
-    window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
-    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
-    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
-    
-    window.type = NPWindowTypeWindow;
-}
-
 - (void)setWindow
 {
     ASSERT(isStarted);
     
-    [self setUpWindowAndPort];
+    PortState portState = [self saveAndSetPortState];
 
     NPError npErr;
     npErr = NPP_SetWindow(instance, &window);
     LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
         npErr, (int)nPort.port, (int)window.x, (int)window.y);
 
-#if 0
-    // Draw test    
-    Rect portRect;
-    GetPortBounds(nPort.port, &portRect);
-    SetPort(nPort.port);
-    MoveTo(0,0);
-    LineTo(portRect.right, portRect.bottom);
-#endif
+    [self restorePortState:portState];
 }
 
 - (void)removeTrackingRect
@@ -721,24 +820,9 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
         return;
     }
     
-    if([NSGraphicsContext currentContextDrawingToScreen]){
-        // AppKit tried to help us by doing a BeginUpdate.
-        // But the invalid region at that level didn't include AppKit's notion of what was not valid.
-        // We reset the port's visible region to counteract what BeginUpdate did.
-        RgnHandle savedVisibleRegion = NewRgn();
-        GetPortVisibleRegion(nPort.port, savedVisibleRegion);
-        Rect portBounds;
-        GetPortBounds(nPort.port, &portBounds);
-        RgnHandle portBoundsAsRegion = NewRgn();
-        RectRgn(portBoundsAsRegion, &portBounds);
-        SetPortVisibleRegion(nPort.port, portBoundsAsRegion);
-        DisposeRgn(portBoundsAsRegion);
-        
+    if ([NSGraphicsContext currentContextDrawingToScreen]) {
         [self sendUpdateEvent];
-
-        SetPortVisibleRegion(nPort.port, savedVisibleRegion);
-        DisposeRgn(savedVisibleRegion);
-    }else{
+    } else {
         // Printing 2862383
     }
 }
@@ -763,6 +847,8 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     }
     
     [self resetTrackingRect];
+    
+    [super viewDidMoveToWindow];
 }
 
 #pragma mark NOTIFICATIONS
@@ -783,14 +869,14 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 -(void)windowBecameKey:(NSNotification *)notification
 {
     [self sendActivateEvent:YES];
-    [self sendUpdateEvent];
+    [self setNeedsDisplay:YES];
     [self restartNullEvents];
 }
 
 -(void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
-    [self sendUpdateEvent];
+    [self setNeedsDisplay:YES];
     [self restartNullEvents];
 }
 
@@ -849,21 +935,14 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     }
     
     NSString *URLString = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
-    NSURL *URL;
-    
-    if ([URLString _web_looksLikeAbsoluteURL]) {
-        URL = [NSURL _web_URLWithString:URLString];
-    } else {
-        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
-    }
-
+    NSURL *URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
     [URLString release];
 
     if (!URL) {
         return nil;
     }
     
-    return [[[WebResourceRequest alloc] initWithURL:URL] autorelease];
+    return [WebResourceRequest requestWithURL:URL];
 }
 
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
@@ -1047,19 +1126,24 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 -(void)invalidateRect:(NPRect *)invalidRect
 {
     LOG(Plugins, "NPN_InvalidateRect");
-    [self sendUpdateEvent];
+    [self setNeedsDisplayInRect:NSMakeRect(invalidRect->left, invalidRect->top,
+        (float)invalidRect->right - invalidRect->left, (float)invalidRect->bottom - invalidRect->top)];
 }
 
--(void)invalidateRegion:(NPRegion)invalidateRegion
+-(void)invalidateRegion:(NPRegion)invalidRegion
 {
     LOG(Plugins, "NPN_InvalidateRegion");
-    [self sendUpdateEvent];
+    Rect invalidRect;
+    GetRegionBounds(invalidRegion, &invalidRect);
+    [self setNeedsDisplayInRect:NSMakeRect(invalidRect.left, invalidRect.top,
+        (float)invalidRect.right - invalidRect.left, (float)invalidRect.bottom - invalidRect.top)];
 }
 
 -(void)forceRedraw
 {
     LOG(Plugins, "forceRedraw");
-    [self sendUpdateEvent];
+    [self setNeedsDisplay:YES];
+    [[self window] displayIfNeeded];
 }
 
 @end
