@@ -570,7 +570,6 @@ static void databaseInit()
 
 -(void)performSetObject:(id)object forKey:(id)key
 {
-    BOOL result;
     NSString *filePath;
     NSMutableData *data;
     NSDictionary *attributes;
@@ -584,24 +583,20 @@ static void databaseInit()
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performSetObject - %s - %s",
         DEBUG_OBJECT(key), DEBUG_OBJECT([IFURLFileDatabase uniqueFilePathForKey:key]));
 
-    result = NO;
-
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:key];
     [archiver encodeObject:object];
     
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSDate date], @"NSFileModificationDate",
-        NSUserName(), @"NSFileOwnerAccountName",
-        IFURLFilePosixPermissions, @"NSFilePosixPermissions",
+        NSUserName(), NSFileOwnerAccountName,
+        IFURLFilePosixPermissions, NSFilePosixPermissions,
         NULL
     ];
 
     directoryAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSDate date], @"NSFileModificationDate",
-        NSUserName(), @"NSFileOwnerAccountName",
-        IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
+        NSUserName(), NSFileOwnerAccountName,
+        IFURLFileDirectoryPosixPermissions, NSFilePosixPermissions,
         NULL
     ];
 
@@ -609,10 +604,7 @@ static void databaseInit()
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
 
-    result = [defaultManager createFileAtPath:filePath contents:data attributes:attributes];
-    if (!result) {
-        result = [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
-    }
+    [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     [archiver release];
     [filePath release];
@@ -671,14 +663,8 @@ static void databaseInit()
                 NULL
             ];
             
-            // be optimistic that full subpath leading to directory exists
-            isOpen = [manager createDirectoryAtPath:path attributes:attributes];
-            if (!isOpen) {
-                // perhaps the optimism did not pay off ...
-                // try again, this time creating full subpath leading to directory
-                isOpen = [manager _IF_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
-            }
-        }
+	    isOpen = [manager _IF_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
+	}
 
         sizeFilePathString = [NSString stringWithFormat:@"%@/%@", path, SIZE_FILE_NAME];
         tmp = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:sizeFilePathString];
