@@ -264,8 +264,12 @@ void QObject::killTimer(int _timerId)
     NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
     NSNumber *timerId = [NSNumber numberWithInt:_timerId];
     NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
-    [deferredTimers removeObject:(KWQObjectTimerTarget *)[timer userInfo]];
-    [timer invalidate];
+    // Only try to remove the timer is it hasn't fired (and is therefore valid).  It is NOT
+    // permissible to reference a timer's userInfo if it is invalid.
+    if ([timer isValid]){
+        [deferredTimers removeObject:(KWQObjectTimerTarget *)[timer userInfo]];
+        [timer invalidate];
+    }
     [timers removeObjectForKey:timerId];
 }
 

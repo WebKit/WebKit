@@ -1,3 +1,10 @@
+2003-06-13  Richard Williamson  <rjw@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * kwq/KWQObject.mm:
+        (QObject::killTimer):
+
 === Safari-84 ===
 
 2003-06-12  David Hyatt  <hyatt@apple.com>
