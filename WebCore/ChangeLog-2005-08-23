@@ -1,3 +1,12 @@
+2002-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3133801 -- REGRESSION: Japanese page comes up hash
+
+        * khtml/khtml_part.cpp: (KHTMLPart::write): Roll back to original KHTML code here,
+	removing the "all ASCII" optimization.
+
 2002-12-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3133081, slashdot messed up when changing font sizes.
@@ -138,8 +147,6 @@
         Reviewed by Darin
 
         * WebCore.pbproj/project.pbxproj:
-
-2002-12-20  Darin Adler  <darin@apple.com>
 
 2002-12-20  Darin Adler  <darin@apple.com>
 
