@@ -39,47 +39,45 @@
     return [WebError errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:[[dataSource URL] absoluteString]];
 }
 
-- (WebError *)receivedData:(NSData *)data
+- (WebError *)receivedResponse:(WebResourceResponse *)response
 {
     NSString *path = [[dataSource contentPolicy] path];
-    NSString *pathWithoutExtension, *newPathWithoutExtension, *extension;
-    NSFileManager *fileManager;
-    NSWorkspace *workspace;
-    unsigned i;
-    
-    if(!fileHandle){
-        fileManager = [NSFileManager defaultManager];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    if([fileManager fileExistsAtPath:path]){
+        NSString *pathWithoutExtension = [path stringByDeletingPathExtension];
+        NSString *extension = [path pathExtension];
+        NSString *newPathWithoutExtension;
+        unsigned i;
         
-        if([fileManager fileExistsAtPath:path]){
-            pathWithoutExtension = [path stringByDeletingPathExtension];
-            extension = [path pathExtension];
-            
-            for(i=1; 1; i++){
-                newPathWithoutExtension = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
-                path = [newPathWithoutExtension stringByAppendingPathExtension:extension];
-                if(![fileManager fileExistsAtPath:path]){
-                    [[dataSource contentPolicy] _setPath:path];
-                    break;
-                }
+        for(i=1; 1; i++){
+            newPathWithoutExtension = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
+            path = [newPathWithoutExtension stringByAppendingPathExtension:extension];
+            if(![fileManager fileExistsAtPath:path]){
+                [[dataSource contentPolicy] _setPath:path];
+                break;
             }
         }
-        
-        if(![fileManager createFileAtPath:path contents:nil attributes:nil]){
-            return [self errorWithCode:WebErrorCannotCreateFile];
-        }
-        
-        fileHandle = [[NSFileHandle fileHandleForWritingAtPath:path] retain];
-        if(!fileHandle){
-            return [self errorWithCode:WebErrorCannotOpenFile];
-        }
-        
-        workspace = [NSWorkspace sharedWorkspace];
-        [workspace noteFileSystemChanged:path];
     }
-    
-    [fileHandle writeData:data];
+
+    if(![fileManager createFileAtPath:path contents:nil attributes:nil]){
+        return [self errorWithCode:WebErrorCannotCreateFile];
+    }
+
+    fileHandle = [[NSFileHandle fileHandleForWritingAtPath:path] retain];
+    if(!fileHandle){
+        return [self errorWithCode:WebErrorCannotOpenFile];
+    }
+
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    [workspace noteFileSystemChanged:path];
 
     return nil;
+}
+
+- (void)receivedData:(NSData *)data
+{
+    [fileHandle writeData:data];
 }
 
 - (WebError *)finishedLoading

@@ -88,20 +88,6 @@
     return downloadHandler;
 }
 
-- (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
-{
-    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
-
-    if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
-        if (isComplete) {
-            [dataSource _setPrimaryLoadComplete:YES];
-        }
-    } else {
-        [[dataSource controller] _mainReceivedProgressForResourceHandle:handle 
-            bytesSoFar: [resourceData length] fromDataSource:dataSource complete:isComplete];
-    }
-}
-
 - (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
 {    
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
@@ -168,6 +154,7 @@
         }else{
             [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
         }
+        [dataSource _setPrimaryLoadComplete:YES];
         [downloadHandler release];
         downloadHandler = nil;
     }
@@ -181,7 +168,10 @@
         if (nonTerminalError) {
             [self receivedError:nonTerminalError forHandle:handle];
         } else {
-            [self receivedProgressWithHandle:handle complete:YES];
+            [[dataSource controller] _mainReceivedProgressForResourceHandle:handle
+                                                                 bytesSoFar:[resourceData length]
+                                                             fromDataSource:dataSource
+                                                                   complete:YES];
         }
     }
     
@@ -262,7 +252,13 @@
         [[dataSource webFrame] _setProvisionalDataSource:nil];
         [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
         downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
+        WebError *downloadError = [downloadHandler receivedResponse:response];
         [downloadProgressDelegate resourceRequest: request didReceiveResponse: response fromDataSource: dataSource];
+
+        if (downloadError) {
+            [self receivedError:downloadError forHandle:handle];
+            [handle cancel];
+        }
         break;
     case WebContentPolicyIgnore:
         [handle cancel];
@@ -278,23 +274,18 @@
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
-    
-    WebError *downloadError = nil;
-    
+        
     if (downloadHandler) {
-        downloadError = [downloadHandler receivedData:data];
+        [downloadHandler receivedData:data];
         [downloadProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
         [resourceProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];
-    }
-
-    [self receivedProgressWithHandle:handle complete:NO];
-
-    if (downloadError) {
-        [self receivedError:downloadError forHandle:handle];
-        [handle cancel];
+        [[dataSource controller] _mainReceivedProgressForResourceHandle:handle
+                                                             bytesSoFar:[resourceData length]
+                                                         fromDataSource:dataSource
+                                                               complete:NO];
     }
     
     LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
