@@ -1,5 +1,22 @@
 2002-10-23  Maciej Stachowiak  <mjs@apple.com>
 
+        - fixed 2876448 - The authentication panel should give a note when
+	the user tried to log in and failed
+
+	Also, made the message different (and more helpful) when the
+	authentication is for a proxy server.
+	
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForRequest:]): Use different
+	messages depending on proxy and previous failure count.
+
+	Updated localized strings:
+	
+	* English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+
+2002-10-23  Maciej Stachowiak  <mjs@apple.com>
+
 	- fixed 2876446 - The label in the authentication panel needs to
 	adjust its height depending on content
 
