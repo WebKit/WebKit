@@ -1,0 +1,221 @@
+In this file:
+
+* About kdelibs
+* Licensing
+* Common Mistakes
+* Upgrading
+* Compile Problems
+* More Info
+
+
+About kdelibs
+-------------
+This is version 2.2 of the KDE libraries.
+
+This package includes libraries that are central to the development and 
+execution of a KDE program, as well as internationalization files for these 
+libraries, misc HTML documentation, theme modules, and regression tests. 
+Here is a list:
+
+* kdecore
+    This is the core collection of KDE stuff. Non GUI classes reside here.
+
+* kdeui
+    The main collection of misc. user interface classes (widgets).
+
+* kimgio
+    An all purpose extension to the qimgio class that supports some obscure
+    image formats.
+
+* kfile
+    This library contains the KFileDialog in all its glory.
+
+* kspell
+    KSpell and related classes are a frontend to ispell for use within a
+    GUI app.
+
+* kab
+    The address book library.
+
+* khtml
+    The next generation HTML rendering widget designed for Konqueror
+    (kfm's successor). This supports HTML 4, CSS, and a variety of other web
+    related standards.
+
+* kio
+    Classes that fetch and decode URLs are contained here. This library also
+    contains "ksycoca", the system configure cache containing services,
+    applications, servicetypes and mimetypes.
+
+* kjs
+    KDE's implementation of ECMAScript (aka JavaScript).
+
+* kparts
+    KDE component model.
+
+* kstyles
+    The theme engine lies within. It handles nearly anything relating to
+    customizing the appearance of widgets.
+
+* dcop
+    The desktop communication program allows even shell scripts to communicate
+    with KDE applications. It's also the base for KParts.
+
+* kssl
+    An SSL intergration for KDE. It currently uses OpenSSL.
+
+* arts
+    ARTS (analog realtime synthesizer) is a environment of small modules
+    that one can plug together to process multimedia data.
+
+* kdesu
+    Library for password entering and handling
+
+* kinit
+    Process launcher, used for fast KDE startup
+
+* ksgmltools
+    Docbook and SGML tools needed to generate documentation for KDE.
+
+* libkmid
+    MIDI file handling and midi mapper (manages output of midi files to
+    various devices).
+
+* interfaces
+    kparts interface for text editors
+
+* libtldl
+    System independed dlopen() handler.
+
+* mimetypes
+    Database of mime types.
+
+* pics
+    Database of icons.
+
+* libkscreensaver
+    Library for making KDE screensavers.
+
+Licensing
+---------
+The libraries themselves have been covered (since Saturday, June 21st, 1997)
+by the GNU Library General Public License (LGPL). Any other programs (such as
+the examples) are covered by the GNU General Public License (GPL). All the
+gory details for the LGPL reside in COPYING.LIB, and for the GPL reside in 
+COPYING.
+
+Various parts are also covered under a BSD style license, detailed in
+COPYING.BSD. Currently, code covered under such license is copyrighted by
+Theo de Raadt.
+
+When in doubt, check the individual file, they should all have license
+headings and other identifying marks.
+
+
+Common Mistakes
+---------------
+If configure claims Qt cannot be found, have a look at http://www.troll.no
+to get a copy of Qt, version 2.2.3 or newer. If you have peeked there
+already, grab the CVS module qt-copy from anoncvs.kde.org, or a snapshot
+thereof.
+
+
+Debugging
+---------
+You can use --enable-debug with the configure script, if you want to have
+debug code in your KDE libs. If you have the space and can stand code that's
+somewhat slower, this is worth it. The extra information really
+helps debugging and thus bugfixing.
+
+On the other hand, --disable-debug removes all debug messages, leading
+to a faster and cleaner desktop.
+
+See also the file DEBUG.
+
+
+Upgrading
+---------
+If you have an kdebase older than 2.0 installed, just copy all your .k*rc
+files from $HOME to $HOME/.kde/share/config. In the other case, default
+values are used for most apps.
+
+
+Compile Problems
+----------------
+Often, KDE compile failures are not KDE's faults but the one of the
+compiler or the distribution used. For that reason, please have a look at
+http://www.kde.org/compilationfaq.html for know issues in certain OS
+environments before reporting bugs or going mad :). 
+
+gcc 3.0 is not yet able to compile all of KDE without errors, mostly due
+to bugs in this version of the compiler. Some older version of gcc 2.96
+also have problems compiling KDE due to compiler bugs. Even though 
+compilation may not report errors with these compiler, the usage of these
+compilers may cause crashes when using the resulting executables.
+
+If you are running a FreeBSD system, you will need to make sure that LIBS
+is set to "-Wl,-export-dynamic". The easiest way to do this is to prefix
+configure with it, i.e.: LIBS="-Wl,-export-dynamic" ./configure. Thanks to
+Will Andrews <will@FreeBSD.org> and Arun Sharma <adsharma@sharmas.dhs.org>
+for identifying what needed to be done, and how to do it, and such.
+
+If you get odd error such as:
+
+as: Error: /var/tmp/ccK1Cfxa.s, line 2827: Truncating token:
+__t4pair2Zt18__rb_tree_iterator3Zt4pair2ZCt12basic_string3ZcZt18string_char_trai
+ts1ZcZt24__default_alloc_template2b0i0Zt12basic_string3ZcZt18string_char_traits1
+ZcZt24__default_alloc_template2b0i0ZRt4pair2ZCt12basic_string3ZcZt18string_char_
+traits1ZcZt24__default_alloc_template2b0i0Zt12basic_string3ZcZt18string_char_tra
+its1ZcZt24__default_alloc_template2b0i0ZPt4pair2ZCt12basic_string3ZcZt18string_c
+har_traits1ZcZt24__default_alloc_template2b0i0Zt12basic_string3ZcZt18string_char
+_traits1ZcZt24__default_alloc_template2b0i0ZbRCt18__rb_tree_iterator3Zt4pair2ZCt
+12basic_string3ZcZt18string_char_traits1ZcZt24__default_alloc_template2b0i0Zt12b
+asic_string3ZcZt18string_char_traits1ZcZt24__default_alloc_template2b0i0ZRt4pair
+2ZCt12basic_string3ZcZt18string_char_traits1ZcZt24__default_alloc_template2b0i0Z
+t12basic_string3ZcZt18string_char_traits1ZcZt24__default_alloc_template2b0i0ZPt4
+pair2ZCt12basic_string3ZcZt18string_char_traits1ZcZt24__default_alloc_template2b
+0i0Zt12basic_string3ZcZt18strin!
+g_char_traits1ZcZt24__default_al
+
+and you're using egcs, try re-compiling all your C++ libs with -fsquangle,
+and then recompiling whatever you were working on with -fsquangle. It
+should help, and more information about this is available on the egcs FAQ
+available at http://egcs.cygnus.com
+
+
+How to report
+-------------
+Reporting bugs is an art. Why?  Because bug reports can help and hinder.
+
+They hinder if the developers are just buried in an avanche of bug reports.
+They spend hours figuring out which bug reports are valid and which non,
+which bug reports are due to bugs or due to installation problems.
+
+They can be a tremendous help to notify developers on problems in areas that
+they normally don't have access (e.g. KDE on AIX) to.
+
+So, here are some tips on bug reporting:
+
+* make sure your bug is due to KDE ... and not due to a packaging problem of
+  your Linux distrubutor. For example, most "I can not install the XYZ.rpm"
+  problem are due to packaging issues. Refer with such questions to your
+  Linux Distributor and his appropriate mailing list or bug reporting tool.
+
+* The chance is high that your bug has already been dealt with ... so look
+  if there is a newer version of kdelibs available. Reporting bugs for
+  older, deprecated versions usually don't get that much attention :-)
+
+* Also the chance is high that another one experienced your problem. The
+  bug report wizard at http://bugs.kde.org will help you to find out if your
+  problem has already been reported.
+
+* The best bug report for a project based on voluntary work is of course one
+  that comes with a patch that solves the problem. :-)
+
+
+More info
+---------
+http://www.kde.org is a good starting point for info on KDE. If you are a
+developer, you may also point your browser to http://developer.kde.org.
+There is a plethora of mailing lists available, you can gain an overview
+quickly by looking at http://lists.kde.org.
