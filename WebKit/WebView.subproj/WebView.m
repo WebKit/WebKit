@@ -90,14 +90,14 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     _private = [[WebViewPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
-    _private->controllerSetName = [groupName copy];
-    if (_private->controllerSetName != nil) {
-        [WebControllerSets addController:self toSetNamed:_private->controllerSetName];
+    _private->setName = [groupName copy];
+    if (_private->setName != nil) {
+        [WebViewSets addWebView:self toSetNamed:_private->setName];
     }
 
     [self setMaintainsBackForwardList: YES];
 
-    ++WebControllerCount;
+    ++WebViewCount;
 
     [self _updateWebCoreSettingsFromPreferences: [WebPreferences standardPreferences]];
 
@@ -132,7 +132,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     [self _close];
     
-    --WebControllerCount;
+    --WebViewCount;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     

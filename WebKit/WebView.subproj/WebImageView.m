@@ -96,9 +96,9 @@
     [super viewDidMoveToWindow];
 }
 
-- (WebView *)controller
+- (WebView *)webView
 {
-    return [[self _web_parentWebFrameView] _controller];
+    return [[self _web_parentWebFrameView] _webView];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -143,11 +143,11 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebView *controller = [webFrameView _controller];
+    WebView *webView = [webFrameView _webView];
     WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);
-    ASSERT(controller);
+    ASSERT(webView);
     
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
         [representation image], 		WebElementImageKey,
@@ -156,13 +156,13 @@
         [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
         frame, 					WebElementFrameKey, nil];
         
-    return [controller _menuForElement:element];
+    return [webView _menuForElement:element];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     // Don't allow drags to be accepted by this WebFrameView.
-    [[[self _web_parentWebFrameView] _controller] unregisterDraggedTypes];
+    [[[self _web_parentWebFrameView] _webView] unregisterDraggedTypes];
 
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -178,7 +178,7 @@
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     NSURL *URL = [representation URL];
-    [[self controller] _downloadURL:URL toDirectory:[dropDestination path]];
+    [[self webView] _downloadURL:URL toDirectory:[dropDestination path]];
 
     // FIXME: The file is supposed to be created at this point so the Finder places the file
     // where the drag ended. Since we can't create the file until the download starts,
@@ -192,7 +192,7 @@
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     // Reregister for drag types because they were unregistered before the drag.
-    [[[self _web_parentWebFrameView] _controller] _registerDraggedTypes];
+    [[[self _web_parentWebFrameView] _webView] _registerDraggedTypes];
 
     // Balance the previous retain from when the drag started.
     [self release];

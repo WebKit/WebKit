@@ -19,7 +19,7 @@
 @interface NSObject (Foo)
 - (void*)_renderFramePart;
 - (id)_frameForView: (id)aView;
-- (id)_controller;
+- (id)_webView;
 @end
 #endif
 
@@ -155,9 +155,9 @@
         printf (" ");
     f = [self frame];
     
-    if ([self respondsToSelector: @selector(_controller)]){
-        id aController = [self _controller];
-        id aFrame = [aController _frameForView: self];
+    if ([self respondsToSelector: @selector(_webView)]){
+        id aWebView = [self _webView];
+        id aFrame = [aWebView _frameForView: self];
         rfp = [aFrame _renderFramePart];
     }
     

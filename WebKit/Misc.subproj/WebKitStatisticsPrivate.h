@@ -8,7 +8,7 @@
  */
 
 extern int WebBridgeCount;
-extern int WebControllerCount;
+extern int WebViewCount;
 extern int WebDataSourceCount;
 extern int WebFrameCount;
 extern int WebHTMLRepresentationCount;

@@ -41,8 +41,8 @@
     [connection release];
     connection = nil;
 
-    [controller release];
-    controller = nil;
+    [webView release];
+    webView = nil;
     
     [dataSource release];
     dataSource = nil;
@@ -93,21 +93,21 @@
 - (void)setDataSource:(WebDataSource *)d
 {
     ASSERT(d);
-    ASSERT([d _controller]);
+    ASSERT([d _webView]);
     
     [d retain];
     [dataSource release];
     dataSource = d;
 
-    [controller release];
-    controller = [[dataSource _controller] retain];
+    [webView release];
+    webView = [[dataSource _webView] retain];
     
     [resourceLoadDelegate release];
-    resourceLoadDelegate = [[controller resourceLoadDelegate] retain];
-    implementations = [controller _resourceLoadDelegateImplementations];
+    resourceLoadDelegate = [[webView resourceLoadDelegate] retain];
+    implementations = [webView _resourceLoadDelegateImplementations];
 
     [downloadDelegate release];
-    downloadDelegate = [[controller downloadDelegate] retain];
+    downloadDelegate = [[webView downloadDelegate] retain];
 }
 
 - (WebDataSource *)dataSource
@@ -133,7 +133,7 @@
     NSURLRequest *clientRequest, *updatedRequest;
     BOOL haveDataSchemeRequest = NO;
     
-    [mutableRequest setHTTPUserAgent:[controller userAgentForURL:[newRequest URL]]];
+    [mutableRequest setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
 
     clientRequest = [newRequest _webDataRequestExternalRequest];
@@ -146,16 +146,16 @@
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
         if (implementations.delegateImplementsIdentifierForRequest)
-            identifier = [[resourceLoadDelegate webView: controller identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
+            identifier = [[resourceLoadDelegate webView: webView identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
         else
-            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
+            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
     }
 
     // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
     if (implementations.delegateImplementsWillSendRequest)
-        updatedRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+        updatedRequest = [resourceLoadDelegate webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
     else
-        updatedRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+        updatedRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
         
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
@@ -193,9 +193,9 @@
     currentWebChallenge = [[WebAuthenticationChallenge alloc] _initWithAuthenticationChallenge:challenge delegate:self];
 
     if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
-        [resourceLoadDelegate webView:controller resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     } else {
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     }
 }
 
@@ -209,9 +209,9 @@
     ASSERT(currentConnectionChallenge = challenge);
 
     if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
-        [resourceLoadDelegate webView:controller resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     } else {
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     }
 }
 
@@ -268,9 +268,9 @@
     [dataSource _addResponse: r];
     
     if (implementations.delegateImplementsDidReceiveResponse)
-        [resourceLoadDelegate webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
@@ -279,9 +279,9 @@
     ASSERT(!reachedTerminalState);
 
     if (implementations.delegateImplementsDidReceiveContentLength)
-        [resourceLoadDelegate webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
@@ -290,9 +290,9 @@
     ASSERT(!reachedTerminalState);
 
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [resourceLoadDelegate webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
+        [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     [self _releaseResources];
 }
@@ -302,7 +302,7 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
     
-    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
+    [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     [self _releaseResources];
 }
@@ -320,7 +320,7 @@
     [connection cancel];
     
     if (error) {
-        [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
 
     [self _releaseResources];

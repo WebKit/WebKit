@@ -27,6 +27,7 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebNSErrorExtras.h>
@@ -152,9 +153,9 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)dealloc
 {
-    [webFrameView _setController:nil];
-    [dataSource _setController:nil];
-    [provisionalDataSource _setController:nil];
+    [webFrameView _setWebView:nil];
+    [dataSource _setWebView:nil];
+    [provisionalDataSource _setWebView:nil];
 
     [name release];
     [webFrameView release];
@@ -201,10 +202,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     dataSource = d;
 }
 
-- (WebView *)controller { return controller; }
-- (void)setController: (WebView *)c
+- (WebView *)webView { return webView; }
+- (void)setWebView: (WebView *)wv
 {
-    controller = c; // not retained (yet)
+    webView = wv; // not retained (yet)
 }
 
 - (WebDataSource *)provisionalDataSource { return provisionalDataSource; }
@@ -249,11 +250,11 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 @implementation WebFrame (WebPrivate)
 
-- (void)setController: (WebView *)controller
+- (void)_setWebView:(WebView *)v
 {
-    // To set controller to nil, we have to use _detachFromParent, not this.
-    ASSERT(controller);
-    [_private setController: controller];
+    // To set to nil, we have to use _detachFromParent, not this.
+    ASSERT(v);
+    [_private setWebView:v];
 }
 
 // helper method used in various nav cases below
@@ -383,7 +384,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         }
     }
     if (_private->dataSource) {
-        [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller willCloseFrame:self];
+        [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView willCloseFrame:self];
     }
 }
 
@@ -399,10 +400,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
     [self _detachChildren];
 
-    [_private setController:nil];
-    [_private->webFrameView _setController:nil];
-    [_private->dataSource _setController:nil];
-    [_private->provisionalDataSource _setController:nil];
+    [_private setWebView:nil];
+    [_private->webFrameView _setWebView:nil];
+    [_private->dataSource _setWebView:nil];
+    [_private->provisionalDataSource _setWebView:nil];
 
     [self _setDataSource:nil];
     [_private setWebFrameView:nil];
@@ -411,12 +412,9 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
     
+    [bridge close];
+    
     [bridge release];
-}
-
-- (void)_setController: (WebView *)controller
-{
-    [_private setController:controller];
 }
 
 - (void)_setDataSource:(WebDataSource *)ds
@@ -457,7 +455,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
 
     [_private setDataSource:ds];
-    [ds _setController:[self webView]];
+    [ds _setWebView:[self webView]];
     [ds _setWebFrame:self];
 }
 
@@ -701,12 +699,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             
             // Tell the client we've committed this URL.
             ASSERT([[self frameView] documentView] != nil);
-            [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller didCommitLoadForFrame:self];
+            [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didCommitLoadForFrame:self];
             
-            // If we have a title let the controller know about it.
+            // If we have a title let the WebView know about it.
             if (ptitle) {
                 [entry setTitle:ptitle];
-                [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                            didReceiveTitle:ptitle
                                                                   forFrame:self];
             }
@@ -888,7 +886,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                didFailProvisionalLoadWithError:[pd _mainDocumentError]
                                                                       forFrame:self];
 
@@ -970,11 +968,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 }
 
                 if ([ds _mainDocumentError]) {
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                      didFailLoadWithError:[ds _mainDocumentError]
                                                                  forFrame:self];
                 } else {
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                     didFinishLoadForFrame:self];
                 }
  
@@ -1042,8 +1040,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
     NSError *error = [NSError _webKitErrorWithCode:code failingURL:[URL absoluteString]];
-    WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error frame:self];    
+    WebView *wv = [self webView];
+    [[wv _policyDelegateForwarder] webView:wv unableToImplementPolicyWithError:error frame:self];    
 }
 
 - (void)_clearProvisionalDataSource
@@ -1125,7 +1123,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self dataSource] __setRequest: [[hackedRequest copy] autorelease]];
         [hackedRequest release];
         
-        [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+        [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                didChangeLocationWithinPageForFrame:self];
     } else {
         // Remember this item so we can traverse any child items as child frames load
@@ -1384,8 +1382,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c decidePolicyForNewWindowAction:action
+    WebView *wv = [self webView];
+    [[wv _policyDelegateForwarder] webView:wv decidePolicyForNewWindowAction:action
                                                                    request:request
                                                               newFrameName:frameName
                                                           decisionListener:listener];
@@ -1456,8 +1454,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c decidePolicyForNavigationAction:action
+    WebView *wv = [self webView];
+    [[wv _policyDelegateForwarder] webView:wv decidePolicyForNavigationAction:action
                                                                     request:request
                                                                       frame:self
                                                            decisionListener:listener];
@@ -1534,7 +1532,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkLoadComplete];
     }
 
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                            didChangeLocationWithinPageForFrame:self];
 }
 
@@ -1560,17 +1558,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
     
-    WebView *controller = nil;
-    WebView *currentController = [self webView];
-    id wd = [currentController UIDelegate];
+    WebView *webView = nil;
+    WebView *currentWebView = [self webView];
+    id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-	controller = [wd webView:currentController createWebViewWithRequest:nil];
+	webView = [wd webView:currentWebView createWebViewWithRequest:nil];
     else
-        controller = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:nil];
+        webView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
         
-    [controller _setTopLevelFrameName:frameName];
-    [[controller _UIDelegateForwarder] webViewShow:controller];
-    WebFrame *frame = [controller mainFrame];
+    [webView _setTopLevelFrameName:frameName];
+    [[webView _UIDelegateForwarder] webViewShow:webView];
+    WebFrame *frame = [webView mainFrame];
 
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
 }
@@ -1747,7 +1745,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                 willPerformClientRedirectToURL:URL
                                                          delay:seconds
                                                       fireDate:date
@@ -1766,7 +1764,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectCancelled
 {
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->controller
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                didCancelClientRedirectForFrame:self];
     _private->quickRedirectComing = NO;
 }
@@ -1972,7 +1970,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     // We tell the documentView provisionalDataSourceChanged:
-    // once it has been created by the controller.
+    // once it has been created by the WebView.
     
     [self _setState: WebFrameStateProvisional];
     
@@ -2019,7 +2017,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (parentFrame) {
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
     }
-    [newDataSource _setController:[self webView]];
+    [newDataSource _setWebView:[self webView]];
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
     _private->justOpenedForTargetedLink = NO;
 

@@ -55,7 +55,7 @@ typedef struct _WebResourceDelegateImplementationCache {
     
     BOOL defersCallbacks;
 
-    NSString *controllerSetName;
+    NSString *setName;
 
     WebPreferences *preferences;
     WebCoreSettings *settings;

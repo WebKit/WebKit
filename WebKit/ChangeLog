@@ -1,3 +1,49 @@
+2003-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- first step in fixing 3236383 -- http://www.xy.com/ exception, crash loading main page
+        
+        Changed WebFrame to explicitly detach from the bridge so we don't have a stale pointer;
+        also cleaned up WebBridge initialization.
+
+        * WebCoreSupport.subproj/WebBridge.h: Added initWithWebFrame: and close methods, removed
+        setWebFrame: method.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webFrameView:webView:]): Use the new initWithWebFrame:.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _detachFromParent]): Call close on the bridge.
+
+        - fixed many places that call a WebView a "controller"
+
+        * Misc.subproj/WebKitStatistics.h:
+        * Misc.subproj/WebKitStatistics.m:
+        * Misc.subproj/WebKitStatisticsPrivate.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebControllerSets.h:
+        * WebView.subproj/WebControllerSets.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebImageView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+
 2003-05-01  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3246045 -- History items without a valid date in 

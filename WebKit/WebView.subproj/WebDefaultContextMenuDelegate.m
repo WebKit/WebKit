@@ -121,7 +121,7 @@
 - (void)openNewWindowWithURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebView *controller = [webFrame webView];
+    WebView *webView = [webFrame webView];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
@@ -129,14 +129,14 @@
 	[request setHTTPReferrer:referrer];
     }
     
-    [controller _openNewWindowWithRequest:request];
+    [webView _openNewWindowWithRequest:request];
 }
 
 - (void)downloadURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebView *controller = [webFrame webView];
-    [controller _downloadURL:URL];
+    WebView *webView = [webFrame webView];
+    [webView _downloadURL:URL];
 }
 
 - (void)openLinkInNewWindow:(id)sender

@@ -43,7 +43,7 @@
 
 - (void)dealloc
 {
-    // controller is only retained while loading, but this object is also
+    // The WebView is only retained while loading, but this object is also
     // retained while loading, so no need to release here
     ASSERT(!loading);
     
@@ -76,9 +76,9 @@
 
 @implementation WebDataSource (WebPrivate)
 
-- (WebView *)_controller
+- (WebView *)_webView
 {
-    return _private->controller;
+    return _private->webView;
 }
 
 - (void)_setRepresentation: (id<WebDocumentRepresentation>)representation
@@ -104,12 +104,12 @@
     
     if (loading) {
         [self retain];
-        [_private->controller retain];
+        [_private->webView retain];
     } else {
-        [_private->controller release];
-        // FIXME: It would be cleanest to set the controller to nil here.  Keeping a non-retained reference
-        // to the controller is dangerous. WebSubresourceClient actually depends on this non-retained reference
-        // when starting loads after the data source has stoppped loading.
+        [_private->webView release];
+        // FIXME: It would be cleanest to set webView to nil here. Keeping a non-retained reference
+        // to the WebView is dangerous. But WebSubresourceClient actually depends on this non-retained
+        // reference when starting loads after the data source has stoppped loading.
         [self release];
     }
 }
@@ -119,13 +119,13 @@
     [self _setLoading:_private->mainClient || [_private->subresourceClients count]];
 }
 
-- (void)_setController: (WebView *)controller
+- (void)_setWebView: (WebView *)webView
 {
     if (_private->loading) {
-        [controller retain];
-        [_private->controller release];
+        [webView retain];
+        [_private->webView release];
     }
-    _private->controller = controller;
+    _private->webView = webView;
     
     [self _defersCallbacksChanged];
 }
@@ -177,7 +177,7 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+    [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                      didStartProvisionalLoadForFrame:[self webFrame]];
 
     if (pageCache){
@@ -187,7 +187,7 @@
         _private->loadingFromPageCache = NO;
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         id identifier;
-        identifier = [[_private->controller resourceLoadDelegate] webView:_private->controller identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        identifier = [[_private->webView resourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
         [_private->mainClient setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainClient loadWithRequest:_private->request]) {
@@ -205,7 +205,7 @@
     if (_private->subresourceClients == nil) {
         _private->subresourceClients = [[NSMutableArray alloc] init];
     }
-    if ([_private->controller defersCallbacks]) {
+    if ([_private->webView defersCallbacks]) {
         [client setDefersCallbacks:YES];
     }
     [_private->subresourceClients addObject:client];
@@ -257,8 +257,8 @@
 {
     [self retain];
     
-    // We depend on the controller in webFrame and we release it in _stopLoading,
-    // so call webFrame first so we don't send a message the released controller (3129503).
+    // We depend on the WebView in the webFrame method and we release it in _stopLoading,
+    // so call webFrame first so we don't send a message the released WebView (3129503).
     [[[self webFrame] childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
     [self _stopLoadingInternal];
     
@@ -294,7 +294,7 @@
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
     
-    // The title doesn't get communicated to the controller until we are committed.
+    // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
         WebHistoryItem *entry;
         NSURL *canonURL = [[[self _originalRequest] URL] _web_canonicalize];
@@ -304,7 +304,7 @@
         // Must update the entries in the back-forward list too.
         [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
-        [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+        [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                                          didReceiveTitle:_private->pageTitle
                                                                 forFrame:[self webFrame]];
     }
@@ -340,7 +340,7 @@
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     if (![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+        [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                       didReceiveServerRedirectForProvisionalLoadForFrame:[self webFrame]];
     }
         
@@ -582,7 +582,7 @@
     if (!_private->committed) {
         [[[self webFrame] _bridge] didNotOpenURL:[[_private->originalRequestCopy URL] absoluteString]];
     }
-    [[self _controller] _mainReceivedError:error
+    [[self _webView] _mainReceivedError:error
                            fromDataSource:self
                                  complete:isComplete];
 }
@@ -596,7 +596,7 @@
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
     NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
-    [[_private->controller _frameLoadDelegateForwarder] webView:_private->controller
+    [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                                       didReceiveIcon:icon
                                                             forFrame:[self webFrame]];
 }
@@ -608,7 +608,7 @@
 
 - (void)_loadIcon
 {
-    if([self webFrame] != [[self _controller] mainFrame] || _private->mainDocumentError || _private->iconLoader){
+    if([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader){
         return;
     }
                 
@@ -652,7 +652,7 @@
 
 - (void)_defersCallbacksChanged
 {
-    BOOL defers = [_private->controller defersCallbacks];
+    BOOL defers = [_private->webView defersCallbacks];
     
     if (defers == _private->defersCallbacks) {
         return;

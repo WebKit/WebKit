@@ -94,7 +94,7 @@
 
 -(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
 {
-    [[dataSource _controller] setDefersCallbacks:NO];
+    [[dataSource _webView] setDefersCallbacks:NO];
     if (!_request) {
 	[self stopLoadingForPolicyChange];
     }
@@ -115,7 +115,7 @@
     NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
+    if ([dataSource webFrame] == [[dataSource _webView] mainFrame]) {
         mutableRequest = [newRequest mutableCopy];
         [mutableRequest setHTTPCookiePolicyBaseURL:URL];
     }
@@ -145,7 +145,7 @@
     // when the main load was started.
     [dataSource _setRequest:newRequest];
     
-    [[dataSource _controller] setDefersCallbacks:YES];
+    [[dataSource _webView] setDefersCallbacks:YES];
     [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest
                                                  dataSource:dataSource
                                                   formState:nil
@@ -157,7 +157,7 @@
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(NSURLResponse *)r
 {
-    [[dataSource _controller] setDefersCallbacks:NO];
+    [[dataSource _webView] setDefersCallbacks:NO];
 
     switch (contentPolicy) {
     case WebPolicyUse:
@@ -209,9 +209,9 @@
 		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
     policyResponse = [r retain];
 
-    WebView *c = [dataSource _controller];
-    [c setDefersCallbacks:YES];
-    [[c _policyDelegateForwarder] webView:c decidePolicyForMIMEType:[r MIMEType]
+    WebView *wv = [dataSource _webView];
+    [wv setDefersCallbacks:YES];
+    [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:[r MIMEType]
                                                             request:[dataSource request]
                                                               frame:[dataSource webFrame]
                                                    decisionListener:listener];
@@ -222,7 +222,7 @@
 {
     ASSERT(![con defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
 
@@ -239,12 +239,12 @@
     ASSERT([data length] != 0);
     ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _webView] defersCallbacks]);
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
 
     [dataSource _receivedData:data];
-    [[dataSource _controller] _mainReceivedBytesSoFar:[[dataSource data] length]
+    [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
                                        fromDataSource:dataSource
                                              complete:NO];
 
@@ -258,7 +258,7 @@
 {
     ASSERT(![con defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "URL = %@", [dataSource _URL]);
         
@@ -266,7 +266,7 @@
     [self retain];
 
     [dataSource _finishedLoading];
-    [[dataSource _controller] _mainReceivedBytesSoFar:[[dataSource data] length]
+    [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
                                        fromDataSource:dataSource
                                              complete:YES];
     [super connectionDidFinishLoading:con];
@@ -278,7 +278,7 @@
 {
     ASSERT(![con defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _controller] defersCallbacks]);
+    ASSERT(![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "URL = %@, error = %@", [error _web_failingURL], [error _web_localizedDescription]);
 

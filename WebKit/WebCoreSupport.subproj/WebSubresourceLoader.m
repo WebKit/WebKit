@@ -53,9 +53,9 @@
     [newRequest setCachePolicy:[[source request] cachePolicy]];
     [newRequest setHTTPReferrer:referrer];
     
-    WebView *_controller = [source _controller];
-    [newRequest setHTTPCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
-    [newRequest setHTTPUserAgent:[_controller userAgentForURL:URL]];
+    WebView *_webView = [source _webView];
+    [newRequest setHTTPCookiePolicyBaseURL:[[[[_webView mainFrame] dataSource]  request] URL]];
+    [newRequest setHTTPUserAgent:[_webView userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
     [newRequest release];
@@ -68,7 +68,7 @@
         NSError *badURLError = [[NSError alloc] _web_initWithDomain:NSURLErrorDomain 
                                                                code:NSURLErrorBadURL
                                                          failingURL:[URL absoluteString]];
-        [_controller _receivedError:badURLError fromDataSource:source];
+        [_webView _receivedError:badURLError fromDataSource:source];
         [badURLError release];
         client = nil;
     }
@@ -78,7 +78,7 @@
 
 - (void)receivedError:(NSError *)error
 {
-    [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
+    [[dataSource _webView] _receivedError:error fromDataSource:dataSource];
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
@@ -116,7 +116,7 @@
     
     [dataSource _removeSubresourceClient:self];
     
-    [[dataSource _controller] _finishedLoadingResourceFromDataSource:dataSource];
+    [[dataSource _webView] _finishedLoadingResourceFromDataSource:dataSource];
     
     [self release];
     

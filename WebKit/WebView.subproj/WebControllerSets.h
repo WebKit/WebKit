@@ -8,10 +8,10 @@
 
 @class WebView;
 
-@interface WebControllerSets : NSObject
-+(void)addController:(WebView *)controller toSetNamed:(NSString *)name;
-+(void)removeController:(WebView *)controller fromSetNamed:(NSString *)name;
-+(NSEnumerator *)controllersInSetNamed:(NSString *)name;
+@interface WebViewSets : NSObject
++(void)addWebView:(WebView *)webView toSetNamed:(NSString *)name;
++(void)removeWebView:(WebView *)webView fromSetNamed:(NSString *)name;
++(NSEnumerator *)webViewsInSetNamed:(NSString *)name;
 @end
 
 

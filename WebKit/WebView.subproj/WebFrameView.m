@@ -71,7 +71,7 @@ enum {
 
 - (WebFrame *)webFrame
 {
-    return [[self _controller] _frameForView: self]; 
+    return [[self _webView] _frameForView: self]; 
 }
 
 

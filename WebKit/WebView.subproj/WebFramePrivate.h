@@ -58,7 +58,7 @@ typedef enum {
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebBridge *bridge;
-    WebView *controller;
+    WebView *webView;
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
     WebFrameLoadType loadType;
@@ -83,8 +83,8 @@ typedef enum {
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
-- (void)setController:(WebView *)c;
-- (WebView *)controller;
+- (void)setWebView:(WebView *)wv;
+- (WebView *)webView;
 - (void)setWebFrameView:(WebFrameView *)v;
 - (WebFrameView *)webFrameView;
 - (void)setDataSource:(WebDataSource *)d;
@@ -104,12 +104,11 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
-- (void)setController: (WebView *)controller;
+- (void)_setWebView: (WebView *)webView;
 - (void)_setName:(NSString *)name;
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_detachFromParent;
 - (void)_closeOldDataSources;
-- (void)_setController: (WebView *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionToCommitted: (NSDictionary *)pageCache;
 - (void)_transitionToLayoutAcceptable;

@@ -93,7 +93,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    [[view controller] _finishedLoadingResourceFromDataSource:[view dataSource]];
+    [[view webView] _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
 
     [view release];
@@ -104,7 +104,7 @@
 
 - (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)result
 {
-    [[view controller] _receivedError:result fromDataSource:[view dataSource]];
+    [[view webView] _receivedError:result fromDataSource:[view dataSource]];
 
     [self receivedError:NPRES_NETWORK_ERR];
 

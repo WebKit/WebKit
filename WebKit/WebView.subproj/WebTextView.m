@@ -175,18 +175,18 @@
     [super menuForEvent:theEvent];
     
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebView *controller = [webFrameView _controller];
+    WebView *webView = [webFrameView _webView];
     WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);
-    ASSERT(controller);
+    ASSERT(webView);
 
     BOOL hasSelection = ([self selectedRange].location != NSNotFound && [self selectedRange].length > 0);
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:hasSelection], WebElementIsSelectedKey,
         frame, WebElementFrameKey, nil];
 
-    return [controller _menuForElement:element];
+    return [webView _menuForElement:element];
 }
 
 // This approach could be relaxed when dealing with 3228554

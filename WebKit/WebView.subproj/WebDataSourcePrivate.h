@@ -27,7 +27,7 @@
 
     id <WebDocumentRepresentation> representation;
     
-    WebView *controller;
+    WebView *webView;
     
     // A reference to actual request used to create the data source.
     // This should only be used by the resourceLoadDelegate's
@@ -72,7 +72,7 @@
     // Error associated with main document.
     NSError *mainDocumentError;
 
-    BOOL loading; // self and controller are retained while loading
+    BOOL loading; // self and webView are retained while loading
 
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
@@ -116,10 +116,10 @@
 - (void)_startLoading;
 - (void)_stopLoading;
 - (NSURL *)_URL;
-- (WebView *)_controller;
+- (WebView *)_webView;
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
-- (void)_setController:(WebView *)controller;
+- (void)_setWebView:(WebView *)webView;
 - (void)_startLoading: (NSDictionary *)pageCache;
 - (void)_stopLoadingInternal;
 - (BOOL)_isStopping;

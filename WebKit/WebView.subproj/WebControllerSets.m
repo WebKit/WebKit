@@ -14,11 +14,11 @@ CFEqual,
 CFHash
 };
 
-@implementation WebControllerSets
+@implementation WebViewSets
 
 NSMutableDictionary *sets = nil;
 
-+(void)addController:(WebView *)controller toSetNamed: (NSString *)name
++(void)addWebView:(WebView *)webView toSetNamed: (NSString *)name
 {
     if (sets == nil) {
 	sets = [[NSMutableDictionary alloc] init];
@@ -33,10 +33,10 @@ NSMutableDictionary *sets = nil;
     }
 
     
-    CFSetSetValue(set, controller);
+    CFSetSetValue(set, webView);
 }
 
-+(void)removeController:(WebView *)controller fromSetNamed: (NSString *)name
++(void)removeWebView:(WebView *)webView fromSetNamed: (NSString *)name
 {
     CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
 
@@ -44,7 +44,7 @@ NSMutableDictionary *sets = nil;
 	return;
     }
 
-    CFSetRemoveValue(set, controller);
+    CFSetRemoveValue(set, webView);
 
     if (CFSetGetCount(set) == 0) {
 	[sets removeObjectForKey:name];
@@ -52,7 +52,7 @@ NSMutableDictionary *sets = nil;
 }
 
 
-+(NSEnumerator *)controllersInSetNamed:(NSString *)name;
++(NSEnumerator *)webViewsInSetNamed:(NSString *)name;
 {
     CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
 

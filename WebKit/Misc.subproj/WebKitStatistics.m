@@ -11,7 +11,7 @@
 #import "WebKitStatisticsPrivate.h"
 
 int WebBridgeCount;
-int WebControllerCount;
+int WebViewCount;
 int WebDataSourceCount;
 int WebFrameCount;
 int WebHTMLRepresentationCount;
@@ -19,9 +19,9 @@ int WebFrameViewCount;
 
 @implementation WebKitStatistics
 
-+ (int)controllerCount
++ (int)webViewCount
 {
-    return WebControllerCount;
+    return WebViewCount;
 }
 
 + (int)frameCount

@@ -58,15 +58,30 @@
 
 @implementation WebBridge
 
-- init
+- (id)initWithWebFrame:(WebFrame *)webFrame
 {
+    self = [super init];
+
     ++WebBridgeCount;
     
-    return [super init];
+    WebView *webView = [webFrame webView];
+    
+    // Non-retained because data source owns representation owns bridge.
+    // But WebFrame will call close on us before it goes away, which
+    // guarantees we will not have a stale reference.
+    _frame = webFrame;
+
+    [self setName:[webFrame name]];
+    [self initializeSettings:[webView _settings]];
+    [self setTextSizeMultiplier:[webView textSizeMultiplier]];
+
+    return self;
 }
 
 - (void)dealloc
 {
+    ASSERT(_frame == nil);
+    
     --WebBridgeCount;
     
     [super dealloc];
@@ -74,8 +89,8 @@
 
 - (NSArray *)childFrames
 {
-    ASSERT(frame != nil);
-    NSArray *frames = [frame childFrames];
+    ASSERT(_frame != nil);
+    NSArray *frames = [_frame childFrames];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
     WebFrame *childFrame;
@@ -89,19 +104,19 @@
 
 - (WebCoreBridge *)mainFrame
 {
-    ASSERT(frame != nil);
-    return [[[frame webView] mainFrame] _bridge];
+    ASSERT(_frame != nil);
+    return [[[_frame webView] mainFrame] _bridge];
 }
 
 - (WebCoreBridge *)findFrameNamed:(NSString *)name;
 {
-    ASSERT(frame != nil);
-    return [[frame findFrameNamed:name] _bridge];
+    ASSERT(_frame != nil);
+    return [[_frame findFrameNamed:name] _bridge];
 }
 
 - (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name
 {
-    ASSERT(frame != nil);
+    ASSERT(_frame != nil);
 
     NSMutableURLRequest *request = nil;
 
@@ -110,163 +125,162 @@
 	[request setHTTPReferrer:[self referrer]];
     }
 
-    WebView *currentController = [frame webView];
-    id wd = [currentController UIDelegate];
-    WebView *newController = nil;
+    WebView *currentWebView = [_frame webView];
+    id wd = [currentWebView UIDelegate];
+    WebView *newWebView = nil;
     
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        newController = [wd webView:currentController createWebViewWithRequest:request];
+        newWebView = [wd webView:currentWebView createWebViewWithRequest:request];
     else
-        newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:request];
-    [newController _setTopLevelFrameName:name];
-    return [[newController mainFrame] _bridge];
+        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
+    [newWebView _setTopLevelFrameName:name];
+    return [[newWebView mainFrame] _bridge];
 }
 
 - (void)showWindow
 {
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webViewShow: c];
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webViewShow: wv];
 }
 
 - (BOOL)areToolbarsVisible
 {
-    ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    id wd = [c UIDelegate];
+    ASSERT(_frame != nil);
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webViewAreToolbarsVisible:)])
-        return [wd webViewAreToolbarsVisible: c];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webViewAreToolbarsVisible:c];
+        return [wd webViewAreToolbarsVisible: wv];
+    return [[WebDefaultUIDelegate sharedUIDelegate] webViewAreToolbarsVisible:wv];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
-    ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webView:c setToolbarsVisible:visible];
+    ASSERT(_frame != nil);
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webView:wv setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
 {
-    ASSERT(frame != nil);
-    return [[frame frameView] allowsScrolling];
+    ASSERT(_frame != nil);
+    return [[_frame frameView] allowsScrolling];
 }
 
 - (void)setScrollbarsVisible:(BOOL)visible
 {
-    ASSERT(frame != nil);
-    return [[frame frameView] setAllowsScrolling:visible];
+    ASSERT(_frame != nil);
+    return [[_frame frameView] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
 {
-    ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    id wd = [c UIDelegate];
+    ASSERT(_frame != nil);
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webViewIsStatusBarVisible:)])
-        return [wd webViewIsStatusBarVisible:c];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:c];
+        return [wd webViewIsStatusBarVisible:wv];
+    return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:wv];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
-    ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webView:c setStatusBarVisible:visible];
+    ASSERT(_frame != nil);
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webView:wv setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     [[webView _UIDelegateForwarder] webView:webView setFrame:frameRect];
 }
 
 - (NSRect)windowFrame
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     return [[webView _UIDelegateForwarder] webViewFrame:webView];
 }
 
 - (void)setWindowContentRect:(NSRect)contentRect
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     [[webView _UIDelegateForwarder] webView:webView setFrame:contentRect];
 }
 
 - (NSRect)windowContentRect
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     return [[webView _UIDelegateForwarder] webViewContentRect:webView];
 }
 
 - (void)setWindowIsResizable:(BOOL)resizable
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     [[webView _UIDelegateForwarder] webView:webView setResizable:resizable];
 }
 
 - (BOOL)windowIsResizable
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     return [[webView _UIDelegateForwarder] webViewIsResizable:webView];
 }
 
 - (NSResponder *)firstResponder
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     return [[webView _UIDelegateForwarder] webViewFirstResponder:webView];
 }
 
 - (void)makeFirstResponder:(NSResponder *)view
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
 }
 
 - (void)closeWindow
 {
-    ASSERT(frame != nil);
-    WebView *webView = [frame webView];
+    ASSERT(_frame != nil);
+    WebView *webView = [_frame webView];
     [[webView _UIDelegateForwarder] webViewClose:webView];
 }
 
-
 - (NSWindow *)window
 {
-    ASSERT(frame != nil);
-    return [[frame frameView] window];
+    ASSERT(_frame != nil);
+    return [[_frame frameView] window];
 }
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webView:c runJavaScriptAlertPanelWithMessage:message];
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webView:wv runJavaScriptAlertPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
-    WebView *c = [frame webView];
-    id wd = [c UIDelegate];
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:)])
-        return [wd webView:c runJavaScriptConfirmPanelWithMessage:message];
-    return [[WebDefaultUIDelegate sharedUIDelegate] webView:c runJavaScriptConfirmPanelWithMessage:message];
+        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message];
+    return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
-    WebView *c = [frame webView];
-    id wd = [c UIDelegate];
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
-        *result = [wd webView:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+        *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     else
-        *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+        *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     return *result != nil;
 }
 
@@ -277,15 +291,15 @@
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webView:c runOpenPanelForFileButtonWithResultListener:resultListener];
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webView:wv runOpenPanelForFileButtonWithResultListener:resultListener];
 }
 
 
 - (WebDataSource *)dataSource
 {
-    ASSERT(frame != nil);
-    WebDataSource *dataSource = [frame dataSource];
+    ASSERT(_frame != nil);
+    WebDataSource *dataSource = [_frame dataSource];
 
     ASSERT(dataSource != nil);
     ASSERT([dataSource _isCommitted]);
@@ -300,9 +314,9 @@
 
 - (void)setStatusText:(NSString *)status
 {
-    ASSERT(frame != nil);
-    WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webView:c setStatusText:status];
+    ASSERT(_frame != nil);
+    WebView *wv = [_frame webView];
+    [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -322,9 +336,9 @@
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSString *)URL
 {
-    // If we are no longer attached to a controller, this must be an attempted load from an
+    // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
-    if ([[self dataSource] _controller] == nil) {
+    if ([[self dataSource] _webView] == nil) {
 	return nil;
     }
 
@@ -336,38 +350,38 @@
 
 - (void)objectLoadedFromCacheWithURL:(NSString *)URL response: response size:(unsigned)bytes
 {
-    ASSERT(frame != nil);
+    ASSERT(_frame != nil);
     ASSERT(response != nil);
 
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
-    WebView *c = [frame webView];
-    id delegate = [c resourceLoadDelegate];
+    WebView *wv = [_frame webView];
+    id delegate = [wv resourceLoadDelegate];
     id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
     id identifier;
-    WebResourceDelegateImplementationCache implementations = [c _resourceLoadDelegateImplementations];
+    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
     
     // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
     if (implementations.delegateImplementsIdentifierForRequest)
-        identifier = [delegate webView:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
+        identifier = [delegate webView:wv identifierForInitialRequest: request fromDataSource: [self dataSource]];
     else
-        identifier = [sharedDelegate webView:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
+        identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:[self dataSource]];
     
     if (implementations.delegateImplementsDidReceiveResponse)
-        [delegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+        [delegate webView:wv resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
     else
-        [sharedDelegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+        [sharedDelegate webView:wv resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
-        [delegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+        [delegate webView:wv resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
     else
-        [sharedDelegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+        [sharedDelegate webView:wv resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
 
     if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [delegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+        [delegate webView:wv resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     else
-        [sharedDelegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+        [sharedDelegate webView:wv resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
-    [[frame webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
+    [[_frame webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
 
     [request release];
 }
@@ -379,30 +393,22 @@
 
 - (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory
 {
-    [frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date lockHistory:lockHistory];
+    [_frame _clientRedirectedTo:[NSURL _web_URLWithString:URL] delay:seconds fireDate:date lockHistory:lockHistory];
 }
 
 - (void)reportClientRedirectCancelled
 {
-    [frame _clientRedirectCancelled];
+    [_frame _clientRedirectCancelled];
 }
 
-- (void)setWebFrame:(WebFrame *)webFrame
+- (void)close
 {
-    ASSERT(webFrame != nil);
-
-    if (frame == nil) {
-	// Non-retained because data source owns representation owns bridge
-	frame = webFrame;
-        [self setTextSizeMultiplier:[[frame webView] textSizeMultiplier]];
-    } else {
-	ASSERT(frame == webFrame);
-    }
+    _frame = nil;
 }
 
 - (void)focusWindow
 {
-    [[[frame webView] _UIDelegateForwarder] webViewFocus:[frame webView]];
+    [[[_frame webView] _UIDelegateForwarder] webViewFocus:[_frame webView]];
 }
 
 - (void)unfocusWindow
@@ -428,11 +434,11 @@
 	target = nil;
     }
 
-    WebFrame *targetFrame = [frame findFrameNamed:target];
+    WebFrame *targetFrame = [_frame findFrameNamed:target];
 
-    [frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
+    [_frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
 
-    if (targetFrame != nil && frame != targetFrame) {
+    if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];
     }
 }
@@ -443,26 +449,26 @@
 	target = nil;
     }
 
-    WebFrame *targetFrame = [frame findFrameNamed:target];
+    WebFrame *targetFrame = [_frame findFrameNamed:target];
 
-    [frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
+    [_frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
 
-    if (targetFrame != nil && frame != targetFrame) {
+    if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];
     }
 }
 
 - (NSString *)generateFrameName
 {
-    return [frame _generateFrameName];
+    return [_frame _generateFrameName];
 }
 
 - (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSString *)URL
     renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
-    ASSERT(frame != nil);
-    WebFrame *newFrame = [[frame webView] _createFrameNamed:frameName inParent:frame allowsScrolling:allowsScrolling];
+    ASSERT(_frame != nil);
+    WebFrame *newFrame = [[_frame webView] _createFrameNamed:frameName inParent:_frame allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
         return nil;
     }
@@ -472,15 +478,15 @@
     [[newFrame frameView] _setMarginWidth:width];
     [[newFrame frameView] _setMarginHeight:height];
 
-    [frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
+    [_frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
 
     return [newFrame _bridge];
 }
 
 - (void)saveDocumentState: (NSArray *)documentState
 {
-    WebHistoryItem *item = [frame _itemForSavingDocState];
-    LOG(Loading, "%@: saving form state from to 0x%x", [frame name], item);
+    WebHistoryItem *item = [_frame _itemForSavingDocState];
+    LOG(Loading, "%@: saving form state from to 0x%x", [_frame name], item);
     if (item) {
         [item setDocumentState: documentState];
         // You might think we could save the scroll state here too, but unfortunately this
@@ -491,14 +497,14 @@
 
 - (NSArray *)documentState
 {
-    LOG(Loading, "%@: restoring form state from item 0x%x", [frame name], [frame _itemForRestoringDocState]);
-    return [[frame _itemForRestoringDocState] documentState];
+    LOG(Loading, "%@: restoring form state from item 0x%x", [_frame name], [_frame _itemForRestoringDocState]);
+    return [[_frame _itemForRestoringDocState] documentState];
 }
 
 - (BOOL)saveDocumentToPageCache: documentInfo
 {
-    WebHistoryItem *item = [frame _itemForSavingDocState];
-    if (![item hasPageCache]){
+    WebHistoryItem *item = [_frame _itemForSavingDocState];
+    if (![item hasPageCache]) {
         return false;
     }
     [[item pageCache] setObject: documentInfo forKey: @"WebCorePageState"];
@@ -507,12 +513,12 @@
 
 - (NSString *)userAgentForURL:(NSString *)URL
 {
-    return [[frame webView] userAgentForURL:[NSURL _web_URLWithString:URL]];
+    return [[_frame webView] userAgentForURL:[NSURL _web_URLWithString:URL]];
 }
 
 - (NSView *)nextKeyViewOutsideWebFrameViews
 {
-    WebView *webView = [frame webView];
+    WebView *webView = [_frame webView];
     NSView *nextKeyView = [webView nextKeyView];
     if (nextKeyView) {
         return nextKeyView;
@@ -523,7 +529,7 @@
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    WebView *webView = [frame webView];
+    WebView *webView = [_frame webView];
     NSView *previousKeyView = [webView previousKeyView];
     if (previousKeyView) {
         return previousKeyView;
@@ -534,17 +540,17 @@
 
 - (BOOL)defersLoading
 {
-    return [[frame webView] defersCallbacks];
+    return [[_frame webView] defersCallbacks];
 }
 
 - (void)setDefersLoading:(BOOL)defers
 {
-    [[frame webView] setDefersCallbacks:defers];
+    [[_frame webView] setDefersCallbacks:defers];
 }
 
 - (void)setNeedsReapplyStyles
 {
-    NSView <WebDocumentView> *view = [[frame frameView] documentView];
+    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view setNeedsToApplyStyles:YES];
         [view setNeedsLayout:YES];
@@ -554,7 +560,7 @@
 
 - (void)setNeedsLayout
 {
-    NSView <WebDocumentView> *view = [[frame frameView] documentView];
+    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
     [view setNeedsLayout:YES];
     [view setNeedsDisplay:YES];
 }
@@ -573,7 +579,7 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
     
@@ -790,7 +796,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     NSURL *url = [[NSURL alloc] initWithString:@""];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-    [frame loadRequest:request];
+    [_frame loadRequest:request];
     [request release];
     [url release];
 }
@@ -804,7 +810,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -813,7 +819,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -822,7 +828,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -831,7 +837,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (int)historyLength
 {
-    return [[[frame webView] backForwardList] backListCount];
+    return [[[_frame webView] backForwardList] backListCount];
 }
 
 - (void)goBackOrForward:(int)distance
@@ -839,8 +845,8 @@ static BOOL loggedObjectCacheSize = NO;
     if (distance == 0) {
         return;
     }
-    WebView *controller = [frame webView];
-    WebBackForwardList *list = [controller backForwardList];
+    WebView *webView = [_frame webView];
+    WebBackForwardList *list = [webView backForwardList];
     WebHistoryItem *item = [list itemAtIndex:distance];
     if (!item) {
         if (distance > 0) {
@@ -856,14 +862,14 @@ static BOOL loggedObjectCacheSize = NO;
         }
     }
     if (item) {
-        [controller goToBackForwardItem:item];
+        [webView goToBackForwardItem:item];
     }
 }
 
 static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
-    ASSERT(self->frame != nil);
-    return [[self->frame webView] _formDelegate];
+    ASSERT(self->_frame != nil);
+    return [[self->_frame webView] _formDelegate];
 }
 
 #define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
@@ -871,61 +877,61 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (void)controlTextDidBeginEditing:(NSNotification *)obj
 {
     FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidBeginEditing:obj inFrame:frame];
+    [formDelegate(self) controlTextDidBeginEditing:obj inFrame:_frame];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj
 {
     FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidEndEditing:obj inFrame:frame];
+    [formDelegate(self) controlTextDidEndEditing:obj inFrame:_frame];
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj
 {
     FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidChange:obj inFrame:frame];
+    [formDelegate(self) controlTextDidChange:obj inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     FormDelegateLog(control);
-    return [formDelegate(self) control:control textShouldBeginEditing:fieldEditor inFrame:frame];
+    return [formDelegate(self) control:control textShouldBeginEditing:fieldEditor inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
     FormDelegateLog(control);
-    return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:frame];
+    return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
 {
     FormDelegateLog(control);
-    return [formDelegate(self) control:control didFailToFormatString:string errorDescription:error inFrame:frame];
+    return [formDelegate(self) control:control didFailToFormatString:string errorDescription:error inFrame:_frame];
 }
 
 - (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
 {
     FormDelegateLog(control);
-    [formDelegate(self) control:control didFailToValidatePartialString:string errorDescription:error inFrame:frame];
+    [formDelegate(self) control:control didFailToValidatePartialString:string errorDescription:error inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control isValidObject:(id)obj
 {
     FormDelegateLog(control);
-    return [formDelegate(self) control:control isValidObject:obj inFrame:frame];
+    return [formDelegate(self) control:control isValidObject:obj inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     FormDelegateLog(control);
-    return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:frame];
+    return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:_frame];
 }
 
 - (void)frameDetached
 {
-    [frame stopLoading];
-    [[frame parentFrame] _removeChild:frame];
+    [_frame stopLoading];
+    [[_frame parentFrame] _removeChild:_frame];
 }
 
 @end

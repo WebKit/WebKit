@@ -30,27 +30,23 @@
 
 - init
 {
-    return [self initWithName: nil webFrameView: nil webView: nil];
+    return [self initWithName:nil webFrameView:nil webView:nil];
 }
 
-- initWithName: (NSString *)n webFrameView: (WebFrameView *)v webView: (WebView *)c
+- initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
 {
     [super init];
 
     _private = [[WebFramePrivate alloc] init];
 
-    [self setController:c];
-
-    _private->bridge = [[WebBridge alloc] init];
-    [_private->bridge initializeSettings: [c _settings]];
-    [_private->bridge setWebFrame:self];
-    [_private->bridge setName:n];
-
+    [self _setWebView:v];
     [self _setName:n];
+
+    _private->bridge = [[WebBridge alloc] initWithWebFrame:self];
     
-    if (v) {
-        [_private setWebFrameView: v];
-        [v _setController: [self webView]];
+    if (fv) {
+        [_private setWebFrameView:fv];
+        [fv _setWebView:v];
     }
     
     ++WebFrameCount;
@@ -79,7 +75,7 @@
 
 - (WebView *)webView
 {
-    return [_private controller];
+    return [_private webView];
 }
 
 
@@ -201,8 +197,8 @@
     // Search from this frame down.
     WebFrame *frame = [self _descendantFrameNamed:name];
 
-    if(!frame){
-        // Search in this controller then in other controllers.
+    if (!frame) {
+        // Search in this WebView then in others.
         frame = [[self webView] _findFrameNamed:name];
     }
 

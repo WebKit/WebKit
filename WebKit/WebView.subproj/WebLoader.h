@@ -24,7 +24,7 @@
     NSURLConnection *connection;
     NSURLRequest *request;
 @private
-    WebView *controller;
+    WebView *webView;
     NSURLResponse *response;
     id identifier;
     id resourceLoadDelegate;

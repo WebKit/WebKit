@@ -303,9 +303,9 @@ typedef struct {
         return NO;
     }
 
-    BOOL defers = [[self controller] defersCallbacks];
+    BOOL defers = [[self webView] defersCallbacks];
     if (!defers) {
-        [[self controller] setDefersCallbacks:YES];
+        [[self webView] setDefersCallbacks:YES];
     }
 
     PortState portState = [self saveAndSetPortStateForUpdate:event->what == updateEvt];
@@ -326,7 +326,7 @@ typedef struct {
     [self restorePortState:portState];
 
     if (!defers) {
-        [[self controller] setDefersCallbacks:NO];
+        [[self webView] setDefersCallbacks:NO];
     }
     
     return acceptedEvent;
@@ -811,14 +811,14 @@ typedef struct {
     return [[self dataSource] webFrame];
 }
 
-- (WebView *)controller
+- (WebView *)webView
 {
     return [[self webFrame] webView];
 }
 
 - (NSWindow *)currentWindow
 {
-    return [self window] ? [self window] : [[self controller] hostWindow];
+    return [self window] ? [self window] : [[self webView] hostWindow];
 }
 
 - (NPP)pluginPointer
@@ -982,7 +982,7 @@ typedef struct {
     [self removeWindowObservers];
 
     if (!newWindow) {
-        if ([[self controller] hostWindow]) {
+        if ([[self webView] hostWindow]) {
             // View will be moved out of the actual window but it still has a host window.
             [self stopNullEvents];
         } else {
@@ -1001,7 +1001,7 @@ typedef struct {
         [self start];
         [self restartNullEvents];
         [self addWindowObservers];
-    } else if ([[self controller] hostWindow]) {
+    } else if ([[self webView] hostWindow]) {
         // View moved out of an actual window, but still has a host window.
         // Call setWindow to explicitly "clip out" the plug-in from sight.
         // FIXME: It would be nice to do this where we call stopNullEvents in viewWillMoveToWindow.
@@ -1019,7 +1019,7 @@ typedef struct {
 
 - (void)viewDidMoveToHostWindow
 {
-    if ([[self controller] hostWindow]) {
+    if ([[self webView] hostWindow]) {
         // View now has an associated window. Start it if not already started.
         [self start];
     }
@@ -1065,7 +1065,7 @@ typedef struct {
 
 - (void)preferencesHaveChanged:(NSNotification *)notification
 {
-    WebPreferences *preferences = [[self controller] preferences];
+    WebPreferences *preferences = [[self webView] preferences];
     BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
     
     if ([notification object] == preferences && isStarted != arePlugInsEnabled) {
@@ -1133,17 +1133,17 @@ typedef struct {
     WebFrame *frame = [[self webFrame] findFrameNamed:frameName];
 
     if (frame == nil) {
-	WebView *newController = nil;
-	WebView *currentController = [self controller];
-	id wd = [currentController UIDelegate];
+	WebView *newWebView = nil;
+	WebView *currentWebView = [self webView];
+	id wd = [currentWebView UIDelegate];
 	if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-	    newController = [wd webView:currentController createWebViewWithRequest:nil];
+	    newWebView = [wd webView:currentWebView createWebViewWithRequest:nil];
 	else
-	    newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:nil];
+	    newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
         
-	[newController _setTopLevelFrameName:frameName];
-	[[newController _UIDelegateForwarder] webViewShow:newController];
-	frame = [newController mainFrame];
+	[newWebView _setTopLevelFrameName:frameName];
+	[[newWebView _UIDelegateForwarder] webViewShow:newWebView];
+	frame = [newWebView mainFrame];
     }
 
     NSURL *URL = [request URL];
@@ -1348,7 +1348,7 @@ typedef struct {
 
 - (const char *)userAgent
 {
-    return [[[self controller] userAgentForURL:baseURL] lossyCString];
+    return [[[self webView] userAgentForURL:baseURL] lossyCString];
 }
 
 -(void)status:(const char *)message
@@ -1360,7 +1360,7 @@ typedef struct {
 
     NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
-    WebView *wv = [self controller];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
     [status release];
 }

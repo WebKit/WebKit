@@ -38,10 +38,10 @@
 
 @implementation WebFrameView (WebPrivate)
 
-// Note that the controller is not retained.
-- (WebView *)_controller
+// Note that the WebVew is not retained.
+- (WebView *)_webView
 {
-    return _private->controller;
+    return _private->webView;
 }
 
 
@@ -92,10 +92,10 @@
     return documentView;
 }
 
-- (void)_setController: (WebView *)controller
+- (void)_setWebView:(WebView *)webView
 {
-    // Not retained; the controller owns the view, indirectly through the frame tree.
-    _private->controller = controller;    
+    // Not retained because the WebView owns the WebFrame, which owns the WebFrameView.
+    _private->webView = webView;    
 }
 
 - (NSScrollView *)_scrollView
@@ -301,17 +301,17 @@ static NSMutableDictionary *viewTypes;
 
 - (void)_goBack
 {
-    [_private->controller goBack];
+    [_private->webView goBack];
 }
 
 - (void)_goForward
 {
-    [_private->controller goForward];
+    [_private->webView goForward];
 }
 
 - (BOOL)_isMainFrame
 {
-    return [_private->controller mainFrame] == [self webFrame];
+    return [_private->webView mainFrame] == [self webFrame];
 }
 
 @end

@@ -89,10 +89,10 @@
 
 - (void)_close
 {
-    if (_private->controllerSetName != nil) {
-        [WebControllerSets removeController:self fromSetNamed:_private->controllerSetName];
-        [_private->controllerSetName release];
-        _private->controllerSetName = nil;
+    if (_private->setName != nil) {
+        [WebViewSets removeWebView:self fromSetNamed:_private->setName];
+        [_private->setName release];
+        _private->setName = nil;
     }
 
     [_private->mainFrame _detachFromParent];
@@ -104,7 +104,7 @@
 {
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
 
-    [childView _setController:self];
+    [childView _setWebView:self];
     [childView setAllowsScrolling:allowsScrolling];
     
     WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webFrameView:childView webView:self];
@@ -249,21 +249,21 @@
     return [[self mainFrame] _descendantFrameNamed:name];
 }
 
-- (WebFrame *)_findFrameNamed: (NSString *)name
+- (WebFrame *)_findFrameNamed:(NSString *)name
 {
-    // Try this controller first
+    // Try this WebView first.
     WebFrame *frame = [self _findFrameInThisWindowNamed:name];
 
     if (frame != nil) {
         return frame;
     }
 
-    // Try other controllers in the same set
-    if (_private->controllerSetName != nil) {
-        NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
-        WebView *controller;
-        while ((controller = [enumerator nextObject]) != nil && frame == nil) {
-	    frame = [controller _findFrameInThisWindowNamed:name];
+    // Try other WebViews in the same set
+    if (_private->setName != nil) {
+        NSEnumerator *enumerator = [WebViewSets webViewsInSetNamed:_private->setName];
+        WebView *webView;
+        while ((webView = [enumerator nextObject]) != nil && frame == nil) {
+	    frame = [webView _findFrameInThisWindowNamed:name];
         }
     }
 
@@ -273,16 +273,16 @@
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
     id wd = [self UIDelegate];
-    WebView *newWindowController = nil;
+    WebView *newWindowWebView = nil;
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        newWindowController = [wd webView:self createWebViewWithRequest:request];
+        newWindowWebView = [wd webView:self createWebViewWithRequest:request];
     else {
-        newWindowController = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWebViewWithRequest: request];
+        newWindowWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWebViewWithRequest: request];
     }
 
-    [[newWindowController _UIDelegateForwarder] webViewShow: self];
+    [[newWindowWebView _UIDelegateForwarder] webViewShow: self];
 
-    return newWindowController;
+    return newWindowWebView;
 }
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element

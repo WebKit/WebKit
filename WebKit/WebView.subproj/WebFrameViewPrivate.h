@@ -10,7 +10,7 @@
 @interface WebFrameViewPrivate : NSObject
 {
 @public
-    WebView *controller;
+    WebView *webView;
     WebDynamicScrollBarsView *frameScrollView;
     
     // These margin values are used to temporarily hold
@@ -27,10 +27,10 @@
 @end
 
 @interface WebFrameView (WebPrivate)
-- (WebView *)_controller;
+- (WebView *)_webView;
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view;
 - (NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
-- (void)_setController:(WebView *)controller;
+- (void)_setWebView:(WebView *)webView;
 - (int)_marginWidth;
 - (int)_marginHeight;
 - (void)_setMarginWidth:(int)w;
