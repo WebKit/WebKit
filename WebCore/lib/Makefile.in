@@ -1,0 +1,66 @@
+# Generated automatically from Makefile.in by configure.
+# Generated automatically from Makefile.in by configure.
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+OBJECTS = $(wildcard *.o)
+
+LIBRARY_BASE_NAME = libwebcore
+LIBRARY_MAJOR_VERSION = 1
+LIBRARY_MINOR_VERSION = 0
+LIBRARY_MICRO_VERSION = 0
+LIBRARY_COMPAT_VERSION = 1.0
+LIBRARY_VERSION = $(LIBRARY_MAJOR_VERSION).$(LIBRARY_MINOR_VERSION).$(LIBRARY_MICRO_VERSION)
+LIBRARY = $(LIBRARY_BASE_NAME).$(LIBRARY_VERSION).dylib
+LIBRARY_DYNAMIC_LINK = $(LIBRARY_BASE_NAME).$(LIBRARY_MAJOR_VERSION).dylib
+LIBRARY_STATIC_LINK = $(LIBRARY_BASE_NAME).dylib
+
+CLEAN_FILES = $(LIBRARY_BASE_NAME).* \
+        *.dylib \
+        *.cpp \
+        *.o \
+        *.a \
+        kjs \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(LIBRARY)
+
+$(LIBRARY): $(OBJECTS)
+	rm -f $(LIBRARY_BASE_NAME).*.dylib; \
+	$(CC) -flat_namespace -undefined suppress -compatibility_version $(LIBRARY_COMPAT_VERSION) -current_version $(LIBRARY_VERSION) $(DYLIBFLAGS) -o $(LIBRARY) $(OBJECTS) -lstdc++ -ljpeg
+	ln -fs $(LIBRARY) $(LIBRARY_DYNAMIC_LINK)
+	ln -fs $(LIBRARY) $(LIBRARY_STATIC_LINK)
+	if [ -d "/symroots" ]; then \
+		ln -fs `pwd`/$(LIBRARY) /symroots/$(LIBRARY); \
+		ln -fs `pwd`/$(LIBRARY) /symroots/$(LIBRARY_DYNAMIC_LINK); \
+		ln -fs `pwd`/$(LIBRARY) /symroots/$(LIBRARY_STATIC_LINK); \
+	fi
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================
