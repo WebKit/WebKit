@@ -31,19 +31,22 @@
 
 class QTextDecoder {
 public:
-    virtual QString toUnicode(const char* chars, int len) = 0;
+    virtual QString toUnicode(const char *, int) = 0;
 };
 
 class QTextCodec {
 public:
-    static QTextCodec *codecForMib(int mib);
-    static QTextCodec *codecForName(const char* hint, int accuracy=0);
+    static QTextCodec *codecForMib(int);
+    static QTextCodec *codecForName(const char *, int accuracy = 0);
+    static QTextCodec *codecForLocale();
 
+    virtual const char* name() const = 0;
     virtual int mibEnum() const = 0;
     virtual QTextDecoder *makeDecoder() const;
-    virtual QString toUnicode(const char *chars, int len) const;
-    QString toUnicode(const QByteArray&, int len) const;
-    QString toUnicode(const char *chars) const;
+    QCString fromUnicode(const QString &) const;
+    virtual QString toUnicode(const char *, int) const;
+    QString toUnicode(const QByteArray &, int) const;
+    QString toUnicode(const char *) const;
 };
 
 #endif
