@@ -122,7 +122,9 @@
         }
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenImageInNewWindow]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadImageToDisk]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard]];
+        if ([element objectForKey:WebElementImageURLKey] != nil) {
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard]];
+        }
     }
     
     if (!imageURL && !linkURL) {

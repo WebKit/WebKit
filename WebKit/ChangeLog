@@ -1,3 +1,17 @@
+2004-07-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3580589> REGRESSION (1.1-1.2): can't open a new window for an image that has not loaded
+	<rdar://problem/3612691> Missing image icons (blue ?) lack context menu
+
+        Reviewed by john.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]): if there is no image, but there is an image URL, provide image context menu items besides "Copy Image" 
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): don't drag an image with an actual image
+        (-[WebHTMLView _mayStartDragAtEventLocation:]): ditto
+
 2004-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.
@@ -246,7 +260,6 @@
         (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
 	Ask for slideback.
 
->>>>>>> 1.2612
 2004-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -1,3 +1,14 @@
+2004-07-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3580589> REGRESSION (1.1-1.2): can't open a new window for an image that has not loaded
+	<rdar://problem/3612691> Missing image icons (blue ?) lack context menu
+
+        Reviewed by john.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): if there is no image, put the image URL on the element anyway
+
 2004-07-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for alt text not working on images.

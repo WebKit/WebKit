@@ -811,14 +811,15 @@ static WebHTMLView *lastHitView = nil;
     
     WebView *webView = [self _webView];
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    WebImageRenderer *image = [element objectForKey:WebElementImageKey];
     BOOL startedDrag = YES;  // optimism - we almost always manage to start the drag
 
     // note per kwebster, the offset arg below is always ignored in positioning the image
-    if (imageURL && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
+    if (imageURL != nil && image != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         id source = self;
         if (!dhtmlWroteData) {
             _private->draggingImageURL = [imageURL retain];
-            source = [pasteboard _web_declareAndWriteDragImage:[element objectForKey:WebElementImageKey]
+            source = [pasteboard _web_declareAndWriteDragImage:image
                                                            URL:linkURL ? linkURL : imageURL
                                                          title:[element objectForKey:WebElementImageAltStringKey]
                                                        archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
@@ -922,7 +923,8 @@ static WebHTMLView *lastHitView = nil;
     NSPoint mouseDownPoint = [self convertPoint:location fromView:nil];
     NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
 
-    if ([mouseDownElement objectForKey: WebElementImageURLKey] != nil && 
+    if ([mouseDownElement objectForKey: WebElementImageKey] != nil &&
+        [mouseDownElement objectForKey: WebElementImageURLKey] != nil && 
         [[WebPreferences standardPreferences] loadsImagesAutomatically] && 
         (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         return YES;
