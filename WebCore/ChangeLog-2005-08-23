@@ -1,3 +1,10 @@
+2003-12-26  Darin Adler  <darin@apple.com>
+
+        - one more small step to make -[KWQPageState dealloc] safer
+
+        * kwq/KWQPageState.mm: (-[KWQPageState dealloc]): Only do the real detach() if the
+        document is already in the detached state; we don't want to detach twice.
+
 2003-12-23  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3451306>: address book search fails at Airborne 
@@ -8,9 +15,7 @@
         * khtml/ecma/kjs_html.cpp:
         commented out definition of document.all; now sites like this one that
         set document.all to a value will work.
-        * khtml/ecma/kjs_html.lut.h:
-        (KJS::):
-        regenerated this file
+        * khtml/ecma/kjs_html.lut.h: regenerated this file
 
 2003-12-23  Darin Adler  <darin@apple.com>
 

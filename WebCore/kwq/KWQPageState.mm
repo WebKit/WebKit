@@ -118,8 +118,11 @@ using KJS::SavedBuiltins;
 
         KWQKHTMLPart::clearTimers(view);
 
+        bool detached = document->renderer() == 0;
         document->setInPageCache(NO);
-        document->detach();
+        if (detached) {
+            document->detach();
+        }
         document->deref();
         
         if (view) {
