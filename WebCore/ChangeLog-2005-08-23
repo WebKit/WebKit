@@ -1,3 +1,15 @@
+2005-02-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs  
+        
+        Fixed <rdar://problem/4020747> REGRESSION: stray </applet> tags crash Safari
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::processCloseTag):  Made a typesafe check that prevents crashes
+        whenever there is a closing applet tag without an actual <applet> in the first place. 
+        Now verifies the current token is ID_APPLET before casting it to an HTMLAppletElementImpl.
+         
+
 2005-02-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
