@@ -1,3 +1,23 @@
+2005-03-08  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4042570> Need to check image properties for presence of width/height properties
+
+	ImageIO-55 changed how image properties are created.  They
+	are now created incrementally.  So we need "re-get" the image
+	properties if the properties we care about (width/height) aren't
+	in the property dictionary.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData init]):
+        (-[WebImageData fileProperties]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData _isSizeAvailable]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+        (-[WebImageData size]):
+
 2005-03-08  John Sullivan  <sullivan@apple.com>
 
         A couple of tweaks to the previous patch, from Darin's review.

@@ -58,6 +58,7 @@ static CFDictionaryRef imageSourceOptions;
         decodeLock = [[NSLock alloc] init];
 
     imageSource = CGImageSourceCreateIncremental ([self _imageSourceOptions]);
+    sizeAvailable = NO;
     
     return self;
 }
@@ -211,7 +212,7 @@ static CFDictionaryRef imageSourceOptions;
 - (CFDictionaryRef)fileProperties
 {
     if (!fileProperties) {
-	fileProperties = CGImageSourceCopyProperties (imageSource, 0);
+	fileProperties = CGImageSourceCopyProperties (imageSource, [self _imageSourceOptions]);
     }
     
     return fileProperties;
@@ -226,17 +227,17 @@ static CFDictionaryRef imageSourceOptions;
         // Clear cache.
 	[self _invalidateImageProperties];
     }
-    
+
     if (imageProperties == 0 && num) {
         imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
         size_t i;
         for (i = 0; i < num; i++) {
 #if USE_DEPRECATED_IMAGESOURCE_API	
-            imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
+            imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, [self _imageSourceOptions]);
             if (imageProperties[i])
                 CFRetain (imageProperties[i]);
 #else
-            imageProperties[i] = CGImageSourceCopyPropertiesAtIndex (imageSource, i, 0);
+            imageProperties[i] = CGImageSourceCopyPropertiesAtIndex (imageSource, i, [self _imageSourceOptions]);
 #endif
         }
         imagePropertiesSize = num;
@@ -247,17 +248,17 @@ static CFDictionaryRef imageSourceOptions;
         // get them before enough data was available in the header.
         if (imageProperties[index] == 0) {
 #if USE_DEPRECATED_IMAGESOURCE_API	
-            imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, 0);
+            imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, [self _imageSourceOptions]);
             if (imageProperties[index])
                 CFRetain (imageProperties[index]);
 #else
-            imageProperties[index] = CGImageSourceCopyPropertiesAtIndex (imageSource, index, 0);
+            imageProperties[index] = CGImageSourceCopyPropertiesAtIndex (imageSource, index, [self _imageSourceOptions]);
 #endif
         }
         
         return imageProperties[index];
     }
-        
+    
     return 0;
 }
 
@@ -369,6 +370,39 @@ static CFDictionaryRef imageSourceOptions;
     }
 }
 
+- (BOOL)_isSizeAvailable
+{
+    CGImageSourceStatus imageSourceStatus = CGImageSourceGetStatus(imageSource);
+    
+    if (sizeAvailable)
+        return YES;
+        
+    // With ImageIO-55 the meta data for an image is updated progressively.  We don't want
+    // to indicate that the image is 'ready' for layout until we know the size.  So, we
+    // have to try getting the meta until we have a valid width and height property.
+    if (imageSourceStatus >= kCGImageStatusIncomplete) {
+        CFDictionaryRef image0Properties = CGImageSourceCopyPropertiesAtIndex (imageSource, 0, [self _imageSourceOptions]);
+        if  (image0Properties) {
+            CFNumberRef widthNumber = CFDictionaryGetValue (image0Properties, kCGImagePropertyPixelWidth);
+            CFNumberRef heightNumber = CFDictionaryGetValue (image0Properties, kCGImagePropertyPixelHeight);
+            sizeAvailable = widthNumber && heightNumber;
+            
+            if (imageProperties) {
+                if (imageProperties[0])
+                    CFRelease(imageProperties[0]);
+            }
+            else {
+                imagePropertiesSize = [self numberOfImages];
+                imageProperties = (CFDictionaryRef *)calloc (imagePropertiesSize * sizeof(CFDictionaryRef), 1);
+            }
+                
+            imageProperties[0] = image0Properties;
+        }
+    }
+    
+    return sizeAvailable;
+}
+
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)callback
 {
 #ifdef kImageBytesCutoff
@@ -400,6 +434,12 @@ static CFDictionaryRef imageSourceOptions;
     
     CFRelease (data);
 
+    // Image properties will not be available until the first frame of the file
+    // reaches kCGImageStatusIncomplete.  New as of ImageIO-55, see 4031602. 
+    if (imageSource) {
+        return [self _isSizeAvailable];
+    }
+    
     return YES;
 }
 
@@ -624,17 +664,17 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             [decodeLock lock];
             CFDictionaryRef properties = [self propertiesAtIndex:0];
             if (properties) {
-            CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
-            if (num)
-                CFNumberGetValue (num, kCFNumberFloat32Type, &w);
-            num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
-            if (num)
-                CFNumberGetValue (num, kCFNumberFloat32Type, &h);
+                CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
+                if (num)
+                    CFNumberGetValue (num, kCFNumberFloat32Type, &w);
+                num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
+                if (num)
+                    CFNumberGetValue (num, kCFNumberFloat32Type, &h);
 
-            size.width = w;
-            size.height = h;
-            
-            haveSize = YES;
+                size.width = w;
+                size.height = h;
+
+                haveSize = YES;
             }
             [decodeLock unlock];
         }

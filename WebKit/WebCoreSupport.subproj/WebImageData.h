@@ -39,6 +39,8 @@
     
     BOOL isSolidColor;                              // Is frame 0 a solid color?
     CGColorRef solidColor;                          // If isSolidColor this is the color, or NULL for transparent
+    
+    BOOL sizeAvailable;
 }
 
 - (size_t)numberOfImages;
