@@ -1090,9 +1090,9 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     left += 1;
 
     RenderBlock *cb = containingBlock();
-    int availableWidth = cb->lineWidth(height);
+    int availableWidth = cb->lineWidth(top);
     if (style()->whiteSpace() == NORMAL)
-        left = kMin(left, absx + availableWidth - 1);
+        left = kMin(left, absx + box->m_x + availableWidth - 1);
     
     return QRect(left, top, 1, height);
 }

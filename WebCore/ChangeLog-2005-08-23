@@ -1,3 +1,21 @@
+2005-03-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for this bug:
+       
+        <rdar://problem/4059384> Cannot place insertion point correctly in editable text that avoids floating elements
+
+        Note: I strongly suspect this bug blocks a complete solution to this other Tiger/P2:
+        <rdar://problem/4055748> AX: Dictionary pop-up panel shows at wrong place on specific parts of particular pages
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect): Change the y-coordinate used to calculate the available width for a line. Height is wrong.
+        Top of the box containing the text where the click is done is correct. Also, add in the x-offset for the start
+        of the text box when calculating the available width. If this text box is avoiding a float at the y-coordinate
+        for the relevant box, failure to add in the amount of float-avoidance will make the text at the coordinates
+        greater than end-of-line minus float-avoidance ineligible for caret placement.
+
 2005-03-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
@@ -8,7 +26,7 @@
         To get the part safely after calling end, save a guarded pointer to the view.
         The old way could end trying to call a virtual function a part that was destroyed.
 
-2005-03-18  Maciej Stachowiak  <mjs@apple.com>
+2005-03-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
