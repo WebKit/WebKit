@@ -437,9 +437,18 @@ void CompositeEditCommandImpl::insertNodeAfter(DOM::NodeImpl *insertChild, DOM::
     }
 }
 
-void CompositeEditCommandImpl::insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset)
+void CompositeEditCommandImpl::insertNodeAt(NodeImpl *insertChild, NodeImpl *refChild, long offset)
 {
-    if (refChild->caretMinOffset() >= offset) {
+    if (refChild->hasChildNodes() || (refChild->renderer() && refChild->renderer()->isBlockFlow())) {
+        NodeImpl *child = refChild->firstChild();
+        for (long i = 0; child && i < offset; i++)
+            child = child->nextSibling();
+        if (child)
+            insertNodeBefore(insertChild, child);
+        else
+            appendNode(refChild, insertChild);
+    } 
+    else if (refChild->caretMinOffset() >= offset) {
         insertNodeBefore(insertChild, refChild);
     } 
     else if (refChild->isTextNode() && refChild->caretMaxOffset() > offset) {
@@ -479,6 +488,13 @@ void CompositeEditCommandImpl::joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl
 {
     JoinTextNodesCommand cmd(document(), text1, text2);
     applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommandImpl::inputText(const DOMString &text)
+{
+    InputTextCommand cmd(document());
+    applyCommandToComposite(cmd);
+    cmd.input(text);
 }
 
 void CompositeEditCommandImpl::insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text)
@@ -1156,7 +1172,7 @@ void InputTextCommandImpl::execute(const DOMString &text)
 {
     KHTMLSelection selection = currentSelection();
 
-    // Delete the current selection
+    // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == KHTMLSelection::RANGE)
         deleteSelection();
     else
@@ -1384,10 +1400,9 @@ void JoinTextNodesCommandImpl::doUnapply()
 // PasteHTMLCommandImpl
 
 PasteHTMLCommandImpl::PasteHTMLCommandImpl(DocumentImpl *document, const DOMString &HTMLString) 
-    : CompositeEditCommandImpl(document)
+    : CompositeEditCommandImpl(document), m_HTMLString(HTMLString)
 {
-    ASSERT(!HTMLString.isEmpty());
-    m_HTMLString = HTMLString; 
+    ASSERT(!m_HTMLString.isEmpty());
 }
 
 PasteHTMLCommandImpl::~PasteHTMLCommandImpl()
@@ -1401,58 +1416,55 @@ int PasteHTMLCommandImpl::commandID() const
 
 void PasteHTMLCommandImpl::doApply()
 {
-    DOM::DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_HTMLString);
+    DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_HTMLString);
     ASSERT(root);
     
-    DOM::NodeImpl *firstChild = root->firstChild();
-    DOM::NodeImpl *lastChild = root->lastChild();
+    NodeImpl *firstChild = root->firstChild();
+    NodeImpl *lastChild = root->lastChild();
     ASSERT(firstChild);
     ASSERT(lastChild);
     
-    deleteSelection();
+    KHTMLSelection selection = currentSelection();
+
+    // Delete the current selection, or collapse whitespace, as needed
+    if (selection.state() == KHTMLSelection::RANGE)
+        deleteSelection();
+    else
+        deleteCollapsibleWhitespace();
     
-    KHTMLPart *part = document()->part();
-    ASSERT(part);
-    
-    KHTMLSelection selection = part->selection();
+    selection = endingSelection();
     ASSERT(!selection.isEmpty());
     
-    DOM::NodeImpl *startNode = selection.startNode();
-    long startOffset = selection.startOffset();
-    TextImpl *textNode = startNode->isTextNode() ? static_cast<TextImpl *>(startNode) : NULL;
-
-    if (textNode && firstChild == lastChild && firstChild->isTextNode()) {
-        // Simple text paste. Add the text to the text node with the caret.
-        insertText(textNode, startOffset, static_cast<TextImpl *>(firstChild)->data());
-        selection = KHTMLSelection(textNode, startOffset + static_cast<TextImpl *>(firstChild)->length());
-        setEndingSelection(selection);
+    if (firstChild == lastChild && firstChild->isTextNode()) {
+        // Simple text paste. Treat as if the text were typed.
+        inputText(static_cast<TextImpl *>(firstChild)->data());
     } 
     else {
-        // HTML tree paste.
-        insertNodeAt(firstChild, startNode, startOffset);
+        // HTML fragment paste.
+        NodeImpl *beforeNode = firstChild;
+        NodeImpl *node = firstChild->nextSibling();
+
+        insertNodeAt(firstChild, selection.startNode(), selection.startOffset());
         
-        DOM::NodeImpl *child = startNode->nextSibling();
-        DOM::NodeImpl *beforeNode = startNode;
-		
-        // Insert the nodes from the clipping.
-        while (child) {
-            DOM::NodeImpl *nextSibling = child->nextSibling();
-            insertNodeAfter(child, beforeNode);
-            beforeNode = child;
-            child = nextSibling;
+        // Insert the nodes from the fragment
+        while (node) {
+            NodeImpl *next = node->nextSibling();
+            insertNodeAfter(node, beforeNode);
+            beforeNode = node;
+            node = next;
         }
+        ASSERT(beforeNode);
 		
 		// Find the last leaf and place the caret after it.
-        child = lastChild;
+        NodeImpl *leaf = lastChild;
         while (1) {
-            DOM::NodeImpl *nextChild = child->lastChild();
-            if (!nextChild) {
+            NodeImpl *nextChild = leaf->lastChild();
+            if (!nextChild)
                 break;
-            }
-            child = nextChild;
+            leaf = nextChild;
         }
-        selection = KHTMLSelection(child, child->caretMaxOffset());
-        setEndingSelection(selection);
+        
+        setEndingSelection(DOMPosition(leaf, leaf->caretMaxOffset()));
     }
 }
 
@@ -1597,8 +1609,12 @@ void RemoveNodeAndPruneCommandImpl::doApply()
 // SplitTextNodeCommandImpl
 
 SplitTextNodeCommandImpl::SplitTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
-    : EditCommandImpl(document), m_text2(text), m_offset(offset)
+    : EditCommandImpl(document), m_text1(0), m_text2(text), m_offset(offset)
 {
+    ASSERT(m_text2);
+    ASSERT(m_text2->length() > 0);
+
+    m_text2->ref();
 }
 
 SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl()

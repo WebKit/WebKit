@@ -1,3 +1,30 @@
+2004-04-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Make paste work again. It has been broken for some undetermined
+        period of time.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (CompositeEditCommandImpl::insertNodeAt): Handle inserting a node when
+        the reference node has children, or is an empty block.
+        (CompositeEditCommandImpl::inputText): New convenience to create and
+        apply an InputTextCommand.
+        (InputTextCommandImpl::execute): Collapse whitespace when selection is
+        not a range. Deleting the selection when it is a range already does that, 
+        so no need to make special accommodation for it.
+        (PasteHTMLCommandImpl::PasteHTMLCommandImpl): Initialize m_HTMLString using 
+        an initialization list.
+        (PasteHTMLCommandImpl::doApply): Collapse whitespace.... as above for 
+        InputTextCommandImpl::execute. Don't need to qualify NodeImpl's with DOM 
+        namespace. Clean up selection access; no need to grep around for it, the
+        desired selection is returned by calling currentSelection(). Treat "simple
+        text paste" like typing. Tighten up and simplify HTML fragment paste; no
+        real change in algorithm. 
+        (SplitTextNodeCommandImpl::SplitTextNodeCommandImpl): m_text1 member variable
+        not initialized. This bug was introduced by a recent change by me. Fixing now.
+        * khtml/editing/htmlediting_impl.h: Add inputText() declaration.
+
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
