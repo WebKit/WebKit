@@ -313,27 +313,25 @@ void QColor::setNamedColor(const QString &name)
     // [kocienda: 2001-11-08]: I've made some improvements
     // but it's still a crock.
     
-    int r, g, b;
-    
     if (name.isEmpty()) {
         color = KWQInvalidColor;
+        return;
     } 
-    else if (decodeColorFromHexColorString(name, &r, &g, &b)) {
+    
+    int r, g, b;
+    NSString *hexString = [getNamedColors() objectForKey:[name.getNSString() lowercaseString]];
+    if (hexString && decodeColorFromHexColorString(QString::fromNSString(hexString), &r, &g, &b)) {
         setRgb(r, g, b);
-    } 
-    else {
-        NSString *hexString;
-        
-        hexString = [getNamedColors() objectForKey:[name.getNSString() lowercaseString]];
-        
-        if (hexString && decodeColorFromHexColorString(QString::fromNSString(hexString), &r, &g, &b)) {
-            setRgb(r, g, b);
-        }
-        else {
-            ERROR("couldn't create color using name %s", name.ascii());
-            color = KWQInvalidColor;
-        }
+        return;
     }
+
+    if (decodeColorFromHexColorString(name, &r, &g, &b)) {
+        setRgb(r, g, b);
+        return;
+    } 
+
+    ERROR("couldn't create color using name %s", name.ascii());
+    color = KWQInvalidColor;
 }
 
 void QColor::hsv(int *h, int *s, int *v) const
