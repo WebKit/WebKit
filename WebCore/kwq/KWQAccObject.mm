@@ -1277,35 +1277,6 @@ static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSSt
     
 }
 
-// NOTE: This wrapper is to get the NSAccessibilityForegroundColorTextAttribute string because
-// AppKit changed the name from NSAccessibilityForegoundColorTextAttribute w/o binary compatibliity.
-// It should be removed once everyone is building on the newer AppKit per <rdar://problem/4014691>.
-static NSString * NSAccessibilityForegroundColorTextAttributeWrapper(void)
-{
-    static NSString * axForegroundColorTextAttribute = nil;
-    
-    // find the symbol just once
-    if (axForegroundColorTextAttribute == nil) {
-        // check for the new name
-        NSSymbol axSymbol = NSLookupAndBindSymbol("_NSAccessibilityForegroundColorTextAttribute");
-        
-        // fall back to the old name
-        if (axSymbol == nil)
-            axSymbol = NSLookupAndBindSymbol("_NSAccessibilityForegoundColorTextAttribute");
-        ASSERT(axSymbol);
-        
-        // get the addreess of variable address
-        NSString ** axSymbolAddr = (NSString**) NSAddressOfSymbol(axSymbol);
-        
-        // get and save the string address
-        axForegroundColorTextAttribute = *axSymbolAddr;
-        ASSERT(axForegroundColorTextAttribute);
-    }
-    
-    // return the symbol we can use
-    return axForegroundColorTextAttribute;
-}
-
 static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, RenderObject *renderer, NSRange range)
 {
     RenderStyle *style = renderer->style();
@@ -1314,7 +1285,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
     AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), range);
 
     // set basic colors
-    AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttributeWrapper(), style->color().getNSColor(), range);
+    AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, style->color().getNSColor(), range);
     AXAttributeStringSetColor(attrString, NSAccessibilityBackgroundColorTextAttribute, style->backgroundColor().getNSColor(), range);
 
     // set super/sub scripting
