@@ -99,16 +99,19 @@ public:
 
     virtual bool isURLAttribute(AttributeImpl *attr) const;
     
+    void tokenizeRelAttribute(const AtomicString& rel);
+
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
     CSSStyleSheetImpl *m_sheet;
     DOMString m_url;
     DOMString m_type;
     QString m_media;
-    DOMString m_rel;
     int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled
-    bool m_loading;
-    bool m_alternate;
+    bool m_loading : 1;
+    bool m_alternate : 1;
+    bool m_isStyleSheet : 1;
+    bool m_isIcon : 1;
     QString m_data; // needed for temporarily storing the loaded style sheet data
 };
 

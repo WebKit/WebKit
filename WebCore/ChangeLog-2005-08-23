@@ -1,3 +1,16 @@
+2005-04-12  David Hyatt  <hyatt@apple.com>
+
+	Beginning of work to support the Acid2 CSS test put forward by the Web Standards Project.  Fix
+	our handling of the rel attribute on <link> elements to do a proper tokenization so that stylesheets
+	can be recognized even when other keywords are present in the rel attribute.
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLLinkElementImpl::parseHTMLAttribute):
+        (HTMLLinkElementImpl::tokenizeRelAttribute):
+        (HTMLLinkElementImpl::process):
+        * khtml/html/html_headimpl.h:
+
 2005-04-12  John Sullivan  <sullivan@apple.com>
 
         - fixed these two bugs (I also fixed these on the experimental-ui-branch)

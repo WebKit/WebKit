@@ -113,7 +113,7 @@ HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
     m_sheet = 0;
     m_loading = false;
     m_cachedSheet = 0;
-    m_alternate = false;
+    m_isStyleSheet = m_isIcon = m_alternate = false;
     m_disabledState = 0;
 }
 
@@ -171,7 +171,7 @@ void HTMLLinkElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     switch (attr->id())
     {
     case ATTR_REL:
-        m_rel = attr->value();
+        tokenizeRelAttribute(attr->value());
         process();
         break;
     case ATTR_HREF:
@@ -194,43 +194,59 @@ void HTMLLinkElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     }
 }
 
+void HTMLLinkElementImpl::tokenizeRelAttribute(const AtomicString& relStr)
+{
+    m_isStyleSheet = m_isIcon = m_alternate = false;
+    QString rel = relStr.string().lower();
+    if (rel == "stylesheet")
+        m_isStyleSheet = true;
+    else if (rel == "icon" || rel == "shortcut icon")
+        m_isIcon = true;
+    else if (rel == "alternate stylesheet" || rel == "stylesheet alternate")
+        m_isStyleSheet = m_alternate = true;
+    else {
+        // Tokenize the rel attribute and set bits based on specific keywords that we find.
+        rel.replace('\n', ' ');
+        QStringList list = QStringList::split(' ', rel);        
+        for (QStringList::Iterator i = list.begin(); i != list.end(); ++i) {
+            if (*i == "stylesheet")
+                m_isStyleSheet = true;
+            else if (*i == "alternate")
+                m_alternate = true;
+            else if (*i == "icon")
+                m_isIcon = true;
+        }
+    }
+}
+
 void HTMLLinkElementImpl::process()
 {
     if (!inDocument())
         return;
 
     QString type = m_type.string().lower();
-    QString rel = m_rel.string().lower();
-
+    
     KHTMLPart* part = getDocument()->part();
 
     // IE extension: location of small icon for locationbar / bookmarks
-#if APPLE_CHANGES
-    if ( part && rel == "shortcut icon" && !m_url.isEmpty() && !part->parentPart())
-    	part->browserExtension()->setIconURL( KURL(m_url.string()) );
-
-    // Mozilla extension to IE extension: icon specified with type
-    if ( part && rel == "icon" && !m_url.isEmpty() && !part->parentPart())
-    	part->browserExtension()->setTypedIconURL( KURL(m_url.string()), type );
-#else
-    // Uses both "shortcut icon" and "icon"
-   
-    if ( part && rel.contains("icon") && !m_url.isEmpty() && !part->parentPart())
-        part->browserExtension()->setIconURL( KURL(m_url.string()) );
-#endif
+    if (part && m_isIcon && !m_url.isEmpty() && !part->parentPart()) {
+        if (!type.isEmpty()) // Mozilla extension to IE extension: icon specified with type
+            part->browserExtension()->setTypedIconURL(KURL(m_url.string()), type);
+        else 
+            part->browserExtension()->setIconURL(KURL(m_url.string()));
+    }
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if(m_disabledState != 2 && (type.contains("text/css") || rel == "stylesheet" || (rel.contains("alternate") && rel.contains("stylesheet"))) && getDocument()->part()) {
+    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && getDocument()->part()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
 	// also, don't load style sheets for standalone documents
-        if( m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print") ) {
+        if (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print")) {
             m_loading = true;
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
             // stylesheet.  Alternate stylesheets don't hold up render tree construction.
-            m_alternate = rel.contains("alternate");
             if (!isAlternate())
                 getDocument()->addPendingSheet();
             
