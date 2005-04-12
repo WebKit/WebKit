@@ -33,7 +33,7 @@ void removeForbidden(int tagId, ushort *forbiddenTags);
 
 enum tagStatus { OPTIONAL, REQUIRED, FORBIDDEN };
 
-bool checkChild(ushort tagID, ushort childID);
+bool checkChild(ushort tagID, ushort childID, bool strict);
 
 extern const unsigned short tagPriorityArray[];
 extern const tagStatus endTagArray[];

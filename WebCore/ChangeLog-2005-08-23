@@ -1,3 +1,24 @@
+2005-04-12  David Hyatt  <hyatt@apple.com>
+
+	Working on the Acid2 test, Row 1.
+
+	Improve checkChild for the DTD so that it knows what mode a document is in.  This allows it to adhere more
+	strictly to the actual DTD in strict mode and almost strict mode.
+
+	Change the <table>-inside-<p> check so that <table> is disallowed inside <p> in 
+	strict mode and almost strict mode.  This matches Firefox behavior, which allows <table>
+	inside <p> only in quirks mode.
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/dtd.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::childAllowed):
+
 2005-04-12  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej. 

@@ -1398,7 +1398,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
             // we have to take care to close the pre block in
             // case we encounter an unallowed element....
-            if(pre && beginTag && !DOM::checkChild(ID_PRE, tagID)) {
+            if(pre && beginTag && !DOM::checkChild(ID_PRE, tagID, !parser->doc()->inCompatMode())) {
                 kdDebug(6036) << " not allowed in <pre> " << (int)tagID << endl;
                 pre = false;
             }

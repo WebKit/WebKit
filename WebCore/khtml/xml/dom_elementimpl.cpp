@@ -527,7 +527,7 @@ bool ElementImpl::childAllowed( NodeImpl *newChild )
 
     // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
     if (getDocument()->isHTMLDocument())
-        return checkChild(id(), newChild->id());
+        return checkChild(id(), newChild->id(), !getDocument()->inCompatMode());
     return true;
 }
 
