@@ -631,6 +631,20 @@ ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
     return m_elementsById.find(elementId.string());
 }
 
+ElementImpl *DocumentImpl::elementFromPoint( const int _x, const int _y ) const
+{
+    if (!m_render) return 0;
+    
+    RenderObject::NodeInfo nodeInfo(true, true);
+    m_render->layer()->hitTest(nodeInfo, _x, _y); 
+    NodeImpl* n = nodeInfo.innerNode();
+
+    while ( n && !n->isElementNode() ) {
+        n = n->parentNode();
+    }
+    
+    return static_cast<ElementImpl*>(n);
+}
 
 void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *element)
 {

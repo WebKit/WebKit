@@ -145,24 +145,24 @@ namespace KJS {
 const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "createEntityReference", DOMDocument::CreateEntityReference, DontDelete|Function, 1, 0 },
-   { "getElementById", DOMDocument::GetElementById, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[34] },
+   { "getElementById", DOMDocument::GetElementById, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[35] },
    { 0, 0, 0, 0, 0 },
-   { "getElementsByTagName", DOMDocument::GetElementsByTagName, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[31] },
+   { "getElementsByTagName", DOMDocument::GetElementsByTagName, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[32] },
    { "queryCommandIndeterm", DOMDocument::QueryCommandIndeterm, DontDelete|Function, 1, 0 },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "createElement", DOMDocument::CreateElement, DontDelete|Function, 1, 0 },
-   { "queryCommandEnabled", DOMDocument::QueryCommandEnabled, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[35] },
+   { "queryCommandEnabled", DOMDocument::QueryCommandEnabled, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[36] },
    { "createAttribute", DOMDocument::CreateAttribute, DontDelete|Function, 1, 0 },
    { "createEvent", DOMDocument::CreateEvent, DontDelete|Function, 1, 0 },
    { 0, 0, 0, 0, 0 },
-   { "importNode", DOMDocument::ImportNode, DontDelete|Function, 2, &DOMDocumentProtoTableEntries[33] },
+   { "importNode", DOMDocument::ImportNode, DontDelete|Function, 2, &DOMDocumentProtoTableEntries[34] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "createDocumentFragment", DOMDocument::CreateDocumentFragment, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[29] },
-   { "createTextNode", DOMDocument::CreateTextNode, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[32] },
-   { "createRange", DOMDocument::CreateRange, DontDelete|Function, 0, 0 },
+   { "createTextNode", DOMDocument::CreateTextNode, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[33] },
+   { "elementFromPoint", DOMDocument::ElementFromPoint, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[31] },
    { "createCDATASection", DOMDocument::CreateCDATASection, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[30] },
    { 0, 0, 0, 0, 0 },
    { "execCommand", DOMDocument::ExecCommand, DontDelete|Function, 3, 0 },
@@ -174,6 +174,7 @@ const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { "getOverrideStyle", DOMDocument::GetOverrideStyle, DontDelete|Function, 2, 0 },
    { "createComment", DOMDocument::CreateComment, DontDelete|Function, 1, 0 },
    { "getElementsByTagNameNS", DOMDocument::GetElementsByTagNameNS, DontDelete|Function, 2, 0 },
+   { "createRange", DOMDocument::CreateRange, DontDelete|Function, 0, 0 },
    { "createNodeIterator", DOMDocument::CreateNodeIterator, DontDelete|Function, 3, 0 },
    { "createTreeWalker", DOMDocument::CreateTreeWalker, DontDelete|Function, 4, 0 },
    { "queryCommandState", DOMDocument::QueryCommandState, DontDelete|Function, 1, 0 },
@@ -181,7 +182,7 @@ const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { "queryCommandValue", DOMDocument::QueryCommandValue, DontDelete|Function, 1, 0 }
 };
 
-const struct HashTable DOMDocumentProtoTable = { 2, 36, DOMDocumentProtoTableEntries, 29 };
+const struct HashTable DOMDocumentProtoTable = { 2, 37, DOMDocumentProtoTableEntries, 29 };
 
 } // namespace
 

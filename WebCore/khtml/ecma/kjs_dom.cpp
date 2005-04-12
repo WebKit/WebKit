@@ -786,6 +786,7 @@ void DOMAttr::putValue(ExecState *exec, int token, const Value& value, int /*att
   createProcessingInstruction DOMDocument::CreateProcessingInstruction DontDelete|Function 1
   createAttribute DOMDocument::CreateAttribute                 DontDelete|Function 1
   createEntityReference DOMDocument::CreateEntityReference     DontDelete|Function 1
+  elementFromPoint     DOMDocument::ElementFromPoint           DontDelete|Function 1
   getElementsByTagName  DOMDocument::GetElementsByTagName      DontDelete|Function 1
   importNode           DOMDocument::ImportNode                 DontDelete|Function 2
   createElementNS      DOMDocument::CreateElementNS            DontDelete|Function 2
@@ -935,6 +936,8 @@ Value DOMDocumentProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List
     return getDOMNode(exec,doc.createAttribute(s));
   case DOMDocument::CreateEntityReference:
     return getDOMNode(exec,doc.createEntityReference(args[0].toString(exec).string()));
+  case DOMDocument::ElementFromPoint:
+    return getDOMNode(exec,doc.elementFromPoint((int)args[0].toNumber(exec), (int)args[1].toNumber(exec)));
   case DOMDocument::GetElementsByTagName:
     return getDOMNodeList(exec,doc.getElementsByTagName(s));
   case DOMDocument::ImportNode: // DOM2

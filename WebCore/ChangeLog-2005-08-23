@@ -1,3 +1,22 @@
+2005-04-12  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej. 
+
+	- fixed <rdar://problem/3760895> Request for including an implementation of the elementFromPoint function
+ 
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::elementFromPoint):
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocumentProtoFunc::tryCall):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMDocument::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::elementFromPoint):
+        * khtml/xml/dom_docimpl.h:
+
 2005-04-12  David Hyatt  <hyatt@apple.com>
 
 	Beginning of work to support the Acid2 CSS test put forward by the Web Standards Project.  Fix

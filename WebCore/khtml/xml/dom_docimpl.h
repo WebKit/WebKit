@@ -197,6 +197,7 @@ public:
     NodeImpl *importNode( NodeImpl *importedNode, bool deep, int &exceptioncode );
     virtual ElementImpl *createElementNS ( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode );
     ElementImpl *getElementById ( const DOMString &elementId ) const;
+    ElementImpl *elementFromPoint ( const int _x, const int _y ) const;
 
     // Actually part of HTMLDocument, but used for giving XML documents a window title as well
     DOMString title() const { return m_title; }

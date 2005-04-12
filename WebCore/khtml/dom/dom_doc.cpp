@@ -329,6 +329,12 @@ Element Document::getElementById( const DOMString &elementId ) const
     return 0;
 }
 
+Element Document::elementFromPoint( const int _x, const int _y ) const
+{
+    if(!impl) return 0;
+    return ((DocumentImpl *)impl)->elementFromPoint( _x, _y );
+}
+
 NodeList Document::getElementsByTagName( const DOMString &tagName )
 {
     if (!impl) return 0;
