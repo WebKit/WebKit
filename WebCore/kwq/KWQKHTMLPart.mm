@@ -36,6 +36,7 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
+#import "KWQNSViewExtras.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
 #import "KWQRegExp.h"
