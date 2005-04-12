@@ -23,17 +23,11 @@
 
 #include "value.h"
 #include "internal.h"
+#include "list.h"
 
 #if APPLE_CHANGES
 #include <CoreFoundation/CoreFoundation.h>
 #include <cxxabi.h>
-#endif
-
-#include <collector.h>
-#include <value.h>
-#include <internal.h>
-
-#if APPLE_CHANGES
 #include <pthread.h>
 #include <mach/mach_port.h>
 #include <mach/task.h>
@@ -372,6 +366,7 @@ bool Collector::collect()
 
   markStackObjectsConservatively();
   markProtectedObjects();
+  List::markProtectedLists();
 #endif
 
 #if TEST_CONSERVATIVE_GC

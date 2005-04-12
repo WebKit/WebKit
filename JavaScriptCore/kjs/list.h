@@ -120,6 +120,8 @@ namespace KJS {
         static const List &empty();
         
 	void mark() { if (_impBase->valueRefCount == 0) markValues(); }
+
+        static void markProtectedLists();
     private:
         ListImpBase *_impBase;
 	bool _needsMarking;

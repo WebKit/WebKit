@@ -28,7 +28,7 @@
 namespace KJS {
 
 // tunable parameters
-const int poolSize = 384;
+const int poolSize = 512;
 const int inlineValuesSize = 4;
 
 
@@ -42,14 +42,19 @@ struct ListImp : ListImpBase
     ValueImp **overflow;
 
     ListImp *nextInFreeList;
+    ListImp *nextInOutsideList;
+    ListImp *prevInOutsideList;
 
 #if DUMP_STATISTICS
     int sizeHighWaterMark;
 #endif
+
+    void markValues();
 };
 
 static ListImp pool[poolSize];
 static ListImp *poolFreeList;
+static ListImp *outsidePoolList;
 static int poolUsed;
 
 #if DUMP_STATISTICS
@@ -86,6 +91,49 @@ ListStatisticsExitLogger::~ListStatisticsExitLogger()
 
 #endif
 
+
+inline void ListImp::markValues()
+{
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 0; i != inlineSize; ++i) {
+	if (!values[i]->marked()) {
+	    values[i]->mark();
+	}
+    }
+
+    int overflowSize = size - inlineSize;
+    for (int i = 0; i != overflowSize; ++i) {
+	if (!overflow[i]->marked()) {
+	    overflow[i]->mark();
+	}
+    }
+}
+
+void List::markProtectedLists()
+{
+#if TEST_CONSERVATIVE_GC || USE_CONSERVATIVE_GC
+    int seen = 0;
+    for (int i = 0; i < poolSize; i++) {
+        if (seen >= poolUsed)
+            break;
+
+        if (pool[i].state == usedInPool) {
+            seen++;
+            if (pool[i].valueRefCount > 0) {
+                pool[i].markValues();
+            }
+        }
+    }
+
+    for (ListImp *l = outsidePoolList; l; l = l->nextInOutsideList) {
+        if (l->valueRefCount > 0) {
+            l->markValues();
+        }
+    }
+#endif
+}
+
+
 static inline ListImp *allocateListImp()
 {
     // Find a free one in the pool.
@@ -99,6 +147,14 @@ static inline ListImp *allocateListImp()
     
     ListImp *imp = new ListImp;
     imp->state = usedOnHeap;
+    // link into outside pool list
+    if (outsidePoolList) {
+        outsidePoolList->prevInOutsideList = imp;
+    }
+    imp->nextInOutsideList = outsidePoolList;
+    imp->prevInOutsideList = NULL;
+    outsidePoolList = imp;
+
     return imp;
 }
 
@@ -110,6 +166,19 @@ static inline void deallocateListImp(ListImp *imp)
 	poolFreeList = imp;
 	poolUsed--;
     } else {
+        // unlink from outside pool list
+        if (!imp->prevInOutsideList) {
+            outsidePoolList = imp->nextInOutsideList;
+            if (outsidePoolList) {
+                outsidePoolList->prevInOutsideList = NULL;
+            }
+        } else {
+            imp->prevInOutsideList->nextInOutsideList = imp->nextInOutsideList;
+            if (imp->nextInOutsideList) {
+                imp->nextInOutsideList->prevInOutsideList = imp->prevInOutsideList;
+            }
+        }
+
         delete imp;
     }
 }
@@ -153,82 +222,44 @@ List::List(bool needsMarking) : _impBase(allocateListImp()), _needsMarking(needs
 
 void List::derefValues()
 {
+#if !USE_CONSERVATIVE_GC
     ListImp *imp = static_cast<ListImp *>(_impBase);
     
     int size = imp->size;
     
     int inlineSize = MIN(size, inlineValuesSize);
-#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != inlineSize; ++i)
         imp->values[i]->deref();
-#endif
 
-#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
-    for (int i = 0; i != inlineSize; ++i)
-        gcUnprotect(imp->values[i]);
-#endif
-    
     int overflowSize = size - inlineSize;
     ValueImp **overflow = imp->overflow;
-#if !USE_CONSERVATIVE_GC
+
     for (int i = 0; i != overflowSize; ++i)
         overflow[i]->deref();
-#endif
-
-#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
-    for (int i = 0; i != overflowSize; ++i)
-        gcUnprotect(overflow[i]);
 #endif
 }
 
 void List::refValues()
 {
+#if !USE_CONSERVATIVE_GC
     ListImp *imp = static_cast<ListImp *>(_impBase);
     
     int size = imp->size;
     
     int inlineSize = MIN(size, inlineValuesSize);
-#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != inlineSize; ++i)
         imp->values[i]->ref();
-#endif
-#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
-    for (int i = 0; i != inlineSize; ++i)
-        gcProtect(imp->values[i]);
-#endif
     
     int overflowSize = size - inlineSize;
     ValueImp **overflow = imp->overflow;
-#if !USE_CONSERVATIVE_GC
     for (int i = 0; i != overflowSize; ++i)
         overflow[i]->ref();
-#endif
-#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
-    for (int i = 0; i != overflowSize; ++i)
-        gcProtect(overflow[i]);
 #endif
 }
 
 void List::markValues()
 {
-    ListImp *imp = static_cast<ListImp *>(_impBase);
-    
-    int size = imp->size;
-    
-    int inlineSize = MIN(size, inlineValuesSize);
-    for (int i = 0; i != inlineSize; ++i) {
-	if (!imp->values[i]->marked()) {
-	    imp->values[i]->mark();
-	}
-    }
-
-    int overflowSize = size - inlineSize;
-    ValueImp **overflow = imp->overflow;
-    for (int i = 0; i != overflowSize; ++i) {
-	if (!overflow[i]->marked()) {
-	    overflow[i]->mark();
-	}
-    }
+    static_cast<ListImp *>(_impBase)->markValues();
 }
 
 void List::release()
@@ -279,9 +310,6 @@ void List::append(ValueImp *v)
     if (imp->valueRefCount > 0) {
 #if !USE_CONSERVATIVE_GC
 	v->ref();
-#endif
-#if USE_CONSERVATIVE_GC | TEST_CONSERVATIVE_GC
-	gcProtect(v);
 #endif
     }
     

@@ -1,3 +1,31 @@
+2005-04-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/4086819> Avoid using protect count hash table so much for 5.6% JS iBench speedup
+
+	- Avoid using protected values hash for the two most common cases
+	- Bump up ListImp high water mark, new testing shows 508 ListImps are
+	created during JS iBench.
+
+	Net result is a 5.6% speedup on JavaScript iBench
+	
+        * kjs/collector.cpp:
+        (KJS::Collector::collect): mark protected lists as appropriate.
+        * kjs/context.h:
+        * kjs/list.cpp:
+        (KJS::ListImp::markValues): Moved implementation from List::markValues
+        (KJS::List::markProtectedLists): Implemented - scan pool and overflow
+	list.
+        (KJS::allocateListImp): link lists outside the pool into a separate
+	doubly linked list to be able to mark protected lists
+        (KJS::deallocateListImp): do the corresponding delinking
+        (KJS::List::derefValues): do nothing in conservative GC mode
+        (KJS::List::refValues): do nothing in conservative GC mode
+        (KJS::List::markValues): call ListImp version
+        (KJS::List::append):
+        * kjs/list.h:
+
 === Safari-412 ===
 
 === Safari-411 ===
