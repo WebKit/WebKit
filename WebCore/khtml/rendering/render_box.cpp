@@ -1240,34 +1240,23 @@ void RenderBox::setStaticY(int staticY)
 void RenderBox::calcAbsoluteHorizontal()
 {
     const int AUTO = -666666;
-    int l,r,w,ml,mr,cw;
+    int l, r, cw;
 
     int pab = borderLeft()+ borderRight()+ paddingLeft()+ paddingRight();
 
-    l=r=ml=mr=w=AUTO;
+    l = r = AUTO;
  
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     RenderObject* cb = container();
     cw = containingBlockWidth() + cb->paddingLeft() + cb->paddingRight();
 
-    if(!style()->left().isVariable())
+    if (!style()->left().isVariable())
         l = style()->left().width(cw);
-    if(!style()->right().isVariable())
+    if (!style()->right().isVariable())
         r = style()->right().width(cw);
-    if(!style()->width().isVariable())
-        w = style()->width().width(cw);
-    else if (isReplaced())
-        w = intrinsicWidth();
-    if(!style()->marginLeft().isVariable())
-        ml = style()->marginLeft().width(cw);
-    if(!style()->marginRight().isVariable())
-        mr = style()->marginRight().width(cw);
-
-
-//    printf("h1: w=%d, l=%d, r=%d, ml=%d, mr=%d\n",w,l,r,ml,mr);
 
     int static_distance=0;
-    if ((parent()->style()->direction()==LTR && (l==AUTO && r==AUTO ))
+    if ((parent()->style()->direction()==LTR && (l == AUTO && r == AUTO))
             || style()->left().isStatic())
     {
         static_distance = m_staticX - cb->borderLeft(); // Should already have been set through layout of the parent().
@@ -1275,7 +1264,7 @@ void RenderBox::calcAbsoluteHorizontal()
         for (; po && po != cb; po = po->parent())
             static_distance += po->xPos();
 
-        if (l==AUTO || style()->left().isStatic())
+        if (l == AUTO || style()->left().isStatic())
             l = static_distance;
     }
 
@@ -1293,14 +1282,60 @@ void RenderBox::calcAbsoluteHorizontal()
             r = static_distance;
     }
 
+    calcAbsoluteHorizontalValues(Width, cb, cw, pab, static_distance, l, r, m_width, m_marginLeft, m_marginRight, m_x);
 
-    if (l!=AUTO && w!=AUTO && r!=AUTO)
-    {
+    // Avoid doing any work in the common case (where the values of min-width and max-width are their defaults).
+    int minW = m_width, minML, minMR, minX;
+    calcAbsoluteHorizontalValues(MinWidth, cb, cw, pab, static_distance, l, r, minW, minML, minMR, minX);
+
+    int maxW = m_width, maxML, maxMR, maxX;
+    if (style()->maxWidth().value != UNDEFINED)
+        calcAbsoluteHorizontalValues(MaxWidth, cb, cw, static_distance, pab, l, r, maxW, maxML, maxMR, maxX);
+
+    if (m_width > maxW) {
+        m_width = maxW;
+        m_marginLeft = maxML;
+        m_marginRight = maxMR;
+        m_x = maxX;
+    }
+    
+    if (m_width < minW) {
+        m_width = minW;
+        m_marginLeft = minML;
+        m_marginRight = minMR;
+        m_x = minX;
+    }
+}
+
+void RenderBox::calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* cb, int cw, int pab, int static_distance,
+                                             int l, int r, int& w, int& ml, int& mr, int& x)
+{
+    const int AUTO = -666666;
+    w = ml = mr = AUTO;
+
+    if (!style()->marginLeft().isVariable())
+        ml = style()->marginLeft().width(cw);
+    if (!style()->marginRight().isVariable())
+        mr = style()->marginRight().width(cw);
+
+    Length width;
+    if (widthType == Width)
+        width = style()->width();
+    else if (widthType == MinWidth)
+        width = style()->minWidth();
+    else
+        width = style()->maxWidth();
+
+    if (!width.isVariable())
+        w = width.width(cw);
+    else if (isReplaced())
+        w = intrinsicWidth();
+
+    if (l != AUTO && w != AUTO && r != AUTO) {
         // left, width, right all given, play with margins
         int ot = l + w + r + pab;
 
-        if (ml==AUTO && mr==AUTO)
-        {
+        if (ml==AUTO && mr==AUTO) {
             // both margins auto, solve for equality
             ml = (cw - ot)/2;
             mr = cw - ot - ml;
@@ -1311,10 +1346,9 @@ void RenderBox::calcAbsoluteHorizontal()
         else if (mr==AUTO)
             // solve for right margin
             mr = cw - ot - ml;
-        else
-        {
+        else {
             // overconstrained, solve according to dir
-            if (style()->direction()==LTR)
+            if (style()->direction() == LTR)
                 r = cw - ( l + w + ml + mr + pab);
             else
                 l = cw - ( r + w + ml + mr + pab);
@@ -1329,64 +1363,51 @@ void RenderBox::calcAbsoluteHorizontal()
         if (mr==AUTO) mr = 0;
 
         //1. solve left & width.
-        if (l==AUTO && w==AUTO && r!=AUTO)
-        {
+        if (l == AUTO && w == AUTO && r != AUTO) {
             // From section 10.3.7 of the CSS2.1 specification.
             // "The shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width)."
-            w = QMIN(QMAX(m_minWidth-pab, cw - ( r + ml + mr + pab)), m_maxWidth-pab);
-            l = cw - ( r + w + ml + mr + pab);
+            w = kMin(kMax(m_minWidth - pab, cw - (r + ml + mr + pab)), m_maxWidth - pab);
+            l = cw - (r + w + ml + mr + pab);
         }
         else
 
         //2. solve left & right. use static positioning.
-        if (l==AUTO && w!=AUTO && r==AUTO)
-        {
-            if (style()->direction()==RTL)
-            {
+        if (l == AUTO && w != AUTO && r == AUTO) {
+            if (style()->direction()==RTL) {
                 r = static_distance;
-                l = cw - ( r + w + ml + mr + pab);
+                l = cw - (r + w + ml + mr + pab);
             }
-            else
-            {
+            else {
                 l = static_distance;
-                r = cw - ( l + w + ml + mr + pab);
+                r = cw - (l + w + ml + mr + pab);
             }
 
-        }
-        else
-
-        //3. solve width & right.
-        if (l!=AUTO && w==AUTO && r==AUTO)
-        {
+        } //3. solve width & right.
+        else if (l != AUTO && w == AUTO && r == AUTO) {
             // From section 10.3.7 of the CSS2.1 specification.
             // "The shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width)."
-            w = QMIN(QMAX(m_minWidth-pab, cw - ( l + ml + mr + pab)), m_maxWidth-pab);
-            r = cw - ( l + w + ml + mr + pab);
+            w = kMin(kMax(m_minWidth - pab, cw - (l + ml + mr + pab)), m_maxWidth - pab);
+            r = cw - (l + w + ml + mr + pab);
         }
         else
 
         //4. solve left
         if (l==AUTO && w!=AUTO && r!=AUTO)
-            l = cw - ( r + w + ml + mr + pab);
+            l = cw - (r + w + ml + mr + pab);
         else
-
         //5. solve width
         if (l!=AUTO && w==AUTO && r!=AUTO)
-            w = cw - ( r + l + ml + mr + pab);
+            w = cw - (r + l + ml + mr + pab);
         else
 
         //6. solve right
         if (l!=AUTO && w!=AUTO && r==AUTO)
-            r = cw - ( l + w + ml + mr + pab);
+            r = cw - (l + w + ml + mr + pab);
     }
 
-    m_width = w + pab;
-    m_marginLeft = ml;
-    m_marginRight = mr;
-    m_x = l + ml + cb->borderLeft();
-//    printf("h: w=%d, l=%d, r=%d, ml=%d, mr=%d\n",w,l,r,ml,mr);
+    w += pab;
+    x = l + ml + cb->borderLeft();
 }
-
 
 void RenderBox::calcAbsoluteVertical()
 {
@@ -1398,9 +1419,9 @@ void RenderBox::calcAbsoluteVertical()
     // that introduces static-position value for top, left & right
 
     const int AUTO = -666666;
-    int t,b,h,mt,mb,ch;
+    int t, b, ch;
 
-    t=b=h=mt=mb=AUTO;
+    t = b = AUTO;
 
     int pab = borderTop()+borderBottom()+paddingTop()+paddingBottom();
 
@@ -1412,34 +1433,84 @@ void RenderBox::calcAbsoluteVertical()
     else
         ch = cb->height() - cb->borderTop() - cb->borderBottom();
 
-    if(!style()->top().isVariable())
+    if (!style()->top().isVariable())
         t = style()->top().width(ch);
-    if(!style()->bottom().isVariable())
+    if (!style()->bottom().isVariable())
         b = style()->bottom().width(ch);
-    if (isTable() && style()->height().isVariable())
+
+    int h, mt, mb, y;
+    calcAbsoluteVerticalValues(Height, cb, ch, pab, t, b, h, mt, mb, y);
+
+    // Avoid doing any work in the common case (where the values of min-height and max-height are their defaults).
+    int minH = h, minMT, minMB, minY;
+    calcAbsoluteVerticalValues(MinHeight, cb, ch, pab, t, b, minH, minMT, minMB, minY);
+
+    int maxH = h, maxMT, maxMB, maxY;
+    if (style()->maxHeight().value != UNDEFINED)
+        calcAbsoluteVerticalValues(MaxHeight, cb, ch, pab, t, b, maxH, maxMT, maxMB, maxY);
+
+    if (h > maxH) {
+        h = maxH;
+        mt = maxMT;
+        mb = maxMB;
+        y = maxY;
+    }
+    
+    if (h < minH) {
+        h = minH;
+        mt = minMT;
+        mb = minMB;
+        y = minY;
+    }
+    
+    // If our natural height exceeds the new height once we've set it, then we need to make sure to update
+    // overflow to track the spillout.
+    if (m_height > h)
+        setOverflowHeight(m_height);
+        
+    // Set our final values.
+    m_height = h;
+    m_marginTop = mt;
+    m_marginBottom = mb;
+    m_y = y;
+}
+
+void RenderBox::calcAbsoluteVerticalValues(HeightType heightType, RenderObject* cb, int ch, int pab, 
+                                           int t, int b, int& h, int& mt, int& mb, int& y)
+{
+    const int AUTO = -666666;
+    h = mt = mb = AUTO;
+
+    if (!style()->marginTop().isVariable())
+        mt = style()->marginTop().width(ch);
+    if (!style()->marginBottom().isVariable())
+        mb = style()->marginBottom().width(ch);
+
+    Length height;
+    if (heightType == Height)
+        height = style()->height();
+    else if (heightType == MinHeight)
+        height = style()->minHeight();
+    else
+        height = style()->maxHeight();
+
+    int ourHeight = m_height;
+
+    if (isTable() && height.isVariable())
         // Height is never unsolved for tables. "auto" means shrink to fit.  Use our
         // height instead.
-        h = m_height - pab;
-    else if(!style()->height().isVariable())
+        h = ourHeight - pab;
+    else if (!height.isVariable())
     {
-        h = style()->height().width(ch);
-        
-        if (m_height-pab > h) {
-            setOverflowHeight(m_height + pab - (paddingBottom() + borderBottom()));
-            m_height = h+pab;
-        }
+        h = height.width(ch);
+        if (ourHeight - pab > h)
+            ourHeight = h + pab;
     }
     else if (isReplaced())
         h = intrinsicHeight();
 
-    if(!style()->marginTop().isVariable())
-        mt = style()->marginTop().width(ch);
-    if(!style()->marginBottom().isVariable())
-        mb = style()->marginBottom().width(ch);
-
     int static_top=0;
-    if ((t==AUTO && b==AUTO ) || style()->top().isStatic())
-    {
+    if ((t == AUTO && b == AUTO) || style()->top().isStatic()) {
         // calc hypothetical location in the normal flow
         // used for 1) top=static-position
         //          2) top, bottom, height are all auto -> calc top -> 3.
@@ -1449,17 +1520,15 @@ void RenderBox::calcAbsoluteVertical()
         for (; po && po != cb; po = po->parent())
             static_top += po->yPos();
 
-        if (h==AUTO || style()->top().isStatic())
+        if (h == AUTO || style()->top().isStatic())
             t = static_top;
     }
 
-    if (t!=AUTO && h!=AUTO && b!=AUTO)
-    {
+    if (t != AUTO && h != AUTO && b != AUTO) {
         // top, height, bottom all given, play with margins
         int ot = h + t + b + pab;
 
-        if (mt==AUTO && mb==AUTO)
-        {
+        if (mt == AUTO && mb == AUTO) {
             // both margins auto, solve for equality
             mt = (ch - ot)/2;
             mb = ch - ot - mt;
@@ -1472,71 +1541,60 @@ void RenderBox::calcAbsoluteVertical()
             mb = ch - ot - mt;
         else
             // overconstrained, solve for bottom
-            b = ch - ( h+t+mt+mb+pab);
+            b = ch - (h + t + mt + mb + pab);
     }
-    else
-    {
+    else {
         // one or two of (top, height, bottom) missing, solve
 
         // auto margins are ignored
-        if (mt==AUTO) mt = 0;
-        if (mb==AUTO) mb = 0;
+        if (mt == AUTO)
+            mt = 0;
+        if (mb == AUTO)
+            mb = 0;
 
         //1. solve top & height. use content height.
-        if (t==AUTO && h==AUTO && b!=AUTO)
-        {
-            h = m_height-pab;
-            t = ch - ( h+b+mt+mb+pab);
+        if (t == AUTO && h == AUTO && b != AUTO) {
+            h = ourHeight - pab;
+            t = ch - (h + b + mt + mb + pab);
         }
-        else
-
-        //2. solve top & bottom. use static positioning.
-        if (t==AUTO && h!=AUTO && b==AUTO)
+        else if (t == AUTO && h != AUTO && b == AUTO) //2. solve top & bottom. use static positioning.
         {
             t = static_top;
-            b = ch - ( h+t+mt+mb+pab);
+            b = ch - (h + t + mt + mb + pab);
         }
-        else
-
-        //3. solve height & bottom. use content height.
-        if (t!=AUTO && h==AUTO && b==AUTO)
+        else if (t != AUTO && h == AUTO && b == AUTO) //3. solve height & bottom. use content height.
         {
-            h = m_height-pab;
-            b = ch - ( h+t+mt+mb+pab);
+            h = ourHeight - pab;
+            b = ch - (h + t + mt + mb + pab);
         }
         else
-
         //4. solve top
-        if (t==AUTO && h!=AUTO && b!=AUTO)
-            t = ch - ( h+b+mt+mb+pab);
+        if (t == AUTO && h != AUTO && b != AUTO)
+            t = ch - (h + b + mt + mb + pab);
         else
 
         //5. solve height
-        if (t!=AUTO && h==AUTO && b!=AUTO)
-            h = ch - ( t+b+mt+mb+pab);
+        if (t != AUTO && h == AUTO && b != AUTO)
+            h = ch - (t + b + mt + mb + pab);
         else
 
         //6. solve bottom
-        if (t!=AUTO && h!=AUTO && b==AUTO)
-            b = ch - ( h+t+mt+mb+pab);
+        if (t != AUTO && h != AUTO && b == AUTO)
+            b = ch - (h + t + mt + mb + pab);
     }
 
-    if (m_height<h+pab) //content must still fit
-        m_height = h+pab;
+    if (ourHeight < h + pab) //content must still fit
+        ourHeight = h + pab;
 
-    if (hasOverflowClip() && m_height > h+pab)
-        m_height = h+pab;
+    if (hasOverflowClip() && ourHeight > h + pab)
+        ourHeight = h + pab;
     
     // Do not allow the height to be negative.  This can happen when someone specifies both top and bottom
     // but the containing block height is less than top, e.g., top:20px, bottom:0, containing block height 16.
-    m_height = kMax(0, m_height);
+    ourHeight = kMax(0, ourHeight);
     
-    m_marginTop = mt;
-    m_marginBottom = mb;
-    m_y = t + mt + cb->borderTop();
-    
-//    printf("v: h=%d, t=%d, b=%d, mt=%d, mb=%d, m_y=%d\n",h,t,b,mt,mb,m_y);
-
+    h = ourHeight;
+    y = t + mt + cb->borderTop();
 }
 
 QRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)

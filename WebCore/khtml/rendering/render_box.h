@@ -157,7 +157,11 @@ protected:
 
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
-
+    void calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* cb, int cw, int pab, int static_distance,
+                                      int l, int r, int& w, int& ml, int& mr, int& x);
+    void calcAbsoluteVerticalValues(HeightType heightType, RenderObject* cb, int ch, int pab, 
+                                    int t, int b, int& h, int& mt, int& mb, int& y); 
+    
     virtual QRect getOverflowClipRect(int tx, int ty);
     virtual QRect getClipRect(int tx, int ty);
 

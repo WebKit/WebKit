@@ -1,3 +1,15 @@
+2005-04-14  David Hyatt  <hyatt@apple.com>
+
+	3258403 and 3258402 can now be fixed.  min/max-width/height support is now complete.  This patch makes them
+	work for positioned elements and enables us to pass row one of the Acid2 test.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteHorizontal):
+        (RenderBox::calcAbsoluteHorizontalValues):
+        (RenderBox::calcAbsoluteVertical):
+        (RenderBox::calcAbsoluteVerticalValues):
+        * khtml/rendering/render_box.h:
+
 2005-04-12  David Hyatt  <hyatt@apple.com>
 
 	Working on the Acid2 test, Row 1.
