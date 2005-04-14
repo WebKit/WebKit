@@ -606,7 +606,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)con willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
-    ASSERT(con == connection);
+    ASSERT_WITH_MESSAGE(con == connection, "parameter con (%@) is not equal to instance variable connection (%@)", con, connection);
     return [self willCacheResponse:cachedResponse];
 }
 
