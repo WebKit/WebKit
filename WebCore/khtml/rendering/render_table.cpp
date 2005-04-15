@@ -307,6 +307,11 @@ void RenderTable::layout()
             firstBody->calcRowHeight();
             firstBody->layoutRows( th - calculatedHeight );
         }
+        else if (!style()->htmlHacks()) {
+            // Completely empty tables (with no sections or anything) should at least honor specified height
+            // in strict mode.
+            m_height += th;
+        }
     }
     
     int bl = borderLeft();
