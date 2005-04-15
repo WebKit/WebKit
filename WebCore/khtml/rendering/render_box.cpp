@@ -99,8 +99,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     // FIXME: Note that we restrict overflow to blocks for now.  One day table bodies and cells 
     // will need to support overflow.
     // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (_style->overflow() != OVISIBLE && isBlockFlow() && !isTableCell() && !isRoot() &&
-        (!isBody() || !document()->isHTMLDocument() || !(parent() && parent()->style()->overflow() == OVISIBLE)))
+    if (_style->overflow() != OVISIBLE && isBlockFlow() && !isTableCell() && !isRoot() && (!isBody() || !document()->isHTMLDocument()))
         setHasOverflowClip();
 
     if (requiresLayer()) {
