@@ -603,7 +603,7 @@ void KHTMLView::layout()
     ScrollBarMode hMode = d->hmode;
     ScrollBarMode vMode = d->vmode;
     
-    RenderObject* rootRenderer = document->documentElement()->renderer();
+    RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
     if (document->isHTMLDocument()) {
         NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
         if (body && body->renderer()) {
@@ -618,7 +618,7 @@ void KHTMLView::layout()
             }
         }
     }
-    else
+    else if (rootRenderer)
         applyOverflowToViewport(rootRenderer, hMode, vMode); // XML/XHTML UAs use the root element.
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
