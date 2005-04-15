@@ -288,7 +288,7 @@ private:
 			    int mouseEventType);
     bool dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard);
 
-    void applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
+    void applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
 #if APPLE_CHANGES
     virtual bool isKHTMLView() const;

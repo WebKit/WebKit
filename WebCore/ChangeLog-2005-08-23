@@ -1,3 +1,16 @@
+2005-04-15  David Hyatt  <hyatt@apple.com>
+
+	The Acid2 test and the reference rendering both make use of overflow:hidden on the <html> element.  Turns out
+	the CSS2.1 wording for this behavior has been revised (based off WinIE/Mozilla behavior).  Change our behavior
+	to match and make <html> overflow apply to the viewport.
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::applyOverflowToViewport):
+        (KHTMLView::layout):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+
 2005-04-14  David Hyatt  <hyatt@apple.com>
 
 	3258403 and 3258402 can now be fixed.  min/max-width/height support is now complete.  This patch makes them
