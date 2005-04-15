@@ -317,10 +317,9 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, Bindin
 
 UString::UString(const QString &d)
 {
-  unsigned int len = d.length();
-  UChar *dat = new UChar[len];
-  memcpy(dat, d.unicode(), len * sizeof(UChar));
-  rep = UString::Rep::create(dat, len);
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
+  // memory layout
+  rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
 UString::UString(const DOMString &d)
@@ -329,11 +328,9 @@ UString::UString(const DOMString &d)
     attach(&Rep::null);
     return;
   }
-
-  unsigned int len = d.length();
-  UChar *dat = new UChar[len];
-  memcpy(dat, d.unicode(), len * sizeof(UChar));
-  rep = UString::Rep::create(dat, len);
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
+  // memory layout
+  rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
 DOMString UString::string() const

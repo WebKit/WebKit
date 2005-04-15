@@ -1,3 +1,15 @@
+2005-04-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- use custom single-threaded malloc for all non-GC JavaScriptCore
+	allocations, for a 9.1% speedup on JavaScript iBench
+	 
+	* khtml/ecma/kjs_binding.cpp:
+        (UString::UString):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+
 2005-04-15  David Hyatt  <hyatt@apple.com>
 
 	Fix the six pixel gap between rows nine and ten of the Acid2 test.  Make sure that percentage heights that
