@@ -1,5 +1,14 @@
 2005-04-15  David Hyatt  <hyatt@apple.com>
 
+	Fix the six pixel gap between rows nine and ten of the Acid2 test.  Make sure that percentage heights that
+	resolve to auto are properly treated as though they have auto height by the self-collapsing block check (as per
+	section 8.3.1, paragraph 7 of the CSS2.1 spec).
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::isSelfCollapsingBlock):
+
+2005-04-15  David Hyatt  <hyatt@apple.com>
+
 	The Acid2 test and the reference rendering both make use of overflow:hidden on the <html> element.  Turns out
 	the CSS2.1 wording for this behavior has been revised (based off WinIE/Mozilla behavior).  Change our behavior
 	to match and make <html> overflow apply to the viewport.
