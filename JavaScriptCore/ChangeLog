@@ -1,3 +1,9 @@
+2005-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        - make fast_malloc.h a private header, not project
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+
 2005-04-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
