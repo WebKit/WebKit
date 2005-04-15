@@ -657,6 +657,9 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
 
 void HTMLTokenizer::parseComment(TokenizerString &src)
 {
+    bool strict = !parser->doc()->inCompatMode();
+    int delimiterCount = 0;
+    bool canClose = false;
     checkScriptBuffer(src.length());
     while ( !src.isEmpty() ) {
         scriptCode[ scriptCodeSize++ ] = *src;
@@ -664,19 +667,35 @@ void HTMLTokenizer::parseComment(TokenizerString &src)
         qDebug("comment is now: *%s*",
                QConstString((QChar*)src.current(), QMIN(16, src.length())).string().latin1());
 #endif
-        if (src->unicode() == '>') {
+
+        if (strict) {
+            if (src->unicode() == '-') {
+                delimiterCount++;
+                if (delimiterCount == 2) {
+                    delimiterCount = 0;
+                    canClose = !canClose;
+                }
+            }
+            else
+                delimiterCount = 0;
+        }
+
+        if ((!strict || canClose) && src->unicode() == '>') {
             bool handleBrokenComments = brokenComments && !(script || style);
             int endCharsCount = 1; // start off with one for the '>' character
-            if (scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' && scriptCode[scriptCodeSize-2] == '-') {
-                endCharsCount = 3;
+            if (!strict) {
+                // In quirks mode just check for -->
+                if (scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' && scriptCode[scriptCodeSize-2] == '-') {
+                    endCharsCount = 3;
+                }
+                else if (scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' && scriptCode[scriptCodeSize-3] == '-' && 
+                    scriptCode[scriptCodeSize-2] == '!') {
+                    // Other browsers will accept --!> as a close comment, even though it's
+                    // not technically valid.
+                    endCharsCount = 4;
+                }
             }
-            else if (scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' && scriptCode[scriptCodeSize-3] == '-' && 
-                scriptCode[scriptCodeSize-2] == '!') {
-                // Other browsers will accept --!> as a close comment, even though it's
-                // not technically valid.
-                endCharsCount = 4;
-            }
-            if (handleBrokenComments || endCharsCount > 1) {
+            if (canClose || handleBrokenComments || endCharsCount > 1) {
                 ++src;
                 if (!( script || xmp || textarea || style)) {
                     if (includesCommentsInDOM) {

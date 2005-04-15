@@ -1,3 +1,11 @@
+2005-04-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for row 13 of the Acid2 test.  Change HTML comment parsing in strict mode to do proper SGML parsing,
+	checking for pairs of -- and only being willing to close the comment if every -- is paired up.
+	
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseComment):
+
 2005-04-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
