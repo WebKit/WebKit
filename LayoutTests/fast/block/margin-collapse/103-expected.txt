@@ -65,17 +65,17 @@ layer at (0,0) size 800x1691
               RenderText {TEXT} at (0,2) size 220x20
                 text run at (0,2) width 220: "Your research is primarily focused on:"
             RenderBlock {SPAN} at (325,250) size 180x20 [color=#333333]
-              RenderRadioButton {INPUT} at (2,3) size 12x13 [color=#000000]
-              RenderText {TEXT} at (16,2) size 32x20
-                text run at (16,2) width 32: "Texts"
+              RenderRadioButton {INPUT} at (3,3) size 12x13 [color=#000000]
+              RenderText {TEXT} at (18,2) size 32x20
+                text run at (18,2) width 32: "Texts"
             RenderBlock {SPAN} at (325,270) size 180x20 [color=#333333]
-              RenderRadioButton {INPUT} at (2,3) size 12x13 [color=#000000]
-              RenderText {TEXT} at (16,2) size 133x20
-                text run at (16,2) width 133: "Performance materials"
+              RenderRadioButton {INPUT} at (3,3) size 12x13 [color=#000000]
+              RenderText {TEXT} at (18,2) size 133x20
+                text run at (18,2) width 133: "Performance materials"
             RenderBlock {SPAN} at (325,290) size 180x20 [color=#333333]
-              RenderRadioButton {INPUT} at (2,3) size 12x13 [color=#000000]
-              RenderText {TEXT} at (16,2) size 21x20
-                text run at (16,2) width 21: "n/a"
+              RenderRadioButton {INPUT} at (3,3) size 12x13 [color=#000000]
+              RenderText {TEXT} at (18,2) size 21x20
+                text run at (18,2) width 21: "n/a"
             RenderBlock {H2} at (0,335) size 560x16 [color=#333333]
               RenderText {TEXT} at (0,0) size 374x16
                 text run at (0,0) width 374: "INTERNET SHAKESPEARE EDITIONS QUESTIONS"
@@ -85,11 +85,11 @@ layer at (0,0) size 800x1691
             RenderBlock {SPAN} at (325,361) size 180x20 [color=#333333]
               RenderText {TEXT} at (0,2) size 19x20
                 text run at (0,2) width 19: "Yes"
-              RenderRadioButton {INPUT} at (21,3) size 12x13 [color=#000000]
-              RenderText {TEXT} at (35,2) size 19x20
-                text run at (35,2) width 4: " "
-                text run at (39,2) width 15: "No"
-              RenderRadioButton {INPUT} at (56,3) size 12x13 [color=#000000]
+              RenderRadioButton {INPUT} at (22,3) size 12x13 [color=#000000]
+              RenderText {TEXT} at (37,2) size 19x20
+                text run at (37,2) width 4: " "
+                text run at (41,2) width 15: "No"
+              RenderRadioButton {INPUT} at (59,3) size 12x13 [color=#000000]
               RenderText {TEXT} at (0,0) size 0x0
             RenderBlock {P} at (0,394) size 560x20 [color=#333333]
               RenderText {TEXT} at (0,2) size 378x20

@@ -149,51 +149,56 @@ layer at (0,0) size 800x1095
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,90) size 49x18
                     text run at (0,90) width 49: "Status:"
-                  RenderText {TEXT} at (49,90) size 74x18
-                    text run at (49,90) width 74: " confirmed"
-                  RenderText {TEXT} at (123,90) size 4x18
-                    text run at (123,90) width 4: " "
-                  RenderBR {BR} at (0,0) size 0x0
-                  RenderText {TEXT} at (0,108) size 45x18
-                    text run at (0,108) width 45: "Seats:"
-                  RenderBR {BR} at (0,0) size 0x0
-                RenderTable {TABLE} at (1,127) size 604x46 [border: (1px outset #808080)]
-                  RenderTableSection {TBODY} at (1,1) size 0x44
-                    RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
-                      RenderTableCell {TD} at (0,0) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 43x18
-                          text run at (2,2) width 43: "Name"
-                      RenderTableCell {TD} at (98,0) size 37x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 33x18
-                          text run at (2,2) width 33: "Seat"
-                      RenderTableCell {TD} at (135,0) size 78x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 45x18
-                          text run at (2,2) width 45: "Status"
-                      RenderTableCell {TD} at (213,0) size 316x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 36x18
-                          text run at (2,2) width 36: "Type"
-                      RenderTableCell {TD} at (529,0) size 73x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 69x18
-                          text run at (2,2) width 69: "Comment"
-                    RenderTableRow {TR} at (0,0) size 0x0
-                      RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 94x18
-                          text run at (2,2) width 94: "HAO,SCOTT"
-                      RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 29x18
-                          text run at (2,2) width 18: "08"
-                          text run at (20,2) width 11: "A"
-                      RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 74x18
-                          text run at (2,2) width 74: "confirmed "
-                      RenderTableCell {TD} at (213,22) size 316x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 312x18
-                          text run at (2,2) width 312: "Non-Smoking, Window Seat, Preferred Seat"
-                      RenderTableCell {TD} at (529,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 4x18
-                          text run at (2,2) width 4: " "
+                  RenderInline {SPACE} at (0,0) size 127x35
+                    RenderText {TEXT} at (49,90) size 74x18
+                      text run at (49,90) width 74: " confirmed"
+                    RenderInline {SPACE} at (0,0) size 127x35
+                      RenderText {TEXT} at (123,90) size 4x18
+                        text run at (123,90) width 4: " "
+                      RenderBR {BR} at (0,0) size 0x0
+                      RenderText {TEXT} at (0,108) size 45x18
+                        text run at (0,108) width 45: "Seats:"
+                      RenderBR {BR} at (0,0) size 0x0
+                RenderBlock (anonymous) at (1,127) size 604x46
+                  RenderTable {TABLE} at (0,0) size 604x46 [border: (1px outset #808080)]
+                    RenderTableSection {TBODY} at (1,1) size 0x44
+                      RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
+                        RenderTableCell {TD} at (0,0) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 43x18
+                            text run at (2,2) width 43: "Name"
+                        RenderTableCell {TD} at (98,0) size 37x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 33x18
+                            text run at (2,2) width 33: "Seat"
+                        RenderTableCell {TD} at (135,0) size 78x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 45x18
+                            text run at (2,2) width 45: "Status"
+                        RenderTableCell {TD} at (213,0) size 316x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 36x18
+                            text run at (2,2) width 36: "Type"
+                        RenderTableCell {TD} at (529,0) size 73x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 69x18
+                            text run at (2,2) width 69: "Comment"
+                      RenderTableRow {TR} at (0,0) size 0x0
+                        RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 94x18
+                            text run at (2,2) width 94: "HAO,SCOTT"
+                        RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 29x18
+                            text run at (2,2) width 18: "08"
+                            text run at (20,2) width 11: "A"
+                        RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 74x18
+                            text run at (2,2) width 74: "confirmed "
+                        RenderTableCell {TD} at (213,22) size 316x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 312x18
+                            text run at (2,2) width 312: "Non-Smoking, Window Seat, Preferred Seat"
+                        RenderTableCell {TD} at (529,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 4x18
+                            text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 604x18
-                  RenderBR {BR} at (0,0) size 0x18
+                  RenderInline {SPACE} at (0,0) size 0x17
+                    RenderInline {SPACE} at (0,0) size 0x17
+                      RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,568) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -240,51 +245,56 @@ layer at (0,0) size 800x1095
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,90) size 49x18
                     text run at (0,90) width 49: "Status:"
-                  RenderText {TEXT} at (49,90) size 74x18
-                    text run at (49,90) width 74: " confirmed"
-                  RenderText {TEXT} at (123,90) size 4x18
-                    text run at (123,90) width 4: " "
-                  RenderBR {BR} at (0,0) size 0x0
-                  RenderText {TEXT} at (0,108) size 45x18
-                    text run at (0,108) width 45: "Seats:"
-                  RenderBR {BR} at (0,0) size 0x0
-                RenderTable {TABLE} at (1,127) size 493x46 [border: (1px outset #808080)]
-                  RenderTableSection {TBODY} at (1,1) size 0x44
-                    RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
-                      RenderTableCell {TD} at (0,0) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 43x18
-                          text run at (2,2) width 43: "Name"
-                      RenderTableCell {TD} at (98,0) size 37x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 33x18
-                          text run at (2,2) width 33: "Seat"
-                      RenderTableCell {TD} at (135,0) size 78x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 45x18
-                          text run at (2,2) width 45: "Status"
-                      RenderTableCell {TD} at (213,0) size 205x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 36x18
-                          text run at (2,2) width 36: "Type"
-                      RenderTableCell {TD} at (418,0) size 73x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 69x18
-                          text run at (2,2) width 69: "Comment"
-                    RenderTableRow {TR} at (0,0) size 0x0
-                      RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 94x18
-                          text run at (2,2) width 94: "HAO,SCOTT"
-                      RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 28x18
-                          text run at (2,2) width 18: "13"
-                          text run at (20,2) width 10: "F"
-                      RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 74x18
-                          text run at (2,2) width 74: "confirmed "
-                      RenderTableCell {TD} at (213,22) size 205x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 201x18
-                          text run at (2,2) width 201: "Non-Smoking, Window Seat"
-                      RenderTableCell {TD} at (418,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                        RenderText {TEXT} at (2,2) size 4x18
-                          text run at (2,2) width 4: " "
+                  RenderInline {SPACE} at (0,0) size 127x35
+                    RenderText {TEXT} at (49,90) size 74x18
+                      text run at (49,90) width 74: " confirmed"
+                    RenderInline {SPACE} at (0,0) size 127x35
+                      RenderText {TEXT} at (123,90) size 4x18
+                        text run at (123,90) width 4: " "
+                      RenderBR {BR} at (0,0) size 0x0
+                      RenderText {TEXT} at (0,108) size 45x18
+                        text run at (0,108) width 45: "Seats:"
+                      RenderBR {BR} at (0,0) size 0x0
+                RenderBlock (anonymous) at (1,127) size 493x46
+                  RenderTable {TABLE} at (0,0) size 493x46 [border: (1px outset #808080)]
+                    RenderTableSection {TBODY} at (1,1) size 0x44
+                      RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
+                        RenderTableCell {TD} at (0,0) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 43x18
+                            text run at (2,2) width 43: "Name"
+                        RenderTableCell {TD} at (98,0) size 37x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 33x18
+                            text run at (2,2) width 33: "Seat"
+                        RenderTableCell {TD} at (135,0) size 78x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 45x18
+                            text run at (2,2) width 45: "Status"
+                        RenderTableCell {TD} at (213,0) size 205x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 36x18
+                            text run at (2,2) width 36: "Type"
+                        RenderTableCell {TD} at (418,0) size 73x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 69x18
+                            text run at (2,2) width 69: "Comment"
+                      RenderTableRow {TR} at (0,0) size 0x0
+                        RenderTableCell {TD} at (0,22) size 98x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 94x18
+                            text run at (2,2) width 94: "HAO,SCOTT"
+                        RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 28x18
+                            text run at (2,2) width 18: "13"
+                            text run at (20,2) width 10: "F"
+                        RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 74x18
+                            text run at (2,2) width 74: "confirmed "
+                        RenderTableCell {TD} at (213,22) size 205x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 201x18
+                            text run at (2,2) width 201: "Non-Smoking, Window Seat"
+                        RenderTableCell {TD} at (418,22) size 73x22 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+                          RenderText {TEXT} at (2,2) size 4x18
+                            text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 493x18
-                  RenderBR {BR} at (0,0) size 0x18
+                  RenderInline {SPACE} at (0,0) size 0x17
+                    RenderInline {SPACE} at (0,0) size 0x17
+                      RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,778) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -330,11 +340,13 @@ layer at (0,0) size 800x1095
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {TEXT} at (1,91) size 49x18
                   text run at (1,91) width 49: "Status:"
-                RenderText {TEXT} at (50,91) size 191x18
-                  text run at (50,91) width 191: " requested, await response"
-                RenderText {TEXT} at (241,91) size 4x18
-                  text run at (241,91) width 4: " "
-                RenderBR {BR} at (0,0) size 0x0
+                RenderInline {SPACE} at (0,0) size 195x17
+                  RenderText {TEXT} at (50,91) size 191x18
+                    text run at (50,91) width 191: " requested, await response"
+                  RenderInline {SPACE} at (0,0) size 4x17
+                    RenderText {TEXT} at (241,91) size 4x18
+                      text run at (241,91) width 4: " "
+                    RenderBR {BR} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,906) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0

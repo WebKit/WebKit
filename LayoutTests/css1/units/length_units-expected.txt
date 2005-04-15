@@ -44,7 +44,7 @@ layer at (0,0) size 800x1546
         RenderText {TEXT} at (0,0) size 310x18
           text run at (0,0) width 287: "This paragraph should have a left margin of 3"
           text run at (287,0) width 23: "em."
-      RenderBlock {P} at (24,316) size 760x18
+      RenderBlock {P} at (23,316) size 761x18
         RenderText {TEXT} at (0,0) size 306x18
           text run at (0,0) width 287: "This paragraph should have a left margin of 3"
           text run at (287,0) width 19: "ex."
@@ -71,35 +71,35 @@ layer at (0,0) size 800x1546
       RenderBlock {P} at (48,554) size 736x18
         RenderText {TEXT} at (0,0) size 591x18
           text run at (0,0) width 591: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-      RenderBlock {P} at (0,612) size 784x230 [bgcolor=#00FFFF] [border: (18px solid #800080)]
-        RenderText {TEXT} at (18,0) size 310x46
-          text run at (18,0) width 310: "This element has a "
+      RenderBlock {P} at (0,612) size 784x230 [bgcolor=#00FFFF] [border: (19px solid #800080)]
+        RenderText {TEXT} at (19,0) size 310x46
+          text run at (19,0) width 310: "This element has a "
         RenderInline {CODE} at (0,0) size 216x46
-          RenderText {TEXT} at (328,0) size 216x46
-            text run at (328,0) width 216: "font-size"
-        RenderText {TEXT} at (544,0) size 53x46
-          text run at (544,0) width 53: " of "
+          RenderText {TEXT} at (329,0) size 216x46
+            text run at (329,0) width 216: "font-size"
+        RenderText {TEXT} at (545,0) size 53x46
+          text run at (545,0) width 53: " of "
         RenderInline {CODE} at (0,0) size 96x46
-          RenderText {TEXT} at (597,0) size 96x46
-            text run at (597,0) width 48: "40"
-            text run at (645,0) width 48: "px"
-        RenderText {TEXT} at (693,0) size 743x92
-          text run at (693,0) width 68: " and"
-          text run at (18,46) width 28: "a "
+          RenderText {TEXT} at (598,0) size 96x46
+            text run at (598,0) width 48: "40"
+            text run at (646,0) width 48: "px"
+        RenderText {TEXT} at (694,0) size 743x92
+          text run at (694,0) width 68: " and"
+          text run at (19,46) width 28: "a "
         RenderInline {CODE} at (0,0) size 264x46
-          RenderText {TEXT} at (46,46) size 264x46
-            text run at (46,46) width 264: "border-left"
-        RenderText {TEXT} at (310,46) size 53x46
-          text run at (310,46) width 53: " of "
+          RenderText {TEXT} at (47,46) size 264x46
+            text run at (47,46) width 264: "border-left"
+        RenderText {TEXT} at (311,46) size 53x46
+          text run at (311,46) width 53: " of "
         RenderInline {CODE} at (0,0) size 384x46
-          RenderText {TEXT} at (363,46) size 384x46
-            text run at (363,46) width 24: "1"
-            text run at (387,46) width 360: "ex solid purple"
-        RenderText {TEXT} at (747,46) size 739x184
-          text run at (747,46) width 10: "."
-          text run at (18,92) width 673: "This should make the left border the same"
-          text run at (18,138) width 711: "number of pixels as the lower-case 'x' in this"
-          text run at (18,184) width 611: "element's font, as well as solid purple."
+          RenderText {TEXT} at (364,46) size 384x46
+            text run at (364,46) width 24: "1"
+            text run at (388,46) width 360: "ex solid purple"
+        RenderText {TEXT} at (748,46) size 739x184
+          text run at (748,46) width 10: "."
+          text run at (19,92) width 673: "This should make the left border the same"
+          text run at (19,138) width 711: "number of pixels as the lower-case 'x' in this"
+          text run at (19,184) width 611: "element's font, as well as solid purple."
       RenderTable {TABLE} at (0,882) size 784x648 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x646
           RenderTableRow {TR} at (0,0) size 0x0
@@ -125,7 +125,7 @@ layer at (0,0) size 800x1546
                 RenderText {TEXT} at (0,0) size 310x18
                   text run at (0,0) width 287: "This paragraph should have a left margin of 3"
                   text run at (287,0) width 23: "em."
-              RenderBlock {P} at (28,90) size 738x18
+              RenderBlock {P} at (27,90) size 739x18
                 RenderText {TEXT} at (0,0) size 306x18
                   text run at (0,0) width 287: "This paragraph should have a left margin of 3"
                   text run at (287,0) width 19: "ex."
@@ -152,32 +152,32 @@ layer at (0,0) size 800x1546
               RenderBlock {P} at (52,328) size 714x18
                 RenderText {TEXT} at (0,0) size 591x18
                   text run at (0,0) width 591: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-              RenderBlock {P} at (4,386) size 762x230 [bgcolor=#00FFFF] [border: (18px solid #800080)]
-                RenderText {TEXT} at (18,0) size 310x46
-                  text run at (18,0) width 310: "This element has a "
+              RenderBlock {P} at (4,386) size 762x230 [bgcolor=#00FFFF] [border: (19px solid #800080)]
+                RenderText {TEXT} at (19,0) size 310x46
+                  text run at (19,0) width 310: "This element has a "
                 RenderInline {CODE} at (0,0) size 216x46
-                  RenderText {TEXT} at (328,0) size 216x46
-                    text run at (328,0) width 216: "font-size"
-                RenderText {TEXT} at (544,0) size 53x46
-                  text run at (544,0) width 53: " of "
+                  RenderText {TEXT} at (329,0) size 216x46
+                    text run at (329,0) width 216: "font-size"
+                RenderText {TEXT} at (545,0) size 53x46
+                  text run at (545,0) width 53: " of "
                 RenderInline {CODE} at (0,0) size 96x46
-                  RenderText {TEXT} at (597,0) size 96x46
-                    text run at (597,0) width 48: "40"
-                    text run at (645,0) width 48: "px"
-                RenderText {TEXT} at (693,0) size 743x92
-                  text run at (693,0) width 68: " and"
-                  text run at (18,46) width 28: "a "
+                  RenderText {TEXT} at (598,0) size 96x46
+                    text run at (598,0) width 48: "40"
+                    text run at (646,0) width 48: "px"
+                RenderText {TEXT} at (694,0) size 743x92
+                  text run at (694,0) width 68: " and"
+                  text run at (19,46) width 28: "a "
                 RenderInline {CODE} at (0,0) size 264x46
-                  RenderText {TEXT} at (46,46) size 264x46
-                    text run at (46,46) width 264: "border-left"
-                RenderText {TEXT} at (310,46) size 53x46
-                  text run at (310,46) width 53: " of "
+                  RenderText {TEXT} at (47,46) size 264x46
+                    text run at (47,46) width 264: "border-left"
+                RenderText {TEXT} at (311,46) size 53x46
+                  text run at (311,46) width 53: " of "
                 RenderInline {CODE} at (0,0) size 384x46
-                  RenderText {TEXT} at (363,46) size 384x46
-                    text run at (363,46) width 24: "1"
-                    text run at (387,46) width 360: "ex solid purple"
-                RenderText {TEXT} at (747,46) size 739x184
-                  text run at (747,46) width 10: "."
-                  text run at (18,92) width 673: "This should make the left border the same"
-                  text run at (18,138) width 711: "number of pixels as the lower-case 'x' in this"
-                  text run at (18,184) width 611: "element's font, as well as solid purple."
+                  RenderText {TEXT} at (364,46) size 384x46
+                    text run at (364,46) width 24: "1"
+                    text run at (388,46) width 360: "ex solid purple"
+                RenderText {TEXT} at (748,46) size 739x184
+                  text run at (748,46) width 10: "."
+                  text run at (19,92) width 673: "This should make the left border the same"
+                  text run at (19,138) width 711: "number of pixels as the lower-case 'x' in this"
+                  text run at (19,184) width 611: "element's font, as well as solid purple."

@@ -46,8 +46,8 @@ layer at (0,0) size 800x1246
         RenderText {TEXT} at (32,0) size 359x18
           text run at (32,0) width 359: "The first line of this sentence should be indented two em."
       RenderBlock {P} at (0,434) size 784x18 [bgcolor=#00FFFF]
-        RenderText {TEXT} at (16,0) size 355x18
-          text run at (16,0) width 355: "The first line of this sentence should be indented two ex."
+        RenderText {TEXT} at (15,0) size 355x18
+          text run at (15,0) width 355: "The first line of this sentence should be indented two ex."
       RenderBlock {P} at (0,468) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (392,0) size 751x36
           text run at (392,0) width 359: "The first line of this sentence should be indented halfway"
@@ -104,8 +104,8 @@ layer at (0,0) size 800x1246
                 RenderText {TEXT} at (32,0) size 359x18
                   text run at (32,0) width 359: "The first line of this sentence should be indented two em."
               RenderBlock {P} at (4,208) size 762x18 [bgcolor=#00FFFF]
-                RenderText {TEXT} at (16,0) size 355x18
-                  text run at (16,0) width 355: "The first line of this sentence should be indented two ex."
+                RenderText {TEXT} at (15,0) size 355x18
+                  text run at (15,0) width 355: "The first line of this sentence should be indented two ex."
               RenderBlock {P} at (4,242) size 762x36 [bgcolor=#00FFFF]
                 RenderText {TEXT} at (381,0) size 740x36
                   text run at (381,0) width 359: "The first line of this sentence should be indented halfway"

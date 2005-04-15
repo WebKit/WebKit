@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         text run at (0,0) width 45: "Line 1 "
       RenderInline {SPAN} at (0,0) size 45x18
         RenderInline {SPAN} at (0,0) size 41x18
-          RenderText {TEXT} at (45,1) size 41x18
-            text run at (45,1) width 41: "Line 2"
+          RenderText {TEXT} at (45,2) size 41x18
+            text run at (45,2) width 41: "Line 2"
         RenderText {TEXT} at (86,0) size 4x18
           text run at (86,0) width 4: " "
       RenderText {TEXT} at (90,0) size 41x18
